@@ -1847,7 +1847,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PrintItem printItem = new PrintItem();
 				printItem.Name = returnInfo.newName;
 				printItem.FileLocation = Path.GetFullPath(returnInfo.fileNameAndPath);
-				printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider);
+				printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider.GetProviderLocator());
 			}
 
 			// we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
@@ -1881,7 +1881,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& returnInfo.destinationLibraryProvider != null)
 				{
 					// save this part to correct library provider
-					returnInfo.destinationLibraryProvider.AddItem(printItemWrapper);
+					LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
+					if (libraryToSaveTo != null)
+					{
+						libraryToSaveTo.AddItem(printItemWrapper);
+						libraryToSaveTo.Dispose();
+					}
 				}
 				else // we have already save it and the library should pick it up
 				{
@@ -2036,9 +2041,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (saveAsWindow == null)
 			{
 				List<ProviderLocatorNode> providerLocator = null;
-				if (printItemWrapper.SourceLibraryProvider != null)
+				if (printItemWrapper.SourceLibraryProviderLocator != null)
 				{
-					providerLocator = printItemWrapper.SourceLibraryProvider.GetProviderLocator();
+					providerLocator = printItemWrapper.SourceLibraryProviderLocator;
 				}
 				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator, true, true);
 				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);

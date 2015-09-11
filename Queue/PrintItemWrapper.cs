@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -62,14 +63,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private FileSystemWatcher diskFileWatcher = new FileSystemWatcher();
 
-		public PrintItemWrapper(DataStorage.PrintItem printItem, LibraryProvider sourceLibraryProvider = null)
+		public PrintItemWrapper(DataStorage.PrintItem printItem, List<ProviderLocatorNode> sourceLibraryProviderLocator = null)
 		{
 			this.PrintItem = printItem;
 			UpdateFileTracking(FileLocation);
 
 			this.fileType = Path.GetExtension(FileLocation).ToUpper();
 
-			SourceLibraryProvider = sourceLibraryProvider;
+			SourceLibraryProviderLocator = sourceLibraryProviderLocator;
 		}
 
 		public PrintItemWrapper(int printItemId)
@@ -283,7 +284,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public bool SlicingHadError { get { return slicingHadError; } }
 
-		public LibraryProvider SourceLibraryProvider { get; private set; }
+		public List<ProviderLocatorNode> SourceLibraryProviderLocator { get; private set; }
 
 		public void Delete()
 		{

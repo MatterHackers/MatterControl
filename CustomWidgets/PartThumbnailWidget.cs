@@ -693,33 +693,38 @@ namespace MatterHackers.MatterControl
 
 			string stlHashCode = this.ItemWrapper.FileHashCode.ToString();
 
-			ImageBuffer bigRender = LoadImageFromDisk(this, stlHashCode);
-			if (bigRender == null)
+			if (stlHashCode != "0")
 			{
-				this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
-				return false;
+				ImageBuffer bigRender = LoadImageFromDisk(this, stlHashCode);
+				if (bigRender == null)
+				{
+					this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
+					return false;
+				}
+
+				ImageBuffer unScaledImage = new ImageBuffer(bigRender.Width, bigRender.Height, 32, new BlenderBGRA());
+				unScaledImage.NewGraphics2D().Render(bigRender, 0, 0);
+				// If the source image (the one we downloaded) is more than twice as big as our dest image.
+				while (unScaledImage.Width > Width * 2)
+				{
+					// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
+					// So we scale as many times as we need to to get the Image to be the right size.
+					// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
+					ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, new BlenderBGRA());
+					halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
+					unScaledImage = halfImage;
+				}
+
+				this.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
+				this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+				this.thumbnailImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, (double)this.thumbnailImage.Width / unScaledImage.Width, (double)this.thumbnailImage.Height / unScaledImage.Height);
+
+				UiThread.RunOnIdle(this.EnsureImageUpdated);
+
+				return true;
 			}
 
-			ImageBuffer unScaledImage = new ImageBuffer(bigRender.Width, bigRender.Height, 32, new BlenderBGRA());
-			unScaledImage.NewGraphics2D().Render(bigRender, 0, 0);
-			// If the source image (the one we downloaded) is more than twice as big as our dest image.
-			while (unScaledImage.Width > Width * 2)
-			{
-				// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
-				// So we scale as many times as we need to to get the Image to be the right size.
-				// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
-				ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, new BlenderBGRA());
-				halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
-				unScaledImage = halfImage;
-			}
-
-			this.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
-			this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-			this.thumbnailImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, (double)this.thumbnailImage.Width / unScaledImage.Width, (double)this.thumbnailImage.Height / unScaledImage.Height);
-
-			UiThread.RunOnIdle(this.EnsureImageUpdated);
-
-			return true;
+			return false;
 		}
 	}
 }

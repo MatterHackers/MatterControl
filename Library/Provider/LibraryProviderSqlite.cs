@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			if (index >= 0 && index < printItems.Count)
 			{
-				return new PrintItemWrapper(printItems[index], this);
+				return new PrintItemWrapper(printItems[index], this.GetProviderLocator());
 			}
 
 			return null;
@@ -373,23 +373,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				metaData = new string[] { "Created By", "MatterControl", "BedPosition", "Absolute" };
 			}
 
-			if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+			// if it is not already in the right location
+			if (!printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
 			{
-				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
-			}
-			else // save a copy to the library and update this to point at it
-			{
+				// save a copy to the library and update this to point at it
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
 				printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
 				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
 				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
-
-				printItemWrapper.PrintItem.Commit();
-
-				// let the queue know that the item has changed so it load the correct part
-				QueueData.Instance.SaveDefaultQueue();
 			}
 		}
 
@@ -409,7 +401,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 				try
 				{
-					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, this);
+					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, this.GetProviderLocator());
 					SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
 				}
 				catch (System.UnauthorizedAccessException)
@@ -430,7 +422,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			else // it is not a mesh so just add it
 			{
-				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, this);
+				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, this.GetProviderLocator());
 				string sourceFileName = printItem.FileLocation;
 				string newFileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItem.FileLocation));
 				string destFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, newFileName);

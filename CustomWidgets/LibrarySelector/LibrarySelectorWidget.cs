@@ -231,7 +231,9 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			}
 
 			// Dispose of all children below this one.
-			while (currentLibraryProvider != null)
+			// Dispose of all children below this one.
+			while (currentLibraryProvider != null
+				&& currentLibraryProvider.ParentLibraryProvider != null)
 			{
 				LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
 				currentLibraryProvider.Dispose();
@@ -368,20 +370,23 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			var provider = this.CurrentLibraryProvider;
 
-			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
+			if (provider != null)
 			{
-				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-				LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
-				AddListItemToTopToBottom(queueItem);
-			}
-
-			for (int i = 0; i < provider.CollectionCount; i++)
-			{
-				PrintItemCollection item = provider.GetCollectionItem(i);
-				if (item.Key != "LibraryProviderPurchasedKey")
+				if (provider.ProviderKey != "ProviderSelectorKey")
 				{
-					LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
+					PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
+					LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
 					AddListItemToTopToBottom(queueItem);
+				}
+
+				for (int i = 0; i < provider.CollectionCount; i++)
+				{
+					PrintItemCollection item = provider.GetCollectionItem(i);
+					if (item.Key != "LibraryProviderPurchasedKey")
+					{
+						LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
+						AddListItemToTopToBottom(queueItem);
+					}
 				}
 			}
 		}

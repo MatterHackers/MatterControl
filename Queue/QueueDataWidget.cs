@@ -492,10 +492,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 			if (returnInfo != null)
 			{
 				List<QueueRowItem> selectedItems = new List<QueueRowItem>(queueDataView.SelectedItems);
-				foreach (QueueRowItem queueItem in selectedItems)
+				LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
+				if (libraryToSaveTo != null)
 				{
-					PrintItemWrapper printItemWrapper = new PrintItemWrapper(queueItem.PrintItemWrapper.PrintItem, returnInfo.destinationLibraryProvider);
-					returnInfo.destinationLibraryProvider.AddItem(printItemWrapper);
+					foreach (QueueRowItem queueItem in selectedItems)
+					{
+						PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
+						libraryToSaveTo.AddItem(printItemWrapper);
+					}
+					libraryToSaveTo.Dispose();
 				}
 			}
 		}

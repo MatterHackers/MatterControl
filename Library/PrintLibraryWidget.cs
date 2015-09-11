@@ -392,7 +392,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnClosed(EventArgs e)
 		{
-			this.libraryDataView.CurrentLibraryProvider.DataReloaded -= UpdateStatus;
+			if (this.libraryDataView != null
+				&& this.libraryDataView.CurrentLibraryProvider != null)
+			{
+				this.libraryDataView.CurrentLibraryProvider.DataReloaded -= UpdateStatus;
+			}
 
 			if (unregisterEvents != null)
 			{

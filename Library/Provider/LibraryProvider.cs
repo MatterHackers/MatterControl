@@ -128,13 +128,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						{
 							foreach (PrintItem part in partFiles)
 							{
-								AddItem(new PrintItemWrapper(part, this));
+								AddItem(new PrintItemWrapper(part, this.GetProviderLocator()));
 							}
 						}
 					}
 					else
 					{
-						AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), loadedFileName), this));
+						AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), loadedFileName), this.GetProviderLocator()));
 					}
 				}
 			}

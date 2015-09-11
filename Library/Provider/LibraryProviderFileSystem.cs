@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
 
-			return new PrintItemWrapper(new DataStorage.PrintItem(GetPrintItemName(itemIndex), fileName), this);
+			return new PrintItemWrapper(new DataStorage.PrintItem(GetPrintItemName(itemIndex), fileName), this.GetProviderLocator());
 		}
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)

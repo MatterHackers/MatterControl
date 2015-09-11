@@ -41,6 +41,7 @@ using MatterHackers.Agg.UI;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
+using System.Threading;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -287,5 +288,49 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibraryProvider purchasedProvider = PurchasedLibraryCreator.CreateLibraryProvider(this, SetCurrentLibraryProvider);
 			return purchasedProvider;
 		}
+
+#if false
+		public static async Task<LibraryProvider> GetLibraryFromLocator(List<ProviderLocatorNode> libraryProviderLocator)
+		{
+			LibraryProviderSelector selector = new LibraryProviderSelector(null, true);
+
+			LibraryProvider lastProvider = null;
+
+			if (libraryProviderLocator.Count > 1)
+			{
+				ProviderLocatorNode selectorNode = libraryProviderLocator[1];
+				foreach (ILibraryCreator libraryCreator in selector.libraryCreators)
+				{
+					if (libraryCreator.ProviderKey == selectorNode.Key)
+					{
+						// We found the right creatory, make the library and then iterate through it to get to the correct sub library
+						lastProvider = libraryCreator.CreateLibraryProvider(null, null);
+						for (int i = 2; i < libraryProviderLocator.Count; i++)
+						{
+							ProviderLocatorNode currentNode = libraryProviderLocator[i];
+
+							// wait for our current providre to finish loading
+							while (lastProvider.CollectionCount == 0)
+							{
+								Thread.Sleep(100);
+							}
+
+							// now find the next sub provider and go to it
+							for (int collectionIndex = 0; collectionIndex < lastProvider.CollectionCount; collectionIndex++)
+							{
+								PrintItemCollection collection = lastProvider.GetCollectionItem(collectionIndex);
+								if (collection.Key == currentNode.Key)
+								{
+									lastProvider = lastProvider.GetProviderForCollection(collection);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return lastProvider;
+		}
+#endif
 	}
 }
