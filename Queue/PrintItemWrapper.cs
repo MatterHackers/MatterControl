@@ -68,7 +68,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.PrintItem = printItem;
 			UpdateFileTracking(FileLocation);
 
-			this.fileType = Path.GetExtension(FileLocation).ToUpper();
+			if (FileLocation != null)
+			{
+				this.fileType = Path.GetExtension(FileLocation).ToUpper();
+			}
 
 			SourceLibraryProviderLocator = sourceLibraryProviderLocator;
 		}
