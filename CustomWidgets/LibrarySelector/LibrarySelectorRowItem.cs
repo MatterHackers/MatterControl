@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		public LibrarySelectorWidget libraryDataView { get; private set; }
 
-		public LibrarySelectorRowItem(PrintItemCollection collection, int collectionIndex, LibrarySelectorWidget libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
+		public LibrarySelectorRowItem(PrintItemCollection collection, int collectionIndex, LibrarySelectorWidget libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget, string openButtonText)
 		{
 			this.thumbnailWidget = thumbnailWidget;
 			this.libraryDataView = libraryDataView;
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			this.Name = this.ItemName + " Row Item Collection";
 
-			CreateGuiElements();
+			CreateGuiElements(openButtonText);
 		}
 
 		public PrintItemCollection PrintItemCollection { get { return printItemCollection; } }
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 		}
 
-		protected SlideWidget GetItemActionButtons()
+		protected SlideWidget GetItemActionButtons(string openButtonText)
 		{
 			SlideWidget buttonContainer = new SlideWidget();
 			buttonContainer.VAnchor = VAnchor.ParentBottomTop;
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
 
-			TextWidget openLabel = new TextWidget("Open".Localize());
+			TextWidget openLabel = new TextWidget(openButtonText);
 			openLabel.TextColor = RGBA_Bytes.White;
 			openLabel.VAnchor = VAnchor.ParentCenter;
 			openLabel.HAnchor = HAnchor.ParentCenter;
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			}
 		}
 
-		protected void CreateGuiElements()
+		protected void CreateGuiElements(string openButtonText)
 		{
 			this.Cursor = Cursors.Hand;
 
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 				primaryContainer.AddChild(primaryFlow);
 
-				rightButtonOverlay = GetItemActionButtons();
+				rightButtonOverlay = GetItemActionButtons(openButtonText);
 				rightButtonOverlay.Visible = false;
 
 				mainContainer.AddChild(primaryContainer);

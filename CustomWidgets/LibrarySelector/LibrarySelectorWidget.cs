@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 using System;
 using System.IO;
 
@@ -375,7 +376,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				if (provider.ProviderKey != "ProviderSelectorKey")
 				{
 					PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-					LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
+					LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage), "Back".Localize());
 					AddListItemToTopToBottom(queueItem);
 				}
 
@@ -384,7 +385,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					PrintItemCollection item = provider.GetCollectionItem(i);
 					if (item.Key != "LibraryProviderPurchasedKey")
 					{
-						LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
+						LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)), "Open".Localize());
 						AddListItemToTopToBottom(queueItem);
 					}
 				}
