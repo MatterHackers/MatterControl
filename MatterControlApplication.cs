@@ -93,6 +93,14 @@ namespace MatterHackers.MatterControl
 
 		static MatterControlApplication()
 		{
+			if (OsInformation.OperatingSystem == OSType.Mac)
+			{
+				// Set working directory - this duplicates functionality in Main but is necessary on OSX as Main fires much later (after the constructor in this case)
+				// resulting in invalid paths due to path tests running before the working directory has been overriden. Setting the value before initializing StaticData
+				// works around this architectural difference.
+				Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
+			}
+
 			// Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field
 			// initializers run before the class constructor, we need to init the platform specific provider in the static constructor (or write a custom initializer method)
 			//
