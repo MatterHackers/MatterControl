@@ -379,15 +379,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			var printItemWrapper = await this.GetPrintItemWrapperAsync();
 
-			string pathAndFile = printItemWrapper.FileLocation;
-			if (File.Exists(pathAndFile))
+			if (printItemWrapper != null)
 			{
-				OpenPartViewWindow(openMode);
-			}
-			else
-			{
-				string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the library?", pathAndFile);
-				StyledMessageBox.ShowMessageBox(null, message, "Item not found", StyledMessageBox.MessageType.YES_NO);
+				string pathAndFile = printItemWrapper.FileLocation;
+				if (File.Exists(pathAndFile))
+				{
+					OpenPartViewWindow(openMode);
+				}
+				else
+				{
+					string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the library?", pathAndFile);
+					StyledMessageBox.ShowMessageBox(null, message, "Item not found", StyledMessageBox.MessageType.YES_NO);
+				}
 			}
 		}
 
