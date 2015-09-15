@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public IEnumerable<PrintItem> GetLibraryItems(string keyphrase = null)
 		{
 			string query;
-			if (keyphrase == null)
+			if (string.IsNullOrEmpty(keyphrase))
 			{
 				query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
 			}
