@@ -250,6 +250,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			buttonRightPanelDisabledCover.Visible = true;
 
 			meshViewerWidget.RenderType = RenderTypes.Outlines;
+			viewControls3D.PartSelectVisible = false;
 		}
 
 		private async void InsertTextNow(string text)
@@ -455,7 +456,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				processingProgressControl.PercentComplete = ((i + 1) * 95 / currentText.Length);
 			}
 
-			SetWordSpacing(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
+			SetWordWraping(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
 			SetWordSize(asynchMeshGroups, asynchMeshGroupTransforms);
 			SetWordHeight(asynchMeshGroups, asynchMeshGroupTransforms);
 
@@ -566,7 +567,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			editPlateButtonsContainer.Visible = false;
 			buttonRightPanelDisabledCover.Visible = true;
 
-			viewControls3D.PartSelectVisible = false;
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
 				viewControls3D.ActiveButton = ViewControls3DButtons.Rotate; 
@@ -578,7 +578,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			buttonRightPanelDisabledCover.Visible = false;
 			processingProgressControl.Visible = false;
 
-			viewControls3D.PartSelectVisible = true;
 			editPlateButtonsContainer.Visible = true;
 		}
 
@@ -620,11 +619,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					wordOptionContainer.Visible = false;
 					buttonRightPanel.AddChild(wordOptionContainer);
 
-					wrappingSizeScrollBar = InsertUiForSlider(wordOptionContainer, "Spacing:".Localize(), 20, 200);
+					wrappingSizeScrollBar = InsertUiForSlider(wordOptionContainer, "Wrapping:".Localize(), 20, 200);
 					{
 						wrappingSizeScrollBar.ValueChanged += (sender, e) =>
 						{
-							SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
+							SetWordWraping(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
 							RebuildUnderline();
 						};
 					}
@@ -716,7 +715,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 		}
 
-		private void SetWordSpacing(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
+		private void SetWordWraping(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
 		{
 			if (meshesList.Count > 0)
 			{
@@ -732,9 +731,13 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				{
 					int newIndex = asynchMeshGroups.Count;
 
-					TypeFacePrinter letterPrinter = new TypeFacePrinter(currentText[i].ToString(), new StyledTypeFace(boldTypeFace, 12));
+					string letter = currentText[i].ToString();
+					TypeFacePrinter letterPrinter = new TypeFacePrinter(letter, new StyledTypeFace(boldTypeFace, 12));
 
-					if (letterPrinter.LocalBounds.Width > 0 && meshIndex2 < meshesList.Count-1)
+					if (letterPrinter.LocalBounds.Width > 0
+						&& letter != " "
+							&& letter != "\n"
+						&& meshIndex2 < meshesList.Count-1)
 					{
 						PlatingMeshGroupData newMeshInfo = platingDataList[meshIndex2];
 
@@ -748,16 +751,34 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				{
 					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
 
-					//EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
-					//string wrappedMessage = wrapper.InsertCRs(text, wrappingSizeScrollBar.Value);
-
-		
 					ScaleRotateTranslate translation = meshTransforms[meshIndex];
 					translation.translation *= Matrix4X4.CreateTranslation(-startPosition);
 					double newX = platingDataList[meshIndex].spacing.x * lastSizeValue;
 					double newY = platingDataList[meshIndex].spacing.y * lastSizeValue;
 					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, 0) + new Vector3(MeshViewerWidget.BedCenter));
 					meshTransforms[meshIndex] = translation;
+				}
+
+				// center in y
+				if (meshesList.Count > 0)
+				{
+					AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0].TotalTransform);
+					for (int i = 0; i < meshesList.Count; i++)
+					{
+						bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform));
+					}
+					
+					Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
+					double centerYOffset = bedCenter.y - bounds.Center.y;
+
+					for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
+					{
+						Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
+
+						ScaleRotateTranslate translation = meshTransforms[meshIndex];
+						translation.translation *= Matrix4X4.CreateTranslation(new Vector3(0, centerYOffset, 0));
+						meshTransforms[meshIndex] = translation;
+					}
 				}
 			}
 		}
