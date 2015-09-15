@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -52,15 +53,14 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MatterHackers.MatterControl.Plugins.TextCreator
+namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
-	public class View3DTextCreator : PartPreview3DWidget
+	public class View3DBrailleBuilder : PartPreview3DWidget
 	{
-		private SolidSlider spacingScrollBar;
+		MHTextEditWidget textToAddWidget;
+		private SolidSlider wrappingSizeScrollBar;
 		private SolidSlider sizeScrollBar;
 		private SolidSlider heightScrollBar;
-
-		private CheckBox createUnderline;
 
 		private double lastHeightValue = 1;
 		private double lastSizeValue = 1;
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private TypeFace boldTypeFace;
 
-		public View3DTextCreator(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
+		public View3DBrailleBuilder(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
 		{
 			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
 
@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				editPlateButtonsContainer = new FlowLayoutWidget();
 
-				MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize());
+				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize());
 				textToAddWidget.VAnchor = VAnchor.ParentCenter;
 				textToAddWidget.Margin = new BorderDouble(5);
 				editPlateButtonsContainer.AddChild(textToAddWidget);
@@ -248,6 +248,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			UnlockEditControls();
 			// but make sure we can't use the right panel yet
 			buttonRightPanelDisabledCover.Visible = true;
+
+			meshViewerWidget.RenderType = RenderTypes.Outlines;
 		}
 
 		private async void InsertTextNow(string text)
@@ -261,7 +263,10 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				await Task.Run(() => insertTextBackgroundWorker_DoWork(text));
+				EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
+				string wrappedMessage = wrapper.InsertCRs(text, wrappingSizeScrollBar.Value);
+
+				await Task.Run(() => InsertTextDoWork(wrappedMessage));
 
 				UnlockEditControls();
 				PullMeshDataFromAsynchLists();
@@ -274,7 +279,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private void ResetWordLayoutSettings()
 		{
-			spacingScrollBar.Value = 1;
+			wrappingSizeScrollBar.Value = 200;
 			sizeScrollBar.Value = 1;
 			heightScrollBar.Value = .25;
 			lastHeightValue = 1;
@@ -349,9 +354,17 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			}
 		}
 
+		bool firstDraw = true;
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			//DoCsgTest();
+			if (firstDraw)
+			{
+				textToAddWidget.Focus();
+				textToAddWidget.Text = "This is some nice long text to work with. Thanks for coming.";
+				firstDraw = false;
+			}
+
 			base.OnDraw(graphics2D);
 		}
 
@@ -396,7 +409,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			base.OnMouseUp(mouseEvent);
 		}
 
-		private void insertTextBackgroundWorker_DoWork(string currentText)
+		private void InsertTextDoWork(string currentText)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -406,7 +419,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			TypeFacePrinter printer = new TypeFacePrinter(currentText, new StyledTypeFace(boldTypeFace, 12));
 			Vector2 size = printer.GetSize(currentText);
-			double centerOffset = -size.x / 2;
+			Vector2 centerOffset = -size / 2;
 
 			double ratioPerMeshGroup = 1.0 / currentText.Length;
 			double currentRatioDone = 0;
@@ -415,7 +428,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				int newIndex = asynchMeshGroups.Count;
 
 				TypeFacePrinter letterPrinter = new TypeFacePrinter(currentText[i].ToString(), new StyledTypeFace(boldTypeFace, 12));
-				Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 10 + (i % 2));
+				Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 10);
 
 				if (textMesh.Faces.Count > 0)
 				{
@@ -423,7 +436,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
 
-					newMeshInfo.spacing.x = printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset;
+					newMeshInfo.spacing = printer.GetOffsetLeftOfCharacterIndex(i) + centerOffset;
 					asynchPlatingDatas.Add(newMeshInfo);
 					asynchMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
 
@@ -446,15 +459,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			SetWordSize(asynchMeshGroups, asynchMeshGroupTransforms);
 			SetWordHeight(asynchMeshGroups, asynchMeshGroupTransforms);
 
-			if (createUnderline.Checked)
-			{
-				CreateUnderline(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
-			}
+			CreateBase(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
 
 			processingProgressControl.PercentComplete = 95;
 		}
 
-		private void CreateUnderline(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
+		private void CreateBase(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
 		{
 			if (meshesList.Count > 0)
 			{
@@ -465,12 +475,20 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				}
 
 				double xSize = bounds.XSize;
-				double ySize = sizeScrollBar.Value * 3;
-				double zSize = bounds.ZSize / 3;
-				Mesh connectionLine = PlatonicSolids.CreateCube(xSize, ySize, zSize);
-				meshesList.Add(new MeshGroup(connectionLine));
+				double ySize = bounds.YSize;
+				double zSize = bounds.ZSize / 2;
+
+				double roundingScale = 20;
+				RectangleDouble baseRect = new RectangleDouble(bounds.minXYZ.x, bounds.minXYZ.y, bounds.maxXYZ.x, bounds.maxXYZ.y);
+				baseRect.Inflate(2);
+				baseRect *= roundingScale;
+				RoundedRect baseRoundedRect = new RoundedRect(baseRect, 20);
+				Mesh baseMeshResult = VertexSourceToMesh.Extrude(baseRoundedRect, zSize * roundingScale);
+				baseMeshResult.Transform(Matrix4X4.CreateScale(1 / roundingScale));
+
+				meshesList.Add(new MeshGroup(baseMeshResult));
 				platingDataList.Add(new PlatingMeshGroupData());
-				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2));
+				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation(0, 0, 0));
 				PlatingHelper.CreateITraceableForMeshGroup(platingDataList, meshesList, meshesList.Count - 1, null);
 			}
 		}
@@ -602,12 +620,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					wordOptionContainer.Visible = false;
 					buttonRightPanel.AddChild(wordOptionContainer);
 
-					spacingScrollBar = InsertUiForSlider(wordOptionContainer, "Spacing:".Localize(), .5, 1);
+					wrappingSizeScrollBar = InsertUiForSlider(wordOptionContainer, "Spacing:".Localize(), 20, 200);
 					{
-						spacingScrollBar.ValueChanged += (sender, e) =>
+						wrappingSizeScrollBar.ValueChanged += (sender, e) =>
 						{
 							SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-							RebuildUnderlineIfRequired();
+							RebuildUnderline();
 						};
 					}
 
@@ -618,7 +636,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 							SetWordSize(MeshGroups, MeshGroupTransforms);
 
 							//SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-							RebuildUnderlineIfRequired();
+							RebuildUnderline();
 						};
 					}
 
@@ -627,34 +645,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						heightScrollBar.ValueChanged += (sender, e) =>
 						{
 							SetWordHeight(MeshGroups, MeshGroupTransforms);
-							RebuildUnderlineIfRequired();
+							RebuildUnderline();
 						};
 					}
-
-					createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-					createUnderline.Checked = true;
-					createUnderline.Margin = new BorderDouble(10, 5);
-					createUnderline.HAnchor = HAnchor.ParentLeft;
-					wordOptionContainer.AddChild(createUnderline);
-					createUnderline.CheckedStateChanged += (sender, e) =>
-					{
-						int oldIndex = SelectedMeshGroupIndex;
-						if (!createUnderline.Checked)
-						{
-							// we need to remove the underline
-							if (MeshGroups.Count > 1)
-							{
-								SelectedMeshGroupIndex = MeshGroups.Count - 1;
-								DeleteSelectedMesh();
-							}
-						}
-						else if (MeshGroups.Count > 0)
-						{
-							// we need to add the underline
-							CreateUnderline(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-						}
-						SelectedMeshGroupIndex = Math.Min(oldIndex, MeshGroups.Count - 1);
-					};
 
 					expandWordOptions.CheckedStateChanged += (sender, e) =>
 					{
@@ -709,20 +702,17 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			return buttonRightPanel;
 		}
 
-		private void RebuildUnderlineIfRequired()
+		private void RebuildUnderline()
 		{
-			if (createUnderline.Checked)
+			// we need to remove the underline
+			if (MeshGroups.Count > 1)
 			{
-				// we need to remove the underline
-				if (MeshGroups.Count > 1)
-				{
-					int oldIndex = SelectedMeshGroupIndex;
-					SelectedMeshGroupIndex = MeshGroups.Count - 1;
-					DeleteSelectedMesh();
-					// we need to add the underline
-					CreateUnderline(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-					SelectedMeshGroupIndex = oldIndex;
-				}
+				int oldIndex = SelectedMeshGroupIndex;
+				SelectedMeshGroupIndex = MeshGroups.Count - 1;
+				DeleteSelectedMesh();
+				// we need to add the underline
+				CreateBase(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
+				SelectedMeshGroupIndex = oldIndex;
 			}
 		}
 
@@ -730,14 +720,43 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			if (meshesList.Count > 0)
 			{
+				EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
+				string currentText = wrapper.InsertCRs(this.word, wrappingSizeScrollBar.Value);
+
+				TypeFacePrinter printer = new TypeFacePrinter(currentText, new StyledTypeFace(boldTypeFace, 12));
+				Vector2 size = printer.GetSize(currentText);
+				Vector2 centerOffset = -size / 2;
+
+				int meshIndex2 = 0;
+				for (int i = 0; i < currentText.Length; i++)
+				{
+					int newIndex = asynchMeshGroups.Count;
+
+					TypeFacePrinter letterPrinter = new TypeFacePrinter(currentText[i].ToString(), new StyledTypeFace(boldTypeFace, 12));
+
+					if (letterPrinter.LocalBounds.Width > 0 && meshIndex2 < meshesList.Count-1)
+					{
+						PlatingMeshGroupData newMeshInfo = platingDataList[meshIndex2];
+
+						newMeshInfo.spacing = printer.GetOffsetLeftOfCharacterIndex(i) + centerOffset;
+
+						meshIndex2++;
+					}
+				}
+
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
 					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
 
+					//EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
+					//string wrappedMessage = wrapper.InsertCRs(text, wrappingSizeScrollBar.Value);
+
+		
 					ScaleRotateTranslate translation = meshTransforms[meshIndex];
 					translation.translation *= Matrix4X4.CreateTranslation(-startPosition);
-					double newX = platingDataList[meshIndex].spacing.x * spacingScrollBar.Value * lastSizeValue;
-					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(MeshViewerWidget.BedCenter));
+					double newX = platingDataList[meshIndex].spacing.x * lastSizeValue;
+					double newY = platingDataList[meshIndex].spacing.y * lastSizeValue;
+					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, 0) + new Vector3(MeshViewerWidget.BedCenter));
 					meshTransforms[meshIndex] = translation;
 				}
 			}
@@ -867,7 +886,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				// we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
 				PushMeshGroupDataToAsynchLists(true);
 
-				string fileName = "TextCreator_{0}".FormatWith(Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
+				string fileName = "BrailleBuilder_{0}".FormatWith(Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
 				string filePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
 				processingProgressControl.RatioComplete = 0;

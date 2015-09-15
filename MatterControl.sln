@@ -124,6 +124,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiAutomation", "Submodules
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudServices.Tests", "..\CloudServicesPlugin\CloudServices.Tests\CloudServices.Tests.csproj", "{66BAFF8D-3079-4912-B100-41140BAF4DDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrailleBuilder", "BrailleBuilder\BrailleBuilder.csproj", "{70FBB82C-558D-4B5F-BE75-A922D392E650}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1133,6 +1135,34 @@ Global
 		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|Mixed Platforms.Build.0 = Release|Any CPU
 		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|x64.ActiveCfg = Release|Any CPU
 		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|x86.ActiveCfg = Release|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug|x64.ActiveCfg = Debug|x64
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug|x64.Build.0 = Debug|x64
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug64|Any CPU.ActiveCfg = Debug64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug64|Any CPU.Build.0 = Debug64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug64|Mixed Platforms.ActiveCfg = Debug64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug64|Mixed Platforms.Build.0 = Debug64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug64|x64.ActiveCfg = Debug64|x64
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug64|x64.Build.0 = Debug64|x64
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Debug64|x86.ActiveCfg = Debug64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release|x64.ActiveCfg = Release|x64
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release|x64.Build.0 = Release|x64
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release|x86.ActiveCfg = Release|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release64|Any CPU.ActiveCfg = Release64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release64|Any CPU.Build.0 = Release64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release64|Mixed Platforms.ActiveCfg = Release64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release64|Mixed Platforms.Build.0 = Release64|Any CPU
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release64|x64.ActiveCfg = Release64|x64
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release64|x64.Build.0 = Release64|x64
+		{70FBB82C-558D-4B5F-BE75-A922D392E650}.Release64|x86.ActiveCfg = Release64|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1170,6 +1200,7 @@ Global
 		{F5D74163-145F-47BF-83DC-D0E07249C6CA} = {4E79BE4E-275E-4901-9173-E9096B7318F0}
 		{E9102310-0029-4D8F-B1E9-88FBA6147D45} = {2AB9B589-5C98-4C05-BBEA-F97DAE168EAB}
 		{66BAFF8D-3079-4912-B100-41140BAF4DDD} = {4E79BE4E-275E-4901-9173-E9096B7318F0}
+		{70FBB82C-558D-4B5F-BE75-A922D392E650} = {32E5B656-D6DF-415E-9E7E-D03F1D8C3A8A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MatterControl.csproj
