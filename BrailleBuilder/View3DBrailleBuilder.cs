@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private double lastHeightValue = 1;
 		private double lastSizeValue = 1;
+		const double unscaledHeight = 10;
 
 		private ProgressControl processingProgressControl;
 		private FlowLayoutWidget editPlateButtonsContainer;
@@ -188,27 +189,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					InsertTextNow(textToAddWidget.Text);
 				};
 
-				KeyDown += (sender, e) =>
-				{
-					KeyEventArgs keyEvent = e as KeyEventArgs;
-					if (keyEvent != null && !keyEvent.Handled)
-					{
-						if (keyEvent.KeyCode == Keys.Escape)
-						{
-							if (meshSelectInfo.downOnPart)
-							{
-								meshSelectInfo.downOnPart = false;
-
-								ScaleRotateTranslate translated = SelectedMeshTransform;
-								translated.translation *= transformOnMouseDown;
-								SelectedMeshTransform = translated;
-
-								Invalidate();
-							}
-						}
-					}
-				};
-
 				editToolBar.AddChild(editPlateButtonsContainer);
 				buttonBottomPanel.AddChild(editToolBar);
 			}
@@ -283,7 +263,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			wrappingSizeScrollBar.Value = 200;
 			sizeScrollBar.Value = 1;
-			heightScrollBar.Value = .25;
+			heightScrollBar.Value = 1;
 			lastHeightValue = 1;
 			lastSizeValue = 1;
 		}
@@ -335,27 +315,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private MeshSelectInfo meshSelectInfo;
 
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseDown(mouseEvent);
-			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
-			{
-				if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-					int meshHitIndex;
-					if (FindMeshGroupHitPosition(mouseEvent.Position, out meshHitIndex))
-					{
-						meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
-						SelectedMeshGroupIndex = meshHitIndex;
-						transformOnMouseDown = SelectedMeshTransform.translation;
-						Invalidate();
-						meshSelectInfo.downOnPart = true;
-					}
-				}
-			}
-		}
-
 		bool firstDraw = true;
 		public override void OnDraw(Graphics2D graphics2D)
 		{
@@ -370,47 +329,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			base.OnDraw(graphics2D);
 		}
 
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
-		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
-			{
-				Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-				Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-				IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
-				if (info != null)
-				{
-					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
-
-					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
-					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
-					meshSelectInfo.lastMoveDelta = delta;
-
-					ScaleRotateTranslate translated = SelectedMeshTransform;
-					translated.translation *= totalTransform;
-					SelectedMeshTransform = translated;
-
-					Invalidate();
-				}
-			}
-
-			base.OnMouseMove(mouseEvent);
-		}
-
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
-		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-				&& meshSelectInfo.downOnPart
-				&& meshSelectInfo.lastMoveDelta != Vector3.Zero)
-			{
-				saveButton.Visible = true;
-				saveAndExitButton.Visible = true;
-			}
-
-			meshSelectInfo.downOnPart = false;
-
-			base.OnMouseUp(mouseEvent);
-		}
-
 		private void InsertTextDoWork(string currentText)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -419,42 +337,19 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			asynchMeshGroupTransforms.Clear();
 			asynchPlatingDatas.Clear();
 
-			TypeFacePrinter printer = new TypeFacePrinter(currentText, new StyledTypeFace(boldTypeFace, 12));
-			Vector2 size = printer.GetSize(currentText);
-			Vector2 centerOffset = -size / 2;
+			TypeFacePrinter brailPrinter = new TypeFacePrinter(currentText, new StyledTypeFace(boldTypeFace, 12));
+			Vector2 textOffset = Vector2.Zero;
 
-			double ratioPerMeshGroup = 1.0 / currentText.Length;
-			double currentRatioDone = 0;
-			for (int i = 0; i < currentText.Length; i++)
+			AddCharacterMeshes(currentText, brailPrinter, textOffset);
+			Vector2 brailSize = brailPrinter.GetSize();
+			textOffset = new Vector2(-brailSize.x / 2, -brailSize.y);
+
+			if (!useBrailFont.Checked)
 			{
-				int newIndex = asynchMeshGroups.Count;
-
-				TypeFacePrinter letterPrinter = new TypeFacePrinter(currentText[i].ToString(), new StyledTypeFace(boldTypeFace, 12));
-				Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 10);
-
-				if (textMesh.Faces.Count > 0)
-				{
-					asynchMeshGroups.Add(new MeshGroup(textMesh));
-
-					PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
-
-					newMeshInfo.spacing = printer.GetOffsetLeftOfCharacterIndex(i) + centerOffset;
-					asynchPlatingDatas.Add(newMeshInfo);
-					asynchMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
-
-					PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, newIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
-					{
-						continueProcessing = true;
-						int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
-						processingProgressControl.PercentComplete = nextPercent;
-					});
-
-					currentRatioDone += ratioPerMeshGroup;
-
-					PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, newIndex);
-				}
-
-				processingProgressControl.PercentComplete = ((i + 1) * 95 / currentText.Length);
+				TypeFacePrinter normalPrinter = new TypeFacePrinter(currentText, new StyledTypeFace(boldTypeFace, 8));
+				Vector2 normalSize = normalPrinter.GetSize();
+				textOffset = new Vector2(-normalSize.x / 2, -brailSize.y - normalSize.y);
+				AddCharacterMeshes(currentText, normalPrinter, textOffset);
 			}
 
 			SetWordWraping(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
@@ -468,6 +363,40 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			processingProgressControl.PercentComplete = 95;
 		}
 
+		private void AddCharacterMeshes(string currentText, TypeFacePrinter printer, Vector2 textOffset)
+		{
+			int newIndex = asynchMeshGroups.Count;
+			StyledTypeFace typeFace = printer.TypeFaceStyle;
+
+			for (int i = 0; i < currentText.Length; i++)
+			{
+				string letter = currentText[i].ToString();
+				TypeFacePrinter letterPrinter = new TypeFacePrinter(letter, typeFace);
+
+				if (CharacterHasMesh(letterPrinter, letter))
+				{
+					Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, unscaledHeight/2);
+
+					asynchMeshGroups.Add(new MeshGroup(textMesh));
+
+					PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
+
+					newMeshInfo.spacing = printer.GetOffsetLeftOfCharacterIndex(i) + textOffset;
+					asynchPlatingDatas.Add(newMeshInfo);
+					asynchMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
+
+					PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, newIndex, null);
+					ScaleRotateTranslate moved = asynchMeshGroupTransforms[newIndex];
+					moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, unscaledHeight));
+					asynchMeshGroupTransforms[newIndex] = moved;
+
+					//PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, newIndex);
+				}
+
+				processingProgressControl.PercentComplete = ((i + 1) * 95 / currentText.Length);
+			}
+		}
+
 		private void CreateBase(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
 		{
 			if (meshesList.Count > 0)
@@ -478,16 +407,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform));
 				}
 
-				double xSize = bounds.XSize;
-				double ySize = bounds.YSize;
-				double zSize = bounds.ZSize / 2;
-
 				double roundingScale = 20;
 				RectangleDouble baseRect = new RectangleDouble(bounds.minXYZ.x, bounds.minXYZ.y, bounds.maxXYZ.x, bounds.maxXYZ.y);
 				baseRect.Inflate(2);
 				baseRect *= roundingScale;
-				RoundedRect baseRoundedRect = new RoundedRect(baseRect, 20);
-				Mesh baseMeshResult = VertexSourceToMesh.Extrude(baseRoundedRect, zSize * roundingScale);
+				RoundedRect baseRoundedRect = new RoundedRect(baseRect, 1 * roundingScale);
+				Mesh baseMeshResult = VertexSourceToMesh.Extrude(baseRoundedRect, unscaledHeight / 2 * roundingScale * sizeScrollBar.Value * heightScrollBar.Value);
 				baseMeshResult.Transform(Matrix4X4.CreateScale(1 / roundingScale));
 
 				meshesList.Add(new MeshGroup(baseMeshResult));
@@ -653,7 +578,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 					// put in the user alpha checkbox
 					{
-						useBrailFont = new CheckBox(new CheckBoxViewText("Use Braille".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
+						useBrailFont = new CheckBox(new CheckBoxViewText("Only Braille".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
 						useBrailFont.Checked = false;
 						useBrailFont.Margin = new BorderDouble(10, 5);
 						useBrailFont.HAnchor = HAnchor.ParentLeft;
@@ -661,13 +586,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						useBrailFont.Checked = true;
 						useBrailFont.CheckedStateChanged += (sender, e) =>
 						{
-							if (useBrailFont.Checked)
-							{
-							}
-							else
-							{
-							}
-
 							InsertTextNow(this.word);
 						};
 					}
@@ -739,6 +657,13 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 		}
 
+		bool CharacterHasMesh(TypeFacePrinter letterPrinter, string letter)
+		{
+			return letterPrinter.LocalBounds.Width > 0
+				&& letter != " "
+				&& letter != "\n";
+		}
+
 		private void SetWordWraping(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
 		{
 			if (meshesList.Count > 0)
@@ -751,17 +676,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Vector2 centerOffset = -size / 2;
 
 				int meshIndex2 = 0;
+				int newIndex = asynchMeshGroups.Count;
+
 				for (int i = 0; i < currentText.Length; i++)
 				{
-					int newIndex = asynchMeshGroups.Count;
-
 					string letter = currentText[i].ToString();
 					TypeFacePrinter letterPrinter = new TypeFacePrinter(letter, new StyledTypeFace(boldTypeFace, 12));
 
-					if (letterPrinter.LocalBounds.Width > 0
-						&& letter != " "
-							&& letter != "\n"
-						&& meshIndex2 < meshesList.Count-1)
+					if (CharacterHasMesh(letterPrinter, letter))
 					{
 						PlatingMeshGroupData newMeshInfo = platingDataList[meshIndex2];
 
@@ -779,7 +701,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					translation.translation *= Matrix4X4.CreateTranslation(-startPosition);
 					double newX = platingDataList[meshIndex].spacing.x * lastSizeValue;
 					double newY = platingDataList[meshIndex].spacing.y * lastSizeValue;
-					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, 0) + new Vector3(MeshViewerWidget.BedCenter));
+					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, startPosition.z) + new Vector3(MeshViewerWidget.BedCenter));
 					meshTransforms[meshIndex] = translation;
 				}
 

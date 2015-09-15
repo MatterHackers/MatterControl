@@ -3715,3 +3715,6 @@ Translated:Wrapping:
 English:Use Braille
 Translated:Use Braille
 
+English:Only Braille
+Translated:Only Braille
+
