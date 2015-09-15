@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private SolidSlider wrappingSizeScrollBar;
 		private SolidSlider sizeScrollBar;
 		private SolidSlider heightScrollBar;
+		private CheckBox useBrailFont;
 
 		private double lastHeightValue = 1;
 		private double lastSizeValue = 1;
@@ -460,6 +461,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			SetWordSize(asynchMeshGroups, asynchMeshGroupTransforms);
 			SetWordHeight(asynchMeshGroups, asynchMeshGroupTransforms);
 
+			CenterTextOnScreen(asynchMeshGroups, asynchMeshGroupTransforms);
+
 			CreateBase(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
 
 			processingProgressControl.PercentComplete = 95;
@@ -648,6 +651,27 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						};
 					}
 
+					// put in the user alpha checkbox
+					{
+						useBrailFont = new CheckBox(new CheckBoxViewText("Use Braille".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
+						useBrailFont.Checked = false;
+						useBrailFont.Margin = new BorderDouble(10, 5);
+						useBrailFont.HAnchor = HAnchor.ParentLeft;
+						wordOptionContainer.AddChild(useBrailFont);
+						useBrailFont.Checked = true;
+						useBrailFont.CheckedStateChanged += (sender, e) =>
+						{
+							if (useBrailFont.Checked)
+							{
+							}
+							else
+							{
+							}
+
+							InsertTextNow(this.word);
+						};
+					}
+
 					expandWordOptions.CheckedStateChanged += (sender, e) =>
 					{
 						wordOptionContainer.Visible = expandWordOptions.Checked;
@@ -759,24 +783,30 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					meshTransforms[meshIndex] = translation;
 				}
 
+				CenterTextOnScreen(meshesList, meshTransforms);
+			}
+		}
+
+		private void CenterTextOnScreen(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
+		{
+			if (meshesList.Count > 0)
+			{
 				// center in y
 				if (meshesList.Count > 0)
 				{
 					AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0].TotalTransform);
-					for (int i = 0; i < meshesList.Count; i++)
+					for (int i = 1; i < meshesList.Count; i++)
 					{
 						bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform));
 					}
-					
+
 					Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
 					double centerYOffset = bedCenter.y - bounds.Center.y;
 
 					for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 					{
-						Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
-
 						ScaleRotateTranslate translation = meshTransforms[meshIndex];
-						translation.translation *= Matrix4X4.CreateTranslation(new Vector3(0, centerYOffset, 0));
+						translation.translation *= Matrix4X4.CreateTranslation(new Vector3(0, centerYOffset + 100, 0));
 						meshTransforms[meshIndex] = translation;
 					}
 				}
