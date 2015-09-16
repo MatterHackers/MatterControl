@@ -71,6 +71,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			this.ItemName = libraryProvider.GetPrintItemName(itemIndex);
+			if(this.ItemName.IndexOf("!ProviderIsLoading!") != -1)
+			{
+				this.ItemName = "Retrieving Contents...".Localize();
+				this.IsViewHelperItem = true;
+				this.EnableSlideInActions = false;
+			}
+
 			this.libraryProvider = libraryProvider;
 			this.ItemIndex = itemIndex;
 
@@ -340,6 +347,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void onViewPartClick(object sender, EventArgs e)
 		{
+			// Abort normal processing for view helpers
+			if (this.IsViewHelperItem)
+			{
+				return;
+			}
+
 			UiThread.RunOnIdle(() =>
 			{
 				this.rightButtonOverlay.SlideOut();
