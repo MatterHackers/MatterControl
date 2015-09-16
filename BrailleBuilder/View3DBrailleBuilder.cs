@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			if (firstDraw)
 			{
 				textToAddWidget.Focus();
-				textToAddWidget.Text = "Test Text";
+				//textToAddWidget.Text = "Test Text";
 				firstDraw = false;
 			}
 
@@ -372,7 +372,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				for (int i = firstNewCharacter; i < asynchPlatingDatas.Count; i++)
 				{
-					asynchPlatingDatas[i].spacing = asynchPlatingDatas[i - firstNewCharacter].spacing + new Vector2(0, -boldStyled.CapHeightInPixels * 1.2);
+					asynchPlatingDatas[i].spacing = asynchPlatingDatas[i - firstNewCharacter].spacing + new Vector2(0, -boldStyled.CapHeightInPixels * 1.3);
 				}
 			}
 
