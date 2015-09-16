@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			if (firstDraw)
 			{
 				textToAddWidget.Focus();
-				textToAddWidget.Text = "Test Text";
+				//textToAddWidget.Text = "Test Text";
 				firstDraw = false;
 			}
 
@@ -595,7 +595,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					// put in the user alpha checkbox
 					{
 						includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-						includeText.ToolTipText = "Show normal text under the braille.".Localize();
+						includeText.ToolTipText = "Show normal text under the braille".Localize();
 						includeText.Checked = false;
 						includeText.Margin = new BorderDouble(10, 5);
 						includeText.HAnchor = HAnchor.ParentLeft;
@@ -609,7 +609,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					// put in the user alpha checkbox
 					{
 						useGrade2 = new CheckBox(new CheckBoxViewText("Use Grade 2".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-						useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions).".Localize();
+						useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions)".Localize();
 						useGrade2.Checked = false;
 						useGrade2.Margin = new BorderDouble(10, 5);
 						useGrade2.HAnchor = HAnchor.ParentLeft;

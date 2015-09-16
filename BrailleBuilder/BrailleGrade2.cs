@@ -53,7 +53,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Assert.IsTrue(ConvertWord("runabout") == "runab");
 				Assert.IsTrue(ConvertWord("afternoon") == "afn");
 				Assert.IsTrue(ConvertWord("really") == "re,y");
-				
+				Assert.IsTrue(ConvertWord("glance") == "gl.e");
+				Assert.IsTrue(ConvertWord("station") == "/,n");
+				Assert.IsTrue(ConvertWord("as") == "z");
+				Assert.IsTrue(ConvertWord("abby") == "a2y");
 
 				ranTests = true;
 			}
@@ -71,8 +74,18 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 		}
 
+		static List<TextMapping> exactTextMappings = new List<TextMapping>()
+		{
+			new TextMapping( "as", "z" ),
+			new TextMapping( "be", "2" ),
+			new TextMapping( "but", "b" ),
+			//new TextMapping( "by", "0" ), // must hava word after and then does not leave the space
+			//new TextMapping( "", "" ),
+		};
+
 		static List<TextMapping> anyPositionMappings = new List<TextMapping>()
 		{
+			// a's
 			new TextMapping( "about", "ab" ),
 			new TextMapping( "above", "abv" ),
 			new TextMapping( "according", "ac" ),
@@ -82,7 +95,29 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			new TextMapping( "afterward", "afw" ),
 			new TextMapping( "again", "ag" ),
 			new TextMapping( "against", "ag." ),
-			//new TextMapping( "", "" ),
+			new TextMapping( "almost", "alm" ),
+			new TextMapping( "already", "alr" ),
+			new TextMapping( "also", "al" ),
+			new TextMapping( "although", "al?" ),
+			new TextMapping( "altogether", "alt" ),
+			new TextMapping( "always", "alw" ),
+			new TextMapping( "and", "&" ),
+			new TextMapping( "ar", ">" ),
+			// b's
+			new TextMapping( "because", "2c" ),
+			new TextMapping( "before", "2f" ),
+			new TextMapping( "behind", "2h" ),
+			new TextMapping( "below", "2l" ),
+			new TextMapping( "beneath", "2n" ),
+			new TextMapping( "beside", "2s" ),
+			new TextMapping( "between", "2t" ),
+			new TextMapping( "beyond", "2y" ),
+			new TextMapping( "blind", "bl" ),
+			new TextMapping( "braille", "brl" ),
+			// c's
+
+			// t's
+			new TextMapping( "time", "\"t" ),
 			//new TextMapping( "", "" ),
 			//new TextMapping( "", "" ),
 			//new TextMapping( "", "" ),
@@ -92,27 +127,29 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			new TextMapping( "you", "y" ),
 			new TextMapping( "en", "5" ),
 			new TextMapping( "er", "}" ),
+			new TextMapping( "st", "/" ),
 		};
 
 		static List<TextMapping> afterTextMappings = new List<TextMapping>()
 		{
 			new TextMapping( "ally", ",y" ),
-			//new TextMapping( "", "" ),
-			//new TextMapping( "", "" ),
+			new TextMapping( "ance", ".e" ),
+			new TextMapping( "ation", ",n" ),
+			new TextMapping( "ble", "#" ),
 			//new TextMapping( "", "" ),
 			//new TextMapping( "", "" ),
 		};
 
 		static List<TextMapping> beforeTextMappings = new List<TextMapping>()
 		{
-			//new TextMapping( "", "" ),
-			//new TextMapping( "", "" ),
+			//new TextMapping( "be", "2" ), // is aften not first in precidence (so not enabled for now)
 			//new TextMapping( "", "" ),
 			//new TextMapping( "", "" ),
 		};
 
 		static List<TextMapping> betweenTextMappings = new List<TextMapping>()
 		{
+			new TextMapping( "bb", "2" ),
 			//new TextMapping( "", "" ),
 			//new TextMapping( "", "" ),
 			//new TextMapping( "", "" ),
@@ -125,11 +162,47 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			string converted = text.ToLower();
 
+			// do the replacements that must be the complete word by itself
+			foreach (TextMapping keyValue in exactTextMappings)
+			{
+				if (converted == keyValue.Key)
+				{
+					converted = keyValue.Value;
+					return converted;
+				}
+			}
+
+			// do the replacements that can go anywhere
 			foreach (TextMapping keyValue in anyPositionMappings)
 			{
 				if (converted.Contains(keyValue.Key))
 				{
 					converted = converted.Replace(keyValue.Key, keyValue.Value);
+				}
+			}
+
+			// do the replacements that must come after other characters
+			string tempAfterFirstCharacter = converted.Substring(1);
+			foreach (TextMapping keyValue in afterTextMappings)
+			{
+				if (tempAfterFirstCharacter.Contains(keyValue.Key))
+				{
+					converted = converted.Substring(0, 1) + tempAfterFirstCharacter.Replace(keyValue.Key, keyValue.Value);
+					tempAfterFirstCharacter = converted.Substring(1);
+				}
+			}
+
+			// do the replacements that must come after and before other characters
+			string tempMiddleCharacters = converted.Substring(1, converted.Length-2);
+			foreach (TextMapping keyValue in betweenTextMappings)
+			{
+				if (tempMiddleCharacters.Contains(keyValue.Key))
+				{
+					int findPosition = tempMiddleCharacters.IndexOf(keyValue.Key);
+					int afterReplacemntStart = 1 + findPosition + keyValue.Key.Length;
+					int afterReplacementLength = converted.Length - afterReplacemntStart;
+					converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(afterReplacemntStart, afterReplacementLength);
+					tempMiddleCharacters = converted.Substring(1, converted.Length - 2);
 				}
 			}
 
