@@ -5,6 +5,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PluginSystem;
 using System;
 using System.IO;
 
@@ -13,16 +14,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	public class CloudSettingsWidget : SettingsViewBase
 	{
 		private DisableableWidget notificationSettingsContainer;
+        private DisableableWidget cloudSyncContainer;
 
 		private Button configureNotificationSettingsButton;
+
+        private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+
+
 		public CloudSettingsWidget()
 			: base(LocalizedString.Get("Cloud Settings"))
 		{
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
-			notificationSettingsContainer = new DisableableWidget();
+			notificationSettingsContainer = new DisableableWidget();            
 			notificationSettingsContainer.AddChild(GetNotificationControls());
 			mainContainer.AddChild(notificationSettingsContainer);
+            mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+            cloudSyncContainer = new DisableableWidget();
+            cloudSyncContainer.AddChild(GetCloudSyncDashboardControls());
+            mainContainer.AddChild(cloudSyncContainer);
 
 			AddChild(mainContainer);
 
@@ -32,7 +42,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetDisplayAttributes()
 		{
-			//this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
 			this.Margin = new BorderDouble(2, 4, 2, 0);
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
 			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
@@ -58,15 +68,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 		}
 
-		private FlowLayoutWidget GetCloudMonitorControls()
+		private FlowLayoutWidget GetCloudSyncDashboardControls()
 		{
-			FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-			buttonBar.HAnchor |= HAnchor.ParentLeftRight;
-			buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-			buttonBar.Margin = new BorderDouble(0, 0, 0, 0);
-			buttonBar.Padding = new BorderDouble(0);
-
-			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
+			FlowLayoutWidget cloudSyncContainer = new FlowLayoutWidget();
+			cloudSyncContainer.HAnchor |= HAnchor.ParentLeftRight;
+			cloudSyncContainer.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+			cloudSyncContainer.Margin = new BorderDouble(0, 0, 0, 0);
+			cloudSyncContainer.Padding = new BorderDouble(0);
 
 			Agg.Image.ImageBuffer cloudMonitorImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "cloud-24x24.png"));
 			if (!ActiveTheme.Instance.IsDarkTheme)
@@ -74,18 +82,37 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				InvertLightness.DoInvertLightness(cloudMonitorImage);
 			}
 
-			return buttonBar;
+            ImageWidget cloudSyncIcon = new ImageWidget(cloudMonitorImage);
+            cloudSyncIcon.Margin = new BorderDouble(right: 6, bottom: 6);
+
+            TextWidget cloudSyncLabel = new TextWidget(LocalizedString.Get("Cloud Sync"));
+            cloudSyncLabel.AutoExpandBoundsToText = true;
+            cloudSyncLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            cloudSyncLabel.VAnchor = VAnchor.ParentCenter;
+
+            linkButtonFactory.fontSize = 10;
+            Button cloudSyncGoLink = linkButtonFactory.Generate("GO TO DASHBOARD");
+            cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser";
+            cloudSyncGoLink.Click += new EventHandler(cloudSyncGoButton_Click);
+
+            cloudSyncContainer.AddChild(cloudSyncIcon);
+            cloudSyncContainer.AddChild(cloudSyncLabel);
+            cloudSyncContainer.AddChild(new HorizontalSpacer());
+            cloudSyncContainer.AddChild(cloudSyncGoLink);
+
+			return cloudSyncContainer;
 		}
+        
 
 		private TextWidget notificationSettingsLabel;
 
 		private FlowLayoutWidget GetNotificationControls()
 		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor |= HAnchor.ParentLeftRight;
-			buttonRow.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-			buttonRow.Margin = new BorderDouble(0, 0, 0, 0);
-			buttonRow.Padding = new BorderDouble(0);
+			FlowLayoutWidget notificationSettingsContainer = new FlowLayoutWidget();
+			notificationSettingsContainer.HAnchor |= HAnchor.ParentLeftRight;
+			notificationSettingsContainer.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+			notificationSettingsContainer.Margin = new BorderDouble(0, 0, 0, 0);
+			notificationSettingsContainer.Padding = new BorderDouble(0);
 
 			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
@@ -95,8 +122,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				InvertLightness.DoInvertLightness(notificationSettingsImage);
 			}
 
-			ImageWidget levelingIcon = new ImageWidget(notificationSettingsImage);
-			levelingIcon.Margin = new BorderDouble(right: 6, bottom: 6);
+			ImageWidget notificationSettingsIcon = new ImageWidget(notificationSettingsImage);
+			notificationSettingsIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
 			configureNotificationSettingsButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
 			configureNotificationSettingsButton.Name = "Configure Notification Settings Button";
@@ -109,9 +136,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
 
-			GuiWidget levelingSwitchContainer = new FlowLayoutWidget();
-			levelingSwitchContainer.VAnchor = VAnchor.ParentCenter;
-			levelingSwitchContainer.Margin = new BorderDouble(left: 16);
+			GuiWidget printNotificationsSwitchContainer = new FlowLayoutWidget();
+			printNotificationsSwitchContainer.VAnchor = VAnchor.ParentCenter;
+			printNotificationsSwitchContainer.Margin = new BorderDouble(left: 16);
 
 			CheckBox enablePrintNotificationsSwitch = ImageButtonFactory.CreateToggleSwitch(UserSettings.Instance.get("PrintNotificationsEnabled") == "true");
 			enablePrintNotificationsSwitch.VAnchor = VAnchor.ParentCenter;
@@ -119,16 +146,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UserSettings.Instance.set("PrintNotificationsEnabled", enablePrintNotificationsSwitch.Checked ? "true" : "false");
 			};
-			levelingSwitchContainer.AddChild(enablePrintNotificationsSwitch);
-			levelingSwitchContainer.SetBoundsToEncloseChildren();
+			printNotificationsSwitchContainer.AddChild(enablePrintNotificationsSwitch);
+			printNotificationsSwitchContainer.SetBoundsToEncloseChildren();
 
-			buttonRow.AddChild(levelingIcon);
-			buttonRow.AddChild(notificationSettingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(configureNotificationSettingsButton);
-			buttonRow.AddChild(levelingSwitchContainer);
+			notificationSettingsContainer.AddChild(notificationSettingsIcon);
+			notificationSettingsContainer.AddChild(notificationSettingsLabel);
+			notificationSettingsContainer.AddChild(new HorizontalSpacer());
+			notificationSettingsContainer.AddChild(configureNotificationSettingsButton);
+			notificationSettingsContainer.AddChild(printNotificationsSwitchContainer);
 
-			return buttonRow;
+			return notificationSettingsContainer;
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -139,6 +166,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 			base.OnClosed(e);
 		}
+
+        public static Action openUserDashBoardFunction = null;
+
+        private void cloudSyncGoButton_Click(object sender, EventArgs mouseEvent)
+        {
+            if(openUserDashBoardFunction != null)
+            {
+                UiThread.RunOnIdle(openUserDashBoardFunction);
+            }
+        }
 
 		private event EventHandler unregisterEvents;
 
