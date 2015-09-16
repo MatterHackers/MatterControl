@@ -3718,3 +3718,6 @@ Translated:Use Braille
 English:Only Braille
 Translated:Only Braille
 
+English:Retrieving Contents...
+Translated:Retrieving Contents...
+

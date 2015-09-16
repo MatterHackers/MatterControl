@@ -363,10 +363,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var provider = this.CurrentLibraryProvider;
 
+			// Logical "up folder" button
 			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
 				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, provider, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage), "Back".Localize());
+				queueItem.IsViewHelperItem = true;
 				AddListItemToTopToBottom(queueItem);
 			}
 

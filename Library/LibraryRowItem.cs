@@ -59,10 +59,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private event EventHandler unregisterEvents;
 
+		/// <summary>
+		/// Indicates that this item is a logical element meant to support the view or if it's a standard provider item
+		/// </summary>
+		public bool IsViewHelperItem { get; set; }
+
+		/// <summary>
+		/// Indicates that this item should support the slide in rightButtonOverlay actions
+		/// </summary>
+		public bool EnableSlideInActions { get; set; }
+
 		public LibraryRowItem(LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
 		{
 			this.thumbnailWidget = thumbnailWidget;
 			this.libraryDataView = libraryDataView;
+			this.IsViewHelperItem = false;
+			this.EnableSlideInActions = true;
 		}
 
 		public string ItemName { get; protected set; }
@@ -72,7 +84,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			get { return isHoverItem; }
 			set
 			{
-				if (this.isHoverItem != value)
+				if (this.isHoverItem != value && this.EnableSlideInActions)
 				{
 					this.isHoverItem = value;
 					if (value == true && !this.libraryDataView.EditMode)
@@ -118,7 +130,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (this.libraryDataView.EditMode)
+			if (this.libraryDataView.EditMode && !this.IsViewHelperItem)
 			{
 				this.selectionCheckBox.Checked = this.IsSelectedItem;
 				selectionCheckBoxContainer.Visible = true;
@@ -131,13 +143,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			base.OnDraw(graphics2D);
 
-			if (this.IsSelectedItem)
+			if (this.IsSelectedItem && !this.IsViewHelperItem)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = RGBA_Bytes.White;
 				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
 			}
-			else if (this.IsHoverItem)
+			else if (this.IsHoverItem && !this.IsViewHelperItem)
 			{
 				RectangleDouble Bounds = LocalBounds;
 				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
@@ -208,6 +220,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					middleColumn.MouseDown += (sender, e) =>
 					{
+						// Abort normal processing for view helpers
+						if(this.IsViewHelperItem)
+						{
+							return;
+						}
+
 						if (this.libraryDataView.EditMode)
 						{
 							if (this.IsSelectedItem)
