@@ -3721,3 +3721,6 @@ Translated:Only Braille
 English:Retrieving Contents...
 Translated:Retrieving Contents...
 
+English:Cloud Sync
+Translated:Cloud Sync
+

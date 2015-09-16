@@ -48,12 +48,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			RegisteredCreators.Instance.RegisterLaunchFunction(information);
 			mainApplication = application;
 
-			/*
+			
 			UiThread.RunOnIdle(() =>
 				{
 					LaunchNewBrailleBuilder(null, null);
 				}, .5);
-			 */
+			 
 		}
 
 		public override string GetPluginInfoJSon()
