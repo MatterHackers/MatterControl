@@ -59,7 +59,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private MHTextEditWidget textToAddWidget;
 		private SolidSlider sizeScrollBar;
 		private SolidSlider heightScrollBar;
-		private CheckBox useOnlyBraille;
+		private CheckBox includeText;
+		private CheckBox useGrade2;
 
 		private double lastHeightValue = 1;
 		private double lastSizeValue = 1;
@@ -240,6 +241,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			if (text.Length > 0)
 			{
 				this.word = text;
+				if (useGrade2.Checked)
+				{
+					text = BrailleGrade2.ConvertString(text);
+				}
 				ResetWordLayoutSettings();
 				processingProgressControl.ProcessType = "Inserting Text".Localize();
 				processingProgressControl.Visible = true;
@@ -342,7 +347,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			if (firstDraw)
 			{
 				textToAddWidget.Focus();
-				//textToAddWidget.Text = "Test Text";
+				textToAddWidget.Text = "Test Text";
 				firstDraw = false;
 			}
 
@@ -362,7 +367,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			AddCharacterMeshes(currentText, brailPrinter);
 			Vector2 brailSize = brailPrinter.GetSize();
 
-			if (!useOnlyBraille.Checked)
+			if (includeText.Checked)
 			{
 				int firstNewCharacter = asynchPlatingDatas.Count;
 				StyledTypeFace boldStyled = new StyledTypeFace(boldTypeFace, 12);
@@ -589,13 +594,27 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 					// put in the user alpha checkbox
 					{
-						useOnlyBraille = new CheckBox(new CheckBoxViewText("Only Braille".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-						useOnlyBraille.Checked = false;
-						useOnlyBraille.Margin = new BorderDouble(10, 5);
-						useOnlyBraille.HAnchor = HAnchor.ParentLeft;
-						wordOptionContainer.AddChild(useOnlyBraille);
-						useOnlyBraille.Checked = true;
-						useOnlyBraille.CheckedStateChanged += (sender, e) =>
+						includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
+						includeText.ToolTipText = "Show normal text under the braille.".Localize();
+						includeText.Checked = false;
+						includeText.Margin = new BorderDouble(10, 5);
+						includeText.HAnchor = HAnchor.ParentLeft;
+						wordOptionContainer.AddChild(includeText);
+						includeText.CheckedStateChanged += (sender, e) =>
+						{
+							InsertTextNow(this.word);
+						};
+					}
+
+					// put in the user alpha checkbox
+					{
+						useGrade2 = new CheckBox(new CheckBoxViewText("Use Grade 2".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
+						useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions).".Localize();
+						useGrade2.Checked = false;
+						useGrade2.Margin = new BorderDouble(10, 5);
+						useGrade2.HAnchor = HAnchor.ParentLeft;
+						wordOptionContainer.AddChild(useGrade2);
+						useGrade2.CheckedStateChanged += (sender, e) =>
 						{
 							InsertTextNow(this.word);
 						};
