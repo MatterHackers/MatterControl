@@ -320,11 +320,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			//DoCsgTest();
 			if (firstDraw)
 			{
 				textToAddWidget.Focus();
-				textToAddWidget.Text = "This is some nice long text to work with. Thanks for coming.";
 				firstDraw = false;
 			}
 
