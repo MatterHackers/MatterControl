@@ -48,8 +48,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			if (!ranTests)
 			{
 				Assert.IsTrue(ConvertWord("taylor") == "taylor");
-				Assert.IsTrue(ConvertWord("Taylor") == "taylor");
-				Assert.IsTrue(ConvertWord("TayLor") == "taylor");
+				//Assert.IsTrue(ConvertWord("Taylor") == ",taylor");
+				//Assert.IsTrue(ConvertWord("TayLor") == ",tay,lor");
 				Assert.IsTrue(ConvertWord("energy") == "5}gy");
 				Assert.IsTrue(ConvertWord("men") == "m5");
 				Assert.IsTrue(ConvertWord("runabout") == "runab");
@@ -59,6 +59,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Assert.IsTrue(ConvertWord("station") == "/,n");
 				Assert.IsTrue(ConvertWord("as") == "z");
 				Assert.IsTrue(ConvertWord("abby") == "a2y");
+				Assert.IsTrue(ConvertWord("here it is") == "\"h x is");
+
+
+
 
 				ranTests = true;
 			}
@@ -126,6 +130,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			new TextMapping( "en", "5" ),
 			new TextMapping( "er", "}" ),
 			new TextMapping( "every", "e" ),
+			// h's
+			new TextMapping( "here", "\"h" ),
+			// i's
+			new TextMapping( "it", "x"),
 
 			// s's
 			new TextMapping( "st", "/" ),
@@ -181,6 +189,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			string converted = text.ToLower();
 
+			// put in commas before capitals
+
 			// do the replacements that must be the complete word by itself
 			foreach (TextMapping keyValue in exactTextMappings)
 			{
@@ -211,17 +221,20 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
-			// do the replacements that must come after and before other characters
-			string tempMiddleCharacters = converted.Substring(1, converted.Length-2);
-			foreach (TextMapping keyValue in betweenTextMappings)
+			if (converted.Length > 2)
 			{
-				if (tempMiddleCharacters.Contains(keyValue.Key))
+				// do the replacements that must come after and before other characters
+				string tempMiddleCharacters = converted.Substring(1, converted.Length - 2);
+				foreach (TextMapping keyValue in betweenTextMappings)
 				{
-					int findPosition = tempMiddleCharacters.IndexOf(keyValue.Key);
-					int afterReplacemntStart = 1 + findPosition + keyValue.Key.Length;
-					int afterReplacementLength = converted.Length - afterReplacemntStart;
-					converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(afterReplacemntStart, afterReplacementLength);
-					tempMiddleCharacters = converted.Substring(1, converted.Length - 2);
+					if (tempMiddleCharacters.Contains(keyValue.Key))
+					{
+						int findPosition = tempMiddleCharacters.IndexOf(keyValue.Key);
+						int afterReplacemntStart = 1 + findPosition + keyValue.Key.Length;
+						int afterReplacementLength = converted.Length - afterReplacemntStart;
+						converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(afterReplacemntStart, afterReplacementLength);
+						tempMiddleCharacters = converted.Substring(1, converted.Length - 2);
+					}
 				}
 			}
 

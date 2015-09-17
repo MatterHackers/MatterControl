@@ -3724,3 +3724,15 @@ Translated:Retrieving Contents...
 English:Cloud Sync
 Translated:Cloud Sync
 
+English:Include Text
+Translated:Include Text
+
+English:Show normal text under the braille
+Translated:Show normal text under the braille
+
+English:Use Grade 2
+Translated:Use Grade 2
+
+English:Experimental support for Braille grade 2 (contractions)
+Translated:Experimental support for Braille grade 2 (contractions)
+
