@@ -364,21 +364,24 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			TypeFacePrinter brailPrinter = new TypeFacePrinter(currentText, new StyledTypeFace(brailTypeFace, 12));
 
-			AddCharacterMeshes(currentText, brailPrinter);
-			Vector2 brailSize = brailPrinter.GetSize();
+			int firstNewCharacter = 0;
+			StyledTypeFace boldStyled = new StyledTypeFace(boldTypeFace, 12);
 
 			if (includeText.Checked)
 			{
-				int firstNewCharacter = asynchPlatingDatas.Count;
-				StyledTypeFace boldStyled = new StyledTypeFace(boldTypeFace, 12);
 				TypeFacePrinter normalPrinter = new TypeFacePrinter(currentText, boldStyled);
 				Vector2 normalSize = normalPrinter.GetSize();
 				AddCharacterMeshes(currentText, normalPrinter);
+				
+				firstNewCharacter = asynchPlatingDatas.Count;
+			}
 
-				for (int i = firstNewCharacter; i < asynchPlatingDatas.Count; i++)
-				{
-					asynchPlatingDatas[i].spacing = asynchPlatingDatas[i - firstNewCharacter].spacing + new Vector2(0, -boldStyled.CapHeightInPixels * 1.3);
-				}
+			AddCharacterMeshes(currentText, brailPrinter);
+			Vector2 brailSize = brailPrinter.GetSize();
+
+			for (int i = firstNewCharacter; i < asynchPlatingDatas.Count; i++)
+			{
+				asynchPlatingDatas[i].spacing = asynchPlatingDatas[i - firstNewCharacter].spacing + new Vector2(0, -boldStyled.CapHeightInPixels * 1.5);
 			}
 
 			CreateBase(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);

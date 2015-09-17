@@ -134,7 +134,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			new TextMapping( "here", "\"h" ),
 			// i's
 			new TextMapping( "it", "x"),
-
+			// o's
+			new TextMapping( "of", "("),
 			// s's
 			new TextMapping( "st", "/" ),
 			// t's
