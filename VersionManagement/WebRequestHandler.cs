@@ -157,6 +157,28 @@ namespace MatterHackers.MatterControl.VersionManagement
 		}
 	}
 
+	/// <summary>
+	/// Provides a WebReqeustBase implementation that allows the caller to specify the serialization object used by the WebRequestBase http post
+	/// </summary>
+	/// <typeparam name="RequestType">The type which will be passed to the Request method, stored in a local instance and serialized for the http post</typeparam>
+	public class WebRequest2<RequestType> : WebRequestBase where RequestType : class
+	{
+		private RequestType localRequestValues;
+
+		public void Request(string requestUrl, RequestType requestValues)
+		{
+			this.uri = requestUrl;
+			localRequestValues = requestValues;
+			this.Request();
+		}
+
+		protected override string getJsonToSend()
+		{
+			return JsonConvert.SerializeObject(localRequestValues);
+		}
+	}
+
+
 	public class WebRequestBase
 	{
 		protected Dictionary<string, string> requestValues;

@@ -262,6 +262,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
+			LibraryProvider provider = libraryProviders.Values.Where(p => p.ProviderKey == collection.Key).FirstOrDefault();
+			if (provider != null)
+			{
+				return provider;
+			}
+
 			foreach (ILibraryCreator libraryCreator in libraryCreators)
 			{
 				if (collection.Key == libraryCreator.ProviderKey)

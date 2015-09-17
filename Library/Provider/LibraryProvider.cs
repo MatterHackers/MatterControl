@@ -38,6 +38,7 @@ using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
@@ -179,6 +180,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public abstract void RemoveCollection(int collectionIndexToRemove);
 
 		public abstract void RemoveItem(int itemIndexToRemove);
+
+		// Base implmentation simply calls RemoveItem
+		public virtual void RemoveItems(int[] indexes)
+		{
+			// Remove items in reverse order
+			foreach (var i in indexes.OrderByDescending(i => i))
+			{
+				RemoveItem(i);
+			}
+		}
 
 		public abstract void RenameCollection(int collectionIndexToRename, string newName);
 
