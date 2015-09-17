@@ -139,6 +139,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrailleGrade2Mapping.cs" />
     <Compile Include="BrailleGrade2.cs" />
     <Compile Include="BrailleBuilderMainWindow.cs" />
     <Compile Include="BrailleBuilder.cs" />

@@ -61,9 +61,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Assert.IsTrue(ConvertWord("abby") == "a2y");
 				Assert.IsTrue(ConvertWord("here it is") == "\"h x is");
 
-
-
-
 				ranTests = true;
 			}
 		}
@@ -136,6 +133,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			new TextMapping( "it", "x"),
 			// o's
 			new TextMapping( "of", "("),
+
 			// s's
 			new TextMapping( "st", "/" ),
 			// t's
