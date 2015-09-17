@@ -35,6 +35,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+// finish a, b, t
+
 namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
 	public static class BrailleGrade2
@@ -80,6 +82,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			new TextMapping( "be", "2" ),
 			new TextMapping( "but", "b" ),
 			//new TextMapping( "by", "0" ), // must hava word after and then does not leave the space
+			new TextMapping( "that", "t" ),
+			new TextMapping( "this", "?" ),
+			//new TextMapping( "to", "6" ), // must hava word after and then does not leave the space
+			//new TextMapping( "", "" ),
+			//new TextMapping( "", "" ),
 			//new TextMapping( "", "" ),
 		};
 
@@ -115,19 +122,30 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			new TextMapping( "blind", "bl" ),
 			new TextMapping( "braille", "brl" ),
 			// c's
-
-			// t's
-			new TextMapping( "time", "\"t" ),
-			//new TextMapping( "", "" ),
-			//new TextMapping( "", "" ),
-			//new TextMapping( "", "" ),
-			//new TextMapping( "", "" ),
-			//new TextMapping( "", "" ),
-			new TextMapping( "every", "e" ),
-			new TextMapping( "you", "y" ),
+			// e's
 			new TextMapping( "en", "5" ),
 			new TextMapping( "er", "}" ),
+			new TextMapping( "every", "e" ),
+
+			// s's
 			new TextMapping( "st", "/" ),
+			// t's
+			new TextMapping( "th", "?" ),
+			new TextMapping( "the", "!" ),
+			new TextMapping( "their", "_!" ),
+			new TextMapping( "themselves", "!mvs" ),
+			new TextMapping( "there", "\"!" ),
+			new TextMapping( "those", "~?" ),
+			new TextMapping( "through", "_?" ),
+			new TextMapping( "thyself", "?yf" ),
+			new TextMapping( "time", "\"t" ),
+			new TextMapping( "today", "td" ),
+			new TextMapping( "together", "tgr" ),
+			new TextMapping( "tomorrow", "tm" ),
+			new TextMapping( "tonight", "tn" ),
+			//new TextMapping( "", "" ),
+			// y's
+			new TextMapping( "you", "y" ),
 		};
 
 		static List<TextMapping> afterTextMappings = new List<TextMapping>()
@@ -136,6 +154,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			new TextMapping( "ance", ".e" ),
 			new TextMapping( "ation", ",n" ),
 			new TextMapping( "ble", "#" ),
+			new TextMapping( "tion", ";n" ),
 			//new TextMapping( "", "" ),
 			//new TextMapping( "", "" ),
 		};
