@@ -198,6 +198,7 @@
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
     <Compile Include="PrinterCommunication\Io\GCodeFileProxy.cs" />
+    <Compile Include="PrinterCommunication\RepRapReadWriteCallbacks.cs" />
     <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
