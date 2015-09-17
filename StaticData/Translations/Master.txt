@@ -3736,3 +3736,6 @@ Translated:Use Grade 2
 English:Experimental support for Braille grade 2 (contractions)
 Translated:Experimental support for Braille grade 2 (contractions)
 
+English:About Braille
+Translated:About Braille
+

@@ -623,6 +623,26 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						};
 					}
 
+					// put in a link to the wikipedia article
+					{
+						LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+						linkButtonFactory.fontSize = 10;
+						linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
+
+						Button moreAboutBrailleLink = linkButtonFactory.Generate("About Braille".Localize());
+						moreAboutBrailleLink.Margin = new BorderDouble(10, 5);
+						moreAboutBrailleLink.HAnchor = HAnchor.ParentLeft;
+						moreAboutBrailleLink.Click += (sender, e) =>
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								MatterControlApplication.Instance.LaunchBrowser("https://en.wikipedia.org/wiki/Braille");
+							});
+						};
+
+						wordOptionContainer.AddChild(moreAboutBrailleLink);
+					}
+
 					expandWordOptions.CheckedStateChanged += (sender, e) =>
 					{
 						wordOptionContainer.Visible = expandWordOptions.Checked;
