@@ -39,6 +39,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace MatterHackers.MatterControl.PrintLibrary
@@ -552,11 +553,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			libraryDataView.SelectedItems.Sort(SortRowItemsOnIndex);
 
-			// remove them last to first
-			for(int i=libraryDataView.SelectedItems.Count-1; i>=0; i--)
+			if (libraryDataView.SelectedItems.Count == 1)
 			{
-				LibraryRowItem item = libraryDataView.SelectedItems[i];
-				item.RemoveFromCollection();
+				// remove them last to first
+				for (int i = libraryDataView.SelectedItems.Count - 1; i >= 0; i--)
+				{
+					LibraryRowItem item = libraryDataView.SelectedItems[i];
+					item.RemoveFromCollection();
+				}
+			}
+			else if (libraryDataView.SelectedItems.Count > 1)
+			{
+				var indexesToRemove = libraryDataView.SelectedItems.Cast<LibraryRowItemPart>().Select(l => l.ItemIndex).ToArray();
+				libraryDataView.CurrentLibraryProvider.RemoveItems(indexesToRemove);
 			}
 
 			libraryDataView.ClearSelectedItems();
