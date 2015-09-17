@@ -104,7 +104,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			set
 			{
 				// unhook the update we were getting
-				currentLibraryProvider.DataReloaded -= libraryDataViewInstance.LibraryDataReloaded;
+				if (currentLibraryProvider != null)
+				{
+					currentLibraryProvider.DataReloaded -= libraryDataViewInstance.LibraryDataReloaded;
+				}
 				// and hook the new one
 				value.DataReloaded += libraryDataViewInstance.LibraryDataReloaded;
 

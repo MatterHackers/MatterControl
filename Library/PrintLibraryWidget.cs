@@ -229,11 +229,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				searchPanel.Visible = true;
 			}
 
-			previousLibraryProvider.KeywordFilter = "";
+			if (previousLibraryProvider != null)
+			{
+				previousLibraryProvider.KeywordFilter = "";
+				previousLibraryProvider.DataReloaded -= UpdateStatus;
+			}
+
 			searchInput.Text = currentLibraryProvider.KeywordFilter;
 			breadCrumbWidget.SetBreadCrumbs(null, this.libraryDataView.CurrentLibraryProvider);
 
-			previousLibraryProvider.DataReloaded -= UpdateStatus;
 			currentLibraryProvider.DataReloaded += UpdateStatus;
 
 			UpdateStatus(null, null);
