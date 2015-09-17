@@ -127,6 +127,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			OnDataReloaded(null);
 		}
 
+		public override bool IsProtected()
+		{
+			return true;
+		}
+
 		private void AddFolderImage(string iconFileName)
 		{
 			string libraryIconPath = Path.Combine("Icons", "FileDialog", iconFileName);

@@ -297,6 +297,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 			}
 		}
+
+		public virtual bool IsProtected()
+		{
+			return false;
+		}
 	}
 
 	public class ProviderLocatorNode

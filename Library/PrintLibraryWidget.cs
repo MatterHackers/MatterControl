@@ -69,7 +69,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private FolderBreadCrumbWidget breadCrumbWidget;
 		private List<ButtonEnableData> editButtonsEnableData = new List<ButtonEnableData>();
 
-		private static Button addToLibraryButton;
+		private Button addToLibraryButton;
+		private Button createFolderButton;
 		private Button enterEditModeButton;
 		private Button leaveEditModeButton;
         private FlowLayoutWidget buttonPanel;
@@ -77,6 +78,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private LibraryDataView libraryDataView;
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
+
+		private FlowLayoutWidget searchPanel;
 
 		static PrintLibraryWidget currentPrintLibraryWidget;
 
@@ -121,7 +124,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				leaveEditModeButton.Visible = false;
 
-				FlowLayoutWidget searchPanel = new FlowLayoutWidget();
+				searchPanel = new FlowLayoutWidget();
 				searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 				searchPanel.HAnchor = HAnchor.ParentLeftRight;
 				searchPanel.Padding = new BorderDouble(0);
@@ -146,6 +149,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					searchPanel.AddChild(searchInput);
 					searchPanel.AddChild(searchButton);
 				}
+
+				searchPanel.Visible = false;
 
 				FlowLayoutWidget navigationPanel = new FlowLayoutWidget();
 				navigationPanel.HAnchor = HAnchor.ParentLeftRight;
@@ -211,6 +216,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void LibraryProviderChanged(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
+			if (currentLibraryProvider.IsProtected())
+			{
+				addToLibraryButton.Enabled = false;
+				createFolderButton.Enabled = false;
+				searchPanel.Visible = false;
+			}
+			else
+			{
+				addToLibraryButton.Enabled = true;
+				createFolderButton.Enabled = true;
+				searchPanel.Visible = true;
+			}
+
 			previousLibraryProvider.KeywordFilter = "";
 			searchInput.Text = currentLibraryProvider.KeywordFilter;
 			breadCrumbWidget.SetBreadCrumbs(null, this.libraryDataView.CurrentLibraryProvider);
@@ -234,11 +252,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
+			textImageButtonFactory.disabledFillColor = new RGBA_Bytes();
 			buttonPanel.RemoveAllChildren();
 			// the add button
 			{
 				addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+				addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it.
 				addToLibraryButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Library".Localize();
 				buttonPanel.AddChild(addToLibraryButton);
 				addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
@@ -247,7 +267,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			// the create folder button
 			{
-				Button createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
+				createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
+				createFolderButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it.
 				createFolderButton.Name = "Create Folder Button";
 				buttonPanel.AddChild(createFolderButton);
 				createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
@@ -553,14 +574,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
 		{
-			foreach (string file in fileDropEventArgs.DroppedFiles)
+			if (libraryDataView != null
+				&& libraryDataView.CurrentLibraryProvider != null
+				&& !libraryDataView.CurrentLibraryProvider.IsProtected())
 			{
-				string extension = Path.GetExtension(file).ToUpper();
-				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-					|| extension == ".GCODE"
-					|| extension == ".ZIP")
+				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
-					fileDropEventArgs.AcceptDrop = true;
+					string extension = Path.GetExtension(file).ToUpper();
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+						|| extension == ".GCODE"
+						|| extension == ".ZIP")
+					{
+						fileDropEventArgs.AcceptDrop = true;
+					}
 				}
 			}
 			base.OnDragEnter(fileDropEventArgs);
@@ -568,15 +594,20 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
 		{
-			foreach (string file in fileDropEventArgs.DroppedFiles)
+			if (libraryDataView != null
+				&& libraryDataView.CurrentLibraryProvider != null
+				&& !libraryDataView.CurrentLibraryProvider.IsProtected())
 			{
-				string extension = Path.GetExtension(file).ToUpper();
-				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-					|| extension == ".GCODE"
-					|| extension == ".ZIP")
+				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
-					fileDropEventArgs.AcceptDrop = true;
-					break;
+					string extension = Path.GetExtension(file).ToUpper();
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+						|| extension == ".GCODE"
+						|| extension == ".ZIP")
+					{
+						fileDropEventArgs.AcceptDrop = true;
+						break;
+					}
 				}
 			}
 			base.OnDragOver(fileDropEventArgs);
@@ -584,7 +615,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			libraryDataView.CurrentLibraryProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
+			if (libraryDataView != null
+				&& libraryDataView.CurrentLibraryProvider != null
+				&& !libraryDataView.CurrentLibraryProvider.IsProtected())
+			{
+				libraryDataView.CurrentLibraryProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
+			}
 
 			base.OnDragDrop(fileDropEventArgs);
 		}
