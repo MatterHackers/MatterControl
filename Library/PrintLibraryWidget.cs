@@ -221,6 +221,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				addToLibraryButton.Enabled = false;
 				createFolderButton.Enabled = false;
 				searchPanel.Visible = false;
+				DoLeaveEditMode();
 			}
 			else
 			{
@@ -445,6 +446,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		private void leaveEditModeButtonClick(object sender, EventArgs e)
+		{
+			DoLeaveEditMode();
+		}
+
+		void DoLeaveEditMode()
 		{
 			breadCrumbWidget.Visible = true;
 			itemOperationButtons.Visible = false;
