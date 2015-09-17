@@ -508,6 +508,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
+			if (gCodeRenderer != null)
+			{
+				gCodeRenderer.Dispose();
+			}
+
 			if (backgroundWorker != null)
 			{
 				backgroundWorker.CancelAsync();
