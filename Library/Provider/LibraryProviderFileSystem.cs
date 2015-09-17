@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			catch (Exception e)
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 			}
 
 			// save it to the root directory
@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			catch (Exception e)
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 			}
 
 			return outputFileName;
@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 				catch (Exception)
 				{
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 				}
 
 				try
@@ -385,7 +385,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 				catch (Exception)
 				{
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 				}
 			});
 

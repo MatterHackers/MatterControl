@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				catch(Exception e)
 				{
 					Debug.Print(e.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					//No active COM ports
 				}
 			}
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					catch(Exception e)
 					{
 						Debug.Print(e.Message);
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 						//No active COM ports
 					}
 				}

@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl
 					}
 					catch
 					{
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 						//Unknown download size
 						downloadSize = 0;
 					}
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				if (System.IO.File.Exists(friendlyFileName))
 				{
 					System.IO.File.Delete(friendlyFileName);

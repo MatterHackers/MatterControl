@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using Newtonsoft.Json;
 using System;
@@ -171,7 +172,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 			catch (Exception)
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				Thread.Sleep(100);
 				this.TryHandleInsert();
 			}
@@ -191,7 +192,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 			catch (Exception)
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				Thread.Sleep(100);
 				this.TryHandleUpdate();
 			}

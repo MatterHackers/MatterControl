@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				catch(Exception e)
 				{
 					Debug.Print(e.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					//Unable to set selected value
 				}
 			}
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				catch(Exception e)
 				{
 					Debug.Print(e.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					//Unable to set selected value
 				}
 			}
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				catch(Exception e)
 				{
 					Debug.Print(e.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					throw new Exception("MatterSlice is not available, for some strange reason");
 				}
 			}

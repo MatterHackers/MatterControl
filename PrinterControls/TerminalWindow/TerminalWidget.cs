@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl
 					catch(UnauthorizedAccessException e)
 					{
 						Debug.Print(e.Message);
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 						PrinterOutputCache.Instance.PrinterLines.Add("");
 						PrinterOutputCache.Instance.PrinterLines.Add(writeFaildeWaring);
 						PrinterOutputCache.Instance.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));

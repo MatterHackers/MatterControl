@@ -655,7 +655,7 @@ namespace MatterHackers.MatterControl
 			catch (Exception e)
 			{
 				Debug.Print(e.Message);
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 #if DEBUG
 				throw e;
 #endif

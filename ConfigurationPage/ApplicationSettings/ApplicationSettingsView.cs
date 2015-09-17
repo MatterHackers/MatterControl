@@ -420,7 +420,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 							}
 							catch (Exception)
 							{
-								Debugger.Break();
+								GuiWidget.BreakInDebugger();
 							}
 						}
 

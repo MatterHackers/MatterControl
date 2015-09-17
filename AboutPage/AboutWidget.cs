@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 					}
 					catch (Exception)
 					{
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 					}
 				}
 				else
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl
 							}
 							catch (Exception)
 							{
-								Debugger.Break();
+								GuiWidget.BreakInDebugger();
 							}
 						}
 						break;
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl
 							}
 							catch (Exception)
 							{
-								Debugger.Break();
+								GuiWidget.BreakInDebugger();
 							}
 						}
 						break;
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch (Exception)
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 			}
 		}
 	}

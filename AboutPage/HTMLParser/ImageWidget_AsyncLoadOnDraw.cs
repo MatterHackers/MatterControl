@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 				}
 				catch (Exception)
 				{
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 				}
 			}
 
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch (Exception)
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 			}
 		}
 	}

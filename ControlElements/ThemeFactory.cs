@@ -1,6 +1,6 @@
 ﻿using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SettingsManagement;
-
 /*
 Copyright (c) 2014, Kevin Pope
 All rights reserved.
@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				themeIndex = defaultThemeIndex;
 			}
 

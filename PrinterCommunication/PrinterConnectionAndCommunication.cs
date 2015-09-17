@@ -368,7 +368,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch
 					{
 						Console.WriteLine("Unable to convert BaudRate to integer");
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 					}
 				}
 				return baudRate;
@@ -892,7 +892,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				catch(Exception e)
 				{
 					Debug.Print(e.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					return -1;
 				}
 			}
@@ -1001,7 +1001,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				catch(Exception e2)
 				{
 					Debug.Print(e2.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					Debug.WriteLine("Unable to Parse Bed Temperature: {0}".FormatWith(temp));
 				}
 			}
@@ -1120,7 +1120,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				catch(Exception e2)
 				{
 					Debug.Print(e2.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					Debug.WriteLine("Unable to Parse Fan Speed: {0}".FormatWith(fanSpeed));
 				}
 			}
@@ -1373,7 +1373,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			catch (Exception e)
 			{
 				Debug.Print(e.Message);
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				// Let's track this issue if possible.
 				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
@@ -1596,31 +1596,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				catch (TimeoutException e)
 				{
 					Debug.Print(e.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 				}
 				catch (IOException e2)
 				{
 					Debug.Print(e2.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					OnConnectionFailed(null);
 				}
 				catch (InvalidOperationException ex)
 				{
 					Debug.Print(ex.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					Debug.WriteLine(ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
 				}
 				catch (UnauthorizedAccessException e3)
 				{
 					Debug.Print(e3.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					OnConnectionFailed(null);
 				}
 				catch (Exception e4)
 				{
 					Debug.Print(e4.Message);
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 					// Let's track this issue if possible.
 					MatterControlApplication.Instance.ReportException(e4, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 				}
@@ -1776,7 +1776,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			catch(Exception e)
 			{
 				Debug.Print(e.Message);
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
 		}
@@ -1964,7 +1964,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			catch(Exception e)
 			{
 				Debug.Print(e.Message);
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				return false;
 			}
 		}
@@ -2226,14 +2226,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch (System.ArgumentOutOfRangeException e)
 					{
 						Debug.Print(e.Message);
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 						connectionFailureMessage = LocalizedString.Get("Unsupported Baud Rate");
 						OnConnectionFailed(null);
 					}
 					catch (Exception ex)
 					{
 						Debug.Print(ex.Message);
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 						Debug.WriteLine("An unexpected exception occurred: " + ex.Message);
 						OnConnectionFailed(null);
 					}
@@ -2970,7 +2970,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch (IOException ex)
 					{
 						Debug.Print(ex.Message);
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 						Trace.WriteLine("Error writing to printer: " + ex.Message);
 
 						// Handle hardware disconnects by relaying the failure reason and shutting down open resources
@@ -2979,12 +2979,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch (TimeoutException e2)
 					{
 						Debug.Print(e2.Message);
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 					}
 					catch (Exception e)
 					{
 						Debug.Print(e.Message);
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 						// Let's track this issue if possible.
 						MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 					}

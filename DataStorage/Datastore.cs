@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -218,7 +219,7 @@ namespace MatterHackers.MatterControl.DataStorage
 					}
 					catch
 					{
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 					}
 				}
 			}
@@ -255,7 +256,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 			catch (Exception)
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				// we faild to close so lets wait a bit and try again
 				Thread.Sleep(1000);
 				try
@@ -264,7 +265,7 @@ namespace MatterHackers.MatterControl.DataStorage
 				}
 				catch (Exception)
 				{
-					Debugger.Break();
+					GuiWidget.BreakInDebugger();
 				}
 			}
 		}

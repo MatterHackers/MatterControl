@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				installUpdateLink.Visible = false;
 				updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
 			}

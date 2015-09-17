@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			catch(Exception e)
 			{
 				Debug.Print(e.Message);
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				//file not found
 			}
 		}
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						catch(Exception e)
 						{
 							Debug.Print(e.Message);
-							Debugger.Break();
+							GuiWidget.BreakInDebugger();
 							this.fileHashCode = 0;
 						}
 					}

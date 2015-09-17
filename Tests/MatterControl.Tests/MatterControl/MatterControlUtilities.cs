@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.UI
 					catch (Exception e)
 					{
 						Debug.Print(e.Message);
-						Debugger.Break();
+						GuiWidget.BreakInDebugger();
 					}
 				}
 				Stopwatch time = Stopwatch.StartNew();

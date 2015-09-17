@@ -1896,7 +1896,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			catch (System.UnauthorizedAccessException e2)
 			{
 				Debug.Print(e2.Message);
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				saveSucceded = false;
 				UiThread.RunOnIdle(() =>
 				{
@@ -1907,7 +1907,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			catch(Exception e)
 			{
 				Debug.Print(e.Message);
-				Debugger.Break();
+				GuiWidget.BreakInDebugger();
 				saveSucceded = false;
 				UiThread.RunOnIdle(() =>
 				{
