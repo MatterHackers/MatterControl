@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					moreMenu = new DropDownMenu("More".Localize() + "... ");
 					moreMenu.NormalColor = new RGBA_Bytes();
 					moreMenu.BorderWidth = 1;
-					moreMenu.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
+					moreMenu.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor,100);
 					moreMenu.MenuAsWideAsItems = false;
 					moreMenu.VAnchor = VAnchor.ParentBottomTop;
 					moreMenu.Margin = new BorderDouble(3, 3);
