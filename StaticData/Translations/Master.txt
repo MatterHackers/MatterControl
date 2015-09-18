@@ -3745,3 +3745,39 @@ Translated:Add a new Material Preset
 English:Import an existing Material Preset
 Translated:Import an existing Material Preset
 
+English:Share Library Item
+Translated:Share Library Item
+
+English:Share Options
+Translated:Share Options
+
+English:Your Share Code:
+Translated:Your Share Code:
+
+English:Anyone with this code will have access
+Translated:Anyone with this code will have access
+
+English:Share with someone
+Translated:Share with someone
+
+English:read-only
+Translated:read-only
+
+English:Generate Share Code
+Translated:Generate Share Code
+
+English:Please wait. Retrieving share code...
+Translated:Please wait. Retrieving share code...
+
+English:Provide this code to grant someone read-only access.
+Translated:Provide this code to grant someone read-only access.
+
+English:Please wait. Sending invite...
+Translated:Please wait. Sending invite...
+
+English:Invite sent!
+Translated:Invite sent!
+
+English:Your invite has been sent!
+Translated:Your invite has been sent!
+

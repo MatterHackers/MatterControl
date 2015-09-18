@@ -136,6 +136,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+        public override bool CanShare { get { return false; } }
+
 		public override int CollectionCount
 		{
 			get
@@ -364,6 +366,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			printItems[itemIndexToRename].Commit();
 			LoadLibraryItems();
 		}
+
+        public override void ShareItem(int itemIndexToShare)
+        {
+
+        }
 
 		protected static void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
 		{

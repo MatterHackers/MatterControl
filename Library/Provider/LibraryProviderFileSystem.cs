@@ -123,6 +123,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+        public override void ShareItem(int itemIndexToShare)
+        {
+
+        }
+
+        public override bool CanShare { get { return false; } }
+
 		public override int ItemCount
 		{
 			get
