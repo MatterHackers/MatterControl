@@ -3739,3 +3739,9 @@ Translated:Experimental support for Braille grade 2 (contractions)
 English:About Braille
 Translated:About Braille
 
+English:Add a new Material Preset
+Translated:Add a new Material Preset
+
+English:Import an existing Material Preset
+Translated:Import an existing Material Preset
+
