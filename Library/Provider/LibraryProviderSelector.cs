@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private Dictionary<int, LibraryProvider> libraryProviders = new Dictionary<int, LibraryProvider>();
 
 		public ILibraryCreator PurchasedLibraryCreator { get; private set; }
+        public ILibraryCreator SharedLibraryCreator { get; private set; }
 
 		private event EventHandler unregisterEvents;
 
@@ -105,6 +106,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					this.PurchasedLibraryCreator = libraryProviderPlugin;
 				}
+                
+                if (libraryProviderPlugin.ProviderKey == "LibraryProviderSharedKey")
+                {
+                    this.SharedLibraryCreator = libraryProviderPlugin;
+                }
 
 				if (libraryProviderPlugin.ShouldBeShown(ReloadData))
 				{
@@ -306,6 +312,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibraryProvider purchasedProvider = PurchasedLibraryCreator.CreateLibraryProvider(this, SetCurrentLibraryProvider);
 			return purchasedProvider;
 		}
+
+        public LibraryProvider GetSharedLibrary()
+        {
+            ((LibraryProviderPlugin)SharedLibraryCreator).ForceVisible();
+            LibraryProvider sharedProvider = SharedLibraryCreator.CreateLibraryProvider(this, SetCurrentLibraryProvider);
+            return sharedProvider;
+        }
 
 #if false
 		public static async Task<LibraryProvider> GetLibraryFromLocator(List<ProviderLocatorNode> libraryProviderLocator)

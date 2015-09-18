@@ -25,8 +25,8 @@ namespace MatterHackers.MatterControl
 			//Add the menu items to the menu itself
 			foreach (Tuple<string, Func<bool>> item in menuItems)
 			{
-				MenuDropList.MenuItemsPadding = new BorderDouble(8, 4, 8, 4) * TextWidget.GlobalPointSizeScaleRatio;
-				MenuDropList.AddItem(item.Item1, pointSize: 10);
+				MenuDropList.MenuItemsPadding = new BorderDouble(8, 6, 8, 6) * TextWidget.GlobalPointSizeScaleRatio;
+				MenuDropList.AddItem(item.Item1, pointSize: 11);
 			}
 			MenuDropList.Padding = padding;
 
