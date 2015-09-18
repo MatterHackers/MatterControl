@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				this.partLabel.TextColor = RGBA_Bytes.White;
 				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
 			}
-			else if (this.IsHoverItem && !this.IsViewHelperItem)
+			else if (this.IsHoverItem)
 			{
 				RectangleDouble Bounds = LocalBounds;
 				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
