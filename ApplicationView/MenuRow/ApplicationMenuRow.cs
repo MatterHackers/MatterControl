@@ -58,12 +58,6 @@ namespace MatterHackers.MatterControl
 			linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
 			linkButtonFactory.fontSize = 8;
 
-			Button signOutLink = linkButtonFactory.Generate("(Sign Out)");
-			signOutLink.Name = "Authentication Sign Out";
-			signOutLink.ToolTipText = "Sign out of your MatterControl account".Localize();
-			signOutLink.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			signOutLink.Margin = new BorderDouble(top: 0);
-
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -90,7 +84,7 @@ namespace MatterHackers.MatterControl
 			popUpAboutPage.AddChild(updateStatusMessage);
 			updateStatusMessage.Click += (sender, e) =>
 			{
-                UiThread.RunOnIdle(CheckForUpdateWindow.Show);
+				UiThread.RunOnIdle(CheckForUpdateWindow.Show);
 			};
 			this.AddChild(popUpAboutPage);
 			SetUpdateNotification(this, null);
