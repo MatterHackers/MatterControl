@@ -563,8 +563,13 @@ namespace SQLiteUnix
 		public List<T> Query<T>(string query, params object[] args) where T : new()
 		{
 			var cmd = CreateCommand(query, args);
-			return cmd.ExecuteQuery<T>();
+			lock (locker)
+			{
+				return cmd.ExecuteQuery<T>();
+			}
 		}
+
+		object locker = new object();
 
 		/// <summary>
 		/// Creates a SQLiteCommand given the command text (SQL) with arguments. Place a '?'
@@ -1066,7 +1071,10 @@ namespace SQLiteUnix
 			{
 				return 0;
 			}
-			return Insert(obj, "", obj.GetType());
+			lock (locker)
+			{
+				return Insert(obj, "", obj.GetType());
+			}
 		}
 
 		/// <summary>
@@ -1215,7 +1223,10 @@ namespace SQLiteUnix
 			{
 				return 0;
 			}
-			return Update(obj, obj.GetType());
+			lock (locker)
+			{
+				return Update(obj, obj.GetType());
+			}
 		}
 
 		/// <summary>
