@@ -54,12 +54,17 @@ namespace MatterHackers.MatterControl.UI
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
 					testRunner.ClickByName("Library Tab", 3);
-					SystemWindow systemWindow;
-					GuiWidget rowItem = testRunner.GetWidgetByName("Local Library Row Item Collection", out systemWindow, 3);
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
 
-					SearchRegion rowItemRegion = testRunner.GetRegionByName("Local Library Row Item Collection", 3);
+					SystemWindow systemWindow;
+					string itemName = "Row Item " + "Calibration - Box";
+
+					GuiWidget rowItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
+
+					SearchRegion rowItemRegion = testRunner.GetRegionByName(itemName, 3);
 
 					testRunner.ClickByName("Library Edit Button", 3);
+					testRunner.Wait(.5);
 
 					SystemWindow containingWindow;
 					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out containingWindow, 3, searchRegion: rowItemRegion);
@@ -71,7 +76,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Library Tab");
 					resultsHarness.AddTestResult(checkBoxWidget.Checked == true, "currently checked");
 
-					testRunner.ClickByName("Local Library Row Item Collection", 3);
+					testRunner.ClickByName(itemName, 3);
 					testRunner.ClickByName("Library Tab");
 					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
 
