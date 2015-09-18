@@ -164,6 +164,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
+        public override bool CanShare { get { return false; } }
+
+        public override void ShareItem(int itemIndexToShare)
+        {
+
+        }
+
 		public void CloudSyncStatusChanged(object sender, EventArgs eventArgs)
 		{
 			var e = eventArgs as ApplicationController.CloudSyncEventArgs;
