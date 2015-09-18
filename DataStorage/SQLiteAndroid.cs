@@ -590,7 +590,10 @@ namespace SQLiteAndroid
 		public List<T> Query<T>(string query, params object[] args) where T : new()
 		{
 			var cmd = CreateCommand(query, args);
-			return cmd.ExecuteQuery<T>();
+			lock (locker)
+			{
+				return cmd.ExecuteQuery<T>();
+			}
 		}
 
 		/// <summary>
@@ -1093,8 +1096,13 @@ namespace SQLiteAndroid
 			{
 				return 0;
 			}
-			return Insert(obj, "", obj.GetType());
+			lock (locker)
+			{
+				return Insert(obj, "", obj.GetType());
+			}
 		}
+
+		object locker = new object();
 
 		/// <summary>
 		/// Inserts the given object and retrieves its
@@ -1242,7 +1250,10 @@ namespace SQLiteAndroid
 			{
 				return 0;
 			}
-			return Update(obj, obj.GetType());
+			lock (locker)
+			{
+				return Update(obj, obj.GetType());
+			}
 		}
 
 		/// <summary>
