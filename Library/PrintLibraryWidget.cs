@@ -578,17 +578,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			if (libraryDataView.SelectedItems.Count == 1)
 			{
-				// remove them last to first
-				for (int i = libraryDataView.SelectedItems.Count - 1; i >= 0; i--)
-				{
-					LibraryRowItem item = libraryDataView.SelectedItems[i];
-					item.RemoveFromCollection();
-				}
+                LibraryRowItem item = libraryDataView.SelectedItems[0];
+                item.RemoveFromCollection();
 			}
 			else if (libraryDataView.SelectedItems.Count > 1)
 			{
-				var indexesToRemove = libraryDataView.SelectedItems.Cast<LibraryRowItemPart>().Select(l => l.ItemIndex).ToArray();
-				libraryDataView.CurrentLibraryProvider.RemoveItems(indexesToRemove);
+                // remove them last to first
+                for (int i = libraryDataView.SelectedItems.Count - 1; i >= 0; i--)
+                {
+                    LibraryRowItem item = libraryDataView.SelectedItems[i];
+                    item.RemoveFromCollection();
+                }
 			}
 
 			libraryDataView.ClearSelectedItems();
