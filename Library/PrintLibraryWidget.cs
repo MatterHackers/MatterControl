@@ -577,19 +577,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			libraryDataView.SelectedItems.Sort(SortRowItemsOnIndex);
 
-			if (libraryDataView.SelectedItems.Count == 1)
+			IEnumerable<LibraryRowItem> partItems = libraryDataView.SelectedItems.Where(item => item is LibraryRowItemPart);
+			if(partItems.Count() == libraryDataView.SelectedItems.Count)
 			{
-				// remove them last to first
+				// If all selected items are LibraryRowItemParts, then we can invoke the batch remove functionality (in the Cloud library scenario)
+				// and perform all deletes as part of a single request, with a single notification from Socketeer
+				var indexesToRemove = partItems.Cast<LibraryRowItemPart>().Select(l => l.ItemIndex).ToArray();
+				libraryDataView.CurrentLibraryProvider.RemoveItems(indexesToRemove);
+			}
+			else
+			{
+				// Otherwise remove each item last to first
 				for (int i = libraryDataView.SelectedItems.Count - 1; i >= 0; i--)
 				{
 					LibraryRowItem item = libraryDataView.SelectedItems[i];
 					item.RemoveFromCollection();
 				}
-			}
-			else if (libraryDataView.SelectedItems.Count > 1)
-			{
-				var indexesToRemove = libraryDataView.SelectedItems.Cast<LibraryRowItemPart>().Select(l => l.ItemIndex).ToArray();
-				libraryDataView.CurrentLibraryProvider.RemoveItems(indexesToRemove);
 			}
 
 			libraryDataView.ClearSelectedItems();
