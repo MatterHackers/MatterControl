@@ -356,6 +356,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             // add the share button            
             {
                 Button shareFromLibraryButton = editButtonFactory.Generate("Share".Localize());
+				shareFromLibraryButton.ToolTipText = "Share designs from your Cloud Library".Localize();
                 shareFromLibraryButton.Margin = new BorderDouble(3, 0);
                 shareFromLibraryButton.Click += shareFromLibraryButton_Click;                
                 editButtonsEnableData.Add(new ButtonEnableData(false, false, false, true));

@@ -3799,3 +3799,6 @@ Translated:Your code has been redeemed.  Please check the Library.
 English:Shared with Me
 Translated:Shared with Me
 
+English:Share designs from your Cloud Library
+Translated:Share designs from your Cloud Library
+
