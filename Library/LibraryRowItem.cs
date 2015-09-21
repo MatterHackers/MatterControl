@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public abstract class LibraryRowItem : GuiWidget
 	{
+		public static readonly string LoadingPlaceholderToken = "!Placeholder_ItemToken!";
+
 		public bool IsSelectedItem
 		{
 			get

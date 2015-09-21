@@ -64,6 +64,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.Name = this.ItemName + " Row Item Collection";
 
+			if (collection.Key == LibraryRowItem.LoadingPlaceholderToken)
+			{
+				this.EnableSlideInActions = false;
+				this.IsViewHelperItem = true;
+			}
+
 			CreateGuiElements();
 		}
 
@@ -170,7 +176,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.Clicks == 2)
+			if (mouseEvent.Clicks == 2 && this.EnableSlideInActions)
 			{
 				UiThread.RunOnIdle(ChangeCollection);
 			}
