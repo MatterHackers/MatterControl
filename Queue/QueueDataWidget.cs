@@ -497,8 +497,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					foreach (QueueRowItem queueItem in selectedItems)
 					{
-						PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
-						libraryToSaveTo.AddItem(printItemWrapper);
+						if (File.Exists(queueItem.PrintItemWrapper.FileLocation))
+						{
+							PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
+							libraryToSaveTo.AddItem(printItemWrapper);
+						}
 					}
 					libraryToSaveTo.Dispose();
 				}
