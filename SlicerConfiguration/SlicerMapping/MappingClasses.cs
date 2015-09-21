@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (materialTemperature != "0")
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
-							AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("wait for extruder {0}", extruderIndex0Based));
+							AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("wait for extruder {0}", extruderIndex0Based + 1));
 						}
 					}
 				}
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (materialTemperature != "0")
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
-							AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", extruderIndex0Based));
+							AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", extruderIndex0Based + 1));
 						}
 					}
 				}

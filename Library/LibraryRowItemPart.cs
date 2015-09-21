@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			this.ItemName = libraryProvider.GetPrintItemName(itemIndex);
-			if(this.ItemName.IndexOf("!ProviderIsLoading!") != -1)
+			if(this.ItemName == LibraryRowItem.LoadingPlaceholderToken)
 			{
 				this.ItemName = "Retrieving Contents...".Localize();
 				this.IsViewHelperItem = true;
