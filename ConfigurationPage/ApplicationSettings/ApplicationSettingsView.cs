@@ -31,13 +31,12 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -45,20 +44,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		private Button languageRestartButton;
 		private Button configureUpdateFeedButton;
-        public StyledDropDownList releaseOptionsDropList;
-        private string cannotRestartWhilePrintIsActiveMessage; 
-        private string cannotRestartWhileActive;
-
-        
+		public StyledDropDownList releaseOptionsDropList;
+		private string cannotRestartWhilePrintIsActiveMessage;
+		private string cannotRestartWhileActive;
 
 		public ApplicationSettingsWidget()
 			: base("Application Settings".Localize())
 		{
+			cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
+			cannotRestartWhileActive = "Unable to restart".Localize();
 
-
-            cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
-            cannotRestartWhileActive = "Unable to restart".Localize();
-
+			if (ActiveTheme.Instance.IsTouchScreen)
+			{
+				mainContainer.AddChild(GetUpdateControl());
+				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			}
+			
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			mainContainer.AddChild(GetLanguageControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -199,15 +200,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			displayControlRestartButton.Margin = new BorderDouble(right: 6);
 			displayControlRestartButton.Click += (sender, e) =>
 			{
-                if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-                {
-                    StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
-                }
-                else
-                {
-                    RestartApplication();
-                }
-				
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				{
+					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
+				}
+				else
+				{
+					RestartApplication();
+				}
 			};
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -280,7 +280,56 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return buttonRow;
 		}
 
+		private FlowLayoutWidget GetUpdateControl()
+		{
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Margin = new BorderDouble(top: 4);
 
+			configureUpdateFeedButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
+			configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
+
+			TextWidget settingsLabel = new TextWidget("Update Notification Feed".Localize());
+			settingsLabel.AutoExpandBoundsToText = true;
+			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.VAnchor = VAnchor.ParentTop;
+
+			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			optionsContainer.Margin = new BorderDouble(bottom: 6);
+
+			releaseOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+
+			optionsContainer.AddChild(releaseOptionsDropList);
+			optionsContainer.Width = 200;
+
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Stable".Localize(), "release");
+			releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
+
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
+			preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
+
+			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
+			developmentDropDownItem.Selected += new EventHandler(FixTabDot);
+
+			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
+			string currentUpdateFeedType = UserSettings.Instance.get("UpdateFeedType");
+
+			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
+			{
+				UserSettings.Instance.set("UpdateFeedType", "release");
+			}
+
+			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("UpdateFeedType");
+			releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
+
+			buttonRow.AddChild(settingsLabel);
+			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(optionsContainer);
+			return buttonRow;
+		}
+		
 		private FlowLayoutWidget GetLanguageControl()
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -312,15 +361,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			languageRestartButton.Click += (sender, e) =>
 			{
-
-                if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-                {
-                    StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
-                }
-                else
-                {
-                    RestartApplication();
-                }
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				{
+					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
+				}
+				else
+				{
+					RestartApplication();
+				}
 			};
 
 			buttonRow.AddChild(settingsLabel);
@@ -440,8 +488,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return buttonRow;
 		}
 
-		static string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
-		static string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
+		private static string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
+		private static string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
 
 		private void AddHandlers()
 		{
