@@ -186,9 +186,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			mainContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			mainContainer.VAnchor = VAnchor.ParentBottomTop;
 			{
+				partLabel = new TextWidget(this.ItemName.Replace('_', ' '), pointSize: 14);
+
 				GuiWidget primaryContainer = new GuiWidget();
 				primaryContainer.HAnchor = HAnchor.ParentLeftRight;
 				primaryContainer.VAnchor = VAnchor.ParentBottomTop;
+				primaryContainer.Name = "Row Item " + partLabel.Text;
 
 				FlowLayoutWidget primaryFlow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 				primaryFlow.HAnchor = HAnchor.ParentLeftRight;
@@ -211,8 +214,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 				middleColumn.Margin = new BorderDouble(10, 6);
 				{
-					partLabel = new TextWidget(this.ItemName.Replace('_', ' '), pointSize: 14);
-					partLabel.Name = "Row Item " + partLabel.Text;
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 18);
 					partLabel.VAnchor = VAnchor.ParentCenter;
