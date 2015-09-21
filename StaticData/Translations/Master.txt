@@ -3805,3 +3805,9 @@ Translated:Share designs from your Cloud Library
 English:Exporting to Folder or SD Card
 Translated:Exporting to Folder or SD Card
 
+English:Materials
+Translated:Materials
+
+English:Material {0}
+Translated:Material {0}
+

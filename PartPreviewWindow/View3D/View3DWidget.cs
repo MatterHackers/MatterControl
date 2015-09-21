@@ -765,7 +765,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
 				colorSelectionContainer.Padding = new BorderDouble(5);
 
-				string colorLabelText = "Extruder {0}".Localize().FormatWith(extruderIndex + 1);
+				string colorLabelText = "Material {0}".Localize().FormatWith(extruderIndex + 1);
 				RadioButton extruderSelection = new RadioButton(colorLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				extruderButtons.Add(extruderSelection);
 				extruderSelection.SiblingRadioButtonList = extruderButtons;
@@ -1323,7 +1323,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
 
-				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Materials"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
 
 				if (numberOfExtruders > 1)
