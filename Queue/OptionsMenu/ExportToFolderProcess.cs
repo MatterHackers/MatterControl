@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (UpdatePartStatus != null)
 				{
-					UpdatePartStatus(this, new StringEventArgs("Calculating Total cm3..."));
+					UpdatePartStatus(this, new StringEventArgs("Calculating Total fillament mm..."));
 				}
 
 				if (savedGCodeFileNames.Count > 0)
@@ -160,22 +160,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 					double total = 0;
 					foreach (string gcodeFileName in savedGCodeFileNames)
 					{
-						string[] lines = File.ReadAllLines(gcodeFileName);
-						if (lines.Length > 0)
+						string allContent = File.ReadAllText(gcodeFileName);
+						if (allContent.Length > 0)
 						{
-							string filamentAmountLine = lines[lines.Length - 1];
-							bool foundAmountInGCode = false;
-							int startPos = filamentAmountLine.IndexOf("(");
+							string searchString = "filament used =";
+							int startPos = allContent.IndexOf(searchString);
 							if (startPos > 0)
 							{
-								int endPos = filamentAmountLine.IndexOf("cm3)", startPos);
+								int endPos = Math.Min(allContent.IndexOf("\n", startPos), allContent.IndexOf("mm", startPos));
 								if (endPos > 0)
 								{
-									string value = filamentAmountLine.Substring(startPos + 1, endPos - (startPos + 1));
+									string value = allContent.Substring(startPos + searchString.Length, endPos - startPos - searchString.Length);
 									double amountForThisFile;
 									if (double.TryParse(value, out amountForThisFile))
 									{
-										foundAmountInGCode = true;
 										total += amountForThisFile;
 									}
 								}

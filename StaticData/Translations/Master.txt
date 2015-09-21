@@ -3802,3 +3802,6 @@ Translated:Shared with Me
 English:Share designs from your Cloud Library
 Translated:Share designs from your Cloud Library
 
+English:Exporting to Folder or SD Card
+Translated:Exporting to Folder or SD Card
+
