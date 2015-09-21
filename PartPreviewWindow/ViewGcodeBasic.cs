@@ -114,6 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SliceSettingsWidget.RegisterForSettingsChange("center_part_on_bed", RecreateBedAndPartPosition, ref unregisterEvents);
 
 			SliceSettingsWidget.RegisterForSettingsChange("extruder_offset", Clear3DGCode, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
 
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
 		}

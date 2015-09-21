@@ -68,6 +68,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SliceSettingsWidget.RegisterForSettingsChange("build_height", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
 			SliceSettingsWidget.RegisterForSettingsChange("bed_shape", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
 			SliceSettingsWidget.RegisterForSettingsChange("center_part_on_bed", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
+			
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
 #if false
             "extruder_offset",
 #endif
