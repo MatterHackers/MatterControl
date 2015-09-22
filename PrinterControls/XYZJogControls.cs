@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl
 			hotkeyControlContainer.ToolTipText = "Enable cursor keys for movement";
 			hotkeyControlContainer.Margin = new BorderDouble(left: 10);
 
-			RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", "hot_key_small.png");
+            RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", "hot_key_small_white.png");
 			hotKeyButton.Margin = new BorderDouble(5);
             hotKeyButton.LostFocus += (sender, e) =>
             {
