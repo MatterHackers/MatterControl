@@ -65,7 +65,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			if (libraryDataViewInstance != null)
 			{
+#if !__ANDROID__ // this is really just for debugging
 				throw new Exception("There should only ever be one of these, Lars.");
+#endif
 			}
 			libraryDataViewInstance = this;
 
