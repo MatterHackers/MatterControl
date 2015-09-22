@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			//processingProgressControl.BackgroundColor = RGBA_Bytes.White;
 			processingProgressControl.VAnchor = VAnchor.ParentBottom;
 			processingProgressControl.HAnchor = HAnchor.ParentLeft;
-			processingProgressControl.Margin = new BorderDouble(thumbnailWidth + 3, 3, 3, 3);
+			processingProgressControl.Margin = new BorderDouble(thumbnailWidth + 6, 3, 3, 3);
 			processingProgressControl.Visible = false;
 			this.AddChild(processingProgressControl);
 		}
