@@ -64,9 +64,12 @@ namespace MatterHackers.MatterControl
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
-			groupBoxLabel.Margin = new BorderDouble(0);
-			groupBoxLabel.HAnchor = HAnchor.ParentLeftRight;
-			base.AddChild(groupBoxLabel);
+			if (groupBoxLabel != null)
+			{
+				groupBoxLabel.Margin = new BorderDouble(0);
+				groupBoxLabel.HAnchor = HAnchor.ParentLeftRight;
+				base.AddChild(groupBoxLabel);
+			}
 
 			clientArea = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren);
 			base.AddChild(clientArea);
@@ -86,11 +89,19 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				return groupBoxLabel.Text;
+				if (groupBoxLabel != null)
+				{
+					return groupBoxLabel.Text;
+				}
+
+				return "";
 			}
 			set
 			{
-				groupBoxLabel.Text = value;
+				if (groupBoxLabel != null)
+				{
+					groupBoxLabel.Text = value;
+				}
 			}
 		}
 
