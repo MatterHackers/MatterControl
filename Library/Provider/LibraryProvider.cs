@@ -204,9 +204,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public void OnDataReloaded(EventArgs eventArgs)
 		{
-			if (DataReloaded != null)
+			EventHandler tempHandler = DataReloaded;
+			if (tempHandler != null)
 			{
-				DataReloaded(null, eventArgs);
+				tempHandler(null, eventArgs);
 			}
 		}
 
