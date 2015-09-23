@@ -68,6 +68,7 @@ and &
 ar >
 AS z 
 +ation ,n
+
 // b's
 +bb+ 2"" 
 BE 2
@@ -85,6 +86,7 @@ blind bl
 braille brl
 BUT b
 BY* 0
+
 // c's
 CAN c
 cannot _c
@@ -98,6 +100,7 @@ con+ 3
 conceive 3cv
 conceiving 3cvg
 could cd
+
 // d's
 day
 +dd+
@@ -107,6 +110,7 @@ declare
 declaring
 dis+
 DO
+
 // e's
 +ea+
 ed
@@ -117,6 +121,7 @@ ENOUGH
 er }
 ever
 EVERY e
+
 // f's
 father
 +ff+
@@ -124,12 +129,14 @@ first
 for
 FROM f
 +ful
+
 // g's
 +gg+
 gh
 GO g
 good gd
 great grt
+
 // h's
 had
 HAVE h
@@ -138,6 +145,7 @@ herself
 him hm
 himself hmf
 HIS
+
 // i's
 in
 ing
@@ -146,22 +154,29 @@ IT x
 ITS xs
 itself xf
 +ity
+
 // j's
 JUST j
+
 // k's
 know 
 KNOWLEDGE k
+
 // l's
 +less
 letter lr
 LIKE l
 little ll
 lord
+
 // m's
+
 // o's
 of (
+
 // s's
 st /
+
 // t's
 th ?
 THAT t
@@ -181,6 +196,7 @@ today td
 together tgr
 tomorrow tm
 tonight tn
+
 // y's
 you y";
 	}
