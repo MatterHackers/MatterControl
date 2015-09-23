@@ -115,9 +115,10 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		protected void OnRequestSuceeded(ResponseType responseItem)
 		{
-			if (RequestSucceeded != null)
+			EventHandler<ResponseSuccessEventArgs<ResponseType>> tempHandler = RequestSucceeded;
+			if (tempHandler != null)
 			{
-				RequestSucceeded(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
+				tempHandler(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
 			}
 		}
 		protected void SendRequest()
