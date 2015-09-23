@@ -505,10 +505,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool DoAddFileAfterCreatingEditData { get; set; }
 		public override void OnClosed(EventArgs e)
 		{
-			if (printItemWrapper != null)
-			{
-				printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
-			}
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
@@ -1167,8 +1163,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printItemWrapper != null)
 			{
 				// remove it first to make sure we don't double add it
-				printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
-				printItemWrapper.FileHasChanged += ReloadMeshIfChangeExternaly;
+				PrintItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+				PrintItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents); ;
 
 				// don't load the mesh until we get all the rest of the interface built
 				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
@@ -1877,6 +1873,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
 
+				printItemWrapper.ReportFileChange();
+
 				if (returnInfo != null
 					&& returnInfo.destinationLibraryProvider != null)
 				{
@@ -2127,12 +2125,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
 		{
-			if (!editorThatRequestedSave)
+			PrintItemWrapper senderItem = sender as PrintItemWrapper;
+			if (senderItem != null
+				&& senderItem.FileLocation == printItemWrapper.FileLocation)
 			{
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-			}
+				if (!editorThatRequestedSave)
+				{
+					ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+				}
 
-			editorThatRequestedSave = false;
+				editorThatRequestedSave = false;
+			}
 		}
 
 		private bool rotateQueueMenu_Click()
