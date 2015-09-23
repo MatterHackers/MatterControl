@@ -85,8 +85,6 @@ namespace MatterHackers.MatterControl
 			ToolTipText = "Click to show in 3D View".Localize();
 			this.ItemWrapper = item;
 
-			EnsureCorrectPartExtension();
-
 			// Set Display Attributes
 			this.Margin = new BorderDouble(0);
 			this.Padding = new BorderDouble(5);
@@ -328,20 +326,8 @@ namespace MatterHackers.MatterControl
 			thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
 		}
 
-		private static void EnsureCorrectPartExtension()
-		{
-			if (OsInformation.OperatingSystem == OSType.Mac
-				|| OsInformation.OperatingSystem == OSType.Android
-				|| OsInformation.OperatingSystem == OSType.X11)
-			{
-				partExtension = ".tga";
-			}
-		}
-
 		private static string GetImageFileName(string stlHashCode)
 		{
-			EnsureCorrectPartExtension();
-
 			string folderToSaveThumbnailsTo = ThumbnailPath();
 			string imageFileName = Path.Combine(folderToSaveThumbnailsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, BigRenderSize.x, BigRenderSize.y), partExtension));
 
