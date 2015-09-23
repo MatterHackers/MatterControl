@@ -30,7 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.PluginSystem;
+#if !__ANDROID__
 using NUnit.Framework;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -41,6 +43,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
 	public static class BrailleGrade2
 	{
+#if !__ANDROID__
 		static bool ranTests = false;
 		[Test]
 		public static void BrailGrade2Tests()
@@ -64,6 +67,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				ranTests = true;
 			}
 		}
+#endif
 
 		internal class TextMapping
 		{

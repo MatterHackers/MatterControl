@@ -30,7 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.PluginSystem;
+#if !__ANDROID__
 using NUnit.Framework;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Text;
