@@ -372,7 +372,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var provider = this.CurrentLibraryProvider;
 			if (provider != null)
 			{
-				if (provider.ProviderKey != "ProviderSelectorKey")
+				if (provider.ProviderKey != LibraryProviderSelector.ProviderKeyName)
 				{
 					// Create logical "up folder" entry
 					PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);

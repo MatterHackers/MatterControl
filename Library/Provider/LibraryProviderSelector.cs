@@ -48,26 +48,37 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	public class LibraryProviderSelector : LibraryProvider
 	{
 		private List<ILibraryCreator> libraryCreators = new List<ILibraryCreator>();
+
 		private Dictionary<int, LibraryProvider> libraryProviders = new Dictionary<int, LibraryProvider>();
 
 		public ILibraryCreator PurchasedLibraryCreator { get; private set; }
-        public ILibraryCreator SharedLibraryCreator { get; private set; }
+
+		public ILibraryCreator SharedLibraryCreator { get; private set; }
 
 		private event EventHandler unregisterEvents;
 
-		List<ImageBuffer> folderImagesForChildren = new List<ImageBuffer>();
+		private List<ImageBuffer> folderImagesForChildren = new List<ImageBuffer>();
 
-		int firstAddedDirectoryIndex;
-	
-		PluginFinder<LibraryProviderPlugin> libraryProviderPlugins;
+		private int firstAddedDirectoryIndex;
 
-		bool includeQueueLibraryProvider;
+		private PluginFinder<LibraryProviderPlugin> libraryProviderPlugins;
+
+		private bool includeQueueLibraryProvider;
+
+		public static readonly string ProviderKeyName = "ProviderSelectorKey";
+
+		public static RootedObjectEventHandler LibraryRootNotice = new RootedObjectEventHandler();
 
 		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider, bool includeQueueLibraryProvider)
 			: base(null, setCurrentLibraryProvider)
 		{
 			this.includeQueueLibraryProvider = includeQueueLibraryProvider;
 			this.Name = "Home".Localize();
+
+			LibraryRootNotice.RegisterEvent((sender, args) =>
+			{
+				this.ReloadData();
+			}, ref unregisterEvents);
 
 			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
 
@@ -223,7 +234,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "ProviderSelectorKey";
+				return LibraryProviderSelector.ProviderKeyName;
 			}
 		}
 
@@ -253,6 +264,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			foreach (KeyValuePair<int, LibraryProvider> keyValue in libraryProviders)
 			{
 				keyValue.Value.Dispose();
+			}
+
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
 			}
 		}
 
