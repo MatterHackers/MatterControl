@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			if (provider != null)
 			{
-				if (provider.ProviderKey != "ProviderSelectorKey")
+				if (provider.ProviderKey != LibraryProviderSelector.ProviderKeyName)
 				{
 					PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
 					LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage), "Back".Localize());
