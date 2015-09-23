@@ -148,7 +148,8 @@ namespace MatterHackers.MatterControl
 		{
 			if (firstDraw)
 			{
-				if (textToAddWidget != null)
+				if (textToAddWidget != null
+					&& !ActiveTheme.Instance.IsTouchScreen)
 				{
 					UiThread.RunOnIdle(textToAddWidget.Focus);
 				}

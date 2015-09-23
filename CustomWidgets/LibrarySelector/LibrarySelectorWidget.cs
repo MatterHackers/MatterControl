@@ -330,13 +330,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			Button clickThumbnail = new Button(0, 0, folderThumbnail);
 
+			PrintItemCollection localPrintItemCollection = printItemCollection;
 			clickThumbnail.Click += (sender, e) =>
 			{
 				if (ActiveTheme.Instance.IsTouchScreen)
 				{
 					if (parentProvider == null)
 					{
-						this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+						this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(localPrintItemCollection);
 					}
 					else
 					{
@@ -352,7 +353,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					{
 						if (parentProvider == null)
 						{
-							this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+							this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(localPrintItemCollection);
 						}
 						else
 						{
@@ -360,6 +361,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 						}
 					}
 				}
+
+				UiThread.RunOnIdle(RebuildView);
 			};
 
 			return clickThumbnail;
