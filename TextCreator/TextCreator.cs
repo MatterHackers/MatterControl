@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public override void Initialize(GuiWidget application)
 		{
-			CreatorInformation information = new CreatorInformation(LaunchNewTextCreator, "259.png", "Text Creator");
+			CreatorInformation information = new CreatorInformation(LaunchNewTextCreator, "TC_32x32.png", "Text Creator");
 			RegisteredCreators.Instance.RegisterLaunchFunction(information);
 			mainApplication = application;
 		}

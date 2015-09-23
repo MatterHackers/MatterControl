@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public override void Initialize(GuiWidget application)
 		{
-			CreatorInformation information = new CreatorInformation(LaunchNewBrailleBuilder, "259.png", "Braille Builder");
+			CreatorInformation information = new CreatorInformation(LaunchNewBrailleBuilder, "BB_32x32.png", "Braille Builder");
 			RegisteredCreators.Instance.RegisterLaunchFunction(information);
 			mainApplication = application;
 

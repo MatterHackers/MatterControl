@@ -3817,3 +3817,6 @@ Translated:Redeem Purchase
 English:Oops! Please sign in to enable this feature.
 Translated:Oops! Please sign in to enable this feature.
 
+English:Rebuild
+Translated:Rebuild
+
