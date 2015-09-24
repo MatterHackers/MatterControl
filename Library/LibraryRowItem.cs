@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private bool isHoverItem = false;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private GuiWidget thumbnailWidget;
+        protected GuiWidget middleColumn;
 
 		private event EventHandler unregisterEvents;
 
@@ -211,10 +212,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				selectionCheckBox.HAnchor = HAnchor.ParentCenter;
 				selectionCheckBoxContainer.AddChild(selectionCheckBox);
 
-				GuiWidget middleColumn = new GuiWidget(0.0, 0.0);
+				middleColumn = new GuiWidget(0.0, 0.0);
 				middleColumn.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 				middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-				middleColumn.Margin = new BorderDouble(10, 6);
+				middleColumn.Margin = new BorderDouble(10, 3);
 				{
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 18);
