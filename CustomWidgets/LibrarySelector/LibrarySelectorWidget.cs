@@ -386,7 +386,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				for (int i = 0; i < provider.CollectionCount; i++)
 				{
 					PrintItemCollection item = provider.GetCollectionItem(i);
-					if (item.Key != "LibraryProviderPurchasedKey")
+					if (item.Key != "LibraryProviderPurchasedKey" && item.Key != "LibraryProviderSharedKey")
 					{
 						LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)), "Open".Localize());
 						AddListItemToTopToBottom(queueItem);
