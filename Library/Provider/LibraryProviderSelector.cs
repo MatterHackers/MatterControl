@@ -92,6 +92,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			libraryCreators.Clear();
 			folderImagesForChildren.Clear();
 
+			/*
 			if (includeQueueLibraryProvider)
 			{
 				// put in the queue provider
@@ -104,7 +105,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				// put in the history provider
 				libraryCreators.Add(new LibraryProviderHistoryCreator());
 				AddFolderImage("queue_folder.png");
-			}
+			} */
 
 			// put in the sqlite provider
 			libraryCreators.Add(new LibraryProviderSQLiteCreator());
