@@ -1,0 +1,6 @@
+temperature = 245
+bed_temperature = 0
+z_offset = 0.05
+infill_speed = 40
+perimeter_speed = 40
+external_perimeter_speed = 40

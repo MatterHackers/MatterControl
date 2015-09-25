@@ -8,4 +8,5 @@ bridge_fan_speed = 100
 temperature = 235
 retract_length = 0
 filament_diameter = 1.75
-z_offset = 0.12
+z_offset = 0.2
+first_layer_speed = 5
