@@ -93,7 +93,7 @@ BY* 0
 CAN c
 cannot _c
 +cc+ -
-ch 3
+ch *
 character ""*
 CHILD *
 children *n
@@ -172,12 +172,67 @@ little ll
 lord
 
 // m's
+many _m
++ment ;t
+MORE m
+mother ""m
+much m*
+must m/
+myself myf
+
+// n's
+name ""n
+necessary nec
+neither nei
++ness ;s
+NOT n
 
 // o's
+o'clock o'c
 of (
+one ""o
+oneself ""of
++ong ;g
+ou |
+ought ""|
++ound .d
++ount .t
+ourselves |rvs
+OUT |
+ow {
+
+// p's
+paid pd
+part ""p
+PEOPLE p
+percieve p}cv
+perceiving p}cvg
+perhaps p}h
+
+// q's
+question ""q
+quick qk
+QUITE q
+
+// r's
+RATHER r
+receive rcv
+receiving rcvg
+rejoice rjc
+right ""r
 
 // s's
+said sd
+sh %
+SHALL %
+should %d
++sion .n
+SO s
+some ""s
+spirit _s
 st /
+STILL /
+such s*
 
 // t's
 th ?
@@ -199,7 +254,40 @@ together tgr
 tomorrow tm
 tonight tn
 
+// u's
+under ""u
+upon ~u
+US u
+
+// v's 
+VERY v
+
+// w's
+WAS 0
+WERE 7
+wh :
+where "":
+WHICH :
+whose ~:
+WILL w
+with )
+word ~w
+world _w
+would wd
+
 // y's
-you y";
+YOU y
+young ""y
+your yr
+yourself yrf
+yourselves yrvs";
+
+//// Punctuation and Composition Signs
+//' '
+//* 99
+//[*] ,7 7,
+////Capital, Single ,+
+////Capital, Double ,,+
+//";
 	}
 }
