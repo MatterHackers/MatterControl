@@ -218,7 +218,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			mainContainer.AddChild(ConnectionControlContainer);
 			mainContainer.AddChild(buttonContainer);
 
+#if __ANDROID__
+			this.AddChild(new SoftKeyboardContentOffset(mainContainer, SoftKeyboardContentOffset.AndroidKeyboardOffset));
+#else
 			this.AddChild(mainContainer);
+#endif
 
 			BindSaveButtonHandlers();
 			BindBaudRateHandlers();
