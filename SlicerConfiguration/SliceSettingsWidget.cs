@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -100,7 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void saveButton_Click(object sender, EventArgs mouseEvent)
 		{
-			ActiveSliceSettings.Instance.CommitChanges();
+			Datastore.Instance.dbSQLite.RunInTransaction(ActiveSliceSettings.Instance.CommitChanges);
 		}
 
 		private void revertbutton_Click(object sender, EventArgs mouseEvent)

@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 				else
 				{
-					currentPrinterSetupStatus.Save();
+					Datastore.Instance.dbSQLite.RunInTransaction(currentPrinterSetupStatus.Save);
 					return true;
 				}
 			}
