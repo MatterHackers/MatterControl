@@ -308,10 +308,13 @@ namespace SQLiteAndroid
 		/// <param name="ty">Type to reflect to a database table.</param>
 		public int DropTable(Type ty)
 		{
-			TableMapping map = GetMapping(ty);
-			var query = string.Format("drop table if exists \"{0}\"", map.TableName);
+			lock (locker)
+			{
+				TableMapping map = GetMapping(ty);
+				var query = string.Format("drop table if exists \"{0}\"", map.TableName);
 
-			return Execute(query);
+				return Execute(query);
+			}
 		}
 
 		/// <summary>
@@ -340,71 +343,74 @@ namespace SQLiteAndroid
 		/// </returns>
 		public int CreateTable(Type ty)
 		{
-			if (_tables == null)
+			lock (locker)
 			{
-				_tables = new Dictionary<string, TableMapping>();
-			}
-			TableMapping map;
-			if (!_tables.TryGetValue(ty.FullName, out map))
-			{
-				map = GetMapping(ty);
-				_tables.Add(ty.FullName, map);
-			}
-			var query = "create table if not exists \"" + map.TableName + "\"(\n";
-
-			var decls = map.Columns.Select(p => Orm.SqlDecl(p, StoreDateTimeAsTicks));
-			var decl = string.Join(",\n", decls.ToArray());
-			query += decl;
-			query += ")";
-
-			var count = Execute(query);
-
-			if (count == 0)
-			{ //Possible bug: This always seems to return 0?
-				// Table already exists, migrate it
-				MigrateTable(map);
-			}
-
-			var indexes = new Dictionary<string, IndexInfo>();
-			foreach (var c in map.Columns)
-			{
-				foreach (var i in c.Indices)
+				if (_tables == null)
 				{
-					var iname = i.Name ?? map.TableName + "_" + c.Name;
-					IndexInfo iinfo;
-					if (!indexes.TryGetValue(iname, out iinfo))
-					{
-						iinfo = new IndexInfo
-						{
-							IndexName = iname,
-							TableName = map.TableName,
-							Unique = i.Unique,
-							Columns = new List<IndexedColumn>()
-						};
-						indexes.Add(iname, iinfo);
-					}
-
-					if (i.Unique != iinfo.Unique)
-						throw new Exception("All the columns in an index must have the same value for their Unique property");
-
-					iinfo.Columns.Add(new IndexedColumn
-						{
-							Order = i.Order,
-							ColumnName = c.Name
-						});
+					_tables = new Dictionary<string, TableMapping>();
 				}
-			}
+				TableMapping map;
+				if (!_tables.TryGetValue(ty.FullName, out map))
+				{
+					map = GetMapping(ty);
+					_tables.Add(ty.FullName, map);
+				}
+				var query = "create table if not exists \"" + map.TableName + "\"(\n";
 
-			foreach (var indexName in indexes.Keys)
-			{
-				var index = indexes[indexName];
-				const string sqlFormat = "create {3} index if not exists \"{0}\" on \"{1}\"(\"{2}\")";
-				var columns = String.Join("\",\"", index.Columns.OrderBy(i => i.Order).Select(i => i.ColumnName).ToArray());
-				var sql = String.Format(sqlFormat, indexName, index.TableName, columns, index.Unique ? "unique" : "");
-				count += Execute(sql);
-			}
+				var decls = map.Columns.Select(p => Orm.SqlDecl(p, StoreDateTimeAsTicks));
+				var decl = string.Join(",\n", decls.ToArray());
+				query += decl;
+				query += ")";
 
-			return count;
+				var count = Execute(query);
+
+				if (count == 0)
+				{ //Possible bug: This always seems to return 0?
+					// Table already exists, migrate it
+					MigrateTable(map);
+				}
+
+				var indexes = new Dictionary<string, IndexInfo>();
+				foreach (var c in map.Columns)
+				{
+					foreach (var i in c.Indices)
+					{
+						var iname = i.Name ?? map.TableName + "_" + c.Name;
+						IndexInfo iinfo;
+						if (!indexes.TryGetValue(iname, out iinfo))
+						{
+							iinfo = new IndexInfo
+							{
+								IndexName = iname,
+								TableName = map.TableName,
+								Unique = i.Unique,
+								Columns = new List<IndexedColumn>()
+							};
+							indexes.Add(iname, iinfo);
+						}
+
+						if (i.Unique != iinfo.Unique)
+							throw new Exception("All the columns in an index must have the same value for their Unique property");
+
+						iinfo.Columns.Add(new IndexedColumn
+							{
+								Order = i.Order,
+								ColumnName = c.Name
+							});
+					}
+				}
+
+				foreach (var indexName in indexes.Keys)
+				{
+					var index = indexes[indexName];
+					const string sqlFormat = "create {3} index if not exists \"{0}\" on \"{1}\"(\"{2}\")";
+					var columns = String.Join("\",\"", index.Columns.OrderBy(i => i.Order).Select(i => i.ColumnName).ToArray());
+					var sql = String.Format(sqlFormat, indexName, index.TableName, columns, index.Unique ? "unique" : "");
+					count += Execute(sql);
+				}
+
+				return count;
+			}
 		}
 
 		public class ColumnInfo
@@ -548,28 +554,31 @@ namespace SQLiteAndroid
 
 		public T ExecuteScalar<T>(string query, params object[] args)
 		{
-			var cmd = CreateCommand(query, args);
-
-			if (TimeExecution)
+			lock (locker)
 			{
-				if (_sw == null)
+				var cmd = CreateCommand(query, args);
+
+				if (TimeExecution)
 				{
-					_sw = new System.Diagnostics.Stopwatch();
+					if (_sw == null)
+					{
+						_sw = new System.Diagnostics.Stopwatch();
+					}
+					_sw.Reset();
+					_sw.Start();
 				}
-				_sw.Reset();
-				_sw.Start();
+
+				var r = cmd.ExecuteScalar<T>();
+
+				if (TimeExecution)
+				{
+					_sw.Stop();
+					_elapsedMilliseconds += _sw.ElapsedMilliseconds;
+					Debug.WriteLine(string.Format("Finished in {0} ms ({1:0.0} s total)", _sw.ElapsedMilliseconds, _elapsedMilliseconds / 1000.0));
+				}
+
+				return r;
 			}
-
-			var r = cmd.ExecuteScalar<T>();
-
-			if (TimeExecution)
-			{
-				_sw.Stop();
-				_elapsedMilliseconds += _sw.ElapsedMilliseconds;
-				Debug.WriteLine(string.Format("Finished in {0} ms ({1:0.0} s total)", _sw.ElapsedMilliseconds, _elapsedMilliseconds / 1000.0));
-			}
-
-			return r;
 		}
 
 		/// <summary>
@@ -590,7 +599,10 @@ namespace SQLiteAndroid
 		public List<T> Query<T>(string query, params object[] args) where T : new()
 		{
 			var cmd = CreateCommand(query, args);
-			return cmd.ExecuteQuery<T>();
+			lock (locker)
+			{
+				return cmd.ExecuteQuery<T>();
+			}
 		}
 
 		/// <summary>
@@ -679,7 +691,10 @@ namespace SQLiteAndroid
 		/// </returns>
 		public ITableQuery<T> Table<T>() where T : new()
 		{
-			return new SQLiteAndroid.TableQuery<T>(this);
+			lock (locker)
+			{
+				return new SQLiteAndroid.TableQuery<T>(this);
+			}
 		}
 
 		/// <summary>
@@ -992,16 +1007,19 @@ namespace SQLiteAndroid
 		/// </param>
 		public void RunInTransaction(Action action)
 		{
-			try
+			lock (locker)
 			{
-				var savePoint = SaveTransactionPoint();
-				action();
-				Release(savePoint);
-			}
-			catch (Exception)
-			{
-				Rollback();
-				throw;
+				try
+				{
+					var savePoint = SaveTransactionPoint();
+					action();
+					Release(savePoint);
+				}
+				catch (Exception)
+				{
+					Rollback();
+					throw;
+				}
 			}
 		}
 
@@ -1016,15 +1034,19 @@ namespace SQLiteAndroid
 		/// </returns>
 		public int InsertAll(System.Collections.IEnumerable objects)
 		{
-			var c = 0;
-			RunInTransaction(() =>
-				{
-					foreach (var r in objects)
+			lock (locker)
+			{
+
+				var c = 0;
+				RunInTransaction(() =>
 					{
-						c += Insert(r);
-					}
-				});
-			return c;
+						foreach (var r in objects)
+						{
+							c += Insert(r);
+						}
+					});
+				return c;
+			}
 		}
 
 		/// <summary>
@@ -1093,8 +1115,13 @@ namespace SQLiteAndroid
 			{
 				return 0;
 			}
-			return Insert(obj, "", obj.GetType());
+			lock (locker)
+			{
+				return Insert(obj, "", obj.GetType());
+			}
 		}
+
+		object locker = new object();
 
 		/// <summary>
 		/// Inserts the given object and retrieves its
@@ -1242,7 +1269,10 @@ namespace SQLiteAndroid
 			{
 				return 0;
 			}
-			return Update(obj, obj.GetType());
+			lock (locker)
+			{
+				return Update(obj, obj.GetType());
+			}
 		}
 
 		/// <summary>
@@ -1320,14 +1350,17 @@ namespace SQLiteAndroid
 		/// </returns>
 		public int Delete(object objectToDelete)
 		{
-			var map = GetMapping(objectToDelete.GetType());
-			var pk = map.PK;
-			if (pk == null)
+			lock (locker)
 			{
-				throw new NotSupportedException("Cannot delete " + map.TableName + ": it has no PK");
+				var map = GetMapping(objectToDelete.GetType());
+				var pk = map.PK;
+				if (pk == null)
+				{
+					throw new NotSupportedException("Cannot delete " + map.TableName + ": it has no PK");
+				}
+				var q = string.Format("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
+				return Execute(q, pk.GetValue(objectToDelete));
 			}
-			var q = string.Format("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
-			return Execute(q, pk.GetValue(objectToDelete));
 		}
 
 		/// <summary>

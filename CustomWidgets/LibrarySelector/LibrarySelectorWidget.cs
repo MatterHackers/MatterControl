@@ -330,13 +330,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			Button clickThumbnail = new Button(0, 0, folderThumbnail);
 
+			PrintItemCollection localPrintItemCollection = printItemCollection;
 			clickThumbnail.Click += (sender, e) =>
 			{
 				if (ActiveTheme.Instance.IsTouchScreen)
 				{
 					if (parentProvider == null)
 					{
-						this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+						this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(localPrintItemCollection);
 					}
 					else
 					{
@@ -352,7 +353,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					{
 						if (parentProvider == null)
 						{
-							this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+							this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(localPrintItemCollection);
 						}
 						else
 						{
@@ -360,6 +361,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 						}
 					}
 				}
+
+				UiThread.RunOnIdle(RebuildView);
 			};
 
 			return clickThumbnail;
@@ -373,7 +376,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			if (provider != null)
 			{
-				if (provider.ProviderKey != "ProviderSelectorKey")
+				if (provider.ProviderKey != LibraryProviderSelector.ProviderKeyName)
 				{
 					PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
 					LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage), "Back".Localize());
@@ -383,7 +386,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				for (int i = 0; i < provider.CollectionCount; i++)
 				{
 					PrintItemCollection item = provider.GetCollectionItem(i);
-					if (item.Key != "LibraryProviderPurchasedKey")
+					if (item.Key != "LibraryProviderPurchasedKey" && item.Key != "LibraryProviderSharedKey")
 					{
 						LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)), "Open".Localize());
 						AddListItemToTopToBottom(queueItem);

@@ -120,7 +120,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				separator.Margin = new BorderDouble(0);
 				this.AddChild(separator);
 
-				Button searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
+				Button searchResultsButton = null;
+				if (ActiveTheme.Instance.IsTouchScreen)
+				{
+					searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
+				}
+				else
+				{
+					searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
+				}
 				searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
 				searchResultsButton.Margin = new BorderDouble(3, 0);
 				this.AddChild(searchResultsButton);

@@ -46,6 +46,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
+	/*
 	public class LibraryProviderQueueCreator : ILibraryCreator
 	{
 		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				return LibraryProviderQueue.StaticProviderKey;
 			}
 		}
-	}
+	} */
 
 	public class LibraryProviderQueue : LibraryProvider
 	{
@@ -113,6 +114,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
+        public override void ShareItem(int itemIndexToShare)
+        {
+
+        }
+
 		public static string StaticProviderKey
 		{
 			get
@@ -121,13 +127,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+        public override bool CanShare { get { return false; } }
+
 		public override int CollectionCount
 		{
 			get
 			{
 				return 0;
 			}
-		}
+		}        
 
 		public override int ItemCount
 		{

@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					moreMenu = new DropDownMenu("More".Localize() + "... ");
 					moreMenu.NormalColor = new RGBA_Bytes();
 					moreMenu.BorderWidth = 1;
-					moreMenu.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
+					moreMenu.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor,100);
 					moreMenu.MenuAsWideAsItems = false;
 					moreMenu.VAnchor = VAnchor.ParentBottomTop;
 					moreMenu.Margin = new BorderDouble(3, 3);
@@ -497,8 +497,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					foreach (QueueRowItem queueItem in selectedItems)
 					{
-						PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
-						libraryToSaveTo.AddItem(printItemWrapper);
+						if (File.Exists(queueItem.PrintItemWrapper.FileLocation))
+						{
+							PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
+							libraryToSaveTo.AddItem(printItemWrapper);
+						}
 					}
 					libraryToSaveTo.Dispose();
 				}

@@ -20,6 +20,7 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler<StringEventArgs> AddLocalFolderToLibrary;
 		public EventHandler RedeemDesignCode;
+        public EventHandler EnterShareCode;
 
 		public MenuOptionFile()
 			: base("File".Localize())
@@ -36,7 +37,7 @@ namespace MatterHackers.MatterControl
                 {"Add File To Queue".Localize(), importFile_Click},
 				//{"Add Folder To Library".Localize(), addFolderToLibrar_Click},
 				{"Redeem Design Code".Localize(), redeemDesignCode_Click},
-				//{"Enter Share Code".Localize(), redeemDesignCode_Click},
+				{"Enter Share Code".Localize(), enterShareCode_Click},
 				{"------------------------", nothing_Click},
 				{"Exit".Localize(), exit_Click},
             };
@@ -56,6 +57,16 @@ namespace MatterHackers.MatterControl
 
 			return true;
 		}
+
+        private bool enterShareCode_Click()
+        {
+            if (EnterShareCode != null)
+            {
+                EnterShareCode(this, null);
+            }
+
+            return true;
+        }
 
 		private bool addFolderToLibrar_Click()
 		{

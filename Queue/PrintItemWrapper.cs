@@ -42,7 +42,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class PrintItemWrapper
 	{
-		public event EventHandler FileHasChanged;
+		public static RootedObjectEventHandler FileHasChanged = new RootedObjectEventHandler();
+
 		public event EventHandler SlicingDone;
 		public event EventHandler SlicingOutputMessage;
 		private static string fileNotFound = "File Not Found\n'{0}'".Localize();
@@ -61,12 +62,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private long writeTime = 0;
 
-		private FileSystemWatcher diskFileWatcher = new FileSystemWatcher();
-
 		public PrintItemWrapper(DataStorage.PrintItem printItem, List<ProviderLocatorNode> sourceLibraryProviderLocator = null)
 		{
 			this.PrintItem = printItem;
-			UpdateFileTracking(FileLocation);
 
 			if (FileLocation != null)
 			{
@@ -210,8 +208,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			set
 			{
 				this.PrintItem.FileLocation = value;
-
-				UpdateFileTracking(value);
 			}
 		}
 
@@ -224,54 +220,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		Stopwatch timeSinceLastFileUpdate = new Stopwatch();
-		private void UpdateFileTracking(string value)
-		{
-			if (value != diskFileWatcher.Filter)
-			{
-				if (Directory.Exists(Path.GetDirectoryName(value)))
-				{
-					diskFileWatcher.Path = Path.GetDirectoryName(value);
-					diskFileWatcher.Filter = Path.GetFileName(value);
-
-					diskFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
-					diskFileWatcher.Changed += SetFileChanged;
-					diskFileWatcher.Created += SetFileChanged;
-
-					// Begin watching.
-					diskFileWatcher.EnableRaisingEvents = true;
-				}
-				else
-				{
-					diskFileWatcher.EnableRaisingEvents = false;
-				}
-			}
-		}
-
 		public void ReportFileChange()
 		{
-			if (timeSinceLastFileUpdate.IsRunning)
-			{
-				if (timeSinceLastFileUpdate.Elapsed.TotalSeconds > 1)
-				{
-					timeSinceLastFileUpdate.Stop();
-					if (FileHasChanged != null)
-					{
-						FileHasChanged(this, null);
-					}
-				}
-				else
-				{
-					UiThread.RunOnIdle(ReportFileChange, .05);
-				}
-			}
-		}
-
-		private void SetFileChanged(object sender, FileSystemEventArgs e)
-		{
-			timeSinceLastFileUpdate.Restart();
-
-			UiThread.RunOnIdle(ReportFileChange, .05);
+			FileHasChanged.CallEvents(this, null);
 		}
 
 		PrintItem printItem;
@@ -281,7 +232,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			set
 			{
 				printItem = value;
-				UpdateFileTracking(printItem.FileLocation);
 			}
 		}
 

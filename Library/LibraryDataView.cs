@@ -65,7 +65,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			if (libraryDataViewInstance != null)
 			{
+#if !__ANDROID__ // this is really just for debugging
 				throw new Exception("There should only ever be one of these, Lars.");
+#endif
 			}
 			libraryDataViewInstance = this;
 
@@ -362,32 +364,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void AddAllItems(object inData = null)
 		{
+			// Clear SelectedItems when the list is rebuilt to prevent duplicate entries
+			this.SelectedItems.Clear();
+
 			topToBottomItemList.RemoveAllChildren();
 
 			var provider = this.CurrentLibraryProvider;
-
-			// Logical "up folder" button
-			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
+			if (provider != null)
 			{
-				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, provider, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage), "Back".Localize());
-				queueItem.IsViewHelperItem = true;
-				AddListItemToTopToBottom(queueItem);
-			}
+				if (provider.ProviderKey != LibraryProviderSelector.ProviderKeyName)
+				{
+					// Create logical "up folder" entry
+					PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
+					LibraryRowItem queueItem = new LibraryRowItemCollection(parent, provider, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage), "Back".Localize());
+					queueItem.IsViewHelperItem = true;
+					AddListItemToTopToBottom(queueItem);
+				}
 
-			for (int i = 0; i < provider.CollectionCount; i++)
-			{
-				PrintItemCollection item = provider.GetCollectionItem(i);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(item, provider, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)), "Open".Localize());
-				AddListItemToTopToBottom(queueItem);
-			}
+				for (int i = 0; i < provider.CollectionCount; i++)
+				{
+					PrintItemCollection item = provider.GetCollectionItem(i);
+					LibraryRowItem queueItem = new LibraryRowItemCollection(item, provider, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)), "Open".Localize());
+					AddListItemToTopToBottom(queueItem);
+				}
 
-			for (int i = 0; i < provider.ItemCount; i++)
-			{
-				GuiWidget thumbnailWidget = provider.GetItemThumbnail(i);
-				LibraryRowItem queueItem = new LibraryRowItemPart(provider, i, this, thumbnailWidget);
+				for (int i = 0; i < provider.ItemCount; i++)
+				{
+					GuiWidget thumbnailWidget = provider.GetItemThumbnail(i);
+					LibraryRowItem queueItem = new LibraryRowItemPart(provider, i, this, thumbnailWidget);
 
-				AddListItemToTopToBottom(queueItem);
+					AddListItemToTopToBottom(queueItem);
+				}
 			}
 
 			LastScrollPosition scrollPosition = inData as LastScrollPosition;

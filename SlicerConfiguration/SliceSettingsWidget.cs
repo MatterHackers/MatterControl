@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -100,7 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void saveButton_Click(object sender, EventArgs mouseEvent)
 		{
-			ActiveSliceSettings.Instance.CommitChanges();
+			Datastore.Instance.dbSQLite.RunInTransaction(ActiveSliceSettings.Instance.CommitChanges);
 		}
 
 		private void revertbutton_Click(object sender, EventArgs mouseEvent)
@@ -149,6 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsDetailSelector.SelectionChanged += new EventHandler(SettingsDetail_SelectionChanged);
 			settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
 			settingsDetailSelector.Margin = new BorderDouble(5, 3);
+            settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
 
 			this.AddChild(settingsDetailSelector);
 			this.AddChild(GetSliceOptionsMenuDropList());
@@ -161,11 +163,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ");
 				sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
 				sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
-				sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+                sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
 				sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
 				sliceOptionsMenuDropList.BorderWidth = 1;
 				sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
-				sliceOptionsMenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
 				sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
 
 				SetMenuItems();

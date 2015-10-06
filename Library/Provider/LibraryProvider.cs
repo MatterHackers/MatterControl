@@ -38,6 +38,7 @@ using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
@@ -162,6 +163,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract int ItemCount { get; }
 
+        public abstract bool CanShare { get; }
+
 		public abstract string ProviderKey { get; }
 
 		public abstract void AddCollectionToLibrary(string collectionName);
@@ -180,9 +183,20 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void RemoveItem(int itemIndexToRemove);
 
+		// Base implmentation simply calls RemoveItem
+		public virtual void RemoveItems(int[] indexes)
+		{
+			// Remove items in reverse order
+			foreach (var i in indexes.OrderByDescending(i => i))
+			{
+				RemoveItem(i);
+			}
+		}
+
 		public abstract void RenameCollection(int collectionIndexToRename, string newName);
 
 		public abstract void RenameItem(int itemIndexToRename, string newName);
+        public abstract void ShareItem(int itemIndexToShare);
 
 		#endregion Abstract Methods
 
@@ -190,9 +204,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public void OnDataReloaded(EventArgs eventArgs)
 		{
-			if (DataReloaded != null)
+			EventHandler tempHandler = DataReloaded;
+			if (tempHandler != null)
 			{
-				DataReloaded(null, eventArgs);
+				tempHandler(null, eventArgs);
 			}
 		}
 

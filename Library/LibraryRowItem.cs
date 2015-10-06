@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public abstract class LibraryRowItem : GuiWidget
 	{
+		public static readonly string LoadingPlaceholderToken = "!Placeholder_ItemToken!";
+
 		public bool IsSelectedItem
 		{
 			get
@@ -56,6 +58,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private bool isHoverItem = false;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private GuiWidget thumbnailWidget;
+        protected GuiWidget middleColumn;
 
 		private event EventHandler unregisterEvents;
 
@@ -149,7 +152,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				this.partLabel.TextColor = RGBA_Bytes.White;
 				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
 			}
-			else if (this.IsHoverItem && !this.IsViewHelperItem)
+			else if (this.IsHoverItem)
 			{
 				RectangleDouble Bounds = LocalBounds;
 				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
@@ -186,9 +189,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			mainContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			mainContainer.VAnchor = VAnchor.ParentBottomTop;
 			{
+				partLabel = new TextWidget(this.ItemName.Replace('_', ' '), pointSize: 14);
+
 				GuiWidget primaryContainer = new GuiWidget();
 				primaryContainer.HAnchor = HAnchor.ParentLeftRight;
 				primaryContainer.VAnchor = VAnchor.ParentBottomTop;
+				primaryContainer.Name = "Row Item " + partLabel.Text;
 
 				FlowLayoutWidget primaryFlow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 				primaryFlow.HAnchor = HAnchor.ParentLeftRight;
@@ -206,13 +212,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				selectionCheckBox.HAnchor = HAnchor.ParentCenter;
 				selectionCheckBoxContainer.AddChild(selectionCheckBox);
 
-				GuiWidget middleColumn = new GuiWidget(0.0, 0.0);
+				middleColumn = new GuiWidget(0.0, 0.0);
 				middleColumn.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 				middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-				middleColumn.Margin = new BorderDouble(10, 6);
+				middleColumn.Margin = new BorderDouble(10, 3);
 				{
-					partLabel = new TextWidget(this.ItemName.Replace('_', ' '), pointSize: 14);
-					partLabel.Name = "Row Item " + partLabel.Text;
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 18);
 					partLabel.VAnchor = VAnchor.ParentCenter;

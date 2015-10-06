@@ -30,7 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.PluginSystem;
+#if !__ANDROID__
 using NUnit.Framework;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -68,6 +70,7 @@ and &
 ar >
 AS z 
 +ation ,n
+
 // b's
 +bb+ 2"" 
 BE 2
@@ -85,11 +88,12 @@ blind bl
 braille brl
 BUT b
 BY* 0
+
 // c's
 CAN c
 cannot _c
 +cc+ -
-ch 3
+ch *
 character ""*
 CHILD *
 children *n
@@ -98,6 +102,7 @@ con+ 3
 conceive 3cv
 conceiving 3cvg
 could cd
+
 // d's
 day
 +dd+
@@ -107,6 +112,7 @@ declare
 declaring
 dis+
 DO
+
 // e's
 +ea+
 ed
@@ -117,6 +123,7 @@ ENOUGH
 er }
 ever
 EVERY e
+
 // f's
 father
 +ff+
@@ -124,12 +131,14 @@ first
 for
 FROM f
 +ful
+
 // g's
 +gg+
 gh
 GO g
 good gd
 great grt
+
 // h's
 had
 HAVE h
@@ -138,6 +147,7 @@ herself
 him hm
 himself hmf
 HIS
+
 // i's
 in
 ing
@@ -146,22 +156,84 @@ IT x
 ITS xs
 itself xf
 +ity
+
 // j's
 JUST j
+
 // k's
 know 
 KNOWLEDGE k
+
 // l's
 +less
 letter lr
 LIKE l
 little ll
 lord
+
 // m's
+many _m
++ment ;t
+MORE m
+mother ""m
+much m*
+must m/
+myself myf
+
+// n's
+name ""n
+necessary nec
+neither nei
++ness ;s
+NOT n
+
 // o's
+o'clock o'c
 of (
+one ""o
+oneself ""of
++ong ;g
+ou |
+ought ""|
++ound .d
++ount .t
+ourselves |rvs
+OUT |
+ow {
+
+// p's
+paid pd
+part ""p
+PEOPLE p
+percieve p}cv
+perceiving p}cvg
+perhaps p}h
+
+// q's
+question ""q
+quick qk
+QUITE q
+
+// r's
+RATHER r
+receive rcv
+receiving rcvg
+rejoice rjc
+right ""r
+
 // s's
+said sd
+sh %
+SHALL %
+should %d
++sion .n
+SO s
+some ""s
+spirit _s
 st /
+STILL /
+such s*
+
 // t's
 th ?
 THAT t
@@ -181,7 +253,41 @@ today td
 together tgr
 tomorrow tm
 tonight tn
+
+// u's
+under ""u
+upon ~u
+US u
+
+// v's 
+VERY v
+
+// w's
+WAS 0
+WERE 7
+wh :
+where "":
+WHICH :
+whose ~:
+WILL w
+with )
+word ~w
+world _w
+would wd
+
 // y's
-you y";
+YOU y
+young ""y
+your yr
+yourself yrf
+yourselves yrvs";
+
+//// Punctuation and Composition Signs
+//' '
+//* 99
+//[*] ,7 7,
+////Capital, Single ,+
+////Capital, Double ,,+
+//";
 	}
 }

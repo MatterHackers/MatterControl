@@ -218,41 +218,44 @@ namespace MatterHackers.MatterControl
 
 		private void onExportGcodeFileSelected(SaveFileDialogParams saveParams)
 		{
-
 			if (saveParams.FileName != null)
 			{
-
-                ExportGcodeCommandLineUtility(saveParams.FileName);
-         
+                ExportGcodeCommandLineUtility(saveParams.FileName);         
 			}
 		}
 
-        public void ExportGcodeCommandLineUtility(String nameOfFile)
-        {
-            if(!string.IsNullOrEmpty(nameOfFile))
-            {
-                gcodePathAndFilenameToSave = nameOfFile;
-                string extension = Path.GetExtension(gcodePathAndFilenameToSave);
-                if(extension == "")
-                {
-                    File.Delete(gcodePathAndFilenameToSave);
-                    gcodePathAndFilenameToSave += ".gcode";
-                }
+		public void ExportGcodeCommandLineUtility(String nameOfFile)
+		{
+			try
+			{
+				if (!string.IsNullOrEmpty(nameOfFile))
+				{
+					gcodePathAndFilenameToSave = nameOfFile;
+					string extension = Path.GetExtension(gcodePathAndFilenameToSave);
+					if (extension == "")
+					{
+						File.Delete(gcodePathAndFilenameToSave);
+						gcodePathAndFilenameToSave += ".gcode";
+					}
 
-                string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-                if(MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
-                {
+					string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+					if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
+					{
 
-                    SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                    printItemWrapper.SlicingDone += sliceItem_Done;
+						SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+						printItemWrapper.SlicingDone += sliceItem_Done;
 
-                }
-                else if (partIsGCode)
-                {
-                    SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
-                }
-            }
-        }
+					}
+					else if (partIsGCode)
+					{
+						SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
+					}
+				}
+			}
+			catch
+			{
+			}
+		}
 
 		private void ExportX3G_Click()
 		{
@@ -292,65 +295,71 @@ namespace MatterHackers.MatterControl
 
 		private void SaveGCodeToNewLocation(string source, string dest)
 		{
-			if (ActivePrinterProfile.Instance.DoPrintLeveling)
+			try
 			{
-				GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(source);
-				if (applyLeveling.Checked)
+				if (ActivePrinterProfile.Instance.DoPrintLeveling)
 				{
-					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-					if (levelingData != null)
+					GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(source);
+					if (applyLeveling.Checked)
 					{
-						for (int lineIndex = 0; lineIndex < unleveledGCode.LineCount; lineIndex++)
+						PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+						if (levelingData != null)
 						{
-							PrinterMachineInstruction instruction = unleveledGCode.Instruction(lineIndex);
-							Vector3 currentDestination = instruction.Position;
-
-							List<string> linesToWrite = null;
-							switch (levelingData.CurrentPrinterLevelingSystem)
+							for (int lineIndex = 0; lineIndex < unleveledGCode.LineCount; lineIndex++)
 							{
-								case PrintLevelingData.LevelingSystem.Probe2Points:
-									instruction.Line = LevelWizard2Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-									linesToWrite = LevelWizard2Point.ProcessCommand(instruction.Line);
-									break;
+								PrinterMachineInstruction instruction = unleveledGCode.Instruction(lineIndex);
+								Vector3 currentDestination = instruction.Position;
 
-								case PrintLevelingData.LevelingSystem.Probe3Points:
-									instruction.Line = LevelWizard3Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-									linesToWrite = LevelWizard3Point.ProcessCommand(instruction.Line);
-									break;
+								List<string> linesToWrite = null;
+								switch (levelingData.CurrentPrinterLevelingSystem)
+								{
+									case PrintLevelingData.LevelingSystem.Probe2Points:
+										instruction.Line = LevelWizard2Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										linesToWrite = LevelWizard2Point.ProcessCommand(instruction.Line);
+										break;
 
-								case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-									instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-									linesToWrite = LevelWizard7PointRadial.ProcessCommand(instruction.Line);
-									break;
+									case PrintLevelingData.LevelingSystem.Probe3Points:
+										instruction.Line = LevelWizard3Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										linesToWrite = LevelWizard3Point.ProcessCommand(instruction.Line);
+										break;
 
-								case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-									instruction.Line = LevelWizard13PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-									linesToWrite = LevelWizard13PointRadial.ProcessCommand(instruction.Line);
-									break;
+									case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										linesToWrite = LevelWizard7PointRadial.ProcessCommand(instruction.Line);
+										break;
 
-								default:
-									throw new NotImplementedException();
-							}
+									case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+										instruction.Line = LevelWizard13PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										linesToWrite = LevelWizard13PointRadial.ProcessCommand(instruction.Line);
+										break;
 
-							instruction.Line = linesToWrite[0];
-							linesToWrite.RemoveAt(0);
+									default:
+										throw new NotImplementedException();
+								}
 
-							// now insert any new lines
-							foreach (string line in linesToWrite)
-							{
-								PrinterMachineInstruction newInstruction = new PrinterMachineInstruction(line);
-								unleveledGCode.Insert(++lineIndex, newInstruction);
+								instruction.Line = linesToWrite[0];
+								linesToWrite.RemoveAt(0);
+
+								// now insert any new lines
+								foreach (string line in linesToWrite)
+								{
+									PrinterMachineInstruction newInstruction = new PrinterMachineInstruction(line);
+									unleveledGCode.Insert(++lineIndex, newInstruction);
+								}
 							}
 						}
 					}
+					unleveledGCode.Save(dest);
 				}
-				unleveledGCode.Save(dest);
+				else
+				{
+					File.Copy(source, dest, true);
+				}
+				ShowFileIfRequested(dest);
 			}
-			else
+			catch
 			{
-				File.Copy(source, dest, true);
 			}
-			ShowFileIfRequested(dest);
 		}
 
 		private void ShowFileIfRequested(string filename)
@@ -404,28 +413,34 @@ namespace MatterHackers.MatterControl
 
 		private void SaveAmf(SaveFileDialogParams saveParams)
 		{
-			if (saveParams.FileName != null)
+			try
 			{
-				string filePathToSave = saveParams.FileName;
-				if (filePathToSave != null && filePathToSave != "")
+				if (saveParams.FileName != null)
 				{
-					string extension = Path.GetExtension(filePathToSave);
-					if (extension == "")
+					string filePathToSave = saveParams.FileName;
+					if (filePathToSave != null && filePathToSave != "")
 					{
-						File.Delete(filePathToSave);
-						filePathToSave += ".amf";
+						string extension = Path.GetExtension(filePathToSave);
+						if (extension == "")
+						{
+							File.Delete(filePathToSave);
+							filePathToSave += ".amf";
+						}
+						if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+						{
+							File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+						}
+						else
+						{
+							List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
+							MeshFileIo.Save(meshGroups, filePathToSave);
+						}
+						ShowFileIfRequested(filePathToSave);
 					}
-					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-					{
-						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-					}
-					else
-					{
-						List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
-						MeshFileIo.Save(meshGroups, filePathToSave);
-					}
-					ShowFileIfRequested(filePathToSave);
 				}
+			}
+			catch
+			{
 			}
 		}
 
@@ -450,28 +465,34 @@ namespace MatterHackers.MatterControl
 
 		private void SaveStl(SaveFileDialogParams saveParams)
 		{
-			if (saveParams.FileName != null)
+			try
 			{
-				string filePathToSave = saveParams.FileName;
-				if (filePathToSave != null && filePathToSave != "")
+				if (saveParams.FileName != null)
 				{
-					string extension = Path.GetExtension(filePathToSave);
-					if (extension == "")
+					string filePathToSave = saveParams.FileName;
+					if (filePathToSave != null && filePathToSave != "")
 					{
-						File.Delete(filePathToSave);
-						filePathToSave += ".stl";
+						string extension = Path.GetExtension(filePathToSave);
+						if (extension == "")
+						{
+							File.Delete(filePathToSave);
+							filePathToSave += ".stl";
+						}
+						if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+						{
+							File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+						}
+						else
+						{
+							List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
+							MeshFileIo.Save(meshGroups, filePathToSave);
+						}
+						ShowFileIfRequested(filePathToSave);
 					}
-					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-					{
-						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-					}
-					else
-					{
-						List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
-						MeshFileIo.Save(meshGroups, filePathToSave);
-					}
-					ShowFileIfRequested(filePathToSave);
 				}
+			}
+			catch
+			{
 			}
 		}
 

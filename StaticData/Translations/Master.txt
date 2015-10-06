@@ -3739,3 +3739,84 @@ Translated:Experimental support for Braille grade 2 (contractions)
 English:About Braille
 Translated:About Braille
 
+English:Add a new Material Preset
+Translated:Add a new Material Preset
+
+English:Import an existing Material Preset
+Translated:Import an existing Material Preset
+
+English:Share Library Item
+Translated:Share Library Item
+
+English:Share Options
+Translated:Share Options
+
+English:Your Share Code:
+Translated:Your Share Code:
+
+English:Anyone with this code will have access
+Translated:Anyone with this code will have access
+
+English:Share with someone
+Translated:Share with someone
+
+English:read-only
+Translated:read-only
+
+English:Generate Share Code
+Translated:Generate Share Code
+
+English:Please wait. Retrieving share code...
+Translated:Please wait. Retrieving share code...
+
+English:Provide this code to grant someone read-only access.
+Translated:Provide this code to grant someone read-only access.
+
+English:Please wait. Sending invite...
+Translated:Please wait. Sending invite...
+
+English:Invite sent!
+Translated:Invite sent!
+
+English:Your invite has been sent!
+Translated:Your invite has been sent!
+
+English:Enter Share Code:
+Translated:Enter Share Code:
+
+English:This code to will provide read-only access.
+Translated:This code to will provide read-only access.
+
+English:Please wait. Redeeming code...
+Translated:Please wait. Redeeming code...
+
+English:Oops! Invalid code.
+Translated:Oops! Invalid code.
+
+English:Your code has been redeemed.  Please check the Library.
+Translated:Your code has been redeemed.  Please check the Library.
+
+English:Shared with Me
+Translated:Shared with Me
+
+English:Share designs from your Cloud Library
+Translated:Share designs from your Cloud Library
+
+English:Exporting to Folder or SD Card
+Translated:Exporting to Folder or SD Card
+
+English:Materials
+Translated:Materials
+
+English:Material {0}
+Translated:Material {0}
+
+English:Redeem Purchase
+Translated:Redeem Purchase
+
+English:Oops! Please sign in to enable this feature.
+Translated:Oops! Please sign in to enable this feature.
+
+English:Rebuild
+Translated:Rebuild
+

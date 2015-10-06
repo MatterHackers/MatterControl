@@ -505,10 +505,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool DoAddFileAfterCreatingEditData { get; set; }
 		public override void OnClosed(EventArgs e)
 		{
-			if (printItemWrapper != null)
-			{
-				printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
-			}
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
@@ -765,7 +761,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
 				colorSelectionContainer.Padding = new BorderDouble(5);
 
-				string colorLabelText = "Extruder {0}".Localize().FormatWith(extruderIndex + 1);
+				string colorLabelText = "Material {0}".Localize().FormatWith(extruderIndex + 1);
 				RadioButton extruderSelection = new RadioButton(colorLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				extruderButtons.Add(extruderSelection);
 				extruderSelection.SiblingRadioButtonList = extruderButtons;
@@ -1167,8 +1163,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printItemWrapper != null)
 			{
 				// remove it first to make sure we don't double add it
-				printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
-				printItemWrapper.FileHasChanged += ReloadMeshIfChangeExternaly;
+				PrintItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+				PrintItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents); ;
 
 				// don't load the mesh until we get all the rest of the interface built
 				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
@@ -1323,7 +1319,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
 
-				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Materials"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
 
 				if (numberOfExtruders > 1)
@@ -1877,6 +1873,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
 
+				printItemWrapper.ReportFileChange();
+
 				if (returnInfo != null
 					&& returnInfo.destinationLibraryProvider != null)
 				{
@@ -2127,12 +2125,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
 		{
-			if (!editorThatRequestedSave)
+			PrintItemWrapper senderItem = sender as PrintItemWrapper;
+			if (senderItem != null
+				&& senderItem.FileLocation == printItemWrapper.FileLocation)
 			{
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-			}
+				if (!editorThatRequestedSave)
+				{
+					ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+				}
 
-			editorThatRequestedSave = false;
+				editorThatRequestedSave = false;
+			}
 		}
 
 		private bool rotateQueueMenu_Click()

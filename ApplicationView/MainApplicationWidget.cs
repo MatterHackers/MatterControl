@@ -351,6 +351,20 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+        public void SwitchToSharedLibrary()
+        {
+            // Switch to the shared library
+            LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
+            if (libraryProviderSelector != null)
+            {
+                LibraryProvider sharedProvider = libraryProviderSelector.GetSharedLibrary();
+                UiThread.RunOnIdle(() =>
+                {
+                    CurrentLibraryDataView.CurrentLibraryProvider = sharedProvider;
+                });
+            }
+        }
+
 		public void ChangeCloudSyncStatus(bool userAuthenticated)
 		{
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });

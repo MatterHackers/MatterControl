@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			this.ItemName = libraryProvider.GetPrintItemName(itemIndex);
-			if(this.ItemName.IndexOf("!ProviderIsLoading!") != -1)
+			if(this.ItemName == LibraryRowItem.LoadingPlaceholderToken)
 			{
 				this.ItemName = "Retrieving Contents...".Localize();
 				this.IsViewHelperItem = true;
@@ -122,33 +122,59 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		ProgressControl processingProgressControl;
 		private void AddLoadingProgressBar()
 		{
-			processingProgressControl = new ProgressControl("Downloading...".Localize(), ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5)
+			processingProgressControl = new ProgressControl("Downloading...".Localize(), RGBA_Bytes.Black, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5, 0)
             {
                 PointSize = 8,
             };
 			//processingProgressControl.BackgroundColor = RGBA_Bytes.White;
 			processingProgressControl.VAnchor = VAnchor.ParentBottom;
 			processingProgressControl.HAnchor = HAnchor.ParentLeft;
-			processingProgressControl.Margin = new BorderDouble(thumbnailWidth + 3, 3, 3, 3);
+			processingProgressControl.Margin = new BorderDouble(0);
 			processingProgressControl.Visible = false;
-			this.AddChild(processingProgressControl);
+
+			middleColumn.AddChild(processingProgressControl);
 		}
 
 		public async override void AddToQueue()
 		{
+			var printItemWrapper = await MakeCopyForQueue();
+
+			// Early exit if MakeCopy failed
+			if(printItemWrapper == null)
+			{
+				return;
+			}
+
 			// create a new item that will be only in the queue
-			QueueData.Instance.AddItem(await MakeCopyForQueue());
+			QueueData.Instance.AddItem(printItemWrapper);
 		}
 
 		private async Task<PrintItemWrapper> MakeCopyForQueue()
 		{
 			var printItemWrapper = await this.GetPrintItemWrapperAsync();
 
+			// Handle non-existing files
+			if(!File.Exists(printItemWrapper.FileLocation))
+			{
+				return null;
+			}
+
 			PrintItem printItemToCopy =  printItemWrapper.PrintItem;
 			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItemToCopy.FileLocation));
 			string newFileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-			File.Copy(printItemToCopy.FileLocation, newFileLocation);
+			// Handle file read/write errors
+			try
+			{
+				File.Copy(printItemToCopy.FileLocation, newFileLocation);
+			}
+			catch(Exception ex)
+			{
+				string errorMessage = string.Format("Unable to duplicate file for queue: {0}\r\n{1}", printItemToCopy.FileLocation, ex.Message);
+				Trace.WriteLine(errorMessage);
+
+				return null;
+			}
 
 			return new PrintItemWrapper(new PrintItem(printItemToCopy.Name, newFileLocation)
 			{

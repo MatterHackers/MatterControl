@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl
 
 				headerRow.AddChild(elementHeader);
 				topToBottom.AddChild(headerRow);
-				this.AddChild(topToBottom);
 			}
 
 			//Creates container in the middle of window
@@ -135,6 +134,12 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(buttonRow);
 
+#if __ANDROID__
+			this.AddChild(new SoftKeyboardContentOffset(topToBottom, SoftKeyboardContentOffset.AndroidKeyboardOffset));
+#else
+			this.AddChild(topToBottom);
+#endif
+
 			ShowAsSystemWindow();
 		}
 
@@ -143,7 +148,8 @@ namespace MatterHackers.MatterControl
 		{
 			if (firstDraw)
 			{
-				if (textToAddWidget != null)
+				if (textToAddWidget != null
+					&& !ActiveTheme.Instance.IsTouchScreen)
 				{
 					UiThread.RunOnIdle(textToAddWidget.Focus);
 				}

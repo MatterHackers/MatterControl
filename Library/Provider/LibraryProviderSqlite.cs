@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -54,7 +55,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string keywordFilter = string.Empty;
 		private List<PrintItem> printItems = new List<PrintItem>();
 
-		private FileSystemWatcher sqliteDatabaseWatcher = new FileSystemWatcher();
+		public static RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 
 		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
 			: base(parentLibraryProvider, setCurrentLibraryProvider)
@@ -69,28 +70,18 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			this.baseLibraryCollection = baseLibraryCollection;
 			LoadLibraryItems();
 
-			sqliteDatabaseWatcher.Path = Path.GetDirectoryName(ApplicationDataStorage.Instance.DatastorePath);
-
-			sqliteDatabaseWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-				   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-			sqliteDatabaseWatcher.Changed += DatabaseFileChange;
-			sqliteDatabaseWatcher.Created += DatabaseFileChange;
-			sqliteDatabaseWatcher.Deleted += DatabaseFileChange;
-			sqliteDatabaseWatcher.Renamed += DatabaseFileChange;
-
-			// Begin watching.
-			sqliteDatabaseWatcher.EnableRaisingEvents = true;
+			ItemAdded.RegisterEvent(DatabaseFileChange, ref unregisterEvents);
 		}
+
+		private event EventHandler unregisterEvents;
 
 		public override void Dispose()
 		{
-			sqliteDatabaseWatcher.Changed -= DatabaseFileChange;
-			sqliteDatabaseWatcher.Created -= DatabaseFileChange;
-			sqliteDatabaseWatcher.Deleted -= DatabaseFileChange;
-			sqliteDatabaseWatcher.Renamed -= DatabaseFileChange;
-
-			// Begin watching.
-			sqliteDatabaseWatcher.EnableRaisingEvents = false;
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			ItemAdded.UnregisterEvent(DatabaseFileChange, ref unregisterEvents);
 		}
 
 		Stopwatch timeSinceLastChange = new Stopwatch();
@@ -135,6 +126,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				return "LibraryProviderSqliteKey";
 			}
 		}
+
+        public override bool CanShare { get { return false; } }
 
 		public override int CollectionCount
 		{
@@ -243,6 +236,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			LoadLibraryItems();
+
+			ItemAdded.CallEvents(this, null);
 		}
 
 		public async Task EnsureSamplePartsExist(IEnumerable<string> filenamesToValidate)
@@ -364,6 +359,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			printItems[itemIndexToRename].Commit();
 			LoadLibraryItems();
 		}
+
+        public override void ShareItem(int itemIndexToShare)
+        {
+
+        }
 
 		protected static void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
 		{

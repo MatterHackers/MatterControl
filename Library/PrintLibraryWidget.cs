@@ -39,6 +39,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace MatterHackers.MatterControl.PrintLibrary
@@ -48,12 +49,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		internal bool multipleItems;
 		internal bool protectedItems;
 		internal bool collectionItems;
+        internal bool shareItems;
 
-		internal ButtonEnableData(bool multipleItems, bool protectedItems, bool collectionItems)
+        internal ButtonEnableData(bool multipleItems, bool protectedItems, bool collectionItems, bool shareItems = false)
 		{
 			this.multipleItems = multipleItems;
 			this.protectedItems = protectedItems;
 			this.collectionItems = collectionItems;
+            this.shareItems = shareItems;
 		}
 	}
 
@@ -348,6 +351,20 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				itemOperationButtons.AddChild(removeFromLibraryButton);
 			}
 
+            
+                        
+            // add the share button            
+            {
+                Button shareFromLibraryButton = editButtonFactory.Generate("Share".Localize());
+				shareFromLibraryButton.ToolTipText = "Share designs from your Cloud Library".Localize();
+                shareFromLibraryButton.Margin = new BorderDouble(3, 0);
+                shareFromLibraryButton.Click += shareFromLibraryButton_Click;                
+                editButtonsEnableData.Add(new ButtonEnableData(false, false, false, true));
+                itemOperationButtons.AddChild(shareFromLibraryButton);
+            }
+
+
+
 			// add a rename button
 			{
 				Button renameFromLibraryButton = editButtonFactory.Generate("Rename".Localize());
@@ -528,6 +545,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						}
 					}
 
+                    if (editButtonsEnableData[buttonIndex].shareItems)
+                    {
+                        if (!libraryDataView.CurrentLibraryProvider.CanShare)
+                        {
+                            enabledStateToSet = false;
+                        }
+                    }
+
 					button.Enabled = enabledStateToSet;
 				}
 			}
@@ -552,15 +577,39 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			libraryDataView.SelectedItems.Sort(SortRowItemsOnIndex);
 
-			// remove them last to first
-			for(int i=libraryDataView.SelectedItems.Count-1; i>=0; i--)
+			IEnumerable<LibraryRowItem> partItems = libraryDataView.SelectedItems.Where(item => item is LibraryRowItemPart);
+			if(partItems.Count() == libraryDataView.SelectedItems.Count)
 			{
-				LibraryRowItem item = libraryDataView.SelectedItems[i];
-				item.RemoveFromCollection();
+				// If all selected items are LibraryRowItemParts, then we can invoke the batch remove functionality (in the Cloud library scenario)
+				// and perform all deletes as part of a single request, with a single notification from Socketeer
+				var indexesToRemove = partItems.Cast<LibraryRowItemPart>().Select(l => l.ItemIndex).ToArray();
+				libraryDataView.CurrentLibraryProvider.RemoveItems(indexesToRemove);
+			}
+			else
+			{
+				// Otherwise remove each item last to first
+				for (int i = libraryDataView.SelectedItems.Count - 1; i >= 0; i--)
+				{
+					LibraryRowItem item = libraryDataView.SelectedItems[i];
+					item.RemoveFromCollection();
+				}
 			}
 
 			libraryDataView.ClearSelectedItems();
 		}
+
+        private void shareFromLibraryButton_Click(object sender, EventArgs e)
+        {
+            if (libraryDataView.SelectedItems.Count == 1)
+            {
+                LibraryRowItem rowItem = libraryDataView.SelectedItems[0];
+                LibraryRowItemPart partItem = rowItem as LibraryRowItemPart;
+                if (partItem != null)
+                {
+                    libraryDataView.CurrentLibraryProvider.ShareItem(partItem.ItemIndex);
+                }
+            }
+        }
 
 		private void exportButton_Click(object sender, EventArgs e)
 		{

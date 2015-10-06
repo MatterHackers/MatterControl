@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
 
 		private PartPreviewMainWindow partPreviewWindow;
 
-		private PrintItemWrapper printItem;
+		private PrintItemWrapper printItemWrapper;
 
 		private bool thumbNailHasBeenCreated = false;
 
@@ -84,8 +84,6 @@ namespace MatterHackers.MatterControl
 		{
 			ToolTipText = "Click to show in 3D View".Localize();
 			this.ItemWrapper = item;
-
-			EnsureCorrectPartExtension();
 
 			// Set Display Attributes
 			this.Margin = new BorderDouble(0);
@@ -131,9 +129,9 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (printItem != null)
+				if (printItemWrapper != null)
 				{
-					string pathAndFile = printItem.FileLocation;
+					string pathAndFile = printItemWrapper.FileLocation;
 					if (File.Exists(pathAndFile))
 					{
 						bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
@@ -148,7 +146,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						QueueRowItem.ShowCantFindFileMessage(printItem);
+						QueueRowItem.ShowCantFindFileMessage(printItemWrapper);
 					}
 				}
 			});
@@ -164,20 +162,20 @@ namespace MatterHackers.MatterControl
 
 		public PrintItemWrapper ItemWrapper
 		{
-			get { return printItem; }
+			get { return printItemWrapper; }
 			set
 			{
 				if (ItemWrapper != null)
 				{
-					ItemWrapper.FileHasChanged -= item_FileHasChanged;
+					PrintItemWrapper.FileHasChanged.UnregisterEvent(item_FileHasChanged, ref unregisterEvents);
 				}
 				
-				printItem = value;
+				printItemWrapper = value;
 				
 				thumbNailHasBeenCreated = false;
 				if (ItemWrapper != null)
 				{
-					ItemWrapper.FileHasChanged += item_FileHasChanged;
+					PrintItemWrapper.FileHasChanged.RegisterEvent(item_FileHasChanged, ref unregisterEvents);
 				}
 			}
 		}
@@ -204,10 +202,6 @@ namespace MatterHackers.MatterControl
 				unregisterEvents(this, null);
 			}
 
-			if (ItemWrapper != null)
-			{
-				ItemWrapper.FileHasChanged -= item_FileHasChanged;
-			}
 			base.OnClosed(e);
 		}
 
@@ -328,20 +322,8 @@ namespace MatterHackers.MatterControl
 			thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
 		}
 
-		private static void EnsureCorrectPartExtension()
-		{
-			if (OsInformation.OperatingSystem == OSType.Mac
-				|| OsInformation.OperatingSystem == OSType.Android
-				|| OsInformation.OperatingSystem == OSType.X11)
-			{
-				partExtension = ".tga";
-			}
-		}
-
 		private static string GetImageFileName(string stlHashCode)
 		{
-			EnsureCorrectPartExtension();
-
 			string folderToSaveThumbnailsTo = ThumbnailPath();
 			string imageFileName = Path.Combine(folderToSaveThumbnailsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, BigRenderSize.x, BigRenderSize.y), partExtension));
 
@@ -556,8 +538,13 @@ namespace MatterHackers.MatterControl
 
 		private void item_FileHasChanged(object sender, EventArgs e)
 		{
-			thumbNailHasBeenCreated = false;
-			Invalidate();
+			PrintItemWrapper senderItem = sender as PrintItemWrapper;
+			if (senderItem != null
+				&& senderItem.FileLocation == printItemWrapper.FileLocation)
+			{
+				thumbNailHasBeenCreated = false;
+				Invalidate();
+			}
 		}
 
 		private bool MeshIsTooBigToLoad(string fileLocation)
