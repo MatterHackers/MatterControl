@@ -57,17 +57,21 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public static RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 
-		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
+		private Object initializingLock = new Object ();
+
+		public LibraryProviderSQLite(PrintItemCollection callerSuppliedCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
 			: base(parentLibraryProvider, setCurrentLibraryProvider)
 		{
 			this.Name = visibleName;
 
-			if (baseLibraryCollection == null)
+			// Lock ensures that SQLite providers initialized near the same time from different threads (which has been observed during debug)
+			// will run in a serial fashion and only one instance will construct and assign to .baseLibraryCollection
+			lock (initializingLock) 
 			{
-				baseLibraryCollection = GetRootLibraryCollection().Result;
+				// Use null coalescing operator to assign either the caller supplied collection or if null, the root library collection
+				this.baseLibraryCollection = callerSuppliedCollection ?? GetRootLibraryCollection();
 			}
 
-			this.baseLibraryCollection = baseLibraryCollection;
 			LoadLibraryItems();
 
 			ItemAdded.RegisterEvent(DatabaseFileChange, ref unregisterEvents);
@@ -160,7 +164,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					return;
 				}
 
-				PrintItemCollection rootLibraryCollection = GetRootLibraryCollection().Result;
+				PrintItemCollection rootLibraryCollection = GetRootLibraryCollection();
 				if (value != ""
 					&& this.baseLibraryCollection.Id != rootLibraryCollection.Id)
 				{
@@ -210,29 +214,24 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return result;
 		}
 
-		public async override void AddCollectionToLibrary(string collectionName)
-		{
-			await AddCollectionToLibraryAsync(collectionName);
-		}
-
-		public async Task AddCollectionToLibraryAsync(string collectionName)
+		public override void AddCollectionToLibrary(string collectionName)
 		{
 			PrintItemCollection newCollection = new PrintItemCollection(collectionName, "");
 			newCollection.ParentCollectionID = baseLibraryCollection.Id;
 			newCollection.Commit();
-			await LoadLibraryItems();
+			LoadLibraryItems();
 		}
 
-		public async override void AddItem(PrintItemWrapper itemToAdd)
+		public override void AddItem(PrintItemWrapper itemToAdd)
 		{
-			await AddItemAsync(itemToAdd.Name, itemToAdd.FileLocation, fireDataReloaded: true);
+			AddItem(itemToAdd.Name, itemToAdd.FileLocation);
 		}
 
-		public async Task AddItemAsync(string fileName, string fileLocation, bool fireDataReloaded)
+		public void AddItem(string fileName, string fileLocation)
 		{
 			if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(fileLocation))
 			{
-				await Task.Run(() => AddStlOrGcode(fileLocation, fileName));
+				AddStlOrGcode(fileLocation, fileName);
 			}
 
 			LoadLibraryItems();
@@ -240,7 +239,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			ItemAdded.CallEvents(this, null);
 		}
 
-		public async Task EnsureSamplePartsExist(IEnumerable<string> filenamesToValidate)
+		public void EnsureSamplePartsExist(IEnumerable<string> filenamesToValidate)
 		{
 			PreloadingCalibrationFiles = true;
 
@@ -272,7 +271,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			foreach (string file in tempFilesToImport)
 			{
 				// Ensure these operations run in serial rather than in parallel where they stomp on each other when writing to default.mcp
-				await this.AddItemAsync(Path.GetFileNameWithoutExtension(file), file, false);
+				this.AddItem(Path.GetFileNameWithoutExtension(file), file);
 			}
 
 			PreloadingCalibrationFiles = false;
@@ -318,15 +317,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new LibraryProviderSQLite(collection, SetCurrentLibraryProvider, this, collection.Name);
 		}
 
-		public override async void RemoveCollection(int collectionIndexToRemove)
-		{
-			await RemoveCollectionAsync(collectionIndexToRemove);
-		}
-
-		public async Task RemoveCollectionAsync(int collectionIndexToRemove)
+		public override void RemoveCollection(int collectionIndexToRemove)
 		{
 			childCollections[collectionIndexToRemove].Delete();
-			await LoadLibraryItems();
+			LoadLibraryItems();
 		}
 
 		public override void RemoveItem(int itemToRemoveIndex)
@@ -441,7 +435,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return result;
 		}
 
-		private async Task<PrintItemCollection> GetRootLibraryCollection()
+		private PrintItemCollection GetRootLibraryCollection()
 		{
 			// Attempt to initialize the library from the Datastore if null
 			PrintItemCollection rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
@@ -458,21 +452,19 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				this.baseLibraryCollection = rootLibraryCollection;
 
 				// Preload library with Oem supplied list of default parts
-				await this.EnsureSamplePartsExist(OemSettings.Instance.PreloadedLibraryFiles);
+				EnsureSamplePartsExist(OemSettings.Instance.PreloadedLibraryFiles);
 			}
 
 			return rootLibraryCollection;
 		}
 
-		private async Task LoadLibraryItems()
+		private void LoadLibraryItems()
 		{
 			IEnumerable<PrintItem> partFiles = null;
 			IEnumerable<PrintItemCollection> collections = null;
-			await Task.Run(() =>
-			{
-				partFiles = GetLibraryItems(KeywordFilter);
-				collections = GetChildCollections();
-			});
+
+			partFiles = GetLibraryItems(KeywordFilter);
+			collections = GetChildCollections();
 
 			printItems.Clear();
 			if (partFiles != null)
