@@ -407,7 +407,21 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				if (CharacterHasMesh(letterPrinter, letter))
 				{
+#if true
 					Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, unscaledLetterHeight / 2);
+#else
+					// this is the code to make rounded tops
+					// convert the letterPrinter to clipper polygons
+					// inset them
+					// convert them back into a vertex source
+					// merge both the inset and original vertex sources together
+					// convert the new vertex source into a mesh (trianglulate them)
+					// offset the inner loop in z
+					// create the polygons from the inner loop to a center point so that there is the rest of an approximation of the bubble
+					// make the mesh for the bottom 
+					// add the top and bottom together
+					// done
+#endif
 
 					asynchMeshGroups.Add(new MeshGroup(textMesh));
 
@@ -444,7 +458,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				baseRect.Inflate(2);
 				baseRect *= roundingScale;
 				RoundedRect baseRoundedRect = new RoundedRect(baseRect, 1 * roundingScale);
+
 				Mesh baseMeshResult = VertexSourceToMesh.Extrude(baseRoundedRect, unscaledBaseHeight / 2 * roundingScale * sizeScrollBar.Value * heightScrollBar.Value);
+
 				baseMeshResult.Transform(Matrix4X4.CreateScale(1 / roundingScale));
 
 				meshesList.Add(new MeshGroup(baseMeshResult));
