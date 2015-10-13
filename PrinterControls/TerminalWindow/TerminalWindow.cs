@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 			AlwaysOnTopOfMain = true;
 #if __ANDROID__
 			TerminalWidget terminalWidget = new TerminalWidget(true);
-			this.AddChild(new SoftKeyboardContentOffset(terminalWidget, SoftKeyboardContentOffset.AndroidKeyboardOffset));
+			this.AddChild(new SoftKeyboardContentOffset(terminalWidget));
 			terminalWidget.Closed += (sender, e) => { Close(); };
 #else
 			this.AddChild(new TerminalWidget(true));

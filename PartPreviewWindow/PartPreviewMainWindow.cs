@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 #if __ANDROID__
 			TerminalWidget terminalWidget = new TerminalWidget(true);
-			this.AddChild(new SoftKeyboardContentOffset(partPreviewWidget, SoftKeyboardContentOffset.AndroidKeyboardOffset));
+			this.AddChild(new SoftKeyboardContentOffset(partPreviewWidget));
 			//mainContainer.Closed += (sender, e) => { Close(); };
 #else
 			this.AddChild(partPreviewWidget);
