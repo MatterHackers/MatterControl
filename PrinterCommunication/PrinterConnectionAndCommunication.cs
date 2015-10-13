@@ -236,49 +236,49 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			MonitorPrinterTemperature = true;
 
 			StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
-			ReadLineStartCallBacks.AddCallBackToKey("start", FoundStart);
-			ReadLineStartCallBacks.AddCallBackToKey("start", PrintingCanContinue);
+			ReadLineStartCallBacks.AddCallbackToKey("start", FoundStart);
+			ReadLineStartCallBacks.AddCallbackToKey("start", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallBackToKey("ok", SuppressEcho);
-			ReadLineStartCallBacks.AddCallBackToKey("wait", SuppressEcho);
-			ReadLineStartCallBacks.AddCallBackToKey("T:", SuppressEcho); // repatier
+			ReadLineStartCallBacks.AddCallbackToKey("ok", SuppressEcho);
+			ReadLineStartCallBacks.AddCallbackToKey("wait", SuppressEcho);
+			ReadLineStartCallBacks.AddCallbackToKey("T:", SuppressEcho); // repatier
 
-			ReadLineStartCallBacks.AddCallBackToKey("ok", PrintingCanContinue);
-			ReadLineStartCallBacks.AddCallBackToKey("Done saving file", PrintingCanContinue);
+			ReadLineStartCallBacks.AddCallbackToKey("ok", PrintingCanContinue);
+			ReadLineStartCallBacks.AddCallbackToKey("Done saving file", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallBackToKey("ok T:", ReadTemperatures); // marlin
-			ReadLineStartCallBacks.AddCallBackToKey("ok T0:", ReadTemperatures); // marlin
-			ReadLineStartCallBacks.AddCallBackToKey("T:", ReadTemperatures); // repatier
-			ReadLineStartCallBacks.AddCallBackToKey("B:", ReadTemperatures); // smoothie
+			ReadLineStartCallBacks.AddCallbackToKey("ok T:", ReadTemperatures); // marlin
+			ReadLineStartCallBacks.AddCallbackToKey("ok T0:", ReadTemperatures); // marlin
+			ReadLineStartCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repatier
+			ReadLineStartCallBacks.AddCallbackToKey("B:", ReadTemperatures); // smoothie
 
-			ReadLineStartCallBacks.AddCallBackToKey("SD printing byte", ReadSdProgress); // repatier
+			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repatier
 
-			ReadLineStartCallBacks.AddCallBackToKey("C:", ReadTargetPositions);
-			ReadLineStartCallBacks.AddCallBackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
-			ReadLineStartCallBacks.AddCallBackToKey("X:", ReadTargetPositions);
+			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
+			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
+			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
 
-			ReadLineContainsCallBacks.AddCallBackToKey("RS:", PrinterRequestsResend);
-			ReadLineContainsCallBacks.AddCallBackToKey("Resend:", PrinterRequestsResend);
+			ReadLineContainsCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
+			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
 
-			ReadLineContainsCallBacks.AddCallBackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
-			ReadLineStartCallBacks.AddCallBackToKey("EXTENSIONS:", PrinterStatesExtensions);
+			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
+			ReadLineStartCallBacks.AddCallbackToKey("EXTENSIONS:", PrinterStatesExtensions);
 
-			WriteLineStartCallBacks.AddCallBackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallBackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallBackToKey("M140", BedTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallBackToKey("M190", BedTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M140", BedTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M190", BedTemperatureWasWritenToPrinter);
 
-			WriteLineStartCallBacks.AddCallBackToKey("M106", FanSpeedWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallBackToKey("M107", FanOffWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
 
-			WriteLineStartCallBacks.AddCallBackToKey("M82", ExtruderWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallBackToKey("M83", ExtruderWasSetToRelativeMode);
+			WriteLineStartCallBacks.AddCallbackToKey("M82", ExtruderWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.AddCallbackToKey("M83", ExtruderWasSetToRelativeMode);
 
-			WriteLineStartCallBacks.AddCallBackToKey("G90", MovementWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallBackToKey("G91", MovementWasSetToRelativeMode);
+			WriteLineStartCallBacks.AddCallbackToKey("G90", MovementWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
 
-			WriteLineStartCallBacks.AddCallBackToKey("M80", AtxPowerUpWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallBackToKey("M81", AtxPowerDownWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
 
 		}
 
@@ -1026,7 +1026,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			// Register to detect the file deleted confirmation.
 			// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
-			ReadLineStartCallBacks.AddCallBackToKey("File deleted:", FileDeleteConfirmed);
+			ReadLineStartCallBacks.AddCallbackToKey("File deleted:", FileDeleteConfirmed);
 			// and send the line to delete the file
 			SendLineToPrinterNow("M30 {0}".FormatWith(fileName.ToLower()));
 		}
@@ -2033,7 +2033,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			SendLineToPrinterNow("M23 {0}".FormatWith(ActivePrintItem.PrintItem.Name.ToLower())); // Select SD File
 			SendLineToPrinterNow("M24"); // Start/resume SD print
 
-			ReadLineStartCallBacks.AddCallBackToKey("Done printing file", DonePrintingSdFile);
+			ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
 
 			return true;
 		}
@@ -2377,7 +2377,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ReadLineStartCallBacks.RemoveCallBackFromKey("Done printing file", DonePrintingSdFile);
+				ReadLineStartCallBacks.RemoveCallbackFromKey("Done printing file", DonePrintingSdFile);
 			});
 			CommunicationState = CommunicationStates.FinishedPrint;
 
@@ -2411,7 +2411,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ReadLineStartCallBacks.RemoveCallBackFromKey("File deleted:", FileDeleteConfirmed);
+				ReadLineStartCallBacks.RemoveCallbackFromKey("File deleted:", FileDeleteConfirmed);
 			});
 			PrintingCanContinue(this, null);
 		}
@@ -2658,7 +2658,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										CommunicationState = CommunicationStates.PrintingFromSd;
 
-										ReadLineStartCallBacks.AddCallBackToKey("Done printing file", DonePrintingSdFile);
+										ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
 									}
 									else
 									{
