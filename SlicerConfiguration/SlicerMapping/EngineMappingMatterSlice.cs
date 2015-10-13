@@ -196,6 +196,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //numberOfTopLayers=6
             new AsCountOrDistance("numberOfTopLayers", "top_solid_layers", "layer_height"),
 
+            new AsPercentOfReferenceOrDirect("topInfillSpeed", "top_solid_infill_speed", "infill_speed"),
+
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
             new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
 

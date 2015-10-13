@@ -849,7 +849,7 @@
     "PresentationName": "Solid Infill",
     "HelpText": "The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm/s"
+    "ExtraSettings": "mm/s or %"
   },
   {
     "SlicerConfigName": "spiral_vase",
@@ -1074,7 +1074,7 @@
     "PresentationName": "Top Solid Infill",
     "HelpText": "The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm/s"
+    "ExtraSettings": "mm/s or %"
   },
   {
     "SlicerConfigName": "top_solid_layers",

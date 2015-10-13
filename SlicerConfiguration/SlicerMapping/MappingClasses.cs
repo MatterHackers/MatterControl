@@ -126,6 +126,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		/// <summary>
+		/// This key will be show in the editor, but it will not be passed to the actual slicing engine.
+		/// Some of these values are used in other parts of MatterControl, not slicing, but are held in the slicing data.
+		/// </summary>
+		/// <param name="originalKey"></param>
 		public VisibleButNotMappedToEngine(string originalKey)
 			: base("", originalKey)
 		{

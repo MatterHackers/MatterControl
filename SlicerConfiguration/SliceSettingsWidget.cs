@@ -671,9 +671,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, item.Key))
 					{
 						OrganizerSettingsData settingInfo = new OrganizerSettingsData(item.Key, item.Key, OrganizerSettingsData.DataEditTypes.STRING);
-						GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, 0);
-						topToBottomSettings.AddChild(controlsForThisSetting);
-						count++;
+						if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName))
+						{
+							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, 0);
+							topToBottomSettings.AddChild(controlsForThisSetting);
+							count++;
+						}
 					}
 				}
 
