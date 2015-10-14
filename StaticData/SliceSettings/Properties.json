@@ -655,6 +655,13 @@
     "ExtraSettings": "mm or %\\nleave 0 for default"
   },
   {
+    "SlicerConfigName": "external_perimeter_extrusion_width",
+    "PresentationName": "Outside Perimeters",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %\\nleave 0 for default"
+  },
+  {
     "SlicerConfigName": "perimeter_speed",
     "PresentationName": "Inside Perimeters",
     "HelpText": "Sets the default movement speed while printing inside perimeters.",

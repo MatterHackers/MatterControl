@@ -201,6 +201,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
             new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
 
+			//outsidePerimeterExtrusionWidth=extrusionWidth=nozzleDiameter
+			new AsPercentOfReferenceOrDirect("outsidePerimeterExtrusionWidth", "external_perimeter_extrusion_width", "nozzle_diameter"),
+
             //numberOfPerimeters=2
             new AsCountOrDistance("numberOfPerimeters", "perimeters", "nozzle_diameter"),
 
