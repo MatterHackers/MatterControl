@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
 	/// It should be refactoried into better moduals at some point.
 	/// </summary>
-	public class PrinterConnectionAndCommunication : IRepRapCallbacks
+	public class PrinterConnectionAndCommunication
 	{
 		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
 
@@ -194,9 +194,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool printWasCanceled = false;
 
-		private FoundStringContainsCallbacks ReadLineContainsCallbacks = new FoundStringContainsCallbacks();
+		private FoundStringContainsCallbacks ReadLineContainsCallBacks = new FoundStringContainsCallbacks();
 
-		private FoundStringStartsWithCallbacks ReadLineStartCallbacks = new FoundStringStartsWithCallbacks();
+		private FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
 
 		private string removeFromQueueMessage = "Cannot find this file\nWould you like to remove it from the queue?".Localize();
 
@@ -227,15 +227,59 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private Stopwatch waitingForPosition = new Stopwatch();
 
-		private FoundStringContainsCallbacks WriteLineContainsCallbacks = new FoundStringContainsCallbacks();
+		private FoundStringContainsCallbacks WriteLineContainsCallBacks = new FoundStringContainsCallbacks();
 
-		private FoundStringStartsWithCallbacks WriteLineStartCallbacks = new FoundStringStartsWithCallbacks();
+		private FoundStringStartsWithCallbacks WriteLineStartCallBacks = new FoundStringStartsWithCallbacks();
 
 		private PrinterConnectionAndCommunication()
 		{
 			MonitorPrinterTemperature = true;
 
-			RepRapReadWriteCallbacks.SetStandardCallbacks(this, ReadLineStartCallbacks, ReadLineContainsCallbacks, WriteLineStartCallbacks, WriteLineContainsCallbacks);
+			StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
+			ReadLineStartCallBacks.AddCallbackToKey("start", FoundStart);
+			ReadLineStartCallBacks.AddCallbackToKey("start", PrintingCanContinue);
+
+			ReadLineStartCallBacks.AddCallbackToKey("ok", SuppressEcho);
+			ReadLineStartCallBacks.AddCallbackToKey("wait", SuppressEcho);
+			ReadLineStartCallBacks.AddCallbackToKey("T:", SuppressEcho); // repatier
+
+			ReadLineStartCallBacks.AddCallbackToKey("ok", PrintingCanContinue);
+			ReadLineStartCallBacks.AddCallbackToKey("Done saving file", PrintingCanContinue);
+
+			ReadLineStartCallBacks.AddCallbackToKey("ok T:", ReadTemperatures); // marlin
+			ReadLineStartCallBacks.AddCallbackToKey("ok T0:", ReadTemperatures); // marlin
+			ReadLineStartCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repatier
+			ReadLineStartCallBacks.AddCallbackToKey("B:", ReadTemperatures); // smoothie
+
+			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repatier
+
+			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
+			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
+			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
+
+			ReadLineContainsCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
+			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
+
+			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
+			ReadLineStartCallBacks.AddCallbackToKey("EXTENSIONS:", PrinterStatesExtensions);
+
+			WriteLineStartCallBacks.AddCallbackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M140", BedTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M190", BedTemperatureWasWritenToPrinter);
+
+			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
+
+			WriteLineStartCallBacks.AddCallbackToKey("M82", ExtruderWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.AddCallbackToKey("M83", ExtruderWasSetToRelativeMode);
+
+			WriteLineStartCallBacks.AddCallbackToKey("G90", MovementWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
+
+			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
+
 		}
 
 		[Flags]
@@ -982,7 +1026,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			// Register to detect the file deleted confirmation.
 			// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
-			ReadLineStartCallbacks.AddCallbackToKey("File deleted:", FileDeleteConfirmed);
+			ReadLineStartCallBacks.AddCallbackToKey("File deleted:", FileDeleteConfirmed);
 			// and send the line to delete the file
 			SendLineToPrinterNow("M30 {0}".FormatWith(fileName.ToLower()));
 		}
@@ -1511,8 +1555,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										}
 
 										FoundStringEventArgs foundResponse = new FoundStringEventArgs(currentEvent.Data);
-										ReadLineStartCallbacks.CheckForKeys(foundResponse);
-										ReadLineContainsCallbacks.CheckForKeys(foundResponse);
+										ReadLineStartCallBacks.CheckForKeys(foundResponse);
+										ReadLineContainsCallBacks.CheckForKeys(foundResponse);
 
 										if (foundResponse.SendToDelegateFunctions)
 										{
@@ -1797,8 +1841,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						// put in the code to return to return to our pre-pause postion
 						lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), lastIndexAdded);
-						// make sure we are on the same extrude index that we were before we paused
-						//lastIndexAdded = InjectGCode("T{0}".FormatWith(extruderIndex));
 					}
 				}
 			}
@@ -1991,7 +2033,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			SendLineToPrinterNow("M23 {0}".FormatWith(ActivePrintItem.PrintItem.Name.ToLower())); // Select SD File
 			SendLineToPrinterNow("M24"); // Start/resume SD print
 
-			ReadLineStartCallbacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
+			ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
 
 			return true;
 		}
@@ -2335,7 +2377,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ReadLineStartCallbacks.RemoveCallbackFromKey("Done printing file", DonePrintingSdFile);
+				ReadLineStartCallBacks.RemoveCallbackFromKey("Done printing file", DonePrintingSdFile);
 			});
 			CommunicationState = CommunicationStates.FinishedPrint;
 
@@ -2355,12 +2397,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void ExtruderWasSetToAbsoluteMode(object sender, EventArgs e)
+		private void ExtruderWasSetToAbsoluteMode(object sender, EventArgs e)
 		{
 			extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
 		}
 
-		public void ExtruderWasSetToRelativeMode(object sender, EventArgs e)
+		private void ExtruderWasSetToRelativeMode(object sender, EventArgs e)
 		{
 			extruderMode = PrinterMachineInstruction.MovementTypes.Relative;
 		}
@@ -2369,7 +2411,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ReadLineStartCallbacks.RemoveCallbackFromKey("File deleted:", FileDeleteConfirmed);
+				ReadLineStartCallBacks.RemoveCallbackFromKey("File deleted:", FileDeleteConfirmed);
 			});
 			PrintingCanContinue(this, null);
 		}
@@ -2489,22 +2531,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			return maxTime * 1.5;
 		}
 
-		public void MovementWasSetToAbsoluteMode(object sender, EventArgs e)
+		private void MovementWasSetToAbsoluteMode(object sender, EventArgs e)
 		{
 			movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
 		}
 
-		public void MovementWasSetToRelativeMode(object sender, EventArgs e)
+		private void MovementWasSetToRelativeMode(object sender, EventArgs e)
 		{
 			movementMode = PrinterMachineInstruction.MovementTypes.Relative;
 		}
 
-		public void AtxPowerUpWasWritenToPrinter(object sender, EventArgs e)
+		private void AtxPowerUpWasWritenToPrinter(object sender, EventArgs e)
 		{
 			OnAtxPowerStateChanged(true);
 		}
 
-		public void AtxPowerDownWasWritenToPrinter(object sender, EventArgs e)
+		private void AtxPowerDownWasWritenToPrinter(object sender, EventArgs e)
 		{
 			OnAtxPowerStateChanged(false);
 		}
@@ -2616,7 +2658,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										CommunicationState = CommunicationStates.PrintingFromSd;
 
-										ReadLineStartCallbacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
+										ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
 									}
 									else
 									{
@@ -2904,8 +2946,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						if (lineWithoutChecksum != null)
 						{
-							WriteLineStartCallbacks.CheckForKeys(foundStringEvent);
-							WriteLineContainsCallbacks.CheckForKeys(foundStringEvent);
+							WriteLineStartCallBacks.CheckForKeys(foundStringEvent);
+							WriteLineContainsCallBacks.CheckForKeys(foundStringEvent);
 
 							if (foundStringEvent.SendToDelegateFunctions)
 							{

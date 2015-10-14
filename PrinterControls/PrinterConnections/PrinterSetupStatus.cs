@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 			return Convert.ToInt32(result);
 		}
 
-		public async Task LoadCalibrationPrints()
+		public void LoadCalibrationPrints()
 		{
 			if (this.ActivePrinter.Make != null && this.ActivePrinter.Model != null)
 			{
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 
 				using (LibraryProviderSQLite instance = new LibraryProviderSQLite(null, null, null, "Local Library"))
 				{
-					await instance.EnsureSamplePartsExist(calibrationPrintFileNames);
+					instance.EnsureSamplePartsExist(calibrationPrintFileNames);
 				}
 
 				var queueItems = QueueData.Instance.GetItemNames();

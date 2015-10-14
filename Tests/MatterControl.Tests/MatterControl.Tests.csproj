@@ -97,7 +97,7 @@
       <Project>{f67ae800-b0c7-42a8-836f-597b4e74591c}</Project>
       <Name>GCodeVisualizer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\SubModules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
+    <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
       <Project>{e9102310-0029-4d8f-b1e9-88fba6147d45}</Project>
       <Name>GuiAutomation</Name>
     </ProjectReference>
