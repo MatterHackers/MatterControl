@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				ActiveSliceSettings.Instance.BedShape);
 
 #if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(part3DView, SoftKeyboardContentOffset.AndroidKeyboardOffset));
+			this.AddChild(new SoftKeyboardContentOffset(part3DView));
 #else
 			this.AddChild(part3DView);
 #endif

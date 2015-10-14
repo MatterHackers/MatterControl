@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 #if __ANDROID__
 			TerminalWidget terminalWidget = new TerminalWidget(true);
-			this.AddChild(new SoftKeyboardContentOffset(mainContainer, SoftKeyboardContentOffset.AndroidKeyboardOffset));
+			this.AddChild(new SoftKeyboardContentOffset(mainContainer));
 			//mainContainer.Closed += (sender, e) => { Close(); };
 #else
 			AddChild(mainContainer);
