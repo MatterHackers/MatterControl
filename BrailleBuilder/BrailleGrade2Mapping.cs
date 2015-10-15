@@ -68,11 +68,11 @@ always alw
 +ance .e
 and &
 ar >
-AS z 
+AS z
 +ation ,n
 
 // b's
-+bb+ 2"" 
++bb+ 2
 BE 2
 be+ 2
 because 2c
