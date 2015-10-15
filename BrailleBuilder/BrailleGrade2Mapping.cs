@@ -128,7 +128,7 @@ EVERY e
 father
 +ff+
 first
-for
+for =
 FROM f
 +ful
 

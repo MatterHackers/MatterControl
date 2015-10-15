@@ -64,13 +64,25 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Assert.IsTrue(ConvertWord("station") == "/,n");
 				Assert.IsTrue(ConvertWord("as") == "z");
 				Assert.IsTrue(ConvertWord("abby") == "a2y");
-				Assert.IsTrue(ConvertString("here it is") == "\"h x is");
 				//Matt Implemented
 				Assert.IsTrue(ConvertWord("commitment") == "-mit;t");
 				Assert.IsTrue(ConvertWord("mother") == "\"m");
 				Assert.IsTrue(ConvertWord("myself") == "myf");
 				Assert.IsTrue(ConvertWord("lochness") == "lo*;s");
 				Assert.IsTrue(ConvertWord("Seven o'clock") == ",sev5 o'c");
+
+				Assert.IsTrue(ConvertWord("test") == "te/");
+				Assert.IsTrue(ConvertWord("that") == "t");
+				Assert.IsTrue(ConvertWord("will") == "w");
+				Assert.IsTrue(ConvertWord("show") == "%{");
+				Assert.IsTrue(ConvertWord("our") == "|r");
+				Assert.IsTrue(ConvertWord("with") == ")");
+				Assert.IsTrue(ConvertWord("braille") == "brl");
+				Assert.IsTrue(ConvertWord("conformance") == "3=m.e");
+
+				Assert.IsTrue(ConvertString("here it is") == "\"h x is");
+				Assert.IsTrue(ConvertString("test that will show our conformance with braille") == "te/ t w %{ |r 3=m.e ) brl");
+				//Assert.IsTrue(ConvertString("so we can create some strings and then this gives us the output that is expected") == "s we c cr1te \"s /r+s & !n ? gives u ! |tput t is expect$");				
 
 				ranTests = true;
 			}
