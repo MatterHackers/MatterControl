@@ -3826,3 +3826,12 @@ Translated:Outside Perimeters
 English:Sample the bed at {0} points
 Translated:Sample the bed at {0} points
 
+English:Software Print Leveling (disabled)
+Translated:Software Print Leveling (disabled)
+
+English:Calibration Settings
+Translated:Calibration Settings
+
+English:Software Print Leveling (enabled)
+Translated:Software Print Leveling (enabled)
+

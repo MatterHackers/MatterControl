@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -69,8 +70,12 @@ namespace MatterHackers.MatterControl
 			mainLayoutContainer.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			mainLayoutContainer.Padding = new BorderDouble(top: 10);
 
-			HardwareSettingsWidget hardwareGroupbox = new HardwareSettingsWidget();
-			mainLayoutContainer.AddChild(hardwareGroupbox);
+			if (!ActiveSliceSettings.Instance.HasHardwareLeveling())
+			{
+				mainLayoutContainer.AddChild(new CalibrationSettingsWidget());
+			}
+
+			mainLayoutContainer.AddChild(new HardwareSettingsWidget());
 
 			CloudSettingsWidget cloudGroupbox = new CloudSettingsWidget();
 			mainLayoutContainer.AddChild(cloudGroupbox);

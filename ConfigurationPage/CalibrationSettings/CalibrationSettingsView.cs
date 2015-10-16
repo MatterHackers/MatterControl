@@ -13,38 +13,24 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
-	public class HardwareSettingsWidget : SettingsViewBase
+	public class CalibrationSettingsWidget : SettingsViewBase
 	{
-		private Button openGcodeTerminalButton;
-		private Button openCameraButton;
-
-		private DisableableWidget eePromControlsContainer;
-		private DisableableWidget terminalCommunicationsContainer;
+		private DisableableWidget printLevelingContainer;
 
 		private event EventHandler unregisterEvents;
 
-		public HardwareSettingsWidget()
-			: base("Hardware Settings".Localize())
+		public CalibrationSettingsWidget()
+			: base("Calibration Settings".Localize())
 		{
-			eePromControlsContainer = new DisableableWidget();
-			eePromControlsContainer.AddChild(GetEEPromControl());
-			terminalCommunicationsContainer = new DisableableWidget();
-			terminalCommunicationsContainer.AddChild(GetGcodeTerminalControl());
-
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			mainContainer.AddChild(eePromControlsContainer);
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-
-			mainContainer.AddChild(terminalCommunicationsContainer);
-
-			DisableableWidget cameraContainer = new DisableableWidget();
-			cameraContainer.AddChild(GetCameraControl());
-
-			if (ApplicationSettings.Instance.get("HardwareHasCamera") == "true")
+			printLevelingContainer = new DisableableWidget();
+			if (!ActiveSliceSettings.Instance.HasHardwareLeveling())
 			{
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-				mainContainer.AddChild(cameraContainer);
+				printLevelingContainer.AddChild(GetAutoLevelControl());
+
+				mainContainer.AddChild(printLevelingContainer);
 			}
+
+			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
 			AddChild(mainContainer);
 			AddHandlers();
@@ -168,14 +154,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			cameraLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			cameraLabel.VAnchor = VAnchor.ParentCenter;
 
-			openCameraButton = textImageButtonFactory.Generate("Preview".Localize().ToUpper());
-			openCameraButton.Click += new EventHandler(openCameraPreview_Click);
-			openCameraButton.Margin = new BorderDouble(left: 6);
-
-			buttonRow.AddChild(cameraIcon);
-			buttonRow.AddChild(cameraLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(openCameraButton);
 #if __ANDROID__
 
 			GuiWidget publishImageSwitchContainer = new FlowLayoutWidget();
@@ -194,38 +172,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			buttonRow.AddChild(publishImageSwitchContainer);
 #endif
-
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetGcodeTerminalControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(0, 4);
-
-			Agg.Image.ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "terminal-24x24.png"));
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				InvertLightness.DoInvertLightness(terminalSettingsImage);
-			}
-
-			ImageWidget terminalIcon = new ImageWidget(terminalSettingsImage);
-			terminalIcon.Margin = new BorderDouble(right: 6, bottom: 6);
-
-			TextWidget gcodeTerminalLabel = new TextWidget("Gcode Terminal");
-			gcodeTerminalLabel.AutoExpandBoundsToText = true;
-			gcodeTerminalLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;
-
-			openGcodeTerminalButton = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
-			openGcodeTerminalButton.Name = "Show Terminal Button";
-			openGcodeTerminalButton.Click += new EventHandler(openGcodeTerminalButton_Click);
-
-			buttonRow.AddChild(terminalIcon);
-			buttonRow.AddChild(gcodeTerminalLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(openGcodeTerminalButton);
 
 			return buttonRow;
 		}
@@ -351,8 +297,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			if (ActivePrinterProfile.Instance.ActivePrinter == null)
 			{
 				// no printer selected
-				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
 			else // we at least have a printer selected
@@ -365,19 +310,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
 					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
 					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-						eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
 					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-						eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-						eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
@@ -388,8 +330,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
 							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
 							case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
-								eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-								terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								break;
 
 							default:
@@ -398,8 +339,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
 					default:
