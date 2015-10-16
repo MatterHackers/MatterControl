@@ -115,7 +115,7 @@ DO
 
 // e's
 +ea+
-ed
+ed $
 either ei
 en 5
 +ence

@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			foreach(string inLine in conversions)
 			{
-				string line = inLine.Replace("\r", "");
+				string line = inLine.Replace("\r", "").Trim();
 				if(line != null && line.Length>0)
 				{
 					string[] keyConversionPair = line.Split(' ');
