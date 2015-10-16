@@ -2151,6 +2151,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void ScaleAxis(double scaleIn, int axis)
 		{
 			AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
+
+			AxisAlignedBoundingBox totalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
+
 			AxisAlignedBoundingBox scaledBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.scale);
 
 			// first we remove any scale we have applied and then scale to the new value
@@ -2169,7 +2172,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scale.scale *= totalScale;
 			SelectedMeshGroupTransform = scale;
 
+			// And make sure its center has not changed
+			AxisAlignedBoundingBox postScaleBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
+			ScaleRotateTranslate translation = SelectedMeshGroupTransform;
+			translation.translation *= Matrix4X4.CreateTranslation(totalMeshBounds.Center - postScaleBounds.Center);
+			SelectedMeshGroupTransform = translation;
+
 			PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
+
 			PartHasBeenChanged();
 			Invalidate();
 			MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
