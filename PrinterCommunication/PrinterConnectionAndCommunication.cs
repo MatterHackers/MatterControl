@@ -2210,6 +2210,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					try
 					{
 						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).CreateAndOpen(serialPortName, baudRate, true);
+#if __ANDROID__
+						ToggleHighLowHeigh(serialPort);
+#endif
 						// wait a bit of time to let the firmware start up
 						Thread.Sleep(500);
 						CommunicationState = CommunicationStates.AttemptingToConnect;
