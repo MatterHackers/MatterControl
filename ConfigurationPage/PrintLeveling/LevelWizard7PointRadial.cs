@@ -151,20 +151,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
     public abstract class LevelWizardRadialBase : LevelWizardBase
     {
         protected string pageOneStepText = "Print Leveling Overview".Localize();
-        protected string pageOneInstructionsTextOne = LocalizedString.Get("Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.");
-        protected string pageOneInstructionsTextTwo = LocalizedString.Get("'Home' the printer");
-        protected string pageOneInstructionsTextThree = LocalizedString.Get("Sample the bed at seven points");
-        protected string pageOneInstructionsTextFour = LocalizedString.Get("Turn auto leveling on");
-        protected string pageOneInstructionsText5 = LocalizedString.Get("You should be done in about 5 minutes.");
-        protected string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extrude is clean.");
-        protected string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
+        protected string pageOneInstructionsTextOne = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
+        protected string pageOneInstructionsTextTwo = "'Home' the printer".Localize();
+        protected string pageOneInstructionsTextThree = "Sample the bed at {0} points".Localize();
+        protected string pageOneInstructionsTextFour = "Turn auto leveling on".Localize();
+        protected string pageOneInstructionsText5 = "You should be done in about 5 minutes.".Localize();
+        protected string pageOneInstructionsText6 = "Note: Be sure the tip of the extrude is clean.".Localize();
+		protected string pageOneInstructionsText7 = "Click 'Next' to continue.".Localize();
 
         public LevelWizardRadialBase(LevelWizardBase.RuningState runningState, int width, int height, int totalSteps, int numberOfRadialSamples)
 			: base(width, height, totalSteps)
 		{
+			pageOneInstructionsTextThree = pageOneInstructionsTextThree.FormatWith(numberOfRadialSamples+1);
+
             bool allowLessThanZero = ActiveSliceSettings.Instance.GetActiveValue("z_can_be_negative") == "1";
-            string printLevelWizardTitle = LocalizedString.Get("MatterControl");
-            string printLevelWizardTitleFull = LocalizedString.Get("Print Leveling Wizard");
+            string printLevelWizardTitle = "MatterControl";
+            string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
             Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
             ProbePosition[] probePositions = new ProbePosition[numberOfRadialSamples + 1];
             for (int i = 0; i < probePositions.Length; i++)
@@ -187,10 +189,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             string homingPageInstructions = string.Format("{0}:\n\n\t• {1}\n\n{2}", homingPageInstructionsTextOne, homingPageInstructionsTextTwo, homingPageInstructionsTextThree);
             printLevelWizard.AddPage(new HomePrinterPage(homingPageStepText, homingPageInstructions));
 
-            string positionLabel = LocalizedString.Get("Position");
-            string lowPrecisionLabel = LocalizedString.Get("Low Precision");
-            string medPrecisionLabel = LocalizedString.Get("Medium Precision");
-            string highPrecisionLabel = LocalizedString.Get("High Precision");
+            string positionLabel = "Position".Localize();
+            string lowPrecisionLabel = "Low Precision".Localize();
+            string medPrecisionLabel = "Medium Precision".Localize();
+			string highPrecisionLabel = "High Precision".Localize();
 
             double bedRadius = Math.Min(ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y) / 2;
 

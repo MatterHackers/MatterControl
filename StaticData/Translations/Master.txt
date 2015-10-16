@@ -3823,3 +3823,6 @@ Translated:Rebuild
 English:Outside Perimeters
 Translated:Outside Perimeters
 
+English:Sample the bed at {0} points
+Translated:Sample the bed at {0} points
+
