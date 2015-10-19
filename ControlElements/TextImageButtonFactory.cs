@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 		protected double borderWidth = 1;
 		protected double borderRadius = 0;
 
-		public TextImageWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes borderColor, RGBA_Bytes textColor, double borderWidth, BorderDouble margin, ImageBuffer image = null, int fontSize = 12, FlowDirection flowDirection = FlowDirection.LeftToRight, double height = 40, double width = 0, bool centerText = false, double imageSpacing = 0)
+		public TextImageWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes borderColor, RGBA_Bytes textColor, double borderWidth, BorderDouble margin, ImageBuffer image = null, double fontSize = 12, FlowDirection flowDirection = FlowDirection.LeftToRight, double height = 40, double width = 0, bool centerText = false, double imageSpacing = 0)
 			: base()
 		{
 			this.image = image;
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 		public RGBA_Bytes hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
 		public RGBA_Bytes pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 		public RGBA_Bytes disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		public int fontSize = 12;
+		public double fontSize = 12;
 		public double borderWidth = 1;
 		public bool invertImageLocation = false;
 		public bool AllowThemeToAdjustImage = true;

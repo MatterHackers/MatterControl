@@ -382,7 +382,7 @@ namespace MatterHackers.RayTracer
 				AxisAlignedBoundingBox meshBounds = GetAxisAlignedBoundingBox(loadedMeshGroups);
 
 				bool done = false;
-				double scallFraction = .1;
+				double scaleFraction = .1;
 				RectangleDouble goalBounds = new RectangleDouble(0, 0, size.x, size.y);
 				goalBounds.Inflate(-10);
 				while (!done)
@@ -391,25 +391,25 @@ namespace MatterHackers.RayTracer
 
 					if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
 					{
-						trackballTumbleWidget.TrackBallController.Scale *= (1 + scallFraction);
+						trackballTumbleWidget.TrackBallController.Scale *= (1 + scaleFraction);
 						partScreenBounds = GetScreenBounds(meshBounds);
 
 						// If it crossed over the goal reduct the amount we are adjusting by.
 						if (NeedsToBeSmaller(partScreenBounds, goalBounds))
 						{
-							scallFraction /= 2;
+							scaleFraction /= 2;
 						}
 					}
 					else
 					{
-						trackballTumbleWidget.TrackBallController.Scale *= (1 - scallFraction);
+						trackballTumbleWidget.TrackBallController.Scale *= (1 - scaleFraction);
 						partScreenBounds = GetScreenBounds(meshBounds);
 
 						// If it crossed over the goal reduct the amount we are adjusting by.
 						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
 						{
-							scallFraction /= 2;
-							if (scallFraction < .001)
+							scaleFraction /= 2;
+							if (scaleFraction < .001)
 							{
 								done = true;
 							}

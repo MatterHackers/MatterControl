@@ -36,11 +36,17 @@ namespace MatterHackers.MatterControl
 {
 	public class InstructionsPage : WizardPage
 	{
+		double extraTextScaling = 1;
 		protected FlowLayoutWidget topToBottomControls;
 
 		public InstructionsPage(string pageDescription, string instructionsText)
 			: base(pageDescription)
 		{
+			if (ActiveTheme.Instance.IsTouchScreen)
+			{
+				extraTextScaling = 1.33333;
+			}
+
 			topToBottomControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottomControls.Padding = new BorderDouble(3);
 			topToBottomControls.HAnchor |= Agg.UI.HAnchor.ParentLeft;
@@ -75,7 +81,7 @@ namespace MatterHackers.MatterControl
 			EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
 			string wrappedInstructions = wrapper.InsertCRs(instructionsText, 400);
 			string wrappedInstructionsTabsToSpaces = wrappedInstructions.Replace("\t", "    ");
-			TextWidget instructionsWidget = new TextWidget(wrappedInstructionsTabsToSpaces, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			TextWidget instructionsWidget = new TextWidget(wrappedInstructionsTabsToSpaces, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12 * extraTextScaling);
 			instructionsWidget.HAnchor = Agg.UI.HAnchor.ParentLeft;
 			topToBottomControls.AddChild(instructionsWidget);
 		}

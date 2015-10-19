@@ -2,6 +2,7 @@
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using System;
 
 namespace MatterHackers.MatterControl
@@ -16,6 +17,7 @@ namespace MatterHackers.MatterControl
 		private Action<bool> responseCallback;
 
 		public enum MessageType { OK, YES_NO };
+		double extraTextScaling = 1;
 
 		public static void ShowMessageBox(Action<bool> callback, String message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string no = "")
 		{
@@ -31,22 +33,51 @@ namespace MatterHackers.MatterControl
 		public StyledMessageBox(Action<bool> callback, String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string no)
 			: base(width, height)
 		{
+			if (ActiveTheme.Instance.IsTouchScreen)
+			{
+				extraTextScaling = 1.33333;
+			}
+
+			textImageButtonFactory.fontSize = extraTextScaling * textImageButtonFactory.fontSize;
+			if (yesOk == "")
+			{
+				if (messageType == MessageType.OK)
+				{
+					yesOk = "Ok".Localize();
+				}
+				else
+				{
+					yesOk = "Yes".Localize();
+				}
+			}
+			if (no == "")
+			{
+				no = "No".Localize();
+			}
+
 			responseCallback = callback;
 			unwrappedMessage = message;
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
-			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+			if (ActiveTheme.Instance.IsTouchScreen)
+			{
+				topToBottom.Padding = new BorderDouble(12, 12, 13, 8);
+			}
+			else
+			{
+				topToBottom.Padding = new BorderDouble(3, 0, 3, 5) * TextWidget.GlobalPointSizeScaleRatio;
+			}
 
 			// Creates Header
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			headerRow.HAnchor = HAnchor.ParentLeftRight;
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+			headerRow.Margin = new BorderDouble(0, 3, 0, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			headerRow.Padding = new BorderDouble(0, 3, 0, 3) * TextWidget.GlobalPointSizeScaleRatio;
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			//Creates Text and adds into header
 			{
-				TextWidget elementHeader = new TextWidget(windowTitle, pointSize: 14);
+				TextWidget elementHeader = new TextWidget(windowTitle, pointSize: 14 * extraTextScaling);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				elementHeader.HAnchor = HAnchor.ParentLeftRight;
 				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -61,11 +92,11 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
 				middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
 				// normally the padding for the middle container should be just (5) all around. The has extra top space
-				middleRowContainer.Padding = new BorderDouble(5, 5, 5, 15);
+				middleRowContainer.Padding = new BorderDouble(5, 5, 5, 15) * TextWidget.GlobalPointSizeScaleRatio;
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
-			messageContainer = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			messageContainer = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12 * extraTextScaling);
 			messageContainer.AutoExpandBoundsToText = true;
 			messageContainer.HAnchor = Agg.UI.HAnchor.ParentLeft;
 			middleRowContainer.AddChild(messageContainer);
@@ -85,10 +116,9 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				buttonRow.HAnchor = HAnchor.ParentLeftRight;
-				buttonRow.Padding = new BorderDouble(0, 3);
+				buttonRow.Padding = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
 			}
 
-			int minButtonWidth = (int)(50 * TextWidget.GlobalPointSizeScaleRatio + .5);
 
 			switch (messageType)
 			{
@@ -96,29 +126,13 @@ namespace MatterHackers.MatterControl
 					{
 						Title = "MatterControl - " + "Please Confirm".Localize();
 						Button yesButton = textImageButtonFactory.Generate(yesOk, centerText: true);
-						if (yesOk == "")
-						{
-							yesOk = "Yes".Localize();
-							textImageButtonFactory.FixedWidth = minButtonWidth;
-							yesButton = textImageButtonFactory.Generate(yesOk, centerText: true);
-							textImageButtonFactory.FixedWidth = 0;
-						}
-						yesButton.Width = Math.Max(minButtonWidth, yesButton.Width);
 						yesButton.Click += new EventHandler(okButton_Click);
 						yesButton.Cursor = Cursors.Hand;
 						buttonRow.AddChild(yesButton);
 
-						//buttonRow.AddChild(new HorizontalSpacer());
+						buttonRow.AddChild(new HorizontalSpacer());
 
 						Button noButton = textImageButtonFactory.Generate(no, centerText: true);
-						if (no == "")
-						{
-							no = "No".Localize();
-							textImageButtonFactory.FixedWidth = minButtonWidth;
-							noButton = textImageButtonFactory.Generate(no, centerText: true);
-							textImageButtonFactory.FixedWidth = 0;
-						}
-						noButton.Width = Math.Max(minButtonWidth, noButton.Width);
 						noButton.Click += new EventHandler(noButton_Click);
 						noButton.Cursor = Cursors.Hand;
 						buttonRow.AddChild(noButton);
@@ -129,14 +143,6 @@ namespace MatterHackers.MatterControl
 					{
 						Title = "MatterControl - " + "Alert".Localize();
 						Button okButton = textImageButtonFactory.Generate(LocalizedString.Get("Ok"), centerText: true);
-						if (yesOk == "")
-						{
-							yesOk = "Ok".Localize();
-							textImageButtonFactory.FixedWidth = minButtonWidth;
-							okButton = textImageButtonFactory.Generate(yesOk, centerText: true);
-							textImageButtonFactory.FixedWidth = 0;
-						}
-						okButton.Width = Math.Max(minButtonWidth, okButton.Width);
 						okButton.Cursor = Cursors.Hand;
 						okButton.Click += new EventHandler(okButton_Click);
 						buttonRow.AddChild(okButton);
@@ -167,7 +173,7 @@ namespace MatterHackers.MatterControl
 				double wrappingSize = middleRowContainer.Width - (middleRowContainer.Padding.Width + messageContainer.Margin.Width);
 				if (wrappingSize > 0)
 				{
-					EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
+					EnglishTextWrapping wrapper = new EnglishTextWrapping(12 * extraTextScaling * TextWidget.GlobalPointSizeScaleRatio);
 					string wrappedMessage = wrapper.InsertCRs(unwrappedMessage, wrappingSize);
 					messageContainer.Text = wrappedMessage;
 				}

@@ -572,6 +572,12 @@ namespace MatterHackers.MatterControl
 				{
 					AfterFirstDraw();
 				}
+
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox(null, "message that is long and wraps. message that is long and wraps. message that is long and wraps." , "caption", StyledMessageBox.MessageType.YES_NO);
+					// show a dialog to tell the user there is an update
+				});
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);

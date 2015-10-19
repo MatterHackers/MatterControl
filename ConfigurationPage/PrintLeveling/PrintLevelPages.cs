@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private FlowLayoutWidget CreateZButtons()
 		{
-			FlowLayoutWidget zButtons = JogControls.CreateZButtons(RGBA_Bytes.White, 4, out zPlusControl, out zMinusControl);
+			FlowLayoutWidget zButtons = JogControls.CreateZButtons(RGBA_Bytes.White, 4, out zPlusControl, out zMinusControl, true);
 			// set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
 			zPlusControl.MoveAmount = 0;
 			zMinusControl.MoveAmount = 0;

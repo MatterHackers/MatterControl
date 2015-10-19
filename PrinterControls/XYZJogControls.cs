@@ -483,13 +483,13 @@ namespace MatterHackers.MatterControl
 		}
 
 		public static FlowLayoutWidget CreateZButtons(RGBA_Bytes color, double buttonSeparationDistance,
-			out MoveButton zPlusControl, out MoveButton zMinusControl)
+			out MoveButton zPlusControl, out MoveButton zMinusControl, bool levelingButtons = false)
 		{
 			FlowLayoutWidget zButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
 				MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
 				moveButtonFactory.normalFillColor = color;
-				zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
+				zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed, levelingButtons);
 				zPlusControl.ToolTipText = "Move Z positive";
 				zButtons.AddChild(zPlusControl);
 
@@ -498,7 +498,7 @@ namespace MatterHackers.MatterControl
 				spacer.BackgroundColor = XYZColors.zColor;
 				zButtons.AddChild(spacer);
 
-				zMinusControl = moveButtonFactory.Generate("Z-", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
+				zMinusControl = moveButtonFactory.Generate("Z-", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed, levelingButtons);
 				zMinusControl.ToolTipText = "Move Z negative";
 				zButtons.AddChild(zMinusControl);
 			}
@@ -616,7 +616,7 @@ namespace MatterHackers.MatterControl
 			protected double borderWidth = 0;
 			protected double borderRadius = 0;
 
-			public MoveButtonWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes textColor)
+			public MoveButtonWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes textColor, bool levelingButtons)
 				: base()
 			{
 				this.BackgroundColor = fillColor;
@@ -632,8 +632,17 @@ namespace MatterHackers.MatterControl
 					textWidget.Padding = new BorderDouble(3, 0);
 					this.AddChild(textWidget);
 				}
-				this.Height = 40 * TextWidget.GlobalPointSizeScaleRatio;
-				this.Width = 40 * TextWidget.GlobalPointSizeScaleRatio;
+
+				if (levelingButtons)
+				{
+					this.Height = 45 * TextWidget.GlobalPointSizeScaleRatio;
+					this.Width = 90 * TextWidget.GlobalPointSizeScaleRatio;
+				}
+				else
+				{
+					this.Height = 40 * TextWidget.GlobalPointSizeScaleRatio;
+					this.Width = 40 * TextWidget.GlobalPointSizeScaleRatio;
+				}
 			}
 
 			public override void OnDraw(Graphics2D graphics2D)
@@ -662,34 +671,34 @@ namespace MatterHackers.MatterControl
 			public RGBA_Bytes pressedTextColor = RGBA_Bytes.White;
 			public RGBA_Bytes disabledTextColor = RGBA_Bytes.White;
 
-			public MoveButton Generate(string label, PrinterConnectionAndCommunication.Axis axis, double movementFeedRate)
+			public MoveButton Generate(string label, PrinterConnectionAndCommunication.Axis axis, double movementFeedRate, bool levelingButtons = false)
 			{
 				//Create button based on view container widget
-				ButtonViewStates buttonViewWidget = GetButtonView(label);
+				ButtonViewStates buttonViewWidget = GetButtonView(label, levelingButtons);
 				MoveButton textImageButton = new MoveButton(0, 0, buttonViewWidget, axis, movementFeedRate);
 				textImageButton.Margin = new BorderDouble(0);
 				textImageButton.Padding = new BorderDouble(0);
 				return textImageButton;
 			}
 
-			public ExtrudeButton Generate(string label, double movementFeedRate, int extruderNumber = 0)
+			public ExtrudeButton Generate(string label, double movementFeedRate, int extruderNumber = 0, bool levelingButtons = false)
 			{
 				//Create button based on view container widget
-				ButtonViewStates buttonViewWidget = GetButtonView(label);
+				ButtonViewStates buttonViewWidget = GetButtonView(label, levelingButtons);
 				ExtrudeButton textImageButton = new ExtrudeButton(0, 0, buttonViewWidget, movementFeedRate, extruderNumber);
 				textImageButton.Margin = new BorderDouble(0);
 				textImageButton.Padding = new BorderDouble(0);
 				return textImageButton;
 			}
 
-			private ButtonViewStates GetButtonView(string label)
+			private ButtonViewStates GetButtonView(string label, bool levelingButtons)
 			{
 				//Create the multi-state button view
 				ButtonViewStates buttonViewWidget = new ButtonViewStates(
-					new MoveButtonWidget(label, normalFillColor, normalTextColor),
-					new MoveButtonWidget(label, hoverFillColor, hoverTextColor),
-					new MoveButtonWidget(label, pressedFillColor, pressedTextColor),
-					new MoveButtonWidget(label, disabledFillColor, disabledTextColor)
+					new MoveButtonWidget(label, normalFillColor, normalTextColor, levelingButtons),
+					new MoveButtonWidget(label, hoverFillColor, hoverTextColor, levelingButtons),
+					new MoveButtonWidget(label, pressedFillColor, pressedTextColor, levelingButtons),
+					new MoveButtonWidget(label, disabledFillColor, disabledTextColor, levelingButtons)
 				);
 				return buttonViewWidget;
 			}
