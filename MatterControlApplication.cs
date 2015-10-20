@@ -575,7 +575,7 @@ namespace MatterHackers.MatterControl
 
 				UiThread.RunOnIdle(() =>
 				{
-					StyledMessageBox.ShowMessageBox(null, "message that is long and wraps. message that is long and wraps. message that is long and wraps." , "caption", StyledMessageBox.MessageType.YES_NO);
+					//StyledMessageBox.ShowMessageBox(null, "message that is long and wraps. message that is long and wraps. message that is long and wraps." , "caption", StyledMessageBox.MessageType.YES_NO);
 					// show a dialog to tell the user there is an update
 				});
 			}
