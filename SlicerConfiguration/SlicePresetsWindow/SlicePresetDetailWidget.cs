@@ -634,30 +634,52 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							FlowLayoutWidget content = new FlowLayoutWidget();
 
 							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
+
+							string startingText = stringEdit.Text;
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								TextEditWidget textEditWidget = (TextEditWidget)sender;
-								string text = textEditWidget.Text;
-								text = text.Trim();
-								bool isMm = text.Contains("mm");
-								if (isMm)
+								// only validate when we lose focus
+								if (!textEditWidget.ContainsFocus)
 								{
-									text = text.Substring(0, text.IndexOf("mm"));
-								}
-								double result;
-								double.TryParse(text, out result);
-								text = result.ToString();
-								if (isMm)
-								{
-									text += "mm";
-								}
-								else
-								{
-									result = (int)result;
+									string text = textEditWidget.Text;
+									text = text.Trim();
+									bool isMm = text.Contains("mm");
+									if (isMm)
+									{
+										text = text.Substring(0, text.IndexOf("mm"));
+									}
+									double result;
+									double.TryParse(text, out result);
 									text = result.ToString();
+									if (isMm)
+									{
+										text += "mm";
+									}
+									else
+									{
+										result = (int)result;
+										text = result.ToString();
+									}
+									textEditWidget.Text = text;
+									startingText = stringEdit.Text;
 								}
-								textEditWidget.Text = text;
+
 								SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
+
+								// make sure we are still looking for the final validation before saving.
+								if (textEditWidget.ContainsFocus)
+								{
+									UiThread.RunOnIdle(() =>
+									{
+										string currentText = textEditWidget.Text;
+										int cursorIndex = textEditWidget.InternalTextEditWidget.CharIndexToInsertBefore;
+										textEditWidget.Text = startingText;
+										textEditWidget.InternalTextEditWidget.MarkAsStartingState();
+										textEditWidget.Text = currentText;
+										textEditWidget.InternalTextEditWidget.CharIndexToInsertBefore = cursorIndex;
+									});
+								}
 							};
 							stringEdit.SelectAllOnFocus = true;
 
