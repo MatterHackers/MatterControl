@@ -294,33 +294,45 @@ namespace MatterHackers.MatterControl
 
 		public static void CheckForAndDoAutoConnect()
 		{
-			DataStorage.Printer autoConnectProfile = ActivePrinterProfile.GetAutoConnectProfile();
+            bool connectionAvailable;
+            DataStorage.Printer autoConnectProfile = ActivePrinterProfile.GetAutoConnectProfile(out connectionAvailable);
 			if (autoConnectProfile != null)
 			{
 				ActivePrinterProfile.Instance.ActivePrinter = autoConnectProfile;
-				PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-				PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+                if (connectionAvailable)
+                {
+                    PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+                    PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+                }
 			}
 		}
 
-		public static DataStorage.Printer GetAutoConnectProfile()
+		public static Printer GetAutoConnectProfile(out bool connectionAvailable)
 		{
 			string query = string.Format("SELECT * FROM Printer;");
 			IEnumerable<Printer> printer_profiles = (IEnumerable<Printer>)Datastore.Instance.dbSQLite.Query<Printer>(query);
 			string[] comportNames = FrostedSerialPort.GetPortNames();
 
-			foreach (DataStorage.Printer printer in printer_profiles)
+            Printer printerToSelect = null;
+            connectionAvailable = false;
+
+            foreach (Printer printer in printer_profiles)
 			{
 				if (printer.AutoConnectFlag)
 				{
-					bool portIsAvailable = comportNames.Contains(printer.ComPort);
+                    printerToSelect = printer;
+                    bool portIsAvailable = comportNames.Contains(printer.ComPort);
 					if (portIsAvailable)
 					{
-						return printer;
+                        // We found a printer that we can select and connect to.
+                        connectionAvailable = true;
+                        return printer;
 					}
 				}
 			}
-			return null;
+
+            // return a printer we can connect to even though we can't connect
+			return printerToSelect;
 		}
 	}
 }
