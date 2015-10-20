@@ -55,8 +55,9 @@ namespace MatterHackers.MatterControl
 {
     public class MatterControlApplication : SystemWindow
 	{
+		public static bool CameraPreviewActive = false;
 		public static Action AfterFirstDraw = null;
-        public bool RestartOnClose = false;
+		public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
 		private string[] commandLineArgs = null;
