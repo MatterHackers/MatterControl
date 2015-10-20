@@ -897,6 +897,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
+				if (FillDensity == 1
+					&& GetActiveValue("infill_type") != "LINES")
+				{
+					string error = "Solid Infill works best when set to LINES.".Localize();
+					string details = string.Format("It is currently set to {0}.".Localize(), GetActiveValue("infill_type"));
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'".Localize();
+					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					return true;
+				}
+
 				string normalSpeedLocation = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'".Localize();
 				// If the given speed is part of the current slice engine then check that it is greater than 0.
 				if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed", normalSpeedLocation)) return false;

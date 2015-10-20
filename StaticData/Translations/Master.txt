@@ -3835,3 +3835,12 @@ Translated:Calibration Settings
 English:Software Print Leveling (enabled)
 Translated:Software Print Leveling (enabled)
 
+English:Layer Height = {0}\nNozzle Diameter = {1}
+Translated:Layer Height = {0}\nNozzle Diameter = {1}
+
+English:Solid Infill works best when set tu LINES.
+Translated:Solid Infill works best when set tu LINES.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
+

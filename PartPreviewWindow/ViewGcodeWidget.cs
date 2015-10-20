@@ -336,44 +336,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (loadedGCode != null)
 			{
-				Affine transform = TotalTransform;
+				using (new PerformanceTimer("GCode Timer", "Total"))
+				{
+					Affine transform = TotalTransform;
 
-				CreateGrid(transform);
+					CreateGrid(transform);
 
-				double gridLineWidths = 0.2 * layerScale;
-				Stroke stroke = new Stroke(grid, gridLineWidths);
+					double gridLineWidths = 0.2 * layerScale;
+					Stroke stroke = new Stroke(grid, gridLineWidths);
 
-				if (RenderGrid)
-				{
-					graphics2D.Render(stroke, new RGBA_Bytes(190, 190, 190, 255));
-				}
+					if (RenderGrid)
+					{
+						using (new PerformanceTimer("GCode Timer", "Render Grid"))
+						{
+							graphics2D.Render(stroke, new RGBA_Bytes(190, 190, 190, 255));
+						}
+					}
 
-				RenderType renderType = RenderType.Extrusions;
-				if (RenderMoves)
-				{
-					renderType |= RenderType.Moves;
-				}
-				if (RenderRetractions)
-				{
-					renderType |= RenderType.Retractions;
-				}
-				if (RenderSpeeds)
-				{
-					renderType |= RenderType.SpeedColors;
-				}
-				if (SimulateExtrusion)
-				{
-					renderType |= RenderType.SimulateExtrusion;
-				}
-				if (HideExtruderOffsets)
-				{
-					renderType |= RenderType.HideExtruderOffsets;
-				}
+					RenderType renderType = RenderType.Extrusions;
+					if (RenderMoves)
+					{
+						renderType |= RenderType.Moves;
+					}
+					if (RenderRetractions)
+					{
+						renderType |= RenderType.Retractions;
+					}
+					if (RenderSpeeds)
+					{
+						renderType |= RenderType.SpeedColors;
+					}
+					if (SimulateExtrusion)
+					{
+						renderType |= RenderType.SimulateExtrusion;
+					}
+					if (HideExtruderOffsets)
+					{
+						renderType |= RenderType.HideExtruderOffsets;
+					}
 
-				GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, renderType,
-					FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
-					new Vector2[] { ActiveSliceSettings.Instance.GetOffset(0), ActiveSliceSettings.Instance.GetOffset(1) });
-				gCodeRenderer.Render(graphics2D, renderInfo);
+					GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, renderType,
+						FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
+						new Vector2[] { ActiveSliceSettings.Instance.GetOffset(0), ActiveSliceSettings.Instance.GetOffset(1) });
+
+					using (new PerformanceTimer("GCode Timer", "Render"))
+					{
+						gCodeRenderer.Render(graphics2D, renderInfo);
+					}
+				}
 			}
 
 			base.OnDraw(graphics2D);
