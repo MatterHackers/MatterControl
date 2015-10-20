@@ -458,7 +458,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onStateChanged(object sender, EventArgs e)
 		{
-			SetButtonStates();
+			UiThread.RunOnIdle(SetButtonStates);
 		}
 	}
 }
