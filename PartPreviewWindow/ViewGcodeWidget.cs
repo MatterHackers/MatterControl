@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
@@ -214,7 +215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.gridSizeMm = gridSizeMm;
 			this.gridCenterMm = gridCenterMm;
 			LocalBounds = new RectangleDouble(0, 0, 100, 100);
-			DoubleBuffer = true;
+			//DoubleBuffer = true;
 			AnchorAll();
 		}
 
@@ -331,6 +332,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private PathStorage grid = new PathStorage();
+		static RGBA_Bytes gridColor = new RGBA_Bytes(190, 190, 190, 255);
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
@@ -340,16 +342,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Affine transform = TotalTransform;
 
-					CreateGrid(transform);
-
-					double gridLineWidths = 0.2 * layerScale;
-					Stroke stroke = new Stroke(grid, gridLineWidths);
-
 					if (RenderGrid)
 					{
 						using (new PerformanceTimer("GCode Timer", "Render Grid"))
 						{
-							graphics2D.Render(stroke, new RGBA_Bytes(190, 190, 190, 255));
+							double gridLineWidths = 0.2 * layerScale;
+
+							Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
+							if (graphics2DGl != null)
+							{
+								GlRenderGrid(graphics2DGl, transform, gridLineWidths);
+							}
+							else
+							{
+								CreateGrid(transform);
+
+								Stroke stroke = new Stroke(grid, gridLineWidths);
+								graphics2D.Render(stroke, gridColor);
+							}
 						}
 					}
 
@@ -387,6 +397,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.OnDraw(graphics2D);
+		}
+
+		private void GlRenderGrid(Graphics2DOpenGL graphics2DGl, Affine transform, double width)
+		{
+			graphics2DGl.PreRender();
+
+			Vector2 gridOffset = gridCenterMm - gridSizeMm / 2;
+			if (gridSizeMm.x > 0 && gridSizeMm.y > 0)
+			{
+				grid.remove_all();
+				for (int y = 0; y <= gridSizeMm.y; y += 10)
+				{
+					Vector2 start = new Vector2(0, y) + gridOffset;
+					Vector2 end = new Vector2(gridSizeMm.x, y) + gridOffset;
+					transform.transform(ref start);
+					transform.transform(ref end);
+
+					graphics2DGl.DrawAALine(start, end, width, gridColor);
+				}
+
+				for (int x = 0; x <= gridSizeMm.x; x += 10)
+				{
+					Vector2 start = new Vector2(x, 0) + gridOffset;
+					Vector2 end = new Vector2(x, gridSizeMm.y) + gridOffset;
+					transform.transform(ref start);
+					transform.transform(ref end);
+
+					graphics2DGl.DrawAALine(start, end, width, gridColor);
+				}
+			}
+
+			graphics2DGl.PopOrthoProjection();
 		}
 
 		public void CreateGrid(Affine transform)

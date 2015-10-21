@@ -54,7 +54,9 @@ namespace MatterHackers.MatterControl
 			};
 
 			AddChild(topToBottom);
+			#if !__ANDROID__
 			ShowAsSystemWindow();
+			#endif
 		}
 
 		public void SetTime(string name, double elapsedSeconds)
