@@ -43,6 +43,6 @@ namespace MatterHackers.MatterControl
 {
 	internal interface IPerformanceResults
 	{
-		void SetTime(string name, double elapsedSeconds);
+		void SetTime(string name, double elapsedSeconds, int recursionCount);
 	}
 }

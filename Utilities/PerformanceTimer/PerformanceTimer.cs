@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 {
 	public class PerformanceTimer : IDisposable
 	{
-		static int runningCount = 0;
+		static int recursionCount = 0;
 		static Dictionary<string, IPerformanceResults> resultsWindows = new Dictionary<string, IPerformanceResults>();
 
 		private IPerformanceResults timingWindowToReportTo;
@@ -61,14 +61,14 @@ namespace MatterHackers.MatterControl
 			this.timingWindowToReportTo = resultsWindows[windowName];
 			this.name = name;
 			timer = Stopwatch.StartNew();
-			runningCount++;
+			recursionCount++;
 		}
 
 		public void Dispose()
 		{
 			timer.Stop();
-			runningCount--;
-			timingWindowToReportTo.SetTime(name, timer.Elapsed.TotalSeconds);
+			recursionCount--;
+			timingWindowToReportTo.SetTime(name, timer.Elapsed.TotalSeconds, recursionCount);
 		}
 	}
 }

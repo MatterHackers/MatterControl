@@ -65,6 +65,8 @@ namespace MatterHackers.MatterControl
 
 		private event EventHandler unregisterEvents;
 
+		FlowLayoutWidget bottomToTop = new FlowLayoutWidget(FlowDirection.BottomToTop);
+
 		internal PerformanceResultsMCOverlay(string name)
 			: base(FlowDirection.TopToBottom)
 		{
@@ -89,6 +91,8 @@ namespace MatterHackers.MatterControl
 			titleWidget.Printer.DrawFromHintedCache = true;
 			AddChild(titleWidget);
 
+			AddChild(bottomToTop);
+
 			pannels.AddChild(this);
 
 			BackgroundColor = new RGBA_Bytes(RGBA_Bytes.White, 180);
@@ -108,7 +112,7 @@ namespace MatterHackers.MatterControl
 			base.OnDraw(graphics2D);
 		}
 
-		public void SetTime(string name, double elapsedSeconds)
+		public void SetTime(string name, double elapsedSeconds, int recursionCount)
 		{
 			if (!timers.ContainsKey(name))
 			{
@@ -116,14 +120,28 @@ namespace MatterHackers.MatterControl
 				{
 					AutoExpandBoundsToText = true,
 					TextColor = new RGBA_Bytes(120, 20, 20),
+					HAnchor = HAnchor.ParentLeft,
 				};
 				newTimeWidget.Printer.DrawFromHintedCache = true;
 				timers.Add(name, newTimeWidget);
-				
-				AddChild(newTimeWidget);
+
+				bottomToTop.AddChild(newTimeWidget);
 			}
 
-			timers[name].Text = "{0:0.00} ms - {1}".FormatWith(elapsedSeconds * 1000, name);
+			timers[name].Margin = new BorderDouble(recursionCount * 5, 0, 0, 0);
+			string outputText = "{0:0.00} ms - {1}".FormatWith(elapsedSeconds * 1000, name);
+			if(recursionCount > 0)
+			{
+				if(recursionCount == 1)
+				{
+					outputText = "|_" + outputText;
+				}
+				else
+				{
+					outputText = new string(' ', recursionCount-1) + "|_" + outputText;
+				}
+			}
+			timers[name].Text = outputText;
 		}
 	}
 }

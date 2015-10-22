@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			ShowAsSystemWindow();
 		}
 
-		public void SetTime(string name, double elapsedSeconds)
+		public void SetTime(string name, double elapsedSeconds, int recursionCount)
 		{
 			if (!timers.ContainsKey(name))
 			{

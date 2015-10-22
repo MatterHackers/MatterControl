@@ -536,7 +536,7 @@ namespace MatterHackers.MatterControl
 		{
 			totalDrawTime.Restart();
 			GuiWidget.DrawCount = 0;
-			//using (new PerformanceTimer("Draw Timer", "Total"))
+			using (new PerformanceTimer("Draw Timer", "Total"))
 			{
 				base.OnDraw(graphics2D);
 			}
