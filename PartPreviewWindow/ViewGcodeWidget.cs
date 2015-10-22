@@ -338,13 +338,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (loadedGCode != null)
 			{
-				using (new PerformanceTimer("GCode Timer", "Total"))
+				//using (new PerformanceTimer("GCode Timer", "Total"))
 				{
 					Affine transform = TotalTransform;
 
 					if (RenderGrid)
 					{
-						using (new PerformanceTimer("GCode Timer", "Render Grid"))
+						//using (new PerformanceTimer("GCode Timer", "Render Grid"))
 						{
 							double gridLineWidths = 0.2 * layerScale;
 
@@ -389,7 +389,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
 						new Vector2[] { ActiveSliceSettings.Instance.GetOffset(0), ActiveSliceSettings.Instance.GetOffset(1) });
 
-					using (new PerformanceTimer("GCode Timer", "Render"))
+					//using (new PerformanceTimer("GCode Timer", "Render"))
 					{
 						gCodeRenderer.Render(graphics2D, renderInfo);
 					}

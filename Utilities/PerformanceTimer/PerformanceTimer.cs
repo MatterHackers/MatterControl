@@ -26,7 +26,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using System;
@@ -37,51 +36,12 @@ using System.Text;
 
 namespace MatterHackers.MatterControl
 {
-	public class PerformanceResultsWindow : SystemWindow
-	{
-		Dictionary<string, TextWidget> timers = new Dictionary<string,TextWidget>();
-		FlowLayoutWidget topToBottom;
-
-		internal PerformanceResultsWindow()
-			: base(350, 200)
-		{
-			BackgroundColor = RGBA_Bytes.White;
-
-			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
-			};
-
-			AddChild(topToBottom);
-			#if !__ANDROID__
-			ShowAsSystemWindow();
-			#endif
-		}
-
-		public void SetTime(string name, double elapsedSeconds)
-		{
-			if (!timers.ContainsKey(name))
-			{
-				TextWidget newTimeWidget = new TextWidget("waiting")
-				{
-					AutoExpandBoundsToText = true,
-				};
-				newTimeWidget.Printer.DrawFromHintedCache = true;
-				timers.Add(name, newTimeWidget);
-				topToBottom.AddChild(newTimeWidget);
-			}
-
-			timers[name].Text = "{0:0.00} ms - {1}".FormatWith(elapsedSeconds * 1000, name);
-		}
-	}
-
 	public class PerformanceTimer : IDisposable
 	{
 		static int runningCount = 0;
-		static Dictionary<string, PerformanceResultsWindow> resultsWindows = new Dictionary<string, PerformanceResultsWindow>();
+		static Dictionary<string, IPerformanceResults> resultsWindows = new Dictionary<string, IPerformanceResults>();
 
-		private PerformanceResultsWindow timingWindowToReportTo;
+		private IPerformanceResults timingWindowToReportTo;
 		private string name;
 		Stopwatch timer;
 
@@ -89,10 +49,12 @@ namespace MatterHackers.MatterControl
 		{
 			if(!resultsWindows.ContainsKey(windowName))
 			{
-				PerformanceResultsWindow timingWindowToReportTo = new PerformanceResultsWindow()
-				{
-					Title = windowName,
-				};
+#if __ANDROID__
+				IPerformanceResults timingWindowToReportTo = new PerformanceResultsMCOverlay(windowName);
+#else
+				IPerformanceResults timingWindowToReportTo = new PerformanceResultsMCOverlay(windowName);
+				//IPerformanceResults timingWindowToReportTo = new PerformanceResultsSystemWindow(windowName);
+#endif
 				resultsWindows.Add(windowName, timingWindowToReportTo);
 			}
 
