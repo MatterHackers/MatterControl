@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]//, Ignore("Not Finished")]
 	public class ExportButtonTest
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -147,17 +147,17 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+            AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, null, null, "Three_Queue_Items");
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
 	public class ExportButtonDisabledNoQueueItems
 	{
-		[Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, RequiresSTA, RunInApplicationDomain]
 		public void ExportButtonIsDisabledWithNoItemsInQueue()
 		{
 			// Run a copy of MatterControl
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Fresh_Installation");
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
 		}
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.UI
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
 	public class QueueItemThumnailWidget
 	{
-        [Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, RequiresSTA, RunInApplicationDomain] 
 		public void QueueThumbnailWidgetOpensPartPreview()
 		{
 			// Run a copy of MatterControl
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, null, null, "Three_Queue_Items");
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.UI
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
 	public class ClickCopyButtonMakesACopyOfPrintItemInQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, RequiresSTA, RunInApplicationDomain]
 		public void CopyButtonMakesACopyOfPartInTheQueue()
 		{
 			// Run a copy of MatterControl
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, null, null, "Three_Queue_Items");
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.UI
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
 	public class AddSingleItemToQueueAddsItem
 	{
-        [Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+        [Test, RequiresSTA, RunInApplicationDomain]
 		public void AddSingleItemToQueue()
 		{
 			// Run a copy of MatterControl
@@ -275,17 +275,12 @@ namespace MatterHackers.MatterControl.UI
 					 * Tests that when the QueueData.Instance.AddItem function is called:
 					 * 1. The Queue count is increased by 1
 					 * 2. A QueueRowItem is created and added to the queue
-					 * 3. That a copy of the part is saved to AppData\MatterControl\data\QueueItems folder
 					 */
 					//TODO: Eventually modify test so that we test adding queue items via file 
 
-
 					bool queueDataCountEqualsZero = false;
 					bool addedPartIncreasesQueueDataCount = false;
-					bool queueItemAppDataDirectoryExists = false;
-					bool queueItemAppDataDirectoryDoesNotExists = true;
 					int currentQueueCount = QueueData.Instance.Count;
-					string pathToAddedQueueItem = Path.Combine(MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath, "data", "QueueItems", "Batman.stl");
 					string partToBeAdded = Path.Combine("..", "..", "..", "TestData", "TestParts", "Batman.stl");
 					
 					//Make Sure Queue Count = 0 
@@ -300,15 +295,6 @@ namespace MatterHackers.MatterControl.UI
 					//Make sure queue item does not exist
 					bool batmanSTLExists = testRunner.WaitForName("Queue Item " + "Batman", 2);
 					resultsHarness.AddTestResult(batmanSTLExists == false);
-					
-
-					//Make sure that QueueItems directory does not exist
-					if (!File.Exists(pathToAddedQueueItem))
-					{
-						queueItemAppDataDirectoryDoesNotExists = true;
-					}
-
-					resultsHarness.AddTestResult(queueItemAppDataDirectoryDoesNotExists == true, "Path to QueueItems directory does not exist before tests");
 
 					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(partToBeAdded), partToBeAdded)));
 					
@@ -324,28 +310,78 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(addedPartIncreasesQueueDataCount == true);
 					testRunner.Wait(3);
 
-					if(File.Exists(pathToAddedQueueItem))
-					{
-						queueItemAppDataDirectoryExists = true;
-					}
-
-					resultsHarness.AddTestResult(queueItemAppDataDirectoryExists == true);
-
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Fresh_Installation");
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 6); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
 		}
 	}
+
+    [TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+    public class QueueAddAMFToQueue
+    {
+        [Test, RequiresSTA, RunInApplicationDomain] 
+        public void AddAMFFile()
+        {
+            // Run a copy of MatterControl
+            Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+            {
+                AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+                {
+
+                    /*
+                     *Tests:
+                     *1. When a zip file is added to the queue all items in the zip file are aadded to queue
+                     */
+
+                    bool queueDataCountEqualsZero = false;
+                    string zipFileToAMF = Path.Combine("..", "..", "..", "TestData", "TestParts", "Rook.amf");
+                    int currentQueueCount = QueueData.Instance.Count;
+
+                    //Make Sure Queue Count = 0 
+                    if (currentQueueCount == 0)
+                    {
+                        queueDataCountEqualsZero = true;
+                    }
+
+                    resultsHarness.AddTestResult(queueDataCountEqualsZero = true);
+
+                    testRunner.Wait(2);
+
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(zipFileToAMF), zipFileToAMF)));
+
+                    resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item " + "Rook", 2));
+
+                    testRunner.Wait(3);
+
+                    bool queueDataIncreasesByOneAfterAdd = false;
+                    int queueCountAfterAdd = QueueData.Instance.Count;
+
+                    if(queueCountAfterAdd != 1)
+                    {
+                        queueDataIncreasesByOneAfterAdd = true;
+                    }
+
+                    resultsHarness.AddTestResult(queueDataIncreasesByOneAfterAdd = true);
+
+                    MatterControlUtilities.CloseMatterControl(testRunner);
+                }
+            };
+
+            AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+            Assert.IsTrue(testHarness.AllTestsPassed);
+            Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+        }
+    }
 
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
 	public class RemoveAllMenuItemClicked
 	{
 
-        [Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+        [Test, RequiresSTA, RunInApplicationDomain]//, Ignore("Not Finished")]
 		public void RemoveAllMenuItemClickedRemovesAll()
 		{
 			// Run a copy of MatterControl
@@ -407,7 +443,7 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, null, null, "Three_Queue_Items");
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 8); // make sure we ran all our tests
 		}
@@ -416,7 +452,7 @@ namespace MatterHackers.MatterControl.UI
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
 	public class QueueRowItemRemoveViewButtons
 	{
-        [Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+        [Test, RequiresSTA, RunInApplicationDomain]//, Ignore("Not Finished")]
 		public void ClickQueueRoWItemViewAndRemove()
 		{
 			// Run a copy of MatterControl
@@ -480,12 +516,60 @@ namespace MatterHackers.MatterControl.UI
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
-
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+			
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, null, null, "Three_Queue_Items");
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 7); // make sure we ran all our tests
 		}
 	}
+
+
+    [TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
+    public class QueueAddButtonAddsZipToQueue
+    {
+        [Test, RequiresSTA, RunInApplicationDomain]
+        public void QueueAddButtonAddsZipFile()
+        {
+
+            Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+            {
+
+                AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+                {
+
+                    /* Tests that when the Queue Copy button is clicked:
+                     * 1. QueueCount = Zero
+                     * 2. All files in compressed zip are added to queue
+                     */
+					
+                    testRunner.Wait(5);
+
+                    testRunner.ClickByName("Queue Add Button");
+
+                    testRunner.Wait(2);
+
+					string test = "%USERPROFILE%";
+
+					string test2 = @"\Development\MatterControl\Tests\TestData\TestParts\Batman.zip";
+
+					string fullPath = test + test2;
+
+					Debug.WriteLine(fullPath);
+
+                    testRunner.Type(fullPath);
+
+                    MatterControlUtilities.CloseMatterControl(testRunner);
+                }
+            };
+
+            AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+            Assert.IsTrue(testHarness.AllTestsPassed);
+            Assert.IsTrue(testHarness.TestCount == 0); // make sure we ran all our tests
+
+        }
+    }
+
+
 }
 
 

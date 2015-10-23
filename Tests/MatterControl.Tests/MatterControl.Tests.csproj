@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NUnit.ApplicationDomain">
       <HintPath>..\..\packages\NUnit.ApplicationDomain.5.0.1\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
     </Reference>
@@ -57,6 +61,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Utilities\ManifestFileHandler.cs">
+      <Link>ManifestFileHandler.cs</Link>
+    </Compile>
     <Compile Include="MatterControl\AutomationTests\CheckBoxInLibraryIsClickable.cs" />
     <Compile Include="MatterControl\AutomationTests\SqLiteLibraryProvider.cs" />
     <Compile Include="MatterControl\LibraryProviderSqliteTests.cs" />
@@ -124,6 +131,10 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
       <Name>VectorMath</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
+      <Project>{a526dc5d-65f3-461b-805f-d3ac9665f5c9}</Project>
+      <Name>WindowsFileDialogs</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

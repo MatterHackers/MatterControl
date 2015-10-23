@@ -34,6 +34,8 @@ using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -148,6 +150,61 @@ namespace MatterHackers.MatterControl.UI
 			return state;
 		}
 
+		public static void AddItemsToQueue(string queueItemFolderToLoad)
+		{
+
+			//DEFAULT LOCATION OF MCP FILE (LOCATION IS CORRECT)
+			string mcpPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
+
+			//RENAME ORIGINAL MCP FILE 
+			//string backupMcp = Path.ChangeExtension(mcpPath, "_original");
+
+			Directory.CreateDirectory(Path.GetDirectoryName(mcpPath));
+
+			if (!File.Exists(mcpPath))
+			{
+				File.WriteAllText(mcpPath, JsonConvert.SerializeObject(new ManifestFile()
+					{
+						ProjectFiles = new System.Collections.Generic.List<PrintItem>()
+					}, Formatting.Indented));
+			}
+
+			var queueItemData = JsonConvert.DeserializeObject<ManifestFile>(File.ReadAllText(mcpPath));
+
+			string queueData = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "testitems");
+
+			//CREATE EMPTY TESTPARTS FOLDER
+			Directory.CreateDirectory(queueData);
+
+			foreach (string file in Directory.GetFiles(Path.Combine("..", "..", "..", "TestData", "QueueItems", queueItemFolderToLoad)))
+			{
+				string newFilePath = Path.Combine(queueData, Path.GetFileName(file));
+				File.Copy(file, newFilePath, true);
+				queueItemData.ProjectFiles.Add(new PrintItem()
+					{
+						FileLocation = newFilePath,
+						Name = Path.GetFileNameWithoutExtension(file),
+						DateAdded = DateTime.Now
+					});
+			}
+
+			File.WriteAllText(mcpPath, JsonConvert.SerializeObject(queueItemData, Formatting.Indented));
+
+			Assert.IsTrue(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
+
+		}
+
+		/*public static void ResetMCPFile()
+		{
+			//DEFAULT LOCATION OF MCP FILE
+			string mcpPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
+
+			//RENAME ORIGINAL MCP FILE 
+			string backupMcp = Path.ChangeExtension(mcpPath, "_original");
+
+			File.Copy(backupMcp, mcpPath, true);
+		}*/
+
 		public static LibraryProvider CurrentProvider()
 		{
 			return ApplicationController.Instance.CurrentLibraryDataView.CurrentLibraryProvider;
@@ -220,7 +277,7 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
-		public static AutomationTesterHarness RunTest(Action<AutomationTesterHarness> testToRun, string testDbFolder = null, string staticDataPathOverride = null, double maxTimeToRun = 60)
+		public static AutomationTesterHarness RunTest(Action<AutomationTesterHarness> testToRun, string testDbFolder = null, string staticDataPathOverride = null, string queueItemFolderToAdd = null, double maxTimeToRun = 60)
 		{
 			if (staticDataPathOverride == null)
 			{
@@ -232,6 +289,12 @@ namespace MatterHackers.MatterControl.UI
 #endif
 			bool showWindow;
 			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting2(testDbFolder);
+
+			if (queueItemFolderToAdd != null)
+			{
+				MatterControlUtilities.AddItemsToQueue(queueItemFolderToAdd);
+			}
+			
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, maxTimeToRun);
 			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
