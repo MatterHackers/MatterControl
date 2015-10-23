@@ -63,6 +63,16 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
+		public static string PathToQueueItemsFolder
+		{
+			
+
+			get
+			{
+				return Path.Combine("{%}USERPROFILE{%}", "Development", "MatterControl", "Tests", "TestData", "QueueItems");
+			}
+		}
+
 		public static void CloseMatterControl(AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
