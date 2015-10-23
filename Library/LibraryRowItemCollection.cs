@@ -176,7 +176,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.Clicks == 2 && this.EnableSlideInActions)
+			if (IsDoubleClick(mouseEvent) 
+				&& this.EnableSlideInActions)
 			{
 				UiThread.RunOnIdle(ChangeCollection);
 			}

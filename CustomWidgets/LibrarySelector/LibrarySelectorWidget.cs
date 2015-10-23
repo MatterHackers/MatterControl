@@ -349,7 +349,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					MouseEventArgs mouseEvent = e as MouseEventArgs;
 
 					if (mouseEvent != null
-						&& mouseEvent.Clicks == 2)
+						&& IsDoubleClick(mouseEvent))
 					{
 						if (parentProvider == null)
 						{

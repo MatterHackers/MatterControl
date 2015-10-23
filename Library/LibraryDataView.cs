@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					MouseEventArgs mouseEvent = e as MouseEventArgs;
 
 					if (mouseEvent != null
-						&& mouseEvent.Clicks == 2)
+						&& IsDoubleClick(mouseEvent))
 					{
 						if (parentProvider == null)
 						{

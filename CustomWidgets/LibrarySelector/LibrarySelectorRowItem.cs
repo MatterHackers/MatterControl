@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.Clicks == 2)
+			if (IsDoubleClick(mouseEvent))
 			{
 				UiThread.RunOnIdle(ChangeCollection);
 			}
