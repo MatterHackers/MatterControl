@@ -297,7 +297,10 @@ namespace MatterHackers.MatterControl
 				TextWidget.GlobalPointSizeScaleRatio = 1.3;
 			}
 
-			this.AddChild(ApplicationController.Instance.MainView);
+            using (new PerformanceTimer("Startup", "MainView"))
+            {
+                this.AddChild(ApplicationController.Instance.MainView);
+            }
 			this.MinimumSize = minSize;
 			this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
@@ -391,7 +394,10 @@ namespace MatterHackers.MatterControl
 				height = Math.Max(int.Parse(sizes[1]), (int)minSize.y + 1);
 			}
 
-			instance = new MatterControlApplication(width, height, out showWindow);
+            using (new PerformanceTimer("Startup", "Total"))
+            {
+                instance = new MatterControlApplication(width, height, out showWindow);
+            }
 
 			return instance;
 		}
@@ -399,7 +405,9 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main()
 		{
-			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            PerformanceTimer.ResultsCreatorFunction = PerformanceResultsMCOverlay.CreateResultsSystemWindow;
+
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.
@@ -536,7 +544,7 @@ namespace MatterHackers.MatterControl
 		{
 			totalDrawTime.Restart();
 			GuiWidget.DrawCount = 0;
-			//using (new PerformanceTimer("Draw Timer", "Total"))
+			using (new PerformanceTimer("Draw Timer", "Total"))
 			{
 				base.OnDraw(graphics2D);
 			}

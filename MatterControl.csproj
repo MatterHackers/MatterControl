@@ -181,10 +181,7 @@
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
-    <Compile Include="Utilities\PerformanceTimer\IPerformanceResults.cs" />
     <Compile Include="Utilities\PerformanceTimer\PerformanceResultsMCOverlay.cs" />
-    <Compile Include="Utilities\PerformanceTimer\PerformanceResultsSystemWindow.cs" />
-    <Compile Include="Utilities\PerformanceTimer\PerformanceTimer.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DCreateSelecitonData.cs" />

@@ -41,9 +41,14 @@ using System.Text;
 
 namespace MatterHackers.MatterControl
 {
-	internal class PerformanceResultsMCOverlay : FlowLayoutWidget, IPerformanceResults
+	public class PerformanceResultsMCOverlay : FlowLayoutWidget, IPerformanceResults
 	{
-		internal class PannelsWidget : FlowLayoutWidget
+        public static IPerformanceResults CreateResultsSystemWindow(string name)
+        {
+            return new PerformanceResultsMCOverlay(name);
+        }
+
+        private class PannelsWidget : FlowLayoutWidget
 		{
 			public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 			{
@@ -67,7 +72,7 @@ namespace MatterHackers.MatterControl
 
 		FlowLayoutWidget bottomToTop = new FlowLayoutWidget(FlowDirection.BottomToTop);
 
-		internal PerformanceResultsMCOverlay(string name)
+        private PerformanceResultsMCOverlay(string name)
 			: base(FlowDirection.TopToBottom)
 		{
 			Margin = new BorderDouble(5);
@@ -80,16 +85,19 @@ namespace MatterHackers.MatterControl
 				pannels.Selectable = false;
 				pannels.HAnchor |= HAnchor.ParentLeft;
 				pannels.VAnchor |= VAnchor.ParentTop;
-				MatterControlApplication.Instance.AddChild(pannels);
+                UiThread.RunOnIdle(() => MatterControlApplication.Instance.AddChild(pannels));
 			}
 
-			TextWidget titleWidget = new TextWidget(name,pointSize:14)
-			{
-				BackgroundColor = new RGBA_Bytes(),
-				TextColor = new RGBA_Bytes(20, 120, 20),
-			};
-			titleWidget.Printer.DrawFromHintedCache = true;
-			AddChild(titleWidget);
+            // add in the column title
+            {
+                TextWidget titleWidget = new TextWidget(name, pointSize: 14)
+                {
+                    BackgroundColor = new RGBA_Bytes(),
+                    TextColor = new RGBA_Bytes(20, 120, 20),
+                };
+                titleWidget.Printer.DrawFromHintedCache = true;
+                AddChild(titleWidget);
+            }
 
 			AddChild(bottomToTop);
 
@@ -141,6 +149,9 @@ namespace MatterHackers.MatterControl
 					outputText = new string(' ', recursionCount-1) + "|_" + outputText;
 				}
 			}
+
+            // TODO: put this is a pre-draw variable to set next time we are going to draw
+            // Doing it here causes an invalidate and endlelss drawing.
 			timers[name].Text = outputText;
 		}
 	}
