@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.PluginSystem;
-using MatterHackers.Agg;
 #if !__ANDROID__
 using NUnit.Framework;
 #endif
@@ -38,6 +37,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using MatterHackers.Agg;
 
 // finish a, b, t
 
@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			if (!ranTests)
 			{
 				Assert.IsTrue(ConvertWord("taylor") == "taylor");
-				//Assert.IsTrue(ConvertWord("Taylor") == ",taylor");
-				//Assert.IsTrue(ConvertWord("TayLor") == ",tay,lor");
+				Assert.IsTrue(ConvertWord("Taylor") == ",taylor");
+				Assert.IsTrue(ConvertWord("TayLor") == ",tay,lor");
 				Assert.IsTrue(ConvertWord("energy") == "5}gy");
 				Assert.IsTrue(ConvertWord("men") == "m5");
 				Assert.IsTrue(ConvertWord("runabout") == "runab");
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				Assert.IsTrue(ConvertString("here it is") == "\"h x is");
 				Assert.IsTrue(ConvertString("test that will show our conformance with braille") == "te/ t w %{ |r 3=m.e ) brl");
-				//Assert.IsTrue(ConvertString("so we can create some strings and then this gives us the output that is expected") == "s we c cr1te \"s /r+s & !n ? gives u ! |tput t is expect$");				
+				Assert.IsTrue(ConvertString("so we can create some strings and then this gives us the output that is expected") == "s we c cr1te \"s /r+s & !n ? gives u ! |tput t is expect$");				
 
 				ranTests = true;
 			}
@@ -111,6 +111,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		static List<TextMapping> afterTextMappings = new List<TextMapping>();
 		static List<TextMapping> beforeTextMappings = new List<TextMapping>();
 		static List<TextMapping> betweenTextMappings = new List<TextMapping>();
+		static List<TextMapping> beforeWordsMappings = new List<TextMapping>();
 
 		public static string ConvertWord(string text)
 		{
@@ -169,11 +170,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				{
 					if (tempMiddleCharacters.Contains(keyValue.Key))
 					{
-						int findPosition = tempMiddleCharacters.IndexOf(keyValue.Key);
-						int afterReplacemntStart = 1 + findPosition + keyValue.Key.Length;
-						int afterReplacementLength = converted.Length - afterReplacemntStart;
-						converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(afterReplacemntStart, afterReplacementLength);
-						tempMiddleCharacters = converted.Substring(1, converted.Length - 2);
+						converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(converted.Length-1, 1);						
 					}
 				}
 			}
@@ -235,10 +232,20 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					{
 						if(keyConversionPair[0] != "//")
 						{
-							TextMapping mapping = new TextMapping(keyConversionPair[0].ToLower(), keyConversionPair[1]);
-							if (keyConversionPair[0] == keyConversionPair[0].ToUpper())//if in all caps it is an exact match
+							TextMapping mapping = new TextMapping(keyConversionPair[0],keyConversionPair[1]);							
+							if(mapping.Key == mapping.Key.ToUpper())//if in all caps it is an exact match
 							{
-								exactTextMappings.Add(mapping);
+								mapping.Key = mapping.Key.ToLower();
+								if (mapping.Key.Contains("*"))
+								{
+									mapping.Key = mapping.Key.Trim('*');
+									beforeWordsMappings.Add(mapping);
+								}
+								else
+								{
+									exactTextMappings.Add(mapping);
+								}
+								
 							}
 							else if(mapping.Key[0] == '+' && mapping.Key[mapping.Key.Length-1] == '+')//check between
 							{
@@ -258,6 +265,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 							else if(mapping.Key.Contains("*"))
 							{
 								//TODO - implement words before/after key
+								mapping.Key = mapping.Key.Trim('*');
+								beforeWordsMappings.Add(mapping);
 							}
 							else//if not a special type then it is an anyPositionMapping
 							{
@@ -269,5 +278,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 
 		}
+
 	}
 }

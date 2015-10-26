@@ -206,6 +206,10 @@
       <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
       <Name>MatterControlPluginSystem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Submodules\MatterSlice\MatterSlice.csproj">
+      <Project>{c46ca728-dd2f-4dd1-971a-aaa89d9dff95}</Project>
+      <Name>MatterSlice</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
