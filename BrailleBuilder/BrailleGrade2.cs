@@ -82,7 +82,24 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				Assert.IsTrue(ConvertString("here it is") == "\"h x is");
 				Assert.IsTrue(ConvertString("test that will show our conformance with braille") == "te/ t w %{ |r 3=m.e ) brl");
-				Assert.IsTrue(ConvertString("so we can create some strings and then this gives us the output that is expected") == "s we c cr1te \"s /r+s & !n ? gives u ! |tput t is expect$");				
+				Assert.IsTrue(ConvertString("so we can create some strings and then this gives us the output that is expected") == "s we c cr1te \"s /r+s & !n ? gives u ! |tput t is expect$");
+
+				Assert.IsTrue(ConvertString("Waltz, bad nymph, for quick jigs vex.") == ",waltz1 bad nymph1 = qk jigs vex4");
+				Assert.IsTrue(ConvertString("Quick zephyrs blow, vexing daft Jim.") == ",qk zephyrs bl{1 vex+ daft ,jim4");
+				Assert.IsTrue(ConvertString("Sphinx of black quartz, judge my vow.") == ",sph9x ( black qu>tz1 judge my v{4");
+				Assert.IsTrue(ConvertString("Two driven jocks help fax my big quiz.") == ",two driv5 jocks help fax my big quiz4");
+				Assert.IsTrue(ConvertString("Five quacking zephyrs jolt my wax bed.") == ",five quack+ zephyrs jolt my wax b$4");
+				Assert.IsTrue(ConvertString("The five boxing wizards jump quickly.") == ",! five box+ wiz>ds jump qkly4");
+				Assert.IsTrue(ConvertString("Pack my box with five dozen liquor jugs.") == ",pack my box ) five doz5 liquor jugs4");
+				Assert.IsTrue(ConvertString("The quick brown fox jumps over the lazy dog.") == ",! qk br{n fox jumps ov} ! lazy dog4");
+				Assert.IsTrue(ConvertString("Jinxed wizards pluck ivy from the big quilt.") == ",j9x$ wiz>ds pluck ivy f ! big quilt4");
+				Assert.IsTrue(ConvertString("Crazy Fredrick bought many very exquisite opal jewels.") == ",crazy ,fr$rick b\"| _m v exquisite opal jewels4");
+				Assert.IsTrue(ConvertString("We promptly judged antique ivory buckles for the next prize.") == ",we promptly judg$ antique ivory buckles =! next prize4");
+				Assert.IsTrue(ConvertString("A mad boxer shot a quick, gloved jab to the jaw of his dizzy opponent.") == ",a mad box} %ot a qk1 glov$ jab 6! jaw ( 8 dizzy oppon5t4");
+				Assert.IsTrue(ConvertString("Jaded zombies acted quaintly but kept driving their oxen forward.") == ",jad$ zombies act$ qua9tly b kept driv+ _! ox5 =w>d4");
+				Assert.IsTrue(ConvertString("14. The job requires extra pluck and zeal from every young wage earner.") == "#ad4 ,! job requires extra pluck & z1l f e \"y wage e>n}4");
+
+				Assert.IsTrue(ConvertString("Just wanting to put together some more tests to show the effectiveness of our converter.") == ",j want+ 6put tgr \"s m te/s 6%{ ! e6ective;s ( |r 3v}t}4");
 
 				ranTests = true;
 			}
@@ -215,7 +232,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
-			return finalString.ToString();
+			string output = finalString.ToString();
+			return output;
 		}
 
 		private static void ConvertMappingStringToList()
