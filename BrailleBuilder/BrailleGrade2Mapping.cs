@@ -92,7 +92,7 @@ BY* 0
 // c's
 CAN c
 cannot _c
-+cc+ -
++cc+ 3
 ch *
 character ""*
 CHILD *
@@ -104,72 +104,72 @@ conceiving 3cvg
 could cd
 
 // d's
-day
-+dd+
-deceive
-deceiving
-declare
-declaring
-dis+
-DO
+day ""d
++dd+ 4
+deceive dcv
+deceiving dcvg
+declare dcl
+declaring dclg
+dis+ 4
+DO d
 
 // e's
-+ea+
++ea+ 1
 ed $
 either ei
 en 5
-+ence
-ENOUGH
++ence ;e
+ENOUGH 5
 er }
-ever
+ever ""e
 EVERY e
 
 // f's
-father
-+ff+
-first
+father ""f
++ff+ 6
+first f/
 for =
 FROM f
-+ful
++ful ;l
 
 // g's
-+gg+
-gh
++gg+ 7
+gh <
 GO g
 good gd
 great grt
 
 // h's
-had
+had _h
 HAVE h
 here ""h
-herself
+herself h}f
 him hm
 himself hmf
-HIS
+HIS 8
 
 // i's
-in
-ing
-INTO
+in 9
+ing +
+INTO* 96
 IT x
 ITS xs
 itself xf
-+ity
++ity ;y
 
 // j's
 JUST j
 
 // k's
-know 
+know ""k
 KNOWLEDGE k
 
 // l's
-+less
++less .s
 letter lr
 LIKE l
 little ll
-lord
+lord ""l
 
 // m's
 many _m
@@ -248,7 +248,7 @@ through _?
 thyself ?yf
 time ""t
 tion ;n
-to* 6 // must hava word after and then does not leave the space
+TO* 6
 today td
 together tgr
 tomorrow tm

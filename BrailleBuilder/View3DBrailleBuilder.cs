@@ -27,11 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters2D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -251,7 +253,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				await Task.Run(() => InsertTextDoWork(text));
+				await Task.Run(() => InsertTextDoWork(text,text));//replace with this.word when not testing conversions
 
 				PullMeshDataFromAsynchLists();
 				SelectedMeshGroupIndex = MeshGroups.Count - 1;
@@ -354,7 +356,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			base.OnDraw(graphics2D);
 		}
 
-		private void InsertTextDoWork(string currentText)
+		private void InsertTextDoWork(string brailleText, string wordText)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -362,21 +364,21 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			asynchMeshGroupTransforms.Clear();
 			asynchPlatingDatas.Clear();
 
-			TypeFacePrinter brailPrinter = new TypeFacePrinter(currentText, new StyledTypeFace(brailTypeFace, 12));
+			TypeFacePrinter brailPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(brailTypeFace, 12));
 
 			int firstNewCharacter = 0;
 			StyledTypeFace boldStyled = new StyledTypeFace(boldTypeFace, 12);
 
 			if (includeText.Checked)
 			{
-				TypeFacePrinter normalPrinter = new TypeFacePrinter(currentText, boldStyled);
+				TypeFacePrinter normalPrinter = new TypeFacePrinter(brailleText, boldStyled);
 				Vector2 normalSize = normalPrinter.GetSize();
-				AddCharacterMeshes(currentText, normalPrinter);
+				AddCharacterMeshes(wordText, normalPrinter);
 				
 				firstNewCharacter = asynchPlatingDatas.Count;
 			}
 
-			AddCharacterMeshes(currentText, brailPrinter);
+			AddCharacterMeshes(brailleText, brailPrinter);
 			Vector2 brailSize = brailPrinter.GetSize();
 
 			for (int i = firstNewCharacter; i < asynchPlatingDatas.Count; i++)
@@ -410,9 +412,15 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 #if true
 					Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, unscaledLetterHeight / 2);
 #else
+					Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, unscaledLetterHeight / 2);
 					// this is the code to make rounded tops
 					// convert the letterPrinter to clipper polygons
+					List<List<IntPoint>> insetPoly = VertexSourceToPolygon.CreatePolygons(letterPrinter);
 					// inset them
+					ClipperOffset clipper = new ClipperOffset();
+					clipper.AddPaths(insetPoly, JoinType.jtMiter, EndType.etClosedPolygon);
+					List<List<IntPoint>> solution = new List<List<IntPoint>>();
+					clipper.Execute(solution, 5.0);
 					// convert them back into a vertex source
 					// merge both the inset and original vertex sources together
 					// convert the new vertex source into a mesh (trianglulate them)
@@ -614,7 +622,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					// put in the user alpha checkbox
 					{
 						includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-						includeText.ToolTipText = "Show normal text under the braille".Localize();
+						includeText.ToolTipText = "Show normal text above the braille".Localize();
 						includeText.Checked = false;
 						includeText.Margin = new BorderDouble(10, 5);
 						includeText.HAnchor = HAnchor.ParentLeft;
@@ -712,29 +720,26 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		}
 
 		private void CenterTextOnScreen(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
-		{
+		{			
+			// center in y
 			if (meshesList.Count > 0)
 			{
-				// center in y
-				if (meshesList.Count > 0)
+				AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0].TotalTransform);
+				for (int i = 1; i < meshesList.Count; i++)
 				{
-					AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0].TotalTransform);
-					for (int i = 1; i < meshesList.Count; i++)
-					{
-						bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform));
-					}
-
-					Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
-					Vector3 centerOffset = bounds.Center - bedCenter;
-
-					for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
-					{
-						ScaleRotateTranslate centering = meshTransforms[meshIndex];
-						centering.centering *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
-						meshTransforms[meshIndex] = centering;
-					}
+					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform));
 				}
-			}
+
+				Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
+				Vector3 centerOffset = bounds.Center - bedCenter;
+
+				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
+				{
+					ScaleRotateTranslate centering = meshTransforms[meshIndex];
+					centering.centering *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
+					meshTransforms[meshIndex] = centering;
+				}
+			}			
 		}
 
 		private void SetWordSize(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
