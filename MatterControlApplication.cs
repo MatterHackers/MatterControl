@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main()
 		{
-            PerformanceTimer.ResultsCreatorFunction = PerformanceResultsMCOverlay.CreateResultsSystemWindow;
+            PerformanceTimer.GetParentWindowFunction = () => { return MatterControlApplication.instance; };
 
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
