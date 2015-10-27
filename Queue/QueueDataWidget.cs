@@ -91,9 +91,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
 				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
-				enterEditModeButton.Name = "Queue Edit Button";
 				enterEditModeButton.ToolTipText = "Enter Multi Select mode".Localize();
-                enterEditModeButton.Click += enterEditModeButtonClick;
+				enterEditModeButton.Click += enterEditModeButtonClick;
 
 				leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
 				leaveEditModeButton.Name = "Queue Done Button";
@@ -110,6 +109,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					editButtonFactory.FixedWidth = leaveEditModeButton.Width;
 					enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+					enterEditModeButton.Name = "Queue Edit Button";
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
@@ -256,6 +256,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			itemOperationButtons.AddChild(copyItemButton);
 
 			Button removeItemButton = editButtonFactory.Generate("Remove".Localize());
+			removeItemButton.Name = "Queue Remove Button";
 			removeItemButton.Margin = new BorderDouble(3, 0);
 			removeItemButton.Click += new EventHandler(removeButton_Click);
 			editButtonsEnableData.Add(new ButtonEnableData(true, true, true));
