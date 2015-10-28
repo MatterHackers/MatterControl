@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
-		public static string PathToQueueItem(string queueItemToLoad)
+		public static string PathToQueueItemsFolder(string queueItemToLoad)
 		{
 
 			string pathToQueueItemFolder = Path.Combine("{%}USERPROFILE{%}", "Development", "MatterControl", "Tests", "TestData", "QueueItems");

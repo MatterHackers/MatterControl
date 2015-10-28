@@ -66,8 +66,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Library Edit Button", 3);
 					testRunner.Wait(.5);
 
-					SystemWindow containingWindow;
-					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out containingWindow, 3, searchRegion: rowItemRegion);
+					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
 					CheckBox checkBoxWidget = foundWidget as CheckBox;
 					resultsHarness.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
 					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
