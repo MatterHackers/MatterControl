@@ -1,0 +1,4 @@
+temperature = 201
+disable_fan_first_layers = 2
+min_fan_speed = 55
+max_fan_speed = 75
