@@ -1,0 +1,15 @@
+filament_diameter = 2.85
+extrusion_multiplier = 1
+temperature = 220
+bed_temperature = 40
+retract_lift = 1
+retract_length = 2.5
+retract_length_tool_change = 5
+retract_restart_extra = 0
+infill_speed = 70
+perimeter_speed = 60
+first_layer_speed = 70%
+skirt_distance = 0.2
+avoid_crossing_perimeters = 0
+travel_speed = 250
+min_fan_speed = 100

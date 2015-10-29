@@ -111,6 +111,7 @@ namespace MatterHackers.Agg.UI
 			AddChild(mainControlText);
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
+			this.Name = topMenuText + " Menu";
 
 			MouseEnter += new EventHandler(DropDownList_MouseEnter);
 			MouseLeave += new EventHandler(DropDownList_MouseLeave);

@@ -143,6 +143,7 @@ namespace MatterHackers.MatterControl
 					{
 						Title = "MatterControl - " + "Alert".Localize();
 						Button okButton = textImageButtonFactory.Generate(LocalizedString.Get("Ok"), centerText: true);
+						okButton.Name = "Ok Button";
 						okButton.Cursor = Cursors.Hand;
 						okButton.Click += new EventHandler(okButton_Click);
 						buttonRow.AddChild(okButton);
