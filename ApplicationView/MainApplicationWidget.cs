@@ -317,14 +317,17 @@ namespace MatterHackers.MatterControl
 			{
 				if (globalInstance == null)
 				{
-					globalInstance = new ApplicationController();
-					if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+					using (new PerformanceTimer("Startup", "AppController Instance"))
 					{
-						globalInstance.MainView = new CompactApplicationView();
-					}
-					else
-					{
-						globalInstance.MainView = new ResponsiveApplicationView();
+						globalInstance = new ApplicationController();
+						if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+						{
+							globalInstance.MainView = new CompactApplicationView();
+						}
+						else
+						{
+							globalInstance.MainView = new ResponsiveApplicationView();
+						}
 					}
 				}
 				return globalInstance;

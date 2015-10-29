@@ -3844,3 +3844,6 @@ Translated:Solid Infill works best when set tu LINES.
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
 
+English:Show normal text above the braille
+Translated:Show normal text above the braille
+

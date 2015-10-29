@@ -297,10 +297,10 @@ namespace MatterHackers.MatterControl
 				TextWidget.GlobalPointSizeScaleRatio = 1.3;
 			}
 
-            using (new PerformanceTimer("Startup", "MainView"))
-            {
-                this.AddChild(ApplicationController.Instance.MainView);
-            }
+			using (new PerformanceTimer("Startup", "MainView"))
+			{
+				this.AddChild(ApplicationController.Instance.MainView);
+			}
 			this.MinimumSize = minSize;
 			this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
@@ -544,7 +544,7 @@ namespace MatterHackers.MatterControl
 		{
 			totalDrawTime.Restart();
 			GuiWidget.DrawCount = 0;
-			using (new PerformanceTimer("Draw Timer", "Total"))
+			using (new PerformanceTimer("Draw Timer", "MC Draw"))
 			{
 				base.OnDraw(graphics2D);
 			}
