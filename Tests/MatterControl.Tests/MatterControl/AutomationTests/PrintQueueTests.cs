@@ -79,11 +79,11 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
-	public class CreateButtonTest
-	{
+	public class ClickingCreateButtonOpensPluginWindow
+    {
 		[Test, RequiresSTA, RunInApplicationDomain]
 		//Test Works
-		public void ClickOnCreateButton()
+		public void ClickCreateButton()
 		{
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
@@ -486,6 +486,10 @@ namespace MatterHackers.MatterControl.UI
 					 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
 					 */
 
+					bool checkboxExists = testRunner.WaitForName("Queue Item Checkbox", 2);
+
+					resultsHarness.AddTestResult(checkboxExists == false);
+
 					int queueItemCount = QueueData.Instance.Count;
 					bool queueItemCountEqualThree = false;
 
@@ -522,11 +526,11 @@ namespace MatterHackers.MatterControl.UI
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, null, null, "Three_Queue_Items");
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]//, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
 	public class DoneButtonClickedTurnsOffEditMode
 	{
 
@@ -711,7 +715,25 @@ namespace MatterHackers.MatterControl.UI
 
 					resultsHarness.AddTestResult(queueWasExportedToZip == true);
 
-					if(File.Exists(validateExportPath))
+
+					//Add the exprted zip file to the Queue and confirm that the Queue Count increases by 3 
+					testRunner.ClickByName("Queue Add Button");
+					testRunner.Wait(1);
+					testRunner.Type(exportZipPath + ".zip");
+					testRunner.Wait(1);
+					testRunner.Type("{Enter}");
+
+					int queueCountAfterZipIsAdded = QueueData.Instance.Count;
+					bool allItemsInZipWereAddedToTheQueue = false;
+
+					if(queueCountAfterZipIsAdded == 6)
+					{
+						allItemsInZipWereAddedToTheQueue = true;
+					}
+
+					resultsHarness.AddTestResult(allItemsInZipWereAddedToTheQueue == true);
+
+					if (File.Exists(validateExportPath))
 					{
 
 						File.Delete(validateExportPath);
@@ -725,7 +747,7 @@ namespace MatterHackers.MatterControl.UI
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, null, null, "Three_Queue_Items");
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
 		}
 	}
 
@@ -878,31 +900,22 @@ namespace MatterHackers.MatterControl.UI
 					}
 
 					resultsHarness.AddTestResult(queueEmpty == false);
-
 					testRunner.ClickByName("Queue... Menu", 2);
-
 					testRunner.ClickByName(" Create Part Sheet Menu Item", 2);
-
 					testRunner.Wait(2);
 
 					string pathToSavePartSheet = MatterControlUtilities.PathToQueueItemsFolder("CreatePartSheet");
-
 					string validatePartSheetPath = Path.Combine("..", "..", "..", "TestData", "QueueItems", "CreatePartSheet.pdf");
 
 					testRunner.Type(pathToSavePartSheet);
-
 					testRunner.Wait(1);
-
 					testRunner.Type("{Enter}");
-
 					testRunner.Wait(1);
-
 					testRunner.Wait(5);
 
 					bool partSheetCreated = File.Exists(validatePartSheetPath);
 
 					testRunner.Wait(2);
-
 					resultsHarness.AddTestResult(partSheetCreated == true);
 
 
@@ -1018,7 +1031,6 @@ namespace MatterHackers.MatterControl.UI
 					* 2. All files in zip are added to queue
 					*/
 					int queueCountBeforeTest = QueueData.Instance.Count;
-
 					bool queueCountEqualsZero = false;
 
 					if (queueCountBeforeTest == 0)
@@ -1052,11 +1064,9 @@ namespace MatterHackers.MatterControl.UI
 					//Mouthpiece & Batman part
 
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
-
 					resultsHarness.AddTestResult(firstQueueItemExists == true);
 
 					bool secondQueueItemExists = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
-
 					resultsHarness.AddTestResult(secondQueueItemExists == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
@@ -1086,7 +1096,8 @@ namespace MatterHackers.MatterControl.UI
 
 					/* Tests that when the Queue Copy button is clicked:
 					* 1. QueueCount = Zero
-					* 2. All files in zip are added to queue
+					* 2. Add button can add single .amf file to the queue 
+					* 3. Queue count inceases by one 
 					*/
 					int queueCountBeforeTest = QueueData.Instance.Count;
 
@@ -1102,17 +1113,16 @@ namespace MatterHackers.MatterControl.UI
 
 					//Click Add button 
 					testRunner.ClickByName("Queue Add Button", 2);
-
 					testRunner.Wait(1);
 
 					string pathToType = MatterControlUtilities.PathToQueueItemsFolder("Rook.amf");
 
 					testRunner.Type(pathToType);
-
 					testRunner.Wait(1);
-
 					testRunner.Type("{Enter}");
 
+
+					//Make sure Queue Count increases by one 
 					int queueCountAfterAMFIsAdded = QueueData.Instance.Count;
 					bool oneItemAddedToQueue = false;
 
@@ -1123,10 +1133,136 @@ namespace MatterHackers.MatterControl.UI
 
 					resultsHarness.AddTestResult(oneItemAddedToQueue = true);
 
-					//Mouthpiece & Batman part
-
+					//Make sure amf queue item is added 
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Rook", 1);
+					resultsHarness.AddTestResult(firstQueueItemExists == true);
 
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class QueueAddButtonAddsSTLFileToQueue
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void QueueAddButtonAddsSTL()
+		{
+
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					/* Tests that when the Queue Copy button is clicked:
+					* 1. QueueCount = Zero
+					* 2. Add button can add single .stl file to the queue 
+					* 3. Queue count inceases by one 
+					*/
+					int queueCountBeforeTest = QueueData.Instance.Count;
+					bool queueCountEqualsZero = false;
+
+					if (queueCountBeforeTest == 0)
+					{
+						queueCountEqualsZero = true;
+					}
+
+					//Make sure queue count equals zero before test begins
+					resultsHarness.AddTestResult(queueCountEqualsZero = true);
+
+					//Click Add button 
+					testRunner.ClickByName("Queue Add Button", 2);
+					testRunner.Wait(1);
+
+					string pathToType = MatterControlUtilities.PathToQueueItemsFolder("Batman.stl");
+
+					testRunner.Type(pathToType);
+					testRunner.Wait(1);
+					testRunner.Type("{Enter}");
+
+					int queueCountAfterSTLIsAdded = QueueData.Instance.Count;
+					bool oneItemAddedToQueue = false;
+
+					if (queueCountAfterSTLIsAdded == 1)
+					{
+						oneItemAddedToQueue = true;
+					}
+
+					resultsHarness.AddTestResult(oneItemAddedToQueue = true);
+
+					//stl queue item is added to the queue
+					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
+					resultsHarness.AddTestResult(firstQueueItemExists == true);
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class QueueAddButtonAddsGcodeFileToQueue
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void QueueAddButtonAddsGcodeFile()
+		{
+
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					/* Tests that when the Queue Copy button is clicked:
+					* 1. QueueCount = Zero
+					* 2. Add button can add single .gcode file to the queue 
+					* 3. Queue count inceases by one 
+					*/
+					int queueCountBeforeTest = QueueData.Instance.Count;
+					bool queueCountEqualsZero = false;
+
+					if (queueCountBeforeTest == 0)
+					{
+						queueCountEqualsZero = true;
+					}
+
+					//Make sure queue count equals zero before test begins
+					resultsHarness.AddTestResult(queueCountEqualsZero = true);
+
+					//Click Add button 
+					testRunner.ClickByName("Queue Add Button", 2);
+					testRunner.Wait(1);
+
+					string pathToType = MatterControlUtilities.PathToQueueItemsFolder("chichen-itza_pyramid.gcode");
+
+					testRunner.Type(pathToType);
+					testRunner.Wait(1);
+					testRunner.Type("{Enter}");
+
+					int queueCountAfterGcodeIsAdded = QueueData.Instance.Count;
+					bool oneItemAddedToQueue = false;
+
+					if (queueCountAfterGcodeIsAdded == 1)
+					{
+						oneItemAddedToQueue = true;
+					}
+
+					resultsHarness.AddTestResult(oneItemAddedToQueue = true);
+
+					//stl queue item is added to the queue
+					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "chichen-itza_pyramid", 1);
 					resultsHarness.AddTestResult(firstQueueItemExists == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
