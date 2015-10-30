@@ -459,15 +459,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		double startDistanceBetweenPoints = 1;
+		double pinchStartScale = 1;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseDown(mouseEvent);
 			if (MouseCaptured)
 			{
-				mouseDownPosition.x = mouseEvent.X;
-				mouseDownPosition.y = mouseEvent.Y;
+				if (mouseEvent.NumPositions == 1)
+				{
+					mouseDownPosition.x = mouseEvent.X;
+					mouseDownPosition.y = mouseEvent.Y;
+				}
+				else
+				{
+					Vector2 centerPosition = (mouseEvent.GetPosition(1) + mouseEvent.GetPosition(0)) / 2;
+					mouseDownPosition = centerPosition;
+				}
 
 				lastMousePosition = mouseDownPosition;
+
+				if (mouseEvent.NumPositions > 1)
+				{
+					startDistanceBetweenPoints = (mouseEvent.GetPosition(1) - mouseEvent.GetPosition(0)).Length;
+                    pinchStartScale = layerScale;
+                }
 			}
 		}
 
@@ -476,25 +492,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseWheel(mouseEvent);
 			if (FirstWidgetUnderMouse) // TODO: find a good way to decide if you are what the wheel is trying to do
 			{
-				Vector2 mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
-				TotalTransform.inverse_transform(ref mousePreScale);
 
 				const double deltaFor1Click = 120;
-				layerScale = layerScale + layerScale * (mouseEvent.WheelDelta / deltaFor1Click) * .1;
+				double scaleAmount = (mouseEvent.WheelDelta / deltaFor1Click) * .1;
 
-				Vector2 mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
-				TotalTransform.inverse_transform(ref mousePostScale);
-
-				unscaledRenderOffset += (mousePostScale - mousePreScale);
+				ScalePartAndFixPosition(mouseEvent, layerScale + layerScale * scaleAmount);
 
 				Invalidate();
 			}
 		}
 
+		void ScalePartAndFixPosition(MouseEventArgs mouseEvent, double scaleAmount)
+		{
+			Vector2 mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
+			TotalTransform.inverse_transform(ref mousePreScale);
+
+			layerScale = scaleAmount;
+
+			Vector2 mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
+			TotalTransform.inverse_transform(ref mousePostScale);
+
+			unscaledRenderOffset += (mousePostScale - mousePreScale);
+		}
+
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseMove(mouseEvent);
-			Vector2 mousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
+			Vector2 mousePos = new Vector2();
+			if (mouseEvent.NumPositions == 1)
+			{
+				mousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
+			}
+			else
+			{
+				Vector2 centerPosition = (mouseEvent.GetPosition(1) + mouseEvent.GetPosition(0)) / 2;
+				mousePos = centerPosition;
+			}
 			if (MouseCaptured)
 			{
 				Vector2 mouseDelta = mousePos - lastMousePosition;
@@ -535,6 +568,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Invalidate();
 			}
 			lastMousePosition = mousePos;
+
+			// check if we should do some scaling
+			if (TransformState == ETransformState.Move
+				&& mouseEvent.NumPositions > 1
+				&& startDistanceBetweenPoints > 0)
+			{
+				double curDistanceBetweenPoints = (mouseEvent.GetPosition(1) - mouseEvent.GetPosition(0)).Length;
+
+				double scaleAmount = pinchStartScale * curDistanceBetweenPoints / startDistanceBetweenPoints;
+				ScalePartAndFixPosition(mouseEvent, scaleAmount);
+			}
 		}
 
 		public void Load(string gcodePathAndFileName)

@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (globalInstance == null)
 				{
-					using (new PerformanceTimer("Startup", "AppController Instance"))
+					//using (new PerformanceTimer("Startup", "AppController Instance"))
 					{
 						globalInstance = new ApplicationController();
 						if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
