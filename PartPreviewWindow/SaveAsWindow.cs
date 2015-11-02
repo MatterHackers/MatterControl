@@ -19,10 +19,17 @@ namespace MatterHackers.MatterControl
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
 		LibrarySelectorWidget librarySelectorWidget;
+		Button saveAsButton;
 
-		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator, bool showQueue, bool getNewName)
+        public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
+			textImageButtonFactory.disabledFillColor = new RGBA_Bytes();
+
 			Title = "MatterControl - " + "Save As".Localize();
 			AlwaysOnTopOfMain = true;
 
@@ -112,11 +119,14 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			Button saveAsButton = textImageButtonFactory.Generate("Save".Localize(), centerText: true);
+			saveAsButton = textImageButtonFactory.Generate("Save".Localize(), centerText: true);
 			saveAsButton.Name = "Save As Save Button";
-			saveAsButton.Visible = true;
+			// Disable the save as button 
+			saveAsButton.Enabled = false;
 			saveAsButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(saveAsButton);
+
+			librarySelectorWidget.ChangedCurrentLibraryProvider += EnableSaveAsButtonOnChangedLibraryProvider;
 
 			saveAsButton.Click += new EventHandler(saveAsButton_Click);
 
@@ -141,6 +151,12 @@ namespace MatterHackers.MatterControl
 #endif
 
 			ShowAsSystemWindow();
+		}
+
+		private void EnableSaveAsButtonOnChangedLibraryProvider(LibraryProvider arg1, LibraryProvider arg2)
+		{
+			// Once we have navigated to any provider enable the ability to click the save as button.
+			saveAsButton.Enabled = true;
 		}
 
 		bool firstDraw = true;
