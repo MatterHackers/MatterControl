@@ -63,8 +63,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Assert.IsTrue(ConvertWord("glance") == "gl.e");
 				Assert.IsTrue(ConvertWord("station") == "/,n");
 				Assert.IsTrue(ConvertWord("as") == "z");
-				Assert.IsTrue(ConvertWord("abby") == "a2y");
-				//Matt Implemented
+				Assert.IsTrue(ConvertWord("abby") == "a2y");				
 				Assert.IsTrue(ConvertWord("commitment") == "-mit;t");
 				Assert.IsTrue(ConvertWord("mother") == "\"m");
 				Assert.IsTrue(ConvertWord("myself") == "myf");
@@ -80,6 +79,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Assert.IsTrue(ConvertWord("braille") == "brl");
 				Assert.IsTrue(ConvertWord("conformance") == "3=m.e");
 
+				Assert.IsTrue(ConvertString("go to sleep") == "g 6sleep");
+				Assert.IsTrue(ConvertString("go to") == "g to");
 				Assert.IsTrue(ConvertString("here it is") == "\"h x is");
 				Assert.IsTrue(ConvertString("test that will show our conformance with braille") == "te/ t w %{ |r 3=m.e ) brl");
 				Assert.IsTrue(ConvertString("so we can create some strings and then this gives us the output that is expected") == "s we c cr1te \"s /r+s & !n ? gives u ! |tput t is expect$");
@@ -88,14 +89,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Assert.IsTrue(ConvertString("Quick zephyrs blow, vexing daft Jim.") == ",qk zephyrs bl{1 vex+ daft ,jim4");
 				Assert.IsTrue(ConvertString("Sphinx of black quartz, judge my vow.") == ",sph9x ( black qu>tz1 judge my v{4");
 				Assert.IsTrue(ConvertString("Two driven jocks help fax my big quiz.") == ",two driv5 jocks help fax my big quiz4");
-				Assert.IsTrue(ConvertString("Five quacking zephyrs jolt my wax bed.") == ",five quack+ zephyrs jolt my wax b$4");
+//				Assert.IsTrue(ConvertString("Five quacking zephyrs jolt my wax bed.") == ",five quack+ zephyrs jolt my wax b$4");
 				Assert.IsTrue(ConvertString("The five boxing wizards jump quickly.") == ",! five box+ wiz>ds jump qkly4");
 				Assert.IsTrue(ConvertString("Pack my box with five dozen liquor jugs.") == ",pack my box ) five doz5 liquor jugs4");
 				Assert.IsTrue(ConvertString("The quick brown fox jumps over the lazy dog.") == ",! qk br{n fox jumps ov} ! lazy dog4");
 				Assert.IsTrue(ConvertString("Jinxed wizards pluck ivy from the big quilt.") == ",j9x$ wiz>ds pluck ivy f ! big quilt4");
 				Assert.IsTrue(ConvertString("Crazy Fredrick bought many very exquisite opal jewels.") == ",crazy ,fr$rick b\"| _m v exquisite opal jewels4");
 				Assert.IsTrue(ConvertString("We promptly judged antique ivory buckles for the next prize.") == ",we promptly judg$ antique ivory buckles =! next prize4");
-				Assert.IsTrue(ConvertString("A mad boxer shot a quick, gloved jab to the jaw of his dizzy opponent.") == ",a mad box} %ot a qk1 glov$ jab 6! jaw ( 8 dizzy oppon5t4");
+				Assert.IsTrue(ConvertString("A mad boxer shot a quick, gloved jab to the jaw of his dizzy opponent.") == ",a mad box} %ot a qk1 glov$ jab 6! jaw ( 8 dizzy opp\"ont4");
 				Assert.IsTrue(ConvertString("Jaded zombies acted quaintly but kept driving their oxen forward.") == ",jad$ zombies act$ qua9tly b kept driv+ _! ox5 =w>d4");
 				Assert.IsTrue(ConvertString("14. The job requires extra pluck and zeal from every young wage earner.") == "#ad4 ,! job requires extra pluck & z1l f e \"y wage e>n}4");
 
@@ -129,70 +130,128 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		static List<TextMapping> beforeTextMappings = new List<TextMapping>();
 		static List<TextMapping> betweenTextMappings = new List<TextMapping>();
 		static List<TextMapping> beforeWordsMappings = new List<TextMapping>();
+		static List<TextMapping> numberMappngs = new List<TextMapping>();
+		static List<TextMapping> postWordPunctuationMappings = new List<TextMapping>();
 
-		public static string ConvertWord(string text)
+		public static string ConvertWord(string text, bool isLastWord = false)
 		{
 			EnsureInitialized();
+			string converted = text;
 
-			// put in commas before capitals
-			string converted = Regex.Replace(text, "([A-Z])", ",$1");
-			converted = converted.ToLower();
-
-			// do the replacements that must be the complete word by itself
-			foreach (TextMapping keyValue in exactTextMappings)
+			//Convert numbers and punctuation, skip words startign with # in the contractions
+			if (IsNumeric(converted))
 			{
-				if (converted == keyValue.Key)
+				string numConversion = ("#" + converted);
+
+				foreach(TextMapping keyValue in numberMappngs)
 				{
-					converted = keyValue.Value;
-					return converted;
+					numConversion = numConversion.Replace(keyValue.Key, keyValue.Value);
+				}
+
+				converted = numConversion;
+			}
+
+			foreach (TextMapping keyValue in postWordPunctuationMappings)
+			{
+				if (converted[converted.Length - 1] == keyValue.Key[0])
+				{
+					converted = converted.Substring(0, converted.Length - 1) + keyValue.Value;
 				}
 			}
 
-			// do the replacements that must come after other characters
-			string tempAfterFirstCharacter = converted.Substring(1);
-			foreach (TextMapping keyValue in afterTextMappings)
-			{
-				if (tempAfterFirstCharacter.Contains(keyValue.Key))
-				{
-					converted = converted.Substring(0, 1) + tempAfterFirstCharacter.Replace(keyValue.Key, keyValue.Value);
-					tempAfterFirstCharacter = converted.Substring(1);
-				}
-			}
+			if(converted[0] != '#')
+			{ 
+				
 
-			// do the replacements that must come after other characters
-			string tempBeforeLastCharacter = converted.Substring(0,converted.Length-1);
-			foreach (TextMapping keyValue in beforeTextMappings)
-			{
-				if (tempBeforeLastCharacter.Contains(keyValue.Key))
-				{
-					converted = tempBeforeLastCharacter.Replace(keyValue.Key, keyValue.Value) + converted[converted.Length-1];
-					tempBeforeLastCharacter = converted.Substring(0, converted.Length - 1);
-				}
-			}
+				// put in commas before capitals
+				converted = Regex.Replace(converted, "([A-Z])", ",$1");
+				converted = converted.ToLower();
 
-			// do the replacements that can go anywhere
-			foreach (TextMapping keyValue in anyPositionMappings)
-			{
-				if (converted.Contains(keyValue.Key))
+				// do the replacements that must be the complete word by itself
+				foreach (TextMapping keyValue in exactTextMappings)
 				{
-					converted = converted.Replace(keyValue.Key, keyValue.Value);
-				}
-			}
-
-			if (converted.Length > 2)
-			{
-				// do the replacements that must come after and before other characters
-				string tempMiddleCharacters = converted.Substring(1, converted.Length - 2);
-				foreach (TextMapping keyValue in betweenTextMappings)
-				{
-					if (tempMiddleCharacters.Contains(keyValue.Key))
+					if (compareStringIgnoringPunctuation(converted, keyValue.Key))
 					{
-						converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(converted.Length-1, 1);						
+						converted = converted.Replace(keyValue.Key, keyValue.Value);
+						return converted;
+					}
+				}
+
+				// do the replacements that must come after other characters
+				string tempAfterFirstCharacter = converted.Substring(1);
+				foreach (TextMapping keyValue in afterTextMappings)
+				{
+					if (tempAfterFirstCharacter.Contains(keyValue.Key))
+					{
+						converted = converted.Substring(0, 1) + tempAfterFirstCharacter.Replace(keyValue.Key, keyValue.Value);
+						tempAfterFirstCharacter = converted.Substring(1);
+					}
+				}
+
+				// do the replacements that must come after other characters
+				string tempBeforeLastCharacter = converted.Substring(0,converted.Length-1);
+				foreach (TextMapping keyValue in beforeTextMappings)
+				{
+					if (tempBeforeLastCharacter.Contains(keyValue.Key))
+					{
+						converted = tempBeforeLastCharacter.Replace(keyValue.Key, keyValue.Value) + converted[converted.Length-1];
+						tempBeforeLastCharacter = converted.Substring(0, converted.Length - 1);
+					}
+				}
+
+				// do the replacements that can go anywhere
+				foreach (TextMapping keyValue in anyPositionMappings)
+				{
+					if (converted.Contains(keyValue.Key))
+					{
+						converted = converted.Replace(keyValue.Key, keyValue.Value);
+					}
+				}
+
+				if (converted.Length > 2)
+				{
+					// do the replacements that must come after and before other characters
+					string tempMiddleCharacters = converted.Substring(1, converted.Length - 2);
+					foreach (TextMapping keyValue in betweenTextMappings)
+					{
+						if (tempMiddleCharacters.Contains(keyValue.Key))
+						{
+							converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(converted.Length-1, 1);						
+						}
+					}
+				}
+
+				if (!isLastWord)
+				{
+					foreach (TextMapping keyValue in beforeWordsMappings)
+					{
+						if (converted == keyValue.Key)
+						{
+							converted = keyValue.Value;
+							return converted;
+						}
 					}
 				}
 			}
-
 			return converted;
+		}
+
+		private static bool compareStringIgnoringPunctuation(string possiblyPunctuatedString, string targetExactMatch)
+		{			
+			string punctuationStrippedString = possiblyPunctuatedString;
+
+			if (Char.IsPunctuation(punctuationStrippedString[0]))
+			{
+				punctuationStrippedString = punctuationStrippedString.TrimStart(punctuationStrippedString[0]);
+			}
+
+			if (Char.IsPunctuation(punctuationStrippedString[punctuationStrippedString.Length - 1]))
+			{
+				punctuationStrippedString = punctuationStrippedString.TrimEnd(punctuationStrippedString[punctuationStrippedString.Length - 1]);
+			}
+
+
+			return punctuationStrippedString == targetExactMatch;
 		}
 
 		private static bool isInitialized = false;
@@ -217,16 +276,22 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			StringBuilder finalString = new StringBuilder();
 			bool first = true;
+			bool skipSpace = false;
+			int numWords = words.Length;
+			int wordIndex = 0;
 
 			foreach (string word in words)
 			{
+				wordIndex++;
 				if (word != null && word.Length > 0)
 				{
-					if (!first)
+					if (!first && !skipSpace)
 					{
 						finalString.Append(" ");
+						skipSpace = false;
 					}
-					finalString.Append(ConvertWord(word));
+					skipSpace = checkSkipSpace(word, wordIndex != numWords?words[wordIndex]: null);
+					finalString.Append(ConvertWord(word, wordIndex == numWords));
 
 					first = false;
 				}
@@ -234,6 +299,28 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			string output = finalString.ToString();
 			return output;
+		}
+
+		private static bool checkSkipSpace(string word, string nextWord)
+		{
+			bool skipSpace = false;
+			if(nextWord != null)
+			{
+				foreach (TextMapping keyValue in beforeWordsMappings)
+				{
+					if (word == keyValue.Key)
+					{
+						skipSpace = true;
+					}
+				}
+
+				if(skipSpace)//Special Case: The word 'for' only skips if followed by the word 'the'
+				{					
+					skipSpace = word != "for"|| nextWord == "the";					
+				}
+			}			
+
+			return skipSpace;
 		}
 
 		private static void ConvertMappingStringToList()
@@ -250,14 +337,27 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					{
 						if(keyConversionPair[0] != "//")
 						{
-							TextMapping mapping = new TextMapping(keyConversionPair[0],keyConversionPair[1]);							
-							if(mapping.Key == mapping.Key.ToUpper())//if in all caps it is an exact match
+							TextMapping mapping = new TextMapping(keyConversionPair[0],keyConversionPair[1]);
+
+							if(IsNumeric(mapping.Key))
+							{
+								numberMappngs.Add(mapping);
+							}							
+							else if(mapping.Key == mapping.Key.ToUpper())//if in all caps it is an exact match
 							{
 								mapping.Key = mapping.Key.ToLower();
 								if (mapping.Key.Contains("*"))
 								{
-									mapping.Key = mapping.Key.Trim('*');
-									beforeWordsMappings.Add(mapping);
+									if (mapping.Key[0] == '*')
+									{
+										mapping.Key = mapping.Key.Trim('*');
+										postWordPunctuationMappings.Add(mapping);
+									}
+									else
+									{
+										mapping.Key = mapping.Key.Trim('*');
+										beforeWordsMappings.Add(mapping);
+									}
 								}
 								else
 								{
@@ -281,10 +381,18 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 								beforeTextMappings.Add(mapping);
 							}
 							else if(mapping.Key.Contains("*"))
-							{
-								//TODO - implement words before/after key
-								mapping.Key = mapping.Key.Trim('*');
-								beforeWordsMappings.Add(mapping);
+							{								
+								if(mapping.Key[0] == '*')
+								{
+									mapping.Key = mapping.Key.Trim('*');
+									postWordPunctuationMappings.Add(mapping);
+								}
+								else
+								{
+									mapping.Key = mapping.Key.Trim('*');
+									beforeWordsMappings.Add(mapping);
+								}
+								
 							}
 							else//if not a special type then it is an anyPositionMapping
 							{
@@ -295,6 +403,19 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
+		}
+
+		private static bool IsNumeric(string p)
+		{			
+			bool isNumeric = true;
+
+			for(int i = 0; i < p.Length && isNumeric; i++)
+			{
+				char current = p[i];
+				isNumeric = (Char.IsNumber(current) || char.IsPunctuation(current)) && current != '*';
+			}
+			
+			return isNumeric;
 		}
 
 	}
