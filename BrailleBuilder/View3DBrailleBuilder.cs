@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				await Task.Run(() => InsertTextDoWork(text,text));//replace with this.word when not testing conversions
+				await Task.Run(() => InsertTextDoWork(text,this.word));//replace with this.word when not testing conversions
 
 				PullMeshDataFromAsynchLists();
 				SelectedMeshGroupIndex = MeshGroups.Count - 1;
@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			if (includeText.Checked)
 			{
-				TypeFacePrinter normalPrinter = new TypeFacePrinter(brailleText, boldStyled);
+				TypeFacePrinter normalPrinter = new TypeFacePrinter(wordText, boldStyled);
 				Vector2 normalSize = normalPrinter.GetSize();
 				AddCharacterMeshes(wordText, normalPrinter);
 				
@@ -381,9 +381,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			AddCharacterMeshes(brailleText, brailPrinter);
 			Vector2 brailSize = brailPrinter.GetSize();
 
-			for (int i = firstNewCharacter; i < asynchPlatingDatas.Count; i++)
+			for (int i = 0; i < firstNewCharacter; i++)
 			{
-				asynchPlatingDatas[i].spacing = asynchPlatingDatas[i - firstNewCharacter].spacing + new Vector2(0, -boldStyled.CapHeightInPixels * 1.5);
+				asynchPlatingDatas[i].spacing = asynchPlatingDatas[i].spacing + new Vector2(0, boldStyled.CapHeightInPixels * 1.5);
 			}
 
 			CreateBase(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
