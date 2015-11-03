@@ -65,12 +65,13 @@ namespace MatterHackers.MatterControl.UI
 
 		public static string PathToQueueItemsFolder(string queueItemToLoad)
 		{
+			string temnp = Directory.GetCurrentDirectory();
 
-			string pathToQueueItemFolder = Path.Combine("{%}USERPROFILE{%}", "Development", "MatterControl", "Tests", "TestData", "QueueItems");
+			string pathToQueueItemFolder = Path.Combine("..", "..", "..", "..", "Tests", "TestData", "QueueItems");
 
 			string fullPathToQueueItem = Path.Combine(pathToQueueItemFolder, queueItemToLoad);
 
-			return fullPathToQueueItem;
+			return Path.GetFullPath(fullPathToQueueItem);
 		}
 
 		public static void CloseMatterControl(AutomationRunner testRunner)
