@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl
 
 			saveAsButton = textImageButtonFactory.Generate("Save".Localize(), centerText: true);
 			saveAsButton.Name = "Save As Save Button";
-			// Disable the save as button 
+			// Disable the save as button until the user actually selects a provider
 			saveAsButton.Enabled = false;
 			saveAsButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(saveAsButton);

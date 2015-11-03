@@ -25,10 +25,12 @@ namespace MatterHackers.MatterControl.UI
 
 					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Edit", 3));
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Copy", 3));
-					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Delete", 3));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu", 3));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu Item", 3));
+					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Copy", 3), "Click Copy");
+					// wait for the copy to finish
+					testRunner.Wait(.1);
+					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Delete", 3), "Click Delete");
+					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu", 3), "Click Save As Menu");
+					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu Item", 3), "Click Save As");
 
 					testRunner.Wait(1);
 
