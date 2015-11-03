@@ -3847,3 +3847,9 @@ Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill
 English:Show normal text above the braille
 Translated:Show normal text above the braille
 
+English:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
+Translated:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
+
+English:Could Not Load Image File
+Translated:Could Not Load Image File
+
