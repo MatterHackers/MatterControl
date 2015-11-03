@@ -75,10 +75,14 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public List<string> PrinterWhiteList { get { return printerWhiteList; } }
 
+		public List<ManufacturerNameMapping> ManufacturerNameMappings { get; set; }
+
 		// TODO: Is this ever initialized and if so, how, given there's no obvious references and only one use of the property
 		private List<string> preloadedLibraryFiles = new List<string>();
 
 		public List<string> PreloadedLibraryFiles { get { return preloadedLibraryFiles; } }
+
+		
 
 		private OemSettings()
 		{
@@ -93,4 +97,18 @@ namespace MatterHackers.MatterControl.SettingsManagement
 #endif
 		}
 	}
+
+	public class ManufacturerNameMapping
+	{
+		public string NameOnDisk
+		{
+			get; set;
+		}
+
+		public string NameToDisplay
+		{
+			get; set;
+		}
+	}
 }
+

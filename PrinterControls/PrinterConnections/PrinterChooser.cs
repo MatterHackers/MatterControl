@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using System.Collections.Generic;
 using MatterHackers.MatterControl.SettingsManagement;
 using System.IO;
 using System.Linq;
@@ -40,6 +41,7 @@ namespace MatterHackers.MatterControl
 	{
 		public StyledDropDownList ManufacturerDropList;
 		private int countOfMakes = 0;
+		private string manufacturer;
 
 		public int CountOfMakes { get { return countOfMakes; } }
 
@@ -50,6 +52,7 @@ namespace MatterHackers.MatterControl
 			ManufacturerDropList = new StyledDropDownList(defaultManufacturerLabelFull, maxHeight: 200);
 			bool addOther = false;
 			string[] printerWhiteListStrings = OemSettings.Instance.PrinterWhiteList.ToArray();
+			List<ManufacturerNameMapping> manufacturerNameMappings = OemSettings.Instance.ManufacturerNameMappings;
 			string pathToManufacturers = "PrinterSettings";
 			if (StaticData.Instance.DirectoryExists(pathToManufacturers))
 			{
@@ -59,29 +62,37 @@ namespace MatterHackers.MatterControl
 				{
 					string folderName = Path.GetFileName(manufacturerDirectory.TrimEnd(new[] { '/', '\\' }));
 
-					if (printerWhiteListStrings.Contains(folderName))
+					foreach(ManufacturerNameMapping nameMapping in manufacturerNameMappings)
 					{
-						string manufacturer = Path.GetFileName(manufacturerDirectory);
-						if (manufacturer == "Other")
+						if(nameMapping.NameOnDisk == folderName)
 						{
-							addOther = true;
+							this.manufacturer = nameMapping.NameToDisplay;
 						}
 						else
 						{
-							ManufacturerDropList.AddItem(manufacturer);
-							if (selectedMake != null)
-							{
-								if (manufacturer == selectedMake)
-								{
-									preselectIndex = index;
-								}
-							}
-
-							index++;
+							this.manufacturer = Path.GetFileName(manufacturerDirectory);
 						}
-						countOfMakes += 1;
 					}
+
+					if (this.manufacturer == "Other")
+					{
+						addOther = true;
+					}
+					else
+					{
+						ManufacturerDropList.AddItem(manufacturer);
+						if (selectedMake != null)
+						{
+							if (this.manufacturer == selectedMake)
+							{
+								preselectIndex = index;
+							}
+						}
+						index++;
+					}
+					countOfMakes += 1;
 				}
+
 				if (addOther)
 				{
 					if (selectedMake != null && preselectIndex == -1)

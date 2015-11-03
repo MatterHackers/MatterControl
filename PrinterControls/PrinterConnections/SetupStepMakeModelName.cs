@@ -3,6 +3,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using System;
+using MatterHackers.MatterControl.SettingsManagement;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -182,6 +183,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			//reconstruct model selector
 			int currentIndex = contentRow.GetChildIndex(printerModelContainer);
 			contentRow.RemoveChild(printerModelContainer);
+			List<ManufacturerNameMapping> manufacturerNameMapping = OemSettings.Instance.ManufacturerNameMappings;
+
+			foreach(ManufacturerNameMapping mapping in manufacturerNameMapping)
+			{
+
+				if (mapping.NameToDisplay == ActivePrinter.Make)
+				{
+					ActivePrinter.Make = mapping.NameOnDisk;
+				}
+
+			}
+
 
 			printerModelContainer = createPrinterModelContainer(ActivePrinter.Make);
 			contentRow.AddChild(printerModelContainer, currentIndex);

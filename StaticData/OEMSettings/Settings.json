@@ -33,6 +33,12 @@
     "Wanhao USA",
     "Velleman",
   ],
+  "ManufacturerNameMappings": [
+  	{
+  		"NameOnDisk": "Esagono",
+  		"NameToDisplay": "Esagonò",
+  	}
+  ],
   "PreloadedLibraryFiles": [
     "Calibration - Box.stl"
   ]
