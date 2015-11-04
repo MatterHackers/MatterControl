@@ -1873,7 +1873,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
 
-				printItemWrapper.ReportFileChange();
+				// Wait for a second to report the file changed to give the OS a chance to finish closing it.
+				UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
 
 				if (returnInfo != null
 					&& returnInfo.destinationLibraryProvider != null)
