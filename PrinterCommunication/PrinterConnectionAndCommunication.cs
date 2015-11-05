@@ -50,6 +50,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
@@ -958,7 +959,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// Shutdown the readFromPrinter thread
 			if (shutdownReadLoop)
 			{
-				ReadThreadHolder.Join();
+				ReadThread.Join();
 			}
 
 			// Shudown the serial port
@@ -1046,7 +1047,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				ForceImmediateWrites = false;
 
 				CommunicationState = CommunicationStates.Disconnecting;
-				ReadThreadHolder.Join();
+				ReadThread.Join();
 				if (serialPort != null)
 				{
 					serialPort.Close();
@@ -1233,9 +1234,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnIdle()
 		{
-			if (PrinterIsConnected && ReadThreadHolder.NumRunning == 0)
+			if (PrinterIsConnected && ReadThread.NumRunning == 0)
 			{
-				ReadThreadHolder.Start(ReadFromPrinter);
+				ReadThread.Start();
 			}
 
 			if (!temperatureRequestTimer.IsRunning)
@@ -1486,10 +1487,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void ReadFromPrinter(object sender, DoWorkEventArgs args)
+		public void ReadFromPrinter(ReadThread readThreadHolder)
 		{
-			ReadThreadHolder readThreadHolder = args.Argument as ReadThreadHolder;
-
 			string dataLastRead = string.Empty;
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -2075,7 +2074,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					CommunicationState = CommunicationStates.FailedToConnect;
 					connectThread.Join(JoinThreadTimeoutMs);
 					CommunicationState = CommunicationStates.Disconnecting;
-					ReadThreadHolder.Join();
+					ReadThread.Join();
 					if (serialPort != null)
 					{
 						serialPort.Close();
@@ -2217,10 +2216,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						Thread.Sleep(500);
 						CommunicationState = CommunicationStates.AttemptingToConnect;
 
-						ReadThreadHolder.Join();
+						ReadThread.Join();
 
 						Console.WriteLine("ReadFromPrinter thread created.");
-						ReadThreadHolder.Start(ReadFromPrinter);
+						ReadThread.Start();
 
 						// We have to send a line because some printers (like old printrbots) do not send anything when connecting and there is no other way to know they are there.
 						SendLineToPrinterNow("M105");
@@ -2999,7 +2998,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		internal class ReadThreadHolder
+		public class ReadThread
 		{
 			private static int currentReadThreadIndex = 0;
 			private int creationIndex;
@@ -3014,23 +3013,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 
-			private ReadThreadHolder(DoWorkEventHandler readFromPrinterFunction)
+			private ReadThread()
 			{
 				numRunning++;
 				currentReadThreadIndex++;
 				creationIndex = currentReadThreadIndex;
 
-				BackgroundWorker readFromPrinterWorker = new BackgroundWorker();
-				readFromPrinterWorker.DoWork += readFromPrinterFunction;
-				readFromPrinterWorker.RunWorkerCompleted += readFromPrinterWorker_RunWorkerCompleted;
-
-				readFromPrinterWorker.RunWorkerAsync(this);
-			}
-
-			void readFromPrinterWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-			{
-				PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("Read Thread Has Exited.\n"));
-				numRunning--;
+				Task.Run(() =>
+				{
+					try
+					{
+						PrinterConnectionAndCommunication.Instance.ReadFromPrinter(this);
+					}
+					catch
+					{
+					}
+					
+					PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("Read Thread Has Exited.\n"));
+					numRunning--;
+				});
 			}
 
 			internal static void Join()
@@ -3038,9 +3039,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				currentReadThreadIndex++;
 			}
 
-			internal static void Start(DoWorkEventHandler readFromPrinterFunction)
+			internal static void Start()
 			{
-				new ReadThreadHolder(readFromPrinterFunction);
+				new ReadThread();
 			}
 			internal bool IsCurrentThread()
 			{
