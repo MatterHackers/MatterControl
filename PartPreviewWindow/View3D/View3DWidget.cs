@@ -1861,8 +1861,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ReportProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
 				}
 
-				saveSucceded = true;
-
 				string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
 
 				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
@@ -1871,7 +1869,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".AMF");
 				}
 
-				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
+				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
 
 				// Wait for a second to report the file changed to give the OS a chance to finish closing it.
 				UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
@@ -1891,6 +1889,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 
 				}
+
+				saveSucceded = true;
 			}
 			catch (System.UnauthorizedAccessException e2)
 			{
