@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
 	public class View3DTextCreator : PartPreview3DWidget
 	{
+		MHTextEditWidget textToAddWidget;
 		private SolidSlider spacingScrollBar;
 		private SolidSlider sizeScrollBar;
 		private SolidSlider heightScrollBar;
@@ -171,7 +172,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				editPlateButtonsContainer = new FlowLayoutWidget();
 
-				MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize());
+				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize());
 				textToAddWidget.VAnchor = VAnchor.ParentCenter;
 				textToAddWidget.Margin = new BorderDouble(5);
 				editPlateButtonsContainer.AddChild(textToAddWidget);
@@ -349,8 +350,18 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			}
 		}
 
+		private bool firstDraw = true;
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			if (firstDraw)
+			{
+#if !__ANDROID__
+				textToAddWidget.Focus();
+#endif
+				//textToAddWidget.Text = "Test Text";
+				firstDraw = false;
+			}
 			//DoCsgTest();
 			base.OnDraw(graphics2D);
 		}
