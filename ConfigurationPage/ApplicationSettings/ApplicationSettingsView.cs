@@ -53,7 +53,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
 			cannotRestartWhileActive = "Unable to restart".Localize();
+#if __ANDROID__
+			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
+#endif
 			if (ActiveTheme.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetUpdateControl());
@@ -70,10 +73,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			}
 
+
+#if !__ANDROID__
 			mainContainer.AddChild(GetThumbnailRenderingControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
-#if !__ANDROID__
 			mainContainer.AddChild(GetDisplayControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
