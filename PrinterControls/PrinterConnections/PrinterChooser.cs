@@ -143,7 +143,6 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			ModelDropList.AddItem(LocalizedString.Get("Other"));
 			AddChild(ModelDropList);
 
 			HAnchor = HAnchor.FitToChildren;
