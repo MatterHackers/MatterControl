@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				for (int i = 0; i < matterSliceToDefaultMapping.Length; i++)
 				{
 					string matterSliceValue = matterSliceToDefaultMapping[i].MappedValue;
-					if (matterSliceValue != null && matterSliceValue != "")
+					if (matterSliceValue != null)
 					{
 						sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(matterSliceToDefaultMapping[i].MappedKey, matterSliceValue));
 					}
