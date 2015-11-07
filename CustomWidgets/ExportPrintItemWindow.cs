@@ -7,6 +7,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.Queue.OptionsMenu;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -113,7 +114,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
-
 			if (showExportGCodeButton)
 			{
 				string exportGCodeText = LocalizedString.Get("Export as");
@@ -127,7 +127,57 @@ namespace MatterHackers.MatterControl
 				});
 				middleRowContainer.AddChild(exportGCode);
 
-				bool showExportX3GButton = ActiveSliceSettings.Instance.IsMakerbotGCodeFlavor();
+                PluginFinder<ExportGcodePlugin> exportPluginFinder = new PluginFinder<ExportGcodePlugin>();
+                
+                foreach (ExportGcodePlugin plugin in exportPluginFinder.Plugins)
+                {
+                    //Create export button for each Plugin found
+
+                    string exportButtonText = plugin.getButtonText().Localize();
+                    Button exportButton = textImageButtonFactory.Generate(exportButtonText);
+                    exportButton.HAnchor = HAnchor.ParentLeft;
+                    exportButton.Cursor = Cursors.Hand;
+                    exportButton.Click += new EventHandler((object sender, EventArgs e) =>
+                    {
+                        SaveFileDialogParams saveParams = new SaveFileDialogParams(plugin.getExtensionFilter(), title: plugin.getButtonText());
+                        saveParams.Title = "MatterControl: Export File";
+                        saveParams.ActionButtonLabel = "Export";                        
+                        FileDialog.SaveFileDialog(saveParams, delegate(SaveFileDialogParams saveParam)
+                        {
+
+                            string extension = Path.GetExtension(saveParam.FileName);
+                            if (extension == "")
+                            {
+                                saveParam.FileName += plugin.getFileExtension();
+                            }
+
+                            if (partIsGCode)
+                            {
+                                Close();
+                                plugin.generate(printItemWrapper.FileLocation, saveParam.FileName);
+                            }
+                            else
+                            {
+                                Close();
+                                SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+                                printItemWrapper.SlicingDone += new EventHandler((object slicingCompleteSender, EventArgs slicingEventArgs) =>
+                                {
+                                    PrintItemWrapper sliceItem = (PrintItemWrapper)slicingCompleteSender;
+                                    if (File.Exists(sliceItem.GetGCodePathAndFileName()))
+                                    {
+                                        plugin.generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+                                    }
+                                });//End SlicingDone Event handler
+                            }
+                        });//End SaveFileDialog delegate               
+
+                    });//End Click Event handler
+                    middleRowContainer.AddChild(exportButton);
+
+                }
+
+                //bool showExportX3GButton = ActivePrinterProfile.Instance.ActivePrinter.DriverType == "X3G";
+                bool showExportX3GButton = false;
 				if (showExportX3GButton)
 				{
 					string exportAsX3GText = "Export as X3G".Localize();
