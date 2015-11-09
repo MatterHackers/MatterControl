@@ -376,6 +376,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 
+			viewControls3D.ResetView += (sender, e) =>
+			{
+				SetDefaultView();
+            };
+
 			buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
 			buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
 			buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
@@ -444,9 +449,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				partHasBeenEdited = true;
 			};
+
+			SetDefaultView();
 		}
 
-		public enum AutoRotate { Enabled, Disabled };
+		public override void SetDefaultView()
+		{
+			meshViewerWidget.TrackballTumbleWidget.ZeroVelocity();
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Reset();
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .03;
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-new Vector3(ActiveSliceSettings.Instance.BedCenter));
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
+		}
+
+	public enum AutoRotate { Enabled, Disabled };
 
 		public enum OpenMode { Viewing, Editing }
 
@@ -1997,6 +2014,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(EnterEditAndCreateSelectionData);
 			}
+
+			SetDefaultView();
 		}
 
 		private bool PartsAreInPrintVolume()

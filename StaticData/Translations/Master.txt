@@ -3853,3 +3853,6 @@ Translated:The image file you have attempted to load is invalid or has no data. 
 English:Could Not Load Image File
 Translated:Could Not Load Image File
 
+English:Reset View
+Translated:Reset View
+

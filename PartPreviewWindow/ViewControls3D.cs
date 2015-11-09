@@ -51,12 +51,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GuiWidget partSelectSeparator;
 		private MeshViewerWidget meshViewerWidget;
 
+		private Button resetViewButton;
+
 		private RadioButton translateButton;
 		private RadioButton rotateButton;
 		private RadioButton scaleButton;
 		private RadioButton partSelectButton;
 
 		private int buttonHeight;
+
+		public event EventHandler ResetView;
 
 		public bool PartSelectVisible
 		{
@@ -113,7 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				buttonHeight = 20;
+				buttonHeight = 0;
 			}
 
 			this.meshViewerWidget = meshViewerWidget;
@@ -129,6 +133,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			textImageButtonFactory.FixedWidth = buttonHeight;
 			textImageButtonFactory.AllowThemeToAdjustImage = false;
 			textImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
+
+            string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
+			resetViewButton = textImageButtonFactory.Generate("", resetViewIconPath);
+			resetViewButton.ToolTipText = "Reset View".Localize();
+			AddChild(resetViewButton);
+			resetViewButton.Click += (sender, e) =>
+			{
+				ResetView?.Invoke(this, null);
+            };
 
 			string rotateIconPath = Path.Combine("ViewTransformControls", "rotate.png");
 			rotateButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
