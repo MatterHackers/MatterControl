@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public class PartPreview3DWidget : PartPreviewWidget
+	public abstract class PartPreview3DWidget : PartPreviewWidget
 	{
 		protected static readonly int DefaultScrollBarWidth = 120;
 
@@ -95,6 +95,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PutOemImageOnBed();
 			});
 		}
+
+		public abstract void SetDefaultView();
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{

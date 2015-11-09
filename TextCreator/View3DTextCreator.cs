@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Csg;
@@ -219,6 +220,11 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 
+			viewControls3D.ResetView += (sender, e) =>
+			{
+				SetDefaultView();
+			};
+
 			buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
 			buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
 			buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
@@ -240,10 +246,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			AddChild(viewControls3D);
 
-			// set the view to be a good angle and distance
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .06;
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .02, 0, 0)));
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-new Vector3(bedCenter));
+			SetDefaultView();
 
 			AddHandlers();
 			UnlockEditControls();
@@ -271,6 +274,19 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				// now set the selection to the new copy
 				SelectedMeshGroupIndex = 0;
 			}
+
+			SetDefaultView();
+		}
+
+		public override void SetDefaultView()
+		{
+			meshViewerWidget.TrackballTumbleWidget.ZeroVelocity();
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Reset();
+
+			// move things into the right place and scale
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .06;
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .02, 0, 0)));
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-new Vector3(ActiveSliceSettings.Instance.BedCenter));
 		}
 
 		private void ResetWordLayoutSettings()

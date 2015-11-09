@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using System.IO;
 using MatterHackers.Localizations;
+using System;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -53,8 +54,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class ViewControls2D : ViewControlsBase
 	{
+		private Button resetViewButton;
+
 		public RadioButton translateButton;
 		public RadioButton scaleButton;
+
+		public event EventHandler ResetView;
 
 		public ViewControls2D()
 		{
@@ -64,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				buttonHeight = 20;
+				buttonHeight = 0;
 			}
 
 			TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
@@ -74,6 +79,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 			iconTextImageButtonFactory.FixedHeight = buttonHeight;
 			iconTextImageButtonFactory.FixedWidth = buttonHeight;
+
+			string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
+			resetViewButton = iconTextImageButtonFactory.Generate("", resetViewIconPath);
+			resetViewButton.ToolTipText = "Reset View".Localize();
+			AddChild(resetViewButton);
+			resetViewButton.Click += (sender, e) =>
+			{
+				ResetView?.Invoke(this, null);
+			};
 
 			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
 			translateButton = iconTextImageButtonFactory.GenerateRadioButton("", translateIconPath);

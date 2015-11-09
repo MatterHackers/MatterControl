@@ -119,6 +119,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
 		}
 
+		public override void SetDefaultView()
+		{
+			meshViewerWidget.TrackballTumbleWidget.ZeroVelocity();
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Reset();
+
+			// move things into the right place and scale
+			Vector3 bedCenter3D = new Vector3(bedCenter, 0);
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .05;
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-bedCenter3D);
+		}
+
 		private void Clear3DGCode(object sender, EventArgs e)
 		{
 			if (gcodeViewWidget != null
@@ -265,6 +276,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.PartSelectVisible = false;
 			AddChild(viewControls3D);
 
+			viewControls3D.ResetView += (sender, e) =>
+			{
+				SetDefaultView();
+			};
+
 			viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			viewControls3D.Visible = false;
 
@@ -275,12 +291,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			//viewControls3D.translateButton.ClickButton(null);
 
-			// move things into the right place and scale
-			{
-				Vector3 bedCenter3D = new Vector3(bedCenter, 0);
-				meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .05;
-				meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-bedCenter3D);
-			}
+			SetDefaultView();
 
 			viewControls2D.translateButton.Click += (sender, e) =>
 			{
