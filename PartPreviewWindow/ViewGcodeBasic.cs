@@ -272,6 +272,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls2D = new ViewControls2D();
 			AddChild(viewControls2D);
 
+			viewControls2D.ResetView += (sender, e) =>
+			{
+				SetDefaultView2D();
+			};
+
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 			viewControls3D.PartSelectVisible = false;
 			AddChild(viewControls3D);
@@ -303,6 +308,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			AddHandlers();
+		}
+
+		private void SetDefaultView2D()
+		{
+			gcodeViewWidget.CenterPartInView();
 		}
 
 		private RenderType GetRenderType()
