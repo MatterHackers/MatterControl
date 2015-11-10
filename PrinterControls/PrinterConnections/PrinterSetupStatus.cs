@@ -61,6 +61,8 @@ namespace MatterHackers.MatterControl
 					instance.EnsureSamplePartsExist(calibrationPrintFileNames);
 				}
 
+				var libraryProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
+
 				var queueItems = QueueData.Instance.GetItemNames();
 
 				// Finally, ensure missing calibration parts are added to the queue if missing
@@ -72,21 +74,15 @@ namespace MatterHackers.MatterControl
 						continue;
 					}
 
-					// If the library item does not exist in the queue, add it
-					IEnumerable<PrintItem> libraryItems = null;
-					using (LibraryProviderSQLite instance = new LibraryProviderSQLite(null, null, null, "Local Library"))
+					// Find the first library item with the given name and add it to the queue
+					PrintItem libraryItem = libraryProvider.GetLibraryItems(nameOnly).FirstOrDefault();
+					if (libraryItem != null)
 					{
-						libraryItems = instance.GetLibraryItems(nameOnly);
-					}
-
-					foreach (PrintItem libraryItem in libraryItems)
-					{
-						if (libraryItem != null)
-						{
-							QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
-						}
+						QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
 					}
 				}
+
+				libraryProvider.Dispose();
 			}
 		}
 
