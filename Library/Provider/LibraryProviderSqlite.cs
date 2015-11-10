@@ -249,8 +249,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			var existingLibaryItems = this.GetLibraryItems().Select(i => i.Name);
 
-			// Build a list of files that need to be imported into the library
-			var missingFiles = filenamesToValidate.Where(fileName => !existingLibaryItems.Contains(fileName, StringComparer.OrdinalIgnoreCase));
+			// Drop extensions and build a list of files that need to be imported into the library
+			var missingFiles = filenamesToValidate.Select(f => Path.GetFileNameWithoutExtension(f)).Where(fileName => !existingLibaryItems.Contains(fileName, StringComparer.OrdinalIgnoreCase));
 
 			// Create temp files on disk that can be imported into the library
 			var tempFilesToImport = missingFiles.Select(fileName =>
