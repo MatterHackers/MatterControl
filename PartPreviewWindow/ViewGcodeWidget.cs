@@ -34,6 +34,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.RenderOpenGl;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
@@ -402,6 +403,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void GlRenderGrid(Graphics2DOpenGL graphics2DGl, Affine transform, double width)
 		{
 			graphics2DGl.PreRender();
+			GL.Begin(BeginMode.Triangles);
 
 			Vector2 gridOffset = gridCenterMm - gridSizeMm / 2;
 			if (gridSizeMm.x > 0 && gridSizeMm.y > 0)
@@ -428,6 +430,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			GL.End();
 			graphics2DGl.PopOrthoProjection();
 		}
 
