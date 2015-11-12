@@ -2962,17 +2962,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						using (TimedLock.Lock(this, "serialPort.Write"))
 						{
-                            serialPort.Write(lineToWrite);
-                            timeSinceLastWrite.Restart();
-                            timeHaveBeenWaitingForOK.Restart();
-
+							serialPort.Write(lineToWrite);
+							timeSinceLastWrite.Restart();
+							timeHaveBeenWaitingForOK.Restart();
 						}
 						//Debug.Write("w: " + lineToWrite);
 					}
 					catch (IOException ex)
 					{
-						Debug.Print(ex.Message);
-						GuiWidget.BreakInDebugger();
+						GuiWidget.BreakInDebugger(ex.Message);
 						Trace.WriteLine("Error writing to printer: " + ex.Message);
 
 						// Handle hardware disconnects by relaying the failure reason and shutting down open resources
@@ -2980,15 +2978,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (TimeoutException e2)
 					{
-						Debug.Print(e2.Message);
-						GuiWidget.BreakInDebugger();
+						GuiWidget.BreakInDebugger(e2.Message);
+					}
+					catch(UnauthorizedAccessException e3)
+					{
+						AbortConnectionAttempt(e3.Message);
 					}
 					catch (Exception e)
 					{
-						Debug.Print(e.Message);
-						GuiWidget.BreakInDebugger();
-						// Let's track this issue if possible.
-						MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+						GuiWidget.BreakInDebugger(e.Message);
 					}
 				}
 				else
