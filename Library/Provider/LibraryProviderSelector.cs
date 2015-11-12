@@ -141,6 +141,19 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				AddFolderImage("download_folder.png");
 			}
 
+			string userLibraryFoldersPath =  Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "LibraryFolders.conf");
+			if (File.Exists(userLibraryFoldersPath))
+			{
+				foreach (string directory in File.ReadLines(userLibraryFoldersPath))
+				{
+					if(Directory.Exists(directory))
+					{
+						libraryCreators.Add(new LibraryProviderFileSystemCreator(directory, (new DirectoryInfo(directory).Name)));
+						AddFolderImage("download_folder.png");
+					}
+				}
+			}
+			
 			firstAddedDirectoryIndex = libraryCreators.Count;
 			OnDataReloaded(null);
 		}
