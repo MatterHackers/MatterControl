@@ -50,6 +50,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl
 {
@@ -125,6 +126,8 @@ namespace MatterHackers.MatterControl
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			bool forceSofwareRendering = false;
+
+			GCodeFileLoaded.PauseOnLayerProcessor = PauseOnLayer;
 
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
 			{
@@ -751,6 +754,15 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
 			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
 			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
+		}
+
+		private bool PauseOnLayer(string layer)
+		{
+			if (layer == "2")
+			{
+				return true;
+			}
+			return false;
 		}
 	}
 }
