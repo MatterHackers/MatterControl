@@ -90,6 +90,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			Button renameItemButton = textImageButtonFactory.Generate("Rename".Localize(), centerText: true);
+			renameItemButton.Name = "Rename Button";
 			renameItemButton.Visible = true;
 			renameItemButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(renameItemButton);

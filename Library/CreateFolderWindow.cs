@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			Button createFolderButton = textImageButtonFactory.Generate("Create".Localize(), centerText: true);
+			createFolderButton.Name = "Create Folder Button";
 			createFolderButton.Visible = true;
 			createFolderButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(createFolderButton);

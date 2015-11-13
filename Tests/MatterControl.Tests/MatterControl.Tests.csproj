@@ -68,6 +68,7 @@
     <Compile Include="MatterControl\AutomationTests\SqLiteLibraryProvider.cs" />
     <Compile Include="MatterControl\LibraryProviderSqliteTests.cs" />
     <Compile Include="MatterControl\AutomationTests\CreateLibraryFolder.cs" />
+    <Compile Include="MatterControl\LocalLibraryTests.cs" />
     <Compile Include="MatterControl\MatterControlUiFeatures.cs" />
     <Compile Include="MatterControl\MatterControlUtilities.cs" />
     <Compile Include="MatterControl\HtmlParser.cs" />
