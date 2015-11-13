@@ -268,6 +268,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
 				addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it.
 				addToLibraryButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Library".Localize();
+				addToLibraryButton.Name = "Library Add Button";
 				buttonPanel.AddChild(addToLibraryButton);
 				addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
 				addToLibraryButton.Click += (sender, e) => UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle);
@@ -277,7 +278,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
 				createFolderButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it.
-				createFolderButton.Name = "Create Folder Button";
+				createFolderButton.Name = "Create Folder From Library Button";
 				buttonPanel.AddChild(createFolderButton);
 				createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
 				createFolderButton.Click += (sender, e) =>
@@ -368,6 +369,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// add a rename button
 			{
 				Button renameFromLibraryButton = editButtonFactory.Generate("Rename".Localize());
+				renameFromLibraryButton.Name = "Rename From Library Button";
 				renameFromLibraryButton.Margin = new BorderDouble(3, 0);
 				editButtonsEnableData.Add(new ButtonEnableData(false, false, true));
 				itemOperationButtons.AddChild(renameFromLibraryButton);
