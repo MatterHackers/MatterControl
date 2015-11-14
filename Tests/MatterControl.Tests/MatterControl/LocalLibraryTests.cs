@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.UI
 
 
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
-	public class UserCanSuccessfullyCreateLibraryFolder
+	public class UserCanSuccessfullyCreateAndRenameLibraryFolder
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
 		public void RenameButtonRenameLocalLibraryItem()
@@ -299,6 +299,97 @@ namespace MatterHackers.MatterControl.UI
 					bool newFolderWasCreated = testRunner.WaitForName(newLibraryFolder, 1);
 					resultsHarness.AddTestResult(newFolderWasCreated == true);
 
+					testRunner.ClickByName("Library Edit Button");
+					testRunner.ClickByName("New Folder Row Item Collection");
+					testRunner.ClickByName("Rename From Library Button");
+					testRunner.Wait(1);
+					testRunner.Type("Renamed Library Folder");
+					testRunner.ClickByName("Rename Button");
+
+					//Make sure that renamed Library Folder Exists
+					bool renamedLibraryFolderExists = testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2);
+					resultsHarness.AddTestResult(renamedLibraryFolderExists == true);
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class LibraryEditButtonOpensUpPartPreviewWindow
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void ClickLibraryEditButtonOpensPartPreviewWindow()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+					//Navigate to Local Library
+					testRunner.ClickByName("Library Tab");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+
+					testRunner.Wait(1);
+
+					string rowItem = "Row Item " + "Calibration - Box";
+					testRunner.ClickByName("Library Edit Button");
+					testRunner.Wait(1);
+					testRunner.ClickByName(rowItem);
+
+					testRunner.ClickByName("Library Edit Item Button");
+
+					//Make sure that Export Item Window exists after Export button is clicked
+					bool exportItemWindowExists = testRunner.WaitForName("Part Preview Window", 2);
+					resultsHarness.AddTestResult(exportItemWindowExists == true);
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class OneLibraryItemSelectedRemoveButtonRemovesItem
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void RemoveButtonClickedRemovesSingleItem()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+					//Navigate to Local Library
+					testRunner.ClickByName("Library Tab");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+
+					testRunner.Wait(1);
+
+					string rowItem = "Row Item " + "Calibration - Box";
+					testRunner.ClickByName("Library Edit Button");
+					testRunner.Wait(1);
+					testRunner.ClickByName(rowItem);
+
+					testRunner.ClickByName("Library Remove Item Button");
+
+					testRunner.Wait(1);
+
+					//Make sure that Export Item Window exists after Export button is clicked
+					bool rowItemExists = testRunner.WaitForName(rowItem, 2);
+					resultsHarness.AddTestResult(rowItemExists == false);
+
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
@@ -311,6 +402,66 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class MultipleLibraryItemsSelectedRemoveButtonRemovesItem
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void RemoveButtonClickedRemovesMultipleItems()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+					//Navigate to Local Library
+					testRunner.ClickByName("Library Tab");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+
+					testRunner.Wait(1);
+					testRunner.ClickByName("Library Edit Button");
+					testRunner.Wait(1);
+
+					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
+					testRunner.ClickByName("Library Add Button");
+
+					testRunner.Wait(2);
+					testRunner.Type(rowItemPath);
+					testRunner.Type("{Enter}");
+
+					string rowItemOne = "Row Item " + "Calibration - Box";
+					testRunner.ClickByName(rowItemOne);
+
+					string rowItemTwo = "Row Item " + "Fennec Fox";
+					testRunner.ClickByName(rowItemTwo);
+
+					testRunner.Wait(1);
+
+					//Make sure row items exist before remove
+					bool rowItemOneExistsBeforeRemove = testRunner.WaitForName(rowItemOne, 2);
+					bool rowItemTwoExistsBeforeRemove = testRunner.WaitForName(rowItemTwo, 2);
+					resultsHarness.AddTestResult(rowItemOneExistsBeforeRemove == true);
+					resultsHarness.AddTestResult(rowItemTwoExistsBeforeRemove == true);
+
+					testRunner.ClickByName("Library Remove Item Button");
+					testRunner.Wait(1);
+
+					//Make sure both selected items are removed
+					bool rowItemOneExists = testRunner.WaitForName(rowItemOne, 2);
+					bool rowItemTwoExists = testRunner.WaitForName(rowItemTwo, 2);
+					resultsHarness.AddTestResult(rowItemOneExists == false);
+					resultsHarness.AddTestResult(rowItemTwoExists == false);
+
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+		}
+	}
 
 
 

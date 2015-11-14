@@ -139,12 +139,12 @@ namespace MatterHackers.MatterControl.UI
 					 */
 
 					//Make sure that the export window does not exist
-					bool exportWindowExists1 = testRunner.WaitForName( "Export Window Queue", 0);
+					bool exportWindowExists1 = testRunner.WaitForName( "Export Item Window", 0);
 					resultsHarness.AddTestResult(exportWindowExists1 == false, "Export window does not exist");
 
 					testRunner.ClickByName("Export Queue Button", 5);
 					SystemWindow containingWindow;
-					GuiWidget exportWindow = testRunner.GetWidgetByName("Export Window Queue", out containingWindow, 5);
+					GuiWidget exportWindow = testRunner.GetWidgetByName("Export Item Window", out containingWindow, 5);
 					resultsHarness.AddTestResult(exportWindow != null, "Export window does exist");
 					if (exportWindow != null)
 					{
@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Queue Item Thumbnail");
 
 					SystemWindow containingWindow;
-					GuiWidget partPreviewWindowExists = testRunner.GetWidgetByName("Part Preview Window Thumbnail", out containingWindow, 3);
+					GuiWidget partPreviewWindowExists = testRunner.GetWidgetByName("Part Preview Window", out containingWindow, 3);
 					resultsHarness.AddTestResult(partPreviewWindowExists != null, "Part Preview Window Exists");
 					partPreviewWindowExists.CloseOnIdle();
 					testRunner.Wait(.5);
