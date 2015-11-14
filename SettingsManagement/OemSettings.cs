@@ -95,6 +95,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
             string pathToOemSettings = Path.Combine(".", "OEMSettings", "Settings.json");
             File.WriteAllText(pathToOemSettings, JsonConvert.SerializeObject(this, Formatting.Indented));
 #endif
+			this.ManufacturerNameMappings = new List<ManufacturerNameMapping>();
 		}
 	}
 
