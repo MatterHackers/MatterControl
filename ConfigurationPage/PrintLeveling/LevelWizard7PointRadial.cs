@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
         {
-			if (LevelingData.SampledPositions.Count == NumberOfRadialSamples)
+			if (LevelingData.SampledPositions.Count == NumberOfRadialSamples+1)
 			{
 				Vector2 destinationFromCenter = new Vector2(currentDestination) - BedCenter;
 
