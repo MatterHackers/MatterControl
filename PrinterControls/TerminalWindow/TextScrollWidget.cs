@@ -227,5 +227,34 @@ namespace MatterHackers.MatterControl
 
 			base.OnDraw(graphics2D);
 		}
-	}
+
+        public override void OnMouseWheel(MouseEventArgs mouseEvent)
+        {
+            base.OnMouseWheel(mouseEvent);
+            double scrollDelta = (mouseEvent.WheelDelta / ((visibleLines.Count) * 60.0));
+
+            if (scrollDelta < 0)//Rounding seems to favor scrolling up, compinsating scroll down to feel as smooth
+            {
+                scrollDelta *= 2;
+            }
+            else if (Position0To1 == 0)//IF we scroll up at the bottum get pop out from the "on screen" chunck
+            {
+                scrollDelta = (NumVisibleLines/(double)visibleLines.Count);
+            }
+
+            double newPos = Position0To1 + scrollDelta;
+            
+            if(newPos > 1)
+            {
+                newPos = 1;
+            }
+            else if(newPos < 0)
+            {
+                newPos = 0;
+            }
+
+            Position0To1 = newPos;
+        }
+
+    }
 }

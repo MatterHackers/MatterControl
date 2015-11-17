@@ -40,7 +40,7 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-    public class RadialLevlingFunctions
+    public class RadialLevlingFunctions : IDisposable
     {
         public int NumberOfRadialSamples { get; set; }
         public PrintLevelingData LevelingData
@@ -54,14 +54,28 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         Vector3 lastDestinationWithLevelingApplied = new Vector3();
 
-        public RadialLevlingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
+		private event EventHandler unregisterEvents;
+
+		public RadialLevlingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
         {
             this.LevelingData = levelingData;
             this.BedCenter = bedCenter;
             this.NumberOfRadialSamples = numberOfRadialSamples;
+
+			PrinterConnectionAndCommunication.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
         }
 
-        public Vector2 GetPrintLevelPositionToSample(int index, double radius)
+		public void Dispose()
+		{
+			unregisterEvents?.Invoke(this, null);
+        }
+
+		private void PrinterReportedPosition(object sender, EventArgs e)
+		{
+			lastDestinationWithLevelingApplied = GetPositionWithZOffset(PrinterConnectionAndCommunication.Instance.LastReportedPosition);
+		}
+
+		public Vector2 GetPrintLevelPositionToSample(int index, double radius)
         {
             Vector2 bedCenter = ActiveSliceSettings.Instance.BedCenter;
             if (index < NumberOfRadialSamples)
@@ -79,29 +93,33 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
         {
-            Vector2 destinationFromCenter = new Vector2(currentDestination) - BedCenter;
+			if (LevelingData.SampledPositions.Count == NumberOfRadialSamples+1)
+			{
+				Vector2 destinationFromCenter = new Vector2(currentDestination) - BedCenter;
 
-            double angleToPoint = Math.Atan2(destinationFromCenter.y, destinationFromCenter.x);
+				double angleToPoint = Math.Atan2(destinationFromCenter.y, destinationFromCenter.x);
 
-            if (angleToPoint < 0)
-            {
-                angleToPoint += MathHelper.Tau;
-            }
+				if (angleToPoint < 0)
+				{
+					angleToPoint += MathHelper.Tau;
+				}
 
-            double oneSegmentAngle = MathHelper.Tau / NumberOfRadialSamples;
-            int firstIndex = (int)(angleToPoint / oneSegmentAngle);
-            int lastIndex = firstIndex + 1;
-            if (lastIndex == NumberOfRadialSamples)
-            {
-                lastIndex = 0;
-            }
+				double oneSegmentAngle = MathHelper.Tau / NumberOfRadialSamples;
+				int firstIndex = (int)(angleToPoint / oneSegmentAngle);
+				int lastIndex = firstIndex + 1;
+				if (lastIndex == NumberOfRadialSamples)
+				{
+					lastIndex = 0;
+				}
 
-            Plane currentPlane = new Plane(LevelingData.SampledPositions[firstIndex], LevelingData.SampledPositions[lastIndex], LevelingData.SampledPositions[NumberOfRadialSamples]);
+				Plane currentPlane = new Plane(LevelingData.SampledPositions[firstIndex], LevelingData.SampledPositions[lastIndex], LevelingData.SampledPositions[NumberOfRadialSamples]);
 
-            double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
+				double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
 
-            currentDestination.z += hitDistance;
-            return currentDestination;
+				currentDestination.z += hitDistance;
+			}
+
+			return currentDestination;
         }
 
         public string DoApplyLeveling(string lineBeingSent, Vector3 currentDestination,
@@ -146,7 +164,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
             return lineBeingSent;
         }
-    }
+	}
 
     public abstract class LevelWizardRadialBase : LevelWizardBase
     {
@@ -217,6 +235,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 || currentLevelingFunctions.BedCenter != bedCenter
                 || currentLevelingFunctions.LevelingData != levelingData)
             {
+				if (currentLevelingFunctions != null)
+				{
+					currentLevelingFunctions.Dispose();
+                }
+
                 currentLevelingFunctions = new RadialLevlingFunctions(numberOfRadialSamples, levelingData, bedCenter);
             }
 
