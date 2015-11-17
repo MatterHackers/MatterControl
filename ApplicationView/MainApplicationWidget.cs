@@ -192,6 +192,7 @@ namespace MatterHackers.MatterControl
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
 			container.AnchorAll();
 
 			ApplicationMenuRow menuRow = new ApplicationMenuRow();
@@ -205,13 +206,16 @@ namespace MatterHackers.MatterControl
 
 			container.AddChild(menuSeparator);
 			Console.WriteLine("{0} ms 1".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
-
 			widescreenPanel = new WidescreenPanel();
 			container.AddChild(widescreenPanel);
+
 			Console.WriteLine("{0} ms 2".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 
 			Console.WriteLine("{0} ms 3".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
-			this.AddChild(container);
+			using (new PerformanceTimer("ReloadAll", "AddChild"))
+			{
+				this.AddChild(container);
+			}
 			Console.WriteLine("{0} ms 4".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 		}
 
@@ -292,12 +296,15 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				// give the widget a chance to hear about the close before they are actually colsed.
-				WidescreenPanel.PreChangePanels.CallEvents(this, null);
-				MainView.CloseAndRemoveAllChildren();
-				MainView.AddElements();
-				if (DoneReloadingAll != null)
+				using (new PerformanceTimer("ReloadAll", "Total"))
 				{
+					// give the widget a chance to hear about the close before they are actually colsed.
+					WidescreenPanel.PreChangePanels.CallEvents(this, null);
+					MainView.CloseAndRemoveAllChildren();
+					using (new PerformanceTimer("ReloadAll", "AddElements"))
+					{
+						MainView.AddElements();
+					}
 					DoneReloadingAll.CallEvents(null, null);
 				}
 			});
