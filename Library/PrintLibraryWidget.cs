@@ -422,6 +422,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			Button addToQueueButton = editButtonFactory.Generate("Add to Queue".Localize());
+			addToQueueButton.Name = "Library Add To Queue Button";
 			addToQueueButton.Margin = new BorderDouble(3, 0);
 			addToQueueButton.Click += addToQueueButton_Click;
 			editButtonsEnableData.Add(new ButtonEnableData(true, true, false));

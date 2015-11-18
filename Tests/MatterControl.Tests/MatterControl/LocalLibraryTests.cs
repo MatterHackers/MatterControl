@@ -463,6 +463,192 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class AddToQueueButtonAddsSingleItemToQueue
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void AddToQueueFromLibraryButtonAddsItemToQueue()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					//Navigate to Local Library
+					testRunner.ClickByName("Library Tab");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+
+					testRunner.Wait(1);
+					testRunner.ClickByName("Library Edit Button");
+					testRunner.Wait(1);
+					
+					//Select Library Item
+					string rowItemOne = "Row Item " + "Calibration - Box";
+					testRunner.ClickByName(rowItemOne);
+
+					testRunner.Wait(1);
+
+					//Add Library Item to the Print Queue
+					testRunner.ClickByName("Library Add To Queue Button");
+
+					testRunner.Wait(2);
+
+					//Make sure that the Queue Count increases by one
+					int queueCountAfterAdd = QueueData.Instance.Count;
+					bool queueCountIncreasedByOne = false;
+					if (queueCountAfterAdd == 1)
+					{
+						queueCountIncreasedByOne = true;
+					}
+
+					resultsHarness.AddTestResult(queueCountIncreasedByOne == true);
+
+					//Navigate to Queue
+					testRunner.ClickByName("Queue Tab");
+
+					testRunner.Wait(1);
+
+					//Make sure that the Print Item was added
+					string queueItem = "Queue Item " + "Calibration - Box";
+					bool queueItemWasAdded = testRunner.WaitForName(queueItem, 2);
+					resultsHarness.AddTestResult(queueItemWasAdded == true);
+
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class AddToQueueButtonAddsMultipleItemsToQueue
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void AddToQueueFromLibraryButtonAddsItemsToQueue()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					//Navigate to Local Library
+					testRunner.ClickByName("Library Tab");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+
+					//Add an item to the library
+					string libraryItemToAdd = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
+					testRunner.ClickByName("Library Add Button");
+
+					testRunner.Wait(2);
+					testRunner.Type(libraryItemToAdd);
+					testRunner.Wait(2);
+					testRunner.Type("{Enter}");
+
+					testRunner.Wait(1);
+					testRunner.ClickByName("Library Edit Button");
+					testRunner.Wait(1);
+
+
+					//Select both Library Items
+					string rowItemOne = "Row Item " + "Calibration - Box";
+					testRunner.ClickByName(rowItemOne);
+
+					string rowItemTwo = "Row Item " + "Fennec Fox";
+					testRunner.ClickByName(rowItemTwo);
+
+
+					//Click the Add To Queue button
+					testRunner.Wait(1);
+					testRunner.ClickByName("Library Add To Queue Button");
+					testRunner.Wait(2);
+
+					//Make sure Queue Count increases by the correct amount
+					int queueCountAfterAdd = QueueData.Instance.Count;
+					bool queueCountIncreasedByTwo = false;
+					if (queueCountAfterAdd == 2)
+					{
+						queueCountIncreasedByTwo = true;
+					}
+
+					resultsHarness.AddTestResult(queueCountIncreasedByTwo == true);
+
+					//Navigate to the Print Queue
+					testRunner.ClickByName("Queue Tab");
+					testRunner.Wait(1);
+
+
+					//Test that both added print items exist
+					string queueItemOne = "Queue Item " + "Calibration - Box";
+					string queueItemTwo = "Queue Item " + "Fennec_Fox";
+					bool queueItemOneWasAdded = testRunner.WaitForName(queueItemOne, 2);
+					bool queueItemTwoWasAdded = testRunner.WaitForName(queueItemTwo, 2);
+
+					resultsHarness.AddTestResult(queueItemOneWasAdded == true);
+					resultsHarness.AddTestResult(queueItemTwoWasAdded == true);
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class ClickLibraryTumbnailWidgetOpensPartPreview
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void LibraryItemThumbnailClickedOpensPartPreview()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					//Navigate to Local Library
+					testRunner.ClickByName("Library Tab");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+
+					//Make sure Part Preview Window does not exists before we click the view button
+					bool partPreviewExistsOne = testRunner.WaitForName("Part Preview Window", 1);
+					resultsHarness.AddTestResult(partPreviewExistsOne == false);
+
+
+					string libraryRowItemName = "Row Item " + "Calibration - Box";
+					testRunner.ClickByName(libraryRowItemName);
+
+					testRunner.Wait(1);
+
+					//Click Library Item View Button
+					string libraryItemViewButton = "Row Item " + "Calibration - Box" + " View Button";
+					testRunner.ClickByName(libraryItemViewButton);
+
+					//Make sure that Part Preview Window opens after View button is clicked
+					bool partPreviewWindowExists = testRunner.WaitForName("Part Preview Window", 1.5);
+					resultsHarness.AddTestResult(partPreviewWindowExists == true);
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+		}
+	}
+
 
 
 }
