@@ -62,15 +62,16 @@ namespace MatterHackers.MatterControl
 				{
 					string folderName = Path.GetFileName(manufacturerDirectory.TrimEnd(new[] { '/', '\\' }));
 
-					foreach(ManufacturerNameMapping nameMapping in manufacturerNameMappings)
+					// Set manufacturer name to the directory name
+					this.manufacturer = Path.GetFileName(manufacturerDirectory);
+
+					// Override the manufacturer name if a manufacturerNameMappings exists
+					foreach (ManufacturerNameMapping nameMapping in manufacturerNameMappings)
 					{
 						if(nameMapping.NameOnDisk == folderName)
 						{
 							this.manufacturer = nameMapping.NameToDisplay;
-						}
-						else
-						{
-							this.manufacturer = Path.GetFileName(manufacturerDirectory);
+							break;
 						}
 					}
 

@@ -64,9 +64,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             return source.GetFilamentCubicMm(filamentDiameter);
         }
 
-        public override double GetFilamentDiamter()
+        public override double GetFilamentDiameter()
         {
-            return source.GetFilamentDiamter();
+            return source.GetFilamentDiameter();
         }
 
         public override double GetFilamentUsedMm(double filamentDiameter)

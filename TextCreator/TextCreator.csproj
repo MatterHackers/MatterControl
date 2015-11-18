@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -148,6 +148,14 @@
     <ProjectReference Include="..\Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj">
+      <Project>{94838988-523c-4b11-ad82-8b9b76f23a31}</Project>
+      <Name>DataConverters2D</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
+      <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
+      <Name>DataConverters3D</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
       <Project>{A737BC76-165B-46C6-82B7-8871C7C92942}</Project>
