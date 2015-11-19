@@ -75,6 +75,7 @@
     <Compile Include="MatterControl\LibraryProviderTests.cs" />
     <Compile Include="MatterControl\AutomationTests\OptionsTabTests.cs" />
     <Compile Include="MatterControl\PrinterCallbackTests.cs" />
+    <Compile Include="MatterControl\PrinterChooserUnitTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
     <Compile Include="MatterControl\AutomationTests\PrintQueueTests.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
