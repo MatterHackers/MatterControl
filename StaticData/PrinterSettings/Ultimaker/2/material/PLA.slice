@@ -1,0 +1,6 @@
+temperature = 210
+bed_temperature = 60
+max_fan_speed = 100
+extrusion_multiplier = 1
+min_fan_speed = 100
+bridge_fan_speed = 100

@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.UI
 			internal string renamedUserDataPath;
 		}
 
-		public static DataFolderState MakeNewStaticDataForTesting2(string testDBFolderName = null)
+		public static DataFolderState MakeNewMatterControlAppDataFolderForTesting(string testDBFolderName = null)
 		{
 			DataFolderState state = new DataFolderState();
 			state.userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl.UI
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
 #endif
 			bool showWindow;
-			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting2(testDbFolder);
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewMatterControlAppDataFolderForTesting(testDbFolder);
 
 			if (queueItemFolderToAdd != null)
 			{

@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string partPreviewTitle = LocalizedString.Get("MatterControl");
 			Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
+			this.Name = "Part Preview Window";
+
 			partPreviewWidget = new PartPreviewContent(printItem, View3DWidget.WindowMode.StandAlone, autoRotate3DView, openMode);
 			partPreviewWidget.Closed += (sender, e) =>
 			{

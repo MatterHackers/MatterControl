@@ -635,7 +635,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			if (exportingWindowIsOpen == false)
 			{
 				exportingWindow = new ExportPrintItemWindow(printItem);
-				exportingWindow.Name = "Export Window Queue";
 				this.exportingWindowIsOpen = true;
 				exportingWindow.Closed += (source, e) => this.exportingWindowIsOpen = false;
 				exportingWindow.ShowAsSystemWindow();

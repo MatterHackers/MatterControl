@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl
 
 			this.Title = McExportFileTitleFull;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.Name = "Export Item Window";
 
 			CreateWindowContent();
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
@@ -235,6 +236,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			Button cancelButton = textImageButtonFactory.Generate("Cancel");
+			cancelButton.Name = "Export Item Window Cancel Button";
 			cancelButton.Cursor = Cursors.Hand;
 			cancelButton.Click += (sender, e) =>
 			{

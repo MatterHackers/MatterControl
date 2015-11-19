@@ -277,6 +277,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			viewButtonLabel.HAnchor = HAnchor.ParentCenter;
 
 			FatFlatClickWidget viewButton = new FatFlatClickWidget(viewButtonLabel);
+			viewButton.Name = "Row Item " + partLabel.Text + " View Button";
 			viewButton.VAnchor = VAnchor.ParentBottomTop;
 			viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
 			viewButton.Width = 100;

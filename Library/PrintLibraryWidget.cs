@@ -332,12 +332,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			editButtonFactory.FixedWidth = 0;
 
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
+			exportItemButton.Name = "Library Export Button";
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += exportButton_Click;
 			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
 			itemOperationButtons.AddChild(exportItemButton);
 
 			Button editItemButton = editButtonFactory.Generate("Edit".Localize());
+			editItemButton.Name = "Library Edit Item Button";
 			editItemButton.Margin = new BorderDouble(3, 0);
 			editItemButton.Click += editButton_Click;
 			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
@@ -346,6 +348,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// add the remove button
 			{
 				Button removeFromLibraryButton = editButtonFactory.Generate("Remove".Localize());
+				removeFromLibraryButton.Name = "Library Remove Item Button";
 				removeFromLibraryButton.Margin = new BorderDouble(3, 0);
 				removeFromLibraryButton.Click += deleteFromLibraryButton_Click;
 				editButtonsEnableData.Add(new ButtonEnableData(true, false, true));
@@ -419,6 +422,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			Button addToQueueButton = editButtonFactory.Generate("Add to Queue".Localize());
+			addToQueueButton.Name = "Library Add To Queue Button";
 			addToQueueButton.Margin = new BorderDouble(3, 0);
 			addToQueueButton.Click += addToQueueButton_Click;
 			editButtonsEnableData.Add(new ButtonEnableData(true, true, false));
