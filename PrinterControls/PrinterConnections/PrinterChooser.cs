@@ -62,6 +62,12 @@ namespace MatterHackers.MatterControl
 				{
 					string folderName = Path.GetFileName(manufacturerDirectory.TrimEnd(new[] { '/', '\\' }));
 
+					// Apply whitelist
+					if (!printerWhiteListStrings.Contains(folderName))
+					{
+						continue;
+					}
+
 					// Set manufacturer name to the directory name
 					this.manufacturer = Path.GetFileName(manufacturerDirectory);
 
