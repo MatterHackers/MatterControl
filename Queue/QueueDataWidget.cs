@@ -179,31 +179,30 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 					bool touchScreenMode = ActiveTheme.Instance.IsTouchScreen;
 
-					if (!touchScreenMode)
-					{
-						if (OemSettings.Instance.ShowShopButton)
-						{
-							shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), "icon_shopping_cart_32x32.png");
-							shopButton.ToolTipText = "Shop online for printing materials".Localize();
-							shopButton.Name = "Buy Materials Button";
-							buttonPanel1.AddChild(shopButton);
-							shopButton.Margin = new BorderDouble(0, 0, 3, 0);
-							shopButton.Click += (sender, e) =>
-							{
-								double activeFilamentDiameter = 0;
-								if (ActivePrinterProfile.Instance.ActivePrinter != null)
-								{
-									activeFilamentDiameter = 3;
-									if (ActiveSliceSettings.Instance.FilamentDiameter < 2)
-									{
-										activeFilamentDiameter = 1.75;
-									}
-								}
 
-								MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
+					if (OemSettings.Instance.ShowShopButton)
+					{
+						shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), "icon_shopping_cart_32x32.png");
+						shopButton.ToolTipText = "Shop online for printing materials".Localize();
+						shopButton.Name = "Buy Materials Button";
+						buttonPanel1.AddChild(shopButton);
+						shopButton.Margin = new BorderDouble(0, 0, 3, 0);
+						shopButton.Click += (sender, e) =>
+						{
+							double activeFilamentDiameter = 0;
+							if (ActivePrinterProfile.Instance.ActivePrinter != null)
+							{
+								activeFilamentDiameter = 3;
+								if (ActiveSliceSettings.Instance.FilamentDiameter < 2)
+								{
+									activeFilamentDiameter = 1.75;
+								}
+							}
+
+							MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
 							};
 						}
-					}
+
 
 					buttonPanel1.AddChild(new HorizontalSpacer());
 
