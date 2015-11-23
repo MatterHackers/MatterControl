@@ -33,9 +33,13 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.Utilities;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
@@ -53,6 +57,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
 		private JogControls jogControls;
 		private AltGroupBox movementControlsGroupBox;
+
+		private LimitCallingFrequency reportDestinationChanged = null;
+
+		private event EventHandler unregisterEvents;
+
 		public static double XSpeed { get { return GetMovementSpeeds()["x"]; } }
 
 		public static double YSpeed { get { return GetMovementSpeeds()["y"]; } }
@@ -67,6 +76,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 
 			return GetMovementSpeeds()["e0"];
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
 		}
 
 		protected override void AddChildElements()
@@ -106,8 +124,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 					manualControlsLayout.AddChild(jogControls);
 					//manualControlsLayout.AddChild(leftToRightContainer);
 					manualControlsLayout.AddChild(CreateSeparatorLine());
-
-					//manualControlsLayout.AddChild(GetManualMoveBar());
+					manualControlsLayout.AddChild(GetHWDestinationBar());
+					manualControlsLayout.AddChild(CreateSeparatorLine());
 				}
 
 				movementControlsGroupBox.AddChild(manualControlsLayout);
@@ -223,6 +241,40 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.AddChild(spacerReleaseShow);
 
 			return homeButtonBar;
+		}
+
+		private FlowLayoutWidget GetHWDestinationBar()
+		{
+			FlowLayoutWidget hwDestinationBar = new FlowLayoutWidget();
+			hwDestinationBar.HAnchor = HAnchor.ParentLeftRight;
+			hwDestinationBar.Margin = new BorderDouble(3, 0, 3, 6) * TextWidget.GlobalPointSizeScaleRatio;
+			hwDestinationBar.Padding = new BorderDouble(0);
+
+			TextWidget xPosition = new TextWidget("X: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			TextWidget yPosition = new TextWidget("Y: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			TextWidget zPosition = new TextWidget("Z: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
+
+			hwDestinationBar.AddChild(xPosition);
+			hwDestinationBar.AddChild(yPosition);
+			hwDestinationBar.AddChild(zPosition);
+
+			reportDestinationChanged = new LimitCallingFrequency(1, () =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					Vector3 destinationPosition = PrinterConnectionAndCommunication.Instance.CurrentDestination;
+					xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
+					yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
+					zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
+				});
+			});
+
+			PrinterConnectionAndCommunication.Instance.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
+			{
+				reportDestinationChanged.CallEvent();
+			}, ref unregisterEvents);
+
+			return hwDestinationBar;
 		}
 
 		private void homeAll_Click(object sender, EventArgs mouseEvent)
