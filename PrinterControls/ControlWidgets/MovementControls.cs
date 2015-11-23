@@ -258,14 +258,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			hwDestinationBar.AddChild(yPosition);
 			hwDestinationBar.AddChild(zPosition);
 
+			SetDestinationPositionText(xPosition, yPosition, zPosition);
+
 			reportDestinationChanged = new LimitCallingFrequency(1, () =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					Vector3 destinationPosition = PrinterConnectionAndCommunication.Instance.CurrentDestination;
-					xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
-					yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
-					zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
+					SetDestinationPositionText(xPosition, yPosition, zPosition);
 				});
 			});
 
@@ -275,6 +274,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}, ref unregisterEvents);
 
 			return hwDestinationBar;
+		}
+
+		private static void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
+		{
+			Vector3 destinationPosition = PrinterConnectionAndCommunication.Instance.CurrentDestination;
+			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
+			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
+			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
 		}
 
 		private void homeAll_Click(object sender, EventArgs mouseEvent)

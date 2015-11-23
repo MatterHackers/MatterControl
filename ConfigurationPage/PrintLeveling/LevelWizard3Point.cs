@@ -120,7 +120,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 			List<string> lines = new List<string>();
 			lines.Add(lineBeingSent);
-			if (lineBeingSent.StartsWith("G28"))
+			if (lineBeingSent.StartsWith("G28")
+				|| lineBeingSent.StartsWith("G29"))
 			{
 				lines.Add("M114");
 			}
