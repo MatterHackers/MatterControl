@@ -31,9 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
@@ -41,35 +39,35 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class XYZColors
-	{
-		public static RGBA_Bytes xColor = new RGBA_Bytes(180, 180, 180);
-		public static RGBA_Bytes yColor = new RGBA_Bytes(255, 255, 255);
-		public static RGBA_Bytes zColor = new RGBA_Bytes(255, 255, 255);
-		public static RGBA_Bytes eColor = new RGBA_Bytes(180, 180, 180);
-
-		public XYZColors()
-		{
-		}
-	}
-
 	public class MovementControls : ControlWidgetBase
 	{
+		public bool hotKeysEnabled = false;
+		public FlowLayoutWidget manualControlsLayout;
+		private double borderWidth = 2;
 		private Button disableMotors;
+		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
 		private Button homeAllButton;
 		private Button homeXButton;
 		private Button homeYButton;
 		private Button homeZButton;
-		double borderWidth = 2;
-		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
-		AltGroupBox movementControlsGroupBox;
-		JogControls jogControls;
-		public FlowLayoutWidget manualControlsLayout;
-		public bool hotKeysEnabled = false;
 		private TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
+		private JogControls jogControls;
+		private AltGroupBox movementControlsGroupBox;
+		public static double XSpeed { get { return GetMovementSpeeds()["x"]; } }
 
-		
-		
+		public static double YSpeed { get { return GetMovementSpeeds()["y"]; } }
+
+		public static double ZSpeed { get { return GetMovementSpeeds()["z"]; } }
+
+		public static double EFeedRate(int extruderIndex)
+		{
+			if (GetMovementSpeeds().ContainsKey("e" + extruderIndex.ToString()))
+			{
+				return GetMovementSpeeds()["e" + extruderIndex.ToString()];
+			}
+
+			return GetMovementSpeeds()["e0"];
+		}
 
 		protected override void AddChildElements()
 		{
@@ -93,9 +91,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			movementControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 			movementControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
 
-			
-
-
 			jogControls = new JogControls(new XYZColors());
 			jogControls.Margin = new BorderDouble(0);
 			{
@@ -104,26 +99,66 @@ namespace MatterHackers.MatterControl.PrinterControls
 				manualControlsLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
 				manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
 				{
-
 					FlowLayoutWidget leftToRightContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-
-					
 
 					manualControlsLayout.AddChild(GetHomeButtonBar());
 					manualControlsLayout.AddChild(CreateSeparatorLine());
 					manualControlsLayout.AddChild(jogControls);
 					//manualControlsLayout.AddChild(leftToRightContainer);
 					manualControlsLayout.AddChild(CreateSeparatorLine());
-					
+
 					//manualControlsLayout.AddChild(GetManualMoveBar());
 				}
-				
+
 				movementControlsGroupBox.AddChild(manualControlsLayout);
 			}
-			
+
 			this.AddChild(movementControlsGroupBox);
 		}
 
+		private static Dictionary<string, double> GetMovementSpeeds()
+		{
+			Dictionary<string, double> speeds = new Dictionary<string, double>();
+			string movementSpeedsString = GetMovementSpeedsString();
+			string[] allSpeeds = movementSpeedsString.Split(',');
+			for (int i = 0; i < allSpeeds.Length / 2; i++)
+			{
+				speeds.Add(allSpeeds[i * 2 + 0], double.Parse(allSpeeds[i * 2 + 1]));
+			}
+
+			return speeds;
+		}
+
+		private static string GetMovementSpeedsString()
+		{
+			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
+			if (PrinterConnectionAndCommunication.Instance != null && ActivePrinterProfile.Instance.ActivePrinter != null)
+			{
+				string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;
+				if (savedSettings != null && savedSettings != "")
+				{
+					presets = savedSettings;
+				}
+			}
+
+			return presets;
+		}
+
+		private static void SetMovementSpeeds(object seder, EventArgs e)
+		{
+			StringEventArgs stringEvent = e as StringEventArgs;
+			if (stringEvent != null && stringEvent.Data != null)
+			{
+				ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds = stringEvent.Data;
+				ActivePrinterProfile.Instance.ActivePrinter.Commit();
+				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+			}
+		}
+
+		private void disableMotors_Click(object sender, EventArgs mouseEvent)
+		{
+			PrinterConnectionAndCommunication.Instance.ReleaseMotors();
+		}
 
 		private FlowLayoutWidget GetHomeButtonBar()
 		{
@@ -174,7 +209,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += new EventHandler(disableMotors_Click);
 
-
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			GuiWidget spacerReleaseShow = new GuiWidget(10 * TextWidget.GlobalPointSizeScaleRatio, 0);
@@ -187,69 +221,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.AddChild(spacer);
 			homeButtonBar.AddChild(disableMotors);
 			homeButtonBar.AddChild(spacerReleaseShow);
-		
 
 			return homeButtonBar;
 		}
 
-		public static double XSpeed { get { return GetMovementSpeeds()["x"]; } }
-
-		public static double YSpeed { get { return GetMovementSpeeds()["y"]; } }
-
-		public static double ZSpeed { get { return GetMovementSpeeds()["z"]; } }
-
-		public static double EFeedRate(int extruderIndex)
+		private void homeAll_Click(object sender, EventArgs mouseEvent)
 		{
-			if (GetMovementSpeeds().ContainsKey("e" + extruderIndex.ToString()))
-			{
-				return GetMovementSpeeds()["e" + extruderIndex.ToString()];
-			}
-
-			return GetMovementSpeeds()["e0"];
-		}
-
-		private static Dictionary<string, double> GetMovementSpeeds()
-		{
-			Dictionary<string, double> speeds = new Dictionary<string, double>();
-			string movementSpeedsString = GetMovementSpeedsString();
-			string[] allSpeeds = movementSpeedsString.Split(',');
-			for (int i = 0; i < allSpeeds.Length / 2; i++)
-			{
-				speeds.Add(allSpeeds[i * 2 + 0], double.Parse(allSpeeds[i * 2 + 1]));
-			}
-
-			return speeds;
-		}
-
-		private static string GetMovementSpeedsString()
-		{
-			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
-			if (PrinterConnectionAndCommunication.Instance != null && ActivePrinterProfile.Instance.ActivePrinter != null)
-			{
-				string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;
-				if (savedSettings != null && savedSettings != "")
-				{
-					presets = savedSettings;
-				}
-			}
-
-			return presets;
-		}
-
-		private static void SetMovementSpeeds(object seder, EventArgs e)
-		{
-			StringEventArgs stringEvent = e as StringEventArgs;
-			if (stringEvent != null && stringEvent.Data != null)
-			{
-				ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds = stringEvent.Data;
-				ActivePrinterProfile.Instance.ActivePrinter.Commit();
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
-			}
-		}
-
-		private void disableMotors_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.ReleaseMotors();
+			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
 		}
 
 		private void homeXButton_Click(object sender, EventArgs mouseEvent)
@@ -266,10 +244,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
 		}
+	}
 
-		private void homeAll_Click(object sender, EventArgs mouseEvent)
+	public class XYZColors
+	{
+		public static RGBA_Bytes eColor = new RGBA_Bytes(180, 180, 180);
+		public static RGBA_Bytes xColor = new RGBA_Bytes(180, 180, 180);
+		public static RGBA_Bytes yColor = new RGBA_Bytes(255, 255, 255);
+		public static RGBA_Bytes zColor = new RGBA_Bytes(255, 255, 255);
+
+		public XYZColors()
 		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
 		}
 	}
 }
