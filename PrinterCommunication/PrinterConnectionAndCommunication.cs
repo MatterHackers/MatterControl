@@ -2224,6 +2224,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// We have to send a line because some printers (like old printrbots) do not send anything when connecting and there is no other way to know they are there.
 						SendLineToPrinterNow("M105");
 						SendLineToPrinterNow("M115");
+						SendLineToPrinterNow("M114");
 					}
 					catch (System.ArgumentOutOfRangeException e)
 					{
