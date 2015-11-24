@@ -2452,7 +2452,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string KeepTrackOfPostionAndDestination(string lineBeingSent)
 		{
-			if (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
+			if (lineBeingSent.StartsWith("G0 ") 
+				|| lineBeingSent.StartsWith("G1 ") 
+				|| lineBeingSent.StartsWith("G2 ") 
+				|| lineBeingSent.StartsWith("G3 "))
 			{
 				Vector3 newDestination = currentDestination;
 				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
