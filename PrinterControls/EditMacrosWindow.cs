@@ -166,8 +166,10 @@ namespace MatterHackers.MatterControl
 
 			macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.Value, pixelHeight: 120, multiLine: true);
 			macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
+            macroCommandInput.VAnchor = VAnchor.ParentBottomTop;
+            macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.ParentBottomTop;
 
-			string shouldBeGCodeLabel = LocalizedString.Get("This should be in 'Gcode'");
+            string shouldBeGCodeLabel = LocalizedString.Get("This should be in 'Gcode'");
 			string shouldBeGCodeLabelFull = string.Format("{0}.", shouldBeGCodeLabel);
 			macroCommandError = new TextWidget(shouldBeGCodeLabelFull, 0, 0, 10);
 			macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -178,7 +180,8 @@ namespace MatterHackers.MatterControl
 			container.AddChild(macroCommandInput);
 			container.AddChild(macroCommandError);
 			container.HAnchor = HAnchor.ParentLeftRight;
-			return container;
+            container.VAnchor = VAnchor.ParentBottomTop;
+            return container;
 		}
 
 		private bool ValidateMacroForm()
