@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class GCodeFileProxy : GCodeFile
 	{
-		private GCodeFile source;
+        private GCodeFile source;
+
+        protected GCodeFile Source { get { return source; } }
 
 		public GCodeFileProxy(GCodeFile source)
 		{

@@ -84,9 +84,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
             new MapItemToBool("continuousSpiralOuterPerimeter", "spiral_vase"),
 
-            //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
-            new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
-
             new VisibleButNotMappedToEngine("extruder_count"),
             new VisibleButNotMappedToEngine("extruders_share_temperature"),
 
@@ -130,7 +127,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //firstLayerToAllowFan=2 # The fan will be force to stay off below this layer.
             new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
 
-            //outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, BFB, MACH3
+            //outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, MACH3
             new MapItem("outputType", "gcode_output_type"),
 
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.

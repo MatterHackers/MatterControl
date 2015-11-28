@@ -77,7 +77,7 @@ def main(argv):
 	if len(argv) > 0:
 		ser = serial.Serial(argv[0], 250000, timeout=1)	
 	else:
-		ser = serial.Serial('COM14', 250000, timeout=1)	
+		ser = serial.Serial('COM4', 250000, timeout=1)	
 	waitForKey = True
 	print "Initializing emulator..."
 	while True:
