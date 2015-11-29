@@ -46,11 +46,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
         #region Abstract Functions
-        public override void Add(PrinterMachineInstruction printerMachineInstruction)
-        {
-            source.Add(printerMachineInstruction);
-        }
-
         public override void Clear()
         {
             source.Clear();
@@ -104,11 +99,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         public override Vector2 GetWeightedCenter()
         {
             return source.GetWeightedCenter();
-        }
-
-        public override void Insert(int indexToStartInjection, PrinterMachineInstruction printerMachineInstruction)
-        {
-            source.Insert(indexToStartInjection, printerMachineInstruction);
         }
 
         public override PrinterMachineInstruction Instruction(int i)
