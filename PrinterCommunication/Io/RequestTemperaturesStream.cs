@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,47 +31,31 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
-using System.Text;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabbySteps : GCodeStream
-	{
+    public class RequestTemperaturesStream : GCodeStream
+    {
         GCodeStream internalStream;
-        PrinterMove unCorrectedLastDestination;
-        double babbyStepZ = 0;
+        Stopwatch timeSinceLastTemp = new Stopwatch();
 
-        public BabbySteps(GCodeStream internalStream)
+        public RequestTemperaturesStream(GCodeStream internalStream)
         {
             this.internalStream = internalStream;
-        }
-
-        string GetLineWithOffset(string lineBeingSent)
-        {
-            if (babbyStepZ != 0)
-            {
-                double extruderDelta = 0;
-                GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
-                double feedRate = 0;
-                GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
-
-                PrinterMove currentDestination = GetPosition(lineBeingSent, unCorrectedLastDestination);
-
-                unCorrectedLastDestination = currentDestination;
-
-                // now adjust the current position
-                currentDestination.position.z += babbyStepZ;
-
-                lineBeingSent = CreateMovementLine(currentDestination);
-            }
-
-            return lineBeingSent;
+            timeSinceLastTemp.Restart();
         }
 
         public override string ReadLine()
         {
-            string lineWithBabbyStepOffset = GetLineWithOffset(internalStream.ReadLine());
-            return lineWithBabbyStepOffset;
+            if (timeSinceLastTemp.ElapsedMilliseconds > 5000)
+            {
+                timeSinceLastTemp.Restart();
+                return "M105";
+            }
+
+            return internalStream.ReadLine();
         }
     }
 }

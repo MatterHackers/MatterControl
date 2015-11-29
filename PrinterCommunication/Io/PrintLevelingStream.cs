@@ -31,47 +31,21 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
-using System.Text;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabbySteps : GCodeStream
+    public class PrintLevelingStream : GCodeStream
 	{
         GCodeStream internalStream;
-        PrinterMove unCorrectedLastDestination;
-        double babbyStepZ = 0;
 
-        public BabbySteps(GCodeStream internalStream)
+        public PrintLevelingStream(GCodeStream internalStream)
         {
             this.internalStream = internalStream;
         }
 
-        string GetLineWithOffset(string lineBeingSent)
-        {
-            if (babbyStepZ != 0)
-            {
-                double extruderDelta = 0;
-                GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
-                double feedRate = 0;
-                GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
-
-                PrinterMove currentDestination = GetPosition(lineBeingSent, unCorrectedLastDestination);
-
-                unCorrectedLastDestination = currentDestination;
-
-                // now adjust the current position
-                currentDestination.position.z += babbyStepZ;
-
-                lineBeingSent = CreateMovementLine(currentDestination);
-            }
-
-            return lineBeingSent;
-        }
-
         public override string ReadLine()
         {
-            string lineWithBabbyStepOffset = GetLineWithOffset(internalStream.ReadLine());
-            return lineWithBabbyStepOffset;
+            return internalStream.ReadLine();
         }
     }
 }

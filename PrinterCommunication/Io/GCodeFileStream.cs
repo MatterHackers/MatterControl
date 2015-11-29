@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,47 +31,32 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
-using System.Text;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabbySteps : GCodeStream
-	{
-        GCodeStream internalStream;
-        PrinterMove unCorrectedLastDestination;
-        double babbyStepZ = 0;
+    public class GCodeFileStream : GCodeStream
+    {
+        int printerCommandQueueLineIndex = -1;
 
-        public BabbySteps(GCodeStream internalStream)
+        public int LineIndex { get { return printerCommandQueueLineIndex; } }
+
+        GCodeFile fileStreaming;
+        public GCodeFileStream(GCodeFile fileStreaming, int startLine = 0)
         {
-            this.internalStream = internalStream;
-        }
-
-        string GetLineWithOffset(string lineBeingSent)
-        {
-            if (babbyStepZ != 0)
-            {
-                double extruderDelta = 0;
-                GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
-                double feedRate = 0;
-                GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
-
-                PrinterMove currentDestination = GetPosition(lineBeingSent, unCorrectedLastDestination);
-
-                unCorrectedLastDestination = currentDestination;
-
-                // now adjust the current position
-                currentDestination.position.z += babbyStepZ;
-
-                lineBeingSent = CreateMovementLine(currentDestination);
-            }
-
-            return lineBeingSent;
+            this.fileStreaming = fileStreaming;
+            printerCommandQueueLineIndex = startLine;
         }
 
         public override string ReadLine()
         {
-            string lineWithBabbyStepOffset = GetLineWithOffset(internalStream.ReadLine());
-            return lineWithBabbyStepOffset;
+            if (printerCommandQueueLineIndex < fileStreaming.LineCount)
+            {
+                return fileStreaming.Instruction(printerCommandQueueLineIndex++).Line;
+            }
+
+            return null;
         }
     }
 }

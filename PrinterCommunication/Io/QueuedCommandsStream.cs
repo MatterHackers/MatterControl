@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,47 +31,44 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
-using System.Text;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabbySteps : GCodeStream
-	{
+    public class QueuedCommandsStream : GCodeStream
+    {
+        List<string> commandQueue = new List<string>();
         GCodeStream internalStream;
-        PrinterMove unCorrectedLastDestination;
-        double babbyStepZ = 0;
 
-        public BabbySteps(GCodeStream internalStream)
+        public QueuedCommandsStream(GCodeStream internalStream)
         {
             this.internalStream = internalStream;
         }
 
-        string GetLineWithOffset(string lineBeingSent)
+        public void Add(string line)
         {
-            if (babbyStepZ != 0)
+            // lock queue
+            using (TimedLock.Lock(this, "Add GCode Line"))
             {
-                double extruderDelta = 0;
-                GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
-                double feedRate = 0;
-                GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
-
-                PrinterMove currentDestination = GetPosition(lineBeingSent, unCorrectedLastDestination);
-
-                unCorrectedLastDestination = currentDestination;
-
-                // now adjust the current position
-                currentDestination.position.z += babbyStepZ;
-
-                lineBeingSent = CreateMovementLine(currentDestination);
+                commandQueue.Add(line);
             }
-
-            return lineBeingSent;
         }
 
         public override string ReadLine()
         {
-            string lineWithBabbyStepOffset = GetLineWithOffset(internalStream.ReadLine());
-            return lineWithBabbyStepOffset;
+            // lock queue
+            using (TimedLock.Lock(this, "Read GCode Line"))
+            {
+                if (commandQueue.Count > 0)
+                {
+                    string line = commandQueue[0];
+                    commandQueue.RemoveAt(0);
+                    return line;
+                }
+            }
+
+            return internalStream.ReadLine();
         }
     }
 }

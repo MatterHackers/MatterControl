@@ -34,6 +34,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
@@ -181,9 +182,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         private GCodeFile loadedGCode = new GCodeFileLoaded();
 
-        private GCodeStream rootGCodeStream = null;
-        private QueuedCommands gcodeCommandQueue = null;
-        private LoadedGCodeStream loadedGCodeStream = null;
+        private GCodeFileStream gCodeFileStream0 = null;
+        private QueuedCommandsStream queuedCommandStream1 = null;
+        private PrintLevelingStream printLevelingStream2 = null;
+        private BabbySteps babbyStepsStream3 = null;
+        private RequestTemperaturesStream requestTemperaturesStream4 = null;
+
+        private GCodeStream totalGCodeStream = null;
 
 		private PrinterMachineInstruction.MovementTypes movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
 
@@ -517,9 +522,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-                if (loadedGCodeStream != null)
+                if (gCodeFileStream0 != null)
                 {
-                    int instructionIndex = loadedGCodeStream.LineIndex - backupAmount;
+                    int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
                     return loadedGCode.GetLayerIndex(instructionIndex);
                 }
 
@@ -620,7 +625,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				else if (NumberOfLinesInCurrentPrint > 0
 					&& loadedGCode != null)
 				{
-					return loadedGCode.PercentComplete(loadedGCodeStream.LineIndex);
+					return loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 				}
 				else
 				{
@@ -827,7 +832,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				int instructionIndex = loadedGCodeStream.LineIndex - backupAmount;
+				int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
 				return loadedGCode.Ratio0to1IntoContainedLayer(instructionIndex);
 			}
 		}
@@ -2406,7 +2411,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					trimedLine = ReplacePrinterMacros(trimedLine);
 
-                    gcodeCommandQueue.Add(trimedLine);
+                    queuedCommandStream1.Add(trimedLine);
 				}
 			}
 		}
@@ -2451,9 +2456,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			string gcodeFilename = e.Argument as string;
 			loadedGCode = GCodeFile.Load(gcodeFilename);
 
-            loadedGCodeStream = new LoadedGCodeStream(loadedGCode);
-            gcodeCommandQueue = new QueuedCommands(loadedGCodeStream);
-            rootGCodeStream = new RequestTemperatures(gcodeCommandQueue);
+            gCodeFileStream0 = new GCodeFileStream(loadedGCode);
+            queuedCommandStream1 = new QueuedCommandsStream(gCodeFileStream0);
+            printLevelingStream2 = new PrintLevelingStream(queuedCommandStream1);
+            babbyStepsStream3 = new BabbySteps(printLevelingStream2);
+            requestTemperaturesStream4 = new RequestTemperaturesStream(babbyStepsStream3);
+            totalGCodeStream = requestTemperaturesStream4;
         }
 
         private void loadGCodeWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -2768,7 +2776,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile2"))
 			{
                 previousSentLine = this.currentSentLine;
-                currentSentLine = rootGCodeStream.ReadLine();
+                currentSentLine = totalGCodeStream.ReadLine();
 
                 if (currentSentLine != null)
 				{

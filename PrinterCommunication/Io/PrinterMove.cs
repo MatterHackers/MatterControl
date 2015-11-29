@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,51 +27,51 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabbySteps : GCodeStream
-	{
-        GCodeStream internalStream;
-        PrinterMove unCorrectedLastDestination;
-        double babbyStepZ = 0;
+    public class PrinterMove
+    {
+        public Vector3 position;
+        public double feedRate;
+        public double extrusion;
 
-        public BabbySteps(GCodeStream internalStream)
+        public static PrinterMove operator +(PrinterMove left, PrinterMove right)
         {
-            this.internalStream = internalStream;
+            left.position += right.position;
+            left.extrusion += right.extrusion;
+            left.feedRate += right.feedRate;
+            return left;
         }
 
-        string GetLineWithOffset(string lineBeingSent)
+        public static PrinterMove operator -(PrinterMove left, PrinterMove right)
         {
-            if (babbyStepZ != 0)
+            left.position -= right.position;
+            left.extrusion -= right.extrusion;
+            left.feedRate -= right.feedRate;
+            return left;
+        }
+
+        public static PrinterMove operator /(PrinterMove left, double scale)
+        {
+            left.position /= scale;
+            left.extrusion /= scale;
+            left.feedRate /= scale;
+            return left;
+        }
+
+        public double LengthSquared
+        {
+            get
             {
-                double extruderDelta = 0;
-                GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
-                double feedRate = 0;
-                GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
-
-                PrinterMove currentDestination = GetPosition(lineBeingSent, unCorrectedLastDestination);
-
-                unCorrectedLastDestination = currentDestination;
-
-                // now adjust the current position
-                currentDestination.position.z += babbyStepZ;
-
-                lineBeingSent = CreateMovementLine(currentDestination);
+                return position.LengthSquared;
             }
-
-            return lineBeingSent;
-        }
-
-        public override string ReadLine()
-        {
-            string lineWithBabbyStepOffset = GetLineWithOffset(internalStream.ReadLine());
-            return lineWithBabbyStepOffset;
         }
     }
 }
