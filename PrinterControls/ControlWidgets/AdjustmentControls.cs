@@ -167,7 +167,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				adjustmentControlsGroupBox.AddChild(tuningRatiosLayout);
 
-				if (false)
+                // put in the baby step controls
+				if (true)
 				{
 					HorizontalLine line = new HorizontalLine();
 					line.Margin = new BorderDouble(0, 10);
@@ -176,27 +177,37 @@ namespace MatterHackers.MatterControl.PrinterControls
 					subheader2.Margin = new BorderDouble(bottom: 6);
 					tuningRatiosLayout.AddChild(subheader2);
 
-					ImageBuffer togetherBig;
-					ImageBuffer appartBig;
+					ImageBuffer moveDownImage;
+					ImageBuffer moveUpImage;
 
-					CreateButtonImages(out togetherBig, out appartBig);
+					CreateButtonImages(out moveDownImage, out moveUpImage);
 
 					textImageButtonFactory.FixedHeight = 0;
-					Button togetherALot = textImageButtonFactory.GenerateFromImages("", togetherBig);
-					Button appartALot = textImageButtonFactory.GenerateFromImages("", appartBig);
+					Button moveDownButton = textImageButtonFactory.GenerateFromImages("", moveDownImage);
+					Button moveUpButton = textImageButtonFactory.GenerateFromImages("", moveUpImage);
 
-					FlowLayoutWidget leftToRigth = new FlowLayoutWidget();
-					leftToRigth.AddChild(togetherALot);
-					leftToRigth.AddChild(appartALot);
+                    moveDownButton.Click += (sender, e) =>
+                    {
+                        PrinterConnectionAndCommunication.Instance.babyStepsStream3.MoveDown();
+                    };
 
-					tuningRatiosLayout.AddChild(leftToRigth);
+                    moveUpButton.Click += (sender, e) =>
+                    {
+                        PrinterConnectionAndCommunication.Instance.babyStepsStream3.MoveUp();
+                    };
+
+                    FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+					leftToRight.AddChild(moveDownButton);
+					leftToRight.AddChild(moveUpButton);
+
+					tuningRatiosLayout.AddChild(leftToRight);
 				}
 			}
 
 			this.AddChild(adjustmentControlsGroupBox);
 		}
 
-		private static void CreateButtonImages(out ImageBuffer togetherBig, out ImageBuffer appartBig)
+		private static void CreateButtonImages(out ImageBuffer moveDownImage, out ImageBuffer moveUpImage)
 		{
 			PathStorage upArrow = new PathStorage();
 			upArrow.MoveTo(0, 0);
@@ -209,40 +220,40 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			int buttonSize = 32;
 			int arrowSize = buttonSize / 3;
-			togetherBig = new ImageBuffer(buttonSize, buttonSize, 32, new BlenderBGRA());
-			Graphics2D togetherBigGraphics = togetherBig.NewGraphics2D();
-			togetherBigGraphics.Clear(RGBA_Bytes.White);
+			moveDownImage = new ImageBuffer(buttonSize, buttonSize, 32, new BlenderBGRA());
+			Graphics2D moveDownGraphics = moveDownImage.NewGraphics2D();
+			moveDownGraphics.Clear(RGBA_Bytes.White);
 
 			int margin = buttonSize / 16;
 			int lineWidth = buttonSize / 16;
-			togetherBigGraphics.FillRectangle(margin, buttonSize / 2 + margin, buttonSize - margin, buttonSize / 2 + margin + lineWidth, RGBA_Bytes.Black);
-			togetherBigGraphics.FillRectangle(margin, buttonSize / 2 - margin, buttonSize - margin, buttonSize / 2 - margin - lineWidth, RGBA_Bytes.Black);
+			//moveDownGraphics.FillRectangle(margin, buttonSize / 2 + margin, buttonSize - margin, buttonSize / 2 + margin + lineWidth, RGBA_Bytes.Black);
+			moveDownGraphics.FillRectangle(margin, buttonSize / 2 - margin, buttonSize - margin, buttonSize / 2 - margin - lineWidth, RGBA_Bytes.Black);
 
-			appartBig = new ImageBuffer(togetherBig);
+			moveUpImage = new ImageBuffer(moveDownImage);
 
 			// point up
 			Affine totalTransform = Affine.NewScaling(arrowSize, arrowSize);
 			totalTransform *= Affine.NewTranslation(buttonSize / 2, buttonSize / 2 - margin - lineWidth);
-			togetherBigGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
+			//moveDownGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
 
 			// point down
 			totalTransform = Affine.NewRotation(MathHelper.Tau / 2);
 			totalTransform *= Affine.NewScaling(arrowSize, arrowSize);
 			totalTransform *= Affine.NewTranslation(buttonSize / 2, buttonSize / 2 + margin + lineWidth);
-			togetherBigGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
+			moveDownGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
 
-			Graphics2D appartBigGraphics = appartBig.NewGraphics2D();
+			Graphics2D moveUpGraphics = moveUpImage.NewGraphics2D();
 
 			// point up
 			totalTransform = Affine.NewScaling(arrowSize, arrowSize);
 			totalTransform *= Affine.NewTranslation(buttonSize / 2, buttonSize / 2 + margin + lineWidth + arrowSize + 1);
-			appartBigGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
+			moveUpGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
 
 			// point down
 			totalTransform = Affine.NewRotation(MathHelper.Tau / 2);
 			totalTransform *= Affine.NewScaling(arrowSize, arrowSize);
 			totalTransform *= Affine.NewTranslation(buttonSize / 2, buttonSize / 2 - margin - lineWidth - arrowSize - 1);
-			appartBigGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
+			//moveUpGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
 		}
 
 		public override void OnClosed(EventArgs e)

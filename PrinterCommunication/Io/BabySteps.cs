@@ -40,6 +40,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         PrinterMove unCorrectedLastDestination;
         double babyStepZ = 0;
 
+        public void MoveDown()
+        {
+            babyStepZ -= .02;
+        }
+
+        public void MoveUp()
+        {
+            babyStepZ += .02;
+        }
+
         public BabySteps(GCodeStream internalStream)
             : base(internalStream, 1)
         {
@@ -47,7 +57,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
         string GetLineWithOffset(string lineBeingSent)
         {
-            if (babyStepZ != 0)
+            if (babyStepZ != 0 && lineBeingSent != null)
             {
                 double extruderDelta = 0;
                 GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);

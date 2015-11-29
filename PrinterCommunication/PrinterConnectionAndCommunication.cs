@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         private GCodeFileStream gCodeFileStream0 = null;
         private QueuedCommandsStream queuedCommandStream1 = null;
         private PrintLevelingStream printLevelingStream2 = null;
-        private BabySteps babyStepsStream3 = null;
+        public BabySteps babyStepsStream3 = null;
         private RequestTemperaturesStream requestTemperaturesStream4 = null;
 
         private GCodeStream totalGCodeStream = null;
