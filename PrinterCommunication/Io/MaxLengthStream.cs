@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
     public class MaxLengthStream : GCodeStream
 	{
         GCodeStream internalStream;
-        PrinterMove lastDestination;
+        PrinterMove lastDestination = new PrinterMove();
         double maxSegmentLength = 0;
 
         List<PrinterMove> movesToSend = new List<PrinterMove>();
@@ -55,36 +55,43 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             if (movesToSend.Count == 0)
             {
                 string lineToSend = internalStream.ReadLine();
-                PrinterMove currentDestination = GetPosition(lineToSend, lastDestination);
-                PrinterMove deltaToDestination = currentDestination - lastDestination;
-                double lengthSquared = deltaToDestination.LengthSquared;
-                if (lengthSquared > maxSegmentLength * maxSegmentLength)
+
+                if (lineToSend != null)
                 {
-                    // create the line segments to send
-                    double length = Math.Sqrt(lengthSquared);
-                    int numSegmentsToSend = (int)Math.Ceiling(length / maxSegmentLength);
-                    PrinterMove deltaForSegment = deltaToDestination / numSegmentsToSend;
-                    PrinterMove nextPoint = lastDestination + deltaForSegment;
-                    for (int i = 0; i < numSegmentsToSend; i++)
+                    PrinterMove currentDestination = GetPosition(lineToSend, lastDestination);
+                    PrinterMove deltaToDestination = currentDestination - lastDestination;
+                    double lengthSquared = deltaToDestination.LengthSquared;
+                    if (lengthSquared > maxSegmentLength * maxSegmentLength)
                     {
-                        movesToSend.Add(nextPoint);
-                        nextPoint += deltaForSegment;
+                        // create the line segments to send
+                        double length = Math.Sqrt(lengthSquared);
+                        int numSegmentsToSend = (int)Math.Ceiling(length / maxSegmentLength);
+                        PrinterMove deltaForSegment = deltaToDestination / numSegmentsToSend;
+                        PrinterMove nextPoint = lastDestination + deltaForSegment;
+                        for (int i = 0; i < numSegmentsToSend; i++)
+                        {
+                            movesToSend.Add(nextPoint);
+                            nextPoint += deltaForSegment;
+                        }
+
+                        // send the first one
+                        PrinterMove positionToSend = movesToSend[0];
+                        movesToSend.RemoveAt(0);
+
+                        lastDestination = positionToSend;
+                        return CreateMovementLine(positionToSend);
                     }
 
-                    // send the first one
-                    PrinterMove positionToSend = movesToSend[0];
-                    movesToSend.RemoveAt(0);
-
-                    return CreateMovementLine(positionToSend);
+                    lastDestination = currentDestination;
                 }
-
-                lastDestination = currentDestination;
                 return lineToSend;
             }
             else
             {
                 PrinterMove positionToSend = movesToSend[0];
                 movesToSend.RemoveAt(0);
+
+                lastDestination = positionToSend;
 
                 string lineToSend = CreateMovementLine(positionToSend);
                 return lineToSend;

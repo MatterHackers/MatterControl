@@ -205,7 +205,7 @@
     <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
     <Compile Include="PrinterCommunication\Io\QueuedCommandsStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrintLevelingStream.cs" />
-    <Compile Include="PrinterCommunication\Io\BabbySteps.cs" />
+    <Compile Include="PrinterCommunication\Io\BabySteps.cs" />
     <Compile Include="PrinterCommunication\Io\GCodeFileProxy.cs" />
     <Compile Include="PrinterCommunication\RepRapReadWriteCallbacks.cs" />
     <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />

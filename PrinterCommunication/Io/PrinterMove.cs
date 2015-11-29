@@ -36,7 +36,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class PrinterMove
+    public struct PrinterMove
     {
         public Vector3 position;
         public double feedRate;

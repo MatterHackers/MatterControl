@@ -35,20 +35,19 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabbySteps : GCodeStream
-	{
-        GCodeStream internalStream;
+    public class BabySteps : MaxLengthStream
+    {
         PrinterMove unCorrectedLastDestination;
-        double babbyStepZ = 0;
+        double babyStepZ = 0;
 
-        public BabbySteps(GCodeStream internalStream)
+        public BabySteps(GCodeStream internalStream)
+            : base(internalStream, 1)
         {
-            this.internalStream = internalStream;
         }
 
         string GetLineWithOffset(string lineBeingSent)
         {
-            if (babbyStepZ != 0)
+            if (babyStepZ != 0)
             {
                 double extruderDelta = 0;
                 GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
@@ -60,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 unCorrectedLastDestination = currentDestination;
 
                 // now adjust the current position
-                currentDestination.position.z += babbyStepZ;
+                currentDestination.position.z += babyStepZ;
 
                 lineBeingSent = CreateMovementLine(currentDestination);
             }
@@ -70,8 +69,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
         public override string ReadLine()
         {
-            string lineWithBabbyStepOffset = GetLineWithOffset(internalStream.ReadLine());
-            return lineWithBabbyStepOffset;
+            string lineWithBabyStepOffset = GetLineWithOffset(base.ReadLine());
+            return lineWithBabyStepOffset;
         }
     }
 }

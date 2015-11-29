@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         private GCodeFileStream gCodeFileStream0 = null;
         private QueuedCommandsStream queuedCommandStream1 = null;
         private PrintLevelingStream printLevelingStream2 = null;
-        private BabbySteps babbyStepsStream3 = null;
+        private BabySteps babyStepsStream3 = null;
         private RequestTemperaturesStream requestTemperaturesStream4 = null;
 
         private GCodeStream totalGCodeStream = null;
@@ -2459,8 +2459,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             gCodeFileStream0 = new GCodeFileStream(loadedGCode);
             queuedCommandStream1 = new QueuedCommandsStream(gCodeFileStream0);
             printLevelingStream2 = new PrintLevelingStream(queuedCommandStream1);
-            babbyStepsStream3 = new BabbySteps(printLevelingStream2);
-            requestTemperaturesStream4 = new RequestTemperaturesStream(babbyStepsStream3);
+            babyStepsStream3 = new BabySteps(printLevelingStream2);
+            requestTemperaturesStream4 = new RequestTemperaturesStream(babyStepsStream3);
             totalGCodeStream = requestTemperaturesStream4;
         }
 
@@ -2745,7 +2745,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// the last instruction was a move
 						string lastInstruction = previousSentLine;
 						double epectedSecondsToWait = Math.Max(5, MaxTimeToMoveForSentInstructions());
-						bool wasMoveAndNoOK = (lastInstruction.Contains("G0 ") || lastInstruction.Contains("G1 "))
+						bool wasMoveAndNoOK = lastInstruction != null
+                            && (lastInstruction.Contains("G0 ") || lastInstruction.Contains("G1 "))
 							&& timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > epectedSecondsToWait;
 						{
 							// This code is to try and make sure the printer does not stop on transmission errors.
