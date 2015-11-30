@@ -27,16 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl;
 using NUnit.Framework;
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Linq;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 
 namespace MatterControl.Tests.MatterControl

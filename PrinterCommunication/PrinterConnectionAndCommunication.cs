@@ -136,7 +136,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentActualExtrusionPosition = 0;
 
-		private Vector3 currentDestination;
+        private Vector3 preLeveledDestination;
+        private Vector3 absoluteDestination;
 
 		private double currentExtruderDestination;
 
@@ -516,7 +517,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
 
-		public Vector3 CurrentDestination { get { return currentDestination; } }
+		public Vector3 AbsoluteDestination { get { return absoluteDestination; } }
 
 		public int CurrentlyPrintingLayer
 		{
@@ -1232,6 +1233,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				temperatureRequestTimer.Start();
 			}
+
 			if (temperatureRequestTimer.ElapsedMilliseconds > 2000)
 			{
 				if (!PrinterIsPrinting
@@ -1665,9 +1667,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 #endif
 
-			if (currentDestination != positionRead)
+			if (absoluteDestination != positionRead)
 			{
-				currentDestination = positionRead;
+                absoluteDestination = positionRead;
 				DestinationChanged.CallEvents(this, null);
 			}
 
@@ -1807,7 +1809,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					InjectGCode(resumeGCode);
 
 					// put in the code to return to our pre-pause postion
-					InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate));
+					InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate));
 					DoPause();
 				}
 				else
@@ -1824,7 +1826,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						InjectGCode(resumeGCode);
 
 						// put in the code to return to return to our pre-pause postion
-						InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate));
+						InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate));
 					}
 				}
 			}
@@ -2416,14 +2418,47 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private string KeepTrackOfPostionAndDestination(string lineBeingSent)
+        private void KeepTrackOfAbsolutePostionAndDestination(string lineBeingSent)
+        {
+            if (lineBeingSent.StartsWith("G0 ")
+                || lineBeingSent.StartsWith("G1 ")
+                || lineBeingSent.StartsWith("G2 ")
+                || lineBeingSent.StartsWith("G3 "))
+            {
+                Vector3 newDestination = absoluteDestination;
+                if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
+                {
+                    newDestination = Vector3.Zero;
+                }
+
+                GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.x);
+                GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.y);
+                GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.z);
+
+                GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentExtruderDestination);
+                GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentFeedRate);
+
+                if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
+                {
+                    newDestination += absoluteDestination;
+                }
+
+                if (absoluteDestination != newDestination)
+                {
+                    absoluteDestination = newDestination;
+                    DestinationChanged.CallEvents(this, null);
+                }
+            }
+        }
+
+        private void KeepTrackOfPreLeveledDestination(string lineBeingSent)
 		{
 			if (lineBeingSent.StartsWith("G0 ") 
 				|| lineBeingSent.StartsWith("G1 ") 
 				|| lineBeingSent.StartsWith("G2 ") 
 				|| lineBeingSent.StartsWith("G3 "))
 			{
-				Vector3 newDestination = currentDestination;
+				Vector3 newDestination = preLeveledDestination;
 				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 				{
 					newDestination = Vector3.Zero;
@@ -2433,22 +2468,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.y);
 				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.z);
 
-				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentExtruderDestination);
-				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentFeedRate);
-
 				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 				{
-					newDestination += currentDestination;
+					newDestination += preLeveledDestination;
 				}
 
-				if (currentDestination != newDestination)
-				{
-					currentDestination = newDestination;
-					DestinationChanged.CallEvents(this, null);
-				}
+                preLeveledDestination = newDestination;
 			}
-
-			return lineBeingSent;
 		}
 
 		private void loadGCodeWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -2650,7 +2676,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				switch (trimedLine)
 				{
 					case "@RESTORE_XYZ_POSITION":
-						return "G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate);
+						return "G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate);
 
 					case "@RESTORE_E_POSITION":
 						return "G92 E{0:0.00000}".FormatWith(currentExtruderDestination);
@@ -2669,22 +2695,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				switch (levelingData.CurrentPrinterLevelingSystem)
 				{
 					case PrintLevelingData.LevelingSystem.Probe2Points:
-						lineBeingSent = LevelWizard2Point.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
+						lineBeingSent = LevelWizard2Point.ApplyLeveling(lineBeingSent, preLeveledDestination, movementMode);
 						linesToWrite = LevelWizard2Point.ProcessCommand(lineBeingSent);
 						break;
 
 					case PrintLevelingData.LevelingSystem.Probe3Points:
-						lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
+						lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, preLeveledDestination, movementMode);
 						linesToWrite = LevelWizard3Point.ProcessCommand(lineBeingSent);
 						break;
 
 					case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
+						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, preLeveledDestination, movementMode);
 						linesToWrite = LevelWizard7PointRadial.ProcessCommand(lineBeingSent);
 						break;
 
 					case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
+						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, preLeveledDestination, movementMode);
 						linesToWrite = LevelWizard13PointRadial.ProcessCommand(lineBeingSent);
 						break;
 
@@ -2862,10 +2888,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			lineToWrite = ApplyExtrusionMultiplier(lineToWrite);
 			lineToWrite = ApplyFeedRateMultiplier(lineToWrite);
-			lineToWrite = KeepTrackOfPostionAndDestination(lineToWrite);
-			lineToWrite = RunPrintLevelingTranslations(lineToWrite);
 
-			string lineWithCount = "N" + (allCheckSumLinesSent.Count + 1).ToString() + " " + lineToWrite;
+            KeepTrackOfPreLeveledDestination(lineToWrite);
+            lineToWrite = RunPrintLevelingTranslations(lineToWrite);
+            KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
+
+            string lineWithCount = "N" + (allCheckSumLinesSent.Count + 1).ToString() + " " + lineToWrite;
 			string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
 			allCheckSumLinesSent.Add(lineWithChecksum);
 			//if ((checkSumCount++ % 71) == 0)
@@ -2885,8 +2913,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			using (TimedLock.Lock(this, "WriteNextLineFromQueue"))
 			{
-				lineToWrite = KeepTrackOfPostionAndDestination(lineToWrite);
+				KeepTrackOfPreLeveledDestination(lineToWrite);
 				lineToWrite = RunPrintLevelingTranslations(lineToWrite);
+                KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
 
 				LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
 				WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
