@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,52 +27,48 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.VectorMath;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.GCodeVisualizer;
+using MatterHackers.VectorMath;
 using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public struct PrinterMove
-    {
-        public Vector3 position;
-        public double feedRate;
-        public double extrusion;
-        internal static readonly PrinterMove Zero;
+    public class OffsetStream : GCodeStream
+	{
+        GCodeStream internalStream;
+        PrinterMove lastDestination = new PrinterMove();
+        Vector3 offset;
 
-        public static PrinterMove operator +(PrinterMove left, PrinterMove right)
+        public OffsetStream(GCodeStream internalStream, Vector3 offset)
         {
-            left.position += right.position;
-            left.extrusion += right.extrusion;
-            left.feedRate += right.feedRate;
-            return left;
+            this.offset = offset;
+            this.internalStream = internalStream;
         }
 
-        public static PrinterMove operator -(PrinterMove left, PrinterMove right)
-        {
-            left.position -= right.position;
-            left.extrusion -= right.extrusion;
-            left.feedRate -= right.feedRate;
-            return left;
-        }
+        public Vector3 Offset { get { return offset; } set { offset = value; } }
 
-        public static PrinterMove operator /(PrinterMove left, double scale)
+        public override string ReadLine()
         {
-            left.position /= scale;
-            left.extrusion /= scale;
-            left.feedRate /= scale;
-            return left;
-        }
+            string lineToSend = internalStream.ReadLine();
 
-        public double LengthSquared
-        {
-            get
+            if (lineToSend != null
+                && LineIsMovement(lineToSend))
             {
-                return position.LengthSquared;
+                PrinterMove currentDestination = GetPosition(lineToSend, lastDestination);
+
+                // send the first one
+                PrinterMove positionToSend = currentDestination;
+                positionToSend.position += offset;
+
+                lineToSend = CreateMovementLine(positionToSend, lastDestination);
+                lastDestination = currentDestination;
+                return lineToSend;
             }
+
+            return lineToSend;
         }
     }
 }

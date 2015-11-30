@@ -35,52 +35,31 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabySteps : MaxLengthStream
+    public class BabyStepsStream : GCodeStream
     {
-        PrinterMove unCorrectedLastDestination;
-        double babyStepZ = 0;
+        OffsetStream offsetStream;
+        MaxLengthStream maxLengthStream;
 
         public void MoveDown()
         {
-            babyStepZ -= .02;
+            offsetStream.Offset = offsetStream.Offset - new Vector3(0, 0, .02);
         }
 
         public void MoveUp()
         {
-            babyStepZ += .02;
+            offsetStream.Offset = offsetStream.Offset + new Vector3(0, 0, .02);
         }
 
-        public BabySteps(GCodeStream internalStream)
-            : base(internalStream, 1)
+        public BabyStepsStream(GCodeStream internalStream)
         {
-        }
-
-        string GetLineWithOffset(string lineBeingSent)
-        {
-            if (babyStepZ != 0 && lineBeingSent != null)
-            {
-                double extruderDelta = 0;
-                GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
-                double feedRate = 0;
-                GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
-
-                PrinterMove currentDestination = GetPosition(lineBeingSent, unCorrectedLastDestination);
-
-                unCorrectedLastDestination = currentDestination;
-
-                // now adjust the current position
-                currentDestination.position.z += babyStepZ;
-
-                lineBeingSent = CreateMovementLine(currentDestination);
-            }
-
-            return lineBeingSent;
+            maxLengthStream = new MaxLengthStream(internalStream, 1);
+            offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, 0));
         }
 
         public override string ReadLine()
         {
-            string lineWithBabyStepOffset = GetLineWithOffset(base.ReadLine());
-            return lineWithBabyStepOffset;
+            string processedLine = offsetStream.ReadLine();
+            return processedLine;
         }
     }
 }

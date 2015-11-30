@@ -198,6 +198,7 @@
     <Compile Include="ConfigurationPage\PrinterConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
+    <Compile Include="PrinterCommunication\Io\OffsetStream.cs" />
     <Compile Include="PrinterCommunication\Io\MaxLengthStream.cs" />
     <Compile Include="PrinterCommunication\Io\GCodeFileStream.cs" />
     <Compile Include="PrinterCommunication\Io\GCodeStream.cs" />
@@ -205,7 +206,7 @@
     <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
     <Compile Include="PrinterCommunication\Io\QueuedCommandsStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrintLevelingStream.cs" />
-    <Compile Include="PrinterCommunication\Io\BabySteps.cs" />
+    <Compile Include="PrinterCommunication\Io\BabyStepsStream.cs" />
     <Compile Include="PrinterCommunication\Io\GCodeFileProxy.cs" />
     <Compile Include="PrinterCommunication\RepRapReadWriteCallbacks.cs" />
     <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />

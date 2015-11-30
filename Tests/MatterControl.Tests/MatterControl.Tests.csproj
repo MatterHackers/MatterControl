@@ -83,6 +83,7 @@
     <Compile Include="MatterControl\Slicing\SliceMappingCLassesTets.cs" />
     <Compile Include="MatterControl\Slicing\SliceLayersTests.cs" />
     <Compile Include="MatterControl\LevelingTests.cs" />
+    <Compile Include="MatterControl\GCodeStreamTests.cs" />
     <Compile Include="MatterControl\TranslationsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

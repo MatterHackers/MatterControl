@@ -47,24 +47,50 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         public abstract string ReadLine();
         #endregion
 
-        public static string CreateMovementLine(PrinterMove destination)
+        static readonly PrinterMove nowhere = new PrinterMove()
+        {
+            position = new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity),
+            extrusion = double.PositiveInfinity,
+            feedRate = double.PositiveInfinity,
+        };
+
+        public static string CreateMovementLine(PrinterMove currentDestination)
+        {
+            return CreateMovementLine(currentDestination, nowhere);
+        }
+
+        public static string CreateMovementLine(PrinterMove destination, PrinterMove start)
         {
             string lineBeingSent;
             StringBuilder newLine = new StringBuilder("G1 ");
-            newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", destination.position.x, destination.position.y, destination.position.z));
 
-            if (destination.extrusion != 0)
+            if (destination.position.x != start.position.x)
             {
-                newLine = newLine.Append(String.Format(" E{0:0.###}", destination.extrusion));
+                newLine = newLine.Append(String.Format("X{0:0.##} ", destination.position.x));
             }
 
-            if (destination.feedRate != 0)
+            if (destination.position.y != start.position.y)
             {
-                newLine = newLine.Append(String.Format(" F{0:0.##}", destination.feedRate));
+                newLine = newLine.Append(String.Format("Y{0:0.##} ", destination.position.y));
+            }
+
+            if (destination.position.z != start.position.z)
+            {
+                newLine = newLine.Append(String.Format("Z{0:0.###} ", destination.position.z));
+            }
+
+            if (destination.extrusion != start.extrusion)
+            {
+                newLine = newLine.Append(String.Format("E{0:0.###} ", destination.extrusion));
+            }
+
+            if (destination.feedRate != start.feedRate)
+            {
+                newLine = newLine.Append(String.Format("F{0:0.##}", destination.feedRate));
             }
 
             lineBeingSent = newLine.ToString();
-            return lineBeingSent;
+            return lineBeingSent.Trim();
         }
 
         public static PrinterMove GetPosition(string lineBeingSent, PrinterMove startPositionPosition)
