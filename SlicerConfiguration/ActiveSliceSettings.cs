@@ -39,6 +39,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -297,6 +298,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				return int.Parse(GetActiveValue("support_material_extruder"));
+			}
+		}
+
+		public int[] LayerToPauseOn
+		{
+			get
+			{
+				string[] userValues = GetActiveValue("layer_to_pause").Split(';');
+
+				int temp;
+				return userValues.Where(v => int.TryParse(v, out temp)).Select(v => int.Parse(v)).ToArray();
 			}
 		}
 
