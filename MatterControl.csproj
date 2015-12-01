@@ -198,6 +198,7 @@
     <Compile Include="ConfigurationPage\PrinterConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
+    <Compile Include="PrinterCommunication\Io\WaitForTempStream.cs" />
     <Compile Include="PrinterCommunication\Io\OffsetStream.cs" />
     <Compile Include="PrinterCommunication\Io\MaxLengthStream.cs" />
     <Compile Include="PrinterCommunication\Io\GCodeFileStream.cs" />

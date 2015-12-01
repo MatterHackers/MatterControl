@@ -41,7 +41,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         public Vector3 position;
         public double feedRate;
         public double extrusion;
-        internal static readonly PrinterMove Zero;
+        public static readonly PrinterMove Zero;
+        public static readonly PrinterMove Nowhere = new PrinterMove()
+        {
+            position = new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity),
+            extrusion = double.PositiveInfinity,
+            feedRate = double.PositiveInfinity,
+        };
 
         public static PrinterMove operator +(PrinterMove left, PrinterMove right)
         {

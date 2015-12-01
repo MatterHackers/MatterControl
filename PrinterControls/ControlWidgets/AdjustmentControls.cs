@@ -188,12 +188,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 
                     moveDownButton.Click += (sender, e) =>
                     {
-                        PrinterConnectionAndCommunication.Instance.babyStepsStream3.MoveDown();
+                        PrinterConnectionAndCommunication.Instance.babyStepsStream4.MoveDown();
                     };
 
                     moveUpButton.Click += (sender, e) =>
                     {
-                        PrinterConnectionAndCommunication.Instance.babyStepsStream3.MoveUp();
+                        PrinterConnectionAndCommunication.Instance.babyStepsStream4.MoveUp();
                     };
 
                     FlowLayoutWidget leftToRight = new FlowLayoutWidget();

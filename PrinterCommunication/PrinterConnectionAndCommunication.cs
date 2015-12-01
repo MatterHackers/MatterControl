@@ -186,8 +186,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         private GCodeFileStream gCodeFileStream0 = null;
         private QueuedCommandsStream queuedCommandStream1 = null;
         private PrintLevelingStream printLevelingStream2 = null;
-        public BabyStepsStream babyStepsStream3 = null;
-        private RequestTemperaturesStream requestTemperaturesStream4 = null;
+        public BabyStepsStream babyStepsStream4 = null;
+        private RequestTemperaturesStream requestTemperaturesStream5 = null;
+        private WaitForTempStream waitForTempStream3 = null;
 
         private GCodeStream totalGCodeStream = null;
 
@@ -2485,9 +2486,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             gCodeFileStream0 = new GCodeFileStream(loadedGCode);
             queuedCommandStream1 = new QueuedCommandsStream(gCodeFileStream0);
             printLevelingStream2 = new PrintLevelingStream(queuedCommandStream1);
-            babyStepsStream3 = new BabyStepsStream(printLevelingStream2);
-            requestTemperaturesStream4 = new RequestTemperaturesStream(babyStepsStream3);
-            totalGCodeStream = requestTemperaturesStream4;
+            waitForTempStream3 = new WaitForTempStream(printLevelingStream2);
+            babyStepsStream4 = new BabyStepsStream(waitForTempStream3);
+            requestTemperaturesStream5 = new RequestTemperaturesStream(babyStepsStream4);
+            totalGCodeStream = requestTemperaturesStream5;
         }
 
         private void loadGCodeWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

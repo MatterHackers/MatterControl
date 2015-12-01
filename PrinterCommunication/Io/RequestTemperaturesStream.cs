@@ -33,25 +33,26 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System.Diagnostics;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public class RequestTemperaturesStream : GCodeStream
     {
         GCodeStream internalStream;
-        Stopwatch timeSinceLastTemp = new Stopwatch();
+        long nextReadTimeMs = 0;
 
         public RequestTemperaturesStream(GCodeStream internalStream)
         {
             this.internalStream = internalStream;
-            timeSinceLastTemp.Restart();
+            nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
         }
 
         public override string ReadLine()
         {
-            if (timeSinceLastTemp.ElapsedMilliseconds > 5000)
+            if (nextReadTimeMs < UiThread.CurrentTimerMs)
             {
-                timeSinceLastTemp.Restart();
+                nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
                 return "M105";
             }
 

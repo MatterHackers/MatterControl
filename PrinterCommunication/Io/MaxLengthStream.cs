@@ -54,12 +54,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         {
             if (movesToSend.Count == 0)
             {
-                string lineToSend = internalStream.ReadLine();
+                string lineFromChild = internalStream.ReadLine();
 
-                if (lineToSend != null 
-                    && LineIsMovement(lineToSend))
+                if (lineFromChild != null 
+                    && LineIsMovement(lineFromChild))
                 {
-                    PrinterMove currentDestination = GetPosition(lineToSend, lastDestination);
+                    PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
                     PrinterMove deltaToDestination = currentDestination - lastDestination;
                     deltaToDestination.feedRate = 0; // remove the changing of the fedrate (we'll set it initialy)
                     double lengthSquared = deltaToDestination.LengthSquared;
@@ -81,14 +81,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                         PrinterMove positionToSend = movesToSend[0];
                         movesToSend.RemoveAt(0);
 
-                        lineToSend = CreateMovementLine(positionToSend, lastDestination);
+                        string altredLineToSend = CreateMovementLine(positionToSend, lastDestination);
                         lastDestination = positionToSend;
-                        return lineToSend;
+                        return altredLineToSend;
                     }
 
                     lastDestination = currentDestination;
                 }
-                return lineToSend;
+                return lineFromChild;
             }
             else
             {

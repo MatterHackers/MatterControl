@@ -47,16 +47,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         public abstract string ReadLine();
         #endregion
 
-        static readonly PrinterMove nowhere = new PrinterMove()
-        {
-            position = new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity),
-            extrusion = double.PositiveInfinity,
-            feedRate = double.PositiveInfinity,
-        };
-
         public static string CreateMovementLine(PrinterMove currentDestination)
         {
-            return CreateMovementLine(currentDestination, nowhere);
+            return CreateMovementLine(currentDestination, PrinterMove.Nowhere);
         }
 
         public static string CreateMovementLine(PrinterMove destination, PrinterMove start)
