@@ -49,6 +49,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             feedRate = double.PositiveInfinity,
         };
 
+        public PrinterMove(Vector3 absoluteDestination, double currentExtruderDestination, double currentFeedRate) : this()
+        {
+            this.position = absoluteDestination;
+            this.extrusion = currentExtruderDestination;
+            this.feedRate = currentFeedRate;
+        }
+
         public static PrinterMove operator +(PrinterMove left, PrinterMove right)
         {
             left.position += right.position;

@@ -31,11 +31,14 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
+using System.Text;
+using System.Collections.Generic;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public class PrintLevelingStream : GCodeStream
-	{
+    {
         GCodeStream internalStream;
 
         public PrintLevelingStream(GCodeStream internalStream)
@@ -45,7 +48,55 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
         public override string ReadLine()
         {
-            return internalStream.ReadLine();
+            string lineFromChild = internalStream.ReadLine();
+
+            if (lineFromChild != null
+                && PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
+                && LineIsMovement(lineFromChild))
+            {
+                PrinterMove absoluteDestination = new PrinterMove(PrinterConnectionAndCommunication.Instance.AbsoluteDestination,
+                    PrinterConnectionAndCommunication.Instance.CurrentExtruderDestination,
+                    PrinterConnectionAndCommunication.Instance.CurrentFeedRate);
+
+                PrinterMove currentDestination = GetPosition(lineFromChild, absoluteDestination);
+                string leveledLine = RunPrintLevelingTranslations(lineFromChild, currentDestination);
+
+                return leveledLine;
+            }
+
+            return lineFromChild;
         }
+
+        private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
+        {
+            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+            if (levelingData != null)
+            {
+                switch (levelingData.CurrentPrinterLevelingSystem)
+                {
+                    case PrintLevelingData.LevelingSystem.Probe2Points:
+                        lineBeingSent = LevelWizard2Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+                        break;
+
+                    case PrintLevelingData.LevelingSystem.Probe3Points:
+                        lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+                        break;
+
+                    case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+                        lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+                        break;
+
+                    case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+                        lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
+            return lineBeingSent;
+        }
+
     }
 }

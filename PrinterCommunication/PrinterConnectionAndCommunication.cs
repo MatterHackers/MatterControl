@@ -141,9 +141,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentExtruderDestination;
 
-		private double currentFeedRate;
+        public double CurrentExtruderDestination {  get { return currentExtruderDestination; } }
 
-		private double currentSdBytes = 0;
+        private double currentFeedRate;
+
+        public double CurrentFeedRate {  get { return currentFeedRate; } }
+
+        private double currentSdBytes = 0;
 
 		private string deviceCode;
 
@@ -174,8 +178,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private string itemNotFoundMessage = "Item not found".Localize();
 
 		private string lastLineRead = "";
-
-		private int lastRemainingSecondsReported = 0;
 
 		private Vector3 lastReportedPosition;
 
@@ -1653,21 +1655,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// The first position read is the target position.
 			lastReportedPosition = positionRead;
 
-			#if false
-			// The second position (if available) is the actual current position of the extruder.
-			int xPosition = lineToParse.IndexOf('X');
-			int secondXPosition = lineToParse.IndexOf("Count", xPosition);
-			if (secondXPosition != -1)
-			{
-				Vector3 currentPositionRead = Vector3.Zero;
-				GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref currentPositionRead.x, secondXPosition - 1);
-				GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref currentPositionRead.y, secondXPosition - 1);
-				GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref currentPositionRead.z, secondXPosition - 1);
-
-				lastReportedPosition = currentPositionRead;
-			}
-#endif
-
 			if (absoluteDestination != positionRead)
 			{
                 absoluteDestination = positionRead;
@@ -2238,7 +2225,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void ClearQueuedGCode()
 		{
 			loadedGCode.Clear();
-			lastRemainingSecondsReported = 0;
 
 			allCheckSumLinesSent.Clear();
 			WriteChecksumLineToPrinter("M110 S1");
@@ -2688,47 +2674,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			return trimedLine;
 		}
 
-		private string RunPrintLevelingTranslations(string lineBeingSent)
-		{
-			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-			if (levelingData != null)
-			{
-				List<string> linesToWrite = null;
-				switch (levelingData.CurrentPrinterLevelingSystem)
-				{
-					case PrintLevelingData.LevelingSystem.Probe2Points:
-						lineBeingSent = LevelWizard2Point.ApplyLeveling(lineBeingSent, preLeveledDestination, movementMode);
-						linesToWrite = LevelWizard2Point.ProcessCommand(lineBeingSent);
-						break;
-
-					case PrintLevelingData.LevelingSystem.Probe3Points:
-						lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, preLeveledDestination, movementMode);
-						linesToWrite = LevelWizard3Point.ProcessCommand(lineBeingSent);
-						break;
-
-					case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, preLeveledDestination, movementMode);
-						linesToWrite = LevelWizard7PointRadial.ProcessCommand(lineBeingSent);
-						break;
-
-					case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, preLeveledDestination, movementMode);
-						linesToWrite = LevelWizard13PointRadial.ProcessCommand(lineBeingSent);
-						break;
-
-					default:
-						throw new NotImplementedException();
-				}
-
-				lineBeingSent = linesToWrite[0];
-				linesToWrite.RemoveAt(0);
-
-				SendLinesToPrinterNow(linesToWrite.ToArray());
-			}
-
-			return lineBeingSent;
-		}
-
 		private void SetDetailedPrintingState(string lineBeingSetToPrinter)
 		{
 			if (lineBeingSetToPrinter.StartsWith("G28"))
@@ -2885,38 +2830,52 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		// this is to make it misbehave
 		//int checkSumCount = 1;
 		private void WriteChecksumLineToPrinter(string lineToWrite)
-		{
-			SetDetailedPrintingState(lineToWrite);
+        {
+            SetDetailedPrintingState(lineToWrite);
 
-			lineToWrite = ApplyExtrusionMultiplier(lineToWrite);
-			lineToWrite = ApplyFeedRateMultiplier(lineToWrite);
+            lineToWrite = ApplyExtrusionMultiplier(lineToWrite);
+            lineToWrite = ApplyFeedRateMultiplier(lineToWrite);
 
             KeepTrackOfPreLeveledDestination(lineToWrite);
-            lineToWrite = RunPrintLevelingTranslations(lineToWrite);
+
+            // remove the comment if any
+            lineToWrite = RemoveCommentIfAny(lineToWrite);
+
             KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
 
             string lineWithCount = "N" + (allCheckSumLinesSent.Count + 1).ToString() + " " + lineToWrite;
-			string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
-			allCheckSumLinesSent.Add(lineWithChecksum);
-			//if ((checkSumCount++ % 71) == 0)
-			{
-				//lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
-				//WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
-			}
-			//else
-			{
-				WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
-			}
-		}
+            string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
+            allCheckSumLinesSent.Add(lineWithChecksum);
+            //if ((checkSumCount++ % 71) == 0)
+            {
+                //lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
+                //WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
+            }
+            //else
+            {
+                WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
+            }
+        }
 
-		private void WriteNextLineFromQueue()
+        private static string RemoveCommentIfAny(string lineToWrite)
+        {
+            int commentIndex = lineToWrite.IndexOf(';');
+            if (commentIndex > 0) // there is content in front of the ;
+            {
+                lineToWrite = lineToWrite.Substring(0, commentIndex).Trim();
+            }
+
+            return lineToWrite;
+        }
+
+        private void WriteNextLineFromQueue()
 		{
 			string lineToWrite = LinesToWriteQueue[0];
 
 			using (TimedLock.Lock(this, "WriteNextLineFromQueue"))
 			{
 				KeepTrackOfPreLeveledDestination(lineToWrite);
-				lineToWrite = RunPrintLevelingTranslations(lineToWrite);
+				lineToWrite = RemoveCommentIfAny(lineToWrite);
                 KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
 
 				LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
@@ -2933,9 +2892,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					FoundStringEventArgs foundStringEvent = new FoundStringEventArgs(lineWithoutChecksum);
 
-					// write data to communication
-					{
-						StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
+                    // If we get a home command, ask the printer where it is after sending it.
+                    if (lineWithoutChecksum.StartsWith("G28")
+                        || lineWithoutChecksum.StartsWith("G29"))
+                    {
+                        SendLineToPrinterNow("M114");
+                    }
+
+
+                    // write data to communication
+                    {
+                        StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
 						if (PrinterIsPrinting)
 						{
 							string lineWidthoutCR = lineToWrite.Substring(0, lineToWrite.Length - 2);
