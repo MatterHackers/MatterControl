@@ -27,25 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using System.Diagnostics;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public class RequestTemperaturesStream : GCodeStream
     {
-        GCodeStream internalStream;
-        long nextReadTimeMs = 0;
+        private GCodeStream internalStream;
+        private long nextReadTimeMs = 0;
 
         public RequestTemperaturesStream(GCodeStream internalStream)
         {
             this.internalStream = internalStream;
             nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
+        }
+
+        public override void Dispose()
+        {
+            internalStream.Dispose();
         }
 
         public override string ReadLine()

@@ -40,6 +40,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         OffsetStream offsetStream;
         MaxLengthStream maxLengthStream;
 
+        public override void Dispose()
+        {
+            offsetStream.Dispose();
+            maxLengthStream.Dispose();
+        }
+
         public void MoveDown()
         {
             offsetStream.Offset = offsetStream.Offset - new Vector3(0, 0, .02);

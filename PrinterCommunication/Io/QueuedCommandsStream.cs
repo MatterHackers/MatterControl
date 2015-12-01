@@ -27,19 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public class QueuedCommandsStream : GCodeStream
     {
-        List<string> commandQueue = new List<string>();
-        GCodeStream internalStream;
+        private List<string> commandQueue = new List<string>();
+        private GCodeStream internalStream;
 
         public QueuedCommandsStream(GCodeStream internalStream)
         {
@@ -53,6 +49,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             {
                 commandQueue.Add(line);
             }
+        }
+
+        public override void Dispose()
+        {
+            internalStream.Dispose();
         }
 
         public override string ReadLine()

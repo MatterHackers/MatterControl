@@ -27,27 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using NUnit.Framework;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
-    public class TestGCodeStream : GCodeStream
-    {
-        string[] lines;
-        int index = 0;
-
-        public TestGCodeStream(string[] lines)
-        {
-            this.lines = lines;
-        }
-
-        public override string ReadLine()
-        {
-            return lines[index++];
-        }
-    }
-
     [TestFixture]
     public class GCodeStreamTests
     {
@@ -93,6 +77,26 @@ namespace MatterControl.Tests.MatterControl
                 correctedLine = maxLengthStream.ReadLine();
                 Assert.IsTrue(correctedLine == expected[expectedIndex++]);
             }
+        }
+    }
+
+    public class TestGCodeStream : GCodeStream
+    {
+        private int index = 0;
+        private string[] lines;
+
+        public TestGCodeStream(string[] lines)
+        {
+            this.lines = lines;
+        }
+
+        public override void Dispose()
+        {
+        }
+
+        public override string ReadLine()
+        {
+            return lines[index++];
         }
     }
 }

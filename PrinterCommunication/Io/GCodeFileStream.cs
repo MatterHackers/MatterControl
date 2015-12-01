@@ -49,6 +49,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             printerCommandQueueLineIndex = startLine;
         }
 
+        public override void Dispose()
+        {
+        }
+
         public override string ReadLine()
         {
             if (printerCommandQueueLineIndex < fileStreaming.LineCount)

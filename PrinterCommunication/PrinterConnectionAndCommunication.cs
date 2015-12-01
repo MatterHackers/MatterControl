@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private double currentActualExtrusionPosition = 0;
 
         private Vector3 preLeveledDestination;
-        private Vector3 absoluteDestination;
+        private Vector3 currentDestination;
 
 		private double currentExtruderDestination;
 
@@ -520,7 +520,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
 
-		public Vector3 AbsoluteDestination { get { return absoluteDestination; } }
+		public Vector3 CurrentDestination { get { return currentDestination; } }
 
 		public int CurrentlyPrintingLayer
 		{
@@ -1655,9 +1655,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// The first position read is the target position.
 			lastReportedPosition = positionRead;
 
-			if (absoluteDestination != positionRead)
+			if (currentDestination != positionRead)
 			{
-                absoluteDestination = positionRead;
+                currentDestination = positionRead;
 				DestinationChanged.CallEvents(this, null);
 			}
 
@@ -2412,7 +2412,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 || lineBeingSent.StartsWith("G2 ")
                 || lineBeingSent.StartsWith("G3 "))
             {
-                Vector3 newDestination = absoluteDestination;
+                Vector3 newDestination = currentDestination;
                 if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
                 {
                     newDestination = Vector3.Zero;
@@ -2427,12 +2427,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                 if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
                 {
-                    newDestination += absoluteDestination;
+                    newDestination += currentDestination;
                 }
 
-                if (absoluteDestination != newDestination)
+                if (currentDestination != newDestination)
                 {
-                    absoluteDestination = newDestination;
+                    currentDestination = newDestination;
                     DestinationChanged.CallEvents(this, null);
                 }
             }
@@ -2466,7 +2466,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void loadGCodeWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
-			string gcodeFilename = e.Argument as string;
+            totalGCodeStream?.Dispose();
+
+            string gcodeFilename = e.Argument as string;
 			loadedGCode = GCodeFile.Load(gcodeFilename);
 
             gCodeFileStream0 = new GCodeFileStream(loadedGCode);

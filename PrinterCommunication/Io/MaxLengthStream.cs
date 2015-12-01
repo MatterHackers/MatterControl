@@ -50,6 +50,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             this.internalStream = internalStream;
         }
 
+        public override void Dispose()
+        {
+            internalStream.Dispose();
+        }
+
         public override string ReadLine()
         {
             if (movesToSend.Count == 0)

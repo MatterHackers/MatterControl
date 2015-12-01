@@ -37,7 +37,7 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public abstract class GCodeStream
+    public abstract class GCodeStream : IDisposable
     {
         #region Abstract Functions
         /// <summary>
@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         /// <returns></returns>
         public abstract string ReadLine();
         #endregion
+
+        public abstract void Dispose();
 
         public static string CreateMovementLine(PrinterMove currentDestination)
         {

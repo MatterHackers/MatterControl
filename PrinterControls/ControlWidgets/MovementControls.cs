@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private static void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
 		{
-			Vector3 destinationPosition = PrinterConnectionAndCommunication.Instance.AbsoluteDestination;
+			Vector3 destinationPosition = PrinterConnectionAndCommunication.Instance.CurrentDestination;
 			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
 			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
 			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);

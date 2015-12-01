@@ -40,10 +40,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
     public class PrintLevelingStream : GCodeStream
     {
         GCodeStream internalStream;
+        PrinterMove lastDestination = new PrinterMove();
+        private event EventHandler unregisterEvents;
 
         public PrintLevelingStream(GCodeStream internalStream)
         {
             this.internalStream = internalStream;
+
+            PrinterConnectionAndCommunication.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
+        }
+
+        private void PrinterReportedPosition(object sender, EventArgs e)
+        {
+            lastDestination = new PrinterMove(PrinterConnectionAndCommunication.Instance.CurrentDestination,
+                PrinterConnectionAndCommunication.Instance.CurrentExtruderDestination,
+                PrinterConnectionAndCommunication.Instance.CurrentFeedRate);
+        }
+
+        public override void Dispose()
+        {
+            unregisterEvents?.Invoke(this, null);
+            internalStream.Dispose();
         }
 
         public override string ReadLine()
@@ -54,13 +71,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 && PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
                 && LineIsMovement(lineFromChild))
             {
-                PrinterMove absoluteDestination = new PrinterMove(PrinterConnectionAndCommunication.Instance.AbsoluteDestination,
-                    PrinterConnectionAndCommunication.Instance.CurrentExtruderDestination,
-                    PrinterConnectionAndCommunication.Instance.CurrentFeedRate);
-
-                PrinterMove currentDestination = GetPosition(lineFromChild, absoluteDestination);
+                PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
                 string leveledLine = RunPrintLevelingTranslations(lineFromChild, currentDestination);
 
+                if(leveledLine != lineFromChild)
+                {
+                    int a = 0;
+                }
+
+                lastDestination = currentDestination;
                 return leveledLine;
             }
 

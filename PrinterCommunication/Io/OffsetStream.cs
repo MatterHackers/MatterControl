@@ -48,6 +48,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             this.internalStream = internalStream;
         }
 
+        public override void Dispose()
+        {
+            internalStream.Dispose();
+        }
+
         public Vector3 Offset { get { return offset; } set { offset = value; } }
 
         public override string ReadLine()

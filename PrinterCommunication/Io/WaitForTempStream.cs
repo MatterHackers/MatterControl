@@ -27,33 +27,32 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
-using System.Text;
-using System.Collections.Generic;
 using System.Diagnostics;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public class WaitForTempStream : GCodeStream
     {
-        GCodeStream internalStream;
-        double targetTemp = 0;
-        double extruderIndex;
-        double sameTempRange = 1;
-        double waitAfterReachTempTime = 3;
-        Stopwatch timeHaveBeenAtTemp = new Stopwatch();
-
-        enum State { passthrough, waitingForExtruderTemp, waitingForBedTemp };
-
-        State state = State.passthrough;
+        private double extruderIndex;
+        private GCodeStream internalStream;
+        private double sameTempRange = 1;
+        private State state = State.passthrough;
+        private double targetTemp = 0;
+        private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
+        private double waitAfterReachTempTime = 3;
 
         public WaitForTempStream(GCodeStream internalStream)
         {
             this.internalStream = internalStream;
+        }
+
+        private enum State
+        { passthrough, waitingForExtruderTemp, waitingForBedTemp };
+
+        public override void Dispose()
+        {
+            internalStream.Dispose();
         }
 
         public override string ReadLine()
@@ -121,7 +120,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                             timeHaveBeenAtTemp.Start();
                         }
 
-                        if(timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
+                        if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
                             || PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
                         {
                             // switch to pass through and continue

@@ -38,10 +38,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public struct PrinterMove
     {
-        public Vector3 position;
-        public double feedRate;
-        public double extrusion;
-        public static readonly PrinterMove Zero;
         public static readonly PrinterMove Nowhere = new PrinterMove()
         {
             position = new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity),
@@ -49,6 +45,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             feedRate = double.PositiveInfinity,
         };
 
+        public static readonly PrinterMove Zero;
+        public double extrusion;
+        public double feedRate;
+        public Vector3 position;
         public PrinterMove(Vector3 absoluteDestination, double currentExtruderDestination, double currentFeedRate) : this()
         {
             this.position = absoluteDestination;
@@ -56,12 +56,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             this.feedRate = currentFeedRate;
         }
 
-        public static PrinterMove operator +(PrinterMove left, PrinterMove right)
+        public double LengthSquared
         {
-            left.position += right.position;
-            left.extrusion += right.extrusion;
-            left.feedRate += right.feedRate;
-            return left;
+            get
+            {
+                return position.LengthSquared;
+            }
         }
 
         public static PrinterMove operator -(PrinterMove left, PrinterMove right)
@@ -80,12 +80,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             return left;
         }
 
-        public double LengthSquared
+        public static PrinterMove operator +(PrinterMove left, PrinterMove right)
         {
-            get
-            {
-                return position.LengthSquared;
-            }
+            left.position += right.position;
+            left.extrusion += right.extrusion;
+            left.feedRate += right.feedRate;
+            return left;
         }
     }
 }
