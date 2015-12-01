@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                         }
 
                         if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-                            || !PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+                            || PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
                         {
                             // switch to pass through and continue
                             state = State.passthrough;
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                         }
 
                         if(timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-                            || !PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+                            || PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
                         {
                             // switch to pass through and continue
                             state = State.passthrough;
