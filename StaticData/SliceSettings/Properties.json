@@ -38,9 +38,8 @@
     "SlicerConfigName": "bottom_solid_layers",
     "PresentationName": "Bottom Solid Layers:",
     "HelpText": "How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.",
-    "DataEditType": "INT",
-    "ExtraSettings": "count"
-  },
+    "DataEditType": "INT_OR_MM",
+    "ExtraSettings": "count or mm"
   {
     "SlicerConfigName": "layer_to_pause",
     "PresentationName": "Select Layer To Pause:",
