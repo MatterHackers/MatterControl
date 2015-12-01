@@ -46,6 +46,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -758,7 +759,9 @@ namespace MatterHackers.MatterControl
 
 		private bool PauseOnLayer(string layer)
 		{
-			if (layer == "2")
+			int layerNumber;
+
+			if (int.TryParse(layer, out layerNumber) && ActiveSliceSettings.Instance.LayerToPauseOn.Contains(layerNumber))
 			{
 				return true;
 			}

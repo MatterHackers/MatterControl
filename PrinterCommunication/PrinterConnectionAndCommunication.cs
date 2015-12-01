@@ -1917,6 +1917,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return;
 				}
 
+				var x = lineToWrite;
 				lineToWrite = lineToWrite.Split(';')[0].Trim();
 				if (lineToWrite.Trim().Length > 0)
 				{
@@ -1948,6 +1949,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							}
 						}
 					}
+				}
+				else
+				{
+					Console.WriteLine();
 				}
 			}
 		}
