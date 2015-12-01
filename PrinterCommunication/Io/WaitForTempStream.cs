@@ -43,6 +43,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         GCodeStream internalStream;
         double targetTemp = 0;
         double extruderIndex;
+        double sameTempRange = 1;
+        double waitAfterReachTempTime = 3;
+        Stopwatch timeHaveBeenAtTemp = new Stopwatch();
 
         enum State { passthrough, waitingForExtruderTemp, waitingForBedTemp };
 
@@ -72,12 +75,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                                 extruderIndex = 0;
                                 GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruderIndex);
                                 state = State.waitingForExtruderTemp;
+                                timeHaveBeenAtTemp.Reset();
                             }
                             else if (lineToSend.StartsWith("M190")) // bed set and wait temp
                             {
                                 // send an M140 instead
                                 lineToSend = "M140" + lineToSend.Substring(4);
                                 state = State.waitingForBedTemp;
+                                timeHaveBeenAtTemp.Reset();
                             }
                         }
 
@@ -87,34 +92,46 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 case State.waitingForExtruderTemp:
                     {
                         double extruderTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature((int)extruderIndex);
-                        if (extruderTemp < targetTemp
-                            && !PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+                        bool tempWithinRange = extruderTemp >= targetTemp - sameTempRange && extruderTemp <= targetTemp + sameTempRange;
+                        if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
                         {
-                            // send a wait command
-                            return "G4 P1000"; // 1 second
+                            timeHaveBeenAtTemp.Start();
                         }
-                        else
+
+                        if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
+                            || !PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
                         {
                             // switch to pass through and continue
                             state = State.passthrough;
                             return internalStream.ReadLine();
+                        }
+                        else
+                        {
+                            // send a wait command
+                            return "G4 P1000"; // 1 second
                         }
                     }
 
                 case State.waitingForBedTemp:
                     {
                         double bedTemp = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
-                        if (bedTemp < targetTemp
-                            && !PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+                        bool tempWithinRange = bedTemp >= targetTemp - sameTempRange && bedTemp <= targetTemp + sameTempRange;
+                        if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
                         {
-                            // send a wait command
-                            return "G4 P1000"; // 1 second
+                            timeHaveBeenAtTemp.Start();
                         }
-                        else
+
+                        if(timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
+                            || !PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
                         {
                             // switch to pass through and continue
                             state = State.passthrough;
                             return internalStream.ReadLine();
+                        }
+                        else
+                        {
+                            // send a wait command
+                            return "G4 P1000"; // 1 second
                         }
                     }
             }
