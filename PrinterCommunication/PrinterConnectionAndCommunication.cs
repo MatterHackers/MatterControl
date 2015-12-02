@@ -2682,11 +2682,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				PrintingState = DetailedPrintingState.HomingAxis;
 			}
-			else if (lineBeingSetToPrinter.StartsWith("M190"))
+			else if (waitForTempStream3?.HeatingBed ?? false)
 			{
 				PrintingState = DetailedPrintingState.HeatingBed;
 			}
-			else if (lineBeingSetToPrinter.StartsWith("M109"))
+			else if (waitForTempStream3?.HeatingExtruder ?? false)
 			{
 				PrintingState = DetailedPrintingState.HeatingExtruder;
 			}

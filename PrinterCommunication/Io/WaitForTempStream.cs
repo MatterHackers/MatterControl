@@ -42,6 +42,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
         private double waitAfterReachTempTime = 3;
 
+        public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
+        public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
+
         public WaitForTempStream(GCodeStream internalStream)
         {
             this.internalStream = internalStream;
