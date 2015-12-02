@@ -188,9 +188,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         private GCodeFileStream gCodeFileStream0 = null;
         private QueuedCommandsStream queuedCommandStream1 = null;
         private PrintLevelingStream printLevelingStream2 = null;
+        private WaitForTempStream waitForTempStream3 = null;
         public BabyStepsStream babyStepsStream4 = null;
         private RequestTemperaturesStream requestTemperaturesStream5 = null;
-        private WaitForTempStream waitForTempStream3 = null;
 
         private GCodeStream totalGCodeStream = null;
 
@@ -2696,14 +2696,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-        private double MaxTimeToMoveForSentInstructions()
-        {
-            // TODO: do the math for the currently pending move
-            // expectedTime =  1 / movementspeed / (currentSentLine - previousSentLine).Length
-
-            return 5;
-        }
-
         string currentSentLine;
         string previousSentLine;
 
@@ -2719,7 +2711,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						// the last instruction was a move
 						string lastInstruction = previousSentLine;
-						double epectedSecondsToWait = Math.Max(5, MaxTimeToMoveForSentInstructions());
+                        double epectedSecondsToWait = 5;
 						bool wasMoveAndNoOK = lastInstruction != null
                             && (lastInstruction.Contains("G0 ") || lastInstruction.Contains("G1 "))
 							&& timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > epectedSecondsToWait;
