@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                             else if (lineToSend.StartsWith("M190")) // bed set and wait temp
                             {
                                 // send an M140 instead
+                                GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
                                 lineToSend = "M140" + lineToSend.Substring(4);
                                 state = State.waitingForBedTemp;
                                 timeHaveBeenAtTemp.Reset();
