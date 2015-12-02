@@ -3856,3 +3856,9 @@ Translated:Could Not Load Image File
 English:Reset View
 Translated:Reset View
 
+English:If you want to select a layer to pause your print on do so here (for changing filament)
+Translated:If you want to select a layer to pause your print on do so here (for changing filament)
+
+English:Select Layer To Pause:
+Translated:Select Layer To Pause:
+
