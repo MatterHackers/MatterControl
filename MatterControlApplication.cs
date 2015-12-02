@@ -46,10 +46,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl
 {
@@ -125,6 +127,8 @@ namespace MatterHackers.MatterControl
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			bool forceSofwareRendering = false;
+
+			GCodeFileLoaded.PauseOnLayerProcessor = PauseOnLayer;
 
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
 			{
@@ -751,6 +755,17 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
 			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
 			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
+		}
+
+		private bool PauseOnLayer(string layer)
+		{
+			int layerNumber;
+
+			if (int.TryParse(layer, out layerNumber) && ActiveSliceSettings.Instance.LayerToPauseOn.Contains(layerNumber))
+			{
+				return true;
+			}
+			return false;
 		}
 	}
 }

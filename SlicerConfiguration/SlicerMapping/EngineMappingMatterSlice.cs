@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private static MapItem[] matterSliceToDefaultMapping =
-        {
+		{
             //avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
             new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
 
@@ -84,13 +84,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
             new MapItemToBool("continuousSpiralOuterPerimeter", "spiral_vase"),
 
-            new VisibleButNotMappedToEngine("extruder_count"),
-            new VisibleButNotMappedToEngine("extruders_share_temperature"),
+			new VisibleButNotMappedToEngine("extruder_count"), 
+			new VisibleButNotMappedToEngine("extruders_share_temperature"),
 
             //endCode=M104 S0
             new GCodeForSlicer("endCode", "end_gcode"),
 
-            new MapItem("zOffset", "z_offset"),
+			new MapItem("zOffset", "z_offset"),
 
             //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
             new ExtruderOffsets("extruderOffsets", "extruder_offset"),
@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new VisibleButNotMappedToEngine("print_leveling_required_to_print"),
 			//new VisibleButNotMappedToEngine("print_leveling_method"),
 			new VisibleButNotMappedToEngine("manual_probe_paper_width"),
+			new VisibleButNotMappedToEngine("layer_to_pause"),
 
 			//fanSpeedMinPercent=100
             new MapItem("fanSpeedMinPercent", "min_fan_speed"),

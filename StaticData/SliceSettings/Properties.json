@@ -40,6 +40,12 @@
     "HelpText": "How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.",
     "DataEditType": "INT_OR_MM",
     "ExtraSettings": "count or mm"
+  {
+    "SlicerConfigName": "layer_to_pause",
+    "PresentationName": "Select Layer To Pause:",
+    "HelpText": "If you want to select a layer to pause your print on do so here (for changing filament)",
+    "DataEditType": "STRING",
+    "ExtraSettings": ""
   },
   {
     "SlicerConfigName": "bridge_acceleration",
