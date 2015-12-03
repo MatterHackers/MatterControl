@@ -350,7 +350,68 @@ namespace MatterHackers.MatterControl
 			showWindow = true;
 		}
 
-		public enum ReportSeverity2 { Warning, Error }
+        bool dropWasOnChild = true;
+        public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+        {
+            base.OnDragEnter(fileDropEventArgs);
+
+            if (!fileDropEventArgs.AcceptDrop)
+            {
+                // no child has accepted the drop
+                foreach (string file in fileDropEventArgs.DroppedFiles)
+                {
+                    string extension = Path.GetExtension(file).ToUpper();
+                    if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+                        || extension == ".GCODE"
+                        || extension == ".ZIP")
+                    {
+                        fileDropEventArgs.AcceptDrop = true;
+                    }
+                }
+                dropWasOnChild = false;
+            }
+            else
+            {
+                dropWasOnChild = true;
+            }
+        }
+
+        public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
+        {
+            base.OnDragOver(fileDropEventArgs);
+
+            if (!fileDropEventArgs.AcceptDrop)
+            {
+                // no child has accepted the drop
+                foreach (string file in fileDropEventArgs.DroppedFiles)
+                {
+                    string extension = Path.GetExtension(file).ToUpper();
+                    if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+                        || extension == ".GCODE"
+                        || extension == ".ZIP")
+                    {
+                        fileDropEventArgs.AcceptDrop = true;
+                    }
+                }
+                dropWasOnChild = false;
+            }
+            else
+            {
+                dropWasOnChild = true;
+            }
+        }
+
+        public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
+        {
+            base.OnDragDrop(fileDropEventArgs);
+
+            if (!dropWasOnChild)
+            {
+                QueueDataWidget.DoAddFiles(fileDropEventArgs.DroppedFiles);
+            }
+        }
+
+        public enum ReportSeverity2 { Warning, Error }
 
 		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)
 		{

@@ -350,40 +350,45 @@ namespace MatterHackers.MatterControl.PrintQueue
 		}
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
-		{
-			int preAddCount = QueueData.Instance.Count;
+        {
+            DoAddFiles(fileDropEventArgs.DroppedFiles);
 
-			foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
-			{
-				string extension = Path.GetExtension(droppedFileName).ToUpper();
-				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-					|| extension == ".GCODE")
-				{
-					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
-				}
-				else if (extension == ".ZIP")
-				{
-					ProjectFileHandler project = new ProjectFileHandler(null);
-					List<PrintItem> partFiles = project.ImportFromProjectArchive(droppedFileName);
-					if (partFiles != null)
-					{
-						foreach (PrintItem part in partFiles)
-						{
-							QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
-						}
-					}
-				}
-			}
+            base.OnDragDrop(fileDropEventArgs);
+        }
 
-			if (QueueData.Instance.Count != preAddCount)
-			{
-				QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
-			}
+        public static void DoAddFiles(List<string> files)
+        {
+            int preAddCount = QueueData.Instance.Count;
 
-			base.OnDragDrop(fileDropEventArgs);
-		}
+            foreach (string fileToAdd in files)
+            {
+                string extension = Path.GetExtension(fileToAdd).ToUpper();
+                if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+                    || extension == ".GCODE")
+                {
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileToAdd), Path.GetFullPath(fileToAdd))));
+                }
+                else if (extension == ".ZIP")
+                {
+                    ProjectFileHandler project = new ProjectFileHandler(null);
+                    List<PrintItem> partFiles = project.ImportFromProjectArchive(fileToAdd);
+                    if (partFiles != null)
+                    {
+                        foreach (PrintItem part in partFiles)
+                        {
+                            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+                        }
+                    }
+                }
+            }
 
-		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+            if (QueueData.Instance.Count != preAddCount)
+            {
+                QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
+            }
+        }
+
+        public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
 		{
 			foreach (string file in fileDropEventArgs.DroppedFiles)
 			{
