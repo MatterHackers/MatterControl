@@ -3862,3 +3862,6 @@ Translated:If you want to select a layer to pause your print on do so here (for 
 English:Select Layer To Pause:
 Translated:Select Layer To Pause:
 
+English:Offset:
+Translated:Offset:
+

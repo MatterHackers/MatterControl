@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         private double targetTemp = 0;
         private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
         private double waitAfterReachTempTime = 3;
+        private double ignoreRequestIfBelowTemp = 20;
 
         public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
         public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
@@ -76,16 +77,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                                 GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
                                 extruderIndex = 0;
                                 GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruderIndex);
-                                state = State.waitingForExtruderTemp;
-                                timeHaveBeenAtTemp.Reset();
+                                if (targetTemp > ignoreRequestIfBelowTemp)
+                                {
+                                    state = State.waitingForExtruderTemp;
+                                    timeHaveBeenAtTemp.Reset();
+                                }
+                                else
+                                {
+                                    return "G4 P1000"; // 1 second
+                                }
                             }
                             else if (lineToSend.StartsWith("M190")) // bed set and wait temp
                             {
                                 // send an M140 instead
                                 GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
                                 lineToSend = "M140" + lineToSend.Substring(4);
-                                state = State.waitingForBedTemp;
-                                timeHaveBeenAtTemp.Reset();
+                                if (targetTemp > ignoreRequestIfBelowTemp)
+                                {
+                                    state = State.waitingForBedTemp;
+                                    timeHaveBeenAtTemp.Reset();
+                                }
+                                else
+                                {
+                                    return "G4 P1000"; // 1 second
+                                }
                             }
                         }
 

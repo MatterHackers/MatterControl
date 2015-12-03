@@ -41,6 +41,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         MaxLengthStream maxLengthStream;
         int layerCount = -1;
 
+        public double Offset
+        {
+            get
+            {
+                return offsetStream.Offset.z;
+            }
+        }
+
         public override void Dispose()
         {
             offsetStream.Dispose();

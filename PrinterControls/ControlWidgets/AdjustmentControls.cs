@@ -168,7 +168,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				adjustmentControlsGroupBox.AddChild(tuningRatiosLayout);
 
                 // put in the baby step controls
-				if (true)
 				{
 					HorizontalLine line = new HorizontalLine();
 					line.Margin = new BorderDouble(0, 10);
@@ -184,21 +183,33 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					textImageButtonFactory.FixedHeight = 0;
 					Button moveDownButton = textImageButtonFactory.GenerateFromImages("", moveDownImage);
-					Button moveUpButton = textImageButtonFactory.GenerateFromImages("", moveUpImage);
+                    moveDownButton.Margin = new BorderDouble(0, 3, 3, 3);
+                    Button moveUpButton = textImageButtonFactory.GenerateFromImages("", moveUpImage);
+                    moveUpButton.Margin = new BorderDouble(3);
+
+                    TextWidget currentOffset = new TextWidget(("Offset:".Localize() + " 0.00"), textColor: ActiveTheme.Instance.PrimaryTextColor)
+                    {
+                        AutoExpandBoundsToText = true,
+                        VAnchor = VAnchor.ParentCenter,
+                        Margin = new BorderDouble(3),
+                    };
 
                     moveDownButton.Click += (sender, e) =>
                     {
-                        PrinterConnectionAndCommunication.Instance.babyStepsStream4.MoveDown();
+                        PrinterConnectionAndCommunication.Instance.BabyStepsMoveDown();
+                        currentOffset.Text = ("Offset:".Localize() + " {0:0.00}").FormatWith(PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset());
                     };
 
                     moveUpButton.Click += (sender, e) =>
                     {
-                        PrinterConnectionAndCommunication.Instance.babyStepsStream4.MoveUp();
+                        PrinterConnectionAndCommunication.Instance.BabyStepsMoveUp();
+                        currentOffset.Text = ("Offset:".Localize() + " {0:0.00}").FormatWith(PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset());
                     };
 
                     FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 					leftToRight.AddChild(moveDownButton);
 					leftToRight.AddChild(moveUpButton);
+                    leftToRight.AddChild(currentOffset);
 
 					tuningRatiosLayout.AddChild(leftToRight);
 				}

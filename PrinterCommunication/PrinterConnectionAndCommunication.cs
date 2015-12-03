@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         private QueuedCommandsStream queuedCommandStream1 = null;
         private PrintLevelingStream printLevelingStream2 = null;
         private WaitForTempStream waitForTempStream3 = null;
-        public BabyStepsStream babyStepsStream4 = null;
+        private BabyStepsStream babyStepsStream4 = null;
         private ExtrusionMultiplyerStream extrusionMultiplyerStream5 = null;
         private FeedRateMultiplyerStream feedrateMultiplyerStream6 = null;
         private RequestTemperaturesStream requestTemperaturesStream7 = null;
@@ -285,7 +285,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		}
 
-		[Flags]
+        public void BabyStepsMoveUp()
+        {
+            babyStepsStream4.MoveUp();
+        }
+
+        public void BabyStepsMoveDown()
+        {
+            babyStepsStream4.MoveDown();
+        }
+
+        public double CurrentBabyStepsOffset()
+        {
+            return babyStepsStream4.Offset;
+        }
+
+        [Flags]
 		public enum Axis { X = 1, Y = 2, Z = 4, E = 8, XYZ = (X | Y | Z) }
 
 		public enum CommunicationStates
