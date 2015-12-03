@@ -36,28 +36,33 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class OffsetStream : GCodeStream
-	{
-        GCodeStream internalStream;
-        PrinterMove lastDestination = new PrinterMove();
+    public class OffsetStream : GCodeStreamProxy
+    {
         Vector3 offset;
+        protected PrinterMove lastDestination = new PrinterMove();
+        public PrinterMove LastDestination { get { return lastDestination; } }
 
         public OffsetStream(GCodeStream internalStream, Vector3 offset)
+            : base(internalStream)
         {
             this.offset = offset;
-            this.internalStream = internalStream;
-        }
-
-        public override void Dispose()
-        {
-            internalStream.Dispose();
         }
 
         public Vector3 Offset { get { return offset; } set { offset = value; } }
 
+        public override Vector3 SetPrinterPosition(Vector3 position)
+        {
+            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
+            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
+
+            string lineBeingSent = CreateMovementLine(lastDestination);
+            PrinterMove leveledDestination = new PrinterMove(lastDestination.position + offset, 0, 0);
+            return leveledDestination.position;
+        }
+
         public override string ReadLine()
         {
-            string lineToSend = internalStream.ReadLine();
+            string lineToSend = base.ReadLine();
 
             if (lineToSend != null
                 && LineIsMovement(lineToSend))

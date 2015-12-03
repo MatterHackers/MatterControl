@@ -28,18 +28,18 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.VectorMath;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class QueuedCommandsStream : GCodeStream
+    public class QueuedCommandsStream : GCodeStreamProxy
     {
         private List<string> commandQueue = new List<string>();
-        private GCodeStream internalStream;
 
         public QueuedCommandsStream(GCodeStream internalStream)
+            : base(internalStream)
         {
-            this.internalStream = internalStream;
         }
 
         public void Add(string line)
@@ -49,11 +49,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             {
                 commandQueue.Add(line);
             }
-        }
-
-        public override void Dispose()
-        {
-            internalStream.Dispose();
         }
 
         public override string ReadLine()
@@ -69,7 +64,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 }
             }
 
-            return internalStream.ReadLine();
+            return base.ReadLine();
         }
     }
 }

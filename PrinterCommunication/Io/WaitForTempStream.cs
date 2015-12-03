@@ -28,36 +28,31 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.VectorMath;
 using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class WaitForTempStream : GCodeStream
+    public class WaitForTempStream : GCodeStreamProxy
     {
         private double extruderIndex;
-        private GCodeStream internalStream;
+        private double ignoreRequestIfBelowTemp = 20;
         private double sameTempRange = 1;
         private State state = State.passthrough;
         private double targetTemp = 0;
         private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
         private double waitAfterReachTempTime = 3;
-        private double ignoreRequestIfBelowTemp = 20;
-
-        public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
-        public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
 
         public WaitForTempStream(GCodeStream internalStream)
+            : base(internalStream)
         {
-            this.internalStream = internalStream;
         }
 
         private enum State
         { passthrough, waitingForExtruderTemp, waitingForBedTemp };
 
-        public override void Dispose()
-        {
-            internalStream.Dispose();
-        }
+        public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
+        public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
 
         public override string ReadLine()
         {
@@ -65,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             {
                 case State.passthrough:
                     {
-                        string lineToSend = internalStream.ReadLine();
+                        string lineToSend = base.ReadLine();
 
                         if (lineToSend != null
                             && lineToSend.StartsWith("M"))
@@ -121,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                         {
                             // switch to pass through and continue
                             state = State.passthrough;
-                            return internalStream.ReadLine();
+                            return base.ReadLine();
                         }
                         else
                         {
@@ -144,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                         {
                             // switch to pass through and continue
                             state = State.passthrough;
-                            return internalStream.ReadLine();
+                            return base.ReadLine();
                         }
                         else
                         {

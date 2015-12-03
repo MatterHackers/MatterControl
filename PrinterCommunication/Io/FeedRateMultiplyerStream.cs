@@ -27,24 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class FeedRateMultiplyerStream : GCodeStream
+    public class FeedRateMultiplyerStream : GCodeStreamProxy
     {
-        private GCodeStream internalStream;
-        public double FeedRateRatio { get; set;  } = 1;
-
         public FeedRateMultiplyerStream(GCodeStream internalStream)
+            : base(internalStream)
         {
-            this.internalStream = internalStream;
         }
 
-        public override void Dispose()
+        public double FeedRateRatio { get; set; } = 1;
+
+        public override string ReadLine()
         {
-            internalStream.Dispose();
+            return ApplyFeedRateMultiplier(internalStream.ReadLine());
         }
 
         private string ApplyFeedRateMultiplier(string lineBeingSent)
@@ -64,11 +63,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             }
 
             return lineBeingSent;
-        }
-
-        public override string ReadLine()
-        {
-            return ApplyFeedRateMultiplier(internalStream.ReadLine());
         }
     }
 }

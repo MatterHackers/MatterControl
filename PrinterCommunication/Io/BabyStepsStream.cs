@@ -35,7 +35,7 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabyStepsStream : GCodeStream
+    public class BabyStepsStream : GCodeStreamProxy
     {
         OffsetStream offsetStream;
         MaxLengthStream maxLengthStream;
@@ -66,9 +66,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         }
 
         public BabyStepsStream(GCodeStream internalStream)
+            : base(null)
         {
-            maxLengthStream = new MaxLengthStream(internalStream, 1);
+            maxLengthStream = new MaxLengthStream(internalStream, 2);
             offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, 0));
+            base.internalStream = offsetStream;
         }
 
         public override string ReadLine()

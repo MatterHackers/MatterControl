@@ -28,23 +28,18 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class RequestTemperaturesStream : GCodeStream
+    public class RequestTemperaturesStream : GCodeStreamProxy
     {
-        private GCodeStream internalStream;
         private long nextReadTimeMs = 0;
 
         public RequestTemperaturesStream(GCodeStream internalStream)
+            : base(internalStream)
         {
-            this.internalStream = internalStream;
             nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
-        }
-
-        public override void Dispose()
-        {
-            internalStream.Dispose();
         }
 
         public override string ReadLine()
@@ -55,7 +50,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 return "M105";
             }
 
-            return internalStream.ReadLine();
+            return base.ReadLine();
         }
     }
 }

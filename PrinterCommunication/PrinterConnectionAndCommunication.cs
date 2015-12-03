@@ -1679,11 +1679,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// The first position read is the target position.
 			lastReportedPosition = positionRead;
 
-			if (currentDestination != positionRead)
+			//if (currentDestination != positionRead)
 			{
                 currentDestination = positionRead;
 				DestinationChanged.CallEvents(this, null);
-			}
+                if (totalGCodeStream != null)
+                {
+                    totalGCodeStream.SetPrinterPosition(currentDestination);
+                }
+            }
 
 			PositionRead.CallEvents(this, null);
 
@@ -2698,77 +2702,78 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			bool pauseRequested = false;
-			using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile2"))
-			{
-                previousSentLine = this.currentSentLine;
-                currentSentLine = totalGCodeStream.ReadLine();
+            using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile2"))
+            {
+                if (firstLineToResendIndex < allCheckSumLinesSent.Count)
+                {
+                    WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\n", "resend");
+                }
+                else
+                {
+                    int waitTimeInMs = 60000; // 60 seconds
+                    if (waitingForPosition.IsRunning && waitingForPosition.ElapsedMilliseconds < waitTimeInMs)
+                    {
+                        // we are waiting for a postion response don't print more
+                        return;
+                    }
 
-                if (currentSentLine != null)
-				{
-					if (firstLineToResendIndex < allCheckSumLinesSent.Count)
-					{
-						WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\n", "resend");
-					}
-					else
-					{
-						int waitTimeInMs = 60000; // 60 seconds
-						if (waitingForPosition.IsRunning && waitingForPosition.ElapsedMilliseconds < waitTimeInMs)
-						{
-							// we are waiting for a postion response don't print more
-							return;
-						}
+                    previousSentLine = this.currentSentLine;
+                    currentSentLine = totalGCodeStream.ReadLine();
 
-						string[] splitOnSemicolon = currentSentLine.Split(';');
-						string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
+                    if (currentSentLine != null)
+                    {
+                        string[] splitOnSemicolon = currentSentLine.Split(';');
+                        string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
 
-						if (currentSentLine.Contains("M114"))
-						{
-							waitingForPosition.Restart();
-						}
+                        if (currentSentLine.Contains("M114"))
+                        {
+                            waitingForPosition.Restart();
+                        }
 
-						if (trimedLine.Length > 0)
-						{
-							if (currentSentLine == "MH_PAUSE")
-							{
-								pauseRequested = true;
-							}
-							else if (currentSentLine == "M226" || currentSentLine == "@pause")
-							{
-								RequestPause();
-							}
-							else
-							{
-								WriteChecksumLineToPrinter(currentSentLine);
-							}
+                        if (trimedLine.Length > 0)
+                        {
+                            if (currentSentLine == "MH_PAUSE")
+                            {
+                                pauseRequested = true;
+                            }
+                            else if (currentSentLine == "M226" || currentSentLine == "@pause")
+                            {
+                                RequestPause();
+                            }
+                            else
+                            {
+                                WriteChecksumLineToPrinter(currentSentLine);
+                            }
 
-							firstLineToResendIndex++;
-						}
-					}
-				}
-				else if (printWasCanceled)
-				{
-					CommunicationState = CommunicationStates.Connected;
-					// never leave the extruder and the bed hot
-					ReleaseMotors();
-					TurnOffBedAndExtruders();
-					printWasCanceled = false;
-				}
-				else // we finished printing normalyl
-				{
-					CommunicationState = CommunicationStates.FinishedPrint;
+                            firstLineToResendIndex++;
+                        }
 
-					printJobDisplayName = null;
+                    }
+                    else if (printWasCanceled)
+                    {
+                        CommunicationState = CommunicationStates.Connected;
+                        // never leave the extruder and the bed hot
+                        ReleaseMotors();
+                        TurnOffBedAndExtruders();
+                        printWasCanceled = false;
+                    }
+                    else // we finished printing normalyl
+                    {
+                        CommunicationState = CommunicationStates.FinishedPrint;
 
-					// never leave the extruder and the bed hot
-					ReleaseMotors();
-					TurnOffBedAndExtruders();
-				}
-			}
+                        printJobDisplayName = null;
 
-			if (pauseRequested)
-			{
-				DoPause();
-			}
+                        // never leave the extruder and the bed hot
+                        ReleaseMotors();
+                        TurnOffBedAndExtruders();
+                    }
+                }
+
+                if (pauseRequested)
+                {
+                    DoPause();
+                }
+            }
 		}
 
 		private void TurnOffBedAndExtruders()

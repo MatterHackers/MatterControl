@@ -27,41 +27,40 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
-using System.Text;
+using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class MaxLengthStream : GCodeStream
-	{
-        GCodeStream internalStream;
-        PrinterMove lastDestination = new PrinterMove();
-        public double MaxSegmentLength { get; set; }
-
-        List<PrinterMove> movesToSend = new List<PrinterMove>();
+    public class MaxLengthStream : GCodeStreamProxy
+    {
+        protected PrinterMove lastDestination = new PrinterMove();
+        public PrinterMove LastDestination { get { return lastDestination; } }
+        private List<PrinterMove> movesToSend = new List<PrinterMove>();
 
         public MaxLengthStream(GCodeStream internalStream, double maxSegmentLength)
+            : base(internalStream)
         {
             this.MaxSegmentLength = maxSegmentLength;
-            this.internalStream = internalStream;
         }
 
-        public override void Dispose()
+        public double MaxSegmentLength { get; set; }
+
+        public override Vector3 SetPrinterPosition(Vector3 position)
         {
-            internalStream.Dispose();
+            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
+            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
+            return position;
         }
 
         public override string ReadLine()
         {
             if (movesToSend.Count == 0)
             {
-                string lineFromChild = internalStream.ReadLine();
+                string lineFromChild = base.ReadLine();
 
-                if (lineFromChild != null 
+                if (lineFromChild != null
                     && LineIsMovement(lineFromChild))
                 {
                     PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);

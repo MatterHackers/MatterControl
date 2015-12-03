@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.VectorMath;
 using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
@@ -97,6 +98,11 @@ namespace MatterControl.Tests.MatterControl
         public override string ReadLine()
         {
             return lines[index++];
+        }
+
+        public override Vector3 SetPrinterPosition(Vector3 position)
+        {
+            return position;
         }
     }
 }

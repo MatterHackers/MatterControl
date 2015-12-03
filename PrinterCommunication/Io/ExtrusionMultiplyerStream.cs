@@ -27,26 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class ExtrusionMultiplyerStream : GCodeStream
+    public class ExtrusionMultiplyerStream : GCodeStreamProxy
     {
-        private GCodeStream internalStream;
-        public double ExtrusionRatio { get; set;  } = 1;
-        private double previousGcodeRequestedExtrusionPosition = 0;
         private double currentActualExtrusionPosition = 0;
+        private double previousGcodeRequestedExtrusionPosition = 0;
 
         public ExtrusionMultiplyerStream(GCodeStream internalStream)
+            : base(internalStream)
         {
-            this.internalStream = internalStream;
         }
 
-        public override void Dispose()
+        public double ExtrusionRatio { get; set; } = 1;
+
+        public override string ReadLine()
         {
-            internalStream.Dispose();
+            return ApplyExtrusionMultiplier(internalStream.ReadLine());
         }
 
         private string ApplyExtrusionMultiplier(string lineBeingSent)
@@ -77,11 +77,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             }
 
             return lineBeingSent;
-        }
-
-        public override string ReadLine()
-        {
-            return ApplyExtrusionMultiplier(internalStream.ReadLine());
         }
     }
 }

@@ -27,27 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public class GCodeFileStream : GCodeStream
     {
-        int printerCommandQueueLineIndex = -1;
+        private GCodeFile fileStreaming;
+        private int printerCommandQueueLineIndex = -1;
 
-        public int LineIndex { get { return printerCommandQueueLineIndex; } }
-
-        GCodeFile fileStreaming;
         public GCodeFileStream(GCodeFile fileStreaming, int startLine = 0)
         {
             this.fileStreaming = fileStreaming;
             printerCommandQueueLineIndex = startLine;
         }
+
+        public int LineIndex { get { return printerCommandQueueLineIndex; } }
 
         public override void Dispose()
         {
@@ -61,6 +57,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             }
 
             return null;
+        }
+
+        public override Vector3 SetPrinterPosition(Vector3 position)
+        {
+            return position;
         }
     }
 }

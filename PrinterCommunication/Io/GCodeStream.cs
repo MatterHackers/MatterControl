@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         /// </summary>
         /// <returns></returns>
         public abstract string ReadLine();
+        public abstract Vector3 SetPrinterPosition(Vector3 position);
         #endregion
 
         public abstract void Dispose();

@@ -37,36 +37,18 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class PrintLevelingStream : GCodeStream
+    public class PrintLevelingStream : GCodeStreamProxy
     {
-        GCodeStream internalStream;
-        PrinterMove lastDestination = new PrinterMove();
-        public PrinterMove LastDestination { get { return lastDestination; } }
-        private event EventHandler unregisterEvents;
-
+        protected PrinterMove lastDestination = new PrinterMove();
         public PrintLevelingStream(GCodeStream internalStream)
+            : base(internalStream)
         {
-            this.internalStream = internalStream;
-
-            PrinterConnectionAndCommunication.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
         }
 
-        private void PrinterReportedPosition(object sender, EventArgs e)
-        {
-            lastDestination = new PrinterMove(PrinterConnectionAndCommunication.Instance.CurrentDestination,
-                PrinterConnectionAndCommunication.Instance.CurrentExtruderDestination,
-                PrinterConnectionAndCommunication.Instance.CurrentFeedRate);
-        }
-
-        public override void Dispose()
-        {
-            unregisterEvents?.Invoke(this, null);
-            internalStream.Dispose();
-        }
-
+        public PrinterMove LastDestination { get { return lastDestination; } }
         public override string ReadLine()
         {
-            string lineFromChild = internalStream.ReadLine();
+            string lineFromChild = base.ReadLine();
 
             if (lineFromChild != null
                 && PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
@@ -75,16 +57,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
                 string leveledLine = RunPrintLevelingTranslations(lineFromChild, currentDestination);
 
-                if(leveledLine != lineFromChild)
-                {
-                    int a = 0;
-                }
-
                 lastDestination = currentDestination;
                 return leveledLine;
             }
 
             return lineFromChild;
+        }
+
+        public override Vector3 SetPrinterPosition(Vector3 position)
+        {
+            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
+            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
+
+            string lineBeingSent = CreateMovementLine(lastDestination);
+            string leveledPosition = RunPrintLevelingTranslations(lineBeingSent, lastDestination);
+            PrinterMove leveledDestination = GetPosition(leveledPosition, lastDestination);
+            return leveledDestination.position;
         }
 
         private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
@@ -118,5 +106,29 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             return lineBeingSent;
         }
 
+    }
+
+    public abstract class GCodeStreamProxy : GCodeStream
+    {
+        protected GCodeStream internalStream;
+
+        public GCodeStreamProxy(GCodeStream internalStream)
+        {
+            this.internalStream = internalStream;
+        }
+
+        public override void Dispose()
+        {
+            internalStream.Dispose();
+        }
+        public override string ReadLine()
+        {
+            return internalStream.ReadLine();
+        }
+
+        public override Vector3 SetPrinterPosition(Vector3 position)
+        {
+            return internalStream.SetPrinterPosition(position);
+        }
     }
 }
