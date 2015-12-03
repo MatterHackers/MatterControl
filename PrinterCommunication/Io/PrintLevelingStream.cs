@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
     {
         GCodeStream internalStream;
         PrinterMove lastDestination = new PrinterMove();
+        public PrinterMove LastDestination { get { return lastDestination; } }
         private event EventHandler unregisterEvents;
 
         public PrintLevelingStream(GCodeStream internalStream)

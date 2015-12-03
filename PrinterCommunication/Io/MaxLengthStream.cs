@@ -40,13 +40,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
         GCodeStream internalStream;
         PrinterMove lastDestination = new PrinterMove();
-        double maxSegmentLength = 0;
+        public double MaxSegmentLength { get; set; }
 
         List<PrinterMove> movesToSend = new List<PrinterMove>();
 
         public MaxLengthStream(GCodeStream internalStream, double maxSegmentLength)
         {
-            this.maxSegmentLength = maxSegmentLength;
+            this.MaxSegmentLength = maxSegmentLength;
             this.internalStream = internalStream;
         }
 
@@ -68,11 +68,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                     PrinterMove deltaToDestination = currentDestination - lastDestination;
                     deltaToDestination.feedRate = 0; // remove the changing of the fedrate (we'll set it initialy)
                     double lengthSquared = deltaToDestination.LengthSquared;
-                    if (lengthSquared > maxSegmentLength * maxSegmentLength)
+                    if (lengthSquared > MaxSegmentLength * MaxSegmentLength)
                     {
                         // create the line segments to send
                         double length = Math.Sqrt(lengthSquared);
-                        int numSegmentsToSend = (int)Math.Ceiling(length / maxSegmentLength);
+                        int numSegmentsToSend = (int)Math.Ceiling(length / MaxSegmentLength);
                         PrinterMove deltaForSegment = deltaToDestination / numSegmentsToSend;
                         PrinterMove nextPoint = lastDestination + deltaForSegment;
                         nextPoint.feedRate = currentDestination.feedRate;

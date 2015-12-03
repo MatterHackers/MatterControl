@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,56 +27,48 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
-using System.Text;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabyStepsStream : GCodeStream
+    public class FeedRateMultiplyerStream : GCodeStream
     {
-        OffsetStream offsetStream;
-        MaxLengthStream maxLengthStream;
-        int layerCount = -1;
+        private GCodeStream internalStream;
+        public double FeedRateRatio { get; set;  } = 1;
+
+        public FeedRateMultiplyerStream(GCodeStream internalStream)
+        {
+            this.internalStream = internalStream;
+        }
 
         public override void Dispose()
         {
-            offsetStream.Dispose();
-            maxLengthStream.Dispose();
+            internalStream.Dispose();
         }
 
-        public void MoveDown()
+        private string ApplyFeedRateMultiplier(string lineBeingSent)
         {
-            offsetStream.Offset = offsetStream.Offset - new Vector3(0, 0, .02);
-        }
+            if (lineBeingSent != null
+                && FeedRateRatio != 1)
+            {
+                lineBeingSent = lineBeingSent.ToUpper().Trim();
+                if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
+                {
+                    double feedRate = 0;
+                    if (GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate))
+                    {
+                        lineBeingSent = GCodeFile.ReplaceNumberAfter('F', lineBeingSent, feedRate * FeedRateRatio);
+                    }
+                }
+            }
 
-        public void MoveUp()
-        {
-            offsetStream.Offset = offsetStream.Offset + new Vector3(0, 0, .02);
-        }
-
-        public BabyStepsStream(GCodeStream internalStream)
-        {
-            maxLengthStream = new MaxLengthStream(internalStream, 1);
-            offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, 0));
+            return lineBeingSent;
         }
 
         public override string ReadLine()
         {
-            string processedLine = offsetStream.ReadLine();
-            if(processedLine != null
-                && layerCount < 1 
-                && processedLine.StartsWith("; LAYER:"))
-            {
-                layerCount++;
-                if(layerCount == 1)
-                {
-                    maxLengthStream.MaxSegmentLength = 5;
-                }
-            }
-            return processedLine;
+            return ApplyFeedRateMultiplier(internalStream.ReadLine());
         }
     }
 }
