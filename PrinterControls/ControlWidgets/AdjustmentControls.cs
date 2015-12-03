@@ -200,6 +200,11 @@ namespace MatterHackers.MatterControl.PrinterControls
                         currentOffset.Text = ("Offset:".Localize() + " {0:0.00}").FormatWith(PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset());
                     };
 
+                    PrinterConnectionAndCommunication.Instance.PrintingStateChanged.RegisterEvent((sender, e) =>
+                    {
+                        currentOffset.Text = ("Offset:".Localize() + " {0:0.00}").FormatWith(PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset());
+                    }, ref unregisterEvents);
+
                     moveUpButton.Click += (sender, e) =>
                     {
                         PrinterConnectionAndCommunication.Instance.BabyStepsMoveUp();

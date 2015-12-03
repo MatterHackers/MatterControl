@@ -297,7 +297,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public double CurrentBabyStepsOffset()
         {
-            return babyStepsStream4.Offset;
+            if (babyStepsStream4 != null)
+            {
+                return babyStepsStream4.Offset;
+            }
+
+            return 0;
         }
 
         [Flags]
