@@ -155,11 +155,11 @@
       <Name>clipper_library</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj">
-      <Project>{94838988-523c-4b11-ad82-8b9b76f23a31}</Project>
+      <Project>{94838988-523C-4B11-AD82-8B9B76F23A31}</Project>
       <Name>DataConverters2D</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
-      <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
+      <Project>{04667764-DC7B-4B95-AEF6-B4E6C87A54E9}</Project>
       <Name>DataConverters3D</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
@@ -211,7 +211,7 @@
       <Name>MatterControlPluginSystem</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\MatterSlice\MatterSlice.csproj">
-      <Project>{c46ca728-dd2f-4dd1-971a-aaa89d9dff95}</Project>
+      <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
       <Name>MatterSlice</Name>
     </ProjectReference>
   </ItemGroup>

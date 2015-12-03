@@ -74,7 +74,7 @@
     <Compile Include="MatterControl\HtmlParser.cs" />
     <Compile Include="MatterControl\LibraryProviderTests.cs" />
     <Compile Include="MatterControl\AutomationTests\OptionsTabTests.cs" />
-    <Compile Include="MatterControl\PrinterCallbackTests.cs" />
+    <Compile Include="MatterControl\PrinterCallBackTests.cs" />
     <Compile Include="MatterControl\PrinterChooserUnitTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
     <Compile Include="MatterControl\AutomationTests\PrintQueueTests.cs" />
@@ -96,47 +96,47 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MatterControl.csproj">
-      <Project>{0b8d6f56-bd7f-4426-b858-d9292b084656}</Project>
+      <Project>{0B8D6F56-BD7F-4426-B858-D9292B084656}</Project>
       <Name>MatterControl</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
+      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
-      <Project>{f67ae800-b0c7-42a8-836f-597b4e74591c}</Project>
+      <Project>{F67AE800-B0C7-42A8-836F-597B4E74591C}</Project>
       <Name>GCodeVisualizer</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
-      <Project>{e9102310-0029-4d8f-b1e9-88fba6147d45}</Project>
+      <Project>{E9102310-0029-4D8F-B1E9-88FBA6147D45}</Project>
       <Name>GuiAutomation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Gui\Gui.csproj">
-      <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
+      <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
-      <Project>{3e4aaba8-d85f-4922-88c6-5c1b2d2308fb}</Project>
+      <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
       <Name>PlatformAbstract</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
-      <Project>{670bddff-927b-425d-9dd1-22acb14356eb}</Project>
+      <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
-      <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
+      <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
       <Name>PolygonMesh</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
-      <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
+      <Project>{195CBE56-E654-437B-AB05-3BE1B9452497}</Project>
       <Name>Agg.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
+      <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
-      <Project>{a526dc5d-65f3-461b-805f-d3ac9665f5c9}</Project>
+      <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
       <Name>WindowsFileDialogs</Name>
     </ProjectReference>
   </ItemGroup>
