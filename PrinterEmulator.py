@@ -34,10 +34,12 @@ import serial
 import time
 import random
 
+extruderGoalTemperature = 0
+
 """Add response callbacks here"""
 def randomTemp(command):
 	# temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
-	return "ok T:%s\n" % random.randrange(202,215)
+	return "ok T:%s\n" % (extruderGoalTemperature + random.randrange(-2,2))
 
 def getPosition(command):
 	# temp commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
@@ -69,15 +71,25 @@ def getCorrectResponse(command):
 		
 	return 'ok\n'
 
+def setExtruderTemperature(command):
+	try:
+		#M104 S210		
+		sIndex = command.find('S') + 1
+		extruderGoalTemperature = int(command[sIndex:])
+	except Exception, e:
+		print e
+		
+	return 'ok\n'
+
 """Dictionary of command and response callback"""
-responses = { "M105" : randomTemp, "A" : echo, "M114" : getPosition , "N" : parseChecksumLine, "M115" : reportMarlinFirmware }
+responses = { "M105" : randomTemp, "A" : echo, "M114" : getPosition , "N" : parseChecksumLine, "M115" : reportMarlinFirmware, "M104" : setExtruderTemperature }
 
 def main(argv):
 	parser = argparse.ArgumentParser(description='Set up a printer emulation.')
 	if len(argv) > 0:
 		ser = serial.Serial(argv[0], 250000, timeout=1)	
 	else:
-		ser = serial.Serial('COM4', 250000, timeout=1)	
+		ser = serial.Serial('COM14', 250000, timeout=1)	
 	waitForKey = True
 	print "Initializing emulator..."
 	while True:
