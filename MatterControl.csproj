@@ -200,6 +200,7 @@
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
     <Compile Include="PrinterCommunication\Io\FeedRateMultiplyerStream.cs" />
     <Compile Include="PrinterCommunication\Io\ExtrusionMultiplyerStream.cs" />
+    <Compile Include="PrinterCommunication\Io\RelativeToAbsoluteStream.cs" />
     <Compile Include="PrinterCommunication\Io\WaitForTempStream.cs" />
     <Compile Include="PrinterCommunication\Io\OffsetStream.cs" />
     <Compile Include="PrinterCommunication\Io\MaxLengthStream.cs" />

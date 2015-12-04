@@ -178,12 +178,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         private GCodeFileStream gCodeFileStream0 = null;
         private QueuedCommandsStream queuedCommandStream1 = null;
-        private PrintLevelingStream printLevelingStream2 = null;
-        private WaitForTempStream waitForTempStream3 = null;
-        private BabyStepsStream babyStepsStream4 = null;
-        private ExtrusionMultiplyerStream extrusionMultiplyerStream5 = null;
-        private FeedRateMultiplyerStream feedrateMultiplyerStream6 = null;
-        private RequestTemperaturesStream requestTemperaturesStream7 = null;
+        private RelativeToAbsoluteStream relativeToAbsoluteStream2 = null;
+        private PrintLevelingStream printLevelingStream3 = null;
+        private WaitForTempStream waitForTempStream4 = null;
+        private BabyStepsStream babyStepsStream5 = null;
+        private ExtrusionMultiplyerStream extrusionMultiplyerStream6 = null;
+        private FeedRateMultiplyerStream feedrateMultiplyerStream7 = null;
+        private RequestTemperaturesStream requestTemperaturesStream8 = null;
 
         private GCodeStream totalGCodeStream = null;
 
@@ -287,19 +288,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public void BabyStepsMoveUp()
         {
-            babyStepsStream4.MoveUp();
+            babyStepsStream5.MoveUp();
         }
 
         public void BabyStepsMoveDown()
         {
-            babyStepsStream4.MoveDown();
+            babyStepsStream5.MoveDown();
         }
 
         public double CurrentBabyStepsOffset()
         {
-            if (babyStepsStream4 != null)
+            if (babyStepsStream5 != null)
             {
-                return babyStepsStream4.Offset;
+                return babyStepsStream5.Offset;
             }
 
             return 0;
@@ -564,19 +565,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
             {
-                if (extrusionMultiplyerStream5 != null)
+                if (extrusionMultiplyerStream6 != null)
                 {
-                    return extrusionMultiplyerStream5.ExtrusionRatio;
+                    return extrusionMultiplyerStream6.ExtrusionRatio;
                 }
 
                 return 1;
             }
 			set
 			{
-				if (extrusionMultiplyerStream5 != null
-                    && value != extrusionMultiplyerStream5.ExtrusionRatio)
+				if (extrusionMultiplyerStream6 != null
+                    && value != extrusionMultiplyerStream6.ExtrusionRatio)
 				{
-                    extrusionMultiplyerStream5.ExtrusionRatio = value;
+                    extrusionMultiplyerStream6.ExtrusionRatio = value;
 					ExtrusionRatioChanged.CallEvents(this, null);
 				}
 			}
@@ -600,19 +601,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
             {
-                if (feedrateMultiplyerStream6 != null)
+                if (feedrateMultiplyerStream7 != null)
                 {
-                    return feedrateMultiplyerStream6.FeedRateRatio;
+                    return feedrateMultiplyerStream7.FeedRateRatio;
                 }
 
                 return 1;
             }
 			set
 			{
-				if (feedrateMultiplyerStream6 != null
-                    && value != feedrateMultiplyerStream6.FeedRateRatio)
+				if (feedrateMultiplyerStream7 != null
+                    && value != feedrateMultiplyerStream7.FeedRateRatio)
 				{
-                    feedrateMultiplyerStream6.FeedRateRatio = value;
+                    feedrateMultiplyerStream7.FeedRateRatio = value;
 					FeedRateRatioChanged.CallEvents(this, null);
 				}
 			}
@@ -1830,7 +1831,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					InjectGCode(resumeGCode);
 
                     // put in the code to return to our pre-pause postion
-                    Vector3 preLeveledDestination = printLevelingStream2.LastDestination.position;
+                    Vector3 preLeveledDestination = printLevelingStream3.LastDestination.position;
                     InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate));
 					DoPause();
 				}
@@ -1848,7 +1849,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						InjectGCode(resumeGCode);
 
                         // put in the code to return to return to our pre-pause postion
-                        Vector3 preLeveledDestination = printLevelingStream2.LastDestination.position;
+                        Vector3 preLeveledDestination = printLevelingStream3.LastDestination.position;
                         InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate));
 					}
 				}
@@ -2436,13 +2437,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             gCodeFileStream0 = new GCodeFileStream(loadedGCode);
             queuedCommandStream1 = new QueuedCommandsStream(gCodeFileStream0);
-            printLevelingStream2 = new PrintLevelingStream(queuedCommandStream1);
-            waitForTempStream3 = new WaitForTempStream(printLevelingStream2);
-            babyStepsStream4 = new BabyStepsStream(waitForTempStream3);
-            extrusionMultiplyerStream5 = new ExtrusionMultiplyerStream(babyStepsStream4);
-            feedrateMultiplyerStream6 = new FeedRateMultiplyerStream(extrusionMultiplyerStream5);
-            requestTemperaturesStream7 = new RequestTemperaturesStream(feedrateMultiplyerStream6);
-            totalGCodeStream = requestTemperaturesStream7;
+            relativeToAbsoluteStream2 = new RelativeToAbsoluteStream(queuedCommandStream1);
+            printLevelingStream3 = new PrintLevelingStream(relativeToAbsoluteStream2);
+            waitForTempStream4 = new WaitForTempStream(printLevelingStream3);
+            babyStepsStream5 = new BabyStepsStream(waitForTempStream4);
+            extrusionMultiplyerStream6 = new ExtrusionMultiplyerStream(babyStepsStream5);
+            feedrateMultiplyerStream7 = new FeedRateMultiplyerStream(extrusionMultiplyerStream6);
+            requestTemperaturesStream8 = new RequestTemperaturesStream(feedrateMultiplyerStream7);
+            totalGCodeStream = requestTemperaturesStream8;
         }
 
         private void loadGCodeWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -2631,7 +2633,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				switch (trimedLine)
 				{
 					case "@RESTORE_XYZ_POSITION":
-                        Vector3 preLeveledDestination = printLevelingStream2.LastDestination.position;
+                        Vector3 preLeveledDestination = printLevelingStream3.LastDestination.position;
                         return "G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate);
 
 					case "@RESTORE_E_POSITION":
@@ -2648,11 +2650,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				PrintingState = DetailedPrintingState.HomingAxis;
 			}
-			else if (waitForTempStream3?.HeatingBed ?? false)
+			else if (waitForTempStream4?.HeatingBed ?? false)
 			{
 				PrintingState = DetailedPrintingState.HeatingBed;
 			}
-			else if (waitForTempStream3?.HeatingExtruder ?? false)
+			else if (waitForTempStream4?.HeatingExtruder ?? false)
 			{
 				PrintingState = DetailedPrintingState.HeatingExtruder;
 			}
