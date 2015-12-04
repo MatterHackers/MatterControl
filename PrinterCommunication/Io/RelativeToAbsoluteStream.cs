@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 if (lineToSend.StartsWith("G91"))
                 {
                     absoluteMode = false;
+                    return "";
                 }
                 else if (lineToSend.StartsWith("G90"))
                 {
@@ -89,10 +90,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                     double feedRate = currentDestination.feedRate;
                     currentDestination += lastDestination;
                     currentDestination.feedRate = feedRate;
+
+                    lineToSend = CreateMovementLine(currentDestination, lastDestination);
                 }
 
                 // send the first one
                 lastDestination = currentDestination;
+
                 return lineToSend;
             }
 
