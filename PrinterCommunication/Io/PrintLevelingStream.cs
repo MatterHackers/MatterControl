@@ -51,14 +51,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             string lineFromChild = base.ReadLine();
 
             if (lineFromChild != null
-                && PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
                 && LineIsMovement(lineFromChild))
             {
                 PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
-                string leveledLine = RunPrintLevelingTranslations(lineFromChild, currentDestination);
+                if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
+                {
+                    lineFromChild = RunPrintLevelingTranslations(lineFromChild, currentDestination);
+                }
 
                 lastDestination = currentDestination;
-                return leveledLine;
+                return lineFromChild;
             }
 
             return lineFromChild;
