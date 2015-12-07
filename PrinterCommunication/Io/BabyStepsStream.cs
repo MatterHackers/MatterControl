@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         public BabyStepsStream(GCodeStream internalStream)
             : base(null)
         {
-            maxLengthStream = new MaxLengthStream(internalStream, 2);
+            maxLengthStream = new MaxLengthStream(internalStream, 1);
             offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, 0));
             base.internalStream = offsetStream;
         }

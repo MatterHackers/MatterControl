@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                         int numSegmentsToCutInto = (int)Math.Ceiling(length / MaxSegmentLength);
 
                         // segments = (((mm/min) / (60s/min))mm/s / s/segment)segments*mm / mm
-                        double maxSegmentsCanTransmit = ((currentDestination.feedRate / 60) / maxSecondsPerSegment) / length;
+                        double maxSegmentsCanTransmit = 1 / (((currentDestination.feedRate / 60) * maxSecondsPerSegment) / length);
 
                         int numSegmentsToSend = Math.Max(1, Math.Min(numSegmentsToCutInto, (int)maxSegmentsCanTransmit));
 
