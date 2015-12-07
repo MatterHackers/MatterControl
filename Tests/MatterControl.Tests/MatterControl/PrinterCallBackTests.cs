@@ -74,8 +74,6 @@ namespace MatterControl.Tests.MatterControl
                    testExtruderCountGreaterThanZero(settingName, settingValue);
                    maxFanSpeedNotGreaterThanOneHundred(settingName, settingValue);
                    minimumFanSpeedLessThanOneHundred(settingName, settingValue);
-                   testRepairOutlinesExtensiveStitchingNotZero(settingName, settingValue);
-                   testRepairOutlinesKeepOpenIsZero(settingName, settingValue);
                    noCurlyBracketsInStartGcode(settingName, settingValue);
                    noCurlyBracketsInEndGcode(settingName, settingValue);
                    testBottomSolidLayersOneMM(settingName, settingValue);
@@ -236,36 +234,6 @@ namespace MatterControl.Tests.MatterControl
                 if (convertedFanSpeed > 100)
                 {
                     string test = String.Format("{0} :: {1}", settingName, convertedFanSpeed.ToString());
-                    Console.WriteLine(test);
-                }
-            }
-        }
-
-        public void testRepairOutlinesExtensiveStitchingNotZero(string settingName, string settingValue)
-        {
-
-            if(settingName == "repair_outlines_extensive_stitching")
-            {
-
-                int convertedSettingValue = Int32.Parse(settingValue);
-
-                if (convertedSettingValue != 0)
-                {
-                    string test = String.Format("{0} :: {1}", settingName, convertedSettingValue.ToString());
-                    Console.WriteLine(test);
-                }
-            }
-        }
-
-        public void testRepairOutlinesKeepOpenIsZero(string settingName, string settingValue)
-        {
-
-            if (settingName == "repair_outlines_keep_open")
-            {
-                int convertedSettingValue = Int32.Parse(settingValue);
-                if (convertedSettingValue != 0)
-                {
-                    string test = String.Format("{0} :: {1}", settingName, convertedSettingValue.ToString());
                     Console.WriteLine(test);
                 }
             }

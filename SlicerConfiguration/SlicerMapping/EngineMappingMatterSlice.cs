@@ -213,10 +213,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("raftExtraDistanceAroundPart", "raft_extra_distance_around_part"),
             new MapItem("raftAirGap", "raft_air_gap"),
 
-            //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
-            new MapRepairOutlines("repairOutlines", "repair_outlines_extensive_stitching"),
-            new VisibleButNotMappedToEngine("repair_outlines_keep_open"),
-
             new VisibleButNotMappedToEngine("has_fan"),
             new VisibleButNotMappedToEngine("has_hardware_leveling"),
             new VisibleButNotMappedToEngine("has_power_control"),
@@ -392,39 +388,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					return final.ToString();
 				}
-			}
-		}
-
-		//repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
-		public class MapRepairOutlines : MapItem
-		{
-			public override string MappedValue
-			{
-				get
-				{
-					if (ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_extensive_stitching") == "1")
-					{
-						if (ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_keep_open") == "1")
-						{
-							return "EXTENSIVE_STITCHING|KEEP_OPEN";
-						}
-						else
-						{
-							return "EXTENSIVE_STITCHING";
-						}
-					}
-					else if (ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_keep_open") == "1")
-					{
-						return "KEEP_OPEN";
-					}
-
-					return "NONE";
-				}
-			}
-
-			public MapRepairOutlines(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
-			{
 			}
 		}
 

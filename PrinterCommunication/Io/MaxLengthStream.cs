@@ -36,8 +36,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
     public class MaxLengthStream : GCodeStreamProxy
     {
         protected PrinterMove lastDestination = new PrinterMove();
-        public PrinterMove LastDestination { get { return lastDestination; } }
         private List<PrinterMove> movesToSend = new List<PrinterMove>();
+        private double maxSecondsPerSegment = 1.0/30.0; // 30 instruction per second
 
         public MaxLengthStream(GCodeStream internalStream, double maxSegmentLength)
             : base(internalStream)
@@ -45,14 +45,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             this.MaxSegmentLength = maxSegmentLength;
         }
 
+        public PrinterMove LastDestination { get { return lastDestination; } }
         public double MaxSegmentLength { get; set; }
-
-        public override Vector3 SetPrinterPosition(Vector3 position)
-        {
-            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
-            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
-            return position;
-        }
 
         public override string ReadLine()
         {
@@ -71,23 +65,32 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                     {
                         // create the line segments to send
                         double length = Math.Sqrt(lengthSquared);
-                        int numSegmentsToSend = (int)Math.Ceiling(length / MaxSegmentLength);
-                        PrinterMove deltaForSegment = deltaToDestination / numSegmentsToSend;
-                        PrinterMove nextPoint = lastDestination + deltaForSegment;
-                        nextPoint.feedRate = currentDestination.feedRate;
-                        for (int i = 0; i < numSegmentsToSend; i++)
+                        int numSegmentsToCutInto = (int)Math.Ceiling(length / MaxSegmentLength);
+
+                        // segments = (((mm/min) / (60s/min))mm/s / s/segment)segments*mm / mm
+                        double maxSegmentsCanTransmit = ((currentDestination.feedRate / 60) / maxSecondsPerSegment) / length;
+
+                        int numSegmentsToSend = Math.Max(1, Math.Min(numSegmentsToCutInto, (int)maxSegmentsCanTransmit));
+
+                        if (numSegmentsToSend > 1)
                         {
-                            movesToSend.Add(nextPoint);
-                            nextPoint += deltaForSegment;
+                            PrinterMove deltaForSegment = deltaToDestination / numSegmentsToSend;
+                            PrinterMove nextPoint = lastDestination + deltaForSegment;
+                            nextPoint.feedRate = currentDestination.feedRate;
+                            for (int i = 0; i < numSegmentsToSend; i++)
+                            {
+                                movesToSend.Add(nextPoint);
+                                nextPoint += deltaForSegment;
+                            }
+
+                            // send the first one
+                            PrinterMove positionToSend = movesToSend[0];
+                            movesToSend.RemoveAt(0);
+
+                            string altredLineToSend = CreateMovementLine(positionToSend, lastDestination);
+                            lastDestination = positionToSend;
+                            return altredLineToSend;
                         }
-
-                        // send the first one
-                        PrinterMove positionToSend = movesToSend[0];
-                        movesToSend.RemoveAt(0);
-
-                        string altredLineToSend = CreateMovementLine(positionToSend, lastDestination);
-                        lastDestination = positionToSend;
-                        return altredLineToSend;
                     }
 
                     lastDestination = currentDestination;
@@ -105,6 +108,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
                 return lineToSend;
             }
+        }
+
+        public override Vector3 SetPrinterPosition(Vector3 position)
+        {
+            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
+            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
+            return position;
         }
     }
 }
