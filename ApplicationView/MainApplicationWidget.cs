@@ -27,8 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-﻿using MatterHackers.Agg;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
@@ -65,7 +66,32 @@ namespace MatterHackers.MatterControl
 
 		private bool topIsHidden = false;
 
-		public override void HideTopContainer()
+        #region automation test
+#if false
+
+        bool firstDraw = true;
+        AutomationRunner clickPreview;
+        Stopwatch timeSinceLastClick = Stopwatch.StartNew();
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            if (firstDraw)
+            {
+                clickPreview = new AutomationRunner();
+                firstDraw = false;
+            }
+
+            if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > 5)
+            {
+                clickPreview.ClickByName("Library Tab");
+                timeSinceLastClick.Restart();
+            }
+
+            base.OnDraw(graphics2D);
+        }
+#endif
+#endregion
+
+        public override void HideTopContainer()
 		{
 			if (!topIsHidden)
 			{
@@ -185,7 +211,31 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		public override void AddElements()
+#region automation test
+#if false
+        bool firstDraw = true;
+        AutomationRunner clickPreview;
+        Stopwatch timeSinceLastClick = Stopwatch.StartNew();
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            if (firstDraw)
+            {
+                clickPreview = new AutomationRunner();
+                firstDraw = false;
+            }
+
+            if(clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > 5)
+            {
+                clickPreview.ClickByName("Library Tab");
+                timeSinceLastClick.Restart();
+            }
+
+            base.OnDraw(graphics2D);
+        }
+#endif
+#endregion
+
+        public override void AddElements()
 		{
 			Stopwatch timer = Stopwatch.StartNew();
 			timer.Start();
