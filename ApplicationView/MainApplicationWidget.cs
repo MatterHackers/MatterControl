@@ -37,10 +37,49 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-	public abstract class ApplicationView : GuiWidget
+    public class StatisticsTracker
+    {
+        double valueTotal = 0;
+        long sampleCount = 0;
+        double currentMean = 0.0;
+        double currentDifferencSquared = 0.0;
+
+        public double Mean { get { return valueTotal / sampleCount; } }
+        public double StandardDeviation
+        {
+            get
+            {
+                if (sampleCount > 2)
+                {
+                    return Math.Sqrt(currentDifferencSquared / (sampleCount - 1));
+                }
+
+                return 0;
+            }
+        }
+
+        public void AddValue(double value)
+        {
+            valueTotal += value;
+            double startingMean = currentMean;
+            if (sampleCount > 0)
+            {
+                currentMean += (value - startingMean) / sampleCount;
+            }
+            else
+            {
+                currentMean = value;
+            }
+            currentDifferencSquared += (value - startingMean) * (value - currentMean);
+            sampleCount++;
+        }
+    }
+
+    public abstract class ApplicationView : GuiWidget
 	{
 		public TopContainerWidget TopContainer;
 
@@ -67,8 +106,8 @@ namespace MatterHackers.MatterControl
 		private bool topIsHidden = false;
 
         #region automation test
-#if false
-
+#if true
+        bool item = true;
         bool firstDraw = true;
         AutomationRunner clickPreview;
         Stopwatch timeSinceLastClick = Stopwatch.StartNew();
@@ -77,19 +116,33 @@ namespace MatterHackers.MatterControl
             if (firstDraw)
             {
                 clickPreview = new AutomationRunner();
+                Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > 5)
+                        {
+                            if (item)
+                            {
+                                clickPreview.ClickByName("Library Tab");
+                            }
+                            else
+                            {
+                                clickPreview.ClickByName("Controls Tab");
+                            }
+                            item = !item;
+                            timeSinceLastClick.Restart();
+                        }
+                    }
+                });
                 firstDraw = false;
             }
 
-            if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > 5)
-            {
-                clickPreview.ClickByName("Library Tab");
-                timeSinceLastClick.Restart();
-            }
-
             base.OnDraw(graphics2D);
+            clickPreview.RenderMouse(this, graphics2D);
         }
 #endif
-#endregion
+        #endregion
 
         public override void HideTopContainer()
 		{
@@ -211,8 +264,9 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-#region automation test
+        #region automation test
 #if false
+        bool item = true;
         bool firstDraw = true;
         AutomationRunner clickPreview;
         Stopwatch timeSinceLastClick = Stopwatch.StartNew();
@@ -221,16 +275,30 @@ namespace MatterHackers.MatterControl
             if (firstDraw)
             {
                 clickPreview = new AutomationRunner();
+                Task.Run(() =>
+                {
+                    while(true)
+                    {
+                        if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > 5)
+                        {
+                            if (item)
+                            {
+                                clickPreview.ClickByName("Library Tab");
+                            }
+                            else
+                            {
+                                clickPreview.ClickByName("History Tab");
+                            }
+                            item = !item;
+                            timeSinceLastClick.Restart();
+                        }
+                    }
+                });
                 firstDraw = false;
             }
 
-            if(clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > 5)
-            {
-                clickPreview.ClickByName("Library Tab");
-                timeSinceLastClick.Restart();
-            }
-
             base.OnDraw(graphics2D);
+            clickPreview.RenderMouse(this, graphics2D);
         }
 #endif
 #endregion
