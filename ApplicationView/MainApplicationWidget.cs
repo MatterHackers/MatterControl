@@ -139,7 +139,6 @@ namespace MatterHackers.MatterControl
             }
 
             base.OnDraw(graphics2D);
-            clickPreview.RenderMouse(this, graphics2D);
         }
 #endif
         #endregion
@@ -298,7 +297,6 @@ namespace MatterHackers.MatterControl
             }
 
             base.OnDraw(graphics2D);
-            clickPreview.RenderMouse(this, graphics2D);
         }
 #endif
 #endregion
