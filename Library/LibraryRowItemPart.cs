@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public async override void RemoveFromCollection()
+		public override void RemoveFromCollection()
 		{
 			libraryDataView.CurrentLibraryProvider.RemoveItem(ItemIndex);
 		}
@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.Invalidate();
 		}
 
-		protected async override void RemoveThisFromPrintLibrary()
+		protected override void RemoveThisFromPrintLibrary()
 		{
 			// TODO: The LibraryProvider does not need a printitemwrapper to remove an item! Why not an interger like the others?
 			libraryDataView.CurrentLibraryProvider.RemoveItem(ItemIndex);

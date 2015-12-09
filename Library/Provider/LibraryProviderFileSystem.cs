@@ -208,11 +208,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return Path.GetFileNameWithoutExtension(currentDirectoryFiles[itemIndex]);
 		}
 
-		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex)
+		public override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
 
-			return new PrintItemWrapper(new DataStorage.PrintItem(GetPrintItemName(itemIndex), fileName), this.GetProviderLocator());
+			return Task.FromResult(new PrintItemWrapper(new DataStorage.PrintItem(GetPrintItemName(itemIndex), fileName), this.GetProviderLocator()));
 		}
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)

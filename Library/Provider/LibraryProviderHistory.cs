@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
+		public override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
 		{
 			throw new NotImplementedException();
 			//return PrintHistoryData.Instance.GetPrintItemWrapper(index);
