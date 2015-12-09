@@ -167,9 +167,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			QueueData.Instance.AddItem(item, indexToInsert);
 		}
 
-		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
+		public override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
 		{
-			return QueueData.Instance.GetPrintItemWrapper(index);
+			return Task.FromResult(QueueData.Instance.GetPrintItemWrapper(index));
 		}
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)

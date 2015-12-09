@@ -302,11 +302,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return printItems[itemIndex].Name;
 		}
 
-		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
+		public override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
 		{
 			if (index >= 0 && index < printItems.Count)
 			{
-				return new PrintItemWrapper(printItems[index], this.GetProviderLocator());
+				return Task.FromResult(new PrintItemWrapper(printItems[index], this.GetProviderLocator()));
 			}
 
 			return null;
