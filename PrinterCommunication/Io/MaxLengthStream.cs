@@ -54,6 +54,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             {
                 string lineFromChild = base.ReadLine();
 
+                // disable this for a test
+                return lineFromChild;
+
                 if (lineFromChild != null
                     && LineIsMovement(lineFromChild))
                 {
