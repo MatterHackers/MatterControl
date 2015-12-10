@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 		private bool topIsHidden = false;
 
         #region automation test
-#if true
+#if false
         bool item = true;
         bool firstDraw = true;
         AutomationRunner clickPreview;

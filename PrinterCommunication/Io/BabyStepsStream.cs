@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 layerCount++;
                 if(layerCount == 1)
                 {
-                    maxLengthStream.MaxSegmentLength = 10;
+                    maxLengthStream.MaxSegmentLength = 5;
                 }
             }
             return processedLine;
