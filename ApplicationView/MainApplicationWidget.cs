@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,44 +41,6 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-    public class StatisticsTracker
-    {
-        double valueTotal = 0;
-        long sampleCount = 0;
-        double currentMean = 0.0;
-        double currentDifferencSquared = 0.0;
-
-        public double Mean { get { return valueTotal / sampleCount; } }
-        public double StandardDeviation
-        {
-            get
-            {
-                if (sampleCount > 2)
-                {
-                    return Math.Sqrt(currentDifferencSquared / (sampleCount - 1));
-                }
-
-                return 0;
-            }
-        }
-
-        public void AddValue(double value)
-        {
-            valueTotal += value;
-            double startingMean = currentMean;
-            if (sampleCount > 0)
-            {
-                currentMean += (value - startingMean) / sampleCount;
-            }
-            else
-            {
-                currentMean = value;
-            }
-            currentDifferencSquared += (value - startingMean) * (value - currentMean);
-            sampleCount++;
-        }
-    }
-
     public abstract class ApplicationView : GuiWidget
 	{
 		public TopContainerWidget TopContainer;
@@ -106,11 +68,14 @@ namespace MatterHackers.MatterControl
 		private bool topIsHidden = false;
 
         #region automation test
-#if false
+#if true
+        StatisticsTracker testTracker = new StatisticsTracker();
         bool item = true;
         bool firstDraw = true;
         AutomationRunner clickPreview;
         Stopwatch timeSinceLastClick = Stopwatch.StartNew();
+        Stopwatch totalDrawTime = Stopwatch.StartNew();
+        int drawCount = 0;
         public override void OnDraw(Graphics2D graphics2D)
         {
             if (firstDraw)
@@ -138,7 +103,17 @@ namespace MatterHackers.MatterControl
                 firstDraw = false;
             }
 
+            totalDrawTime.Restart();
             base.OnDraw(graphics2D);
+            totalDrawTime.Stop();
+            if (drawCount++ > 30 && testTracker.Count < 100)
+            {
+                testTracker.AddValue(totalDrawTime.ElapsedMilliseconds);
+                if (testTracker.Count == 100)
+                {
+                    // TODO: report
+                }
+            }
         }
 #endif
         #endregion

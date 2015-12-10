@@ -605,7 +605,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
+        public override void OnDraw(Graphics2D graphics2D)
 		{
 			totalDrawTime.Restart();
 			GuiWidget.DrawCount = 0;
