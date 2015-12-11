@@ -39,10 +39,10 @@ namespace MatterHackers.MatterControl
 {
     public static class PerformanceTests
     {
-        public static void SwitchBetweenWidgets(GuiWidget systemWindow, string firstWidgetName, string secondWidgetName, double switchTimeSeconds)
+        public static void SwitchBetweenWidgets(GuiWidget container, string firstWidgetName, string secondWidgetName, double switchTimeSeconds)
         {
             StatisticsTracker testTracker = new StatisticsTracker("SwitchBetweenTabs");
-            bool item = true;
+            bool clickFirstItem = true;
             bool done = false;
             bool firstDraw = true;
             AutomationRunner clickPreview;
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
                         {
                             if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > switchTimeSeconds)
                             {
-                                if (item)
+                                if (clickFirstItem)
                                 {
                                     clickPreview.ClickByName(firstWidgetName);
                                 }
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
                                 {
                                     clickPreview.ClickByName(secondWidgetName);
                                 }
-                                item = !item;
+                                clickFirstItem = !clickFirstItem;
                                 timeSinceLastClick.Restart();
                             }
                         }
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
                 totalDrawTime.Restart();
             };
 
-            systemWindow.DrawBefore += beforeDraw;
+            container.DrawBefore += beforeDraw;
 
             DrawEventHandler afterDraw = null;
             afterDraw = (sender, e) =>
@@ -92,14 +92,41 @@ namespace MatterHackers.MatterControl
                     if (testTracker.Count == 100)
                     {
                         Trace.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
-                        systemWindow.DrawBefore -= beforeDraw;
-                        systemWindow.DrawBefore -= afterDraw;
+                        container.DrawBefore -= beforeDraw;
+                        container.DrawBefore -= afterDraw;
                         done = true;
                     }
                 }
             };
 
-            systemWindow.DrawAfter += afterDraw;
+            container.DrawAfter += afterDraw;
+        }
+
+        public static void ClickStuff(GuiWidget container, string[] clickThings)
+        {
+            bool firstDraw = true;
+            AutomationRunner clickPreview;
+
+            DrawEventHandler beforeDraw = null;
+            beforeDraw = (sender, e) =>
+            {
+                if (firstDraw)
+                {
+                    clickPreview = new AutomationRunner();
+                    Task.Run(() =>
+                    {
+                        foreach (string clickName in clickThings)
+                        {
+                            clickPreview.ClickByName(clickName, 10);
+                        }
+
+                        container.DrawBefore -= beforeDraw;
+                    });
+                    firstDraw = false;
+                }
+            };
+
+            container.DrawBefore += beforeDraw;
         }
     }
 }

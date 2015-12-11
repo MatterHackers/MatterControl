@@ -50,7 +50,8 @@ namespace MatterHackers.MatterControl
 			string defaultManufacturerLabel = LocalizedString.Get("Select Make");
 			string defaultManufacturerLabelFull = string.Format("- {0} -", defaultManufacturerLabel);
 			ManufacturerDropList = new StyledDropDownList(defaultManufacturerLabelFull, maxHeight: 200);
-			bool addOther = false;
+            ManufacturerDropList.Name = "Select Make";
+            bool addOther = false;
 			string[] printerWhiteListStrings = OemSettings.Instance.PrinterWhiteList.ToArray();
 			List<ManufacturerNameMapping> manufacturerNameMappings = OemSettings.Instance.ManufacturerNameMappings;
 			string pathToManufacturers = "PrinterSettings";
