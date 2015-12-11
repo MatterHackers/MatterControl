@@ -139,8 +139,9 @@ namespace MatterHackers.MatterControl
 			string defaultModelDropDownLabel = LocalizedString.Get("Select Model");
 			string defaultModelDropDownLabelFull = string.Format("- {0} -", defaultModelDropDownLabel);
 			ModelDropList = new StyledDropDownList(defaultModelDropDownLabelFull, maxHeight: 200);
+            ModelDropList.Name = defaultModelDropDownLabel;
 
-			string pathToModels = Path.Combine("PrinterSettings", manufacturer);
+            string pathToModels = Path.Combine("PrinterSettings", manufacturer);
 			if (StaticData.Instance.DirectoryExists((pathToModels)))
 			{
 				foreach (string manufacturerDirectory in StaticData.Instance.GetDirectories(pathToModels))

@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl
         {
             if (firstDraw)
             {
-                PerformanceTests.SwitchBetweenWidgets(this, "Library Tab", "Controls Tab", .1);
+                PerformanceTests.ReportDrawTimeWhileSwitching(this, "Library Tab", "Controls Tab", .1);
                 firstDraw = false;
             }
 
@@ -204,7 +204,18 @@ namespace MatterHackers.MatterControl
         {
             if (firstDraw)
             {
-                PerformanceTests.SwitchBetweenWidgets(this, "Library Tab", "History Tab", .1);
+                //PerformanceTests.ReportDrawTimeWhileSwitching(this, "Library Tab", "History Tab", .1);
+
+                string[] clickThings = new string[]
+                {
+                "History Tab",
+                "Queue Tab",
+                "Library Tab",
+                "History Tab",
+                };
+                //PerformanceTests.ClickStuff(this, clickThings);
+
+
                 firstDraw = false;
             }
 

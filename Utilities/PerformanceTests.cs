@@ -33,13 +33,14 @@ using MatterHackers.GuiAutomation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
     public static class PerformanceTests
     {
-        public static void SwitchBetweenWidgets(GuiWidget container, string firstWidgetName, string secondWidgetName, double switchTimeSeconds)
+        public static void ReportDrawTimeWhileSwitching(GuiWidget container, string firstWidgetName, string secondWidgetName, double switchTimeSeconds)
         {
             StatisticsTracker testTracker = new StatisticsTracker("SwitchBetweenTabs");
             bool clickFirstItem = true;
@@ -102,28 +103,24 @@ namespace MatterHackers.MatterControl
             container.DrawAfter += afterDraw;
         }
 
-        public static void ClickStuff(GuiWidget container, string[] clickThings)
+        public static void ClickStuff(GuiWidget container, string[] clickThings, double secondsBetweenClicks = .1)
         {
-            bool firstDraw = true;
             AutomationRunner clickPreview;
 
             DrawEventHandler beforeDraw = null;
             beforeDraw = (sender, e) =>
             {
-                if (firstDraw)
+                clickPreview = new AutomationRunner();
+                Task.Run(() =>
                 {
-                    clickPreview = new AutomationRunner();
-                    Task.Run(() =>
+                    foreach (string clickName in clickThings)
                     {
-                        foreach (string clickName in clickThings)
-                        {
-                            clickPreview.ClickByName(clickName, 10);
-                        }
+                        clickPreview.ClickByName(clickName, 10);
+                        Thread.Sleep((int)(secondsBetweenClicks * 1000));
+                    }
+                });
 
-                        container.DrawBefore -= beforeDraw;
-                    });
-                    firstDraw = false;
-                }
+                container.DrawBefore -= beforeDraw;
             };
 
             container.DrawBefore += beforeDraw;
