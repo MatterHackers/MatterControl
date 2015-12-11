@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 
         #region automation test
 #if true
-        StatisticsTracker testTracker = new StatisticsTracker();
+        StatisticsTracker testTracker = new StatisticsTracker("ApplicationViewFrameRate");
         bool item = true;
         bool firstDraw = true;
         AutomationRunner clickPreview;
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
                 testTracker.AddValue(totalDrawTime.ElapsedMilliseconds);
                 if (testTracker.Count == 100)
                 {
-                    // TODO: report
+					Trace.WriteLine("StatisticsTrackerReport: " + Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
                 }
             }
         }
