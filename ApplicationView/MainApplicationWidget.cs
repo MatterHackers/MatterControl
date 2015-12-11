@@ -67,56 +67,17 @@ namespace MatterHackers.MatterControl
 
 		private bool topIsHidden = false;
 
-        #region automation test
-#if true
-        StatisticsTracker testTracker = new StatisticsTracker("ApplicationViewFrameRate");
-        bool item = true;
         bool firstDraw = true;
-        AutomationRunner clickPreview;
-        Stopwatch timeSinceLastClick = Stopwatch.StartNew();
-        Stopwatch totalDrawTime = Stopwatch.StartNew();
-        int drawCount = 0;
         public override void OnDraw(Graphics2D graphics2D)
         {
             if (firstDraw)
             {
-                clickPreview = new AutomationRunner();
-                Task.Run(() =>
-                {
-                    while (true)
-                    {
-                        if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > 5)
-                        {
-                            if (item)
-                            {
-                                clickPreview.ClickByName("Library Tab");
-                            }
-                            else
-                            {
-                                clickPreview.ClickByName("Controls Tab");
-                            }
-                            item = !item;
-                            timeSinceLastClick.Restart();
-                        }
-                    }
-                });
+                PerformanceTests.SwitchBetweenWidgets(this, "Library Tab", "Controls Tab", .1);
                 firstDraw = false;
             }
 
-            totalDrawTime.Restart();
             base.OnDraw(graphics2D);
-            totalDrawTime.Stop();
-            if (drawCount++ > 30 && testTracker.Count < 100)
-            {
-                testTracker.AddValue(totalDrawTime.ElapsedMilliseconds);
-                if (testTracker.Count == 100)
-                {
-					Trace.WriteLine("StatisticsTrackerReport: " + Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
-                }
-            }
         }
-#endif
-        #endregion
 
         public override void HideTopContainer()
 		{
@@ -238,43 +199,17 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-        #region automation test
-#if false
-        bool item = true;
         bool firstDraw = true;
-        AutomationRunner clickPreview;
-        Stopwatch timeSinceLastClick = Stopwatch.StartNew();
         public override void OnDraw(Graphics2D graphics2D)
         {
             if (firstDraw)
             {
-                clickPreview = new AutomationRunner();
-                Task.Run(() =>
-                {
-                    while(true)
-                    {
-                        if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > 5)
-                        {
-                            if (item)
-                            {
-                                clickPreview.ClickByName("Library Tab");
-                            }
-                            else
-                            {
-                                clickPreview.ClickByName("History Tab");
-                            }
-                            item = !item;
-                            timeSinceLastClick.Restart();
-                        }
-                    }
-                });
+                PerformanceTests.SwitchBetweenWidgets(this, "Library Tab", "History Tab", .1);
                 firstDraw = false;
             }
 
             base.OnDraw(graphics2D);
         }
-#endif
-#endregion
 
         public override void AddElements()
 		{
