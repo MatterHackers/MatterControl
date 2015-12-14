@@ -41,6 +41,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -290,6 +291,9 @@ namespace MatterHackers.MatterControl.UI
 
 		public static AutomationTesterHarness RunTest(Action<AutomationTesterHarness> testToRun, string testDbFolder = null, string staticDataPathOverride = null, string queueItemFolderToAdd = null, double maxTimeToRun = 60)
 		{
+			StackTrace st = new StackTrace(false);
+			Console.WriteLine("\r\nRunning automation test: " + st.GetFrames().Skip(1).First().GetMethod().Name);
+
 			if (staticDataPathOverride == null)
 			{
 				staticDataPathOverride = Path.Combine("..", "..", "..", "..", "StaticData");
