@@ -40,7 +40,7 @@ namespace TestRunner
 			{
 				Process process = new Process();
 				process.StartInfo.Arguments = string.Format(
-					"{0} /xml:{1} /noshadow:true",
+					"{0} /xml:{1} /noshadow:true /config:Release", // /include:Agg.UI" // /include:MatterControl.UI2;Leveling"
 					Path.GetFullPath("../../../MatterControl.nunit"),
 					Path.GetFullPath(outputFileName));
 				process.StartInfo.FileName = binPath;

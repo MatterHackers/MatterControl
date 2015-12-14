@@ -32,7 +32,6 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using NUnit.Framework;
 using System;
