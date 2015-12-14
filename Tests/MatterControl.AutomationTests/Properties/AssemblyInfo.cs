@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MatterControl.Tests")]
+[assembly: AssemblyTitle("MatterControl.AutomationTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MatterHackers, Inc.")]
-[assembly: AssemblyProduct("MatterControl.Tests")]
+[assembly: AssemblyProduct("MatterControl.AutomationTests")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ecbee48f-eea8-4700-9635-6d8513f8ffcb")]
+[assembly: Guid("418e7058-92ee-4329-86ba-ac26b65afb25")]
 
 // Version information for an assembly consists of the following four values:
 //

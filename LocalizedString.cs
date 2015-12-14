@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 //﻿#define DEBUG_SHOW_TRANSLATED_STRINGS
 
 using MatterHackers.MatterControl;
+using System.IO;
 
 namespace MatterHackers.Localizations
 {
@@ -46,9 +47,16 @@ namespace MatterHackers.Localizations
 				UserSettings.Instance.set("Language", "en");
 			}
 
+			string pathToTranslationsFolder = "Translations";
+
+			// Fall back to english if translation data isn't available
+			if (!Directory.Exists(pathToTranslationsFolder))
+			{
+				return englishText;
+			}
+
 			if (MatterControlTranslationMap == null)
 			{
-				string pathToTranslationsFolder = "Translations";
 				MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
 			}
 #if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG

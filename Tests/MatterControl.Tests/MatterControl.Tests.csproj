@@ -64,20 +64,14 @@
     <Compile Include="..\..\Utilities\ManifestFileHandler.cs">
       <Link>ManifestFileHandler.cs</Link>
     </Compile>
-    <Compile Include="MatterControl\AutomationTests\CheckBoxInLibraryIsClickable.cs" />
-    <Compile Include="MatterControl\AutomationTests\SqLiteLibraryProvider.cs" />
     <Compile Include="MatterControl\LibraryProviderSqliteTests.cs" />
-    <Compile Include="MatterControl\AutomationTests\CreateLibraryFolder.cs" />
-    <Compile Include="MatterControl\LocalLibraryTests.cs" />
     <Compile Include="MatterControl\MatterControlUiFeatures.cs" />
     <Compile Include="MatterControl\MatterControlUtilities.cs" />
     <Compile Include="MatterControl\HtmlParser.cs" />
     <Compile Include="MatterControl\LibraryProviderTests.cs" />
-    <Compile Include="MatterControl\AutomationTests\OptionsTabTests.cs" />
     <Compile Include="MatterControl\PrinterCallBackTests.cs" />
     <Compile Include="MatterControl\PrinterChooserUnitTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
-    <Compile Include="MatterControl\AutomationTests\PrintQueueTests.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
     <Compile Include="MatterControl\SetupIniTests.cs" />
     <Compile Include="MatterControl\Slicing\SliceMappingCLassesTets.cs" />
