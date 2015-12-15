@@ -92,7 +92,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			libraryCreators.Clear();
 			folderImagesForChildren.Clear();
 
-			/*
 			if (includeQueueLibraryProvider)
 			{
 				// put in the queue provider
@@ -100,6 +99,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				AddFolderImage("queue_folder.png");
 			}
 
+            /*
 			if (false)
 			{
 				// put in the history provider
@@ -107,8 +107,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				AddFolderImage("queue_folder.png");
 			} */
 
-			// put in the sqlite provider
-			libraryCreators.Add(new LibraryProviderSQLiteCreator());
+            // put in the sqlite provider
+            libraryCreators.Add(new LibraryProviderSQLiteCreator());
 			AddFolderImage("library_folder.png");
 
 			// Check for LibraryProvider factories and put them in the list too.
