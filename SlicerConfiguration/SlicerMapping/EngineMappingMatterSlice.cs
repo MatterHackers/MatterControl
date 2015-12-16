@@ -134,6 +134,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
 
+            new MapItemToBool("generateSupport", "support_material"),
+
             //infillExtendIntoPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
             new MapItem("infillExtendIntoPerimeter", "infill_overlap_perimeter"),
 
@@ -157,8 +159,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("infillStartingAngle", "fill_angle"),
 
 			new MapItemToBool("wipeAfterRetraction", "wipe"),
-
-            new MapItem("supportInfillStartingAngle", "support_material_infill_angle"),
 
             //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
             new MapItem("insidePerimetersSpeed", "perimeter_speed"),
@@ -263,10 +263,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //supportMaterialSpeed=50 # mm/s.
             new MapItem("supportMaterialSpeed", "support_material_speed"),
-
-            // get the check box on the screen
-            new SupportMatterial("supportEndAngle", "support_material"),
-            new VisibleButNotMappedToEngine("support_material_threshold"),
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
             new MapItem("supportType", "support_type"),
@@ -439,28 +435,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 
 					return (originalValue / nozzleDiameter * 100).ToString();
-				}
-			}
-		}
-
-		public class SupportMatterial : MapItem
-		{
-			public SupportMatterial(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
-			{
-			}
-
-			public override string MappedValue
-			{
-				get
-				{
-					string supportMaterial = ActiveSliceSettings.Instance.GetActiveValue("support_material");
-					if (supportMaterial == "0")
-					{
-						return "-1";
-					}
-
-					return (MapItem.GetValueForKey("support_material_threshold")).ToString();
 				}
 			}
 		}
