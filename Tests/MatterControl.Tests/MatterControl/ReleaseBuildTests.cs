@@ -3,9 +3,11 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml.Linq;
 
 namespace MatterControl.Tests
 {
@@ -22,7 +24,82 @@ namespace MatterControl.Tests
 #endif
         }
 
-        [Test, Category("ReleaseQuality")]
+		[Test, Category("ReleaseQuality")]
+		public void MatterControlKnownAssembliesAreOptimized()
+		{
+			// Rebuild at any time with rebuildDependencies() below
+			string knownAssemblies = @"MatterHackers.VectorMath.dll
+						AGG.dll
+						PlatfromAbstract.dll
+						MatterHackers.PolygonMesh.dll
+						MatterHackers.Csg.dll
+						clipper_library.dll
+						MatterHackers.Agg.UI.dll
+						Tesselate.dll
+						MatterHackers.DataConverters2D.dll
+						MatterHackers.RenderOpenGl.dll
+						RayTracer.dll
+						MatterHackers.DataConverters3D.dll
+						MatterHackers.Localizations.dll
+						MatterHackers.OpenGL.UI.dll
+						agg_platform_win32.dll
+						WindowsFileDialogs.dll
+						Community.CsharpSqlite.dll
+						MatterHackers.SerialPortCommunication.dll
+						MatterHackers.MatterControl.Pulgins.dll
+						MatterHackers.Agg.ImageProcessing.dll
+						MatterHackers.MarchingSquares.dll
+						GuiAutomation.dll
+						../../../../bin/Release/MatterControlAuth.dll
+						../../../../bin/Release/PictureCreator.dll
+						../../../../bin/Release/PrintNotifications.dll
+						../../../../bin/Release/CloudServices.dll
+						../../../../bin/Release/X3GDriver.dll
+						../../../../bin/Release/Mono.Nat.dll
+						../../../../bin/Release/BrailBuilder.dll
+						TextCreator.dll";
+
+			foreach (string assemblyName in knownAssemblies.Split('\n').Select(s => s.Trim()))
+			{
+				var assemblyPath = Path.GetFullPath(assemblyName);
+				if (!File.Exists(assemblyPath))
+				{
+					Console.WriteLine("Skipping missing file: " + assemblyPath);
+					continue;
+				}
+
+				var assembly = Assembly.LoadFrom(assemblyPath);
+
+#if (!DEBUG)
+				IsAssemblyOptimized(assembly);
+#endif
+			}
+		}
+
+		private void rebuildDependencies()
+		{
+			// Update to point to resent buildagent results file
+			var elem = XElement.Load(@"C:\Data\Sources\MatterHackers\BuildAndDeployment\MatterControl\build_sln.xml");
+			var items = elem.Descendants().Where(e => e.Name == "target" && "CopyFilesToOutputDirectory" == (string)e.Attribute("name")).SelectMany(e => e.Elements("message").Select(e2 => e2.Value.TrimEnd('.')).Where(s => s.Contains("Copying") && s.Contains(".dll")));
+
+			var referencedItems = new List<string>();
+
+			foreach (var item in items)
+			{
+				var segments = System.Text.RegularExpressions.Regex.Split(item, "to \"");
+
+				var relativeAssemblyName = segments[1].TrimEnd('"');
+
+				var assemblyName = Path.GetFileName(relativeAssemblyName);
+
+				referencedItems.Add(assemblyName);
+			}
+
+			Console.WriteLine(referencedItems);
+		}
+
+
+		[Test, Category("ReleaseQuality")]
         public void MatterControlDependenciesAreOptimized()
         {
 #if(!DEBUG)
@@ -40,12 +117,10 @@ namespace MatterControl.Tests
                     IsAssemblyOptimized(assembly);
                 }
             }
-
-            Console.WriteLine(string.Join("\r\n", matterControl.GetReferencedAssemblies().Select(a => a.Name).ToArray()));
 #endif
-        }
+		}
 
-        [Test, Category("ReleaseQuality")]
+		[Test, Category("ReleaseQuality")]
         public void ClassicDebugComplicationFlagTests()
         {
 #if(!DEBUG)
