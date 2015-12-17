@@ -1,0 +1,11 @@
+﻿<NUnitProject>
+	<Settings activeconfig="Debug" processModel="Multiple" domainUsage="Multiple" />
+	<Config name="Debug" binpathtype="Auto" runtimeFramework="v4.0.21006">
+		<assembly path="MatterControl.AutomationTests\bin\Debug\MatterControl.AutomationTests.dll" />
+		<assembly path="..\..\CloudServicesPlugin\CloudServices.Tests\bin\Debug\CloudServices.Tests.dll" />
+	</Config>
+	<Config name="Release" binpathtype="Auto" runtimeFramework="v4.0.21006">
+		<assembly path="MatterControl.AutomationTests\bin\Release\MatterControl.AutomationTests.dll" />
+		<assembly path="..\..\CloudServicesPlugin\CloudServices.Tests\bin\Release\CloudServices.Tests.dll" />
+	</Config>
+</NUnitProject>
