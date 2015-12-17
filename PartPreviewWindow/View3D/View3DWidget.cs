@@ -1301,7 +1301,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Rotate"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandRotateOptions);
 
@@ -1310,7 +1310,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rotateOptionContainer.Visible = false;
 				buttonRightPanel.AddChild(rotateOptionContainer);
 
-				expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Scale"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Scale".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandScaleOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandScaleOptions);
 
@@ -1321,7 +1321,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in the mirror options
 				{
-					expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Mirror"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Mirror".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 					expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandMirrorOptions);
 
@@ -1336,7 +1336,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
 
-				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Materials"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
 
 				if (numberOfExtruders > 1)
@@ -1353,7 +1353,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in the view options
 				{
-					expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Display"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 					expandViewOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandViewOptions);
 
@@ -1362,7 +1362,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					viewOptionContainer.Padding = new BorderDouble(left: 4);
 					viewOptionContainer.Visible = false;
 					{
-						CheckBox showBedCheckBox = new CheckBox(LocalizedString.Get("Show Print Bed"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+						CheckBox showBedCheckBox = new CheckBox("Show Print Bed".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 						showBedCheckBox.Checked = true;
 						showBedCheckBox.CheckedStateChanged += (sender, e) =>
 						{
@@ -1372,7 +1372,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (buildHeight > 0)
 						{
-							CheckBox showBuildVolumeCheckBox = new CheckBox(LocalizedString.Get("Show Print Area"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+							CheckBox showBuildVolumeCheckBox = new CheckBox("Show Print Area".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 							showBuildVolumeCheckBox.Checked = false;
 							showBuildVolumeCheckBox.Margin = new BorderDouble(bottom: 5);
 							showBuildVolumeCheckBox.CheckedStateChanged += (sender, e) =>

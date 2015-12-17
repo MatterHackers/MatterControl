@@ -39,6 +39,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -104,17 +105,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public bool SimulateExtrusion
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
-				Invalidate();
-			}
-		}
+        public bool SimulateExtrusion
+        {
+            get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }
+            set
+            {
+                UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
+                Invalidate();
+            }
+        }
 
-		public bool HideExtruderOffsets
+        public bool TransparentExtrusion
+        {
+            get { return (UserSettings.Instance.get("GcodeViewerTransparentExtrusion") == "True"); }
+            set
+            {
+                UserSettings.Instance.set("GcodeViewerTransparentExtrusion", value.ToString());
+                Invalidate();
+            }
+        }
+
+        public bool HideExtruderOffsets
 		{
 			get
 			{
@@ -281,26 +292,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void initialLoading_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			SetGCodeAfterLoad((GCodeFile)e.Result);
+        private async void initialLoading_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            SetGCodeAfterLoad((GCodeFile)e.Result);
 
-			backgroundWorker = new BackgroundWorker();
-			backgroundWorker.WorkerReportsProgress = true;
-			backgroundWorker.WorkerSupportsCancellation = true;
+            gCodeRenderer = new GCodeRenderer(loadedGCode);
 
-			backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(postLoadInitialization_ProgressChanged);
-			backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(postLoadInitialization_RunWorkerCompleted);
+            await Task.Run(() =>
+            {
+                DoPostLoadInitialization();
+            }
+            );
 
-			backgroundWorker.DoWork += new DoWorkEventHandler(DoPostLoadInitialization);
-
-			gCodeRenderer = new GCodeRenderer(loadedGCode);
-			backgroundWorker.RunWorkerAsync(gCodeRenderer);
+            postLoadInitialization_RunWorkerCompleted();
 		}
 
-		public static void DoPostLoadInitialization(object sender, DoWorkEventArgs doWorkEventArgs)
+		public void DoPostLoadInitialization()
 		{
-			GCodeRenderer gCodeRenderer = (GCodeRenderer)doWorkEventArgs.Argument;
 			try
 			{
 				if (gCodeRenderer.GCodeFileToDraw != null)
@@ -324,7 +332,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void postLoadInitialization_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		private void postLoadInitialization_RunWorkerCompleted()
 		{
 			if (DoneLoading != null)
 			{
@@ -339,68 +347,77 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (loadedGCode != null)
 			{
-				//using (new PerformanceTimer("GCode Timer", "Total"))
-				{
-					Affine transform = TotalTransform;
+                //using (new PerformanceTimer("GCode Timer", "Total"))
+                {
+                    Affine transform = TotalTransform;
 
-					if (RenderGrid)
-					{
-						//using (new PerformanceTimer("GCode Timer", "Render Grid"))
-						{
-							double gridLineWidths = 0.2 * layerScale;
+                    if (RenderGrid)
+                    {
+                        //using (new PerformanceTimer("GCode Timer", "Render Grid"))
+                        {
+                            double gridLineWidths = 0.2 * layerScale;
 
-							Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
-							if (graphics2DGl != null)
-							{
-								GlRenderGrid(graphics2DGl, transform, gridLineWidths);
-							}
-							else
-							{
-								CreateGrid(transform);
+                            Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
+                            if (graphics2DGl != null)
+                            {
+                                GlRenderGrid(graphics2DGl, transform, gridLineWidths);
+                            }
+                            else
+                            {
+                                CreateGrid(transform);
 
-								Stroke stroke = new Stroke(grid, gridLineWidths);
-								graphics2D.Render(stroke, gridColor);
-							}
-						}
-					}
+                                Stroke stroke = new Stroke(grid, gridLineWidths);
+                                graphics2D.Render(stroke, gridColor);
+                            }
+                        }
+                    }
 
-					RenderType renderType = RenderType.Extrusions;
-					if (RenderMoves)
-					{
-						renderType |= RenderType.Moves;
-					}
-					if (RenderRetractions)
-					{
-						renderType |= RenderType.Retractions;
-					}
-					if (RenderSpeeds)
-					{
-						renderType |= RenderType.SpeedColors;
-					}
-					if (SimulateExtrusion)
-					{
-						renderType |= RenderType.SimulateExtrusion;
-					}
-					if (HideExtruderOffsets)
-					{
-						renderType |= RenderType.HideExtruderOffsets;
-					}
+                    GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, CreateRenderInfo(),
+                        FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
+                        new Vector2[] { ActiveSliceSettings.Instance.GetOffset(0), ActiveSliceSettings.Instance.GetOffset(1) });
 
-					GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, renderType,
-						FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
-						new Vector2[] { ActiveSliceSettings.Instance.GetOffset(0), ActiveSliceSettings.Instance.GetOffset(1) });
-
-					//using (new PerformanceTimer("GCode Timer", "Render"))
-					{
-						gCodeRenderer.Render(graphics2D, renderInfo);
-					}
-				}
-			}
+                    //using (new PerformanceTimer("GCode Timer", "Render"))
+                    {
+                        gCodeRenderer.Render(graphics2D, renderInfo);
+                    }
+                }
+            }
 
 			base.OnDraw(graphics2D);
 		}
 
-		private void GlRenderGrid(Graphics2DOpenGL graphics2DGl, Affine transform, double width)
+        private RenderType CreateRenderInfo()
+        {
+            RenderType renderType = RenderType.Extrusions;
+            if (RenderMoves)
+            {
+                renderType |= RenderType.Moves;
+            }
+            if (RenderRetractions)
+            {
+                renderType |= RenderType.Retractions;
+            }
+            if (RenderSpeeds)
+            {
+                renderType |= RenderType.SpeedColors;
+            }
+            if (SimulateExtrusion)
+            {
+                renderType |= RenderType.SimulateExtrusion;
+            }
+            if (TransparentExtrusion)
+            {
+                renderType |= RenderType.TransparentExtrusion;
+            }
+            if (HideExtruderOffsets)
+            {
+                renderType |= RenderType.HideExtruderOffsets;
+            }
+
+            return renderType;
+        }
+
+        private void GlRenderGrid(Graphics2DOpenGL graphics2DGl, Affine transform, double width)
 		{
 			graphics2DGl.PreRender();
 			GL.Begin(BeginMode.Triangles);

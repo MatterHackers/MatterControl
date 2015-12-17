@@ -330,11 +330,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				renderType |= RenderType.SpeedColors;
 			}
-			if (gcodeViewWidget.SimulateExtrusion)
-			{
-				renderType |= RenderType.SimulateExtrusion;
-			}
-			if (gcodeViewWidget.HideExtruderOffsets)
+            if (gcodeViewWidget.SimulateExtrusion)
+            {
+                renderType |= RenderType.SimulateExtrusion;
+            }
+            if (gcodeViewWidget.TransparentExtrusion)
+            {
+                renderType |= RenderType.TransparentExtrusion;
+            }
+            if (gcodeViewWidget.HideExtruderOffsets)
 			{
 				renderType |= RenderType.HideExtruderOffsets;
 			}
@@ -432,7 +436,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelInfoContainer.HAnchor = HAnchor.ParentLeftRight;
 			modelInfoContainer.Padding = new BorderDouble(5);
 
-			string printTimeLabel = "Print Time".Localize().ToUpper();
+			string printTimeLabel = "Print Time".Localize();
 			string printTimeLabelFull = string.Format("{0}:", printTimeLabel);
 			// put in the print time
 			modelInfoContainer.AddChild(new TextWidget(printTimeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10));
@@ -463,7 +467,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			//modelInfoContainer.AddChild(new TextWidget("Size:", textColor: ActiveTheme.Instance.PrimaryTextColor));
 
-			string filamentLengthLabel = "Filament Length".Localize().ToUpper();
+			string filamentLengthLabel = "Filament Length".Localize();
 			string filamentLengthLabelFull = string.Format("{0}:", filamentLengthLabel);
 			// show the filament used
 			modelInfoContainer.AddChild(new TextWidget(filamentLengthLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
@@ -476,7 +480,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
 
-			string filamentVolumeLabel = "Filament Volume".Localize().ToUpper();
+			string filamentVolumeLabel = "Filament Volume".Localize();
 			string filamentVolumeLabelFull = string.Format("{0}:", filamentVolumeLabel);
 			modelInfoContainer.AddChild(new TextWidget(filamentVolumeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
@@ -488,7 +492,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
 
-			string weightLabel = "Est. Weight".Localize().ToUpper();
+			string weightLabel = "Est. Weight".Localize();
 			string weightLabelFull = string.Format("{0}:", weightLabel);
 			modelInfoContainer.AddChild(new TextWidget(weightLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 			{
@@ -555,7 +559,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show grid check box
 			{
-				CheckBox showGrid = new CheckBox(LocalizedString.Get("Grid"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				CheckBox showGrid = new CheckBox(LocalizedString.Get("Print Bed"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showGrid.Checked = gcodeViewWidget.RenderGrid;
 				meshViewerWidget.RenderBed = showGrid.Checked;
 				showGrid.CheckedStateChanged += (sender, e) =>
@@ -623,8 +627,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerInfoContainer.AddChild(simulateExtrusion);
 			}
 
-			// put in a simulate extrusion checkbox
-			if (ActiveSliceSettings.Instance.ExtruderCount > 1)
+            // put in a render extrusion transparent checkbox
+            {
+                CheckBox transparentExtrusion = new CheckBox(LocalizedString.Get("Transparent"), textColor: ActiveTheme.Instance.PrimaryTextColor)
+                {
+                    Checked = gcodeViewWidget.TransparentExtrusion,
+                    Margin = new BorderDouble(5, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio,
+                    HAnchor = HAnchor.ParentLeft,
+                };
+
+                transparentExtrusion.CheckedStateChanged += (sender, e) =>
+                {
+                    gcodeViewWidget.TransparentExtrusion = transparentExtrusion.Checked;
+                };
+                layerInfoContainer.AddChild(transparentExtrusion);
+            }
+
+            // put in a simulate extrusion checkbox
+            if (ActiveSliceSettings.Instance.ExtruderCount > 1)
 			{
 				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: ActiveTheme.Instance.PrimaryTextColor);
 				hideExtruderOffsets.Checked = gcodeViewWidget.HideExtruderOffsets;
