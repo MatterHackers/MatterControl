@@ -110,7 +110,7 @@ Advanced
         support_material_speed
         bridge_speed
         gap_fill_speed
-      Speed for non Print Moves
+      Speed for Non-Print Moves
         travel_speed
       Modifiers
         first_layer_speed
