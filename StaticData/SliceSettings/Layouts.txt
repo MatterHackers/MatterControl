@@ -276,7 +276,7 @@ Advanced
         print_leveling_solution
         print_leveling_method
         print_leveling_required_to_print
-      Prob Settings
+      Probe Settings
         manual_probe_paper_width
       Options
     Custom G-Code
