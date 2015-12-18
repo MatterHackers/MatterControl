@@ -2785,8 +2785,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void TurnOffBedAndExtruders()
 		{
-			SetTargetExtruderTemperature(0, 0);
-			SetTargetExtruderTemperature(1, 0);
+            SetTargetExtruderTemperature(0, 0);
+            for (int i = 1; i < ActiveSliceSettings.Instance.ExtruderCount; i++)
+            {
+                SetTargetExtruderTemperature(i, 0);
+            }
 			TargetBedTemperature = 0;
 		}
 
