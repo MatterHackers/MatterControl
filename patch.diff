@@ -1,0 +1,30 @@
+From cad98b18fc17a636c2068b47d9dc909fab082498 Mon Sep 17 00:00:00 2001
+From: Lars Brubaker <larsbrubaker@gmail.com>
+Date: Fri, 18 Dec 2015 14:18:18 -0800
+Subject: [PATCH] Make sure we turn off all heaters when we shut down.
+
+---
+ PrinterCommunication/PrinterConnectionAndCommunication.cs | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/PrinterCommunication/PrinterConnectionAndCommunication.cs b/PrinterCommunication/PrinterConnectionAndCommunication.cs
+index e4b5125..103024b 100644
+--- a/PrinterCommunication/PrinterConnectionAndCommunication.cs
++++ b/PrinterCommunication/PrinterConnectionAndCommunication.cs
+@@ -2785,8 +2785,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
+ 
+ 		private void TurnOffBedAndExtruders()
+ 		{
+-			SetTargetExtruderTemperature(0, 0);
+-			SetTargetExtruderTemperature(1, 0);
++            SetTargetExtruderTemperature(0, 0);
++            for (int i = 1; i < ActiveSliceSettings.Instance.ExtruderCount; i++)
++            {
++                SetTargetExtruderTemperature(i, 0);
++            }
+ 			TargetBedTemperature = 0;
+ 		}
+ 
+-- 
+1.8.3.msysgit.0
+
