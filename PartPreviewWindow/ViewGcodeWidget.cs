@@ -214,10 +214,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					Invalidate();
 
-					if (ActiveLayerChanged != null)
-					{
-						ActiveLayerChanged(this, null);
-					}
+                    ActiveLayerChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -286,10 +283,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void initialLoading_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
-			if (LoadingProgressChanged != null)
-			{
-				LoadingProgressChanged(this, e);
-			}
+			LoadingProgressChanged?.Invoke(this, e);
 		}
 
         private async void initialLoading_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -298,11 +292,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gCodeRenderer = new GCodeRenderer(loadedGCode);
 
-            await Task.Run(() =>
-            {
-                DoPostLoadInitialization();
-            }
-            );
+            await Task.Run(() => DoPostLoadInitialization() );
 
             postLoadInitialization_RunWorkerCompleted();
 		}
@@ -311,10 +301,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			try
 			{
-				if (gCodeRenderer.GCodeFileToDraw != null)
-				{
-					gCodeRenderer.GCodeFileToDraw.GetFilamentUsedMm(ActiveSliceSettings.Instance.FilamentDiameter);
-				}
+                gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.FilamentDiameter);
 			}
 			catch (Exception e)
 			{
@@ -324,20 +311,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
 		}
 
-		private void postLoadInitialization_ProgressChanged(object sender, ProgressChangedEventArgs e)
-		{
-			if (LoadingProgressChanged != null)
-			{
-				LoadingProgressChanged(this, e);
-			}
-		}
-
 		private void postLoadInitialization_RunWorkerCompleted()
 		{
-			if (DoneLoading != null)
-			{
-				DoneLoading(this, null);
-			}
+            DoneLoading?.Invoke(this, null);
 		}
 
 		private PathStorage grid = new PathStorage();

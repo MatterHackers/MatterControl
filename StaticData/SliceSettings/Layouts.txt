@@ -110,7 +110,7 @@ Advanced
         support_material_speed
         bridge_speed
         gap_fill_speed
-      Speed for non Print Moves
+      Speed for Non-Print Moves
         travel_speed
       Modifiers
         first_layer_speed
@@ -276,7 +276,7 @@ Advanced
         print_leveling_solution
         print_leveling_method
         print_leveling_required_to_print
-      Prob Settings
+      Probe Settings
         manual_probe_paper_width
       Options
     Custom G-Code

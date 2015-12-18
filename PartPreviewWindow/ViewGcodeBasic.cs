@@ -921,7 +921,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (gcodeViewWidget != null
 				&& gcodeViewWidget.LoadedGCode == null)
 			{
-				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loaded decided to not load it.
+				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loader decided to not load it.
 				if (File.Exists(printItem.FileLocation))
 				{
 					SetProcessingMessage(string.Format(fileTooBigToLoad, printItem.Name));
