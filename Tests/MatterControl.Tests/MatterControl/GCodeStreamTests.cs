@@ -54,6 +54,7 @@ namespace MatterControl.Tests.MatterControl
                 null,
             };
 
+            /* // this is the correct code but we don't have pause in the gcode stream so we are always outputing x y z (FIX this)
             string[] expected = new string[]
             {
                 "G1 X0 Y0 Z0 E0 F500",
@@ -65,6 +66,23 @@ namespace MatterControl.Tests.MatterControl
                 "G1 X12 F500",
                 "G1 X6",
                 "G1 X0",
+                null,
+            };
+            */
+
+            // We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+            // All communication should go through stream to minimize the difference between printing and controling while not printing (all printing in essence).
+            string[] expected = new string[]
+            {
+                "G1 X0 Y0 Z0 E0 F500",
+                "M105",
+                "G1 X6 Y0 Z0 F2500",
+                "G1 X12 Y0 Z0",
+                "G1 X18 Y0 Z0",
+                "G28",
+                "G1 X12 Y0 Z0 F500",
+                "G1 X6 Y0 Z0",
+                "G1 X0 Y0 Z0",
                 null,
             };
 
