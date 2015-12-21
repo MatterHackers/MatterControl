@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.AddChild(showHelpBox);
 			}
 
-			settingsDetailSelector = new StyledDropDownList("Simple", maxHeight: 200);
+			settingsDetailSelector = new StyledDropDownList("Basic", maxHeight: 200);
 			settingsDetailSelector.AddItem(LocalizedString.Get("Basic"), "Simple");
 			settingsDetailSelector.AddItem(LocalizedString.Get("Standard"), "Intermediate");
 			settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");

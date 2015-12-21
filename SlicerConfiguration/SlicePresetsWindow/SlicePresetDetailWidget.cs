@@ -240,21 +240,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void PopulateLayoutDictionary()
 		{
-			string UserLevel = "Advanced"; //Show all settings
-			for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
+			// Show all settings
+			var advancedSettings = SliceSettingsOrganizer.Instance.UserLevels["Advanced"];
+
+			foreach (OrganizerCategory category in advancedSettings.CategoriesList)
 			{
-				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
-
-				for (int groupIndex = 0; groupIndex < category.GroupsList.Count; groupIndex++)
+				foreach (OrganizerGroup group in category.GroupsList)
 				{
-					OrganizerGroup group = category.GroupsList[groupIndex];
-
-					for (int subGroupIndex = 0; subGroupIndex < group.SubGroupsList.Count; subGroupIndex++)
+					foreach (OrganizerSubGroup subgroup in group.SubGroupsList)
 					{
-						OrganizerSubGroup subgroup = group.SubGroupsList[subGroupIndex];
-						for (int settingIndex = 0; settingIndex < subgroup.SettingDataList.Count; settingIndex++)
+						foreach (OrganizerSettingsData setting in subgroup.SettingDataList)
 						{
-							OrganizerSettingsData setting = subgroup.SettingDataList[settingIndex];
 							string settingDisplayName = "{0} > {1} > {2}".FormatWith(category.Name, group.Name, setting.PresentationName).Replace("\\n", "").Replace(":", "");
 							settingLayoutData[setting.SlicerConfigName] = settingDisplayName;
 						}
