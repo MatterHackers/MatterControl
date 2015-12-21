@@ -305,7 +305,7 @@
     "PresentationName": "Fill Density",
     "HelpText": "The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "% or Ratio",
+    "ExtraSettings": "% or ratio",
     "QuickMenuSettings": [{"MenuName" : "Light", "Value": "10%"},{"MenuName" : "Standard", "Value": "30%"},{"MenuName" : "Heavy", "Value": "90%"}]
   },
   {
