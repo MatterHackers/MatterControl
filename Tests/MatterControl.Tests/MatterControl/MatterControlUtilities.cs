@@ -67,9 +67,7 @@ namespace MatterHackers.MatterControl.UI
 		public static string PathToQueueItemsFolder(string queueItemToLoad)
 		{
 			string temnp = Directory.GetCurrentDirectory();
-
 			string pathToQueueItemFolder = Path.Combine("..", "..", "..", "..", "Tests", "TestData", "QueueItems");
-
 			string fullPathToQueueItem = Path.Combine(pathToQueueItemFolder, queueItemToLoad);
 
 			return Path.GetFullPath(fullPathToQueueItem);
@@ -109,67 +107,23 @@ namespace MatterHackers.MatterControl.UI
 			OutputImage(test, "image-test.tga");
 		}
 
-		public class DataFolderState
+		private static int testID = 0;
+		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
+
+		public static void MakeNewMatterControlAppDataFolderForTesting(string testDBFolderName = null)
 		{
-			internal bool undoDataRename;
-			internal string userDataPath;
-			internal string renamedUserDataPath;
+
+			string temp = Path.Combine("..", "..", "..", "..", "Tests","temp");
+			ApplicationDataStorage.Instance.OverrideApplicationPath(Path.Combine(temp, runName, $"Test{testID++}"));
+
 		}
 
-		public static DataFolderState MakeNewMatterControlAppDataFolderForTesting(string testDBFolderName = null)
-		{
-			DataFolderState state = new DataFolderState();
-			state.userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
-			state.renamedUserDataPath = Path.Combine(Path.GetDirectoryName(state.userDataPath), "-MatterControl");
-
-			int testCount = 0;
-			while (Directory.Exists(state.renamedUserDataPath + testCount.ToString()))
-			{
-				testCount++;
-			}
-
-			state.renamedUserDataPath = state.renamedUserDataPath + testCount.ToString();
-
-			state.undoDataRename = false;
-			if (Directory.Exists(state.userDataPath))
-			{
-				Directory.Move(state.userDataPath, state.renamedUserDataPath);
-				state.undoDataRename = true;
-			}
-
-			Stopwatch time = Stopwatch.StartNew();
-			// Wait for up to some amount of time for the directory to be moved.
-			while (!Directory.Exists(state.renamedUserDataPath)
-				&& time.ElapsedMilliseconds < 1000)
-			{
-				Thread.Sleep(1); // make sure we are not eating all the cpu time.
-			}
-
-			if (testDBFolderName != null)
-			{
-				string fullPathToDataContents = Path.Combine("..", "..", "..", "TestData", "TestDatabaseStates", testDBFolderName);
-				CopyTestDataDBFolderToTemporaryMCAppDataDirectory(fullPathToDataContents);
-
-				if (Directory.Exists(state.renamedUserDataPath))
-				{
-					state.undoDataRename = true;
-				}
-				return state;
-			}
-
-			Datastore.Instance.Initialize();
-
-			return state;
-		}
 
 		public static void AddItemsToQueue(string queueItemFolderToLoad)
 		{
 
 			//DEFAULT LOCATION OF MCP FILE (LOCATION IS CORRECT)
 			string mcpPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
-
-			//RENAME ORIGINAL MCP FILE 
-			//string backupMcp = Path.ChangeExtension(mcpPath, "_original");
 
 			Directory.CreateDirectory(Path.GetDirectoryName(mcpPath));
 
@@ -206,17 +160,6 @@ namespace MatterHackers.MatterControl.UI
 
 		}
 
-		/*public static void ResetMCPFile()
-		{
-			//DEFAULT LOCATION OF MCP FILE
-			string mcpPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
-
-			//RENAME ORIGINAL MCP FILE 
-			string backupMcp = Path.ChangeExtension(mcpPath, "_original");
-
-			File.Copy(backupMcp, mcpPath, true);
-		}*/
-
 		public static LibraryProvider CurrentProvider()
 		{
 			return ApplicationController.Instance.CurrentLibraryDataView.CurrentLibraryProvider;
@@ -235,60 +178,6 @@ namespace MatterHackers.MatterControl.UI
 			return goodNavigate;
 		}
 
-		public static void RestoreStaticDataAfterTesting(DataFolderState state, bool closeDataBase)
-		{
-			if (state.undoDataRename)
-			{
-				Thread.Sleep(500);
-				if (closeDataBase)
-				{
-					Datastore.Instance.Exit();
-				}
-				Stopwatch timeTryingToDelete = Stopwatch.StartNew();
-				while (Directory.Exists(state.userDataPath)
-					&& timeTryingToDelete.Elapsed.TotalSeconds < 10)
-				{
-					try
-					{
-						Directory.Delete(state.userDataPath, true);
-					}
-					catch (Exception e)
-					{
-						Debug.Print(e.Message);
-						GuiWidget.BreakInDebugger();
-					}
-				}
-				Stopwatch time = Stopwatch.StartNew();
-				// Wait for up to some amount of time for the directory to be gone.
-				while (Directory.Exists(state.userDataPath)
-					&& time.ElapsedMilliseconds < 100)
-				{
-					Thread.Sleep(1); // make sure we are not eating all the cpu time.
-				}
-				if (!Directory.Exists(state.userDataPath))
-				{
-					Directory.Move(state.renamedUserDataPath, state.userDataPath);
-				}
-			}
-		}
-
-		public static void CopyTestDataDBFolderToTemporaryMCAppDataDirectory(string testDataDBDirectory)
-		{
-			string matterControlAppDataFolder = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
-
-			foreach (string folder in Directory.GetDirectories(testDataDBDirectory, "*", SearchOption.AllDirectories))
-			{
-				string directoryToCopyFilesTo = folder.Replace(testDataDBDirectory, matterControlAppDataFolder);
-				Directory.CreateDirectory(directoryToCopyFilesTo);
-			}
-
-			foreach (string fileName in Directory.GetFiles(testDataDBDirectory, "*", SearchOption.AllDirectories))
-			{
-				string newFileFullName = fileName.Replace(testDataDBDirectory, matterControlAppDataFolder);
-				File.Copy(fileName, newFileFullName, true);
-			}
-		}
-
 		public static AutomationTesterHarness RunTest(Action<AutomationTesterHarness> testToRun, string testDbFolder = null, string staticDataPathOverride = null, string queueItemFolderToAdd = null, double maxTimeToRun = 60)
 		{
 			StackTrace st = new StackTrace(false);
@@ -303,7 +192,7 @@ namespace MatterHackers.MatterControl.UI
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
 #endif
 			bool showWindow;
-			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewMatterControlAppDataFolderForTesting(testDbFolder);
+			/*MatterControlUtilities.DataFolderState staticDataState =*/MatterControlUtilities.MakeNewMatterControlAppDataFolderForTesting(testDbFolder);
 
 			if (queueItemFolderToAdd != null)
 			{
@@ -312,7 +201,6 @@ namespace MatterHackers.MatterControl.UI
 			
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, maxTimeToRun);
-			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 
 			return testHarness;
 		}
