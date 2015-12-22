@@ -63,7 +63,7 @@ namespace MatterControl.Tests
 		[Test, RunInApplicationDomain]
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
-			MatterControlUtilities.MakeNewMatterControlAppDataFolderForTesting();
+			MatterControlUtilities.OverrideAppDataLocation();
 
 			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };

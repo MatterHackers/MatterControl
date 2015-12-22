@@ -796,7 +796,7 @@
   },
   {
     "SlicerConfigName": "skirt_distance",
-    "PresentationName": "Distance from Object",
+    "PresentationName": "Distance From Object",
     "HelpText": "The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm",
