@@ -46,6 +46,10 @@ namespace MatterHackers.MatterControl.DataStorage
 		private static readonly string applicationDataFolderName = "MatterControl";
 		private readonly string datastoreName = "MatterControl.db";
 		private string applicationPath;
+		//private string testDataPath = Path.Combine("..", "..", "..", "..", "Tests", "TestData");
+
+
+
 		public ApplicationDataStorage()
 		//Constructor - validates that local storage folder exists, creates if necessary
 		{
@@ -71,6 +75,8 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
+		private static string applicationUserDataPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
+		
 		public string ApplicationLibraryDataPath
 		{
 			get
@@ -85,6 +91,14 @@ namespace MatterHackers.MatterControl.DataStorage
 				}
 				return libraryPath;
 			}
+		}
+
+		internal void OverrideApplicationPath(string path)
+		{
+			Directory.CreateDirectory(path);
+			applicationUserDataPath = path;
+			Datastore.Instance = new Datastore();
+			Datastore.Instance.Initialize();
 		}
 
 		public string ApplicationPath
@@ -119,8 +133,9 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 			get
 			{
-				return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
+				return applicationUserDataPath;
 			}
+
 		}
 		/// <summary>
 		/// Returns the path to the sqlite database
@@ -234,6 +249,10 @@ namespace MatterHackers.MatterControl.DataStorage
 					globalInstance = new Datastore();
 				}
 				return globalInstance;
+			}
+			internal set
+			{
+				globalInstance = value;
 			}
 		}
 		public void Exit()
