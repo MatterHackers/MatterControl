@@ -24,7 +24,6 @@ namespace MatterHackers.MatterControl.UI
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
 					testRunner.ClickByName("SettingsAndControls", 5);
 					testRunner.Wait(2);
 					testRunner.ClickByName("Options Tab", 6);
@@ -33,7 +32,8 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(terminalWindowExists1 == false, "Terminal Window does not exist");
 
 					testRunner.ClickByName("Show Terminal Button", 6);
-		
+					testRunner.Wait(1);
+
 					SystemWindow containingWindow;
 					GuiWidget terminalWindow = testRunner.GetWidgetByName("Gcode Terminal", out containingWindow, 3);
 					resultsHarness.AddTestResult(terminalWindow != null, "Terminal Window exists after Show Terminal button is clicked");
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests

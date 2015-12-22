@@ -40,13 +40,13 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Save Button", 1));
 
 					// ensure that it is now in the library folder (that the folder updated)
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item " + "Test Part", 5), "The part we added sholud be in the library");
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item " + "Test Part", 5), "The part we added should be in the library");
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
+					MatterControlUtilities.CloseMatterControl(testRunner); 
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_One_Queue_No_Library");
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 8); // make sure we ran all our tests
