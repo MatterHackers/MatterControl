@@ -50,10 +50,13 @@ namespace MatterHackers.MatterControl.VersionManagement
 	{
 		protected Dictionary<string, string> requestValues;
 		protected string uri;
+
 		public WebRequestBase()
 		{
 			requestValues = new Dictionary<string, string>();
 		}
+
+		public int Timeout { get; set; } = 100000;
 
 		public event EventHandler RequestComplete;
 
@@ -124,6 +127,9 @@ namespace MatterHackers.MatterControl.VersionManagement
 		protected void SendRequest()
 		{
 			RequestManager requestManager = new RequestManager();
+
+			requestManager.Timeout = this.Timeout;
+
 			string jsonToSend = JsonConvert.SerializeObject(requestValues);
 
 			System.Diagnostics.Trace.Write(string.Format("ServiceRequest: {0}\r\n  {1}\r\n", uri, string.Join("\r\n\t", jsonToSend.Split(','))));
