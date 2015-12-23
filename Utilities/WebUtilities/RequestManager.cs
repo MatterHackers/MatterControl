@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
@@ -37,6 +38,8 @@ namespace MatterHackers.MatterControl
 	public class RequestManager
 	{
 		public string LastResponse { protected set; get; }
+
+		public int Timeout { get; internal set; } = 100000;
 
 		private CookieContainer cookies = new CookieContainer();
 
@@ -119,6 +122,9 @@ namespace MatterHackers.MatterControl
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
 			// Set the Method property of the request to POST.
 			request.Method = method;
+
+			request.Timeout = this.Timeout;
+
 			// Set cookie container to maintain cookies
 			request.CookieContainer = cookies;
 			request.AllowAutoRedirect = false;
@@ -131,6 +137,7 @@ namespace MatterHackers.MatterControl
 			{
 				request.Credentials = new NetworkCredential(login, password);
 			}
+
 			if (method == "POST")
 			{
 				// Convert POST data to a byte array.
@@ -151,6 +158,10 @@ namespace MatterHackers.MatterControl
 				}
 				catch (WebException ex)
 				{
+					if(ex.Status == WebExceptionStatus.Timeout)
+					{
+						LastResponse = JsonConvert.SerializeObject(new { status = "error", statuscode = 408 });
+					}
 					Console.WriteLine("Web exception occurred. Status code: {0}", ex.Status);
 				}
 				catch (IOException ioException)
