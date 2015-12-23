@@ -1235,7 +1235,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnCommunicationStateChanged(EventArgs e)
 		{
+			
 			CommunicationStateChanged.CallEvents(this, e);
+#if __ANDROID__
+
+			//Path to the printer output file 
+			string pathToPrintOutputFile = Path.Combine(ApplicationDataStorage.Instance.PublicDataStoragePath, "print_output.txt");
+
+			if (CommunicationState == CommunicationStates.FinishedPrint)
+			{
+				//Only write to the text file if file exists 
+				if (File.Exists(pathToPrintOutputFile))
+				{
+					Task.Run(() =>
+					{
+						File.WriteAllLines(pathToPrintOutputFile, PrinterOutputCache.Instance.PrinterLines);
+					});
+				}
+			}
+#endif
 		}
 
 		public void OnConnectionFailed(EventArgs e)
