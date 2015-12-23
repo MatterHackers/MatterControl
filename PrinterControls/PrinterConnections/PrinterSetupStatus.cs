@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 			macroDict["Offset 1"] = "M565 Z1;\nM500";
 			macroDict["Offset 1.1"] = "M565 Z1.1;\nM500";
 			macroDict["Offset 1.2"] = "M565 Z1.2;\nM500";
-            macroDict["Z Offset"] = "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;";
+			macroDict["Z Offset"] = "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;";
 
 			//Determine if baud rate is needed and show controls if required
 			string baudRate;
