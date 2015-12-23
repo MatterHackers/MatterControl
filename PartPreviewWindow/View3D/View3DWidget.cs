@@ -461,13 +461,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         MeshGroup booleanGroup;
         ScaleRotateTranslate groupTransform;
         Vector3 offset = new Vector3();
-        Vector3 direction = new Vector3(1.1, 1.2, 1.3);
+        Vector3 direction = new Vector3(.11, .12, .13);
         Vector3 centering = new Vector3(100, 100, 20);
         private void CreateBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
         {
             Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
+			//boxA.Triangulate();
             boxA.Translate(centering);
             Mesh boxB = PlatonicSolids.CreateCube(40, 40, 40);
+			//boxB.Triangulate();
 
             for (int i = 0; i < 3; i++)
             {
@@ -492,6 +494,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             meshViewerWidget.MeshGroups.Remove(booleanGroup);
             meshViewerWidget.MeshGroupTransforms.Remove(groupTransform);
+			UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
         }
 #endif
 
