@@ -9,6 +9,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class PrintLevelingData
 	{
+		public List<Vector3> SampledPositions = new List<Vector3>();
 		private static bool activelyLoading = false;
 
 		private static Printer activePrinter = null;
@@ -28,11 +29,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		[JsonConverter(typeof(StringEnumConverter))]
 		public enum LevelingSystem { Probe3Points, Probe2Points, Probe7PointRadial, Probe13PointRadial }
 
-		public List<Vector3> SampledPositions = new List<Vector3>();
-
 		public LevelingSystem CurrentPrinterLevelingSystem
 		{
-			get 
+			get
 			{
 				switch (ActiveSliceSettings.Instance.GetActiveValue("print_leveling_solution"))
 				{
@@ -135,6 +134,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return instance;
 		}
 
+		public void Commit()
+		{
+			if (!activelyLoading)
+			{
+				string newLevelingInfo = Newtonsoft.Json.JsonConvert.SerializeObject(this);
+
+				// clear the legacy value
+				activePrinter.PrintLevelingProbePositions = "";
+				// set the new value
+				activePrinter.PrintLevelingJsonData = newLevelingInfo;
+				activePrinter.Commit();
+			}
+		}
+
 		private static void CreateFromJsonOrLegacy(string jsonData, string depricatedPositionsCsv3ByXYZ)
 		{
 			if (jsonData != null)
@@ -151,20 +164,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			else
 			{
 				instance = new PrintLevelingData();
-			}
-		}
-
-		public void Commit()
-		{
-			if (!activelyLoading)
-			{
-				string newLevelingInfo = Newtonsoft.Json.JsonConvert.SerializeObject(this);
-
-				// clear the legacy value
-				activePrinter.PrintLevelingProbePositions = "";
-				// set the new value
-				activePrinter.PrintLevelingJsonData = newLevelingInfo;
-				activePrinter.Commit();
 			}
 		}
 

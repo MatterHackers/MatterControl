@@ -294,57 +294,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetVisibleControls()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+
+			var currentStatus = PrinterConnectionAndCommunication.Instance.CommunicationState;
+			var connected =
+					currentStatus == PrinterConnectionAndCommunication.CommunicationStates.Connected ||
+					currentStatus == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint;
+
+			if (ActivePrinterProfile.Instance.ActivePrinter == null || !connected)
 			{
-				// no printer selected
 				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
-			else // we at least have a printer selected
+			else
 			{
-				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
-					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-						printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						break;
-
-					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-						printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						break;
-
-					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-						printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						break;
-
-					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						switch (PrinterConnectionAndCommunication.Instance.PrintingState)
-						{
-							case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:
-							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
-							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
-							case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
-								printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-								break;
-
-							default:
-								throw new NotImplementedException();
-						}
-						break;
-
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						break;
-
-					default:
-						throw new NotImplementedException();
-				}
+				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 			}
 		}
 	}

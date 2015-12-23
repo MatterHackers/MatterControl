@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 
 			// put in the movement edit controls
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-			if (levelingData.SampledPositions.Count > 0)
+			if (EditSamplePositionList(levelingData))
 			{
 				for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 				{
@@ -190,11 +190,22 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(DoSave_Click);
 		}
 
+		bool EditSamplePositionList(PrintLevelingData levelingData)
+		{
+			if (levelingData.CurrentPrinterLevelingSystem == PrintLevelingData.LevelingSystem.Probe7PointRadial
+				|| levelingData.CurrentPrinterLevelingSystem == PrintLevelingData.LevelingSystem.Probe13PointRadial)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		private void DoSave_Click()
 		{
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
-			if (levelingData.SampledPositions.Count > 0)
+			if (EditSamplePositionList(levelingData))
 			{
 				for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 				{
