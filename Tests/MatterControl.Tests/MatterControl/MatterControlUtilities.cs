@@ -50,6 +50,10 @@ namespace MatterHackers.MatterControl.UI
 	{
 		private static bool saveImagesForDebug = true;
 
+		private static int testID = 0;
+
+		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
+
 		private static void RemoveAllFromQueue(AutomationRunner testRunner)
 		{
 			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", 2));
@@ -66,11 +70,8 @@ namespace MatterHackers.MatterControl.UI
 
 		public static string PathToQueueItemsFolder(string queueItemToLoad)
 		{
-			string temnp = Directory.GetCurrentDirectory();
 			string pathToQueueItemFolder = Path.Combine("..", "..", "..", "..", "Tests", "TestData", "QueueItems");
-			string fullPathToQueueItem = Path.Combine(pathToQueueItemFolder, queueItemToLoad);
-
-			return Path.GetFullPath(fullPathToQueueItem);
+			return Path.GetFullPath(Path.Combine(pathToQueueItemFolder, queueItemToLoad));
 		}
 
 		public static void CloseMatterControl(AutomationRunner testRunner)
@@ -107,17 +108,16 @@ namespace MatterHackers.MatterControl.UI
 			OutputImage(test, "image-test.tga");
 		}
 
-		private static int testID = 0;
-		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
-
-		public static void MakeNewMatterControlAppDataFolderForTesting(string testDBFolderName = null)
+		/// <summary>
+		/// Overrides the AppData location, ensuring each test starts with a fresh MatterControl database.
+		/// </summary>
+		public static void OverrideAppDataLocation()
 		{
+			string tempFolderPath = Path.Combine("..", "..", "..", "..", "Tests","temp");
 
-			string temp = Path.Combine("..", "..", "..", "..", "Tests","temp");
-			ApplicationDataStorage.Instance.OverrideApplicationPath(Path.Combine(temp, runName, $"Test{testID++}"));
-
+			ApplicationDataStorage.Instance.OverrideAppDataLocation(
+				Path.Combine(tempFolderPath, runName, $"Test{testID++}"));
 		}
-
 
 		public static void AddItemsToQueue(string queueItemFolderToLoad)
 		{
@@ -142,7 +142,9 @@ namespace MatterHackers.MatterControl.UI
 			//CREATE EMPTY TESTPARTS FOLDER
 			Directory.CreateDirectory(queueData);
 
-			foreach (string file in Directory.GetFiles(Path.Combine("..", "..", "..", "TestData", "QueueItems", queueItemFolderToLoad)))
+			string queueItemTestDataFolder = Path.Combine("..", "..", "..", "TestData", "QueueItems");
+
+			foreach (string file in Directory.GetFiles(Path.Combine(queueItemTestDataFolder, queueItemFolderToLoad)))
 			{
 				string newFilePath = Path.Combine(queueData, Path.GetFileName(file));
 				File.Copy(file, newFilePath, true);
@@ -178,8 +180,13 @@ namespace MatterHackers.MatterControl.UI
 			return goodNavigate;
 		}
 
-		public static AutomationTesterHarness RunTest(Action<AutomationTesterHarness> testToRun, string testDbFolder = null, string staticDataPathOverride = null, string queueItemFolderToAdd = null, double maxTimeToRun = 60)
+		public static AutomationTesterHarness RunTest(
+			Action<AutomationTesterHarness> testToRun, 
+			string staticDataPathOverride = null, 
+			double maxTimeToRun = 60, 
+			QueueTemplate queueItemFolderToAdd = QueueTemplate.None)
 		{
+			// Walk back a step in the stack and output the callers name
 			StackTrace st = new StackTrace(false);
 			Console.WriteLine("\r\nRunning automation test: " + st.GetFrames().Skip(1).First().GetMethod().Name);
 
@@ -187,22 +194,31 @@ namespace MatterHackers.MatterControl.UI
 			{
 				staticDataPathOverride = Path.Combine("..", "..", "..", "..", "StaticData");
 			}
+
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
 #endif
-			bool showWindow;
-			/*MatterControlUtilities.DataFolderState staticDataState =*/MatterControlUtilities.MakeNewMatterControlAppDataFolderForTesting(testDbFolder);
+			MatterControlUtilities.OverrideAppDataLocation();
 
-			if (queueItemFolderToAdd != null)
+			if (queueItemFolderToAdd != QueueTemplate.None)
 			{
-				MatterControlUtilities.AddItemsToQueue(queueItemFolderToAdd);
+				string queueTemplateDirectory = queueItemFolderToAdd.ToString();
+				MatterControlUtilities.AddItemsToQueue(queueTemplateDirectory);
 			}
-			
-			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
-			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, maxTimeToRun);
 
-			return testHarness;
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance();
+			return AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, maxTimeToRun);
 		}
+	}
+
+	/// <summary>
+	/// Represents a queue template folder on disk (located at Tests/TestData/QueueItems) that should be synced into the default
+	/// queue during test init. The enum name and folder name *must* be the same in order to function
+	/// </summary>
+	public enum QueueTemplate
+	{
+		None,
+		Three_Queue_Items
 	}
 }

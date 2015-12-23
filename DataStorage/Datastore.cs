@@ -46,9 +46,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		private static readonly string applicationDataFolderName = "MatterControl";
 		private readonly string datastoreName = "MatterControl.db";
 		private string applicationPath;
-		//private string testDataPath = Path.Combine("..", "..", "..", "..", "Tests", "TestData");
-
-
+		private static string applicationUserDataPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
 
 		public ApplicationDataStorage()
 		//Constructor - validates that local storage folder exists, creates if necessary
@@ -75,8 +73,6 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
-		private static string applicationUserDataPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
-		
 		public string ApplicationLibraryDataPath
 		{
 			get
@@ -93,10 +89,18 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
-		internal void OverrideApplicationPath(string path)
+		/// <summary>
+		/// Overrides the AppData location.
+		/// </summary>
+		/// <param name="path">The new AppData path.</param>
+		internal void OverrideAppDataLocation(string path)
 		{
+			// Ensure the target directory exists
 			Directory.CreateDirectory(path);
+
 			applicationUserDataPath = path;
+
+			// Initialize a fresh datastore instance after overriding the AppData path
 			Datastore.Instance = new Datastore();
 			Datastore.Instance.Initialize();
 		}
@@ -135,8 +139,8 @@ namespace MatterHackers.MatterControl.DataStorage
 			{
 				return applicationUserDataPath;
 			}
-
 		}
+
 		/// <summary>
 		/// Returns the path to the sqlite database
 		/// </summary>
@@ -250,6 +254,8 @@ namespace MatterHackers.MatterControl.DataStorage
 				}
 				return globalInstance;
 			}
+
+			// Special case to allow tests to set custom application paths 
 			internal set
 			{
 				globalInstance = value;

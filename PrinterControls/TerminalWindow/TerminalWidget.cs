@@ -32,9 +32,11 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.DataStorage;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace MatterHackers.MatterControl
 {
@@ -116,6 +118,7 @@ namespace MatterHackers.MatterControl
 
 					textScrollWidget = new TextScrollWidget(PrinterOutputCache.Instance.PrinterLines);
 					//outputScrollWidget.Height = 100;
+					Debug.WriteLine(PrinterOutputCache.Instance.PrinterLines);
 					textScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 					textScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 					textScrollWidget.HAnchor = HAnchor.ParentLeftRight;

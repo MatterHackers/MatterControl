@@ -38,92 +38,92 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-    public static class PerformanceTests
-    {
-        public static void ReportDrawTimeWhileSwitching(GuiWidget container, string firstWidgetName, string secondWidgetName, double switchTimeSeconds)
-        {
-            StatisticsTracker testTracker = new StatisticsTracker("SwitchBetweenTabs");
-            bool clickFirstItem = true;
-            bool done = false;
-            bool firstDraw = true;
-            AutomationRunner clickPreview;
-            Stopwatch timeSinceLastClick = Stopwatch.StartNew();
-            Stopwatch totalDrawTime = Stopwatch.StartNew();
-            int drawCount = 0;
+	public static class PerformanceTests
+	{
+		public static void ReportDrawTimeWhileSwitching(GuiWidget container, string firstWidgetName, string secondWidgetName, double switchTimeSeconds)
+		{
+			StatisticsTracker testTracker = new StatisticsTracker("SwitchBetweenTabs");
+			bool clickFirstItem = true;
+			bool done = false;
+			bool firstDraw = true;
+			AutomationRunner clickPreview;
+			Stopwatch timeSinceLastClick = Stopwatch.StartNew();
+			Stopwatch totalDrawTime = Stopwatch.StartNew();
+			int drawCount = 0;
 
-            DrawEventHandler beforeDraw = (sender, e) =>
-            {
-                if (firstDraw)
-                {
-                    clickPreview = new AutomationRunner();
-                    Task.Run(() =>
-                    {
-                        while (!done)
-                        {
-                            if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > switchTimeSeconds)
-                            {
-                                if (clickFirstItem)
-                                {
-                                    clickPreview.ClickByName(firstWidgetName);
-                                }
-                                else
-                                {
-                                    clickPreview.ClickByName(secondWidgetName);
-                                }
-                                clickFirstItem = !clickFirstItem;
-                                timeSinceLastClick.Restart();
-                            }
-                        }
-                    });
-                    firstDraw = false;
-                }
+			DrawEventHandler beforeDraw = (sender, e) =>
+			{
+				if (firstDraw)
+				{
+					clickPreview = new AutomationRunner();
+					Task.Run(() =>
+					{
+						while (!done)
+						{
+							if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > switchTimeSeconds)
+							{
+								if (clickFirstItem)
+								{
+									clickPreview.ClickByName(firstWidgetName);
+								}
+								else
+								{
+									clickPreview.ClickByName(secondWidgetName);
+								}
+								clickFirstItem = !clickFirstItem;
+								timeSinceLastClick.Restart();
+							}
+						}
+					});
+					firstDraw = false;
+				}
 
-                totalDrawTime.Restart();
-            };
+				totalDrawTime.Restart();
+			};
 
-            container.DrawBefore += beforeDraw;
+			container.DrawBefore += beforeDraw;
 
-            DrawEventHandler afterDraw = null;
-            afterDraw = (sender, e) =>
-            {
-                totalDrawTime.Stop();
-                if (drawCount++ > 30 && testTracker.Count < 100)
-                {
-                    testTracker.AddValue(totalDrawTime.ElapsedMilliseconds);
-                    if (testTracker.Count == 100)
-                    {
-                        Trace.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
-                        container.DrawBefore -= beforeDraw;
-                        container.DrawBefore -= afterDraw;
-                        done = true;
-                    }
-                }
-            };
+			DrawEventHandler afterDraw = null;
+			afterDraw = (sender, e) =>
+			{
+				totalDrawTime.Stop();
+				if (drawCount++ > 30 && testTracker.Count < 100)
+				{
+					testTracker.AddValue(totalDrawTime.ElapsedMilliseconds);
+					if (testTracker.Count == 100)
+					{
+						Trace.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
+						container.DrawBefore -= beforeDraw;
+						container.DrawBefore -= afterDraw;
+						done = true;
+					}
+				}
+			};
 
-            container.DrawAfter += afterDraw;
-        }
+			container.DrawAfter += afterDraw;
+		}
 
-        public static void ClickStuff(GuiWidget container, string[] clickThings, double secondsBetweenClicks = .1)
-        {
-            AutomationRunner clickPreview;
+		public static void ClickStuff(GuiWidget container, string[] clickThings, double secondsBetweenClicks = .1)
+		{
+			AutomationRunner clickPreview;
 
-            DrawEventHandler beforeDraw = null;
-            beforeDraw = (sender, e) =>
-            {
-                clickPreview = new AutomationRunner();
-                Task.Run(() =>
-                {
-                    foreach (string clickName in clickThings)
-                    {
-                        clickPreview.ClickByName(clickName, 10);
-                        Thread.Sleep((int)(secondsBetweenClicks * 1000));
-                    }
-                });
+			DrawEventHandler beforeDraw = null;
+			beforeDraw = (sender, e) =>
+			{
+				clickPreview = new AutomationRunner();
+				Task.Run(() =>
+				{
+					foreach (string clickName in clickThings)
+					{
+						clickPreview.ClickByName(clickName, 10);
+						Thread.Sleep((int)(secondsBetweenClicks * 1000));
+					}
+				});
 
-                container.DrawBefore -= beforeDraw;
-            };
+				container.DrawBefore -= beforeDraw;
+			};
 
-            container.DrawBefore += beforeDraw;
-        }
-    }
+			container.DrawBefore += beforeDraw;
+		}
+	}
 }

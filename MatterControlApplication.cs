@@ -114,11 +114,10 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private MatterControlApplication(double width, double height, out bool showWindow)
+		private MatterControlApplication(double width, double height)
 			: base(width, height)
 		{
 			Name = "MatterControl";
-			showWindow = false;
 
 			// set this at startup so that we can tell next time if it got set to true in close
 			UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
@@ -136,50 +135,10 @@ namespace MatterHackers.MatterControl
 				string commandUpper = command.ToUpper();
 				switch (commandUpper)
 				{
-					case "TEST":
-						CheckKnownAssemblyConditionalCompSymbols();
-						return;
-
 					case "FORCE_SOFTWARE_RENDERING":
 						forceSofwareRendering = true;
 						GL.ForceSoftwareRendering();
 						break;
-
-					case "MHSERIAL_TO_ANDROID":
-						{
-							Dictionary<string, string> vidPid_NameDictionary = new Dictionary<string, string>();
-							string[] MHSerialLines = File.ReadAllLines(Path.Combine("..", "..", "StaticData", "Drivers", "MHSerial", "MHSerial.inf"));
-							foreach (string line in MHSerialLines)
-							{
-								if (line.Contains("=DriverInstall,"))
-								{
-									string name = Regex.Match(line, "%(.*).name").Groups[1].Value;
-									string vid = Regex.Match(line, "VID_(.*)&PID").Groups[1].Value;
-									string pid = Regex.Match(line, "PID_([0-9a-fA-F]+)").Groups[1].Value;
-									string vidPid = "{0},{1}".FormatWith(vid, pid);
-									if (!vidPid_NameDictionary.ContainsKey(vidPid))
-									{
-										vidPid_NameDictionary.Add(vidPid, name);
-									}
-								}
-							}
-
-							using (StreamWriter deviceFilter = new StreamWriter("deviceFilter.txt"))
-							{
-								using (StreamWriter serialPort = new StreamWriter("serialPort.txt"))
-								{
-									foreach (KeyValuePair<string, string> vidPid_Name in vidPid_NameDictionary)
-									{
-										string[] vidPid = vidPid_Name.Key.Split(',');
-										int vid = Int32.Parse(vidPid[0], System.Globalization.NumberStyles.HexNumber);
-										int pid = Int32.Parse(vidPid[1], System.Globalization.NumberStyles.HexNumber);
-										serialPort.WriteLine("customTable.AddProduct(0x{0:X4}, 0x{1:X4}, cdcDriverType);  // {2}".FormatWith(vid, pid, vidPid_Name.Value));
-										deviceFilter.WriteLine("<!-- {2} -->\n<usb-device vendor-id=\"{0}\" product-id=\"{1}\" />".FormatWith(vid, pid, vidPid_Name.Value));
-									}
-								}
-							}
-						}
-						return;
 
 					case "CLEAR_CACHE":
 						AboutWidget.DeleteCacheData();
@@ -346,8 +305,6 @@ namespace MatterHackers.MatterControl
 
 				DesktopPosition = new Point2D(xpos, ypos);
 			}
-
-			showWindow = true;
 		}
 
         bool dropWasOnChild = true;
@@ -433,20 +390,15 @@ namespace MatterHackers.MatterControl
 			{
 				if (instance == null)
 				{
-					bool showWindow;
-					instance = CreateInstance(out showWindow);
-
-					if (showWindow)
-					{
-						instance.ShowAsSystemWindow();
-					}
+					instance = CreateInstance();
+					instance.ShowAsSystemWindow();
 				}
 
 				return instance;
 			}
 		}
 
-		public static MatterControlApplication CreateInstance(out bool showWindow)
+		public static MatterControlApplication CreateInstance()
 		{
 			// try and open our window matching the last size that we had for it.
 			string windowSize = ApplicationSettings.Instance.get("WindowSize");
@@ -461,7 +413,7 @@ namespace MatterHackers.MatterControl
 
             using (new PerformanceTimer("Startup", "Total"))
             {
-                instance = new MatterControlApplication(width, height, out showWindow);
+                instance = new MatterControlApplication(width, height);
             }
 
 			return instance;
@@ -629,7 +581,6 @@ namespace MatterHackers.MatterControl
 
 			if (firstDraw)
 			{
-                //Task.Run((Action)AutomationTest);
 				UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
 				firstDraw = false;
@@ -645,35 +596,14 @@ namespace MatterHackers.MatterControl
 
 				TerminalWindow.ShowIfLeftOpen();
 
-				if (AfterFirstDraw != null)
-				{
-					AfterFirstDraw();
-				}
-
-				UiThread.RunOnIdle(() =>
-				{
-					//StyledMessageBox.ShowMessageBox(null, "message that is long and wraps. message that is long and wraps. message that is long and wraps." , "caption", StyledMessageBox.MessageType.YES_NO);
-					// show a dialog to tell the user there is an update
-				});
+				AfterFirstDraw?.Invoke();
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
 			//msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
 		}
 
-        private void AutomationTest()
-        {
-            AutomationRunner test = new AutomationRunner("C:/TestImages");
-            test.Wait(2);
-			test.ClickByName("SettingsAndControls");
-            test.Wait(2);
-			test.ClickImage("BackButton.png");
-
-
-			//ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
-		}
-
-        public override void OnMouseMove(MouseEventArgs mouseEvent)
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			if (GuiWidget.DebugBoundsUnderMouse)
 			{

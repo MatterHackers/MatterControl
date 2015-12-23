@@ -26,6 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+//#define DoBooleanTest
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -35,7 +36,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -49,7 +49,6 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -184,7 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							EnterEditAndCreateSelectionData();
 						});
 					};
-					if (printItemWrapper != null 
+					if (printItemWrapper != null
 						&& printItemWrapper.PrintItem.ReadOnly)
 					{
 						addButton.Enabled = false;
@@ -197,15 +196,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						EnterEditAndCreateSelectionData();
 					};
-					
-					if (printItemWrapper != null 
+
+					if (printItemWrapper != null
 						&& printItemWrapper.PrintItem.ReadOnly)
 					{
 						enterEdittingButton.Enabled = false;
 					}
 
 					Button exportButton = textImageButtonFactory.Generate("Export...".Localize());
-					if (printItemWrapper != null && 
+					if (printItemWrapper != null &&
 						(printItemWrapper.PrintItem.Protected || printItemWrapper.PrintItem.ReadOnly))
 					{
 						exportButton.Enabled = false;
@@ -379,7 +378,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.ResetView += (sender, e) =>
 			{
 				SetDefaultView();
-            };
+			};
 
 			buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
 			buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
@@ -451,7 +450,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			SetDefaultView();
+
+#if DoBooleanTest
+            DrawBefore += CreateBooleanTestGeometry;
+            DrawAfter += RemoveBooleanTestGeometry;
+#endif
 		}
+
+#if DoBooleanTest
+        MeshGroup booleanGroup;
+        ScaleRotateTranslate groupTransform;
+        Vector3 offset = new Vector3();
+        Vector3 direction = new Vector3(.11, .12, .13);
+        Vector3 centering = new Vector3(100, 100, 20);
+        private void CreateBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
+        {
+            Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
+			//boxA.Triangulate();
+            boxA.Translate(centering);
+            Mesh boxB = PlatonicSolids.CreateCube(40, 40, 40);
+			//boxB.Triangulate();
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (Math.Abs(direction[i] + offset[i]) > 10)
+                {
+                    direction[i] = -direction[i];
+                }
+            }
+            offset += direction;
+
+            boxB.Translate(offset + centering);
+
+            booleanGroup = new MeshGroup();
+            booleanGroup.Meshes.Add(PolygonMesh.Csg.CsgOperations.Union(boxA, boxB));
+            meshViewerWidget.MeshGroups.Add(booleanGroup);
+
+            groupTransform = ScaleRotateTranslate.Identity();
+            meshViewerWidget.MeshGroupTransforms.Add(groupTransform);
+        }
+
+        private void RemoveBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
+        {
+            meshViewerWidget.MeshGroups.Remove(booleanGroup);
+            meshViewerWidget.MeshGroupTransforms.Remove(groupTransform);
+			UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
+        }
+#endif
 
 		public override void SetDefaultView()
 		{
@@ -463,11 +508,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 		}
 
-	public enum AutoRotate { Enabled, Disabled };
+		public enum AutoRotate { Enabled, Disabled };
 
 		public enum OpenMode { Viewing, Editing }
 
 		public enum WindowMode { Embeded, StandAlone };
+
 		private enum TraceInfoOpperation { DONT_COPY, DO_COPY };
 
 		public bool DisplayAllValueData { get; set; }
@@ -520,6 +566,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public WindowMode windowType { get; set; }
 		private bool DoAddFileAfterCreatingEditData { get; set; }
+
 		public override void OnClosed(EventArgs e)
 		{
 			if (unregisterEvents != null)
@@ -612,8 +659,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			DrawStuffForSelectedPart(graphics2D);
 		}
 
-		ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
-		ViewControls3DButtons? activeButtonBeforeKeyOverride = null;
+		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
+		private ViewControls3DButtons? activeButtonBeforeKeyOverride = null;
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
@@ -1011,7 +1058,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MergeAndSavePartsToCurrentMeshFile();
 				return true;
 			});
-			
+
 			buttonList.Add("Save As", () =>
 			{
 				UiThread.RunOnIdle(OpenSaveAsWindow);
@@ -1109,7 +1156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if ((!enterEditButtonsContainer.Visible
 				&& !doEdittingButtonsContainer.Visible)
-				|| printItemWrapper == null ||	printItemWrapper.PrintItem.ReadOnly)
+				|| printItemWrapper == null || printItemWrapper.PrintItem.ReadOnly)
 			{
 				return false;
 			}
@@ -1189,7 +1236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector2 bedCenter = new Vector2();
 				MeshViewerWidget.CenterPartAfterLoad doCentering = MeshViewerWidget.CenterPartAfterLoad.DONT;
 
-				if(ActiveSliceSettings.Instance != null 
+				if (ActiveSliceSettings.Instance != null
 				&& ActiveSliceSettings.Instance.CenterOnBed())
 				{
 					doCentering = MeshViewerWidget.CenterPartAfterLoad.DO;
@@ -1904,7 +1951,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else // we have already save it and the library should pick it up
 				{
-
 				}
 
 				saveSucceded = true;
@@ -1920,7 +1966,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
 				});
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				Debug.Print(e.Message);
 				GuiWidget.BreakInDebugger();
@@ -2020,8 +2066,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool PartsAreInPrintVolume()
 		{
-			if (ActiveSliceSettings.Instance != null 
-				&& !ActiveSliceSettings.Instance.CenterOnBed() 
+			if (ActiveSliceSettings.Instance != null
+				&& !ActiveSliceSettings.Instance.CenterOnBed()
 				&& ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
@@ -2288,7 +2334,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect)
 				{
 					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-				} 
+				}
 				SelectedMeshGroupIndex = -1;
 			}
 		}

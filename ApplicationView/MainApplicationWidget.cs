@@ -41,7 +41,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-    public abstract class ApplicationView : GuiWidget
+	public abstract class ApplicationView : GuiWidget
 	{
 		public TopContainerWidget TopContainer;
 
@@ -67,19 +67,19 @@ namespace MatterHackers.MatterControl
 
 		private bool topIsHidden = false;
 
-        bool firstDraw = true;
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            if (firstDraw)
-            {
-                PerformanceTests.ReportDrawTimeWhileSwitching(this, "Library Tab", "Controls Tab", .1);
-                firstDraw = false;
-            }
+		bool firstDraw = true;
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (firstDraw)
+			{
+				PerformanceTests.ReportDrawTimeWhileSwitching(this, "Library Tab", "Controls Tab", .1);
+				firstDraw = false;
+			}
 
-            base.OnDraw(graphics2D);
-        }
+			base.OnDraw(graphics2D);
+		}
 
-        public override void HideTopContainer()
+		public override void HideTopContainer()
 		{
 			if (!topIsHidden)
 			{
@@ -199,30 +199,30 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-        bool firstDraw = true;
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            if (firstDraw)
-            {
-                //PerformanceTests.ReportDrawTimeWhileSwitching(this, "Library Tab", "History Tab", .1);
+		bool firstDraw = true;
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (firstDraw)
+			{
+				//PerformanceTests.ReportDrawTimeWhileSwitching(this, "Library Tab", "History Tab", .1);
 
-                string[] clickThings = new string[]
-                {
-                "History Tab",
-                "Queue Tab",
-                "Library Tab",
-                "History Tab",
-                };
-                //PerformanceTests.ClickStuff(this, clickThings);
+				string[] clickThings = new string[]
+				{
+				"History Tab",
+				"Queue Tab",
+				"Library Tab",
+				"History Tab",
+				};
+				//PerformanceTests.ClickStuff(this, clickThings);
 
 
-                firstDraw = false;
-            }
+				firstDraw = false;
+			}
 
-            base.OnDraw(graphics2D);
-        }
+			base.OnDraw(graphics2D);
+		}
 
-        public override void AddElements()
+		public override void AddElements()
 		{
 			Stopwatch timer = Stopwatch.StartNew();
 			timer.Start();
@@ -388,29 +388,29 @@ namespace MatterHackers.MatterControl
 		{
 			// Switch to the purchased library
 			LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
-			if(libraryProviderSelector != null)
+			if (libraryProviderSelector != null)
 			{
 				LibraryProvider purchaseProvider = libraryProviderSelector.GetPurchasedLibrary();
-				UiThread.RunOnIdle(() => 
+				UiThread.RunOnIdle(() =>
 				{
 					CurrentLibraryDataView.CurrentLibraryProvider = purchaseProvider;
 				});
 			}
 		}
 
-        public void SwitchToSharedLibrary()
-        {
-            // Switch to the shared library
-            LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
-            if (libraryProviderSelector != null)
-            {
-                LibraryProvider sharedProvider = libraryProviderSelector.GetSharedLibrary();
-                UiThread.RunOnIdle(() =>
-                {
-                    CurrentLibraryDataView.CurrentLibraryProvider = sharedProvider;
-                });
-            }
-        }
+		public void SwitchToSharedLibrary()
+		{
+			// Switch to the shared library
+			LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
+			if (libraryProviderSelector != null)
+			{
+				LibraryProvider sharedProvider = libraryProviderSelector.GetSharedLibrary();
+				UiThread.RunOnIdle(() =>
+				{
+					CurrentLibraryDataView.CurrentLibraryProvider = sharedProvider;
+				});
+			}
+		}
 
 		public void ChangeCloudSyncStatus(bool userAuthenticated)
 		{

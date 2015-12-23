@@ -37,100 +37,107 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class PrintLevelingStream : GCodeStreamProxy
-    {
-        protected PrinterMove lastDestination = new PrinterMove();
-        public PrintLevelingStream(GCodeStream internalStream)
-            : base(internalStream)
-        {
-        }
+	public class PrintLevelingStream : GCodeStreamProxy
+	{
+		protected PrinterMove lastDestination = new PrinterMove();
+		public PrintLevelingStream(GCodeStream internalStream)
+			: base(internalStream)
+		{
+		}
 
-        public PrinterMove LastDestination { get { return lastDestination; } }
-        public override string ReadLine()
-        {
-            string lineFromChild = base.ReadLine();
+		public PrinterMove LastDestination { get { return lastDestination; } }
+		public override string ReadLine()
+		{
+			string lineFromChild = base.ReadLine();
 
-            if (lineFromChild != null
-                && LineIsMovement(lineFromChild))
-            {
-                PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
-                if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
-                {
-                    lineFromChild = RunPrintLevelingTranslations(lineFromChild, currentDestination);
-                }
+			if (lineFromChild != null)
+			{
+				if (LineIsMovement(lineFromChild))
+				{
+					PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
+					if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
+					{
+						lineFromChild = RunPrintLevelingTranslations(lineFromChild, currentDestination);
+					}
 
-                lastDestination = currentDestination;
-                return lineFromChild;
-            }
+					lastDestination = currentDestination;
+					return lineFromChild;
+				}
+				else if (lineFromChild.StartsWith("G29"))
+				{
+					// remove G29 (machine prob bed) if we are running our own leveling.
+					lineFromChild = base.ReadLine(); // get the next line instead
+				}
+			}
 
-            return lineFromChild;
-        }
+			return lineFromChild;
+		}
 
-        public override Vector3 SetPrinterPosition(Vector3 position)
-        {
-            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
-            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
+		public override Vector3 SetPrinterPosition(Vector3 position)
+		{
+			Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
+			lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
 
-            string lineBeingSent = CreateMovementLine(lastDestination);
-            string leveledPosition = RunPrintLevelingTranslations(lineBeingSent, lastDestination);
-            PrinterMove leveledDestination = GetPosition(leveledPosition, lastDestination);
-            return leveledDestination.position;
-        }
+			string lineBeingSent = CreateMovementLine(lastDestination);
+			string leveledPosition = RunPrintLevelingTranslations(lineBeingSent, lastDestination);
+			PrinterMove leveledDestination = GetPosition(leveledPosition, lastDestination);
+			return leveledDestination.position;
+		}
 
-        private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
-        {
-            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            if (levelingData != null)
-            {
-                switch (levelingData.CurrentPrinterLevelingSystem)
-                {
-                    case PrintLevelingData.LevelingSystem.Probe2Points:
-                        lineBeingSent = LevelWizard2Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
-                        break;
+		private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
+		{
+			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+			if (levelingData != null)
+			{
+				switch (levelingData.CurrentPrinterLevelingSystem)
+				{
+					case PrintLevelingData.LevelingSystem.Probe2Points:
+						lineBeingSent = LevelWizard2Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+						break;
 
-                    case PrintLevelingData.LevelingSystem.Probe3Points:
-                        lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
-                        break;
+					case PrintLevelingData.LevelingSystem.Probe3Points:
+						lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+						break;
 
-                    case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-                        lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
-                        break;
+					case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+						break;
 
-                    case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-                        lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
-                        break;
+					case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+						break;
 
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
+					default:
+						throw new NotImplementedException();
+				}
+			}
 
-            return lineBeingSent;
-        }
+			return lineBeingSent;
+		}
 
-    }
+	}
 
-    public abstract class GCodeStreamProxy : GCodeStream
-    {
-        protected GCodeStream internalStream;
+	public abstract class GCodeStreamProxy : GCodeStream
+	{
+		protected GCodeStream internalStream;
 
-        public GCodeStreamProxy(GCodeStream internalStream)
-        {
-            this.internalStream = internalStream;
-        }
+		public GCodeStreamProxy(GCodeStream internalStream)
+		{
+			this.internalStream = internalStream;
+		}
 
-        public override void Dispose()
-        {
-            internalStream.Dispose();
-        }
-        public override string ReadLine()
-        {
-            return internalStream.ReadLine();
-        }
+		public override void Dispose()
+		{
+			internalStream.Dispose();
+		}
+		public override string ReadLine()
+		{
+			return internalStream.ReadLine();
+		}
 
-        public override Vector3 SetPrinterPosition(Vector3 position)
-        {
-            return internalStream.SetPrinterPosition(position);
-        }
-    }
+		public override Vector3 SetPrinterPosition(Vector3 position)
+		{
+			return internalStream.SetPrinterPosition(position);
+		}
+	}
 }

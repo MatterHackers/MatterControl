@@ -35,58 +35,58 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class BabyStepsStream : GCodeStreamProxy
-    {
-        OffsetStream offsetStream;
-        MaxLengthStream maxLengthStream;
-        int layerCount = -1;
+	public class BabyStepsStream : GCodeStreamProxy
+	{
+		OffsetStream offsetStream;
+		MaxLengthStream maxLengthStream;
+		int layerCount = -1;
 
-        public double Offset
-        {
-            get
-            {
-                return offsetStream.Offset.z;
-            }
-        }
+		public double Offset
+		{
+			get
+			{
+				return offsetStream.Offset.z;
+			}
+		}
 
-        public override void Dispose()
-        {
-            offsetStream.Dispose();
-            maxLengthStream.Dispose();
-        }
+		public override void Dispose()
+		{
+			offsetStream.Dispose();
+			maxLengthStream.Dispose();
+		}
 
-        public void MoveDown()
-        {
-            offsetStream.Offset = offsetStream.Offset - new Vector3(0, 0, .02);
-        }
+		public void MoveDown()
+		{
+			offsetStream.Offset = offsetStream.Offset - new Vector3(0, 0, .02);
+		}
 
-        public void MoveUp()
-        {
-            offsetStream.Offset = offsetStream.Offset + new Vector3(0, 0, .02);
-        }
+		public void MoveUp()
+		{
+			offsetStream.Offset = offsetStream.Offset + new Vector3(0, 0, .02);
+		}
 
-        public BabyStepsStream(GCodeStream internalStream)
-            : base(null)
-        {
-            maxLengthStream = new MaxLengthStream(internalStream, 1);
-            offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, 0));
-            base.internalStream = offsetStream;
-        }
+		public BabyStepsStream(GCodeStream internalStream)
+			: base(null)
+		{
+			maxLengthStream = new MaxLengthStream(internalStream, 1);
+			offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, 0));
+			base.internalStream = offsetStream;
+		}
 
-        public override string ReadLine()
-        {
-            string processedLine = offsetStream.ReadLine();
-            if(processedLine != null
-                && layerCount < 1 
-                && processedLine.StartsWith("; LAYER:"))
-            {
-                layerCount++;
-                if(layerCount == 1)
-                {
-                    maxLengthStream.MaxSegmentLength = 5;
-                }
-            }
-            return processedLine;
-        }
-    }
+		public override string ReadLine()
+		{
+			string processedLine = offsetStream.ReadLine();
+			if (processedLine != null
+				&& layerCount < 1
+				&& processedLine.StartsWith("; LAYER:"))
+			{
+				layerCount++;
+				if (layerCount == 1)
+				{
+					maxLengthStream.MaxSegmentLength = 5;
+				}
+			}
+			return processedLine;
+		}
+	}
 }
