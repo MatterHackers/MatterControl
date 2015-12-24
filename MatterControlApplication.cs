@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 			if (OsInformation.OperatingSystem == OSType.Mac)
 			{
 				// Set working directory - this duplicates functionality in Main but is necessary on OSX as Main fires much later (after the constructor in this case)
-				// resulting in invalid paths due to path tests running before the working directory has been overriden. Setting the value before initializing StaticData
+				// resulting in invalid paths due to path tests running before the working directory has been overridden. Setting the value before initializing StaticData
 				// works around this architectural difference.
 				Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 			}
