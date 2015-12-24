@@ -211,7 +211,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             // TODO: The raft currently does not handle brim correctly. So it needs to be fixed before it is enabled.
             new MapItemToBool("enableRaft", "create_raft"),
             new MapItem("raftExtraDistanceAroundPart", "raft_extra_distance_around_part"),
-            new MapItem("raftAirGap", "raft_air_gap"),
+			new MapItem("raftAirGap", "raft_air_gap"),
+			new MapItem("supportAirGap", "support_air_gap"),
 
             new VisibleButNotMappedToEngine("has_fan"),
             new VisibleButNotMappedToEngine("has_hardware_leveling"),
@@ -269,9 +270,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
             new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
-
-            //supportZDistanceFromObject=1 # The number of layers to skip in z. The gap between the support and the model.
-            new AsCountOrDistance("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers", "layer_height"),
 
             new AsCountOrDistance("supportInterfaceLayers", "support_material_interface_layers", "layer_height"),
 

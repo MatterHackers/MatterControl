@@ -901,6 +901,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "support_air_gap",
+    "PresentationName": "Air Gap",
+    "HelpText": "The distance between the interface of support and the part. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
     "SlicerConfigName": "support_material_angle",
     "PresentationName": "Starting Angle",
     "HelpText": "The starting angle of the supports.",

@@ -151,6 +151,7 @@ Advanced
         support_material_xy_distance
         support_material_z_distance
         support_material_z_gap_layers
+        support_air_gap
         support_material_create_internal_support
       Extruders
         support_material_extruder
