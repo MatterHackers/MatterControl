@@ -43,7 +43,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 	public class FolderBreadCrumbWidget : FlowLayoutWidget
 	{
 		private static TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory();
-		Action<LibraryProvider> SwitchToLibraryProvider;
+
+		private Action<LibraryProvider> SwitchToLibraryProvider;
 
 		public FolderBreadCrumbWidget(Action<LibraryProvider> SwitchToLibraryProvider, LibraryProvider currentLibraryProvider)
 		{

@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void RemoveItem(int itemIndexToRemove);
 
-		// Base implmentation simply calls RemoveItem
+		// Base implementation simply calls RemoveItem
 		public virtual void RemoveItems(int[] indexes)
 		{
 			// Remove items in reverse order
