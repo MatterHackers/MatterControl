@@ -70,30 +70,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static MapItem[] matterSliceToDefaultMapping =
 		{
-            //avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
-            new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
+			//avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
+			new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
 
 			new MapItemToBool("outsidePerimetersFirst", "external_perimeters_first"),
 
-            //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
-            new MapItem("bottomClipAmount", "bottom_clip_amount"),
+			//bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
+			new MapItem("bottomClipAmount", "bottom_clip_amount"),
 
-            //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
-            new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
+			//centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
+			new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
 
-            //continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
-            new MapItemToBool("continuousSpiralOuterPerimeter", "spiral_vase"),
+			//continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
+			new MapItemToBool("continuousSpiralOuterPerimeter", "spiral_vase"),
 
-			new VisibleButNotMappedToEngine("extruder_count"), 
+			new VisibleButNotMappedToEngine("extruder_count"),
 			new VisibleButNotMappedToEngine("extruders_share_temperature"),
 
-            //endCode=M104 S0
-            new GCodeForSlicer("endCode", "end_gcode"),
+			//endCode=M104 S0
+			new GCodeForSlicer("endCode", "end_gcode"),
 
 			new MapItem("zOffset", "z_offset"),
 
-            //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
-            new ExtruderOffsets("extruderOffsets", "extruder_offset"),
+			//extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+			new ExtruderOffsets("extruderOffsets", "extruder_offset"),
 
             //extrusionWidth=0.4 # The width of the line to extrude.
             new MapItem("extrusionWidth", "nozzle_diameter"),
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
 
-            new MapItemToBool("generateSupport", "support_material"),
+			new MapItemToBool("generateSupport", "support_material"),
 
             //infillExtendIntoPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
             new MapItem("infillExtendIntoPerimeter", "infill_overlap_perimeter"),
@@ -147,13 +147,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //infillSpeed=50 # mm/s.
             new MapItem("infillSpeed", "infill_speed"),
 
-            new MapItem("bridgeSpeed", "bridge_speed"),
+			new MapItem("bridgeSpeed", "bridge_speed"),
 
-            new MapItem("bridgeFanSpeedPercent", "bridge_fan_speed"),
+			new MapItem("bridgeFanSpeedPercent", "bridge_fan_speed"),
 
-            new MapItem("raftFanSpeedPercent", "raft_fan_speed_percent"),
+			new MapItem("raftFanSpeedPercent", "raft_fan_speed_percent"),
 
-            new AsPercentOfReferenceOrDirect("raftPrintSpeed", "raft_print_speed", "infill_speed"),
+			new AsPercentOfReferenceOrDirect("raftPrintSpeed", "raft_print_speed", "infill_speed"),
 
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //numberOfTopLayers=6
             new AsCountOrDistance("numberOfTopLayers", "top_solid_layers", "layer_height"),
 
-            new AsPercentOfReferenceOrDirect("topInfillSpeed", "top_solid_infill_speed", "infill_speed"),
+			new AsPercentOfReferenceOrDirect("topInfillSpeed", "top_solid_infill_speed", "infill_speed"),
 
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
             new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
@@ -210,24 +210,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             // TODO: The raft currently does not handle brim correctly. So it needs to be fixed before it is enabled.
             new MapItemToBool("enableRaft", "create_raft"),
-            new MapItem("raftExtraDistanceAroundPart", "raft_extra_distance_around_part"),
+			new MapItem("raftExtraDistanceAroundPart", "raft_extra_distance_around_part"),
 			new MapItem("raftAirGap", "raft_air_gap"),
 			new MapItem("supportAirGap", "support_air_gap"),
 
-            new VisibleButNotMappedToEngine("has_fan"),
-            new VisibleButNotMappedToEngine("has_hardware_leveling"),
-            new VisibleButNotMappedToEngine("has_power_control"),
-            new VisibleButNotMappedToEngine("has_heated_bed"),
-            new VisibleButNotMappedToEngine("has_sd_card_reader"),
-            new VisibleButNotMappedToEngine("z_can_be_negative"),
-            new VisibleButNotMappedToEngine("show_reset_connection"),
-            new VisibleButNotMappedToEngine("extruder_wipe_temperature"),
-            new VisibleButNotMappedToEngine("bed_remove_part_temperature"),
+			new VisibleButNotMappedToEngine("has_fan"),
+			new VisibleButNotMappedToEngine("has_hardware_leveling"),
+			new VisibleButNotMappedToEngine("has_power_control"),
+			new VisibleButNotMappedToEngine("has_heated_bed"),
+			new VisibleButNotMappedToEngine("has_sd_card_reader"),
+			new VisibleButNotMappedToEngine("z_can_be_negative"),
+			new VisibleButNotMappedToEngine("show_reset_connection"),
+			new VisibleButNotMappedToEngine("extruder_wipe_temperature"),
+			new VisibleButNotMappedToEngine("bed_remove_part_temperature"),
 
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
 
-            new MapFirstValue("retractionOnTravel", "retract_length"),
+			new MapFirstValue("retractionOnTravel", "retract_length"),
             //retractionOnTravel=4.5
             //new MapItem("retractionOnTravel", "retract_before_travel"),
 
@@ -253,14 +253,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //supportExtruder=1
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
 
-            new ValuePlusConstant("supportInterfaceExtruder", "support_material_interface_extruder", -1),
+			new ValuePlusConstant("supportInterfaceExtruder", "support_material_interface_extruder", -1),
 
-            new ValuePlusConstant("raftExtruder", "raft_extruder", -1),
+			new ValuePlusConstant("raftExtruder", "raft_extruder", -1),
 
             //supportLineSpacing=2
             new MapItem("supportLineSpacing", "support_material_spacing"),
 
-            new SupportExtrusionWidth("supportExtrusionPercent","support_material_extrusion_width"),
+			new SupportExtrusionWidth("supportExtrusionPercent","support_material_extrusion_width"),
 
             //supportMaterialSpeed=50 # mm/s.
             new MapItem("supportMaterialSpeed", "support_material_speed"),
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
             new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
 
-            new AsCountOrDistance("supportInterfaceLayers", "support_material_interface_layers", "layer_height"),
+			new AsCountOrDistance("supportInterfaceLayers", "support_material_interface_layers", "layer_height"),
 
             //travelSpeed=200 # The speed to move when not extruding material. mm/s.
             new MapItem("travelSpeed", "travel_speed"),
@@ -283,18 +283,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
             new MapItem("wipeTowerSize", "wipe_tower_size"),
 
-            new VisibleButNotMappedToEngine("pause_gcode"),
-            new VisibleButNotMappedToEngine("resume_gcode"),
-            new VisibleButNotMappedToEngine("cancel_gcode"),
+			new VisibleButNotMappedToEngine("pause_gcode"),
+			new VisibleButNotMappedToEngine("resume_gcode"),
+			new VisibleButNotMappedToEngine("cancel_gcode"),
 			new VisibleButNotMappedToEngine("connect_gcode"),
 
-            new VisibleButNotMappedToEngine("bed_size"),
-            new VisibleButNotMappedToEngine("build_height"),
+			new VisibleButNotMappedToEngine("bed_size"),
+			new VisibleButNotMappedToEngine("build_height"),
 
-            new VisibleButNotMappedToEngine("temperature"),
-            new VisibleButNotMappedToEngine("bed_temperature"),
-            new VisibleButNotMappedToEngine("bed_shape"),
-        };
+			new VisibleButNotMappedToEngine("temperature"),
+			new VisibleButNotMappedToEngine("bed_temperature"),
+			new VisibleButNotMappedToEngine("bed_shape"),
+		};
 
 		public static void WriteMatterSliceSettingsFile(string outputFilename)
 		{
