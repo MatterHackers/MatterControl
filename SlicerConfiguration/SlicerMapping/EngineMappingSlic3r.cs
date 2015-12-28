@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					hideItems.Add("gcode_output_type");
 					hideItems.Add("raft_extra_distance_around_part");
 					hideItems.Add("raft_air_gap");
+					hideItems.Add("support_air_gap");
 					hideItems.Add("repair_outlines_extensive_stitching");
 					hideItems.Add("repair_outlines_keep_open");
 					hideItems.Add("complete_objects");
