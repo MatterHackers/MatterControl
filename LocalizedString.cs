@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 //﻿#define DEBUG_SHOW_TRANSLATED_STRINGS
 
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl;
 using System.IO;
 
@@ -50,7 +51,7 @@ namespace MatterHackers.Localizations
 			string pathToTranslationsFolder = "Translations";
 
 			// Fall back to english if translation data isn't available
-			if (!Directory.Exists(pathToTranslationsFolder))
+			if (!StaticData.Instance.DirectoryExists(pathToTranslationsFolder))
 			{
 				return englishText;
 			}
