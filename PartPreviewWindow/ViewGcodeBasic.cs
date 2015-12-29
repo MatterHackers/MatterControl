@@ -624,15 +624,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					gcodeViewWidget.SimulateExtrusion = simulateExtrusion.Checked;
 				};
-
 				layerInfoContainer.AddChild(simulateExtrusion);
 			}
 
             // put in a render extrusion transparent checkbox
             {
-				CheckBox transparentExtrusion = new CheckBox(LocalizedString.Get("Transparent"), textColor: ActiveTheme.Instance.PrimaryTextColor)
-				{
-					Checked = gcodeViewWidget.TransparentExtrusion,					
+                CheckBox transparentExtrusion = new CheckBox(LocalizedString.Get("Transparent"), textColor: ActiveTheme.Instance.PrimaryTextColor)
+                {
+                    Checked = gcodeViewWidget.TransparentExtrusion,
+                    Margin = new BorderDouble(5, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio,
+                    HAnchor = HAnchor.ParentLeft,
                 };
 
                 transparentExtrusion.CheckedStateChanged += (sender, e) =>
