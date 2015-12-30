@@ -1134,7 +1134,7 @@
   },
   {
     "SlicerConfigName": "wipe",
-    "PresentationName": "Wipe Before Retract",
+    "PresentationName": "Wipe After Retract",
     "HelpText": "This will cause the extruder to try to wipe itself after retracting to minimize strings.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
