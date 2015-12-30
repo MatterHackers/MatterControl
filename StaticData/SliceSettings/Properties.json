@@ -734,7 +734,7 @@
   {
     "SlicerConfigName": "retract_length",
     "PresentationName": "Length on Move",
-    "HelpText": "The amount that the filament will be reversed after each qualifying non-printing move.",
+    "HelpText": "The amount that the filament will be reversed before each qualifying non-printing move.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
