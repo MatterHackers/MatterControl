@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 
 		void client_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
 		{
-			try // if we get a bad result we can get a target ivocation exception. In that case just don't show anything
+			try // if we get a bad result we can get a target invocation exception. In that case just don't show anything
 			{
 				byte[] raw = e.Result;
 				Stream stream = new MemoryStream(raw);
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
 				{
 					// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
 					// So we scale as many times as we need to to get the Image to be the right size.
-					// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
+					// If this were going to be a non-uniform scale we could do the x and y separately to get better results.
 					ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, scalingBlender);
 					halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
 					unScaledImage = halfImage;

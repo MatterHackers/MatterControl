@@ -33,6 +33,7 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.ImageProcessing;
 using MatterHackers.VectorMath;
 using System;
 
@@ -201,7 +202,13 @@ namespace MatterHackers.MatterControl
 
 		public Button GenerateEditButton()
 		{
-			Button editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
+			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
+			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
+			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+
+			Button editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage, 
+				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
+				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black)));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
 			return editButton;
@@ -211,7 +218,13 @@ namespace MatterHackers.MatterControl
 		{
 			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 
-			editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
+			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
+			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
+			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+
+			editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage,
+				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
+				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black)));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
 			textWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -225,7 +238,13 @@ namespace MatterHackers.MatterControl
 		{
 			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 
-			editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
+			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
+			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
+			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+
+			editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage,
+				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
+				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black)));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
 			TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12);
