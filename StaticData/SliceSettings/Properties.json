@@ -558,7 +558,7 @@
   },
   {
     "SlicerConfigName": "max_fan_speed",
-    "PresentationName": "Max Fan Speed",
+    "PresentationName": "Maximum Fan Speed",
     "HelpText": "This is the maximum speed that your fan can run at.",
     "DataEditType": "INT",
     "ExtraSettings": "%"
