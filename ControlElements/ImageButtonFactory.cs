@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -72,10 +73,51 @@ namespace MatterHackers.MatterControl
 				disabledImageName = normalImageName;
 			}
 
-			Agg.Image.ImageBuffer normalImage = StaticData.Instance.LoadIcon(normalImageName);
-			Agg.Image.ImageBuffer pressedImage = StaticData.Instance.LoadIcon(pressedImageName);
-			Agg.Image.ImageBuffer hoverImage = StaticData.Instance.LoadIcon(hoverImageName);
-			Agg.Image.ImageBuffer disabledImage = StaticData.Instance.LoadIcon(disabledImageName);
+			ImageBuffer normalImage = StaticData.Instance.LoadIcon(normalImageName);
+			ImageBuffer pressedImage = StaticData.Instance.LoadIcon(pressedImageName);
+			ImageBuffer hoverImage = StaticData.Instance.LoadIcon(hoverImageName);
+			ImageBuffer disabledImage = StaticData.Instance.LoadIcon(disabledImageName);
+
+			if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+			{
+				InvertLightness.DoInvertLightness(normalImage);
+				InvertLightness.DoInvertLightness(pressedImage);
+				InvertLightness.DoInvertLightness(hoverImage);
+				InvertLightness.DoInvertLightness(disabledImage);
+			}
+
+			if (ActiveTheme.Instance.IsTouchScreen)
+			{
+				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
+				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);
+				pressedImage.NewGraphics2D().Render(new Stroke(rect, 3), ActiveTheme.Instance.PrimaryTextColor);
+			}
+
+			ButtonViewStates buttonViewWidget = new ButtonViewStates(
+				new ImageWidget(normalImage),
+				new ImageWidget(hoverImage),
+				new ImageWidget(pressedImage),
+				new ImageWidget(disabledImage)
+			);
+
+			//Create button based on view container widget
+			Button imageButton = new Button(0, 0, buttonViewWidget);
+			imageButton.Margin = new BorderDouble(0);
+			imageButton.Padding = new BorderDouble(0);
+			return imageButton;
+		}
+
+		public Button Generate(ImageBuffer normalImage, ImageBuffer hoverImage, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
+		{
+			if (pressedImage == null)
+			{
+				pressedImage = hoverImage;
+			}
+
+			if (disabledImage == null)
+			{
+				disabledImage = normalImage;
+			}
 
 			if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
 			{

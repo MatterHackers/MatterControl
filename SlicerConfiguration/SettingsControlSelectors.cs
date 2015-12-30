@@ -29,7 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 //#define DO_IN_PLACE_EDIT
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
@@ -93,7 +96,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			container.HAnchor = HAnchor.ParentLeftRight;
 			container.Padding = new BorderDouble(6, 0);
 
-			editButton = imageButtonFactory.Generate("icon_edit_white.png", "icon_edit_gray.png");
+			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
+			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
+			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+
+			editButton = imageButtonFactory.Generate(normalImage, WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray));
 
 			editButton.VAnchor = VAnchor.ParentCenter;
 			editButton.Margin = new BorderDouble(right: 6);
@@ -252,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(presetIndex).ToString();
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					Debug.Print(e.Message);
 					GuiWidget.BreakInDebugger();
@@ -265,7 +272,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					dropDownList.SelectedValue = ActivePrinterProfile.Instance.ActiveQualitySettingsID.ToString();
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					Debug.Print(e.Message);
 					GuiWidget.BreakInDebugger();
@@ -323,7 +330,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SelectedLabel = MatterSliceInfo.DisplayName;
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					Debug.Print(e.Message);
 					GuiWidget.BreakInDebugger();
