@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
@@ -66,18 +65,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		private bool topIsHidden = false;
-
-		bool firstDraw = true;
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (firstDraw)
-			{
-				PerformanceTests.ReportDrawTimeWhileSwitching(this, "Library Tab", "Controls Tab", .1);
-				firstDraw = false;
-			}
-
-			base.OnDraw(graphics2D);
-		}
 
 		public override void HideTopContainer()
 		{
@@ -197,29 +184,6 @@ namespace MatterHackers.MatterControl
 
 		public override void HideTopContainer()
 		{
-		}
-
-		bool firstDraw = true;
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (firstDraw)
-			{
-				//PerformanceTests.ReportDrawTimeWhileSwitching(this, "Library Tab", "History Tab", .1);
-
-				string[] clickThings = new string[]
-				{
-				"History Tab",
-				"Queue Tab",
-				"Library Tab",
-				"History Tab",
-				};
-				//PerformanceTests.ClickStuff(this, clickThings);
-
-
-				firstDraw = false;
-			}
-
-			base.OnDraw(graphics2D);
 		}
 
 		public override void AddElements()

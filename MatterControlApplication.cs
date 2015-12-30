@@ -39,7 +39,6 @@ using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl.OpenGl;
-using MatterHackers.GuiAutomation;
 using MatterHackers.VectorMath;
 using Mindscape.Raygun4Net;
 using System;
