@@ -179,7 +179,7 @@
     "PresentationName": "Disable Fan For The First",
     "HelpText": "The number of layers for which the fan will be forced to remain off.",
     "DataEditType": "INT",
-    "ExtraSettings": "Layers"
+    "ExtraSettings": "layers"
   },
   {
     "SlicerConfigName": "end_gcode",
@@ -284,7 +284,7 @@
     "PresentationName": "Enable Fan If Layer\\nPrint Time Is Below",
     "HelpText": "If a layer is estimated to take less than this to print, the fan will be turned on.",
     "DataEditType": "INT",
-    "ExtraSettings": "Seconds"
+    "ExtraSettings": "seconds"
   },
   {
     "SlicerConfigName": "filament_diameter",
