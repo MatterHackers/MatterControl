@@ -3169,3 +3169,699 @@ Translated:Reset
 English:Console
 Translated:Console
 
+English:On
+Translated:On
+
+English:Off
+Translated:Off
+
+English:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
+
+English:The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.
+Translated:The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.
+
+English:The number of layers, or the distance, to skip between the support and the model. Add mm to the end of the number to specify distance.
+Translated:The number of layers, or the distance, to skip between the support and the model. Add mm to the end of the number to specify distance.
+
+English:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
+
+English:Top Solid Layers:
+Translated:Top Solid Layers:
+
+English:Bottom Solid Layers:
+Translated:Bottom Solid Layers:
+
+English:This will cause the extruder to try to wipe itself after retracting to minimize strings.
+Translated:This will cause the extruder to try to wipe itself after retracting to minimize strings.
+
+English:Calculating Positions...
+Translated:Calculating Positions...
+
+English:ATX Power Control
+Translated:ATX Power Control
+
+English:Specify if your printer can control the power supply
+Translated:Specify if your printer can control the power supply
+
+English:Has Power Control
+Translated:Has Power Control
+
+English:The temperature the bed temperature will be set to when part is to be removed.
+Translated:The temperature the bed temperature will be set to when part is to be removed.
+
+English:Extruder Wipe Temperature
+Translated:Extruder Wipe Temperature
+
+English:Bed Remove Part Temperature
+Translated:Bed Remove Part Temperature
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:The temperature the extruder will be when extruder wipes.
+
+English:Basic
+Translated:Basic
+
+English:Sets the size of the outer solid surface for the entire print.
+Translated:Sets the size of the outer solid surface for the entire print.
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+Translated:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+
+English:Layers/Surface
+Translated:Layers/Surface
+
+English:Width
+Translated:Width
+
+English:Arrange
+Translated:Arrange
+
+English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+Translated:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+
+English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+Translated:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+
+English:Features
+Translated:Features
+
+English:Update Available
+Translated:Update Available
+
+English:Check For Update
+Translated:Check For Update
+
+English:solid_shell
+Translated:solid_shell
+
+English:GCode file too big to preview ({0}).
+Translated:GCode file too big to preview ({0}).
+
+English:Up to Date
+Translated:Up to Date
+
+English:Checking For Update
+Translated:Checking For Update
+
+English:Loading Parts...
+Translated:Loading Parts...
+
+English:More
+Translated:More
+
+English:Share
+Translated:Share
+
+English:WARNING: Write Failed!
+Translated:WARNING: Write Failed!
+
+English:Can't access '{0}'.
+Translated:Can't access '{0}'.
+
+English:Oops! Unable to save changes.
+Translated:Oops! Unable to save changes.
+
+English:Unable to save
+Translated:Unable to save
+
+English:Terminal
+Translated:Terminal
+
+English:Settings\n& Controls
+Translated:Settings\n& Controls
+
+English:Print Area
+Translated:Print Area
+
+English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+
+English:First Layer Extrusion Width' must be greater than 0.
+Translated:First Layer Extrusion Width' must be greater than 0.
+
+English:First Layer Extrusion Width = {0}
+Translated:First Layer Extrusion Width = {0}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+
+English:Open
+Translated:Open
+
+English:Checking For Update...
+Translated:Checking For Update...
+
+English:Create Folder
+Translated:Create Folder
+
+English:Redeem
+Translated:Redeem
+
+English:First Layer Height = {0}\nNozzle Diameter = {1}
+Translated:First Layer Height = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+
+English:Create New Folder:
+Translated:Create New Folder:
+
+English:Folder Name
+Translated:Folder Name
+
+English:Enter a Folder Name Here
+Translated:Enter a Folder Name Here
+
+English:Save New Design to Queue
+Translated:Save New Design to Queue
+
+English:Design Name
+Translated:Design Name
+
+English:Enter the name of your design.
+Translated:Enter the name of your design.
+
+English:Enter a Design Name Here
+Translated:Enter a Design Name Here
+
+English:Also save to Library
+Translated:Also save to Library
+
+English:Home
+Translated:Home
+
+English:The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+
+English:Collection not Empty
+Translated:Collection not Empty
+
+English:Do NOT Delete
+Translated:Do NOT Delete
+
+English:Library (cloud)
+Translated:Library (cloud)
+
+English:Purchased
+Translated:Purchased
+
+English:Session Expired
+Translated:Session Expired
+
+English:Thumbnail Rendering
+Translated:Thumbnail Rendering
+
+English:Flat
+Translated:Flat
+
+English:3D
+Translated:3D
+
+English:Update Status
+Translated:Update Status
+
+English:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+
+English:Folder not Empty
+Translated:Folder not Empty
+
+English:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+
+English:Delete folder?
+Translated:Delete folder?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+
+English:Cloud Library
+Translated:Cloud Library
+
+English:Rename
+Translated:Rename
+
+English:Rename Item:
+Translated:Rename Item:
+
+English:New Name
+Translated:New Name
+
+English:Enter New Name Here
+Translated:Enter New Name Here
+
+English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
+Translated:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
+
+English:Save New Design
+Translated:Save New Design
+
+English:Save Location
+Translated:Save Location
+
+English:Choose the location to save to.
+Translated:Choose the location to save to.
+
+English:Sample the bed at seven points
+Translated:Sample the bed at seven points
+
+English:You should be done in about 5 minutes.
+Translated:You should be done in about 5 minutes.
+
+English:The print leveling alogrithm to use.
+Translated:The print leveling alogrithm to use.
+
+English:The print leveling sampling mothod to use.
+Translated:The print leveling sampling mothod to use.
+
+English:This gcode will be run prior to starting bed probing.
+Translated:This gcode will be run prior to starting bed probing.
+
+English:This gcode will be run after finishing bed probing.
+Translated:This gcode will be run after finishing bed probing.
+
+English:The width of the paper (or other calibration device) used when doing manual bed probing.
+Translated:The width of the paper (or other calibration device) used when doing manual bed probing.
+
+English:The offset of the probe relative to the extruder.
+Translated:The offset of the probe relative to the extruder.
+
+English:The z offset of the probe relative to the extruder.
+Translated:The z offset of the probe relative to the extruder.
+
+English:Print Leveling
+Translated:Print Leveling
+
+English:Leveling Solution
+Translated:Leveling Solution
+
+English:Leveling Method
+Translated:Leveling Method
+
+English:Manual Probe Paper Width
+Translated:Manual Probe Paper Width
+
+English:Probe Offset
+Translated:Probe Offset
+
+English:Probe Z Offset
+Translated:Probe Z Offset
+
+English:There is a recommended update available for MatterControl. Would you like to download it now?
+Translated:There is a recommended update available for MatterControl. Would you like to download it now?
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+
+English:This printer requires print leveling to run correctly.
+Translated:This printer requires print leveling to run correctly.
+
+English:Require Leveling To Print
+Translated:Require Leveling To Print
+
+English:Oops! You cannot restart while a print is active.
+Translated:Oops! You cannot restart while a print is active.
+
+English:Unable to restart
+Translated:Unable to restart
+
+English:Add File To Queue
+Translated:Add File To Queue
+
+English:Add Folder To Library
+Translated:Add Folder To Library
+
+English:Using the above controls
+Translated:Using the above controls
+
+English:Add Local Folder To Library
+Translated:Add Local Folder To Library
+
+English:Redeem Design Code
+Translated:Redeem Design Code
+
+English:You should be done in about 6 minutes.
+Translated:You should be done in about 6 minutes.
+
+English:Enter Share Code
+Translated:Enter Share Code
+
+English:Downloading...
+Translated:Downloading...
+
+English:Uploading...
+Translated:Uploading...
+
+English:Click to show in 3D View
+Translated:Click to show in 3D View
+
+English:Enter Mulit Select mode
+Translated:Enter Mulit Select mode
+
+English:Add a .stl, .amf, .gcode or .zip File To The Queue
+Translated:Add a .stl, .amf, .gcode or .zip File To The Queue
+
+English:Choose a Create Tool to generate custom parts
+Translated:Choose a Create Tool to generate custom parts
+
+English:Switch to Setings and Manual Controls pannel
+Translated:Switch to Setings and Manual Controls pannel
+
+English:Pop This Tab out into its own Window
+Translated:Pop This Tab out into its own Window
+
+English:Preview layer Tool Paths
+Translated:Preview layer Tool Paths
+
+English:Add a .stl, .amf, .gcode or .zip File to the Queue
+Translated:Add a .stl, .amf, .gcode or .zip File to the Queue
+
+English:Add a .stl, .amf, .gcode or .zip File to the Bed
+Translated:Add a .stl, .amf, .gcode or .zip File to the Bed
+
+English:Add an .stl, .amf, .gcode or .zip file to the Queue
+Translated:Add an .stl, .amf, .gcode or .zip file to the Queue
+
+English:Insert an .stl, .amf, .gcode or .zip file
+Translated:Insert an .stl, .amf, .gcode or .zip file
+
+English:Bring the Window back into this Tab
+Translated:Bring the Window back into this Tab
+
+English:Insert an .stl, .amf or .zip file
+Translated:Insert an .stl, .amf or .zip file
+
+English:Update Channel
+Translated:Update Channel
+
+English:Current Build : Test Build
+Translated:Current Build : Test Build
+
+English:Stable: The current release version of MatterControl (recommended).
+Translated:Stable: The current release version of MatterControl (recommended).
+
+English:Beta: The release candidate version of MatterControl.
+Translated:Beta: The release candidate version of MatterControl.
+
+English:Alpha: The in development version of MatterControl.
+Translated:Alpha: The in development version of MatterControl.
+
+English:Choose a Create Tool to generate custom designs
+Translated:Choose a Create Tool to generate custom designs
+
+English:Switch to Settings, Controls and Options
+Translated:Switch to Settings, Controls and Options
+
+English:Switch to Queue, Library and History
+Translated:Switch to Queue, Library and History
+
+English:Sign in to your MatterControl account
+Translated:Sign in to your MatterControl account
+
+English:Connect to the currently selected printer
+Translated:Connect to the currently selected printer
+
+English:Disconnect from current printer
+Translated:Disconnect from current printer
+
+English:Select a printer
+Translated:Select a printer
+
+English:Current extruder temperature
+Translated:Current extruder temperature
+
+English:Preheat the Extruder
+Translated:Preheat the Extruder
+
+English:Current bed temperature
+Translated:Current bed temperature
+
+English:Preheat the Bed
+Translated:Preheat the Bed
+
+English:Shop online for printing materials
+Translated:Shop online for printing materials
+
+English:Add an .stl, .amf, .gcode or .zip file to the Library
+Translated:Add an .stl, .amf, .gcode or .zip file to the Library
+
+English:Open your dashboard in a web browser
+Translated:Open your dashboard in a web browser
+
+English:Sign out of your MatterControl account
+Translated:Sign out of your MatterControl account
+
+English:Add a new Printer Profile
+Translated:Add a new Printer Profile
+
+English:Rotate (Ctrl + L. Mouse)
+Translated:Rotate (Ctrl + L. Mouse)
+
+English:Move (Shift + L. Mouse)
+Translated:Move (Shift + L. Mouse)
+
+English:Zoom (Alt + L. Mouse)
+Translated:Zoom (Alt + L. Mouse)
+
+English:Select Part
+Translated:Select Part
+
+English:Move
+Translated:Move
+
+English:Zoom
+Translated:Zoom
+
+English:Preview 3D Design
+Translated:Preview 3D Design
+
+English:Rotate (Alt + L. Mouse)
+Translated:Rotate (Alt + L. Mouse)
+
+English:Zoom (Ctrl + L. Mouse)
+Translated:Zoom (Ctrl + L. Mouse)
+
+English:Enter Multi Select mode
+Translated:Enter Multi Select mode
+
+English:Print leveling is enabled.
+Translated:Print leveling is enabled.
+
+English:Edit notification settings
+Translated:Edit notification settings
+
+English:Rotate (Alt + Left Mouse)
+Translated:Rotate (Alt + Left Mouse)
+
+English:Move (Shift + Left Mouse)
+Translated:Move (Shift + Left Mouse)
+
+English:Zoom (Ctrl + Left Mouse)
+Translated:Zoom (Ctrl + Left Mouse)
+
+English:Search Results
+Translated:Search Results
+
+English:Slice files prior to send
+Translated:Slice files prior to send
+
+English:Oops! Please sign in to continue.
+Translated:Oops! Please sign in to continue.
+
+English:Login Required
+Translated:Login Required
+
+English:Rebuild Thumbnails Now
+Translated:Rebuild Thumbnails Now
+
+English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
+Translated:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
+
+English:Loading...
+Translated:Loading...
+
+English:Wrapping:
+Translated:Wrapping:
+
+English:Use Braille
+Translated:Use Braille
+
+English:Only Braille
+Translated:Only Braille
+
+English:Retrieving Contents...
+Translated:Retrieving Contents...
+
+English:Cloud Sync
+Translated:Cloud Sync
+
+English:Include Text
+Translated:Include Text
+
+English:Show normal text under the braille
+Translated:Show normal text under the braille
+
+English:Use Grade 2
+Translated:Use Grade 2
+
+English:Experimental support for Braille grade 2 (contractions)
+Translated:Experimental support for Braille grade 2 (contractions)
+
+English:About Braille
+Translated:About Braille
+
+English:Add a new Material Preset
+Translated:Add a new Material Preset
+
+English:Import an existing Material Preset
+Translated:Import an existing Material Preset
+
+English:Share Library Item
+Translated:Share Library Item
+
+English:Share Options
+Translated:Share Options
+
+English:Your Share Code:
+Translated:Your Share Code:
+
+English:Anyone with this code will have access
+Translated:Anyone with this code will have access
+
+English:Share with someone
+Translated:Share with someone
+
+English:read-only
+Translated:read-only
+
+English:Generate Share Code
+Translated:Generate Share Code
+
+English:Please wait. Retrieving share code...
+Translated:Please wait. Retrieving share code...
+
+English:Provide this code to grant someone read-only access.
+Translated:Provide this code to grant someone read-only access.
+
+English:Please wait. Sending invite...
+Translated:Please wait. Sending invite...
+
+English:Invite sent!
+Translated:Invite sent!
+
+English:Your invite has been sent!
+Translated:Your invite has been sent!
+
+English:Enter Share Code:
+Translated:Enter Share Code:
+
+English:This code to will provide read-only access.
+Translated:This code to will provide read-only access.
+
+English:Please wait. Redeeming code...
+Translated:Please wait. Redeeming code...
+
+English:Oops! Invalid code.
+Translated:Oops! Invalid code.
+
+English:Your code has been redeemed.  Please check the Library.
+Translated:Your code has been redeemed.  Please check the Library.
+
+English:Shared with Me
+Translated:Shared with Me
+
+English:Share designs from your Cloud Library
+Translated:Share designs from your Cloud Library
+
+English:Exporting to Folder or SD Card
+Translated:Exporting to Folder or SD Card
+
+English:Materials
+Translated:Materials
+
+English:Material {0}
+Translated:Material {0}
+
+English:Redeem Purchase
+Translated:Redeem Purchase
+
+English:Oops! Please sign in to enable this feature.
+Translated:Oops! Please sign in to enable this feature.
+
+English:Rebuild
+Translated:Rebuild
+
+English:Outside Perimeters
+Translated:Outside Perimeters
+
+English:Sample the bed at {0} points
+Translated:Sample the bed at {0} points
+
+English:Software Print Leveling (disabled)
+Translated:Software Print Leveling (disabled)
+
+English:Calibration Settings
+Translated:Calibration Settings
+
+English:Software Print Leveling (enabled)
+Translated:Software Print Leveling (enabled)
+
+English:Layer Height = {0}\nNozzle Diameter = {1}
+Translated:Layer Height = {0}\nNozzle Diameter = {1}
+
+English:Solid Infill works best when set tu LINES.
+Translated:Solid Infill works best when set tu LINES.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
+
+English:Show normal text above the braille
+Translated:Show normal text above the braille
+
+English:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
+Translated:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
+
+English:Could Not Load Image File
+Translated:Could Not Load Image File
+
+English:Reset View
+Translated:Reset View
+
+English:If you want to select a layer to pause your print on do so here (for changing filament)
+Translated:If you want to select a layer to pause your print on do so here (for changing filament)
+
+English:Select Layer To Pause:
+Translated:Select Layer To Pause:
+
+English:Offset:
+Translated:Offset:
+
+English:The speed to move while printing the first layer. If expressed as a percentage the above Infill speed is modified.
+Translated:The speed to move while printing the first layer. If expressed as a percentage the above Infill speed is modified.
+
+English:The amount that the filament will be reversed before each qualifying non-printing move.
+Translated:The amount that the filament will be reversed before each qualifying non-printing move.
+
+English:The distance between the interface of support and the part. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:The distance between the interface of support and the part. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+
+English:Distance From Object
+Translated:Distance From Object
+
+English:Wipe After Retract
+Translated:Wipe After Retract
+
+English:Maximum Fan Speed
+Translated:Maximum Fan Speed
+

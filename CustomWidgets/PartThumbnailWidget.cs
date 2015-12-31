@@ -725,11 +725,21 @@ namespace MatterHackers.MatterControl
 
 							for (int x = 0; x < width; x++)
 							{
-								int alaph = imageABuffer[3];
-								resultBuffer[offsetResult++] = (byte)255; offsetA++;
-								resultBuffer[offsetResult++] = (byte)255; offsetA++;
-								resultBuffer[offsetResult++] = (byte)255; offsetA++;
-								resultBuffer[offsetResult++] = imageABuffer[offsetA++];
+								int alpha = imageABuffer[offsetA+3];
+								if (alpha > 0)
+								{
+									resultBuffer[offsetResult++] = (byte)255; offsetA++;
+									resultBuffer[offsetResult++] = (byte)255; offsetA++;
+									resultBuffer[offsetResult++] = (byte)255; offsetA++;
+									resultBuffer[offsetResult++] = (byte)alpha; offsetA++;
+								}
+								else
+								{
+									resultBuffer[offsetResult++] = (byte)0; offsetA++;
+									resultBuffer[offsetResult++] = (byte)0; offsetA++;
+									resultBuffer[offsetResult++] = (byte)0; offsetA++;
+									resultBuffer[offsetResult++] = (byte)0; offsetA++;
+								}
 							}
 						}
 						result.SetRecieveBlender(new BlenderPreMultBGRA());
