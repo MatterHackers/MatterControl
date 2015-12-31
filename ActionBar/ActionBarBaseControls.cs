@@ -247,6 +247,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			buttonView.HAnchor = HAnchor.ParentLeftRight;
 
 			this.ToolTipText = "Select a printer".Localize();
+			this.Name = "Select a Printer Button";
 
 			Margin = DefaultMargin;
 

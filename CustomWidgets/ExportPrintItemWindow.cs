@@ -120,6 +120,7 @@ namespace MatterHackers.MatterControl
 				string exportGCodeText = LocalizedString.Get("Export as");
 				string exportGCodeTextFull = string.Format("{0} GCode", exportGCodeText);
 				Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
+				exportGCode.Name = "Export as GCode Button";
 				exportGCode.HAnchor = HAnchor.ParentLeft;
 				exportGCode.Cursor = Cursors.Hand;
 				exportGCode.Click += new EventHandler((object sender, EventArgs e) =>

@@ -78,6 +78,11 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
+		public static string PathToExportGcodeFolder
+		{
+			get { return Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Tests", "TestData", "ExportedGcode", runName)); }
+		}
+
 		public static string PathToQueueItemsFolder(string queueItemToLoad)
 		{
 			string pathToQueueItemFolder = Path.Combine("..", "..", "..", "..", "Tests", "TestData", "QueueItems");

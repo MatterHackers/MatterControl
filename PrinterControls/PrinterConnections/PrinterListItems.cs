@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.Margin = new BorderDouble(1);
 			this.BackgroundColor = this.defaultBackgroundColor;
 			this.Padding = new BorderDouble(0);
+			this.Name = this.printerRecord.Name + " Profile";
 
 			string[] comportNames = FrostedSerialPort.GetPortNames();
 			bool portIsAvailable = comportNames.Contains(printerRecord.ComPort);

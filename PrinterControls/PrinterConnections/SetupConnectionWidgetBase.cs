@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 
 			cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			cancelButton.Name = "Setup Connection Cancel Button";
 			cancelButton.Click += new EventHandler(CancelButton_Click);
 
 			//Create the main container
