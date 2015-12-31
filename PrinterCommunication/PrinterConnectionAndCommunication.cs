@@ -1783,7 +1783,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						ToggleHighLowHeigh(serialPort);
 
-						// let the process know we canceled not ended normaly.
+						// let the process know we canceled not ended normally.
 						CommunicationState = CommunicationStates.Connected;
 					}
 					else
@@ -1799,7 +1799,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						resetSerialPort.Close();
 
-						// let the process know we canceled not ended normaly.
+						// let the process know we canceled not ended normally.
 						CommunicationState = CommunicationStates.Disconnected;
 					}
 				}
@@ -1848,9 +1848,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
 					InjectGCode(resumeGCode);
 
-                    // put in the code to return to our pre-pause postion
-                    Vector3 preLeveledDestination = printLevelingStream3.LastDestination.position;
-                    InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate));
 					DoPause();
 				}
 				else
@@ -1865,10 +1862,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// inject the resume_gcode to execute when we resume printing
 						string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
 						InjectGCode(resumeGCode);
-
-                        // put in the code to return to return to our pre-pause postion
-                        Vector3 preLeveledDestination = printLevelingStream3.LastDestination.position;
-                        InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate));
 					}
 				}
 			}
@@ -1938,7 +1931,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					lineToWrite = lineToWrite.Replace("\\n", "\n");
 				}
 
-				//Check line for linebreaks, split and process separate if necessary
+				//Check line for line breaks, split and process separate if necessary
 				if (lineToWrite.Contains("\n"))
 				{
 					string[] linesToWrite = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
@@ -2137,7 +2130,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// add any gcode we want to print while canceling
 					InjectGCode(cancelGCode);
 				}
-				// let the process know we canceled not ended normaly.
+				// let the process know we canceled not ended normally.
 				printWasCanceled = true;
 			}
 		}
@@ -2148,7 +2141,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
-				// let the process know we canceled not ended normaly.
+				// let the process know we canceled not ended normally.
 				CommunicationState = CommunicationStates.Connected;
 				SendLineToPrinterNow("M25"); // : Pause SD print
 				SendLineToPrinterNow("M26"); // : Set SD position
@@ -2197,7 +2190,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						Console.WriteLine("ReadFromPrinter thread created.");
 						ReadThread.Start();
 
-						// We have to send a line because some printers (like old printrbots) do not send anything when connecting and there is no other way to know they are there.
+						// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
 						SendLineToPrinterNow("M105");
 						SendLineToPrinterNow("M115");
 						SendLineToPrinterNow("M114");
@@ -2220,7 +2213,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
-				// If the serial port isn't avaiable (i.e. the specified port name wasn't found in GetPortNames()) or the serial
+				// If the serial port isn't available (i.e. the specified port name wasn't found in GetPortNames()) or the serial
 				// port is already opened in another instance or process, then report the connection problem back to the user
 				connectionFailureMessage = (serialPortIsAlreadyOpen ?
 					string.Format("{0} in use", PrinterConnectionAndCommunication.Instance.ActivePrinter.ComPort) :
@@ -2284,7 +2277,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			firmwareUriGcodeSend = false;
 
 			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
-			// this aspect to ensure the validation logic that verifies port availablity/in use status can proceed without additional workarounds for Android
+			// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
 			#if __ANDROID__
 			string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
 
@@ -2326,7 +2319,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
 					Disable();
-					connectionFailureMessage = LocalizedString.Get("Cancelled");
+					connectionFailureMessage = LocalizedString.Get("Canceled");
 					OnConnectionFailed(null);
 					return false;
 				}
@@ -2400,7 +2393,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			codeToInject = codeToInject.Replace("\\n", "\n");
 			string[] lines = codeToInject.Split('\n');
 
-			for (int i = lines.Length - 1; i >= 0; i--)
+			for (int i = 0; i < lines.Length; i++)
 			{
 				string[] splitOnSemicolon = lines[i].Split(';');
 				string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
@@ -2408,7 +2401,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					trimedLine = ReplacePrinterMacros(trimedLine);
 
-                    queuedCommandStream1.Add(trimedLine);
+					queuedCommandStream1.Add(trimedLine);
 				}
 			}
 		}
@@ -2470,7 +2463,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			switch (communicationState)
 			{
 				case CommunicationStates.Connected:
-					// This can happen if the printer is reset during the silcing of the part.
+					// This can happen if the printer is reset during the slicing of the part.
 					break;
 
 				case CommunicationStates.PreparingToPrint:
@@ -2597,7 +2590,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
 					if (File.Exists(gcodePathAndFileName))
 					{
-						// read the last few k of the file nad see if it says "filament used". We use this marker to tell if the file finished writing
+						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{
 							PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
@@ -2648,14 +2641,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (trimedLine.StartsWith("@"))
 			{
+				PrinterMove preLeveledData = queuedCommandStream1.LastDestination;
+
 				switch (trimedLine)
 				{
 					case "@RESTORE_XYZ_POSITION":
-                        Vector3 preLeveledDestination = printLevelingStream3.LastDestination.position;
-                        return "G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, currentFeedRate);
+						// put in the code to return to return to our pre-pause position
+						Vector3 preLeveledDestination = preLeveledData.position;
+						return "G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate);
 
 					case "@RESTORE_E_POSITION":
-						return "G92 E{0:0.00000}".FormatWith(currentExtruderDestination);
+						return "G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion);
 				}
 			}
 
@@ -2687,7 +2683,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         private void TryWriteNextLineFromGCodeFile()
 		{
-			// wait until the printer responds from the last command with an ok OR we waited too long
+			// wait until the printer responds from the last command with an OK OR we waited too long
 			if (timeHaveBeenWaitingForOK.IsRunning)
 			{
 				using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile1"))
@@ -2711,7 +2707,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								//if (firstLineToResendIndex == allCheckSumLinesSent.Count)
 								{
 									// Basically we got some response but it did not contain an OK.
-									// The theory is that we may have recieved a transmission error (like 'OP' rather than 'OK')
+									// The theory is that we may have received a transmission error (like 'OP' rather than 'OK')
 									// and in that event we don't want the print to just stop and wait forever.
 									firstLineToResendIndex--; // we are going to resend the last command
 								}
@@ -2738,7 +2734,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     int waitTimeInMs = 60000; // 60 seconds
                     if (waitingForPosition.IsRunning && waitingForPosition.ElapsedMilliseconds < waitTimeInMs)
                     {
-                        // we are waiting for a postion response don't print more
+                        // we are waiting for a position response don't print more
                         return;
                     }
 
@@ -2782,7 +2778,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         TurnOffBedAndExtruders();
                         printWasCanceled = false;
                     }
-                    else // we finished printing normalyl
+                    else // we finished printing normally
                     {
                         CommunicationState = CommunicationStates.FinishedPrint;
 

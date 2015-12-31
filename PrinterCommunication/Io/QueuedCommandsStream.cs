@@ -36,8 +36,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
     public class QueuedCommandsStream : GCodeStreamProxy
     {
         private List<string> commandQueue = new List<string>();
+		protected PrinterMove lastDestination = new PrinterMove();
+		public PrinterMove LastDestination { get { return lastDestination; } }
 
-        public QueuedCommandsStream(GCodeStream internalStream)
+		public QueuedCommandsStream(GCodeStream internalStream)
             : base(internalStream)
         {
         }
@@ -53,18 +55,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
         public override string ReadLine()
         {
+			string lineToSend = null;
             // lock queue
             using (TimedLock.Lock(this, "Read GCode Line"))
             {
                 if (commandQueue.Count > 0)
                 {
-                    string line = commandQueue[0];
+					lineToSend = commandQueue[0];
                     commandQueue.RemoveAt(0);
-                    return line;
                 }
             }
 
-            return base.ReadLine();
+			if (lineToSend == null)
+			{
+				lineToSend = base.ReadLine();
+			}
+
+			// keep track of the position
+			if (lineToSend != null
+				&& LineIsMovement(lineToSend))
+			{
+				lastDestination = GetPosition(lineToSend, lastDestination);
+			}
+
+			return lineToSend;
         }
     }
 }
