@@ -65,7 +65,11 @@ namespace MatterHackers.MatterControl
 			{
 				if (activePrinter != value)
 				{
-					PrinterConnectionAndCommunication.Instance.Disable();
+					// If we have an active printer, run Disable otherwise skip to prevent empty ActiveSliceSettings due to null ActivePrinter
+					if (activePrinter != null)
+					{
+						PrinterConnectionAndCommunication.Instance.Disable();
+					}
 
 					activePrinter = value;
 					ValidateMaterialSettings();
