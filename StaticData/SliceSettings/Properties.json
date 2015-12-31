@@ -734,7 +734,7 @@
   {
     "SlicerConfigName": "retract_length",
     "PresentationName": "Length on Move",
-    "HelpText": "The amount that the filament will be reversed after each qualifying non-printing move.",
+    "HelpText": "The amount that the filament will be reversed before each qualifying non-printing move.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -1134,7 +1134,7 @@
   },
   {
     "SlicerConfigName": "wipe",
-    "PresentationName": "Wipe Before Retract",
+    "PresentationName": "Wipe After Retract",
     "HelpText": "This will cause the extruder to try to wipe itself after retracting to minimize strings.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
