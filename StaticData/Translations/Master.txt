@@ -3868,27 +3868,18 @@ Translated:Offset:
 English:The speed to move while printing the first layer. If expressed as a percentage the above Infill speed is modified.
 Translated:The speed to move while printing the first layer. If expressed as a percentage the above Infill speed is modified.
 
-English:The amount that the filament will be reversed before each qualifying non-printing move.
-Translated:The amount that the filament will be reversed before each qualifying non-printing move.
-
 English:The distance between the interface of support and the part. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
 Translated:The distance between the interface of support and the part. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
 
 English:Distance From Object
 Translated:Distance From Object
 
-English:Wipe After Retract
-Translated:Wipe After Retract
-
 English:Maximum Fan Speed
 Translated:Maximum Fan Speed
 
-English:Print Bed
-Translated:Print Bed
+English:The amount that the filament will be reversed before each qualifying non-printing move.
+Translated:The amount that the filament will be reversed before each qualifying non-printing move.
 
-English:Transparent
-Translated:Transparent
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
-Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
+English:Wipe After Retract
+Translated:Wipe After Retract
 

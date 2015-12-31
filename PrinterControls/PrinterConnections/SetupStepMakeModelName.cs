@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Save & Continue"));
+			nextButton.Name = "Save & Continue Button";
 			nextButton.Click += new EventHandler(NextButton_Click);
 
 			GuiWidget hSpacer = new GuiWidget();
