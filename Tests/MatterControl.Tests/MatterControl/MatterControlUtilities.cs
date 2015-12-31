@@ -38,10 +38,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -65,6 +67,14 @@ namespace MatterHackers.MatterControl.UI
 			get
 			{
 				return Path.Combine("..", "..", "..", "TestData", "TestImages");
+			}
+		}
+
+		public static string PathToDownloadsFolder
+		{
+			get
+			{
+				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 			}
 		}
 
@@ -99,6 +109,17 @@ namespace MatterHackers.MatterControl.UI
 			if (saveImagesForDebug)
 			{
 				OutputImage(widgetToOutput.BackBuffer, fileName);
+			}
+		}
+
+		public static void CleanUpDownloadsDirectoryAfterTest(List<string> filesToDelete)
+		{
+			foreach(var filePath in filesToDelete)
+			{
+				if(File.Exists(filePath))
+				{
+					File.Delete(filePath);
+				}
 			}
 		}
 

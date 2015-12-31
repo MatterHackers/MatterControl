@@ -308,7 +308,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				string[] userValues = GetActiveValue("layer_to_pause").Split(';');
 
 				int temp;
-				return userValues.Where(v => int.TryParse(v, out temp)).Select(v => int.Parse(v)).ToArray();
+				return userValues.Where(v => int.TryParse(v, out temp)).Select(v =>
+				{
+					//Convert from 0 based index to 1 based index
+					int val = int.Parse(v);
+
+					// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
+					return val == 0 ? 1 : val - 1;
+				}).ToArray();
 			}
 		}
 
