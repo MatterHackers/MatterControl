@@ -3883,3 +3883,9 @@ Translated:The amount that the filament will be reversed before each qualifying 
 English:Wipe After Retract
 Translated:Wipe After Retract
 
+English:Print Bed
+Translated:Print Bed
+
+English:Transparent
+Translated:Transparent
+
