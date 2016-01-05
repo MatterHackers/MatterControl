@@ -3889,3 +3889,6 @@ Translated:Print Bed
 English:Transparent
 Translated:Transparent
 
+English:Canceled
+Translated:Canceled
+
