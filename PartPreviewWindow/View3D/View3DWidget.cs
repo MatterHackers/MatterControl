@@ -1928,12 +1928,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
 
 				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
-				{
-					printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".AMF");
-				}
 
-				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
+				if (returnInfo == null)
+				{
+					// we are replacing a file from the current print item wrapper
+					
+					// get a new location to save to
+					string tempFileNameToSaveTo = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
+					tempFileNameToSaveTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, tempFileNameToSaveTo);
+
+					// save to the new temp location
+					MeshFileIo.Save(asynchMeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
+
+					// remember the file we are replacing
+					string fileWeAreReplacing = printItemWrapper.FileLocation;
+
+					// after the file is done saving set the print item wrapper to point to it
+					printItemWrapper.FileLocation = tempFileNameToSaveTo;
+
+					// try to delete the old file
+					try
+					{
+						File.Delete(fileWeAreReplacing);
+					}
+					catch
+					{
+
+					}
+				}
+				else // we are saving a new file and it will not exist until we are done
+				{
+					MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
+				}
 
 				// Wait for a second to report the file changed to give the OS a chance to finish closing it.
 				UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
@@ -1949,7 +1975,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						libraryToSaveTo.Dispose();
 					}
 				}
-				else // we have already save it and the library should pick it up
+				else // we have already saved it and the library should pick it up
 				{
 				}
 
