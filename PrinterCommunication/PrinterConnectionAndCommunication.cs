@@ -56,9 +56,9 @@ using System.Threading.Tasks;
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
 	/// <summary>
-	/// This is the class that comunicates with a RepRap printer over the serial port.
+	/// This is the class that communicates with a RepRap printer over the serial port.
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
-	/// It should be refactoried into better moduals at some point.
+	/// It should be refactored into better modules at some point.
 	/// </summary>
 	public class PrinterConnectionAndCommunication
 	{
@@ -486,7 +486,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							if (!timeSinceStartedPrint.IsRunning
 								&& value == CommunicationStates.Printing)
 							{
-								// If we are just satrting to print (we know we were not pasued or it would have stoped above)
+								// If we are just starting to print (we know we were not paused or it would have stopped above)
 								timeSinceStartedPrint.Restart();
 							}
 							break;
@@ -709,7 +709,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						return "Finished Print".Localize();
 
 					default:
-						throw new NotImplementedException("Make sure every satus returns the correct connected state.");
+						throw new NotImplementedException("Make sure every status returns the correct connected state.");
 				}
 			}
 		}
@@ -736,7 +736,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						return true;
 
 					default:
-						throw new NotImplementedException("Make sure every satus returns the correct connected state.");
+						throw new NotImplementedException("Make sure every status returns the correct connected state.");
 				}
 			}
 		}
@@ -961,7 +961,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		/// <summary>
-		/// Abort an ongoing attempt to establish communcation with a printer due to the specified problem. This is a specialized
+		/// Abort an ongoing attempt to establish communication with a printer due to the specified problem. This is a specialized
 		/// version of the functionality that's previously been in .Disable but focused specifically on the task of aborting an
 		/// ongoing connection. Ideally we should unify all abort invocations to use this implementation rather than the mix
 		/// of occasional OnConnectionFailed calls, .Disable and .stopTryingToConnect
@@ -970,10 +970,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		/// <param name="shutdownReadLoop">Shutdown/join the readFromPrinterThread</param>
 		public void AbortConnectionAttempt(string abortReason, bool shutdownReadLoop = true)
 		{
-			// Set .Disconnecting to allow the readloop to exit gracefully before a forced thread join (and extended timeout)
+			// Set .Disconnecting to allow the read loop to exit gracefully before a forced thread join (and extended timeout)
 			CommunicationState = CommunicationStates.Disconnecting;
 
-			// Shudown the connectionAttempt thread
+			// Shutdown the connectionAttempt thread
 			if (connectThread != null)
 			{
 				connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
@@ -985,7 +985,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				ReadThread.Join();
 			}
 
-			// Shudown the serial port
+			// Shutdown the serial port
 			if (serialPort != null)
 			{
 				// Close and dispose the serial port
@@ -1062,7 +1062,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// Make sure we send this without waiting for the printer to respond. We want to try and turn off the heaters.
 				// It may be possible in the future to make this go into the printer queue for assured sending but it means
 				// the program has to be smart about closing an able to wait until the printer has agreed that it shut off
-				// the motors and heaters (a good idea ane something for the future).
+				// the motors and heaters (a good idea and something for the future).
 				ForceImmediateWrites = true;
 				ReleaseMotors();
 				TurnOffBedAndExtruders();
