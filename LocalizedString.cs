@@ -38,29 +38,30 @@ namespace MatterHackers.Localizations
 	{
 		private static TranslationMap MatterControlTranslationMap;
 
+		private static readonly object syncRoot = new object();
+
+		static LocalizedString()
+		{
+			lock(syncRoot)
+			{
+				if (MatterControlTranslationMap == null)
+				{
+					MatterControlTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
+				}
+			}
+		}
+
 		public static string Get(string englishText)
 		{
-			string language = UserSettings.Instance.get("Language");
-			if (language == null)
-			{
-				language = "en";
-				UserSettings.Instance.set("Language", "en");
-			}
-
-			if (MatterControlTranslationMap == null)
-			{
-				string pathToTranslationsFolder = "Translations";
-				MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
-			}
 #if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG
-            return "El " + englishText + " o";
+			return "El " + englishText + " o";
 #endif
 			return MatterControlTranslationMap.Translate(englishText);
 		}
 
 		public static void ResetTranslationMap()
 		{
-			MatterControlTranslationMap = null;
+			MatterControlTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
 		}
 
 		public static string Localize(this string englishString)
