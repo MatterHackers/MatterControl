@@ -1929,10 +1929,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
 
+				// If null we are replacing a file from the current print item wrapper
 				if (returnInfo == null)
 				{
-					// we are replacing a file from the current print item wrapper
-					
 					// get a new location to save to
 					string tempFileNameToSaveTo = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
 					tempFileNameToSaveTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, tempFileNameToSaveTo);
@@ -1945,6 +1944,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					// after the file is done saving set the print item wrapper to point to it
 					printItemWrapper.FileLocation = tempFileNameToSaveTo;
+					printItemWrapper.PrintItem.Commit();
 
 					// try to delete the old file
 					try
