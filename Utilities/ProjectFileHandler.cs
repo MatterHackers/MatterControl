@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl
 				CopyFileToTempFolder(item.Key, item.Value.FileName);
 			}
 
-			// Delete or move existing file out of the way as CreateFromDirectory will not overwrite and thows an exception
+			// Delete or move existing file out of the way as CreateFromDirectory will not overwrite and throws an exception
 			if (File.Exists(savedFileName))
 			{
 				try

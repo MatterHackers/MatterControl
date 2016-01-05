@@ -247,17 +247,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			ReadLineStartCallBacks.AddCallbackToKey("ok", SuppressEcho);
 			ReadLineStartCallBacks.AddCallbackToKey("wait", SuppressEcho);
-			ReadLineStartCallBacks.AddCallbackToKey("T:", SuppressEcho); // repatier
+			ReadLineStartCallBacks.AddCallbackToKey("T:", SuppressEcho); // repetier
 
 			ReadLineStartCallBacks.AddCallbackToKey("ok", PrintingCanContinue);
 			ReadLineStartCallBacks.AddCallbackToKey("Done saving file", PrintingCanContinue);
 
 			ReadLineStartCallBacks.AddCallbackToKey("ok T:", ReadTemperatures); // marlin
 			ReadLineStartCallBacks.AddCallbackToKey("ok T0:", ReadTemperatures); // marlin
-			ReadLineStartCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repatier
+			ReadLineStartCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repetier
 			ReadLineStartCallBacks.AddCallbackToKey("B:", ReadTemperatures); // smoothie
 
-			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repatier
+			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
 
 			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
 			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
@@ -1594,7 +1594,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						{                            
 							string allDataRead = serialPort.ReadExisting();
 							//Debug.Write("r: " + allDataRead);
-							//Console.Write(indata);
 							dataLastRead += allDataRead.Replace('\r', '\n');
 							do
 							{

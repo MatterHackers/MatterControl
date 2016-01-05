@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			catch (Exception)
 			{
 				GuiWidget.BreakInDebugger();
-				// we faild to close so lets wait a bit and try again
+				// we failed to close so lets wait a bit and try again
 				Thread.Sleep(1000);
 				try
 				{

@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				extrudersUsed.Add(false);
 			}
 
-			// If we have support enabled and and are using an extruder other than 0 for it
+			// If we have support enabled and are using an extruder other than 0 for it
 			if (ActiveSliceSettings.Instance.SupportEnabled)
 			{
 				if (ActiveSliceSettings.Instance.SupportExtruder != 0)
