@@ -1611,7 +1611,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									{
 										// TODO: This is an initial proof of concept for validating the printer response after DTR. More work is
 										// needed to test this technique across existing hardware and/or edge cases where this simple approach
-										// (initial line having more than 3 non-ascii characters) may not be adequate or appropriate.
+										// (initial line having more than 3 non-ASCII characters) may not be adequate or appropriate.
 										// TODO: Revise the INVALID char count to an agreed upon threshold
 										string[] segments = lastLineRead.Split('?');
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
