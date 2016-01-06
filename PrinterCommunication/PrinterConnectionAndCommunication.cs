@@ -269,11 +269,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			#region hardware failure callbacks
 			// smoothie temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("T:Inf", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("B:Inf", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("T:inf", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("B:inf", PrinterReportsError);
+
 			// marlin temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("MINTEMP", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("MAXTEMP", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("M999", PrinterReportsError);
+
 			// repatier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
 			#endregion
@@ -1458,19 +1461,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		bool reportedError = false;
 		public void PrinterReportsError(object sender, EventArgs e)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-			if (foundStringEventArgs != null)
+			if(!reportedError)
 			{
-				string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
-					+ "\n"
-					+ "\n" 
-					+ "Error Reported".Localize() + ":" 
-					+ $" \"{foundStringEventArgs.LineToCheck}\".";
-				UiThread.RunOnIdle(() =>
-				StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
-				);
+				reportedError = true;
+				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
+				if (foundStringEventArgs != null)
+				{
+					string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
+						+ "\n"
+						+ "\n" 
+						+ "Error Reported".Localize() + ":" 
+						+ $" \"{foundStringEventArgs.LineToCheck}\".";
+					UiThread.RunOnIdle(() =>
+					StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
+					);
+				}
 			}
 		}
 
