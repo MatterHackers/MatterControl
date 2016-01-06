@@ -267,7 +267,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
 			ReadLineStartCallBacks.AddCallbackToKey("EXTENSIONS:", PrinterStatesExtensions);
 
-			ReadLineStartCallBacks.AddCallbackToKey("Error:", PrinterReportsError);
+			#region hardware failure callbacks
+			// smoothie temperature failures
+			ReadLineContainsCallBacks.AddCallbackToKey("T:Inf", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("B:Inf", PrinterReportsError);
+			// marlin temperature failures
+			ReadLineContainsCallBacks.AddCallbackToKey("MINTEMP", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("MAXTEMP", PrinterReportsError);
+			// repatier temperature failures
+			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
+			#endregion
 
 			WriteLineStartCallBacks.AddCallbackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
