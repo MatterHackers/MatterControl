@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl
 			// Set English as default language if unset
 			if (string.IsNullOrEmpty(this.get("Language")))
 			{
-				UserSettings.Instance.set("Language", "en");
+				this.set("Language", "en");
 			}
 
 			// Propagate Language to local property
