@@ -15,8 +15,12 @@ namespace MatterHackers.MatterControl
 		private UserSettings()
 		{
 			// Load the UserSettings from the database
-			settingsDictionary = (from setting in Datastore.Instance.dbSQLite.Query<UserSetting>("SELECT * FROM UserSetting;")
-								  select setting).ToDictionary(s => s.Name, s => s);
+			settingsDictionary = new Dictionary<string, UserSetting>();
+			foreach(var userSetting in Datastore.Instance.dbSQLite.Query<UserSetting>("SELECT * FROM UserSetting;"))
+			{
+				// Allow for duplicate entries in the database with the same .Name value
+				settingsDictionary[userSetting.Name] = userSetting;
+			}
 
 			// Set English as default language if unset
 			if (string.IsNullOrEmpty(this.get("Language")))
