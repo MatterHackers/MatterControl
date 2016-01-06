@@ -1455,7 +1455,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (foundStringEventArgs != null)
 			{
 				string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
-					+ "\n\n" + "Error Reported:".Localize() + $" \"{foundStringEventArgs.LineToCheck}\".";
+					+ "\n"
+					+ "\n" 
+					+ "Error Reported".Localize() + ":" 
+					+ $" \"{foundStringEventArgs.LineToCheck}\".";
 				UiThread.RunOnIdle(() =>
 				StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
 				);

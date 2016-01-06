@@ -3892,3 +3892,12 @@ Translated:Transparent
 English:Canceled
 Translated:Canceled
 
+English:Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.
+Translated:Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.
+
+English:Error Reported
+Translated:Error Reported
+
+English:Printer Hardware Error
+Translated:Printer Hardware Error
+
