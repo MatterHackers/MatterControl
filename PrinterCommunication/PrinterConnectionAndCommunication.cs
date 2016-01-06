@@ -267,6 +267,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
 			ReadLineStartCallBacks.AddCallbackToKey("EXTENSIONS:", PrinterStatesExtensions);
 
+			ReadLineStartCallBacks.AddCallbackToKey("Error:", PrinterReportsError);
+
 			WriteLineStartCallBacks.AddCallbackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M140", BedTemperatureWasWritenToPrinter);
@@ -1444,6 +1446,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					firstLineToResendIndex = result - 1;
 				}
+			}
+		}
+
+		public void PrinterReportsError(object sender, EventArgs e)
+		{
+			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
+			if (foundStringEventArgs != null)
+			{
+				string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
+					+ "\n\n" + "Error Reported:".Localize() + $" \"{foundStringEventArgs.LineToCheck}\".";
+				UiThread.RunOnIdle(() =>
+				StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
+				);
 			}
 		}
 
