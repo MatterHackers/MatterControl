@@ -601,6 +601,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					else
 					{
 						LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+						pendingPartsToLoad.Clear();
 					}
 				}
 			}

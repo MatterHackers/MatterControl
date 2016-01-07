@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else if (pendingPartsToLoad.Count > 0)
 				{
 					LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+					pendingPartsToLoad.Clear();
 				}
 				else
 				{
