@@ -247,12 +247,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							// we only have single selection
 							if (this.IsSelectedItem)
 							{
-								// It is aleady selected, do nothing.
+								// It is already selected, do nothing.
 							}
 							else
 							{
 								libraryDataView.ClearSelectedItems();
 								libraryDataView.SelectedItems.Add(this);
+								Invalidate();
 							}
 						}
 					};
