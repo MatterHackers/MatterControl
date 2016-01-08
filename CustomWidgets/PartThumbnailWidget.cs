@@ -50,6 +50,7 @@ namespace MatterHackers.MatterControl
 {
 	public class PartThumbnailWidget : ClickWidget
 	{
+		object locker = new object();
 		// all the color stuff
 		new public double BorderWidth = 0;
 
@@ -207,7 +208,7 @@ namespace MatterHackers.MatterControl
 
 		private void LoadOrCreateThumbnail()
 		{
-			using (TimedLock.Lock(this, "TryLoad"))
+			lock(locker)
 			{
 				if (!thumbNailHasBeenCreated)
 				{

@@ -114,6 +114,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private static PrinterConnectionAndCommunication globalInstance;
 
+		object locker = new object();
+
 		private readonly int JoinThreadTimeoutMs = 5000;
 
 		private PrintItemWrapper activePrintItem;
@@ -1588,7 +1590,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						&& serialPort.BytesToRead > 0
 						&& readThreadHolder.IsCurrentThread())
 					{
-						using (TimedLock.Lock(this, "ReadFromPrinter"))
+						lock(locker)
 						{                            
 							string allDataRead = serialPort.ReadExisting();
 							//Debug.Write("r: " + allDataRead);
@@ -1887,7 +1889,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				else
 				{
-					using (TimedLock.Lock(this, "RequestPause"))
+					lock(locker)
 					{
 						InjectGCode(pauseGCode);
 
@@ -1959,7 +1961,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void SendLineToPrinterNow(string lineToWrite)
 		{
-			using (TimedLock.Lock(this, "QueueLineToPrinter"))
+			lock(locker)
 			{
 				if (lineToWrite.Contains("\\n"))
 				{
@@ -2155,7 +2157,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void CancelPrint()
 		{
-			using (TimedLock.Lock(this, "CancelingPrint"))
+			lock(locker)
 			{
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
@@ -2172,7 +2174,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void CancelSDCardPrint()
 		{
-			using (TimedLock.Lock(this, "CancelingPrint"))
+			lock(locker)
 			{
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
@@ -2721,7 +2723,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// wait until the printer responds from the last command with an OK OR we waited too long
 			if (timeHaveBeenWaitingForOK.IsRunning)
 			{
-				using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile1"))
+				lock(locker)
 				{
 					// we are still sending commands
 					if (currentSentLine != null)
@@ -2758,7 +2760,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			bool pauseRequested = false;
-            using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile2"))
+            lock(locker)
             {
                 if (firstLineToResendIndex < allCheckSumLinesSent.Count)
                 {
@@ -2882,7 +2884,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			string lineToWrite = LinesToWriteQueue[0];
 
-			using (TimedLock.Lock(this, "WriteNextLineFromQueue"))
+			lock(locker)
 			{
 				lineToWrite = RemoveCommentIfAny(lineToWrite);
                 KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
@@ -2936,7 +2938,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					try
 					{
-						using (TimedLock.Lock(this, "serialPort.Write"))
+						lock(locker)
 						{
 							serialPort.Write(lineToWrite);
 							timeSinceLastWrite.Restart();

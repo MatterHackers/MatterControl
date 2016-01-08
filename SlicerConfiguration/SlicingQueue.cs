@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string preparingToSliceModelTxt = LocalizedString.Get("Preparing to slice model");
 			string peparingToSliceModelFull = string.Format("{0}...", preparingToSliceModelTxt);
 			itemToQueue.OnSlicingOutputMessage(new StringEventArgs(peparingToSliceModelFull));
-			using (TimedLock.Lock(listOfSlicingItems, "QueuePartForSlicing"))
+			lock(listOfSlicingItems)
 			{
 				//Add to thumbnail generation queue
 				listOfSlicingItems.Add(itemToQueue);
@@ -438,7 +438,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								string stdError = slicerProcess.StandardError.ReadToEnd();
 
 								slicerProcess.WaitForExit();
-								using (TimedLock.Lock(slicerProcess, "SlicingProcess"))
+								lock(slicerProcess)
 								{
 									slicerProcess = null;
 								}
@@ -497,7 +497,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						itemToSlice.DoneSlicing = true;
 					});
 
-					using (TimedLock.Lock(listOfSlicingItems, "CreateSlicedPartsThread()"))
+					lock(listOfSlicingItems)
 					{
 						listOfSlicingItems.RemoveAt(0);
 					}
@@ -534,7 +534,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (slicerProcess != null)
 			{
-				using (TimedLock.Lock(slicerProcess, "SlicingProcess"))
+				lock(slicerProcess)
 				{
 					if (slicerProcess != null && !slicerProcess.HasExited)
 					{

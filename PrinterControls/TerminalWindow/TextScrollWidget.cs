@@ -38,6 +38,8 @@ namespace MatterHackers.MatterControl
 {
 	public class TextScrollWidget : GuiWidget
 	{
+		object locker = new object();
+
 		private string[] StartLineStringFilters = null;
 
 		private event EventHandler unregisterEvents;
@@ -137,7 +139,7 @@ namespace MatterHackers.MatterControl
 
 		private void CreateFilteredList()
 		{
-			using (TimedLock.Lock(this, "CreatingFilteredList"))
+			lock(locker)
 			{
 				visibleLines = new List<string>();
 				string[] allSourceLinesTemp = allSourceLines.ToArray();
@@ -185,9 +187,9 @@ namespace MatterHackers.MatterControl
 			int numLinesToDraw = NumVisibleLines;
 
 			double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
-			using (TimedLock.Lock(visibleLines, ""))
+			lock(visibleLines)
 			{
-				using (TimedLock.Lock(this, "DrawingLines"))
+				lock(locker)
 				{
 					int startLineIndex = visibleLines.Count - numLinesToDraw;
 					if (forceStartLine != -1)
