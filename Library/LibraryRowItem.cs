@@ -241,6 +241,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							{
 								libraryDataView.SelectedItems.Add(this);
 							}
+							Invalidate();
 						}
 						else
 						{
