@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -37,6 +38,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
+using System.IO;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
@@ -176,10 +178,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 					subheader2.Margin = new BorderDouble(bottom: 6);
 					tuningRatiosLayout.AddChild(subheader2);
 
-					ImageBuffer moveDownImage;
-					ImageBuffer moveUpImage;
+					ImageBuffer moveUpImage = StaticData.Instance.LoadIcon("MicroUp.png");
+					moveUpImage = ImageBuffer.CreateScaledImage(moveUpImage, 32, 32);
 
-					CreateButtonImages(out moveDownImage, out moveUpImage);
+					ImageBuffer moveDownImage = StaticData.Instance.LoadIcon("MicroDown.png");
+					moveDownImage = ImageBuffer.CreateScaledImage(moveDownImage, 32, 32);
 
 					textImageButtonFactory.FixedHeight = 0;
 					Button moveDownButton = textImageButtonFactory.GenerateFromImages("", moveDownImage);
@@ -221,55 +224,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 
 			this.AddChild(adjustmentControlsGroupBox);
-		}
-
-		private static void CreateButtonImages(out ImageBuffer moveDownImage, out ImageBuffer moveUpImage)
-		{
-			PathStorage upArrow = new PathStorage();
-			upArrow.MoveTo(0, 0);
-			upArrow.LineTo(.5, -.5);
-			upArrow.LineTo(.25, -.5);
-			upArrow.LineTo(.25, -1);
-			upArrow.LineTo(-.25, -1);
-			upArrow.LineTo(-.25, -.5);
-			upArrow.LineTo(-.5, -.5);
-
-			int buttonSize = 32;
-			int arrowSize = buttonSize / 3;
-			moveDownImage = new ImageBuffer(buttonSize, buttonSize, 32, new BlenderBGRA());
-			Graphics2D moveDownGraphics = moveDownImage.NewGraphics2D();
-			moveDownGraphics.Clear(RGBA_Bytes.White);
-
-			int margin = buttonSize / 16;
-			int lineWidth = buttonSize / 16;
-			//moveDownGraphics.FillRectangle(margin, buttonSize / 2 + margin, buttonSize - margin, buttonSize / 2 + margin + lineWidth, RGBA_Bytes.Black);
-			moveDownGraphics.FillRectangle(margin, buttonSize / 2 - margin, buttonSize - margin, buttonSize / 2 - margin - lineWidth, RGBA_Bytes.Black);
-
-			moveUpImage = new ImageBuffer(moveDownImage);
-
-			// point up
-			Affine totalTransform = Affine.NewScaling(arrowSize, arrowSize);
-			totalTransform *= Affine.NewTranslation(buttonSize / 2, buttonSize / 2 - margin - lineWidth);
-			//moveDownGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
-
-			// point down
-			totalTransform = Affine.NewRotation(MathHelper.Tau / 2);
-			totalTransform *= Affine.NewScaling(arrowSize, arrowSize);
-			totalTransform *= Affine.NewTranslation(buttonSize / 2, buttonSize / 2 + margin + lineWidth);
-			moveDownGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
-
-			Graphics2D moveUpGraphics = moveUpImage.NewGraphics2D();
-
-			// point up
-			totalTransform = Affine.NewScaling(arrowSize, arrowSize);
-			totalTransform *= Affine.NewTranslation(buttonSize / 2, buttonSize / 2 + margin + lineWidth + arrowSize + 1);
-			moveUpGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
-
-			// point down
-			totalTransform = Affine.NewRotation(MathHelper.Tau / 2);
-			totalTransform *= Affine.NewScaling(arrowSize, arrowSize);
-			totalTransform *= Affine.NewTranslation(buttonSize / 2, buttonSize / 2 - margin - lineWidth - arrowSize - 1);
-			//moveUpGraphics.Render(new VertexSourceApplyTransform(upArrow, totalTransform), RGBA_Bytes.Black);
 		}
 
 		public override void OnClosed(EventArgs e)
