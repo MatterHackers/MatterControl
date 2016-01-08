@@ -223,40 +223,51 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					partLabel.VAnchor = VAnchor.ParentCenter;
 					middleColumn.AddChild(partLabel);
 
+					bool mouseDownOnMiddle = false;
 					middleColumn.MouseDown += (sender, e) =>
 					{
 						// Abort normal processing for view helpers
-						if(this.IsViewHelperItem)
+						if (this.IsViewHelperItem)
 						{
 							return;
 						}
+						mouseDownOnMiddle = true;
+					};
 
-						if (this.libraryDataView.EditMode)
+					middleColumn.MouseUp += (sender, e) =>
+					{
+						if (mouseDownOnMiddle &
+						middleColumn.LocalBounds.Contains(e.Position))
 						{
-							if (this.IsSelectedItem)
+							if (this.libraryDataView.EditMode)
 							{
-								libraryDataView.SelectedItems.Remove(this);
-							}
-							else
-							{
-								libraryDataView.SelectedItems.Add(this);
-							}
-							Invalidate();
-						}
-						else
-						{
-							// we only have single selection
-							if (this.IsSelectedItem)
-							{
-								// It is already selected, do nothing.
-							}
-							else
-							{
-								libraryDataView.ClearSelectedItems();
-								libraryDataView.SelectedItems.Add(this);
+								if (this.IsSelectedItem)
+								{
+									libraryDataView.SelectedItems.Remove(this);
+								}
+								else
+								{
+									libraryDataView.SelectedItems.Add(this);
+								}
 								Invalidate();
 							}
+							else
+							{
+								// we only have single selection
+								if (this.IsSelectedItem)
+								{
+									// It is already selected, do nothing.
+								}
+								else
+								{
+									libraryDataView.ClearSelectedItems();
+									libraryDataView.SelectedItems.Add(this);
+									Invalidate();
+								}
+							}
 						}
+
+						mouseDownOnMiddle = false;
 					};
 				}
 				primaryFlow.AddChild(selectionCheckBoxContainer);
