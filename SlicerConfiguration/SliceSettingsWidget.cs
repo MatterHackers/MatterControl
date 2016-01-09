@@ -560,7 +560,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (addedSettingToSubGroup)
 						{
 							needToAddSubGroup = true;
-							string groupBoxLabel = subGroupTitle;
+							string groupBoxLabel = subGroupTitle.Localize();
 							AltGroupBox groupBox = new AltGroupBox(groupBoxLabel);
 							groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 							groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;

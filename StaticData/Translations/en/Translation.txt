@@ -3904,3 +3904,99 @@ Translated:Printer Hardware Error
 English:Error Loading Contents
 Translated:Error Loading Contents
 
+English:Temporarily override target temperature
+Translated:Temporarily override target temperature
+
+English:CHANGE
+Translated:CHANGE
+
+English:REVERT
+Translated:REVERT
+
+English:UPDATE
+Translated:UPDATE
+
+English:Oops! Could not complete update.
+Translated:Oops! Could not complete update.
+
+English:Connect your printer to check for firmware updates.
+Translated:Connect your printer to check for firmware updates.
+
+English:Fine
+Translated:Fine
+
+English:Coarse
+Translated:Coarse
+
+English:Outer Surface - Perimeters
+Translated:Outer Surface - Perimeters
+
+English:Outer Surface - Top & Bottom
+Translated:Outer Surface - Top & Bottom
+
+English:Light
+Translated:Light
+
+English:Heavy
+Translated:Heavy
+
+English:Speed for Infill
+Translated:Speed for Infill
+
+English:Speed for Perimeters
+Translated:Speed for Perimeters
+
+English:Speeds for Other Printing
+Translated:Speeds for Other Printing
+
+English:Speed for Non-Print Moves
+Translated:Speed for Non-Print Moves
+
+English:Touching
+Translated:Touching
+
+English:Far
+Translated:Far
+
+English:Machine Settings
+Translated:Machine Settings
+
+English:Probe Settings
+Translated:Probe Settings
+
+English:On Connect G-Code
+Translated:On Connect G-Code
+
+English:sign in
+Translated:sign in
+
+English:Log into my account
+Translated:Log into my account
+
+English:Login
+Translated:Login
+
+English:Username or Email
+Translated:Username or Email
+
+English:Enter your username or email address
+Translated:Enter your username or email address
+
+English:Password
+Translated:Password
+
+English:Forgot Password
+Translated:Forgot Password
+
+English:Enter your password
+Translated:Enter your password
+
+English:New User? 
+Translated:New User? 
+
+English:Create An Account
+Translated:Create An Account
+
+English:Please wait. Signing in...
+Translated:Please wait. Signing in...
+

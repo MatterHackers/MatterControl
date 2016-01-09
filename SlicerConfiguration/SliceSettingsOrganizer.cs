@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType, parameters[3].Trim(), parameters[4].Trim());
 
 				default:
-					throw new Exception("Bad number of paramenters.");
+					throw new Exception("Bad number of parameters.");
 			}
 		}
 

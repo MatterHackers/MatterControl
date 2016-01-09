@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 			tempLabelContainer.Height = 16;
 			tempLabelContainer.Margin = new BorderDouble(3, 0);
 
-			TextWidget tempLabel = new TextWidget(string.Format("mm / minute"), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
+			TextWidget tempLabel = new TextWidget("mm / minute".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 			tempLabel.HAnchor = HAnchor.ParentLeft;
 			tempLabel.VAnchor = VAnchor.ParentCenter;
 

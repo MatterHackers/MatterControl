@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			mainContainer.HAnchor = HAnchor.ParentLeftRight;
 			mainContainer.Margin = new BorderDouble(left: 0);
 
-			TextWidget subheader = new TextWidget("Temporarily override target temperature", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			TextWidget subheader = new TextWidget("Temporarily override target temperature".Localize(), pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			subheader.Margin = new BorderDouble(bottom: 6);
 			mainContainer.AddChild(subheader);
 

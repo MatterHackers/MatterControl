@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 
 				if (!userHasPermission)
 				{
-					TextWidget demoLabel = new TextWidget("(demo)", pointSize: 10);
+					TextWidget demoLabel = new TextWidget("(" + "demo".Localize() + ")", pointSize: 10);
 
 					demoLabel.Margin = new BorderDouble(left: 4);
 					demoLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 
 				if (!userHasPermission)
 				{
-					Button unlockButton = unlockButtonFactory.Generate("Unlock");
+					Button unlockButton = unlockButtonFactory.Generate("Unlock".Localize());
 					unlockButton.Margin = new BorderDouble(0);
 					unlockButton.Cursor = Cursors.Hand;
 					unlockButton.Click += (sender, e) =>
