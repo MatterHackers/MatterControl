@@ -4000,3 +4000,9 @@ Translated:Create An Account
 English:Please wait. Signing in...
 Translated:Please wait. Signing in...
 
+English:Extruder Temperatures
+Translated:Extruder Temperatures
+
+English:Bed Temperatures
+Translated:Bed Temperatures
+

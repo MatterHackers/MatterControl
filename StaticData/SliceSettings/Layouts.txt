@@ -40,11 +40,11 @@ Intermediate
     Filament
       Filament
         filament_diameter
-      Extruder Temperature (°C)
+      Extruder Temperatures
         first_layer_temperature
         temperature
         extruder_wipe_temperature
-      Bed Temperature (°C)
+      Bed Temperatures
         first_layer_bed_temperature
         bed_temperature
         bed_remove_part_temperature
@@ -196,11 +196,11 @@ Advanced
       Filament
         filament_diameter
         extrusion_multiplier
-      Extruder Temperature (°C)
+      Extruder Temperatures
         first_layer_temperature
         temperature
         extruder_wipe_temperature
-      Bed Temperature (°C)
+      Bed Temperatures
         first_layer_bed_temperature
         bed_temperature
         bed_remove_part_temperature
