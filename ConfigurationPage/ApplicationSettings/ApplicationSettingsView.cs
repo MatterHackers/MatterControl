@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -36,7 +37,9 @@ using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -561,6 +564,49 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UserSettings.Instance.set("Language", languageCode);
 				languageRestartButton.Visible = true;
+
+				if(languageCode == "L10N")
+				{
+					GenerateLocalizationValidationFile();
+				}
+			}
+		}
+
+		[Conditional("DEBUG")]
+		private void GenerateLocalizationValidationFile()
+		{
+			char currentChar = 'A';
+
+			string outputPath = StaticData.Instance.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
+
+			// Ensure the output directory exists
+			Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
+
+			using (var outstream = new StreamWriter(outputPath))
+			{
+				foreach (var line in File.ReadAllLines(StaticData.Instance.MapPath(Path.Combine("Translations", "en", "Translation.txt"))))
+				{
+					if (line.StartsWith("Translated:"))
+					{
+						var pos = line.IndexOf(':');
+						var segments = new string[]
+						{
+							line.Substring(0, pos),
+							line.Substring(pos + 1),
+						};
+
+						outstream.WriteLine("{0}:{1}", segments[0], new string(segments[1].ToCharArray().Select(c => c == ' ' ? ' ' : currentChar).ToArray()));
+
+						if (currentChar++ == 'Z')
+						{
+							currentChar = 'A';
+						}
+					}
+					else
+					{
+						outstream.WriteLine(line);
+					}
+				}
 			}
 		}
 	}
