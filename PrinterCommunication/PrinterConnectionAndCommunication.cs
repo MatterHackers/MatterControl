@@ -2905,7 +2905,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                     // If we get a home command, ask the printer where it is after sending it.
                     if (lineWithoutChecksum.StartsWith("G28")
-                        || lineWithoutChecksum.StartsWith("G29"))
+                        || lineWithoutChecksum.StartsWith("G29")
+						|| lineWithoutChecksum.StartsWith("G92"))
                     {
                         SendLineToPrinterNow("M114");
                     }
