@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -183,8 +184,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					ImageBuffer moveDownImage = StaticData.Instance.LoadIcon("MicroDown.png");
 					moveDownImage = ImageBuffer.CreateScaledImage(moveDownImage, 32, 32);
+					InvertLightness.DoInvertLightness(moveUpImage);
+					InvertLightness.DoInvertLightness(moveDownImage);
 
 					textImageButtonFactory.FixedHeight = 0;
+					textImageButtonFactory.AllowThemeToAdjustImage = false;
 					Button moveDownButton = textImageButtonFactory.GenerateFromImages("", moveDownImage);
                     moveDownButton.Margin = new BorderDouble(0, 3, 3, 3);
                     Button moveUpButton = textImageButtonFactory.GenerateFromImages("", moveUpImage);

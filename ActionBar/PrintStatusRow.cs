@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button GetAutoLevelIndicator()
 		{
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
-			imageButtonFactory.invertImageColor = false;
+			imageButtonFactory.InvertImageColor = false;
 			string notifyIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
 			string notifyHoverIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
 			Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);

@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public class ImageButtonFactory
 	{
-		public bool invertImageColor = true;
+		public bool InvertImageColor { get; set; } = true;
 
 		public static CheckBox CreateToggleSwitch(bool initialState)
 		{
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl
 			ImageBuffer hoverImage = StaticData.Instance.LoadIcon(hoverImageName);
 			ImageBuffer disabledImage = StaticData.Instance.LoadIcon(disabledImageName);
 
-			if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+			if (!ActiveTheme.Instance.IsDarkTheme && InvertImageColor)
 			{
 				InvertLightness.DoInvertLightness(normalImage);
 				InvertLightness.DoInvertLightness(pressedImage);
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 				disabledImage = normalImage;
 			}
 
-			if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+			if (!ActiveTheme.Instance.IsDarkTheme && InvertImageColor)
 			{
 				InvertLightness.DoInvertLightness(normalImage);
 				InvertLightness.DoInvertLightness(pressedImage);
