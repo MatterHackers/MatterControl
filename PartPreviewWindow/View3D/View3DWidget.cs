@@ -52,6 +52,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -1901,6 +1903,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
+
 		private void MergeAndSavePartsDoWork(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
 			if (returnInfo != null)
@@ -1934,27 +1938,67 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (returnInfo == null)
 				{
 					// get a new location to save to
-					string tempFileNameToSaveTo = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
-					tempFileNameToSaveTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, tempFileNameToSaveTo);
+					string tempFileNameToSaveTo = Path.Combine(
+						ApplicationDataStorage.Instance.ApplicationLibraryDataPath, 
+						Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
 
-					// save to the new temp location
-					MeshFileIo.Save(asynchMeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
+					string outputPath;
+					string newFileName;
 
-					// remember the file we are replacing
-					string fileWeAreReplacing = printItemWrapper.FileLocation;
+					bool keepSourceFile = false;
 
-					// after the file is done saving set the print item wrapper to point to it
-					printItemWrapper.FileLocation = tempFileNameToSaveTo;
-					printItemWrapper.PrintItem.Commit();
+					var fileInfo = new FileInfo(printItemWrapper.FileLocation);
+					if (fileInfo.Extension.Equals(".amf", StringComparison.OrdinalIgnoreCase))
+					{
+						outputPath = printItemWrapper.FileLocation;
+					}
+					else
+					{
+						// Switching from .stl, .obj or similar to AMF. Save the file and update the
+						// the filename with an incremented (n) value to reflect the extension change in the UI 
+						string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
 
-					// try to delete the old file
+						// Ensure the original .stl or .obj is retained after the switch to .amf
+						keepSourceFile = true;
+
+						// Drop bracketed number sections from our source filename to ensure we don't generate something like "file (1) (1).amf"
+						if (fileName.Contains("("))
+						{
+							fileName = fileNameNumberMatch.Replace(fileName, "").Trim();
+						}
+
+						// Generate and search for an incrementing file name until no match is found at the target directory
+						int foundCount = 0;
+						do
+						{
+							newFileName = string.Format("{0} ({1})", fileName, ++foundCount);
+							outputPath = Path.Combine(fileInfo.DirectoryName, newFileName + ".amf");
+
+							// Continue incrementing while any matching file exists
+						} while (Directory.GetFiles(fileInfo.DirectoryName, newFileName + ".*").Any());
+					}
+
 					try
 					{
-						File.Delete(fileWeAreReplacing);
-					}
-					catch
-					{
+						// save to the new temp location
+						bool savedSuccessfully = MeshFileIo.Save(asynchMeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
 
+						// Swap out the files if the save operation completed successfully 
+						if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
+						{
+							// Ensure the target path is clear
+							if(!keepSourceFile && File.Exists(printItemWrapper.FileLocation))
+							{
+								File.Delete(printItemWrapper.FileLocation);
+							}
+
+							// Move the newly saved file back into place
+							File.Move(tempFileNameToSaveTo, outputPath);
+						}
+					}
+					catch(Exception ex)
+					{
+						Trace.WriteLine("Error saving file: ", ex.Message);
 					}
 				}
 				else // we are saving a new file and it will not exist until we are done
