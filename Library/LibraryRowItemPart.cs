@@ -240,11 +240,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public async void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
+		public async void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing, PrintItemWrapper printItemWrapper = null)
 		{
 			if (viewingWindow == null)
 			{
-				var printItemWrapper = await this.GetPrintItemWrapperAsync();
+				// Only call GetPrintItemWrapperAsync if need to avoid unneeded overhead
+				if (printItemWrapper == null)
+				{
+					printItemWrapper = await this.GetPrintItemWrapperAsync();
+				}
 				viewingWindow = new PartPreviewMainWindow(printItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
 				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
 			}
@@ -433,7 +437,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				string pathAndFile = printItemWrapper.FileLocation;
 				if (File.Exists(pathAndFile))
 				{
-					OpenPartViewWindow(openMode);
+					OpenPartViewWindow(openMode, printItemWrapper);
 				}
 				else
 				{

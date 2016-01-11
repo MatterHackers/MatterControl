@@ -137,7 +137,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 			if (Directory.Exists(downloadsDirectory))
 			{
-				libraryCreators.Add(new LibraryProviderFileSystemCreator(downloadsDirectory, "Downloads"));
+				libraryCreators.Add(
+					new LibraryProviderFileSystemCreator(
+						downloadsDirectory,
+						"Downloads",
+						useIncrementedNameDuringTypeChange: true));
+
 				AddFolderImage("download_folder.png");
 			}
 
@@ -148,7 +153,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					if(Directory.Exists(directory))
 					{
-						libraryCreators.Add(new LibraryProviderFileSystemCreator(directory, (new DirectoryInfo(directory).Name)));
+						libraryCreators.Add(
+							new LibraryProviderFileSystemCreator(
+								directory, 
+								(new DirectoryInfo(directory).Name),
+								useIncrementedNameDuringTypeChange: true));
+
 						AddFolderImage("download_folder.png");
 					}
 				}

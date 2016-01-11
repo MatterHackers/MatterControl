@@ -42,26 +42,29 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderFileSystemCreator : ILibraryCreator
 	{
-		string rootPath;
-		public string Description { get; set; }
+		private string rootPath;
 
-		public LibraryProviderFileSystemCreator(string rootPath, string description)
+		private bool useIncrementedNameDuringTypeChange;
+
+		public LibraryProviderFileSystemCreator(string rootPath, string description, bool useIncrementedNameDuringTypeChange = false)
 		{
 			this.rootPath = rootPath;
 			this.Description = description;
+			this.useIncrementedNameDuringTypeChange = useIncrementedNameDuringTypeChange;
 		}
 
-		public string ProviderKey
-		{
-			get
-			{
-				return "FileSystem_" + rootPath + "_Key";
-			}
-		}
+		public string Description { get; set; }
+
+		public string ProviderKey => "FileSystem_" + rootPath + "_Key";
 
 		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
-			return new LibraryProviderFileSystem(rootPath, Description, parentLibraryProvider, setCurrentLibraryProvider);
+			return new LibraryProviderFileSystem(
+				rootPath, 
+				Description, 
+				parentLibraryProvider, 
+				setCurrentLibraryProvider, 
+				this.useIncrementedNameDuringTypeChange);
 		}
 	}
 
@@ -73,14 +76,22 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		private string keywordFilter = string.Empty;
 		private string rootPath;
+		private bool useIncrementedNameDuringTypeChange;
 
-		public LibraryProviderFileSystem(string rootPath, string name, LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
+		public LibraryProviderFileSystem(
+			string rootPath, string name, 
+			LibraryProvider parentLibraryProvider, 
+			Action<LibraryProvider> setCurrentLibraryProvider,
+			bool useIncrementedNameDuringTypeChange = false)
 			: base(parentLibraryProvider, setCurrentLibraryProvider)
 		{
 			this.Name = name;
 			this.rootPath = rootPath;
 
 			directoryWatcher.Path = rootPath;
+
+			// Indicates if the new AMF file should use the original file name incremented until no name collision occurs
+			this.useIncrementedNameDuringTypeChange = useIncrementedNameDuringTypeChange;
 
 			directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
 				   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -123,12 +134,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-        public override void ShareItem(int itemIndexToShare)
-        {
+		public override void ShareItem(int itemIndexToShare)
+		{
+		}
 
-        }
-
-        public override bool CanShare { get { return false; } }
+		public override bool CanShare { get { return false; } }
 
 		public override int ItemCount
 		{
@@ -212,7 +222,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
 
-			return Task.FromResult(new PrintItemWrapper(new DataStorage.PrintItem(GetPrintItemName(itemIndex), fileName), this.GetProviderLocator()));
+			var printItemWrapper = new PrintItemWrapper(new DataStorage.PrintItem(GetPrintItemName(itemIndex), fileName), this.GetProviderLocator())
+			{
+				UseIncrementedNameDuringTypeChange = true
+			};
+
+			return Task.FromResult(printItemWrapper);
 		}
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
