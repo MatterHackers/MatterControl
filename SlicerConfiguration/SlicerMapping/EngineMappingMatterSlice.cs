@@ -136,6 +136,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			new MapItemToBool("generateSupport", "support_material"),
 
+			new MapItem("supportPercent", "support_material_percent"),
+
             //infillExtendIntoPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
             new MapItem("infillExtendIntoPerimeter", "infill_overlap_perimeter"),
 

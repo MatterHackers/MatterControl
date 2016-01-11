@@ -34,6 +34,7 @@ Intermediate
         support_material_create_internal_support
       Support Options
         support_material_spacing
+        support_material_percent
       Extruders
         support_material_extruder
   Filament
@@ -145,6 +146,7 @@ Advanced
         support_material_pattern
         support_material_spacing
         support_material_angle
+        support_material_percent
         support_material_infill_angle
         support_material_interface_layers
         support_material_interface_spacing

@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					hideItems.Add("repair_outlines_keep_open");
 					hideItems.Add("complete_objects");
 					hideItems.Add("output_filename_format");
+					hideItems.Add("support_material_percent");
 					hideItems.Add("post_process");
 					hideItems.Add("extruder_clearance_height");
 					hideItems.Add("extruder_clearance_radius");
