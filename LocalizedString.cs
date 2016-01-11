@@ -44,7 +44,7 @@ namespace MatterHackers.Localizations
 			{
 				if (MatterControlTranslationMap == null)
 				{
-#if DEBUG
+#if DEBUG && !__ANDROID__
 					// In debug builds we load a translation map capable of generating/updating master.txt
 					MatterControlTranslationMap = new AutoGeneratingTranslationMap("Translations", UserSettings.Instance.Language);
 #else
