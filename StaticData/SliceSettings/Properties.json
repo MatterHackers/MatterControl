@@ -919,7 +919,7 @@
     "PresentationName": "Support Percent",
     "HelpText": "The amount of support to generate.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees",
+    "ExtraSettings": "%",
     "QuickMenuSettings": [{"MenuName" : "Little", "Value": "10"},{"MenuName" : "Standard", "Value": "50"},{"MenuName" : "Lots", "Value": "90"}]  },
   {
     "SlicerConfigName": "support_material_infill_angle",
