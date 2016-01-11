@@ -211,6 +211,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		public string GetFileExtension()
+		{
+			return Path.GetExtension(this.PrintItem.FileLocation);
+		}
+
+		public string GetFileNameWithoutExtension()
+		{
+			return Path.GetFileNameWithoutExtension(this.PrintItem.FileLocation); ;
+		}
+
 		public string Name
 		{
 			get { return this.PrintItem.Name; }
@@ -238,6 +248,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public bool SlicingHadError { get { return slicingHadError; } }
 
 		public List<ProviderLocatorNode> SourceLibraryProviderLocator { get; private set; }
+		public bool UseIncrementedNameDuringTypeChange { get; internal set; }
 
 		public void Delete()
 		{

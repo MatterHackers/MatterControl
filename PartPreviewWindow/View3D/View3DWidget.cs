@@ -1937,29 +1937,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// If null we are replacing a file from the current print item wrapper
 				if (returnInfo == null)
 				{
-					// get a new location to save to
-					string tempFileNameToSaveTo = Path.Combine(
-						ApplicationDataStorage.Instance.ApplicationLibraryDataPath, 
-						Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
-
-					string outputPath;
-					string newFileName;
-
-					bool keepSourceFile = false;
-
 					var fileInfo = new FileInfo(printItemWrapper.FileLocation);
-					if (fileInfo.Extension.Equals(".amf", StringComparison.OrdinalIgnoreCase))
+
+					bool requiresTypeChange = !fileInfo.Extension.Equals(".amf", StringComparison.OrdinalIgnoreCase);
+					if (requiresTypeChange && !printItemWrapper.UseIncrementedNameDuringTypeChange)
 					{
-						outputPath = printItemWrapper.FileLocation;
+						// Not using incremented file name, simply change to AMF
+						printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".amf");
 					}
-					else
+					else if (requiresTypeChange)
 					{
+						string newFileName;
+						string incrementedFileName;
+
 						// Switching from .stl, .obj or similar to AMF. Save the file and update the
 						// the filename with an incremented (n) value to reflect the extension change in the UI 
 						string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
-
-						// Ensure the original .stl or .obj is retained after the switch to .amf
-						keepSourceFile = true;
 
 						// Drop bracketed number sections from our source filename to ensure we don't generate something like "file (1) (1).amf"
 						if (fileName.Contains("("))
@@ -1967,19 +1960,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							fileName = fileNameNumberMatch.Replace(fileName, "").Trim();
 						}
 
-						// Generate and search for an incrementing file name until no match is found at the target directory
+						// Generate and search for an incremented file name until no match is found at the target directory
 						int foundCount = 0;
 						do
 						{
 							newFileName = string.Format("{0} ({1})", fileName, ++foundCount);
-							outputPath = Path.Combine(fileInfo.DirectoryName, newFileName + ".amf");
+							incrementedFileName = Path.Combine(fileInfo.DirectoryName, newFileName + ".amf");
 
 							// Continue incrementing while any matching file exists
 						} while (Directory.GetFiles(fileInfo.DirectoryName, newFileName + ".*").Any());
+
+						// Change the FileLocation to the new AMF file
+						printItemWrapper.FileLocation = incrementedFileName;
 					}
 
 					try
 					{
+						// get a new location to save to
+						string tempFileNameToSaveTo = Path.Combine(
+							ApplicationDataStorage.Instance.ApplicationLibraryDataPath,
+							Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
+
 						// save to the new temp location
 						bool savedSuccessfully = MeshFileIo.Save(asynchMeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
 
@@ -1987,13 +1988,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
 						{
 							// Ensure the target path is clear
-							if(!keepSourceFile && File.Exists(printItemWrapper.FileLocation))
+							if(File.Exists(printItemWrapper.FileLocation))
 							{
 								File.Delete(printItemWrapper.FileLocation);
 							}
 
 							// Move the newly saved file back into place
-							File.Move(tempFileNameToSaveTo, outputPath);
+							File.Move(tempFileNameToSaveTo, printItemWrapper.FileLocation);
+
+							// Once the file is swapped back into place, update the PrintItem to account for extension change
+							printItemWrapper.PrintItem.Commit();
 						}
 					}
 					catch(Exception ex)
