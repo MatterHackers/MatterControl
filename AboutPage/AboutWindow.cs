@@ -57,15 +57,10 @@ namespace MatterHackers.MatterControl
 			aboutPage.AnchorAll();
 			this.AddChild(aboutPage);
 
-			FlowLayoutWidget buttonRowContainer = new FlowLayoutWidget();
-			buttonRowContainer.HAnchor = HAnchor.ParentLeftRight;
-			buttonRowContainer.Padding = new BorderDouble(0, 3);
-			AddChild(buttonRowContainer);
-
 			Button cancelButton = textImageButtonFactory.Generate("Close");
-			cancelButton.Click += (sender, e) => { CancelButton_Click(); };
-			buttonRowContainer.AddChild(new HorizontalSpacer());
-			buttonRowContainer.AddChild(cancelButton);
+			cancelButton.Click += (s, e) => CancelButton_Click();
+			cancelButton.HAnchor = HAnchor.ParentRight;
+			this.AddChild(cancelButton);
 
 			this.Title = LocalizedString.Get("About MatterControl");
 			this.AlwaysOnTopOfMain = true;

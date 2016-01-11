@@ -244,11 +244,11 @@ namespace MatterHackers.MatterControl
 					{
 						if (elementState.Id == "sendFeedback")
 						{
-							createdButton.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
+							createdButton.Click += (s, e) =>  ContactFormWindow.Open();
 						}
 						else if (elementState.Id == "clearCache")
 						{
-							createdButton.Click += (sender, mouseEvent) => { AboutWidget.DeleteCacheData(); };
+							createdButton.Click += (s, e) => AboutWidget.DeleteCacheData();
 						}
 					}
 
