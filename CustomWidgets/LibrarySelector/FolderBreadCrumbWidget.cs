@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 		{
 			LibraryProvider displayingProvider = currentLibraryProvider;
 
-			this.CloseAndRemoveAllChildren();
+			this.CloseAllChildren();
 
 			List<LibraryProvider> parentProviderList = new List<LibraryProvider>();
 			while (currentLibraryProvider != null)

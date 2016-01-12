@@ -137,9 +137,6 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
-		private string cannotExitWhileActiveMessage = "Oops! You cannot exit while a print is active.".Localize();
-		private string cannotExitWhileActiveTitle = "Unable to Exit";
-
 		private bool exit_Click()
 		{
 			UiThread.RunOnIdle(() =>
@@ -150,16 +147,9 @@ namespace MatterHackers.MatterControl
 					parent = parent.Parent;
 				}
 
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-				{
-					StyledMessageBox.ShowMessageBox(null, cannotExitWhileActiveMessage, cannotExitWhileActiveTitle);
-				}
-				else
-				{
-					MatterControlApplication app = parent as MatterControlApplication;
-					app.RestartOnClose = false;
-					app.Close();
-				}
+				MatterControlApplication app = parent as MatterControlApplication;
+				app.RestartOnClose = false;
+				app.Close();
 			});
 			return true;
 		}

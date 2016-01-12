@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl
 			if (PopedOutSystemWindow != null)
 			{
 				SaveSizeAndPosition();
-				PopedOutSystemWindow.CloseAndRemoveAllChildren();
+				PopedOutSystemWindow.CloseAllChildren();
 				PopedOutSystemWindow.Close();
 			}
 		}

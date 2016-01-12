@@ -72,11 +72,6 @@ namespace MatterHackers.MatterControl
 		private bool ShowMemoryUsed = false;
 		private Stopwatch totalDrawTime = new Stopwatch();
 
-		private string unableToExitMessage = "Oops! You cannot exit while a print is active.".Localize();
-
-		private string unableToExitTitle = "Unable to Exit".Localize();
-
-
 #if true//!DEBUG
 		static RaygunClient _raygunClient = GetCorrectClient();
 #endif
@@ -542,7 +537,23 @@ namespace MatterHackers.MatterControl
 
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
-				StyledMessageBox.ShowMessageBox(null, unableToExitMessage, unableToExitTitle);
+				// Needed as we can't assign to CancelClose inside of the lambda below
+				bool continueWithShutdown = false;
+
+				StyledMessageBox.ShowMessageBox(
+					(shutdownConfirmed) => continueWithShutdown = shutdownConfirmed,
+					"Are you sure you want to abort the current print and close MatterControl?".Localize(),
+					"Abort Print".Localize(),
+					StyledMessageBox.MessageType.YES_NO);
+
+				if (continueWithShutdown)
+				{
+					PrinterConnectionAndCommunication.Instance.Disable();
+					this.Close();
+				}
+
+				// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called 
+				// when MatterControlApplication.OnClosed is invoked
 				CancelClose = true;
 			}
 			else if (PartsSheet.IsSaving())

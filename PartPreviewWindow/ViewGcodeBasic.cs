@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			CloseAndRemoveAllChildren();
+			CloseAllChildren();
 			gcodeViewWidget = null;
 			gcodeProcessingStateInfoText = null;
 
@@ -427,7 +427,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddModelInfo(FlowLayoutWidget buttonPanel)
 		{
-			buttonPanel.CloseAndRemoveAllChildren();
+			buttonPanel.CloseAllChildren();
 
 			double oldWidth = textImageButtonFactory.FixedWidth;
 			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
@@ -548,7 +548,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddDisplayControls(FlowLayoutWidget buttonPanel)
 		{
-			buttonPanel.CloseAndRemoveAllChildren();
+			buttonPanel.CloseAllChildren();
 
 			double oldWidth = textImageButtonFactory.FixedWidth;
 			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;

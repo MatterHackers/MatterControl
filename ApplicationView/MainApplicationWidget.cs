@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl
 				{
 					// give the widget a chance to hear about the close before they are actually colsed.
 					WidescreenPanel.PreChangePanels.CallEvents(this, null);
-					MainView.CloseAndRemoveAllChildren();
+					MainView.CloseAllChildren();
 					using (new PerformanceTimer("ReloadAll", "AddElements"))
 					{
 						MainView.AddElements();
