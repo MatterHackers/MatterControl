@@ -93,6 +93,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.queueDataView = queueDataView;
 			this.PrintItemWrapper = printItemWrapper;
 			this.Name = "Queue Item " + printItemWrapper.Name;
+
+			// Ensure queue items do not overwrite existing AMF files on disk when converting
+			// from STL or similar to AMF
+			this.PrintItemWrapper.UseIncrementedNameDuringTypeChange = true;
+
 			ConstructPrintQueueItem();
 		}
 
