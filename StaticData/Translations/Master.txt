@@ -4024,3 +4024,12 @@ Translated:Support Percent
 English:Allow Negative Z
 Translated:Allow Negative Z
 
+English:Offset: 
+Translated:Offset: 
+
+English:Are you sure you want to abort the current print and close MatterControl?
+Translated:Are you sure you want to abort the current print and close MatterControl?
+
+English:Abort Print
+Translated:Abort Print
+

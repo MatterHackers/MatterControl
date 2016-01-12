@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 
 		private void LoadColumnTwo()
 		{
-			ColumnTwo.CloseAndRemoveAllChildren();
+			ColumnTwo.CloseAllChildren();
 
 			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
 			partViewContent.AnchorAll();
@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl
 
 		private void RemovePanelsAndCreateEmpties()
 		{
-			CloseAndRemoveAllChildren();
+			CloseAllChildren();
 
 			ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
