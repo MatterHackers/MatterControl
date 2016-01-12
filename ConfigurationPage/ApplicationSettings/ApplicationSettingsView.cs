@@ -584,7 +584,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			using (var outstream = new StreamWriter(outputPath))
 			{
-				foreach (var line in File.ReadAllLines(StaticData.Instance.MapPath(Path.Combine("Translations", "en", "Translation.txt"))))
+				foreach (var line in File.ReadAllLines(StaticData.Instance.MapPath(Path.Combine("Translations", "Master.txt"))))
 				{
 					if (line.StartsWith("Translated:"))
 					{
