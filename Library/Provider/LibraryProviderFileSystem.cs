@@ -379,7 +379,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
 						{
 							if (upperFilter.Trim() == string.Empty
-								|| Path.GetFileNameWithoutExtension(filename.ToUpper()).Contains(upperFilter))
+								|| FileNameContainsFilter(filename, upperFilter))
 							{
 								newReadDirectoryFiles.Add(filename);
 							}
@@ -390,13 +390,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						foreach (string directory in newReadDirectoryDirectories)
 						{
 							string subDirectory = Path.Combine(rootPath, directory);
-							string[] subDirectoryFiles = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
+							string[] subDirectoryFiles = Directory.GetFiles(subDirectory);
 							foreach (string filename in subDirectoryFiles)
 							{
 								if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
 								{
 									if (keywordFilter.Trim() == string.Empty
-										|| Path.GetFileNameWithoutExtension(filename.ToUpper()).Contains(upperFilter))
+										|| FileNameContainsFilter(filename, upperFilter) )
 									{
 										newReadDirectoryFiles.Add(filename);
 									}
@@ -422,6 +422,20 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			currentDirectoryFiles = newReadDirectoryFiles;
 
 			OnDataReloaded(null);
+		}
+
+		private bool FileNameContainsFilter(string filename, string upperFilter)
+		{
+			string[] mustContains = upperFilter.Split(' ');
+			foreach (string check in mustContains)
+			{
+				if(!Path.GetFileNameWithoutExtension(filename.ToUpper().Replace('_', ' ')).Contains(check))
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		private string GetPathFromLocator(List<ProviderLocatorNode> providerLocator)
