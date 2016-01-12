@@ -252,86 +252,93 @@ namespace MatterHackers.MatterControl
 				return null;
 			}
 
-			using (FileStream fs = File.OpenRead(loadedFileName))
-			using (ZipArchive zip = new ZipArchive(fs))
+			try
 			{
-				int projectHashCode = zip.GetHashCode();
-
-				//If the temp folder doesn't exist - create it, otherwise clear it
-				string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-extract", projectHashCode.ToString());
-				if (!Directory.Exists(stagingFolder))
+				using (FileStream fs = File.OpenRead(loadedFileName))
+				using (ZipArchive zip = new ZipArchive(fs))
 				{
-					Directory.CreateDirectory(stagingFolder);
-				}
-				else
-				{
-					System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(@stagingFolder);
-					EmptyFolder(directory);
-				}
+					int projectHashCode = zip.GetHashCode();
 
-				List<PrintItem> printItemList = new List<PrintItem>();
-				Project projectManifest = null;
-
-				foreach (ZipArchiveEntry zipEntry in zip.Entries)
-				{
-					string sourceExtension = Path.GetExtension(zipEntry.Name).ToUpper();
-
-					// Note: directories have empty Name properties
-					//
-					// Only process ZipEntries that are:
-					//    - not directories and
-					//     - are in the ValidFileExtension list or
-					//     - have a .GCODE extension or
-					//     - are named manifest.json
-					if (!string.IsNullOrWhiteSpace(zipEntry.Name) &&
-						(zipEntry.Name == "manifest.json"
-						|| MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
-						|| sourceExtension == ".GCODE"))
+					//If the temp folder doesn't exist - create it, otherwise clear it
+					string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-extract", projectHashCode.ToString());
+					if (!Directory.Exists(stagingFolder))
 					{
-						string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
+						Directory.CreateDirectory(stagingFolder);
+					}
+					else
+					{
+						System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(@stagingFolder);
+						EmptyFolder(directory);
+					}
 
-						string neededPathForZip = Path.GetDirectoryName(extractedFileName);
-						if (!Directory.Exists(neededPathForZip))
-						{
-							Directory.CreateDirectory(neededPathForZip);
-						}
+					List<PrintItem> printItemList = new List<PrintItem>();
+					Project projectManifest = null;
 
-						using (Stream zipStream = zipEntry.Open())
-						using (FileStream streamWriter = File.Create(extractedFileName))
-						{
-							zipStream.CopyTo(streamWriter);
-						}
+					foreach (ZipArchiveEntry zipEntry in zip.Entries)
+					{
+						string sourceExtension = Path.GetExtension(zipEntry.Name).ToUpper();
 
-						if (zipEntry.Name == "manifest.json")
+						// Note: directories have empty Name properties
+						//
+						// Only process ZipEntries that are:
+						//    - not directories and
+						//     - are in the ValidFileExtension list or
+						//     - have a .GCODE extension or
+						//     - are named manifest.json
+						if (!string.IsNullOrWhiteSpace(zipEntry.Name) &&
+							(zipEntry.Name == "manifest.json"
+							|| MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+							|| sourceExtension == ".GCODE"))
 						{
-							using (StreamReader sr = new System.IO.StreamReader(extractedFileName))
+							string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
+
+							string neededPathForZip = Path.GetDirectoryName(extractedFileName);
+							if (!Directory.Exists(neededPathForZip))
 							{
-								projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
+								Directory.CreateDirectory(neededPathForZip);
+							}
+
+							using (Stream zipStream = zipEntry.Open())
+							using (FileStream streamWriter = File.Create(extractedFileName))
+							{
+								zipStream.CopyTo(streamWriter);
+							}
+
+							if (zipEntry.Name == "manifest.json")
+							{
+								using (StreamReader sr = new System.IO.StreamReader(extractedFileName))
+								{
+									projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
+								}
 							}
 						}
 					}
-				}
 
-				if (projectManifest != null)
-				{
-					foreach (ManifestItem item in projectManifest.ProjectFiles)
+					if (projectManifest != null)
 					{
-						for (int i = 1; i <= item.ItemQuantity; i++)
+						foreach (ManifestItem item in projectManifest.ProjectFiles)
 						{
-							printItemList.Add(this.GetPrintItemFromFile(Path.Combine(stagingFolder, item.FileName), item.Name));
+							for (int i = 1; i <= item.ItemQuantity; i++)
+							{
+								printItemList.Add(this.GetPrintItemFromFile(Path.Combine(stagingFolder, item.FileName), item.Name));
+							}
 						}
 					}
-				}
-				else
-				{
-					string[] files = Directory.GetFiles(stagingFolder, "*.*", SearchOption.AllDirectories);
-					foreach (string fileName in files)
+					else
 					{
-						printItemList.Add(this.GetPrintItemFromFile(fileName, Path.GetFileNameWithoutExtension(fileName)));
+						string[] files = Directory.GetFiles(stagingFolder, "*.*", SearchOption.AllDirectories);
+						foreach (string fileName in files)
+						{
+							printItemList.Add(this.GetPrintItemFromFile(fileName, Path.GetFileNameWithoutExtension(fileName)));
+						}
 					}
-				}
 
-				return printItemList;
+					return printItemList;
+				}
+			}
+			catch
+			{
+				return null;
 			}
 		}
 

@@ -4021,3 +4021,6 @@ Translated:The amount of support to generate.
 English:Support Percent
 Translated:Support Percent
 
+English:Allow Negative Z
+Translated:Allow Negative Z
+

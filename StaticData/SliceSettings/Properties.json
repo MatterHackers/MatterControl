@@ -1162,7 +1162,7 @@
   },
   {
     "SlicerConfigName": "z_can_be_negative",
-    "PresentationName": "Z Can Be Negative",
+    "PresentationName": "Allow Negative Z",
     "HelpText": "Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
