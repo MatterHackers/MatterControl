@@ -33,7 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -42,7 +42,6 @@ namespace MatterHackers.MatterControl.EeProm
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		private EePromRepetierStorage currentEePromSettings;
-		private BindingList<EePromRepetierParameter> data = new BindingList<EePromRepetierParameter>();
 		private FlowLayoutWidget settingsColmun;
 
 		private event EventHandler unregisterEvents;
@@ -169,55 +168,64 @@ namespace MatterHackers.MatterControl.EeProm
 			buttonSave.Click += buttonSave_Click;
 		}
 
+		bool waitingForUiUpdate = false;
 		private void NewSettingReadFromPrinter(object sender, EventArgs e)
 		{
 			EePromRepetierParameter newSetting = e as EePromRepetierParameter;
 			if (newSetting != null)
 			{
-				data.Add(newSetting);
-
-				UiThread.RunOnIdle(AddItemToUi, newSetting);
+				if (!waitingForUiUpdate)
+				{
+					waitingForUiUpdate = true;
+					UiThread.RunOnIdle(AddItemToUi, 1);
+				}
 			}
 		}
 
 		private int currentTabIndex = 0;
 
-		private void AddItemToUi(object state)
+		private void AddItemToUi()
 		{
-			EePromRepetierParameter newSetting = state as EePromRepetierParameter;
-			if (newSetting != null)
+			List<EePromRepetierParameter> tempList = new List<EePromRepetierParameter>();
+			lock (currentEePromSettings.eePromSettingsList)
 			{
-				FlowLayoutWidget row = new FlowLayoutWidget();
-				row.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-				row.AddChild(AddDescription(newSetting.Description));
-				row.Padding = new BorderDouble(5, 0);
-				if ((settingsColmun.Children.Count % 2) == 1)
+				foreach (KeyValuePair<int, EePromRepetierParameter> keyValue in currentEePromSettings.eePromSettingsList)
 				{
-					row.BackgroundColor = new RGBA_Bytes(0, 0, 0, 50);
+					tempList.Add(keyValue.Value);
 				}
-
-				CreateSpacer(row);
-
-				double currentValue;
-				double.TryParse(newSetting.Value, out currentValue);
-				MHNumberEdit valueEdit = new MHNumberEdit(currentValue, pixelWidth: 80, allowNegatives: true, allowDecimals: true);
-				valueEdit.SelectAllOnFocus = true;
-				valueEdit.TabIndex = currentTabIndex++;
-				valueEdit.VAnchor = Agg.UI.VAnchor.ParentCenter;
-				valueEdit.ActuallNumberEdit.EditComplete += (sender, e) =>
-				{
-					newSetting.Value = valueEdit.ActuallNumberEdit.Value.ToString();
-				};
-				row.AddChild(valueEdit);
-
-				settingsColmun.AddChild(row);
 			}
 
-			// TODO: fix the flow layout so we don't need this.
-			// This is correcting a bug in flow layout widgets not setting sizes correctly.
-			double oldWidth = Width;
-			Width = Width + 1;
-			Width = oldWidth;
+			foreach (EePromRepetierParameter newSetting in tempList)
+			{
+				if (newSetting != null)
+				{
+					FlowLayoutWidget row = new FlowLayoutWidget();
+					row.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+					row.AddChild(AddDescription(newSetting.Description));
+					row.Padding = new BorderDouble(5, 0);
+					if ((settingsColmun.Children.Count % 2) == 1)
+					{
+						row.BackgroundColor = new RGBA_Bytes(0, 0, 0, 30);
+					}
+
+					CreateSpacer(row);
+
+					double currentValue;
+					double.TryParse(newSetting.Value, out currentValue);
+					MHNumberEdit valueEdit = new MHNumberEdit(currentValue, pixelWidth: 80 * TextWidget.GlobalPointSizeScaleRatio, allowNegatives: true, allowDecimals: true);
+					valueEdit.SelectAllOnFocus = true;
+					valueEdit.TabIndex = currentTabIndex++;
+					valueEdit.VAnchor = Agg.UI.VAnchor.ParentCenter;
+					valueEdit.ActuallNumberEdit.EditComplete += (sender, e) =>
+					{
+						newSetting.Value = valueEdit.ActuallNumberEdit.Value.ToString();
+					};
+					row.AddChild(valueEdit);
+
+					settingsColmun.AddChild(row);
+				}
+			}
+			waitingForUiUpdate = false;
 		}
 
 		private GuiWidget AddDescription(string description)
@@ -251,7 +259,6 @@ namespace MatterHackers.MatterControl.EeProm
 		private void DoButtonAbort_Click()
 		{
 			currentEePromSettings.Clear();
-			data.Clear();
 			currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
 			Close();
 		}

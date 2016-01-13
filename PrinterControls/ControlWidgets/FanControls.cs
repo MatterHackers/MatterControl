@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		protected override void AddChildElements()
 		{
-			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan Controls".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 
 			fanControlsGroupBox.Margin = new BorderDouble(0);
 			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;

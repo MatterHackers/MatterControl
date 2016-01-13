@@ -4345,3 +4345,9 @@ Translated:The distance to move the nozzle along the Z axis to ensure that it is
 English:Retract When \nChanging Islands
 Translated:Retract When \nChanging Islands
 
+English:Movement
+Translated:Movement
+
+English:Fan
+Translated:Fan
+

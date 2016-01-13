@@ -49,14 +49,20 @@ namespace MatterHackers.MatterControl.EeProm
 
 		public void Clear()
 		{
-			eePromSettingsList.Clear();
+			lock (eePromSettingsList)
+			{
+				eePromSettingsList.Clear();
+			}
 		}
 
 		public void Save()
 		{
-			foreach (EePromRepetierParameter p in eePromSettingsList.Values)
+			lock (eePromSettingsList)
 			{
-				p.save();
+				foreach (EePromRepetierParameter p in eePromSettingsList.Values)
+				{
+					p.save();
+				}
 			}
 		}
 
@@ -77,16 +83,17 @@ namespace MatterHackers.MatterControl.EeProm
 			}
 
 			EePromRepetierParameter parameter = new EePromRepetierParameter(line);
-			if (eePromSettingsList.ContainsKey(parameter.position))
+			lock (eePromSettingsList)
 			{
-				eePromSettingsList.Remove(parameter.position);
+				if (eePromSettingsList.ContainsKey(parameter.position))
+				{
+					eePromSettingsList.Remove(parameter.position);
+				}
+
+				eePromSettingsList.Add(parameter.position, parameter);
 			}
 
-			eePromSettingsList.Add(parameter.position, parameter);
-			if (eventAdded != null)
-			{
-				eventAdded(this, parameter);
-			}
+			eventAdded(this, parameter);
 		}
 
 		public void AskPrinterForSettings()
