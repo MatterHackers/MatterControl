@@ -206,33 +206,7 @@ namespace MatterControl.MatterControl.UI
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
-					//Add printer profile so that we can export gcode
-					//TODO: Seperate this logic out into a seperate function so we dont have to re-write code
-
-					testRunner.ClickByName("Select a Printer Button");
-					testRunner.Wait(1);
-
-					testRunner.ClickByName("Select Make");
-					testRunner.Wait(1);
-
-					testRunner.ClickByName("Airwolf 3D Menu Item");
-					testRunner.Wait(1);
-
-					testRunner.ClickByName("Select Model");
-					testRunner.Wait(1);
-
-					testRunner.ClickByName("HD Menu Item");
-					testRunner.Wait(1);
-
-					testRunner.ClickByName("Save & Continue Button");
-					testRunner.Wait(1);
-
-					testRunner.ClickByName("Setup Connection Cancel Button");
-					testRunner.Wait(1);
-
-					testRunner.ClickByName("Airwolf 3D HD Profile");
-					testRunner.Wait(1);
-
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
 
 					string firstItemName = "Row Item " + "Batman";
 

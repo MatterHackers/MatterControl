@@ -101,6 +101,39 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
+		public static void SelectAndAddPrinter(AutomationRunner testRunner, string make, string model)
+		{
+
+			string manufacturer = make + " Menu Item";
+			string printer = model + " Menu Item";
+			string printerProfile = String.Format("{0} {1} Profile", make, model);
+
+
+			testRunner.ClickByName("Select a Printer Button");
+			testRunner.Wait(1);
+
+			testRunner.ClickByName("Select Make");
+			testRunner.Wait(1);
+
+			testRunner.ClickByName(manufacturer);
+			testRunner.Wait(1);
+
+			testRunner.ClickByName("Select Model");
+			testRunner.Wait(1);
+
+			testRunner.ClickByName(printer);
+			testRunner.Wait(1);
+
+			testRunner.ClickByName("Save & Continue Button");
+			testRunner.Wait(1);
+
+			testRunner.ClickByName("Setup Connection Cancel Button");
+			testRunner.Wait(2);
+
+			testRunner.ClickByName(printerProfile);
+			testRunner.Wait(1);
+		}
+
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)
 		{
 			if (saveImagesForDebug)
