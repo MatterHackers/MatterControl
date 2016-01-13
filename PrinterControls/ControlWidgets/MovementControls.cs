@@ -32,6 +32,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.Utilities;
 using MatterHackers.VectorMath;
@@ -55,8 +56,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private Button homeYButton;
 		private Button homeZButton;
 		private TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
-		private JogControls jogControls;
+		internal JogControls jogControls;
 		private AltGroupBox movementControlsGroupBox;
+
+		// Provides a list of DisableableWidgets controls that can be toggled on/off at runtime
+		internal List<DisableableWidget> DisableableWidgets = new List<DisableableWidget>();
+
+		// Displays the current baby step offset stream values
+		private TextWidget offsetStreamLabel;
 
 		private LimitCallingFrequency reportDestinationChanged = null;
 
@@ -80,11 +87,26 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public override void OnClosed(EventArgs e)
 		{
+			PrinterConnectionAndCommunication.Instance.OffsetStreamChanged -= OffsetStreamChanged;
+
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
 			}
 			base.OnClosed(e);
+		}
+
+		/// <summary>
+		/// Helper method to create DisableableWidget containers and populate the DisableableWidgets local property.
+		/// </summary>
+		/// <param name="widget">The widget to wrap.</param>
+		private DisableableWidget CreateDisableableContainer(GuiWidget widget)
+		{
+			var container = new DisableableWidget();
+			container.AddChild(widget);
+			DisableableWidgets.Add(container);
+
+			return container;
 		}
 
 		protected override void AddChildElements()
@@ -119,13 +141,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					FlowLayoutWidget leftToRightContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 
-					manualControlsLayout.AddChild(GetHomeButtonBar());
-					manualControlsLayout.AddChild(CreateSeparatorLine());
+					manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
+					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
 					manualControlsLayout.AddChild(jogControls);
-					//manualControlsLayout.AddChild(leftToRightContainer);
-					manualControlsLayout.AddChild(CreateSeparatorLine());
-					manualControlsLayout.AddChild(GetHWDestinationBar());
-					manualControlsLayout.AddChild(CreateSeparatorLine());
+					////manualControlsLayout.AddChild(leftToRightContainer);
+					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
+					manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
+					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
 				}
 
 				movementControlsGroupBox.AddChild(manualControlsLayout);
@@ -226,7 +248,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += new EventHandler(disableMotors_Click);
-
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			GuiWidget spacerReleaseShow = new GuiWidget(10 * TextWidget.GlobalPointSizeScaleRatio, 0);
@@ -236,11 +257,37 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.AddChild(homeXButton);
 			homeButtonBar.AddChild(homeYButton);
 			homeButtonBar.AddChild(homeZButton);
+
+			offsetStreamLabel = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
+			offsetStreamLabel.AutoExpandBoundsToText = true;
+			offsetStreamLabel.VAnchor = VAnchor.ParentCenter;
+			homeButtonBar.AddChild(offsetStreamLabel);
+
 			homeButtonBar.AddChild(spacer);
 			homeButtonBar.AddChild(disableMotors);
 			homeButtonBar.AddChild(spacerReleaseShow);
 
+			PrinterConnectionAndCommunication.Instance.OffsetStreamChanged += OffsetStreamChanged;
+
 			return homeButtonBar;
+		}
+
+		internal void OffsetStreamChanged(object sender, System.IO.ErrorEventArgs e)
+		{
+			if(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			{
+				Vector3 offset = PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset;
+
+				offsetStreamLabel.Text = ("{0} ({1:0.##}, {2:0.##}, {3:0.##})").FormatWith(
+					"Offset: ".Localize(),
+					offset.x,
+					offset.y,
+					offset.z);
+			}
+			else
+			{
+				offsetStreamLabel.Text = "";
+			}
 		}
 
 		private FlowLayoutWidget GetHWDestinationBar()

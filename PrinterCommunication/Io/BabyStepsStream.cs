@@ -41,11 +41,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		MaxLengthStream maxLengthStream;
 		int layerCount = -1;
 
-		public double Offset
+		public Vector3 Offset
 		{
 			get
 			{
-				return offsetStream.Offset.z;
+				return offsetStream.Offset;
 			}
 		}
 
@@ -55,14 +55,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			maxLengthStream.Dispose();
 		}
 
-		public void MoveDown()
+		public void OffsetAxis(PrinterConnectionAndCommunication.Axis moveAxis, double moveAmount)
 		{
-			offsetStream.Offset = offsetStream.Offset - new Vector3(0, 0, .02);
-		}
-
-		public void MoveUp()
-		{
-			offsetStream.Offset = offsetStream.Offset + new Vector3(0, 0, .02);
+			offsetStream.Offset = offsetStream.Offset + new Vector3(
+				(moveAxis == PrinterConnectionAndCommunication.Axis.X) ? moveAmount : 0,
+				(moveAxis == PrinterConnectionAndCommunication.Axis.Y) ? moveAmount : 0,
+				(moveAxis == PrinterConnectionAndCommunication.Axis.Z) ? moveAmount : 0);
 		}
 
 		public BabyStepsStream(GCodeStream internalStream)

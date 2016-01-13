@@ -37,6 +37,8 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.CustomWidgets;
+using System.Collections.ObjectModel;
 
 namespace MatterHackers.MatterControl
 {
@@ -57,6 +59,8 @@ namespace MatterHackers.MatterControl
 		TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
 
 		private MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
+
+		private event EventHandler unregisterEvents;
 
 		public JogControls(XYZColors colors)
 		{
@@ -145,59 +149,59 @@ namespace MatterHackers.MatterControl
 							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
 						}
 					}
-					else if(OsInformation.OperatingSystem == OSType.Mac) 
+					else if (OsInformation.OperatingSystem == OSType.Mac)
 					{
-							if (e.KeyCode == Keys.LButton && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
-							}
-							else if (e.KeyCode == Keys.Z && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
-							}
-							else if (e.KeyCode == Keys.Y && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
-							}
-							else if (e.KeyCode == Keys.X && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
-							}
-							else if (e.KeyCode == Keys.Left && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountNegative, MovementControls.XSpeed);
-							}
-							else if (e.KeyCode == Keys.Right && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountPositive, MovementControls.XSpeed);
-							}
-							else if (e.KeyCode == Keys.Up && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
-							}
-							else if (e.KeyCode == Keys.Down && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
-							}
-							else if (e.KeyCode == (Keys.Back | Keys.Cancel) && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
-							}
-							else if (e.KeyCode == Keys.Clear && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
-							}
-							else if (e.KeyCode == Keys.E && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
+						if (e.KeyCode == Keys.LButton && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
+						}
+						else if (e.KeyCode == Keys.Z && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
+						}
+						else if (e.KeyCode == Keys.Y && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
+						}
+						else if (e.KeyCode == Keys.X && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
+						}
+						else if (e.KeyCode == Keys.Left && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountNegative, MovementControls.XSpeed);
+						}
+						else if (e.KeyCode == Keys.Right && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountPositive, MovementControls.XSpeed);
+						}
+						else if (e.KeyCode == Keys.Up && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
+						}
+						else if (e.KeyCode == Keys.Down && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
+						}
+						else if (e.KeyCode == (Keys.Back | Keys.Cancel) && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
+						}
+						else if (e.KeyCode == Keys.Clear && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
+						}
+						else if (e.KeyCode == Keys.E && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
 
-							}
-							else if (e.KeyCode == Keys.R && hotKeysEnabled)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
-							}
+						}
+						else if (e.KeyCode == Keys.R && hotKeysEnabled)
+						{
+							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
+						}
 					}
-				
+
 				};
 
 					// add in some movement radio buttons
@@ -216,38 +220,64 @@ namespace MatterHackers.MatterControl
 
 						FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
 
+						var radioList = new ObservableCollection<GuiWidget>();
+
+						pointZeroOneButton = buttonFactory.GenerateRadioButton("0.02");
+						pointZeroOneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+						pointZeroOneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.02); };
+						pointZeroOneButton.SiblingRadioButtonList = radioList;
+						moveRadioButtons.AddChild(pointZeroOneButton);
+
 						RadioButton pointOneButton = buttonFactory.GenerateRadioButton("0.1");
 						pointOneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 						pointOneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.1); };
+						pointOneButton.SiblingRadioButtonList = radioList;
 						moveRadioButtons.AddChild(pointOneButton);
 
 						RadioButton oneButton = buttonFactory.GenerateRadioButton("1");
 						oneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 						oneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(1); };
+						oneButton.SiblingRadioButtonList = radioList;
 						moveRadioButtons.AddChild(oneButton);
 
-						RadioButton tenButton = buttonFactory.GenerateRadioButton("10");
+						tooBigForBabyStepping = new DisableableWidget()
+						{
+							VAnchor = VAnchor.FitToChildren,
+							HAnchor = HAnchor.FitToChildren
+						};
+
+						var tooBigFlowLayout = new FlowLayoutWidget();
+						tooBigForBabyStepping.AddChild(tooBigFlowLayout);
+
+						tenButton = buttonFactory.GenerateRadioButton("10");
 						tenButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 						tenButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(10); };
-						moveRadioButtons.AddChild(tenButton);
-
-						RadioButton oneHundredButton = buttonFactory.GenerateRadioButton("100");
+						tenButton.SiblingRadioButtonList = radioList;
+						tooBigFlowLayout.AddChild(tenButton);
+						
+						oneHundredButton = buttonFactory.GenerateRadioButton("100");
 						oneHundredButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 						oneHundredButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(100); };
-						moveRadioButtons.AddChild(oneHundredButton);
+						oneHundredButton.SiblingRadioButtonList = radioList;
+						tooBigFlowLayout.AddChild(oneHundredButton);
+
+						moveRadioButtons.AddChild(tooBigForBabyStepping);
 
 						tenButton.Checked = true;
 						moveRadioButtons.Margin = new BorderDouble(0, 3);
+
 						setMoveDistanceControl.AddChild(moveRadioButtons);
+
+						TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
+						mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
+
+						tooBigFlowLayout.AddChild(mmLabel);
 					}
 
-					TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
-					mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
-					setMoveDistanceControl.AddChild(mmLabel);
 					setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
 					xYZWithDistance.AddChild(setMoveDistanceControl);
 				}
-				
+
 				allControlsLeftToRight.AddChild(xYZWithDistance);
 
 #if !__ANDROID__
@@ -261,15 +291,16 @@ namespace MatterHackers.MatterControl
 				barBetweenZAndE.Margin = new BorderDouble(distanceBetweenControls, 5);
 				allControlsLeftToRight.AddChild(barBetweenZAndE);
 
-				//moveButtonFactory.normalFillColor = XYZColors.eColor;
-
 				FlowLayoutWidget eButtons = CreateEButtons(buttonSeparationDistance);
-				eButtons.VAnchor |= Agg.UI.VAnchor.ParentTop;
-				allControlsLeftToRight.AddChild(eButtons);
+				disableableEButtons = new DisableableWidget()
+				{
+					HAnchor = HAnchor.FitToChildren,
+					VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
+				};
+				disableableEButtons.AddChild(eButtons);
 
-			
+				allControlsLeftToRight.AddChild(disableableEButtons);
 				allControlsTopToBottom.AddChild(allControlsLeftToRight);
-
 			}
 			
 			this.AddChild(allControlsTopToBottom);
@@ -280,6 +311,26 @@ namespace MatterHackers.MatterControl
 
 			// this.HAnchor |= HAnchor.ParentLeftRight;
 
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
+		}
+
+		internal void EnableBabystepping(bool enableBabysteppingMode)
+		{
+			if (enableBabysteppingMode)
+			{
+				pointZeroOneButton.Checked = true;
+			}
+
+			tenButton.Enabled = !enableBabysteppingMode;
+			oneHundredButton.Enabled = !enableBabysteppingMode;
+
+			disableableEButtons.SetEnableLevel(enableBabysteppingMode ? DisableableWidget.EnableLevel.Disabled : DisableableWidget.EnableLevel.Enabled);
+			tooBigForBabyStepping.SetEnableLevel(enableBabysteppingMode ? DisableableWidget.EnableLevel.Disabled : DisableableWidget.EnableLevel.Enabled);
 		}
 
 		private void SetEMoveAmount(int moveAmount)
@@ -313,10 +364,14 @@ namespace MatterHackers.MatterControl
 
 		private List<ExtrudeButton> eMinusButtons = new List<ExtrudeButton>();
 		private List<ExtrudeButton> ePlusButtons = new List<ExtrudeButton>();
+		private RadioButton oneHundredButton;
+		private RadioButton tenButton;
+		private DisableableWidget disableableEButtons;
+		private DisableableWidget tooBigForBabyStepping;
+		private RadioButton pointZeroOneButton;
 
 		private FlowLayoutWidget GetHotkeyControlContainer()
 		{
-
 			TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
 			hotKeyButtonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
 			hotKeyButtonFactory.FixedWidth = 30 * TextWidget.GlobalPointSizeScaleRatio;
@@ -579,8 +634,14 @@ namespace MatterHackers.MatterControl
 			{
 				MoveButton moveButton = (MoveButton)sender;
 
-				//Add more fancy movement here
-				PrinterConnectionAndCommunication.Instance.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
+				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
+				{
+					PrinterConnectionAndCommunication.Instance.AddToBabyStepOffset(this.moveAxis, this.MoveAmount);
+				}
+				else
+				{
+					PrinterConnectionAndCommunication.Instance.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
+				}
 			}
 		}
 
