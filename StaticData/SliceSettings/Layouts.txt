@@ -214,6 +214,7 @@ Advanced
         retract_restart_extra
         retract_before_travel
         retract_layer_change
+        retract_when_changing_islands
         min_extrusion_before_retract
         wipe
       Retraction On Tool Change

@@ -153,6 +153,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			new MapItem("bridgeFanSpeedPercent", "bridge_fan_speed"),
 
+			new MapItemToBool("retractWhenChangingIslands", "retract_when_changing_islands"),
+
 			new MapItem("raftFanSpeedPercent", "raft_fan_speed_percent"),
 
 			new AsPercentOfReferenceOrDirect("raftPrintSpeed", "raft_print_speed", "infill_speed"),

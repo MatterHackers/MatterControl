@@ -2,7 +2,7 @@
   {
     "SlicerConfigName": "avoid_crossing_perimeters",
     "PresentationName": "Avoid Crossing Perimeters",
-    "HelpText": "Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.",
+    "HelpText": "Attempts to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },
@@ -86,7 +86,7 @@
   {
     "SlicerConfigName": "build_height",
     "PresentationName": "Build Height",
-    "HelpText": "The height of the printer's printable volume, in millimeters. Serves no purpose for slicing, but controls the height of the visual print area displayed in 3D View.",
+    "HelpText": "The height of the printer's printable volume, in millimeters. Primarily controls the height of the visual print area displayed in 3D View.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -191,14 +191,14 @@
   {
     "SlicerConfigName": "external_perimeter_speed",
     "PresentationName": "Outside Perimeter",
-    "HelpText": "The speed at which outside, external, or the otherwise visible perimeters will print.",
+    "HelpText": "The speed at which outside, (visible) perimeters will print.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "mm/s or %"
   },
   {
     "SlicerConfigName": "external_perimeters_first",
     "PresentationName": "External Perimeters First",
-    "HelpText": "Forces external perimeters to be drawn first. By default, they will print last.",
+    "HelpText": "Forces external perimeters to be printed first. By default, they will print last.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },
@@ -240,7 +240,7 @@
   {
     "SlicerConfigName": "extruders_share_temperature",
     "PresentationName": "Share Temperature",
-    "HelpText": "Indicate that more than one extruder shares a common heater cartridge.",
+    "HelpText": "Indicate that the extruders share a common heater cartridge.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },
@@ -261,7 +261,7 @@
   {
     "SlicerConfigName": "extrusion_multiplier",
     "PresentationName": "Extrusion Multiplier",
-    "HelpText": "All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.",
+    "HelpText": "All extrusions are multiplied by this value. Increasing it above 1  will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": ""
   },
@@ -289,7 +289,7 @@
   {
     "SlicerConfigName": "filament_diameter",
     "PresentationName": "Diameter",
-    "HelpText": "The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.",
+    "HelpText": "The actual diameter of the filament used for printing.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -303,7 +303,7 @@
   {
     "SlicerConfigName": "fill_density",
     "PresentationName": "Fill Density",
-    "HelpText": "The amount of infill material to generate, expressed as a mathematical term-- specifically, ratio or a percentage.",
+    "HelpText": "The amount of infill material to generate, expressed as a ratio or a percentage.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "% or ratio",
     "QuickMenuSettings": [{"MenuName" : "Light", "Value": "10%"},{"MenuName" : "Standard", "Value": "30%"},{"MenuName" : "Heavy", "Value": "90%"}]
@@ -318,7 +318,7 @@
   {
     "SlicerConfigName": "first_layer_acceleration",
     "PresentationName": "First Layer",
-    "HelpText": "Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.",
+    "HelpText": "Acceleration to use while printing the first layer. Set to 0 to use the default first layer acceleration.",
     "DataEditType": "DOUBLE",
     "ExtraSettings": "mm/s"
   },
@@ -339,7 +339,7 @@
   {
     "SlicerConfigName": "first_layer_height",
     "PresentationName": "First Layer Height",
-    "HelpText": "The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.",
+    "HelpText": "The height of the first layer. A first layer taller than the default layer height can sometimes be used to improve adhesion to the build plate.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "mm or %"
   },
@@ -423,7 +423,7 @@
   {
     "SlicerConfigName": "has_power_control",
     "PresentationName": "Has Power Control",
-    "HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.",
+    "HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Control pane.",
     "DataEditType": "HARDWARE_PRESENT",
     "ExtraSettings": ""
   },
@@ -507,7 +507,7 @@
   {
     "SlicerConfigName": "print_leveling_solution",
     "PresentationName": "Leveling Solution",
-    "HelpText": "The print leveling alogrithm to use.",
+    "HelpText": "The print leveling algorithm to use.",
     "DataEditType": "LIST",
     "ExtraSettings": "3-Point Plane,7-Point Disk,13-Point Disk"
   },
@@ -521,7 +521,7 @@
   {
     "SlicerConfigName": "print_leveling_method",
     "PresentationName": "Leveling Method",
-    "HelpText": "The print leveling sampling mothod to use.",
+    "HelpText": "The print leveling sampling method to use.",
     "DataEditType": "LIST",
     "ExtraSettings": "Manual,Use Z Limit Switch,Probe With G30"
   },
@@ -550,7 +550,7 @@
   {
     "SlicerConfigName": "solid_shell",
     "PresentationName": "Width",
-    "HelpText": "Sets the size of the outer solid surface for the entire print.",
+    "HelpText": "Sets the size of the outer solid surface (perimeter) for the entire print.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm",
     "SetSettingsOnChange": ["bottom_solid_layers", "top_solid_layers", "perimeters"],
@@ -580,14 +580,14 @@
   {
     "SlicerConfigName": "min_print_speed",
     "PresentationName": "Minimum Print Speed",
-    "HelpText": "The minimum speed to which the printer will reduce in order to attempt to make the layer print time long enough to satisfy the minimum layer time.",
+    "HelpText": "The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm/s"
   },
   {
     "SlicerConfigName": "min_skirt_length",
     "PresentationName": "Minimum Extrusion Length",
-    "HelpText": "The minimum length of filament to use drawing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt is shorter than this value.",
+    "HelpText": "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -746,6 +746,13 @@
     "ExtraSettings": "mm"
   },
   {
+    "SlicerConfigName": "retract_when_changing_islands",
+    "PresentationName": "Retract When \nChanging Islands",
+    "HelpText": "Force a retraction when moving between islands (distinct parts on the layer).",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "retract_lift",
     "PresentationName": "Z Lift",
     "HelpText": "The distance the nozzle will lift after each retraction.",
@@ -769,7 +776,7 @@
   {
     "SlicerConfigName": "retract_speed",
     "PresentationName": "Speed",
-    "HelpText": "The speed at which filament will retract and re-extrude until the next print move.",
+    "HelpText": "The speed at which filament will retract and re-extrude.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm/s"
   },
@@ -903,7 +910,7 @@
   {
     "SlicerConfigName": "support_air_gap",
     "PresentationName": "Air Gap",
-    "HelpText": "The distance between the first layer and the top of the raft. A good value is typically about half the extrusion diameter. For a 0.4 mm nozzle, a value between 0.0 and 0.2 would be best.",
+    "HelpText": "The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -917,7 +924,7 @@
   {
     "SlicerConfigName": "support_material_percent",
     "PresentationName": "Support Percent",
-    "HelpText": "The amount of support to generate.",
+    "HelpText": "The percent of the extrusion width that can be overlapped and still generate.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "%",
     "QuickMenuSettings": [{"MenuName" : "Little", "Value": "10"},{"MenuName" : "Standard", "Value": "50"},{"MenuName" : "Lots", "Value": "90"}]  },
