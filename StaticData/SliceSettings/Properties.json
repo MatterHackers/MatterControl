@@ -93,7 +93,7 @@
   {
     "SlicerConfigName": "cancel_gcode",
     "PresentationName": "Cancel G-Code",
-    "HelpText": "GCode to run when a print is canceled.",
+    "HelpText": "G-Code to run when a print is canceled.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -114,7 +114,7 @@
   {
     "SlicerConfigName": "connect_gcode",
     "PresentationName": "On Connect G-Code",
-    "HelpText": "GCode to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.",
+    "HelpText": "G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -184,7 +184,7 @@
   {
     "SlicerConfigName": "end_gcode",
     "PresentationName": "End G-Code",
-    "HelpText": "GCode to be run at the end of all automatic output (the very end of the GCode commands).",
+    "HelpText": "G-Code to be run at the end of all automatic output (the very end of the G-Code commands).",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -254,7 +254,7 @@
   {
     "SlicerConfigName": "extrusion_axis",
     "PresentationName": "Extrusion Axis",
-    "HelpText": "This is the identifier used in the gcode to specify the extruder.",
+    "HelpText": "This is the identifier used in the G-Code to specify the extruder.",
     "DataEditType": "STRING",
     "ExtraSettings": ""
   },
@@ -381,21 +381,21 @@
   {
     "SlicerConfigName": "gcode_comments",
     "PresentationName": "Verbose G-Code",
-    "HelpText": "Include detailed comments in the gcode.",
+    "HelpText": "Include detailed comments in the G-Code.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },
   {
     "SlicerConfigName": "gcode_flavor",
     "PresentationName": "G-Code Flavor",
-    "HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output gcode will use the correct commands.",
+    "HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
     "DataEditType": "LIST",
     "ExtraSettings": "reprap,teacup,makerbot,sailfish,mach3_ecm,no_extrusion"
   },
   {
     "SlicerConfigName": "gcode_output_type",
     "PresentationName": "G-Code Output",
-    "HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output gcode will use the correct commands.",
+    "HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
     "DataEditType": "LIST",
     "ExtraSettings": "REPRAP,ULTIGCODE,BFB,MACH3"
   },
@@ -535,7 +535,7 @@
   {
     "SlicerConfigName": "layer_gcode",
     "PresentationName": "Layer Change G-Code",
-    "HelpText": "GCode to be run after the change in Z height for the next layer.",
+    "HelpText": "G-Code to be run after the change in Z height for the next layer.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -594,7 +594,7 @@
   {
     "SlicerConfigName": "notes",
     "PresentationName": "notes",
-    "HelpText": "These notes will be added as comments in the header of the output gcode.",
+    "HelpText": "These notes will be added as comments in the header of the output G-Code.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -636,7 +636,7 @@
   {
     "SlicerConfigName": "pause_gcode",
     "PresentationName": "Pause G-Code",
-    "HelpText": "GCode to run when the printer is paused.",
+    "HelpText": "G-Code to run when the printer is paused.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -685,7 +685,7 @@
   {
     "SlicerConfigName": "post_process",
     "PresentationName": "Post-Processing Scripts",
-    "HelpText": "You can include additional programs to process the gcode after slicer is finished. The complete path of the program to run should be included here.",
+    "HelpText": "You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -713,7 +713,7 @@
   {
     "SlicerConfigName": "resume_gcode",
     "PresentationName": "Resume G-Code",
-    "HelpText": "GCode to be run when the print resumes after a pause.",
+    "HelpText": "G-Code to be run when the print resumes after a pause.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -882,7 +882,7 @@
   {
     "SlicerConfigName": "start_gcode",
     "PresentationName": "Start G-Code",
-    "HelpText": "GCode to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom GCode variables.",
+    "HelpText": "G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
@@ -1086,7 +1086,7 @@
   {
     "SlicerConfigName": "toolchange_gcode",
     "PresentationName": "Tool Change G-Code",
-    "HelpText": "GCode to be run after every tool change.",
+    "HelpText": "G-Code to be run after every tool change.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
