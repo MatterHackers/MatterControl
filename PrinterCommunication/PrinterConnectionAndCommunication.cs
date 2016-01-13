@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnectionAndCommunication
 	{
-		public event ErrorEventHandler OffsetStreamChanged;
+		public event EventHandler OffsetStreamChanged;
 
 		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
 
