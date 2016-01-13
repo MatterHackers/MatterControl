@@ -4033,3 +4033,6 @@ Translated:Are you sure you want to abort the current print and close MatterCont
 English:Abort Print
 Translated:Abort Print
 
+English:mm / minute
+Translated:mm / minute
+

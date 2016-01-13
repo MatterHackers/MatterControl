@@ -62,6 +62,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnectionAndCommunication
 	{
+		public event ErrorEventHandler OffsetStreamChanged;
+
 		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
@@ -302,25 +304,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		}
 
-        public void BabyStepsMoveUp()
+        public void AddToBabyStepOffset(Axis moveAxis, double moveAmount)
         {
-            babyStepsStream5.MoveUp();
-        }
+			babyStepsStream5.OffsetAxis(moveAxis, moveAmount);
+			OffsetStreamChanged?.Invoke(null, null);
+		}
 
-        public void BabyStepsMoveDown()
-        {
-            babyStepsStream5.MoveDown();
-        }
-
-        public double CurrentBabyStepsOffset()
-        {
-            if (babyStepsStream5 != null)
-            {
-                return babyStepsStream5.Offset;
-            }
-
-            return 0;
-        }
+		public Vector3 CurrentBabyStepsOffset => babyStepsStream5?.Offset ?? Vector3.Zero;
 
         [Flags]
 		public enum Axis { X = 1, Y = 2, Z = 4, E = 8, XYZ = (X | Y | Z) }
