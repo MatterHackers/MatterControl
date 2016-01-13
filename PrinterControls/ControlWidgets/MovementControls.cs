@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return homeButtonBar;
 		}
 
-		internal void OffsetStreamChanged(object sender, System.IO.ErrorEventArgs e)
+		internal void OffsetStreamChanged(object sender, EventArgs e)
 		{
 			if(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 			{
