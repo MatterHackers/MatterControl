@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -73,7 +74,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string currentDirectory = ".";
 		private List<string> currentDirectoryDirectories = new List<string>();
 		private List<string> currentDirectoryFiles = new List<string>();
-		private FileSystemWatcher directoryWatcher = new FileSystemWatcher();
+		private FileSystemWatcher directoryWatcher;
 		private string keywordFilter = string.Empty;
 		private string rootPath;
 		private bool useIncrementedNameDuringTypeChange;
@@ -88,20 +89,24 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			this.Name = name;
 			this.rootPath = rootPath;
 
-			directoryWatcher.Path = rootPath;
-
 			// Indicates if the new AMF file should use the original file name incremented until no name collision occurs
 			this.useIncrementedNameDuringTypeChange = useIncrementedNameDuringTypeChange;
 
-			directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-				   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-			directoryWatcher.Changed += DiretoryContentsChanged;
-			directoryWatcher.Created += DiretoryContentsChanged;
-			directoryWatcher.Deleted += DiretoryContentsChanged;
-			directoryWatcher.Renamed += DiretoryContentsChanged;
+			if (OsInformation.OperatingSystem == OSType.Windows)
+			{
+				directoryWatcher = new FileSystemWatcher();
+				directoryWatcher.Path = rootPath;
 
-			// Begin watching.
-			directoryWatcher.EnableRaisingEvents = true;
+				directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+					   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+				directoryWatcher.Changed += DiretoryContentsChanged;
+				directoryWatcher.Created += DiretoryContentsChanged;
+				directoryWatcher.Deleted += DiretoryContentsChanged;
+				directoryWatcher.Renamed += DiretoryContentsChanged;
+
+				// Begin watching.
+				directoryWatcher.EnableRaisingEvents = true;
+			}
 
 			GetFilesAndCollectionsInCurrentDirectory();
 		}
@@ -199,12 +204,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void Dispose()
 		{
-			directoryWatcher.EnableRaisingEvents = false;
+			if (directoryWatcher != null)
+			{
+				directoryWatcher.EnableRaisingEvents = false;
 
-			directoryWatcher.Changed -= DiretoryContentsChanged;
-			directoryWatcher.Created -= DiretoryContentsChanged;
-			directoryWatcher.Deleted -= DiretoryContentsChanged;
-			directoryWatcher.Renamed -= DiretoryContentsChanged;
+				directoryWatcher.Changed -= DiretoryContentsChanged;
+				directoryWatcher.Created -= DiretoryContentsChanged;
+				directoryWatcher.Deleted -= DiretoryContentsChanged;
+				directoryWatcher.Renamed -= DiretoryContentsChanged;
+			}
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
