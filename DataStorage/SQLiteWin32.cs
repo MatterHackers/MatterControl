@@ -469,7 +469,7 @@ namespace SQLiteWin32
 		/// The fully escaped SQL.
 		/// </param>
 		/// <param name="args">
-		/// Arguments to substitute for the occurences of '?' in the command text.
+		/// Arguments to substitute for the occurrences of '?' in the command text.
 		/// </param>
 		/// <returns>
 		/// A <see cref="SQLiteCommand"/>
