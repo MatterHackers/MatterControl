@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="CheckBoxInLibraryIsClickable.cs" />
     <Compile Include="CreateLibraryFolder.cs" />
+    <Compile Include="ExportItemWindowTests.cs" />
     <Compile Include="LibraryDownloadsTest.cs" />
     <Compile Include="LocalLibraryTests.cs" />
     <Compile Include="OptionsTabTests.cs" />

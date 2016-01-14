@@ -70,20 +70,33 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
-		public static string PathToDownloadsFolder
+		public static void CreateDownloadsSubFolder()
+		{
+
+			Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "Temporary"));
+
+		}
+
+		public static string PathToDownloadsSubFolder
 		{
 			get
 			{
-				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "Temporary");
 			}
 		}
+
+		public static void CleanupDownloadsDirectory(string path)
+		{
+			Directory.Delete(path, true);
+		}
+
 
 		public static string PathToExportGcodeFolder
 		{
 			get { return Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Tests", "TestData", "ExportedGcode", runName)); }
 		}
 
-		public static string PathToQueueItemsFolder(string queueItemToLoad)
+		public static string GetTestItemPath(string queueItemToLoad)
 		{
 			string pathToQueueItemFolder = Path.Combine("..", "..", "..", "..", "Tests", "TestData", "QueueItems");
 			return Path.GetFullPath(Path.Combine(pathToQueueItemFolder, queueItemToLoad));
@@ -147,17 +160,6 @@ namespace MatterHackers.MatterControl.UI
 			if (saveImagesForDebug)
 			{
 				OutputImage(widgetToOutput.BackBuffer, fileName);
-			}
-		}
-
-		public static void CleanUpDownloadsDirectoryAfterTest(List<string> filesToDelete)
-		{
-			foreach(var filePath in filesToDelete)
-			{
-				if(File.Exists(filePath))
-				{
-					File.Delete(filePath);
-				}
 			}
 		}
 

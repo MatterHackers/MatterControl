@@ -15,13 +15,13 @@ using MatterHackers.MatterControl.DataStorage;
 using System.Diagnostics;
 using System.Collections.Generic;
 using MatterHackers.MatterControl.UI;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 
 namespace MatterControl.MatterControl.UI
 {
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
 	public class AddMultipleFilesToDownloads
 	{
-		List<string> addedFiles = new List<string>();
 
 		[Test, RequiresSTA, RunInApplicationDomain]
 		public void DownloadsAddButtonAddsMultipleFiles()
@@ -29,58 +29,55 @@ namespace MatterControl.MatterControl.UI
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
+
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
-					string itemName = "Row Item " + "Fennec Fox";
-					string itemNameTwo = "Row Item " + "Batman";
+					MatterControlUtilities.CreateDownloadsSubFolder();
 
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
 					testRunner.Wait(3);
 
-					//Get parts to add
-					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
-					string secondRowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Batman.stl");
-
-					//Get files to delete from Downloads once each test has completed and then add them to List
-					string firstFileToDelete = Path.Combine(MatterControlUtilities.PathToDownloadsFolder, "Fennec_Fox.stl");
-					string secondFileToDelete = Path.Combine(MatterControlUtilities.PathToDownloadsFolder, "Batman.stl");
-					addedFiles.Add(firstFileToDelete);
-					addedFiles.Add(secondFileToDelete);
-
-					//Format text to add both items to Downloads and then type paths into file dialogues 
-					string textForBothRowItems = String.Format("\"{0}\" \"{1}\"", rowItemPath, secondRowItemPath);
+					string firstRowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+					string secondRowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
+					string textForBothRowItems = String.Format("\"{0}\" \"{1}\"", firstRowItemPath, secondRowItemPath);
 					testRunner.Wait(2);
 					testRunner.Type(textForBothRowItems);
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
-					//Get test results 
-					bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
-					resultsHarness.AddTestResult(rowItemWasAdded == true);
-
-					bool secondRowItemWasAdded = testRunner.WaitForName(itemNameTwo, 2);
-					resultsHarness.AddTestResult(secondRowItemWasAdded == true);
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Fennec Fox", 2) == true);
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Batman", 2) == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			MatterControlUtilities.CleanUpDownloadsDirectoryAfterTest(addedFiles);
+
+			AutomationTesterHarness testHarness = null;
+
+			try
+			{
+				testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			}
+			catch { }
+			finally
+			{
+				MatterControlUtilities.CleanupDownloadsDirectory(MatterControlUtilities.PathToDownloadsSubFolder);
+			}
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
-			
 		}
 	}
+
 
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
 	public class AddAMFToDownloads
 	{
-		List<string> addedFiles = new List<string>();
 
 		[Test, RequiresSTA, RunInApplicationDomain]
 		public void DownloadsAddButtonAddsAMFFiles()
@@ -91,39 +88,42 @@ namespace MatterControl.MatterControl.UI
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
-					string itemName = "Row Item " + "Rook";
+					MatterControlUtilities.CreateDownloadsSubFolder();
 
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
-					testRunner.Wait(3);
-
-					//Get parts to add
-					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Rook.amf");
-
-					//Get files to delete from Downloads once each test has completed and then add them to List
-					string firstFileToDelete = Path.Combine(MatterControlUtilities.PathToDownloadsFolder, "Rook.amf");
-					addedFiles.Add(firstFileToDelete);
+					testRunner.Wait(2);
 
 					//Add AMF part items to Downloads and then type paths into file dialogues 
 					testRunner.Wait(2);
-					testRunner.Type(rowItemPath);
+					testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
-					//Get test results 
-					bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
-					resultsHarness.AddTestResult(rowItemWasAdded == true);
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Rook", 2) == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			MatterControlUtilities.CleanUpDownloadsDirectoryAfterTest(addedFiles);
+
+			AutomationTesterHarness testHarness = null;
+
+			try
+			{
+				testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			}
+			catch { }
+			finally
+			{
+				MatterControlUtilities.CleanupDownloadsDirectory(MatterControlUtilities.PathToDownloadsSubFolder);
+			}
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 1);
 
 		}
 	}
@@ -131,7 +131,6 @@ namespace MatterControl.MatterControl.UI
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
 	public class AddZipFileToDownloads
 	{
-		List<string> addedFiles = new List<string>();
 
 		[Test, RequiresSTA, RunInApplicationDomain]
 		public void DownloadsAddButtonAddsZipFiles()
@@ -141,132 +140,155 @@ namespace MatterControl.MatterControl.UI
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.CreateDownloadsSubFolder();
 
-					string firstItemName = "Row Item " + "Chinese Dragon";
-					string secondItemName = "Row Item " + "chichen-itza pyramid";
-					string thirdItemName = "Row Item " + "Circle Calibration";
 
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
-					testRunner.Wait(3);
-
-					//Get parts to add
-					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Test.zip");
-
-					//Get files to delete from Downloads once each test has completed and then add them to List
-					string firstFileToDelete = Path.Combine(MatterControlUtilities.PathToDownloadsFolder, "Circle Calibration.stl");
-					string secondFileToDelete = Path.Combine(MatterControlUtilities.PathToDownloadsFolder, "Chinese Dragon.stl");
-					string thirdFileToDelete = Path.Combine(MatterControlUtilities.PathToDownloadsFolder, "chichen-itza_pyramid.stl");
-					addedFiles.Add(firstFileToDelete);
-					addedFiles.Add(secondFileToDelete);
-					addedFiles.Add(thirdFileToDelete);
+					testRunner.Wait(2);
 
 					//Add AMF part items to Downloads and then type paths into file dialogues 
 					testRunner.Wait(2);
-					testRunner.Type(rowItemPath);
+					testRunner.Type(MatterControlUtilities.GetTestItemPath("Test.zip"));
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
-					//Get test results 
-					bool firstRowItemWasAdded = testRunner.WaitForName(firstItemName, 2);
-					resultsHarness.AddTestResult(firstRowItemWasAdded == true);
 
-					bool secondRowItemWasAdded = testRunner.WaitForName(secondItemName, 2);
-					resultsHarness.AddTestResult(secondRowItemWasAdded == true);
-
-					bool thirdRowItemWasAdded = testRunner.WaitForName(thirdItemName, 2);
-					resultsHarness.AddTestResult(thirdRowItemWasAdded == true);
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Chinese Dragon", 2) == true);
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item chichen-itza pyramid", 2) == true);
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Circle Calibration", 2) == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			MatterControlUtilities.CleanUpDownloadsDirectoryAfterTest(addedFiles);
+			AutomationTesterHarness testHarness = null;
+
+			try
+			{
+				testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			}
+			catch { }
+			finally
+			{
+				MatterControlUtilities.CleanupDownloadsDirectory(MatterControlUtilities.PathToDownloadsSubFolder);
+			}
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
-
+			Assert.IsTrue(testHarness.TestCount == 3);
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
-	public class ExportItemsFromDownloads
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class RenameDownloadsItem
 	{
 
-		List<string> addedFiles = new List<string>();
-
 		[Test, RequiresSTA, RunInApplicationDomain]
-		public void DownloadsExportButtonExportsGcode()
+		public void RenameDownloadsPrintItem()
 		{
-			// Run a copy of MatterControl
+
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.CreateDownloadsSubFolder();
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
-
-					string firstItemName = "Row Item " + "Batman";
 
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
 					testRunner.Wait(2);
 
-					//Get parts to add
-					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Batman.stl");
-
-					//Get files to delete from Downloads once each test has completed and then add them to List
-					string firstFileToDelete = Path.Combine(MatterControlUtilities.PathToDownloadsFolder, "Batman.stl");
-					addedFiles.Add(firstFileToDelete);
-
-					//Add STL part items to Downloads and then type paths into file dialogue
-					testRunner.Wait(2);
-					testRunner.Type(rowItemPath);
+					testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
-					//Get test results 
-					bool firstRowItemWasAdded = testRunner.WaitForName(firstItemName, 2);
-					resultsHarness.AddTestResult(firstRowItemWasAdded == true);
-
-					testRunner.ClickByName("Library Edit Button");
-					testRunner.ClickByName(firstItemName);
-					testRunner.ClickByName("Library Export Button");
+					//Rename added item
+					testRunner.ClickByName("Library Edit Button", 2);
+					testRunner.ClickByName("Row Item Batman");
+					testRunner.ClickByName("Rename From Library Button", 2);
 					testRunner.Wait(2);
-
-					//testRunner.WaitForName("Export Item Window", 2);
-					testRunner.ClickByName("Export as GCode Button");
-					testRunner.Wait(2);
-
-					string gcodeExportPath = MatterControlUtilities.PathToExportGcodeFolder;
-                    testRunner.Type(gcodeExportPath);
-					testRunner.Type("{Enter}");
-					testRunner.Wait(2);
-
-					bool gcodeExported = false;
-
-					if (File.Exists(gcodeExportPath))
-					{
-						gcodeExported = true;
-					}
-
-					resultsHarness.AddTestResult(gcodeExported == true);
+					testRunner.Type("Batman Renamed");
+					testRunner.ClickByName("Rename Button");
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Batman Renamed", 2) == true);
 
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
+			AutomationTesterHarness testHarness = null;
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			MatterControlUtilities.CleanUpDownloadsDirectoryAfterTest(addedFiles);
+			try
+			{
+				testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			}
+			catch { }
+			finally
+			{
+				MatterControlUtilities.CleanupDownloadsDirectory(MatterControlUtilities.PathToDownloadsSubFolder);
+			}
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
-
+			Assert.IsTrue(testHarness.TestCount == 1);
 		}
 	}
+
+
+		[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+		public class CreateSubFolderLibraryDownloads
+		{
+
+			[Test, RequiresSTA, RunInApplicationDomain]
+			public void CreateFolder()
+			{
+
+				Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+				{
+					AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+					{
+
+						MatterControlUtilities.CreateDownloadsSubFolder();
+
+						//Navigate to Downloads Library Provider
+						testRunner.ClickByName("Library Tab");
+						MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
+						MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
+						testRunner.ClickByName("Create Folder From Library Button");
+						testRunner.Wait(2);
+						testRunner.Type("New Folder");
+						testRunner.ClickByName("Create Folder Button");
+
+						testRunner.Wait(2);
+						resultsHarness.AddTestResult(testRunner.WaitForName("New Folder Row Item Collection", 2) == true);
+
+						MatterControlUtilities.CloseMatterControl(testRunner);
+					}
+				};
+				AutomationTesterHarness testHarness = null;
+
+				try
+				{
+					testHarness = MatterControlUtilities.RunTest(testToRun);
+
+				}
+				catch { }
+				finally
+				{
+					MatterControlUtilities.CleanupDownloadsDirectory(MatterControlUtilities.PathToDownloadsSubFolder);
+				}
+
+				Assert.IsTrue(testHarness.AllTestsPassed);
+				Assert.IsTrue(testHarness.TestCount == 1);
+			}
+		}
+	
 }
+
+	
+
