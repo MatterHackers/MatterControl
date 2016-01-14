@@ -56,12 +56,8 @@ namespace MatterHackers.MatterControl
 				// Load the calibration file names
 				List<string> calibrationPrintFileNames = LoadCalibrationPartNamesForPrinter(this.ActivePrinter.Make, this.ActivePrinter.Model);
 
-				using (LibraryProviderSQLite instance = new LibraryProviderSQLite(null, null, null, "Local Library"))
-				{
-					instance.EnsureSamplePartsExist(calibrationPrintFileNames);
-				}
-
 				var libraryProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
+				libraryProvider.EnsureSamplePartsExist(calibrationPrintFileNames);
 
 				var queueItems = QueueData.Instance.GetItemNames();
 
