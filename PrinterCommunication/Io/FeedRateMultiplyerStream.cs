@@ -32,37 +32,36 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class FeedRateMultiplyerStream : GCodeStreamProxy
-    {
-        public FeedRateMultiplyerStream(GCodeStream internalStream)
-            : base(internalStream)
-        {
-        }
+	public class FeedRateMultiplyerStream : GCodeStreamProxy
+	{
+		protected PrinterMove lastDestination = new PrinterMove();
+		public PrinterMove LastDestination { get { return lastDestination; } }
 
-        public double FeedRateRatio { get; set; } = 1;
+		public FeedRateMultiplyerStream(GCodeStream internalStream)
+			: base(internalStream)
+		{
+		}
 
-        public override string ReadLine()
-        {
-            return ApplyFeedRateMultiplier(internalStream.ReadLine());
-        }
+		public double FeedRateRatio { get; set; } = 1;
 
-        private string ApplyFeedRateMultiplier(string lineBeingSent)
-        {
-            if (lineBeingSent != null
-                && FeedRateRatio != 1)
-            {
-                lineBeingSent = lineBeingSent.ToUpper().Trim();
-                if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
-                {
-                    double feedRate = 0;
-                    if (GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate))
-                    {
-                        lineBeingSent = GCodeFile.ReplaceNumberAfter('F', lineBeingSent, feedRate * FeedRateRatio);
-                    }
-                }
-            }
+		public override string ReadLine()
+		{
+			string lineToSend = internalStream.ReadLine();
 
-            return lineBeingSent;
-        }
-    }
+			if (lineToSend != null
+				&& LineIsMovement(lineToSend))
+			{
+				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
+
+				PrinterMove moveToSend = currentMove;
+				moveToSend.feedRate *= FeedRateRatio;
+
+				lineToSend = CreateMovementLine(moveToSend, lastDestination);
+				lastDestination = currentMove;
+				return lineToSend;
+			}
+
+			return lineToSend;
+		}
+	}
 }

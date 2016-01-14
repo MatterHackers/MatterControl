@@ -36,49 +36,38 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class OffsetStream : GCodeStreamProxy
-    {
-        Vector3 offset;
-        protected PrinterMove lastDestination = new PrinterMove();
-        public PrinterMove LastDestination { get { return lastDestination; } }
+	public class OffsetStream : GCodeStreamProxy
+	{
+		Vector3 offset;
+		protected PrinterMove lastDestination = new PrinterMove();
+		public PrinterMove LastDestination { get { return lastDestination; } }
 
-        public OffsetStream(GCodeStream internalStream, Vector3 offset)
-            : base(internalStream)
-        {
-            this.offset = offset;
-        }
+		public OffsetStream(GCodeStream internalStream, Vector3 offset)
+			: base(internalStream)
+		{
+			this.offset = offset;
+		}
 
-        public Vector3 Offset { get { return offset; } set { offset = value; } }
+		public Vector3 Offset { get { return offset; } set { offset = value; } }
 
-        public override Vector3 SetPrinterPosition(Vector3 position)
-        {
-            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
-            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
+		public override string ReadLine()
+		{
+			string lineToSend = base.ReadLine();
 
-            string lineBeingSent = CreateMovementLine(lastDestination);
-            PrinterMove leveledDestination = new PrinterMove(lastDestination.position + offset, 0, 0);
-            return leveledDestination.position;
-        }
+			if (lineToSend != null
+				&& LineIsMovement(lineToSend))
+			{
+				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 
-        public override string ReadLine()
-        {
-            string lineToSend = base.ReadLine();
+				PrinterMove moveToSend = currentMove;
+				moveToSend.position += offset;
 
-            if (lineToSend != null
-                && LineIsMovement(lineToSend))
-            {
-                PrinterMove currentDestination = GetPosition(lineToSend, lastDestination);
+				lineToSend = CreateMovementLine(moveToSend, lastDestination);
+				lastDestination = currentMove;
+				return lineToSend;
+			}
 
-                // send the first one
-                PrinterMove positionToSend = currentDestination;
-                positionToSend.position += offset;
-
-                lineToSend = CreateMovementLine(positionToSend, lastDestination);
-                lastDestination = currentDestination;
-                return lineToSend;
-            }
-
-            return lineToSend;
-        }
-    }
+			return lineToSend;
+		}
+	}
 }
