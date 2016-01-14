@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget terminalIcon = new ImageWidget(terminalSettingsImage);
 			terminalIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
-			TextWidget gcodeTerminalLabel = new TextWidget("G-Code Terminal");
+			TextWidget gcodeTerminalLabel = new TextWidget("G-Code Terminal".Localize());
 			gcodeTerminalLabel.AutoExpandBoundsToText = true;
 			gcodeTerminalLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;

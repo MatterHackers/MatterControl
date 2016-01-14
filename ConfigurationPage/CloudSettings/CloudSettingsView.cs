@@ -85,13 +85,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             ImageWidget cloudSyncIcon = new ImageWidget(cloudMonitorImage);
             cloudSyncIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
-            TextWidget cloudSyncLabel = new TextWidget(LocalizedString.Get("Cloud Sync"));
+            TextWidget cloudSyncLabel = new TextWidget("Cloud Sync".Localize());
             cloudSyncLabel.AutoExpandBoundsToText = true;
             cloudSyncLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             cloudSyncLabel.VAnchor = VAnchor.ParentCenter;
 
             linkButtonFactory.fontSize = 10;
-            Button cloudSyncGoLink = linkButtonFactory.Generate("GO TO DASHBOARD");
+            Button cloudSyncGoLink = linkButtonFactory.Generate("Go to Dashboard".Localize().ToUpper());
             cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser";
             cloudSyncGoLink.Click += new EventHandler(cloudSyncGoButton_Click);
 
@@ -102,7 +102,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			return cloudSyncContainer;
 		}
-        
 
 		private TextWidget notificationSettingsLabel;
 

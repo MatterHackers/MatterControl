@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				libraryCreators.Add(
 					new LibraryProviderFileSystemCreator(
 						downloadsDirectory,
-						"Downloads",
+						"Downloads".Localize(),
 						useIncrementedNameDuringTypeChange: true));
 
 				AddFolderImage("download_folder.png");
