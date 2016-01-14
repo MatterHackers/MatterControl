@@ -211,6 +211,7 @@
     <Compile Include="PrinterCommunication\Io\QueuedCommandsStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrintLevelingStream.cs" />
     <Compile Include="PrinterCommunication\Io\BabyStepsStream.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
