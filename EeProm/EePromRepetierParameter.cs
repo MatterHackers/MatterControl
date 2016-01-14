@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.EeProm
 {
 	public class EePromRepetierParameter : EventArgs
 	{
-		public string description;
+		public string description = "";
 		public int type;
 		public int position;
 		private string val = "";
@@ -55,7 +55,11 @@ namespace MatterHackers.MatterControl.EeProm
 					int.TryParse(lines[0], out type);
 					int.TryParse(lines[1], out position);
 					val = lines[2];
-					description = line.Substring(7 + lines[0].Length + lines[1].Length + lines[2].Length);
+					int startPos = 7 + lines[0].Length + lines[1].Length + lines[2].Length;
+					if (line.Length > startPos)
+					{
+						description = line.Substring(startPos);
+					}
 					changed = false;
 				}
 			}
