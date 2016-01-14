@@ -275,8 +275,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		internal void OffsetStreamChanged(object sender, EventArgs e)
 		{
 			Vector3 offset = PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset;
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused
-				&& offset.LengthSquared != 0)
+			if ((PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				&& offset.Length > .01)
 			{
 
 				offsetStreamLabel.Text = ("{0} ({1:0.##}, {2:0.##}, {3:0.##})").FormatWith(
