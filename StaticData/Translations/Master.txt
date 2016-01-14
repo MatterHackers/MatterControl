@@ -4351,3 +4351,9 @@ Translated:Movement
 English:Fan
 Translated:Fan
 
+English:Firmware Version: {0}
+Translated:Firmware Version: {0}
+
+English:Offset
+Translated:Offset
+
