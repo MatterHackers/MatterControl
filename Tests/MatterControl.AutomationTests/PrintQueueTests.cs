@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Queue Add Button", 2);
 					testRunner.Wait(2);
 
-					string queueItemPath = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
+					string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 
 					testRunner.Type(queueItemPath);
 					testRunner.Wait(1);
@@ -371,9 +371,9 @@ namespace MatterHackers.MatterControl.UI
 
 					//Click Add Button and Add Part To Queue
 					testRunner.ClickByName("Queue Add Button", 2);
-					string pathToFirstQueueItem = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
+					string pathToFirstQueueItem = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 					testRunner.Wait(1);
-					string pathToSecondQueueItem = MatterControlUtilities.PathToQueueItemsFolder("Batman.stl");
+					string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
 					string textForBothQueueItems = String.Format("\"{0}\" \"{1}\"", pathToFirstQueueItem, pathToSecondQueueItem);
 
 					testRunner.Type(textForBothQueueItems);
@@ -696,7 +696,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.Wait(2);
 
 					//Type in Absolute Path to Save 
-					string exportZipPath = MatterControlUtilities.PathToQueueItemsFolder("TestExportZip");
+					string exportZipPath = MatterControlUtilities.GetTestItemPath("TestExportZip");
 
 					// Ensure file does not exist before save
 					if(File.Exists(exportZipPath))
@@ -909,7 +909,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName(" Create Part Sheet Menu Item", 2);
 					testRunner.Wait(2);
 
-					string pathToSavePartSheet = MatterControlUtilities.PathToQueueItemsFolder("CreatePartSheet");
+					string pathToSavePartSheet = MatterControlUtilities.GetTestItemPath("CreatePartSheet");
 					string validatePartSheetPath = Path.Combine("..", "..", "..", "TestData", "QueueItems", "CreatePartSheet.pdf");
 
 					testRunner.Type(pathToSavePartSheet);
@@ -1051,7 +1051,7 @@ namespace MatterHackers.MatterControl.UI
 
 					testRunner.Wait(1);
 					
-					string pathToType = MatterControlUtilities.PathToQueueItemsFolder("Batman.zip");
+					string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
 					testRunner.Type(pathToType);
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
@@ -1120,7 +1120,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Queue Add Button", 2);
 					testRunner.Wait(1);
 
-					string pathToType = MatterControlUtilities.PathToQueueItemsFolder("Rook.amf");
+					string pathToType = MatterControlUtilities.GetTestItemPath("Rook.amf");
 
 					testRunner.Type(pathToType);
 					testRunner.Wait(1);
@@ -1186,7 +1186,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Queue Add Button", 2);
 					testRunner.Wait(1);
 
-					string pathToType = MatterControlUtilities.PathToQueueItemsFolder("Batman.stl");
+					string pathToType = MatterControlUtilities.GetTestItemPath("Batman.stl");
 
 					testRunner.Type(pathToType);
 					testRunner.Wait(1);
@@ -1250,7 +1250,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Queue Add Button", 2);
 					testRunner.Wait(1);
 
-					string pathToType = MatterControlUtilities.PathToQueueItemsFolder("chichen-itza_pyramid.gcode");
+					string pathToType = MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode");
 
 					testRunner.Type(pathToType);
 					testRunner.Wait(1);

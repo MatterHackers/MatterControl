@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Library Add Button");
 
 					//Get Library Item to Add
-					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
+					string rowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 					testRunner.Wait(2);
 					testRunner.Type(rowItemPath);
 					testRunner.Wait(1);
@@ -95,8 +95,8 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Library Add Button");
 
 					//Get Library Item to Add
-					string firstRowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
-					string secondRowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Batman.stl");
+					string firstRowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+					string secondRowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
 
 					string textForBothRowItems = String.Format("\"{0}\" \"{1}\"", firstRowItemPath, secondRowItemPath);
 					testRunner.Wait(2);
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Library Add Button");
 
 					//Get Library Item to Add
-					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Rook.amf");
+					string rowItemPath = MatterControlUtilities.GetTestItemPath("Rook.amf");
 					testRunner.Wait(2);
 					testRunner.Type(rowItemPath);
 					testRunner.Wait(1);
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Library Add Button");
 
 					//Get Library Item to Add
-					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Batman.zip");
+					string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.zip");
 					testRunner.Wait(2);
 					testRunner.Type(rowItemPath);
 					testRunner.Wait(1);
@@ -421,7 +421,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.Wait(1);
 
-					string rowItemPath = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
+					string rowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 					testRunner.ClickByName("Library Add Button");
 
 					testRunner.Wait(2);
@@ -543,7 +543,7 @@ namespace MatterHackers.MatterControl.UI
 					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
 
 					//Add an item to the library
-					string libraryItemToAdd = MatterControlUtilities.PathToQueueItemsFolder("Fennec_Fox.stl");
+					string libraryItemToAdd = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 					testRunner.ClickByName("Library Add Button");
 
 					testRunner.Wait(2);
