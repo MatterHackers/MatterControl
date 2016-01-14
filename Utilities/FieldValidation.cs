@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.FieldValidation
@@ -57,7 +58,7 @@ namespace MatterHackers.MatterControl.FieldValidation
 			if (value.Trim() == "")
 			{
 				status.IsValid = false;
-				status.ErrorMessage = "Oops! Field cannot be left blank";
+				status.ErrorMessage = "Oops! Field cannot be left blank".Localize();
 			}
 			return status;
 		}
@@ -69,7 +70,7 @@ namespace MatterHackers.MatterControl.FieldValidation
 			if (!regexItem.IsMatch(value))
 			{
 				status.IsValid = false;
-				status.ErrorMessage = "Oops! Field cannot have special characters";
+				status.ErrorMessage = "Oops! Field cannot have special characters".Localize();
 			}
 			return status;
 		}
@@ -92,7 +93,7 @@ namespace MatterHackers.MatterControl.FieldValidation
 			else
 			{
 				status.IsValid = false;
-				status.ErrorMessage = "Sorry!  Must be a valid U.S. or Canadian phone number.";
+				status.ErrorMessage = "Sorry!  Must be a valid U.S. or Canadian phone number.".Localize();
 			}
 
 			return status;
@@ -111,7 +112,7 @@ namespace MatterHackers.MatterControl.FieldValidation
 			else
 			{
 				status.IsValid = false;
-				status.ErrorMessage = "Sorry!  Must be a valid email address.";
+				status.ErrorMessage = "Sorry!  Must be a valid email address.".Localize();
 			}
 			return status;
 		}

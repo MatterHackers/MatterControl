@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -492,7 +493,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
-			return new LibraryProviderSQLite(null, setCurrentLibraryProvider, parentLibraryProvider, "Local Library");
+			return new LibraryProviderSQLite(null, setCurrentLibraryProvider, parentLibraryProvider, "Local Library".Localize());
 		}
 	}
 }

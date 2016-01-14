@@ -4357,3 +4357,45 @@ Translated:Firmware Version: {0}
 English:Offset
 Translated:Offset
 
+English:Downloads
+Translated:Downloads
+
+English:Local Library
+Translated:Local Library
+
+English:G-Code Terminal
+Translated:G-Code Terminal
+
+English:Go to Dashboard
+Translated:Go to Dashboard
+
+English:Sign Up for an Account
+Translated:Sign Up for an Account
+
+English:Create Account
+Translated:Create Account
+
+English:Username
+Translated:Username
+
+English:Enter a username
+Translated:Enter a username
+
+English:Email
+Translated:Email
+
+English:Enter your email address
+Translated:Enter your email address
+
+English:Re-enter Password
+Translated:Re-enter Password
+
+English:Confirm your Password
+Translated:Confirm your Password
+
+English:Oops! Field cannot be left blank
+Translated:Oops! Field cannot be left blank
+
+English:Sorry!  Must be a valid email address.
+Translated:Sorry!  Must be a valid email address.
+
