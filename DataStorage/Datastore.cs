@@ -73,6 +73,15 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
+		public string GetTempFileName(string fileExtension = null)
+		{
+			string tempFileName = string.IsNullOrEmpty(fileExtension) ? 
+				Path.GetRandomFileName() :
+				Path.ChangeExtension(Path.GetRandomFileName(), "." + fileExtension.TrimStart('.'));
+
+			return Path.Combine(this.ApplicationTempDataPath, tempFileName);
+		}
+
 		public string ApplicationLibraryDataPath
 		{
 			get

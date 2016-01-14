@@ -1977,9 +1977,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					try
 					{
 						// get a new location to save to
-						string tempFileNameToSaveTo = Path.Combine(
-							ApplicationDataStorage.Instance.ApplicationLibraryDataPath,
-							Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
+						string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
 
 						// save to the new temp location
 						bool savedSuccessfully = MeshFileIo.Save(asynchMeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
