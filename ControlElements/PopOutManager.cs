@@ -226,22 +226,29 @@ namespace MatterHackers.MatterControl
 
 		private void SaveWindowShouldStartClosed()
 		{
-			UserSettings.Instance.Fields.SetBool(WindowLeftOpenKey, false);
+			if (!MatterControlApplication.Instance.HasBeenClosed
+				&& !ApplicationController.Instance.Reloading)
+			{
+				UserSettings.Instance.Fields.SetBool(WindowLeftOpenKey, false);
+			}
 		}
 
 		private void SystemWindow_Closing(object sender, WidgetClosingEnventArgs closingEvent)
 		{
-			SaveSizeAndPosition();
-			SaveWindowShouldStartClosed();
-			if (PopedOutSystemWindow.Children.Count == 1)
+			if (PopedOutSystemWindow != null)
 			{
-				GuiWidget child = PopedOutSystemWindow.Children[0];
-				PopedOutSystemWindow.RemoveChild(child);
-				child.ClearRemovedFlag();
-				widgetWhosContentsPopOut.RemoveAllChildren();
-				widgetWhosContentsPopOut.AddChild(child);
+				SaveSizeAndPosition();
+				SaveWindowShouldStartClosed();
+				if (PopedOutSystemWindow.Children.Count == 1)
+				{
+					GuiWidget child = PopedOutSystemWindow.Children[0];
+					PopedOutSystemWindow.RemoveChild(child);
+					child.ClearRemovedFlag();
+					widgetWhosContentsPopOut.RemoveAllChildren();
+					widgetWhosContentsPopOut.AddChild(child);
+				}
+				PopedOutSystemWindow = null;
 			}
-			PopedOutSystemWindow = null;
 		}
 
 		private void SaveSizeAndPosition()
