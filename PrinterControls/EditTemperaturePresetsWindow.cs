@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl
 				leftRightEdit.Padding = new BorderDouble(3);
 				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 				string presetLabelTxt = LocalizedString.Get("Preset");
-				TextWidget label = new TextWidget(string.Format("{1} {0}.", preset_count, presetLabelTxt), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				TextWidget label = new TextWidget(string.Format("{1} {0}", preset_count, presetLabelTxt), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				label.VAnchor = VAnchor.ParentCenter;
 				leftRightEdit.AddChild(label);
 
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl
 				GuiWidget hSpacer = new GuiWidget();
 				hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-				TextWidget maxWidgetLabel = new TextWidget(LocalizedString.Get("Max Temp."), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				TextWidget maxWidgetLabel = new TextWidget(LocalizedString.Get("Max Temp"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				maxWidgetLabel.VAnchor = VAnchor.ParentCenter;
 				leftRightEdit.AddChild(maxWidgetLabel);
 				leftRightEdit.AddChild(hSpacer);
