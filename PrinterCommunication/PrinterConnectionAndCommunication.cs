@@ -1867,12 +1867,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 
 				// Add the pause_gcode to the loadedGCode.GCodeCommandQueue
+				PrinterMove preLeveledData = queuedCommandStream1.LastDestination;
+				Vector3 preLeveledDestination = preLeveledData.position;
 				string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
 				if (pauseGCode.Trim() == "")
 				{
 					// inject the resume_gcode to execute when we resume printing
 					string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
 					InjectGCode(resumeGCode);
+					InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate));
+					InjectGCode("G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion));
 
 					DoPause();
 				}
@@ -1888,6 +1892,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// inject the resume_gcode to execute when we resume printing
 						string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
 						InjectGCode(resumeGCode);
+						InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate));
+						InjectGCode("G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion));
 					}
 				}
 			}
@@ -2425,8 +2431,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
 				if (trimedLine != "")
 				{
-					trimedLine = ReplacePrinterMacros(trimedLine);
-
 					queuedCommandStream1.Add(trimedLine);
 				}
 			}
@@ -2661,27 +2665,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
 				}
 			}
-		}
-
-		private string ReplacePrinterMacros(string trimedLine)
-		{
-			if (trimedLine.StartsWith("@"))
-			{
-				PrinterMove preLeveledData = queuedCommandStream1.LastDestination;
-
-				switch (trimedLine)
-				{
-					case "@RESTORE_XYZ_POSITION":
-						// put in the code to return to return to our pre-pause position
-						Vector3 preLeveledDestination = preLeveledData.position;
-						return "G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate);
-
-					case "@RESTORE_E_POSITION":
-						return "G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion);
-				}
-			}
-
-			return trimedLine;
 		}
 
 		private void SetDetailedPrintingState(string lineBeingSetToPrinter)
