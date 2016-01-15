@@ -1870,32 +1870,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				PrinterMove preLeveledData = queuedCommandStream1.LastDestination;
 				Vector3 preLeveledDestination = preLeveledData.position;
 				string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
-				if (pauseGCode.Trim() == "")
-				{
-					// inject the resume_gcode to execute when we resume printing
-					string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
-					InjectGCode(resumeGCode);
-					InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate));
-					InjectGCode("G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion));
 
-					DoPause();
-				}
-				else
-				{
-					lock (locker)
-					{
-						InjectGCode(pauseGCode);
+				// put in the gcode for pausing (if any)
+				InjectGCode(pauseGCode);
 
-						// inject a marker to tell when we are done with the inserted pause code
-						InjectGCode("MH_PAUSE");
+				// inject a marker to tell when we are done with the inserted pause code
+				InjectGCode("MH_PAUSE");
 
-						// inject the resume_gcode to execute when we resume printing
-						string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
-						InjectGCode(resumeGCode);
-						InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate));
-						InjectGCode("G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion));
-					}
-				}
+				// inject the resume_gcode to execute when we resume printing
+				string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
+				InjectGCode("G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion));
+				InjectGCode(resumeGCode);
+				InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate));
 			}
 		}
 
