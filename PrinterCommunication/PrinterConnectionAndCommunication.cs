@@ -1881,6 +1881,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
 				InjectGCode("G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion));
 				InjectGCode(resumeGCode);
+				Vector3 ensureAllAxis = preLeveledDestination + new Vector3(.01, .01, .01);
+				InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(ensureAllAxis.x, ensureAllAxis.y, ensureAllAxis.z, preLeveledData.feedRate + 1));
 				InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate));
 			}
 		}
