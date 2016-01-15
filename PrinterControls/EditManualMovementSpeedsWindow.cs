@@ -128,14 +128,11 @@ namespace MatterHackers.MatterControl
 				TextWidget axisLabel;
 				if (settingsArray[i].StartsWith("e"))
 				{
-					int extruderIndex = (int)double.Parse(settingsArray[i].Substring(1)) + 1;
-					string extruderLabelTxt = LocalizedString.Get("Extruder");
-					axisLabel = new TextWidget(string.Format("{0} {1}", extruderLabelTxt, extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
+					axisLabel = new TextWidget(string.Format("{0}(s)", "Extruder".Localize()), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				}
 				else
 				{
-					string axisLabelText = LocalizedString.Get("Axis");
-					axisLabel = new TextWidget(string.Format("{0} {1}", axisLabelText, settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
+					axisLabel = new TextWidget(string.Format("{0} {1}", "Axis".Localize(), settingsArray[i].ToUpper()), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				}
 				axisLabel.VAnchor = VAnchor.ParentCenter;
 				leftRightEdit.AddChild(axisLabel);
