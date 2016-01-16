@@ -162,6 +162,60 @@ namespace MatterHackers.MatterControl
 					testrunner.Wait(2);
 					testrunner.ClickByName("Library Add To Queue Button");
 					testrunner.ClickByName("Queue Tab");
+				});
+				container.DrawBefore -= beforeDraw;
+			};
+			container.DrawBefore += beforeDraw;
+		}
+
+		public static void RenameLibraryItem(GuiWidget container, double secondsBetweenClicks = .1)
+		{
+			AutomationRunner testrunner;
+			DrawEventHandler beforeDraw = null;
+			beforeDraw = (sender, e) =>
+			{
+				testrunner = new AutomationRunner();
+				Task.Run(() =>
+				{
+					testrunner.ClickByName("Library Tab");
+					NavigateToFolder(testrunner, "Local Library Row Item Collection");
+
+					testrunner.ClickByName("Library Edit Button");
+					testrunner.ClickByName("Row Item Calibration - Box");
+					testrunner.Wait(2);
+					testrunner.ClickByName("Rename From Library Button");
+					testrunner.Wait(2);
+					testrunner.Type("Renamed Calibration Cube");
+					testrunner.ClickByName("Rename Button");
+
+					
+				});
+				container.DrawBefore -= beforeDraw;
+			};
+			container.DrawBefore += beforeDraw;
+		}
+
+		public static void CreateAndRenameLocalLibraryFolder(GuiWidget container, double secondsBetweenClicks = .1)
+		{
+			AutomationRunner testrunner;
+			DrawEventHandler beforeDraw = null;
+			beforeDraw = (sender, e) =>
+			{
+				testrunner = new AutomationRunner();
+				Task.Run(() =>
+				{
+					testrunner.ClickByName("Library Tab");
+					NavigateToFolder(testrunner, "Local Library Row Item Collection");
+					testrunner.ClickByName("Create Folder From Library Button");
+					testrunner.Wait(2);
+					testrunner.Type("New Folder");
+					testrunner.ClickByName("Create Folder Button");
+					testrunner.ClickByName("Library Edit Button");
+					testrunner.ClickByName("Row Item New Folder");
+					testrunner.ClickByName("Rename From Library Button");
+					testrunner.Wait(2);
+					testrunner.Type("Renamed Folder");
+					testrunner.ClickByName("Rename Button");
 
 
 				});
