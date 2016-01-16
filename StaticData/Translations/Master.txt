@@ -4399,3 +4399,18 @@ Translated:Oops! Field cannot be left blank
 English:Sorry!  Must be a valid email address.
 Translated:Sorry!  Must be a valid email address.
 
+English:Please wait while we create your account...
+Translated:Please wait while we create your account...
+
+English:Account created
+Translated:Account created
+
+English:Success! Your account has been created.
+Translated:Success! Your account has been created.
+
+English:Please log in to continue.
+Translated:Please log in to continue.
+
+English:Oops! Invalid username, email or password.
+Translated:Oops! Invalid username, email or password.
+

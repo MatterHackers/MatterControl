@@ -407,9 +407,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void LibraryDataReloaded(object sender, EventArgs e)
 		{
 			UiThread.RunOnIdle(AddAllItems, new LastScrollPosition()
-				{
-					topLeftScrollPosition = this.TopLeftOffset,
-				});
+			{
+				topLeftScrollPosition = this.TopLeftOffset,
+			});
 		}
 	}
 }
