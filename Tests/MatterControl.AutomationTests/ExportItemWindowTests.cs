@@ -22,7 +22,7 @@ namespace MatterControl.AutomationTests
 	{
 
 		[Test, RequiresSTA, RunInApplicationDomain]
-		public void DownloadsExportButtonExportsGcode()
+		public void ExportAsGcode()
 		{
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
@@ -32,38 +32,30 @@ namespace MatterControl.AutomationTests
 
 					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
 
-					string firstItemName = "Row Item " + "Batman";
-
+					string firstItemName = "Row Item Batman";
 					//Navigate to Downloads Library Provider
-					testRunner.ClickByName("Library Tab");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
-					testRunner.ClickByName("Library Add Button");
-					testRunner.Wait(2);
+					testRunner.ClickByName("Queue Tab");
+					testRunner.ClickByName("Queue Add Button", 2);
 
 					//Get parts to add
 					string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
 
-					//Get files to delete from Downloads once each test has completed and then add them to List
-					string firstFileToDelete = Path.Combine(MatterControlUtilities.PathToDownloadsSubFolder, "Batman.stl");
-
-
 					//Add STL part items to Downloads and then type paths into file dialogue
-					testRunner.Wait(2);
-					testRunner.Type(rowItemPath);
+					testRunner.Wait(1);
+					testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
 					//Get test results 
-					bool firstRowItemWasAdded = testRunner.WaitForName(firstItemName, 2);
-					resultsHarness.AddTestResult(firstRowItemWasAdded == true);
+					resultsHarness.AddTestResult(testRunner.WaitForName(firstItemName, 2) == true);
 
-					testRunner.ClickByName("Library Edit Button");
+					testRunner.ClickByName("Queue Edit Button");
 					testRunner.ClickByName(firstItemName);
-					testRunner.ClickByName("Library Export Button");
+					testRunner.ClickByName("Queue Export Button");
 					testRunner.Wait(2);
 
-					//testRunner.WaitForName("Export Item Window", 2);
-					testRunner.ClickByName("Export as GCode Button");
+					testRunner.WaitForName("Export Item Window", 2);
+					testRunner.ClickByName("Export as GCode Button", 2);
 					testRunner.Wait(2);
 
 					string gcodeExportPath = MatterControlUtilities.PathToExportGcodeFolder;
@@ -71,25 +63,19 @@ namespace MatterControl.AutomationTests
 					testRunner.Type("{Enter}");
 					testRunner.Wait(2);
 
-					bool gcodeExported = false;
+					Console.WriteLine(gcodeExportPath);
 
-					if (File.Exists(gcodeExportPath))
-					{
-						gcodeExported = true;
-					}
-
-					resultsHarness.AddTestResult(gcodeExported == true);
-
+					resultsHarness.AddTestResult(File.Exists(gcodeExportPath) == true);
+					Debugger.Break();
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			//MatterControlUtilities.CleanUpDownloadsDirectoryAfterTest(addedFiles);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 2);
 
 		}
 	}
