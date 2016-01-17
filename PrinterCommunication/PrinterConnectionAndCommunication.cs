@@ -1330,10 +1330,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			try
 			{
-				PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-				if (levelingData != null
-					&& levelingData.NeedsPrintLeveling)
+				// If leveling is required or is currently on
+				if (ActiveSliceSettings.Instance.LevelingRequiredToPrint
+					|| ActivePrinterProfile.Instance.DoPrintLeveling)
 				{
+					LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
+					if(ActiveSliceSettings.Instance.LevelingRequiredToPrint)
+					{
+						// run in the first run state
+						runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
+					}
+					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 					switch (levelingData.CurrentPrinterLevelingSystem)
 					{
 						case PrintLevelingData.LevelingSystem.Probe2Points:
@@ -1342,7 +1349,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								&& levelingData.SampledPosition1.z == 0
 								&& levelingData.SampledPosition2.z == 0)
 							{
-								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+								// leveling is not set up so we need to run it
+								LevelWizardBase.ShowPrintLevelWizard(runningState);
 								return;
 							}
 							break;
@@ -1350,7 +1358,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						case PrintLevelingData.LevelingSystem.Probe7PointRadial:
 							if (levelingData.SampledPositions.Count != 7) // different criteria for what is not initialized
 							{
-								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+								LevelWizardBase.ShowPrintLevelWizard(runningState);
 								return;
 							}
 							break;
@@ -1358,7 +1366,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						case PrintLevelingData.LevelingSystem.Probe13PointRadial:
 							if (levelingData.SampledPositions.Count != 13) // different criteria for what is not initialized
 							{
-								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+								LevelWizardBase.ShowPrintLevelWizard(runningState);
 								return;
 							}
 							break;

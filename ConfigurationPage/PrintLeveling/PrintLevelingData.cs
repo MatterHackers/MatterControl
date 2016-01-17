@@ -51,11 +51,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public bool NeedsPrintLeveling
-		{
-			get { return ActiveSliceSettings.Instance.GetActiveValue("print_leveling_required_to_print") == "1"; }
-		}
-
 		public Vector3 ProbeOffset0
 		{
 			get { return probeOffset0Private; }

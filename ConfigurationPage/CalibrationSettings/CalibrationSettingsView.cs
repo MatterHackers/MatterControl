@@ -119,7 +119,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(editButton);
 			buttonRow.AddChild(new HorizontalSpacer());
 			buttonRow.AddChild(runPrintLevelingButton);
-			buttonRow.AddChild(printLevelingSwitch);
+
+			// only show the switch if leveling can be turned off (it can't if it is required).
+			if (!ActiveSliceSettings.Instance.LevelingRequiredToPrint)
+			{
+				buttonRow.AddChild(printLevelingSwitch);
+			}
 
 			SetPrintLevelButtonVisiblity();
 			return buttonRow;

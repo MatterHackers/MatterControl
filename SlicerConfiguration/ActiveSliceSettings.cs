@@ -548,6 +548,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get { return ParseDouble(GetActiveValue("filament_diameter")); }
 		}
 
+		public bool LevelingRequiredToPrint
+		{
+			get
+			{
+				return GetActiveValue("print_leveling_required_to_print") == "1";
+			}
+		}
+
 		///<summary>
 		///Returns the settings value at the 'top' of the stack
 		///</summary>

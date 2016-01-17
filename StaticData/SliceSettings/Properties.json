@@ -509,7 +509,7 @@
     "PresentationName": "Leveling Solution",
     "HelpText": "The print leveling algorithm to use.",
     "DataEditType": "LIST",
-    "ExtraSettings": "3-Point Plane,7-Point Disk,13-Point Disk"
+    "ExtraSettings": "3 Point Plane,7 Point Disk,13 Point Disk"
   },
   {
     "SlicerConfigName": "print_leveling_required_to_print",

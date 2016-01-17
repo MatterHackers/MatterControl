@@ -254,6 +254,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             "has_fan",
             "has_heated_bed",
+			"print_leveling_required_to_print",
 			"has_hardware_leveling",
             "has_sd_card_reader",
             "extruder_count",
