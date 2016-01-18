@@ -133,6 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
+			new MapItemToBool("generateSupportPerimeter", "support_material_create_perimeter"),
 
 			new MapItemToBool("generateSupport", "support_material"),
 

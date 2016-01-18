@@ -943,6 +943,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "support_material_create_perimeter",
+    "PresentationName": "Create Perimeter",
+    "HelpText": "Generates an outline around the support material to improve strength and hold up interface layers.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "support_material_enforce_layers",
     "PresentationName": "Enforce Support For First",
     "HelpText": "Generate support material everywhere not touching the bed for n layers, regardless of angle.",
