@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			editButtonFactory.FixedWidth = 0;
 
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
-			exportItemButton.Name = "Export Queue Button";
+			exportItemButton.Name = "Queue Export Button";
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += new EventHandler(exportButton_Click);
 			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
