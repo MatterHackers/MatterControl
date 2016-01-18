@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 
 		public CloudSettingsWidget()
-			: base(LocalizedString.Get("Cloud Settings"))
+			: base(LocalizedString.Get("Cloud"))
 		{
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
 			configureNotificationSettingsButton.Click += new EventHandler(configureNotificationSettingsButton_Click);
 
-			notificationSettingsLabel = new TextWidget(LocalizedString.Get("Notification Settings"));
+			notificationSettingsLabel = new TextWidget(LocalizedString.Get("Notifications"));
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;

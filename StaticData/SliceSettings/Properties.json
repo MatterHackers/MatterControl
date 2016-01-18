@@ -233,7 +233,7 @@
   {
     "SlicerConfigName": "extruder_offset",
     "PresentationName": "Extruder Offset",
-    "HelpText": "This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.",
+    "HelpText": "The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.",
     "DataEditType": "OFFSET2",
     "ExtraSettings": "mm"
   },
@@ -332,7 +332,7 @@
   {
     "SlicerConfigName": "first_layer_extrusion_width",
     "PresentationName": "First Layer",
-    "HelpText": "Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.",
+    "HelpText": "A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "mm or %\\nleave 0 for default"
   },
@@ -804,7 +804,7 @@
   {
     "SlicerConfigName": "skirt_distance",
     "PresentationName": "Distance From Object",
-    "HelpText": "The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.",
+    "HelpText": "The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm",
     "QuickMenuSettings": [{"MenuName" : "Touching", "Value": "0"},{"MenuName" : "Standard", "Value": "3"},{"MenuName" : "Far", "Value": "10"}]
@@ -1107,7 +1107,7 @@
   {
     "SlicerConfigName": "top_solid_infill_speed",
     "PresentationName": "Top Solid Infill",
-    "HelpText": "The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.",
+    "HelpText": "The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "mm/s or %"
   },

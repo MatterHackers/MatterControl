@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					sliderThumbWidth = 20;
 				}
 
-				TextWidget subheader = new TextWidget("Fine-tune adjustment while actively printing", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
+				TextWidget subheader = new TextWidget("", pointSize: 4, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				subheader.Margin = new BorderDouble(bottom: 6);
 				tuningRatiosLayout.AddChild(subheader);
 				TextWidget feedRateDescription;

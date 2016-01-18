@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private event EventHandler unregisterEvents;
 
 		public CalibrationSettingsWidget()
-			: base("Calibration Settings".Localize())
+			: base("Calibration".Localize())
 		{
 			printLevelingContainer = new DisableableWidget();
 			if (!ActiveSliceSettings.Instance.HasHardwareLeveling())

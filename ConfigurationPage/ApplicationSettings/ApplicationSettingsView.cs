@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private string cannotRestartWhileActive;
 
 		public ApplicationSettingsWidget()
-			: base("Application Settings".Localize())
+			: base("Application".Localize())
 		{
 			cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
 			cannotRestartWhileActive = "Unable to restart".Localize();
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.Margin = new BorderDouble(0, 6);
 
 			string settingLabelBeggining = "Theme".Localize();
-			string settingLabelEnd = "Display Options".Localize();
+			string settingLabelEnd = "Display".Localize();
 			string settingLabelFull = String.Format("{0}/{1}", settingLabelBeggining, settingLabelEnd);
 			TextWidget settingLabel = new TextWidget(settingLabelFull);//"Theme/Display Options"
 			settingLabel.AutoExpandBoundsToText = true;
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget("Change Display Mode".Localize());
+			TextWidget settingsLabel = new TextWidget("Display Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget("Language Options".Localize());
+			TextWidget settingsLabel = new TextWidget("Language".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
