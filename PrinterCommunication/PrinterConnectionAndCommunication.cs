@@ -427,6 +427,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					case CommunicationStates.Connected:
 						timeWaitingForTemperature.Stop(); // make sure we try again to send temps
+						SendLineToPrinterNow("M115");
+						SendLineToPrinterNow("M114");
 						break;
 				}
 
