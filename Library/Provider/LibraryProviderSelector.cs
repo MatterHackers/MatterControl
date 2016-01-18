@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
                     this.SharedLibraryCreator = libraryProviderPlugin;
                 }
 
-				if (libraryProviderPlugin.ShouldBeShown(ReloadData))
+				if (libraryProviderPlugin.ShouldBeShown())
 				{
 					// This coupling is required to navigate to the Purchased folder after redemption or purchase updates
 					libraryCreators.Add(libraryProviderPlugin);

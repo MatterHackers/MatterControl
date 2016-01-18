@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 		}
 
-		public virtual bool ShouldBeShown(Action functionToCallIfStateChanges)
+		public virtual bool ShouldBeShown()
 		{
 			return true;
 		}

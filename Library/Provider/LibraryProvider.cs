@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public void OnDataReloaded(EventArgs eventArgs)
 		{
-			DataReloaded?.Invoke(null, eventArgs);
+			DataReloaded?.Invoke(this, eventArgs);
 		}
 
 		#endregion Static Methods
