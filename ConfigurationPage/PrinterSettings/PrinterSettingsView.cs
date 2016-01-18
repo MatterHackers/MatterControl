@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private event EventHandler unregisterEvents;
 
 		public HardwareSettingsWidget()
-			: base("Hardware Settings".Localize())
+			: base("Hardware".Localize())
 		{
 			eePromControlsContainer = new DisableableWidget();
 			eePromControlsContainer.AddChild(GetEEPromControl());
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			TextWidget notificationSettingsLabel = new TextWidget("EEProm Settings".Localize());
+			TextWidget notificationSettingsLabel = new TextWidget("EEProm".Localize());
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;

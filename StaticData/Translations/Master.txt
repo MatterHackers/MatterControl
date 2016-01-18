@@ -4399,3 +4399,42 @@ Translated:Oops! Field cannot be left blank
 English:Sorry!  Must be a valid email address.
 Translated:Sorry!  Must be a valid email address.
 
+English:No macros are currently set up for this printer.
+Translated:No macros are currently set up for this printer.
+
+English:The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+Translated:The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+
+English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
+Translated:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
+
+English:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
+Translated:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
+
+English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
+Translated:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
+
+English:Max Temp
+Translated:Max Temp
+
+English:Language
+Translated:Language
+
+English:Display Mode
+Translated:Display Mode
+
+English:Calibration
+Translated:Calibration
+
+English:EEProm
+Translated:EEProm
+
+English:Cloud
+Translated:Cloud
+
+English:Notifications
+Translated:Notifications
+
+English:Application
+Translated:Application
+
