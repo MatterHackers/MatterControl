@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 {
                     PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
                     PrinterMove deltaToDestination = currentDestination - lastDestination;
-                    deltaToDestination.feedRate = 0; // remove the changing of the fedrate (we'll set it initialy)
+                    deltaToDestination.feedRate = 0; // remove the changing of the federate (we'll set it initialy)
                     double lengthSquared = deltaToDestination.LengthSquared;
                     if (lengthSquared > MaxSegmentLength * MaxSegmentLength)
                     {
@@ -113,11 +113,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             }
         }
 
-        public override Vector3 SetPrinterPosition(Vector3 position)
+        public override void SetPrinterPosition(PrinterMove position)
         {
-            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
-            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
-            return position;
-        }
-    }
+			lastDestination = position;
+			internalStream.SetPrinterPosition(lastDestination);
+		}
+	}
 }

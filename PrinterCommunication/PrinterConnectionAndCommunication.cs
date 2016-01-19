@@ -138,15 +138,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private Thread connectThread;
 
-		private Vector3 currentDestination;
+		private PrinterMove currentDestination;
 
-		private double currentExtruderDestination;
+		public double CurrentExtruderDestination { get { return currentDestination.extrusion; } }
 
-		public double CurrentExtruderDestination { get { return currentExtruderDestination; } }
-
-		private double currentFeedRate;
-
-		public double CurrentFeedRate { get { return currentFeedRate; } }
+		public double CurrentFeedRate { get { return currentDestination.feedRate; } }
 
 		private double currentSdBytes = 0;
 
@@ -174,21 +170,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string lastLineRead = "";
 
-		private Vector3 lastReportedPosition;
+		private PrinterMove lastReportedPosition;
 
 		private List<string> LinesToWriteQueue = new List<string>();
 
 		private GCodeFile loadedGCode = new GCodeFileLoaded();
 
 		private GCodeFileStream gCodeFileStream0 = null;
-		private QueuedCommandsStream queuedCommandStream1 = null;
-		private RelativeToAbsoluteStream relativeToAbsoluteStream2 = null;
-		private PrintLevelingStream printLevelingStream3 = null;
-		private WaitForTempStream waitForTempStream4 = null;
-		private BabyStepsStream babyStepsStream5 = null;
-		private ExtrusionMultiplyerStream extrusionMultiplyerStream6 = null;
-		private FeedRateMultiplyerStream feedrateMultiplyerStream7 = null;
-		private RequestTemperaturesStream requestTemperaturesStream8 = null;
+		private PauseHandlingStream pauseHandlingStream1 = null;
+		private QueuedCommandsStream queuedCommandStream2 = null;
+		private RelativeToAbsoluteStream relativeToAbsoluteStream3 = null;
+		private PrintLevelingStream printLevelingStream4 = null;
+		private WaitForTempStream waitForTempStream5 = null;
+		private BabyStepsStream babyStepsStream6 = null;
+		private ExtrusionMultiplyerStream extrusionMultiplyerStream7 = null;
+		private FeedRateMultiplyerStream feedrateMultiplyerStream8 = null;
+		private RequestTemperaturesStream requestTemperaturesStream9 = null;
 
 		private GCodeStream totalGCodeStream = null;
 
@@ -306,11 +303,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void AddToBabyStepOffset(Axis moveAxis, double moveAmount)
 		{
-			babyStepsStream5.OffsetAxis(moveAxis, moveAmount);
+			babyStepsStream6.OffsetAxis(moveAxis, moveAmount);
 			OffsetStreamChanged?.Invoke(null, null);
 		}
 
-		public Vector3 CurrentBabyStepsOffset => babyStepsStream5?.Offset ?? Vector3.Zero;
+		public Vector3 CurrentBabyStepsOffset => babyStepsStream6?.Offset ?? Vector3.Zero;
 
 		[Flags]
 		public enum Axis { X = 1, Y = 2, Z = 4, E = 8, XYZ = (X | Y | Z) }
@@ -540,7 +537,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
 
-		public Vector3 CurrentDestination { get { return currentDestination; } }
+		public Vector3 CurrentDestination { get { return currentDestination.position; } }
 
 		public int CurrentlyPrintingLayer
 		{
@@ -573,19 +570,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (extrusionMultiplyerStream6 != null)
+				if (extrusionMultiplyerStream7 != null)
 				{
-					return extrusionMultiplyerStream6.ExtrusionRatio;
+					return extrusionMultiplyerStream7.ExtrusionRatio;
 				}
 
 				return 1;
 			}
 			set
 			{
-				if (extrusionMultiplyerStream6 != null
-					&& value != extrusionMultiplyerStream6.ExtrusionRatio)
+				if (extrusionMultiplyerStream7 != null
+					&& value != extrusionMultiplyerStream7.ExtrusionRatio)
 				{
-					extrusionMultiplyerStream6.ExtrusionRatio = value;
+					extrusionMultiplyerStream7.ExtrusionRatio = value;
 					ExtrusionRatioChanged.CallEvents(this, null);
 				}
 			}
@@ -609,19 +606,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (feedrateMultiplyerStream7 != null)
+				if (feedrateMultiplyerStream8 != null)
 				{
-					return feedrateMultiplyerStream7.FeedRateRatio;
+					return feedrateMultiplyerStream8.FeedRateRatio;
 				}
 
 				return 1;
 			}
 			set
 			{
-				if (feedrateMultiplyerStream7 != null
-					&& value != feedrateMultiplyerStream7.FeedRateRatio)
+				if (feedrateMultiplyerStream8 != null
+					&& value != feedrateMultiplyerStream8.FeedRateRatio)
 				{
-					feedrateMultiplyerStream7.FeedRateRatio = value;
+					feedrateMultiplyerStream8.FeedRateRatio = value;
 					FeedRateRatioChanged.CallEvents(this, null);
 				}
 			}
@@ -637,7 +634,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get { return firmwareVersion; }
 		}
 
-		public Vector3 LastReportedPosition { get { return lastReportedPosition; } }
+		public Vector3 LastReportedPosition { get { return lastReportedPosition.position; } }
 
 		public bool MonitorPrinterTemperature
 		{
@@ -1731,19 +1728,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 
 			string lineToParse = foundStringEventArgs.LineToCheck;
-			Vector3 positionRead = Vector3.Zero;
-			GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref positionRead.x);
-			GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref positionRead.y);
-			GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref positionRead.z);
-
-			// The first position read is the target position.
-			lastReportedPosition = positionRead;
+			GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref lastReportedPosition.position.x);
+			GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref lastReportedPosition.position.y);
+			GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref lastReportedPosition.position.z);
+			GCodeFile.GetFirstNumberAfter("E:", lineToParse, ref lastReportedPosition.extrusion);
 
 			//if (currentDestination != positionRead)
 			{
-				currentDestination = positionRead;
+				currentDestination = lastReportedPosition;
 				DestinationChanged.CallEvents(this, null);
-				if (totalGCodeStream != null)
+                if (totalGCodeStream != null)
 				{
 					totalGCodeStream.SetPrinterPosition(currentDestination);
 				}
@@ -1876,24 +1870,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return;
 				}
 
-				// Add the pause_gcode to the loadedGCode.GCodeCommandQueue
-				PrinterMove preLeveledData = queuedCommandStream1.LastDestination;
-				Vector3 preLeveledDestination = preLeveledData.position;
-				string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
-
-				// put in the gcode for pausing (if any)
-				InjectGCode(pauseGCode);
-
-				// inject a marker to tell when we are done with the inserted pause code
-				InjectGCode("MH_PAUSE");
-
-				// inject the resume_gcode to execute when we resume printing
-				string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
-				InjectGCode("G92 E{0:0.00000}".FormatWith(preLeveledData.extrusion));
-				InjectGCode(resumeGCode);
-				Vector3 ensureAllAxis = preLeveledDestination + new Vector3(.01, .01, .01);
-				InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(ensureAllAxis.x, ensureAllAxis.y, ensureAllAxis.z, preLeveledData.feedRate + 1));
-				InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(preLeveledDestination.x, preLeveledDestination.y, preLeveledDestination.z, preLeveledData.feedRate));
+				pauseHandlingStream1.DoPause();
 			}
 		}
 
@@ -1921,6 +1898,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				else
 				{
+					LinesToWriteQueue.Clear();
+					pauseHandlingStream1.Resume();
 					CommunicationState = CommunicationStates.Printing;
 				}
 			}
@@ -1972,7 +1951,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				lineToWrite = lineToWrite.Split(';')[0].Trim();
 				if (lineToWrite.Trim().Length > 0)
 				{
-					if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd)
+					if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd
+						&& !ForceImmediateWrites)
 					{
 						// insert the command into the printing queue at the head
 						InjectGCode(lineToWrite);
@@ -2389,14 +2369,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReleaseMotors();
 		}
 
-		private void DoPause()
-		{
-			if (PrinterIsPrinting)
-			{
-				CommunicationState = CommunicationStates.Paused;
-			}
-		}
-
 		private void ExtruderWasSetToAbsoluteMode(object sender, EventArgs e)
 		{
 			extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
@@ -2429,7 +2401,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
 				if (trimedLine != "")
 				{
-					queuedCommandStream1.Add(trimedLine);
+					queuedCommandStream2.Add(trimedLine);
 				}
 			}
 		}
@@ -2441,25 +2413,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				|| lineBeingSent.StartsWith("G2 ")
 				|| lineBeingSent.StartsWith("G3 "))
 			{
-				Vector3 newDestination = currentDestination;
+				PrinterMove newDestination = currentDestination;
 				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 				{
-					newDestination = Vector3.Zero;
+					newDestination.position = Vector3.Zero;
 				}
 
-				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.x);
-				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.y);
-				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.z);
+				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.position.x);
+				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.position.y);
+				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.position.z);
 
-				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentExtruderDestination);
-				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentFeedRate);
+				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref newDestination.extrusion);
+				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref newDestination.feedRate);
 
 				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 				{
-					newDestination += currentDestination;
+					newDestination.position += currentDestination.position;
 				}
 
-				if (currentDestination != newDestination)
+				if (currentDestination.position != newDestination.position)
 				{
 					currentDestination = newDestination;
 					DestinationChanged.CallEvents(this, null);
@@ -2475,15 +2447,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			loadedGCode = GCodeFile.Load(gcodeFilename);
 
 			gCodeFileStream0 = new GCodeFileStream(loadedGCode);
-			queuedCommandStream1 = new QueuedCommandsStream(gCodeFileStream0);
-			relativeToAbsoluteStream2 = new RelativeToAbsoluteStream(queuedCommandStream1);
-			printLevelingStream3 = new PrintLevelingStream(relativeToAbsoluteStream2);
-			waitForTempStream4 = new WaitForTempStream(printLevelingStream3);
-			babyStepsStream5 = new BabyStepsStream(waitForTempStream4);
-			extrusionMultiplyerStream6 = new ExtrusionMultiplyerStream(babyStepsStream5);
-			feedrateMultiplyerStream7 = new FeedRateMultiplyerStream(extrusionMultiplyerStream6);
-			requestTemperaturesStream8 = new RequestTemperaturesStream(feedrateMultiplyerStream7);
-			totalGCodeStream = requestTemperaturesStream8;
+			pauseHandlingStream1 = new PauseHandlingStream(gCodeFileStream0);
+			queuedCommandStream2 = new QueuedCommandsStream(pauseHandlingStream1);
+			relativeToAbsoluteStream3 = new RelativeToAbsoluteStream(queuedCommandStream2);
+			printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3);
+			waitForTempStream5 = new WaitForTempStream(printLevelingStream4);
+			babyStepsStream6 = new BabyStepsStream(waitForTempStream5);
+			extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
+			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
+			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);
+			totalGCodeStream = requestTemperaturesStream9;
 		}
 
 		private void loadGCodeWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -2671,11 +2644,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				PrintingState = DetailedPrintingState.HomingAxis;
 			}
-			else if (waitForTempStream4?.HeatingBed ?? false)
+			else if (waitForTempStream5?.HeatingBed ?? false)
 			{
 				PrintingState = DetailedPrintingState.HeatingBed;
 			}
-			else if (waitForTempStream4?.HeatingExtruder ?? false)
+			else if (waitForTempStream5?.HeatingExtruder ?? false)
 			{
 				PrintingState = DetailedPrintingState.HeatingExtruder;
 			}
@@ -2728,7 +2701,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 
-			bool pauseRequested = false;
 			lock (locker)
 			{
 				if (firstLineToResendIndex < allCheckSumLinesSent.Count)
@@ -2759,22 +2731,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						if (trimedLine.Length > 0)
 						{
-							if (currentSentLine == "MH_PAUSE")
-							{
-								pauseRequested = true;
-							}
-							else if (currentSentLine == "M226" || currentSentLine == "@pause")
-							{
-								RequestPause();
-							}
-							else
-							{
-								WriteChecksumLineToPrinter(currentSentLine);
-							}
+							WriteChecksumLineToPrinter(currentSentLine);
 
 							firstLineToResendIndex++;
 						}
-
 					}
 					else if (printWasCanceled)
 					{
@@ -2795,18 +2755,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						TurnOffBedAndExtruders();
 					}
 				}
-
-				if (pauseRequested)
-				{
-					DoPause();
-				}
 			}
 		}
 
 		private void TurnOffBedAndExtruders()
 		{
-			SetTargetExtruderTemperature(0, 0);
-			for (int i = 1; i < ActiveSliceSettings.Instance.ExtruderCount; i++)
+			for (int i = 0; i < ActiveSliceSettings.Instance.ExtruderCount; i++)
 			{
 				SetTargetExtruderTemperature(i, 0);
 			}

@@ -48,6 +48,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.offset = offset;
 		}
 
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			lastDestination = position;
+			lastDestination.position -= offset;
+			internalStream.SetPrinterPosition(lastDestination);
+		}
+
 		public Vector3 Offset { get { return offset; } set { offset = value; } }
 
 		public override string ReadLine()

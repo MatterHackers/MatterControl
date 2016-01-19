@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,65 +27,37 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
+using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
+using System.Text;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class QueuedCommandsStream : GCodeStreamProxy
-    {
-		object locker = new object();
-		private List<string> commandQueue = new List<string>();
-		protected PrinterMove lastDestination = new PrinterMove();
-		public PrinterMove LastDestination { get { return lastDestination; } }
+	public abstract class GCodeStreamProxy : GCodeStream
+	{
+		protected GCodeStream internalStream;
 
-		public QueuedCommandsStream(GCodeStream internalStream)
-            : base(internalStream)
-        {
-        }
+		public GCodeStreamProxy(GCodeStream internalStream)
+		{
+			this.internalStream = internalStream;
+		}
+
+		public override void Dispose()
+		{
+			internalStream.Dispose();
+		}
+		public override string ReadLine()
+		{
+			return internalStream.ReadLine();
+		}
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
-			lastDestination = position;
-			internalStream.SetPrinterPosition(lastDestination);
+			internalStream.SetPrinterPosition(position);
 		}
-
-		public void Add(string line)
-        {
-            // lock queue
-            lock(locker)
-            {
-                commandQueue.Add(line);
-            }
-        }
-
-        public override string ReadLine()
-        {
-			string lineToSend = null;
-            // lock queue
-            lock(locker)
-            {
-                if (commandQueue.Count > 0)
-                {
-					lineToSend = commandQueue[0];
-                    commandQueue.RemoveAt(0);
-                }
-            }
-
-			if (lineToSend == null)
-			{
-				lineToSend = base.ReadLine();
-			}
-
-			// keep track of the position
-			if (lineToSend != null
-				&& LineIsMovement(lineToSend))
-			{
-				lastDestination = GetPosition(lineToSend, lastDestination);
-			}
-
-			return lineToSend;
-        }
-    }
+	}
 }
