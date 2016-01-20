@@ -32,6 +32,7 @@ using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -85,6 +86,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		private bool PauseOnLayer(string layer)
+		{
+			int layerNumber;
+
+			if (int.TryParse(layer, out layerNumber) && ActiveSliceSettings.Instance.LayerToPauseOn.Contains(layerNumber))
+			{
+				return true;
+			}
+			return false;
+		}
+
 		public void DoPause()
 		{
 			// Add the pause_gcode to the loadedGCode.GCodeCommandQueue
@@ -127,9 +139,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				lineToSend = base.ReadLine();
 				lineToSend = relativeToAbsoluteConverter.ProcessLine(lineToSend);
+				if(lineToSend == null)
+				{
+					return lineToSend;
+				}
 			}
 
-			if (lineToSend == "MH_PAUSE")
+			if (lineToSend.StartsWith("; LAYER:"))
+			{
+				string layerNumber = lineToSend.Split(':')[1];
+				if (PauseOnLayer(layerNumber))
+				{
+					DoPause();
+				}
+			}
+			else if (lineToSend.StartsWith("M226") || lineToSend.StartsWith("@pause"))
+			{
+				DoPause();
+			}
+			else if (lineToSend == "MH_PAUSE")
 			{
 				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 				{
@@ -140,10 +168,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 
 				lineToSend = "";
-			}
-			else if (lineToSend == "M226" || lineToSend == "@pause")
-			{
-				DoPause();
 			}
 
 			// keep track of the position

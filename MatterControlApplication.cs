@@ -121,8 +121,6 @@ namespace MatterHackers.MatterControl
 
 			bool forceSofwareRendering = false;
 
-			GCodeFileLoaded.PauseOnLayerProcessor = PauseOnLayer;
-
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
 			{
 				string command = commandLineArgs[currentCommandIndex];
@@ -756,17 +754,6 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
 			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
 			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
-		}
-
-		private bool PauseOnLayer(string layer)
-		{
-			int layerNumber;
-
-			if (int.TryParse(layer, out layerNumber) && ActiveSliceSettings.Instance.LayerToPauseOn.Contains(layerNumber))
-			{
-				return true;
-			}
-			return false;
 		}
 	}
 }
