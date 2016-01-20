@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							if (saveButtons.Visible)
 							{
-								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
+								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?".Localize(), "Save Changes".Localize(), StyledMessageBox.MessageType.YES_NO);
 							}
 							else
 							{
@@ -1056,13 +1056,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
 		{
 			TupleList<string, Func<bool>> buttonList = new TupleList<string, Func<bool>>();
-			buttonList.Add("Save", () =>
+			buttonList.Add("Save".Localize(), () =>
 			{
 				MergeAndSavePartsToCurrentMeshFile();
 				return true;
 			});
 
-			buttonList.Add("Save As", () =>
+			buttonList.Add("Save As".Localize(), () =>
 			{
 				UiThread.RunOnIdle(OpenSaveAsWindow);
 				return true;

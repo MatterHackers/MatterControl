@@ -39,6 +39,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
+		private static string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?".Localize();
+		private static string PartsNotPrintableTitle = "Parts not in print area".Localize();
+
 		private void CreateSelectionData()
 		{
 			string makingCopyLabel = LocalizedString.Get("Preparing Meshes");
@@ -130,14 +133,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									AutoArrangePartsInBackground();
 								}
-							}, PartsNotPrintableMessage, PartsNotPrintableTitle, StyledMessageBox.MessageType.YES_NO, "Center on Bed", "Cancel");
+							}, PartsNotPrintableMessage, PartsNotPrintableTitle, StyledMessageBox.MessageType.YES_NO, "Center on Bed".Localize(), "Cancel".Localize());
 						});
 					}
 				}
 			}
 		}
-
-		static string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?";
-		static string PartsNotPrintableTitle = "Parts not in print area";
 	}
 }

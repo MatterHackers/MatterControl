@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.PluginSystem;
 using System;
@@ -44,7 +45,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public override void Initialize(GuiWidget application)
 		{
-			CreatorInformation information = new CreatorInformation(LaunchNewTextCreator, "TC_32x32.png", "Text Creator");
+			CreatorInformation information = new CreatorInformation(LaunchNewTextCreator, "TC_32x32.png", "Text Creator".Localize());
 			RegisteredCreators.Instance.RegisterLaunchFunction(information);
 			mainApplication = application;
 		}

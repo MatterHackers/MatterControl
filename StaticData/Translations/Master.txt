@@ -4438,3 +4438,33 @@ Translated:Notifications
 English:Application
 Translated:Application
 
+English:Firmware Updates
+Translated:Firmware Updates
+
+English:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
+Translated:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
+
+English:Parts not in print area
+Translated:Parts not in print area
+
+English:Center on Bed
+Translated:Center on Bed
+
+English:sign out
+Translated:sign out
+
+English:Loading G-Code...
+Translated:Loading G-Code...
+
+English:Braille Builder
+Translated:Braille Builder
+
+English:Image Converter
+Translated:Image Converter
+
+English:Text Creator
+Translated:Text Creator
+
+English:demo
+Translated:demo
+
