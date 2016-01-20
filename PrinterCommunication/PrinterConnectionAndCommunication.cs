@@ -277,6 +277,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("MINTEMP", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("MAXTEMP", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("M999", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("Error: Extruder switched off", PrinterReportsError);
 
 			// repatier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);

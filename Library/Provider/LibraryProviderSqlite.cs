@@ -228,16 +228,22 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			AddItem(itemToAdd.Name, itemToAdd.FileLocation);
 		}
 
-		public void AddItem(string fileName, string fileLocation)
+		public async void AddItem(string fileName, string fileLocation)
 		{
-			if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(fileLocation))
+			await Task.Run(() =>
 			{
-				AddStlOrGcode(fileLocation, fileName);
-			}
+				if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(fileLocation))
+				{
+					AddStlOrGcode(fileLocation, fileName);
+				}
 
-			LoadLibraryItems();
+				UiThread.RunOnIdle(() =>
+				{
+					LoadLibraryItems();
 
-			ItemAdded.CallEvents(this, null);
+					ItemAdded.CallEvents(this, null);
+				});
+			});
 		}
 
 		public void EnsureSamplePartsExist(IEnumerable<string> filenamesToValidate)
