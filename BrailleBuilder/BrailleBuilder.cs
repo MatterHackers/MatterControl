@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.PluginSystem;
 using System;
@@ -44,7 +45,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public override void Initialize(GuiWidget application)
 		{
-			CreatorInformation information = new CreatorInformation(LaunchNewBrailleBuilder, "BB_32x32.png", "Braille Builder");
+			CreatorInformation information = new CreatorInformation(LaunchNewBrailleBuilder, "BB_32x32.png", "Braille Builder".Localize());
 			RegisteredCreators.Instance.RegisterLaunchFunction(information);
 			mainApplication = application;
 
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			return "{" +
 				"\"Name\": \"Braille Builder\"," +
 				"\"UUID\": \"9F1152BA-2D9E-44FC-93FD-B55FC6FD8D9E\"," +
-				"\"About\": \"A Creator that allows you to type in text and have it turned into aprintable Braille extrusions.\"," +
+				"\"About\": \"A Creator that allows you to type in text and have it turned into a printable Braille extrusions.\"," +
 				"\"Developer\": \"MatterHackers, Inc.\"," +
 				"\"URL\": \"https://www.matterhackers.com\"" +
 				"}";

@@ -203,10 +203,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			centerPartPreviewAndControls.AnchorAll();
 
 			gcodeDisplayWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
-			String firstProcessingMessage = "Press 'Add' to select an item.".Localize();
+			string firstProcessingMessage = "Press 'Add' to select an item.".Localize();
+
 			if (printItem != null)
 			{
-				firstProcessingMessage = LocalizedString.Get("Loading GCode...");
+				firstProcessingMessage = "Loading G-Code...".Localize();
 				if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
 				{
 					gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
@@ -894,7 +895,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void LoadingProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
-			SetProcessingMessage(string.Format("Loading GCode {0}%...", e.ProgressPercentage));
+			SetProcessingMessage(string.Format("{0} {1}%...", "Loading G-Code".Localize(), e.ProgressPercentage));
 		}
 
 		private void CloseIfNotNull(GuiWidget widget)
