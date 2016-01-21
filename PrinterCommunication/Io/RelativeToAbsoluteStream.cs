@@ -48,59 +48,60 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         {
         }
 
-        public override Vector3 SetPrinterPosition(Vector3 position)
+        public override void SetPrinterPosition(PrinterMove position)
         {
-            Vector3 positionFromInternalStream = internalStream.SetPrinterPosition(position);
-            lastDestination = new PrinterMove(positionFromInternalStream, 0, 0);
+			lastDestination = position;
+			internalStream.SetPrinterPosition(lastDestination);
+		}
 
-            return positionFromInternalStream;
-        }
+		public string ProcessLine(string lineToProcess)
+		{
+			if (lineToProcess != null
+				&& lineToProcess.StartsWith("G9"))
+			{
+				if (lineToProcess.StartsWith("G91"))
+				{
+					absoluteMode = false;
+					return "";
+				}
+				else if (lineToProcess.StartsWith("G90"))
+				{
+					absoluteMode = true;
+				}
+			}
 
-        public override string ReadLine()
+			if (lineToProcess != null
+				&& LineIsMovement(lineToProcess))
+			{
+				PrinterMove currentDestination;
+				if (absoluteMode)
+				{
+					currentDestination = GetPosition(lineToProcess, lastDestination);
+				}
+				else
+				{
+					currentDestination = GetPosition(lineToProcess, PrinterMove.Zero);
+					double feedRate = currentDestination.feedRate;
+					currentDestination += lastDestination;
+					currentDestination.feedRate = feedRate;
+
+					lineToProcess = CreateMovementLine(currentDestination, lastDestination);
+				}
+
+				// send the first one
+				lastDestination = currentDestination;
+			}
+
+			return lineToProcess;
+		}
+
+		public override string ReadLine()
         {
             // G91 Relative
             // G90 Absolute
             string lineToSend = base.ReadLine();
 
-            if (lineToSend != null
-                && lineToSend.StartsWith("G9"))
-            {
-                if (lineToSend.StartsWith("G91"))
-                {
-                    absoluteMode = false;
-                    return "";
-                }
-                else if (lineToSend.StartsWith("G90"))
-                {
-                    absoluteMode = true;
-                }
-            }
-
-            if (lineToSend != null
-                && LineIsMovement(lineToSend))
-            {
-                PrinterMove currentDestination;
-                if (absoluteMode)
-                {
-                    currentDestination = GetPosition(lineToSend, lastDestination);
-                }
-                else
-                {
-                    currentDestination = GetPosition(lineToSend, PrinterMove.Zero);
-                    double feedRate = currentDestination.feedRate;
-                    currentDestination += lastDestination;
-                    currentDestination.feedRate = feedRate;
-
-                    lineToSend = CreateMovementLine(currentDestination, lastDestination);
-                }
-
-                // send the first one
-                lastDestination = currentDestination;
-
-                return lineToSend;
-            }
-
-            return lineToSend;
+            return ProcessLine(lineToSend);
         }
     }
 }

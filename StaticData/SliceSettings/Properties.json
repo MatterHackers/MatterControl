@@ -509,7 +509,7 @@
     "PresentationName": "Leveling Solution",
     "HelpText": "The print leveling algorithm to use.",
     "DataEditType": "LIST",
-    "ExtraSettings": "3-Point Plane,7-Point Disk,13-Point Disk"
+    "ExtraSettings": "3 Point Plane,7 Point Disk,13 Point Disk"
   },
   {
     "SlicerConfigName": "print_leveling_required_to_print",
@@ -939,6 +939,13 @@
     "SlicerConfigName": "support_material_create_internal_support",
     "PresentationName": "Support Everywhere",
     "HelpText": "Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "support_material_create_perimeter",
+    "PresentationName": "Create Perimeter",
+    "HelpText": "Generates an outline around the support material to improve strength and hold up interface layers.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },

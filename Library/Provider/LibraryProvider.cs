@@ -204,11 +204,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public void OnDataReloaded(EventArgs eventArgs)
 		{
-			EventHandler tempHandler = DataReloaded;
-			if (tempHandler != null)
-			{
-				tempHandler(null, eventArgs);
-			}
+			DataReloaded?.Invoke(this, eventArgs);
 		}
 
 		#endregion Static Methods

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,47 +27,37 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 using System;
+using MatterHackers.Agg;
+using MatterHackers.GCodeVisualizer;
+using MatterHackers.VectorMath;
+using System.Text;
 using System.Collections.Generic;
-using System.ComponentModel;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
-namespace MatterHackers.MatterControl.PrintLibrary.Provider
+namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public interface ILibraryCreator
+	public abstract class GCodeStreamProxy : GCodeStream
 	{
-		LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider);
+		protected GCodeStream internalStream;
 
-		string ProviderKey { get; }
-	}
-
-	public class LibraryProviderPlugin : ILibraryCreator
-	{
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
+		public GCodeStreamProxy(GCodeStream internalStream)
 		{
-			throw new NotImplementedException();
+			this.internalStream = internalStream;
 		}
 
-		public virtual void ForceVisible()
+		public override void Dispose()
 		{
+			internalStream.Dispose();
+		}
+		public override string ReadLine()
+		{
+			return internalStream.ReadLine();
 		}
 
-		public virtual bool ShouldBeShown()
+		public override void SetPrinterPosition(PrinterMove position)
 		{
-			return true;
-		}
-
-		public virtual string ProviderKey
-		{
-			get { throw new NotImplementedException(); } 
-		}
-
-		public virtual ImageBuffer GetFolderImage()
-		{
-			return LibraryProvider.NormalFolderImage;
+			internalStream.SetPrinterPosition(position);
 		}
 	}
 }

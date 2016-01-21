@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
@@ -68,6 +69,7 @@ namespace MatterControl.Tests
 			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 			Thread.Sleep(3000); // wait for the library to finish initializing
+			UiThread.InvokePendingActions();
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
 			Assert.IsTrue(testProvider.ItemCount == 1, "Start with a new database for these tests.");
 
@@ -90,6 +92,7 @@ namespace MatterControl.Tests
 
 			testProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
 			Thread.Sleep(3000); // wait for the add to finish
+			UiThread.InvokePendingActions();
 
 			Assert.IsTrue(testProvider.ItemCount == 2);
 			Assert.IsTrue(dataReloaded == true);

@@ -268,13 +268,11 @@ namespace MatterHackers.MatterControl
 				presetsContainer.AddChild(tempButton);
 
 				// We push the value into a temp double so that the function will not point to a shared keyValue instance.
-				double temp = GetPreheatTemperature();
 				tempButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
-
-						SetTargetTemperature(temp);
+						SetTargetTemperature(GetPreheatTemperature());
 						tempSliderContainer.Visible = false;
 					});
 				};

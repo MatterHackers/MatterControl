@@ -45,7 +45,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         {
         }
 
-        public void Add(string line)
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			lastDestination = position;
+			internalStream.SetPrinterPosition(lastDestination);
+		}
+
+		public void Add(string line)
         {
             // lock queue
             lock(locker)

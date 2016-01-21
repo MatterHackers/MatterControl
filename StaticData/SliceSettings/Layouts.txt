@@ -155,6 +155,7 @@ Advanced
         support_material_z_gap_layers
         support_air_gap
         support_material_create_internal_support
+        support_material_create_perimeter
       Extruders
         support_material_extruder
         support_material_interface_extruder

@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public LibraryDataView()
 		{
-			// let the application controler know about this window so it can use it to switch library providers if it needs to.
+			// let the application controller know about this window so it can use it to switch library providers if it needs to.
 			ApplicationController.Instance.CurrentLibraryDataView = this;
 
 			currentLibraryProvider = new LibraryProviderSelector(SetCurrentLibraryProvider, false);
@@ -407,9 +407,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void LibraryDataReloaded(object sender, EventArgs e)
 		{
 			UiThread.RunOnIdle(AddAllItems, new LastScrollPosition()
-				{
-					topLeftScrollPosition = this.TopLeftOffset,
-				});
+			{
+				topLeftScrollPosition = this.TopLeftOffset,
+			});
 		}
 	}
 }

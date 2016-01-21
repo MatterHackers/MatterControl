@@ -59,9 +59,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             return null;
         }
 
-        public override Vector3 SetPrinterPosition(Vector3 position)
+        public override void SetPrinterPosition(PrinterMove position)
         {
-            return position;
         }
     }
 }

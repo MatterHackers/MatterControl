@@ -44,6 +44,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public double FeedRateRatio { get; set; } = 1;
 
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			lastDestination = position;
+			internalStream.SetPrinterPosition(lastDestination);
+		}
+
 		public override string ReadLine()
 		{
 			string lineToSend = internalStream.ReadLine();
