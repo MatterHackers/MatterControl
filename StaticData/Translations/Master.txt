@@ -4468,3 +4468,12 @@ Translated:Text Creator
 English:demo
 Translated:demo
 
+English:Generates an outline around the support material to improve strength and hold up interface layers.
+Translated:Generates an outline around the support material to improve strength and hold up interface layers.
+
+English:Create Perimeter
+Translated:Create Perimeter
+
+English:Loading G-Code
+Translated:Loading G-Code
+
