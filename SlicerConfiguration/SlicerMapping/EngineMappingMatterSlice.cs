@@ -193,8 +193,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			new VisibleButNotMappedToEngine("solid_shell"),
 
-            //numberOfSkirtLoops=1 # The number of loops to draw around objects. Can be used to help hold them down.
+            //numberOfSkirtLoops=1 # The number of loops to draw around the convex hull.
             new MapItem("numberOfSkirtLoops", "skirts"),
+
+            //numberOfBrimLoops=0 # The number of loops to draw around islands.
+			new MapItem("numberOfBrimLoops", "brims"),
 
             //numberOfTopLayers=6
             new AsCountOrDistance("numberOfTopLayers", "top_solid_layers", "layer_height"),
