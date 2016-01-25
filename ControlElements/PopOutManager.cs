@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl
 
 		private string dataBaseKeyPrefix;
 
+		public static bool SaveIfClosed { get; set; }
+
 		#region Public Members
 
 		public PopOutManager(GuiWidget widgetWhosContentsPopOut, Vector2 minSize, string windowTitle, string dataBaseKeyPrefix)
@@ -227,7 +229,7 @@ namespace MatterHackers.MatterControl
 		private void SaveWindowShouldStartClosed()
 		{
 			if (!MatterControlApplication.Instance.HasBeenClosed
-				&& !ApplicationController.Instance.Reloading)
+				&& PopOutManager.SaveIfClosed)
 			{
 				UserSettings.Instance.Fields.SetBool(WindowLeftOpenKey, false);
 			}

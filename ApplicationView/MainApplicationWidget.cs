@@ -293,7 +293,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool Reloading { get; private set; } = false;
 		public void ReloadAll(object sender, EventArgs e)
 		{
 			UiThread.RunOnIdle(() =>
@@ -301,7 +300,7 @@ namespace MatterHackers.MatterControl
 				using (new PerformanceTimer("ReloadAll", "Total"))
 				{
 					// give the widget a chance to hear about the close before they are actually closed.
-					Reloading = true;
+					PopOutManager.SaveIfClosed = false;
                     WidescreenPanel.PreChangePanels.CallEvents(this, null);
 					MainView.CloseAllChildren();
 					using (new PerformanceTimer("ReloadAll", "AddElements"))
@@ -309,8 +308,8 @@ namespace MatterHackers.MatterControl
 						MainView.AddElements();
 					}
 					DoneReloadingAll.CallEvents(null, null);
-					Reloading = false;
-                }
+					PopOutManager.SaveIfClosed = true;
+				}
 			});
 		}
 
