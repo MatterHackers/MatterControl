@@ -126,7 +126,9 @@ namespace MatterHackers.MatterControl
 
 		private void LoadColumnTwo()
 		{
+			PopOutManager.SaveIfClosed = false;
 			ColumnTwo.CloseAllChildren();
+			PopOutManager.SaveIfClosed = true;
 
 			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
 			partViewContent.AnchorAll();
