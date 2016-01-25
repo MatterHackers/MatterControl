@@ -4420,3 +4420,15 @@ Translated:Generates an outline around the support material to improve strength 
 English:Create Perimeter
 Translated:Create Perimeter
 
+English:Braille Builder
+Translated:Braille Builder
+
+English:Image Converter
+Translated:Image Converter
+
+English:Text Creator
+Translated:Text Creator
+
+English:sign out
+Translated:sign out
+
