@@ -1204,26 +1204,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1}".FormatWith(axis, axisPositionMm));
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
 		}
 
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0}Y{1}Z{2}".FormatWith(position.x, position.y, position.z));
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0}Y{1}Z{2} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
 		}
 
 		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
 		{
 			if (moveAmountMm != 0)
 			{
+				// TODO: Long term we need to track the active extruder and make requiresToolChange be driven by the extruder you're actually on
+				bool requiresToolChange = extruderNumber != 0;
+
 				SetMovementToRelative();
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0}".FormatWith(moveAmountMm));
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T0".FormatWith(extruderNumber)); //Reset back to extruder one
+
+				if (requiresToolChange)
+				{
+					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
+				}
+
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
+
+				if (requiresToolChange)
+				{
+					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T0"); //Reset back to extruder one
+				}
+
 				SetMovementToAbsolute();
 			}
 		}
@@ -1233,8 +1243,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (moveAmountMm != 0)
 			{
 				SetMovementToRelative();
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1}".FormatWith(axis, moveAmountMm));
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
 				SetMovementToAbsolute();
 			}
 		}
