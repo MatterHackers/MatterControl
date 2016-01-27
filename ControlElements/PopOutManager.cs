@@ -39,27 +39,19 @@ namespace MatterHackers.MatterControl
 {
 	public class PopOutManager
 	{
+		private static readonly string PositionSufix = "_WindowPosition";
 		private static readonly string WindowLeftOpenSufix = "_WindowLeftOpen";
 		private static readonly string WindowSizeSufix = "_WindowSize";
-		private static readonly string PositionSufix = "_WindowPosition";
-
+		private string dataBaseKeyPrefix;
+		private Vector2 minSize;
+		private SystemWindow systemWindowWithPopContent = null;
+		private string PositionKey;
+		private GuiWidget widgetWithPopContent = null;
 		private string WindowLeftOpenKey;
 		private string WindowSizeKey;
-		private string PositionKey;
-
-		private SystemWindow PopedOutSystemWindow = null;
-		private GuiWidget widgetWhosContentsPopOut = null;
 		private string windowTitle;
 
-		private Vector2 minSize;
-
-		private string dataBaseKeyPrefix;
-
-		public static bool SaveIfClosed { get; set; }
-
-		#region Public Members
-
-		public PopOutManager(GuiWidget widgetWhosContentsPopOut, Vector2 minSize, string windowTitle, string dataBaseKeyPrefix)
+		public PopOutManager(GuiWidget widgetWithPopContent, Vector2 minSize, string windowTitle, string dataBaseKeyPrefix)
 		{
 			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 			string titeCaseTitle = textInfo.ToTitleCase(windowTitle.ToLower());
@@ -67,16 +59,16 @@ namespace MatterHackers.MatterControl
 			this.windowTitle = "MatterControl - " + titeCaseTitle;
 			this.minSize = minSize;
 			this.dataBaseKeyPrefix = dataBaseKeyPrefix;
-			this.widgetWhosContentsPopOut = widgetWhosContentsPopOut;
+			this.widgetWithPopContent = widgetWithPopContent;
 
 			UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.MainView.DrawAfter += ShowOnFirstSystemWindowDraw;
+				ApplicationController.Instance.MainView.DrawAfter += ShowOnNextMatterControlDraw;
 			});
 
-			widgetWhosContentsPopOut.Closed += (sender, e) =>
+			widgetWithPopContent.Closed += (sender, e) =>
 			{
-				WidgetWhosContentsPopOutIsClosing();
+				WidgetWithPopContentIsClosing();
 			};
 
 			WindowLeftOpenKey = dataBaseKeyPrefix + WindowLeftOpenSufix;
@@ -84,27 +76,21 @@ namespace MatterHackers.MatterControl
 			PositionKey = dataBaseKeyPrefix + PositionSufix;
 		}
 
-		public static void SetPopOutState(string dataBaseKeyPrefix, bool poppedOut)
-		{
-			string windowLeftOpenKey = dataBaseKeyPrefix + WindowLeftOpenSufix;
-			UserSettings.Instance.Fields.SetBool(windowLeftOpenKey, poppedOut);
-		}
-
-		public static void SetStates(string dataBaseKeyPrefix, bool poppedOut, double width, double height, double positionX, double positionY)
-		{
-			string windowLeftOpenKey = dataBaseKeyPrefix + WindowLeftOpenSufix;
-			string windowSizeKey = dataBaseKeyPrefix + WindowSizeSufix;
-			string positionKey = dataBaseKeyPrefix + PositionSufix;
-
-			UserSettings.Instance.Fields.SetBool(windowLeftOpenKey, poppedOut);
-
-			UserSettings.Instance.set(windowSizeKey, string.Format("{0},{1}", width, height));
-			UserSettings.Instance.set(positionKey, string.Format("{0},{1}", positionX, positionY));
-		}
+		public static bool SaveIfClosed { get; set; }
 
 		public void ShowContentInWindow()
 		{
-			if (PopedOutSystemWindow == null)
+			if(widgetWithPopContent.HasBeenClosed)
+			{
+				if(systemWindowWithPopContent != null)
+				{
+					systemWindowWithPopContent.Close();
+				}
+
+				return;
+			}
+
+			if (systemWindowWithPopContent == null)
 			{
 				// So the window is open now only change this is we close it.
 				UserSettings.Instance.Fields.SetBool(WindowLeftOpenKey, true);
@@ -119,23 +105,23 @@ namespace MatterHackers.MatterControl
 					height = Math.Max(int.Parse(sizes[1]), (int)minSize.y);
 				}
 
-				PopedOutSystemWindow = new SystemWindow(width, height);
-				PopedOutSystemWindow.Padding = new BorderDouble(3);
-				PopedOutSystemWindow.Title = windowTitle;
-				PopedOutSystemWindow.AlwaysOnTopOfMain = true;
-				PopedOutSystemWindow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				PopedOutSystemWindow.Closing += SystemWindow_Closing;
-				if (widgetWhosContentsPopOut.Children.Count == 1)
+				systemWindowWithPopContent = new SystemWindow(width, height);
+				systemWindowWithPopContent.Padding = new BorderDouble(3);
+				systemWindowWithPopContent.Title = windowTitle;
+				systemWindowWithPopContent.AlwaysOnTopOfMain = true;
+				systemWindowWithPopContent.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				systemWindowWithPopContent.Closing += SystemWindow_Closing;
+				if (widgetWithPopContent.Children.Count == 1)
 				{
-					GuiWidget child = widgetWhosContentsPopOut.Children[0];
-					widgetWhosContentsPopOut.RemoveChild(child);
+					GuiWidget child = widgetWithPopContent.Children[0];
+					widgetWithPopContent.RemoveChild(child);
 					child.ClearRemovedFlag();
-					widgetWhosContentsPopOut.AddChild(CreateContentForEmptyControl());
-					PopedOutSystemWindow.AddChild(child);
+					widgetWithPopContent.AddChild(CreateContentForEmptyControl());
+					systemWindowWithPopContent.AddChild(child);
 				}
-				PopedOutSystemWindow.ShowAsSystemWindow();
+				systemWindowWithPopContent.ShowAsSystemWindow();
 
-				PopedOutSystemWindow.MinimumSize = minSize;
+				systemWindowWithPopContent.MinimumSize = minSize;
 				string desktopPosition = UserSettings.Instance.get(PositionKey);
 				if (desktopPosition != null && desktopPosition != "")
 				{
@@ -144,42 +130,31 @@ namespace MatterHackers.MatterControl
 					//If the desktop position is less than -10,-10, override
 					int xpos = Math.Max(int.Parse(sizes[0]), -10);
 					int ypos = Math.Max(int.Parse(sizes[1]), -10);
-					PopedOutSystemWindow.DesktopPosition = new Point2D(xpos, ypos);
+					systemWindowWithPopContent.DesktopPosition = new Point2D(xpos, ypos);
 				}
 			}
 			else
 			{
-				PopedOutSystemWindow.BringToFront();
+				systemWindowWithPopContent.BringToFront();
 			}
 		}
 
-		#endregion Public Members
-
-		private void WidgetWhosContentsPopOutIsClosing()
+		private static void SetPopOutState(string dataBaseKeyPrefix, bool poppedOut)
 		{
-			if (PopedOutSystemWindow != null)
-			{
-				SaveSizeAndPosition();
-				PopedOutSystemWindow.CloseAllChildren();
-				PopedOutSystemWindow.Close();
-			}
+			string windowLeftOpenKey = dataBaseKeyPrefix + WindowLeftOpenSufix;
+			UserSettings.Instance.Fields.SetBool(windowLeftOpenKey, poppedOut);
 		}
 
-		private void ShowOnFirstSystemWindowDraw(GuiWidget drawingWidget, DrawEventArgs e)
+		private static void SetStates(string dataBaseKeyPrefix, bool poppedOut, double width, double height, double positionX, double positionY)
 		{
-			if (widgetWhosContentsPopOut.Children.Count > 0)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					bool wasLeftOpen = UserSettings.Instance.Fields.GetBool(WindowLeftOpenKey, false);
-					if (wasLeftOpen)
-					{
-						ShowContentInWindow();
-					}
-				});
-			}
+			string windowLeftOpenKey = dataBaseKeyPrefix + WindowLeftOpenSufix;
+			string windowSizeKey = dataBaseKeyPrefix + WindowSizeSufix;
+			string positionKey = dataBaseKeyPrefix + PositionSufix;
 
-			ApplicationController.Instance.MainView.DrawAfter -= ShowOnFirstSystemWindowDraw;
+			UserSettings.Instance.Fields.SetBool(windowLeftOpenKey, poppedOut);
+
+			UserSettings.Instance.set(windowSizeKey, string.Format("{0},{1}", width, height));
+			UserSettings.Instance.set(positionKey, string.Format("{0},{1}", positionX, positionY));
 		}
 
 		private GuiWidget CreateContentForEmptyControl()
@@ -207,7 +182,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(() =>
 				{
 					SaveWindowShouldStartClosed();
-					SystemWindow temp = PopedOutSystemWindow;
+					SystemWindow temp = systemWindowWithPopContent;
 					SystemWindow_Closing(null, null);
 					temp.Close();
 				});
@@ -226,6 +201,15 @@ namespace MatterHackers.MatterControl
 			return allContent;
 		}
 
+		private void SaveSizeAndPosition()
+		{
+			if (systemWindowWithPopContent != null)
+			{
+				UserSettings.Instance.set(WindowSizeKey, string.Format("{0},{1}", systemWindowWithPopContent.Width, systemWindowWithPopContent.Height));
+				UserSettings.Instance.set(PositionKey, string.Format("{0},{1}", systemWindowWithPopContent.DesktopPosition.x, systemWindowWithPopContent.DesktopPosition.y));
+			}
+		}
+
 		private void SaveWindowShouldStartClosed()
 		{
 			if (!MatterControlApplication.Instance.HasBeenClosed
@@ -235,30 +219,48 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		private void ShowOnNextMatterControlDraw(GuiWidget drawingWidget, DrawEventArgs e)
+		{
+			if (widgetWithPopContent.Children.Count > 0)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					bool wasLeftOpen = UserSettings.Instance.Fields.GetBool(WindowLeftOpenKey, false);
+					if (wasLeftOpen)
+					{
+						ShowContentInWindow();
+					}
+				});
+			}
+
+			ApplicationController.Instance.MainView.DrawAfter -= ShowOnNextMatterControlDraw;
+		}
+
 		private void SystemWindow_Closing(object sender, WidgetClosingEnventArgs closingEvent)
 		{
-			if (PopedOutSystemWindow != null)
+			if (systemWindowWithPopContent != null)
 			{
 				SaveSizeAndPosition();
 				SaveWindowShouldStartClosed();
-				if (PopedOutSystemWindow.Children.Count == 1)
+				if (systemWindowWithPopContent.Children.Count == 1)
 				{
-					GuiWidget child = PopedOutSystemWindow.Children[0];
-					PopedOutSystemWindow.RemoveChild(child);
+					GuiWidget child = systemWindowWithPopContent.Children[0];
+					systemWindowWithPopContent.RemoveChild(child);
 					child.ClearRemovedFlag();
-					widgetWhosContentsPopOut.RemoveAllChildren();
-					widgetWhosContentsPopOut.AddChild(child);
+					widgetWithPopContent.RemoveAllChildren();
+					widgetWithPopContent.AddChild(child);
 				}
-				PopedOutSystemWindow = null;
+				systemWindowWithPopContent = null;
 			}
 		}
 
-		private void SaveSizeAndPosition()
+		private void WidgetWithPopContentIsClosing()
 		{
-			if (PopedOutSystemWindow != null)
+			if (systemWindowWithPopContent != null)
 			{
-				UserSettings.Instance.set(WindowSizeKey, string.Format("{0},{1}", PopedOutSystemWindow.Width, PopedOutSystemWindow.Height));
-				UserSettings.Instance.set(PositionKey, string.Format("{0},{1}", PopedOutSystemWindow.DesktopPosition.x, PopedOutSystemWindow.DesktopPosition.y));
+				SaveSizeAndPosition();
+				systemWindowWithPopContent.CloseAllChildren();
+				systemWindowWithPopContent.Close();
 			}
 		}
 	}
