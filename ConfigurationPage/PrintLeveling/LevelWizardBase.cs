@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected static readonly string doneInstructionsText = LocalizedString.Get("Congratulations!\n\nAuto Print Leveling is now configured and enabled.");
 		protected static readonly string doneInstructionsTextTwo = LocalizedString.Get("Remove the paper");
-		protected static readonly string doneInstructionsTextThree = LocalizedString.Get("If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.");
+		protected static readonly string doneInstructionsTextThree = LocalizedString.Get("To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.");
 		protected static readonly string stepTextBeg = LocalizedString.Get("Step");
 		protected static readonly string stepTextEnd = LocalizedString.Get("of");
 

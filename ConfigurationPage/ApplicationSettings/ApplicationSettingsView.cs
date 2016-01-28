@@ -152,10 +152,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 6);
 
-			string settingLabelBeggining = "Theme".Localize();
-			string settingLabelEnd = "Display".Localize();
-			string settingLabelFull = String.Format("{0}/{1}", settingLabelBeggining, settingLabelEnd);
-			TextWidget settingLabel = new TextWidget(settingLabelFull);//"Theme/Display Options"
+			TextWidget settingLabel = new TextWidget("Theme".Localize());
 			settingLabel.AutoExpandBoundsToText = true;
 			settingLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingLabel.HAnchor = Agg.UI.HAnchor.ParentLeft;

@@ -440,7 +440,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string printTimeLabel = "Print Time".Localize();
 			string printTimeLabelFull = string.Format("{0}:", printTimeLabel);
 			// put in the print time
-			modelInfoContainer.AddChild(new TextWidget(printTimeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10));
+			modelInfoContainer.AddChild(new TextWidget(printTimeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
 				string timeRemainingText = "---";
 
@@ -493,7 +493,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
 
-			string weightLabel = "Est. Weight".Localize();
+			string weightLabel = "Estimated Weight".Localize();
 			string weightLabelFull = string.Format("{0}:", weightLabel);
 			modelInfoContainer.AddChild(new TextWidget(weightLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 			{

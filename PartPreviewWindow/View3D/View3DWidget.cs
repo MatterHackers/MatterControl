@@ -1138,9 +1138,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the dimensions
 			{
-				buttonPanel.AddChild(createAxisScalingControl("x", 0));
-				buttonPanel.AddChild(createAxisScalingControl("y", 1));
-				buttonPanel.AddChild(createAxisScalingControl("z", 2));
+                
+				buttonPanel.AddChild(createAxisScalingControl("x".ToUpper(), 0));
+                buttonPanel.AddChild(createAxisScalingControl("y".ToUpper(), 1));
+                buttonPanel.AddChild(createAxisScalingControl("z".ToUpper(), 2));
 
 				uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				uniformScale.Checked = true;

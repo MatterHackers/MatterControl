@@ -117,8 +117,7 @@ namespace MatterHackers.MatterControl
 			bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
 			if (showExportGCodeButton)
 			{
-				string exportGCodeText = LocalizedString.Get("Export as");
-				string exportGCodeTextFull = string.Format("{0} GCode", exportGCodeText);
+				string exportGCodeTextFull = string.Format("{0} G-Code", "Export as".Localize());
 				Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
 				exportGCode.Name = "Export as GCode Button";
 				exportGCode.HAnchor = HAnchor.ParentLeft;

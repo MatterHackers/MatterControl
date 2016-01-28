@@ -4477,3 +4477,6 @@ Translated:Create Perimeter
 English:Loading G-Code
 Translated:Loading G-Code
 
+English:Estimated Weight
+Translated:Estimated Weight
+
