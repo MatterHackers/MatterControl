@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			menuItems = new TupleList<string, Func<bool>>();
 			menuItems.Add(new Tuple<string, Func<bool>>("Design".Localize(), null));
 			menuItems.Add(new Tuple<string, Func<bool>>(" Export to Zip".Localize(), exportQueueToZipMenu_Click));
-			menuItems.Add(new Tuple<string, Func<bool>>("GCode", null));
+			menuItems.Add(new Tuple<string, Func<bool>>("G-Code", null));
 			menuItems.Add(new Tuple<string, Func<bool>>(" Export to Folder or SD Card".Localize(), exportGCodeToFolderButton_Click));
 			//menuItems.Add(new Tuple<string, Func<bool>>("X3G", null));
 			//menuItems.Add(new Tuple<string, Func<bool>>("Export to Folder".Localize(), exportX3GButton_Click));
