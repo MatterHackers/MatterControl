@@ -4399,6 +4399,39 @@ Translated:Oops! Field cannot be left blank
 English:Sorry!  Must be a valid email address.
 Translated:Sorry!  Must be a valid email address.
 
+English:Please wait while we create your account...
+Translated:Please wait while we create your account...
+
+English:Account created
+Translated:Account created
+
+English:Success! Your account has been created.
+Translated:Success! Your account has been created.
+
+English:Please log in to continue.
+Translated:Please log in to continue.
+
+English:Oops! Invalid username, email or password.
+Translated:Oops! Invalid username, email or password.
+
+English:Generates an outline around the support material to improve strength and hold up interface layers.
+Translated:Generates an outline around the support material to improve strength and hold up interface layers.
+
+English:Create Perimeter
+Translated:Create Perimeter
+
+English:Braille Builder
+Translated:Braille Builder
+
+English:Image Converter
+Translated:Image Converter
+
+English:Text Creator
+Translated:Text Creator
+
+English:sign out
+Translated:sign out
+
 English:No macros are currently set up for this printer.
 Translated:No macros are currently set up for this printer.
 
@@ -4413,15 +4446,6 @@ Translated:The distance from the model at which the first skirt loop is drawn. M
 
 English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
 Translated:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
-
-English:Max Temp
-Translated:Max Temp
-
-English:Language
-Translated:Language
-
-English:Display Mode
-Translated:Display Mode
 
 English:Calibration
 Translated:Calibration
@@ -4438,8 +4462,11 @@ Translated:Notifications
 English:Application
 Translated:Application
 
-English:Firmware Updates
-Translated:Firmware Updates
+English:Language
+Translated:Language
+
+English:Display Mode
+Translated:Display Mode
 
 English:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
 Translated:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
@@ -4447,36 +4474,6 @@ Translated:Parts are not on the bed or outside the print area.\n\nWould you like
 English:Parts not in print area
 Translated:Parts not in print area
 
-English:Center on Bed
-Translated:Center on Bed
-
-English:sign out
-Translated:sign out
-
 English:Loading G-Code...
 Translated:Loading G-Code...
-
-English:Braille Builder
-Translated:Braille Builder
-
-English:Image Converter
-Translated:Image Converter
-
-English:Text Creator
-Translated:Text Creator
-
-English:demo
-Translated:demo
-
-English:Generates an outline around the support material to improve strength and hold up interface layers.
-Translated:Generates an outline around the support material to improve strength and hold up interface layers.
-
-English:Create Perimeter
-Translated:Create Perimeter
-
-English:Loading G-Code
-Translated:Loading G-Code
-
-English:Estimated Weight
-Translated:Estimated Weight
 
