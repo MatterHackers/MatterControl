@@ -25,7 +25,8 @@
     "PresentationName": "Bed Temperature",
     "HelpText": "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "degrees",
+    "ShowIfSet": "has_heated_bed"
   },
   {
     "SlicerConfigName": "bottom_clip_amount",
@@ -327,7 +328,8 @@
     "PresentationName": "Bed First Layer",
     "HelpText": "The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.",
     "DataEditType": "DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "degrees",
+    "ShowIfSet": "has_heated_bed"
   },
   {
     "SlicerConfigName": "first_layer_extrusion_width",
@@ -509,28 +511,32 @@
     "PresentationName": "Leveling Solution",
     "HelpText": "The print leveling algorithm to use.",
     "DataEditType": "LIST",
-    "ExtraSettings": "3 Point Plane,7 Point Disk,13 Point Disk"
+    "ExtraSettings": "3 Point Plane,7 Point Disk,13 Point Disk",
+    "ShowIfSet": "!has_hardware_leveling"
   },
   {
     "SlicerConfigName": "print_leveling_required_to_print",
     "PresentationName": "Require Leveling To Print",
     "HelpText": "The printer requires print leveling to run correctly.",
     "DataEditType": "CHECK_BOX",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "ShowIfSet": "!has_hardware_leveling"
   },
   {
     "SlicerConfigName": "print_leveling_method",
     "PresentationName": "Leveling Method",
     "HelpText": "The print leveling sampling method to use.",
     "DataEditType": "LIST",
-    "ExtraSettings": "Manual,Use Z Limit Switch,Probe With G30"
+    "ExtraSettings": "Manual,Use Z Limit Switch,Probe With G30",
+    "ShowIfSet": "!has_hardware_leveling"
   },
   {
     "SlicerConfigName": "manual_probe_paper_width",
     "PresentationName": "Manual Probe Paper Width",
     "HelpText": "The thickness of the paper (or other calibration device) used to perform manual bed probe.",
     "DataEditType": "DOUBLE",
-    "ExtraSettings": "mm"
+    "ExtraSettings": "mm",
+    "ShowIfSet": "!has_hardware_leveling"
   },
   {
     "SlicerConfigName": "layer_gcode",
@@ -1081,7 +1087,8 @@
     "PresentationName": "Bed Remove Part Temperature",
     "HelpText": "The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "degrees",
+    "ShowIfSet": "has_heated_bed"
   },
   {
     "SlicerConfigName": "thin_walls",
@@ -1179,7 +1186,8 @@
     "PresentationName": "Allow Negative Z",
     "HelpText": "Allows the printer to attempt going below 0 along the Z axis during the Software Print Leveling wizard, and disables related warnings. Does not override actual endstops, physical or software.",
     "DataEditType": "CHECK_BOX",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "ShowIfSet": "!has_hardware_leveling"
   },
   {
     "SlicerConfigName": "z_offset",

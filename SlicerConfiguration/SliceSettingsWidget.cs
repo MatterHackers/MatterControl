@@ -545,7 +545,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						foreach (OrganizerSettingsData settingInfo in subGroup.SettingDataList)
 						{
-							if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName))
+							bool settingShouldBeShown = true;
+							if (settingInfo.ShowIfSet != null
+								&& settingInfo.ShowIfSet != "")
+							{
+								string showValue = "0";
+								string checkName = settingInfo.ShowIfSet;
+								if(checkName.StartsWith("!"))
+								{
+									showValue = "1";
+									checkName = checkName.Substring(1);
+								}
+								string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(checkName);
+								if (sliceSettingValue == showValue)
+								{
+									settingShouldBeShown = false;
+								}
+							}
+
+							if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName)
+								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
 								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, copyIndex);

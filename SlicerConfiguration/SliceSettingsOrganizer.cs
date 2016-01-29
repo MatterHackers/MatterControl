@@ -63,6 +63,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> SetSettingsOnChange = new List<string>();
 
+		public string ShowIfSet { get; set; }
+
 		static public OrganizerSettingsData NewOrganizerSettingData(string slicerConfigName, string presentationName, OrganizerSettingsData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
 		{
 			return new OrganizerSettingsData(slicerConfigName, presentationName, dataEditType, extraSettings, helpText);
