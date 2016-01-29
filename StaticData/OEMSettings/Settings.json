@@ -31,6 +31,7 @@
     "SeeMeCNC",
     "Solidoodle",
     "Type A Machines",
+	"Ultimaker",
     "Wanhao",
     "Velleman",
   ],
@@ -41,6 +42,8 @@
   	}
   ],
   "PreloadedLibraryFiles": [
+	"MatterControl - Coin.stl",
+    "MatterControl - Stand.stl",
     "Calibration - Box.stl"
   ]
 }
