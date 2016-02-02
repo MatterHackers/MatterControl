@@ -138,6 +138,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			settingsDetailSelector = new StyledDropDownList("Basic", maxHeight: 200);
+			settingsDetailSelector.Name = "User Level Dropdown";
 			settingsDetailSelector.AddItem(LocalizedString.Get("Basic"), "Simple");
 			settingsDetailSelector.AddItem(LocalizedString.Get("Standard"), "Intermediate");
 			settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
@@ -381,7 +382,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					UserSettings.Instance.set(settingsName, categoryTabs.TabBar.SelectedTabName);
 				};
 			}
-
 
 			this.AnchorAll();
 			SetStatusDisplay();

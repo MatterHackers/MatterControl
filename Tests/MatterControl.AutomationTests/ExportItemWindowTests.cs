@@ -30,7 +30,7 @@ namespace MatterControl.AutomationTests
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
 
 					string firstItemName = "Row Item Batman";
 					//Navigate to Downloads Library Provider

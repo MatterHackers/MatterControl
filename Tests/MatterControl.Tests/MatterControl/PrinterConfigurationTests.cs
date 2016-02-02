@@ -17,7 +17,7 @@ namespace MatterControl.Tests.MatterControl
 	public class PrinterConfigurationTests
 	{
 
-		[Test, Category("PrinterConfigurationFiles")]
+		[Test, Category("PrinterConfigurationFiles"), Ignore("Not Finished")]
 		public void PrinterConfigTests()
 		{
 

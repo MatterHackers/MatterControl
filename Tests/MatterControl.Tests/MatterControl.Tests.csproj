@@ -76,6 +76,7 @@
     <Compile Include="MatterControl\PrinterCallBackTests.cs" />
     <Compile Include="MatterControl\PrinterChooserUnitTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
+    <Compile Include="MatterControl\PrinterWhiteListTests.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
     <Compile Include="MatterControl\SetupIniTests.cs" />
     <Compile Include="MatterControl\Slicing\SliceMappingCLassesTets.cs" />
