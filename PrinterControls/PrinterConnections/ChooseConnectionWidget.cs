@@ -147,6 +147,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
 
 					Button addPrinterButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+					addPrinterButton.Name = "Add new printer button";
 					addPrinterButton.ToolTipText = "Add a new Printer Profile".Localize();
 					addPrinterButton.Click += new EventHandler(AddConnectionLink_Click);
 
