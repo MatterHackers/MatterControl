@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
-		public static void SelectAndAddPrinter(AutomationRunner testRunner, string make, string model)
+		public static void SelectAndAddPrinter(AutomationRunner testRunner, string make, string model, bool firstAdd)
 		{
 
 			string manufacturer = make + " Menu Item";
@@ -124,6 +124,13 @@ namespace MatterHackers.MatterControl.UI
 
 			testRunner.ClickByName("Select a Printer Button");
 			testRunner.Wait(1);
+
+
+			if (!firstAdd)
+			{
+				testRunner.ClickByName("Add new printer button");
+				testRunner.Wait(1);
+			}
 
 			testRunner.ClickByName("Select Make");
 			testRunner.Wait(1);
