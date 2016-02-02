@@ -113,9 +113,29 @@ namespace MatterHackers.MatterControl
 		private void AddContent(HtmlParser htmlParser, string htmlContent)
 		{
 			ElementState elementState = htmlParser.CurrentElementState;
-			string decodedHtml = HtmlParser.UrlDecode(htmlContent);
+			string decodedHtml = HtmlParser.UrlDecode(htmlContent.Replace("\r\n", "").Replace("\t", "").Trim());
 			switch (elementState.TypeName)
 			{
+				case "a":
+					{
+						elementsUnderConstruction.Push(new FlowLayoutWidget());
+						elementsUnderConstruction.Peek().Name = "a";
+
+						if (decodedHtml != null && decodedHtml != "")
+						{
+							Button linkButton = linkButtonFactory.Generate(decodedHtml.Replace("\r\n", "\n"));
+							StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
+							double descentInPixels = styled.DescentInPixels;
+							linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
+							linkButton.Click += (sender, mouseEvent) =>
+							{
+								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
+							};
+							elementsUnderConstruction.Peek().AddChild(linkButton);
+						}
+					}
+					break;
+
 				case "p":
 					{
 						elementsUnderConstruction.Push(new FlowLayoutWidget());
@@ -173,24 +193,7 @@ namespace MatterHackers.MatterControl
 					}
 					break;
 
-				case "a":
-					{
-						elementsUnderConstruction.Push(new FlowLayoutWidget());
-						elementsUnderConstruction.Peek().Name = "a";
-
-						if (decodedHtml != null && decodedHtml != "")
-						{
-							Button linkButton = linkButtonFactory.Generate(decodedHtml);
-							StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
-							double descentInPixels = styled.DescentInPixels;
-							linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
-							linkButton.Click += (sender, mouseEvent) =>
-							{
-								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
-							};
-							elementsUnderConstruction.Peek().AddChild(linkButton);
-						}
-					}
+				case "input":
 					break;
 
 				case "table":
@@ -292,6 +295,9 @@ namespace MatterHackers.MatterControl
 					elementsUnderConstruction.Peek().AddChild(aWidget);
 					break;
 
+				case "body":
+					break;
+
 				case "p":
 					GuiWidget pWidget = elementsUnderConstruction.Pop();
 					if (pWidget.Name != "p")
@@ -308,6 +314,9 @@ namespace MatterHackers.MatterControl
 						throw new Exception("Should have been 'div'.");
 					}
 					elementsUnderConstruction.Peek().AddChild(divWidget);
+					break;
+
+				case "input":
 					break;
 
 				case "table":

@@ -40,13 +40,11 @@ namespace MatterHackers.MatterControl.HtmlParsing
 
 		internal List<string> classes = new List<string>();
 
-		internal Point2D sizePercent = new Point2D();
-		internal Point2D sizeFixed = new Point2D();
-
 		internal string href;
-
 		internal string id;
 		internal double pointSize = 12;
+		internal Point2D sizeFixed = new Point2D();
+		internal Point2D sizePercent = new Point2D();
 		internal string src;
 		internal string typeName;
 
@@ -78,15 +76,11 @@ namespace MatterHackers.MatterControl.HtmlParsing
 
 		public List<string> Classes { get { return classes; } }
 
-		public Point2D SizePercent { get { return sizePercent; } }
-		public Point2D SizeFixed { get { return sizeFixed; } }
-
 		public string Href { get { return href; } }
-
 		public string Id { get { return id; } }
-
 		public double PointSize { get { return pointSize; } }
-
+		public Point2D SizeFixed { get { return sizeFixed; } }
+		public Point2D SizePercent { get { return sizePercent; } }
 		public string TypeName { get { return typeName; } }
 
 		public VerticalAlignType VerticalAlignment { get { return verticalAlignment; } }
@@ -96,13 +90,41 @@ namespace MatterHackers.MatterControl.HtmlParsing
 			string[] splitOnSemi = styleContent.Split(';');
 			for (int i = 0; i < splitOnSemi.Length; i++)
 			{
-				if (splitOnSemi[i].Length > 0)
+				if (splitOnSemi[i].Length > 0 && splitOnSemi[i].Contains(":"))
 				{
 					string[] splitOnColon = splitOnSemi[i].Split(':');
-					string attribute = splitOnColon[0];
+					string attribute = splitOnColon[0].Trim();
 					string value = splitOnColon[1];
 					switch (attribute)
 					{
+						case "cursor":
+							break;
+
+						case "float":
+							Console.WriteLine("Not Implemented");
+							break;
+
+						case "font-size":
+							this.pointSize = GetFirstInt(value);
+							break;
+
+						case "font-weight":
+							break;
+
+						case "height":
+							if (value.Contains("%"))
+							{
+								this.sizePercent = new Point2D(this.SizePercent.x, GetFirstInt(value));
+							}
+							else
+							{
+								this.sizeFixed = new Point2D(this.SizeFixed.x, GetFirstInt(value));
+							}
+							break;
+
+						case "margin":
+							break;
+
 						case "margin-right":
 						case "margin-left":
 							break;
@@ -118,34 +140,27 @@ namespace MatterHackers.MatterControl.HtmlParsing
 							}
 							break;
 
-						case "float":
-							Console.WriteLine("Not Implemented");
-							break;
-
-						case "height":
-							if (value.Contains("%"))
-							{
-								this.sizePercent = new Point2D(this.SizePercent.x, GetFirstInt(value));
-							}
-							else
-							{
-								this.sizeFixed = new Point2D(this.SizeFixed.x, GetFirstInt(value));
-							}
-							break;
-
 						case "text-align":
 							this.alignment = (ElementState.AlignType)Enum.Parse(typeof(ElementState.AlignType), value);
 							break;
 
-						case "font-size":
-							this.pointSize = GetFirstInt(value);
+						case "text-decoration":
 							break;
 
 						case "vertical-align":
 							this.verticalAlignment = (ElementState.VerticalAlignType)Enum.Parse(typeof(ElementState.VerticalAlignType), value);
 							break;
 
+						case "overflow":
+							break;
+
+						case "padding":
+							break;
+
 						case "'": // the ending single quote
+							break;
+
+						case "color":
 							break;
 
 						default:
