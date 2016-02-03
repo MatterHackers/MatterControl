@@ -50,17 +50,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			string lineFromChild = base.ReadLine();
 
-			if (lineFromChild != null)
+			if (lineFromChild != null
+				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
 			{
 				if (LineIsMovement(lineFromChild))
 				{
 					PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
-					if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
-					{
-						lineFromChild = RunPrintLevelingTranslations(lineFromChild, currentDestination);
-					}
-
+					lineFromChild = RunPrintLevelingTranslations(lineFromChild, currentDestination);
 					lastDestination = currentDestination;
+
 					return lineFromChild;
 				}
 				else if (lineFromChild.StartsWith("G29"))
