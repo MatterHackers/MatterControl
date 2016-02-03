@@ -764,7 +764,6 @@ namespace MatterHackers.MatterControl
 			MatterHackers.GCodeVisualizer.GCodeFile.AssertDebugNotDefined();
 			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
 			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();
-			ClipperLib.Clipper.AssertDebugNotDefined();
 			MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined();
 			MatterHackers.Localizations.TranslationMap.AssertDebugNotDefined();
 			MatterHackers.MarchingSquares.MarchingSquaresByte.AssertDebugNotDefined();

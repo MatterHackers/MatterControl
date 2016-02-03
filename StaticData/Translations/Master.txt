@@ -4477,3 +4477,6 @@ Translated:Parts not in print area
 English:Loading G-Code...
 Translated:Loading G-Code...
 
+English:demo
+Translated:demo
+

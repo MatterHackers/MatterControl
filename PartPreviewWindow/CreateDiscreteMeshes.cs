@@ -36,7 +36,6 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace MatterHackers.MatterControl
