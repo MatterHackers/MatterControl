@@ -100,6 +100,9 @@ namespace MatterHackers.MatterControl.HtmlParsing
 						case "cursor":
 							break;
 
+						case "display":
+							break;
+
 						case "float":
 							Console.WriteLine("Not Implemented");
 							break;

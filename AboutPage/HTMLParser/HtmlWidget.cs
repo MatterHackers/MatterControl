@@ -136,6 +136,7 @@ namespace MatterHackers.MatterControl
 					}
 					break;
 
+				case "h1":
 				case "p":
 					{
 						elementsUnderConstruction.Push(new FlowLayoutWidget());
@@ -298,6 +299,7 @@ namespace MatterHackers.MatterControl
 				case "body":
 					break;
 
+				case "h1":
 				case "p":
 					GuiWidget pWidget = elementsUnderConstruction.Pop();
 					if (pWidget.Name != "p")

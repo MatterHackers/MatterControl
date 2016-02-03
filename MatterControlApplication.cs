@@ -604,6 +604,24 @@ namespace MatterHackers.MatterControl
 
 				TerminalWindow.ShowIfLeftOpen();
 
+#if false
+			{
+				SystemWindow releaseNotes = new SystemWindow(640, 480);
+				string releaseNotesFile = Path.Combine("C:/Users/LarsBrubaker/Downloads", "test1.html");
+				string releaseNotesContent = StaticData.Instance.ReadAllText(releaseNotesFile);
+				HtmlWidget content = new HtmlWidget(releaseNotesContent, RGBA_Bytes.Black);
+				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.ParentBottomTop));
+				content.VAnchor |= VAnchor.ParentTop;
+				content.BackgroundColor = RGBA_Bytes.White;
+				releaseNotes.AddChild(content);
+				releaseNotes.BackgroundColor = RGBA_Bytes.Cyan;
+				UiThread.RunOnIdle((state) =>
+				{
+					releaseNotes.ShowAsSystemWindow();
+				}, 1);
+			}
+#endif
+
 				AfterFirstDraw?.Invoke();
 			}
 
