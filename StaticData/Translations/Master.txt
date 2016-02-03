@@ -4480,3 +4480,6 @@ Translated:Loading G-Code...
 English:demo
 Translated:demo
 
+English:Extruder 2
+Translated:Extruder 2
+

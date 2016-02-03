@@ -61,7 +61,8 @@
     "PresentationName": "Bridging Fan Speed",
     "HelpText": "The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.",
     "DataEditType": "INT",
-    "ExtraSettings": "%"
+    "ExtraSettings": "%",
+    "ShowIfSet": "has_fan"
   },
   {
     "SlicerConfigName": "bridge_flow_ratio",
@@ -159,7 +160,8 @@
     "PresentationName": "Fan Speed",
     "HelpText": "The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "%"
+    "ExtraSettings": "%",
+    "ShowIfSet": "has_fan"
   },
   {
     "SlicerConfigName": "raft_print_speed",
@@ -180,7 +182,8 @@
     "PresentationName": "Disable Fan For The First",
     "HelpText": "The number of layers for which the layer cooling fan will be forced off at the start of the print.",
     "DataEditType": "INT",
-    "ExtraSettings": "layers"
+    "ExtraSettings": "layers",
+    "ShowIfSet": "has_fan"
   },
   {
     "SlicerConfigName": "end_gcode",
@@ -278,14 +281,16 @@
     "PresentationName": "Keep Fan Always On",
     "HelpText": "This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.",
     "DataEditType": "CHECK_BOX",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "ShowIfSet": "has_fan"
   },
   {
     "SlicerConfigName": "fan_below_layer_time",
     "PresentationName": "Enable Fan If Layer\\nPrint Time Is Below",
     "HelpText": "If a layer is estimated to take less than this to print, the fan will be turned on.",
     "DataEditType": "INT",
-    "ExtraSettings": "seconds"
+    "ExtraSettings": "seconds",
+    "ShowIfSet": "has_fan"
   },
   {
     "SlicerConfigName": "filament_diameter",
@@ -567,7 +572,8 @@
     "PresentationName": "Maximum Fan Speed",
     "HelpText": "The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
     "DataEditType": "INT",
-    "ExtraSettings": "%"
+    "ExtraSettings": "%",
+    "ShowIfSet": "has_fan"
   },
   {
     "SlicerConfigName": "min_extrusion_before_retract",
@@ -581,7 +587,8 @@
     "PresentationName": "Minimum Fan Speed",
     "HelpText": "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
     "DataEditType": "INT",
-    "ExtraSettings": "%"
+    "ExtraSettings": "%",
+    "ShowIfSet": "has_fan"
   },
   {
     "SlicerConfigName": "min_print_speed",
