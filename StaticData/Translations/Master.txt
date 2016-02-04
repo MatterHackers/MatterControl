@@ -4483,3 +4483,21 @@ Translated:demo
 English:Extruder 2
 Translated:Extruder 2
 
+English:To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.
+Translated:To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.
+
+English:Start G-Code cannot contain G29 if Print Leveling is enabled.
+Translated:Start G-Code cannot contain G29 if Print Leveling is enabled.
+
+English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+Translated:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
+
+English:Start G-Code cannot contain G30 if Print Leveling is enabled.
+Translated:Start G-Code cannot contain G30 if Print Leveling is enabled.
+
+English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+Translated:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+

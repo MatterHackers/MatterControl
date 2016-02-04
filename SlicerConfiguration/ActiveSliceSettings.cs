@@ -34,6 +34,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -868,6 +869,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
+				}
+
+				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
+				if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
+				{
+					string[] startGCode = ActiveSliceSettings.Instance.GetActiveValue("start_gcode").Replace("\\n", "\n").Split('\n');
+					foreach (string startGCodeLine in startGCode)
+					{
+						if (startGCodeLine.StartsWith("G29"))
+						{
+							string error = "Start G-Code cannot contain G29 if Print Leveling is enabled.".Localize();
+							string details = "Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling".Localize();
+							string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
+							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							return false;
+						}
+
+						if (startGCodeLine.StartsWith("G30"))
+						{
+							string error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize();
+							string details = "Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling".Localize();
+							string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
+							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							return false;
+						}
+					}
 				}
 
 				if (FirstLayerExtrusionWidth > NozzleDiameter * 4)
