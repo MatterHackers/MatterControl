@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void ManufacturerDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			ActivePrinter.Make = ((DropDownList)sender).SelectedLabel;
+			ActivePrinter.Make = ((DropDownList)sender).SelectedValue;
 			ActivePrinter.Model = null;
 			ReconstructModelSelector();
 			SetElementState();
@@ -184,17 +184,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			//reconstruct model selector
 			int currentIndex = contentRow.GetChildIndex(printerModelContainer);
 			contentRow.RemoveChild(printerModelContainer);
-			List<ManufacturerNameMapping> manufacturerNameMapping = OemSettings.Instance.ManufacturerNameMappings;
 
-			foreach(ManufacturerNameMapping mapping in manufacturerNameMapping)
-			{
-
-				if (mapping.NameToDisplay == ActivePrinter.Make)
-				{
-					ActivePrinter.Make = mapping.NameOnDisk;
-				}
-
-			}
 
 
 			printerModelContainer = createPrinterModelContainer(ActivePrinter.Make);
@@ -214,7 +204,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				SetElementState();
 				if (usingDefaultName)
 				{
-                    string printerInputName = String.Format("{0} {1}", this.ActivePrinter.Make, this.ActivePrinter.Model);
+					// Use ManufacturerDropList.SelectedLabel instead of ActivePrinter.Make to ensure the mapped Unicode values are picked up
+					string mappedMakeText = printerManufacturerSelector.ManufacturerDropList.SelectedLabel;
+
+                    string printerInputName = String.Format("{0} {1}", mappedMakeText, this.ActivePrinter.Model);
                     string query = "SELECT Name FROM Printer WHERE Name LIKE @printerName;";
                     var names = Datastore.Instance.dbSQLite.Query<sqlName>(query, printerInputName + "%").Select(item => item.Name).ToList();
 
@@ -231,7 +224,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                         do
                         {
                             printerModelCount++;
-                            possiblePrinterName = String.Format("{0} ({1})", printerInputName, printerModelCount);            
+                            possiblePrinterName = String.Format("{0} ({1})", printerInputName, printerModelCount);
                         } while (names.Contains(possiblePrinterName));
 
 

@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						ManufacturerDropList.AddItem(manufacturer);
+						ManufacturerDropList.AddItem(manufacturer, folderName);
 						if (selectedMake != null)
 						{
 							if (this.manufacturer == selectedMake)
