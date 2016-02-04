@@ -4483,3 +4483,15 @@ Translated:demo
 English:Extruder 2
 Translated:Extruder 2
 
+English:Loading G-Code
+Translated:Loading G-Code
+
+English:Estimated Weight
+Translated:Estimated Weight
+
+English:Version
+Translated:Version
+
+English:Build:
+Translated:Build:
+
