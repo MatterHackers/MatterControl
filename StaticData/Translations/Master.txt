@@ -4501,3 +4501,9 @@ Translated:Start G-Code cannot contain G30 if Print Leveling is enabled.
 English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
 Translated:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
 
+English:Loading G-Code
+Translated:Loading G-Code
+
+English:Estimated Weight
+Translated:Estimated Weight
+
