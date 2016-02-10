@@ -146,8 +146,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			formContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			formContainer.Padding = new BorderDouble(10);
 
-			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Question*")));
-			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Briefly describe your question"), 9, 14));
+			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Subject*")));
 
 			questionInput = new MHTextEditWidget(subjectText);
 			questionInput.HAnchor = HAnchor.ParentLeftRight;
@@ -156,8 +155,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			questionErrorMessage = ErrorMessageGenerator();
 			formContainer.AddChild(questionErrorMessage);
 
-			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Details*")));
-			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Fill in the details here"), 9, 14));
+			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Message*")));
 
 			detailInput = new MHTextEditWidget(bodyText, pixelHeight: 120, multiLine: true);
 			detailInput.HAnchor = HAnchor.ParentLeftRight;
@@ -166,7 +164,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			detailErrorMessage = ErrorMessageGenerator();
 			formContainer.AddChild(detailErrorMessage);
 
-			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Your Email Address*")));
+			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Email Address*")));
 
 			emailInput = new MHTextEditWidget();
 			emailInput.HAnchor = HAnchor.ParentLeftRight;
@@ -175,7 +173,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			emailErrorMessage = ErrorMessageGenerator();
 			formContainer.AddChild(emailErrorMessage);
 
-			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Your Name*")));
+			formContainer.AddChild(LabelGenerator(LocalizedString.Get("Name*")));
 
 			nameInput = new MHTextEditWidget();
 			nameInput.HAnchor = HAnchor.ParentLeftRight;
