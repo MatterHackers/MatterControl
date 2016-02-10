@@ -71,7 +71,7 @@ namespace MatterControl.Tests
 			Thread.Sleep(3000); // wait for the library to finish initializing
 			UiThread.InvokePendingActions();
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
-			Assert.IsTrue(testProvider.ItemCount == 1, "Start with a new database for these tests.");
+			Assert.IsTrue(testProvider.ItemCount == 3, "Start with a new database for these tests.");
 
 			// create a collection and make sure it is on disk
 			dataReloaded = false; // it has been loaded for the default set of parts
@@ -94,12 +94,12 @@ namespace MatterControl.Tests
 			Thread.Sleep(3000); // wait for the add to finish
 			UiThread.InvokePendingActions();
 
-			Assert.IsTrue(testProvider.ItemCount == 2);
+			Assert.IsTrue(testProvider.ItemCount == 4);
 			Assert.IsTrue(dataReloaded == true);
 			string fileNameWithExtension = Path.GetFileNameWithoutExtension(meshPathAndFileName);
 			Assert.IsTrue(NamedItemExists(fileNameWithExtension));
 
-			// make sure the provider locator is correct
+			// make sure the provider locater is correct
 
 			// remove item works
 			dataReloaded = false;
