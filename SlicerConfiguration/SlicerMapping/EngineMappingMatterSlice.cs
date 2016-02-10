@@ -267,6 +267,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			new SupportExtrusionWidth("supportExtrusionPercent","support_material_extrusion_width"),
 
+			new MapItem("supportInfillStartingAngle", "support_material_infill_angle"),
+
             //supportMaterialSpeed=50 # mm/s.
             new MapItem("supportMaterialSpeed", "support_material_speed"),
 
