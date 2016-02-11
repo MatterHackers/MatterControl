@@ -1660,7 +1660,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
 										{
 											CommunicationState = CommunicationStates.Connected;
-											// new send any command that initialize this printer
+											// now send any command that initialize this printer
 											string connectGCode = ActiveSliceSettings.Instance.GetActiveValue("connect_gcode");
 											SendLineToPrinterNow(connectGCode);
 										}
