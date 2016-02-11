@@ -42,6 +42,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl
 {
@@ -110,10 +111,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		// Replace multiple white spaces with single whitespace
+		private static readonly Regex replaceMultipleWhiteSpacesWithSingleWhitespaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
+
 		private void AddContent(HtmlParser htmlParser, string htmlContent)
 		{
 			ElementState elementState = htmlParser.CurrentElementState;
-			string decodedHtml = HtmlParser.UrlDecode(htmlContent.Replace("\r\n", "").Replace("\t", "").Trim());
+			htmlContent = replaceMultipleWhiteSpacesWithSingleWhitespaceRegex.Replace(htmlContent, " ");
+			string decodedHtml = HtmlParser.UrlDecode(htmlContent);
 			switch (elementState.TypeName)
 			{
 				case "a":
