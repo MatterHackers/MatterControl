@@ -460,7 +460,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 						foreach (string fileNameToLoad in openParams.FileNames)
 						{
-							if (Path.GetExtension(fileNameToLoad).ToUpper() == ".ZIP")
+							string extension = Path.GetExtension(fileNameToLoad).ToUpper();
+							if (extension == ".ZIP")
 							{
 								ProjectFileHandler project = new ProjectFileHandler(null);
 								List<PrintItem> partFiles = project.ImportFromProjectArchive(fileNameToLoad);
@@ -472,8 +473,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 									}
 								}
 							}
-							else
+							else if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
 							{
+								// Only add files if they have an extension and if it's in the OpenDesignFileParams list
 								QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileNameToLoad), Path.GetFullPath(fileNameToLoad))));
 							}
 						}
