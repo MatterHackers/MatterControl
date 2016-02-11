@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return new string[] { "" };
 
 				default:
-					throw new NotImplementedException();
+					return new string[] { "" };
 			}
 		}
 
