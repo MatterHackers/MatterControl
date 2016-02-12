@@ -27,10 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -61,7 +63,7 @@ namespace MatterHackers.MatterControl.EeProm
 			{
 				foreach (EePromRepetierParameter p in eePromSettingsList.Values)
 				{
-					p.save();
+					p.Save();
 				}
 			}
 		}
@@ -99,6 +101,53 @@ namespace MatterHackers.MatterControl.EeProm
 		public void AskPrinterForSettings()
 		{
 			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M205");
+		}
+
+		internal void Export(string fileName)
+		{
+			FileStream fs = new FileStream(fileName, FileMode.Create);
+			StreamWriter sw = new System.IO.StreamWriter(fs);
+
+			lock (eePromSettingsList)
+			{
+				foreach (EePromRepetierParameter p in eePromSettingsList.Values)
+				{
+					string data = "{0}|{1}".FormatWith(p.description, p.value);
+					sw.WriteLine(data);
+				}
+			}
+
+			sw.Close();
+		}
+
+		internal void Import(string fileName)
+		{
+			// read all the lines 
+			string[] allLines = File.ReadAllLines(fileName);
+			// find all the descriptions we can
+			foreach (string line in allLines)
+			{
+				if (line.Contains("|"))
+				{
+					string[] descriptionValue = line.Split('|');
+					if (descriptionValue.Length == 2)
+					{
+						foreach (KeyValuePair<int, EePromRepetierParameter> keyValue in eePromSettingsList)
+						{
+							if (keyValue.Value.Description == descriptionValue[0])
+							{
+								if(keyValue.Value.Value != descriptionValue[1])
+								{
+									// push in the value
+									keyValue.Value.Value = descriptionValue[1];
+									keyValue.Value.MarkChanged();
+									break;
+                                }
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

@@ -27,8 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
+using System.IO;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -37,7 +39,7 @@ namespace MatterHackers.MatterControl.EeProm
 		public string description = "";
 		public int type;
 		public int position;
-		private string val = "";
+		public string value { get; private set; } = "";
 		private bool changed = false;
 
 		public EePromRepetierParameter(string line)
@@ -54,7 +56,7 @@ namespace MatterHackers.MatterControl.EeProm
 				{
 					int.TryParse(lines[0], out type);
 					int.TryParse(lines[1], out position);
-					val = lines[2];
+					value = lines[2];
 					int startPos = 7 + lines[0].Length + lines[1].Length + lines[2].Length;
 					if (line.Length > startPos)
 					{
@@ -65,7 +67,7 @@ namespace MatterHackers.MatterControl.EeProm
 			}
 		}
 
-		public void save()
+		public void Save()
 		{
 			if (!changed)
 			{
@@ -73,8 +75,8 @@ namespace MatterHackers.MatterControl.EeProm
 			}
 
 			string cmd = "M206 T" + type + " P" + position + " ";
-			if (type == 3) cmd += "X" + val;
-			else cmd += "S" + val;
+			if (type == 3) cmd += "X" + value;
+			else cmd += "S" + value;
 			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmd);
 			changed = false;
 		}
@@ -87,14 +89,19 @@ namespace MatterHackers.MatterControl.EeProm
 
 		public string Value
 		{
-			get { return val; }
+			get { return value; }
 			set
 			{
 				value = value.Replace(',', '.').Trim();
-				if (val.Equals(value)) return;
-				val = value;
-				changed = true;
+				if (this.value.Equals(value)) return;
+				this.value = value;
+				MarkChanged();
 			}
+		}
+
+		internal void MarkChanged()
+		{
+			changed = true;
 		}
 	}
 }

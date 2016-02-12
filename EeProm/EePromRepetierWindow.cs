@@ -46,9 +46,6 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private event EventHandler unregisterEvents;
 
-		private Button buttonCancel;
-		private Button buttonSave;
-
 		public EePromRepetierWindow()
 			: base(540, 480)
 		{
@@ -61,20 +58,20 @@ namespace MatterHackers.MatterControl.EeProm
 			topToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
 			topToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			topToBottom.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			topToBottom.Padding = new BorderDouble(3, 0);
+			topToBottom.Padding = new BorderDouble(3, 0) * TextWidget.GlobalPointSizeScaleRatio;
 
 			FlowLayoutWidget row = new FlowLayoutWidget();
 			row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			row.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			GuiWidget descriptionWidget = AddDescription(LocalizedString.Get("Description"));
-			descriptionWidget.Margin = new BorderDouble(left: 3);
+			descriptionWidget.Margin = new BorderDouble(left: 3) * TextWidget.GlobalPointSizeScaleRatio;
 			row.AddChild(descriptionWidget);
 
 			CreateSpacer(row);
 
 			GuiWidget valueText = new TextWidget(LocalizedString.Get("Value"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			valueText.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			valueText.Margin = new BorderDouble(left: 5, right: 60);
+			valueText.Margin = new BorderDouble(left: 5, right: 60) * TextWidget.GlobalPointSizeScaleRatio;
 			row.AddChild(valueText);
 			topToBottom.AddChild(row);
 
@@ -94,15 +91,96 @@ namespace MatterHackers.MatterControl.EeProm
 			FlowLayoutWidget buttonBar = new FlowLayoutWidget();
 			buttonBar.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			buttonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			buttonSave = textImageButtonFactory.Generate(LocalizedString.Get("Save To EEPROM"));
-			buttonSave.Margin = new BorderDouble(0, 3);
-			buttonBar.AddChild(buttonSave);
+
+			// put in the save button
+			{
+				Button buttonSave = textImageButtonFactory.Generate("Save To EEPROM".Localize());
+				buttonSave.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonSave.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						currentEePromSettings.Save();
+						currentEePromSettings.Clear();
+						currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
+						Close();
+					});
+				};
+
+				buttonBar.AddChild(buttonSave);
+			}
 
 			CreateSpacer(buttonBar);
 
-			buttonCancel = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
-			buttonCancel.Margin = new BorderDouble(3);
-			buttonBar.AddChild(buttonCancel);
+			// put in the import button
+			{
+				Button buttonImport = textImageButtonFactory.Generate("Import".Localize() + "...");
+				buttonImport.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonImport.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						FileDialog.OpenFileDialog(
+							new OpenFileDialogParams("EEPROM Settings" + "|*.ini")
+							{
+								ActionButtonLabel = "Import EEPROM Settings".Localize(),
+								Title = "Import EEPROM".Localize(),
+							},
+								(openParams) =>
+								{
+									if (openParams.FileName != null)
+									{
+										currentEePromSettings.Import(openParams.FileName);
+										RebuildUi();
+                                    }
+								});
+					});
+				};
+				buttonBar.AddChild(buttonImport);
+			}
+
+			// put in the export button
+			{
+				Button buttonExport = textImageButtonFactory.Generate("Export".Localize() + "...");
+				buttonExport.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonExport.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						FileDialog.SaveFileDialog(
+							new SaveFileDialogParams("EEPROM Settings" + "|*.ini")
+							{
+								ActionButtonLabel = "Export EEPROM Settings".Localize(),
+								Title = "Export EEPROM".Localize(),
+                                FileName = "eeprom_settings.ini"
+							},
+								(saveParams) =>
+								{
+									if (saveParams.FileName != null)
+									{
+										currentEePromSettings.Export(saveParams.FileName);
+									}
+								});
+					});
+				};
+				buttonBar.AddChild(buttonExport);
+			}
+
+			// put in the cancel button
+			{
+				Button buttonCancel = textImageButtonFactory.Generate("Close".Localize());
+				buttonCancel.Margin = new BorderDouble(10, 3, 0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonCancel.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						currentEePromSettings.Clear();
+						currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
+						Close();
+					});
+				};
+				buttonBar.AddChild(buttonCancel);
+			}
 
 			topToBottom.AddChild(buttonBar);
 
@@ -114,7 +192,7 @@ namespace MatterHackers.MatterControl.EeProm
 			this.AddChild(topToBottom);
 #endif
 
-			translate();
+			Title = LocalizedString.Get("Firmware EEPROM Settings");
 
 			ShowAsSystemWindow();
 
@@ -158,16 +236,6 @@ namespace MatterHackers.MatterControl.EeProm
 			base.OnClosed(e);
 		}
 
-		public void translate()
-		{
-			Title = LocalizedString.Get("Firmware EEPROM Settings");
-			buttonCancel.Text = LocalizedString.Get("Close");
-			buttonCancel.Click += buttonAbort_Click;
-
-			buttonSave.Text = LocalizedString.Get("Save to EEPROM");
-			buttonSave.Click += buttonSave_Click;
-		}
-
 		bool waitingForUiUpdate = false;
 		private void NewSettingReadFromPrinter(object sender, EventArgs e)
 		{
@@ -177,14 +245,14 @@ namespace MatterHackers.MatterControl.EeProm
 				if (!waitingForUiUpdate)
 				{
 					waitingForUiUpdate = true;
-					UiThread.RunOnIdle(AddItemToUi, 1);
+					UiThread.RunOnIdle(RebuildUi, 1);
 				}
 			}
 		}
 
 		private int currentTabIndex = 0;
 
-		private void AddItemToUi()
+		private void RebuildUi()
 		{
 			List<EePromRepetierParameter> tempList = new List<EePromRepetierParameter>();
 			lock (currentEePromSettings.eePromSettingsList)
@@ -195,6 +263,8 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 			}
 
+			settingsColmun.CloseAllChildren();
+
 			foreach (EePromRepetierParameter newSetting in tempList)
 			{
 				if (newSetting != null)
@@ -202,7 +272,7 @@ namespace MatterHackers.MatterControl.EeProm
 					FlowLayoutWidget row = new FlowLayoutWidget();
 					row.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 					row.AddChild(AddDescription(newSetting.Description));
-					row.Padding = new BorderDouble(5, 0);
+					row.Padding = new BorderDouble(5, 0) * TextWidget.GlobalPointSizeScaleRatio;
 					if ((settingsColmun.Children.Count % 2) == 1)
 					{
 						row.BackgroundColor = new RGBA_Bytes(0, 0, 0, 30);
@@ -236,31 +306,6 @@ namespace MatterHackers.MatterControl.EeProm
 			holder.AddChild(textWidget);
 
 			return holder;
-		}
-
-		private void buttonSave_Click(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(DoButtonSave_Click);
-		}
-
-		private void DoButtonSave_Click()
-		{
-			currentEePromSettings.Save();
-			currentEePromSettings.Clear();
-			currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
-			Close();
-		}
-
-		private void buttonAbort_Click(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(DoButtonAbort_Click);
-		}
-
-		private void DoButtonAbort_Click()
-		{
-			currentEePromSettings.Clear();
-			currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
-			Close();
 		}
 	}
 }

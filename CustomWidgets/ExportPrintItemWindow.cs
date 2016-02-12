@@ -145,7 +145,6 @@ namespace MatterHackers.MatterControl
                         saveParams.ActionButtonLabel = "Export";                        
                         FileDialog.SaveFileDialog(saveParams, delegate(SaveFileDialogParams saveParam)
                         {
-
                             string extension = Path.GetExtension(saveParam.FileName);
                             if (extension == "")
                             {

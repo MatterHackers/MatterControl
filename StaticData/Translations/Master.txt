@@ -4507,3 +4507,18 @@ Translated:Loading G-Code
 English:Estimated Weight
 Translated:Estimated Weight
 
+English:Export EEPROM Settings
+Translated:Export EEPROM Settings
+
+English:MatterControl - 
+Translated:MatterControl - 
+
+English:Export EEPROM
+Translated:Export EEPROM
+
+English:Import EEPROM Settings
+Translated:Import EEPROM Settings
+
+English:Import EEPROM
+Translated:Import EEPROM
+
