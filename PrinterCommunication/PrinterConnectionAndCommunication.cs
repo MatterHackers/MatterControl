@@ -1320,11 +1320,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				temperatureRequestTimer.Restart();
 			}
 
-			bool waited30SeconsdForOk = timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > 30; // waited for more than 30 seconds
+			bool waited30SecondsForOk = timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > 30; // waited for more than 30 seconds
 			bool noResponseFor5Seconds = timeSinceLastReadAnything.Elapsed.TotalSeconds > 5;
-			bool waitedToLongForOK = waited30SeconsdForOk && noResponseFor5Seconds;
 			while (LinesToWriteQueue.Count > 0 &&
-				(!timeHaveBeenWaitingForOK.IsRunning || waitedToLongForOK))
+				(waited30SecondsForOk || !timeHaveBeenWaitingForOK.IsRunning || noResponseFor5Seconds))
 			{
 				WriteNextLineFromQueue();
 			}
@@ -2212,8 +2211,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
 						SendLineToPrinterNow("M105");
-						SendLineToPrinterNow("M115");
-						SendLineToPrinterNow("M114");
+						// We do not need to wait for the M105
+						PrintingCanContinue(null, null);
 					}
 					catch (System.ArgumentOutOfRangeException e)
 					{
