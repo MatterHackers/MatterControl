@@ -1020,7 +1020,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void onSaveFileSelected(SaveFileDialogParams saveParams)
 		{
-			if (saveParams.FileName != null)
+			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
 				GenerateConfigFile(saveParams.FileName);
 			}

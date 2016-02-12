@@ -73,10 +73,6 @@ namespace MatterHackers.MatterControl.EeProm
 		private MHNumberEdit maxXYJerk;
 		private MHNumberEdit maxZJerk;
 
-		private Button buttonAbort;
-		private Button buttonSetToFactorySettings;
-		private Button buttonSave;
-
 		private event EventHandler unregisterEvents;
 
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
@@ -89,7 +85,7 @@ namespace MatterHackers.MatterControl.EeProm
 			: base(700, 480)
 		{
 			AlwaysOnTopOfMain = true;
-			Title = LocalizedString.Get("Marlin Firmware EEPROM Settings");
+			Title = "Marlin Firmware EEPROM Settings".Localize();
 
 			currentEePromSettings = new EePromMarlinSettings();
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
@@ -114,48 +110,54 @@ namespace MatterHackers.MatterControl.EeProm
 
 				topButtonBar.Margin = new BorderDouble(0, 3);
 
-				CreateMainButton(ref buttonSetToFactorySettings, topButtonBar, "Reset to Factory Defaults");
-				buttonSetToFactorySettings.Click += SetToFactorySettings;
+				Button buttonSetToFactorySettings = textImageButtonFactory.Generate("Reset to Factory Defaults".Localize());
+				topButtonBar.AddChild(buttonSetToFactorySettings);
+
+				buttonSetToFactorySettings.Click += (sender, e) =>
+				{
+					currentEePromSettings.SetPrinterToFactorySettings();
+					currentEePromSettings.Update();
+				};
 
 				mainContainer.AddChild(topButtonBar);
 			}
 
-			topToBottom.AddChild(Create4FieldSet("Steps per mm:",
+			topToBottom.AddChild(Create4FieldSet("Steps per mm:".Localize(),
 				"X:", ref stepsPerMmX,
 				"Y:", ref stepsPerMmY,
 				"Z:", ref stepsPerMmZ,
 				"E:", ref stepsPerMmE));
 
-			topToBottom.AddChild(Create4FieldSet("Maximum feedrates [mm/s]:",
+			topToBottom.AddChild(Create4FieldSet("Maximum feedrates [mm/s]:".Localize(),
 				"X:", ref maxFeedrateMmPerSX,
 				"Y:", ref maxFeedrateMmPerSY,
 				"Z:", ref maxFeedrateMmPerSZ,
 				"E:", ref maxFeedrateMmPerSE));
 
-			topToBottom.AddChild(Create4FieldSet("Maximum Acceleration [mm/s²]:",
+			topToBottom.AddChild(Create4FieldSet("Maximum Acceleration [mm/s²]:".Localize(),
 				"X:", ref maxAccelerationMmPerSSqrdX,
 				"Y:", ref maxAccelerationMmPerSSqrdY,
 				"Z:", ref maxAccelerationMmPerSSqrdZ,
 				"E:", ref maxAccelerationMmPerSSqrdE));
 
-			topToBottom.AddChild(CreateField("Acceleration:", ref acceleration));
-			topToBottom.AddChild(CreateField("Retract Acceleration:", ref retractAcceleration));
+			topToBottom.AddChild(CreateField("Acceleration:".Localize(), ref acceleration));
+			topToBottom.AddChild(CreateField("Retract Acceleration:".Localize(), ref retractAcceleration));
 
-			topToBottom.AddChild(Create3FieldSet("PID settings:",
+			topToBottom.AddChild(Create3FieldSet("PID settings:".Localize(),
 				"P:", ref pidP,
 				"I:", ref pidI,
 				"D:", ref pidD));
 
-			topToBottom.AddChild(Create3FieldSet("Homing Offset:",
+			topToBottom.AddChild(Create3FieldSet("Homing Offset:".Localize(),
 				"X:", ref homingOffsetX,
 				"Y:", ref homingOffsetY,
 				"Z:", ref homingOffsetZ));
 
-			topToBottom.AddChild(CreateField("Min feedrate [mm/s]:", ref minFeedrate));
-			topToBottom.AddChild(CreateField("Min travel feedrate [mm/s]:", ref minTravelFeedrate));
-			topToBottom.AddChild(CreateField("Minimum segment time [ms]:", ref minSegmentTime));
-			topToBottom.AddChild(CreateField("Maximum X-Y jerk [mm/s]:", ref maxXYJerk));
-			topToBottom.AddChild(CreateField("Maximum Z jerk [mm/s]:", ref maxZJerk));
+			topToBottom.AddChild(CreateField("Min feedrate [mm/s]:".Localize(), ref minFeedrate));
+			topToBottom.AddChild(CreateField("Min travel feedrate [mm/s]:".Localize(), ref minTravelFeedrate));
+			topToBottom.AddChild(CreateField("Minimum segment time [ms]:".Localize(), ref minSegmentTime));
+			topToBottom.AddChild(CreateField("Maximum X-Y jerk [mm/s]:".Localize(), ref maxXYJerk));
+			topToBottom.AddChild(CreateField("Maximum Z jerk [mm/s]:".Localize(), ref maxZJerk));
 
 			GuiWidget topBottomSpacer = new GuiWidget(1, 1);
 			topBottomSpacer.VAnchor = VAnchor.ParentBottomTop;
@@ -170,12 +172,80 @@ namespace MatterHackers.MatterControl.EeProm
 				bottomButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				bottomButtonBar.Margin = new BorderDouble(0, 3);
 
-				CreateMainButton(ref buttonSave, bottomButtonBar, "Save to EEProm");
-				buttonSave.Click += buttonSave_Click;
+				Button buttonSave = textImageButtonFactory.Generate("Save to EEProm".Localize());
+				bottomButtonBar.AddChild(buttonSave);
+				buttonSave.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						SaveSettingsToActive();
+						currentEePromSettings.SaveToEeProm();
+						Close();
+					});
+				};
 
 				CreateSpacer(bottomButtonBar);
 
-				CreateMainButton(ref buttonAbort, bottomButtonBar, "Close");
+				// put in the import button
+#if true
+				{
+					Button buttonImport = textImageButtonFactory.Generate("Import".Localize() + "...");
+					buttonImport.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+					buttonImport.Click += (sender, e) =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							FileDialog.OpenFileDialog(
+								new OpenFileDialogParams("EEPROM Settings" + "|*.ini")
+								{
+									ActionButtonLabel = "Import EEPROM Settings".Localize(),
+									Title = "Import EEPROM".Localize(),
+								},
+									(openParams) =>
+									{
+										if (!string.IsNullOrEmpty(openParams.FileName))
+										{
+											currentEePromSettings.Import(openParams.FileName);
+											SetUiToPrinterSettings(null, null);
+                                        }
+									});
+						});
+					};
+					bottomButtonBar.AddChild(buttonImport);
+				}
+
+				// put in the export button
+				{
+					Button buttonExport = textImageButtonFactory.Generate("Export".Localize() + "...");
+					buttonExport.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+					buttonExport.Click += (sender, e) =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							string defaultFileNameNoPath = "eeprom_settings.ini";
+                            FileDialog.SaveFileDialog(
+								new SaveFileDialogParams("EEPROM Settings" + "|*.ini")
+								{
+									ActionButtonLabel = "Export EEPROM Settings".Localize(),
+									Title = "Export EEPROM".Localize(),
+									FileName = defaultFileNameNoPath
+								},
+									(saveParams) =>
+									{
+										if (!string.IsNullOrEmpty(saveParams.FileName)
+										&& saveParams.FileName != defaultFileNameNoPath)
+										{
+											currentEePromSettings.Export(saveParams.FileName);
+										}
+									});
+						});
+					};
+					bottomButtonBar.AddChild(buttonExport);
+				}
+#endif
+
+				Button buttonAbort = textImageButtonFactory.Generate("Close".Localize());
+				bottomButtonBar.AddChild(buttonAbort);
 				buttonAbort.Click += buttonAbort_Click;
 
 				mainContainer.AddChild(bottomButtonBar);
@@ -256,7 +326,7 @@ namespace MatterHackers.MatterControl.EeProm
 			row.Margin = new BorderDouble(3);
 			row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-			TextWidget labelWidget = new TextWidget(LocalizedString.Get(label), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			TextWidget labelWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			labelWidget.VAnchor = VAnchor.ParentCenter;
 			maxWidthOfLeftStuff = Math.Max(maxWidthOfLeftStuff, labelWidget.Width);
 			GuiWidget holder = new GuiWidget(labelWidget.Width, labelWidget.Height);
@@ -311,18 +381,6 @@ namespace MatterHackers.MatterControl.EeProm
 			buttonBar.AddChild(spacer);
 		}
 
-		private void CreateMainButton(ref Button button, FlowLayoutWidget buttonBar, string text)
-		{
-			button = textImageButtonFactory.Generate(LocalizedString.Get(text));
-			buttonBar.AddChild(button);
-		}
-
-		private void SetToFactorySettings(object sender, EventArgs e)
-		{
-			currentEePromSettings.SetPrinterToFactorySettings();
-			currentEePromSettings.Update();
-		}
-
 		private void buttonAbort_Click(object sender, EventArgs e)
 		{
 			UiThread.RunOnIdle(Close);
@@ -365,18 +423,6 @@ namespace MatterHackers.MatterControl.EeProm
 			homingOffsetX.Text = currentEePromSettings.hox;
 			homingOffsetY.Text = currentEePromSettings.hoy;
 			homingOffsetZ.Text = currentEePromSettings.hoz;
-		}
-
-		private void buttonSave_Click(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(DoButtonSave_Click);
-		}
-
-		private void DoButtonSave_Click()
-		{
-			SaveSettingsToActive();
-			currentEePromSettings.SaveToEeProm();
-			Close();
 		}
 
 		private void SaveSettingsToActive()

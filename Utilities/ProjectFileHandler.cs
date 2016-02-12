@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 
 		private void onSaveFileSelected(SaveFileDialogParams saveParams)
 		{
-			if (saveParams.FileName != null)
+			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
 				ExportToProjectArchive(saveParams.FileName);
 			}

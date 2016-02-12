@@ -105,19 +105,17 @@ namespace MatterHackers.MatterControl.EeProm
 
 		internal void Export(string fileName)
 		{
-			FileStream fs = new FileStream(fileName, FileMode.Create);
-			StreamWriter sw = new System.IO.StreamWriter(fs);
-
-			lock (eePromSettingsList)
+			using (var sw = new StreamWriter(fileName))
 			{
-				foreach (EePromRepetierParameter p in eePromSettingsList.Values)
+				lock (eePromSettingsList)
 				{
-					string data = "{0}|{1}".FormatWith(p.description, p.value);
-					sw.WriteLine(data);
+					foreach (EePromRepetierParameter p in eePromSettingsList.Values)
+					{
+						string data = "{0}|{1}".FormatWith(p.description, p.value);
+						sw.WriteLine(data);
+					}
 				}
 			}
-
-			sw.Close();
 		}
 
 		internal void Import(string fileName)

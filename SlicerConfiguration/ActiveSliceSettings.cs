@@ -806,7 +806,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void onExportFileSelected(SaveFileDialogParams saveParams)
 		{
-			if (saveParams.FileName != null)
+			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
 				GenerateConfigFile(saveParams.FileName);
 			}

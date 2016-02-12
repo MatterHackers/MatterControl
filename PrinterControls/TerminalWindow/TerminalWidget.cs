@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl
 
 		private void onExportLogFileSelected(SaveFileDialogParams saveParams)
 		{
-			if (saveParams.FileName != null)
+			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
 				string filePathToSave = saveParams.FileName;
 				if (filePathToSave != null && filePathToSave != "")

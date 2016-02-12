@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					},
 					(saveParams) =>
 					{
-						if (saveParams.FileName != null)
+						if (!string.IsNullOrEmpty(saveParams.FileName))
 						{
 							PartsSheet currentPartsInQueue = new PartsSheet(parts, saveParams.FileName);
 

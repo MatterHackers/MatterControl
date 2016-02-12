@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.EeProm
 							},
 								(openParams) =>
 								{
-									if (openParams.FileName != null)
+									if (!string.IsNullOrEmpty(openParams.FileName))
 									{
 										currentEePromSettings.Import(openParams.FileName);
 										RebuildUi();
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.EeProm
 							},
 								(saveParams) =>
 								{
-									if (saveParams.FileName != null)
+									if (!string.IsNullOrEmpty(saveParams.FileName))
 									{
 										currentEePromSettings.Export(saveParams.FileName);
 									}

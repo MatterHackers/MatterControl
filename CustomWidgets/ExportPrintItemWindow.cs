@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl
 
 		private void onExportGcodeFileSelected(SaveFileDialogParams saveParams)
 		{
-			if (saveParams.FileName != null)
+			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
                 ExportGcodeCommandLineUtility(saveParams.FileName);         
 			}
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl
 
 		private void onExportX3gFileSelected(SaveFileDialogParams saveParams)
 		{
-			if (saveParams.FileName != null)
+			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
 				x3gPathAndFilenameToSave = saveParams.FileName;
 				string extension = Path.GetExtension(x3gPathAndFilenameToSave);
@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				if (saveParams.FileName != null)
+				if (!string.IsNullOrEmpty(saveParams.FileName))
 				{
 					string filePathToSave = saveParams.FileName;
 					if (filePathToSave != null && filePathToSave != "")
@@ -518,7 +518,7 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				if (saveParams.FileName != null)
+				if (!string.IsNullOrEmpty(saveParams.FileName))
 				{
 					string filePathToSave = saveParams.FileName;
 					if (filePathToSave != null && filePathToSave != "")

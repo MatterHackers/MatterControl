@@ -27,9 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -78,7 +82,7 @@ namespace MatterHackers.MatterControl.EeProm
 				if ((token != " ") && ((token == "M92") || (mode == "M92")))
 				{
 					foundSetting = true;
-					if(mode != "M92")
+					if (mode != "M92")
 					{
 						foundFirstM92E = false;
 					}
@@ -272,10 +276,10 @@ namespace MatterHackers.MatterControl.EeProm
 
 			//String l
 			get { return se; }
-			set { if (se.Equals(value)) 
-				return; 
-				se = value; 
-				changed = true; 
+			set { if (se.Equals(value))
+					return;
+				se = value;
+				changed = true;
 			}
 		}
 
@@ -307,6 +311,67 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			get { return ax; }
 			set { if (ax.Equals(value)) return; ax = value; changed = true; }
+		}
+
+		internal void Import(string fileName)
+		{
+			// read all the lines 
+			string[] allLines = File.ReadAllLines(fileName);
+			// find all the descriptions we can
+			foreach (string line in allLines)
+			{
+				if (line.Contains("|"))
+				{
+					string[] descriptionValue = line.Split('|');
+					if (descriptionValue.Length == 2)
+					{
+						SetSetting(descriptionValue[0], descriptionValue[1]);
+					}
+				}
+			}
+			changed = true;
+        }
+
+
+		void SetSetting(string keyToSet, string valueToSetTo)
+		{
+			valueToSetTo = valueToSetTo.Replace("\"", "").Trim();
+
+			List<string> lines = new List<string>();
+			FieldInfo[] fields;
+			fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+			foreach (FieldInfo field in fields)
+			{
+				List<string> possibleNames = new List<string>();
+				possibleNames.Add(field.Name);
+
+				if (possibleNames.Contains(keyToSet))
+				{
+					string name = field.Name;
+					object value = field.GetValue(this);
+					switch (field.FieldType.Name)
+					{
+						case "Int32":
+							field.SetValue(this, (int)double.Parse(valueToSetTo));
+							break;
+
+						case "Double":
+							field.SetValue(this, double.Parse(valueToSetTo));
+							break;
+
+						case "Boolean":
+							field.SetValue(this, bool.Parse(valueToSetTo));
+							break;
+
+						case "String":
+							field.SetValue(this, valueToSetTo.Replace("\\n", "\n"));
+							break;
+
+						default:
+							throw new NotImplementedException("unknown type");
+					}
+				}
+			}
 		}
 
 		public string AY
@@ -343,6 +408,31 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			get { return avs; }
 			set { if (avs.Equals(value)) return; avs = value; changed = true; }
+		}
+
+		internal void Export(string fileName)
+		{
+			using (var sw = new StreamWriter(fileName))
+			{
+				FieldInfo[] fields;
+				fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+				foreach (FieldInfo field in fields)
+				{
+					string name = field.Name;
+					object value = field.GetValue(this);
+					switch (field.FieldType.Name)
+					{
+						case "Int32":
+						case "Double":
+						case "Boolean":
+						case "FMatrix3x3":
+						case "String":
+							// all these setting just output correctly with ToString() so we don't have to do anything special.
+							sw.WriteLine("{0}|{1}".FormatWith(name, value));
+							break;
+					}
+				}
+			}
 		}
 
 		public string AVT
