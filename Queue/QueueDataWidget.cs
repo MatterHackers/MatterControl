@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 									}
 								}
 							}
-							else if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
+							else if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension.ToLower()))
 							{
 								// Only add files if they have an extension and if it's in the OpenDesignFileParams list
 								QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileNameToLoad), Path.GetFullPath(fileNameToLoad))));
