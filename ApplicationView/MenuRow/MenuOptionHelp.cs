@@ -5,6 +5,7 @@ using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.AboutPage;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -15,40 +16,38 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		override protected TupleList<string, Func<bool>> GetMenuItems()
+		override protected IEnumerable<MenuItemAction> GetMenuItems()
 		{
-			return new TupleList<string, Func<bool>>
+			return new List<MenuItemAction>
             {
-                {"Getting Started".Localize(), gettingStarted_Click},
-                {"View Help".Localize(), help_Click},
-				{"Release Notes".Localize(), notes_Click},
-				{"------------------------", nothing_Click},
-                {"Report a Bug".Localize(), bug_Click},
-                {"Check For Update".Localize(), checkForUpdate_Click},
-				{"------------------------", nothing_Click},
-                {"About MatterControl".Localize(), about_Click},
+				new MenuItemAction("Getting Started".Localize(), gettingStarted_Click),
+                new MenuItemAction("View Help".Localize(), help_Click),
+				new MenuItemAction("Release Notes".Localize(), notes_Click),
+				new MenuItemAction("------------------------", null),
+                new MenuItemAction("Report a Bug".Localize(), bug_Click),
+                new MenuItemAction("Check For Update".Localize(), checkForUpdate_Click),
+				new MenuItemAction("------------------------", null),
+                new MenuItemAction("About MatterControl".Localize(), about_Click),
             };
 		}
 
-		private bool bug_Click()
+		private void bug_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
 				ContactFormWindow.Open();
 			});
-			return true;
 		}
 
-		private bool help_Click()
+		private void help_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
 				MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles");
 			});
-			return true;
 		}
 
-		private bool checkForUpdate_Click()
+		private void checkForUpdate_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -56,37 +55,27 @@ namespace MatterHackers.MatterControl
 				UpdateControlData.Instance.CheckForUpdateUserRequested();
 				CheckForUpdateWindow.Show();
 			});
-			return true;
 		}
 
-		private bool about_Click()
+		private void about_Click()
 		{
 			UiThread.RunOnIdle(AboutWindow.Show);
-			return true;
 		}
 
-		private bool nothing_Click()
-		{
-			return true;
-		}
-
-		private bool notes_Click()
+		private void notes_Click()
 		{
 			UiThread.RunOnIdle(() =>
 				{
 					MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
 				});
-			return true;
 		}
 
-		private bool gettingStarted_Click()
+		private void gettingStarted_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
 				MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles/mattercontrol-getting-started");
 			});
-
-			return true;
 		}
 	}
 }

@@ -7,6 +7,7 @@ using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MatterHackers.MatterControl
@@ -22,17 +23,17 @@ namespace MatterHackers.MatterControl
 			
 		}
 
-		override protected TupleList<string, Func<bool>> GetMenuItems()
+		override protected IEnumerable<MenuItemAction> GetMenuItems()
 		{
-			return new TupleList<string, Func<bool>>
+			return new List<MenuItemAction>
             {
-                {LocalizedString.Get("Settings"), openPrintingPannel_Click},
-                {LocalizedString.Get("Controls"), openControlsPannel_Click},
-				{LocalizedString.Get("Terminal"), openTermanialPannel_Click},
+				new MenuItemAction("Settings".Localize(), openPrintingPannel_Click),
+				new MenuItemAction("Controls".Localize(), openControlsPannel_Click),
+				new MenuItemAction("Terminal".Localize(), openTermanialPannel_Click),
             };
 		}
 
-		private bool openPrintingPannel_Click()
+		private void openPrintingPannel_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -41,10 +42,9 @@ namespace MatterHackers.MatterControl
 					sliceSettingsPopOut.ShowInWindow();
 				}
 			});
-			return true;
 		}
 
-		private bool openControlsPannel_Click()
+		private void openControlsPannel_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -53,13 +53,11 @@ namespace MatterHackers.MatterControl
 					controlsPopOut.ShowInWindow();
 				}
 			});
-			return true;
 		}
 
-		private bool openTermanialPannel_Click()
+		private void openTermanialPannel_Click()
 		{
 			UiThread.RunOnIdle(TerminalWindow.Show);
-			return true;
 		}
 	}
 }

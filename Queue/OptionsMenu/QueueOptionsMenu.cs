@@ -121,7 +121,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 					MenuDropList.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
 				}
 
-				MenuDropList.AddItem(item.Item1);
+				MenuItem menuItem = MenuDropList.AddItem(item.Item1);
+				if(item.Item2 == null)
+				{
+					menuItem.Enabled = false;
+				}
 			}
 
 			MenuDropList.Padding = padding;

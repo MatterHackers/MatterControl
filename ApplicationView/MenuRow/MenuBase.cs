@@ -2,13 +2,28 @@
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
 	public abstract class MenuBase : GuiWidget
 	{
+		public class MenuItemAction
+		{
+			public MenuItemAction(string title, Action action)
+			{
+				this.Title = title;
+				this.Action = action;
+			}
+
+			public string Title { get; set; }
+			public Action Action { get; set; }
+		}
+
 		public DropDownMenu MenuDropList;
-		private TupleList<string, Func<bool>> menuItems = null;
+		private List<MenuItemAction> menuItems = null;
+
+		protected abstract IEnumerable<MenuItemAction> GetMenuItems();
 
 		public MenuBase(string menuName)
 		{
@@ -20,13 +35,17 @@ namespace MatterHackers.MatterControl
 			MenuDropList.DrawDirectionalArrow = false;
 			MenuDropList.MenuAsWideAsItems = false;
 
-			menuItems = GetMenuItems();
+			menuItems = new List<MenuItemAction>(GetMenuItems());
 			BorderDouble padding = MenuDropList.MenuItemsPadding;
 			//Add the menu items to the menu itself
-			foreach (Tuple<string, Func<bool>> item in menuItems)
+			foreach (MenuItemAction item in menuItems)
 			{
 				MenuDropList.MenuItemsPadding = new BorderDouble(8, 6, 8, 6) * TextWidget.GlobalPointSizeScaleRatio;
-				MenuDropList.AddItem(item.Item1, pointSize: 11);
+				MenuItem newItem = MenuDropList.AddItem(item.Title, pointSize: 11);
+				if (item.Action == null)
+				{
+					newItem.Enabled = false;
+				}
 			}
 			MenuDropList.Padding = padding;
 
@@ -40,19 +59,14 @@ namespace MatterHackers.MatterControl
 			this.MenuDropList.OpenOffset = new Vector2(0, 0);
 		}
 
-		abstract protected TupleList<string, Func<bool>> GetMenuItems();
-
 		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
 		{
 			string menuSelection = ((DropDownMenu)sender).SelectedValue;
-			foreach (Tuple<string, Func<bool>> item in menuItems)
+			foreach (MenuItemAction item in menuItems)
 			{
-				if (item.Item1 == menuSelection)
+				if (item.Title == menuSelection)
 				{
-					if (item.Item2 != null)
-					{
-						item.Item2();
-					}
+					item.Action?.Invoke();
 				}
 			}
 		}

@@ -29,46 +29,37 @@ namespace MatterHackers.MatterControl
 			CurrentMenuOptionFile = this;
 		}
 
-		override protected TupleList<string, Func<bool>> GetMenuItems()
+		override protected IEnumerable<MenuItemAction> GetMenuItems()
 		{
-			return new TupleList<string, Func<bool>>
-            {
-                {"Add Printer".Localize(), addPrinter_Click},
-                {"Add File To Queue".Localize(), importFile_Click},
-				//{"Add Folder To Library".Localize(), addFolderToLibrar_Click},
-				{"Redeem Design Code".Localize(), redeemDesignCode_Click},
-				{"Enter Share Code".Localize(), enterShareCode_Click},
-				{"------------------------", nothing_Click},
-				{"Exit".Localize(), exit_Click},
+			return new List<MenuItemAction>
+			{
+				new MenuItemAction("Add Printer".Localize(), addPrinter_Click),
+                new MenuItemAction("Add File To Queue".Localize(), importFile_Click),
+				//new MenuItemAction("Add Folder To Library".Localize(), addFolderToLibrar_Click),
+				new MenuItemAction("Redeem Design Code".Localize(), redeemDesignCode_Click),
+				new MenuItemAction("Enter Share Code".Localize(), enterShareCode_Click),
+				new MenuItemAction("------------------------", null),
+				new MenuItemAction("Exit".Localize(), exit_Click),
             };
 		}
 
-		private bool nothing_Click()
-		{
-			return true;
-		}
-
-		private bool redeemDesignCode_Click()
+		private void redeemDesignCode_Click()
 		{
 			if (RedeemDesignCode != null)
 			{
 				RedeemDesignCode(this, null);
 			}
-
-			return true;
 		}
 
-        private bool enterShareCode_Click()
+        private void enterShareCode_Click()
         {
             if (EnterShareCode != null)
             {
                 EnterShareCode(this, null);
             }
-
-            return true;
         }
 
-		private bool addFolderToLibrar_Click()
+		private void addFolderToLibrar_Click()
 		{
 			if (AddLocalFolderToLibrary != null)
 			{
@@ -88,16 +79,14 @@ namespace MatterHackers.MatterControl
 					createFolderWindow.BringToFront();
 				}
 			}
-			return true;
 		}
 
-		private bool addPrinter_Click()
+		private void addPrinter_Click()
 		{
 			UiThread.RunOnIdle(ConnectionWindow.Show);
-			return true;
 		}
 
-		private bool importFile_Click()
+		private void importFile_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -134,10 +123,9 @@ namespace MatterHackers.MatterControl
 						}
 					});
 			});
-			return true;
 		}
 
-		private bool exit_Click()
+		private void exit_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -151,7 +139,6 @@ namespace MatterHackers.MatterControl
 				app.RestartOnClose = false;
 				app.Close();
 			});
-			return true;
 		}
 	}
 }

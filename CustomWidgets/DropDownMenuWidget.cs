@@ -276,7 +276,7 @@ namespace MatterHackers.Agg.UI
 			}
 		}
 
-		public void AddItem(string name, string value = null, double pointSize = 12)
+		public MenuItem AddItem(string name, string value = null, double pointSize = 12)
 		{
 			if (value == null)
 			{
@@ -309,6 +309,8 @@ namespace MatterHackers.Agg.UI
 			menuItem.Text = name;
 			menuItem.Name = name + " Menu Item";
 			MenuItems.Add(menuItem);
+
+			return menuItem;
 		}
 	}
 }
