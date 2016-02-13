@@ -60,7 +60,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private ExportPrintItemWindow exportingWindow;
 		private bool exportingWindowIsOpen = false;
 		private Button leaveEditModeButton;
-		private TupleList<string, Func<bool>> menuItems;
+		private List<PrintItemAction> menuItems;
+		private HashSet<string> singleSelectionMenuItems;
 		private PluginChooserWindow pluginChooserWindow;
 		private QueueDataView queueDataView;
 		private QueueOptionsMenu queueMenu;
@@ -113,6 +114,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
+				singleSelectionMenuItems = new HashSet<string>();
+
 				CreateEditBarButtons();
 				leaveEditModeButton.Visible = false;
 
@@ -127,7 +130,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				topBarContainer.AddChild(new HorizontalSpacer());
 				topBarContainer.AddChild(itemOperationButtons);
 
-				// put in the itme edit menu
+				// put in the item edit menu
 				{
 					moreMenu = new DropDownMenu("More".Localize() + "... ");
 					moreMenu.NormalColor = new RGBA_Bytes();
@@ -159,7 +162,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
 					addToQueueButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Queue".Localize();
-                    buttonPanel1.AddChild(addToQueueButton);
+					buttonPanel1.AddChild(addToQueueButton);
 					addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
 					addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
 					addToQueueButton.Name = "Queue Add Button";
@@ -169,7 +172,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						createButton = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
 						createButton.ToolTipText = "Choose a Create Tool to generate custom designs".Localize();
 						createButton.Name = "Design Tool Button";
-                        buttonPanel1.AddChild(createButton);
+						buttonPanel1.AddChild(createButton);
 						createButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createButton.Click += (sender, e) =>
 						{
@@ -178,7 +181,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 					}
 
 					bool touchScreenMode = ActiveTheme.Instance.IsTouchScreen;
-
 
 					if (OemSettings.Instance.ShowShopButton)
 					{
@@ -520,21 +522,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 			SaveAsWindow saveAsWindow = new SaveAsWindow(DoAddToSpecificLibrary, null, false, false);
 		}
 
-		private bool addToLibraryMenu_Selected()
-		{
-			addToLibraryButton_Click(null, null);
-			return true;
-		}
-
 		private void addToQueueButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(AddItemsToQueue);
-		}
-
-		private bool clearAllMenu_Select()
-		{
-			clearAllButton_Click(null, null);
-			return true;
 		}
 
 		private void clearAllButton_Click(object sender, EventArgs mouseEvent)
@@ -546,12 +536,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void copyButton_Click(object sender, EventArgs mouseEvent)
 		{
 			CreateCopyInQueue();
-		}
-
-		private bool copyMenu_Selected()
-		{
-			copyButton_Click(null, null);
-			return true;
 		}
 
 		private void deleteAllFromQueueButton_Click(object sender, EventArgs mouseEvent)
@@ -566,12 +550,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			queueDataView.EditMode = true;
 
 			SetEditButtonsStates();
-		}
-
-		private bool exportButton_Click()
-		{
-			exportButton_Click(null, null);
-			return true;
 		}
 
 		private void exportButton_Click(object sender, EventArgs mouseEvent)
@@ -605,14 +583,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void ItemMenu_SelectionChanged(object sender, EventArgs e)
 		{
 			string menuSelection = ((DropDownMenu)sender).SelectedValue;
-			foreach (Tuple<string, Func<bool>> item in menuItems)
+			foreach (var menuItem in menuItems)
 			{
-				if (item.Item1 == menuSelection)
+				if (menuItem.Title == menuSelection)
 				{
-					if (item.Item2 != null)
-					{
-						item.Item2();
-					}
+					menuItem.Action?.Invoke(queueDataView.SelectedItems);
 				}
 			}
 		}
@@ -685,12 +660,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.queueDataView.ClearSelectedItems();
 		}
 
-		private bool removeMenu_Selected()
-		{
-			removeButton_Click(null, null);
-			return true;
-		}
-
 		private void sendButton_Click(object sender, EventArgs mouseEvent)
 		{
 			//Open export options
@@ -705,12 +674,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private bool sendMenu_Selected()
-		{
-			sendButton_Click(null, null);
-			return true;
-		}
-
 		private void SetDisplayAttributes()
 		{
 			this.Padding = new BorderDouble(3);
@@ -720,30 +683,58 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void SetMenuItems(DropDownMenu dropDownMenu)
 		{
-			menuItems = new TupleList<string, Func<bool>>();
+			menuItems = new List<PrintItemAction>();
 
 			if (ActiveTheme.Instance.IsTouchScreen)
 			{
-				menuItems.Add(new Tuple<string, Func<bool>>("Remove All".Localize(), clearAllMenu_Select));
+				menuItems.Add(new PrintItemAction()
+				{
+					Title = "Remove All".Localize(),
+					Action = (items) => clearAllButton_Click(null, null)
+				});
 			}
 
-			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
-			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Send".Localize(),
+				Action = (items) => sendButton_Click(null, null)
+			});
+
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Add To Library".Localize(),
+				Action = (items) => addToLibraryButton_Click(null, null)
+			});
+
+			// Extension point for plugins to hook into selected item actions
+			var pluginFinder = new PluginFinder<PrintItemMenuExtension>();
+			foreach (var menuExtensionPlugin in pluginFinder.Plugins)
+			{
+				foreach(var menuItem in menuExtensionPlugin.GetMenuItems())
+				{
+					menuItems.Add(menuItem);
+				}
+			}
 
 			BorderDouble padding = dropDownMenu.MenuItemsPadding;
+
 			//Add the menu items to the menu itself
-			foreach (Tuple<string, Func<bool>> item in menuItems)
+			foreach (PrintItemAction item in menuItems)
 			{
-				if (item.Item2 == null)
+				if (item.Action == null)
 				{
 					dropDownMenu.MenuItemsPadding = new BorderDouble(5, 0, padding.Right, 3);
 				}
 				else
 				{
+					if(item.SingleItemOnly)
+					{
+						singleSelectionMenuItems.Add(item.Title);
+					}
 					dropDownMenu.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
 				}
 
-				dropDownMenu.AddItem(item.Item1);
+				dropDownMenu.AddItem(item.Title);
 			}
 
 			dropDownMenu.Padding = padding;
@@ -752,6 +743,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void SetEditButtonsStates()
 		{
 			int selectedCount = queueDataView.SelectedItems.Count;
+
+			// Disable menu items which are singleSelection only
+			foreach(MenuItem menuItem in moreMenu.MenuItems)
+			{
+				// TODO: Ideally this would set .Enabled but at the moment, disabled controls don't have enough 
+				// functionality to convey the disabled aspect or suppress click events
+				menuItem.Visible = selectedCount == 1 || !singleSelectionMenuItems.Contains(menuItem.Text);
+			}
 
 			for(int buttonIndex=0; buttonIndex<itemOperationButtons.Children.Count; buttonIndex++)
 			{

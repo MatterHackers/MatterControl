@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,8 +8,8 @@
     <ProjectGuid>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MatterHackers.MatterControl.Pulgins</RootNamespace>
-    <AssemblyName>MatterHackers.MatterControl.Pulgins</AssemblyName>
+    <RootNamespace>MatterHackers.MatterControl.Plugins</RootNamespace>
+    <AssemblyName>MatterHackers.MatterControl.Plugins</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>

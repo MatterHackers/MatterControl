@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MatterHackers.MatterControl.PrintQueue
@@ -641,5 +642,17 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			return GetPrintQueueItem(SelectedIndex);
 		}
+	}
+
+	public class PrintItemAction
+	{
+		public string Title { get; set; }
+		public Action<IEnumerable<QueueRowItem>> Action { get; set; }
+		public bool SingleItemOnly { get; set; } = false;
+	}
+
+	public abstract class PrintItemMenuExtension
+	{
+		public abstract IEnumerable<PrintItemAction> GetMenuItems();
 	}
 }

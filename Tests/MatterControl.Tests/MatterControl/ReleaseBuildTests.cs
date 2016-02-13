@@ -46,7 +46,7 @@ namespace MatterControl.Tests
 						WindowsFileDialogs.dll
 						Community.CsharpSqlite.dll
 						MatterHackers.SerialPortCommunication.dll
-						MatterHackers.MatterControl.Pulgins.dll
+						MatterHackers.MatterControl.Plugins.dll
 						MatterHackers.Agg.ImageProcessing.dll
 						MatterHackers.MarchingSquares.dll
 						GuiAutomation.dll
