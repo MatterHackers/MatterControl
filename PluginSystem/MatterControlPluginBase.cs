@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.PluginSystem
 		/// {
 		///     "Name": "MatterHackers Test Plugin",
 		///     "UUID": "22cf8c90-66c3-11e3-949a-0800200c9a66",
-		///     "About": "This is a sample plugin info that shows some of the expected values that can be presnet in a plugin info.",
+		///     "About": "This is a sample plugin info that shows some of the expected values that can be present in a plugin info.",
 		///     "Developer": "MatterHackers, Inc."
 		///     "URL": "https://www.matterhackers.com"
 		/// }
