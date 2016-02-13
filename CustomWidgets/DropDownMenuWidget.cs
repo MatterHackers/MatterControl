@@ -12,6 +12,23 @@ namespace MatterHackers.Agg.UI
 
 		private TextWidget mainControlText;
 
+		public DropDownMenu(GuiWidget topMenuWidget, Direction direction = Direction.Down)
+			: base(direction)
+		{
+		}
+
+		public DropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
+			: base(direction)
+		{
+			SetStates(topMenuText, pointSize);
+		}
+
+		public DropDownMenu(string topMenuText, GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
+			: base(buttonView, direction)
+		{
+			SetStates(topMenuText, pointSize);
+		}
+
 		bool menuAsWideAsItems = true;
 		public bool MenuAsWideAsItems 
 		{
@@ -93,11 +110,6 @@ namespace MatterHackers.Agg.UI
 			return MenuItems[SelectedIndex].Value;
 		}
 
-		public DropDownMenu(GuiWidget topMenuWidget, Direction direction = Direction.Down)
-			: base(direction)
-		{
-		}
-
 		private void SetStates(string topMenuText, double pointSize)
 		{
 			SetDisplayAttributes();
@@ -119,18 +131,6 @@ namespace MatterHackers.Agg.UI
 			//IE Don't show arrow unless color is set explicitly
 			NormalArrowColor = new RGBA_Bytes(255, 255, 255, 0);
 			HoverArrowColor = TextColor;
-		}
-
-		public DropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
-			: base(direction)
-		{
-			SetStates(topMenuText, pointSize);
-		}
-
-		public DropDownMenu(string topMenuText, GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
-			: base(buttonView, direction)
-		{
-			SetStates(topMenuText, pointSize);
 		}
 
 		protected override void DropListItems_Closed(object sender, EventArgs e)
