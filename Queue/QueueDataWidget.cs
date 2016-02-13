@@ -719,7 +719,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			BorderDouble padding = dropDownMenu.MenuItemsPadding;
 
 			//Add the menu items to the menu itself
-			foreach (var item in menuItems)
+			foreach (PrintItemAction item in menuItems)
 			{
 				if (item.Action == null)
 				{
@@ -745,7 +745,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			int selectedCount = queueDataView.SelectedItems.Count;
 
 			// Disable menu items which are singleSelection only
-			foreach(var menuItem in moreMenu.MenuItems)
+			foreach(MenuItem menuItem in moreMenu.MenuItems)
 			{
 				// TODO: Ideally this would set .Enabled but at the moment, disabled controls don't have enough 
 				// functionality to convey the disabled aspect or suppress click events
