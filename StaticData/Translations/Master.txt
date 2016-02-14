@@ -4522,3 +4522,12 @@ Translated:Import EEPROM Settings
 English:Import EEPROM
 Translated:Import EEPROM
 
+English:Center on Bed
+Translated:Center on Bed
+
+English:Would you like to save your changes before exiting the editor?
+Translated:Would you like to save your changes before exiting the editor?
+
+English:Save Changes
+Translated:Save Changes
+

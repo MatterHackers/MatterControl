@@ -235,6 +235,7 @@
     <Compile Include="Library\Provider\LibraryProviderSqlite.cs" />
     <Compile Include="Library\Provider\LibraryProvider.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
+    <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />

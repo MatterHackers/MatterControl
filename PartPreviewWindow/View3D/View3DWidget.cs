@@ -1206,6 +1206,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private void ReportProgressChanged(double progress0To1, string processingState)
+		{
+			bool continueProcessing;
+			ReportProgressChanged(progress0To1, processingState, out continueProcessing);
+		}
+
 		private void ReportProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
 		{
 			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
