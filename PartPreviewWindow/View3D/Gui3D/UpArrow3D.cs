@@ -99,8 +99,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				translated.translation *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta)); ;
 				MeshViewerToDrawWith.SelectedMeshGroupTransform = translated;
 
-				// now snap this position to the grid
+				if(MeshViewerToDrawWith.SnapGridDistance > 0)
 				{
+					// snap this position to the grid
 					double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
 					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 					double bottom = selectedBounds.minXYZ.z + delta.z;

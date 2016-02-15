@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.VAnchor = Agg.UI.VAnchor.ParentCenter;
 				editToolBar.AddChild(processingProgressControl);
 				editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+				editToolBar.HAnchor = HAnchor.ParentLeftRight;
 				processingProgressControl.Visible = false;
 
 				// If the window is embeded (in the center pannel) and there is no item loaded then don't show the add button
@@ -228,6 +229,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				doEdittingButtonsContainer = new FlowLayoutWidget();
 				doEdittingButtonsContainer.Visible = false;
+				doEdittingButtonsContainer.HAnchor = HAnchor.ParentLeftRight;
 
 				{
 					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
@@ -308,8 +310,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					separatorThree.VAnchor = VAnchor.ParentBottomTop;
 					doEdittingButtonsContainer.AddChild(separatorThree);
 
-					Button leaveEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
-					leaveEditModeButton.Click += (sender, e) =>
+					Button cancelEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+					cancelEditModeButton.Click += (sender, e) =>
 					{
 						UiThread.RunOnIdle(() =>
 						{
@@ -330,7 +332,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						});
 					};
-					doEdittingButtonsContainer.AddChild(leaveEditModeButton);
+
+					doEdittingButtonsContainer.AddChild(cancelEditModeButton);
 
 					// put in the save button
 					AddSaveAndSaveAs(doEdittingButtonsContainer);
@@ -457,6 +460,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             DrawBefore += CreateBooleanTestGeometry;
             DrawAfter += RemoveBooleanTestGeometry;
 #endif
+		}
+
+		private void AddGridSnapSettings(GuiWidget widgetToAddTo)
+		{
+			FlowLayoutWidget container = new FlowLayoutWidget()
+			{
+				Margin = new BorderDouble(5, 0) * TextWidget.GlobalPointSizeScaleRatio,
+			};
+
+			TextWidget snapGridLabel = new TextWidget("Snap Grid".Localize())
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(3, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio,
+			};
+
+			container.AddChild(snapGridLabel);
+
+			StyledDropDownList selectableOptions = new StyledDropDownList("Custom", Direction.Up)
+			{
+				VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+			};
+
+			Dictionary<double, string> snapSettings = new Dictionary<double, string>()
+			{
+				{ 0, "Off" },
+				{ .1, ".1" },
+				{ .25, ".25" },
+				{ .5, ".5" },
+				{ 1, "1" },
+				{ 2, "2" },
+				{ 5, "5" },
+			};
+
+			foreach (KeyValuePair<double, string> snapSetting in snapSettings)
+			{
+				double valueLocal = snapSetting.Key;
+
+				MenuItem newItem = selectableOptions.AddItem(snapSetting.Value);
+				if (meshViewerWidget.SnapGridDistance == valueLocal)
+				{
+					selectableOptions.SelectedLabel = snapSetting.Value;
+				}
+
+				newItem.Selected += (sender, e) =>
+				{
+					meshViewerWidget.SnapGridDistance = snapSetting.Key;
+				};
+			}
+
+			container.AddChild(selectableOptions);
+
+			widgetToAddTo.AddChild(container);
 		}
 
 #if DoBooleanTest
@@ -1445,6 +1501,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GuiWidget verticalSpacer = new GuiWidget();
 				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
 				buttonRightPanel.AddChild(verticalSpacer);
+
+				AddGridSnapSettings(buttonRightPanel);
 			}
 
 			buttonRightPanel.Padding = new BorderDouble(6, 6);

@@ -4531,3 +4531,6 @@ Translated:Would you like to save your changes before exiting the editor?
 English:Save Changes
 Translated:Save Changes
 
+English:Snap Grid
+Translated:Snap Grid
+
