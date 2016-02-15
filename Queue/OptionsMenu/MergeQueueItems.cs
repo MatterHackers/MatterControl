@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.Queue.OptionsMenu
 				{
 					SingleItemOnly = false,
 					Title = "Merge...",
-					Action = (items) =>
+					Action = (items, queueDataWidget) =>
 					{
 						List<QueueRowItem> allRowItems = new List<QueueRowItem>(items);
 						if (allRowItems.Count > 1)
@@ -60,10 +60,12 @@ namespace MatterHackers.MatterControl.Queue.OptionsMenu
 										QueueRowItem rowItem = allRowItems[i];
 										// remove all the items that we just merged
 										QueueData.Instance.RemoveAt(QueueData.Instance.GetIndex(rowItem.PrintItemWrapper));
-
-										// select the part we added, if possible
-										QueueData.Instance.SelectedIndex = QueueData.Instance.GetIndex(newPrintItem);
 									}
+
+									// select the part we added, if possible
+									QueueData.Instance.SelectedIndex = QueueData.Instance.GetIndex(newPrintItem);
+
+									queueDataWidget.LeaveEditMode();
 								});
 							}
 						}

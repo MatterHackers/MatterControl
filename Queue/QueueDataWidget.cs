@@ -530,7 +530,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void clearAllButton_Click(object sender, EventArgs mouseEvent)
 		{
 			QueueData.Instance.RemoveAll();
-			leaveEditMode();
+			LeaveEditMode();
 		}
 
 		private void copyButton_Click(object sender, EventArgs mouseEvent)
@@ -587,23 +587,26 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (menuItem.Title == menuSelection)
 				{
-					menuItem.Action?.Invoke(queueDataView.SelectedItems);
+					menuItem.Action?.Invoke(queueDataView.SelectedItems, this);
 				}
 			}
 		}
 
-		private void leaveEditMode()
+		public void LeaveEditMode()
 		{
-			enterEditModeButton.Visible = true;
-			leaveEditModeButton.Visible = false;
-			queueDataView.EditMode = false;
-			
-			PrintItemSelectionChanged(null, null);
+			if (queueDataView.EditMode)
+			{
+				enterEditModeButton.Visible = true;
+				leaveEditModeButton.Visible = false;
+				queueDataView.EditMode = false;
+
+				PrintItemSelectionChanged(null, null);
+			}
 		}
 
 		private void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
 		{
-			leaveEditMode();
+			LeaveEditMode();
 		}
 
 		private void onLibraryItemsSelectChanged(object sender, EventArgs e)
@@ -690,20 +693,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 				menuItems.Add(new PrintItemAction()
 				{
 					Title = "Remove All".Localize(),
-					Action = (items) => clearAllButton_Click(null, null)
+					Action = (items, queueDataView) => clearAllButton_Click(null, null)
 				});
 			}
 
 			menuItems.Add(new PrintItemAction()
 			{
 				Title = "Send".Localize(),
-				Action = (items) => sendButton_Click(null, null)
+				Action = (items, queueDataView) => sendButton_Click(null, null)
 			});
 
 			menuItems.Add(new PrintItemAction()
 			{
 				Title = "Add To Library".Localize(),
-				Action = (items) => addToLibraryButton_Click(null, null)
+				Action = (items, queueDataView) => addToLibraryButton_Click(null, null)
 			});
 
 			// Extension point for plugins to hook into selected item actions
