@@ -481,9 +481,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Dictionary<double, string> snapSettings = new Dictionary<double, string>()
 			{
 				{ 0, "Off" },
-				{ .1, ".1" },
-				{ .25, ".25" },
-				{ .5, ".5" },
+				{ .1, "0.1" },
+				{ .25, "0.25" },
+				{ .5, "0.5" },
 				{ 1, "1" },
 				{ 2, "2" },
 				{ 5, "5" },
