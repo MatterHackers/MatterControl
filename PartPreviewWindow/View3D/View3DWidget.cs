@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget : PartPreview3DWidget
 	{
-		internal HeightValueDisplay heightDisplay;
 		private readonly int EditButtonHeight = 44;
 		private Action afterSaveCallback = null;
 		private Button applyScaleButton;
@@ -104,8 +103,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private CheckBox uniformScale;
 		private EventHandler unregisterEvents;
-
-		private UpArrow3D upArrow;
 
 		private bool viewIsInEditModePreLock = false;
 
@@ -441,10 +438,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
-			upArrow = new UpArrow3D(this);
-			heightDisplay = new HeightValueDisplay(this);
-			heightDisplay.Visible = false;
-			meshViewerWidget.interactionVolumes.Add(upArrow);
+			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
+			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
 
 			// make sure the colors are set correctl
 			ThemeChanged(this, null);
@@ -709,8 +704,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (HaveSelection)
 			{
-				upArrow.SetPosition();
-				heightDisplay.SetPosition();
+				foreach (InteractionVolume volume in meshViewerWidget.interactionVolumes)
+				{
+					volume.SetPosition();
+				}
 			}
 
 			hasDrawn = true;

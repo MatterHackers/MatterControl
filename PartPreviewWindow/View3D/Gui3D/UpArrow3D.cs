@@ -48,10 +48,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Vector3 lastMoveDelta;
 		private PlaneShape hitPlane;
 		private View3DWidget view3DWidget;
+		internal HeightValueDisplay heightDisplay;
 
 		public UpArrow3D(View3DWidget view3DWidget)
 			: base(null, view3DWidget.meshViewerWidget)
 		{
+			heightDisplay = new HeightValueDisplay(view3DWidget);
+			heightDisplay.Visible = false;
+
+			DrawOnTop = true;
+
 			this.view3DWidget = view3DWidget;
 			string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
 			if (StaticData.Instance.FileExists(arrowFile))
@@ -123,8 +129,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseMove(mouseEvent3D);
 		}
 
-		public void SetPosition()
+		public override void SetPosition()
 		{
+			heightDisplay.SetPosition();
+
 			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 			Vector3 boundsCenter = selectedBounds.Center;
 			Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
@@ -140,11 +148,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (MouseOver || MouseDownOnControl)
 			{
-				view3DWidget.heightDisplay.Visible = true;
+				heightDisplay.Visible = true;
 			}
 			else if (!view3DWidget.DisplayAllValueData)
 			{
-				view3DWidget.heightDisplay.Visible = false;
+				heightDisplay.Visible = false;
 			}
 		}
 
