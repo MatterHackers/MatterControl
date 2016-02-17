@@ -798,6 +798,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public Vector3 LastHitPosition { get; private set; }
+
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
@@ -807,7 +809,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
 				if (info != null)
 				{
+					LastHitPosition = info.hitPosition;
 					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
+
+					if (false)//meshViewerWidget.SnapGridDistance > 0)
+					{
+						// snap this position to the grid
+						double snapGridDistance = meshViewerWidget.SnapGridDistance;
+						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.GetBoundsForSelection();
+
+						// snap the x position
+						if (info.hitPosition.x < selectedBounds.Center.x)
+						{
+							double left = selectedBounds.minXYZ.x + delta.x;
+							double snappedLeft = ((int)((left / snapGridDistance) + .5)) * snapGridDistance;
+							delta.x = snappedLeft - selectedBounds.minXYZ.x;
+						}
+						else
+						{
+							double right = selectedBounds.maxXYZ.x + delta.x;
+							double snappedRight = ((int)((right / snapGridDistance) + .5)) * snapGridDistance;
+							delta.x = snappedRight - selectedBounds.maxXYZ.x;
+						}
+
+						// snap the y position
+					}
+
 
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
 					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));

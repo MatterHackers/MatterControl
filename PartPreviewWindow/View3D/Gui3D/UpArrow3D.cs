@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// move it back to where it started
 				ScaleRotateTranslate translated = MeshViewerToDrawWith.SelectedMeshGroupTransform;
-				translated.translation *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta)); ;
+				translated.translation *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
 				MeshViewerToDrawWith.SelectedMeshGroupTransform = translated;
 
 				if(MeshViewerToDrawWith.SnapGridDistance > 0)
@@ -110,14 +110,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// snap this position to the grid
 					double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
 					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
-					double bottom = selectedBounds.minXYZ.z + delta.z;
 
+					// snap the z position
+					double bottom = selectedBounds.minXYZ.z + delta.z;
 					double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
 					delta.z = snappedBottom - selectedBounds.minXYZ.z;
 				}
 
-				// and move it from there to where we are now
-				translated.translation *= Matrix4X4.CreateTranslation(new Vector3(delta));
+					// and move it from there to where we are now
+					translated.translation *= Matrix4X4.CreateTranslation(new Vector3(delta));
 				MeshViewerToDrawWith.SelectedMeshGroupTransform = translated;
 
 				lastMoveDelta = delta;
