@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			else
 			{
 				this.ActivePrinter = activePrinter;
-				string editHeaderTitleTxt = LocalizedString.Get("Edit");
+				string editHeaderTitleTxt = LocalizedString.Get("Edit Printer");
 				headerTitle = string.Format("{1} - {0}", this.ActivePrinter.Name, editHeaderTitleTxt);
 				if (this.ActivePrinter.BaudRate == null)
 				{
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			ConnectionControlContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			ConnectionControlContainer.HAnchor = HAnchor.ParentLeftRight;
 			{
-				TextWidget printerNameLabel = new TextWidget(LocalizedString.Get("Printer Name"), 0, 0, 10);
+				TextWidget printerNameLabel = new TextWidget(LocalizedString.Get("Name"), 0, 0, 10);
 				printerNameLabel.TextColor = this.defaultTextColor;
 				printerNameLabel.HAnchor = HAnchor.ParentLeftRight;
 				printerNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.Margin = new BorderDouble(0, 5);
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			TextWidget printerManufacturerLabel = new TextWidget(LocalizedString.Get("Printer Make"), 0, 0, 10);
+			TextWidget printerManufacturerLabel = new TextWidget(LocalizedString.Get("Make"), 0, 0, 10);
 			printerManufacturerLabel.TextColor = this.defaultTextColor;
 			printerManufacturerLabel.HAnchor = HAnchor.ParentLeftRight;
 			printerManufacturerLabel.Margin = elementMargin;
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.Margin = new BorderDouble(0, 5);
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			TextWidget printerModelLabel = new TextWidget(LocalizedString.Get("Printer Model"), 0, 0, 10);
+			TextWidget printerModelLabel = new TextWidget(LocalizedString.Get("Model"), 0, 0, 10);
 			printerModelLabel.TextColor = this.defaultTextColor;
 			printerModelLabel.HAnchor = HAnchor.ParentLeftRight;
 			printerModelLabel.Margin = elementMargin;
