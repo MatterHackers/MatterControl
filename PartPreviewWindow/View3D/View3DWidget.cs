@@ -814,10 +814,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
 				if (info != null)
 				{
-					LastHitPosition = info.hitPosition;
+					// move the mesh back to the start position
+					{
+						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
+						ScaleRotateTranslate translated = SelectedMeshGroupTransform;
+						translated.translation *= totalTransform;
+						SelectedMeshGroupTransform = translated;
+					}
+
 					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
 
-					if (false)// meshViewerWidget.SnapGridDistance > 0)
+					if (meshViewerWidget.SnapGridDistance > 0)
 					{
 						// snap this position to the grid
 						double snapGridDistance = meshViewerWidget.SnapGridDistance;
@@ -834,7 +841,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							double right = selectedBounds.maxXYZ.x - delta.x;
 							double snappedRight = ((int)((right / snapGridDistance) + .5)) * snapGridDistance;
-							//delta.x = selectedBounds.maxXYZ.x - snappedRight;
+							delta.x = selectedBounds.maxXYZ.x - snappedRight;
 						}
 
 						// snap the y position
@@ -842,23 +849,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							double bottom = selectedBounds.minXYZ.y + delta.y;
 							double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
-							//delta.y = snappedBottom - selectedBounds.minXYZ.y;
+							delta.y = snappedBottom - selectedBounds.minXYZ.y;
 						}
 						else
 						{
 							double top = selectedBounds.maxXYZ.y + delta.y;
 							double snappedTop = ((int)((top / snapGridDistance) + .5)) * snapGridDistance;
-							//delta.y = snappedTop - selectedBounds.maxXYZ.y;
+							delta.y = snappedTop - selectedBounds.maxXYZ.y;
 						}
 					}
 
-					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
-					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
-					meshSelectInfo.lastMoveDelta = delta;
+					// move the mesh back to the new position
+					{
+						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
 
-					ScaleRotateTranslate translated = SelectedMeshGroupTransform;
-					translated.translation *= totalTransform;
-					SelectedMeshGroupTransform = translated;
+						ScaleRotateTranslate translated = SelectedMeshGroupTransform;
+						translated.translation *= totalTransform;
+						SelectedMeshGroupTransform = translated;
+
+						meshSelectInfo.lastMoveDelta = delta;
+					}
+
+					LastHitPosition = info.hitPosition;
 
 					Invalidate();
 				}
