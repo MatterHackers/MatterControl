@@ -67,10 +67,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 
 				Mesh bottomBounds = PlatonicSolids.CreateCube(selectedBounds.XSize, selectedBounds.YSize, .1);
-				Vector3 bottomRight = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-				Vector2 bottomRightScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomRight);
-
 				RenderMeshToGl.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
+
+				if (false)
+				{
+					Vector3 lastHitPosition = view3DWidget.LastHitPosition;
+					double lineWidth = .5;
+					if (lastHitPosition.x < selectedBounds.Center.x)
+					{
+						Mesh leftSide = PlatonicSolids.CreateCube(lineWidth, selectedBounds.YSize, .1);
+						Matrix4X4 leftTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.minXYZ.x, selectedBounds.Center.y, 0.1));
+						RenderMeshToGl.Render(leftSide, new RGBA_Bytes(222, 80, 20), leftTransform, RenderTypes.Shaded);
+					}
+					else
+					{
+						Mesh rightSide = PlatonicSolids.CreateCube(lineWidth, selectedBounds.YSize, .1);
+						Matrix4X4 rightTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.maxXYZ.x, selectedBounds.Center.y, 0.1));
+						RenderMeshToGl.Render(rightSide, new RGBA_Bytes(222, 80, 20), rightTransform, RenderTypes.Shaded);
+					}
+					if (lastHitPosition.y < selectedBounds.Center.y)
+					{
+						Mesh bottomSide = PlatonicSolids.CreateCube(selectedBounds.XSize, lineWidth, .1);
+						Matrix4X4 bottomTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.Center.x, selectedBounds.minXYZ.y, 0.1));
+						RenderMeshToGl.Render(bottomSide, new RGBA_Bytes(222, 80, 20), bottomTransform, RenderTypes.Shaded);
+					}
+					else
+					{
+						Mesh topSide = PlatonicSolids.CreateCube(selectedBounds.XSize, lineWidth, .1);
+						Matrix4X4 topTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.Center.x, selectedBounds.maxXYZ.y, 0.1));
+						RenderMeshToGl.Render(topSide, new RGBA_Bytes(222, 80, 20), topTransform, RenderTypes.Shaded);
+					}
+				}
 			}
 
 			base.DrawGlContent(e);

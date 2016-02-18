@@ -1,4 +1,5 @@
-﻿using MatterHackers.MatterControl.DataStorage;
+﻿using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -17,57 +18,56 @@ namespace MatterHackers.MatterControl.Queue.OptionsMenu
 				new PrintItemAction()
 				{
 					SingleItemOnly = false,
-					Title = "Merge...",
+					Title = "Create Combine...",
 					Action = (items, queueDataWidget) =>
 					{
 						List<QueueRowItem> allRowItems = new List<QueueRowItem>(items);
 						if (allRowItems.Count > 1)
 						{
-							List<MeshGroup> combinedMeshes = new List<MeshGroup>();
-
-							// Load up all the parts and merge them together
-							foreach(QueueRowItem item in allRowItems)
+							RenameItemWindow renameItemWindow = new RenameItemWindow(allRowItems[0].PrintItemWrapper.Name, (returnInfo) =>
 							{
-								List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(item.PrintItemWrapper.FileLocation);
-								combinedMeshes.AddRange(loadedMeshGroups);
-							}
-
-							// save them out
-							string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
-							MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-							string libraryDataPath = ApplicationDataStorage.Instance.ApplicationLibraryDataPath;
-							if (!Directory.Exists(libraryDataPath))
-							{
-								Directory.CreateDirectory(libraryDataPath);
-							}
-
-							string tempFileNameToSaveTo = Path.Combine(libraryDataPath, Path.ChangeExtension(Path.GetRandomFileName(), "amf"));
-							bool savedSuccessfully = MeshFileIo.Save(combinedMeshes, tempFileNameToSaveTo, outputInfo);
-
-							// Swap out the files if the save operation completed successfully
-							if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
-							{
-								// create a new print item
-								// add it to the queue
-								PrintItemWrapper newPrintItem = new PrintItemWrapper(new PrintItem(allRowItems[0].PrintItemWrapper.Name, tempFileNameToSaveTo));
-								QueueData.Instance.AddItem(newPrintItem, QueueData.Instance.GetIndex(allRowItems[0].PrintItemWrapper));
-
-								// remove the parts that we merged
 								Task.Run(() =>
 								{
-									for (int i=allRowItems.Count-1; i>=0; i--)
+									List<MeshGroup> combinedMeshes = new List<MeshGroup>();
+
+									// Load up all the parts and merge them together
+									foreach(QueueRowItem item in allRowItems)
 									{
-										QueueRowItem rowItem = allRowItems[i];
-										// remove all the items that we just merged
-										QueueData.Instance.RemoveAt(QueueData.Instance.GetIndex(rowItem.PrintItemWrapper));
+										List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(item.PrintItemWrapper.FileLocation);
+										combinedMeshes.AddRange(loadedMeshGroups);
 									}
 
-									// select the part we added, if possible
-									QueueData.Instance.SelectedIndex = QueueData.Instance.GetIndex(newPrintItem);
+									// save them out
+									string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
+									MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+									string libraryDataPath = ApplicationDataStorage.Instance.ApplicationLibraryDataPath;
+									if (!Directory.Exists(libraryDataPath))
+									{
+										Directory.CreateDirectory(libraryDataPath);
+									}
 
-									queueDataWidget.LeaveEditMode();
+									string tempFileNameToSaveTo = Path.Combine(libraryDataPath, Path.ChangeExtension(Path.GetRandomFileName(), "amf"));
+									bool savedSuccessfully = MeshFileIo.Save(combinedMeshes, tempFileNameToSaveTo, outputInfo);
+
+									// Swap out the files if the save operation completed successfully
+									if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
+									{
+										// create a new print item
+										// add it to the queue
+										PrintItemWrapper newPrintItem = new PrintItemWrapper(new PrintItem(returnInfo.newName, tempFileNameToSaveTo));
+										QueueData.Instance.AddItem(newPrintItem, 0);
+
+										// select the part we added, if possible
+										QueueData.Instance.SelectedIndex = 0;
+
+										queueDataWidget.LeaveEditMode();
+									}
 								});
-							}
+							}, "Set Name".Localize())
+							{
+								Title = "MatterHackers - Set Name".Localize(),
+								ElementHeader = "Set Name".Localize(),
+							};
 						}
 					}
 				}

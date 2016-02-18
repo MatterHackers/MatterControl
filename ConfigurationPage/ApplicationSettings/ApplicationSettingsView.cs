@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				{
 					UserSettings.Instance.set("ThumbnailRenderingMode", thumbnailRenderingMode);
 
-					// Ask if the usrer would like to rebaild all their thumbnails
+					// Ask if the user would like to rebuild all their thumbnails
 					Action<bool> removeThumbnails = (bool shouldRebuildThumbnails) =>
 					{
 						if (shouldRebuildThumbnails)
@@ -556,7 +556,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string languageCode = ((DropDownList)sender).SelectedLabel;
+			string languageCode = ((DropDownList)sender).SelectedValue;
 			if (languageCode != UserSettings.Instance.get("Language"))
 			{
 				UserSettings.Instance.set("Language", languageCode);

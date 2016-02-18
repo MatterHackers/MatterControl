@@ -13,6 +13,14 @@ namespace MatterHackers.MatterControl
 		private Action<RenameItemReturnInfo> functionToCallToCreateNamedFolder;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget saveAsNameWidget;
+		TextWidget elementHeader;
+		Button renameItemButton;
+
+		public string ElementHeader
+		{
+			get { return elementHeader.Text; }
+			set { elementHeader.Text = value; }
+		}
 
 		public class RenameItemReturnInfo
 		{
@@ -24,7 +32,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public RenameItemWindow(string currentItemName, Action<RenameItemReturnInfo> functionToCallToRenameItem)
+		public RenameItemWindow(string currentItemName, Action<RenameItemReturnInfo> functionToCallToRenameItem, string renameButtonString = null)
 			: base(480, 180)
 		{
 			Title = "MatterControl - Rename Item";
@@ -46,7 +54,7 @@ namespace MatterHackers.MatterControl
 			//Creates Text and adds into header
 			{
 				string renameItemLabel = "Rename Item:".Localize();
-				TextWidget elementHeader = new TextWidget(renameItemLabel, pointSize: 14);
+				elementHeader = new TextWidget(renameItemLabel, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				elementHeader.HAnchor = HAnchor.ParentLeftRight;
 				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -89,7 +97,11 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			Button renameItemButton = textImageButtonFactory.Generate("Rename".Localize(), centerText: true);
+			if(renameButtonString == null)
+			{
+				renameButtonString = "Rename".Localize();
+            }
+			renameItemButton = textImageButtonFactory.Generate(renameButtonString, centerText: true);
 			renameItemButton.Name = "Rename Button";
 			renameItemButton.Visible = true;
 			renameItemButton.Cursor = Cursors.Hand;

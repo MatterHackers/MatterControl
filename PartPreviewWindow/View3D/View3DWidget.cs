@@ -165,10 +165,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.VAnchor = Agg.UI.VAnchor.ParentCenter;
 				editToolBar.AddChild(processingProgressControl);
 				editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-				editToolBar.HAnchor = HAnchor.ParentLeftRight;
 				processingProgressControl.Visible = false;
 
-				// If the window is embeded (in the center pannel) and there is no item loaded then don't show the add button
+				// If the window is embedded (in the center panel) and there is no item loaded then don't show the add button
 				enterEditButtonsContainer = new FlowLayoutWidget();
 				{
 					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
@@ -226,7 +225,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				doEdittingButtonsContainer = new FlowLayoutWidget();
 				doEdittingButtonsContainer.Visible = false;
-				doEdittingButtonsContainer.HAnchor = HAnchor.ParentLeftRight;
 
 				{
 					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
@@ -481,9 +479,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Dictionary<double, string> snapSettings = new Dictionary<double, string>()
 			{
 				{ 0, "Off" },
-				{ .1, ".1" },
-				{ .25, ".25" },
-				{ .5, ".5" },
+				{ .1, "0.1" },
+				{ .25, "0.25" },
+				{ .5, "0.5" },
 				{ 1, "1" },
 				{ 2, "2" },
 				{ 5, "5" },
@@ -800,6 +798,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public Vector3 LastHitPosition { get; private set; }
+
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
@@ -809,7 +809,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
 				if (info != null)
 				{
+					LastHitPosition = info.hitPosition;
 					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
+
+					if (false)//meshViewerWidget.SnapGridDistance > 0)
+					{
+						// snap this position to the grid
+						double snapGridDistance = meshViewerWidget.SnapGridDistance;
+						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.GetBoundsForSelection();
+
+						// snap the x position
+						if (info.hitPosition.x < selectedBounds.Center.x)
+						{
+							double left = selectedBounds.minXYZ.x + delta.x;
+							double snappedLeft = ((int)((left / snapGridDistance) + .5)) * snapGridDistance;
+							delta.x = snappedLeft - selectedBounds.minXYZ.x;
+						}
+						else
+						{
+							double right = selectedBounds.maxXYZ.x + delta.x;
+							double snappedRight = ((int)((right / snapGridDistance) + .5)) * snapGridDistance;
+							delta.x = snappedRight - selectedBounds.maxXYZ.x;
+						}
+
+						// snap the y position
+					}
+
 
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
 					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
