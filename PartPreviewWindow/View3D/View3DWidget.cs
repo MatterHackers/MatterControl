@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
 			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
 
-			// make sure the colors are set correctl
+			// make sure the colors are set correct
 			ThemeChanged(this, null);
 
 			saveButtons.VisibleChanged += (sender, e) =>
@@ -453,6 +453,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             DrawBefore += CreateBooleanTestGeometry;
             DrawAfter += RemoveBooleanTestGeometry;
 #endif
+		}
+
+		public bool DragingPart
+		{
+			get { return meshSelectInfo.downOnPart; }
 		}
 
 		private void AddGridSnapSettings(GuiWidget widgetToAddTo)
@@ -812,7 +817,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					LastHitPosition = info.hitPosition;
 					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
 
-					if (false)//meshViewerWidget.SnapGridDistance > 0)
+					if (false)// meshViewerWidget.SnapGridDistance > 0)
 					{
 						// snap this position to the grid
 						double snapGridDistance = meshViewerWidget.SnapGridDistance;
@@ -827,14 +832,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							double right = selectedBounds.maxXYZ.x + delta.x;
+							double right = selectedBounds.maxXYZ.x - delta.x;
 							double snappedRight = ((int)((right / snapGridDistance) + .5)) * snapGridDistance;
-							delta.x = snappedRight - selectedBounds.maxXYZ.x;
+							//delta.x = selectedBounds.maxXYZ.x - snappedRight;
 						}
 
 						// snap the y position
+						if (info.hitPosition.y < selectedBounds.Center.y)
+						{
+							double bottom = selectedBounds.minXYZ.y + delta.y;
+							double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
+							//delta.y = snappedBottom - selectedBounds.minXYZ.y;
+						}
+						else
+						{
+							double top = selectedBounds.maxXYZ.y + delta.y;
+							double snappedTop = ((int)((top / snapGridDistance) + .5)) * snapGridDistance;
+							//delta.y = snappedTop - selectedBounds.maxXYZ.y;
+						}
 					}
-
 
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
 					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Mesh bottomBounds = PlatonicSolids.CreateCube(selectedBounds.XSize, selectedBounds.YSize, .1);
 				RenderMeshToGl.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
 
-				if (false)
+				if (false)// view3DWidget.DragingPart)
 				{
 					Vector3 lastHitPosition = view3DWidget.LastHitPosition;
 					double lineWidth = .5;
