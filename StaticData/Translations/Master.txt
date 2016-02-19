@@ -4534,3 +4534,9 @@ Translated:Save Changes
 English:Snap Grid
 Translated:Snap Grid
 
+English:Retraction On Tool Change
+Translated:Retraction On Tool Change
+
+English:randomize_start
+Translated:randomize_start
+

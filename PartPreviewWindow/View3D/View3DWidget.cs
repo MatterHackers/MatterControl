@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool hasDrawn = false;
 		private FlowLayoutWidget materialOptionContainer;
 		private List<PlatingMeshGroupData> MeshGroupExtraData;
-		private MeshSelectInfo meshSelectInfo;
+		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
 		private FlowLayoutWidget mirrorOptionContainer;
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
@@ -346,9 +346,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (keyEvent.KeyCode == Keys.Escape)
 						{
-							if (meshSelectInfo.downOnPart)
+							if (CurrentSelectInfo.DownOnPart)
 							{
-								meshSelectInfo.downOnPart = false;
+								CurrentSelectInfo.DownOnPart = false;
 
 								ScaleRotateTranslate translated = SelectedMeshGroupTransform;
 								translated.translation = transformOnMouseDown;
@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
 			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
 
-			// make sure the colors are set correctl
+			// make sure the colors are set correct
 			ThemeChanged(this, null);
 
 			saveButtons.VisibleChanged += (sender, e) =>
@@ -453,6 +453,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             DrawBefore += CreateBooleanTestGeometry;
             DrawAfter += RemoveBooleanTestGeometry;
 #endif
+		}
+
+		public bool DragingPart
+		{
+			get { return CurrentSelectInfo.DownOnPart; }
 		}
 
 		private void AddGridSnapSettings(GuiWidget widgetToAddTo)
@@ -777,15 +782,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (!meshViewerWidget.MouseDownOnInteractionVolume)
 					{
 						int meshGroupHitIndex;
-						if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
+						IntersectInfo info = new IntersectInfo();
+						if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex, ref info))
 						{
-							meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
+							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.z, null);
 							SelectedMeshGroupIndex = meshGroupHitIndex;
 
 							transformOnMouseDown = SelectedMeshGroupTransform.translation;
 
 							Invalidate();
-							meshSelectInfo.downOnPart = true;
+							CurrentSelectInfo.DownOnPart = true;
+
+							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.GetBoundsForSelection();
+
+							if (info.hitPosition.x < selectedBounds.Center.x)
+							{
+								if (info.hitPosition.y < selectedBounds.Center.y)
+								{
+									CurrentSelectInfo.HitQuadrant = HitQuadrant.LB;
+								}
+								else
+								{
+									CurrentSelectInfo.HitQuadrant = HitQuadrant.LT;
+								}
+							}
+							else
+							{
+								if (info.hitPosition.y < selectedBounds.Center.y)
+								{
+									CurrentSelectInfo.HitQuadrant = HitQuadrant.RB;
+								}
+								else
+								{
+									CurrentSelectInfo.HitQuadrant = HitQuadrant.RT;
+								}
+							}
 						}
 						else
 						{
@@ -802,24 +833,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
+			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && CurrentSelectInfo.DownOnPart)
 			{
 				Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
 				Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-				IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
+				IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 				if (info != null)
 				{
-					LastHitPosition = info.hitPosition;
-					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
+					// move the mesh back to the start position
+					{
+						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
+						ScaleRotateTranslate translated = SelectedMeshGroupTransform;
+						translated.translation *= totalTransform;
+						SelectedMeshGroupTransform = translated;
+					}
 
-					if (false)//meshViewerWidget.SnapGridDistance > 0)
+					Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
+
+					if (meshViewerWidget.SnapGridDistance > 0)
 					{
 						// snap this position to the grid
 						double snapGridDistance = meshViewerWidget.SnapGridDistance;
 						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.GetBoundsForSelection();
 
 						// snap the x position
-						if (info.hitPosition.x < selectedBounds.Center.x)
+						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LB
+							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.LT)
 						{
 							double left = selectedBounds.minXYZ.x + delta.x;
 							double snappedLeft = ((int)((left / snapGridDistance) + .5)) * snapGridDistance;
@@ -827,22 +866,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							double right = selectedBounds.maxXYZ.x + delta.x;
+							double right = selectedBounds.maxXYZ.x - delta.x;
 							double snappedRight = ((int)((right / snapGridDistance) + .5)) * snapGridDistance;
-							delta.x = snappedRight - selectedBounds.maxXYZ.x;
+							delta.x = selectedBounds.maxXYZ.x - snappedRight;
 						}
 
 						// snap the y position
+						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LB
+							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RB)
+						{
+							double bottom = selectedBounds.minXYZ.y + delta.y;
+							double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
+							delta.y = snappedBottom - selectedBounds.minXYZ.y;
+						}
+						else
+						{
+							double top = selectedBounds.maxXYZ.y + delta.y;
+							double snappedTop = ((int)((top / snapGridDistance) + .5)) * snapGridDistance;
+							delta.y = snappedTop - selectedBounds.maxXYZ.y;
+						}
 					}
 
+					// move the mesh back to the new position
+					{
+						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
 
-					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
-					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
-					meshSelectInfo.lastMoveDelta = delta;
+						ScaleRotateTranslate translated = SelectedMeshGroupTransform;
+						translated.translation *= totalTransform;
+						SelectedMeshGroupTransform = translated;
 
-					ScaleRotateTranslate translated = SelectedMeshGroupTransform;
-					translated.translation *= totalTransform;
-					SelectedMeshGroupTransform = translated;
+						CurrentSelectInfo.LastMoveDelta = delta;
+					}
+
+					LastHitPosition = info.hitPosition;
 
 					Invalidate();
 				}
@@ -854,13 +910,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-				&& meshSelectInfo.downOnPart
-				&& meshSelectInfo.lastMoveDelta != Vector3.Zero)
+				&& CurrentSelectInfo.DownOnPart
+				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 			{
 				PartHasBeenChanged();
 			}
 
-			meshSelectInfo.downOnPart = false;
+			CurrentSelectInfo.DownOnPart = false;
 
 			if (activeButtonBeforeMouseOverride != null)
 			{
@@ -1714,7 +1770,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex)
+		private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex, ref IntersectInfo info)
 		{
 			meshHitIndex = 0;
 			if (MeshGroupExtraData.Count == 0 || MeshGroupExtraData[0].meshTraceableData == null)
@@ -1734,11 +1790,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
 			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-			IntersectInfo info = allObjects.GetClosestIntersection(ray);
+			info = allObjects.GetClosestIntersection(ray);
 			if (info != null)
 			{
-				meshSelectInfo.planeDownHitPos = info.hitPosition;
-				meshSelectInfo.lastMoveDelta = new Vector3();
+				CurrentSelectInfo.PlaneDownHitPos = info.hitPosition;
+				CurrentSelectInfo.LastMoveDelta = new Vector3();
 
 				for (int i = 0; i < MeshGroupExtraData.Count; i++)
 				{
@@ -2530,13 +2586,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sizeDisplay[2].SetDisplayString("---");
 			}
 		}
+	}
 
-		internal struct MeshSelectInfo
-		{
-			internal bool downOnPart;
-			internal PlaneShape hitPlane;
-			internal Vector3 lastMoveDelta;
-			internal Vector3 planeDownHitPos;
-		}
+	public enum HitQuadrant { LB, LT, RB, RT }
+	public class MeshSelectInfo
+	{
+		public HitQuadrant HitQuadrant;
+		public bool DownOnPart;
+		public PlaneShape HitPlane;
+		public Vector3 LastMoveDelta;
+		public Vector3 PlaneDownHitPos;
 	}
 }

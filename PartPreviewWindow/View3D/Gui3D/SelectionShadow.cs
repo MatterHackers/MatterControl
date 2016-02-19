@@ -69,33 +69,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Mesh bottomBounds = PlatonicSolids.CreateCube(selectedBounds.XSize, selectedBounds.YSize, .1);
 				RenderMeshToGl.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
 
-				if (false)
+				RGBA_Bytes snapColorBorder = RGBA_Bytes.Red;
+
+				if (view3DWidget.DragingPart)
 				{
 					Vector3 lastHitPosition = view3DWidget.LastHitPosition;
 					double lineWidth = .5;
-					if (lastHitPosition.x < selectedBounds.Center.x)
+
+					MeshSelectInfo meshSelectInfo = view3DWidget.CurrentSelectInfo;
+
+					if (meshSelectInfo.HitQuadrant == HitQuadrant.LB
+						|| meshSelectInfo.HitQuadrant == HitQuadrant.LT)
 					{
 						Mesh leftSide = PlatonicSolids.CreateCube(lineWidth, selectedBounds.YSize, .1);
 						Matrix4X4 leftTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.minXYZ.x, selectedBounds.Center.y, 0.1));
-						RenderMeshToGl.Render(leftSide, new RGBA_Bytes(222, 80, 20), leftTransform, RenderTypes.Shaded);
+						RenderMeshToGl.Render(leftSide, snapColorBorder, leftTransform, RenderTypes.Shaded);
 					}
 					else
 					{
 						Mesh rightSide = PlatonicSolids.CreateCube(lineWidth, selectedBounds.YSize, .1);
 						Matrix4X4 rightTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.maxXYZ.x, selectedBounds.Center.y, 0.1));
-						RenderMeshToGl.Render(rightSide, new RGBA_Bytes(222, 80, 20), rightTransform, RenderTypes.Shaded);
+						RenderMeshToGl.Render(rightSide, snapColorBorder, rightTransform, RenderTypes.Shaded);
 					}
-					if (lastHitPosition.y < selectedBounds.Center.y)
+
+					if (meshSelectInfo.HitQuadrant == HitQuadrant.LB
+						|| meshSelectInfo.HitQuadrant == HitQuadrant.RB)
 					{
 						Mesh bottomSide = PlatonicSolids.CreateCube(selectedBounds.XSize, lineWidth, .1);
 						Matrix4X4 bottomTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.Center.x, selectedBounds.minXYZ.y, 0.1));
-						RenderMeshToGl.Render(bottomSide, new RGBA_Bytes(222, 80, 20), bottomTransform, RenderTypes.Shaded);
+						RenderMeshToGl.Render(bottomSide, snapColorBorder, bottomTransform, RenderTypes.Shaded);
 					}
 					else
 					{
 						Mesh topSide = PlatonicSolids.CreateCube(selectedBounds.XSize, lineWidth, .1);
 						Matrix4X4 topTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.Center.x, selectedBounds.maxXYZ.y, 0.1));
-						RenderMeshToGl.Render(topSide, new RGBA_Bytes(222, 80, 20), topTransform, RenderTypes.Shaded);
+						RenderMeshToGl.Render(topSide, snapColorBorder, topTransform, RenderTypes.Shaded);
 					}
 				}
 			}
