@@ -2,7 +2,7 @@
   {
     "SlicerConfigName": "avoid_crossing_perimeters",
     "PresentationName": "Avoid Crossing Perimeters",
-    "HelpText": "Attempts to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.",
+    "HelpText": "Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },
@@ -88,7 +88,7 @@
   {
     "SlicerConfigName": "build_height",
     "PresentationName": "Build Height",
-    "HelpText": "The height of the printer's printable volume, in millimeters. Primarily controls the height of the visual print area displayed in 3D View.",
+    "HelpText": "The height of the printer's printable volume, in millimeters. Serves no purpose for slicing, but controls the height of the visual print area displayed in 3D View.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -195,7 +195,7 @@
   {
     "SlicerConfigName": "external_perimeter_speed",
     "PresentationName": "Outside Perimeter",
-    "HelpText": "The speed at which outside, (visible) perimeters will print.",
+    "HelpText": "The speed at which outside, external, or the otherwise visible perimeters will print.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "mm/s or %"
   },
@@ -244,7 +244,7 @@
   {
     "SlicerConfigName": "extruders_share_temperature",
     "PresentationName": "Share Temperature",
-    "HelpText": "Indicate that the extruders share a common heater cartridge.",
+    "HelpText": "Used to specify if more than one extruder share a common heater cartridge.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },
@@ -295,7 +295,7 @@
   {
     "SlicerConfigName": "filament_diameter",
     "PresentationName": "Diameter",
-    "HelpText": "The actual diameter of the filament used for printing.",
+    "HelpText": "The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -346,7 +346,7 @@
   {
     "SlicerConfigName": "first_layer_height",
     "PresentationName": "First Layer Height",
-    "HelpText": "The height of the first layer. A first layer taller than the default layer height can sometimes be used to improve adhesion to the build plate.",
+    "HelpText": "The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "mm or %"
   },
@@ -404,7 +404,7 @@
     "PresentationName": "G-Code Output",
     "HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
     "DataEditType": "LIST",
-    "ExtraSettings": "REPRAP,ULTIGCODE,BFB,MACH3"
+    "ExtraSettings": "REPRAP,ULTIGCODE,MAKERBOT,BFB,MACH3"
   },
   {
     "SlicerConfigName": "has_fan",
@@ -430,7 +430,7 @@
   {
     "SlicerConfigName": "has_power_control",
     "PresentationName": "Has Power Control",
-    "HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Control pane.",
+    "HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.",
     "DataEditType": "HARDWARE_PRESENT",
     "ExtraSettings": ""
   },
@@ -1169,7 +1169,7 @@
   },
   {
     "SlicerConfigName": "wipe",
-    "PresentationName": "Wipe After Retract",
+    "PresentationName": "Wipe Before Retract",
     "HelpText": "The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
@@ -1190,7 +1190,7 @@
   },
   {
     "SlicerConfigName": "z_can_be_negative",
-    "PresentationName": "Allow Negative Z",
+    "PresentationName": "Z Can Be Negative",
     "HelpText": "Allows the printer to attempt going below 0 along the Z axis during the Software Print Leveling wizard, and disables related warnings. Does not override actual endstops, physical or software.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": "",
