@@ -49,12 +49,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
-			for (int i = 0; i < asynchMeshGroups.Count; i++)
+			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
-				asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
+				asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i].TotalTransform);
 
 				bool continueProcessing;
-				ReportProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
+				ReportProgressChanged((i + 1) * .4 / asyncMeshGroups.Count, "", out continueProcessing);
 			}
 
 			if (SelectedMeshGroupIndex == -1)
@@ -62,10 +62,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SelectedMeshGroupIndex = 0;
 			}
 
-			MeshGroup meshGroupWeAreKeeping = asynchMeshGroups[SelectedMeshGroupIndex];
-			for (int meshGroupToMoveIndex = asynchMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
+			MeshGroup meshGroupWeAreKeeping = asyncMeshGroups[SelectedMeshGroupIndex];
+			for (int meshGroupToMoveIndex = asyncMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
 			{
-				MeshGroup meshGroupToMove = asynchMeshGroups[meshGroupToMoveIndex];
+				MeshGroup meshGroupToMove = asyncMeshGroups[meshGroupToMoveIndex];
 				if (meshGroupToMove != meshGroupWeAreKeeping)
 				{
 					for (int moveIndex = 0; moveIndex < meshGroupToMove.Meshes.Count; moveIndex++)
@@ -74,27 +74,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						meshGroupWeAreKeeping.Meshes.Add(mesh);
 					}
 
-					asynchMeshGroups.RemoveAt(meshGroupToMoveIndex);
-					asynchMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
+					asyncMeshGroups.RemoveAt(meshGroupToMoveIndex);
+					asyncMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
 				}
 				else
 				{
-					asynchMeshGroupTransforms[meshGroupToMoveIndex] = ScaleRotateTranslate.Identity();
+					asyncMeshGroupTransforms[meshGroupToMoveIndex] = ScaleRotateTranslate.Identity();
 				}
 			}
 
-			asynchPlatingDatas.Clear();
-			double ratioPerMeshGroup = 1.0 / asynchMeshGroups.Count;
+			asyncPlatingDatas.Clear();
+			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
 			double currentRatioDone = 0;
-			for (int i = 0; i < asynchMeshGroups.Count; i++)
+			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
 				PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-				asynchPlatingDatas.Add(newInfo);
+				asyncPlatingDatas.Add(newInfo);
 
-				MeshGroup meshGroup = asynchMeshGroups[i];
+				MeshGroup meshGroup = asyncMeshGroups[i];
 
 				// create the selection info
-				PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
+				PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
 				{
 					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
 				});

@@ -52,18 +52,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
 
-			asynchPlatingDatas.Clear();
-			double ratioPerMeshGroup = 1.0 / asynchMeshGroups.Count;
+			asyncPlatingDatas.Clear();
+			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
 			double currentRatioDone = 0;
-			for (int i = 0; i < asynchMeshGroups.Count; i++)
+			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
 				PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-				asynchPlatingDatas.Add(newInfo);
+				asyncPlatingDatas.Add(newInfo);
 
-				MeshGroup meshGroup = asynchMeshGroups[i];
+				MeshGroup meshGroup = asyncMeshGroups[i];
 
 				// create the selection info
-				PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
+				PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
 				{
 					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
 				});
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool continueProcessing2;
 			ReportProgressChanged(1, "Creating GL Data", out continueProcessing2);
-			meshViewerWidget.CreateGlDataForMeshes(asynchMeshGroups);
+			meshViewerWidget.CreateGlDataForMeshes(asyncMeshGroups);
 		}
 
 		private async void EnterEditAndCreateSelectionData()

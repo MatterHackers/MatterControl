@@ -76,9 +76,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		private Button closeButton;
 		private String word;
 
-		private List<MeshGroup> asynchMeshGroups = new List<MeshGroup>();
-		private List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
-		private List<PlatingMeshGroupData> asynchPlatingDatas = new List<PlatingMeshGroupData>();
+		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
+		private List<ScaleRotateTranslate> asyncMeshGroupTransforms = new List<ScaleRotateTranslate>();
+		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
 
 		private List<PlatingMeshGroupData> MeshGroupExtraData;
 
@@ -428,9 +428,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			asynchMeshGroups.Clear();
-			asynchMeshGroupTransforms.Clear();
-			asynchPlatingDatas.Clear();
+			asyncMeshGroups.Clear();
+			asyncMeshGroupTransforms.Clear();
+			asyncPlatingDatas.Clear();
 
 			TypeFacePrinter printer = new TypeFacePrinter(currentText, new StyledTypeFace(boldTypeFace, 12));
 			Vector2 size = printer.GetSize(currentText);
@@ -440,22 +440,22 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			double currentRatioDone = 0;
 			for (int i = 0; i < currentText.Length; i++)
 			{
-				int newIndex = asynchMeshGroups.Count;
+				int newIndex = asyncMeshGroups.Count;
 
 				TypeFacePrinter letterPrinter = new TypeFacePrinter(currentText[i].ToString(), new StyledTypeFace(boldTypeFace, 12));
 				Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 10 + (i % 2));
 
 				if (textMesh.Faces.Count > 0)
 				{
-					asynchMeshGroups.Add(new MeshGroup(textMesh));
+					asyncMeshGroups.Add(new MeshGroup(textMesh));
 
 					PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
 
 					newMeshInfo.spacing.x = printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset;
-					asynchPlatingDatas.Add(newMeshInfo);
-					asynchMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
+					asyncPlatingDatas.Add(newMeshInfo);
+					asyncMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
 
-					PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, newIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
+					PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, newIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
 					{
 						continueProcessing = true;
 						int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
@@ -464,19 +464,19 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					currentRatioDone += ratioPerMeshGroup;
 
-					PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, newIndex);
+					PlatingHelper.PlaceMeshGroupOnBed(asyncMeshGroups, asyncMeshGroupTransforms, newIndex);
 				}
 
 				processingProgressControl.PercentComplete = ((i + 1) * 95 / currentText.Length);
 			}
 
-			SetWordSpacing(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
-			SetWordSize(asynchMeshGroups, asynchMeshGroupTransforms);
-			SetWordHeight(asynchMeshGroups, asynchMeshGroupTransforms);
+			SetWordSpacing(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas);
+			SetWordSize(asyncMeshGroups, asyncMeshGroupTransforms);
+			SetWordHeight(asyncMeshGroups, asyncMeshGroupTransforms);
 
 			if (createUnderline.Checked)
 			{
-				CreateUnderline(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
+				CreateUnderline(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas);
 			}
 
 			processingProgressControl.PercentComplete = 95;
@@ -505,8 +505,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private void PushMeshGroupDataToAsynchLists(bool copyTraceInfo)
 		{
-			asynchMeshGroups.Clear();
-			asynchMeshGroupTransforms.Clear();
+			asyncMeshGroups.Clear();
+			asyncMeshGroupTransforms.Clear();
 			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
 			{
 				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
@@ -515,11 +515,11 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				{
 					Mesh mesh = meshGroup.Meshes[meshIndex];
 					newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
-					asynchMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
+					asyncMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
 				}
-				asynchMeshGroups.Add(newMeshGroup);
+				asyncMeshGroups.Add(newMeshGroup);
 			}
-			asynchPlatingDatas.Clear();
+			asyncPlatingDatas.Clear();
 
 			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
 			{
@@ -533,7 +533,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
 					}
 				}
-				asynchPlatingDatas.Add(meshData);
+				asyncPlatingDatas.Add(meshData);
 			}
 		}
 
@@ -550,17 +550,17 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		private void PullMeshDataFromAsynchLists()
 		{
 			MeshGroups.Clear();
-			foreach (MeshGroup mesh in asynchMeshGroups)
+			foreach (MeshGroup mesh in asyncMeshGroups)
 			{
 				MeshGroups.Add(mesh);
 			}
 			MeshGroupTransforms.Clear();
-			foreach (ScaleRotateTranslate transform in asynchMeshGroupTransforms)
+			foreach (ScaleRotateTranslate transform in asyncMeshGroupTransforms)
 			{
 				MeshGroupTransforms.Add(transform);
 			}
 			MeshGroupExtraData.Clear();
-			foreach (PlatingMeshGroupData meshData in asynchPlatingDatas)
+			foreach (PlatingMeshGroupData meshData in asyncPlatingDatas)
 			{
 				MeshGroupExtraData.Add(meshData);
 			}
@@ -892,7 +892,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				// we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
+				// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
 				PushMeshGroupDataToAsynchLists(true);
 
 				string fileName = "TextCreator_{0}".FormatWith(Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
@@ -922,22 +922,22 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			try
 			{
 				// push all the transforms into the meshes
-				for (int i = 0; i < asynchMeshGroups.Count; i++)
+				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					asynchMeshGroups[i].Transform(MeshGroupTransforms[i].TotalTransform);
+					asyncMeshGroups[i].Transform(MeshGroupTransforms[i].TotalTransform);
 
-					processingProgressControl.RatioComplete = (double)i / asynchMeshGroups.Count * .1;
+					processingProgressControl.RatioComplete = (double)i / asyncMeshGroups.Count * .1;
 				}
 
 				List<MeshGroup> mergResults = new List<MeshGroup>();
 				mergResults.Add(new MeshGroup());
 				mergResults[0].Meshes.Add(new Mesh());
 				double meshGroupIndex = 0;
-				foreach (MeshGroup meshGroup in asynchMeshGroups)
+				foreach (MeshGroup meshGroup in asyncMeshGroups)
 				{
 					foreach (Mesh mesh in meshGroup.Meshes)
 					{
-						processingProgressControl.RatioComplete = .1 + (double)meshGroupIndex / asynchMeshGroups.Count;
+						processingProgressControl.RatioComplete = .1 + (double)meshGroupIndex / asyncMeshGroups.Count;
 						mergResults[0].Meshes[0] = CsgOperations.Union(mergResults[0].Meshes[0], mesh);
 					}
 					meshGroupIndex++;

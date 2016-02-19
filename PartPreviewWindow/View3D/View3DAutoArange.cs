@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 					PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
-					PlatingHelper.ArrangeMeshGroups(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas, ReportProgressChanged);
+					PlatingHelper.ArrangeMeshGroups(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas, ReportProgressChanged);
 				});
 
 				if (WidgetHasBeenClosed)
@@ -67,11 +67,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// offset them to the centor of the bed
-				for (int i = 0; i < asynchMeshGroups.Count; i++)
+				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					ScaleRotateTranslate translate = asynchMeshGroupTransforms[i];
+					ScaleRotateTranslate translate = asyncMeshGroupTransforms[i];
 					translate.translation *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.BedCenter, 0));
-					asynchMeshGroupTransforms[i] = translate;
+					asyncMeshGroupTransforms[i] = translate;
 				}
 
 				UnlockEditControls();

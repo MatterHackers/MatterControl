@@ -44,20 +44,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
-			MeshGroup meshGroupToCopy = asynchMeshGroups[SelectedMeshGroupIndex];
+			MeshGroup meshGroupToCopy = asyncMeshGroups[SelectedMeshGroupIndex];
 			MeshGroup copyMeshGroup = new MeshGroup();
 			double meshCount = meshGroupToCopy.Meshes.Count;
 			for (int i = 0; i < meshCount; i++)
 			{
-				Mesh mesh = asynchMeshGroups[SelectedMeshGroupIndex].Meshes[i];
+				Mesh mesh = asyncMeshGroups[SelectedMeshGroupIndex].Meshes[i];
 				copyMeshGroup.Meshes.Add(Mesh.Copy(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
 				{
 					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
 				}));
 			}
 
-			PlatingHelper.FindPositionForGroupAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, asynchPlatingDatas, asynchMeshGroups, asynchMeshGroupTransforms);
-			PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, null);
+			PlatingHelper.FindPositionForGroupAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
+			PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, asyncMeshGroups.Count - 1, null);
 
 			bool continueProcessing2;
 			ReportProgressChanged(.95, "", out continueProcessing2);
