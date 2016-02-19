@@ -75,7 +75,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Vector3 lastHitPosition = view3DWidget.LastHitPosition;
 					double lineWidth = .5;
-					if (lastHitPosition.x < selectedBounds.Center.x)
+
+					MeshSelectInfo meshSelectInfo = view3DWidget.CurrentSelectInfo;
+
+					if (meshSelectInfo.HitQuadrant == HitQuadrant.LB
+						|| meshSelectInfo.HitQuadrant == HitQuadrant.LT)
 					{
 						Mesh leftSide = PlatonicSolids.CreateCube(lineWidth, selectedBounds.YSize, .1);
 						Matrix4X4 leftTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.minXYZ.x, selectedBounds.Center.y, 0.1));
@@ -87,7 +91,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Matrix4X4 rightTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.maxXYZ.x, selectedBounds.Center.y, 0.1));
 						RenderMeshToGl.Render(rightSide, snapColorBorder, rightTransform, RenderTypes.Shaded);
 					}
-					if (lastHitPosition.y < selectedBounds.Center.y)
+
+					if (meshSelectInfo.HitQuadrant == HitQuadrant.LB
+						|| meshSelectInfo.HitQuadrant == HitQuadrant.RB)
 					{
 						Mesh bottomSide = PlatonicSolids.CreateCube(selectedBounds.XSize, lineWidth, .1);
 						Matrix4X4 bottomTransform = Matrix4X4.CreateTranslation(new Vector3(selectedBounds.Center.x, selectedBounds.minXYZ.y, 0.1));
