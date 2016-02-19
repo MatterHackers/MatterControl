@@ -105,89 +105,89 @@ namespace MatterHackers.MatterControl
 			return output;
 		}
 
-		public static void ArrangeMeshGroups(List<MeshGroup> asynchMeshGroups, List<ScaleRotateTranslate> asynchMeshGroupTransforms, List<PlatingMeshGroupData> asynchPlatingDatas,
+		public static void ArrangeMeshGroups(List<MeshGroup> asyncMeshGroups, List<ScaleRotateTranslate> asyncMeshGroupTransforms, List<PlatingMeshGroupData> asyncPlatingDatas,
 			Action<double, string> reportProgressChanged)
 		{
 			// move them all out of the way
-			for (int i = 0; i < asynchMeshGroups.Count; i++)
+			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
-				ScaleRotateTranslate translate = asynchMeshGroupTransforms[i];
+				ScaleRotateTranslate translate = asyncMeshGroupTransforms[i];
 				translate.translation *= Matrix4X4.CreateTranslation(10000, 10000, 0);
-				asynchMeshGroupTransforms[i] = translate;
+				asyncMeshGroupTransforms[i] = translate;
 			}
 
 			// sort them by size
-			for (int i = 0; i < asynchMeshGroups.Count; i++)
+			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
-				AxisAlignedBoundingBox iAABB = asynchMeshGroups[i].GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].TotalTransform);
-				for (int j = i + 1; j < asynchMeshGroups.Count; j++)
+				AxisAlignedBoundingBox iAABB = asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i].TotalTransform);
+				for (int j = i + 1; j < asyncMeshGroups.Count; j++)
 				{
-					AxisAlignedBoundingBox jAABB = asynchMeshGroups[j].GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[j].TotalTransform);
+					AxisAlignedBoundingBox jAABB = asyncMeshGroups[j].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[j].TotalTransform);
 					if (Math.Max(iAABB.XSize, iAABB.YSize) < Math.Max(jAABB.XSize, jAABB.YSize))
 					{
-						PlatingMeshGroupData tempData = asynchPlatingDatas[i];
-						asynchPlatingDatas[i] = asynchPlatingDatas[j];
-						asynchPlatingDatas[j] = tempData;
+						PlatingMeshGroupData tempData = asyncPlatingDatas[i];
+						asyncPlatingDatas[i] = asyncPlatingDatas[j];
+						asyncPlatingDatas[j] = tempData;
 
-						MeshGroup tempMeshGroup = asynchMeshGroups[i];
-						asynchMeshGroups[i] = asynchMeshGroups[j];
-						asynchMeshGroups[j] = tempMeshGroup;
+						MeshGroup tempMeshGroup = asyncMeshGroups[i];
+						asyncMeshGroups[i] = asyncMeshGroups[j];
+						asyncMeshGroups[j] = tempMeshGroup;
 
-						ScaleRotateTranslate iTransform = asynchMeshGroupTransforms[i];
-						ScaleRotateTranslate jTransform = asynchMeshGroupTransforms[j];
+						ScaleRotateTranslate iTransform = asyncMeshGroupTransforms[i];
+						ScaleRotateTranslate jTransform = asyncMeshGroupTransforms[j];
 						Matrix4X4 tempTransform = iTransform.translation;
 						iTransform.translation = jTransform.translation;
 						jTransform.translation = tempTransform;
 
-						asynchMeshGroupTransforms[i] = jTransform;
-						asynchMeshGroupTransforms[j] = iTransform;
+						asyncMeshGroupTransforms[i] = jTransform;
+						asyncMeshGroupTransforms[j] = iTransform;
 
 						iAABB = jAABB;
 					}
 				}
 			}
 
-			double ratioPerMeshGroup = 1.0 / asynchMeshGroups.Count;
+			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
 			double currentRatioDone = 0;
 			// put them onto the plate (try the center) starting with the biggest and moving down
-			for (int meshGroupIndex = 0; meshGroupIndex < asynchMeshGroups.Count; meshGroupIndex++)
+			for (int meshGroupIndex = 0; meshGroupIndex < asyncMeshGroups.Count; meshGroupIndex++)
 			{
 				reportProgressChanged(currentRatioDone, "Calculating Positions...".Localize());
 
-				MeshGroup meshGroup = asynchMeshGroups[meshGroupIndex];
-				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[meshGroupIndex].TotalTransform).minXYZ;
-				ScaleRotateTranslate atZero = asynchMeshGroupTransforms[meshGroupIndex];
+				MeshGroup meshGroup = asyncMeshGroups[meshGroupIndex];
+				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupIndex].TotalTransform).minXYZ;
+				ScaleRotateTranslate atZero = asyncMeshGroupTransforms[meshGroupIndex];
 				atZero.translation *= Matrix4X4.CreateTranslation(-meshLowerLeft);
-				asynchMeshGroupTransforms[meshGroupIndex] = atZero;
+				asyncMeshGroupTransforms[meshGroupIndex] = atZero;
 
-				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, asynchPlatingDatas, asynchMeshGroups, asynchMeshGroupTransforms);
+				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
 
 				// and create the trace info so we can select it
-				if (asynchPlatingDatas[meshGroupIndex].meshTraceableData.Count == 0)
+				if (asyncPlatingDatas[meshGroupIndex].meshTraceableData.Count == 0)
 				{
-					PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, meshGroupIndex, null);
+					PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, meshGroupIndex, null);
 				}
 
 				currentRatioDone += ratioPerMeshGroup;
 
 				// and put it on the bed
-				PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, meshGroupIndex);
+				PlatingHelper.PlaceMeshGroupOnBed(asyncMeshGroups, asyncMeshGroupTransforms, meshGroupIndex);
 			}
 
 			// and finally center whatever we have as a group
 			{
-				AxisAlignedBoundingBox bounds = asynchMeshGroups[0].GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[0].TotalTransform);
-				for (int i = 1; i < asynchMeshGroups.Count; i++)
+				AxisAlignedBoundingBox bounds = asyncMeshGroups[0].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[0].TotalTransform);
+				for (int i = 1; i < asyncMeshGroups.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, asynchMeshGroups[i].GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].TotalTransform));
+					bounds = AxisAlignedBoundingBox.Union(bounds, asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i].TotalTransform));
 				}
 
 				Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-				for (int i = 0; i < asynchMeshGroups.Count; i++)
+				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					ScaleRotateTranslate translate = asynchMeshGroupTransforms[i];
+					ScaleRotateTranslate translate = asyncMeshGroupTransforms[i];
 					translate.translation *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
-					asynchMeshGroupTransforms[i] = translate;
+					asyncMeshGroupTransforms[i] = translate;
 				}
 			}
 		}

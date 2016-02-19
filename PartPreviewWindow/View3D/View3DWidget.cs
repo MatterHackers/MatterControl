@@ -64,9 +64,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly int EditButtonHeight = 44;
 		private Action afterSaveCallback = null;
 		private Button applyScaleButton;
-		private List<MeshGroup> asynchMeshGroups = new List<MeshGroup>();
-		private List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
-		private List<PlatingMeshGroupData> asynchPlatingDatas = new List<PlatingMeshGroupData>();
+		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
+		private List<ScaleRotateTranslate> asyncMeshGroupTransforms = new List<ScaleRotateTranslate>();
+		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
 		private FlowLayoutWidget doEdittingButtonsContainer;
 		private bool editorThatRequestedSave = false;
 		private FlowLayoutWidget enterEditButtonsContainer;
@@ -1847,7 +1847,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UnlockEditControls();
 				PartHasBeenChanged();
 
-				bool addingOnlyOneItem = asynchMeshGroups.Count == MeshGroups.Count + 1;
+				bool addingOnlyOneItem = asyncMeshGroups.Count == MeshGroups.Count + 1;
 
 				if (MeshGroups.Count > 0)
 				{
@@ -1855,7 +1855,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (addingOnlyOneItem)
 					{
 						// if we are only adding one part to the plate set the selection to it
-						SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
+						SelectedMeshGroupIndex = asyncMeshGroups.Count - 1;
 					}
 				}
 			}
@@ -1917,12 +1917,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
 
-							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, ScaleRotateTranslate.Identity(), asynchPlatingDatas, asynchMeshGroups, asynchMeshGroupTransforms);
+							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, ScaleRotateTranslate.Identity(), asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
 							if (WidgetHasBeenClosed)
 							{
 								return;
 							}
-							PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
+							PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, asyncMeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
 							{
 								continueProcessing = !this.WidgetHasBeenClosed;
 								double ratioAvailable = (ratioPerFile * .5);
@@ -2047,19 +2047,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider.GetProviderLocator());
 			}
 
-			// we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
+			// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			try
 			{
 				// push all the transforms into the meshes
-				for (int i = 0; i < asynchMeshGroups.Count; i++)
+				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
+					asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i].TotalTransform);
 
 					bool continueProcessing;
-					ReportProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
+					ReportProgressChanged((i + 1) * .4 / asyncMeshGroups.Count, "", out continueProcessing);
 				}
 
 				string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
@@ -2112,7 +2112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
 
 						// save to the new temp location
-						bool savedSuccessfully = MeshFileIo.Save(asynchMeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
+						bool savedSuccessfully = MeshFileIo.Save(asyncMeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
 
 						// Swap out the files if the save operation completed successfully 
 						if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
@@ -2137,7 +2137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else // we are saving a new file and it will not exist until we are done
 				{
-					MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
+					MeshFileIo.Save(asyncMeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
 				}
 
 				// Wait for a second to report the file changed to give the OS a chance to finish closing it.
@@ -2191,7 +2191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			UnlockEditControls();
 
-			// NOTE: we do not pull the data back out of the asynch lists.
+			// NOTE: we do not pull the data back out of the async lists.
 			if (saveSucceded)
 			{
 				saveButtons.Visible = false;
@@ -2325,23 +2325,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void PullMeshGroupDataFromAsynchLists()
 		{
-			if (MeshGroups.Count != asynchMeshGroups.Count)
+			if (MeshGroups.Count != asyncMeshGroups.Count)
 			{
 				PartHasBeenChanged();
 			}
 
 			MeshGroups.Clear();
-			foreach (MeshGroup meshGroup in asynchMeshGroups)
+			foreach (MeshGroup meshGroup in asyncMeshGroups)
 			{
 				MeshGroups.Add(meshGroup);
 			}
 			MeshGroupTransforms.Clear();
-			foreach (ScaleRotateTranslate transform in asynchMeshGroupTransforms)
+			foreach (ScaleRotateTranslate transform in asyncMeshGroupTransforms)
 			{
 				MeshGroupTransforms.Add(transform);
 			}
 			MeshGroupExtraData.Clear();
-			foreach (PlatingMeshGroupData meshData in asynchPlatingDatas)
+			foreach (PlatingMeshGroupData meshData in asyncPlatingDatas)
 			{
 				MeshGroupExtraData.Add(meshData);
 			}
@@ -2359,8 +2359,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				processingProgressControl.ProgressMessage = "Async Copy";
 			});
-			asynchMeshGroups.Clear();
-			asynchMeshGroupTransforms.Clear();
+			asyncMeshGroups.Clear();
+			asyncMeshGroupTransforms.Clear();
 			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
 			{
 				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
@@ -2370,10 +2370,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mesh mesh = meshGroup.Meshes[meshIndex];
 					newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
 				}
-				asynchMeshGroups.Add(newMeshGroup);
-				asynchMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
+				asyncMeshGroups.Add(newMeshGroup);
+				asyncMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
 			}
-			asynchPlatingDatas.Clear();
+			asyncPlatingDatas.Clear();
 
 			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
 			{
@@ -2386,7 +2386,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
 				}
 
-				asynchPlatingDatas.Add(meshData);
+				asyncPlatingDatas.Add(meshData);
 			}
 			UiThread.RunOnIdle(() =>
 			{

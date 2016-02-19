@@ -79,9 +79,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private Button closeButton;
 		private String word;
 
-		private List<MeshGroup> asynchMeshGroups = new List<MeshGroup>();
-		private List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
-		private List<PlatingMeshGroupData> asynchPlatingDatas = new List<PlatingMeshGroupData>();
+		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
+		private List<ScaleRotateTranslate> asyncMeshGroupTransforms = new List<ScaleRotateTranslate>();
+		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
 
 		private List<PlatingMeshGroupData> MeshGroupExtraData;
 
@@ -379,9 +379,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			asynchMeshGroups.Clear();
-			asynchMeshGroupTransforms.Clear();
-			asynchPlatingDatas.Clear();
+			asyncMeshGroups.Clear();
+			asyncMeshGroupTransforms.Clear();
+			asyncPlatingDatas.Clear();
 
 			TypeFacePrinter brailPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(brailTypeFace, 12));
 
@@ -394,7 +394,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Vector2 normalSize = normalPrinter.GetSize();
 				AddCharacterMeshes(wordText, normalPrinter);
 				
-				firstNewCharacter = asynchPlatingDatas.Count;
+				firstNewCharacter = asyncPlatingDatas.Count;
 			}
 
 			AddCharacterMeshes(brailleText, brailPrinter);
@@ -402,23 +402,23 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			for (int i = 0; i < firstNewCharacter; i++)
 			{
-				asynchPlatingDatas[i].spacing = asynchPlatingDatas[i].spacing + new Vector2(0, boldStyled.CapHeightInPixels * 1.5);
+				asyncPlatingDatas[i].spacing = asyncPlatingDatas[i].spacing + new Vector2(0, boldStyled.CapHeightInPixels * 1.5);
 			}
 
-			CreateBase(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
+			CreateBase(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas);
 
-			SetWordPositions(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
-			SetWordSize(asynchMeshGroups, asynchMeshGroupTransforms);
-			SetWordHeight(asynchMeshGroups, asynchMeshGroupTransforms);
+			SetWordPositions(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas);
+			SetWordSize(asyncMeshGroups, asyncMeshGroupTransforms);
+			SetWordHeight(asyncMeshGroups, asyncMeshGroupTransforms);
 
-			CenterTextOnScreen(asynchMeshGroups, asynchMeshGroupTransforms);
+			CenterTextOnScreen(asyncMeshGroups, asyncMeshGroupTransforms);
 
 			processingProgressControl.PercentComplete = 95;
 		}
 
 		private void AddCharacterMeshes(string currentText, TypeFacePrinter printer)
 		{
-			int newIndex = asynchMeshGroups.Count;
+			int newIndex = asyncMeshGroups.Count;
 			StyledTypeFace typeFace = printer.TypeFaceStyle;
 
 			for (int i = 0; i < currentText.Length; i++)
@@ -450,18 +450,18 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					// done
 #endif
 
-					asynchMeshGroups.Add(new MeshGroup(textMesh));
+					asyncMeshGroups.Add(new MeshGroup(textMesh));
 
 					PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
 
 					newMeshInfo.spacing = printer.GetOffsetLeftOfCharacterIndex(i);
-					asynchPlatingDatas.Add(newMeshInfo);
-					asynchMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
+					asyncPlatingDatas.Add(newMeshInfo);
+					asyncMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
 
-					PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, newIndex, null);
-					ScaleRotateTranslate moved = asynchMeshGroupTransforms[newIndex];
+					PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, newIndex, null);
+					ScaleRotateTranslate moved = asyncMeshGroupTransforms[newIndex];
 					moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, unscaledLetterHeight / 2));
-					asynchMeshGroupTransforms[newIndex] = moved;
+					asyncMeshGroupTransforms[newIndex] = moved;
 
 					newIndex++;
 				}
@@ -499,8 +499,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void PushMeshGroupDataToAsynchLists(bool copyTraceInfo)
 		{
-			asynchMeshGroups.Clear();
-			asynchMeshGroupTransforms.Clear();
+			asyncMeshGroups.Clear();
+			asyncMeshGroupTransforms.Clear();
 			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
 			{
 				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
@@ -510,11 +510,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					Mesh mesh = meshGroup.Meshes[meshIndex];
 					mesh.CleanAndMergMesh();
 					newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
-					asynchMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
+					asyncMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
 				}
-				asynchMeshGroups.Add(newMeshGroup);
+				asyncMeshGroups.Add(newMeshGroup);
 			}
-			asynchPlatingDatas.Clear();
+			asyncPlatingDatas.Clear();
 
 			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
 			{
@@ -528,7 +528,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
 					}
 				}
-				asynchPlatingDatas.Add(meshData);
+				asyncPlatingDatas.Add(meshData);
 			}
 		}
 
@@ -545,17 +545,17 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private void PullMeshDataFromAsynchLists()
 		{
 			MeshGroups.Clear();
-			foreach (MeshGroup mesh in asynchMeshGroups)
+			foreach (MeshGroup mesh in asyncMeshGroups)
 			{
 				MeshGroups.Add(mesh);
 			}
 			MeshGroupTransforms.Clear();
-			foreach (ScaleRotateTranslate transform in asynchMeshGroupTransforms)
+			foreach (ScaleRotateTranslate transform in asyncMeshGroupTransforms)
 			{
 				MeshGroupTransforms.Add(transform);
 			}
 			MeshGroupExtraData.Clear();
-			foreach (PlatingMeshGroupData meshData in asynchPlatingDatas)
+			foreach (PlatingMeshGroupData meshData in asyncPlatingDatas)
 			{
 				MeshGroupExtraData.Add(meshData);
 			}
@@ -893,7 +893,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				// we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
+				// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
 				PushMeshGroupDataToAsynchLists(true);
 
 				string fileName = "BrailleBuilder_{0}".FormatWith(Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
@@ -923,14 +923,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			try
 			{
 				// push all the transforms into the meshes
-				for (int i = 0; i < asynchMeshGroups.Count; i++)
+				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					asynchMeshGroups[i].Transform(MeshGroupTransforms[i].TotalTransform);
+					asyncMeshGroups[i].Transform(MeshGroupTransforms[i].TotalTransform);
 
-					processingProgressControl.RatioComplete = (double)i / asynchMeshGroups.Count * .1;
+					processingProgressControl.RatioComplete = (double)i / asyncMeshGroups.Count * .1;
 				}
 
-				MeshFileIo.Save(asynchMeshGroups, filePath);
+				MeshFileIo.Save(asyncMeshGroups, filePath);
 			}
 			catch (System.UnauthorizedAccessException)
 			{
