@@ -39,10 +39,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class HeightValueDisplay : GuiWidget
 	{
-		private View3DWidget view3DWidget;
-		private TextWidget numberDisplay;
-
 		private static readonly int HorizontalLineLength = 30;
+		private TextWidget numberDisplay;
+		private Vector2 startLineGroundPos;
+		private Vector2 startLineSelectionPos;
+		private View3DWidget view3DWidget;
 
 		public HeightValueDisplay(View3DWidget view3DWidget)
 		{
@@ -56,7 +57,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			VAnchor = VAnchor.FitToChildren;
 			HAnchor = HAnchor.FitToChildren;
 
-			MeshViewerToDrawWith.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 			MeshViewerToDrawWith.DrawAfter += new DrawEventHandler(MeshViewerToDrawWith_Draw);
 		}
 
@@ -100,9 +100,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private Vector2 startLineGroundPos;
-		private Vector2 startLineSelectionPos;
-
 		private void MeshViewerToDrawWith_Draw(GuiWidget drawingWidget, DrawEventArgs drawEvent)
 		{
 			if (Visible)
@@ -135,29 +132,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}
-		}
-
-		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
-		{
-			if (Visible)
-			{
-				if (view3DWidget.DisplayAllValueData)
-				{
-				}
-				else
-				{
-				}
-			}
-		}
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseDown(mouseEvent);
-		}
-
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseMove(mouseEvent);
 		}
 	}
 }

@@ -438,6 +438,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
 			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
+			meshViewerWidget.interactionVolumes.Add(new SnappingIndicators(this));
 
 			// make sure the colors are set correct
 			ThemeChanged(this, null);
@@ -856,7 +857,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						// snap this position to the grid
 						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.GetBoundsForSelection();
 
-						double xSnapOffset = selectedBounds.minXYZ.x; ;
+						double xSnapOffset = selectedBounds.minXYZ.x;
 						// snap the x position
 						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.RB
 							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
@@ -869,7 +870,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						double snappedX = ((int)((xToSnap / snapGridDistance) + .5)) * snapGridDistance;
 						delta.x = snappedX - xSnapOffset;
 
-						double ySnapOffset = selectedBounds.minXYZ.y; ;
+						double ySnapOffset = selectedBounds.minXYZ.y;
 						// snap the y position
 						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LT
 							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
