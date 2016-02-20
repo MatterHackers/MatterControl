@@ -4540,3 +4540,33 @@ Translated:Retraction On Tool Change
 English:randomize_start
 Translated:randomize_start
 
+English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+Translated:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+
+English:The height of the printer's printable volume, in millimeters. Serves no purpose for slicing, but controls the height of the visual print area displayed in 3D View.
+Translated:The height of the printer's printable volume, in millimeters. Serves no purpose for slicing, but controls the height of the visual print area displayed in 3D View.
+
+English:The speed at which outside, external, or the otherwise visible perimeters will print.
+Translated:The speed at which outside, external, or the otherwise visible perimeters will print.
+
+English:Used to specify if more than one extruder share a common heater cartridge.
+Translated:Used to specify if more than one extruder share a common heater cartridge.
+
+English:The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
+Translated:The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
+
+English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
+Translated:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
+
+English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
+Translated:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
+
+English:The number of loops to draw around parts. Used to provide additional bed adhesion
+Translated:The number of loops to draw around parts. Used to provide additional bed adhesion
+
+English:Skirt (Priming)
+Translated:Skirt (Priming)
+
+English:Brim (Hold Downs)
+Translated:Brim (Hold Downs)
+

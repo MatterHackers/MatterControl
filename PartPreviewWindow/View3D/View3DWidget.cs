@@ -850,41 +850,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
 
-					if (meshViewerWidget.SnapGridDistance > 0)
+					double snapGridDistance = meshViewerWidget.SnapGridDistance;
+					if (snapGridDistance > 0)
 					{
 						// snap this position to the grid
-						double snapGridDistance = meshViewerWidget.SnapGridDistance;
 						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.GetBoundsForSelection();
 
+						double xSnapOffset = selectedBounds.minXYZ.x; ;
 						// snap the x position
-						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LB
-							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.LT)
+						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.RB
+							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
 						{
-							double left = selectedBounds.minXYZ.x + delta.x;
-							double snappedLeft = ((int)((left / snapGridDistance) + .5)) * snapGridDistance;
-							delta.x = snappedLeft - selectedBounds.minXYZ.x;
+							// switch to the other side
+							xSnapOffset = selectedBounds.maxXYZ.x;
 						}
-						else
-						{
-							double right = selectedBounds.maxXYZ.x - delta.x;
-							double snappedRight = ((int)((right / snapGridDistance) + .5)) * snapGridDistance;
-							delta.x = selectedBounds.maxXYZ.x - snappedRight;
-						}
+						double xToSnap = xSnapOffset + delta.x;
 
+						double snappedX = ((int)((xToSnap / snapGridDistance) + .5)) * snapGridDistance;
+						delta.x = snappedX - xSnapOffset;
+
+						double ySnapOffset = selectedBounds.minXYZ.y; ;
 						// snap the y position
-						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LB
-							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RB)
+						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LT
+							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
 						{
-							double bottom = selectedBounds.minXYZ.y + delta.y;
-							double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
-							delta.y = snappedBottom - selectedBounds.minXYZ.y;
+							// switch to the other side
+							ySnapOffset = selectedBounds.maxXYZ.y;
 						}
-						else
-						{
-							double top = selectedBounds.maxXYZ.y + delta.y;
-							double snappedTop = ((int)((top / snapGridDistance) + .5)) * snapGridDistance;
-							delta.y = snappedTop - selectedBounds.maxXYZ.y;
-						}
+						double yToSnap = ySnapOffset + delta.y;
+
+						double snappedY = ((int)((yToSnap / snapGridDistance) + .5)) * snapGridDistance;
+						delta.y = snappedY - ySnapOffset;
 					}
 
 					// move the mesh back to the new position

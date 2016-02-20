@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				RGBA_Bytes snapColorBorder = RGBA_Bytes.Red;
 
-				if (view3DWidget.DragingPart)
+				if (view3DWidget.DragingPart && view3DWidget.meshViewerWidget.SnapGridDistance > 0)
 				{
 					Vector3 lastHitPosition = view3DWidget.LastHitPosition;
 					double lineWidth = .5;
