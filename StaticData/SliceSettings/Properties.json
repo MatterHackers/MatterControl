@@ -88,7 +88,7 @@
   {
     "SlicerConfigName": "build_height",
     "PresentationName": "Build Height",
-    "HelpText": "The height of the printer's printable volume, in millimeters. Serves no purpose for slicing, but controls the height of the visual print area displayed in 3D View.",
+    "HelpText": "The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -295,7 +295,7 @@
   {
     "SlicerConfigName": "filament_diameter",
     "PresentationName": "Diameter",
-    "HelpText": "The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.",
+    "HelpText": "The actual diameter of the filament used for printing.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
   },
@@ -404,7 +404,7 @@
     "PresentationName": "G-Code Output",
     "HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
     "DataEditType": "LIST",
-    "ExtraSettings": "REPRAP,ULTIGCODE,MAKERBOT,BFB,MACH3"
+    "ExtraSettings": "REPRAP,ULTIGCODE,BFB,MACH3"
   },
   {
     "SlicerConfigName": "has_fan",
