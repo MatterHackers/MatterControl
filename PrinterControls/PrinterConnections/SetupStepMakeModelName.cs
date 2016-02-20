@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.Margin = new BorderDouble(0, 5);
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string printerNameLabelTxt = LocalizedString.Get("Printer Name");
+			string printerNameLabelTxt = LocalizedString.Get("Name");
 			string printerNameLabelTxtFull = string.Format("{0}:", printerNameLabelTxt);
 			TextWidget printerNameLabel = new TextWidget(printerNameLabelTxtFull, 0, 0, 12);
 			printerNameLabel.TextColor = this.defaultTextColor;
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.Margin = new BorderDouble(0, 5);
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string printerManufacturerLabelTxt = LocalizedString.Get("Select Make");
+			string printerManufacturerLabelTxt = LocalizedString.Get("Make");
 			string printerManufacturerLabelTxtFull = string.Format("{0}:", printerManufacturerLabelTxt);
 			TextWidget printerManufacturerLabel = new TextWidget(printerManufacturerLabelTxtFull, 0, 0, 12);
 			printerManufacturerLabel.TextColor = this.defaultTextColor;
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.Margin = new BorderDouble(0, 5);
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string printerModelLabelTxt = LocalizedString.Get("Select Model");
+			string printerModelLabelTxt = LocalizedString.Get("Model");
 			string printerModelLabelTxtFull = string.Format("{0}:", printerModelLabelTxt);
 			TextWidget printerModelLabel = new TextWidget(printerModelLabelTxtFull, 0, 0, 12);
 			printerModelLabel.TextColor = this.defaultTextColor;
