@@ -122,11 +122,13 @@ Advanced
         first_layer_acceleration
         default_acceleration
     Skirt and Raft
-      Skirt
+      Skirt (Priming)
         skirts
         skirt_distance
         skirt_height
         min_skirt_length
+      Brim (Hold Downs)
+        brims
       Raft
         create_raft
         raft_extra_distance_around_part

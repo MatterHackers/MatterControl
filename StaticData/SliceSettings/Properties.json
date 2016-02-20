@@ -836,6 +836,13 @@
     "DataEditType": "INT",
     "ExtraSettings": ""
   },
+	{
+		"SlicerConfigName": "brims",
+		"PresentationName": "Loops",
+		"HelpText": "The number of loops to draw around parts. Used to provide additional bed adhesion",
+		"DataEditType": "INT",
+		"ExtraSettings": ""
+	},
   {
     "SlicerConfigName": "slowdown_below_layer_time",
     "PresentationName": "Slow Down If Layer Print\\nTime Is Below",
