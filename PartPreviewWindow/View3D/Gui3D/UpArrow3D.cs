@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						upArrow = loadedMeshGroups[0].Meshes[0];
 
 						CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
-						AxisAlignedBoundingBox arrowBounds = upArrow.GetAxisAlignedBoundingBox();
 						//CollisionVolume = new CylinderShape(arrowBounds.XSize / 2, arrowBounds.ZSize, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
 						//CollisionVolume = new CylinderShape(arrowBounds.XSize / 2 * 4, arrowBounds.ZSize * 4, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
 					}
@@ -164,12 +163,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (MouseOver)
 				{
 					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
-
-					// draw the hight from the bottom to the bed
-					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
-
-					Vector3 bottomRight = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-					Vector2 bottomRightScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomRight);
 				}
 				else
 				{

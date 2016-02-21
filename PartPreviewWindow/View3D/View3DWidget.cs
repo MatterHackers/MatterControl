@@ -59,6 +59,19 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public interface IInteractionVolumeCreator
+	{
+		InteractionVolume CreateLibraryProvider(View3DWidget widget);
+	}
+
+	public class InteractionVolumePlugin : IInteractionVolumeCreator
+	{
+		public virtual InteractionVolume CreateLibraryProvider(View3DWidget widget)
+		{
+			return null;
+		}
+	}
+
 	public partial class View3DWidget : PartPreview3DWidget
 	{
 		private readonly int EditButtonHeight = 44;
@@ -439,6 +452,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
 			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
 			meshViewerWidget.interactionVolumes.Add(new SnappingIndicators(this));
+
+			PluginFinder<InteractionVolumePlugin> InteractionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
+			foreach(InteractionVolumePlugin plugin in InteractionVolumePlugins.Plugins)
+			{
+				meshViewerWidget.interactionVolumes.Add(plugin.CreateLibraryProvider(this));
+			}
+
 
 			// make sure the colors are set correct
 			ThemeChanged(this, null);

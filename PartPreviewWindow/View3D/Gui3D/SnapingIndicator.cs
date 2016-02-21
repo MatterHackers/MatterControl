@@ -28,25 +28,18 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SnappingIndicators : InteractionVolume
 	{
-		private double HorizontalLineLength = 10;
-		private View3DWidget view3DWidget;
+		private double distToStart = 10;
+		private double lineLength = 15;
 		private Vector2[] lines = new Vector2[4];
+		private View3DWidget view3DWidget;
 
 		public SnappingIndicators(View3DWidget view3DWidget)
 			: base(null, view3DWidget.meshViewerWidget)
@@ -64,9 +57,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 
 				MeshSelectInfo meshSelectInfo = view3DWidget.CurrentSelectInfo;
-
-				double distToStart = 5;
-				double lineLength = 15;
 
 				switch (meshSelectInfo.HitQuadrant)
 				{
