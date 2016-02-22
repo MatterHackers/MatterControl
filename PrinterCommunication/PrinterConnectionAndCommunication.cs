@@ -1342,45 +1342,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (ActiveSliceSettings.Instance.LevelingRequiredToPrint
 					|| ActivePrinterProfile.Instance.DoPrintLeveling)
 				{
-					LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
-					if(ActiveSliceSettings.Instance.LevelingRequiredToPrint)
-					{
-						// run in the first run state
-						runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
-					}
 					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-					switch (levelingData.CurrentPrinterLevelingSystem)
+					if(!levelingData.HasBeenRun())
 					{
-						case PrintLevelingData.LevelingSystem.Probe2Points:
-						case PrintLevelingData.LevelingSystem.Probe3Points:
-							if (levelingData.SampledPosition0.z == 0
-								&& levelingData.SampledPosition1.z == 0
-								&& levelingData.SampledPosition2.z == 0)
-							{
-								// leveling is not set up so we need to run it
-								LevelWizardBase.ShowPrintLevelWizard(runningState);
-								return;
-							}
-							break;
-
-						case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-							if (levelingData.SampledPositions.Count != 7) // different criteria for what is not initialized
-							{
-								LevelWizardBase.ShowPrintLevelWizard(runningState);
-								return;
-							}
-							break;
-
-						case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-							if (levelingData.SampledPositions.Count != 13) // different criteria for what is not initialized
-							{
-								LevelWizardBase.ShowPrintLevelWizard(runningState);
-								return;
-							}
-							break;
-
-						default:
-							throw new NotImplementedException();
+						levelingData.RunLevelingWizard();
+						return;
 					}
 				}
 
@@ -1662,6 +1628,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											// now send any command that initialize this printer
 											string connectGCode = ActiveSliceSettings.Instance.GetActiveValue("connect_gcode");
 											SendLineToPrinterNow(connectGCode);
+
+											// run the print leveling wizard if we need to for this printer
+											if (ActiveSliceSettings.Instance.LevelingRequiredToPrint
+												|| ActivePrinterProfile.Instance.DoPrintLeveling)
+											{
+												PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+												if (!levelingData.HasBeenRun())
+												{
+													UiThread.RunOnIdle(() => levelingData.RunLevelingWizard() );
+												}
+											}
 										}
 										else
 										{

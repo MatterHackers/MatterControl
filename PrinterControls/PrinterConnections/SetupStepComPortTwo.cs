@@ -189,6 +189,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerErrorMessage.Text = printerErrorMessageLabelThreeFull;
 			nextButton.Visible = true;
 			connectButton.Visible = false;
+			UiThread.RunOnIdle(Parent.Close);
 		}
 
 		private void NextButton_Click(object sender, EventArgs mouseEvent)

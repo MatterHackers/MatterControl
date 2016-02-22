@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
 
 		protected static readonly string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
-		protected static readonly string requiredPageInstructions1 = "Congratulations on setting up your new printer. Before starting your first print we need to run a simple calibration procedure.";
+		protected static readonly string requiredPageInstructions1 = "Congratulations on connecting to your new printer. Before starting your first print we need to run a simple calibration procedure.";
 		protected static readonly string requiredPageInstructions2 = "The next few screens will walk your through the print leveling wizard.";
 
 		protected static readonly string homingPageStepText = "Homing The Printer".Localize();

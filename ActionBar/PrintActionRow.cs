@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
@@ -36,6 +37,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button resumeButton;
 		private Button skipButton;
 		private Button startButton;
+		private Button configureButton;
 		private MatterHackers.MatterControl.TextImageButtonFactory textImageButtonFactory = new MatterHackers.MatterControl.TextImageButtonFactory();
 		private Stopwatch timeSincePrintStarted = new Stopwatch();
 
@@ -69,6 +71,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), "icon_play_32x32.png");
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
+
+			configureButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
+			configureButton.ToolTipText = "Run setup configuration for printer.".Localize();
+			configureButton.Margin = new BorderDouble(6, 6, 6, 3);
+			
 
 			string connectButtonText = "Connect".Localize();
 			string connectButtonMessage = "Connect to the printer".Localize();
@@ -127,6 +134,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(startButton);
 			allPrintButtons.Add(startButton);
 
+			this.AddChild(configureButton);
+			allPrintButtons.Add(configureButton);
+
 			this.AddChild(pauseButton);
 			allPrintButtons.Add(pauseButton);
 
@@ -161,19 +171,20 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			addButton.Click += new EventHandler(onAddButton_Click);
-			startButton.Click += new EventHandler(onStartButton_Click);
-			skipButton.Click += new EventHandler(onSkipButton_Click);
-			removeButton.Click += new EventHandler(onRemoveButton_Click);
-			resumeButton.Click += new EventHandler(onResumeButton_Click);
-			pauseButton.Click += new EventHandler(onPauseButton_Click);
-			connectButton.Click += new EventHandler(onConnectButton_Click);
+			addButton.Click += onAddButton_Click;
+			startButton.Click += onStartButton_Click;
+			configureButton.Click += onStartButton_Click;
+            skipButton.Click += onSkipButton_Click;
+			removeButton.Click += onRemoveButton_Click;
+			resumeButton.Click += onResumeButton_Click;
+			pauseButton.Click += onPauseButton_Click;
+			connectButton.Click += onConnectButton_Click;
 			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
 			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelPrinting); };
-			reprintButton.Click += new EventHandler(onReprintButton_Click);
-			doneWithCurrentPartButton.Click += new EventHandler(onDoneWithCurrentPartButton_Click);
+			reprintButton.Click += onReprintButton_Click;
+			doneWithCurrentPartButton.Click += onDoneWithCurrentPartButton_Click;
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
@@ -246,15 +257,24 @@ namespace MatterHackers.MatterControl.ActionBar
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-						this.activePrintButtons.Add(startButton);
-
-						//Show 'skip' button if there are more items in queue
-						if (QueueData.Instance.Count > 1)
+						PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+						if (levelingData != null && ActiveSliceSettings.Instance.LevelingRequiredToPrint
+							&& !levelingData.HasBeenRun())
 						{
-							this.activePrintButtons.Add(skipButton);
+							this.activePrintButtons.Add(configureButton);
+						}
+						else
+						{
+							this.activePrintButtons.Add(startButton);
+							//Show 'skip' button if there are more items in queue
+							if (QueueData.Instance.Count > 1)
+							{
+								this.activePrintButtons.Add(skipButton);
+							}
+
+							this.activePrintButtons.Add(removeButton);
 						}
 
-						this.activePrintButtons.Add(removeButton);
 						EnableActiveButtons();
 						break;
 

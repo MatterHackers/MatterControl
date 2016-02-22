@@ -4570,3 +4570,9 @@ Translated:Skirt (Priming)
 English:Brim (Hold Downs)
 Translated:Brim (Hold Downs)
 
+English:Finish Setup...
+Translated:Finish Setup...
+
+English:Run setup configuration for printer.
+Translated:Run setup configuration for printer.
+

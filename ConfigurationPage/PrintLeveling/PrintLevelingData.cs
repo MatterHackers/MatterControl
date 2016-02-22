@@ -4,6 +4,7 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -181,6 +182,53 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					}
 				}
 			}
+		}
+
+		public bool HasBeenRun()
+		{
+			switch (CurrentPrinterLevelingSystem)
+			{
+				case PrintLevelingData.LevelingSystem.Probe2Points:
+				case PrintLevelingData.LevelingSystem.Probe3Points:
+					if (SampledPosition0.z == 0
+						&& SampledPosition1.z == 0
+						&& SampledPosition2.z == 0)
+					{
+						return false;
+					}
+					break;
+
+				case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+					if (SampledPositions.Count != 7) // different criteria for what is not initialized
+					{
+						return false;
+					}
+					break;
+
+				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+					if (SampledPositions.Count != 13) // different criteria for what is not initialized
+					{
+						return false;
+					}
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+
+			return true;
+		}
+
+		public void RunLevelingWizard()
+		{
+			LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
+			if (ActiveSliceSettings.Instance.LevelingRequiredToPrint)
+			{
+				// run in the first run state
+				runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
+			}
+
+			LevelWizardBase.ShowPrintLevelWizard(runningState);
 		}
 	}
 }
