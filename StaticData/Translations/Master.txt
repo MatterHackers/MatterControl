@@ -4576,3 +4576,9 @@ Translated:Finish Setup...
 English:Run setup configuration for printer.
 Translated:Run setup configuration for printer.
 
+English:Name
+Translated:Name
+
+English:Make
+Translated:Make
+

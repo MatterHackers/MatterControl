@@ -75,7 +75,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			configureButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
 			configureButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			configureButton.Margin = new BorderDouble(6, 6, 6, 3);
-			
 
 			string connectButtonText = "Connect".Localize();
 			string connectButtonMessage = "Connect to the printer".Localize();
