@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using MatterHackers.MatterControl.DataStorage;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
 	public class PrinterSettings
 	{
 		private static PrinterSettings globalInstance = null;
-		public Dictionary<string, DataStorage.PrinterSetting> settingsDictionary;
+		public Dictionary<string, PrinterSetting> settingsDictionary;
 		private int ActiveSettingsPrinterId = -1;
 
 		public static PrinterSettings Instance
@@ -60,14 +61,14 @@ namespace MatterHackers.MatterControl
 			{
 				LoadDataIfNeeded();
 
-				DataStorage.PrinterSetting setting;
+				PrinterSetting setting;
 				if (settingsDictionary.ContainsKey(key))
 				{
 					setting = settingsDictionary[key];
 				}
 				else
 				{
-					setting = new DataStorage.PrinterSetting();
+					setting = new PrinterSetting();
 					setting.Name = key;
 					setting.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
 
@@ -83,9 +84,8 @@ namespace MatterHackers.MatterControl
 		{
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
-				IEnumerable<DataStorage.PrinterSetting> settingsList = GetPrinterSettings();
-				settingsDictionary = new Dictionary<string, DataStorage.PrinterSetting>();
-				foreach (DataStorage.PrinterSetting s in settingsList)
+				settingsDictionary = new Dictionary<string, PrinterSetting>();
+				foreach (PrinterSetting s in GetPrinterSettings())
 				{
 					settingsDictionary[s.Name] = s;
 				}
@@ -93,12 +93,11 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private IEnumerable<DataStorage.PrinterSetting> GetPrinterSettings()
+		private IEnumerable<PrinterSetting> GetPrinterSettings()
 		{
 			//Retrieve a list of settings from the Datastore
 			string query = string.Format("SELECT * FROM PrinterSetting WHERE PrinterId = {0};", ActivePrinterProfile.Instance.ActivePrinter.Id);
-			IEnumerable<DataStorage.PrinterSetting> result = (IEnumerable<DataStorage.PrinterSetting>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrinterSetting>(query);
-			return result;
+			return Datastore.Instance.dbSQLite.Query<PrinterSetting>(query);
 		}
 	}
 }

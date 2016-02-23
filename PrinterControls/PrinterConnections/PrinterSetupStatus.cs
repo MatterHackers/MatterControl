@@ -44,9 +44,7 @@ namespace MatterHackers.MatterControl
 
 		public int ExistingPrinterCount()
 		{
-			string query = string.Format("SELECT COUNT(*) FROM Printer;");
-			string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
-			return Convert.ToInt32(result);
+			return Datastore.Instance.RecordCount("Printer");
 		}
 
 		public void LoadCalibrationPrints()

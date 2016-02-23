@@ -107,8 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			presetListControl = new PresetListControl();
 
-			IEnumerable<DataStorage.SliceSettingsCollection> collections = GetCollections();
-			foreach (DataStorage.SliceSettingsCollection collection in collections)
+			foreach (SliceSettingsCollection collection in GetCollections())
 			{
 				presetListControl.AddChild(new PresetListItem(this.windowController, collection));
 			}
@@ -170,7 +169,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (openParams.FileNames != null)
 			{
-				DataStorage.SliceSettingsCollection settingsCollection;
+				SliceSettingsCollection settingsCollection;
 				try
 				{
 					if (File.Exists(openParams.FileName))
@@ -193,7 +192,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								string settingDefaultValue = settingLine[1].Trim();
 
 								//To do - validate imported settings as valid (KP)
-								DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+								SliceSetting sliceSetting = new SliceSetting();
 								sliceSetting.Name = keyName;
 								sliceSetting.Value = settingDefaultValue;
 								sliceSetting.SettingsCollectionId = settingsCollection.Id;
@@ -210,25 +209,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private IEnumerable<DataStorage.SliceSettingsCollection> GetCollections()
+		private IEnumerable<SliceSettingsCollection> GetCollections()
 		{
-			IEnumerable<DataStorage.SliceSettingsCollection> results = Enumerable.Empty<DataStorage.SliceSettingsCollection>();
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				//Retrieve a list of collections matching from the Datastore
 				string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1}  ORDER BY Name;", windowController.filterTag, ActivePrinterProfile.Instance.ActivePrinter.Id);
-				results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
+				return Datastore.Instance.dbSQLite.Query<SliceSettingsCollection>(query);
 			}
-			return results;
+
+			return Enumerable.Empty<SliceSettingsCollection>();
 		}
 
 		private class PresetListItem : FlowLayoutWidget
 		{
-			private DataStorage.SliceSettingsCollection preset;
+			private SliceSettingsCollection preset;
 
-			private DataStorage.SliceSettingsCollection Preset { get { return preset; } }
+			private SliceSettingsCollection Preset { get { return preset; } }
 
-			public PresetListItem(SlicePresetsWindow windowController, DataStorage.SliceSettingsCollection preset)
+			public PresetListItem(SlicePresetsWindow windowController, SliceSettingsCollection preset)
 			{
 				this.preset = preset;
 				this.BackgroundColor = RGBA_Bytes.White;
