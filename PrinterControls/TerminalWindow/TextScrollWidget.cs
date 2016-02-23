@@ -29,10 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MatterHackers.MatterControl
 {
@@ -47,8 +49,9 @@ namespace MatterHackers.MatterControl
 		private List<string> allSourceLines;
 		private List<string> visibleLines;
 
-		private TypeFacePrinter printer = new TypeFacePrinter();
-		public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
+		private TypeFacePrinter printer = null;
+
+			public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
 		private int forceStartLine = -1;
 
 		public double Position0To1
@@ -88,6 +91,8 @@ namespace MatterHackers.MatterControl
 
 		public TextScrollWidget(List<string> sourceLines)
 		{
+			string pathToFont = StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg"));
+			printer = new TypeFacePrinter("", new StyledTypeFace(TypeFace.LoadFrom(pathToFont), 12));
 			printer.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines;
