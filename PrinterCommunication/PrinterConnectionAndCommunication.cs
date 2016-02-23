@@ -2059,8 +2059,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.Printing:
 					{
-						CancelPrint();
 						MarkActivePrintCanceled();
+						CancelPrint();
 					}
 
 					break;
@@ -2108,6 +2108,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (activePrintTask != null)
 			{
 				TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+
+				activePrintTask.PercentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 
 				activePrintTask.PrintEnd = DateTime.Now;
 				activePrintTask.PrintComplete = false;
@@ -2465,10 +2467,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
 					activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
 					activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
+					activePrintTask.PrintingGCodeFileName = ActivePrintItem.GetGCodePathAndFileName();
 					activePrintTask.PrintComplete = false;
-					activePrintTask.PrintProgressJson = new PrintProgressInfo(ActivePrintItem).JsonString();
-
-					PrintProgressInfo progress = PrintProgressInfo.FromJsonString(activePrintTask.PrintProgressJson);
 
 					activePrintTask.Commit();
 
@@ -2719,6 +2719,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						{
 							waitingForPosition.Restart();
 						}
+
+						if(currentSentLine.StartsWith("; LAYER:"))
+						{
+							activePrintTask.PercentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
+							activePrintTask.Commit();
+                        }
 
 						if (trimedLine.Length > 0)
 						{

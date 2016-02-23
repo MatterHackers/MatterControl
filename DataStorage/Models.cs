@@ -331,7 +331,9 @@ namespace MatterHackers.MatterControl.DataStorage
 			PrintStart = DateTime.Now;
 		}
 
-		public string PrintProgressJson { get; set; }
+		public string PrintingGCodeFileName { get; set; }
+
+		public double PercentDone { get; set; }
 
 		public bool PrintComplete { get; set; }
 

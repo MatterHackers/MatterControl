@@ -75,35 +75,4 @@ namespace MatterHackers.MatterControl.PrintHistory
 			HistoryCleared.CallEvents(this, null);
 		}
 	}
-
-	public class PrintProgressInfo
-	{
-		public PrintProgressInfo()
-		{
-		}
-
-        public PrintProgressInfo(PrintItemWrapper printItem)
-		{
-			PrintingGCodeFileName = printItem.GetGCodePathAndFileName();
-			TotalBytesInGCode = new FileInfo(PrintingGCodeFileName).Length;
-		}
-
-		public int CurrentLayer { get; set; }
-
-		public long CurrentLayerOffsetByteInGCode { get; set; }
-
-		public string PrintingGCodeFileName { get; set; }
-
-		public long TotalBytesInGCode { get; set; }
-
-		public static PrintProgressInfo FromJsonString(string json)
-		{
-			return Newtonsoft.Json.JsonConvert.DeserializeObject<PrintProgressInfo>(json);
-		}
-
-		public string JsonString()
-		{
-			return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-		}
-	}
 }
