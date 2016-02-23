@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 		private List<string> allSourceLines;
 		private List<string> visibleLines;
 
-		private TypeFacePrinter printer = new TypeFacePrinter();
+		private TypeFacePrinter printer = new TypeFacePrinter("", new StyledTypeFace(LiberationMonoFont.Instance, 12));
 		public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
 		private int forceStartLine = -1;
 
