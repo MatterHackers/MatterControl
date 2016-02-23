@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using System.Collections.Generic;
@@ -55,7 +54,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 		}
 
-		public IEnumerable<PrintTask> GetHistoryItems(int recordCount)
+		public IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
 		{
 			string query;
 			if (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true")
