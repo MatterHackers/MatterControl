@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
@@ -2465,6 +2466,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
 					activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
 					activePrintTask.PrintComplete = false;
+					activePrintTask.PrintProgressJson = new PrintProgressInfo(ActivePrintItem).JsonString();
+
+					PrintProgressInfo progress = PrintProgressInfo.FromJsonString(activePrintTask.PrintProgressJson);
+
 					activePrintTask.Commit();
 
 					CommunicationState = CommunicationStates.Printing;

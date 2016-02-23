@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 using System.Collections.Generic;
 using System.IO;
 
@@ -37,10 +38,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
 	public class PrintHistoryData
 	{
-		private static PrintHistoryData instance;
-		public bool ShowTimestamp;
-
+		public static readonly int RecordLimit = 20;
 		public RootedObjectEventHandler HistoryCleared = new RootedObjectEventHandler();
+		public bool ShowTimestamp;
+		private static PrintHistoryData instance;
 
 		public static PrintHistoryData Instance
 		{
@@ -53,8 +54,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 				return instance;
 			}
 		}
-
-		public static readonly int RecordLimit = 20;
 
 		public IEnumerable<PrintTask> GetHistoryItems(int recordCount)
 		{
@@ -75,6 +74,37 @@ namespace MatterHackers.MatterControl.PrintHistory
 		{
 			Datastore.Instance.dbSQLite.ExecuteScalar<PrintTask>("DELETE FROM PrintTask;");
 			HistoryCleared.CallEvents(this, null);
+		}
+	}
+
+	public class PrintProgressInfo
+	{
+		public PrintProgressInfo()
+		{
+		}
+
+        public PrintProgressInfo(PrintItemWrapper printItem)
+		{
+			PrintingGCodeFileName = printItem.GetGCodePathAndFileName();
+			TotalBytesInGCode = new FileInfo(PrintingGCodeFileName).Length;
+		}
+
+		public int CurrentLayer { get; set; }
+
+		public long CurrentLayerOffsetByteInGCode { get; set; }
+
+		public string PrintingGCodeFileName { get; set; }
+
+		public long TotalBytesInGCode { get; set; }
+
+		public static PrintProgressInfo FromJsonString(string json)
+		{
+			return Newtonsoft.Json.JsonConvert.DeserializeObject<PrintProgressInfo>(json);
+		}
+
+		public string JsonString()
+		{
+			return Newtonsoft.Json.JsonConvert.SerializeObject(this);
 		}
 	}
 }
