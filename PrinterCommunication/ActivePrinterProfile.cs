@@ -313,14 +313,12 @@ namespace MatterHackers.MatterControl
 
 		public static Printer GetAutoConnectProfile(out bool connectionAvailable)
 		{
-			string query = string.Format("SELECT * FROM Printer;");
-			IEnumerable<Printer> printer_profiles = (IEnumerable<Printer>)Datastore.Instance.dbSQLite.Query<Printer>(query);
 			string[] comportNames = FrostedSerialPort.GetPortNames();
 
             Printer printerToSelect = null;
             connectionAvailable = false;
 
-            foreach (Printer printer in printer_profiles)
+            foreach (Printer printer in Datastore.Instance.dbSQLite.Query<Printer>("SELECT * FROM Printer;"))
 			{
 				if (printer.AutoConnectFlag)
 				{
