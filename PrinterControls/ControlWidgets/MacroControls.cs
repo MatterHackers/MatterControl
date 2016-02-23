@@ -162,17 +162,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return macroButtonContainer;
 		}
 
-		private IEnumerable<DataStorage.CustomCommands> GetMacros()
+		internal static IEnumerable<DataStorage.CustomCommands> GetMacros()
 		{
-			IEnumerable<DataStorage.CustomCommands> results = Enumerable.Empty<DataStorage.CustomCommands>();
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
-				//Retrieve a list of saved printers from the Datastore
+				//Retrieve a list of macros from the database
 				string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActivePrinterProfile.Instance.ActivePrinter.Id);
-				results = (IEnumerable<DataStorage.CustomCommands>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.CustomCommands>(query);
-				return results;
+
+				return DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.CustomCommands>(query);
 			}
-			return results;
+
+			return Enumerable.Empty<DataStorage.CustomCommands>();
 		}
 
 		protected void SendCommandToPrinter(string command)

@@ -228,13 +228,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private IEnumerable<Printer> GetAllPrinters()
 		{
 			//Retrieve a list of saved printers from the Datastore
-			//            return (IEnumerable<Printer>)from s in Datastore.Instance.dbSQLite.Table<Printer>()
-			//                                         orderby s.Name
-			//                                         select s;
-
-			string query = string.Format("SELECT * FROM Printer;");
-			IEnumerable<Printer> result = (IEnumerable<Printer>)Datastore.Instance.dbSQLite.Query<Printer>(query);
-			return result;
+			return Datastore.Instance.dbSQLite.Query<Printer>("SELECT * FROM Printer;");
 		}
 	}
 }

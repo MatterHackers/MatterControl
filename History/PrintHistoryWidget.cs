@@ -167,15 +167,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 		private int GetCompletedPrints()
 		{
 			//string query = "SELECT COUNT(*) FROM PrintTask WHERE PrintComplete = '{0}';".FormatWith(true);
-			var results = DataStorage.Datastore.Instance.dbSQLite.Table<PrintTask>().Where(o => o.PrintComplete == true);
+			var results = Datastore.Instance.dbSQLite.Table<PrintTask>().Where(o => o.PrintComplete == true);
 			return results.Count();
 		}
 
 		private int GetTotalPrintSeconds()
 		{
-			string query = "SELECT SUM(PrintTimeSeconds) FROM PrintTask";
-			var results = DataStorage.Datastore.Instance.dbSQLite.ExecuteScalar<int>(query);
-			return results;
+			return Datastore.Instance.dbSQLite.ExecuteScalar<int>("SELECT SUM(PrintTimeSeconds) FROM PrintTask");
 		}
 
 		private string GetPrintTimeString()

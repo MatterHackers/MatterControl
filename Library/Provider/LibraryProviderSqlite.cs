@@ -209,10 +209,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		/// <returns>A list of all print items</returns>
 		public static IEnumerable<PrintItem> GetAllPrintItemsRecursive()
 		{
-			// NOTE: We are making the assumption that everything is reference if it does not have a 0 in eth PrintItemCollectionID.
-			string query = "SELECT * FROM PrintItem WHERE PrintItemCollectionID != 0;";
-			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
-			return result;
+			// NOTE: We are making the assumption that everything is reference if it does not have a 0 in PrintItemCollectionID.
+			return Datastore.Instance.dbSQLite.Query<PrintItem>("SELECT * FROM PrintItem WHERE PrintItemCollectionID != 0;");
 		}
 
 		public override void AddCollectionToLibrary(string collectionName)
@@ -300,8 +298,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} AND Name LIKE '%{1}%' ORDER BY Name ASC;", baseLibraryCollection.Id, keyphrase);
 			}
-			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
-			return result;
+
+			return Datastore.Instance.dbSQLite.Query<PrintItem>(query);
 		}
 
 		public override string GetPrintItemName(int itemIndex)
@@ -438,8 +436,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		protected IEnumerable<PrintItemCollection> GetChildCollections()
 		{
 			string query = string.Format("SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
-			IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
-			return result;
+			return Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
 		}
 
 		private PrintItemCollection GetRootLibraryCollection()

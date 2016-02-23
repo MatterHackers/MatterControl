@@ -99,36 +99,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (collection != null)
 			{
-				Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
-				IEnumerable<DataStorage.SliceSetting> settingsList = GetCollectionSettings(collection.Id);
-				foreach (DataStorage.SliceSetting s in settingsList)
+				Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
+				foreach (SliceSetting s in GetCollectionSettings(collection.Id))
 				{
 					settingsDictionary[s.Name] = s;
 				}
+
 				this.ActivePresetLayer = new SettingsLayer(collection, settingsDictionary);
 			}
 			UiThread.RunOnIdle(DoChangeToSlicePresetDetail);
 		}
 
-		private DataStorage.SliceSettingsCollection GetCollection(int collectionId)
+		private SliceSettingsCollection GetCollection(int collectionId)
 		{
-			return DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == collectionId).Take(1).FirstOrDefault();
+			return Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == collectionId).Take(1).FirstOrDefault();
 		}
 
-		private IEnumerable<DataStorage.SliceSettingsCollection> GetPresets(string filterTag)
+		private IEnumerable<SliceSettingsCollection> GetPresets(string filterTag)
 		{
 			//Retrieve a list of presets from the Datastore
 			string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = {0};", filterTag);
-			IEnumerable<DataStorage.SliceSettingsCollection> result = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
-			return result;
+			return Datastore.Instance.dbSQLite.Query<SliceSettingsCollection>(query);
 		}
 
-		public IEnumerable<DataStorage.SliceSetting> GetCollectionSettings(int collectionId)
+		public IEnumerable<SliceSetting> GetCollectionSettings(int collectionId)
 		{
 			//Retrieve a list of slice settings from the Datastore
 			string query = string.Format("SELECT * FROM SliceSetting WHERE SettingsCollectionID = {0};", collectionId);
-			IEnumerable<DataStorage.SliceSetting> result = (IEnumerable<DataStorage.SliceSetting>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSetting>(query);
-			return result;
+			return Datastore.Instance.dbSQLite.Query<SliceSetting>(query);
 		}
 
 		private void DoChangeToSlicePresetDetail()

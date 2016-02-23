@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsRowContainer.RemoveScrollChildren();
 			UiThread.RunOnIdle(() =>
 			{
-				foreach (KeyValuePair<String, DataStorage.SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
+				foreach (KeyValuePair<String, SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
 				{
 					OrganizerSettingsData settingData = SliceSettingsOrganizer.Instance.GetSettingsData(item.Key);
 
@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (!this.windowController.ActivePresetLayer.settingsDictionary.ContainsKey(addRowSettingData.SlicerConfigName))
 					{
-						DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+						SliceSetting sliceSetting = new SliceSetting();
 						sliceSetting.Name = addRowSettingData.SlicerConfigName;
 						sliceSetting.Value = ActiveSliceSettings.Instance.GetActiveValue(addRowSettingData.SlicerConfigName); //populate with current
 						sliceSetting.SettingsCollectionId = this.windowController.ActivePresetLayer.settingsCollectionData.Id;
@@ -450,7 +450,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (this.windowController.ActivePresetLayer.settingsDictionary.ContainsKey(configName))
 				{
-					DataStorage.SliceSetting item = this.windowController.ActivePresetLayer.settingsDictionary[configName];
+					SliceSetting item = this.windowController.ActivePresetLayer.settingsDictionary[configName];
 					SliceSettingsToRemoveOnCommit.Add(item);
 
 					this.windowController.ActivePresetLayer.settingsDictionary.Remove(configName);
@@ -475,7 +475,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+				SliceSetting sliceSetting = new SliceSetting();
 				sliceSetting.Name = keyName;
 				sliceSetting.Value = keyValue;
 				sliceSetting.SettingsCollectionId = this.windowController.ActivePresetLayer.settingsCollectionData.Id;
@@ -488,7 +488,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void CommitChanges()
 		{
-			foreach (KeyValuePair<String, DataStorage.SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
+			foreach (KeyValuePair<String, SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
 			{
 				//Ensure that each setting's collection id matches current collection id (ie for new presets)
 				if (item.Value.SettingsCollectionId != windowController.ActivePresetLayer.settingsCollectionData.Id)
@@ -894,8 +894,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			int noExistingPresets = ExistingPresetsCount() + 1;
 
-			Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
-			DataStorage.SliceSettingsCollection collection = new DataStorage.SliceSettingsCollection();
+			Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
+			SliceSettingsCollection collection = new SliceSettingsCollection();
 
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
@@ -934,16 +934,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				DataStorage.SliceSettingsCollection duplicateCollection = new SliceSettingsCollection();
+				SliceSettingsCollection duplicateCollection = new SliceSettingsCollection();
 				duplicateCollection.Name = string.Format("{0} (copy)".FormatWith(windowController.ActivePresetLayer.settingsCollectionData.Name));
 				duplicateCollection.Tag = windowController.ActivePresetLayer.settingsCollectionData.Tag;
 				duplicateCollection.PrinterId = windowController.ActivePresetLayer.settingsCollectionData.PrinterId;
 
-				Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
-				IEnumerable<DataStorage.SliceSetting> settingsList = this.windowController.GetCollectionSettings(windowController.ActivePresetLayer.settingsCollectionData.Id);
-				foreach (DataStorage.SliceSetting s in settingsList)
+				Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
+				IEnumerable<SliceSetting> settingsList = this.windowController.GetCollectionSettings(windowController.ActivePresetLayer.settingsCollectionData.Id);
+				foreach (SliceSetting s in settingsList)
 				{
-					DataStorage.SliceSetting newSetting = new DataStorage.SliceSetting();
+					SliceSetting newSetting = new SliceSetting();
 					newSetting.Name = s.Name;
 					newSetting.Value = s.Value;
 
@@ -971,7 +971,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (openParams.FileNames != null)
 			{
-				Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
+				Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
 				try
 				{
 					if (File.Exists(openParams.FileName))
@@ -986,7 +986,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								string keyName = settingLine[0].Trim();
 								string settingDefaultValue = settingLine[1].Trim();
 
-								DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+								SliceSetting sliceSetting = new SliceSetting();
 								sliceSetting.Name = keyName;
 								sliceSetting.Value = settingDefaultValue;
 								sliceSetting.SettingsCollectionId = windowController.ActivePresetLayer.settingsCollectionData.Id;
@@ -1030,7 +1030,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			List<string> configFileAsList = new List<string>();
 
-			foreach (KeyValuePair<String, DataStorage.SliceSetting> setting in windowController.ActivePresetLayer.settingsDictionary)
+			foreach (KeyValuePair<String, SliceSetting> setting in windowController.ActivePresetLayer.settingsDictionary)
 			{
 				string settingString = string.Format("{0} = {1}", setting.Value.Name, setting.Value.Value);
 				configFileAsList.Add(settingString);

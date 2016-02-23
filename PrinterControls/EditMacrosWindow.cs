@@ -32,6 +32,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.FieldValidation;
+using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -286,8 +287,7 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(presetsFormContainer);
 
-			IEnumerable<DataStorage.CustomCommands> macroList = GetMacros();
-			foreach (DataStorage.CustomCommands currentCommand in macroList)
+			foreach (DataStorage.CustomCommands currentCommand in MacroControlsWidget.GetMacros())
 			{
 				FlowLayoutWidget macroRow = new FlowLayoutWidget();
 				macroRow.Margin = new BorderDouble(3, 0, 3, 3);
@@ -352,19 +352,6 @@ namespace MatterHackers.MatterControl
 			topToBottom.AddChild(buttonRow);
 			AddChild(topToBottom);
 			this.AnchorAll();
-		}
-
-		private IEnumerable<DataStorage.CustomCommands> GetMacros()
-		{
-			IEnumerable<DataStorage.CustomCommands> results = Enumerable.Empty<DataStorage.CustomCommands>();
-			if (ActivePrinterProfile.Instance.ActivePrinter != null)
-			{
-				//Retrieve a list of saved printers from the Datastore
-				string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActivePrinterProfile.Instance.ActivePrinter.Id);
-				results = (IEnumerable<DataStorage.CustomCommands>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.CustomCommands>(query);
-				return results;
-			}
-			return results;
 		}
 
 		private void addMacro_Click(object sender, EventArgs mouseEvent)
