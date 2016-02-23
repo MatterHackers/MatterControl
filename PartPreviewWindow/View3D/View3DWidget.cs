@@ -443,7 +443,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			heightDisplay.Visible = false;
 			meshViewerWidget.interactionVolumes.Add(upArrow);
 
-			// make sure the colors are set correctl
+			// make sure the colors are set correctly
 			ThemeChanged(this, null);
 
 			saveButtons.VisibleChanged += (sender, e) =>
