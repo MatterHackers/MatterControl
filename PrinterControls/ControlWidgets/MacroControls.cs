@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return macroButtonContainer;
 		}
 
-		private IEnumerable<DataStorage.CustomCommands> GetMacros()
+		internal static IEnumerable<DataStorage.CustomCommands> GetMacros()
 		{
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
