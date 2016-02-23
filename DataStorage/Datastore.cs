@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string GetTempFileName(string fileExtension = null)
 		{
-			string tempFileName = string.IsNullOrEmpty(fileExtension) ? 
+			string tempFileName = string.IsNullOrEmpty(fileExtension) ?
 				Path.GetRandomFileName() :
 				Path.ChangeExtension(Path.GetRandomFileName(), "." + fileExtension.TrimStart('.'));
 
@@ -204,8 +204,23 @@ namespace MatterHackers.MatterControl.DataStorage
 		private static string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
 		private static Datastore globalInstance;
 		private ApplicationSession activeSession;
-		private List<Type> dataStoreTables = new List<Type> { typeof(PrintItemCollection), typeof(PrinterSetting), typeof(CustomCommands), typeof(SystemSetting), typeof(UserSetting), typeof(ApplicationSession), typeof(PrintItem), typeof(PrintTask), typeof(Printer), typeof(SliceSetting), typeof(SliceSettingsCollection) };
 		private bool TEST_FLAG = false;
+
+		private List<Type> dataStoreTables = new List<Type>
+		{
+			typeof(PrintItemCollection),
+			typeof(PrinterSetting),
+			typeof(CustomCommands),
+			typeof(SystemSetting),
+			typeof(UserSetting),
+			typeof(ApplicationSession),
+			typeof(PrintItem),
+			typeof(PrintTask),
+			typeof(Printer),
+			typeof(SliceSetting),
+			typeof(SliceSettingsCollection)
+		};
+
 		public Datastore()
 		{
 			if (!File.Exists(datastoreLocation))
@@ -276,12 +291,15 @@ namespace MatterHackers.MatterControl.DataStorage
 			{
 				return;
 			}
+
 			wasExited = true;
+
 			if (this.activeSession != null)
 			{
 				this.activeSession.SessionEnd = DateTime.Now;
 				this.activeSession.Commit();
 			}
+
 			// lets wait a bit to make sure the commit has resolved.
 			Thread.Sleep(100);
 			try
@@ -304,8 +322,8 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
-		public void Initialize()
 		//Run initial checks and operations on sqlite datastore
+		public void Initialize()
 		{
 			if (TEST_FLAG)
 			{
@@ -323,32 +341,23 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 			string query = string.Format("SELECT COUNT(*) FROM {0};", tableName);
 			string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
+
 			return Convert.ToInt32(result);
 		}
-		private void StartSession()
+
 		//Begins new application session record
+		private void StartSession()
 		{
 			activeSession = new ApplicationSession();
 			dbSQLite.Insert(activeSession);
 		}
 
-		private void ValidateSchema()
 		// Checks if the datastore contains the appropriate tables - adds them if necessary
+		private void ValidateSchema()
 		{
 			foreach (Type table in dataStoreTables)
 			{
 				dbSQLite.CreateTable(table);
-
-				//string query = string.Format("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='{0}';", table.Name);
-				////SQLiteCommand command = dbSQLite.CreateCommand(query);
-
-				//int RowCount = 0;
-				//string result = dbSQLite.ExecuteScalar<string>(query);
-				//RowCount = Convert.ToInt32(result);
-				//if (RowCount == 0)
-				//{
-				//    dbSQLite.CreateTable(table);
-				//}
 			}
 		}
 
