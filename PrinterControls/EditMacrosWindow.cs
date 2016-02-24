@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(presetsFormContainer);
 
-			foreach (DataStorage.CustomCommands currentCommand in MacroControlsWidget.GetMacros())
+			foreach (CustomCommands currentCommand in MacroControlsWidget.GetMacros())
 			{
 				FlowLayoutWidget macroRow = new FlowLayoutWidget();
 				macroRow.Margin = new BorderDouble(3, 0, 3, 3);
@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl
 				editLink.Margin = new BorderDouble(right: 5);
 				// You can't pass a foreach variable into a link function or it wall always be the last item.
 				// So we make a local variable copy of it and pass that. This will get the right one.
-				DataStorage.CustomCommands currentCommandForLinkFunction = currentCommand;
+				CustomCommands currentCommandForLinkFunction = currentCommand;
 				editLink.Click += (sender, e) =>
 				{
 					windowController.ChangeToMacroDetail(currentCommandForLinkFunction);
@@ -364,7 +364,7 @@ namespace MatterHackers.MatterControl
 	{
 		public EventHandler functionToCallOnSave;
 
-		public DataStorage.CustomCommands ActiveMacro;
+		public CustomCommands ActiveMacro;
 
 		public EditMacrosWindow(EventHandler functionToCallOnSave)
 			: base(360, 420)

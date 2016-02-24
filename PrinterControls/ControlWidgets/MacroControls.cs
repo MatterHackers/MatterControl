@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
@@ -139,13 +140,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			macroButtonContainer.Margin = new BorderDouble(3, 0);
 			macroButtonContainer.Padding = new BorderDouble(3);
 
-			IEnumerable<DataStorage.CustomCommands> macroList = GetMacros();
 			int buttonCount = 0;
-			foreach (DataStorage.CustomCommands m in macroList)
+			foreach (CustomCommands macro in GetMacros())
 			{
 				buttonCount++;
-				Button macroButton = textImageButtonFactory.Generate(m.Name);
-				macroButton.Text = m.Value;
+				Button macroButton = textImageButtonFactory.Generate(macro.Name);
+				macroButton.Text = macro.Value;
 				macroButton.Margin = new BorderDouble(right: 5);
 				macroButton.Click += (sender, e) =>
 				{
@@ -153,26 +153,28 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				macroButtonContainer.AddChild(macroButton);
 			}
+
 			if (buttonCount == 0)
 			{
 				TextWidget noMacrosFound = new TextWidget(LocalizedString.Get("No macros are currently set up for this printer."), pointSize: 10);
 				noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				macroButtonContainer.AddChild(noMacrosFound);
 			}
+
 			return macroButtonContainer;
 		}
 
-		internal static IEnumerable<DataStorage.CustomCommands> GetMacros()
+		internal static IEnumerable<CustomCommands> GetMacros()
 		{
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				//Retrieve a list of macros from the database
 				string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActivePrinterProfile.Instance.ActivePrinter.Id);
 
-				return DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.CustomCommands>(query);
+				return Datastore.Instance.dbSQLite.Query<CustomCommands>(query);
 			}
 
-			return Enumerable.Empty<DataStorage.CustomCommands>();
+			return Enumerable.Empty<CustomCommands>();
 		}
 
 		protected void SendCommandToPrinter(string command)
