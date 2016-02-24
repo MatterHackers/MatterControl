@@ -598,7 +598,7 @@ namespace MatterHackers.MatterControl
 					if (argExtension.Length > 1
 						&& MeshFileIo.ValidFileExtensions().Contains(argExtension))
 					{
-						QueueData.Instance.AddItem(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
+						QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
 					}
 				}
 
@@ -713,7 +713,7 @@ namespace MatterHackers.MatterControl
 #endif
 			if (!Directory.Exists(pluginDirectory))
 			{
-				string dataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
+				string dataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
 				pluginDirectory = Path.Combine(dataPath, "Plugins");
 			}
 			// TODO: this should look in a plugin folder rather than just the application directory (we probably want it in the user folder).

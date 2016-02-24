@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 
 			if (settingsDict.Count > 0)
 			{
-				collection = new DataStorage.SliceSettingsCollection();
+				collection = new SliceSettingsCollection();
 				collection.Name = this.ActivePrinter.Name;
 				collection.Commit();
 
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl
 
 				if (settingsDict.Count > 0)
 				{
-					collection = new DataStorage.SliceSettingsCollection();
+					collection = new SliceSettingsCollection();
 					collection.Name = Path.GetFileNameWithoutExtension(filePath);
 					collection.PrinterId = ActivePrinter.Id;
 					collection.Tag = tag;
@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl
 		{
 			foreach (KeyValuePair<string, string> item in settingsDict)
 			{
-				DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+				SliceSetting sliceSetting = new SliceSetting();
 				sliceSetting.Name = item.Key;
 				sliceSetting.Value = item.Value;
 				sliceSetting.SettingsCollectionId = collectionId;

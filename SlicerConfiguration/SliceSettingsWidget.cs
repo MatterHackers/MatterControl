@@ -686,7 +686,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				topToBottomSettings.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 
-				foreach (KeyValuePair<string, DataStorage.SliceSetting> item in ActiveSliceSettings.Instance.DefaultSettings)
+				foreach (KeyValuePair<string, SliceSetting> item in ActiveSliceSettings.Instance.DefaultSettings)
 				{
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, item.Key))
 					{
