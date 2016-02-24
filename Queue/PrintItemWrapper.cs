@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private long writeTime = 0;
 
-		public PrintItemWrapper(DataStorage.PrintItem printItem, List<ProviderLocatorNode> sourceLibraryProviderLocator = null)
+		public PrintItemWrapper(PrintItem printItem, List<ProviderLocatorNode> sourceLibraryProviderLocator = null)
 		{
 			this.PrintItem = printItem;
 
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public PrintItemWrapper(int printItemId)
 		{
-			this.PrintItem = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItem>().Where(v => v.Id == printItemId).Take(1).FirstOrDefault();
+			this.PrintItem = Datastore.Instance.dbSQLite.Table<PrintItem>().Where(v => v.Id == printItemId).Take(1).FirstOrDefault();
 			try
 			{
 				this.fileType = Path.GetExtension(this.FileLocation).ToUpper();
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				string engineString = ((int)ActivePrinterProfile.Instance.ActiveSliceEngineType).ToString();
 
 				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
-				string gcodePathAndFileName = Path.Combine(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
+				string gcodePathAndFileName = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
 				return gcodePathAndFileName;
 			}
 			else

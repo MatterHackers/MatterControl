@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public ExportToFolderProcess(List<DataStorage.PrintItem> list, string exportPath)
+		public ExportToFolderProcess(List<PrintItem> list, string exportPath)
 		{
 			this.allFilesToExport = list;
 			this.exportPath = exportPath;

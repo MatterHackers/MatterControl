@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.VersionManagement;
 using System;
@@ -73,9 +74,9 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler UpdateStatusChanged = new RootedObjectEventHandler();
 
 #if __ANDROID__
-		static string updateFileLocation = Path.Combine(DataStorage.ApplicationDataStorage.Instance.PublicDataStoragePath, "updates");
+		static string updateFileLocation = Path.Combine(ApplicationDataStorage.Instance.PublicDataStoragePath, "updates");
 #else
-		private static string applicationDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
+		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 		private static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
 #endif
 
@@ -368,8 +369,8 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				DataStorage.ApplicationSession firstSession;
-				firstSession = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.ApplicationSession>().OrderBy(v => v.SessionStart).Take(1).FirstOrDefault();
+				ApplicationSession firstSession;
+				firstSession = Datastore.Instance.dbSQLite.Table<ApplicationSession>().OrderBy(v => v.SessionStart).Take(1).FirstOrDefault();
 				if (firstSession != null
 					&& DateTime.Compare(firstSession.SessionStart.AddDays(7), DateTime.Now) < 0)
 				{

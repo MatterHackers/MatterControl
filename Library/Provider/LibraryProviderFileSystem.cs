@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
 
-			var printItemWrapper = new PrintItemWrapper(new DataStorage.PrintItem(GetPrintItemName(itemIndex), fileName), this.GetProviderLocator())
+			var printItemWrapper = new PrintItemWrapper(new PrintItem(GetPrintItemName(itemIndex), fileName), this.GetProviderLocator())
 			{
 				UseIncrementedNameDuringTypeChange = true
 			};
