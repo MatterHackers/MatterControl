@@ -91,6 +91,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Leveling")]
         public void Leveling7PointsCorectInterpolation()
 		{
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
 			PrintLevelingData levelingData = new PrintLevelingData();
 
 			double radius = 100;

@@ -26,7 +26,7 @@ namespace MatterControl.Tests.MatterControl
             Assert.True("B" == "B");
         }*/
 
-       [Test, Category("PrinterConfigurationFiles")]
+       [Test, Category("PrinterConfigurationFiles"), Ignore("Not Finished")]
        public void PrinterConfigTests()
         {
 
