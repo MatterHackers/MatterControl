@@ -2,6 +2,7 @@
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
@@ -170,7 +171,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private int GetPrinterRecordCount()
 		{
-			return DataStorage.Datastore.Instance.RecordCount("Printer");
+			return Datastore.Instance.RecordCount("Printer");
 		}
 
 		private void SetButtonText()

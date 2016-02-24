@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 
 			RemoveListItems();
-			IEnumerable<DataStorage.PrintTask> partFiles = PrintHistoryData.Instance.GetHistoryItems(NumItemsToLoad);
+			IEnumerable<PrintTask> partFiles = PrintHistoryData.Instance.GetHistoryItems(NumItemsToLoad);
 			if (partFiles != null)
 			{
 				foreach (PrintTask part in partFiles)

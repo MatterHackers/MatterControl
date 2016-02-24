@@ -122,9 +122,9 @@ namespace MatterHackers.MatterControl
 
 			// start cleaning out unused data
 			// MatterControl\data\gcode
-			RemoveDirectory(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath);
+			RemoveDirectory(ApplicationDataStorage.Instance.GCodeOutputPath);
 
-			string userDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
+			string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 			RemoveDirectory(Path.Combine(userDataPath, "updates"));
 
 			HashSet<string> referencedPrintItemsFilePaths = new HashSet<string>();
