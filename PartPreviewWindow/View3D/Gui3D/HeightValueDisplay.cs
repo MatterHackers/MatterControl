@@ -116,20 +116,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// draw the verticle line that shows the measurment
 					Vector2 pointerBottom = new Vector2(startLineGroundPos.x + HorizontalLineLength / 2, yGround);
 					Vector2 pointerTop = new Vector2(startLineSelectionPos.x + HorizontalLineLength / 2, ySelection);
-					drawEvent.graphics2D.Line(pointerBottom, pointerTop, RGBA_Bytes.Black);
 
-					Vector2 direction = pointerTop - pointerBottom;
-					if (direction.LengthSquared > 0)
-					{
-						PathStorage arrow = new PathStorage();
-						arrow.MoveTo(-3, -5);
-						arrow.LineTo(0, 0);
-						arrow.LineTo(3, -5);
-						double rotation = Math.Atan2(direction.y, direction.x);
-						IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
-						IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(pointerTop));
-						drawEvent.graphics2D.Render(inPosition, RGBA_Bytes.Black);
-					}
+					InteractionVolume.DrawMeasureLine(drawEvent.graphics2D, pointerBottom, pointerTop, RGBA_Bytes.Black, InteractionVolume.LineArrows.End);
 				}
 			}
 		}
