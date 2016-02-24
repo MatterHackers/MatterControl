@@ -46,30 +46,6 @@ namespace MatterControl.Tests.MatterControl
 
 		}
 
-		[Test, Category("SamplePartsTests")]
-		public void AndroidCalibrationPartsInSettings()
-		{
 
-			string samplePartsPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "MatterControlAndroid", "MatterControlAndroid", "DefaultOEMSettings", "Assets", "StaticData", "OEMSettings", "SampleParts"));
-			string[] files = Directory.GetFiles(samplePartsPath);
-			bool hasTabletStand = files.Where(l => l.Contains("MatterControl - Stand.stl")).Any();
-			bool hasCoin = files.Where(l => l.Contains("MatterControl - Coin.stl")).Any();
-			Assert.IsTrue(hasCoin, "Expected coin file not found");
-			Assert.IsTrue(hasTabletStand, "Expected stand file not found");
-
-		}
-
-		[Test, Category("SamplePartsTests")]
-		public void AndroidCalibrationPartsExist()
-		{
-
-			string samplePartsPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "MatterControlAndroid", "MatterControlAndroid", "DefaultOEMSettings", "Assets", "StaticData", "OEMSettings", "Settings.json"));
-			string[] lines = File.ReadAllLines(samplePartsPath);
-			bool hasTabletStand = lines.Where(l => l.Contains("MatterControl - Stand.stl")).Any();
-			bool hasCoin = lines.Where(l => l.Contains("MatterControl - Coin.stl")).Any();
-			Assert.IsTrue(hasCoin, "Expected coin file not found");
-			Assert.IsTrue(hasTabletStand, "Expected stand file not found");
-
-		}
 	}
 }
