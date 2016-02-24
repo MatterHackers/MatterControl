@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.DataStorage;
 using System.Collections.Generic;
 using System.IO;
 
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		public static readonly int RecordLimit = 20;
 
-		public IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
+		public IEnumerable<PrintTask> GetHistoryItems(int recordCount)
 		{
 			string query;
 			if (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true")
@@ -66,14 +67,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				query = string.Format("SELECT * FROM PrintTask ORDER BY PrintStart DESC LIMIT {0};", recordCount);
 			}
-			IEnumerable<DataStorage.PrintTask> result = (IEnumerable<DataStorage.PrintTask>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintTask>(query);
-			return result;
+
+			return Datastore.Instance.dbSQLite.Query<PrintTask>(query);
 		}
 
 		internal void ClearHistory()
 		{
-			string query = string.Format("DELETE FROM PrintTask;");
-			DataStorage.Datastore.Instance.dbSQLite.ExecuteScalar<DataStorage.PrintTask>(query);
+			Datastore.Instance.dbSQLite.ExecuteScalar<PrintTask>("DELETE FROM PrintTask;");
 			HistoryCleared.CallEvents(this, null);
 		}
 	}

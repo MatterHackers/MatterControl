@@ -48,11 +48,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SettingsLayer
 	{
 		//Container class representing a collection of setting along with the meta info for that collection
-		public Dictionary<string, DataStorage.SliceSetting> settingsDictionary;
+		public Dictionary<string, SliceSetting> settingsDictionary;
 
-		public DataStorage.SliceSettingsCollection settingsCollectionData;
+		public SliceSettingsCollection settingsCollectionData;
 
-		public SettingsLayer(DataStorage.SliceSettingsCollection settingsCollection, Dictionary<string, DataStorage.SliceSetting> settingsDictionary)
+		public SettingsLayer(SliceSettingsCollection settingsCollection, Dictionary<string, SliceSetting> settingsDictionary)
 		{
 			this.settingsCollectionData = settingsCollection;
 			this.settingsDictionary = settingsDictionary;
@@ -146,11 +146,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				SettingsLayer printerSettingsLayer;
-				DataStorage.SliceSettingsCollection collection;
+				SliceSettingsCollection collection;
 				if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based) != 0)
 				{
 					int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based);
-					collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
+					collection = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
 					printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
 				}
 				else
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based) != 0)
 			{
 				int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based);
-				DataStorage.SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
+				SliceSettingsCollection collection = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
 				SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
 				if (printerSettingsLayer.settingsDictionary.ContainsKey(sliceSetting))
 				{
@@ -203,11 +203,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				SettingsLayer printerSettingsLayer;
-				DataStorage.SliceSettingsCollection collection;
+				SliceSettingsCollection collection;
 				if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != 0)
 				{
 					int materialOneSettingsID = ActivePrinterProfile.Instance.ActiveQualitySettingsID;
-					collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
+					collection = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
 					printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
 				}
 				else
@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public Dictionary<string, DataStorage.SliceSetting> DefaultSettings
+		public Dictionary<string, SliceSetting> DefaultSettings
 		{
 			get
 			{
@@ -614,15 +614,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
-				DataStorage.SliceSettingsCollection collection;
+				SliceSettingsCollection collection;
 				if (ActivePrinterProfile.Instance.ActivePrinter.DefaultSettingsCollectionId != 0)
 				{
 					int activePrinterSettingsID = ActivePrinterProfile.Instance.ActivePrinter.DefaultSettingsCollectionId;
-					collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == activePrinterSettingsID).Take(1).FirstOrDefault();
+					collection = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == activePrinterSettingsID).Take(1).FirstOrDefault();
 				}
 				else
 				{
-					collection = new DataStorage.SliceSettingsCollection();
+					collection = new SliceSettingsCollection();
 					collection.Name = ActivePrinterProfile.Instance.ActivePrinter.Name;
 					collection.Commit();
 
@@ -634,31 +634,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private SettingsLayer LoadConfigurationSettingsFromDatastore(DataStorage.SliceSettingsCollection collection)
+		private SettingsLayer LoadConfigurationSettingsFromDatastore(SliceSettingsCollection collection)
 		{
-			Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
-
-			IEnumerable<DataStorage.SliceSetting> settingsList = GetCollectionSettings(collection.Id);
-			foreach (DataStorage.SliceSetting s in settingsList)
+			Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
+			foreach (SliceSetting s in GetCollectionSettings(collection.Id))
 			{
 				settingsDictionary[s.Name] = s;
 			}
 
-			SettingsLayer settingsLayer = new SettingsLayer(collection, settingsDictionary);
-			return settingsLayer;
+			return new SettingsLayer(collection, settingsDictionary);
 		}
 
-		private IEnumerable<DataStorage.SliceSetting> GetCollectionSettings(int collectionId)
+		private IEnumerable<SliceSetting> GetCollectionSettings(int collectionId)
 		{
-			//Retrieve a list of saved printers from the Datastore
 			string query = string.Format("SELECT * FROM SliceSetting WHERE SettingsCollectionID = {0};", collectionId);
-			IEnumerable<DataStorage.SliceSetting> result = (IEnumerable<DataStorage.SliceSetting>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSetting>(query);
-			return result;
+			return Datastore.Instance.dbSQLite.Query<SliceSetting>(query);
 		}
 
 		private void LoadDefaultConfigrationSettings()
 		{
-			DataStorage.SliceSettingsCollection defaultCollection = new DataStorage.SliceSettingsCollection();
+			SliceSettingsCollection defaultCollection = new SliceSettingsCollection();
 			defaultCollection.Name = "__default__";
 			SettingsLayer defaultSettingsLayer = LoadConfigurationSettingsFromFile(Path.Combine("PrinterSettings", "config.ini"), defaultCollection);
 			this.activeSettingsLayers.Add(defaultSettingsLayer);
@@ -682,9 +677,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public SettingsLayer LoadConfigurationSettingsFromFile(string pathAndFileName, DataStorage.SliceSettingsCollection collection)
+		public SettingsLayer LoadConfigurationSettingsFromFile(string pathAndFileName, SliceSettingsCollection collection)
 		{
-			Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
+			Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
 			SettingsLayer activeCollection;
 			try
 			{
@@ -699,7 +694,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							string keyName = settingLine[0].Trim();
 							string settingDefaultValue = settingLine[1].Trim();
 
-							DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+							SliceSetting sliceSetting = new SliceSetting();
 							sliceSetting.Name = keyName;
 							sliceSetting.Value = settingDefaultValue;
 
@@ -767,7 +762,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+				SliceSetting sliceSetting = new SliceSetting();
 				sliceSetting.Name = keyName;
 				sliceSetting.Value = keyValue;
 				sliceSetting.SettingsCollectionId = layer.settingsCollectionData.Id;
@@ -791,7 +786,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void CommitLayerChanges(int layerIndex)
 		{
 			SettingsLayer layer = this.activeSettingsLayers[layerIndex];
-			foreach (KeyValuePair<String, DataStorage.SliceSetting> item in layer.settingsDictionary)
+			foreach (KeyValuePair<String, SliceSetting> item in layer.settingsDictionary)
 			{
 				item.Value.Commit();
 			}
@@ -818,7 +813,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// make a new dictionary so we only hash on the current values and keys.
 				StringBuilder bigStringForHashCode = new StringBuilder();
-				foreach (KeyValuePair<String, DataStorage.SliceSetting> setting in this.DefaultSettings)
+				foreach (KeyValuePair<String, SliceSetting> setting in this.DefaultSettings)
 				{
 					string activeValue = GetActiveValue(setting.Key);
 					bigStringForHashCode.Append(setting.Key);
@@ -833,7 +828,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			List<string> configFileAsList = new List<string>();
 
-			foreach (KeyValuePair<String, DataStorage.SliceSetting> setting in this.DefaultSettings)
+			foreach (KeyValuePair<String, SliceSetting> setting in this.DefaultSettings)
 			{
 				string activeValue = GetActiveValue(setting.Key);
 				activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);

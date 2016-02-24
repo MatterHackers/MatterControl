@@ -274,17 +274,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public int ExistingPrinterCount()
 		{
-			string query = string.Format("SELECT COUNT(*) FROM Printer;");
-			string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
-			return Convert.ToInt32(result);
+			return Datastore.Instance.RecordCount("Printer");
 		}
 
-        private class sqlName
-        {
-            public string Name { get; set; } 
-        }
+		private class sqlName
+		{
+			public string Name { get; set; }
+		}
 
-        
 		private bool OnSave()
 		{
 			if (printerNameInput.Text != "")

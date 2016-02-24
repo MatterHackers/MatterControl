@@ -154,8 +154,7 @@ namespace MatterControl.Tests
 		private bool NamedCollectionExists(string nameToLookFor)
 		{
 			string query = string.Format("SELECT * FROM PrintItemCollection WHERE Name = '{0}' ORDER BY Name ASC;", nameToLookFor);
-			IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
-			foreach (PrintItemCollection collection in result)
+			foreach (PrintItemCollection collection in Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query))
 			{
 				if (collection.Name == nameToLookFor)
 				{
@@ -169,8 +168,7 @@ namespace MatterControl.Tests
 		private bool NamedItemExists(string nameToLookFor)
 		{
 			string query = string.Format("SELECT * FROM PrintItem WHERE Name = '{0}' ORDER BY Name ASC;", nameToLookFor);
-			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
-			foreach (PrintItem collection in result)
+			foreach (PrintItem collection in Datastore.Instance.dbSQLite.Query<PrintItem>(query))
 			{
 				if (collection.Name == nameToLookFor)
 				{

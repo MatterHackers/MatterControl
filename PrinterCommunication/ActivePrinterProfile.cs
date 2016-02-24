@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl
 			if (activePrinter != null)
 			{
 				int index = activePrinter.QualityCollectionId;
-				SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == index).Take(1).FirstOrDefault();
+				SliceSettingsCollection collection = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == index).Take(1).FirstOrDefault();
 				if (collection == null)
 				{
 					ActivePrinterProfile.Instance.ActiveQualitySettingsID = 0;
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl
 					Int32.TryParse(activeMaterialPresets[i], out index);
 					if (index != 0)
 					{
-						SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == index).Take(1).FirstOrDefault();
+						SliceSettingsCollection collection = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == index).Take(1).FirstOrDefault();
 						if (collection == null)
 						{
 							ActivePrinterProfile.Instance.SetMaterialSetting(i + 1, 0);
@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl
 		public static void CheckForAndDoAutoConnect()
 		{
 			bool connectionAvailable;
-			DataStorage.Printer autoConnectProfile = ActivePrinterProfile.GetAutoConnectProfile(out connectionAvailable);
+			Printer autoConnectProfile = ActivePrinterProfile.GetAutoConnectProfile(out connectionAvailable);
 			if (autoConnectProfile != null)
 			{
 				ActivePrinterProfile.Instance.ActivePrinter = autoConnectProfile;

@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -157,17 +158,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 
-		private IEnumerable<DataStorage.SliceSettingsCollection> GetCollections()
+		private IEnumerable<SliceSettingsCollection> GetCollections()
 		{
-			IEnumerable<DataStorage.SliceSettingsCollection> results = Enumerable.Empty<DataStorage.SliceSettingsCollection>();
-
 			//Retrieve a list of collections matching from the Datastore
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1} ORDER BY Name;", filterTag, ActivePrinterProfile.Instance.ActivePrinter.Id);
-				results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
+				return Datastore.Instance.dbSQLite.Query<SliceSettingsCollection>(query);
 			}
-			return results;
+
+			return Enumerable.Empty<SliceSettingsCollection>();
 		}
 
 		private void onItemSelect(object sender, EventArgs e)
@@ -243,8 +243,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem defaultMenuItem = dropDownList.AddItem("- default -", "0");
 			defaultMenuItem.Selected += new EventHandler(onItemSelect);
 
-			IEnumerable<DataStorage.SliceSettingsCollection> collections = GetCollections();
-			foreach (DataStorage.SliceSettingsCollection collection in collections)
+			foreach (SliceSettingsCollection collection in GetCollections())
 			{
 				MenuItem menuItem = dropDownList.AddItem(collection.Name, collection.Id.ToString());
 				menuItem.Selected += new EventHandler(onItemSelect);
