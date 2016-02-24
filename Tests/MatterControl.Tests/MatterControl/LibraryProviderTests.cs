@@ -61,6 +61,8 @@ namespace MatterControl.Tests
 		[Test]
 		public void LibraryProviderFileSystem_NavigationWorking()
 		{
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
 			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 			string testLibraryDirectory = Path.Combine(downloadsDirectory, "LibraryProviderFileSystemTest");
 			if (Directory.Exists(testLibraryDirectory))
