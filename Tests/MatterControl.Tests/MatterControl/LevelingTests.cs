@@ -40,6 +40,7 @@ using System.Text;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.VectorMath;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -48,8 +49,10 @@ namespace MatterControl.Tests.MatterControl
     public class LevelingTests
     {
 		[Test, Category("Leveling")]
-		public void Leveling7PointsNeverGetsTooHeigh()
+		public void Leveling7PointsNeverGetsTooHigh()
 		{
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
 			PrintLevelingData levelingData = new PrintLevelingData();
 
 			double radius = 100;
