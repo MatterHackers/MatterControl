@@ -4582,3 +4582,9 @@ Translated:Name
 English:Make
 Translated:Make
 
+English:User Manual
+Translated:User Manual
+
+English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
+Translated:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
+
