@@ -23,7 +23,8 @@ namespace MatterHackers.MatterControl
 				new MenuItemAction("Getting Started".Localize(), gettingStarted_Click),
                 new MenuItemAction("View Help".Localize(), help_Click),
 				new MenuItemAction("Release Notes".Localize(), notes_Click),
-				new MenuItemAction("------------------------", null),
+                new MenuItemAction("User Manual".Localize(), manual_Click),
+                new MenuItemAction("------------------------", null),
                 new MenuItemAction("Report a Bug".Localize(), bug_Click),
                 new MenuItemAction("Check For Update".Localize(), checkForUpdate_Click),
 				new MenuItemAction("------------------------", null),
@@ -77,5 +78,13 @@ namespace MatterHackers.MatterControl
 				MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles/mattercontrol-getting-started");
 			});
 		}
-	}
+
+        private void manual_Click()
+        {
+            UiThread.RunOnIdle(() =>
+            {
+                MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com");
+            });
+        }
+    }
 }
