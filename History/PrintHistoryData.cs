@@ -28,8 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 using System.Collections.Generic;
 using System.IO;
 
@@ -37,10 +37,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
 	public class PrintHistoryData
 	{
-		private static PrintHistoryData instance;
-		public bool ShowTimestamp;
-
+		public static readonly int RecordLimit = 20;
 		public RootedObjectEventHandler HistoryCleared = new RootedObjectEventHandler();
+		public bool ShowTimestamp;
+		private static PrintHistoryData instance;
 
 		public static PrintHistoryData Instance
 		{
@@ -54,9 +54,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 		}
 
-		public static readonly int RecordLimit = 20;
-
-		public IEnumerable<PrintTask> GetHistoryItems(int recordCount)
+		public IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
 		{
 			string query;
 			if (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true")

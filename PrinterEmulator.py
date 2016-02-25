@@ -34,7 +34,7 @@ import serial
 import time
 import random
 
-extruderGoalTemperature = 0
+extruderGoalTemperature = 210
 
 """Add response callbacks here"""
 def randomTemp(command):
