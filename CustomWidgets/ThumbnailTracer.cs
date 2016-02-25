@@ -94,7 +94,8 @@ namespace MatterHackers.RayTracer
 		public void SetRenderPosition(List<MeshGroup> loadedMeshGroups)
 		{
 			trackballTumbleWidget.TrackBallController.Reset();
-			trackballTumbleWidget.TrackBallController.Scale = .03;
+			trackballTumbleWidget.TrackBallController.MinScale = 0;
+            trackballTumbleWidget.TrackBallController.Scale = .03;
 
 			trackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
 			trackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));

@@ -250,9 +250,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Reset();
 
 			// move things into the right place and scale
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .06;
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .02, 0, 0)));
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-new Vector3(ActiveSliceSettings.Instance.BedCenter));
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = 3;
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .02, 0, 0)));
 		}
 
 		private async void InsertTextNow(string text)

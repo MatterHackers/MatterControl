@@ -126,8 +126,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// move things into the right place and scale
 			Vector3 bedCenter3D = new Vector3(bedCenter, 0);
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .05;
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-bedCenter3D);
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = 3;
 		}
 
 		private void Clear3DGCode(object sender, EventArgs e)

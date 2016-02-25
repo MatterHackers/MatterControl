@@ -579,8 +579,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			meshViewerWidget.TrackballTumbleWidget.ZeroVelocity();
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Reset();
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .03;
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-new Vector3(ActiveSliceSettings.Instance.BedCenter));
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = 3;
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 		}
@@ -2586,7 +2586,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UpdateSizeInfo();
 		}
 
-		private void UpdateSizeInfo()
+		public void UpdateSizeInfo()
 		{
 			if (sizeDisplay[0] != null
 				&& SelectedMeshGroup != null)
