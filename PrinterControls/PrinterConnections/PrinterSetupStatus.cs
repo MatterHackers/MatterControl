@@ -240,34 +240,40 @@ namespace MatterHackers.MatterControl
 			return settingsDict;
 		}
 
-		public SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
+		/// <summary>
+		/// Loads a SliceSettingsCollection from StaticData PrinterSettings
+		/// </summary>
+		/// <param name="make">The make to load</param>
+		/// <param name="model">The model to load</param>
+		public SliceSettingsCollection LoadSettingsFromConfigFile(string make, string model)
 		{
-			SliceSettingsCollection collection = null;
 			Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(Path.Combine("PrinterSettings", make, model, "config.ini"));
-
 			if (settingsDict.Count > 0)
 			{
-				collection = new SliceSettingsCollection();
+				SliceSettingsCollection collection = new SliceSettingsCollection();
 				collection.Name = this.ActivePrinter.Name;
 				collection.Commit();
 
 				this.ActivePrinter.DefaultSettingsCollectionId = collection.Id;
 
 				CommitSliceSettings(settingsDict, collection.Id);
+
+				return collection;
 			}
-			return collection;
+
+			// Return null if the loaded settings dictionary was empty
+			return null;
 		}
 
 		public void LoadSlicePresets(string make, string model, string tag)
 		{
 			foreach (string filePath in GetSlicePresets(make, model, tag))
 			{
-				SliceSettingsCollection collection = null;
 				Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(filePath);
 
 				if (settingsDict.Count > 0)
 				{
-					collection = new SliceSettingsCollection();
+					SliceSettingsCollection collection = new SliceSettingsCollection();
 					collection.Name = Path.GetFileNameWithoutExtension(filePath);
 					collection.PrinterId = ActivePrinter.Id;
 					collection.Tag = tag;
@@ -344,7 +350,7 @@ namespace MatterHackers.MatterControl
 		public void Save()
 		{
 			//Load the default slice settings for the make and model combination - if they exist
-			SliceSettingsCollection collection = LoadDefaultSliceSettings(this.ActivePrinter.Make, this.ActivePrinter.Model);
+			SliceSettingsCollection collection = LoadSettingsFromConfigFile(this.ActivePrinter.Make, this.ActivePrinter.Model);
 
 			if (defaultMovementSpeeds != null)
 			{
