@@ -1,2 +1,5 @@
-layer_height = 0.15
-start_gcode = M42 P5 S128\nG28 X0 Y0 ; home all axes\nM106 S160\nG28 X0 Y0 Z0\nG91\nG1 Z5 F3000\nT0\nG1 E35 F100 ;  Extrude primer filament\nT1\nG1 E35 F100\nT0
+layer_height = 0.1
+start_gcode = ;== Enable illumination ===================\nM42 P5 S128\n;== Home Axes =============================\nG90; Set to absolute mode\nG28 X Y\n;== Start cooling fan =====================\nM106 S160\n;== Start AutoTemp ========================\nM109 T0 S[temperature] B260 F1 \n;== Move the Z axis =======================\nG91\nG1 Z25 F5000\nG90\n;== Move X,Y to primer position ===========\nG1 X0 Y10 F5000\n;== Set Extruder relative mode & prime==\nT0\nM83 \nG1 E60 F175 ;  Extrude\nG1 E-2 F5000 ; Retract\nM82\n;== Reset extruder value (X,Y,Z,E)======\nG92 E0;\n;== Move the Z axis (faster) ==============\nG91\nG1 Z5 F20000 ; \nG90\n;== Home Axes =============================\nG28 X Y Z ; Home Axes\n;== Move the Z axis ==============\nG91\nG1 Z10 F5000 ; Move Z axis\nG90
+bridge_speed = 18
+retract_lift = 0.4
+end_gcode = M104 T0 S0 ; turn off temperature\nM104 T1 S0 ; turn off temperature\nM106 S0 ;  Turn off Fan\nG91 ;  Set distance mode to relative value mode\nG1 Z5 F5000 ; lift nozzle\nT0\nG1 E-30 F800 ; Retract Extruder\nG90;\nG1 X210 Y10 F3000;\nM84;
