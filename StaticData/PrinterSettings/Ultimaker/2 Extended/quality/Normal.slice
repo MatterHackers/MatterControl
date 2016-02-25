@@ -1,0 +1,6 @@
+layer_height = 0.1
+fill_density = 0.2
+first_layer_speed = 20
+infill_speed = 80
+external_perimeter_speed = 30
+perimeter_speed = 60
