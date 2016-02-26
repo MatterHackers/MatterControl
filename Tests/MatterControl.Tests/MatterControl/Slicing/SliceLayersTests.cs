@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Slicing.Tests
 	public class SliceLayersTests
 	{
 		[Test]
-		public void SliceLayersGeneratingCorrectSegmets()
+		public void SliceLayersGeneratingCorrectSegments()
 		{
 			// TODO: Make tests work on Mac as well as Windows
 			if (OsInformation.OperatingSystem == OSType.Mac)
