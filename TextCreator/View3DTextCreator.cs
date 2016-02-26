@@ -77,12 +77,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		private String word;
 
 		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
-		private List<ScaleRotateTranslate> asyncMeshGroupTransforms = new List<ScaleRotateTranslate>();
+		private List<Matrix4X4> asyncMeshGroupTransforms = new List<Matrix4X4>();
 		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
 
 		private List<PlatingMeshGroupData> MeshGroupExtraData;
 
-		public ScaleRotateTranslate SelectedMeshTransform
+		public Matrix4X4 SelectedMeshTransform
 		{
 			get { return meshViewerWidget.SelectedMeshGroupTransform; }
 			set { meshViewerWidget.SelectedMeshGroupTransform = value; }
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			}
 		}
 
-		public List<ScaleRotateTranslate> MeshGroupTransforms
+		public List<Matrix4X4> MeshGroupTransforms
 		{
 			get { return meshViewerWidget.MeshGroupTransforms; }
 		}
@@ -201,9 +201,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 							{
 								meshSelectInfo.downOnPart = false;
 
-								ScaleRotateTranslate translated = SelectedMeshTransform;
-								translated.translation *= transformOnMouseDown;
-								SelectedMeshTransform = translated;
+								SelectedMeshTransform *= transformOnMouseDown;
 
 								Invalidate();
 							}
@@ -312,7 +310,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
 				{
-					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i].TotalTransform));
+					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i]));
 				}
 			}
 			IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
@@ -359,7 +357,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					{
 						meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
 						SelectedMeshGroupIndex = meshHitIndex;
-						transformOnMouseDown = SelectedMeshTransform.translation;
+						transformOnMouseDown = SelectedMeshTransform;
 						Invalidate();
 						meshSelectInfo.downOnPart = true;
 					}
@@ -398,9 +396,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
 					meshSelectInfo.lastMoveDelta = delta;
 
-					ScaleRotateTranslate translated = SelectedMeshTransform;
-					translated.translation *= totalTransform;
-					SelectedMeshTransform = translated;
+					SelectedMeshTransform *= totalTransform;
 
 					Invalidate();
 				}
@@ -453,7 +449,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					newMeshInfo.spacing.x = printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset;
 					asyncPlatingDatas.Add(newMeshInfo);
-					asyncMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
+					asyncMeshGroupTransforms.Add(Matrix4X4.Identity);
 
 					PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, newIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
 					{
@@ -482,14 +478,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			processingProgressControl.PercentComplete = 95;
 		}
 
-		private void CreateUnderline(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
+		private void CreateUnderline(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms, List<PlatingMeshGroupData> platingDataList)
 		{
 			if (meshesList.Count > 0)
 			{
-				AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0].TotalTransform);
+				AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0]);
 				for (int i = 1; i < meshesList.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform));
+					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i]));
 				}
 
 				double xSize = bounds.XSize;
@@ -498,7 +494,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				Mesh connectionLine = PlatonicSolids.CreateCube(xSize, ySize, zSize);
 				meshesList.Add(new MeshGroup(connectionLine));
 				platingDataList.Add(new PlatingMeshGroupData());
-				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2));
+				meshTransforms.Add(Matrix4X4.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2));
 				PlatingHelper.CreateITraceableForMeshGroup(platingDataList, meshesList, meshesList.Count - 1, null);
 			}
 		}
@@ -555,7 +551,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				MeshGroups.Add(mesh);
 			}
 			MeshGroupTransforms.Clear();
-			foreach (ScaleRotateTranslate transform in asyncMeshGroupTransforms)
+			foreach (Matrix4X4 transform in asyncMeshGroupTransforms)
 			{
 				MeshGroupTransforms.Add(transform);
 			}
@@ -594,7 +590,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private void DeleteSelectedMesh()
 		{
-			// don't ever delet the last mesh
+			// don't ever delete the last mesh
 			if (MeshGroups.Count > 1)
 			{
 				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
@@ -754,31 +750,29 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			}
 		}
 
-		private void SetWordSpacing(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
+		private void SetWordSpacing(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms, List<PlatingMeshGroupData> platingDataList)
 		{
 			if (meshesList.Count > 0)
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
-					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
+					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex]);
 
-					ScaleRotateTranslate translation = meshTransforms[meshIndex];
-					translation.translation *= Matrix4X4.CreateTranslation(-startPosition);
+					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(-startPosition);
 					double newX = platingDataList[meshIndex].spacing.x * spacingScrollBar.Value * lastSizeValue;
-					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(MeshViewerWidget.BedCenter));
-					meshTransforms[meshIndex] = translation;
+					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(MeshViewerWidget.BedCenter));
 				}
 			}
 		}
 
-		private void SetWordSize(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
+		private void SetWordSize(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms)
 		{
 			Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
 			if (meshesList.Count > 0)
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
-					Vector3 startPositionRelCenter = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation) - bedCenter;
+					Vector3 startPositionRelCenter = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex]) - bedCenter;
 
 					// take out the last scale
 					double oldSize = 1.0 / lastSizeValue;
@@ -790,11 +784,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					Vector3 deltaPosition = endPositionRelCenter - startPositionRelCenter;
 					
 					// move the part to keep it in the same relative position
-					ScaleRotateTranslate scale = meshTransforms[meshIndex];
+					Matrix4X4 scale = meshTransforms[meshIndex];
 
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize));
-					scale.translation *= Matrix4X4.CreateTranslation(deltaPosition);
+					throw new NotImplementedException();
+					//scale.scale *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
+					//scale.scale *= Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize));
+					//scale.translation *= Matrix4X4.CreateTranslation(deltaPosition);
 					
 					meshTransforms[meshIndex] = scale;
 				}
@@ -803,19 +798,21 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			}
 		}
 
-		private void SetWordHeight(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
+		private void SetWordHeight(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms)
 		{
 			if (meshesList.Count > 0)
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
+					throw new NotImplementedException();
+
 					// take out the last scale
 					double oldHeight = lastHeightValue;
-					ScaleRotateTranslate scale = meshTransforms[meshIndex];
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, 1 / oldHeight));
+					Matrix4X4 scale = meshTransforms[meshIndex];
+					//scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, 1 / oldHeight));
 
 					double newHeight = heightScrollBar.Value;
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
+					//scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
 					meshTransforms[meshIndex] = scale;
 				}
 
@@ -924,7 +921,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				// push all the transforms into the meshes
 				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					asyncMeshGroups[i].Transform(MeshGroupTransforms[i].TotalTransform);
+					asyncMeshGroups[i].Transform(MeshGroupTransforms[i]);
 
 					processingProgressControl.RatioComplete = (double)i / asyncMeshGroups.Count * .1;
 				}

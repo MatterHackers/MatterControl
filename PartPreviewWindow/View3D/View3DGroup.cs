@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
@@ -51,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
-				asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i].TotalTransform);
+				asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i]);
 
 				bool continueProcessing;
 				ReportProgressChanged((i + 1) * .4 / asyncMeshGroups.Count, "", out continueProcessing);
@@ -79,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					asyncMeshGroupTransforms[meshGroupToMoveIndex] = ScaleRotateTranslate.Identity();
+					asyncMeshGroupTransforms[meshGroupToMoveIndex] = Matrix4X4.Identity;
 				}
 			}
 

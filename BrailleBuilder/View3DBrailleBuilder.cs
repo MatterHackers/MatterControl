@@ -80,12 +80,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private String word;
 
 		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
-		private List<ScaleRotateTranslate> asyncMeshGroupTransforms = new List<ScaleRotateTranslate>();
+		private List<Matrix4X4> asyncMeshGroupTransforms = new List<Matrix4X4>();
 		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
 
 		private List<PlatingMeshGroupData> MeshGroupExtraData;
 
-		public ScaleRotateTranslate SelectedMeshTransform
+		public Matrix4X4 SelectedMeshTransform
 		{
 			get { return meshViewerWidget.SelectedMeshGroupTransform; }
 			set { meshViewerWidget.SelectedMeshGroupTransform = value; }
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 		}
 
-		public List<ScaleRotateTranslate> MeshGroupTransforms
+		public List<Matrix4X4> MeshGroupTransforms
 		{
 			get { return meshViewerWidget.MeshGroupTransforms; }
 		}
@@ -284,20 +284,18 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 		}
 
-		private void SetWordPositions(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
+		private void SetWordPositions(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms, List<PlatingMeshGroupData> platingDataList)
 		{
 			if (meshesList.Count > 0)
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count - 1; meshIndex++)
 				{
-					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
+					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex]);
 
-					ScaleRotateTranslate translation = meshTransforms[meshIndex];
-					translation.translation *= Matrix4X4.CreateTranslation(-startPosition);
+					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(-startPosition);
 					double newX = platingDataList[meshIndex].spacing.x * lastSizeValue;
 					double newY = platingDataList[meshIndex].spacing.y * lastSizeValue;
-					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, startPosition.z) + new Vector3(MeshViewerWidget.BedCenter));
-					meshTransforms[meshIndex] = translation;
+					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, startPosition.z) + new Vector3(MeshViewerWidget.BedCenter));
 				}
 
 				CenterTextOnScreen(meshesList, meshTransforms);
@@ -325,7 +323,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			{
 				foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
 				{
-					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i].TotalTransform));
+					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i]));
 				}
 			}
 			IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
@@ -442,7 +440,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					clipper.Execute(solution, 5.0);
 					// convert them back into a vertex source
 					// merge both the inset and original vertex sources together
-					// convert the new vertex source into a mesh (trianglulate them)
+					// convert the new vertex source into a mesh (triangulate them)
 					// offset the inner loop in z
 					// create the polygons from the inner loop to a center point so that there is the rest of an approximation of the bubble
 					// make the mesh for the bottom 
@@ -456,12 +454,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 					newMeshInfo.spacing = printer.GetOffsetLeftOfCharacterIndex(i);
 					asyncPlatingDatas.Add(newMeshInfo);
-					asyncMeshGroupTransforms.Add(ScaleRotateTranslate.Identity());
+					asyncMeshGroupTransforms.Add(Matrix4X4.Identity);
 
 					PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, newIndex, null);
-					ScaleRotateTranslate moved = asyncMeshGroupTransforms[newIndex];
-					moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, unscaledLetterHeight / 2));
-					asyncMeshGroupTransforms[newIndex] = moved;
+					asyncMeshGroupTransforms[newIndex] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, unscaledLetterHeight / 2));
 
 					newIndex++;
 				}
@@ -470,14 +466,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 		}
 
-		private void CreateBase(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
+		private void CreateBase(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms, List<PlatingMeshGroupData> platingDataList)
 		{
 			if (meshesList.Count > 0)
 			{
-				AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0].TotalTransform);
+				AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0]);
 				for (int i = 1; i < meshesList.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform));
+					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i]));
 				}
 
 				double roundingScale = 20;
@@ -492,7 +488,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				meshesList.Add(new MeshGroup(baseMeshResult));
 				platingDataList.Add(new PlatingMeshGroupData());
-				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation(0, 0, 0));
+				meshTransforms.Add(Matrix4X4.CreateTranslation(0, 0, 0));
 				PlatingHelper.CreateITraceableForMeshGroup(platingDataList, meshesList, meshesList.Count - 1, null);
 			}
 		}
@@ -550,7 +546,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				MeshGroups.Add(mesh);
 			}
 			MeshGroupTransforms.Clear();
-			foreach (ScaleRotateTranslate transform in asyncMeshGroupTransforms)
+			foreach (Matrix4X4 transform in asyncMeshGroupTransforms)
 			{
 				MeshGroupTransforms.Add(transform);
 			}
@@ -587,7 +583,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void DeleteSelectedMesh()
 		{
-			// don't ever delet the last mesh
+			// don't ever delete the last mesh
 			if (MeshGroups.Count > 1)
 			{
 				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
@@ -638,7 +634,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						};
 					}
 
-					// put in the user alpha checkbox
+					// put in the user alpha check box
 					{
 						includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
 						includeText.ToolTipText = "Show normal text above the braille".Localize();
@@ -652,7 +648,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						};
 					}
 
-					// put in the user alpha checkbox
+					// put in the user alpha check box
 					{
 						useGrade2 = new CheckBox(new CheckBoxViewText("Use Grade 2".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
 						useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions)".Localize();
@@ -738,15 +734,15 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				&& letter != "\n";
 		}
 
-		private void CenterTextOnScreen(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
+		private void CenterTextOnScreen(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms)
 		{			
 			// center in y
 			if (meshesList.Count > 0)
 			{
-				AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0].TotalTransform);
+				AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0]);
 				for (int i = 1; i < meshesList.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform));
+					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i]));
 				}
 
 				Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
@@ -754,20 +750,18 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
-					ScaleRotateTranslate centering = meshTransforms[meshIndex];
-					centering.centering *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
-					meshTransforms[meshIndex] = centering;
+					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
 				}
 			}			
 		}
 
-		private void SetWordSize(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
+		private void SetWordSize(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms)
 		{
 			if (meshesList.Count > 0)
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
-					Vector3 startPositionRelCenter = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
+					Vector3 startPositionRelCenter = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex]);
 
 					// take out the last scale
 					double oldSize = 1.0 / lastSizeValue;
@@ -779,13 +773,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					Vector3 deltaPosition = endPositionRelCenter - startPositionRelCenter;
 
 					// move the part to keep it in the same relative position
-					ScaleRotateTranslate scale = meshTransforms[meshIndex];
+					throw new NotImplementedException();
+					Matrix4X4 scale = meshTransforms[meshIndex];
 
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize));
-					scale.translation *= Matrix4X4.CreateTranslation(deltaPosition);
+					scale *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
+					scale *= Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize));
+					//scale.translation *= Matrix4X4.CreateTranslation(deltaPosition);
 
-					meshTransforms[meshIndex] = scale;
+					//meshTransforms[meshIndex] = scale;
 				}
 
 				lastSizeValue = sizeScrollBar.Value;
@@ -794,29 +789,30 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			CenterTextOnScreen(meshesList, meshTransforms);
 		}
 
-		private void SetWordHeight(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
+		private void SetWordHeight(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms)
 		{
 			if (meshesList.Count > 0)
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count-1; meshIndex++)
 				{
-					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
+					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex]);
 
 					// take out the last scale
 					double oldHeight = 1.0 / lastHeightValue;
 					double newHeight = heightScrollBar.Value;
 
 					// move the part to keep it in the same relative position
-					ScaleRotateTranslate scale = meshTransforms[meshIndex];
+					Matrix4X4 scale = meshTransforms[meshIndex];
 
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, oldHeight));
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
+					throw new NotImplementedException();
+					//scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, oldHeight));
+					//scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
 
 					// if it's not the base
 					int baseIndex = meshesList.Count-1;
-					AxisAlignedBoundingBox baseBounds = meshesList[baseIndex].GetAxisAlignedBoundingBox(meshTransforms[baseIndex].TotalTransform);
+					AxisAlignedBoundingBox baseBounds = meshesList[baseIndex].GetAxisAlignedBoundingBox(meshTransforms[baseIndex]);
 
-					scale.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, baseBounds.ZSize - startPosition.z));
+					//scale.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, baseBounds.ZSize - startPosition.z));
 
 					meshTransforms[meshIndex] = scale;
 				}
@@ -925,7 +921,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				// push all the transforms into the meshes
 				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					asyncMeshGroups[i].Transform(MeshGroupTransforms[i].TotalTransform);
+					asyncMeshGroups[i].Transform(MeshGroupTransforms[i]);
 
 					processingProgressControl.RatioComplete = (double)i / asyncMeshGroups.Count * .1;
 				}

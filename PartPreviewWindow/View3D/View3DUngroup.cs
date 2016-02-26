@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -56,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			int indexBeingReplaced = SelectedMeshGroupIndex;
 			List<Mesh> discreetMeshes = new List<Mesh>();
-			asyncMeshGroups[indexBeingReplaced].Transform(asyncMeshGroupTransforms[indexBeingReplaced].TotalTransform);
+			asyncMeshGroups[indexBeingReplaced].Transform(asyncMeshGroupTransforms[indexBeingReplaced]);
 			// if there are multiple meshes than just make them separate groups
 			if (asyncMeshGroups[indexBeingReplaced].Meshes.Count > 1)
 			{
@@ -86,8 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				int addedMeshIndex = asyncMeshGroups.Count - 1;
 				MeshGroup addedMeshGroup = asyncMeshGroups[addedMeshIndex];
 
-				ScaleRotateTranslate transform = ScaleRotateTranslate.Identity();
-				transform.SetCenteringForMeshGroup(addedMeshGroup);
+				Matrix4X4 transform = Matrix4X4.Identity;
 				asyncMeshGroupTransforms.Add(transform);
 
 				//PlatingHelper.PlaceMeshGroupOnBed(asyncMeshGroups, asyncMeshGroupTransforms, addedMeshIndex, false);

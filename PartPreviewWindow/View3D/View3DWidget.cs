@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Action afterSaveCallback = null;
 		private Button applyScaleButton;
 		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
-		private List<ScaleRotateTranslate> asyncMeshGroupTransforms = new List<ScaleRotateTranslate>();
+		private List<Matrix4X4> asyncMeshGroupTransforms = new List<Matrix4X4>();
 		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
 		private FlowLayoutWidget doEdittingButtonsContainer;
 		private bool editorThatRequestedSave = false;
@@ -363,9 +363,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								CurrentSelectInfo.DownOnPart = false;
 
-								ScaleRotateTranslate translated = SelectedMeshGroupTransform;
-								translated.translation = transformOnMouseDown;
-								SelectedMeshGroupTransform = translated;
+								SelectedMeshGroupTransform = transformOnMouseDown;
 
 								Invalidate();
 							}
@@ -536,7 +534,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 #if DoBooleanTest
         MeshGroup booleanGroup;
-        ScaleRotateTranslate groupTransform;
+        Matrix4X4 groupTransform;
         Vector3 offset = new Vector3();
         Vector3 direction = new Vector3(.11, .12, .13);
         Vector3 centering = new Vector3(100, 100, 20);
@@ -563,7 +561,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             booleanGroup.Meshes.Add(PolygonMesh.Csg.CsgOperations.Union(boxA, boxB));
             meshViewerWidget.MeshGroups.Add(booleanGroup);
 
-            groupTransform = ScaleRotateTranslate.Identity();
+            groupTransform = Matrix4X4.Identity;
             meshViewerWidget.MeshGroupTransforms.Add(groupTransform);
         }
 
@@ -605,7 +603,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			get { return meshViewerWidget.MeshGroups; }
 		}
 
-		public List<ScaleRotateTranslate> MeshGroupTransforms
+		public List<Matrix4X4> MeshGroupTransforms
 		{
 			get { return meshViewerWidget.MeshGroupTransforms; }
 		}
@@ -635,7 +633,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public ScaleRotateTranslate SelectedMeshGroupTransform
+		public Matrix4X4 SelectedMeshGroupTransform
 		{
 			get { return meshViewerWidget.SelectedMeshGroupTransform; }
 			set { meshViewerWidget.SelectedMeshGroupTransform = value; }
@@ -809,7 +807,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.z, null);
 							SelectedMeshGroupIndex = meshGroupHitIndex;
 
-							transformOnMouseDown = SelectedMeshGroupTransform.translation;
+							transformOnMouseDown = SelectedMeshGroupTransform;
 
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
@@ -864,9 +862,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// move the mesh back to the start position
 					{
 						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
-						ScaleRotateTranslate translated = SelectedMeshGroupTransform;
-						translated.translation *= totalTransform;
-						SelectedMeshGroupTransform = translated;
+						SelectedMeshGroupTransform *= totalTransform;
 					}
 
 					Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
@@ -908,9 +904,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
 
-						ScaleRotateTranslate translated = SelectedMeshGroupTransform;
-						translated.translation *= totalTransform;
-						SelectedMeshGroupTransform = translated;
+						SelectedMeshGroupTransform *= totalTransform;
 
 						CurrentSelectInfo.LastMoveDelta = delta;
 					}
@@ -1042,8 +1036,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SelectedMeshGroup.ReverseFaceEdges();
 
-					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-					scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
+					throw new NotImplementedException();
+					Matrix4X4 scale = SelectedMeshGroupTransform;
+					//scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
 					SelectedMeshGroupTransform = scale;
 
 					PartHasBeenChanged();
@@ -1060,8 +1055,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SelectedMeshGroup.ReverseFaceEdges();
 
-					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-					scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
+					throw new NotImplementedException();
+					Matrix4X4 scale = SelectedMeshGroupTransform;
+					//scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
 					SelectedMeshGroupTransform = scale;
 
 					PartHasBeenChanged();
@@ -1078,8 +1074,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SelectedMeshGroup.ReverseFaceEdges();
 
-					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-					scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
+					throw new NotImplementedException();
+					Matrix4X4 scale = SelectedMeshGroupTransform;
+					//scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
 					SelectedMeshGroupTransform = scale;
 
 					PartHasBeenChanged();
@@ -1127,11 +1124,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (SelectedMeshGroupIndex != -1)
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-					// rotate it
-					ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-					rotated.rotation *= Matrix4X4.CreateRotationX(radians);
-					SelectedMeshGroupTransform = rotated;
-
+					Matrix4X4 rotation = Matrix4X4.CreateRotationX(radians);
+					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1146,11 +1140,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (SelectedMeshGroupIndex != -1)
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-					// rotate it
-					ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-					rotated.rotation *= Matrix4X4.CreateRotationY(radians);
-					SelectedMeshGroupTransform = rotated;
-					saveButtons.Visible = true;
+					Matrix4X4 rotation = Matrix4X4.CreateRotationY(radians);
+					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					PartHasBeenChanged();
 					Invalidate();
 				}
 			};
@@ -1164,11 +1156,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (SelectedMeshGroupIndex != -1)
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-					// rotate it
-					ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-					rotated.rotation *= Matrix4X4.CreateRotationZ(radians);
-					SelectedMeshGroupTransform = rotated;
-
+					Matrix4X4 rotation = Matrix4X4.CreateRotationZ(radians);
+					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1681,7 +1670,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (SelectedMeshGroup != null)
 			{
-				AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
+				AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
 				Vector3 boundsCenter = selectedBounds.Center;
 				Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
@@ -1800,7 +1789,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
 				{
-					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i].TotalTransform));
+					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i]));
 				}
 			}
 			IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
@@ -1934,7 +1923,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
 
-							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, ScaleRotateTranslate.Identity(), asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
+							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, Matrix4X4.Identity, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
 							if (WidgetHasBeenClosed)
 							{
 								return;
@@ -1977,7 +1966,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void MakeLowestFaceFlat(int indexToLayFlat)
 		{
 			Vertex lowestVertex = MeshGroups[indexToLayFlat].Meshes[0].Vertices[0];
-			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
+
+			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, MeshGroupTransforms[indexToLayFlat]);
 			Mesh meshToLayFlat = null;
 			foreach (Mesh meshToCheck in MeshGroups[indexToLayFlat].Meshes)
 			{
@@ -1985,7 +1975,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int testIndex = 1; testIndex < meshToCheck.Vertices.Count; testIndex++)
 				{
 					Vertex vertex = meshToCheck.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat]);
 					if (vertexPosition.z < lowestVertexPosition.z)
 					{
 						lowestVertex = meshToCheck.Vertices[testIndex];
@@ -2005,7 +1995,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (faceVertex != lowestVertex)
 					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, MeshGroupTransforms[indexToLayFlat]);
 						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
 						double xLeg = new Vector2(pointRelLowest.x, pointRelLowest.y).Length;
 						double yLeg = pointRelLowest.z;
@@ -2027,7 +2017,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			List<Vector3> faceVertexes = new List<Vector3>();
 			foreach (Vertex vertex in faceToLayFlat.Vertices())
 			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat]);
 				faceVertexes.Add(vertexPosition);
 				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.z - lowestVertexPosition.z);
 			}
@@ -2043,9 +2033,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
 
 				// rotate it
-				ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-				rotated.rotation *= partLevelMatrix;
-				SelectedMeshGroupTransform = rotated;
+				SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, partLevelMatrix);
 
 				PartHasBeenChanged();
 				Invalidate();
@@ -2073,7 +2061,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// push all the transforms into the meshes
 				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i].TotalTransform);
+					asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i]);
 
 					bool continueProcessing;
 					ReportProgressChanged((i + 1) * .4 / asyncMeshGroups.Count, "", out continueProcessing);
@@ -2353,7 +2341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MeshGroups.Add(meshGroup);
 			}
 			MeshGroupTransforms.Clear();
-			foreach (ScaleRotateTranslate transform in asyncMeshGroupTransforms)
+			foreach (Matrix4X4 transform in asyncMeshGroupTransforms)
 			{
 				MeshGroupTransforms.Add(transform);
 			}
@@ -2440,9 +2428,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
 
-			AxisAlignedBoundingBox totalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
+			AxisAlignedBoundingBox totalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
 
-			AxisAlignedBoundingBox scaledBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.scale);
+			throw new NotImplementedException();
+
+			AxisAlignedBoundingBox scaledBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
 
 			// first we remove any scale we have applied and then scale to the new value
 			Vector3 axisRemoveScalings = new Vector3();
@@ -2456,14 +2446,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			newScale[axis] = scaleIn;
 			Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
 
-			ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-			scale.scale *= totalScale;
+			Matrix4X4 scale = SelectedMeshGroupTransform;
+			//scale.scale *= totalScale;
 			SelectedMeshGroupTransform = scale;
 
 			// And make sure its center has not changed
-			AxisAlignedBoundingBox postScaleBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
-			ScaleRotateTranslate translation = SelectedMeshGroupTransform;
-			translation.translation *= Matrix4X4.CreateTranslation(totalMeshBounds.Center - postScaleBounds.Center);
+			AxisAlignedBoundingBox postScaleBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
+			Matrix4X4 translation = SelectedMeshGroupTransform;
+			//translation.translation *= Matrix4X4.CreateTranslation(totalMeshBounds.Center - postScaleBounds.Center);
 			SelectedMeshGroupTransform = translation;
 
 			PartHasBeenChanged();
@@ -2591,7 +2581,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (sizeDisplay[0] != null
 				&& SelectedMeshGroup != null)
 			{
-				AxisAlignedBoundingBox bounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.scale);
+				AxisAlignedBoundingBox bounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
 				sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
 				sizeDisplay[1].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[1]));
 				sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));

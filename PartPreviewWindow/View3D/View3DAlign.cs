@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SelectedMeshGroupIndex = 0;
 			}
-			// make sure our thread traslates numbmers correctly (always do this in a thread)
+			// make sure our thread translates numbers correctly (always do this in a thread)
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			// save our data so we don't mess up the display while doing work
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// try to move all the not selected meshes relative to the selected mesh
 			AxisAlignedBoundingBox selectedOriginalBounds = asyncMeshGroups[SelectedMeshGroupIndex].GetAxisAlignedBoundingBox();
 			Vector3 selectedOriginalCenter = selectedOriginalBounds.Center;
-			AxisAlignedBoundingBox selectedCurrentBounds = asyncMeshGroups[SelectedMeshGroupIndex].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[SelectedMeshGroupIndex].TotalTransform);
+			AxisAlignedBoundingBox selectedCurrentBounds = asyncMeshGroups[SelectedMeshGroupIndex].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[SelectedMeshGroupIndex]);
 			Vector3 selctedCurrentCenter = selectedCurrentBounds.Center;
 			for (int meshGroupToMoveIndex = 0; meshGroupToMoveIndex < asyncMeshGroups.Count; meshGroupToMoveIndex++)
 			{
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					AxisAlignedBoundingBox groupToMoveOriginalBounds = meshGroupToMove.GetAxisAlignedBoundingBox();
 					Vector3 groupToMoveOriginalCenter = groupToMoveOriginalBounds.Center;
-					AxisAlignedBoundingBox groupToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupToMoveIndex].TotalTransform);
+					AxisAlignedBoundingBox groupToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupToMoveIndex]);
 					Vector3 groupToMoveCenter = groupToMoveBounds.Center;
 
 					Vector3 originalCoordinatesDelta = groupToMoveOriginalCenter - selectedOriginalCenter;
@@ -74,9 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (deltaRequired.Length > .0001)
 					{
-						ScaleRotateTranslate translated = asyncMeshGroupTransforms[meshGroupToMoveIndex];
-						translated.translation *= Matrix4X4.CreateTranslation(deltaRequired);
-						asyncMeshGroupTransforms[meshGroupToMoveIndex] = translated;
+						asyncMeshGroupTransforms[meshGroupToMoveIndex] *= Matrix4X4.CreateTranslation(deltaRequired);
 						PartHasBeenChanged();
 					}
 				}
@@ -125,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (MeshGroups.Count > 0)
 			{
-				// set the progress lable text
+				// set the progress label text
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;
 				string makingCopyLabel = LocalizedString.Get("Aligning");

@@ -66,12 +66,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				// offset them to the centor of the bed
+				// offset them to the center of the bed
 				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					ScaleRotateTranslate translate = asyncMeshGroupTransforms[i];
-					translate.translation *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.BedCenter, 0));
-					asyncMeshGroupTransforms[i] = translate;
+					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.BedCenter, 0));
 				}
 
 				UnlockEditControls();

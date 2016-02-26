@@ -4588,3 +4588,9 @@ Translated:User Manual
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 
+English:Extruder 3
+Translated:Extruder 3
+
+English:Extruder 4
+Translated:Extruder 4
+

@@ -105,24 +105,22 @@ namespace MatterHackers.MatterControl
 			return output;
 		}
 
-		public static void ArrangeMeshGroups(List<MeshGroup> asyncMeshGroups, List<ScaleRotateTranslate> asyncMeshGroupTransforms, List<PlatingMeshGroupData> asyncPlatingDatas,
+		public static void ArrangeMeshGroups(List<MeshGroup> asyncMeshGroups, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingMeshGroupData> asyncPlatingDatas,
 			Action<double, string> reportProgressChanged)
 		{
 			// move them all out of the way
 			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
-				ScaleRotateTranslate translate = asyncMeshGroupTransforms[i];
-				translate.translation *= Matrix4X4.CreateTranslation(10000, 10000, 0);
-				asyncMeshGroupTransforms[i] = translate;
+				asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(10000, 10000, 0);
 			}
 
 			// sort them by size
 			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
-				AxisAlignedBoundingBox iAABB = asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i].TotalTransform);
+				AxisAlignedBoundingBox iAABB = asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]);
 				for (int j = i + 1; j < asyncMeshGroups.Count; j++)
 				{
-					AxisAlignedBoundingBox jAABB = asyncMeshGroups[j].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[j].TotalTransform);
+					AxisAlignedBoundingBox jAABB = asyncMeshGroups[j].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[j]);
 					if (Math.Max(iAABB.XSize, iAABB.YSize) < Math.Max(jAABB.XSize, jAABB.YSize))
 					{
 						PlatingMeshGroupData tempData = asyncPlatingDatas[i];
@@ -133,11 +131,11 @@ namespace MatterHackers.MatterControl
 						asyncMeshGroups[i] = asyncMeshGroups[j];
 						asyncMeshGroups[j] = tempMeshGroup;
 
-						ScaleRotateTranslate iTransform = asyncMeshGroupTransforms[i];
-						ScaleRotateTranslate jTransform = asyncMeshGroupTransforms[j];
-						Matrix4X4 tempTransform = iTransform.translation;
-						iTransform.translation = jTransform.translation;
-						jTransform.translation = tempTransform;
+						Matrix4X4 iTransform = asyncMeshGroupTransforms[i];
+						Matrix4X4 jTransform = asyncMeshGroupTransforms[j];
+						Matrix4X4 tempTransform = iTransform;
+						iTransform = jTransform;
+						jTransform = tempTransform;
 
 						asyncMeshGroupTransforms[i] = jTransform;
 						asyncMeshGroupTransforms[j] = iTransform;
@@ -155,10 +153,8 @@ namespace MatterHackers.MatterControl
 				reportProgressChanged(currentRatioDone, "Calculating Positions...".Localize());
 
 				MeshGroup meshGroup = asyncMeshGroups[meshGroupIndex];
-				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupIndex].TotalTransform).minXYZ;
-				ScaleRotateTranslate atZero = asyncMeshGroupTransforms[meshGroupIndex];
-				atZero.translation *= Matrix4X4.CreateTranslation(-meshLowerLeft);
-				asyncMeshGroupTransforms[meshGroupIndex] = atZero;
+				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupIndex]).minXYZ;
+				asyncMeshGroupTransforms[meshGroupIndex] *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
 				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
 
@@ -176,43 +172,37 @@ namespace MatterHackers.MatterControl
 
 			// and finally center whatever we have as a group
 			{
-				AxisAlignedBoundingBox bounds = asyncMeshGroups[0].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[0].TotalTransform);
+				AxisAlignedBoundingBox bounds = asyncMeshGroups[0].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[0]);
 				for (int i = 1; i < asyncMeshGroups.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i].TotalTransform));
+					bounds = AxisAlignedBoundingBox.Union(bounds, asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]));
 				}
 
 				Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					ScaleRotateTranslate translate = asyncMeshGroupTransforms[i];
-					translate.translation *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
-					asyncMeshGroupTransforms[i] = translate;
+					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
 				}
 			}
 		}
 
-		public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
+		public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
 		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index].TotalTransform);
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
-			ScaleRotateTranslate moved = meshTransforms[index];
-			moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
-			meshTransforms[index] = moved;
+			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
 		}
 
-		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
+		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
 		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index].TotalTransform);
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
-			ScaleRotateTranslate moved = meshTransforms[index];
-			moved.translation *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.x + bounds.XSize / 2, -boundsCenter.y + bounds.YSize / 2, 0));
-			meshTransforms[index] = moved;
+			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.x + bounds.XSize / 2, -boundsCenter.y + bounds.YSize / 2, 0));
 		}
 
-		public static void FindPositionForGroupAndAddToPlate(MeshGroup meshGroupToAdd, ScaleRotateTranslate meshTransform, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> meshesGroupsToAvoid, List<ScaleRotateTranslate> meshTransforms)
+		public static void FindPositionForGroupAndAddToPlate(MeshGroup meshGroupToAdd, Matrix4X4 meshTransform, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> meshesGroupsToAvoid, List<Matrix4X4> meshTransforms)
 		{
 			if (meshGroupToAdd == null || meshGroupToAdd.Meshes.Count < 1)
 			{
@@ -220,10 +210,10 @@ namespace MatterHackers.MatterControl
 			}
 
 			// first find the bounds of what is already here.
-			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[0], meshTransforms[0].TotalTransform);
+			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[0], meshTransforms[0]);
 			for (int i = 1; i < meshesGroupsToAvoid.Count; i++)
 			{
-				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[i], meshTransforms[i].TotalTransform);
+				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[i], meshTransforms[i]);
 				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
 			}
 
@@ -231,17 +221,14 @@ namespace MatterHackers.MatterControl
 
 			PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
 			perMeshInfo.Add(newMeshInfo);
-			meshTransform.SetCenteringForMeshGroup(meshGroupToAdd);
 			meshTransforms.Add(meshTransform);
 
 			int meshGroupIndex = meshesGroupsToAvoid.Count - 1;
 
 			// move the part to the total bounds lower left side
 			MeshGroup meshGroup = meshesGroupsToAvoid[meshGroupIndex];
-			Vector3 meshLowerLeft = GetAxisAlignedBoundingBox(meshGroup, meshTransforms[meshGroupIndex].TotalTransform).minXYZ;
-			ScaleRotateTranslate atLowerLeft = meshTransforms[meshGroupIndex];
-			atLowerLeft.translation *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
-			meshTransforms[meshGroupIndex] = atLowerLeft;
+			Vector3 meshLowerLeft = GetAxisAlignedBoundingBox(meshGroup, meshTransforms[meshGroupIndex]).minXYZ;
+			meshTransforms[meshGroupIndex] *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 
 			MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
 
@@ -253,12 +240,12 @@ namespace MatterHackers.MatterControl
 			return meshGroup.GetAxisAlignedBoundingBox(transform);
 		}
 
-		public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms)
+		public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<Matrix4X4> meshTransforms)
 		{
-			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[0], meshTransforms[0].TotalTransform);
+			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[0], meshTransforms[0]);
 			for (int i = 1; i < meshGroupToMoveIndex; i++)
 			{
-				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[i], meshTransforms[i].TotalTransform);
+				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[i], meshTransforms[i]);
 				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
 			}
 
@@ -267,7 +254,7 @@ namespace MatterHackers.MatterControl
 
 			MeshGroup meshGroupToMove = allMeshGroups[meshGroupToMoveIndex];
 			// find a place to put it that doesn't hit anything
-			AxisAlignedBoundingBox meshToMoveBounds = GetAxisAlignedBoundingBox(meshGroupToMove, meshTransforms[meshGroupToMoveIndex].TotalTransform);
+			AxisAlignedBoundingBox meshToMoveBounds = GetAxisAlignedBoundingBox(meshGroupToMove, meshTransforms[meshGroupToMoveIndex]);
 			// add in a few mm so that it will not be touching
 			meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
 			meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
@@ -293,7 +280,7 @@ namespace MatterHackers.MatterControl
 				if (!partPlaced)
 				{
 					yStep = currentSize;
-					// check top edeg 
+					// check top edge 
 					for (xStep = 0; xStep < currentSize; xStep++)
 					{
 						partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
@@ -315,12 +302,10 @@ namespace MatterHackers.MatterControl
 				currentSize++;
 			}
 
-			ScaleRotateTranslate moved = meshTransforms[meshGroupToMoveIndex];
-			moved.translation *= transform;
-			meshTransforms[meshGroupToMoveIndex] = moved;
+			meshTransforms[meshGroupToMoveIndex] *= transform;
 		}
 
-		private static bool CheckPosition(int meshGroupToMoveIndex, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms, MeshGroup meshGroupToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
+		private static bool CheckPosition(int meshGroupToMoveIndex, List<MeshGroup> allMeshGroups, List<Matrix4X4> meshTransforms, MeshGroup meshGroupToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
 		{
 			double xStepAmount = 5;
 			double yStepAmount = 5;
@@ -335,7 +320,7 @@ namespace MatterHackers.MatterControl
 				MeshGroup meshToTest = allMeshGroups[i];
 				if (meshToTest != meshGroupToMove)
 				{
-					AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBox(meshToTest, meshTransforms[i].TotalTransform);
+					AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBox(meshToTest, meshTransforms[i]);
 					AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
 					if (intersection.XSize > 0 && intersection.YSize > 0)
 					{
@@ -378,7 +363,7 @@ namespace MatterHackers.MatterControl
 						reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
 					}
 
-					// only allow limited recusion to speed this up building this data
+					// only allow limited recursion to speed this up building this data
 					IPrimitive traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 0);
 					perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(traceData);
 				}
@@ -429,6 +414,24 @@ namespace MatterHackers.MatterControl
 			}
 
 			return allPolys;
+		}
+
+		public static Matrix4X4 ApplyAtCenter(IHasAABB meshToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
+		{
+			return ApplyAtCenter(meshToApplyTo.GetAxisAlignedBoundingBox(currentTransform), currentTransform, transformToApply);
+		}
+
+		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
+		{
+			return ApplyAtPosition(currentTransform, transformToApply, boundsToApplyTo.Center);
+		}
+
+		public static Matrix4X4 ApplyAtPosition(Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 postionToApplyAt)
+		{
+			currentTransform *= Matrix4X4.CreateTranslation(-postionToApplyAt);
+			currentTransform *= transformToApply;
+			currentTransform *= Matrix4X4.CreateTranslation(postionToApplyAt);
+			return currentTransform;
 		}
 	}
 }
