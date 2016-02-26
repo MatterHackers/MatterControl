@@ -1,0 +1,11 @@
+max_fan_speed = 100
+temperature = 237
+min_fan_speed = 100
+disable_fan_first_layers = 2
+bridge_fan_speed = 100
+filament_diameter = 1.7
+z_offset = 0.05
+retract_length = 3
+perimeter_speed = 30
+infill_speed = 30
+external_perimeter_speed = 35
