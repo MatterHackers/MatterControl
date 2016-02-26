@@ -1,4 +1,6 @@
 layer_height = 0.25
+fill_density = 0
+support_material = 1
 infill_speed = 30
 perimeter_speed = 30
 external_perimeter_speed = 30

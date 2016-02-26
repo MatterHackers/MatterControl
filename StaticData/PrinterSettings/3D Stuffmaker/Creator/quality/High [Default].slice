@@ -1,1 +1,7 @@
 layer_height = 0.15
+bridge_speed = 6
+extrusion_multiplier = 1
+start_gcode = G28 ; home all axes\nM109 S[temperature] B250 F1\nM83\nG1 E30 F100 ;  Extrude primer filament\nM82
+infill_speed = 30
+perimeter_speed = 30
+external_perimeter_speed = 30
