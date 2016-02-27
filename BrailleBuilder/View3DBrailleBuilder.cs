@@ -773,14 +773,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					Vector3 deltaPosition = endPositionRelCenter - startPositionRelCenter;
 
 					// move the part to keep it in the same relative position
-					throw new NotImplementedException();
-					Matrix4X4 scale = meshTransforms[meshIndex];
-
-					scale *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
-					scale *= Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize));
-					//scale.translation *= Matrix4X4.CreateTranslation(deltaPosition);
-
-					//meshTransforms[meshIndex] = scale;
+					meshTransforms[meshIndex] *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
+					meshTransforms[meshIndex] *= Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize));
+					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(deltaPosition);
 				}
 
 				lastSizeValue = sizeScrollBar.Value;
@@ -802,19 +797,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					double newHeight = heightScrollBar.Value;
 
 					// move the part to keep it in the same relative position
-					Matrix4X4 scale = meshTransforms[meshIndex];
-
-					throw new NotImplementedException();
-					//scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, oldHeight));
-					//scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
+					meshTransforms[meshIndex] *= Matrix4X4.CreateScale(new Vector3(1, 1, oldHeight));
+					meshTransforms[meshIndex] *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
 
 					// if it's not the base
 					int baseIndex = meshesList.Count-1;
 					AxisAlignedBoundingBox baseBounds = meshesList[baseIndex].GetAxisAlignedBoundingBox(meshTransforms[baseIndex]);
 
-					//scale.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, baseBounds.ZSize - startPosition.z));
-
-					meshTransforms[meshIndex] = scale;
+					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, baseBounds.ZSize - startPosition.z));
 				}
 
 				lastHeightValue = heightScrollBar.Value;

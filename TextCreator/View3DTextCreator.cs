@@ -772,26 +772,13 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
-					Vector3 startPositionRelCenter = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex]) - bedCenter;
-
 					// take out the last scale
 					double oldSize = 1.0 / lastSizeValue;
-					Vector3 unscaledStartPositionRelCenter = startPositionRelCenter * oldSize;
 
 					double newSize = sizeScrollBar.Value;
-					Vector3 endPositionRelCenter = unscaledStartPositionRelCenter * newSize;
 
-					Vector3 deltaPosition = endPositionRelCenter - startPositionRelCenter;
-					
-					// move the part to keep it in the same relative position
-					Matrix4X4 scale = meshTransforms[meshIndex];
-
-					throw new NotImplementedException();
-					//scale.scale *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
-					//scale.scale *= Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize));
-					//scale.translation *= Matrix4X4.CreateTranslation(deltaPosition);
-					
-					meshTransforms[meshIndex] = scale;
+					meshTransforms[meshIndex] = PlatingHelper.ApplyAtPosition(meshTransforms[meshIndex], Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize)), new Vector3(bedCenter));
+					meshTransforms[meshIndex] = PlatingHelper.ApplyAtPosition(meshTransforms[meshIndex], Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize)), new Vector3(bedCenter));
 				}
 
 				lastSizeValue = sizeScrollBar.Value;
@@ -804,16 +791,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
-					throw new NotImplementedException();
-
 					// take out the last scale
 					double oldHeight = lastHeightValue;
-					Matrix4X4 scale = meshTransforms[meshIndex];
-					//scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, 1 / oldHeight));
+					meshTransforms[meshIndex] *= Matrix4X4.CreateScale(new Vector3(1, 1, 1 / oldHeight));
 
 					double newHeight = heightScrollBar.Value;
-					//scale.scale *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
-					meshTransforms[meshIndex] = scale;
+					meshTransforms[meshIndex] *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
 				}
 
 				lastHeightValue = heightScrollBar.Value;
