@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
         {
             if (EnterShareCode != null)
             {
-                EnterShareCode(this, null);
+				UiThread.RunOnIdle(() => EnterShareCode(this, null));
             }
         }
 
