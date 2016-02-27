@@ -1586,22 +1586,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DeleteSelectedMesh()
 		{
-			DeleteMeshGroup(SelectedMeshGroupIndex);
-		}
-
-		public void DeleteMeshGroup(int meshIndexToDelete)
-		{
 			// don't ever delete the last mesh
-			if (meshIndexToDelete != -1
+			if (SelectedMeshGroupIndex != -1
 				&& MeshGroups.Count > 1)
 			{
-				undoBuffer.Add(new DeleteUndoCommand(this, meshIndexToDelete));
+				undoBuffer.Add(new DeleteUndoCommand(this, SelectedMeshGroupIndex));
 
-				MeshGroups.RemoveAt(meshIndexToDelete);
-				MeshGroupExtraData.RemoveAt(meshIndexToDelete);
-				MeshGroupTransforms.RemoveAt(meshIndexToDelete);
-				SelectedMeshGroupIndex = Math.Min(SelectedMeshGroupIndex, MeshGroups.Count - 1);
+				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
+				MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
+				MeshGroupTransforms.RemoveAt(SelectedMeshGroupIndex);
 				PartHasBeenChanged();
+				this.SelectedMeshGroupIndex = -1;
 			}
 		}
 
