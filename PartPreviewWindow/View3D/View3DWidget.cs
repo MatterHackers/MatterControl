@@ -1035,12 +1035,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (SelectedMeshGroupIndex != -1)
 				{
 					SelectedMeshGroup.ReverseFaceEdges();
-
-					throw new NotImplementedException();
-					Matrix4X4 scale = SelectedMeshGroupTransform;
-					//scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
-					SelectedMeshGroupTransform = scale;
-
+					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, Matrix4X4.CreateScale(-1, 1, 1));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1054,12 +1049,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (SelectedMeshGroupIndex != -1)
 				{
 					SelectedMeshGroup.ReverseFaceEdges();
-
-					throw new NotImplementedException();
-					Matrix4X4 scale = SelectedMeshGroupTransform;
-					//scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
-					SelectedMeshGroupTransform = scale;
-
+					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, Matrix4X4.CreateScale(1, -1, 1));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1073,12 +1063,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (SelectedMeshGroupIndex != -1)
 				{
 					SelectedMeshGroup.ReverseFaceEdges();
-
-					throw new NotImplementedException();
-					Matrix4X4 scale = SelectedMeshGroupTransform;
-					//scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
-					SelectedMeshGroupTransform = scale;
-
+					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, Matrix4X4.CreateScale(1, 1, -1));
 					PartHasBeenChanged();
 					Invalidate();
 				}
