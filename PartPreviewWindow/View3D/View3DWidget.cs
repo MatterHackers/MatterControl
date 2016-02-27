@@ -74,6 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public partial class View3DWidget : PartPreview3DWidget
 	{
+		private UndoBuffer undoBuffer = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 		private Action afterSaveCallback = null;
 		private Button applyScaleButton;
@@ -344,30 +345,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					AddSaveAndSaveAs(doEdittingButtonsContainer);
 				}
 
-				KeyDown += (sender, e) =>
-				{
-					KeyEventArgs keyEvent = e as KeyEventArgs;
-					if (keyEvent != null && !keyEvent.Handled)
-					{
-						if (keyEvent.KeyCode == Keys.Delete || keyEvent.KeyCode == Keys.Back)
-						{
-							DeleteSelectedMesh();
-						}
-
-						if (keyEvent.KeyCode == Keys.Escape)
-						{
-							if (CurrentSelectInfo.DownOnPart)
-							{
-								CurrentSelectInfo.DownOnPart = false;
-
-								SelectedMeshGroupTransform = transformOnMouseDown;
-
-								Invalidate();
-							}
-						}
-					}
-				};
-
 				editToolBar.AddChild(doEdittingButtonsContainer);
 				buttonBottomPanel.AddChild(editToolBar);
 			}
@@ -449,7 +426,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.interactionVolumes.Add(new SnappingIndicators(this));
 
 			PluginFinder<InteractionVolumePlugin> InteractionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
-			foreach(InteractionVolumePlugin plugin in InteractionVolumePlugins.Plugins)
+			foreach (InteractionVolumePlugin plugin in InteractionVolumePlugins.Plugins)
 			{
 				meshViewerWidget.interactionVolumes.Add(plugin.CreateLibraryProvider(this));
 			}
@@ -469,6 +446,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             DrawBefore += CreateBooleanTestGeometry;
             DrawAfter += RemoveBooleanTestGeometry;
 #endif
+		}
+
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (activeButtonBeforeKeyOverride == null)
+			{
+				activeButtonBeforeKeyOverride = viewControls3D.ActiveButton;
+
+				if (keyEvent.Alt)
+				{
+					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+				}
+				else if (keyEvent.Shift)
+				{
+					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
+				}
+				else if (keyEvent.Control)
+				{
+					viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
+				}
+			}
+
+			switch (keyEvent.KeyCode)
+			{
+				case Keys.Z:
+					if (keyEvent.Control)
+					{
+						undoBuffer.Undo();
+						keyEvent.Handled = true;
+						keyEvent.SuppressKeyPress = true;
+					}
+					break;
+
+				case Keys.Y:
+					if (keyEvent.Control)
+					{
+						undoBuffer.Redo();
+						keyEvent.Handled = true;
+						keyEvent.SuppressKeyPress = true;
+					}
+					break;
+
+				case Keys.Delete:
+				case Keys.Back:
+					DeleteSelectedMesh();
+					break;
+
+				case Keys.Escape:
+					if (CurrentSelectInfo.DownOnPart)
+					{
+						CurrentSelectInfo.DownOnPart = false;
+
+						SelectedMeshGroupTransform = transformOnMouseDown;
+
+						Invalidate();
+					}
+					break;
+			}
 		}
 
 		public bool DragingPart
@@ -737,29 +772,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
 		private ViewControls3DButtons? activeButtonBeforeKeyOverride = null;
 
-		public override void OnKeyDown(KeyEventArgs keyEvent)
-		{
-			if (activeButtonBeforeKeyOverride == null)
-			{
-				activeButtonBeforeKeyOverride = viewControls3D.ActiveButton;
-
-				if (keyEvent.Alt)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-				}
-				else if (keyEvent.Shift)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
-				}
-				else if (keyEvent.Control)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
-				}
-			}
-
-			base.OnKeyDown(keyEvent);
-		}
-
 		public override void OnKeyUp(KeyEventArgs keyEvent)
 		{
 			if (activeButtonBeforeKeyOverride != null)
@@ -915,13 +927,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseMove(mouseEvent);
 		}
 
+		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
+		{
+			undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroup, transformOnMouseDown, SelectedMeshGroupTransform));
+		}
+
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
 				&& CurrentSelectInfo.DownOnPart
 				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 			{
-				PartHasBeenChanged();
+				if (SelectedMeshGroupTransform != transformOnMouseDown)
+				{
+					AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
+					PartHasBeenChanged();
+				}
 			}
 
 			CurrentSelectInfo.DownOnPart = false;
