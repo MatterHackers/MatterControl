@@ -11,10 +11,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Matrix4X4 undoTransform;
 		private View3DWidget view3DWidget;
 
-		public TransformUndoCommand(View3DWidget view3DWidget, MeshGroup selectedMeshGroup, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
+		public TransformUndoCommand(View3DWidget view3DWidget, int meshGroupIndex, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
 		{
 			this.view3DWidget = view3DWidget;
-			meshGroupIndex = view3DWidget.MeshGroups.IndexOf(selectedMeshGroup);
+			this.meshGroupIndex = meshGroupIndex;
 			this.undoTransform = undoTransform;
 			this.redoTransform = redoTransform;
 		}

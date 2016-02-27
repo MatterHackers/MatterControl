@@ -181,6 +181,7 @@
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
+    <Compile Include="PartPreviewWindow\View3D\DeleteUndoCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SnapingIndicator.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />

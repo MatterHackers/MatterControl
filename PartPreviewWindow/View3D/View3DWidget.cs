@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool firstDraw = true;
 		private bool hasDrawn = false;
 		private FlowLayoutWidget materialOptionContainer;
-		private List<PlatingMeshGroupData> MeshGroupExtraData;
+		public List<PlatingMeshGroupData> MeshGroupExtraData { get; private set; }
 		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
@@ -929,7 +929,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
 		{
-			undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroup, transformOnMouseDown, SelectedMeshGroupTransform));
+			undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, transformOnMouseDown, SelectedMeshGroupTransform));
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
@@ -959,6 +959,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void PartHasBeenChanged()
 		{
 			saveButtons.Visible = true;
+			Invalidate();
 		}
 
 		public void ThemeChanged(object sender, EventArgs e)
@@ -1585,16 +1586,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DeleteSelectedMesh()
 		{
+			DeleteMeshGroup(SelectedMeshGroupIndex);
+		}
+
+		public void DeleteMeshGroup(int meshIndexToDelete)
+		{
 			// don't ever delete the last mesh
-			if (SelectedMeshGroupIndex != -1
+			if (meshIndexToDelete != -1
 				&& MeshGroups.Count > 1)
 			{
-				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
-				MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
-				MeshGroupTransforms.RemoveAt(SelectedMeshGroupIndex);
+				undoBuffer.Add(new DeleteUndoCommand(this, meshIndexToDelete));
+
+				MeshGroups.RemoveAt(meshIndexToDelete);
+				MeshGroupExtraData.RemoveAt(meshIndexToDelete);
+				MeshGroupTransforms.RemoveAt(meshIndexToDelete);
 				SelectedMeshGroupIndex = Math.Min(SelectedMeshGroupIndex, MeshGroups.Count - 1);
 				PartHasBeenChanged();
-				Invalidate();
 			}
 		}
 
