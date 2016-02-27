@@ -191,6 +191,7 @@
     <Compile Include="PartPreviewWindow\View3D\View3DCopyGroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DGroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DUngroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\MirrorControls.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
     <Compile Include="PartPreviewWindow\ViewControls2D.cs" />

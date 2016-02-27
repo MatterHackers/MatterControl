@@ -605,7 +605,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				// put in the word editing menu
 				{
-					CheckBox expandWordOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 					expandWordOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandWordOptions);
 

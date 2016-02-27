@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public partial class View3DWidget : PartPreview3DWidget
 	{
-		private readonly int EditButtonHeight = 44;
+		public readonly int EditButtonHeight = 44;
 		private Action afterSaveCallback = null;
 		private Button applyScaleButton;
 		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
@@ -84,7 +84,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool editorThatRequestedSave = false;
 		private FlowLayoutWidget enterEditButtonsContainer;
 		private CheckBox expandMaterialOptions;
-		private CheckBox expandMirrorOptions;
 		private CheckBox expandRotateOptions;
 		private CheckBox expandScaleOptions;
 		private CheckBox expandViewOptions;
@@ -95,7 +94,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private FlowLayoutWidget materialOptionContainer;
 		private List<PlatingMeshGroupData> MeshGroupExtraData;
 		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
-		private FlowLayoutWidget mirrorOptionContainer;
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
 		private List<string> pendingPartsToLoad = new List<string>();
@@ -112,7 +110,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EditableNumberDisplay[] sizeDisplay = new EditableNumberDisplay[3];
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
-		private Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private CheckBox uniformScale;
 		private EventHandler unregisterEvents;
@@ -953,7 +950,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void AddHandlers()
 		{
 			expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
-			expandMirrorOptions.CheckedStateChanged += expandMirrorOptions_CheckedStateChanged;
 			if (expandMaterialOptions != null)
 			{
 				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
@@ -1017,66 +1013,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void AddMirrorControls(FlowLayoutWidget buttonPanel)
-		{
-			List<GuiWidget> mirrorControls = new List<GuiWidget>();
-			transformControls.Add("Mirror", mirrorControls);
-
-			textImageButtonFactory.FixedWidth = EditButtonHeight;
-
-			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			Button mirrorXButton = textImageButtonFactory.Generate("X", centerText: true);
-			buttonContainer.AddChild(mirrorXButton);
-			mirrorControls.Add(mirrorXButton);
-			mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				if (SelectedMeshGroupIndex != -1)
-				{
-					SelectedMeshGroup.ReverseFaceEdges();
-					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, Matrix4X4.CreateScale(-1, 1, 1));
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-
-			Button mirrorYButton = textImageButtonFactory.Generate("Y", centerText: true);
-			buttonContainer.AddChild(mirrorYButton);
-			mirrorControls.Add(mirrorYButton);
-			mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				if (SelectedMeshGroupIndex != -1)
-				{
-					SelectedMeshGroup.ReverseFaceEdges();
-					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, Matrix4X4.CreateScale(1, -1, 1));
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-
-			Button mirrorZButton = textImageButtonFactory.Generate("Z", centerText: true);
-			buttonContainer.AddChild(mirrorZButton);
-			mirrorControls.Add(mirrorZButton);
-			mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				if (SelectedMeshGroupIndex != -1)
-				{
-					SelectedMeshGroup.ReverseFaceEdges();
-					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, Matrix4X4.CreateScale(1, 1, -1));
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-			buttonPanel.AddChild(buttonContainer);
-			buttonPanel.AddChild(generateHorizontalRule());
-			textImageButtonFactory.FixedWidth = 0;
-		}
-
 		private void AddRotateControls(FlowLayoutWidget buttonPanel)
 		{
 			List<GuiWidget> rotateControls = new List<GuiWidget>();
-			transformControls.Add("Rotate".Localize(), rotateControls);
 
 			textImageButtonFactory.FixedWidth = EditButtonHeight;
 
@@ -1165,7 +1104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			buttonPanel.AddChild(generateHorizontalRule());
+			buttonPanel.AddChild(GenerateHorizontalRule());
 			textImageButtonFactory.FixedWidth = 0;
 		}
 
@@ -1198,7 +1137,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void AddScaleControls(FlowLayoutWidget buttonPanel)
 		{
 			List<GuiWidget> scaleControls = new List<GuiWidget>();
-			transformControls.Add("Scale", scaleControls);
 
 			// Put in the scale ratio edit field
 			{
@@ -1269,7 +1207,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonPanel.AddChild(leftToRight);
 			}
 
-			buttonPanel.AddChild(generateHorizontalRule());
+			buttonPanel.AddChild(GenerateHorizontalRule());
 		}
 
 		private bool AllowDragDrop()
@@ -1474,7 +1412,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandRotateOptions);
 
@@ -1483,7 +1421,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rotateOptionContainer.Visible = false;
 				buttonRightPanel.AddChild(rotateOptionContainer);
 
-				expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Scale".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandScaleOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Scale".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandScaleOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandScaleOptions);
 
@@ -1492,24 +1430,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scaleOptionContainer.Visible = false;
 				buttonRightPanel.AddChild(scaleOptionContainer);
 
-				// put in the mirror options
-				{
-					expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Mirror".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-					expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
-					buttonRightPanel.AddChild(expandMirrorOptions);
-
-					mirrorOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					mirrorOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					mirrorOptionContainer.Visible = false;
-					buttonRightPanel.AddChild(mirrorOptionContainer);
-
-					AddMirrorControls(mirrorOptionContainer);
-				}
+				buttonRightPanel.AddChild(new MirrorControls(this));
 
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
 
-				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
 
 				if (numberOfExtruders > 1)
@@ -1526,7 +1452,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in the view options
 				{
-					expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 					expandViewOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandViewOptions);
 
@@ -1701,21 +1627,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			materialOptionContainer.Visible = expandMaterialOptions.Checked;
 		}
 
-		private void expandMirrorOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (mirrorOptionContainer.Visible != expandMirrorOptions.Checked)
-			{
-				if (expandMirrorOptions.Checked == true)
-				{
-					expandScaleOptions.Checked = false;
-					expandRotateOptions.Checked = false;
-					expandViewOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				mirrorOptionContainer.Visible = expandMirrorOptions.Checked;
-			}
-		}
-
 		private void expandRotateOptions_CheckedStateChanged(object sender, EventArgs e)
 		{
 			if (rotateOptionContainer.Visible != expandRotateOptions.Checked)
@@ -1724,7 +1635,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					expandViewOptions.Checked = false;
 					expandScaleOptions.Checked = false;
-					expandMirrorOptions.Checked = false;
 					expandMaterialOptions.Checked = false;
 				}
 				rotateOptionContainer.Visible = expandRotateOptions.Checked;
@@ -1739,7 +1649,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					expandViewOptions.Checked = false;
 					expandRotateOptions.Checked = false;
-					expandMirrorOptions.Checked = false;
 					expandMaterialOptions.Checked = false;
 				}
 				scaleOptionContainer.Visible = expandScaleOptions.Checked;
@@ -1754,7 +1663,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					expandScaleOptions.Checked = false;
 					expandRotateOptions.Checked = false;
-					expandMirrorOptions.Checked = false;
 					expandMaterialOptions.Checked = false;
 				}
 				viewOptionContainer.Visible = expandViewOptions.Checked;
@@ -1805,7 +1713,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return false;
 		}
 
-		private GuiWidget generateHorizontalRule()
+		public GuiWidget GenerateHorizontalRule()
 		{
 			GuiWidget horizontalRule = new GuiWidget();
 			horizontalRule.Height = 1;
