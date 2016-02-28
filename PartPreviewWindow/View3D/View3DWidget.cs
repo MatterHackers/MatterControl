@@ -77,7 +77,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private UndoBuffer undoBuffer = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 		private Action afterSaveCallback = null;
-		private Button applyScaleButton;
 		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
 		private List<Matrix4X4> asyncMeshGroupTransforms = new List<Matrix4X4>();
 		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
@@ -86,7 +85,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private FlowLayoutWidget enterEditButtonsContainer;
 		private CheckBox expandMaterialOptions;
 		private CheckBox expandRotateOptions;
-		private CheckBox expandScaleOptions;
 		private CheckBox expandViewOptions;
 		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
@@ -104,15 +102,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SaveAsWindow saveAsWindow = null;
 		private SplitButton saveButtons;
 		private bool saveSucceded = true;
-		private FlowLayoutWidget scaleOptionContainer;
-		private MHNumberEdit scaleRatioControl;
 		private EventHandler SelectionChanged;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
-		private EditableNumberDisplay[] sizeDisplay = new EditableNumberDisplay[3];
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private CheckBox uniformScale;
 		private EventHandler unregisterEvents;
 
 		private bool viewIsInEditModePreLock = false;
@@ -120,6 +114,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private FlowLayoutWidget viewOptionContainer;
 
 		private bool wasInSelectMode = false;
+
+		public event EventHandler SelectedTransformChanged;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
 		{
@@ -851,7 +847,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							SelectedMeshGroupIndex = -1;
 						}
 
-						UpdateSizeInfo();
+						SelectedTransformChanged?.Invoke(this, null);
 					}
 				}
 			}
@@ -962,6 +958,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void PartHasBeenChanged()
 		{
 			saveButtons.Visible = true;
+			SelectedTransformChanged?.Invoke(this, null);
 			Invalidate();
 		}
 
@@ -980,9 +977,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
 			}
 			expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
-			expandScaleOptions.CheckedStateChanged += expandScaleOptions_CheckedStateChanged;
-
-			SelectionChanged += SetApplyScaleVisability;
 		}
 
 		private void AddMaterialControls(FlowLayoutWidget buttonPanel)
@@ -1159,81 +1153,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			flowToAddTo.AddChild(saveButtons);
 		}
 
-		private void AddScaleControls(FlowLayoutWidget buttonPanel)
-		{
-			List<GuiWidget> scaleControls = new List<GuiWidget>();
-
-			// Put in the scale ratio edit field
-			{
-				FlowLayoutWidget scaleRatioContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
-				scaleRatioContainer.Padding = new BorderDouble(5);
-
-				string scaleRatioLabelText = "Ratio".Localize();
-				string scaleRatioLabelTextFull = "{0}:".FormatWith(scaleRatioLabelText);
-				TextWidget scaleRatioLabel = new TextWidget(scaleRatioLabelTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				scaleRatioLabel.Margin = new BorderDouble(0, 0, 3, 0);
-				scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
-				scaleRatioContainer.AddChild(scaleRatioLabel);
-
-				scaleRatioContainer.AddChild(new HorizontalSpacer());
-
-				scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50 * TextWidget.GlobalPointSizeScaleRatio, allowDecimals: true, increment: .05);
-				scaleRatioControl.SelectAllOnFocus = true;
-				scaleRatioControl.VAnchor = VAnchor.ParentCenter;
-				scaleRatioContainer.AddChild(scaleRatioControl);
-				scaleRatioControl.ActuallNumberEdit.KeyPressed += (sender, e) =>
-				{
-					SetApplyScaleVisability(this, null);
-				};
-
-				scaleRatioControl.ActuallNumberEdit.KeyDown += (sender, e) =>
-				{
-					SetApplyScaleVisability(this, null);
-				};
-
-				scaleRatioControl.ActuallNumberEdit.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
-				{
-					ApplyScaleFromEditField();
-				};
-
-				scaleRatioContainer.AddChild(CreateScaleDropDownMenu());
-
-				buttonPanel.AddChild(scaleRatioContainer);
-
-				scaleControls.Add(scaleRatioControl);
-			}
-
-			applyScaleButton = whiteButtonFactory.Generate("Apply Scale".Localize(), centerText: true);
-			applyScaleButton.Visible = false;
-			applyScaleButton.Cursor = Cursors.Hand;
-			buttonPanel.AddChild(applyScaleButton);
-
-			scaleControls.Add(applyScaleButton);
-			applyScaleButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				ApplyScaleFromEditField();
-			};
-
-			// add in the dimensions
-			{
-                
-				buttonPanel.AddChild(createAxisScalingControl("x".ToUpper(), 0));
-                buttonPanel.AddChild(createAxisScalingControl("y".ToUpper(), 1));
-                buttonPanel.AddChild(createAxisScalingControl("z".ToUpper(), 2));
-
-				uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				uniformScale.Checked = true;
-
-				FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-				leftToRight.Padding = new BorderDouble(5, 3);
-
-				leftToRight.AddChild(uniformScale);
-				buttonPanel.AddChild(leftToRight);
-			}
-
-			buttonPanel.AddChild(GenerateHorizontalRule());
-		}
 
 		private bool AllowDragDrop()
 		{
@@ -1245,20 +1164,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return true;
-		}
-
-		private void ApplyScaleFromEditField()
-		{
-			if (HaveSelection)
-			{
-				double scale = scaleRatioControl.ActuallNumberEdit.Value;
-				if (scale > 0)
-				{
-					ScaleAxis(scale, 0);
-					ScaleAxis(scale, 1);
-					ScaleAxis(scale, 2);
-				}
-			}
 		}
 
 		private void AutoSpin()
@@ -1338,39 +1243,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partHasBeenEdited = false;
 		}
 
-		private GuiWidget createAxisScalingControl(string axis, int axisIndex)
-		{
-			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			leftToRight.Padding = new BorderDouble(5, 3);
-
-			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			sizeDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			leftToRight.AddChild(sizeDescription);
-
-			sizeDisplay[axisIndex] = new EditableNumberDisplay(textImageButtonFactory, "100", "1000.00");
-			sizeDisplay[axisIndex].EditComplete += (sender, e) =>
-			{
-				if (HaveSelection)
-				{
-					SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
-					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
-					UpdateSizeInfo();
-				}
-				else
-				{
-					sizeDisplay[axisIndex].SetDisplayString("---");
-				}
-			};
-
-			leftToRight.AddChild(sizeDisplay[axisIndex]);
-
-			return leftToRight;
-		}
-
 		private void CreateOptionsContent()
 		{
 			AddRotateControls(rotateOptionContainer);
-			AddScaleControls(scaleOptionContainer);
 		}
 
 		private void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
@@ -1446,14 +1321,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rotateOptionContainer.Visible = false;
 				buttonRightPanel.AddChild(rotateOptionContainer);
 
-				expandScaleOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Scale".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-				expandScaleOptions.Margin = new BorderDouble(bottom: 2);
-				buttonRightPanel.AddChild(expandScaleOptions);
-
-				scaleOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				scaleOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-				scaleOptionContainer.Visible = false;
-				buttonRightPanel.AddChild(scaleOptionContainer);
+				buttonRightPanel.AddChild(new ScaleControls(this));
 
 				buttonRightPanel.AddChild(new MirrorControls(this));
 
@@ -1533,60 +1401,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return buttonRightPanel;
 		}
 
-		private DropDownMenu CreateScaleDropDownMenu()
-		{
-			DropDownMenu presetScaleMenu = new DropDownMenu("", Direction.Down);
-			presetScaleMenu.NormalArrowColor = ActiveTheme.Instance.PrimaryTextColor;
-			presetScaleMenu.HoverArrowColor = ActiveTheme.Instance.PrimaryTextColor;
-			presetScaleMenu.MenuAsWideAsItems = false;
-			presetScaleMenu.AlignToRightEdge = true;
-			//presetScaleMenu.OpenOffset = new Vector2(-50, 0);
-			presetScaleMenu.HAnchor = HAnchor.AbsolutePosition;
-			presetScaleMenu.VAnchor = VAnchor.AbsolutePosition;
-			presetScaleMenu.Width = 25;
-			presetScaleMenu.Height = scaleRatioControl.Height + 2;
-
-			presetScaleMenu.AddItem("mm to in (.0393)");
-			presetScaleMenu.AddItem("in to mm (25.4)");
-			presetScaleMenu.AddItem("mm to cm (.1)");
-			presetScaleMenu.AddItem("cm to mm (10)");
-			string resetLable = "reset".Localize();
-			string resetLableFull = "{0} (1)".FormatWith(resetLable);
-			presetScaleMenu.AddItem(resetLableFull);
-
-			presetScaleMenu.SelectionChanged += (sender, e) =>
-			{
-				double scale = 1;
-				switch (presetScaleMenu.SelectedIndex)
-				{
-					case 0:
-						scale = 1.0 / 25.4;
-						break;
-
-					case 1:
-						scale = 25.4;
-						break;
-
-					case 2:
-						scale = .1;
-						break;
-
-					case 3:
-						scale = 10;
-						break;
-
-					case 4:
-						scale = 1;
-						break;
-				}
-
-				scaleRatioControl.ActuallNumberEdit.Value = scale;
-				ApplyScaleFromEditField();
-			};
-
-			return presetScaleMenu;
-		}
-
 		private void DeleteSelectedMesh()
 		{
 			// don't ever delete the last mesh
@@ -1646,7 +1460,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (expandMaterialOptions.Checked == true)
 			{
-				expandScaleOptions.Checked = false;
 				expandRotateOptions.Checked = false;
 				expandViewOptions.Checked = false;
 			}
@@ -1660,24 +1473,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (expandRotateOptions.Checked == true)
 				{
 					expandViewOptions.Checked = false;
-					expandScaleOptions.Checked = false;
 					expandMaterialOptions.Checked = false;
 				}
 				rotateOptionContainer.Visible = expandRotateOptions.Checked;
-			}
-		}
-
-		private void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (scaleOptionContainer.Visible != expandScaleOptions.Checked)
-			{
-				if (expandScaleOptions.Checked == true)
-				{
-					expandViewOptions.Checked = false;
-					expandRotateOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				scaleOptionContainer.Visible = expandScaleOptions.Checked;
 			}
 		}
 
@@ -1687,7 +1485,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (expandViewOptions.Checked == true)
 				{
-					expandScaleOptions.Checked = false;
 					expandRotateOptions.Checked = false;
 					expandMaterialOptions.Checked = false;
 				}
@@ -2343,67 +2140,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.saveAsWindow = null;
 		}
 
-		private void ScaleAxis(double scaleIn, int axis)
-		{
-			AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
-
-			AxisAlignedBoundingBox totalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
-
-			throw new NotImplementedException();
-
-			AxisAlignedBoundingBox scaledBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
-
-			// first we remove any scale we have applied and then scale to the new value
-			Vector3 axisRemoveScalings = new Vector3();
-			axisRemoveScalings.x = scaledBounds.Size.x / originalMeshBounds.Size.x;
-			axisRemoveScalings.y = scaledBounds.Size.y / originalMeshBounds.Size.y;
-			axisRemoveScalings.z = scaledBounds.Size.z / originalMeshBounds.Size.z;
-
-			Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(1 / axisRemoveScalings);
-
-			Vector3 newScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
-			newScale[axis] = scaleIn;
-			Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
-
-			Matrix4X4 scale = SelectedMeshGroupTransform;
-			//scale.scale *= totalScale;
-			SelectedMeshGroupTransform = scale;
-
-			// And make sure its center has not changed
-			AxisAlignedBoundingBox postScaleBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
-			Matrix4X4 translation = SelectedMeshGroupTransform;
-			//translation.translation *= Matrix4X4.CreateTranslation(totalMeshBounds.Center - postScaleBounds.Center);
-			SelectedMeshGroupTransform = translation;
-
-			PartHasBeenChanged();
-			Invalidate();
-			MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
-			SetApplyScaleVisability(this, null);
-		}
-
 		private bool scaleQueueMenu_Click()
 		{
 			return true;
-		}
-
-		private void SetApplyScaleVisability(Object sender, EventArgs e)
-		{
-			if (HaveSelection)
-			{
-				double scale = scaleRatioControl.ActuallNumberEdit.Value;
-				if (scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[0]
-					|| scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[1]
-					|| scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[2])
-				{
-					applyScaleButton.Visible = true;
-				}
-				else
-				{
-					applyScaleButton.Visible = false;
-				}
-			}
-
-			UpdateSizeInfo();
 		}
 
 		private void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
@@ -2420,33 +2159,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					default:
 						UnlockEditControls();
 						break;
-				}
-			}
-		}
-
-		private void SetNewModelSize(double sizeInMm, int axis)
-		{
-			if (HaveSelection)
-			{
-				// because we remove any current scale before we change to a new one we only get the size of the base mesh data
-				AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
-
-				double currentSize = originalMeshBounds.Size[axis];
-				double desiredSize = sizeDisplay[axis].GetValue();
-				double scaleFactor = 1;
-				if (currentSize != 0)
-				{
-					scaleFactor = desiredSize / currentSize;
-				}
-
-				if (uniformScale.Checked)
-				{
-					scaleRatioControl.ActuallNumberEdit.Value = scaleFactor;
-					ApplyScaleFromEditField();
-				}
-				else
-				{
-					ScaleAxis(scaleFactor, axis);
 				}
 			}
 		}
@@ -2492,25 +2204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				wasInSelectMode = false;
 			}
 
-			UpdateSizeInfo();
-		}
-
-		public void UpdateSizeInfo()
-		{
-			if (sizeDisplay[0] != null
-				&& SelectedMeshGroup != null)
-			{
-				AxisAlignedBoundingBox bounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
-				sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
-				sizeDisplay[1].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[1]));
-				sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));
-			}
-			else
-			{
-				sizeDisplay[0].SetDisplayString("---");
-				sizeDisplay[1].SetDisplayString("---");
-				sizeDisplay[2].SetDisplayString("---");
-			}
+			SelectedTransformChanged?.Invoke(this, null);
 		}
 	}
 

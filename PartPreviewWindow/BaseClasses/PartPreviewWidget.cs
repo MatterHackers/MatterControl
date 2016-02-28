@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		protected TextImageButtonFactory checkboxButtonFactory = new TextImageButtonFactory();
 		public TextImageButtonFactory ExpandMenuOptionFactory = new TextImageButtonFactory();
-		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
+		public TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
 
 		protected ViewControls2D viewControls2D;
 
