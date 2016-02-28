@@ -929,7 +929,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
 		{
-			undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, transformOnMouseDown, SelectedMeshGroupTransform));
+			if (undoTransform != SelectedMeshGroupTransform)
+			{
+				undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+			}
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
