@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -41,6 +42,35 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	internal class ArangeUndoCommand : IUndoRedoCommand
+	{
+		List<TransformUndoCommand> allUndoTransforms = new List<TransformUndoCommand>();
+
+		public ArangeUndoCommand(View3DWidget view3DWidget, List<Matrix4X4> preArrangeTarnsforms, List<Matrix4X4> postArrangeTarnsforms)
+		{
+			for(int i=0; i<preArrangeTarnsforms.Count; i++)
+			{
+				allUndoTransforms.Add(new TransformUndoCommand(view3DWidget, i, preArrangeTarnsforms[i], postArrangeTarnsforms[i]));
+			}
+		}
+
+		public void Do()
+		{
+			for (int i = 0; i < allUndoTransforms.Count; i++)
+			{
+				allUndoTransforms[i].Do();
+			}
+		}
+
+		public void Undo()
+		{
+			for (int i = 0; i < allUndoTransforms.Count; i++)
+			{
+				allUndoTransforms[i].Undo();
+			}
+		}
+	}
+
 	public partial class View3DWidget
 	{
 		private async void AutoArrangePartsInBackground()
@@ -53,6 +83,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.Visible = true;
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
+
+				List<Matrix4X4> preArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
 
 				await Task.Run(() =>
 				{
@@ -72,10 +104,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.BedCenter, 0));
 				}
 
-				UnlockEditControls();
 				PartHasBeenChanged();
 
 				PullMeshGroupDataFromAsynchLists();
+				List<Matrix4X4> postArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
+
+				undoBuffer.Add(new ArangeUndoCommand(this, preArrangeTarnsforms, postArrangeTarnsforms));
+
+				UnlockEditControls();
 			}
 		}
 	}
