@@ -500,6 +500,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					break;
 			}
+
+			base.OnKeyDown(keyEvent);
 		}
 
 		public bool DragingPart

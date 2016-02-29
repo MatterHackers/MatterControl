@@ -40,13 +40,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class ScaleControls : FlowLayoutWidget
 	{
+		private Button applyScaleButton;
 		private CheckBox expandScaleOptions;
 		private FlowLayoutWidget scaleOptionContainer;
-		private View3DWidget view3DWidget;
 		private MHNumberEdit scaleRatioControl;
-		private CheckBox uniformScale;
-		private Button applyScaleButton;
 		private EditableNumberDisplay[] sizeDisplay = new EditableNumberDisplay[3];
+		private CheckBox uniformScale;
+		private View3DWidget view3DWidget;
 
 		public ScaleControls(View3DWidget view3DWidget)
 			: base(FlowDirection.TopToBottom)
@@ -95,12 +95,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scaleRatioContainer.AddChild(scaleRatioControl);
 				scaleRatioControl.ActuallNumberEdit.KeyPressed += (sender, e) =>
 				{
-					SetApplyScaleVisability(this, null);
+					UpdateSizeInfo(this, null);
 				};
 
 				scaleRatioControl.ActuallNumberEdit.KeyDown += (sender, e) =>
 				{
-					SetApplyScaleVisability(this, null);
+					UpdateSizeInfo(this, null);
 				};
 
 				scaleRatioControl.ActuallNumberEdit.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
@@ -116,7 +116,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			applyScaleButton = view3DWidget.whiteButtonFactory.Generate("Apply Scale".Localize(), centerText: true);
-			applyScaleButton.Visible = false;
 			applyScaleButton.Cursor = Cursors.Hand;
 			buttonPanel.AddChild(applyScaleButton);
 
@@ -128,10 +127,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the dimensions
 			{
-
-				buttonPanel.AddChild(createAxisScalingControl("x".ToUpper(), 0));
-				buttonPanel.AddChild(createAxisScalingControl("y".ToUpper(), 1));
-				buttonPanel.AddChild(createAxisScalingControl("z".ToUpper(), 2));
+				buttonPanel.AddChild(CreateAxisScalingControl("x".ToUpper(), 0));
+				buttonPanel.AddChild(CreateAxisScalingControl("y".ToUpper(), 1));
+				buttonPanel.AddChild(CreateAxisScalingControl("z".ToUpper(), 2));
 
 				uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				uniformScale.Checked = true;
@@ -146,62 +144,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonPanel.AddChild(view3DWidget.GenerateHorizontalRule());
 		}
 
-		private void AddMirrorControls(FlowLayoutWidget buttonPanel)
-		{
-			List<GuiWidget> mirrorControls = new List<GuiWidget>();
-
-			double oldFixedWidth = view3DWidget.textImageButtonFactory.FixedWidth;
-			view3DWidget.textImageButtonFactory.FixedWidth = view3DWidget.EditButtonHeight;
-
-			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			Button mirrorXButton = view3DWidget.textImageButtonFactory.Generate("X", centerText: true);
-			buttonContainer.AddChild(mirrorXButton);
-			mirrorControls.Add(mirrorXButton);
-			mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				if (view3DWidget.SelectedMeshGroupIndex != -1)
-				{
-					view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
-					view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(-1, 1, 1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-
-			Button mirrorYButton = view3DWidget.textImageButtonFactory.Generate("Y", centerText: true);
-			buttonContainer.AddChild(mirrorYButton);
-			mirrorControls.Add(mirrorYButton);
-			mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				if (view3DWidget.SelectedMeshGroupIndex != -1)
-				{
-					view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
-					view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(1, -1, 1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-
-			Button mirrorZButton = view3DWidget.textImageButtonFactory.Generate("Z", centerText: true);
-			buttonContainer.AddChild(mirrorZButton);
-			mirrorControls.Add(mirrorZButton);
-			mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				if (view3DWidget.SelectedMeshGroupIndex != -1)
-				{
-					view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
-					view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(1, 1, -1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-			buttonPanel.AddChild(buttonContainer);
-			buttonPanel.AddChild(view3DWidget.GenerateHorizontalRule());
-			view3DWidget.textImageButtonFactory.FixedWidth = oldFixedWidth;
-		}
-
 		private void ApplyScaleFromEditField()
 		{
 			if (view3DWidget.HaveSelection)
@@ -214,6 +156,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ScaleAxis(scale, 2);
 				}
 			}
+		}
+
+		private GuiWidget CreateAxisScalingControl(string axis, int axisIndex)
+		{
+			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+			leftToRight.Padding = new BorderDouble(5, 3);
+
+			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			sizeDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			leftToRight.AddChild(sizeDescription);
+
+			sizeDisplay[axisIndex] = new EditableNumberDisplay(view3DWidget.textImageButtonFactory, "100", "1000.00");
+			sizeDisplay[axisIndex].EditComplete += (sender, e) =>
+			{
+				if (view3DWidget.HaveSelection)
+				{
+					SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
+					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
+					UpdateSizeInfo(null, null);
+				}
+				else
+				{
+					sizeDisplay[axisIndex].SetDisplayString("---");
+				}
+			};
+
+			leftToRight.AddChild(sizeDisplay[axisIndex]);
+
+			return leftToRight;
 		}
 
 		private DropDownMenu CreateScaleDropDownMenu()
@@ -269,6 +240,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			return presetScaleMenu;
 		}
+
 		private void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
 		{
 			if (scaleOptionContainer.Visible != expandScaleOptions.Checked)
@@ -276,62 +248,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scaleOptionContainer.Visible = expandScaleOptions.Checked;
 			}
 		}
-		private void SetApplyScaleVisability(Object sender, EventArgs e)
-		{
-			if (view3DWidget.HaveSelection)
-			{
-				double scale = scaleRatioControl.ActuallNumberEdit.Value;
-				if (scale != view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale[0]
-					|| scale != view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale[1]
-					|| scale != view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale[2])
-				{
-					applyScaleButton.Visible = true;
-				}
-				else
-				{
-					applyScaleButton.Visible = false;
-				}
-			}
 
-			UpdateSizeInfo(this, null);
-		}
 		private void ScaleAxis(double scaleIn, int axis)
 		{
 			AxisAlignedBoundingBox originalMeshBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox();
-
-			AxisAlignedBoundingBox totalMeshBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
-
-			throw new NotImplementedException();
 
 			AxisAlignedBoundingBox scaledBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
 
 			// first we remove any scale we have applied and then scale to the new value
 			Vector3 axisRemoveScalings = new Vector3();
-			axisRemoveScalings.x = scaledBounds.Size.x / originalMeshBounds.Size.x;
-			axisRemoveScalings.y = scaledBounds.Size.y / originalMeshBounds.Size.y;
-			axisRemoveScalings.z = scaledBounds.Size.z / originalMeshBounds.Size.z;
+			axisRemoveScalings.x = originalMeshBounds.XSize / scaledBounds.XSize;
+			axisRemoveScalings.y = originalMeshBounds.YSize / scaledBounds.YSize;
+			axisRemoveScalings.z = originalMeshBounds.ZSize / scaledBounds.ZSize;
 
-			Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(1 / axisRemoveScalings);
+			Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(axisRemoveScalings);
 
 			Vector3 newScale = view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale;
 			newScale[axis] = scaleIn;
 			Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
 
-			Matrix4X4 scale = view3DWidget.SelectedMeshGroupTransform;
-			//scale.scale *= totalScale;
-			view3DWidget.SelectedMeshGroupTransform = scale;
-
-			// And make sure its center has not changed
-			AxisAlignedBoundingBox postScaleBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
-			Matrix4X4 translation = view3DWidget.SelectedMeshGroupTransform;
-			//translation.translation *= Matrix4X4.CreateTranslation(totalMeshBounds.Center - postScaleBounds.Center);
-			view3DWidget.SelectedMeshGroupTransform = translation;
+			view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, totalScale);
 
 			view3DWidget.PartHasBeenChanged();
 			Invalidate();
 			view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
-			SetApplyScaleVisability(this, null);
+			UpdateSizeInfo(this, null);
 		}
+
 		private void SetNewModelSize(double sizeInMm, int axis)
 		{
 			if (view3DWidget.HaveSelection)
@@ -359,36 +302,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget createAxisScalingControl(string axis, int axisIndex)
-		{
-			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			leftToRight.Padding = new BorderDouble(5, 3);
-
-			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			sizeDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			leftToRight.AddChild(sizeDescription);
-
-			sizeDisplay[axisIndex] = new EditableNumberDisplay(view3DWidget.textImageButtonFactory, "100", "1000.00");
-			sizeDisplay[axisIndex].EditComplete += (sender, e) =>
-			{
-				if (view3DWidget.HaveSelection)
-				{
-					SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
-					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
-					UpdateSizeInfo(null, null);
-				}
-				else
-				{
-					sizeDisplay[axisIndex].SetDisplayString("---");
-				}
-			};
-
-			leftToRight.AddChild(sizeDisplay[axisIndex]);
-
-			return leftToRight;
-		}
-
-		void UpdateSizeInfo(object sender, EventArgs e)
+		private void UpdateSizeInfo(object sender, EventArgs e)
 		{
 			if (sizeDisplay[0] != null
 				&& view3DWidget.SelectedMeshGroup != null)
