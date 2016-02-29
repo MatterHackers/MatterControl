@@ -713,11 +713,11 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
 				buttonRightPanel.AddChild(verticalSpacer);
 
-				saveButton = whiteButtonFactory.Generate("Save".Localize(), centerText: true);
+				saveButton = WhiteButtonFactory.Generate("Save".Localize(), centerText: true);
 				saveButton.Visible = false;
 				saveButton.Cursor = Cursors.Hand;
 
-				saveAndExitButton = whiteButtonFactory.Generate("Save & Exit".Localize(), centerText: true);
+				saveAndExitButton = WhiteButtonFactory.Generate("Save & Exit".Localize(), centerText: true);
 				saveAndExitButton.Visible = false;
 				saveAndExitButton.Cursor = Cursors.Hand;
 

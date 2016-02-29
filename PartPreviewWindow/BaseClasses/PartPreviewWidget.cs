@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		protected TextImageButtonFactory checkboxButtonFactory = new TextImageButtonFactory();
 		public TextImageButtonFactory ExpandMenuOptionFactory = new TextImageButtonFactory();
-		public TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
+		public TextImageButtonFactory WhiteButtonFactory = new TextImageButtonFactory();
 
 		protected ViewControls2D viewControls2D;
 
@@ -68,15 +68,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			textImageButtonFactory.disabledFillColor = new RGBA_Bytes();
 
 
-			whiteButtonFactory.FixedWidth = SideBarButtonWidth;
-			whiteButtonFactory.FixedHeight = ShortButtonHeight;
-			whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
-			whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
-			whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
-			whiteButtonFactory.borderWidth = 1;
-			whiteButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			whiteButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			WhiteButtonFactory.FixedWidth = SideBarButtonWidth;
+			WhiteButtonFactory.FixedHeight = ShortButtonHeight;
+			WhiteButtonFactory.normalFillColor = RGBA_Bytes.White;
+			WhiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
+			WhiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
+			WhiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
+			WhiteButtonFactory.borderWidth = 1;
+			WhiteButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			WhiteButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
 			ExpandMenuOptionFactory.FixedWidth = SideBarButtonWidth;
 			ExpandMenuOptionFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;

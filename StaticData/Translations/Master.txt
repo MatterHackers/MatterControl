@@ -4594,3 +4594,9 @@ Translated:Extruder 3
 English:Extruder 4
 Translated:Extruder 4
 
+English:Undo
+Translated:Undo
+
+English:Redo
+Translated:Redo
+

@@ -43,12 +43,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class UpArrow3D : InteractionVolume
 	{
-		private Mesh upArrow;
-		private double zHitHeight;
-		private Vector3 lastMoveDelta;
-		private PlaneShape hitPlane;
-		private View3DWidget view3DWidget;
 		internal HeightValueDisplay heightDisplay;
+		private PlaneShape hitPlane;
+		private Vector3 lastMoveDelta;
+		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
+		private Mesh upArrow;
+		private View3DWidget view3DWidget;
+		private double zHitHeight;
 
 		public UpArrow3D(View3DWidget view3DWidget)
 			: base(null, view3DWidget.meshViewerWidget)
@@ -78,6 +79,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public override void DrawGlContent(EventArgs e)
+		{
+			if (MeshViewerToDrawWith.SelectedMeshGroup != null)
+			{
+				if (MouseOver)
+				{
+					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
+				}
+				else
+				{
+					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
+				}
+			}
+
+			base.DrawGlContent(e);
+		}
+
 		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
 			zHitHeight = mouseEvent3D.info.hitPosition.z;
@@ -87,6 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 			zHitHeight = info.hitPosition.z;
+			transformOnMouseDown = MeshViewerToDrawWith.SelectedMeshGroupTransform;
 
 			base.OnMouseDown(mouseEvent3D);
 		}
@@ -126,6 +145,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseMove(mouseEvent3D);
 		}
 
+		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
+		{
+			view3DWidget.AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
+			base.OnMouseUp(mouseEvent3D);
+		}
+
 		public override void SetPosition()
 		{
 			heightDisplay.SetPosition();
@@ -151,23 +176,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				heightDisplay.Visible = false;
 			}
-		}
-
-		public override void DrawGlContent(EventArgs e)
-		{
-			if (MeshViewerToDrawWith.SelectedMeshGroup != null)
-			{
-				if (MouseOver)
-				{
-					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
-				}
-				else
-				{
-					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
-				}
-			}
-
-			base.DrawGlContent(e);
 		}
 	}
 }

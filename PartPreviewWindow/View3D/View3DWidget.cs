@@ -390,8 +390,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 			AddChild(viewControls3D);
 
-			AddHandlers();
-
 			UiThread.RunOnIdle(AutoSpin);
 
 			if (printItemWrapper == null && windowType == WindowMode.Embeded)
@@ -971,16 +969,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 		}
 
-		private void AddHandlers()
-		{
-			expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
-			if (expandMaterialOptions != null)
-			{
-				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
-			}
-			expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
-		}
-
 		private void AddMaterialControls(FlowLayoutWidget buttonPanel)
 		{
 			extruderButtons.Clear();
@@ -1110,7 +1098,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(rotateButtonContainer);
 
-			Button layFlatButton = whiteButtonFactory.Generate("Align to Bed".Localize(), centerText: true);
+			Button layFlatButton = WhiteButtonFactory.Generate("Align to Bed".Localize(), centerText: true);
 			layFlatButton.Cursor = Cursors.Hand;
 			buttonPanel.AddChild(layFlatButton);
 
@@ -1311,12 +1299,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			buttonRightPanel.Width = 200;
+
+			// put in undo redo
+			{
+				FlowLayoutWidget undoRedoButtons = new FlowLayoutWidget()
+				{
+					VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
+					HAnchor = HAnchor.FitToChildren | HAnchor.ParentCenter,
+				};
+				double oldWidth = WhiteButtonFactory.FixedWidth;
+				WhiteButtonFactory.FixedWidth = WhiteButtonFactory.FixedWidth / 2;
+                Button undoButton = WhiteButtonFactory.Generate("Undo".Localize(), centerText: true);
+				undoButton.Enabled = false;
+				undoButton.Click += (sender, e) =>
+				{
+					undoBuffer.Undo();
+				};
+				undoRedoButtons.AddChild(undoButton);
+
+				Button redoButton = WhiteButtonFactory.Generate("Redo".Localize(), centerText: true);
+				redoButton.Enabled = false;
+				redoButton.Click += (sender, e) =>
+				{
+					undoBuffer.Redo();
+				};
+				undoRedoButtons.AddChild(redoButton);
+				buttonRightPanel.AddChild(undoRedoButtons);
+
+				undoBuffer.Changed += (sender, e) =>
+				{
+					undoButton.Enabled = undoBuffer.UndoCount > 0;
+					redoButton.Enabled = undoBuffer.RedoCount > 0;
+				};
+				WhiteButtonFactory.FixedWidth = oldWidth;
+			}
+
 			{
 				BorderDouble buttonMargin = new BorderDouble(top: 3);
 
 				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandRotateOptions);
+				expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
 
 				rotateOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				rotateOptionContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -1332,6 +1356,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
+				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
 
 				if (numberOfExtruders > 1)
 				{
@@ -1350,6 +1375,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 					expandViewOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandViewOptions);
+					expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
 
 					viewOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 					viewOptionContainer.HAnchor = HAnchor.ParentLeftRight;

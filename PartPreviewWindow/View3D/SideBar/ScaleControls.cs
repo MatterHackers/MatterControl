@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scaleControls.Add(scaleRatioControl);
 			}
 
-			applyScaleButton = view3DWidget.whiteButtonFactory.Generate("Apply Scale".Localize(), centerText: true);
+			applyScaleButton = view3DWidget.WhiteButtonFactory.Generate("Apply Scale".Localize(), centerText: true);
 			applyScaleButton.Cursor = Cursors.Hand;
 			buttonPanel.AddChild(applyScaleButton);
 
@@ -148,6 +148,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (view3DWidget.HaveSelection)
 			{
+				Matrix4X4 startingTransform = view3DWidget.SelectedMeshGroupTransform;
 				Vector3 currentScale = view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale;
 
 				double scale = scaleRatioControl.ActuallNumberEdit.Value;
@@ -162,6 +163,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale.z = currentScale.z;
 					ScaleAxis(scale, 2);
 				}
+
+				view3DWidget.AddUndoForSelectedMeshGroupTransform(startingTransform);
 			}
 		}
 
@@ -179,9 +182,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (view3DWidget.HaveSelection)
 				{
+					Matrix4X4 startingTransform = view3DWidget.SelectedMeshGroupTransform;
 					SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
 					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
 					OnSelectedTransformChanged(null, null);
+					view3DWidget.AddUndoForSelectedMeshGroupTransform(startingTransform);
 				}
 				else
 				{
