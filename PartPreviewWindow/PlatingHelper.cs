@@ -194,6 +194,14 @@ namespace MatterHackers.MatterControl
 			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
 		}
 
+		public static void PlaceMeshAtHeight(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index, double zHeight)
+		{
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
+			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+
+			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - boundsCenter.z + bounds.ZSize / 2));
+		}
+
 		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
 		{
 			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);

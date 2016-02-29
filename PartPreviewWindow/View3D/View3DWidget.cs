@@ -1982,7 +1982,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UnlockEditControls();
 			}
 
-			SelectionChanged(this, null);
+			SelectionChanged?.Invoke(this, null);
 
 			if (openMode == OpenMode.Editing)
 			{
