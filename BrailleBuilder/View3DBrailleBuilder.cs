@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			viewControls3D.ResetView += (sender, e) =>
 			{
-				SetDefaultView();
+				meshViewerWidget.ResetView();
 			};
 
 			buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			AddChild(viewControls3D);
 
 			// set the view to be a good angle and distance
-			SetDefaultView();
+			meshViewerWidget.ResetView();
 
 			AddHandlers();
 			UnlockEditControls();
@@ -241,18 +241,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			//meshViewerWidget.RenderType = RenderTypes.Outlines;
 			viewControls3D.PartSelectVisible = false;
-			SetDefaultView();
-		}
-
-		public override void SetDefaultView()
-		{
-			meshViewerWidget.TrackballTumbleWidget.ZeroVelocity();
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Reset();
-
-			// move things into the right place and scale
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-new Vector3(ActiveSliceSettings.Instance.BedCenter));
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = 3;
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .02, 0, 0)));
+			meshViewerWidget.ResetView();
 		}
 
 		private async void InsertTextNow(string text)

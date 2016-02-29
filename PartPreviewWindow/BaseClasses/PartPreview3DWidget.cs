@@ -96,8 +96,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		public abstract void SetDefaultView();
-
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (needToRecretaeBed)

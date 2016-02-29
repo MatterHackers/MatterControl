@@ -358,7 +358,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D.ResetView += (sender, e) =>
 			{
-				SetDefaultView();
+				meshViewerWidget.ResetView();
 			};
 
 			buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
@@ -434,7 +434,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				partHasBeenEdited = true;
 			};
 
-			SetDefaultView();
+			meshViewerWidget.ResetView();
 
 #if DoBooleanTest
             DrawBefore += CreateBooleanTestGeometry;
@@ -600,16 +600,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
         }
 #endif
-
-		public override void SetDefaultView()
-		{
-			meshViewerWidget.TrackballTumbleWidget.ZeroVelocity();
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Reset();
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-new Vector3(ActiveSliceSettings.Instance.BedCenter));
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = 3;
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
-			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
-		}
 
 		public enum AutoRotate { Enabled, Disabled };
 
@@ -2015,7 +2005,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(EnterEditAndCreateSelectionData);
 			}
 
-			SetDefaultView();
+			meshViewerWidget.ResetView();
 		}
 
 		private bool PartsAreInPrintVolume()
