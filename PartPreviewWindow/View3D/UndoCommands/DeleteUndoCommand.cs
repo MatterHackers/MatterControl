@@ -27,6 +27,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DWidget.MeshGroups.RemoveAt(deletedIndex);
 			view3DWidget.MeshGroupExtraData.RemoveAt(deletedIndex);
 			view3DWidget.MeshGroupTransforms.RemoveAt(deletedIndex);
+			if (view3DWidget.SelectedMeshGroupIndex >= view3DWidget.MeshGroups.Count)
+			{
+				view3DWidget.SelectedMeshGroupIndex = view3DWidget.MeshGroups.Count - 1;
+			}
 			view3DWidget.PartHasBeenChanged();
 		}
 
@@ -36,6 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DWidget.MeshGroupTransforms.Insert(deletedIndex, deletedTransform);
 			view3DWidget.MeshGroupExtraData.Insert(deletedIndex, deletedPlatingData);
 			view3DWidget.Invalidate();
+			view3DWidget.SelectedMeshGroupIndex = view3DWidget.MeshGroups.Count - 1;
 		}
 	}
 }
