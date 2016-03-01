@@ -258,6 +258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(separator);
 
 					Button ungroupButton = textImageButtonFactory.Generate("Ungroup".Localize());
+					ungroupButton.Name = "3D View Ungroup";
 					doEdittingButtonsContainer.AddChild(ungroupButton);
 					ungroupButton.Click += (sender, e) =>
 					{
@@ -265,6 +266,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 
 					Button groupButton = textImageButtonFactory.Generate("Group".Localize());
+					groupButton.Name = "3D View Group";
 					doEdittingButtonsContainer.AddChild(groupButton);
 					groupButton.Click += (sender, e) =>
 					{
