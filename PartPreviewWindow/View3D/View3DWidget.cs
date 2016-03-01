@@ -1430,8 +1430,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
 				MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
 				MeshGroupTransforms.RemoveAt(SelectedMeshGroupIndex);
-				PartHasBeenChanged();
 				this.SelectedMeshGroupIndex = -1;
+				PartHasBeenChanged();
 			}
 		}
 
