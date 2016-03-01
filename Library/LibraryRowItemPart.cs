@@ -277,6 +277,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			printLabel.HAnchor = HAnchor.ParentCenter;
 
 			FatFlatClickWidget printButton = new FatFlatClickWidget(printLabel);
+			printButton.Name = "Row Item " + partLabel.Text + " Print Button";
 			printButton.VAnchor = VAnchor.ParentBottomTop;
 			printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			printButton.Width = 100;

@@ -127,6 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			MeshGroupExtraData.Add(new PlatingMeshGroupData());
 
 			this.printItemWrapper = printItemWrapper;
+			this.Name = "View3DWidget";
 
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;

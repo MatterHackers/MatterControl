@@ -32,6 +32,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MatterHackers.PolygonMesh, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Submodules\agg-sharp\PolygonMesh\bin\Debug\MatterHackers.PolygonMesh.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -67,6 +71,7 @@
     <Compile Include="LibraryDownloadsTest.cs" />
     <Compile Include="LocalLibraryTests.cs" />
     <Compile Include="OptionsTabTests.cs" />
+    <Compile Include="PartPreviewTests.cs" />
     <Compile Include="PrintQueueTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqLiteLibraryProvider.cs" />
