@@ -1303,7 +1303,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				double oldWidth = WhiteButtonFactory.FixedWidth;
 				WhiteButtonFactory.FixedWidth = WhiteButtonFactory.FixedWidth / 2;
                 Button undoButton = WhiteButtonFactory.Generate("Undo".Localize(), centerText: true);
-				undoButton.Name = "View 3D Undo";
+				undoButton.Name = "3D View Undo";
 				undoButton.Enabled = false;
 				undoButton.Click += (sender, e) =>
 				{
@@ -1312,7 +1312,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				undoRedoButtons.AddChild(undoButton);
 
 				Button redoButton = WhiteButtonFactory.Generate("Redo".Localize(), centerText: true);
-				redoButton.Name = "View 3D Redo";
+				redoButton.Name = "3D View Redo";
 				redoButton.Enabled = false;
 				redoButton.Click += (sender, e) =>
 				{

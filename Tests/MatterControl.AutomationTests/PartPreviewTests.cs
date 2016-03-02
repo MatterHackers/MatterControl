@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.UI
 					{
 
 						int meshCountBeforeUndo = view3D.MeshGroups.Count();
-						testRunner.ClickByName("View 3D Undo");
+						testRunner.ClickByName("3D View Undo");
 						System.Threading.Thread.Sleep(2000);
 						int meshCountAfterUndo = view3D.MeshGroups.Count();
 						resultsHarness.AddTestResult(meshCountAfterUndo == meshCountBeforeUndo - 1);
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.UI
 					for(int z = 0; z <= 4; z++)
 					{
 						int meshCountBeforeRedo = view3D.MeshGroups.Count();
-						testRunner.ClickByName("View 3D Redo");
+						testRunner.ClickByName("3D View Redo");
 						System.Threading.Thread.Sleep(2000);
 						int meshCountAfterRedo = view3D.MeshGroups.Count();
 						resultsHarness.AddTestResult(meshCountAfterRedo == meshCountBeforeRedo + 1);
@@ -271,6 +271,72 @@ namespace MatterHackers.MatterControl.UI
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 11); // make sure we ran all our tests
+		}
+
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void UndoRedoDelete()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					SystemWindow systemWindow;
+
+					//Navigate to Local Library 
+					testRunner.ClickByName("Library Tab");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+					testRunner.Wait(1);
+					testRunner.ClickByName("Row Item Calibration - Box");
+					testRunner.ClickByName("Row Item Calibration - Box Print Button");
+					testRunner.Wait(1);
+
+					//Get View3DWidget and count MeshGroups before Copy button is clicked
+					GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
+					View3DWidget view3D = partPreview as View3DWidget;
+
+					string copyButtonName = "3D View Copy";
+
+					//Click Edit button to make edit controls visible
+					testRunner.ClickByName("3D View Edit");
+					testRunner.Wait(1);
+					int partCountBeforeCopy = view3D.MeshGroups.Count();
+					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
+
+					for (int i = 0; i <= 4; i++)
+					{
+						testRunner.ClickByName(copyButtonName);
+						testRunner.Wait(1);
+					}
+
+					testRunner.Wait(1);
+
+					int meshCountAfterCopy = view3D.MeshGroups.Count();
+					testRunner.ClickByName("3D View Remove");
+					System.Threading.Thread.Sleep(2000);
+					int meshCountAfterRemove = view3D.MeshGroups.Count();
+					resultsHarness.AddTestResult(meshCountAfterRemove == 5);
+
+
+					testRunner.ClickByName("3D View Undo");
+					System.Threading.Thread.Sleep(2000);
+					int meshCountAfterUndo = view3D.MeshGroups.Count();
+					resultsHarness.AddTestResult(meshCountAfterUndo == 6);
+
+					testRunner.ClickByName("3D View Redo");
+					System.Threading.Thread.Sleep(2000);
+					int meshCountAfterRedo = view3D.MeshGroups.Count();
+					resultsHarness.AddTestResult(meshCountAfterRedo == 5);
+					
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
 		}
 	}
 }
