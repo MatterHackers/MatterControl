@@ -338,5 +338,63 @@ namespace MatterHackers.MatterControl.UI
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
 		}
+
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void SaveAsToQueue()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					SystemWindow systemWindow;
+
+					//Navigate to Local Library 
+					testRunner.ClickByName("Library Tab");
+					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+					testRunner.Wait(1);
+					testRunner.ClickByName("Row Item Calibration - Box");
+					testRunner.ClickByName("Row Item Calibration - Box Print Button");
+					testRunner.Wait(1);
+
+					//Click Edit button to make edit controls visible
+					testRunner.ClickByName("3D View Edit");
+					testRunner.Wait(1);
+					
+					for (int i = 0; i <= 2; i++)
+					{
+						testRunner.ClickByName("3D View Copy");
+						testRunner.Wait(1);
+					}
+
+
+					//Click Save As button to save changes to the part
+					testRunner.ClickByName("Save As Menu");
+					testRunner.Wait(1);
+					testRunner.ClickByName("Save As Menu Item");
+					testRunner.Wait(1);
+
+					//Type in name of new part and then save to Print Queue
+					testRunner.Type("Save As Print Queue");
+					MatterControlUtilities.NavigateToFolder(testRunner,"Print Queue Row Item Collection");
+					testRunner.Wait(1);
+					testRunner.ClickByName("Save As Save Button");
+
+					//Make sure there is a new Queue item with a name that matcheds the new opart
+					testRunner.Wait(1);
+					testRunner.ClickByName("Queue Tab");
+					testRunner.Wait(1);
+					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Save As Print Queue", 5));
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+		}
 	}
 }
