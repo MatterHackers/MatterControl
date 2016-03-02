@@ -1431,11 +1431,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (SelectedMeshGroupIndex != -1
 				&& MeshGroups.Count > 1)
 			{
-				undoBuffer.Add(new DeleteUndoCommand(this, SelectedMeshGroupIndex));
+				int removingIndex = SelectedMeshGroupIndex;
+				undoBuffer.Add(new DeleteUndoCommand(this, removingIndex));
 
-				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
-				MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
-				MeshGroupTransforms.RemoveAt(SelectedMeshGroupIndex);
+				MeshGroups.RemoveAt(removingIndex);
+				MeshGroupExtraData.RemoveAt(removingIndex);
+				MeshGroupTransforms.RemoveAt(removingIndex);
 				this.SelectedMeshGroupIndex = -1;
 				PartHasBeenChanged();
 			}
