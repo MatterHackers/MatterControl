@@ -4600,3 +4600,9 @@ Translated:Undo
 English:Redo
 Translated:Redo
 
+English:Set Name
+Translated:Set Name
+
+English:MatterHackers - Set Name
+Translated:MatterHackers - Set Name
+
