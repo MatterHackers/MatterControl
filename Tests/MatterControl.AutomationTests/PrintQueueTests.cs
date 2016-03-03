@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.UI
 					bool exportWindowExists1 = testRunner.WaitForName( "Export Item Window", 0);
 					resultsHarness.AddTestResult(exportWindowExists1 == false, "Export window does not exist");
 
-					testRunner.ClickByName("Export Queue Button", 5);
+					testRunner.ClickByName("Queue Export Button", 5);
 					SystemWindow containingWindow;
 					GuiWidget exportWindow = testRunner.GetWidgetByName("Export Item Window", out containingWindow, 5);
 					resultsHarness.AddTestResult(exportWindow != null, "Export window does exist");

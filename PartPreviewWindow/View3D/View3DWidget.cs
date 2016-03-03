@@ -316,6 +316,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(separatorThree);
 
 					Button cancelEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+					cancelEditModeButton.Name = "3D View Cancel";
 					cancelEditModeButton.Click += (sender, e) =>
 					{
 						UiThread.RunOnIdle(() =>

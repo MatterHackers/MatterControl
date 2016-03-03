@@ -32,6 +32,7 @@ namespace MatterHackers.MatterControl
 
 			Title = "MatterControl - " + "Save As".Localize();
 			AlwaysOnTopOfMain = true;
+			this.Name = "Save As Window";
 
 			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
