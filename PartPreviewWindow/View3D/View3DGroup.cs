@@ -31,6 +31,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
@@ -42,71 +43,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private void GroupSelected()
 		{
-			string makingCopyLabel = LocalizedString.Get("Grouping");
-			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-			processingProgressControl.ProcessType = makingCopyLabelFull;
-
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
+			if(Scene.IsSelected(Object3DTypes.SelectionGroup))
 			{
-				asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i]);
-
-				bool continueProcessing;
-				ReportProgressChanged((i + 1) * .4 / asyncMeshGroups.Count, "", out continueProcessing);
-			}
-
-			if (SelectedMeshGroupIndex == -1)
-			{
-				SelectedMeshGroupIndex = 0;
-			}
-
-			MeshGroup meshGroupWeAreKeeping = asyncMeshGroups[SelectedMeshGroupIndex];
-			for (int meshGroupToMoveIndex = asyncMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
-			{
-				MeshGroup meshGroupToMove = asyncMeshGroups[meshGroupToMoveIndex];
-				if (meshGroupToMove != meshGroupWeAreKeeping)
+				var newGroup = new Object3D
 				{
-					for (int moveIndex = 0; moveIndex < meshGroupToMove.Meshes.Count; moveIndex++)
-					{
-						Mesh mesh = meshGroupToMove.Meshes[moveIndex];
-						meshGroupWeAreKeeping.Meshes.Add(mesh);
-					}
+					MeshGroup = new MeshGroup(),
+					Children = { Scene.SelectedItem },
+					ItemType = Object3DTypes.Group
+				};
 
-					asyncMeshGroups.RemoveAt(meshGroupToMoveIndex);
-					asyncMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
-				}
-				else
+				ClearSelection(newGroup.Children, Scene.SelectedItem);
+
+				newGroup.CreateTraceables();
+
+				Scene.Modify((scene) =>
 				{
-					asyncMeshGroupTransforms[meshGroupToMoveIndex] = Matrix4X4.Identity;
-				}
-			}
-
-			asyncPlatingDatas.Clear();
-			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
-			double currentRatioDone = 0;
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
-			{
-				PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-				asyncPlatingDatas.Add(newInfo);
-
-				MeshGroup meshGroup = asyncMeshGroups[i];
-
-				// create the selection info
-				PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
-				{
-					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
+					scene.Remove(Scene.SelectedItem);
+					scene.Add(newGroup);
 				});
 
-				currentRatioDone += ratioPerMeshGroup;
 			}
 		}
 
 		private async void GroupSelectedMeshs()
 		{
-			if (MeshGroups.Count > 0)
+			if (Scene.HasItems)
 			{
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;
@@ -120,11 +81,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				// remove the original mesh and replace it with these new meshes
-				PullMeshGroupDataFromAsynchLists();
-
 				// our selection changed to the mesh we just added which is at the end
-				SelectedMeshGroupIndex = MeshGroups.Count - 1;
+				Scene.SetSelectionToLastItem();
 
 				UnlockEditControls();
 

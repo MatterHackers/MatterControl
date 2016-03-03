@@ -53,6 +53,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -115,7 +116,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			get
 			{
-				return meshViewerWidget.MeshGroups;
+				return meshViewerWidget.MeshGroups.Select(o => o.MeshGroup).ToList();
 			}
 		}
 

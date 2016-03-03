@@ -45,31 +45,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CreateSelectionData()
 		{
-			processingProgressControl.ProcessType = "Preparing Meshes".Localize() + ":";
-
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
+			processingProgressControl.ProcessType = "Preparing Meshes".Localize() + ":";
 
-			asyncPlatingDatas.Clear();
-			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
-			double currentRatioDone = 0;
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
+			foreach(var object3D in Scene.Children)
 			{
-				asyncPlatingDatas.Add(new PlatingMeshGroupData());
-
-				// create the selection info
-				PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
-				{
-					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
-				});
-
-				currentRatioDone += ratioPerMeshGroup;
+				object3D.CreateTraceables();
 			}
 
 			bool continueProcessing2;
 			ReportProgressChanged(1, "Creating GL Data", out continueProcessing2);
-			meshViewerWidget.CreateGlDataForMeshes(asyncMeshGroups);
+
+			meshViewerWidget.CreateGlDataForMeshes(Scene.Children);
 		}
 
 		private async void EnterEditAndCreateSelectionData()
@@ -80,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-			if (MeshGroups.Count > 0)
+			if (Scene.HasItems)
 			{
 				processingProgressControl.Visible = true;
 				LockEditControls();
@@ -92,10 +80,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					return;
 				}
-				// remove the original mesh and replace it with these new meshes
-				PullMeshGroupDataFromAsynchLists();
 
-				SelectedMeshGroupIndex = 0;
+				Scene.SetSelectionToFirstItem();
+
 				buttonRightPanel.Visible = true;
 				UnlockEditControls();
 				viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;

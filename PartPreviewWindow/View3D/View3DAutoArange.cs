@@ -75,6 +75,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private async void AutoArrangePartsInBackground()
 		{
+			// TODO: ******************** !!!!!!!!!!!!!!! ********************
+		}
+
+		/*
+		private async void AutoArrangePartsInBackground()
+		{
 			if (MeshGroups.Count > 0)
 			{
 				string progressArrangeParts = LocalizedString.Get("Arranging Parts");
@@ -113,6 +119,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				UnlockEditControls();
 			}
-		}
+		} */
 	}
 }

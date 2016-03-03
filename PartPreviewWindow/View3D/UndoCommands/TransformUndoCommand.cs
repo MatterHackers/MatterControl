@@ -21,12 +21,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Do()
 		{
-			view3DWidget.MeshGroupTransforms[meshGroupIndex] = redoTransform;
+			view3DWidget.Scene.Children[meshGroupIndex].Matrix = redoTransform;
 		}
 
 		public void Undo()
 		{
-			view3DWidget.MeshGroupTransforms[meshGroupIndex] = undoTransform;
+			view3DWidget.Scene.Children[meshGroupIndex].Matrix = undoTransform;
 		}
 	}
 }

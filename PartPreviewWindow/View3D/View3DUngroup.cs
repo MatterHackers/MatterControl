@@ -44,6 +44,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private void UngroupSelected()
 		{
+			if (Scene.IsSelected(Object3DTypes.Group))
+			{
+				Scene.Modify((scene) =>
+				{
+					ClearSelection(scene, Scene.SelectedItem, Object3DTypes.Group, 0);
+					Scene.SelectedItem = null;
+				});
+
+				PartHasBeenChanged();
+			}
+		}
+
+		/*
+		private void UngroupSelected()
+		{
 			if (SelectedMeshGroupIndex == -1)
 			{
 				SelectedMeshGroupIndex = 0;
@@ -57,6 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
 			int indexBeingReplaced = SelectedMeshGroupIndex;
+
 			List<Mesh> discreetMeshes = new List<Mesh>();
 			asyncMeshGroups[indexBeingReplaced].Transform(asyncMeshGroupTransforms[indexBeingReplaced]);
 			// if there are multiple meshes than just make them separate groups
@@ -74,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ReportProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
 				});
 			}
-
+			
 			asyncMeshGroups.RemoveAt(indexBeingReplaced);
 			asyncPlatingDatas.RemoveAt(indexBeingReplaced);
 			asyncMeshGroupTransforms.RemoveAt(indexBeingReplaced);
@@ -101,10 +117,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				currentRatioDone += ratioPerDiscreetMesh;
 			}
 		}
+		*/
 
 		private async void UngroupSelectedMeshGroup()
 		{
-			if (MeshGroups.Count > 0)
+			if (Scene.HasItems)
 			{
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;
@@ -118,11 +135,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				// remove the original mesh and replace it with these new meshes
-				PullMeshGroupDataFromAsynchLists();
-
 				// our selection changed to the mesh we just added which is at the end
-				SelectedMeshGroupIndex = MeshGroups.Count - 1;
+				Scene.SetSelectionToLastItem();
 
 				UnlockEditControls();
 

@@ -45,13 +45,6 @@ namespace MatterHackers.MatterControl
 
 	using Polygons = List<List<IntPoint>>;
 
-	public class PlatingMeshGroupData
-	{
-		public Vector3 currentScale = new Vector3(1, 1, 1);
-		public Vector2 spacing;
-		public List<IPrimitive> meshTraceableData = new List<IPrimitive>();
-	}
-
 	public static class PlatingHelper
 	{
 		public static PathStorage PolygonToPathStorage(Polygon polygon)
@@ -106,31 +99,40 @@ namespace MatterHackers.MatterControl
 			return output;
 		}
 
-		public static void ArrangeMeshGroups(List<MeshGroup> asyncMeshGroups, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingMeshGroupData> asyncPlatingDatas,
+		public static void ArrangeMeshGroups(List<IObject3D> object3DList, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingMeshGroupData> MeshGroupExtraData,
+	Action<double, string> reportProgressChanged)
+		{
+			// TODO: ******************** !!!!!!!!!!!!!!! ********************
+		}
+
+		/*
+		public static void ArrangeMeshGroups(List<IObject3D> object3DList, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingMeshGroupData> MeshGroupExtraData,
 			Action<double, string> reportProgressChanged)
 		{
+
+
 			// move them all out of the way
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
+			for (int i = 0; i < MeshGroups.Count; i++)
 			{
 				asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(10000, 10000, 0);
 			}
 
 			// sort them by size
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
+			for (int i = 0; i < MeshGroups.Count; i++)
 			{
-				AxisAlignedBoundingBox iAABB = asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]);
-				for (int j = i + 1; j < asyncMeshGroups.Count; j++)
+				AxisAlignedBoundingBox iAABB = MeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]);
+				for (int j = i + 1; j < MeshGroups.Count; j++)
 				{
-					AxisAlignedBoundingBox jAABB = asyncMeshGroups[j].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[j]);
+					AxisAlignedBoundingBox jAABB = MeshGroups[j].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[j]);
 					if (Math.Max(iAABB.XSize, iAABB.YSize) < Math.Max(jAABB.XSize, jAABB.YSize))
 					{
-						PlatingMeshGroupData tempData = asyncPlatingDatas[i];
-						asyncPlatingDatas[i] = asyncPlatingDatas[j];
-						asyncPlatingDatas[j] = tempData;
+						PlatingMeshGroupData tempData = MeshGroupExtraData[i];
+						MeshGroupExtraData[i] = MeshGroupExtraData[j];
+						MeshGroupExtraData[j] = tempData;
 
-						MeshGroup tempMeshGroup = asyncMeshGroups[i];
-						asyncMeshGroups[i] = asyncMeshGroups[j];
-						asyncMeshGroups[j] = tempMeshGroup;
+						MeshGroup tempMeshGroup = MeshGroups[i];
+						MeshGroups[i] = MeshGroups[j];
+						MeshGroups[j] = tempMeshGroup;
 
 						Matrix4X4 iTransform = asyncMeshGroupTransforms[i];
 						Matrix4X4 jTransform = asyncMeshGroupTransforms[j];
@@ -146,47 +148,47 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
+			double ratioPerMeshGroup = 1.0 / MeshGroups.Count;
 			double currentRatioDone = 0;
 			// put them onto the plate (try the center) starting with the biggest and moving down
-			for (int meshGroupIndex = 0; meshGroupIndex < asyncMeshGroups.Count; meshGroupIndex++)
+			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
 			{
 				reportProgressChanged(currentRatioDone, "Calculating Positions...".Localize());
 
-				MeshGroup meshGroup = asyncMeshGroups[meshGroupIndex];
+				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
 				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupIndex]).minXYZ;
 				asyncMeshGroupTransforms[meshGroupIndex] *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
-				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
+				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, MeshGroupExtraData, MeshGroups, asyncMeshGroupTransforms);
 
 				// and create the trace info so we can select it
-				if (asyncPlatingDatas[meshGroupIndex].meshTraceableData.Count == 0)
+				if (MeshGroupExtraData[meshGroupIndex].meshTraceableData.Count == 0)
 				{
-					PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, meshGroupIndex, null);
+					PlatingHelper.CreateITraceableForMeshGroup(MeshGroupExtraData, MeshGroups, meshGroupIndex, null);
 				}
 
 				currentRatioDone += ratioPerMeshGroup;
 
 				// and put it on the bed
-				PlatingHelper.PlaceMeshGroupOnBed(asyncMeshGroups, asyncMeshGroupTransforms, meshGroupIndex);
+				PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, asyncMeshGroupTransforms, meshGroupIndex);
 			}
 
 			// and finally center whatever we have as a group
 			{
-				AxisAlignedBoundingBox bounds = asyncMeshGroups[0].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[0]);
-				for (int i = 1; i < asyncMeshGroups.Count; i++)
+				AxisAlignedBoundingBox bounds = MeshGroups[0].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[0]);
+				for (int i = 1; i < MeshGroups.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]));
+					bounds = AxisAlignedBoundingBox.Union(bounds, MeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]));
 				}
 
 				Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-				for (int i = 0; i < asyncMeshGroups.Count; i++)
+				for (int i = 0; i < MeshGroups.Count; i++)
 				{
 					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
 				}
 			}
 		}
-
+		*/
 		public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
 		{
 			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
@@ -228,8 +230,7 @@ namespace MatterHackers.MatterControl
 
 			meshesGroupsToAvoid.Add(meshGroupToAdd);
 
-			PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
-			perMeshInfo.Add(newMeshInfo);
+			perMeshInfo.Add(new PlatingMeshGroupData());
 			meshTransforms.Add(meshTransform);
 
 			int meshGroupIndex = meshesGroupsToAvoid.Count - 1;

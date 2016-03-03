@@ -46,6 +46,7 @@ using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -56,6 +57,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -90,9 +92,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private UndoBuffer undoBuffer = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 		private Action afterSaveCallback = null;
-		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
-		private List<Matrix4X4> asyncMeshGroupTransforms = new List<Matrix4X4>();
-		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
 		private FlowLayoutWidget doEdittingButtonsContainer;
 		private bool editorThatRequestedSave = false;
 		private FlowLayoutWidget enterEditButtonsContainer;
@@ -104,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool firstDraw = true;
 		private bool hasDrawn = false;
 		private FlowLayoutWidget materialOptionContainer;
-		public List<PlatingMeshGroupData> MeshGroupExtraData { get; private set; }
+
 		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
@@ -136,8 +135,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.windowType = windowType;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 			autoRotating = allowAutoRotate;
-			MeshGroupExtraData = new List<PlatingMeshGroupData>();
-			MeshGroupExtraData.Add(new PlatingMeshGroupData());
 
 			this.printItemWrapper = printItemWrapper;
 			this.Name = "View3DWidget";
@@ -508,7 +505,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						CurrentSelectInfo.DownOnPart = false;
 
-						SelectedMeshGroupTransform = transformOnMouseDown;
+						Scene.SelectedItem.Matrix = transformOnMouseDown;
 
 						Invalidate();
 					}
@@ -695,55 +692,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public enum WindowMode { Embeded, StandAlone };
 
-		private enum TraceInfoOpperation { DONT_COPY, DO_COPY };
-
 		public bool DisplayAllValueData { get; set; }
 
-		public bool HaveSelection
-		{
-			get { return MeshGroups.Count > 0 && SelectedMeshGroupIndex > -1; }
-		}
-
-		public List<MeshGroup> MeshGroups
-		{
-			get { return meshViewerWidget.MeshGroups; }
-		}
-
-		public List<Matrix4X4> MeshGroupTransforms
-		{
-			get { return meshViewerWidget.MeshGroupTransforms; }
-		}
-
-		public MeshGroup SelectedMeshGroup
-		{
-			get { return meshViewerWidget.SelectedMeshGroup; }
-		}
-
-		public int SelectedMeshGroupIndex
-		{
-			get
-			{
-				return meshViewerWidget.SelectedMeshGroupIndex;
-			}
-			set
-			{
-				if (value != SelectedMeshGroupIndex)
-				{
-					meshViewerWidget.SelectedMeshGroupIndex = value;
-					if (SelectionChanged != null)
-					{
-						SelectionChanged(this, null);
-					}
-					Invalidate();
-				}
-			}
-		}
-
-		public Matrix4X4 SelectedMeshGroupTransform
-		{
-			get { return meshViewerWidget.SelectedMeshGroupTransform; }
-			set { meshViewerWidget.SelectedMeshGroupTransform = value; }
-		}
+		public MeshViewerWidget.SceneGraph Scene => meshViewerWidget.ActiveScene;
 
 		public WindowMode windowType { get; set; }
 		private bool DoAddFileAfterCreatingEditData { get; set; }
@@ -830,7 +781,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				firstDraw = false;
 			}
 
-			if (HaveSelection)
+			if (Scene.HasSelection)
 			{
 				foreach (InteractionVolume volume in meshViewerWidget.interactionVolumes)
 				{
@@ -873,29 +824,77 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
+
+
 			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
 			{
-				if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-					&& mouseEvent.Button == MouseButtons.Left
-					&& ModifierKeys != Keys.Shift
+				if (mouseEvent.Button == MouseButtons.Left
+					&&
+					ModifierKeys == Keys.Shift ||
+					(
+					meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
 					&& ModifierKeys != Keys.Control
-					&& ModifierKeys != Keys.Alt)
+					&& ModifierKeys != Keys.Alt))
 				{
 					if (!meshViewerWidget.MouseDownOnInteractionVolume)
 					{
-						int meshGroupHitIndex;
 						IntersectInfo info = new IntersectInfo();
-						if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex, ref info))
+
+						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
+						if (hitObject != null)
 						{
 							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.z, null);
-							SelectedMeshGroupIndex = meshGroupHitIndex;
 
-							transformOnMouseDown = SelectedMeshGroupTransform;
+							if (hitObject != Scene.SelectedItem)
+							{
+								Scene.Modify((scene) =>
+								{
+									if (Scene.SelectedItem == null)
+									{
+										// No selection exists
+										Scene.SelectedItem = hitObject;
+									}
+									else if(ModifierKeys == Keys.Shift && !Scene.SelectedItem.Children.Contains(hitObject))
+									{
+										// We're adding a new item to the selection. To do so we wrap the selected item
+										// in a new group and all he new item with a new group
+										var newSelectionGroup = new Object3D
+										{
+											ItemType = Object3DTypes.SelectionGroup,
+											MeshGroup = new MeshGroup()
+										};
+
+										newSelectionGroup.Children.Add(Scene.SelectedItem);
+										newSelectionGroup.Children.Add(hitObject);
+
+										// Swap items
+										scene.Remove(Scene.SelectedItem);
+										scene.Remove(hitObject);
+										scene.Add(newSelectionGroup);
+
+										Scene.SelectedItem = newSelectionGroup;
+									}
+									else if(Scene.SelectedItem == hitObject || Scene.SelectedItem.Children.Contains(hitObject))
+									{
+										// Selection should not be cleared and drag should occur
+									}
+									else if (ModifierKeys != Keys.Shift)
+									{
+										ClearSelection(scene);
+
+										Scene.SelectedItem = hitObject;
+									}
+								});
+
+								PartHasBeenChanged();
+							}
+
+							transformOnMouseDown = Scene.SelectedItem.Matrix;
 
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
 
-							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.GetBoundsForSelection();
+							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.ActiveScene.SelectedItem.GetAxisAlignedBoundingBox();
 
 							if (info.hitPosition.x < selectedBounds.Center.x)
 							{
@@ -922,10 +921,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							SelectedMeshGroupIndex = -1;
+							Scene.Modify(ClearSelection);
 						}
 
 						SelectedTransformChanged?.Invoke(this, null);
+					}
+				}
+			}
+		}
+
+		private void ClearSelection(List<IObject3D> sceneGraph)
+		{
+			ClearSelection(sceneGraph, Scene.SelectedItem);
+			Scene.SelectedItem = null;
+		}
+
+		private void ClearSelection(List<IObject3D> sceneGraph, IObject3D selectionContext, Object3DTypes typeToCollapse = Object3DTypes.SelectionGroup, int depth = int.MaxValue)
+		{
+			if (selectionContext != null && selectionContext.ItemType == typeToCollapse)
+			{
+				sceneGraph.Remove(selectionContext);
+
+				// Remove the children from the selection and back into the root of the scene
+				foreach (var child in selectionContext.Children)
+				{
+					child.Matrix *= selectionContext.Matrix;
+
+					if(child.ItemType == Object3DTypes.SelectionGroup && depth > 0)
+					{
+						ClearSelection(sceneGraph, child,typeToCollapse, depth -1);
+					}
+					else
+					{
+						sceneGraph.Add(child);
 					}
 				}
 			}
@@ -945,7 +973,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// move the mesh back to the start position
 					{
 						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
-						SelectedMeshGroupTransform *= totalTransform;
+						Scene.SelectedItem.Matrix *= totalTransform;
 					}
 
 					Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
@@ -954,7 +982,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (snapGridDistance > 0)
 					{
 						// snap this position to the grid
-						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.GetBoundsForSelection();
+						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.ActiveScene.SelectedItem.GetAxisAlignedBoundingBox();
 
 						double xSnapOffset = selectedBounds.minXYZ.x;
 						// snap the x position
@@ -987,7 +1015,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
 
-						SelectedMeshGroupTransform *= totalTransform;
+						Scene.SelectedItem.Matrix *= totalTransform;
 
 						CurrentSelectInfo.LastMoveDelta = delta;
 					}
@@ -1003,9 +1031,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
 		{
-			if (undoTransform != SelectedMeshGroupTransform)
+			if (undoTransform != Scene.SelectedItem.Matrix)
 			{
-				undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+				// jlewin
+				//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 			}
 		}
 
@@ -1015,7 +1044,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& CurrentSelectInfo.DownOnPart
 				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 			{
-				if (SelectedMeshGroupTransform != transformOnMouseDown)
+				if (Scene.SelectedItem.Matrix != transformOnMouseDown)
 				{
 					AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
 					PartHasBeenChanged();
@@ -1065,9 +1094,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				int extruderIndexLocal = extruderIndex;
 				extruderSelection.Click += (sender, e) =>
 				{
-					if (SelectedMeshGroupIndex != -1)
+					if (Scene.HasSelection)
 					{
-						foreach (Mesh mesh in SelectedMeshGroup.Meshes)
+						foreach (Mesh mesh in Scene.SelectedItem.MeshGroup.Meshes)
 						{
 							MeshMaterialData material = MeshMaterialData.Get(mesh);
 							if (material.MaterialIndex != extruderIndexLocal + 1)
@@ -1081,9 +1110,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.SelectionChanged += (sender, e) =>
 				{
-					if (SelectedMeshGroup != null)
+					if (Scene.HasSelection)
 					{
-						Mesh mesh = SelectedMeshGroup.Meshes[0];
+						Mesh mesh = Scene.SelectedItem.MeshGroup.Meshes[0];
 						MeshMaterialData material = MeshMaterialData.Get(mesh);
 
 						for (int i = 0; i < extruderButtons.Count; i++)
@@ -1132,13 +1161,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			rotateControls.Add(rotateXButton);
 			rotateXButton.Click += (object sender, EventArgs mouseEvent) =>
 			{
-				if (SelectedMeshGroupIndex != -1)
+				if (Scene.HasSelection)
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationX(radians);
-					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
-					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
-					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem.MeshGroup, Scene.SelectedItem.Matrix, rotation);
+					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
+					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1150,13 +1180,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			rotateControls.Add(rotateYButton);
 			rotateYButton.Click += (object sender, EventArgs mouseEvent) =>
 			{
-				if (SelectedMeshGroupIndex != -1)
+				if (Scene.HasSelection)
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationY(radians);
+					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem.MeshGroup, Scene.SelectedItem.Matrix, rotation);
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1168,13 +1200,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			rotateControls.Add(rotateZButton);
 			rotateZButton.Click += (object sender, EventArgs mouseEvent) =>
 			{
-				if (SelectedMeshGroupIndex != -1)
+				if (Scene.HasSelection)
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationZ(radians);
-					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
-					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
-					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem.MeshGroup, Scene.SelectedItem.Matrix, rotation);
+					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
+					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1188,11 +1221,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			layFlatButton.Click += (object sender, EventArgs mouseEvent) =>
 			{
-				if (SelectedMeshGroupIndex != -1)
+				if (Scene.HasSelection)
 				{
-					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
-					MakeLowestFaceFlat(SelectedMeshGroupIndex);
-					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					// TODO: jlewin - Must implement
+					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
+					//MakeLowestFaceFlat(SelectedMeshGroupIndex);
+					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1290,9 +1324,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			SwitchStateToNotEditing();
 
-			MeshGroups.Clear();
-			MeshGroupExtraData.Clear();
-			MeshGroupTransforms.Clear();
+			Scene.Children.Clear();
+
 			if (printItemWrapper != null)
 			{
 				// remove it first to make sure we don't double add it
@@ -1313,6 +1346,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, doCentering, bedCenter);
+
+				PartHasBeenChanged();
+				Invalidate();
 			}
 
 			partHasBeenEdited = false;
@@ -1525,25 +1561,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void DeleteSelectedMesh()
 		{
 			// don't ever delete the last mesh
-			if (SelectedMeshGroupIndex != -1
-				&& MeshGroups.Count > 1)
+			if (Scene.HasSelection
+				&& Scene.Children.Count > 1)
 			{
-				int removingIndex = SelectedMeshGroupIndex;
-				undoBuffer.Add(new DeleteUndoCommand(this, removingIndex));
+				// jlewin 
+				//int removingIndex = SelectedMeshGroupIndex;
+				//undoBuffer.Add(new DeleteUndoCommand(this, removingIndex));
 
-				MeshGroups.RemoveAt(removingIndex);
-				MeshGroupExtraData.RemoveAt(removingIndex);
-				MeshGroupTransforms.RemoveAt(removingIndex);
-				this.SelectedMeshGroupIndex = -1;
+				//MeshGroups.RemoveAt(removingIndex);
+
+				Scene.SelectedItem.Children.Clear();
+
 				PartHasBeenChanged();
 			}
 		}
 
 		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
 		{
-			if (SelectedMeshGroup != null)
+			if (Scene.HasSelection)
 			{
-				AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
+				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
 				Vector3 boundsCenter = selectedBounds.Center;
 				Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
@@ -1614,48 +1651,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex, ref IntersectInfo info)
+		private IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo info)
 		{
-			meshHitIndex = 0;
-			if (MeshGroupExtraData.Count == 0 || MeshGroupExtraData[0].meshTraceableData == null)
-			{
-				return false;
-			}
-
-			List<IPrimitive> mesheTraceables = new List<IPrimitive>();
-			for (int i = 0; i < MeshGroupExtraData.Count; i++)
-			{
-				foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
-				{
-					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i]));
-				}
-			}
-			IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
-
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
 			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-			info = allObjects.GetClosestIntersection(ray);
-			if (info != null)
-			{
-				CurrentSelectInfo.PlaneDownHitPos = info.hitPosition;
-				CurrentSelectInfo.LastMoveDelta = new Vector3();
+			
+			double closestDistance = double.PositiveInfinity;
 
-				for (int i = 0; i < MeshGroupExtraData.Count; i++)
+			IObject3D hitObject = null;
+
+			foreach (Object3D object3D in Scene.Children)
+			{
+				double distance = object3D.DistanceToHit(ray, ref info);
+				if (distance < closestDistance)
 				{
-					List<IPrimitive> insideBounds = new List<IPrimitive>();
-					foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
-					{
-						traceData.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
-					}
-					if (insideBounds.Contains(info.closestHitObject))
-					{
-						meshHitIndex = i;
-						return true;
-					}
+					CurrentSelectInfo.PlaneDownHitPos = info.hitPosition;
+					CurrentSelectInfo.LastMoveDelta = new Vector3();
+					closestDistance = distance;
+
+					hitObject = object3D;
 				}
 			}
 
-			return false;
+			return hitObject;
 		}
 
 		public GuiWidget GenerateHorizontalRule()
@@ -1670,7 +1688,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
-			if (MeshGroups.Count > 0 && filesToLoad != null && filesToLoad.Length > 0)
+			if (Scene.HasItems && filesToLoad != null && filesToLoad.Length > 0)
 			{
 				string loadingPartLabel = "Loading Parts".Localize();
 				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
@@ -1678,8 +1696,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.Visible = true;
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
-
-				PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
 				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad));
 
@@ -1691,20 +1707,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UnlockEditControls();
 				PartHasBeenChanged();
 
-				bool addingOnlyOneItem = asyncMeshGroups.Count == MeshGroups.Count + 1;
+				bool addingOnlyOneItem = Scene.Children.Count == Scene.Children.Count + 1;
 
-				if (MeshGroups.Count > 0)
+				if (Scene.HasItems)
 				{
-					PullMeshGroupDataFromAsynchLists();
 					if (addingOnlyOneItem)
 					{
 						// if we are only adding one part to the plate set the selection to it
-						SelectedMeshGroupIndex = asyncMeshGroups.Count - 1;
+						Scene.SetSelectionToLastItem();
 					}
 				}
 			}
 		}
 
+		private void loadAndAddPartsToPlate(string[] filesToLoadIncludingZips)
+		{
+			// TODO: ******************** !!!!!!!!!!!!!!! ********************
+		}
+
+		/*
 		private void loadAndAddPartsToPlate(string[] filesToLoadIncludingZips)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -1761,12 +1782,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
 
-							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, Matrix4X4.Identity, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
+							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, Matrix4X4.Identity, MeshGroupExtraData, MeshGroups, asyncMeshGroupTransforms);
 							if (WidgetHasBeenClosed)
 							{
 								return;
 							}
-							PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, asyncMeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
+							PlatingHelper.CreateITraceableForMeshGroup(MeshGroupExtraData, MeshGroups, MeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
 							{
 								continueProcessing = !this.WidgetHasBeenClosed;
 								double ratioAvailable = (ratioPerFile * .5);
@@ -1783,6 +1804,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
+		*/
 
 		private void LockEditControls()
 		{
@@ -1801,6 +1823,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private void MakeLowestFaceFlat(int indexToLayFlat)
+		{
+			// TODO: ******************** !!!!!!!!!!!!!!! ********************
+		}
+
+		/*
 		private void MakeLowestFaceFlat(int indexToLayFlat)
 		{
 			Vertex lowestVertex = MeshGroups[indexToLayFlat].Meshes[0].Vertices[0];
@@ -1877,11 +1905,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Invalidate();
 			}
 		}
+		*/
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
 		private void MergeAndSavePartsDoWork(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
+			if (Path.GetExtension(printItemWrapper.FileLocation) == ".xml")
+			{
+				meshViewerWidget.SaveScene();
+			}
+
+			/* Classic save implementation temporarily disabled
+
 			if (returnInfo != null)
 			{
 				PrintItem printItem = new PrintItem();
@@ -1897,12 +1933,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			try
 			{
 				// push all the transforms into the meshes
-				for (int i = 0; i < asyncMeshGroups.Count; i++)
+				for (int i = 0; i < MeshGroups.Count; i++)
 				{
-					asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i]);
+					MeshGroups[i].Transform(asyncMeshGroupTransforms[i]);
 
 					bool continueProcessing;
-					ReportProgressChanged((i + 1) * .4 / asyncMeshGroups.Count, "", out continueProcessing);
+					ReportProgressChanged((i + 1) * .4 / MeshGroups.Count, "", out continueProcessing);
 				}
 
 				string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
@@ -1955,7 +1991,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
 
 						// save to the new temp location
-						bool savedSuccessfully = MeshFileIo.Save(asyncMeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
+						bool savedSuccessfully = MeshFileIo.Save(MeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
 
 						// Swap out the files if the save operation completed successfully 
 						if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
@@ -1980,7 +2016,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else // we are saving a new file and it will not exist until we are done
 				{
-					MeshFileIo.Save(asyncMeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
+					MeshFileIo.Save(MeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
 				}
 
 				// Wait for a second to report the file changed to give the OS a chance to finish closing it.
@@ -2025,6 +2061,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 		}
+		*/
+		}
 
 		private void MergeAndSavePartsDoCompleted()
 		{
@@ -2051,7 +2089,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorThatRequestedSave = true;
 			afterSaveCallback = eventToCallAfterSave;
 
-			if (MeshGroups.Count > 0)
+			if (Scene.HasItems)
 			{
 				string progressSavingPartsLabel = "Saving".Localize();
 				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
@@ -2068,7 +2106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private async void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
 			editorThatRequestedSave = true;
-			if (MeshGroups.Count > 0)
+			if (Scene.HasItems)
 			{
 				string progressSavingPartsLabel = "Saving".Localize();
 				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
@@ -2118,7 +2156,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& !ActiveSliceSettings.Instance.CenterOnBed()
 				&& ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
-				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
+				AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty;
+				foreach(var aabb in Scene.Children.Select(item => item.GetAxisAlignedBoundingBox()))
+				{
+					allBounds += aabb;
+				}
+
 				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
 				RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y);
 				bedRect.Offset(ActiveSliceSettings.Instance.BedCenter - ActiveSliceSettings.Instance.BedSize / 2);
@@ -2166,76 +2209,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void PullMeshGroupDataFromAsynchLists()
-		{
-			if (MeshGroups.Count != asyncMeshGroups.Count)
-			{
-				PartHasBeenChanged();
-			}
-
-			MeshGroups.Clear();
-			foreach (MeshGroup meshGroup in asyncMeshGroups)
-			{
-				MeshGroups.Add(meshGroup);
-			}
-			MeshGroupTransforms.Clear();
-			foreach (Matrix4X4 transform in asyncMeshGroupTransforms)
-			{
-				MeshGroupTransforms.Add(transform);
-			}
-			MeshGroupExtraData.Clear();
-			foreach (PlatingMeshGroupData meshData in asyncPlatingDatas)
-			{
-				MeshGroupExtraData.Add(meshData);
-			}
-
-			if (MeshGroups.Count != MeshGroupTransforms.Count
-				|| MeshGroups.Count != MeshGroupExtraData.Count)
-			{
-				throw new Exception("These all need to remain in sync.");
-			}
-		}
-
-		private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation, ReportProgressRatio reportProgress = null)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				processingProgressControl.ProgressMessage = "Async Copy";
-			});
-			asyncMeshGroups.Clear();
-			asyncMeshGroupTransforms.Clear();
-			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
-			{
-				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
-				MeshGroup newMeshGroup = new MeshGroup();
-				for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
-				{
-					Mesh mesh = meshGroup.Meshes[meshIndex];
-					newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
-				}
-				asyncMeshGroups.Add(newMeshGroup);
-				asyncMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
-			}
-			asyncPlatingDatas.Clear();
-
-			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
-			{
-				PlatingMeshGroupData meshData = new PlatingMeshGroupData();
-				meshData.currentScale = MeshGroupExtraData[meshGroupIndex].currentScale;
-				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
-
-				if (traceInfoOpperation == TraceInfoOpperation.DO_COPY)
-				{
-					meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
-				}
-
-				asyncPlatingDatas.Add(meshData);
-			}
-			UiThread.RunOnIdle(() =>
-			{
-				processingProgressControl.ProgressMessage = "";
-			});
-		}
 
 		private void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
 		{
@@ -2298,7 +2271,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 				}
-				SelectedMeshGroupIndex = -1;
+
+				Scene.Modify(ClearSelection);
 			}
 		}
 
