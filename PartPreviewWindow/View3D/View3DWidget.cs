@@ -61,12 +61,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public interface IInteractionVolumeCreator
 	{
-		InteractionVolume CreateLibraryProvider(View3DWidget widget);
+		InteractionVolume CreateInteractionVolume(View3DWidget widget);
 	}
 
 	public class InteractionVolumePlugin : IInteractionVolumeCreator
 	{
-		public virtual InteractionVolume CreateLibraryProvider(View3DWidget widget)
+		public virtual InteractionVolume CreateInteractionVolume(View3DWidget widget)
+		{
+			return null;
+		}
+	}
+
+	public interface ISideBarToolCreator
+	{
+		GuiWidget CreateSideBarTool(View3DWidget widget);
+    }
+
+	public class SideBarPlugin : ISideBarToolCreator
+	{
+		public virtual GuiWidget CreateSideBarTool(View3DWidget widget)
 		{
 			return null;
 		}
@@ -426,9 +439,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PluginFinder<InteractionVolumePlugin> InteractionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
 			foreach (InteractionVolumePlugin plugin in InteractionVolumePlugins.Plugins)
 			{
-				meshViewerWidget.interactionVolumes.Add(plugin.CreateLibraryProvider(this));
+				meshViewerWidget.interactionVolumes.Add(plugin.CreateInteractionVolume(this));
 			}
-
 
 			// make sure the colors are set correct
 			ThemeChanged(this, null);
@@ -1346,6 +1358,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonRightPanel.AddChild(new ScaleControls(this));
 
 				buttonRightPanel.AddChild(new MirrorControls(this));
+
+				PluginFinder<SideBarPlugin> SideBarPlugins = new PluginFinder<SideBarPlugin>();
+				foreach (SideBarPlugin plugin in SideBarPlugins.Plugins)
+				{
+					buttonRightPanel.AddChild(plugin.CreateSideBarTool(this));
+				}
 
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;

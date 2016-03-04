@@ -4606,3 +4606,6 @@ Translated:Set Name
 English:MatterHackers - Set Name
 Translated:MatterHackers - Set Name
 
+English:Shapes
+Translated:Shapes
+
