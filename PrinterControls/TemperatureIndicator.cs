@@ -553,6 +553,7 @@ namespace MatterHackers.MatterControl
 		{
 			AddChildElements();
 			AddHandlers();
+			this.Name = "Bed Temperature Controls Widget";
 		}
 
 		override protected string HelpText
