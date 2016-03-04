@@ -873,6 +873,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							MHNumberEdit doubleEditWidget = new MHNumberEdit(0, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
 							doubleEditWidget.ToolTipText = settingData.HelpText;
+							doubleEditWidget.Name = settingData.PresentationName + " Textbox";
 
 							double currentValue = 0;
 							bool ChangesMultipleOtherSettings = settingData.SetSettingsOnChange.Count > 0;
