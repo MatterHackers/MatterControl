@@ -87,6 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save").ToUpper(), centerText: true);
+			saveButton.Name = "Save Slice Settings Button";
 			saveButton.VAnchor = VAnchor.ParentCenter;
 			saveButton.Visible = true;
 			saveButton.Margin = new BorderDouble(5, 0, 5, 0);
@@ -1094,6 +1095,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case OrganizerSettingsData.DataEditTypes.CHECK_BOX:
 						{
 							CheckBox checkBoxWidget = new CheckBox("");
+							checkBoxWidget.Name = settingData.PresentationName + " Checkbox";
 							checkBoxWidget.ToolTipText = settingData.HelpText;
 							checkBoxWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
 							checkBoxWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -1170,6 +1172,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case OrganizerSettingsData.DataEditTypes.HARDWARE_PRESENT:
 						{
 							CheckBox checkBoxWidget = new CheckBox("");
+							checkBoxWidget.Name = settingData.PresentationName + " Checkbox";
 							checkBoxWidget.ToolTipText = settingData.HelpText;
 							checkBoxWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
 							checkBoxWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;

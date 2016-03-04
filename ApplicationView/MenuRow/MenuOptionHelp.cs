@@ -14,6 +14,7 @@ namespace MatterHackers.MatterControl
 		public MenuOptionHelp()
 			: base("Help".Localize())
 		{
+			Name = "Help Menu";
 		}
 
 		override protected IEnumerable<MenuItemAction> GetMenuItems()

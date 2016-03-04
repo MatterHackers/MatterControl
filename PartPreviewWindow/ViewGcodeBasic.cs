@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			generateGCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Generate"));
+			generateGCodeButton.Name = "Generate Gcode Button";
 			generateGCodeButton.Click += new EventHandler(generateButton_Click);
 			buttonBottomPanel.AddChild(generateGCodeButton);
 

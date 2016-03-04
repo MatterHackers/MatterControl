@@ -114,6 +114,47 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
+		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
+		{
+			string tempFolderPath = Path.Combine("..", "..", "..", "..", "Tests", "temp");
+			string fullPath = Path.Combine(tempFolderPath, runName, "Test0", "data", "gcode");
+
+			string [] gcodeFiles = Directory.GetFiles(fullPath);
+
+			foreach (string file in gcodeFiles)
+			{
+				if(file.Contains(".ini"))
+				{
+
+					FileInfo f = new FileInfo(file);
+					string fullName = f.FullName;
+					string[] lines = File.ReadAllLines(fullName);
+					foreach (string line in lines)
+					{
+
+						if (line.Contains(sliceSetting))
+						{
+							line.Trim(' ');
+							string[] settingNameAndValue = line.Split('=');
+							string settingName = settingNameAndValue[0].Trim();
+							string settingValue = string.Empty;
+							if (settingNameAndValue.Length == 2)
+							{
+								settingValue = settingNameAndValue[1].Trim();
+							}
+
+							if(settingValue == expectedValue)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
 		public static void SelectAndAddPrinter(AutomationRunner testRunner, string make, string model, bool firstAdd)
 		{
 
@@ -153,6 +194,7 @@ namespace MatterHackers.MatterControl.UI
 			testRunner.ClickByName(printerProfile);
 			testRunner.Wait(1);
 		}
+
 
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)
 		{
