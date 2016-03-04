@@ -1085,11 +1085,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DoGenerateButton_Click(object state)
 		{
-			if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
+			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
 			{
-				((Button)state).Visible = false;
-				SlicingQueue.Instance.QueuePartForSlicing(printItem);
-				startedSliceFromGenerateButton = true;
+				if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
+				{
+					((Button)state).Visible = false;
+					SlicingQueue.Instance.QueuePartForSlicing(printItem);
+					startedSliceFromGenerateButton = true;
+				}
+			}
+			else
+			{
+				StyledMessageBox.ShowMessageBox(null, "Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
 			}
 		}
 
