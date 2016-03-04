@@ -4606,18 +4606,3 @@ Translated:Set Name
 English:MatterHackers - Set Name
 Translated:MatterHackers - Set Name
 
-English:Parse Error while slicing
-Translated:Parse Error while slicing
-
-English:Subject*
-Translated:Subject*
-
-English:Message*
-Translated:Message*
-
-English:Email Address*
-Translated:Email Address*
-
-English:Name*
-Translated:Name*
-
