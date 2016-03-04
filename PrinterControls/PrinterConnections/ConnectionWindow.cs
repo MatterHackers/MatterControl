@@ -17,6 +17,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string connectToPrinterTitle = LocalizedString.Get("MatterControl");
 			string connectToPrinterTitleEnd = LocalizedString.Get("Connect to Printer");
 			Title = string.Format("{0} - {1}", connectToPrinterTitle, connectToPrinterTitleEnd);
+			Name = "Printer Connection Window";
 
 			if (GetPrinterRecordCount() > 0)
 			{

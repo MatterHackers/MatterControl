@@ -152,9 +152,6 @@ namespace MatterHackers.MatterControl.UI
 					bool bedTemperatureControlsWidget = testRunner.WaitForName("Bed Temperature Controls Widget", 2);
 					resultsHarness.AddTestResult(bedTemperatureTextBoxVisible == false);
 
-
-
-
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
