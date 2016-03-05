@@ -917,11 +917,11 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			catch (System.UnauthorizedAccessException)
 			{
 				//Do something special when unauthorized?
-				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize());
+				UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize()));
 			}
 			catch
 			{
-				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize());
+				UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize()));
 			}
 		}
 

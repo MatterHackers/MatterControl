@@ -26,7 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-//#define DoBooleanTest
+#define DoBooleanTest
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -587,7 +587,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
 			//boxA.Triangulate();
             boxA.Translate(centering);
-            Mesh boxB = PlatonicSolids.CreateCube(40, 40, 40);
+			Mesh boxB = PlatonicSolids.CreateCube(40, 40, 40);
+			boxB = PlatonicSolids.CreateIcosahedron(35);
 			//boxB.Triangulate();
 
             for (int i = 0; i < 3; i++)
@@ -602,7 +603,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             boxB.Translate(offset + centering);
 
             booleanGroup = new MeshGroup();
-            booleanGroup.Meshes.Add(PolygonMesh.Csg.CsgOperations.Union(boxA, boxB));
+			//booleanGroup.Meshes.Add(PolygonMesh.Csg.CsgOperations.Union(boxA, boxB));
+			//booleanGroup.Meshes.Add(PolygonMesh.Csg.CsgOperations.Union(boxA, boxB));
+			Mesh meshToAdd = PolygonMesh.Csg.CsgOperations.Intersect(boxA, boxB);
+			meshToAdd.CleanAndMergMesh();
+			booleanGroup.Meshes.Add(meshToAdd);
             meshViewerWidget.MeshGroups.Add(booleanGroup);
 
             groupTransform = Matrix4X4.Identity;
