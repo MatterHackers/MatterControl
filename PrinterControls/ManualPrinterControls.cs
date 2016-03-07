@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
 			AddHandlers();
 			SetVisibleControls();
 
-			if (!pluginsQueuedToAdd)
+			if (!pluginsQueuedToAdd && ActiveSliceSettings.Instance.ShowFirmwareUpdater)
 			{
 				UiThread.RunOnIdle(AddPlugins);
 				pluginsQueuedToAdd = true;

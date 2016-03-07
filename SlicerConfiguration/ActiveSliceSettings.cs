@@ -294,6 +294,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public bool ShowFirmwareUpdater
+		{
+			get
+			{
+				return GetActiveValue("include_firmware_updater") == "Simple Arduino";
+			}
+		}
+
+
 		public int SupportExtruder
 		{
 			get

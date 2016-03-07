@@ -263,6 +263,7 @@ Advanced
         has_sd_card_reader
         has_power_control
         show_reset_connection
+        include_firmware_updater
         extruder_count
         heat_extruder_before_homing
         extruders_share_temperature
