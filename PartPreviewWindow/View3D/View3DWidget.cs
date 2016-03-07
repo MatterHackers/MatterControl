@@ -581,44 +581,58 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Matrix4X4 groupTransform;
         Vector3 offset = new Vector3();
         Vector3 direction = new Vector3(.11, .12, .13);
-        Vector3 centering = new Vector3(100, 100, 20);
-        private void CreateBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
-        {
-            Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
-			//boxA.Triangulate();
-            boxA.Translate(centering);
+		private void CreateBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
+		{
+			try
+			{
+				booleanGroup = new MeshGroup();
+
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Union, new Vector3(100, 0, 20)));
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Subtract, new Vector3(100, 100, 20)));
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Intersect, new Vector3(100, 200, 20)));
+
+				offset += direction;
+				meshViewerWidget.MeshGroups.Add(booleanGroup);
+
+				groupTransform = Matrix4X4.Identity;
+				meshViewerWidget.MeshGroupTransforms.Add(groupTransform);
+			}
+			catch(Exception e2)
+			{
+				string text = e2.Message;
+                int a = 0;
+			}
+		}
+
+		private Mesh ApplyBoolean(Func<Mesh, Mesh, Mesh> opperation, Vector3 centering)
+		{
+			Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
+			boxA.Translate(centering);
 			Mesh boxB = PlatonicSolids.CreateCube(40, 40, 40);
 			boxB = PlatonicSolids.CreateIcosahedron(35);
-			//boxB.Triangulate();
 
-            for (int i = 0; i < 3; i++)
-            {
-                if (Math.Abs(direction[i] + offset[i]) > 10)
-                {
-                    direction[i] = -direction[i];
-                }
-            }
-            offset += direction;
+			for (int i = 0; i < 3; i++)
+			{
+				if (Math.Abs(direction[i] + offset[i]) > 10)
+				{
+					direction[i] = -direction[i];
+				}
+			}
+			boxB.Translate(offset + centering);
 
-            boxB.Translate(offset + centering);
-
-            booleanGroup = new MeshGroup();
-			//booleanGroup.Meshes.Add(PolygonMesh.Csg.CsgOperations.Union(boxA, boxB));
-			//booleanGroup.Meshes.Add(PolygonMesh.Csg.CsgOperations.Union(boxA, boxB));
-			Mesh meshToAdd = PolygonMesh.Csg.CsgOperations.Intersect(boxA, boxB);
+			Mesh meshToAdd = opperation(boxA, boxB);
 			meshToAdd.CleanAndMergMesh();
-			booleanGroup.Meshes.Add(meshToAdd);
-            meshViewerWidget.MeshGroups.Add(booleanGroup);
+			return meshToAdd;
+		}
 
-            groupTransform = Matrix4X4.Identity;
-            meshViewerWidget.MeshGroupTransforms.Add(groupTransform);
-        }
-
-        private void RemoveBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
+		private void RemoveBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
         {
-            meshViewerWidget.MeshGroups.Remove(booleanGroup);
-            meshViewerWidget.MeshGroupTransforms.Remove(groupTransform);
-			UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
+			if (meshViewerWidget.MeshGroups.Contains(booleanGroup))
+			{
+				meshViewerWidget.MeshGroups.Remove(booleanGroup);
+				meshViewerWidget.MeshGroupTransforms.Remove(groupTransform);
+				UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
+			}
         }
 #endif
 
