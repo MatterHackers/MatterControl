@@ -294,6 +294,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public bool ShowFirmwareUpdater
+		{
+			get
+			{
+				return GetActiveValue("include_firmware_updater") == "1";
+			}
+		}
+
+
 		public int SupportExtruder
 		{
 			get

@@ -428,6 +428,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "include_firmware_updater",
+    "PresentationName": "Show Firmware Updater",
+    "HelpText": "Select to include Marlin Firmware Updater.",
+    "DataEditType": "HARDWARE_PRESENT",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "has_power_control",
     "PresentationName": "Has Power Control",
     "HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Control pane.",
