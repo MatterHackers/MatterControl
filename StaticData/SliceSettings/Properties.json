@@ -428,6 +428,14 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "include_firmware_updater",
+    "PresentationName": "Show Firmware Updater",
+    "HelpText": "This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature",
+    "DataEditType": "LIST",
+    "ExtraSettings": "None,Simple Arduino"
+
+  },
+  {
     "SlicerConfigName": "has_power_control",
     "PresentationName": "Has Power Control",
     "HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.",

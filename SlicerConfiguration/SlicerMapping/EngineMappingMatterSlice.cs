@@ -107,6 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new VisibleButNotMappedToEngine("manual_probe_paper_width"),
 			new VisibleButNotMappedToEngine("layer_to_pause"),
 
+
 			//fanSpeedMinPercent=100
             new MapItem("fanSpeedMinPercent", "min_fan_speed"),
 
@@ -231,6 +232,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new VisibleButNotMappedToEngine("show_reset_connection"),
 			new VisibleButNotMappedToEngine("extruder_wipe_temperature"),
 			new VisibleButNotMappedToEngine("bed_remove_part_temperature"),
+			new VisibleButNotMappedToEngine("include_firmware_updater"),
 
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
@@ -304,6 +306,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new VisibleButNotMappedToEngine("temperature"),
 			new VisibleButNotMappedToEngine("bed_temperature"),
 			new VisibleButNotMappedToEngine("bed_shape"),
+
 		};
 
 		public static void WriteMatterSliceSettingsFile(string outputFilename)

@@ -263,6 +263,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"show_reset_connection",
             "extruders_share_temperature",
 			"center_part_on_bed",
+			"include_firmware_updater",
         };
 
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
