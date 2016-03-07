@@ -430,9 +430,10 @@
   {
     "SlicerConfigName": "include_firmware_updater",
     "PresentationName": "Show Firmware Updater",
-    "HelpText": "Select to include Marlin Firmware Updater.",
-    "DataEditType": "HARDWARE_PRESENT",
-    "ExtraSettings": ""
+    "HelpText": "This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature",
+    "DataEditType": "LIST",
+    "ExtraSettings": "None,Simple Arduino"
+
   },
   {
     "SlicerConfigName": "has_power_control",

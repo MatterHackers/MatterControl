@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return GetActiveValue("include_firmware_updater") == "1";
+				return GetActiveValue("include_firmware_updater") == "Simple Arduino";
 			}
 		}
 
