@@ -29,349 +29,270 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class EngineMappingsMatterSlice : SliceEngineMaping
+	public class EngineMappingsMatterSlice : SliceEngineMapping
 	{
-		// private so that this class is a sigleton
-		private EngineMappingsMatterSlice()
-		{
-		}
+		public static readonly EngineMappingsMatterSlice Instance = new EngineMappingsMatterSlice();
 
-		private static EngineMappingsMatterSlice instance = null;
+		public HashSet<string> matterSliceSettingNames;
 
-		public static EngineMappingsMatterSlice Instance
+		MappedSetting[] matterSliceSettings;
+
+		// Singleton use only - prevent external construction
+		private EngineMappingsMatterSlice() : base("MatterSlice")
 		{
-			get
+			matterSliceSettings = new MappedSetting[]
 			{
-				if (instance == null)
-				{
-					instance = new EngineMappingsMatterSlice();
-				}
-				return instance;
-			}
+				//avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
+				new MappedToBoolString("avoid_crossing_perimeters", "avoidCrossingPerimeters"),
+
+				new MappedToBoolString("external_perimeters_first", "outsidePerimetersFirst"),
+
+				//bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
+				new MappedSetting("bottom_clip_amount", "bottomClipAmount"),
+
+				//centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
+				new MappedToBoolString("center_part_on_bed", "centerObjectInXy"),
+
+				//continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
+				new MappedToBoolString("spiral_vase", "continuousSpiralOuterPerimeter"),
+
+				//endCode=M104 S0
+				new GCodeForSlicer("end_gcode", "endCode"),
+
+				new MappedSetting("z_offset", "zOffset"),
+
+				//extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+				new ExtruderOffsets("extruder_offset", "extruderOffsets"),
+
+				//extrusionWidth=0.4 # The width of the line to extrude.
+				new MappedSetting("nozzle_diameter", "extrusionWidth"),
+
+				//fanSpeedMaxPercent=100
+				new MappedSetting("max_fan_speed", "fanSpeedMaxPercent"),
+
+				//fanSpeedMinPercent=100
+				new MappedSetting("min_fan_speed", "fanSpeedMinPercent"),
+
+				//filamentDiameter=2.89 # The width of the filament being fed into the extruder, in millimeters.
+				new MappedSetting("filament_diameter", "filamentDiameter"),
+
+				//extrusionMultiplier=1 # Lets you adjust how much material to extrude.
+				new MappedSetting("extrusion_multiplier", "extrusionMultiplier"),
+
+				//firstLayerExtrusionWidth=0.8 # The width of the line to extrude for the first layer.
+				new AsPercentOfReferenceOrDirect("first_layer_extrusion_width", "firstLayerExtrusionWidth", "nozzle_diameter"),
+
+				//firstLayerSpeed=20 # mm/s.
+				new AsPercentOfReferenceOrDirect("first_layer_speed", "firstLayerSpeed", "infill_speed"),
+
+				//firstLayerThickness=0.3 # The height of the first layer to print, in millimeters.
+				new AsPercentOfReferenceOrDirect("first_layer_height", "firstLayerThickness", "layer_height"),
+
+				//firstLayerToAllowFan=2 # The fan will be force to stay off below this layer.
+				new MappedSetting("disable_fan_first_layers", "firstLayerToAllowFan"),
+
+				//outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, MACH3
+				new MappedSetting("gcode_output_type", "outputType"),
+
+				//generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
+				new MappedToBoolString("support_material_create_internal_support", "generateInternalSupport"),
+				new MappedToBoolString("support_material_create_perimeter", "generateSupportPerimeter"),
+
+				new MappedToBoolString("output_only_first_layer", "outputOnlyFirstLayer"),
+
+				new MappedToBoolString("support_material", "generateSupport"),
+
+				new MappedSetting("support_material_percent", "supportPercent"),
+
+				//infillExtendIntoPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
+				new MappedSetting("infill_overlap_perimeter", "infillExtendIntoPerimeter"),
+
+				//infillPercent=20 # The percent of filled space to open space while infilling.
+				new ScaledSingleNumber("fill_density", "infillPercent", 100),
+				//infillType=GRID # Available Values: GRID, LINES
+				new MappedSetting("infill_type", "infillType"),
+
+				//infillSpeed=50 # mm/s.
+				new MappedSetting("infill_speed", "infillSpeed"),
+
+				new MappedSetting("bridge_speed", "bridgeSpeed"),
+
+				new MappedSetting("bridge_fan_speed", "bridgeFanSpeedPercent"),
+
+				new MappedToBoolString("retract_when_changing_islands", "retractWhenChangingIslands"),
+
+				new MappedSetting("raft_fan_speed_percent", "raftFanSpeedPercent"),
+
+				new AsPercentOfReferenceOrDirect("raft_print_speed", "raftPrintSpeed", "infill_speed"),
+
+				//infillStartingAngle=45
+				new MappedSetting("fill_angle", "infillStartingAngle"),
+
+				new MappedToBoolString("wipe", "wipeAfterRetraction"),
+
+				//insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
+				new MappedSetting("perimeter_speed", "insidePerimetersSpeed"),
+
+				//layerThickness=0.1
+				new MappedSetting("layer_height", "layerThickness"),
+
+				//minimumExtrusionBeforeRetraction=0 # mm.
+				new MappedSetting("min_extrusion_before_retract", "minimumExtrusionBeforeRetraction"),
+
+				//minimumPrintingSpeed=10 # The minimum speed that the extruder is allowed to move while printing. mm/s.
+				new MappedSetting("min_print_speed", "minimumPrintingSpeed"),
+
+				//minimumLayerTimeSeconds=5
+				new MappedSetting("slowdown_below_layer_time", "minimumLayerTimeSeconds"),
+
+				new MapFirstValue("retract_restart_extra", "unretractExtraExtrusion"),
+
+				//minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
+				new MapFirstValue("retract_before_travel", "minimumTravelToCauseRetraction"),
+
+				//modelRotationMatrix=[[1,0,0],[0,1,0],[0,0,1]]
+				//multiVolumeOverlapPercent=0
+
+				//numberOfBottomLayers=6
+				new AsCountOrDistance("bottom_solid_layers", "numberOfBottomLayers", "layer_height"),
+
+				new VisibleButNotMappedToEngine("solid_shell"),
+
+				//numberOfSkirtLoops=1 # The number of loops to draw around the convex hull.
+				new MappedSetting("skirts", "numberOfSkirtLoops"),
+
+				//numberOfBrimLoops=0 # The number of loops to draw around islands.
+				new MappedSetting("brims", "numberOfBrimLoops"),
+
+				//numberOfTopLayers=6
+				new AsCountOrDistance("top_solid_layers", "numberOfTopLayers", "layer_height"),
+
+				new AsPercentOfReferenceOrDirect("top_solid_infill_speed", "topInfillSpeed", "infill_speed"),
+
+				//outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
+				new AsPercentOfReferenceOrDirect("external_perimeter_speed", "outsidePerimeterSpeed", "perimeter_speed"),
+
+				//outsidePerimeterExtrusionWidth=extrusionWidth=nozzleDiameter
+				new AsPercentOfReferenceOrDirect("external_perimeter_extrusion_width", "outsidePerimeterExtrusionWidth", "nozzle_diameter"),
+
+				//numberOfPerimeters=2
+				new AsCountOrDistance("perimeters", "numberOfPerimeters", "nozzle_diameter"),
+
+				//positionToPlaceObjectCenter=[102.5,102.5]
+				new MapPositionToPlaceObjectCenter("print_center", "positionToPlaceObjectCenter"),
+
+				// TODO: The raft currently does not handle brim correctly. So it needs to be fixed before it is enabled.
+				new MappedToBoolString("create_raft", "enableRaft"),
+				new MappedSetting("raft_extra_distance_around_part", "raftExtraDistanceAroundPart"),
+				new MappedSetting("raft_air_gap", "raftAirGap"),
+				new MappedSetting("support_air_gap", "supportAirGap"),
+			
+				//retractionOnExtruderSwitch=14.5
+				new MappedSetting("retract_length_tool_change", "retractionOnExtruderSwitch"),
+
+				new MapFirstValue("retract_length", "retractionOnTravel"),
+				//retractionOnTravel=4.5
+				//new MapItem("retractionOnTravel", "retract_before_travel"),
+
+				//retractionSpeed=45 # mm/s.
+				new MapFirstValue("retract_speed", "retractionSpeed"),
+
+				//retractionZHop=0 # The amount to move the extruder up in z after retracting (before a move). mm.
+				new MapFirstValue("retract_lift", "retractionZHop"),
+
+				//skirtDistanceFromObject=6 # How far from objects the first skirt loop should be, in millimeters.
+				new MappedSetting("skirt_distance", "skirtDistanceFromObject"),
+
+				//skirtMinLength=0 # The minimum length of the skirt line, in millimeters.
+				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),
+
+				//startCode=M109 S210
+				new MapStartGCode("start_gcode", "startCode", true),
+
+				new GCodeForSlicer("toolchange_gcode", "toolChangeCode"),
+
+				//supportExtruder=1
+				new ValuePlusConstant("support_material_extruder", "supportExtruder", -1),
+
+				new ValuePlusConstant("support_material_interface_extruder", "supportInterfaceExtruder", -1),
+
+				new ValuePlusConstant("raft_extruder", "raftExtruder", -1),
+
+				//supportLineSpacing=2
+				new MappedSetting("support_material_spacing", "supportLineSpacing"),
+
+				new SupportExtrusionWidth("support_material_extrusion_width","supportExtrusionPercent"),
+
+				new MappedSetting("support_material_infill_angle", "supportInfillStartingAngle"),
+
+				//supportMaterialSpeed=50 # mm/s.
+				new MappedSetting("support_material_speed", "supportMaterialSpeed"),
+
+				//supportType=NONE # Available Values: NONE, GRID, LINES
+				new MappedSetting("support_type", "supportType"),
+
+				//supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
+				new MappedSetting("support_material_xy_distance", "supportXYDistanceFromObject"),
+
+				new AsCountOrDistance("support_material_interface_layers", "supportInterfaceLayers", "layer_height"),
+
+				//travelSpeed=200 # The speed to move when not extruding material. mm/s.
+				new MappedSetting("travel_speed", "travelSpeed"),
+
+				//wipeShieldDistanceFromObject=0 # If greater than 0 this creates an outline around shapes so the extrude will be wiped when entering.
+				new MappedSetting("wipe_shield_distance", "wipeShieldDistanceFromObject"),
+
+				// TODO: We don't need this yet as it is only for dual extrusion
+				//wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
+				new MappedSetting("wipe_tower_size", "wipeTowerSize"),
+			};
+
+			matterSliceSettingNames = new HashSet<string>(matterSliceSettings.Select(m => m.CanonicalSettingsName));
 		}
 
-		public override bool MapContains(string originalKey)
+		public override bool HasSetting(string canonicalSettingsName)
 		{
-			foreach (MapItem mapItem in matterSliceToDefaultMapping)
-			{
-				if (mapItem.OriginalKey == originalKey)
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return matterSliceSettingNames.Contains(canonicalSettingsName)
+				|| base.applicationLevelSettings.Contains(canonicalSettingsName);
 		}
-
-		private static MapItem[] matterSliceToDefaultMapping =
-		{
-			//avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
-			new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
-
-			new MapItemToBool("outsidePerimetersFirst", "external_perimeters_first"),
-
-			//bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
-			new MapItem("bottomClipAmount", "bottom_clip_amount"),
-
-			//centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
-			new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
-
-			//continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
-			new MapItemToBool("continuousSpiralOuterPerimeter", "spiral_vase"),
-
-			new VisibleButNotMappedToEngine("extruder_count"),
-			new VisibleButNotMappedToEngine("extruders_share_temperature"),
-
-			//endCode=M104 S0
-			new GCodeForSlicer("endCode", "end_gcode"),
-
-			new MapItem("zOffset", "z_offset"),
-
-			//extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
-			new ExtruderOffsets("extruderOffsets", "extruder_offset"),
-
-            //extrusionWidth=0.4 # The width of the line to extrude.
-            new MapItem("extrusionWidth", "nozzle_diameter"),
-
-            //fanSpeedMaxPercent=100
-            new MapItem("fanSpeedMaxPercent", "max_fan_speed"),
-
-			new VisibleButNotMappedToEngine("print_leveling_solution"),
-			new VisibleButNotMappedToEngine("print_leveling_required_to_print"),
-			//new VisibleButNotMappedToEngine("print_leveling_method"),
-			new VisibleButNotMappedToEngine("manual_probe_paper_width"),
-			new VisibleButNotMappedToEngine("layer_to_pause"),
-
-
-			//fanSpeedMinPercent=100
-            new MapItem("fanSpeedMinPercent", "min_fan_speed"),
-
-            //filamentDiameter=2.89 # The width of the filament being fed into the extruder, in millimeters.
-            new MapItem("filamentDiameter", "filament_diameter"),
-
-            //extrusionMultiplier=1 # Lets you adjust how much material to extrude.
-            new MapItem("extrusionMultiplier", "extrusion_multiplier"),
-
-            //firstLayerExtrusionWidth=0.8 # The width of the line to extrude for the first layer.
-            new AsPercentOfReferenceOrDirect("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
-
-            //firstLayerSpeed=20 # mm/s.
-            new AsPercentOfReferenceOrDirect("firstLayerSpeed", "first_layer_speed", "infill_speed"),
-
-            //firstLayerThickness=0.3 # The height of the first layer to print, in millimeters.
-            new AsPercentOfReferenceOrDirect("firstLayerThickness", "first_layer_height", "layer_height"),
-
-            //firstLayerToAllowFan=2 # The fan will be force to stay off below this layer.
-            new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
-
-            //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
-            new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
-			new MapItemToBool("generateSupportPerimeter", "support_material_create_perimeter"),
-
-			new MapItemToBool("outputOnlyFirstLayer", "output_only_first_layer"),
-
-			new MapItemToBool("generateSupport", "support_material"),
-
-			new MapItem("supportPercent", "support_material_percent"),
-
-            //infillExtendIntoPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
-            new MapItem("infillExtendIntoPerimeter", "infill_overlap_perimeter"),
-
-            //infillPercent=20 # The percent of filled space to open space while infilling.
-            new ScaledSingleNumber("infillPercent", "fill_density", 100),
-            //infillType=GRID # Available Values: GRID, LINES
-            new MapItem("infillType", "infill_type"),
-
-            //infillSpeed=50 # mm/s.
-            new MapItem("infillSpeed", "infill_speed"),
-
-			new MapItem("bridgeSpeed", "bridge_speed"),
-
-			new MapItem("bridgeFanSpeedPercent", "bridge_fan_speed"),
-
-			new MapItemToBool("retractWhenChangingIslands", "retract_when_changing_islands"),
-
-			new MapItem("raftFanSpeedPercent", "raft_fan_speed_percent"),
-
-			new AsPercentOfReferenceOrDirect("raftPrintSpeed", "raft_print_speed", "infill_speed"),
-
-            //infillStartingAngle=45
-            new MapItem("infillStartingAngle", "fill_angle"),
-
-			new MapItemToBool("wipeAfterRetraction", "wipe"),
-
-            //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
-            new MapItem("insidePerimetersSpeed", "perimeter_speed"),
-
-            //layerThickness=0.1
-            new MapItem("layerThickness", "layer_height"),
-
-            //minimumExtrusionBeforeRetraction=0 # mm.
-            new MapItem("minimumExtrusionBeforeRetraction", "min_extrusion_before_retract"),
-
-            //minimumPrintingSpeed=10 # The minimum speed that the extruder is allowed to move while printing. mm/s.
-            new MapItem("minimumPrintingSpeed", "min_print_speed"),
-
-            //minimumLayerTimeSeconds=5
-            new MapItem("minimumLayerTimeSeconds", "slowdown_below_layer_time"),
-
-			new MapFirstValue("unretractExtraExtrusion", "retract_restart_extra"),
-
-            //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
-            new MapFirstValue("minimumTravelToCauseRetraction", "retract_before_travel"),
-
-            //modelRotationMatrix=[[1,0,0],[0,1,0],[0,0,1]]
-            //multiVolumeOverlapPercent=0
-
-            //numberOfBottomLayers=6
-            new AsCountOrDistance("numberOfBottomLayers", "bottom_solid_layers", "layer_height"),
-
-			new VisibleButNotMappedToEngine("solid_shell"),
-
-            //numberOfSkirtLoops=1 # The number of loops to draw around the convex hull.
-            new MapItem("numberOfSkirtLoops", "skirts"),
-
-            //numberOfBrimLoops=0 # The number of loops to draw around islands.
-			new MapItem("numberOfBrimLoops", "brims"),
-
-            //numberOfTopLayers=6
-            new AsCountOrDistance("numberOfTopLayers", "top_solid_layers", "layer_height"),
-
-			new AsPercentOfReferenceOrDirect("topInfillSpeed", "top_solid_infill_speed", "infill_speed"),
-
-            //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
-            new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
-
-			//outsidePerimeterExtrusionWidth=extrusionWidth=nozzleDiameter
-			new AsPercentOfReferenceOrDirect("outsidePerimeterExtrusionWidth", "external_perimeter_extrusion_width", "nozzle_diameter"),
-
-            //numberOfPerimeters=2
-            new AsCountOrDistance("numberOfPerimeters", "perimeters", "nozzle_diameter"),
-
-            //positionToPlaceObjectCenter=[102.5,102.5]
-            new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", "print_center"),
-
-            // TODO: The raft currently does not handle brim correctly. So it needs to be fixed before it is enabled.
-            new MapItemToBool("enableRaft", "create_raft"),
-			new MapItem("raftExtraDistanceAroundPart", "raft_extra_distance_around_part"),
-			new MapItem("raftAirGap", "raft_air_gap"),
-			new MapItem("supportAirGap", "support_air_gap"),
-
-			new VisibleButNotMappedToEngine("has_fan"),
-			new VisibleButNotMappedToEngine("has_hardware_leveling"),
-			new VisibleButNotMappedToEngine("has_power_control"),
-			new VisibleButNotMappedToEngine("has_heated_bed"),
-			new VisibleButNotMappedToEngine("has_sd_card_reader"),
-			new VisibleButNotMappedToEngine("z_can_be_negative"),
-			new VisibleButNotMappedToEngine("show_reset_connection"),
-			new VisibleButNotMappedToEngine("extruder_wipe_temperature"),
-			new VisibleButNotMappedToEngine("bed_remove_part_temperature"),
-			new VisibleButNotMappedToEngine("include_firmware_updater"),
-
-            //retractionOnExtruderSwitch=14.5
-            new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
-
-			new MapFirstValue("retractionOnTravel", "retract_length"),
-            //retractionOnTravel=4.5
-            //new MapItem("retractionOnTravel", "retract_before_travel"),
-
-            //retractionSpeed=45 # mm/s.
-            new MapFirstValue("retractionSpeed", "retract_speed"),
-
-            //retractionZHop=0 # The amount to move the extruder up in z after retracting (before a move). mm.
-            new MapFirstValue("retractionZHop", "retract_lift"),
-
-            //skirtDistanceFromObject=6 # How far from objects the first skirt loop should be, in millimeters.
-            new MapItem("skirtDistanceFromObject", "skirt_distance"),
-
-            //skirtMinLength=0 # The minimum length of the skirt line, in millimeters.
-            new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
-
-            //startCode=M109 S210
-            new MapStartGCode("startCode", "start_gcode", true),
-
-			new GCodeForSlicer("toolChangeCode", "toolchange_gcode"),
-
-			new VisibleButNotMappedToEngine("heat_extruder_before_homing"),
-
-            //supportExtruder=1
-            new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
-
-			new ValuePlusConstant("supportInterfaceExtruder", "support_material_interface_extruder", -1),
-
-			new ValuePlusConstant("raftExtruder", "raft_extruder", -1),
-
-            //supportLineSpacing=2
-            new MapItem("supportLineSpacing", "support_material_spacing"),
-
-			new SupportExtrusionWidth("supportExtrusionPercent","support_material_extrusion_width"),
-
-			new MapItem("supportInfillStartingAngle", "support_material_infill_angle"),
-
-            //supportMaterialSpeed=50 # mm/s.
-            new MapItem("supportMaterialSpeed", "support_material_speed"),
-
-            //supportType=NONE # Available Values: NONE, GRID, LINES
-            new MapItem("supportType", "support_type"),
-
-            //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
-            new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
-
-			new AsCountOrDistance("supportInterfaceLayers", "support_material_interface_layers", "layer_height"),
-
-            //travelSpeed=200 # The speed to move when not extruding material. mm/s.
-            new MapItem("travelSpeed", "travel_speed"),
-
-            //wipeShieldDistanceFromObject=0 # If greater than 0 this creates an outline around shapes so the extrude will be wiped when entering.
-            new MapItem("wipeShieldDistanceFromObject", "wipe_shield_distance"),
-
-            // TODO: We don't need this yet as it is only for dual extrusion
-            //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
-            new MapItem("wipeTowerSize", "wipe_tower_size"),
-
-			new VisibleButNotMappedToEngine("pause_gcode"),
-			new VisibleButNotMappedToEngine("resume_gcode"),
-			new VisibleButNotMappedToEngine("cancel_gcode"),
-			new VisibleButNotMappedToEngine("connect_gcode"),
-
-			new VisibleButNotMappedToEngine("bed_size"),
-			new VisibleButNotMappedToEngine("build_height"),
-
-			new VisibleButNotMappedToEngine("temperature"),
-			new VisibleButNotMappedToEngine("bed_temperature"),
-			new VisibleButNotMappedToEngine("bed_shape"),
-
-		};
 
 		public static void WriteMatterSliceSettingsFile(string outputFilename)
 		{
 			using (StreamWriter sliceSettingsFile = new StreamWriter(outputFilename))
 			{
-				for (int i = 0; i < matterSliceToDefaultMapping.Length; i++)
+				foreach (var mapItem in Instance.matterSliceSettings)
 				{
-					string matterSliceValue = matterSliceToDefaultMapping[i].MappedValue;
+					string matterSliceValue = mapItem.Value;
 					if (matterSliceValue != null)
 					{
-						sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(matterSliceToDefaultMapping[i].MappedKey, matterSliceValue));
+						sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(mapItem.ExportedName, matterSliceValue));
 					}
 				}
 			}
 		}
 
-		public class FirstLayerHeight : ScaledSingleNumber
+		public class ExtruderOffsets : MappedSetting
 		{
-			internal string originalReference;
-
-			public override string MappedValue
-			{
-				get
-				{
-					string finalValueString = base.MappedValue;
-
-					if (OriginalValue.Contains("%"))
-					{
-						string withoutPercent = OriginalValue.Replace("%", "");
-						double ratio = MapItem.ParseValueString(withoutPercent, 100) / 100.0;
-						double valueToModify = MapItem.GetValueForKey(originalReference);
-						double finalValue = valueToModify * ratio * scale;
-						finalValueString = finalValue.ToString();
-					}
-
-					if (finalValueString.Trim() == "0")
-					{
-						return ActiveSliceSettings.Instance.GetActiveValue(originalReference);
-					}
-					return finalValueString;
-				}
-			}
-
-			public FirstLayerHeight(string mappedKey, string originalKey, string originalReference, double scale = 1)
-				: base(mappedKey, originalKey, scale)
-			{
-				this.originalReference = originalReference;
-			}
-		}
-
-		public class ExtruderOffsets : MapItem
-		{
-			public ExtruderOffsets(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
+			public ExtruderOffsets(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
 			{
 			}
 
-			public override string MappedValue
+			public override string Value
 			{
 				get
 				{
 					// map from 0x0,0x0,0x0
 					// to [[0,0],[0,0]]
 					StringBuilder final = new StringBuilder("[");
-					string[] offsets = base.MappedValue.Split(',');
+					string[] offsets = base.Value.Split(',');
 					bool first = true;
 					int count = 0;
 					foreach (string offset in offsets)
@@ -397,49 +318,52 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public class FanTranslator : MapItem
+		public class FanTranslator : MappedSetting
 		{
-			public override string MappedValue
+			public FanTranslator(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
 			{
 				get
 				{
-					int numLayersFanIsDisabledOn = int.Parse(base.MappedValue);
+					int numLayersFanIsDisabledOn = int.Parse(base.Value);
 					int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
 					return layerToEnableFanOn.ToString();
 				}
 			}
-
-			public FanTranslator(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
-			{
-			}
 		}
 
-		public class SupportExtrusionWidth : MapItem
+		public class SupportExtrusionWidth : MappedSetting
 		{
-			public SupportExtrusionWidth(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
+			public SupportExtrusionWidth(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
 			{
 			}
 
-			public override string MappedValue
+			public override string Value
 			{
 				get
 				{
 					double nozzleDiameter = ActiveSliceSettings.Instance.NozzleDiameter;
-					if (OriginalValue == "0")
+
+					string extrusionWidth = base.Value;
+
+					if (extrusionWidth == "0")
 					{
 						return "100";
 					}
 
-					if (OriginalValue.Contains("%"))
+					if (extrusionWidth.Contains("%"))
 					{
-						string withoutPercent = OriginalValue.Replace("%", "");
+						string withoutPercent = extrusionWidth.Replace("%", "");
 						return withoutPercent;
 					}
 
 					double originalValue;
-					if (!double.TryParse(OriginalValue, out originalValue))
+					if (!double.TryParse(extrusionWidth, out originalValue))
 					{
 						originalValue = nozzleDiameter;
 					}
@@ -449,53 +373,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public class ConstantMinusValue : MapItem
+		public class ValuePlusConstant : MappedSetting
 		{
 			private double constant;
 
-			public ConstantMinusValue(string mappedKey, string originalKey, double constant)
-				: base(mappedKey, originalKey)
+			public ValuePlusConstant(string canonicalSettingsName, string exportedName, double constant)
+				: base(canonicalSettingsName, exportedName)
 			{
 				this.constant = constant;
 			}
 
-			public override string MappedValue
-			{
-				get
-				{
-					return (90 - MapItem.ParseValueString(OriginalValue)).ToString();
-				}
-			}
+			public override string Value => (ParseDouble(base.Value) + constant).ToString();
 		}
 
-		public class ValuePlusConstant : MapItem
+		public class InfillTranslator : MappedSetting
 		{
-			private double constant;
-
-			public ValuePlusConstant(string mappedKey, string originalKey, double constant)
-				: base(mappedKey, originalKey)
+			public InfillTranslator(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
 			{
-				this.constant = constant;
 			}
 
-			public override string MappedValue
+			public override string Value
 			{
 				get
 				{
-					return (MapItem.ParseValueString(OriginalValue) + constant).ToString();
-				}
-			}
-		}
-
-		public class InfillTranslator : MapItem
-		{
-			public override string MappedValue
-			{
-				get
-				{
-					double infillRatio0To1 = MapItem.ParseValueString(base.MappedValue);
+					double infillRatio0To1 = ParseDouble(base.Value);
 					// 400 = solid (extruder width)
-					double nozzle_diameter = MapItem.GetValueForKey("nozzle_diameter");
+					double nozzle_diameter = ParseDoubleFromRawValue("nozzle_diameter");
 					double linespacing = 1000;
 					if (infillRatio0To1 > .01)
 					{
@@ -505,41 +409,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return ((int)(linespacing * 1000)).ToString();
 				}
 			}
-
-			public InfillTranslator(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
-			{
-			}
 		}
 
 		public class GCodeForSlicer : InjectGCodeCommands
 		{
-			public override string MappedValue
-			{
-				get
-				{
-					string gCode = base.MappedValue.Replace("\n", "\\n");
-
-					gCode = GCodeProcessing.ReplaceMacroValues(gCode);
-
-					return gCode;
-				}
-			}
-
-			public GCodeForSlicer(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
+			public GCodeForSlicer(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
 			{
 			}
+
+			public override string Value => GCodeProcessing.ReplaceMacroValues(base.Value.Replace("\n", "\\n"));
 		}
 
-		public class MapPositionToPlaceObjectCenter : MapItem
+		public class MapPositionToPlaceObjectCenter : MappedSetting
 		{
-			public MapPositionToPlaceObjectCenter(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
+			public MapPositionToPlaceObjectCenter(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
 			{
 			}
 
-			public override string MappedValue
+			public override string Value
 			{
 				get
 				{
@@ -550,18 +439,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public class SkirtLengthMaping : MapItem
+		public class SkirtLengthMapping : MappedSetting
 		{
-			public SkirtLengthMaping(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
+			public SkirtLengthMapping(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
 			{
 			}
 
-			public override string MappedValue
+			public override string Value
 			{
 				get
 				{
-					double lengthToExtrudeMm = MapItem.ParseValueString(base.MappedValue);
+					double lengthToExtrudeMm = ParseDouble(base.Value);
 					// we need to convert mm of filament to mm of extrusion path
 					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
 					double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;

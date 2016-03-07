@@ -27,10 +27,62 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public abstract class SliceEngineMaping
+	public abstract class SliceEngineMapping
 	{
-		public abstract bool MapContains(string defaultKey);
+		private string engineName;
+
+		/// <summary>
+		/// These application level settings will appear in Slice Settings but are not used or passed to the 
+		/// active slice engine and are simply tagging on along with the existing settings infrastructure
+		/// </summary>
+		protected HashSet<string> applicationLevelSettings = new HashSet<string>()
+		{
+			"bed_shape",
+			"bed_size",
+			"bed_temperature",
+			"build_height",
+			"cancel_gcode",
+			"connect_gcode",
+			"has_fan",
+			"has_hardware_leveling",
+			"has_heated_bed",
+			"has_power_control",
+			"has_sd_card_reader",
+			"manual_probe_paper_width",
+			"pause_gcode",
+			"print_leveling_method",
+			"print_leveling_required_to_print",
+			"print_leveling_solution",
+			"resume_gcode",
+			"support_material_threshold",
+			"temperature",
+			"z_can_be_negative"
+
+			// TODO: Determine if these are MatterSlice only values or if it was an error that they were missing from Cura
+			/*
+				"bed_remove_part_temperature" - !cura
+				"extruder_count" !cura
+				"extruder_wipe_temperature" !cura
+				"extruders_share_temperature" !cura
+				"heat_extruder_before_homing" !cura
+				"include_firmware_updater" !cura (but seems like it should be)
+				"layer_to_pause" !cura (but seems like it should be)
+				"show_reset_connection" !cura (seems like it should be)
+				"solid_shell" !cura
+			*/
+		};
+
+		public SliceEngineMapping(string engineName)
+		{
+			this.engineName = engineName;
+		}
+
+		public string Name { get { return engineName; } }
+
+		public abstract bool HasSetting(string canonicalSettingsName);
 	}
 }

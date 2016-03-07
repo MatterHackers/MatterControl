@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public SliceEngineMaping ActiveSliceEngine
+		public SliceEngineMapping ActiveSliceEngine
 		{
 			get
 			{

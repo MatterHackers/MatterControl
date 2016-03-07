@@ -28,204 +28,137 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class EngineMappingCura : SliceEngineMaping
+	public class EngineMappingCura : SliceEngineMapping
 	{
-		// private so that this class is a sigleton
-		private EngineMappingCura()
-		{
-		}
+		public static readonly EngineMappingCura Instance = new EngineMappingCura();
 
-		private static EngineMappingCura instance = null;
+		private HashSet<string> curaSettingNames;
 
-		public static EngineMappingCura Instance
+		private MappedSetting[] curaSettings;
+
+		// Singleton use only - prevent external construction
+		private EngineMappingCura() : base("Cura")
 		{
-			get
+			curaSettings = new MappedSetting[]
 			{
-				if (instance == null)
-				{
-					instance = new EngineMappingCura();
-				}
-				return instance;
-			}
+				new ScaledSingleNumber("layer_height", "layerThickness", 1000),
+				new AsPercentOfReferenceOrDirect("first_layer_height", "initialLayerThickness", "layer_height", 1000),
+				new ScaledSingleNumber("filament_diameter", "filamentDiameter", 1000),
+				//filamentFlow
+				//layer0extrusionWidth
+				new ScaledSingleNumber("nozzle_diameter", "extrusionWidth", 1000),
+				new AsCountOrDistance("perimeters", "insetCount", "nozzle_diameter"),
+				new AsCountOrDistance("bottom_solid_layers", "downSkinCount", "layer_height"),
+				new AsCountOrDistance("top_solid_layers", "upSkinCount", "layer_height"),
+				new ScaledSingleNumber("skirt_distance", "skirtDistance", 1000),
+				new MappedSetting("skirts", "skirtLineCount"),
+				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),
+
+				new MappedSetting("infill_speed", "printSpeed"),
+				new MappedSetting("infill_speed", "infillSpeed"),
+				new MappedSetting("travel_speed", "moveSpeed"),
+				new AsPercentOfReferenceOrDirect("first_layer_speed", "initialLayerSpeed", "infill_speed"),
+
+				new MappedSetting("perimeter_speed", "insetXSpeed"),
+				new AsPercentOfReferenceOrDirect("external_perimeter_speed", "inset0Speed", "perimeter_speed"),
+
+				new ScaledSingleNumber("bottom_clip_amount", "objectSink", 1000),
+
+				new MappedSetting("max_fan_speed", "fanSpeedMin"),
+				new MappedSetting("min_fan_speed", "fanSpeedMax"),
+
+				new FanTranslator("disable_fan_first_layers", "fanFullOnLayerNr"),
+				new MappedSetting("cool_extruder_lift", "coolHeadLift"),
+
+				new ScaledSingleNumber("retract_length", "retractionAmount", 1000),
+				new MapFirstValue("retract_speed", "retractionSpeed"),
+				new ScaledSingleNumber("retract_before_travel", "retractionMinimalDistance", 1000),
+				new ScaledSingleNumber("min_extrusion_before_retract", "minimalExtrusionBeforeRetraction", 1000),
+
+				new ScaledSingleNumber("retract_lift", "retractionZHop", 1000),
+
+				new MappedSetting("spiral_vase", "spiralizeMode"),
+				new PrintCenterX("print_center", "posx"),
+				new PrintCenterY("print_center", "posy"),
+
+				// needs testing, not working
+				new ScaledSingleNumber("support_material_spacing", "supportLineDistance", 1000),
+				new SupportMatterial("support_material", "supportAngle"),
+				new MappedSetting("support_material_create_internal_support", "supportEverywhere"),
+				new ScaledSingleNumber("support_material_xy_distance", "supportXYDistance", 1000),
+				new ScaledSingleNumber("support_material_z_distance", "supportZDistance", 1000),
+
+				new SupportTypeMapping("support_type", "supportType"),
+
+				new MappedSetting("slowdown_below_layer_time", "minimalLayerTime"),
+
+				new InfillTranslator("fill_density", "sparseInfillLineDistance"),
+
+				new MapStartGCode("start_gcode", "startCode", true),
+				new MapEndGCode("end_gcode", "endCode"),
+			};
+
+			curaSettingNames = new HashSet<string>(curaSettings.Select(m => m.CanonicalSettingsName));
 		}
 
-		public override bool MapContains(string defaultKey)
+		public override bool HasSetting(string canonicalSettingsName)
 		{
-			foreach (MapItem mapItem in curaToDefaultMapping)
-			{
-				if (mapItem.OriginalKey == defaultKey)
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return curaSettingNames.Contains(canonicalSettingsName) 
+				|| base.applicationLevelSettings.Contains(canonicalSettingsName);
 		}
-
-		private static MapItem[] curaToDefaultMapping =
-        {
-            new ScaledSingleNumber("layerThickness", "layer_height", 1000),
-            new AsPercentOfReferenceOrDirect("initialLayerThickness", "first_layer_height", "layer_height", 1000),
-            new ScaledSingleNumber("filamentDiameter", "filament_diameter", 1000),
-            //filamentFlow
-            //layer0extrusionWidth
-            new ScaledSingleNumber("extrusionWidth", "nozzle_diameter", 1000),
-            new AsCountOrDistance("insetCount", "perimeters", "nozzle_diameter"),
-            new AsCountOrDistance("downSkinCount", "bottom_solid_layers", "layer_height"),
-            new AsCountOrDistance("upSkinCount", "top_solid_layers", "layer_height"),
-            new ScaledSingleNumber("skirtDistance", "skirt_distance", 1000),
-            new MapItem("skirtLineCount", "skirts"),
-            new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
-
-            new MapItem("printSpeed", "infill_speed"),
-            new MapItem("infillSpeed", "infill_speed"),
-            new MapItem("moveSpeed", "travel_speed"),
-            new AsPercentOfReferenceOrDirect("initialLayerSpeed", "first_layer_speed", "infill_speed"),
-
-            new MapItem("insetXSpeed", "perimeter_speed"),
-            new AsPercentOfReferenceOrDirect("inset0Speed", "external_perimeter_speed", "perimeter_speed"),
-
-            new VisibleButNotMappedToEngine("temperature"),
-            new VisibleButNotMappedToEngine("bed_temperature"),
-            new VisibleButNotMappedToEngine("bed_shape"),
-
-            new VisibleButNotMappedToEngine("has_fan"),
-            new VisibleButNotMappedToEngine("has_power_control"),
-            new VisibleButNotMappedToEngine("has_heated_bed"),
-            new VisibleButNotMappedToEngine("has_hardware_leveling"),
-            new VisibleButNotMappedToEngine("has_sd_card_reader"),
-            new VisibleButNotMappedToEngine("z_can_be_negative"),
-
-			new VisibleButNotMappedToEngine("print_leveling_solution"),
-			new VisibleButNotMappedToEngine("print_leveling_required_to_print"),
-			//new VisibleButNotMappedToEngine("print_leveling_method"),
-			new VisibleButNotMappedToEngine("manual_probe_paper_width"),
-
-			new ScaledSingleNumber("objectSink", "bottom_clip_amount", 1000),
-
-            new MapItem("fanSpeedMin", "max_fan_speed"),
-            new MapItem("fanSpeedMax", "min_fan_speed"),
-
-            new FanTranslator("fanFullOnLayerNr", "disable_fan_first_layers"),
-            new MapItem("coolHeadLift", "cool_extruder_lift"),
-
-            new ScaledSingleNumber("retractionAmount", "retract_length", 1000),
-            new MapFirstValue("retractionSpeed", "retract_speed"),
-            new ScaledSingleNumber("retractionMinimalDistance", "retract_before_travel", 1000),
-            new ScaledSingleNumber("minimalExtrusionBeforeRetraction", "min_extrusion_before_retract", 1000),
-
-            new ScaledSingleNumber("retractionZHop", "retract_lift", 1000),
-
-            new MapItem("spiralizeMode", "spiral_vase"),
-
-            new VisibleButNotMappedToEngine("bed_size"),
-
-            new PrintCenterX("posx", "print_center"),
-            new PrintCenterY("posy", "print_center"),
-
-            new VisibleButNotMappedToEngine("build_height"),
-
-            // needs testing, not working
-            new ScaledSingleNumber("supportLineDistance", "support_material_spacing", 1000),
-            new SupportMatterial("supportAngle", "support_material"),
-            new VisibleButNotMappedToEngine("support_material_threshold"),
-            new MapItem("supportEverywhere", "support_material_create_internal_support"),
-            new ScaledSingleNumber("supportXYDistance", "support_material_xy_distance", 1000),
-            new ScaledSingleNumber("supportZDistance", "support_material_z_distance", 1000),
-
-            new SupportTypeMapping("supportType", "support_type"),
-
-            new MapItem("minimalLayerTime", "slowdown_below_layer_time"),
-
-            new InfillTranslator("sparseInfillLineDistance", "fill_density"),
-
-            new MapStartGCode("startCode", "start_gcode", false),
-            new MapEndGCode("endCode", "end_gcode"),
-
-            new VisibleButNotMappedToEngine("pause_gcode"),
-            new VisibleButNotMappedToEngine("resume_gcode"),
-            new VisibleButNotMappedToEngine("cancel_gcode"),
-			new VisibleButNotMappedToEngine("connect_gcode"),
-
-#if false
-            SETTING(filamentFlow);
-            SETTING(infillOverlap);
-
-            SETTING(initialSpeedupLayers);
-
-            SETTING(supportExtruder);
-
-            SETTING(retractionAmountExtruderSwitch);
-            SETTING(enableCombing);
-            SETTING(multiVolumeOverlap);
-            SETTING(objectSink);
-
-            SETTING(raftMargin);
-            SETTING(raftLineSpacing);
-            SETTING(raftBaseThickness);
-            SETTING(raftBaseLinewidth);
-            SETTING(raftInterfaceThickness);
-            SETTING(raftInterfaceLinewidth);
-
-            SETTING(minimalFeedrate);
-
-fanFullOnLayerNr = 2;
-
-            SETTING(fixHorrible);
-            SETTING(gcodeFlavor);
-
-/*
-objectPosition.X = 102500;
-objectPosition.Y = 102500;
-enableOozeShield = 0;
-*/
-#endif
-        };
 
 		public static string GetCuraCommandLineSettings()
 		{
 			StringBuilder settings = new StringBuilder();
-			for (int i = 0; i < curaToDefaultMapping.Length; i++)
+			foreach (MappedSetting mapItem in Instance.curaSettings)
 			{
-				string curaValue = curaToDefaultMapping[i].MappedValue;
-				if (curaValue != null && curaValue != "")
+				if (!string.IsNullOrEmpty(mapItem.Value))
 				{
-					settings.Append(string.Format("-s {0}=\"{1}\" ", curaToDefaultMapping[i].MappedKey, curaValue));
+					settings.AppendFormat("-s {0}=\"{1}\" ", mapItem.ExportedName, mapItem.Value);
 				}
 			}
 
 			return settings.ToString();
 		}
 
-		public class FanTranslator : MapItem
+		public class FanTranslator : MappedSetting
 		{
-			public override string MappedValue
+			public FanTranslator(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
 			{
 				get
 				{
-					int numLayersFanIsDisabledOn = int.Parse(base.MappedValue);
+					int numLayersFanIsDisabledOn = int.Parse(base.Value);
 					int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
 					return layerToEnableFanOn.ToString();
 				}
 			}
 
-			public FanTranslator(string cura, string originalKey)
-				: base(cura, originalKey)
-			{
-			}
+
 		}
 
-		public class SupportTypeMapping : MapItem
+		public class SupportTypeMapping : MappedSetting
 		{
-			public override string MappedValue
+			public SupportTypeMapping(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
 			{
 				get
 				{
-					switch (base.MappedValue)
+					switch (base.Value)
 					{
 						case "LINES":
 							return "1"; // the lines setting from curaengine
@@ -235,45 +168,44 @@ enableOozeShield = 0;
 					}
 				}
 			}
-
-			public SupportTypeMapping(string cura, string originalKey)
-				: base(cura, originalKey)
-			{
-			}
 		}
 
-		public class SupportMatterial : MapItem
+		public class SupportMatterial : MappedSetting
 		{
-			public override string MappedValue
+			public SupportMatterial(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
 			{
 				get
 				{
-					string supportMaterial = ActiveSliceSettings.Instance.GetActiveValue("support_material");
+					string supportMaterial = base.Value;
 					if (supportMaterial == "0")
 					{
 						return "-1";
 					}
 
-					return (90 - MapItem.GetValueForKey("support_material_threshold")).ToString();
+					return (90 - ParseDoubleFromRawValue("support_material_threshold")).ToString();
 				}
-			}
-
-			public SupportMatterial(string cura, string originalKey)
-				: base(cura, originalKey)
-			{
 			}
 		}
 
 		public class InfillTranslator : ScaledSingleNumber
 		{
-			public override string MappedValue
+			public InfillTranslator(string canonicalSettingsName, string exportedName) : base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
 			{
 				get
 				{
-					double infillRatio0To1 = ScaledSingleNumber.ParseValueString(base.MappedValue);
+					double infillRatio0To1 = ParseDouble(base.Value);
 
 					// 400 = solid (extruder width)
-					double nozzle_diameter = MapItem.GetValueForKey("nozzle_diameter");
+					double nozzle_diameter = ParseDoubleFromRawValue("nozzle_diameter");
 					double linespacing = 1000;
 					if (infillRatio0To1 > .01)
 					{
@@ -284,15 +216,16 @@ enableOozeShield = 0;
 				}
 			}
 
-			public InfillTranslator(string cura, string originalKey)
-				: base(cura, originalKey)
-			{
-			}
 		}
 
-		public class PrintCenterX : MapItem
+		public class PrintCenterX : MappedSetting
 		{
-			public override string MappedValue
+			public PrintCenterX(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
 			{
 				get
 				{
@@ -300,16 +233,16 @@ enableOozeShield = 0;
 					return (PrinteCenter.x * 1000).ToString();
 				}
 			}
-
-			public PrintCenterX(string cura, string originalKey)
-				: base(cura, originalKey)
-			{
-			}
 		}
 
-		public class PrintCenterY : MapItem
+		public class PrintCenterY : MappedSetting
 		{
-			public override string MappedValue
+			public PrintCenterY(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
 			{
 				get
 				{
@@ -317,22 +250,22 @@ enableOozeShield = 0;
 					return (PrinteCenter.y * 1000).ToString();
 				}
 			}
-
-			public PrintCenterY(string cura, string originalKey)
-				: base(cura, originalKey)
-			{
-			}
 		}
 
 		public class MapEndGCode : InjectGCodeCommands
 		{
-			public override string MappedValue
+			public MapEndGCode(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
 			{
 				get
 				{
 					StringBuilder curaEndGCode = new StringBuilder();
 
-					curaEndGCode.Append(GCodeProcessing.ReplaceMacroValues(base.MappedValue));
+					curaEndGCode.Append(GCodeProcessing.ReplaceMacroValues(base.Value));
 
 					curaEndGCode.Append("\n; filament used = filament_used_replace_mm (filament_used_replace_cm3)");
 
@@ -340,24 +273,20 @@ enableOozeShield = 0;
 				}
 			}
 
-			public MapEndGCode(string cura, string originalKey)
-				: base(cura, originalKey)
-			{
-			}
 		}
 
-		public class SkirtLengthMaping : MapItem
+		public class SkirtLengthMapping : MappedSetting
 		{
-			public SkirtLengthMaping(string curaKey, string defaultKey)
-				: base(curaKey, defaultKey)
+			public SkirtLengthMapping(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
 			{
 			}
 
-			public override string MappedValue
+			public override string Value
 			{
 				get
 				{
-					double lengthToExtrudeMm = MapItem.ParseValueString(base.MappedValue);
+					double lengthToExtrudeMm = ParseDouble(base.Value);
 					// we need to convert mm of filament to mm of extrusion path
 					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
 					double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;

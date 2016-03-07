@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									{
 										itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\\n", " "));
 									}
-									if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(setting.SlicerConfigName))
+									if (ActivePrinterProfile.Instance.ActiveSliceEngine.HasSetting(setting.SlicerConfigName))
 									{
 										MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
 										settingMenuItem.Selected += new EventHandler(OnItemSelected);
@@ -375,8 +375,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					OrganizerSettingsData settingData = SliceSettingsOrganizer.Instance.GetSettingsData(item.Key);
 
-					// Dont add row if there is no entry
-					if (settingData != null && ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingData.SlicerConfigName))
+					// Don't add row if there is no entry
+					if (settingData != null && ActivePrinterProfile.Instance.ActiveSliceEngine.HasSetting(settingData.SlicerConfigName))
 					{
 						FlowLayoutWidget row = GetSettingsRow(settingData, item.Value.Value);
 						row.Padding = new BorderDouble(3, 3, 3, 6);

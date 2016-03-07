@@ -565,7 +565,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 							}
 
-							if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName)
+							if (ActivePrinterProfile.Instance.ActiveSliceEngine.HasSetting(settingInfo.SlicerConfigName)
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
@@ -693,7 +693,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, item.Key))
 					{
 						OrganizerSettingsData settingInfo = new OrganizerSettingsData(item.Key, item.Key, OrganizerSettingsData.DataEditTypes.STRING);
-						if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName))
+						if (ActivePrinterProfile.Instance.ActiveSliceEngine.HasSetting(settingInfo.SlicerConfigName))
 						{
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, 0);
 							topToBottomSettings.AddChild(controlsForThisSetting);
