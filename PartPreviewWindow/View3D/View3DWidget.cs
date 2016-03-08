@@ -26,7 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-#define DoBooleanTest
+//#define DoBooleanTest
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -618,7 +618,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					direction[i] = -direction[i];
 				}
 			}
-			boxB.Translate(offset + centering);
+			Vector3 offsetB = offset + centering;
+			// switch to the failing offset
+			offsetB = new Vector3(105.281352839009, -3.36098038168194, 10.1168288631333);
+            boxB.Translate(offsetB);
 
 			Mesh meshToAdd = opperation(boxA, boxB);
 			meshToAdd.CleanAndMergMesh();
