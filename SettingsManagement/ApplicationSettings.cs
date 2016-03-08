@@ -9,7 +9,7 @@ namespace MatterHackers.MatterControl
 
 		public static string OpenPrintableFileParams { get { return "STL, AMF, ZIP, GCODE|*.stl;*.amf;*.zip;*.gcode"; } }
 
-		public static string OpenDesignFileParams { get { return "STL, AMF, ZIP|*.stl;*.amf;*.zip"; } }
+		public static string OpenDesignFileParams { get { return "STL, AMF, ZIP|*.stl;*.amf;*.zip;*.gcode"; } }
 
 		private static ApplicationSettings globalInstance = null;
 		public Dictionary<string, DataStorage.SystemSetting> settingsDictionary;
