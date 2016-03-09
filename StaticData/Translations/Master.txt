@@ -4615,3 +4615,12 @@ Translated:This will only work on specific hardware. Do not use unless you are s
 English:Show Firmware Updater
 Translated:Show Firmware Updater
 
+English:Cube
+Translated:Cube
+
+English:Cylinder
+Translated:Cylinder
+
+English:Sphere
+Translated:Sphere
+

@@ -279,6 +279,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("MAXTEMP", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("M999", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Error: Extruder switched off", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("Heater decoupled", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("Bot is Shutdown due to Overheat", PrinterReportsError);
 
 			// repatier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
