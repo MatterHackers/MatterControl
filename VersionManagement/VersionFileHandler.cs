@@ -27,32 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.PlatformAbstract;
+using System;
 using System.IO;
+
+using MatterHackers.Agg.PlatformAbstract;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public class VersionInfo
+	public sealed class VersionInfo
 	{
-		private static VersionInfoContainer globalInstance;
+		public readonly static VersionInfo Instance = DeserializeFromDisk();
 
-		public static VersionInfoContainer Instance
-		{
-			get
-			{
-				if (globalInstance == null)
-				{
-					VersionInfoHandler versionInfoHandler = new VersionInfoHandler();
-					globalInstance = versionInfoHandler.ImportVersionInfoFromJson();
-				}
-				return globalInstance;
-			}
-		}
-	}
-
-	public class VersionInfoContainer
-	{
-		public VersionInfoContainer()
+		// Prevent external construction and limit to singleton Instance above
+		private VersionInfo()
 		{
 		}
 
@@ -63,37 +51,11 @@ namespace MatterHackers.MatterControl
 		public string BuildToken { get; set; }
 
 		public string ProjectToken { get; set; }
-	}
 
-	internal class VersionInfoHandler
-	{
-		public VersionInfoHandler()
+		private static VersionInfo DeserializeFromDisk()
 		{
-		}
-
-		public VersionInfoContainer ImportVersionInfoFromJson(string loadedFileName = null)
-		{
-			// TODO: Review all cases below. What happens if we return a default instance of VersionInfoContainer or worse yet, null. It seems likely we end up with a null
-			// reference error when someone attempts to use VersionInfo.Instance and it's invalide. Consider removing the error handing below and throwing an error when
-			// an error condition is found rather than masking it until the user goes to a section that relies on the instance - thus moving detection of the problem to
-			// an earlier stage and expanding the number of cases where it would be noticed.
-			string content = loadedFileName == null ?
-					StaticData.Instance.ReadAllText(Path.Combine("BuildInfo.txt")) :
-					System.IO.File.Exists(loadedFileName) ? System.IO.File.ReadAllText(loadedFileName) : "";
-
-			if (!string.IsNullOrWhiteSpace(content))
-			{
-				VersionInfoContainer versionInfo = (VersionInfoContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(content, typeof(VersionInfoContainer));
-				if (versionInfo == null)
-				{
-					return new VersionInfoContainer();
-				}
-				return versionInfo;
-			}
-			else
-			{
-				return null;
-			}
+			string content = StaticData.Instance.ReadAllText("BuildInfo.txt");
+			return JsonConvert.DeserializeObject<VersionInfo>(content);
 		}
 	}
 }
