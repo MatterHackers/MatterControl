@@ -129,12 +129,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //firstLayerToAllowFan=2 # The fan will be force to stay off below this layer.
             new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
 
-            //outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, MACH3
-            new MapItem("outputType", "gcode_output_type"),
-
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
 			new MapItemToBool("generateSupportPerimeter", "support_material_create_perimeter"),
+
+			new MapItemToBool("outputOnlyFirstLayer", "output_only_first_layer"),
 
 			new MapItemToBool("generateSupport", "support_material"),
 

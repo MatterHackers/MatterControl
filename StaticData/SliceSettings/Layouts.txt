@@ -169,8 +169,9 @@ Advanced
       Notes
         notes
     Output Options
-      Center Print
+      File Settings
         center_part_on_bed
+        output_only_first_layer
       Sequential Printing
         complete_objects
         extruder_clearance_height
@@ -272,7 +273,6 @@ Advanced
       Firmware
         z_can_be_negative
         gcode_flavor
-        gcode_output_type
         use_relative_e_distances
         gcode_arcs
         g0

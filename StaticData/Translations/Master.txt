@@ -4624,3 +4624,12 @@ Translated:Cylinder
 English:Sphere
 Translated:Sphere
 
+English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
+Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
+
+English:First Layer Only
+Translated:First Layer Only
+
+English:File Settings
+Translated:File Settings
+
