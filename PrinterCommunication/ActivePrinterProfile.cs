@@ -75,10 +75,11 @@ namespace MatterHackers.MatterControl
 					ValidateMaterialSettings();
 					ValidateQualitySettings();
 
-					if (ActivePrinter != null)
+					if (activePrinter != null)
 					{
-						BedSettings.SetMakeAndModel(ActivePrinter.Make, ActivePrinter.Model);
+						BedSettings.SetMakeAndModel(activePrinter.Make, activePrinter.Model);
 					}
+
 					globalInstance.OnActivePrinterChanged(null);
 				}
 			}
