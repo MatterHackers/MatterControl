@@ -620,7 +620,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			Vector3 offsetB = offset + centering;
 			// switch to the failing offset
-			offsetB = new Vector3(105.281352839009, -3.36098038168194, 10.1168288631333);
+			//offsetB = new Vector3(105.281352839009, -3.36098038168194, 10.1168288631333);
+			Debug.WriteLine(offsetB);
             boxB.Translate(offsetB);
 
 			Mesh meshToAdd = opperation(boxA, boxB);
