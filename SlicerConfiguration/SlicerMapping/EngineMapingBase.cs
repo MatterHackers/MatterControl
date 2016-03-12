@@ -36,8 +36,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private string engineName;
 
 		/// <summary>
-		/// These application level settings will appear in Slice Settings but are not used or passed to the 
-		/// active slice engine and are simply tagging on along with the existing settings infrastructure
+		/// These application level settings will appear in all slice engine Slice Settings panels but are 
+		/// not used or passed to the active slice engine and are simply tagging along with the existing
+		/// settings infrastructure
 		/// </summary>
 		protected HashSet<string> applicationLevelSettings = new HashSet<string>()
 		{

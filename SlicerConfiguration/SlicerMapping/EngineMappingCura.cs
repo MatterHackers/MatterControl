@@ -116,11 +116,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static string GetCuraCommandLineSettings()
 		{
 			StringBuilder settings = new StringBuilder();
-			foreach (MappedSetting mapItem in Instance.curaSettings)
+			foreach (MappedSetting mappedSetting in Instance.curaSettings)
 			{
-				if (!string.IsNullOrEmpty(mapItem.Value))
+				if (!string.IsNullOrEmpty(mappedSetting.Value))
 				{
-					settings.AppendFormat("-s {0}=\"{1}\" ", mapItem.ExportedName, mapItem.Value);
+					settings.AppendFormat("-s {0}=\"{1}\" ", mappedSetting.ExportedName, mappedSetting.Value);
 				}
 			}
 

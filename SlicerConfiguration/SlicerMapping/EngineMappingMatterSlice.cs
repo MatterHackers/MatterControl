@@ -267,12 +267,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			using (StreamWriter sliceSettingsFile = new StreamWriter(outputFilename))
 			{
-				foreach (var mapItem in Instance.matterSliceSettings)
+				foreach (MappedSetting mappedSetting in Instance.matterSliceSettings)
 				{
-					string matterSliceValue = mapItem.Value;
-					if (matterSliceValue != null)
+					if (mappedSetting.Value != null)
 					{
-						sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(mapItem.ExportedName, matterSliceValue));
+						sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(mappedSetting.ExportedName, mappedSetting.Value));
 					}
 				}
 			}
