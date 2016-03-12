@@ -100,14 +100,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				new InfillTranslator("fill_density", "sparseInfillLineDistance"),
 
-				new MapStartGCode("start_gcode", "startCode", true),
+				new MapStartGCode("start_gcode", "startCode", false),
 				new MapEndGCode("end_gcode", "endCode"),
 			};
 
 			curaSettingNames = new HashSet<string>(curaSettings.Select(m => m.CanonicalSettingsName));
 		}
 
-		public override bool HasSetting(string canonicalSettingsName)
+		public override bool MapContains(string canonicalSettingsName)
 		{
 			return curaSettingNames.Contains(canonicalSettingsName) 
 				|| base.applicationLevelSettings.Contains(canonicalSettingsName);

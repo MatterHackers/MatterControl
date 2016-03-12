@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			hiddenSettings.Add("retractWhenChangingIslands");
 		}
 
-		public override bool HasSetting(string key)
+		public override bool MapContains(string key)
 		{
 			// Visible items are anything not in the hiddenSettings set
 			return !hiddenSettings.Contains(key);

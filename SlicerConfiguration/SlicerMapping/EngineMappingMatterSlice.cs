@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			matterSliceSettingNames = new HashSet<string>(matterSliceSettings.Select(m => m.CanonicalSettingsName));
 		}
 
-		public override bool HasSetting(string canonicalSettingsName)
+		public override bool MapContains(string canonicalSettingsName)
 		{
 			return matterSliceSettingNames.Contains(canonicalSettingsName)
 				|| base.applicationLevelSettings.Contains(canonicalSettingsName);

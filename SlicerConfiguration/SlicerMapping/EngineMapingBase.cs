@@ -84,6 +84,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string Name { get { return engineName; } }
 
-		public abstract bool HasSetting(string canonicalSettingsName);
+		public abstract bool MapContains(string canonicalSettingsName);
 	}
 }

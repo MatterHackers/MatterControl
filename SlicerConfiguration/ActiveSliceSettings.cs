@@ -1004,7 +1004,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			if (!valueWasNumber
-				|| (ActivePrinterProfile.Instance.ActiveSliceEngine.HasSetting(speedSetting)
+				|| (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
 				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);
