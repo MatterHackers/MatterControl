@@ -95,6 +95,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override string Value => base.Value.Contains(",") ? base.Value.Split(',')[0] : base.Value;
 	}
+
+	public class ConvertCRs : MappedSetting
+	{
+		public ConvertCRs(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
+		{
+		}
+
+		public override string Value
+		{
+			get
+			{
+				string actualCRs = base.Value.Replace("\\n", "\n");
+				return actualCRs;
+			}
+		}
+
+	}
+
 	/// <summary>
 	/// Setting will appear in the editor, but it will not be passed to the slicing engine.
 	/// These values are used in other parts of MatterControl, not slicing, but are held in the slicing data.
@@ -301,7 +320,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class InjectGCodeCommands : MappedSetting
+	public class InjectGCodeCommands : ConvertCRs
 	{
 		public InjectGCodeCommands(string canonicalSettingsName, string exportedName)
 			: base(canonicalSettingsName, exportedName)
