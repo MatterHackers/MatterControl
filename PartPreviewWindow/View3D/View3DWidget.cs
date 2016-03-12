@@ -579,19 +579,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #if DoBooleanTest
         MeshGroup booleanGroup;
         Matrix4X4 groupTransform;
-        Vector3 offset = new Vector3();
-        Vector3 direction = new Vector3(.11, .12, .13);
+		Vector3 offset = new Vector3();
+		Vector3 direction = new Vector3(.11, .12, .13);
+		Vector3 rotCurrent = new Vector3();
+		Vector3 rotChange = new Vector3(.011, .012, .013);
+		Vector3 scaleChange = new Vector3(.0011, .0012, .0013);
+		Vector3 scaleCurrent = new Vector3(1, 1, 1);
 		private void CreateBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
 		{
 			try
 			{
 				booleanGroup = new MeshGroup();
 
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Union, new Vector3(100, 0, 20)));
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Subtract, new Vector3(100, 100, 20)));
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Intersect, new Vector3(100, 200, 20)));
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Union, new Vector3(100, 0, 20), "U"));
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Subtract, new Vector3(100, 100, 20), "S"));
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Intersect, new Vector3(100, 200, 20), "I"));
 
 				offset += direction;
+				rotCurrent += rotChange;
+				scaleCurrent += scaleChange;
 				meshViewerWidget.MeshGroups.Add(booleanGroup);
 
 				groupTransform = Matrix4X4.Identity;
@@ -604,25 +610,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private Mesh ApplyBoolean(Func<Mesh, Mesh, Mesh> opperation, Vector3 centering)
+		private Mesh ApplyBoolean(Func<Mesh, Mesh, Mesh> opperation, Vector3 centering, string opp)
 		{
 			Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
 			boxA.Translate(centering);
 			Mesh boxB = PlatonicSolids.CreateCube(40, 40, 40);
-			boxB = PlatonicSolids.CreateIcosahedron(35);
+			//boxB = PlatonicSolids.CreateIcosahedron(35);
 
 			for (int i = 0; i < 3; i++)
 			{
 				if (Math.Abs(direction[i] + offset[i]) > 10)
 				{
-					direction[i] = -direction[i];
+					direction[i] = direction[i] * -1.00073112;
 				}
 			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				if (Math.Abs(rotChange[i] + rotCurrent[i]) > 6)
+				{
+					rotChange[i] = rotChange[i] * -1.000073112;
+				}
+			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				if (scaleChange[i] + scaleCurrent[i] > 1.1 || scaleChange[i] + scaleCurrent[i] < .9)
+				{
+					scaleChange[i] = scaleChange[i] * -1.000073112;
+				}
+			}
+
 			Vector3 offsetB = offset + centering;
 			// switch to the failing offset
 			//offsetB = new Vector3(105.281352839009, -3.36098038168194, 10.1168288631333);
-			Debug.WriteLine(offsetB);
-            boxB.Translate(offsetB);
+			Debug.WriteLine("t"+offsetB.ToString() + " r" + rotCurrent.ToString() + " s" + scaleCurrent.ToString() + " " + opp);
+			Matrix4X4 transformB = Matrix4X4.CreateScale(scaleCurrent) * Matrix4X4.CreateRotation(rotCurrent) * Matrix4X4.CreateTranslation(offsetB);
+            boxB.Transform(transformB);
 
 			Mesh meshToAdd = opperation(boxA, boxB);
 			meshToAdd.CleanAndMergMesh();
