@@ -40,9 +40,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static readonly EngineMappingsMatterSlice Instance = new EngineMappingsMatterSlice();
 
-		public HashSet<string> matterSliceSettingNames;
+		private HashSet<string> matterSliceSettingNames;
 
-		MappedSetting[] matterSliceSettings;
+		private MappedSetting[] matterSliceSettings;
 
 		// Singleton use only - prevent external construction
 		private EngineMappingsMatterSlice() : base("MatterSlice")
