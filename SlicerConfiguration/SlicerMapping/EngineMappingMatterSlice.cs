@@ -160,8 +160,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				//numberOfBottomLayers=6
 				new AsCountOrDistance("bottom_solid_layers", "numberOfBottomLayers", "layer_height"),
 
-				new VisibleButNotMappedToEngine("solid_shell"),
-
 				//numberOfSkirtLoops=1 # The number of loops to draw around the convex hull.
 				new MappedSetting("skirts", "numberOfSkirtLoops"),
 
@@ -249,6 +247,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// TODO: We don't need this yet as it is only for dual extrusion
 				//wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
 				new MappedSetting("wipe_tower_size", "wipeTowerSize"),
+
+				// Enable MatterControl behaviors that are unique to MatterSlice only
+				new VisibleButNotMappedToEngine("solid_shell"),
+				new VisibleButNotMappedToEngine("extruder_count"),
+				new VisibleButNotMappedToEngine("extruders_share_temperature"),
+
 			};
 
 			matterSliceSettingNames = new HashSet<string>(matterSliceSettings.Select(m => m.CanonicalSettingsName));

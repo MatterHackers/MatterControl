@@ -182,11 +182,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
 			}
 
-			int numberOfHeatedExtruders = 1;
-			if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
-			{
-				numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
-			}
+			int numberOfHeatedExtruders = (ActiveSliceSettings.Instance.ExtrudersShareTemperature) ? 1 : ActiveSliceSettings.Instance.ExtruderCount;
 
 			// Start heating all the extruder that we are going to use.
 			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
@@ -249,11 +245,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			List<string> postStartGCode = new List<string>();
 			postStartGCode.Add("; automatic settings after start_gcode");
 
-			int numberOfHeatedExtruders = 1;
-			if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
-			{
-				numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
-			}
+			int numberOfHeatedExtruders = (ActiveSliceSettings.Instance.ExtrudersShareTemperature) ? 1 : ActiveSliceSettings.Instance.ExtruderCount;
 
 			// don't set the extruders to heating if we already waited for them to reach temp
 			if (ActiveSliceSettings.Instance.GetActiveValue("heat_extruder_before_homing") != "1")

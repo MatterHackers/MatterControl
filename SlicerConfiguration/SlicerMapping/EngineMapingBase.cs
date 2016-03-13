@@ -36,9 +36,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private string engineName;
 
 		/// <summary>
-		/// These application level settings will appear in all slice engine Slice Settings panels but are 
-		/// not used or passed to the active slice engine and are simply tagging along with the existing
-		/// settings infrastructure
+		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
+		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
+		/// through into the slicer config file
 		/// </summary>
 		protected HashSet<string> applicationLevelSettings = new HashSet<string>()
 		{
@@ -61,20 +61,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"resume_gcode",
 			"support_material_threshold",
 			"temperature",
-			"z_can_be_negative"
+			"z_can_be_negative",
 
-			// TODO: Determine if these are MatterSlice only values or if it was an error that they were missing from Cura
-			/*
-				"bed_remove_part_temperature" - !cura
-				"extruder_count" !cura
-				"extruder_wipe_temperature" !cura
-				"extruders_share_temperature" !cura
-				"heat_extruder_before_homing" !cura
-				"include_firmware_updater" !cura (but seems like it should be)
-				"layer_to_pause" !cura (but seems like it should be)
-				"show_reset_connection" !cura (seems like it should be)
-				"solid_shell" !cura
-			*/
+			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be. 
+			"bed_remove_part_temperature",
+			"extruder_wipe_temperature",
+			"heat_extruder_before_homing",
+			"include_firmware_updater",
+			"layer_to_pause",
+			"show_reset_connection"
 		};
 
 		public SliceEngineMapping(string engineName)
