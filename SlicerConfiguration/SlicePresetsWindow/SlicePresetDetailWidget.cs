@@ -375,7 +375,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					OrganizerSettingsData settingData = SliceSettingsOrganizer.Instance.GetSettingsData(item.Key);
 
-					// Dont add row if there is no entry
+					// Don't add row if there is no entry
 					if (settingData != null && ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingData.SlicerConfigName))
 					{
 						FlowLayoutWidget row = GetSettingsRow(settingData, item.Value.Value);
