@@ -591,9 +591,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				booleanGroup = new MeshGroup();
 
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Union, new Vector3(100, 0, 20), "U"));
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Subtract, new Vector3(100, 100, 20), "S"));
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Intersect, new Vector3(100, 200, 20), "I"));
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Union, AxisAlignedBoundingBox.Union, new Vector3(100, 0, 20), "U"));
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Subtract, null, new Vector3(100, 100, 20), "S"));
+				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Intersect, AxisAlignedBoundingBox.Intersection , new Vector3(100, 200, 20), "I"));
 
 				offset += direction;
 				rotCurrent += rotChange;
@@ -610,12 +610,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private Mesh ApplyBoolean(Func<Mesh, Mesh, Mesh> opperation, Vector3 centering, string opp)
+		private Mesh ApplyBoolean(Func<Mesh, Mesh, Mesh> meshOpperation, Func<AxisAlignedBoundingBox, AxisAlignedBoundingBox, AxisAlignedBoundingBox> aabbOpperation, Vector3 centering, string opp)
 		{
 			Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
+			boxA = PlatonicSolids.CreateIcosahedron(35);
 			boxA.Translate(centering);
 			Mesh boxB = PlatonicSolids.CreateCube(40, 40, 40);
-			//boxB = PlatonicSolids.CreateIcosahedron(35);
+			boxB = PlatonicSolids.CreateIcosahedron(35);
 
 			for (int i = 0; i < 3; i++)
 			{
@@ -643,13 +644,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Vector3 offsetB = offset + centering;
 			// switch to the failing offset
-			//offsetB = new Vector3(105.281352839009, -3.36098038168194, 10.1168288631333);
+			//offsetB = new Vector3(105.240172225344, 92.9716306394062, 18.4619570261172);
+			//rotCurrent = new Vector3(4.56890223673623, -2.67874102322035, 1.02768848238523);
+			//scaleCurrent = new Vector3(1.07853517569753, 0.964980885267323, 1.09290934544604);
 			Debug.WriteLine("t"+offsetB.ToString() + " r" + rotCurrent.ToString() + " s" + scaleCurrent.ToString() + " " + opp);
 			Matrix4X4 transformB = Matrix4X4.CreateScale(scaleCurrent) * Matrix4X4.CreateRotation(rotCurrent) * Matrix4X4.CreateTranslation(offsetB);
             boxB.Transform(transformB);
 
-			Mesh meshToAdd = opperation(boxA, boxB);
+			Mesh meshToAdd = meshOpperation(boxA, boxB);
 			meshToAdd.CleanAndMergMesh();
+
+			if(aabbOpperation != null)
+			{
+				AxisAlignedBoundingBox boundsA = boxA.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox boundsB = boxB.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox boundsAdd = meshToAdd.GetAxisAlignedBoundingBox();
+
+				AxisAlignedBoundingBox boundsResult = aabbOpperation(boundsA, boundsB);
+
+				if(!boundsAdd.Equals(boundsResult, .0001))
+				{
+					int a = 0;
+				}
+			}
+
+			int nonManifoldEdges = meshToAdd.GetNonManifoldEdges().Count;
+			if (nonManifoldEdges > 0)
+			{
+				// shoud be manifold
+				int a = 0;
+			}
+
 			return meshToAdd;
 		}
 
