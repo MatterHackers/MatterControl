@@ -4633,3 +4633,6 @@ Translated:First Layer Only
 English:File Settings
 Translated:File Settings
 
+English:Solid Infill works best when set to LINES.
+Translated:Solid Infill works best when set to LINES.
+
