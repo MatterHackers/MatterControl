@@ -96,22 +96,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override string Value => base.Value.Contains(",") ? base.Value.Split(',')[0] : base.Value;
 	}
 
-	public class ConvertCRs : MappedSetting
+	// Replaces escaped newline characters with unescaped newline characters
+	public class UnescapeNewlineCharacters : MappedSetting
 	{
-		public ConvertCRs(string canonicalSettingsName, string exportedName)
+		public UnescapeNewlineCharacters(string canonicalSettingsName, string exportedName)
 			: base(canonicalSettingsName, exportedName)
 		{
 		}
 
-		public override string Value
-		{
-			get
-			{
-				string actualCRs = base.Value.Replace("\\n", "\n");
-				return actualCRs;
-			}
-		}
-
+		public override string Value => base.Value.Replace("\\n", "\n");
 	}
 
 	/// <summary>
@@ -131,12 +124,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class MapStartGCode : InjectGCodeCommands
 	{
-		private bool escapeCarriageReturns;
+		private bool escapeNewlineCharacters;
 
-		public MapStartGCode(string canonicalSettingsName, string exportedName, bool escapeCarriageReturns)
+		public MapStartGCode(string canonicalSettingsName, string exportedName, bool escapeNewlineCharacters)
 			: base(canonicalSettingsName, exportedName)
 		{
-			this.escapeCarriageReturns = escapeCarriageReturns;
+			this.escapeNewlineCharacters = escapeNewlineCharacters;
 		}
 
 		public override string Value
@@ -157,7 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					newStartGCode.Append(line);
 				}
 
-				if (escapeCarriageReturns)
+				if (escapeNewlineCharacters)
 				{
 					return newStartGCode.ToString().Replace("\n", "\\n");
 				}
@@ -312,7 +305,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class InjectGCodeCommands : ConvertCRs
+	public class InjectGCodeCommands : UnescapeNewlineCharacters
 	{
 		public InjectGCodeCommands(string canonicalSettingsName, string exportedName)
 			: base(canonicalSettingsName, exportedName)
