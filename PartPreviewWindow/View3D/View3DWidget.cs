@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PluginFinder<InteractionVolumePlugin> InteractionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
 			foreach (InteractionVolumePlugin plugin in InteractionVolumePlugins.Plugins)
 			{
-				meshViewerWidget.interactionVolumes.Add(plugin.CreateInteractionVolume(this));
+				//meshViewerWidget.interactionVolumes.Add(plugin.CreateInteractionVolume(this));
 			}
 
 			// make sure the colors are set correct
@@ -1434,7 +1434,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PluginFinder<SideBarPlugin> SideBarPlugins = new PluginFinder<SideBarPlugin>();
 				foreach (SideBarPlugin plugin in SideBarPlugins.Plugins)
 				{
-					buttonRightPanel.AddChild(plugin.CreateSideBarTool(this));
+					//buttonRightPanel.AddChild(plugin.CreateSideBarTool(this));
 				}
 
 				// put in the material options
