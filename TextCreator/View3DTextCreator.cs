@@ -582,9 +582,10 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			// don't ever delete the last mesh
 			if (MeshGroups.Count > 1)
 			{
-				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
-				MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
-				MeshGroupTransforms.RemoveAt(SelectedMeshGroupIndex);
+				int removeIndex = SelectedMeshGroupIndex;
+				MeshGroups.RemoveAt(removeIndex);
+				MeshGroupExtraData.RemoveAt(removeIndex);
+				MeshGroupTransforms.RemoveAt(removeIndex);
 				SelectedMeshGroupIndex = Math.Min(SelectedMeshGroupIndex, MeshGroups.Count - 1);
 				saveButton.Visible = true;
 				saveAndExitButton.Visible = true;
