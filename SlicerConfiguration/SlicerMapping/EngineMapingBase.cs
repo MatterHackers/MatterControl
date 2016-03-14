@@ -27,10 +27,58 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public abstract class SliceEngineMaping
+	public abstract class SliceEngineMapping
 	{
-		public abstract bool MapContains(string defaultKey);
+		private string engineName;
+
+		/// <summary>
+		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
+		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
+		/// through into the slicer config file
+		/// </summary>
+		protected HashSet<string> applicationLevelSettings = new HashSet<string>()
+		{
+			"bed_shape",
+			"bed_size",
+			"bed_temperature",
+			"build_height",
+			"cancel_gcode",
+			"connect_gcode",
+			"has_fan",
+			"has_hardware_leveling",
+			"has_heated_bed",
+			"has_power_control",
+			"has_sd_card_reader",
+			"manual_probe_paper_width",
+			"pause_gcode",
+			"print_leveling_method",
+			"print_leveling_required_to_print",
+			"print_leveling_solution",
+			"resume_gcode",
+			"support_material_threshold",
+			"temperature",
+			"z_can_be_negative",
+
+			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be. 
+			"bed_remove_part_temperature",
+			"extruder_wipe_temperature",
+			"heat_extruder_before_homing",
+			"include_firmware_updater",
+			"layer_to_pause",
+			"show_reset_connection"
+		};
+
+		public SliceEngineMapping(string engineName)
+		{
+			this.engineName = engineName;
+		}
+
+		public string Name { get { return engineName; } }
+
+		public abstract bool MapContains(string canonicalSettingsName);
 	}
 }

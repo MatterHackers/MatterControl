@@ -54,94 +54,85 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class MapItem
+	public class MappedSetting
 	{
-		private string mappedKey;
-		private string originalKey;
-
-		public MapItem(string mappedKey, string originalKey)
+		public MappedSetting(string canonicalSettingsName, string exportedName)
 		{
-			this.mappedKey = mappedKey;
-			this.originalKey = originalKey;
+			this.CanonicalSettingsName = canonicalSettingsName;
+			this.ExportedName = exportedName;
 		}
 
-		protected static double ParseValueString(string valueString, double valueOnError = 0)
+		public double ParseDouble(string textValue, double valueOnError = 0)
 		{
-			double value = valueOnError;
-
-			if (!double.TryParse(valueString, out value))
+			double value;
+			if (!double.TryParse(textValue, out value))
 			{
-#if DEBUG
-				throw new Exception("Slicing value is not a double.");
-#endif
+				MatterControlApplication.BreakInDebugger("Slicing value is not a double.");
+				return valueOnError;
 			}
 
 			return value;
 		}
 
-		public static double GetValueForKey(string originalKey, double valueOnError = 0)
+		public double ParseDoubleFromRawValue(string canonicalSettingsName, double valueOnError = 0)
 		{
-			return ParseValueString(ActiveSliceSettings.Instance.GetActiveValue(originalKey), valueOnError);
+			return ParseDouble(ActiveSliceSettings.Instance.GetActiveValue(canonicalSettingsName), valueOnError);
 		}
 
-		public string MappedKey { get { return mappedKey; } }
+		public string ExportedName { get; }
 
-		public string OriginalKey { get { return originalKey; } }
+		public string CanonicalSettingsName { get; }
 
-		public string OriginalValue { get { return ActiveSliceSettings.Instance.GetActiveValue(originalKey); } }
-
-		public virtual string MappedValue { get { return OriginalValue; } }
+		public virtual string Value => ActiveSliceSettings.Instance.GetActiveValue(CanonicalSettingsName);
 	}
 
-	public class MapFirstValue : MapItem
+	public class MapFirstValue : MappedSetting
 	{
-		public MapFirstValue(string mappedKey, string originalKey)
-			: base(mappedKey, originalKey)
+		public MapFirstValue(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
 		{
 		}
 
-		public override string MappedValue 
-		{
-			get
-			{
-				string mappedValue = base.MappedValue;
-				if (mappedValue.Contains(","))
-				{
-					string[] splitValues = mappedValue.Split(',');
-					return splitValues[0];
-				}
-
-				return mappedValue;
-			}
-		}
+		public override string Value => base.Value.Contains(",") ? base.Value.Split(',')[0] : base.Value;
 	}
 
-	public class VisibleButNotMappedToEngine : MapItem
+	// Replaces escaped newline characters with unescaped newline characters
+	public class UnescapeNewlineCharacters : MappedSetting
 	{
-		public override string MappedValue
+		public UnescapeNewlineCharacters(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
 		{
-			get
-			{
-				return null;
-			}
 		}
 
-		/// <summary>
-		/// This key will be show in the editor, but it will not be passed to the actual slicing engine.
-		/// Some of these values are used in other parts of MatterControl, not slicing, but are held in the slicing data.
-		/// </summary>
-		/// <param name="originalKey"></param>
-		public VisibleButNotMappedToEngine(string originalKey)
-			: base("", originalKey)
+		public override string Value => base.Value.Replace("\\n", "\n");
+	}
+
+	/// <summary>
+	/// Setting will appear in the editor, but it will not be passed to the slicing engine.
+	/// These values are used in other parts of MatterControl, not slicing, but are held in the slicing data.
+	/// </summary>
+	/// <seealso cref="MatterHackers.MatterControl.SlicerConfiguration.MappedSetting" />
+	public class VisibleButNotMappedToEngine : MappedSetting
+	{
+		public VisibleButNotMappedToEngine(string canonicalSettingsName)
+			: base(canonicalSettingsName, "")
 		{
 		}
+
+		public override string Value => null;
 	}
 
 	public class MapStartGCode : InjectGCodeCommands
 	{
-		private bool replaceCRs;
+		private bool escapeNewlineCharacters;
 
-		public override string MappedValue
+		public MapStartGCode(string canonicalSettingsName, string exportedName, bool escapeNewlineCharacters)
+			: base(canonicalSettingsName, exportedName)
+		{
+			this.escapeNewlineCharacters = escapeNewlineCharacters;
+		}
+
+		public override string Value
 		{
 			get
 			{
@@ -151,7 +142,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					newStartGCode.Append(line + "\n");
 				}
 
-				newStartGCode.Append(GCodeProcessing.ReplaceMacroValues(base.MappedValue));
+				newStartGCode.Append(GCodeProcessing.ReplaceMacroValues(base.Value));
 
 				foreach (string line in PostStartGCode(SlicingQueue.extrudersUsed))
 				{
@@ -159,19 +150,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					newStartGCode.Append(line);
 				}
 
-				if (replaceCRs)
+				if (escapeNewlineCharacters)
 				{
 					return newStartGCode.ToString().Replace("\n", "\\n");
 				}
 
 				return newStartGCode.ToString();
 			}
-		}
-
-		public MapStartGCode(string mappedKey, string originalKey, bool replaceCRs)
-			: base(mappedKey, originalKey)
-		{
-			this.replaceCRs = replaceCRs;
 		}
 
 		public List<string> PreStartGCode(List<bool> extrudersUsed)
@@ -190,11 +175,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
 			}
 
-			int numberOfHeatedExtruders = 1;
-			if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
-			{
-				numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
-			}
+			int numberOfHeatedExtruders = (ActiveSliceSettings.Instance.ExtrudersShareTemperature) ? 1 : ActiveSliceSettings.Instance.ExtruderCount;
 
 			// Start heating all the extruder that we are going to use.
 			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
@@ -257,13 +238,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			List<string> postStartGCode = new List<string>();
 			postStartGCode.Add("; automatic settings after start_gcode");
 
-			int numberOfHeatedExtruders = 1;
-			if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
-			{
-				numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
-			}
+			int numberOfHeatedExtruders = (ActiveSliceSettings.Instance.ExtrudersShareTemperature) ? 1 : ActiveSliceSettings.Instance.ExtruderCount;
 
-			// don't set the extrudes to heating if we alread waited for them to reach temp
+			// don't set the extruders to heating if we already waited for them to reach temp
 			if (ActiveSliceSettings.Instance.GetActiveValue("heat_extruder_before_homing") != "1")
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
@@ -290,61 +267,48 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class MapItemToBool : MapItem
+	public class MappedToBoolString : MappedSetting
 	{
-		public override string MappedValue
-		{
-			get
-			{
-				if (base.MappedValue == "1")
-				{
-					return "True";
-				}
-
-				return "False";
-			}
-		}
-
-		public MapItemToBool(string mappedKey, string originalKey)
-			: base(mappedKey, originalKey)
+		public MappedToBoolString(string canonicalSettingsName, string exportedName) : base(canonicalSettingsName, exportedName)
 		{
 		}
+
+		public override string Value => (base.Value == "1") ?  "True" : "False";
 	}
 
 	public class ScaledSingleNumber : MapFirstValue
 	{
 		internal double scale;
 
-		public override string MappedValue
+		internal ScaledSingleNumber(string matterControlName, string exportedName, double scale = 1) : base(matterControlName, exportedName)
+		{
+			this.scale = scale;
+		}
+
+		public override string Value
 		{
 			get
 			{
 				double ratio = 0;
-				if (OriginalValue.Contains("%"))
+				if (base.Value.Contains("%"))
 				{
-					string withoutPercent = OriginalValue.Replace("%", "");
-					ratio = MapItem.ParseValueString(withoutPercent) / 100.0;
+					string withoutPercent = base.Value.Replace("%", "");
+					ratio = ParseDouble(withoutPercent) / 100.0;
 				}
 				else
 				{
-					ratio = MapItem.ParseValueString(base.MappedValue);
+					ratio = ParseDouble(base.Value);
 				}
 
 				return (ratio * scale).ToString();
 			}
 		}
-
-		internal ScaledSingleNumber(string mappedKey, string originalKey, double scale = 1)
-			: base(mappedKey, originalKey)
-		{
-			this.scale = scale;
-		}
 	}
 
-	public class InjectGCodeCommands : ConvertCRs
+	public class InjectGCodeCommands : UnescapeNewlineCharacters
 	{
-		public InjectGCodeCommands(string mappedKey, string originalKey)
-			: base(mappedKey, originalKey)
+		public InjectGCodeCommands(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
 		{
 		}
 
@@ -368,90 +332,74 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class ConvertCRs : MapItem
-	{
-		public override string MappedValue
-		{
-			get
-			{
-				string actualCRs = base.MappedValue.Replace("\\n", "\n");
-				return actualCRs;
-			}
-		}
-
-		public ConvertCRs(string mappedKey, string originalKey)
-			: base(mappedKey, originalKey)
-		{
-		}
-	}
-
-	public class AsCountOrDistance : MapItem
+	public class AsCountOrDistance : MappedSetting
 	{
 		private string keyToUseAsDenominatorForCount;
 
-		public AsCountOrDistance(string mappedKey, string originalKey, string keyToUseAsDenominatorForCount)
-			: base(mappedKey, originalKey)
+		public AsCountOrDistance(string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
+			: base(canonicalSettingsName, exportedName)
 		{
 			this.keyToUseAsDenominatorForCount = keyToUseAsDenominatorForCount;
 		}
 
-		public override string MappedValue
+		public override string Value
 		{
 			get
 			{
-				if (OriginalValue.Contains("mm"))
+
+				if (base.Value.Contains("mm"))
 				{
-					string withoutMm = OriginalValue.Replace("mm", "");
+					string withoutMm = base.Value.Replace("mm", "");
 					string distanceString = ActiveSliceSettings.Instance.GetActiveValue(keyToUseAsDenominatorForCount);
-					double denominator = MapItem.ParseValueString(distanceString, 1);
-					int layers = (int)(MapItem.ParseValueString(withoutMm) / denominator + .5);
+					double denominator = ParseDouble(distanceString, 1);
+					int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
 					return layers.ToString();
 				}
 
-				return base.MappedValue;
+				return base.Value;
 			}
 		}
 	}
 
-	public class AsPercentOfReferenceOrDirect : MapItem
+	public class AsPercentOfReferenceOrDirect : MappedSetting
 	{
 		string originalReference;
 		double scale;
 
-		public override string MappedValue
+		public AsPercentOfReferenceOrDirect(string canonicalSettingsName, string exportedName, string originalReference, double scale = 1)
+			: base(canonicalSettingsName, exportedName)
+		{
+			this.scale = scale;
+			this.originalReference = originalReference;
+		}
+
+		public override string Value
 		{
 			get
 			{
 				double finalValue = 0;
-				if (OriginalValue.Contains("%"))
+				if (base.Value.Contains("%"))
 				{
-					string withoutPercent = OriginalValue.Replace("%", "");
-					double ratio = MapItem.ParseValueString(withoutPercent) / 100.0;
+					string withoutPercent = base.Value.Replace("%", "");
+					double ratio = ParseDouble(withoutPercent) / 100.0;
 					string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
-					double valueToModify = MapItem.ParseValueString(originalReferenceString);
+					double valueToModify = ParseDouble(originalReferenceString);
 					finalValue = valueToModify * ratio;
 				}
 				else
 				{
-					finalValue = MapItem.ParseValueString(OriginalValue);
+					finalValue = ParseDouble(base.Value);
 				}
 
 				if (finalValue == 0)
 				{
-					finalValue = MapItem.ParseValueString(ActiveSliceSettings.Instance.GetActiveValue(originalReference));
+					finalValue = ParseDouble(ActiveSliceSettings.Instance.GetActiveValue(originalReference));
 				}
 
 				finalValue *= scale;
 
 				return finalValue.ToString();
 			}
-		}
-
-		public AsPercentOfReferenceOrDirect(string mappedKey, string originalKey, string originalReference, double scale = 1)
-			: base(mappedKey, originalKey)
-		{
-			this.scale = scale;
-			this.originalReference = originalReference;
 		}
 	}
 }

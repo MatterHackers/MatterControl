@@ -51,12 +51,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 				ActiveSliceSettings.Instance.SaveValue("primary", "1", 0);
 				ActiveSliceSettings.Instance.SaveValue("reference", "10", 0);
 
-				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("notused", "primary", "reference");
-				Assert.IsTrue(mapper.MappedValue == "1");
+				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("primary", "notused", "reference");
+				Assert.IsTrue(mapper.Value == "1");
 
 				// and also scaled
-				AsPercentOfReferenceOrDirect mapper2 = new AsPercentOfReferenceOrDirect("notused", "primary", "reference", 1000);
-				Assert.IsTrue(mapper2.MappedValue == "1000");
+				AsPercentOfReferenceOrDirect mapper2 = new AsPercentOfReferenceOrDirect("primary", "notused", "reference", 1000);
+				Assert.IsTrue(mapper2.Value == "1000");
 			}
 
 			// % reference values work
@@ -64,12 +64,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 				ActiveSliceSettings.Instance.SaveValue("primary", "13%", 0);
 				ActiveSliceSettings.Instance.SaveValue("reference", "100", 0);
 
-				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("notused", "primary", "reference");
-				Assert.IsTrue(mapper.MappedValue == "13");
+				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("primary", "notused", "reference");
+				Assert.IsTrue(mapper.Value == "13");
 
 				// and also scaled
-				AsPercentOfReferenceOrDirect mapper2 = new AsPercentOfReferenceOrDirect("notused", "primary", "reference", 1000);
-				Assert.IsTrue(mapper2.MappedValue == "13000");
+				AsPercentOfReferenceOrDirect mapper2 = new AsPercentOfReferenceOrDirect("primary", "notused", "reference", 1000);
+				Assert.IsTrue(mapper2.Value == "13000");
 			}
 
 			// and also check for 0
@@ -77,12 +77,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 				ActiveSliceSettings.Instance.SaveValue("primary", "0", 0);
 				ActiveSliceSettings.Instance.SaveValue("reference", "100", 0);
 
-				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("notused", "primary", "reference");
-				Assert.IsTrue(mapper.MappedValue == "100");
+				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("primary", "notused", "reference");
+				Assert.IsTrue(mapper.Value == "100");
 
 				// and also scaled
-				AsPercentOfReferenceOrDirect mapper2 = new AsPercentOfReferenceOrDirect("notused", "primary", "reference", 1000);
-				Assert.IsTrue(mapper2.MappedValue == "100000");
+				AsPercentOfReferenceOrDirect mapper2 = new AsPercentOfReferenceOrDirect("primary", "notused", "reference", 1000);
+				Assert.IsTrue(mapper2.Value == "100000");
 			}
 #endif
 		}

@@ -252,11 +252,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return GetActiveValue("has_sd_card_reader") == "1";
 		}
 
-		public bool IsMakerbotGCodeFlavor()
-		{
-			return GetActiveValue("gcode_flavor") == "makerbot";
-		}
-
 		public double BedTemperature
 		{
 			get
@@ -424,11 +419,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("notused", "first_layer_extrusion_width", "nozzle_diameter");
+				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("first_layer_extrusion_width", "notused", "nozzle_diameter");
 
-				double firstLayerValue;
-				firstLayerValue = ParseDouble(mapper.MappedValue);
-
+				double firstLayerValue = ParseDouble(mapper.Value);
 				return firstLayerValue;
 			}
 		}
