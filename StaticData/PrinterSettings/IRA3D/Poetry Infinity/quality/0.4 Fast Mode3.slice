@@ -51,4 +51,3 @@ manual_probe_paper_width = .1
 nozzle_diameter = 0.4
 extruder_offset = 0x0,0x0,0x0,0x0
 top_solid_infill_speed = 100%
-support_material_percent = 15
