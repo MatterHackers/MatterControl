@@ -81,7 +81,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void DrawGlContent(EventArgs e)
 		{
-			if (MeshViewerToDrawWith.SelectedMeshGroup != null)
+			bool shouldDrawScaleControls = true;
+			if (MeshViewerToDrawWith.SelectedInteractionVolume != null
+				&& MeshViewerToDrawWith.SelectedInteractionVolume as UpArrow3D == null)
+			{
+				shouldDrawScaleControls = false;
+			}
+			if (MeshViewerToDrawWith.SelectedMeshGroup != null
+				&& shouldDrawScaleControls)
 			{
 				if (MouseOver)
 				{
