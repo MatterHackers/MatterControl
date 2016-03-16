@@ -141,6 +141,7 @@ namespace MatterHackers.MatterControl
                     exportButton.Click += new EventHandler((object sender, EventArgs e) =>
                     {
                         SaveFileDialogParams saveParams = new SaveFileDialogParams(plugin.getExtensionFilter(), title: plugin.getButtonText());
+						saveParams.FileName = printItemWrapper.Name;
                         saveParams.Title = "MatterControl: Export File";
                         saveParams.ActionButtonLabel = "Export";                        
                         FileDialog.SaveFileDialog(saveParams, delegate(SaveFileDialogParams saveParam)
