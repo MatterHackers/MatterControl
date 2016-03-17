@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 					Button exportButton = textImageButtonFactory.Generate(exportButtonText);
 					exportButton.HAnchor = HAnchor.ParentLeft;
 					exportButton.Cursor = Cursors.Hand;
-					exportButton.Click += new EventHandler((object sender, EventArgs e) =>
+					exportButton.Click += (object sender, EventArgs e) =>
 					{
 						UiThread.RunOnIdle(() =>
 						{
