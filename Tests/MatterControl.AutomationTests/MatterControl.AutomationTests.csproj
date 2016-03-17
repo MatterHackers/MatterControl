@@ -32,10 +32,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MatterHackers.PolygonMesh, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Submodules\agg-sharp\PolygonMesh\bin\Debug\MatterHackers.PolygonMesh.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -106,6 +102,10 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
       <Project>{670bddff-927b-425d-9dd1-22acb14356eb}</Project>
       <Name>PlatformWin32</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
+      <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
+      <Name>PolygonMesh</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
       <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
