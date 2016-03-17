@@ -174,22 +174,6 @@ namespace MatterHackers.MatterControl
 
 					});//End Click Event handler
 					middleRowContainer.AddChild(exportButton);
-
-				}
-
-				//bool showExportX3GButton = ActivePrinterProfile.Instance.ActivePrinter.DriverType == "X3G";
-				bool showExportX3GButton = false;
-				if (showExportX3GButton)
-				{
-					string exportAsX3GText = "Export as X3G".Localize();
-					Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
-					exportAsX3G.HAnchor = HAnchor.ParentLeft;
-					exportAsX3G.Cursor = Cursors.Hand;
-					exportAsX3G.Click += new EventHandler((object sender, EventArgs e) =>
-						{
-							UiThread.RunOnIdle(ExportX3G_Click);
-						});
-					middleRowContainer.AddChild(exportAsX3G);
 				}
 			}
 
@@ -306,42 +290,6 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
-			}
-		}
-
-		private void ExportX3G_Click()
-		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export X3G|*.x3g", title: "Export X3G");
-			saveParams.Title = "MatterControl: Export File";
-			saveParams.ActionButtonLabel = "Export";
-
-			FileDialog.SaveFileDialog(saveParams, onExportX3gFileSelected);
-		}
-
-		private void onExportX3gFileSelected(SaveFileDialogParams saveParams)
-		{
-			if (!string.IsNullOrEmpty(saveParams.FileName))
-			{
-				x3gPathAndFilenameToSave = saveParams.FileName;
-				string extension = Path.GetExtension(x3gPathAndFilenameToSave);
-				if (extension == "")
-				{
-					File.Delete(gcodePathAndFilenameToSave);
-					x3gPathAndFilenameToSave += ".x3g";
-				}
-
-				string saveExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(saveExtension))
-				{
-					Close();
-					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-					printItemWrapper.SlicingDone += x3gItemSlice_Complete;
-				}
-				else if (partIsGCode)
-				{
-					Close();
-					generateX3GfromGcode(printItemWrapper.FileLocation, x3gPathAndFilenameToSave);
-				}
 			}
 		}
 
