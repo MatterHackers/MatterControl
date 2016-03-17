@@ -135,44 +135,57 @@ namespace MatterHackers.MatterControl
 					//Create export button for each Plugin found
 
 					string exportButtonText = plugin.getButtonText().Localize();
+
 					Button exportButton = textImageButtonFactory.Generate(exportButtonText);
 					exportButton.HAnchor = HAnchor.ParentLeft;
 					exportButton.Cursor = Cursors.Hand;
 					exportButton.Click += new EventHandler((object sender, EventArgs e) =>
 					{
-						SaveFileDialogParams saveParams = new SaveFileDialogParams(plugin.getExtensionFilter(), title: plugin.getButtonText());
-						saveParams.FileName = printItemWrapper.Name;
-						saveParams.Title = "MatterControl: Export File";
-						saveParams.ActionButtonLabel = "Export";
-						FileDialog.SaveFileDialog(saveParams, delegate (SaveFileDialogParams saveParam)
+						UiThread.RunOnIdle(() =>
 						{
-							string extension = Path.GetExtension(saveParam.FileName);
-							if (extension == "")
-							{
-								saveParam.FileName += plugin.getFileExtension();
-							}
+							// Close the export window
+							Close();
 
-							if (partIsGCode)
-							{
-								Close();
-								plugin.generate(printItemWrapper.FileLocation, saveParam.FileName);
-							}
-							else
-							{
-								Close();
-								SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-								printItemWrapper.SlicingDone += new EventHandler((object slicingCompleteSender, EventArgs slicingEventArgs) =>
+							// Open a SaveFileDialog. If Save is clicked, slice the part if needed and pass the plugin the 
+							// path to the gcode file and the target save path
+							FileDialog.SaveFileDialog(
+								new SaveFileDialogParams(plugin.getExtensionFilter())
 								{
-									PrintItemWrapper sliceItem = (PrintItemWrapper)slicingCompleteSender;
-									if (File.Exists(sliceItem.GetGCodePathAndFileName()))
+									Title = "MatterControl: Export File",
+									FileName = printItemWrapper.Name,
+									ActionButtonLabel = "Export"
+								},
+								(SaveFileDialogParams saveParam) =>
+								{
+									string extension = Path.GetExtension(saveParam.FileName);
+									if (extension == "")
 									{
-										plugin.generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+										saveParam.FileName += plugin.getFileExtension();
 									}
-								});//End SlicingDone Event handler
-							}
-						});//End SaveFileDialog delegate               
 
-					});//End Click Event handler
+									if (partIsGCode)
+									{
+										plugin.generate(printItemWrapper.FileLocation, saveParam.FileName);
+									}
+									else
+									{
+										SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+
+										printItemWrapper.SlicingDone += (printItem, eventArgs) =>
+										{
+											PrintItemWrapper sliceItem = (PrintItemWrapper)printItem;
+											if (File.Exists(sliceItem.GetGCodePathAndFileName()))
+											{
+												plugin.generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+											}
+										}; //End SlicingDone Event handler
+									}
+
+									//End SaveFileDialog callback
+								});
+						});
+					};//End Click Event handler
+
 					middleRowContainer.AddChild(exportButton);
 				}
 			}
