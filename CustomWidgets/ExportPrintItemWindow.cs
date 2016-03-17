@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl
 				{
 					//Create export button for each Plugin found
 
-					string exportButtonText = plugin.getButtonText().Localize();
+					string exportButtonText = plugin.GetButtonText().Localize();
 
 					Button exportButton = textImageButtonFactory.Generate(exportButtonText);
 					exportButton.HAnchor = HAnchor.ParentLeft;
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl
 							// Open a SaveFileDialog. If Save is clicked, slice the part if needed and pass the plugin the 
 							// path to the gcode file and the target save path
 							FileDialog.SaveFileDialog(
-								new SaveFileDialogParams(plugin.getExtensionFilter())
+								new SaveFileDialogParams(plugin.GetExtensionFilter())
 								{
 									Title = "MatterControl: Export File",
 									FileName = printItemWrapper.Name,
@@ -160,12 +160,12 @@ namespace MatterHackers.MatterControl
 									string extension = Path.GetExtension(saveParam.FileName);
 									if (extension == "")
 									{
-										saveParam.FileName += plugin.getFileExtension();
+										saveParam.FileName += plugin.GetFileExtension();
 									}
 
 									if (partIsGCode)
 									{
-										plugin.generate(printItemWrapper.FileLocation, saveParam.FileName);
+										plugin.Generate(printItemWrapper.FileLocation, saveParam.FileName);
 									}
 									else
 									{
@@ -176,15 +176,13 @@ namespace MatterHackers.MatterControl
 											PrintItemWrapper sliceItem = (PrintItemWrapper)printItem;
 											if (File.Exists(sliceItem.GetGCodePathAndFileName()))
 											{
-												plugin.generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+												plugin.Generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
 											}
-										}; //End SlicingDone Event handler
+										};
 									}
-
-									//End SaveFileDialog callback
 								});
 						});
-					};//End Click Event handler
+					}; // End exportButton Click handler
 
 					middleRowContainer.AddChild(exportButton);
 				}
