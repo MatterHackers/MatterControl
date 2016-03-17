@@ -49,3 +49,4 @@ manual_probe_paper_width = .1
 nozzle_diameter = 0.25
 extruder_offset = 0x0,0x0,0x0,0x0
 min_skirt_length = 20
+fill_angle = 60
