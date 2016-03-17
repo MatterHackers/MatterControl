@@ -128,68 +128,63 @@ namespace MatterHackers.MatterControl
 				});
 				middleRowContainer.AddChild(exportGCode);
 
-                PluginFinder<ExportGcodePlugin> exportPluginFinder = new PluginFinder<ExportGcodePlugin>();
-                
-                foreach (ExportGcodePlugin plugin in exportPluginFinder.Plugins)
-                {
-                    //Create export button for each Plugin found
+				PluginFinder<ExportGcodePlugin> exportPluginFinder = new PluginFinder<ExportGcodePlugin>();
 
-                    string exportButtonText = plugin.getButtonText().Localize();
-                    Button exportButton = textImageButtonFactory.Generate(exportButtonText);
-                    exportButton.HAnchor = HAnchor.ParentLeft;
-                    exportButton.Cursor = Cursors.Hand;
-                    exportButton.Click += new EventHandler((object sender, EventArgs e) =>
-                    {
-                        SaveFileDialogParams saveParams = new SaveFileDialogParams(plugin.getExtensionFilter(), title: plugin.getButtonText());
-						saveParams.FileName = printItemWrapper.Name;
-                        saveParams.Title = "MatterControl: Export File";
-                        saveParams.ActionButtonLabel = "Export";                        
-                        FileDialog.SaveFileDialog(saveParams, delegate(SaveFileDialogParams saveParam)
-                        {
-                            string extension = Path.GetExtension(saveParam.FileName);
-                            if (extension == "")
-                            {
-                                saveParam.FileName += plugin.getFileExtension();
-                            }
-
-                            if (partIsGCode)
-                            {
-                                Close();
-                                plugin.generate(printItemWrapper.FileLocation, saveParam.FileName);
-                            }
-                            else
-                            {
-                                Close();
-                                SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                                printItemWrapper.SlicingDone += new EventHandler((object slicingCompleteSender, EventArgs slicingEventArgs) =>
-                                {
-                                    PrintItemWrapper sliceItem = (PrintItemWrapper)slicingCompleteSender;
-                                    if (File.Exists(sliceItem.GetGCodePathAndFileName()))
-                                    {
-                                        plugin.generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
-                                    }
-                                });//End SlicingDone Event handler
-                            }
-                        });//End SaveFileDialog delegate               
-
-                    });//End Click Event handler
-                    middleRowContainer.AddChild(exportButton);
-
-                }
-
-                //bool showExportX3GButton = ActivePrinterProfile.Instance.ActivePrinter.DriverType == "X3G";
-                bool showExportX3GButton = false;
-				if (showExportX3GButton)
+				foreach (ExportGcodePlugin plugin in exportPluginFinder.Plugins)
 				{
-					string exportAsX3GText = "Export as X3G".Localize();
-					Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
-					exportAsX3G.HAnchor = HAnchor.ParentLeft;
-					exportAsX3G.Cursor = Cursors.Hand;
-					exportAsX3G.Click += new EventHandler((object sender, EventArgs e) =>
+					//Create export button for each Plugin found
+
+					string exportButtonText = plugin.GetButtonText().Localize();
+
+					Button exportButton = textImageButtonFactory.Generate(exportButtonText);
+					exportButton.HAnchor = HAnchor.ParentLeft;
+					exportButton.Cursor = Cursors.Hand;
+					exportButton.Click += (object sender, EventArgs e) =>
+					{
+						UiThread.RunOnIdle(() =>
 						{
-							UiThread.RunOnIdle(ExportX3G_Click);
+							// Close the export window
+							Close();
+
+							// Open a SaveFileDialog. If Save is clicked, slice the part if needed and pass the plugin the 
+							// path to the gcode file and the target save path
+							FileDialog.SaveFileDialog(
+								new SaveFileDialogParams(plugin.GetExtensionFilter())
+								{
+									Title = "MatterControl: Export File",
+									FileName = printItemWrapper.Name,
+									ActionButtonLabel = "Export"
+								},
+								(SaveFileDialogParams saveParam) =>
+								{
+									string extension = Path.GetExtension(saveParam.FileName);
+									if (extension == "")
+									{
+										saveParam.FileName += plugin.GetFileExtension();
+									}
+
+									if (partIsGCode)
+									{
+										plugin.Generate(printItemWrapper.FileLocation, saveParam.FileName);
+									}
+									else
+									{
+										SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+
+										printItemWrapper.SlicingDone += (printItem, eventArgs) =>
+										{
+											PrintItemWrapper sliceItem = (PrintItemWrapper)printItem;
+											if (File.Exists(sliceItem.GetGCodePathAndFileName()))
+											{
+												plugin.Generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+											}
+										};
+									}
+								});
 						});
-					middleRowContainer.AddChild(exportAsX3G);
+					}; // End exportButton Click handler
+
+					middleRowContainer.AddChild(exportButton);
 				}
 			}
 
@@ -272,7 +267,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
-                ExportGcodeCommandLineUtility(saveParams.FileName);         
+				ExportGcodeCommandLineUtility(saveParams.FileName);
 			}
 		}
 
@@ -306,42 +301,6 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
-			}
-		}
-
-		private void ExportX3G_Click()
-		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export X3G|*.x3g", title: "Export X3G");
-			saveParams.Title = "MatterControl: Export File";
-			saveParams.ActionButtonLabel = "Export";
-
-			FileDialog.SaveFileDialog(saveParams, onExportX3gFileSelected);
-		}
-
-		private void onExportX3gFileSelected(SaveFileDialogParams saveParams)
-		{
-			if (!string.IsNullOrEmpty(saveParams.FileName))
-			{
-				x3gPathAndFilenameToSave = saveParams.FileName;
-				string extension = Path.GetExtension(x3gPathAndFilenameToSave);
-				if (extension == "")
-				{
-					File.Delete(gcodePathAndFilenameToSave);
-					x3gPathAndFilenameToSave += ".x3g";
-				}
-
-				string saveExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(saveExtension))
-				{
-					Close();
-					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-					printItemWrapper.SlicingDone += x3gItemSlice_Complete;
-				}
-				else if (partIsGCode)
-				{
-					Close();
-					generateX3GfromGcode(printItemWrapper.FileLocation, x3gPathAndFilenameToSave);
-				}
 			}
 		}
 
@@ -429,7 +388,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			printItemWrapper.SlicingDone -= sliceItem_Done; 
+			printItemWrapper.SlicingDone -= sliceItem_Done;
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);

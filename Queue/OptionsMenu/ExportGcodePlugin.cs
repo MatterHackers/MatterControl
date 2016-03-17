@@ -7,28 +7,25 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Queue.OptionsMenu
 {
-    public class ExportGcodePlugin : MatterControlPlugin
-    {
+	public class ExportGcodePlugin : MatterControlPlugin
+	{
+		public virtual string GetButtonText()
+		{
+			return "";
+		}
 
-        public virtual string getButtonText()
-        {
-            return "";
-        }
+		public virtual string GetFileExtension()
+		{
+			return "";
+		}
 
-        public virtual string getFileExtension()
-        {
-            return "";
-        }
+		public virtual string GetExtensionFilter()
+		{
+			return "";
+		}
 
-        public virtual string getExtensionFilter()
-        {
-            return "";
-        }
-
-        public virtual void generate(string gcodeInputPath, string x3gOutputPath)
-        {
-
-        }
-
-    }
+		public virtual void Generate(string gcodeInputPath, string x3gOutputPath)
+		{
+		}
+	}
 }
