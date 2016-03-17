@@ -128,57 +128,57 @@ namespace MatterHackers.MatterControl
 				});
 				middleRowContainer.AddChild(exportGCode);
 
-                PluginFinder<ExportGcodePlugin> exportPluginFinder = new PluginFinder<ExportGcodePlugin>();
-                
-                foreach (ExportGcodePlugin plugin in exportPluginFinder.Plugins)
-                {
-                    //Create export button for each Plugin found
+				PluginFinder<ExportGcodePlugin> exportPluginFinder = new PluginFinder<ExportGcodePlugin>();
 
-                    string exportButtonText = plugin.getButtonText().Localize();
-                    Button exportButton = textImageButtonFactory.Generate(exportButtonText);
-                    exportButton.HAnchor = HAnchor.ParentLeft;
-                    exportButton.Cursor = Cursors.Hand;
-                    exportButton.Click += new EventHandler((object sender, EventArgs e) =>
-                    {
-                        SaveFileDialogParams saveParams = new SaveFileDialogParams(plugin.getExtensionFilter(), title: plugin.getButtonText());
+				foreach (ExportGcodePlugin plugin in exportPluginFinder.Plugins)
+				{
+					//Create export button for each Plugin found
+
+					string exportButtonText = plugin.getButtonText().Localize();
+					Button exportButton = textImageButtonFactory.Generate(exportButtonText);
+					exportButton.HAnchor = HAnchor.ParentLeft;
+					exportButton.Cursor = Cursors.Hand;
+					exportButton.Click += new EventHandler((object sender, EventArgs e) =>
+					{
+						SaveFileDialogParams saveParams = new SaveFileDialogParams(plugin.getExtensionFilter(), title: plugin.getButtonText());
 						saveParams.FileName = printItemWrapper.Name;
-                        saveParams.Title = "MatterControl: Export File";
-                        saveParams.ActionButtonLabel = "Export";                        
-                        FileDialog.SaveFileDialog(saveParams, delegate(SaveFileDialogParams saveParam)
-                        {
-                            string extension = Path.GetExtension(saveParam.FileName);
-                            if (extension == "")
-                            {
-                                saveParam.FileName += plugin.getFileExtension();
-                            }
+						saveParams.Title = "MatterControl: Export File";
+						saveParams.ActionButtonLabel = "Export";
+						FileDialog.SaveFileDialog(saveParams, delegate (SaveFileDialogParams saveParam)
+						{
+							string extension = Path.GetExtension(saveParam.FileName);
+							if (extension == "")
+							{
+								saveParam.FileName += plugin.getFileExtension();
+							}
 
-                            if (partIsGCode)
-                            {
-                                Close();
-                                plugin.generate(printItemWrapper.FileLocation, saveParam.FileName);
-                            }
-                            else
-                            {
-                                Close();
-                                SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                                printItemWrapper.SlicingDone += new EventHandler((object slicingCompleteSender, EventArgs slicingEventArgs) =>
-                                {
-                                    PrintItemWrapper sliceItem = (PrintItemWrapper)slicingCompleteSender;
-                                    if (File.Exists(sliceItem.GetGCodePathAndFileName()))
-                                    {
-                                        plugin.generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
-                                    }
-                                });//End SlicingDone Event handler
-                            }
-                        });//End SaveFileDialog delegate               
+							if (partIsGCode)
+							{
+								Close();
+								plugin.generate(printItemWrapper.FileLocation, saveParam.FileName);
+							}
+							else
+							{
+								Close();
+								SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+								printItemWrapper.SlicingDone += new EventHandler((object slicingCompleteSender, EventArgs slicingEventArgs) =>
+								{
+									PrintItemWrapper sliceItem = (PrintItemWrapper)slicingCompleteSender;
+									if (File.Exists(sliceItem.GetGCodePathAndFileName()))
+									{
+										plugin.generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+									}
+								});//End SlicingDone Event handler
+							}
+						});//End SaveFileDialog delegate               
 
-                    });//End Click Event handler
-                    middleRowContainer.AddChild(exportButton);
+					});//End Click Event handler
+					middleRowContainer.AddChild(exportButton);
 
-                }
+				}
 
-                //bool showExportX3GButton = ActivePrinterProfile.Instance.ActivePrinter.DriverType == "X3G";
-                bool showExportX3GButton = false;
+				//bool showExportX3GButton = ActivePrinterProfile.Instance.ActivePrinter.DriverType == "X3G";
+				bool showExportX3GButton = false;
 				if (showExportX3GButton)
 				{
 					string exportAsX3GText = "Export as X3G".Localize();
@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
-                ExportGcodeCommandLineUtility(saveParams.FileName);         
+				ExportGcodeCommandLineUtility(saveParams.FileName);
 			}
 		}
 
@@ -429,7 +429,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			printItemWrapper.SlicingDone -= sliceItem_Done; 
+			printItemWrapper.SlicingDone -= sliceItem_Done;
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
