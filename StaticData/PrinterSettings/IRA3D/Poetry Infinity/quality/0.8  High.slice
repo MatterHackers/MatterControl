@@ -2,7 +2,6 @@ layer_height = 0.03
 first_layer_height = 0.24
 bottom_clip_amount = 0
 perimeters = 2
-avoid_crossing_perimeters = 1
 external_perimeters_first = 0
 top_solid_layers = 1mm
 bottom_solid_layers = 1mm
