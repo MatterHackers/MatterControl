@@ -26,3 +26,4 @@ travel_speed = 150
 support_material_speed = 35
 create_raft = 0
 support_type = GRID
+support_material_spacing = 1
