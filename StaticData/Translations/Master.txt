@@ -4636,3 +4636,9 @@ Translated:File Settings
 English:Solid Infill works best when set to LINES.
 Translated:Solid Infill works best when set to LINES.
 
+English:'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+
+English:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+
