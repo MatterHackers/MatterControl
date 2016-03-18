@@ -25,4 +25,4 @@ infill_speed = 45
 perimeter_speed = 45
 create_raft = 0
 skirt_distance = 2
-support_material_spacing = 1
+support_material_spacing = 2.5

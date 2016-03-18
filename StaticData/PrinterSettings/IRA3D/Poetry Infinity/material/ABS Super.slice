@@ -22,4 +22,4 @@ slowdown_below_layer_time = 5
 min_print_speed = 10
 cool_extruder_lift = 0
 create_raft = 0
-support_material_spacing = 1
+support_material_spacing = 2.5
