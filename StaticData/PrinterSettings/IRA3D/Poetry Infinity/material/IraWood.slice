@@ -24,3 +24,4 @@ cool_extruder_lift = 0
 infill_speed = 35
 create_raft = 0
 skirt_distance = 2
+support_material_spacing = 1

@@ -28,3 +28,4 @@ create_raft = 0
 support_material_speed = 35
 travel_speed = 70
 skirt_distance = 2
+support_material_spacing = 1
