@@ -4642,3 +4642,24 @@ Translated:'First Layer Height' must be less than or equal to the 'Nozzle Diamet
 English:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
 Translated:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
 
+English:Pyramid
+Translated:Pyramid
+
+English:Half Sphere
+Translated:Half Sphere
+
+English:Cone
+Translated:Cone
+
+English:Wedge
+Translated:Wedge
+
+English:Roof
+Translated:Roof
+
+English:Round Roof
+Translated:Round Roof
+
+English:Honey Comb
+Translated:Honey Comb
+

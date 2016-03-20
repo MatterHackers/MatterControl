@@ -61,7 +61,6 @@ namespace MatterHackers.RayTracer
 		private RayTracer raytracer = new RayTracer(AntiAliasing.VeryHigh, true, true, true, true, true);
 
 		private List<IPrimitive> renderCollection = new List<IPrimitive>();
-		private bool SavedTimes = false;
 		private Scene scene;
 		private Point2D size;
 		public TrackballTumbleWidget trackballTumbleWidget;
