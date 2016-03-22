@@ -160,8 +160,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void SetPosition()
 		{
-			heightDisplay.SetPosition();
-
 			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 			Vector3 boundsCenter = selectedBounds.Center;
 			Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);

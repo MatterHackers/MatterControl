@@ -40,20 +40,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class HeightValueDisplay : GuiWidget
 	{
 		private static readonly int HorizontalLineLength = 30;
-		private TextWidget numberDisplay;
-		private Vector2 startLineGroundPos;
-		private Vector2 startLineSelectionPos;
 		private View3DWidget view3DWidget;
+		ValueDisplayInfo zValueDisplayInfo = new ValueDisplayInfo();
 
 		public HeightValueDisplay(View3DWidget view3DWidget)
 		{
 			BackgroundColor = new RGBA_Bytes(RGBA_Bytes.White, 150);
 			this.view3DWidget = view3DWidget;
 			view3DWidget.meshViewerWidget.AddChild(this);
-			numberDisplay = new TextWidget("00.00", pointSize: 8);
-			numberDisplay.Margin = new BorderDouble(3, 2);
-			numberDisplay.AutoExpandBoundsToText = true;
-			AddChild(numberDisplay);
 			VAnchor = VAnchor.FitToChildren;
 			HAnchor = HAnchor.FitToChildren;
 
@@ -62,50 +56,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private MeshViewerWidget MeshViewerToDrawWith { get { return view3DWidget.meshViewerWidget; } }
 
-		public void SetPosition()
-		{
-			if (MeshViewerToDrawWith.HaveSelection)
-			{
-				// draw the hight from the bottom to the bed
-				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
-
-				Vector2 screenPosition = new Vector2(-100, 0);
-				if (view3DWidget.DisplayAllValueData)
-				{
-					screenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z));
-					numberDisplay.Text = "{0:0.00}".FormatWith(selectedBounds.minXYZ.z);
-				}
-				else
-				{
-					Vector3[] bottomPoints = new Vector3[4];
-					bottomPoints[0] = new Vector3(selectedBounds.minXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z);
-					bottomPoints[1] = new Vector3(selectedBounds.minXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-					bottomPoints[2] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z);
-					bottomPoints[3] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-
-					for (int i = 0; i < 4; i++)
-					{
-						Vector2 testScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i]);
-						if (testScreenPosition.x > screenPosition.x)
-						{
-							startLineSelectionPos = testScreenPosition;
-							startLineGroundPos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z));
-							screenPosition = testScreenPosition + new Vector2(HorizontalLineLength, 0);
-						}
-					}
-					numberDisplay.Text = "{0:0.00mm}".FormatWith(selectedBounds.minXYZ.z);
-				}
-
-				OriginRelativeParent = screenPosition;
-			}
-		}
-
 		private void MeshViewerToDrawWith_Draw(GuiWidget drawingWidget, DrawEventArgs drawEvent)
 		{
 			if (Visible)
 			{
 				if (drawEvent != null)
 				{
+					Vector2 startLineGroundPos = Vector2.Zero;
+					Vector2 startLineSelectionPos = Vector2.Zero;
+					Vector2 midLinePos = Vector2.Zero;
+
 					// draw the line that is on the ground
 					double yGround = (int)(startLineGroundPos.y + .5) + .5;
 					drawEvent.graphics2D.Line(startLineGroundPos.x, yGround, startLineGroundPos.x + HorizontalLineLength - 5, yGround, RGBA_Bytes.Black);
@@ -118,6 +78,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Vector2 pointerTop = new Vector2(startLineSelectionPos.x + HorizontalLineLength / 2, ySelection);
 
 					InteractionVolume.DrawMeasureLine(drawEvent.graphics2D, pointerBottom, pointerTop, RGBA_Bytes.Black, InteractionVolume.LineArrows.End);
+
+					if (MeshViewerToDrawWith.HaveSelection)
+					{
+						// draw the hight from the bottom to the bed
+						AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+
+						Vector2 screenPosition = new Vector2(-100, 0);
+						Vector3[] bottomPoints = new Vector3[4];
+						bottomPoints[0] = new Vector3(selectedBounds.minXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z);
+						bottomPoints[1] = new Vector3(selectedBounds.minXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
+						bottomPoints[2] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z);
+						bottomPoints[3] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
+
+						for (int i = 0; i < 4; i++)
+						{
+							Vector2 testScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i]);
+							if (testScreenPosition.x > screenPosition.x)
+							{
+								startLineSelectionPos = testScreenPosition;
+								startLineGroundPos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z));
+								midLinePos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z/2));
+								screenPosition = testScreenPosition + new Vector2(HorizontalLineLength, 0);
+							}
+						}
+						zValueDisplayInfo.DisplaySizeInfo(drawEvent.graphics2D, startLineGroundPos, selectedBounds.minXYZ.z);
+
+
+						OriginRelativeParent = screenPosition;
+					}
 				}
 			}
 		}
