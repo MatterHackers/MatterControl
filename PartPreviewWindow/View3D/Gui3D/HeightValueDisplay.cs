@@ -66,19 +66,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Vector2 startLineSelectionPos = Vector2.Zero;
 					Vector2 midLinePos = Vector2.Zero;
 
-					// draw the line that is on the ground
-					double yGround = (int)(startLineGroundPos.y + .5) + .5;
-					drawEvent.graphics2D.Line(startLineGroundPos.x, yGround, startLineGroundPos.x + HorizontalLineLength - 5, yGround, RGBA_Bytes.Black);
-					// and the line that is at the base of the selection
-					double ySelection = (int)(startLineSelectionPos.y + .5) + .5;
-					drawEvent.graphics2D.Line(startLineSelectionPos.x, ySelection, startLineSelectionPos.x + HorizontalLineLength - 5, ySelection, RGBA_Bytes.Black);
-
-					// draw the verticle line that shows the measurment
-					Vector2 pointerBottom = new Vector2(startLineGroundPos.x + HorizontalLineLength / 2, yGround);
-					Vector2 pointerTop = new Vector2(startLineSelectionPos.x + HorizontalLineLength / 2, ySelection);
-
-					InteractionVolume.DrawMeasureLine(drawEvent.graphics2D, pointerBottom, pointerTop, RGBA_Bytes.Black, InteractionVolume.LineArrows.End);
-
 					if (MeshViewerToDrawWith.HaveSelection)
 					{
 						// draw the hight from the bottom to the bed
@@ -102,10 +89,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								screenPosition = testScreenPosition + new Vector2(HorizontalLineLength, 0);
 							}
 						}
-						zValueDisplayInfo.DisplaySizeInfo(drawEvent.graphics2D, startLineGroundPos, selectedBounds.minXYZ.z);
+						zValueDisplayInfo.DisplaySizeInfo(drawEvent.graphics2D, midLinePos, selectedBounds.minXYZ.z);
 
 
 						OriginRelativeParent = screenPosition;
+
+						// draw the line that is on the ground
+						double yGround = (int)(startLineGroundPos.y + .5) + .5;
+						drawEvent.graphics2D.Line(startLineGroundPos.x, yGround, startLineGroundPos.x + HorizontalLineLength - 5, yGround, RGBA_Bytes.Black);
+						// and the line that is at the base of the selection
+						double ySelection = (int)(startLineSelectionPos.y + .5) + .5;
+						drawEvent.graphics2D.Line(startLineSelectionPos.x, ySelection, startLineSelectionPos.x + HorizontalLineLength - 5, ySelection, RGBA_Bytes.Black);
+
+						// draw the vertical line that shows the measurement
+						Vector2 pointerBottom = new Vector2(startLineGroundPos.x + HorizontalLineLength / 2, yGround);
+						Vector2 pointerTop = new Vector2(startLineSelectionPos.x + HorizontalLineLength / 2, ySelection);
+
+						InteractionVolume.DrawMeasureLine(drawEvent.graphics2D, pointerBottom, pointerTop, RGBA_Bytes.Black, InteractionVolume.LineArrows.End);
 					}
 				}
 			}
