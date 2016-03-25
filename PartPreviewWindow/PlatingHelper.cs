@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl
 
 			foreach (Face face in mesh.Faces)
 			{
-				if (true)
+				if (false)
 				{
 					MeshFaceTraceable triangle = new MeshFaceTraceable(face);
 					allPolys.Add(triangle);
