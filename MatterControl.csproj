@@ -181,6 +181,7 @@
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
+    <Compile Include="PartPreviewWindow\View3D\DebugBvh.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControls.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteUndoCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\CopyUndoCommand.cs" />
@@ -382,6 +383,7 @@
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetupStatus.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mindscape.Raygun4Net, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Mindscape.Raygun4Net.5.0.0\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
       <Private>True</Private>
