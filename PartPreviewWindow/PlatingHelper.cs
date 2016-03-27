@@ -348,6 +348,7 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
+		/*
 		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio reportProgress)
 		{
 			if (meshGroups != null)
@@ -433,6 +434,7 @@ namespace MatterHackers.MatterControl
 
 			return allPolys;
 		}
+		*/
 
 		public static Matrix4X4 ApplyAtCenter(IHasAABB meshToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
 		{

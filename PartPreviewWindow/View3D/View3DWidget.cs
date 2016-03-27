@@ -854,7 +854,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										// No selection exists
 										Scene.SelectedItem = hitObject;
 									}
-									else if(ModifierKeys == Keys.Shift && !Scene.SelectedItem.Children.Contains(hitObject))
+									else if (ModifierKeys == Keys.Shift && !Scene.SelectedItem.Children.Contains(hitObject))
 									{
 										// We're adding a new item to the selection. To do so we wrap the selected item
 										// in a new group and all he new item with a new group
@@ -874,7 +874,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 										Scene.SelectedItem = newSelectionGroup;
 									}
-									else if(Scene.SelectedItem == hitObject || Scene.SelectedItem.Children.Contains(hitObject))
+									else if (Scene.SelectedItem == hitObject || Scene.SelectedItem.Children.Contains(hitObject))
 									{
 										// Selection should not be cleared and drag should occur
 									}
@@ -947,9 +947,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					child.Matrix *= selectionContext.Matrix;
 
-					if(child.ItemType == Object3DTypes.SelectionGroup && depth > 0)
+					if (child.ItemType == Object3DTypes.SelectionGroup && depth > 0)
 					{
-						ClearSelection(sceneGraph, child,typeToCollapse, depth -1);
+						ClearSelection(sceneGraph, child, typeToCollapse, depth - 1);
 					}
 					else
 					{
@@ -1184,11 +1184,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationY(radians);
-					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
-					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
-					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
-					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem.MeshGroup, Scene.SelectedItem.Matrix, rotation);
+
+					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
+					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1205,6 +1207,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationZ(radians);
 					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem.MeshGroup, Scene.SelectedItem.Matrix, rotation);
+
 					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
@@ -1430,7 +1433,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				double oldWidth = WhiteButtonFactory.FixedWidth;
 				WhiteButtonFactory.FixedWidth = WhiteButtonFactory.FixedWidth / 2;
-                Button undoButton = WhiteButtonFactory.Generate("Undo".Localize(), centerText: true);
+				Button undoButton = WhiteButtonFactory.Generate("Undo".Localize(), centerText: true);
 				undoButton.Name = "3D View Undo";
 				undoButton.Enabled = false;
 				undoButton.Click += (sender, e) =>
@@ -1655,7 +1658,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
 			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-			
+
 			double closestDistance = double.PositiveInfinity;
 
 			IObject3D hitObject = null;
