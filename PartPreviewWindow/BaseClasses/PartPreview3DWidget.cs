@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected bool autoRotating = false;
 		protected bool allowAutoRotate = false;
 
-		
 		public MeshViewerWidget meshViewerWidget;
 
 		public SceneGraph Scene => meshViewerWidget.ActiveScene;
@@ -108,6 +107,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return hitObject;
+		}
+
+		public GuiWidget GenerateHorizontalRule()
+		{
+			return new GuiWidget()
+			{
+				Height = 1,
+				Margin = new BorderDouble(0, 1, 0, 3),
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = new RGBA_Bytes(255, 255, 255, 200)
+			};
 		}
 
 		private void SetFlagToRecreateBedAndPartPosition(object sender, EventArgs e)
@@ -166,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		protected static SolidSlider InsertUiForSlider(FlowLayoutWidget wordOptionContainer, string header, double min = 0, double max = .5)
+		protected static SolidSlider InsertUiForSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
 			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
@@ -174,17 +184,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scrollBarWidth = 20;
 			}
 
-			TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			spacingText.Margin = new BorderDouble(10, 3, 3, 5);
-			spacingText.HAnchor = HAnchor.ParentLeft;
+			TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(10, 3, 3, 5),
+				HAnchor = HAnchor.ParentLeft
+			};
 			wordOptionContainer.AddChild(spacingText);
-			SolidSlider namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1);
-			namedSlider.TotalWidthInPixels = DefaultScrollBarWidth;
-			namedSlider.Minimum = min;
-			namedSlider.Maximum = max;
-			namedSlider.Margin = new BorderDouble(3, 5, 3, 3);
-			namedSlider.HAnchor = HAnchor.ParentCenter;
+
+			SolidSlider namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1)
+			{
+				TotalWidthInPixels = DefaultScrollBarWidth,
+				Minimum = min,
+				Maximum = max,
+				Margin = new BorderDouble(3, 5, 3, 3),
+				HAnchor = HAnchor.ParentCenter,
+			};
 			namedSlider.View.BackgroundColor = new RGBA_Bytes();
+
 			wordOptionContainer.AddChild(namedSlider);
 
 			return namedSlider;

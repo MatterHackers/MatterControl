@@ -59,35 +59,24 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
-	public class View3DBrailleBuilder : PartPreview3DWidget
+	public class View3DCreatorWidget : PartPreview3DWidget
 	{
-		private MHTextEditWidget textToAddWidget;
-		private SolidSlider sizeScrollBar;
-		private SolidSlider heightScrollBar;
-		private CheckBox includeText;
-		private CheckBox useGrade2;
-
-		private ProgressControl processingProgressControl;
+		protected ProgressControl processingProgressControl;
 		private FlowLayoutWidget editPlateButtonsContainer;
 
-		private Button saveButton;
-		private Button saveAndExitButton;
+		protected Button saveButton;
+		protected Button saveAndExitButton;
 		private Button closeButton;
-		private String wordText;
 
-		BrailleGenerator brailleGenerator;
+		protected string printItemName;
 
-		internal struct MeshSelectInfo
+		private string prependToFileName;
+
+		private bool partSelectButtonWasClicked = false;
+
+		public View3DCreatorWidget(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, string prependToFileName)
 		{
-			internal bool downOnPart;
-			internal PlaneShape hitPlane;
-			internal Vector3 planeDownHitPos;
-			internal Vector3 lastMoveDelta;
-		}
-
-		public View3DBrailleBuilder(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
-		{
-			brailleGenerator = new BrailleGenerator();
+			this.prependToFileName = prependToFileName;
 
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
@@ -126,22 +115,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
 
 				editPlateButtonsContainer = new FlowLayoutWidget();
+				editPlateButtonsContainer.DebugShowBounds = true;
 
-				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize());
-				textToAddWidget.VAnchor = VAnchor.ParentCenter;
-				textToAddWidget.Margin = new BorderDouble(5);
-				editPlateButtonsContainer.AddChild(textToAddWidget);
-				textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
-				{
-					InsertTextNow(textToAddWidget.Text);
-				};
-
-				Button insertTextButton = textImageButtonFactory.Generate("Insert".Localize());
-				editPlateButtonsContainer.AddChild(insertTextButton);
-				insertTextButton.Click += (sender, e) =>
-				{
-					InsertTextNow(textToAddWidget.Text);
-				};
+				AddToBottomToolbar(editPlateButtonsContainer);
 
 				editToolBar.AddChild(editPlateButtonsContainer);
 				buttonBottomPanel.AddChild(editToolBar);
@@ -168,6 +144,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			buttonBottomPanel.AddChild(leftRightSpacer);
 
 			closeButton = textImageButtonFactory.Generate("Close".Localize());
+			closeButton.Click += (s, e) => UiThread.RunOnIdle(Close);
 			buttonBottomPanel.AddChild(closeButton);
 
 			mainContainerTopToBottom.AddChild(buttonBottomPanel);
@@ -182,14 +159,207 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			// set the view to be a good angle and distance
 			meshViewerWidget.ResetView();
 
-			AddHandlers();
+			saveButton.Click += (s, e) => MergeAndSavePartsToStl();
+			
+			saveAndExitButton.Click += (s, e) => MergeAndSavePartsToStl();
+			
 			UnlockEditControls();
+
 			// but make sure we can't use the right panel yet
 			buttonRightPanelDisabledCover.Visible = true;
 
 			//meshViewerWidget.RenderType = RenderTypes.Outlines;
 			viewControls3D.PartSelectVisible = false;
 			meshViewerWidget.ResetView();
+		}
+
+		protected void LockEditControls()
+		{
+			editPlateButtonsContainer.Visible = false;
+			buttonRightPanelDisabledCover.Visible = true;
+
+			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+			{
+				viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+			}
+		}
+
+		protected virtual void UnlockEditControls()
+		{
+			buttonRightPanelDisabledCover.Visible = false;
+			processingProgressControl.Visible = false;
+
+			editPlateButtonsContainer.Visible = true;
+		}
+
+		protected virtual void AddToBottomToolbar(GuiWidget parentContainer)
+		{
+		}
+
+		protected virtual void AddToWordEditMenu(GuiWidget wordOptionContainer)
+		{
+		}
+
+		protected virtual FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
+		{
+			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			buttonRightPanel.Width = 200;
+			{
+				BorderDouble buttonMargin = new BorderDouble(top: 3);
+
+				// put in the word editing menu
+				{
+					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandWordOptions.Margin = new BorderDouble(bottom: 2);
+					buttonRightPanel.AddChild(expandWordOptions);
+
+					FlowLayoutWidget wordOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						HAnchor = HAnchor.ParentLeftRight,
+						Visible = false
+					};
+
+					buttonRightPanel.AddChild(wordOptionContainer);
+
+					// 
+					AddToWordEditMenu(wordOptionContainer);
+
+					expandWordOptions.CheckedStateChanged += (sender, e) =>
+					{
+						wordOptionContainer.Visible = expandWordOptions.Checked;
+					};
+
+					expandWordOptions.Checked = true;
+				}
+
+				GuiWidget verticalSpacer = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
+				buttonRightPanel.AddChild(verticalSpacer);
+
+				saveButton = WhiteButtonFactory.Generate("Save".Localize(), centerText: true);
+				saveButton.Visible = false;
+				saveButton.Cursor = Cursors.Hand;
+
+				saveAndExitButton = WhiteButtonFactory.Generate("Save & Exit".Localize(), centerText: true);
+				saveAndExitButton.Visible = false;
+				saveAndExitButton.Cursor = Cursors.Hand;
+
+				//buttonRightPanel.AddChild(saveButton);
+				buttonRightPanel.AddChild(saveAndExitButton);
+			}
+
+			buttonRightPanel.Padding = new BorderDouble(6, 6);
+			buttonRightPanel.Margin = new BorderDouble(0, 1);
+			buttonRightPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			buttonRightPanel.VAnchor = VAnchor.ParentBottomTop;
+
+			return buttonRightPanel;
+		}
+
+		private async void MergeAndSavePartsToStl()
+		{
+			if (Scene.HasItems)
+			{
+				partSelectButtonWasClicked = viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect;
+
+				processingProgressControl.ProcessType = "Saving Parts:".Localize();
+				processingProgressControl.Visible = true;
+				processingProgressControl.PercentComplete = 0;
+				LockEditControls();
+
+				System.Diagnostics.Debugger.Launch();
+
+				// TODO: jlewin - reuse save mechanism in View3DWidget once written
+				/*
+				// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
+				PushMeshGroupDataToAsynchLists(true);
+				*/
+
+				string fileName = prependToFileName + Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
+				string filePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+				processingProgressControl.RatioComplete = 0;
+				await Task.Run(() => MergeAndSavePartsDoWork(filePath));
+
+				PrintItem printItem = new PrintItem();
+
+				printItem.Name = printItemName;
+				printItem.FileLocation = Path.GetFullPath(filePath);
+
+				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+
+				// and save to the queue
+				QueueData.Instance.AddItem(printItemWrapper);
+
+				//Exit after save
+				UiThread.RunOnIdle(CloseOnIdle);
+			}
+		}
+
+		private void MergeAndSavePartsDoWork(string filePath)
+		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			try
+			{
+				System.Diagnostics.Debugger.Launch();
+				// TODO: jlewin - reuse save mechanism in View3DWidget once written
+				/*
+				// push all the transforms into the meshes
+				for (int i = 0; i < asyncMeshGroups.Count; i++)
+				{
+					asyncMeshGroups[i].Transform(MeshGroupTransforms[i]);
+
+					processingProgressControl.RatioComplete = (double)i / asyncMeshGroups.Count * .1;
+				}
+
+				MeshFileIo.Save(asyncMeshGroups, filePath);
+				*/
+
+			}
+			catch (System.UnauthorizedAccessException)
+			{
+				//Do something special when unauthorized?
+				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize());
+			}
+			catch
+			{
+				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize());
+			}
+		}
+	}
+
+	public class View3DBrailleBuilder : View3DCreatorWidget
+	{
+		// Unique to View3DBrailleBuilder {{
+		private MHTextEditWidget textToAddWidget;
+		private SolidSlider sizeScrollBar;
+		private SolidSlider heightScrollBar;
+		private CheckBox includeText;
+		private CheckBox useGrade2;
+
+		private bool firstDraw = true;
+
+		BrailleGenerator brailleGenerator;
+		private String wordText;
+		// Unique to View3DBrailleBuilder }}
+
+		public View3DBrailleBuilder(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
+			: base(viewerVolume, bedCenter, bedShape, "BrailleBuilder_")
+		{
+			brailleGenerator = new BrailleGenerator();
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (firstDraw)
+			{
+#if !__ANDROID__
+				textToAddWidget.Focus();
+#endif
+				//textToAddWidget.Text = "Test Text";
+				firstDraw = false;
+			}
+
+			base.OnDraw(graphics2D);
 		}
 
 		private async void InsertTextNow(string brailleText)
@@ -202,7 +372,16 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					brailleText = BrailleGrade2.ConvertString(brailleText);
 				}
 
-				ResetWordLayoutSettings();
+				// Update the name to use when generating the print item wrapper
+				printItemName = wordText;
+
+				// ResetWordLayoutSettings
+				sizeScrollBar.Value = 1;
+				heightScrollBar.Value = 1;
+
+				brailleGenerator.lastHeightValue = 1;
+				brailleGenerator.lastSizeValue = 1;
+				
 				processingProgressControl.ProcessType = "Inserting Text".Localize();
 				processingProgressControl.Visible = true;
 				processingProgressControl.PercentComplete = 0;
@@ -240,32 +419,111 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 		}
 
-		private void ResetWordLayoutSettings()
+		protected override void AddToBottomToolbar(GuiWidget parentContainer)
 		{
-			sizeScrollBar.Value = 1;
-			heightScrollBar.Value = 1;
+			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
+			{
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(5)
+			};
 
-			// TODO: jlewin - Set some new property on the builder?
-			/*
-			lastHeightValue = 1;
-			lastSizeValue = 1;
-			*/
+			parentContainer.AddChild(textToAddWidget);
+
+			textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
+			{
+				InsertTextNow(textToAddWidget.Text);
+			};
+
+			Button insertTextButton = textImageButtonFactory.Generate("Insert".Localize());
+			parentContainer.AddChild(insertTextButton);
+			insertTextButton.Click += (sender, e) =>
+			{
+				InsertTextNow(textToAddWidget.Text);
+			};
 		}
 
-		private bool firstDraw = true;
-
-		public override void OnDraw(Graphics2D graphics2D)
+		protected override void AddToWordEditMenu(GuiWidget wordOptionContainer)
 		{
-			if (firstDraw)
+			sizeScrollBar = InsertUiForSlider(wordOptionContainer, "Size:".Localize(), .3, 2);
 			{
-#if !__ANDROID__
-				textToAddWidget.Focus();
-#endif
-				//textToAddWidget.Text = "Test Text";
-				firstDraw = false;
+				sizeScrollBar.ValueChanged += (sender, e) =>
+				{
+					brailleGenerator.SetWordSize(Scene, sizeScrollBar.Value);
+
+					//SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
+					RebuildBase();
+				};
 			}
 
-			base.OnDraw(graphics2D);
+			heightScrollBar = InsertUiForSlider(wordOptionContainer, "Height:".Localize(), .05, 1);
+			{
+				heightScrollBar.ValueChanged += (sender, e) =>
+				{
+					brailleGenerator.SetWordHeight(Scene, heightScrollBar.Value);
+					RebuildBase();
+				};
+			}
+
+			// put in the user alpha check box
+			{
+				includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
+				includeText.ToolTipText = "Show normal text above the braille".Localize();
+				includeText.Checked = false;
+				includeText.Margin = new BorderDouble(10, 5);
+				includeText.HAnchor = HAnchor.ParentLeft;
+				wordOptionContainer.AddChild(includeText);
+				includeText.CheckedStateChanged += (sender, e) =>
+				{
+					InsertTextNow(this.wordText);
+				};
+			}
+
+			// put in the user alpha check box
+			{
+				useGrade2 = new CheckBox(new CheckBoxViewText("Use Grade 2".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
+				useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions)".Localize();
+				useGrade2.Checked = false;
+				useGrade2.Margin = new BorderDouble(10, 5);
+				useGrade2.HAnchor = HAnchor.ParentLeft;
+				wordOptionContainer.AddChild(useGrade2);
+				useGrade2.CheckedStateChanged += (sender, e) =>
+				{
+					InsertTextNow(this.wordText);
+				};
+			}
+
+			// put in a link to the wikipedia article
+			{
+				LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+				linkButtonFactory.fontSize = 10;
+				linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
+
+				Button moreAboutBrailleLink = linkButtonFactory.Generate("About Braille".Localize());
+				moreAboutBrailleLink.Margin = new BorderDouble(10, 5);
+				moreAboutBrailleLink.HAnchor = HAnchor.ParentLeft;
+				moreAboutBrailleLink.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						MatterControlApplication.Instance.LaunchBrowser("https://en.wikipedia.org/wiki/Braille");
+					});
+				};
+
+				wordOptionContainer.AddChild(moreAboutBrailleLink);
+			}
+		}
+
+		private void RebuildBase()
+		{
+			if (Scene.HasItems)
+			{
+				Scene.Modify(scene =>
+				{
+					// Remove the old base and create and add a new one
+					scene.Remove(scene.Last());
+					scene.Add(brailleGenerator.CreateBaseplate(Scene));
+				});
+			}
 		}
 
 		public class BrailleGenerator
@@ -308,12 +566,16 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					object3D.ExtraData.Spacing += new Vector2(0, boldStyled.CapHeightInPixels * 1.5);
 				}
 
+				tempScene.Children.Add(CreateBaseplate(tempScene));
+
 				SetWordPositions(tempScene);
 				SetWordSize(tempScene, wordSize);
 				SetWordHeight(tempScene, wordHeight);
 
 				var basePlateObject = CreateBaseplate(tempScene);
 				tempScene.Children.Add(basePlateObject);
+
+				CenterTextOnScreen(tempScene);
 
 				return tempScene;
 			}
@@ -410,7 +672,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					lastHeightValue = newHeight;
 				}
 			}
-			
+
 			// jlewin - source from sizeScrollbar.Value
 			public void SetWordSize(IObject3D scene, double newSize)
 			{
@@ -438,9 +700,15 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
-			/*
 			private void CenterTextOnScreen(Object3D object3D)
 			{
+				// Center on bed
+				Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
+				Vector3 centerOffset = object3D.GetAxisAlignedBoundingBox().Center - bedCenter;
+
+				object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
+
+				/*
 				// center in y
 				if (object3D.Children.Count > 0)
 				{
@@ -454,8 +722,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					{
 						child.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
 					}
-				}
-			} */
+				} */
+			}
 
 			private bool CharacterHasMesh(TypeFacePrinter letterPrinter, string letter)
 			{
@@ -476,7 +744,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					baseRect *= roundingScale;
 
 					RoundedRect baseRoundedRect = new RoundedRect(baseRect, 1 * roundingScale);
-
 					Mesh baseMeshResult = VertexSourceToMesh.Extrude(baseRoundedRect, unscaledBaseHeight / 2 * roundingScale * lastHeightValue);
 					baseMeshResult.Transform(Matrix4X4.CreateScale(1 / roundingScale));
 
@@ -486,7 +753,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						ItemType = Object3DTypes.Model
 					};
 
-					basePlateObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, unscaledLetterHeight / 2));
+					basePlateObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, 0));
 					basePlateObject.CreateTraceables();
 
 					return basePlateObject;
@@ -498,313 +765,5 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		}
 
-		private void arrangePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			UnlockEditControls();
-			saveButton.Visible = true;
-			saveAndExitButton.Visible = true;
-			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-		}
-
-		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
-		{
-			UnlockEditControls();
-		}
-
-		private void LockEditControls()
-		{
-			editPlateButtonsContainer.Visible = false;
-			buttonRightPanelDisabledCover.Visible = true;
-
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
-			{
-				viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-			}
-		}
-
-		private void UnlockEditControls()
-		{
-			buttonRightPanelDisabledCover.Visible = false;
-			processingProgressControl.Visible = false;
-
-			editPlateButtonsContainer.Visible = true;
-		}
-
-		private FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
-		{
-			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			buttonRightPanel.Width = 200;
-			{
-				BorderDouble buttonMargin = new BorderDouble(top: 3);
-
-				// put in the word editing menu
-				{
-					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-					expandWordOptions.Margin = new BorderDouble(bottom: 2);
-					buttonRightPanel.AddChild(expandWordOptions);
-
-					FlowLayoutWidget wordOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-					{
-						HAnchor = HAnchor.ParentLeftRight,
-						Visible = false
-					};
-					
-					buttonRightPanel.AddChild(wordOptionContainer);
-
-					sizeScrollBar = InsertUiForSlider(wordOptionContainer, "Size:".Localize(), .3, 2);
-					{
-						sizeScrollBar.ValueChanged += (sender, e) =>
-						{
-							brailleGenerator.SetWordSize(Scene, sizeScrollBar.Value);
-
-							//SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-							RebuildBase();
-						};
-					}
-
-					heightScrollBar = InsertUiForSlider(wordOptionContainer, "Height:".Localize(), .05, 1);
-					{
-						heightScrollBar.ValueChanged += (sender, e) =>
-						{
-							brailleGenerator.SetWordHeight(Scene, heightScrollBar.Value);
-							RebuildBase();
-						};
-					}
-
-					// put in the user alpha check box
-					{
-						includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-						includeText.ToolTipText = "Show normal text above the braille".Localize();
-						includeText.Checked = false;
-						includeText.Margin = new BorderDouble(10, 5);
-						includeText.HAnchor = HAnchor.ParentLeft;
-						wordOptionContainer.AddChild(includeText);
-						includeText.CheckedStateChanged += (sender, e) =>
-						{
-							InsertTextNow(this.wordText);
-						};
-					}
-
-					// put in the user alpha check box
-					{
-						useGrade2 = new CheckBox(new CheckBoxViewText("Use Grade 2".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-						useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions)".Localize();
-						useGrade2.Checked = false;
-						useGrade2.Margin = new BorderDouble(10, 5);
-						useGrade2.HAnchor = HAnchor.ParentLeft;
-						wordOptionContainer.AddChild(useGrade2);
-						useGrade2.CheckedStateChanged += (sender, e) =>
-						{
-							InsertTextNow(this.wordText);
-						};
-					}
-
-					// put in a link to the wikipedia article
-					{
-						LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-						linkButtonFactory.fontSize = 10;
-						linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
-
-						Button moreAboutBrailleLink = linkButtonFactory.Generate("About Braille".Localize());
-						moreAboutBrailleLink.Margin = new BorderDouble(10, 5);
-						moreAboutBrailleLink.HAnchor = HAnchor.ParentLeft;
-						moreAboutBrailleLink.Click += (sender, e) =>
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								MatterControlApplication.Instance.LaunchBrowser("https://en.wikipedia.org/wiki/Braille");
-							});
-						};
-
-						wordOptionContainer.AddChild(moreAboutBrailleLink);
-					}
-
-					expandWordOptions.CheckedStateChanged += (sender, e) =>
-					{
-						wordOptionContainer.Visible = expandWordOptions.Checked;
-					};
-
-					expandWordOptions.Checked = true;
-				}
-
-				GuiWidget verticalSpacer = new GuiWidget();
-				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
-				buttonRightPanel.AddChild(verticalSpacer);
-
-				saveButton = WhiteButtonFactory.Generate("Save".Localize(), centerText: true);
-				saveButton.Visible = false;
-				saveButton.Cursor = Cursors.Hand;
-
-				saveAndExitButton = WhiteButtonFactory.Generate("Save & Exit".Localize(), centerText: true);
-				saveAndExitButton.Visible = false;
-				saveAndExitButton.Cursor = Cursors.Hand;
-
-				//buttonRightPanel.AddChild(saveButton);
-				buttonRightPanel.AddChild(saveAndExitButton);
-			}
-
-			buttonRightPanel.Padding = new BorderDouble(6, 6);
-			buttonRightPanel.Margin = new BorderDouble(0, 1);
-			buttonRightPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			buttonRightPanel.VAnchor = VAnchor.ParentBottomTop;
-
-			return buttonRightPanel;
-		}
-
-		private void RebuildBase()
-		{
-			if (Scene.HasItems)
-			{
-				Scene.Modify(scene =>
-				{
-					// Remove the old base and create and add a new one
-					scene.Remove(scene.Last());
-					scene.Add(brailleGenerator.CreateBaseplate(Scene));
-				});
-			}
-		}
-
-		private void AddLetterControls(FlowLayoutWidget buttonPanel)
-		{
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
-
-			FlowLayoutWidget degreesContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			degreesContainer.HAnchor = HAnchor.ParentLeftRight;
-			degreesContainer.Padding = new BorderDouble(5);
-
-			GuiWidget horizontalSpacer = new GuiWidget();
-			horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-			TextWidget degreesLabel = new TextWidget("Degrees:".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			degreesContainer.AddChild(degreesLabel);
-			degreesContainer.AddChild(horizontalSpacer);
-
-			MHNumberEdit degreesControl = new MHNumberEdit(45, pixelWidth: 40, allowNegatives: true, increment: 5, minValue: -360, maxValue: 360);
-			degreesControl.VAnchor = Agg.UI.VAnchor.ParentTop;
-			degreesContainer.AddChild(degreesControl);
-
-			buttonPanel.AddChild(degreesContainer);
-
-			FlowLayoutWidget rotateButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			rotateButtonContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			buttonPanel.AddChild(rotateButtonContainer);
-
-			buttonPanel.AddChild(generateHorizontalRule());
-			textImageButtonFactory.FixedWidth = 0;
-		}
-
-		private GuiWidget generateHorizontalRule()
-		{
-			GuiWidget horizontalRule = new GuiWidget();
-			horizontalRule.Height = 1;
-			horizontalRule.Margin = new BorderDouble(0, 1, 0, 3);
-			horizontalRule.HAnchor = HAnchor.ParentLeftRight;
-			horizontalRule.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
-			return horizontalRule;
-		}
-
-		private void AddHandlers()
-		{
-			closeButton.Click += new EventHandler(onCloseButton_Click);
-
-			saveButton.Click += (sender, e) =>
-			{
-				MergeAndSavePartsToStl();
-			};
-
-			saveAndExitButton.Click += (sender, e) =>
-			{
-				MergeAndSavePartsToStl();
-			};
-		}
-
-		private bool partSelectButtonWasClicked = false;
-
-		private async void MergeAndSavePartsToStl()
-		{
-			if (Scene.HasItems)
-			{
-				partSelectButtonWasClicked = viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect;
-
-				processingProgressControl.ProcessType = "Saving Parts:".Localize();
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				System.Diagnostics.Debugger.Launch();
-
-				// TODO: jlewin - reuse save mechanism in View3DWidget once written
-				/*
-				// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
-				PushMeshGroupDataToAsynchLists(true);
-				*/
-
-				string fileName = "BrailleBuilder_{0}".FormatWith(Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
-				string filePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
-
-				processingProgressControl.RatioComplete = 0;
-				await Task.Run(() => MergeAndSavePartsDoWork(filePath));
-
-				PrintItem printItem = new PrintItem();
-
-				printItem.Name = string.Format("{0}", wordText);
-				printItem.FileLocation = Path.GetFullPath(filePath);
-
-				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-
-				// and save to the queue
-				QueueData.Instance.AddItem(printItemWrapper);
-
-				//Exit after save
-				UiThread.RunOnIdle(CloseOnIdle);
-			}
-		}
-
-		private void MergeAndSavePartsDoWork(string filePath)
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			try
-			{
-				System.Diagnostics.Debugger.Launch();
-				// TODO: jlewin - reuse save mechanism in View3DWidget once written
-				/*
-				// push all the transforms into the meshes
-				for (int i = 0; i < asyncMeshGroups.Count; i++)
-				{
-					asyncMeshGroups[i].Transform(MeshGroupTransforms[i]);
-
-					processingProgressControl.RatioComplete = (double)i / asyncMeshGroups.Count * .1;
-				}
-
-				MeshFileIo.Save(asyncMeshGroups, filePath);
-				*/
-
-			}
-			catch (System.UnauthorizedAccessException)
-			{
-				//Do something special when unauthorized?
-				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize());
-			}
-			catch
-			{
-				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize());
-			}
-		}
-
-		private bool scaleQueueMenu_Click()
-		{
-			return true;
-		}
-
-		private bool rotateQueueMenu_Click()
-		{
-			return true;
-		}
-
-		private void onCloseButton_Click(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(Close);
-		}
 	}
 }
