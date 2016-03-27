@@ -104,7 +104,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool hasDrawn = false;
 		private FlowLayoutWidget materialOptionContainer;
 
-		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
 		private List<string> pendingPartsToLoad = new List<string>();
@@ -693,8 +692,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public enum WindowMode { Embeded, StandAlone };
 
 		public bool DisplayAllValueData { get; set; }
-
-		public MeshViewerWidget.SceneGraph Scene => meshViewerWidget.ActiveScene;
 
 		public WindowMode windowType { get; set; }
 		private bool DoAddFileAfterCreatingEditData { get; set; }
@@ -1652,31 +1649,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				viewOptionContainer.Visible = expandViewOptions.Checked;
 			}
-		}
-
-		private IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo info)
-		{
-			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-
-			double closestDistance = double.PositiveInfinity;
-
-			IObject3D hitObject = null;
-
-			foreach (Object3D object3D in Scene.Children)
-			{
-				double distance = object3D.DistanceToHit(ray, ref info);
-				if (distance < closestDistance)
-				{
-					CurrentSelectInfo.PlaneDownHitPos = info.hitPosition;
-					CurrentSelectInfo.LastMoveDelta = new Vector3();
-					closestDistance = distance;
-
-					hitObject = object3D;
-				}
-			}
-
-			return hitObject;
 		}
 
 		public GuiWidget GenerateHorizontalRule()

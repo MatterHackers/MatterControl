@@ -33,6 +33,8 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
+using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using System;
 using System.IO;
@@ -53,7 +55,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected bool autoRotating = false;
 		protected bool allowAutoRotate = false;
+
+		
 		public MeshViewerWidget meshViewerWidget;
+
+		public SceneGraph Scene => meshViewerWidget.ActiveScene;
 
 		private event EventHandler unregisterEvents;
 
@@ -75,6 +81,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #endif
 
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
+		}
+
+		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
+
+		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo info)
+		{
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
+
+			double closestDistance = double.PositiveInfinity;
+
+			IObject3D hitObject = null;
+
+			foreach (Object3D object3D in Scene.Children)
+			{
+				double distance = object3D.DistanceToHit(ray, ref info);
+				if (distance < closestDistance)
+				{
+					CurrentSelectInfo.PlaneDownHitPos = info.hitPosition;
+					CurrentSelectInfo.LastMoveDelta = new Vector3();
+					closestDistance = distance;
+
+					hitObject = object3D;
+				}
+			}
+
+			return hitObject;
 		}
 
 		private void SetFlagToRecreateBedAndPartPosition(object sender, EventArgs e)
