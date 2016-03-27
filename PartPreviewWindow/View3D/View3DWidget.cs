@@ -1681,12 +1681,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget GenerateHorizontalRule()
 		{
-			GuiWidget horizontalRule = new GuiWidget();
-			horizontalRule.Height = 1;
-			horizontalRule.Margin = new BorderDouble(0, 1, 0, 3);
-			horizontalRule.HAnchor = HAnchor.ParentLeftRight;
-			horizontalRule.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
-			return horizontalRule;
+			return new GuiWidget()
+			{
+				Height = 1,
+				Margin = new BorderDouble(0, 1, 0, 3),
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = new RGBA_Bytes(255, 255, 255, 200)
+			};
 		}
 
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
