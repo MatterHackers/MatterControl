@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 
-		public SceneGraph Scene => meshViewerWidget.ActiveScene;
+		public SceneGraph Scene => meshViewerWidget.Scene;
 
 		private event EventHandler unregisterEvents;
 

@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				shouldDrawScaleControls = false;
 			}
-			if (MeshViewerToDrawWith.ActiveScene.HasSelection
+			if (MeshViewerToDrawWith.Scene.HasSelection
 				&& shouldDrawScaleControls)
 			{
 				if (MouseOver)
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 			zHitHeight = info.hitPosition.z;
-			transformOnMouseDown = MeshViewerToDrawWith.ActiveScene.SelectedItem.Matrix;
+			transformOnMouseDown = MeshViewerToDrawWith.Scene.SelectedItem.Matrix;
 
 			base.OnMouseDown(mouseEvent3D);
 		}
@@ -119,18 +119,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
-			if (info != null && MeshViewerToDrawWith.ActiveScene.HasSelection)
+			if (info != null && MeshViewerToDrawWith.Scene.HasSelection)
 			{
 				Vector3 delta = new Vector3(0, 0, info.hitPosition.z - zHitHeight);
 
 				// move it back to where it started
-				MeshViewerToDrawWith.ActiveScene.SelectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
+				MeshViewerToDrawWith.Scene.SelectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
 
 				if (MeshViewerToDrawWith.SnapGridDistance > 0)
 				{
 					// snap this position to the grid
 					double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
-					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.ActiveScene.SelectedItem.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox();
 
 					// snap the z position
 					double bottom = selectedBounds.minXYZ.z + delta.z;
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// and move it from there to where we are now
-				MeshViewerToDrawWith.ActiveScene.SelectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(delta));
+				MeshViewerToDrawWith.Scene.SelectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(delta));
 
 				lastMoveDelta = delta;
 
@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void SetPosition()
 		{
-			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.ActiveScene.SelectedItem.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox();
 			Vector3 boundsCenter = selectedBounds.Center;
 			Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 

@@ -51,10 +51,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void SetPosition()
 		{
-			if (MeshViewerToDrawWith.ActiveScene.HasSelection)
+			if (MeshViewerToDrawWith.Scene.HasSelection)
 			{
 				// draw the hight from the bottom to the bed
-				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.ActiveScene.SelectedItem.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox();
 
 				MeshSelectInfo meshSelectInfo = view3DWidget.CurrentSelectInfo;
 
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MeshViewerToDrawWith_Draw(GuiWidget drawingWidget, DrawEventArgs drawEvent)
 		{
-			if (MeshViewerToDrawWith.ActiveScene.HasSelection
+			if (MeshViewerToDrawWith.Scene.HasSelection
 				&& view3DWidget.meshViewerWidget.SnapGridDistance > 0
 				&& view3DWidget.CurrentSelectInfo.DownOnPart)
 			{

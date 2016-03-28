@@ -891,7 +891,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
 
-							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.ActiveScene.SelectedItem.GetAxisAlignedBoundingBox();
+							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
 
 							if (info.hitPosition.x < selectedBounds.Center.x)
 							{
@@ -979,7 +979,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (snapGridDistance > 0)
 					{
 						// snap this position to the grid
-						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.ActiveScene.SelectedItem.GetAxisAlignedBoundingBox();
+						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
 
 						double xSnapOffset = selectedBounds.minXYZ.x;
 						// snap the x position
