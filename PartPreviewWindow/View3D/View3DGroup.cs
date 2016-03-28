@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// our selection changed to the mesh we just added which is at the end
-				Scene.SetSelectionToLastItem();
+				Scene.SelectLastChild();
 
 				UnlockEditControls();
 

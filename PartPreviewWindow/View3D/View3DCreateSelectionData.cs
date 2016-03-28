@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				Scene.SetSelectionToFirstItem();
+				Scene.SelectFirstChild();
 
 				buttonRightPanel.Visible = true;
 				UnlockEditControls();

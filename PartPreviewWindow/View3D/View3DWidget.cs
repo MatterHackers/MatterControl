@@ -1679,7 +1679,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (addingOnlyOneItem)
 					{
 						// if we are only adding one part to the plate set the selection to it
-						Scene.SetSelectionToLastItem();
+						Scene.SelectLastChild();
 					}
 				}
 			}

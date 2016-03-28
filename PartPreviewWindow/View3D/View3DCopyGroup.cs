@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
@@ -41,7 +43,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private void CopyGroup()
 		{
-			// TODO: ******************** !!!!!!!!!!!!!!! ********************
+			Scene.Modify(scene =>
+			{
+				var selectedItem = Scene.SelectedItem;
+				var newItem = new Object3D()
+				{
+					ItemType = selectedItem.ItemType,
+					MeshGroup = selectedItem.MeshGroup,
+					Children = new List<IObject3D>(selectedItem.Children),
+					Matrix = selectedItem.Matrix
+				};
+
+				var bounds = selectedItem.GetAxisAlignedBoundingBox();
+				newItem.Matrix = Matrix4X4.CreateTranslation(bounds.XSize + 5, 0, 0);
+				newItem.CreateTraceables();
+
+				scene.Add(newItem);
+			});
 		}
 
 		/*
@@ -93,7 +111,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Scene.Children.Last().ExtraData.CurrentScale = Scene.SelectedItem.ExtraData.CurrentScale;
 
-				Scene.SetSelectionToLastItem();
+				Scene.SelectLastChild();
 
 				undoBuffer.Add(new CopyUndoCommand(this, Scene.Children.Count - 1));
 			}
