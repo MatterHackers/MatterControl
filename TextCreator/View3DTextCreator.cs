@@ -33,248 +33,70 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Csg;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RayTracer;
-using MatterHackers.RayTracer.Traceable;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
-	public class View3DTextCreator : PartPreview3DWidget
+	public class View3DTextCreator : View3DCreatorWidget
 	{
 		MHTextEditWidget textToAddWidget;
 		private SolidSlider spacingScrollBar;
 		private SolidSlider sizeScrollBar;
 		private SolidSlider heightScrollBar;
+		private bool firstDraw = true;
+		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 
 		private CheckBox createUnderline;
 
-		private double lastHeightValue = 1;
-		private double lastSizeValue = 1;
+		private String wordText;
 
-		private ProgressControl processingProgressControl;
-		private FlowLayoutWidget editPlateButtonsContainer;
+		TextGenerator textGenerator;
 
-		private Button saveButton;
-		private Button saveAndExitButton;
-		private Button closeButton;
-		private String word;
-
-		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
-		private List<Matrix4X4> asyncMeshGroupTransforms = new List<Matrix4X4>();
-		private List<PlatingMeshGroupData> asyncPlatingDatas = new List<PlatingMeshGroupData>();
-
-		private List<PlatingMeshGroupData> MeshGroupExtraData;
-
-		public Matrix4X4 SelectedMeshTransform
+		protected override void AddToBottomToolbar(GuiWidget parentContainer)
 		{
-			get { return meshViewerWidget.SelectedMeshGroupTransform; }
-			set { meshViewerWidget.SelectedMeshGroupTransform = value; }
-		}
-
-		public MeshGroup SelectedMeshGroup
-		{
-			get
+			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
 			{
-				return meshViewerWidget.SelectedMeshGroup;
-			}
-		}
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(5)
+			};
+			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => InsertTextNow(textToAddWidget.Text);
+			parentContainer.AddChild(textToAddWidget);
 
-		public int SelectedMeshGroupIndex
-		{
-			get
+			Button insertTextButton = textImageButtonFactory.Generate("Insert".Localize());
+			insertTextButton.Click += (s, e) => InsertTextNow(textToAddWidget.Text);
+			parentContainer.AddChild(insertTextButton);
+
+			// jlewin - this looks like "Undo on esc", needs confirmation
+			KeyDown += (s, e) =>
 			{
-				return meshViewerWidget.SelectedMeshGroupIndex;
-			}
-			set
-			{
-				meshViewerWidget.SelectedMeshGroupIndex = value;
-			}
+				if (e != null && !e.Handled && e.KeyCode == Keys.Escape)
+				{
+					if (CurrentSelectInfo.DownOnPart)
+					{
+						CurrentSelectInfo.DownOnPart = false;
+						Scene.SelectedItem.Matrix *= transformOnMouseDown;
+						Invalidate();
+					}
+				}
+			};
 		}
-
-		public List<MeshGroup> MeshGroups
-		{
-			get
-			{
-				return meshViewerWidget.MeshGroups;
-			}
-		}
-
-		public List<Matrix4X4> MeshGroupTransforms
-		{
-			get { return meshViewerWidget.MeshGroupTransforms; }
-		}
-
-		internal struct MeshSelectInfo
-		{
-			internal bool downOnPart;
-			internal PlaneShape hitPlane;
-			internal Vector3 planeDownHitPos;
-			internal Vector3 lastMoveDelta;
-		}
-
-		private TypeFace boldTypeFace;
 
 		public View3DTextCreator(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
+			: base(viewerVolume, bedCenter, bedShape, "TextCreator_", partSelectVisible: true)
 		{
-			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
-
-			MeshGroupExtraData = new List<PlatingMeshGroupData>();
-
-			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
-
-			FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			centerPartPreviewAndControls.AnchorAll();
-
-			GuiWidget viewArea = new GuiWidget();
-			viewArea.AnchorAll();
-			{
-				meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
-				meshViewerWidget.AllowBedRenderingWhenEmpty = true;
-				meshViewerWidget.AnchorAll();
-			}
-			viewArea.AddChild(meshViewerWidget);
-
-			centerPartPreviewAndControls.AddChild(viewArea);
-			mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
-
-			FlowLayoutWidget buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonBottomPanel.HAnchor = HAnchor.ParentLeftRight;
-			buttonBottomPanel.Padding = new BorderDouble(3, 3);
-			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			buttonRightPanel = CreateRightButtonPanel(viewerVolume.y);
-
-			// add in the plater tools
-			{
-				FlowLayoutWidget editToolBar = new FlowLayoutWidget();
-
-				processingProgressControl = new ProgressControl("Finding Parts:".Localize(), ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor);
-				processingProgressControl.VAnchor = Agg.UI.VAnchor.ParentCenter;
-				editToolBar.AddChild(processingProgressControl);
-				editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-
-				editPlateButtonsContainer = new FlowLayoutWidget();
-
-				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize());
-				textToAddWidget.VAnchor = VAnchor.ParentCenter;
-				textToAddWidget.Margin = new BorderDouble(5);
-				editPlateButtonsContainer.AddChild(textToAddWidget);
-				textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
-				{
-					InsertTextNow(textToAddWidget.Text);
-				};
-
-				Button insertTextButton = textImageButtonFactory.Generate("Insert".Localize());
-				editPlateButtonsContainer.AddChild(insertTextButton);
-				insertTextButton.Click += (sender, e) =>
-				{
-					InsertTextNow(textToAddWidget.Text);
-				};
-
-				KeyDown += (sender, e) =>
-				{
-					KeyEventArgs keyEvent = e as KeyEventArgs;
-					if (keyEvent != null && !keyEvent.Handled)
-					{
-						if (keyEvent.KeyCode == Keys.Escape)
-						{
-							if (meshSelectInfo.downOnPart)
-							{
-								meshSelectInfo.downOnPart = false;
-
-								SelectedMeshTransform *= transformOnMouseDown;
-
-								Invalidate();
-							}
-						}
-					}
-				};
-
-				editToolBar.AddChild(editPlateButtonsContainer);
-				buttonBottomPanel.AddChild(editToolBar);
-			}
-
-			GuiWidget buttonRightPanelHolder = new GuiWidget(HAnchor.FitToChildren, VAnchor.ParentBottomTop);
-			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
-			buttonRightPanelHolder.AddChild(buttonRightPanel);
-
-			viewControls3D = new ViewControls3D(meshViewerWidget);
-
-			viewControls3D.ResetView += (sender, e) =>
-			{
-				meshViewerWidget.ResetView();
-			};
-
-			buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
-			buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
-			buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
-			LockEditControls();
-
-			GuiWidget leftRightSpacer = new GuiWidget();
-			leftRightSpacer.HAnchor = HAnchor.ParentLeftRight;
-			buttonBottomPanel.AddChild(leftRightSpacer);
-
-			closeButton = textImageButtonFactory.Generate("Close".Localize());
-			buttonBottomPanel.AddChild(closeButton);
-
-			mainContainerTopToBottom.AddChild(buttonBottomPanel);
-
-			this.AddChild(mainContainerTopToBottom);
-			this.AnchorAll();
-
-			meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-
-			AddChild(viewControls3D);
-
-			meshViewerWidget.ResetView();
-
-			AddHandlers();
-			UnlockEditControls();
-			// but make sure we can't use the right panel yet
-			buttonRightPanelDisabledCover.Visible = true;
-		}
-
-		private async void InsertTextNow(string text)
-		{
-			if (text.Length > 0)
-			{
-				this.word = text;
-				ResetWordLayoutSettings();
-				processingProgressControl.ProcessType = "Inserting Text".Localize();
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				await Task.Run(() => insertTextBackgroundWorker_DoWork(text));
-
-				UnlockEditControls();
-				PullMeshDataFromAsynchLists();
-				saveButton.Visible = true;
-				saveAndExitButton.Visible = true;
-				// now set the selection to the new copy
-				SelectedMeshGroupIndex = 0;
-			}
-
-			meshViewerWidget.ResetView();
+			textGenerator = new TextGenerator();
 		}
 
 		private void ResetWordLayoutSettings()
@@ -282,56 +104,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			spacingScrollBar.Value = 1;
 			sizeScrollBar.Value = 1;
 			heightScrollBar.Value = .25;
-			lastHeightValue = 1;
-			lastSizeValue = 1;
+
+			textGenerator.ResetSettings();
 		}
-
-		private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex)
-		{
-			meshHitIndex = 0;
-			if (MeshGroupExtraData.Count == 0 || MeshGroupExtraData[0].meshTraceableData == null)
-			{
-				return false;
-			}
-
-			List<IPrimitive> mesheTraceables = new List<IPrimitive>();
-			for (int i = 0; i < MeshGroupExtraData.Count; i++)
-			{
-				foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
-				{
-					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i]));
-				}
-			}
-			IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
-
-			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-			IntersectInfo info = allObjects.GetClosestIntersection(ray);
-			if (info != null)
-			{
-				meshSelectInfo.planeDownHitPos = info.hitPosition;
-				meshSelectInfo.lastMoveDelta = new Vector3();
-
-				for (int i = 0; i < MeshGroupExtraData.Count; i++)
-				{
-					List<IPrimitive> insideBounds = new List<IPrimitive>();
-					foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
-					{
-						traceData.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
-					}
-					if (insideBounds.Contains(info.closestHitObject))
-					{
-						meshHitIndex = i;
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
-
-		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private MeshSelectInfo meshSelectInfo;
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -341,20 +116,25 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 				{
 					viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-					int meshHitIndex;
-					if (FindMeshGroupHitPosition(mouseEvent.Position, out meshHitIndex))
+
+					IntersectInfo info = new IntersectInfo();
+
+					IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
+					if (hitObject != null)
 					{
-						meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
-						SelectedMeshGroupIndex = meshHitIndex;
-						transformOnMouseDown = SelectedMeshTransform;
-						Invalidate();
-						meshSelectInfo.downOnPart = true;
+						CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.z, null);
+						CurrentSelectInfo.DownOnPart = true;
+
+						transformOnMouseDown = hitObject.Matrix;
+
+						if (hitObject != Scene.SelectedItem)
+						{
+
+						}
 					}
 				}
 			}
 		}
-
-		private bool firstDraw = true;
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
@@ -372,20 +152,21 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
+			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && CurrentSelectInfo.DownOnPart)
 			{
 				Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
 				Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-				IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
+				IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 				if (info != null)
 				{
-					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
 
-					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
+					Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
+
+					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
 					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
-					meshSelectInfo.lastMoveDelta = delta;
+					CurrentSelectInfo.LastMoveDelta = delta;
 
-					SelectedMeshTransform *= totalTransform;
+					Scene.SelectedItem.Matrix *= totalTransform;
 
 					Invalidate();
 				}
@@ -394,189 +175,61 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			base.OnMouseMove(mouseEvent);
 		}
 
+		private async void InsertTextNow(string text)
+		{
+			if (text.Length > 0)
+			{
+				this.wordText = text;
+				ResetWordLayoutSettings();
+				processingProgressControl.ProcessType = "Inserting Text".Localize();
+				processingProgressControl.Visible = true;
+				processingProgressControl.PercentComplete = 0;
+				LockEditControls();
+
+				var newItem = await Task.Run(() =>
+				{
+					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+					return textGenerator.CreateText(
+						wordText,
+						sizeScrollBar.Value,
+						heightScrollBar.Value,
+						spacingScrollBar.Value,
+						createUnderline.Checked);
+				});
+
+				Scene.Modify(scene =>
+				{
+					scene.Clear();
+					scene.Add(newItem);
+				});
+
+				Scene.SetSelectionToLastItem();
+
+				UnlockEditControls();
+				saveButton.Visible = true;
+				saveAndExitButton.Visible = true;
+			}
+
+			meshViewerWidget.ResetView();
+		}
+
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-				&& meshSelectInfo.downOnPart
-				&& meshSelectInfo.lastMoveDelta != Vector3.Zero)
+				&& CurrentSelectInfo.DownOnPart
+				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 			{
 				saveButton.Visible = true;
 				saveAndExitButton.Visible = true;
 			}
 
-			meshSelectInfo.downOnPart = false;
+			CurrentSelectInfo.DownOnPart = false;
 
 			base.OnMouseUp(mouseEvent);
 		}
 
-		private void insertTextBackgroundWorker_DoWork(string currentText)
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			asyncMeshGroups.Clear();
-			asyncMeshGroupTransforms.Clear();
-			asyncPlatingDatas.Clear();
-
-			TypeFacePrinter printer = new TypeFacePrinter(currentText, new StyledTypeFace(boldTypeFace, 12));
-			Vector2 size = printer.GetSize(currentText);
-			double centerOffset = -size.x / 2;
-
-			double ratioPerMeshGroup = 1.0 / currentText.Length;
-			double currentRatioDone = 0;
-			for (int i = 0; i < currentText.Length; i++)
-			{
-				int newIndex = asyncMeshGroups.Count;
-
-				TypeFacePrinter letterPrinter = new TypeFacePrinter(currentText[i].ToString(), new StyledTypeFace(boldTypeFace, 12));
-				Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 10 + (i % 2));
-
-				if (textMesh.Faces.Count > 0)
-				{
-					asyncMeshGroups.Add(new MeshGroup(textMesh));
-
-					PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
-
-					newMeshInfo.spacing.x = printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset;
-					asyncPlatingDatas.Add(newMeshInfo);
-					asyncMeshGroupTransforms.Add(Matrix4X4.Identity);
-
-					PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, newIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
-					{
-						continueProcessing = true;
-						int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
-						processingProgressControl.PercentComplete = nextPercent;
-					});
-
-					currentRatioDone += ratioPerMeshGroup;
-
-					PlatingHelper.PlaceMeshGroupOnBed(asyncMeshGroups, asyncMeshGroupTransforms, newIndex);
-				}
-
-				processingProgressControl.PercentComplete = ((i + 1) * 95 / currentText.Length);
-			}
-
-			SetWordSpacing(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas);
-			SetWordSize(asyncMeshGroups, asyncMeshGroupTransforms);
-			SetWordHeight(asyncMeshGroups, asyncMeshGroupTransforms);
-
-			if (createUnderline.Checked)
-			{
-				CreateUnderline(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas);
-			}
-
-			processingProgressControl.PercentComplete = 95;
-		}
-
-		private void CreateUnderline(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms, List<PlatingMeshGroupData> platingDataList)
-		{
-			if (meshesList.Count > 0)
-			{
-				AxisAlignedBoundingBox bounds = meshesList[0].GetAxisAlignedBoundingBox(meshTransforms[0]);
-				for (int i = 1; i < meshesList.Count; i++)
-				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, meshesList[i].GetAxisAlignedBoundingBox(meshTransforms[i]));
-				}
-
-				double xSize = bounds.XSize;
-				double ySize = sizeScrollBar.Value * 3;
-				double zSize = bounds.ZSize / 3;
-				Mesh connectionLine = PlatonicSolids.CreateCube(xSize, ySize, zSize);
-				meshesList.Add(new MeshGroup(connectionLine));
-				platingDataList.Add(new PlatingMeshGroupData());
-				meshTransforms.Add(Matrix4X4.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2));
-				PlatingHelper.CreateITraceableForMeshGroup(platingDataList, meshesList, meshesList.Count - 1, null);
-			}
-		}
-
-		private void PushMeshGroupDataToAsynchLists(bool copyTraceInfo)
-		{
-			asyncMeshGroups.Clear();
-			asyncMeshGroupTransforms.Clear();
-			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
-			{
-				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
-				MeshGroup newMeshGroup = new MeshGroup();
-				for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
-				{
-					Mesh mesh = meshGroup.Meshes[meshIndex];
-					newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
-					asyncMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
-				}
-				asyncMeshGroups.Add(newMeshGroup);
-			}
-			asyncPlatingDatas.Clear();
-
-			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
-			{
-				PlatingMeshGroupData meshData = new PlatingMeshGroupData();
-				meshData.currentScale = MeshGroupExtraData[meshGroupIndex].currentScale;
-				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
-				for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
-				{
-					if (copyTraceInfo)
-					{
-						meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
-					}
-				}
-				asyncPlatingDatas.Add(meshData);
-			}
-		}
-
-		private void arrangePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			UnlockEditControls();
-			saveButton.Visible = true;
-			saveAndExitButton.Visible = true;
-			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-
-			PullMeshDataFromAsynchLists();
-		}
-
-		private void PullMeshDataFromAsynchLists()
-		{
-			MeshGroups.Clear();
-			foreach (MeshGroup mesh in asyncMeshGroups)
-			{
-				MeshGroups.Add(mesh);
-			}
-			MeshGroupTransforms.Clear();
-			foreach (Matrix4X4 transform in asyncMeshGroupTransforms)
-			{
-				MeshGroupTransforms.Add(transform);
-			}
-			MeshGroupExtraData.Clear();
-			foreach (PlatingMeshGroupData meshData in asyncPlatingDatas)
-			{
-				MeshGroupExtraData.Add(meshData);
-			}
-		}
-
-		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
-		{
-			UnlockEditControls();
-		}
-
-		private void LockEditControls()
-		{
-			editPlateButtonsContainer.Visible = false;
-			buttonRightPanelDisabledCover.Visible = true;
-
-			viewControls3D.PartSelectVisible = false;
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
-			{
-				viewControls3D.ActiveButton = ViewControls3DButtons.Rotate; 
-			}
-		}
-
-		private void UnlockEditControls()
-		{
-			buttonRightPanelDisabledCover.Visible = false;
-			processingProgressControl.Visible = false;
-
-			viewControls3D.PartSelectVisible = true;
-			editPlateButtonsContainer.Visible = true;
-		}
-
+		/*
 		private void DeleteSelectedMesh()
 		{
 			// don't ever delete the last mesh
@@ -591,206 +244,71 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				saveAndExitButton.Visible = true;
 				Invalidate();
 			}
-		}
+		} */
 
-		private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		protected override void AddToWordEditMenu(GuiWidget wordOptionContainer)
 		{
-			processingProgressControl.PercentComplete = e.ProgressPercentage;
-		}
-
-		private FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
-		{
-			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			buttonRightPanel.Width = 200;
+			spacingScrollBar = InsertUiForSlider(wordOptionContainer, "Spacing:".Localize(), .5, 1);
+			spacingScrollBar.ValueChanged += (sender, e) =>
 			{
-				BorderDouble buttonMargin = new BorderDouble(top: 3);
-
-				// put in the word editing menu
+				var textGroup = Scene.Children.FirstOrDefault();
+				if (textGroup != null)
 				{
-					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-					expandWordOptions.Margin = new BorderDouble(bottom: 2);
-					buttonRightPanel.AddChild(expandWordOptions);
-
-					FlowLayoutWidget wordOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					wordOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					wordOptionContainer.Visible = false;
-					buttonRightPanel.AddChild(wordOptionContainer);
-
-					spacingScrollBar = InsertUiForSlider(wordOptionContainer, "Spacing:".Localize(), .5, 1);
-					{
-						spacingScrollBar.ValueChanged += (sender, e) =>
-						{
-							SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-							RebuildUnderlineIfRequired();
-						};
-					}
-
-					sizeScrollBar = InsertUiForSlider(wordOptionContainer, "Size:".Localize(), .3, 2);
-					{
-						sizeScrollBar.ValueChanged += (sender, e) =>
-						{
-							SetWordSize(MeshGroups, MeshGroupTransforms);
-
-							//SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-							RebuildUnderlineIfRequired();
-						};
-					}
-
-					heightScrollBar = InsertUiForSlider(wordOptionContainer, "Height:".Localize(), .05, 1);
-					{
-						heightScrollBar.ValueChanged += (sender, e) =>
-						{
-							SetWordHeight(MeshGroups, MeshGroupTransforms);
-							RebuildUnderlineIfRequired();
-						};
-					}
-
-					createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-					createUnderline.Checked = true;
-					createUnderline.Margin = new BorderDouble(10, 5);
-					createUnderline.HAnchor = HAnchor.ParentLeft;
-					wordOptionContainer.AddChild(createUnderline);
-					createUnderline.CheckedStateChanged += (sender, e) =>
-					{
-						int oldIndex = SelectedMeshGroupIndex;
-						if (!createUnderline.Checked)
-						{
-							// we need to remove the underline
-							if (MeshGroups.Count > 1)
-							{
-								SelectedMeshGroupIndex = MeshGroups.Count - 1;
-								DeleteSelectedMesh();
-							}
-						}
-						else if (MeshGroups.Count > 0)
-						{
-							// we need to add the underline
-							CreateUnderline(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-						}
-						SelectedMeshGroupIndex = Math.Min(oldIndex, MeshGroups.Count - 1);
-					};
-
-					expandWordOptions.CheckedStateChanged += (sender, e) =>
-					{
-						wordOptionContainer.Visible = expandWordOptions.Checked;
-					};
-
-					expandWordOptions.Checked = true;
+					textGenerator.SetWordSpacing(textGroup, spacingScrollBar.Value, rebuildUnderline: true);
 				}
+			};
 
-				// put in the letter editing menu
+			sizeScrollBar = InsertUiForSlider(wordOptionContainer, "Size:".Localize(), .3, 2);
+			sizeScrollBar.ValueChanged += (sender, e) =>
+			{
+				var textGroup = Scene.Children.FirstOrDefault();
+				if (textGroup != null)
 				{
-					CheckBox expandLetterOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Letter", "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-					expandLetterOptions.Margin = new BorderDouble(bottom: 2);
-					//buttonRightPanel.AddChild(expandLetterOptions);
-
-					FlowLayoutWidget letterOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					letterOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					letterOptionContainer.Visible = false;
-					buttonRightPanel.AddChild(letterOptionContainer);
-
-					SolidSlider sizeScrollBar = InsertUiForSlider(letterOptionContainer, "Size:".Localize());
-					SolidSlider heightScrollBar = InsertUiForSlider(letterOptionContainer, "Height:".Localize());
-					SolidSlider rotationScrollBar = InsertUiForSlider(letterOptionContainer, "Rotation:".Localize());
-
-					expandLetterOptions.CheckedStateChanged += (sender, e) =>
-					{
-						letterOptionContainer.Visible = expandLetterOptions.Checked;
-					};
+					textGenerator.SetWordSize(textGroup, sizeScrollBar.Value, rebuildUnderline: true);
 				}
+			};
 
-				GuiWidget verticalSpacer = new GuiWidget();
-				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
-				buttonRightPanel.AddChild(verticalSpacer);
-
-				saveButton = WhiteButtonFactory.Generate("Save".Localize(), centerText: true);
-				saveButton.Visible = false;
-				saveButton.Cursor = Cursors.Hand;
-
-				saveAndExitButton = WhiteButtonFactory.Generate("Save & Exit".Localize(), centerText: true);
-				saveAndExitButton.Visible = false;
-				saveAndExitButton.Cursor = Cursors.Hand;
-
-				//buttonRightPanel.AddChild(saveButton);
-				buttonRightPanel.AddChild(saveAndExitButton);
-			}
-
-			buttonRightPanel.Padding = new BorderDouble(6, 6);
-			buttonRightPanel.Margin = new BorderDouble(0, 1);
-			buttonRightPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			buttonRightPanel.VAnchor = VAnchor.ParentBottomTop;
-
-			return buttonRightPanel;
+			heightScrollBar = InsertUiForSlider(wordOptionContainer, "Height:".Localize(), .05, 1);
+			heightScrollBar.ValueChanged += (sender,e) =>
+			{
+				var textGroup = Scene.Children.FirstOrDefault();
+				if (textGroup != null)
+				{
+					textGenerator.SetWordHeight(textGroup, heightScrollBar.Value, rebuildUnderline: true);
+				}
+			};
+			createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
+			{
+				Checked = true,
+				Margin = new BorderDouble(10, 5),
+				HAnchor = HAnchor.ParentLeft
+			};
+			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
+			wordOptionContainer.AddChild(createUnderline);
 		}
 
-		private void RebuildUnderlineIfRequired()
+		private void CreateUnderline_CheckedStateChanged(object sender, EventArgs e)
 		{
-			if (createUnderline.Checked)
+			// The character data is now inject as a group and is the only item in the scene, thus it's easy to grab
+			var currentGroup = Scene.Children.First();
+
+			// Create a copy of the tree for the group
+			IObject3D workItem = new Object3D()
 			{
-				// we need to remove the underline
-				if (MeshGroups.Count > 1)
-				{
-					int oldIndex = SelectedMeshGroupIndex;
-					SelectedMeshGroupIndex = MeshGroups.Count - 1;
-					DeleteSelectedMesh();
-					// we need to add the underline
-					CreateUnderline(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
-					SelectedMeshGroupIndex = oldIndex;
-				}
-			}
-		}
+				Children = new List<IObject3D>(currentGroup.Children)
+			};
 
-		private void SetWordSpacing(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms, List<PlatingMeshGroupData> platingDataList)
-		{
-			if (meshesList.Count > 0)
+			// Change the contents, adding or removing the underline
+			textGenerator.EnableUnderline(workItem, createUnderline.Checked);
+
+			// Modify the active scene graph, swapping in the new item
+			Scene.Modify(scene =>
 			{
-				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
-				{
-					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex]);
+				scene.Clear();
+				scene.Add(workItem);
+			});
 
-					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(-startPosition);
-					double newX = platingDataList[meshIndex].spacing.x * spacingScrollBar.Value * lastSizeValue;
-					meshTransforms[meshIndex] *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(MeshViewerWidget.BedCenter));
-				}
-			}
-		}
-
-		private void SetWordSize(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms)
-		{
-			Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
-			if (meshesList.Count > 0)
-			{
-				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
-				{
-					// take out the last scale
-					double oldSize = 1.0 / lastSizeValue;
-
-					double newSize = sizeScrollBar.Value;
-
-					meshTransforms[meshIndex] = PlatingHelper.ApplyAtPosition(meshTransforms[meshIndex], Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize)), new Vector3(bedCenter));
-					meshTransforms[meshIndex] = PlatingHelper.ApplyAtPosition(meshTransforms[meshIndex], Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize)), new Vector3(bedCenter));
-				}
-
-				lastSizeValue = sizeScrollBar.Value;
-			}
-		}
-
-		private void SetWordHeight(List<MeshGroup> meshesList, List<Matrix4X4> meshTransforms)
-		{
-			if (meshesList.Count > 0)
-			{
-				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
-				{
-					// take out the last scale
-					double oldHeight = lastHeightValue;
-					meshTransforms[meshIndex] *= Matrix4X4.CreateScale(new Vector3(1, 1, 1 / oldHeight));
-
-					double newHeight = heightScrollBar.Value;
-					meshTransforms[meshIndex] *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
-				}
-
-				lastHeightValue = heightScrollBar.Value;
-			}
+			Scene.SetSelectionToLastItem();
 		}
 
 		private void AddLetterControls(FlowLayoutWidget buttonPanel)
@@ -819,126 +337,210 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			buttonPanel.AddChild(rotateButtonContainer);
 
-			buttonPanel.AddChild(generateHorizontalRule());
+			buttonPanel.AddChild(GenerateHorizontalRule());
 			textImageButtonFactory.FixedWidth = 0;
 		}
 
-		private GuiWidget generateHorizontalRule()
+		public class TextGenerator
 		{
-			GuiWidget horizontalRule = new GuiWidget();
-			horizontalRule.Height = 1;
-			horizontalRule.Margin = new BorderDouble(0, 1, 0, 3);
-			horizontalRule.HAnchor = HAnchor.ParentLeftRight;
-			horizontalRule.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
-			return horizontalRule;
-		}
+			private double lastHeightValue = 1;
+			private double lastSizeValue = 1;
 
-		private void AddHandlers()
-		{
-			closeButton.Click += new EventHandler(onCloseButton_Click);
+			private TypeFace boldTypeFace;
 
-			saveButton.Click += (sender, e) =>
+			public TextGenerator()
 			{
-				MergeAndSavePartsToStl();
-			};
-
-			saveAndExitButton.Click += (sender, e) =>
-			{
-				MergeAndSavePartsToStl();
-			};
-		}
-
-		private bool partSelectButtonWasClicked = false;
-
-		private async void MergeAndSavePartsToStl()
-		{
-			if (MeshGroups.Count > 0)
-			{
-				partSelectButtonWasClicked = viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect;
-				
-
-				processingProgressControl.ProcessType = "Saving Parts:".Localize();
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
-				PushMeshGroupDataToAsynchLists(true);
-
-				string fileName = "TextCreator_{0}".FormatWith(Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
-				string filePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
-
-				processingProgressControl.RatioComplete = 0;
-				await Task.Run(() => mergeAndSavePartsBackgroundWorker_DoWork(filePath));
-
-				PrintItem printItem = new PrintItem();
-
-				printItem.Name = string.Format("{0}", word);
-				printItem.FileLocation = Path.GetFullPath(filePath);
-
-				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-
-				// and save to the queue
-				QueueData.Instance.AddItem(printItemWrapper);
-
-				//Exit after save
-				UiThread.RunOnIdle(CloseOnIdle);
+				boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
 			}
-		}
 
-		private void mergeAndSavePartsBackgroundWorker_DoWork(string filePath)
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			try
+			public IObject3D CreateText(string wordText, double wordSize, double wordHeight, double characterSpacing, bool createUnderline)
 			{
-				// push all the transforms into the meshes
-				for (int i = 0; i < asyncMeshGroups.Count; i++)
-				{
-					asyncMeshGroups[i].Transform(MeshGroupTransforms[i]);
+				var tempScene = new Object3D { ItemType = Object3DTypes.Group };
 
-					processingProgressControl.RatioComplete = (double)i / asyncMeshGroups.Count * .1;
-				}
+				StyledTypeFace typeFace = new StyledTypeFace(boldTypeFace, 12);
+				TypeFacePrinter printer = new TypeFacePrinter(wordText, typeFace);
 
-				List<MeshGroup> mergResults = new List<MeshGroup>();
-				mergResults.Add(new MeshGroup());
-				mergResults[0].Meshes.Add(new Mesh());
-				double meshGroupIndex = 0;
-				foreach (MeshGroup meshGroup in asyncMeshGroups)
+				Vector2 size = printer.GetSize(wordText);
+				double centerOffset = -size.x / 2;
+
+				double ratioPerMeshGroup = 1.0 / wordText.Length;
+				double currentRatioDone = 0;
+
+				for (int i = 0; i < wordText.Length; i++)
 				{
-					foreach (Mesh mesh in meshGroup.Meshes)
+					string letter = wordText[i].ToString();
+					TypeFacePrinter letterPrinter = new TypeFacePrinter(letter, typeFace);
+
+					Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 10 + (i % 2));
+					if (textMesh.Faces.Count > 0)
 					{
-						processingProgressControl.RatioComplete = .1 + (double)meshGroupIndex / asyncMeshGroups.Count;
-						mergResults[0].Meshes[0] = CsgOperations.Union(mergResults[0].Meshes[0], mesh);
+						var characterObject = new Object3D()
+						{
+							MeshGroup = new MeshGroup(textMesh),
+							ItemType = Object3DTypes.Model
+						};
+						characterObject.ExtraData.Spacing.x = printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset;
+
+						tempScene.Children.Add(characterObject);
+
+
+
+						//public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
+						{
+							AxisAlignedBoundingBox bounds = characterObject.GetAxisAlignedBoundingBox();
+							Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+
+							characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
+						}
+						characterObject.CreateTraceables();
+
+						currentRatioDone += ratioPerMeshGroup;
 					}
-					meshGroupIndex++;
+
+					//processingProgressControl.PercentComplete = ((i + 1) * 95 / wordText.Length);
 				}
 
-				MeshFileIo.Save(mergResults, filePath);
+				SetWordSpacing(tempScene, characterSpacing);
+				SetWordSize(tempScene, wordSize);
+				SetWordHeight(tempScene, wordHeight);
+
+				if (createUnderline)
+				{
+					tempScene.Children.Add(CreateUnderline(tempScene));
+				}
+
+				// jlewin - restore progress
+				//processingProgressControl.PercentComplete = 95;
+
+				return tempScene;
 			}
-			catch (System.UnauthorizedAccessException)
+
+			private IObject3D CreateUnderline(IObject3D scene)
 			{
-				//Do something special when unauthorized?
-				UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize()));
+				if (scene.HasItems)
+				{
+					AxisAlignedBoundingBox bounds = scene.GetAxisAlignedBoundingBox();
+					
+					double xSize = bounds.XSize;
+					double ySize = lastSizeValue * 3;
+					double zSize = bounds.ZSize / 3;
+
+					var lineObject = new Object3D()
+					{
+						MeshGroup = new MeshGroup(PlatonicSolids.CreateCube(xSize, ySize, zSize)),
+						ItemType = Object3DTypes.Model,
+						Matrix = Matrix4X4.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2)
+					};
+					lineObject.CreateTraceables();
+
+					return lineObject;
+				}
+
+				return null;
 			}
-			catch
+
+			private bool hasUnderline;
+
+			public void EnableUnderline(IObject3D scene, bool enableUnderline)
 			{
-				UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize()));
+				hasUnderline = enableUnderline;
+
+				if (enableUnderline && scene.HasItems)
+				{
+					// we need to add the underline
+					scene.Children.Add(CreateUnderline(scene));
+				}
+				else if (scene.HasItems)
+				{
+					// we need to remove the underline
+					scene.Children.Remove(scene.Children.Last());
+				}
 			}
-		}
 
-		private bool scaleQueueMenu_Click()
-		{
-			return true;
-		}
 
-		private bool rotateQueueMenu_Click()
-		{
-			return true;
-		}
+			public void RebuildUnderline(IObject3D scene)
+			{
+				if (hasUnderline && scene.HasItems)
+				{
+					// Remove the underline object
+					scene.Children.Remove(scene.Children.Last());
 
-		private void onCloseButton_Click(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(Close);
+					// we need to add the underline
+					CreateUnderline(scene);
+				}
+			}
+
+			public void SetWordSpacing(IObject3D scene, double spacing, bool rebuildUnderline = false)
+			{
+				if (scene.HasItems)
+				{
+					foreach (var sceneItem in scene.Children)
+					{
+						Vector3 startPosition = Vector3.Transform(Vector3.Zero, sceneItem.Matrix);
+
+						sceneItem.Matrix *= Matrix4X4.CreateTranslation(-startPosition);
+
+						double newX = sceneItem.ExtraData.Spacing.x * spacing * lastSizeValue;
+						sceneItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(MeshViewerWidget.BedCenter));
+					}
+
+					if(rebuildUnderline)
+					{
+						RebuildUnderline(scene);
+					}
+				}
+			}
+
+			public void SetWordSize(IObject3D scene, double newSize, bool rebuildUnderline = false)
+			{
+				// take out the last scale
+				double oldSize = 1.0 / lastSizeValue;
+
+				Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
+				if (scene.HasItems)
+				{
+					foreach (var object3D in scene.Children)
+					{
+						object3D.Matrix = PlatingHelper.ApplyAtPosition(object3D.Matrix, Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize)), new Vector3(bedCenter));
+						object3D.Matrix = PlatingHelper.ApplyAtPosition(object3D.Matrix, Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize)), new Vector3(bedCenter));
+					}
+
+					lastSizeValue = newSize;
+
+					if (rebuildUnderline)
+					{
+						RebuildUnderline(scene);
+					}
+				}
+			}
+
+			public void SetWordHeight(IObject3D scene, double newHeight, bool rebuildUnderline = false)
+			{
+				if (scene.HasItems)
+				{
+					foreach (var sceneItem in scene.Children)
+					{
+						// take out the last scale
+						double oldHeight = lastHeightValue;
+						sceneItem.Matrix *= Matrix4X4.CreateScale(new Vector3(1, 1, 1 / oldHeight));
+
+						sceneItem.Matrix *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
+					}
+
+					lastHeightValue = newHeight;
+
+					if (rebuildUnderline)
+					{
+						RebuildUnderline(scene);
+					}
+				}
+			}
+
+			public void ResetSettings()
+			{
+				lastHeightValue = 1;
+				lastSizeValue = 1;
+			}
 		}
 	}
 }
