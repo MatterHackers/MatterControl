@@ -162,8 +162,24 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			};
 		}
 
-		protected override void AddToWordEditMenu(GuiWidget wordOptionContainer)
+		protected override void AddToSidebar(GuiWidget sidePanel)
 		{
+			CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Braille Builder".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+			expandWordOptions.Margin = new BorderDouble(bottom: 2);
+			sidePanel.AddChild(expandWordOptions);
+
+			FlowLayoutWidget wordOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Visible = false
+			};
+			sidePanel.AddChild(wordOptionContainer);
+
+			expandWordOptions.CheckedStateChanged += (sender, e) =>
+			{
+				wordOptionContainer.Visible = expandWordOptions.Checked;
+			};
+
 			sizeScrollBar = InsertUiForSlider(wordOptionContainer, "Size:".Localize(), .3, 2);
 			{
 				sizeScrollBar.ValueChanged += (sender, e) =>
@@ -230,6 +246,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				};
 
 				wordOptionContainer.AddChild(moreAboutBrailleLink);
+
+				expandWordOptions.Checked = true;
 			}
 		}
 
