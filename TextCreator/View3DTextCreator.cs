@@ -64,34 +64,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		TextGenerator textGenerator;
 
-		protected override void AddToBottomToolbar(GuiWidget parentContainer)
-		{
-			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
-			{
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(5)
-			};
-			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => InsertTextNow(textToAddWidget.Text);
-			parentContainer.AddChild(textToAddWidget);
-
-			Button insertTextButton = textImageButtonFactory.Generate("Insert".Localize());
-			insertTextButton.Click += (s, e) => InsertTextNow(textToAddWidget.Text);
-			parentContainer.AddChild(insertTextButton);
-
-			// jlewin - this looks like "Undo on esc", needs confirmation
-			KeyDown += (s, e) =>
-			{
-				if (e != null && !e.Handled && e.KeyCode == Keys.Escape)
-				{
-					if (CurrentSelectInfo.DownOnPart)
-					{
-						CurrentSelectInfo.DownOnPart = false;
-						Scene.SelectedItem.Matrix *= transformOnMouseDown;
-						Invalidate();
-					}
-				}
-			};
-		}
 
 		public View3DTextCreator(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
 			: base(viewerVolume, bedCenter, bedShape, "TextCreator_", partSelectVisible: true)
@@ -204,7 +176,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					scene.Add(newItem);
 				});
 
-				Scene.SetSelectionToLastItem();
+				Scene.SelectLastChild();
 
 				UnlockEditControls();
 				saveButton.Visible = true;
@@ -287,6 +259,35 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			wordOptionContainer.AddChild(createUnderline);
 		}
 
+		protected override void AddToBottomToolbar(GuiWidget parentContainer)
+		{
+			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
+			{
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(5)
+			};
+			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => InsertTextNow(textToAddWidget.Text);
+			parentContainer.AddChild(textToAddWidget);
+
+			Button insertTextButton = textImageButtonFactory.Generate("Insert".Localize());
+			insertTextButton.Click += (s, e) => InsertTextNow(textToAddWidget.Text);
+			parentContainer.AddChild(insertTextButton);
+
+			// jlewin - this looks like "Undo on esc", needs confirmation
+			KeyDown += (s, e) =>
+			{
+				if (e != null && !e.Handled && e.KeyCode == Keys.Escape)
+				{
+					if (CurrentSelectInfo.DownOnPart)
+					{
+						CurrentSelectInfo.DownOnPart = false;
+						Scene.SelectedItem.Matrix *= transformOnMouseDown;
+						Invalidate();
+					}
+				}
+			};
+		}
+
 		private void CreateUnderline_CheckedStateChanged(object sender, EventArgs e)
 		{
 			// The character data is now inject as a group and is the only item in the scene, thus it's easy to grab
@@ -308,7 +309,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				scene.Add(workItem);
 			});
 
-			Scene.SetSelectionToLastItem();
+			Scene.SelectLastChild();
 		}
 
 		private void AddLetterControls(FlowLayoutWidget buttonPanel)

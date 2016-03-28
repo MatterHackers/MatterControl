@@ -129,14 +129,13 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					scene.Add(newItem);
 				});
 
-				Scene.SetSelectionToLastItem();
 				//RebuildBase();
 
 				UnlockEditControls();
 				saveButton.Visible = true;
 				saveAndExitButton.Visible = true;
 
-				Scene.SetSelectionToLastItem();
+				Scene.SelectLastChild();
 			}
 		}
 
