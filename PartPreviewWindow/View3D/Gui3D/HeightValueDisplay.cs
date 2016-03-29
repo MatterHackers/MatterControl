@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private static readonly int HorizontalLineLength = 30;
 		private View3DWidget view3DWidget;
-		ValueDisplayInfo zValueDisplayInfo = new ValueDisplayInfo();
+		ValueDisplayInfo heightValueDisplayInfo = new ValueDisplayInfo();
 
 		public HeightValueDisplay(View3DWidget view3DWidget)
 		{
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								screenPosition = testScreenPosition + new Vector2(HorizontalLineLength, 0);
 							}
 						}
-						zValueDisplayInfo.DisplaySizeInfo(drawEvent.graphics2D, midLinePos, selectedBounds.minXYZ.z);
+						heightValueDisplayInfo.DisplaySizeInfo(drawEvent.graphics2D, midLinePos, selectedBounds.minXYZ.z);
 
 
 						OriginRelativeParent = screenPosition;

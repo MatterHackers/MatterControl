@@ -690,14 +690,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						return "Disconnecting".Localize();
 
 					case CommunicationStates.AttemptingToConnect:
-						string connectingMessageTxt = "Connecting".Localize();
-						return "{0}...".FormatWith(connectingMessageTxt);
+						return "Connecting".Localize() + "...";
 
 					case CommunicationStates.ConnectionLost:
 						return "Connection Lost".Localize();
 
 					case CommunicationStates.FailedToConnect:
-						return "Unable to Connect";
+						return "Unable to Connect".Localize();
 
 					case CommunicationStates.Connected:
 						return "Connected".Localize();
