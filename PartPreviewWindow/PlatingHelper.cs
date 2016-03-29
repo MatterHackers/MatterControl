@@ -434,9 +434,9 @@ namespace MatterHackers.MatterControl
 		}
 		*/
 
-		public static Matrix4X4 ApplyAtCenter(IHasAABB meshToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
+		public static Matrix4X4 ApplyAtCenter(IObject3D object3DToApplayTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
 		{
-			return ApplyAtCenter(meshToApplyTo.GetAxisAlignedBoundingBox(currentTransform), currentTransform, transformToApply);
+			return ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(currentTransform), currentTransform, transformToApply);
 		}
 
 		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
