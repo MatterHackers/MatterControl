@@ -847,7 +847,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									if (Scene.SelectedItem == null)
 									{
 										// No selection exists
-										Scene.SelectedItem = hitObject;
+										Scene.Select(hitObject);
 									}
 									else if (ModifierKeys == Keys.Shift && !Scene.SelectedItem.Children.Contains(hitObject))
 									{
@@ -867,7 +867,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										children.Remove(hitObject);
 										children.Add(newSelectionGroup);
 
-										Scene.SelectedItem = newSelectionGroup;
+										Scene.Select(newSelectionGroup);
 									}
 									else if (Scene.SelectedItem == hitObject || Scene.SelectedItem.Children.Contains(hitObject))
 									{
@@ -877,7 +877,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									{
 										ClearSelectionApplyChanges(children);
 
-										Scene.SelectedItem = hitObject;
+										Scene.Select(hitObject);
 									}
 								});
 
@@ -1551,16 +1551,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasSelection && Scene.Children.Count > 1)
 			{
-				// jlewin 
-				//undoBuffer.Add(new DeleteUndoCommand(this, removingIndex));
-				Scene.ModifyChildren(children =>
-				{
-					children.Remove(Scene.SelectedItem);
-				});
+				// Create and perform the delete operation 
+				var deleteOperation = new DeleteCommand(this, Scene.SelectedItem);
+				deleteOperation.Do();
 
-				Scene.SelectLastChild();
-
-				PartHasBeenChanged();
+				// Store the operation for undo/redo
+				undoBuffer.Add(deleteOperation);
 			}
 		}
 

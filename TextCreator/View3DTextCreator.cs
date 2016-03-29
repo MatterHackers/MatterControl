@@ -336,17 +336,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
 
-				view3DWidget.Scene.ModifyChildren(children =>
-				{
-					if (IsSystemWindow)
-					{
-						children.Clear();
-					}
-
-					children.Add(injectedItem);
-				});
-
-				view3DWidget.Scene.SelectLastChild();
+				(view3DWidget as View3DWidget).InsertNewItem(injectedItem);
 
 				view3DWidget.UnlockEditControls();
 			}
@@ -380,7 +370,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			// Update the injected item and the scene selection
 			injectedItem = workItem;
-			view3DWidget.Scene.SelectedItem = injectedItem;
+			view3DWidget.Scene.Select(injectedItem);
 		}
 
 		internal void SetInitialFocus()

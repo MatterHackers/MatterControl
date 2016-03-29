@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (wasLastItem)
 			{
-				view3DWidget.Scene.SelectedItem = view3DWidget.Scene.Children.Last();
+				view3DWidget.Scene.SelectLastChild();
 			}
 			view3DWidget.PartHasBeenChanged();
 		}
@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			view3DWidget.Scene.Children.Insert(newItemIndex, addedObject3D);
 			view3DWidget.Invalidate();
-			view3DWidget.Scene.SelectedItem = view3DWidget.Scene.Children.Last();
+			view3DWidget.Scene.SelectLastChild();
 		}
 	}
 }

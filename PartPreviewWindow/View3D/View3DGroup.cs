@@ -41,30 +41,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void GroupSelected()
-		{
-			if(Scene.IsSelected(Object3DTypes.SelectionGroup))
-			{
-				var newGroup = new Object3D
-				{
-					MeshGroup = new MeshGroup(),
-					Children = { Scene.SelectedItem },
-					ItemType = Object3DTypes.Group
-				};
-
-				ClearSelectionApplyChanges(newGroup.Children, Scene.SelectedItem);
-
-				newGroup.CreateTraceables();
-
-				Scene.ModifyChildren(children =>
-				{
-					children.Remove(Scene.SelectedItem);
-					children.Add(newGroup);
-				});
-
-			}
-		}
-
 		private async void GroupSelectedMeshs()
 		{
 			if (Scene.HasChildren)
@@ -74,19 +50,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				await Task.Run((System.Action)GroupSelected);
+				var item = Scene.SelectedItem;
+
+				await Task.Run(() =>
+				{
+					if (Scene.IsSelected(Object3DTypes.SelectionGroup))
+					{
+						// Create and perform the delete operation 
+						var operation = new GroupCommand(this, Scene.SelectedItem);
+						operation.Do();
+
+						// Store the operation for undo/redo
+						undoBuffer.Add(operation);
+					}
+				});
 
 				if (WidgetHasBeenClosed)
 				{
 					return;
 				}
 
-				// our selection changed to the mesh we just added which is at the end
-				Scene.SelectLastChild();
-
 				UnlockEditControls();
-
-				PartHasBeenChanged();
 
 				Invalidate();
 			}

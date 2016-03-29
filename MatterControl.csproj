@@ -182,8 +182,9 @@
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControls.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\InsertCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteUndoCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\CopyUndoCommand.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\GroupCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SnapingIndicator.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />

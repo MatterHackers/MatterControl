@@ -41,43 +41,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void CopyGroup()
-		{
-			var newItem = Scene.SelectedItem.Clone();
-			PlatingHelper.MoveToOpenPosition(newItem, Scene);
-
-			Scene.ModifyChildren(children =>
-			{
-				children.Add(newItem);
-			});
-		}
-
-		/*
-		private void CopyGroup()
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-			MeshGroup meshGroupToCopy = MeshGroups[SelectedMeshGroupIndex];
-			MeshGroup copyMeshGroup = new MeshGroup();
-			double meshCount = meshGroupToCopy.Meshes.Count;
-			for (int i = 0; i < meshCount; i++)
-			{
-				Mesh mesh = MeshGroups[SelectedMeshGroupIndex].Meshes[i];
-				copyMeshGroup.Meshes.Add(Mesh.Copy(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
-				{
-					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
-				}));
-			}
-
-			PlatingHelper.FindPositionForGroupAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, MeshGroupExtraData, MeshGroups, asyncMeshGroupTransforms);
-			PlatingHelper.CreateITraceableForMeshGroup(MeshGroupExtraData, MeshGroups, MeshGroups.Count - 1, null);
-
-			bool continueProcessing2;
-			ReportProgressChanged(.95, "", out continueProcessing2);
-		}
-		*/
 		private async void MakeCopyOfGroup()
 		{
 			if (Scene.HasSelection)
@@ -87,24 +50,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				await Task.Run((System.Action)CopyGroup);
+				// Copy selected item
+				IObject3D newItem = await Task.Run(() =>
+				{
+					var clonedItem = Scene.SelectedItem.Clone();
+					PlatingHelper.MoveToOpenPosition(clonedItem, Scene);
+
+					return clonedItem;
+				});
 
 				if (WidgetHasBeenClosed)
 				{
 					return;
 				}
 
+				InsertNewItem(newItem);
+
 				UnlockEditControls();
 				PartHasBeenChanged();
 
+				// TODO: jlewin - why do we need to reset the scale?
 				// now set the selection to the new copy
-
 				Scene.Children.Last().ExtraData.CurrentScale = Scene.SelectedItem.ExtraData.CurrentScale;
-
-				Scene.SelectLastChild();
-
-				undoBuffer.Add(new CopyUndoCommand(this, Scene.Children.Count - 1));
 			}
+		}
+
+		public void InsertNewItem(IObject3D newItem)
+		{
+			// Create and perform a new insert operation 
+			var insertOperation = new InsertCommand(this, newItem);
+			insertOperation.Do();
+
+			// Store the operation for undo/redo
+			undoBuffer.Add(insertOperation);
 		}
 	}
 }

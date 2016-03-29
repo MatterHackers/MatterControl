@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if(Scene.HasSelection)
 			{
-				Scene.SelectedItem = Scene.Children.First();
+				Scene.SelectFirstChild();
 			}
 
 			// make sure our thread translates numbers correctly (always do this in a thread)

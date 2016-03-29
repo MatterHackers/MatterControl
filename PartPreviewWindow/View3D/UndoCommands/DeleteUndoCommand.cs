@@ -5,46 +5,40 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	internal class DeleteUndoCommand : IUndoRedoCommand
+	public class DeleteCommand : IUndoRedoCommand
 	{
-		private int deletedIndex;
+		private IObject3D item;
+
 		private View3DWidget view3DWidget;
-		private Matrix4X4 deletedTransform;
-		PlatingData deletedPlatingData;
 
-		IObject3D meshGroupThatWasDeleted;
-
-		bool wasLastItem;
-
-		public DeleteUndoCommand(View3DWidget view3DWidget, int deletedIndex)
+		public DeleteCommand(View3DWidget view3DWidget, IObject3D deletingItem)
 		{
 			this.view3DWidget = view3DWidget;
-			this.deletedIndex = deletedIndex;
-			meshGroupThatWasDeleted = view3DWidget.Scene.Children[deletedIndex];
-
-			wasLastItem = view3DWidget.Scene.Children.Last() == meshGroupThatWasDeleted;
-
-			deletedPlatingData = view3DWidget.Scene.Children[deletedIndex].ExtraData;
+			this.item = deletingItem;
 		}
 
 		public void Do()
 		{
-			view3DWidget.Scene.Children.RemoveAt(deletedIndex);
-
-			if (wasLastItem)
+			view3DWidget.Scene.ModifyChildren(children =>
 			{
-				view3DWidget.Scene.SelectLastChild();
-			}
+				children.Remove(item);
+			});
+
+			view3DWidget.Scene.SelectLastChild();
 
 			view3DWidget.PartHasBeenChanged();
 		}
 
 		public void Undo()
 		{
-			view3DWidget.Scene.Children.Insert(deletedIndex, meshGroupThatWasDeleted);
-			view3DWidget.Invalidate();
+			view3DWidget.Scene.ModifyChildren(children =>
+			{
+				children.Add(item);
+			});
 
-			view3DWidget.Scene.SelectLastChild();
+			view3DWidget.Scene.Select(item);
+
+			view3DWidget.PartHasBeenChanged();
 		}
 	}
 }
