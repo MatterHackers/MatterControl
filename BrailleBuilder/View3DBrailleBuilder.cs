@@ -275,23 +275,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					//InsertTextDoWork(text, this.word));//replace with this.word when not testing conversions
 				});
 
-				view3DWidget.Scene.ModifyChildren(children =>
-				{
-					if(IsSystemWindow)
-					{
-						children.Clear();
-					}
+				PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
 
-					children.Add(injectedItem);
-				});
+				(view3DWidget as View3DWidget).InsertNewItem(injectedItem);
 
-				//RebuildBase();
-
-				//UnlockEditControls();
-				//saveButton.Visible = true;
-				//saveAndExitButton.Visible = true;
-
-				view3DWidget.Scene.SelectLastChild();
+				view3DWidget.UnlockEditControls();
 			}
 		}
 
