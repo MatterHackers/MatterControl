@@ -56,10 +56,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				newGroup.CreateTraceables();
 
-				Scene.Modify((scene) =>
+				Scene.ModifyChildren(children =>
 				{
-					scene.Remove(Scene.SelectedItem);
-					scene.Add(newGroup);
+					children.Remove(Scene.SelectedItem);
+					children.Add(newGroup);
 				});
 
 			}

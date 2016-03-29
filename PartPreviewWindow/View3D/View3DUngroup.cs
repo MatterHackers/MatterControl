@@ -46,9 +46,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.IsSelected(Object3DTypes.Group))
 			{
-				Scene.Modify((scene) =>
+				Scene.ModifyChildren(children =>
 				{
-					ClearSelection(scene, Scene.SelectedItem, Object3DTypes.Group, 0);
+					ClearSelection(children, Scene.SelectedItem, Object3DTypes.Group, 0);
 					Scene.SelectedItem = null;
 				});
 

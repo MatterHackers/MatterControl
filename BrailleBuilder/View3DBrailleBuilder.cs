@@ -265,14 +265,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					//InsertTextDoWork(text, this.word));//replace with this.word when not testing conversions
 				});
 
-				view3DWidget.Scene.Modify(scene =>
+				view3DWidget.Scene.ModifyChildren(children =>
 				{
 					if(IsSystemWindow)
 					{
-						scene.Clear();
+						children.Clear();
 					}
 
-					scene.Add(injectedItem);
+					children.Add(injectedItem);
 				});
 
 				//RebuildBase();
@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			if (view3DWidget.Scene.HasChildren && injectedItem != null)
 			{
 				// Remove the old base and create and add a new one
-				view3DWidget.Scene.Modify(children =>
+				view3DWidget.Scene.ModifyChildren(children =>
 				{
 					children.Remove(injectedItem);
 					injectedItem = brailleGenerator.CreateBaseplate(injectedItem);

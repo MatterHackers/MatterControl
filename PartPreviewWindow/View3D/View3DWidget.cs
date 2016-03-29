@@ -842,7 +842,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							if (hitObject != Scene.SelectedItem)
 							{
-								Scene.Modify((scene) =>
+								Scene.ModifyChildren(children =>
 								{
 									if (Scene.SelectedItem == null)
 									{
@@ -863,9 +863,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										newSelectionGroup.Children.Add(hitObject);
 
 										// Swap items
-										scene.Remove(Scene.SelectedItem);
-										scene.Remove(hitObject);
-										scene.Add(newSelectionGroup);
+										children.Remove(Scene.SelectedItem);
+										children.Remove(hitObject);
+										children.Add(newSelectionGroup);
 
 										Scene.SelectedItem = newSelectionGroup;
 									}
@@ -875,7 +875,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									}
 									else if (ModifierKeys != Keys.Shift)
 									{
-										ClearSelection(scene);
+										ClearSelection(children);
 
 										Scene.SelectedItem = hitObject;
 									}
@@ -916,7 +916,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							Scene.Modify(ClearSelection);
+							Scene.ModifyChildren(ClearSelection);
 						}
 
 						SelectedTransformChanged?.Invoke(this, null);
@@ -925,9 +925,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ClearSelection(List<IObject3D> sceneGraph)
+		private void ClearSelection(List<IObject3D> sceneChildren)
 		{
-			ClearSelection(sceneGraph, Scene.SelectedItem);
+			ClearSelection(sceneChildren, Scene.SelectedItem);
 			Scene.SelectedItem = null;
 		}
 
@@ -2234,7 +2234,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 				}
 
-				Scene.Modify(ClearSelection);
+				Scene.ModifyChildren(ClearSelection);
 			}
 		}
 

@@ -333,14 +333,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						createUnderline.Checked);
 				});
 
-				view3DWidget.Scene.Modify(scene =>
+				view3DWidget.Scene.ModifyChildren(children =>
 				{
 					if (IsSystemWindow)
 					{
-						scene.Clear();
+						children.Clear();
 					}
 
-					scene.Add(injectedItem);
+					children.Add(injectedItem);
 				});
 
 				view3DWidget.Scene.SelectLastChild();
@@ -369,10 +369,10 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			modifier(workItem);
 
 			// Modify the scene graph, swapping in the modified item
-			view3DWidget.Scene.Modify(scene =>
+			view3DWidget.Scene.ModifyChildren(children =>
 			{
-				scene.Remove(injectedItem);
-				scene.Add(workItem);
+				children.Remove(injectedItem);
+				children.Add(workItem);
 			});
 
 			// Update the injected item and the scene selection

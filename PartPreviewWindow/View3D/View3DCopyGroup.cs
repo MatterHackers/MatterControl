@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private void CopyGroup()
 		{
-			Scene.Modify(scene =>
+			Scene.ModifyChildren(children =>
 			{
 				var newItem = Scene.SelectedItem.Clone();
 				var bounds = newItem.GetAxisAlignedBoundingBox();
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// TODO: jlewin - use plating helper arrange
 				newItem.Matrix = Matrix4X4.CreateTranslation(bounds.XSize + 5, 0, 0);
 
-				scene.Add(newItem);
+				children.Add(newItem);
 			});
 		}
 
