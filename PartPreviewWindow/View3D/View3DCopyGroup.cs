@@ -45,18 +45,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Scene.Modify(scene =>
 			{
-				var selectedItem = Scene.SelectedItem;
-				var newItem = new Object3D()
-				{
-					ItemType = selectedItem.ItemType,
-					MeshGroup = selectedItem.MeshGroup,
-					Children = new List<IObject3D>(selectedItem.Children),
-					Matrix = selectedItem.Matrix
-				};
+				var newItem = Scene.SelectedItem.Clone();
+				var bounds = newItem.GetAxisAlignedBoundingBox();
 
-				var bounds = selectedItem.GetAxisAlignedBoundingBox();
+				// TODO: jlewin - use plating helper arrange
 				newItem.Matrix = Matrix4X4.CreateTranslation(bounds.XSize + 5, 0, 0);
-				newItem.CreateTraceables();
 
 				scene.Add(newItem);
 			});
