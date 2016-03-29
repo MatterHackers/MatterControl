@@ -198,12 +198,11 @@ namespace MatterHackers.MatterControl
 			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
 		}
 
-		public static void PlaceMeshAtHeight(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index, double zHeight)
+		public static void PlaceMeshAtHeight(IObject3D objectToMove, double zHeight)
 		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
-			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+			AxisAlignedBoundingBox bounds = objectToMove.GetAxisAlignedBoundingBox();
 
-			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - boundsCenter.z + bounds.ZSize / 2));
+			objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.z));
 		}
 
 		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
@@ -414,9 +413,9 @@ namespace MatterHackers.MatterControl
 		}
 		*/
 
-		public static Matrix4X4 ApplyAtCenter(IObject3D object3DToApplayTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
+		public static Matrix4X4 ApplyAtCenter(IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
 		{
-			return ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(currentTransform), currentTransform, transformToApply);
+			return ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(), object3DToApplayTo.Matrix, transformToApply);
 		}
 
 		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)

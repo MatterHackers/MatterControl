@@ -1028,8 +1028,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (undoTransform != Scene.SelectedItem?.Matrix)
 			{
-				// jlewin
-				//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+				undoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
 			}
 		}
 
@@ -1161,8 +1160,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationX(radians);
 					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
-                    Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, Scene.SelectedItem.Matrix, rotation);
-					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+                    Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, rotation);
+					undoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1178,13 +1177,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationY(radians);
-					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, Scene.SelectedItem.Matrix, rotation);
-
-					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
-					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
-					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
-					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
-
+					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
+					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, rotation);
+					undoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1200,11 +1195,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationZ(radians);
-					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, Scene.SelectedItem.Matrix, rotation);
-
-					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
-					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
-					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
+					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, rotation);
+					undoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1220,10 +1213,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (Scene.HasSelection)
 				{
-					// TODO: jlewin - Must implement
-					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
-					//MakeLowestFaceFlat(SelectedMeshGroupIndex);
-					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
+					MakeLowestFaceFlat(Scene.SelectedItem);
+					undoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1784,25 +1776,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void MakeLowestFaceFlat(int indexToLayFlat)
+		private void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
 		{
-			// TODO: ******************** !!!!!!!!!!!!!!! ********************
-		}
+			Matrix4X4 objectToWold = objectToLayFlatGroup.Matrix;
+            IObject3D objectToLayFlat = objectToLayFlatGroup.Children[0];
+            Vertex lowestVertex = objectToLayFlat.MeshGroup.Meshes[0].Vertices[0];
 
-		/*
-		private void MakeLowestFaceFlat(int indexToLayFlat)
-		{
-			Vertex lowestVertex = MeshGroups[indexToLayFlat].Meshes[0].Vertices[0];
-
-			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, MeshGroupTransforms[indexToLayFlat]);
+			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, objectToWold);
 			Mesh meshToLayFlat = null;
-			foreach (Mesh meshToCheck in MeshGroups[indexToLayFlat].Meshes)
+			foreach (Mesh meshToCheck in objectToLayFlat.MeshGroup.Meshes)
 			{
 				// find the lowest point on the model
 				for (int testIndex = 1; testIndex < meshToCheck.Vertices.Count; testIndex++)
 				{
 					Vertex vertex = meshToCheck.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat]);
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
 					if (vertexPosition.z < lowestVertexPosition.z)
 					{
 						lowestVertex = meshToCheck.Vertices[testIndex];
@@ -1822,7 +1810,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (faceVertex != lowestVertex)
 					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, MeshGroupTransforms[indexToLayFlat]);
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, objectToWold);
 						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
 						double xLeg = new Vector2(pointRelLowest.x, pointRelLowest.y).Length;
 						double yLeg = pointRelLowest.z;
@@ -1844,7 +1832,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			List<Vector3> faceVertexes = new List<Vector3>();
 			foreach (Vertex vertex in faceToLayFlat.Vertices())
 			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat]);
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
 				faceVertexes.Add(vertexPosition);
 				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.z - lowestVertexPosition.z);
 			}
@@ -1860,13 +1848,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
 
 				// rotate it
-				SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, partLevelMatrix);
+				objectToLayFlatGroup.Matrix = PlatingHelper.ApplyAtCenter(objectToLayFlatGroup, partLevelMatrix);
 
 				PartHasBeenChanged();
 				Invalidate();
 			}
 		}
-		*/
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 

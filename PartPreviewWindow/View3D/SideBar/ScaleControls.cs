@@ -280,12 +280,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			newScale[axis] = scaleIn;
 			Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
 
-			selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, selectedItem.Matrix, totalScale);
+			selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, totalScale);
 
-			// keep the bottom where it was
-
-			// TODO: ******************** !!!!!!!!!!!!!!! ********************
-			//			PlatingHelper.PlaceMeshAtHeight(view3DWidget.MeshGroups, view3DWidget.MeshGroupTransforms, view3DWidget.SelectedMeshGroupIndex, scaledBounds.minXYZ.z);
+			PlatingHelper.PlaceMeshAtHeight(selectedItem, originalMeshBounds.minXYZ.z);
 
 			view3DWidget.PartHasBeenChanged();
 			Invalidate();

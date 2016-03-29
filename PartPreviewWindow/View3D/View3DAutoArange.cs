@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			for (int i = 0; i < preArrangeTarnsforms.Count; i++)
 			{
-				allUndoTransforms.Add(new TransformUndoCommand(view3DWidget, i, preArrangeTarnsforms[i], postArrangeTarnsforms[i]));
+				//allUndoTransforms.Add(new TransformUndoCommand(view3DWidget, i, preArrangeTarnsforms[i], postArrangeTarnsforms[i]));
 			}
 		}
 

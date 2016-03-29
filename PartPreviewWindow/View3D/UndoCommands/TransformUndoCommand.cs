@@ -6,27 +6,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	internal class TransformUndoCommand : IUndoRedoCommand
 	{
-		private int meshGroupIndex;
+		private IObject3D transformedObject;
 		private Matrix4X4 redoTransform;
 		private Matrix4X4 undoTransform;
 		private View3DWidget view3DWidget;
 
-		public TransformUndoCommand(View3DWidget view3DWidget, int meshGroupIndex, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
+		public TransformUndoCommand(View3DWidget view3DWidget, IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
 		{
 			this.view3DWidget = view3DWidget;
-			this.meshGroupIndex = meshGroupIndex;
+			this.transformedObject = transformedObject;
 			this.undoTransform = undoTransform;
 			this.redoTransform = redoTransform;
 		}
 
 		public void Do()
 		{
-			view3DWidget.Scene.Children[meshGroupIndex].Matrix = redoTransform;
+			transformedObject.Matrix = redoTransform;
 		}
 
 		public void Undo()
 		{
-			view3DWidget.Scene.Children[meshGroupIndex].Matrix = undoTransform;
+			transformedObject.Matrix = undoTransform;
 		}
 	}
 }
