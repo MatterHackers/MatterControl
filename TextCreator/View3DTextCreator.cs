@@ -249,20 +249,18 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			sizeScrollBar = PartPreview3DWidget.InsertUiForSlider(tabContainer, "Size:".Localize(), .3, 2);
 			sizeScrollBar.ValueChanged += (sender, e) =>
 			{
-				var textGroup = view3DWidget.Scene.Children.FirstOrDefault();
-				if (textGroup != null)
+				if (injectedItem != null)
 				{
-					textGenerator.SetWordSize(textGroup, sizeScrollBar.Value, rebuildUnderline: true);
+					textGenerator.SetWordSize(injectedItem, sizeScrollBar.Value, rebuildUnderline: true);
 				}
 			};
 
 			heightScrollBar = PartPreview3DWidget.InsertUiForSlider(tabContainer, "Height:".Localize(), .05, 1);
 			heightScrollBar.ValueChanged += (sender, e) =>
 			{
-				var textGroup = view3DWidget.Scene.Children.FirstOrDefault();
-				if (textGroup != null)
+				if (injectedItem != null)
 				{
-					textGenerator.SetWordHeight(textGroup, heightScrollBar.Value, rebuildUnderline: true);
+					textGenerator.SetWordHeight(injectedItem, heightScrollBar.Value, rebuildUnderline: true);
 				}
 			};
 
@@ -310,6 +308,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private async void InsertTextNow(string text)
 		{
+			// Clear prior selection
+			injectedItem = null;
+
 			if (text.Length > 0)
 			{
 				this.wordText = text;
@@ -332,6 +333,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						spacingScrollBar.Value,
 						createUnderline.Checked);
 				});
+
+				PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
 
 				view3DWidget.Scene.ModifyChildren(children =>
 				{
@@ -506,7 +509,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					group.Children.Remove(group.Children.Last());
 
 					// we need to add the underline
-					CreateUnderline(group);
+					group.Children.Add(CreateUnderline(group));
 				}
 			}
 

@@ -156,7 +156,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			{
 				sizeScrollBar.ValueChanged += (sender, e) =>
 				{
-					brailleGenerator.SetWordSize(view3DWidget.Scene, sizeScrollBar.Value);
+					if(injectedItem == null)
+					{
+						return;
+					}
+
+					brailleGenerator.SetWordSize(injectedItem, sizeScrollBar.Value);
 
 					//SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
 					RebuildBase();
@@ -167,7 +172,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			{
 				heightScrollBar.ValueChanged += (sender, e) =>
 				{
-					brailleGenerator.SetWordHeight(view3DWidget.Scene, heightScrollBar.Value);
+					if (injectedItem == null)
+					{
+						return;
+					}
+
+					brailleGenerator.SetWordHeight(injectedItem, heightScrollBar.Value);
 				};
 			}
 
@@ -308,13 +318,21 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			if (view3DWidget.Scene.HasChildren && injectedItem != null)
 			{
+				var newBaseplate = brailleGenerator.CreateBaseplate(injectedItem);
+
+				if(newBaseplate == null)
+				{
+					return;
+				}
+
 				// Remove the old base and create and add a new one
 				view3DWidget.Scene.ModifyChildren(children =>
 				{
 					children.Remove(injectedItem);
-					injectedItem = brailleGenerator.CreateBaseplate(injectedItem);
-					children.Add(injectedItem);
+					children.Add(newBaseplate);
 				});
+
+				injectedItem = newBaseplate;
 			}
 		}
 
@@ -342,7 +360,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			public IObject3D CreateText(string brailleText, double wordSize, double wordHeight, bool includeText = false, string wordText = null)
 			{
-				var tempScene = new Object3D { ItemType = Object3DTypes.Group };
+				var group = new Object3D { ItemType = Object3DTypes.Group };
 
 				TypeFacePrinter brailPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(brailTypeFace, 12));
 
@@ -352,29 +370,34 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				{
 					TypeFacePrinter normalPrinter = new TypeFacePrinter(wordText, boldStyled);
 					Vector2 normalSize = normalPrinter.GetSize();
-					AddCharacterMeshes(tempScene, wordText, normalPrinter);
+					AddCharacterMeshes(group, wordText, normalPrinter);
 				}
 
-				AddCharacterMeshes(tempScene, brailleText, brailPrinter);
+				AddCharacterMeshes(group, brailleText, brailPrinter);
 				Vector2 brailSize = brailPrinter.GetSize();
 
-				foreach (var object3D in tempScene.Children)
+				foreach (var object3D in group.Children)
 				{
 					object3D.ExtraData.Spacing += new Vector2(0, boldStyled.CapHeightInPixels * 1.5);
 				}
 
-				tempScene.Children.Add(CreateBaseplate(tempScene));
+				IObject3D basePlate = CreateBaseplate(group); 
+				group.Children.Add(basePlate);
 
-				SetWordPositions(tempScene);
-				SetWordSize(tempScene, wordSize);
-				SetWordHeight(tempScene, wordHeight);
+				SetWordPositions(group);
+				SetWordSize(group, wordSize);
+				SetWordHeight(group, wordHeight);
 
-				var basePlateObject = CreateBaseplate(tempScene);
-				tempScene.Children.Add(basePlateObject);
+				// Remove the temporary baseplate added above and required by SetPositions/SetSize
+				group.Children.Remove(basePlate);
 
-				CenterTextOnScreen(tempScene);
+				// Add the actual baseplate that can be correctly sized to its siblings bounds
+				basePlate = CreateBaseplate(group);
+				group.Children.Add(basePlate);
 
-				return tempScene;
+				CenterTextOnScreen(group);
+
+				return group;
 			}
 
 			private void AddCharacterMeshes(IObject3D group, string currentText, TypeFacePrinter printer)
