@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void AlignToSelectedMeshGroup()
 		{
-			if (Scene.HasItems)
+			if (Scene.HasChildren)
 			{
 				// set the progress label text
 				processingProgressControl.PercentComplete = 0;

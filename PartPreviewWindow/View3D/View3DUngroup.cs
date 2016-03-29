@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void UngroupSelectedMeshGroup()
 		{
-			if (Scene.HasItems)
+			if (Scene.HasChildren)
 			{
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;

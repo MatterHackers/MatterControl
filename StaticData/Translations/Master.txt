@@ -4663,3 +4663,9 @@ Translated:Round Roof
 English:Honey Comb
 Translated:Honey Comb
 
+English:BRAILLE
+Translated:BRAILLE
+
+English:TEXT
+Translated:TEXT
+

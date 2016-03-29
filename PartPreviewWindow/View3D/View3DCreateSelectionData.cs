@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-			if (Scene.HasItems)
+			if (Scene.HasChildren)
 			{
 				processingProgressControl.Visible = true;
 				LockEditControls();

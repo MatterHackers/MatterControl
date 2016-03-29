@@ -1650,7 +1650,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
-			if (Scene.HasItems && filesToLoad != null && filesToLoad.Length > 0)
+			if (Scene.HasChildren && filesToLoad != null && filesToLoad.Length > 0)
 			{
 				string loadingPartLabel = "Loading Parts".Localize();
 				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
@@ -1671,7 +1671,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				bool addingOnlyOneItem = Scene.Children.Count == Scene.Children.Count + 1;
 
-				if (Scene.HasItems)
+				if (Scene.HasChildren)
 				{
 					if (addingOnlyOneItem)
 					{
@@ -2051,7 +2051,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorThatRequestedSave = true;
 			afterSaveCallback = eventToCallAfterSave;
 
-			if (Scene.HasItems)
+			if (Scene.HasChildren)
 			{
 				string progressSavingPartsLabel = "Saving".Localize();
 				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
@@ -2068,7 +2068,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private async void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
 			editorThatRequestedSave = true;
-			if (Scene.HasItems)
+			if (Scene.HasChildren)
 			{
 				string progressSavingPartsLabel = "Saving".Localize();
 				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);

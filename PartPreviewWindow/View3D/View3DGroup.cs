@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void GroupSelectedMeshs()
 		{
-			if (Scene.HasItems)
+			if (Scene.HasChildren)
 			{
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;

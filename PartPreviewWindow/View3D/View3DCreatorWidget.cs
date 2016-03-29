@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void MergeAndSavePartsToStl()
 		{
-			if (Scene.HasItems)
+			if (Scene.HasChildren)
 			{
 				partSelectButtonWasClicked = viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect;
 

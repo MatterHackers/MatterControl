@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void RebuildBase()
 		{
-			if (view3DWidget.Scene.HasItems && injectedItem != null)
+			if (view3DWidget.Scene.HasChildren && injectedItem != null)
 			{
 				// Remove the old base and create and add a new one
 				view3DWidget.Scene.Modify(children =>
@@ -429,7 +429,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			private void SetWordPositions(IObject3D group)
 			{
-				if (group.HasItems)
+				if (group.HasChildren)
 				{
 					foreach (var object3D in group.Children)
 					{
@@ -446,7 +446,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			public void SetWordHeight(IObject3D group, double newHeight)
 			{
-				if (group.HasItems)
+				if (group.HasChildren)
 				{
 					AxisAlignedBoundingBox baseBounds = group.Children.Last().GetAxisAlignedBoundingBox();
 
@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			public void SetWordSize(IObject3D group, double newSize)
 			{
-				if (group.HasItems)
+				if (group.HasChildren)
 				{
 					foreach (var object3D in group.Children)
 					{
@@ -513,7 +513,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			public IObject3D CreateBaseplate(IObject3D group)
 			{
-				if (group.HasItems)
+				if (group.HasChildren)
 				{
 					AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox();
 
