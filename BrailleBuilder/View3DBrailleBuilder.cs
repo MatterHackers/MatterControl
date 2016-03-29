@@ -51,23 +51,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
 	public class View3DBrailleBuilder : View3DCreatorWidget
 	{
-		// Unique to View3DBrailleBuilder {{
-		private MHTextEditWidget textToAddWidget;
-		private SolidSlider sizeScrollBar;
-		private SolidSlider heightScrollBar;
-		private CheckBox includeText;
-		private CheckBox useGrade2;
-
 		private bool firstDraw = true;
-
-		BrailleGenerator brailleGenerator;
-		private String wordText;
-		// Unique to View3DBrailleBuilder }}
+		BrailleCreatorSidebar brailleCreator;
 
 		public View3DBrailleBuilder(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
 			: base(viewerVolume, bedCenter, bedShape, "BrailleBuilder_", partSelectVisible: false)
 		{
-			brailleGenerator = new BrailleGenerator();
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -75,7 +64,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			if (firstDraw)
 			{
 #if !__ANDROID__
-				textToAddWidget.Focus();
+				brailleCreator.SetInitialFocus();
 #endif
 				//textToAddWidget.Text = "Test Text";
 				firstDraw = false;
@@ -84,134 +73,116 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			base.OnDraw(graphics2D);
 		}
 
-		private async void InsertTextNow(string brailleText)
+		protected override void AddToSidebar(GuiWidget sidePanel)
 		{
-			if (brailleText.Length > 0)
+			brailleCreator = new BrailleCreatorSidebar();
+			brailleCreator.IsSystemWindow = true;
+			brailleCreator.TextInserted += (s, e) =>
 			{
-				this.wordText = brailleText;
-				if (useGrade2.Checked)
-				{
-					brailleText = BrailleGrade2.ConvertString(brailleText);
-				}
-
-				// Update the name to use when generating the print item wrapper
-				printItemName = wordText;
-
-				// ResetWordLayoutSettings
-				sizeScrollBar.Value = 1;
-				heightScrollBar.Value = 1;
-
-				brailleGenerator.ResetSettings();
-				
-				processingProgressControl.ProcessType = "Inserting Text".Localize();
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				var newItem = await Task.Run(() =>
-				{
-					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-					return brailleGenerator.CreateText(
-						brailleText, 
-						sizeScrollBar.Value, 
-						heightScrollBar.Value, 
-						includeText.Checked, 
-						wordText);
-
-					//processingProgressControl.PercentComplete = 95;
-					//InsertTextDoWork(text, this.word));//replace with this.word when not testing conversions
-				});
-
-				Scene.Modify(scene =>
-				{
-					scene.Clear();
-					scene.Add(newItem);
-				});
-
-				//RebuildBase();
-
-				UnlockEditControls();
 				saveButton.Visible = true;
 				saveAndExitButton.Visible = true;
+			};
 
-				Scene.SelectLastChild();
-			}
+			var mainContainer = brailleCreator.CreateSideBarTool(this);
+			mainContainer.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			sidePanel.AddChild(mainContainer);
 		}
 
 		protected override void AddToBottomToolbar(GuiWidget parentContainer)
 		{
-			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
-			{
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(5)
-			};
+			brailleCreator.AddToBottomToolbar(parentContainer);
+		}
+	}
 
-			parentContainer.AddChild(textToAddWidget);
+	public class BrailleCreatorSidebar : SideBarPlugin
+	{
+		public event EventHandler TextInserted;
 
-			textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
-			{
-				InsertTextNow(textToAddWidget.Text);
-			};
+		private MHTextEditWidget textToAddWidget;
+		private SolidSlider sizeScrollBar;
+		private SolidSlider heightScrollBar;
+		private CheckBox includeText;
+		private CheckBox useGrade2;
 
-			Button insertTextButton = textImageButtonFactory.Generate("Insert".Localize());
-			parentContainer.AddChild(insertTextButton);
-			insertTextButton.Click += (sender, e) =>
-			{
-				InsertTextNow(textToAddWidget.Text);
-			};
+		private GuiWidget insertContainer;
+
+		private String wordText;
+
+		private BrailleGenerator brailleGenerator;
+		private PartPreview3DWidget view3DWidget;
+
+		private IObject3D injectedItem = null;
+
+		public BrailleCreatorSidebar()
+		{
 		}
 
-		protected override void AddToSidebar(GuiWidget sidePanel)
-		{
-			CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Braille Builder".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-			expandWordOptions.Margin = new BorderDouble(bottom: 2);
-			sidePanel.AddChild(expandWordOptions);
+		public bool IsSystemWindow { get; set; } = false;
 
-			FlowLayoutWidget wordOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+		public override GuiWidget CreateSideBarTool(PartPreview3DWidget widget)
+		{
+			brailleGenerator = new BrailleGenerator();
+			this.view3DWidget = widget;
+
+			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			var tabButton = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("BRAILLE".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+			tabButton.Margin = new BorderDouble(bottom: 2);
+			mainContainer.AddChild(tabButton);
+
+			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				Visible = false
 			};
-			sidePanel.AddChild(wordOptionContainer);
+			mainContainer.AddChild(tabContainer);
 
-			expandWordOptions.CheckedStateChanged += (sender, e) =>
+			tabButton.CheckedStateChanged += (sender, e) =>
 			{
-				wordOptionContainer.Visible = expandWordOptions.Checked;
+				tabContainer.Visible = tabButton.Checked;
+
+				if (!IsSystemWindow)
+				{
+					if (insertContainer == null)
+					{
+						AddToBottomToolbar(view3DWidget.doEdittingButtonsContainer);
+					}
+
+					insertContainer.Visible = tabButton.Checked;
+				}
 			};
 
-			sizeScrollBar = InsertUiForSlider(wordOptionContainer, "Size:".Localize(), .3, 2);
+			sizeScrollBar = View3DWidget.InsertUiForSlider(tabContainer, "Size:".Localize(), .3, 2);
 			{
 				sizeScrollBar.ValueChanged += (sender, e) =>
 				{
-					brailleGenerator.SetWordSize(Scene, sizeScrollBar.Value);
+					brailleGenerator.SetWordSize(view3DWidget.Scene, sizeScrollBar.Value);
 
 					//SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
 					RebuildBase();
 				};
 			}
 
-			heightScrollBar = InsertUiForSlider(wordOptionContainer, "Height:".Localize(), .05, 1);
+			heightScrollBar = View3DWidget.InsertUiForSlider(tabContainer, "Height:".Localize(), .05, 1);
 			{
 				heightScrollBar.ValueChanged += (sender, e) =>
 				{
-					brailleGenerator.SetWordHeight(Scene, heightScrollBar.Value);
-					RebuildBase();
+					brailleGenerator.SetWordHeight(view3DWidget.Scene, heightScrollBar.Value);
 				};
 			}
 
 			// put in the user alpha check box
 			{
-				includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-				includeText.ToolTipText = "Show normal text above the braille".Localize();
-				includeText.Checked = false;
-				includeText.Margin = new BorderDouble(10, 5);
-				includeText.HAnchor = HAnchor.ParentLeft;
-				wordOptionContainer.AddChild(includeText);
-				includeText.CheckedStateChanged += (sender, e) =>
+				includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
 				{
-					InsertTextNow(this.wordText);
+					ToolTipText = "Show normal text above the braille".Localize(),
+					Checked = false,
+					Margin = new BorderDouble(10, 5),
+					HAnchor = HAnchor.ParentLeft
 				};
+
+				tabContainer.AddChild(includeText);
+				includeText.CheckedStateChanged += (s, e) => InsertTextNow(this.wordText);
 			}
 
 			// put in the user alpha check box
@@ -221,7 +192,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				useGrade2.Checked = false;
 				useGrade2.Margin = new BorderDouble(10, 5);
 				useGrade2.HAnchor = HAnchor.ParentLeft;
-				wordOptionContainer.AddChild(useGrade2);
+				tabContainer.AddChild(useGrade2);
 				useGrade2.CheckedStateChanged += (sender, e) =>
 				{
 					InsertTextNow(this.wordText);
@@ -245,23 +216,111 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					});
 				};
 
-				wordOptionContainer.AddChild(moreAboutBrailleLink);
-
-				expandWordOptions.Checked = true;
+				tabContainer.AddChild(moreAboutBrailleLink);
 			}
+
+			tabButton.Checked = this.IsSystemWindow;
+
+			return mainContainer;
+		}
+
+		private async void InsertTextNow(string brailleText)
+		{
+			if (brailleText.Length > 0)
+			{
+				this.wordText = brailleText;
+				if (useGrade2.Checked)
+				{
+					brailleText = BrailleGrade2.ConvertString(brailleText);
+				}
+
+				// Update the name to use when generating the print item wrapper
+				//printItemName = wordText;
+
+				// ResetWordLayoutSettings
+
+				// TODO: jlewin - setting the slider values causes the onchange events to fire causing object to get rebuilt. What's the reason for chaning the slider values on insert?
+				//sizeScrollBar.Value = 1;
+				//heightScrollBar.Value = 1;
+
+				brailleGenerator.ResetSettings();
+				
+				//processingProgressControl.ProcessType = "Inserting Text".Localize();
+				//processingProgressControl.Visible = true;
+				//processingProgressControl.PercentComplete = 0;
+				//LockEditControls();
+
+				injectedItem = await Task.Run(() =>
+				{
+					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+					return brailleGenerator.CreateText(
+						brailleText, 
+						sizeScrollBar.Value, 
+						heightScrollBar.Value, 
+						includeText.Checked, 
+						wordText);
+
+					//processingProgressControl.PercentComplete = 95;
+					//InsertTextDoWork(text, this.word));//replace with this.word when not testing conversions
+				});
+
+				view3DWidget.Scene.Modify(scene =>
+				{
+					if(IsSystemWindow)
+					{
+						scene.Clear();
+					}
+
+					scene.Add(injectedItem);
+				});
+
+				//RebuildBase();
+
+				//UnlockEditControls();
+				//saveButton.Visible = true;
+				//saveAndExitButton.Visible = true;
+
+				view3DWidget.Scene.SelectLastChild();
+			}
+		}
+
+		public void AddToBottomToolbar(GuiWidget parentContainer)
+		{
+			insertContainer = new FlowLayoutWidget(FlowDirection.LeftToRight, HAnchor.FitToChildren);
+
+			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
+			{
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(5)
+			};
+			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => InsertTextNow(textToAddWidget.Text);
+			insertContainer.AddChild(textToAddWidget);
+
+			Button insertTextButton = view3DWidget.textImageButtonFactory.Generate("Insert".Localize());
+			insertTextButton.Click += (s, e) => InsertTextNow(textToAddWidget.Text);
+			insertContainer.AddChild(insertTextButton);
+
+			parentContainer.AddChild(insertContainer);
 		}
 
 		private void RebuildBase()
 		{
-			if (Scene.HasItems)
+			if (view3DWidget.Scene.HasItems && injectedItem != null)
 			{
-				Scene.Modify(scene =>
+				// Remove the old base and create and add a new one
+				view3DWidget.Scene.Modify(children =>
 				{
-					// Remove the old base and create and add a new one
-					scene.Remove(scene.Last());
-					scene.Add(brailleGenerator.CreateBaseplate(Scene));
+					children.Remove(injectedItem);
+					injectedItem = brailleGenerator.CreateBaseplate(injectedItem);
+					children.Add(injectedItem);
 				});
 			}
+		}
+
+		internal void SetInitialFocus()
+		{
+			textToAddWidget.Focus();
 		}
 
 		public class BrailleGenerator
@@ -318,7 +377,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				return tempScene;
 			}
 
-			private void AddCharacterMeshes(Object3D scene, string currentText, TypeFacePrinter printer)
+			private void AddCharacterMeshes(IObject3D group, string currentText, TypeFacePrinter printer)
 			{
 				StyledTypeFace typeFace = printer.TypeFaceStyle;
 
@@ -360,7 +419,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, unscaledLetterHeight / 2));
 						characterObject.CreateTraceables();
 
-						scene.Children.Add(characterObject);
+						group.Children.Add(characterObject);
 					}
 
 					// TODO: jlewin - we need a reporter instance
@@ -368,11 +427,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
-			private void SetWordPositions(IObject3D scene)
+			private void SetWordPositions(IObject3D group)
 			{
-				if (scene.HasItems)
+				if (group.HasItems)
 				{
-					foreach (var object3D in scene.Children)
+					foreach (var object3D in group.Children)
 					{
 						Vector3 startPosition = Vector3.Transform(Vector3.Zero, object3D.Matrix);
 						object3D.Matrix *= Matrix4X4.CreateTranslation(-startPosition);
@@ -385,15 +444,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
-			// jlewin - source from heightScrollBar.Value
-			public void SetWordHeight(IObject3D scene, double newHeight)
+			public void SetWordHeight(IObject3D group, double newHeight)
 			{
-				if (scene.HasItems)
+				if (group.HasItems)
 				{
-					AxisAlignedBoundingBox baseBounds = scene.Children.Last().GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox baseBounds = group.Children.Last().GetAxisAlignedBoundingBox();
 
 					// Skip the base item
-					foreach (var sceneItem in scene.Children.Take(scene.Children.Count - 1))
+					foreach (var sceneItem in group.Children.Take(group.Children.Count - 1))
 					{
 						Vector3 startPosition = Vector3.Transform(Vector3.Zero, sceneItem.Matrix);
 
@@ -411,12 +469,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
-			// jlewin - source from sizeScrollbar.Value
-			public void SetWordSize(IObject3D scene, double newSize)
+			public void SetWordSize(IObject3D group, double newSize)
 			{
-				if (scene.HasItems)
+				if (group.HasItems)
 				{
-					foreach (var object3D in scene.Children)
+					foreach (var object3D in group.Children)
 					{
 						Vector3 startPositionRelCenter = Vector3.Transform(Vector3.Zero, object3D.Matrix);
 
@@ -438,29 +495,13 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
-			private void CenterTextOnScreen(Object3D object3D)
+			private void CenterTextOnScreen(IObject3D group)
 			{
 				// Center on bed
 				Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
-				Vector3 centerOffset = object3D.GetAxisAlignedBoundingBox().Center - bedCenter;
+				Vector3 centerOffset = group.GetAxisAlignedBoundingBox().Center - bedCenter;
 
-				object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
-
-				/*
-				// center in y
-				if (object3D.Children.Count > 0)
-				{
-					AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox();
-
-					Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
-					Vector3 centerOffset = bounds.Center - bedCenter;
-
-					// TODO: Would it make sense to group these by default, to move as a unit and still allow the user to easily ungroup when desired?
-					foreach (var child in object3D.Children)
-					{
-						child.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
-					}
-				} */
+				group.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-centerOffset.x, -centerOffset.y, 0));
 			}
 
 			private bool CharacterHasMesh(TypeFacePrinter letterPrinter, string letter)
@@ -470,11 +511,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					&& letter != "\n";
 			}
 
-			public IObject3D CreateBaseplate(IObject3D scene)
+			public IObject3D CreateBaseplate(IObject3D group)
 			{
-				if (scene.HasItems)
+				if (group.HasItems)
 				{
-					AxisAlignedBoundingBox bounds = scene.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox();
 
 					double roundingScale = 20;
 					RectangleDouble baseRect = new RectangleDouble(bounds.minXYZ.x, bounds.minXYZ.y, bounds.maxXYZ.x, bounds.maxXYZ.y);

@@ -178,14 +178,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editPlateButtonsContainer.Visible = true;
 		}
 
-
 		protected virtual FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
 		{
-			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom, HAnchor.Max_FitToChildren_ParentWidth);
 			buttonRightPanel.Width = 200;
 			{
-				BorderDouble buttonMargin = new BorderDouble(top: 3);
-
 				AddToSidebar(buttonRightPanel);
 
 				GuiWidget verticalSpacer = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);

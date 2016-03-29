@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public interface ISideBarToolCreator
 	{
-		GuiWidget CreateSideBarTool(View3DWidget widget);
+		GuiWidget CreateSideBarTool(PartPreview3DWidget widget);
     }
 
 	public class SideBarPlugin : ISideBarToolCreator
 	{
-		public virtual GuiWidget CreateSideBarTool(View3DWidget widget)
+		public virtual GuiWidget CreateSideBarTool(PartPreview3DWidget widget)
 		{
 			return null;
 		}
@@ -90,9 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public partial class View3DWidget : PartPreview3DWidget
 	{
 		private UndoBuffer undoBuffer = new UndoBuffer();
-		public readonly int EditButtonHeight = 44;
 		private Action afterSaveCallback = null;
-		private FlowLayoutWidget doEdittingButtonsContainer;
 		private bool editorThatRequestedSave = false;
 		private FlowLayoutWidget enterEditButtonsContainer;
 		private CheckBox expandMaterialOptions;

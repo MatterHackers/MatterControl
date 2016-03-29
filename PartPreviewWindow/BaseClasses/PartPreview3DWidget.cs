@@ -51,6 +51,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public abstract class PartPreview3DWidget : PartPreviewWidget
 	{
+		public FlowLayoutWidget doEdittingButtonsContainer;
+
+		public readonly int EditButtonHeight = 44;
+
 		protected static readonly int DefaultScrollBarWidth = 120;
 
 		public ProgressControl processingProgressControl;

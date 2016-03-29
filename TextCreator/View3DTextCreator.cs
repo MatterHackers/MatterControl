@@ -49,24 +49,17 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
-
 	public class View3DTextCreator : View3DCreatorWidget
 	{
 		private bool firstDraw = true;
 
-		TextCreator2 textCreator;
+		TextCreatorSidebar textCreator;
 
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 
 		public View3DTextCreator(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
 			: base(viewerVolume, bedCenter, bedShape, "TextCreator_", partSelectVisible: true)
 		{
-			textCreator = new TextCreator2(this);
-			textCreator.TextInserted += (s, e) =>
-			{
-				saveButton.Visible = true;
-				saveAndExitButton.Visible = true;
-			};
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -138,7 +131,17 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		protected override void AddToSidebar(GuiWidget sidePanel)
 		{
-			textCreator.AddToSidebar(sidePanel);
+			textCreator = new TextCreatorSidebar();
+			textCreator.IsSystemWindow = true;
+			textCreator.TextInserted += (s, e) =>
+			{
+				saveButton.Visible = true;
+				saveAndExitButton.Visible = true;
+			};
+
+			var mainContainer = textCreator.CreateSideBarTool(this);
+			mainContainer.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			sidePanel.AddChild(mainContainer);
 		}
 
 		protected override void AddToBottomToolbar(GuiWidget parentContainer)
@@ -176,26 +179,124 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		}
 	}
 
-	public class TextCreator2 : GuiWidget
+	public class TextCreatorSidebar : SideBarPlugin
 	{
 		public event EventHandler TextInserted;
 
-		MHTextEditWidget textToAddWidget;
+		private MHTextEditWidget textToAddWidget;
 		private SolidSlider spacingScrollBar;
 		private SolidSlider sizeScrollBar;
 		private SolidSlider heightScrollBar;
-
 		private CheckBox createUnderline;
+
+		private GuiWidget insertContainer;
 
 		private String wordText;
 
-		TextGenerator textGenerator;
-		PartPreview3DWidget previewWidget;
+		private TextGenerator textGenerator;
+		private PartPreview3DWidget view3DWidget;
 
-		public TextCreator2(PartPreview3DWidget previewWidget)
+		private IObject3D injectedItem = null;
+
+		public TextCreatorSidebar()
+		{
+		}
+
+		public bool IsSystemWindow { get; set; } = false;
+
+		public override GuiWidget CreateSideBarTool(PartPreview3DWidget widget)
 		{
 			textGenerator = new TextGenerator();
-			this.previewWidget = previewWidget;
+			this.view3DWidget = widget;
+
+			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			var tabButton = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("TEXT".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+			tabButton.Margin = new BorderDouble(bottom: 2);
+			mainContainer.AddChild(tabButton);
+
+			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Visible = false
+			};
+			mainContainer.AddChild(tabContainer);
+
+			tabButton.CheckedStateChanged += (sender, e) =>
+			{
+				tabContainer.Visible = tabButton.Checked;
+
+				if (!IsSystemWindow)
+				{
+					if (insertContainer == null)
+					{
+						AddToBottomToolbar(view3DWidget.doEdittingButtonsContainer);
+					}
+
+					insertContainer.Visible = tabButton.Checked;
+				}
+			};
+
+			spacingScrollBar = PartPreview3DWidget.InsertUiForSlider(tabContainer, "Spacing:".Localize(), .5, 1);
+			spacingScrollBar.ValueChanged += (sender, e) =>
+			{
+				if (injectedItem != null)
+				{
+					textGenerator.SetWordSpacing(injectedItem, spacingScrollBar.Value, rebuildUnderline: true);
+				}
+			};
+
+			sizeScrollBar = PartPreview3DWidget.InsertUiForSlider(tabContainer, "Size:".Localize(), .3, 2);
+			sizeScrollBar.ValueChanged += (sender, e) =>
+			{
+				var textGroup = view3DWidget.Scene.Children.FirstOrDefault();
+				if (textGroup != null)
+				{
+					textGenerator.SetWordSize(textGroup, sizeScrollBar.Value, rebuildUnderline: true);
+				}
+			};
+
+			heightScrollBar = PartPreview3DWidget.InsertUiForSlider(tabContainer, "Height:".Localize(), .05, 1);
+			heightScrollBar.ValueChanged += (sender, e) =>
+			{
+				var textGroup = view3DWidget.Scene.Children.FirstOrDefault();
+				if (textGroup != null)
+				{
+					textGenerator.SetWordHeight(textGroup, heightScrollBar.Value, rebuildUnderline: true);
+				}
+			};
+
+			createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
+			{
+				Checked = true,
+				Margin = new BorderDouble(10, 5),
+				HAnchor = HAnchor.ParentLeft
+			};
+			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
+			tabContainer.AddChild(createUnderline);
+
+			tabButton.Checked = this.IsSystemWindow;
+
+			return mainContainer;
+		}
+
+		public void AddToBottomToolbar(GuiWidget parentContainer)
+		{
+			insertContainer = new FlowLayoutWidget(FlowDirection.LeftToRight, HAnchor.FitToChildren);
+
+			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
+			{
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(5)
+			};
+			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => InsertTextNow(textToAddWidget.Text);
+			insertContainer.AddChild(textToAddWidget);
+
+			Button insertTextButton = view3DWidget.textImageButtonFactory.Generate("Insert".Localize());
+			insertTextButton.Click += (s, e) => InsertTextNow(textToAddWidget.Text);
+			insertContainer.AddChild(insertTextButton);
+
+			parentContainer.AddChild(insertContainer);
 		}
 
 		private void ResetWordLayoutSettings()
@@ -214,13 +315,13 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				this.wordText = text;
 				ResetWordLayoutSettings();
 
-				previewWidget.processingProgressControl.ProcessType = "Inserting Text".Localize();
-				previewWidget.processingProgressControl.Visible = true;
-				previewWidget.processingProgressControl.PercentComplete = 0;
+				//view3DWidget.processingProgressControl.ProcessType = "Inserting Text".Localize();
+				//view3DWidget.processingProgressControl.Visible = true;
+				//view3DWidget.processingProgressControl.PercentComplete = 0;
 
-				previewWidget.LockEditControls();
+				view3DWidget.LockEditControls();
 
-				var newItem = await Task.Run(() =>
+				injectedItem = await Task.Run(() =>
 				{
 					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -232,170 +333,51 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						createUnderline.Checked);
 				});
 
-				previewWidget.Scene.Modify(scene =>
+				view3DWidget.Scene.Modify(scene =>
 				{
-					scene.Clear();
-					scene.Add(newItem);
+					if (IsSystemWindow)
+					{
+						scene.Clear();
+					}
+
+					scene.Add(injectedItem);
 				});
 
-				previewWidget.Scene.SelectLastChild();
+				view3DWidget.Scene.SelectLastChild();
 
-				previewWidget.UnlockEditControls();
+				view3DWidget.UnlockEditControls();
 			}
-
-			previewWidget.meshViewerWidget.ResetView();
 
 			TextInserted?.Invoke(null, null);
 		}
 
-		/*
-		private void DeleteSelectedMesh()
-		{
-			// don't ever delete the last mesh
-			if (MeshGroups.Count > 1)
-			{
-				int removeIndex = SelectedMeshGroupIndex;
-				MeshGroups.RemoveAt(removeIndex);
-				MeshGroupExtraData.RemoveAt(removeIndex);
-				MeshGroupTransforms.RemoveAt(removeIndex);
-				SelectedMeshGroupIndex = Math.Min(SelectedMeshGroupIndex, MeshGroups.Count - 1);
-				saveButton.Visible = true;
-				saveAndExitButton.Visible = true;
-				Invalidate();
-			}
-		} */
-
-		public void AddToSidebar(GuiWidget sidePanel)
-		{
-			CheckBox expandWordOptions = previewWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("Text Creator".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-			expandWordOptions.Margin = new BorderDouble(bottom: 2);
-			sidePanel.AddChild(expandWordOptions);
-
-			FlowLayoutWidget wordOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Visible = false
-			};
-			sidePanel.AddChild(wordOptionContainer);
-
-			expandWordOptions.CheckedStateChanged += (sender, e) =>
-			{
-				wordOptionContainer.Visible = expandWordOptions.Checked;
-			};
-
-			spacingScrollBar = PartPreview3DWidget.InsertUiForSlider(wordOptionContainer, "Spacing:".Localize(), .5, 1);
-			spacingScrollBar.ValueChanged += (sender, e) =>
-			{
-				var textGroup = previewWidget.Scene.Children.FirstOrDefault();
-				if (textGroup != null)
-				{
-					textGenerator.SetWordSpacing(textGroup, spacingScrollBar.Value, rebuildUnderline: true);
-				}
-			};
-
-
-
-			sizeScrollBar = PartPreview3DWidget.InsertUiForSlider(wordOptionContainer, "Size:".Localize(), .3, 2);
-			sizeScrollBar.ValueChanged += (sender, e) =>
-			{
-				var textGroup = previewWidget.Scene.Children.FirstOrDefault();
-				if (textGroup != null)
-				{
-					textGenerator.SetWordSize(textGroup, sizeScrollBar.Value, rebuildUnderline: true);
-				}
-			};
-
-			heightScrollBar = PartPreview3DWidget.InsertUiForSlider(wordOptionContainer, "Height:".Localize(), .05, 1);
-			heightScrollBar.ValueChanged += (sender,e) =>
-			{
-				var textGroup = previewWidget.Scene.Children.FirstOrDefault();
-				if (textGroup != null)
-				{
-					textGenerator.SetWordHeight(textGroup, heightScrollBar.Value, rebuildUnderline: true);
-				}
-			};
-
-			createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
-			{
-				Checked = true,
-				Margin = new BorderDouble(10, 5),
-				HAnchor = HAnchor.ParentLeft
-			};
-			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
-			wordOptionContainer.AddChild(createUnderline);
-
-			expandWordOptions.Checked = true;
-		}
-
-		public void AddToBottomToolbar(GuiWidget parentContainer)
-		{
-			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
-			{
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(5)
-			};
-			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => InsertTextNow(textToAddWidget.Text);
-			parentContainer.AddChild(textToAddWidget);
-
-			Button insertTextButton = previewWidget.textImageButtonFactory.Generate("Insert".Localize());
-			insertTextButton.Click += (s, e) => InsertTextNow(textToAddWidget.Text);
-			parentContainer.AddChild(insertTextButton);
-
-
-		}
-
 		private void CreateUnderline_CheckedStateChanged(object sender, EventArgs e)
 		{
-			// The character data is now inject as a group and is the only item in the scene, thus it's easy to grab
-			var currentGroup = previewWidget.Scene.Children.First();
-
-			// Create a copy of the tree for the group
-			IObject3D workItem = new Object3D()
+			ModifyInjectedItem(workItem =>
 			{
-				Children = new List<IObject3D>(currentGroup.Children)
-			};
+				// Change the contents, adding or removing the underline
+				textGenerator.EnableUnderline(workItem, enableUnderline: createUnderline.Checked);
+			});
+		}
 
-			// Change the contents, adding or removing the underline
-			textGenerator.EnableUnderline(workItem, createUnderline.Checked);
+		private void ModifyInjectedItem(Action<IObject3D> modifier)
+		{
+			// Create a copy of the injected group
+			IObject3D workItem = injectedItem.Clone();
 
-			// Modify the active scene graph, swapping in the new item
-			previewWidget.Scene.Modify(scene =>
+			// Invoke the passed in action
+			modifier(workItem);
+
+			// Modify the scene graph, swapping in the modified item
+			view3DWidget.Scene.Modify(scene =>
 			{
-				scene.Clear();
+				scene.Remove(injectedItem);
 				scene.Add(workItem);
 			});
 
-			previewWidget.Scene.SelectLastChild();
-		}
-
-		private void AddLetterControls(FlowLayoutWidget buttonPanel)
-		{
-			previewWidget.textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
-
-			FlowLayoutWidget degreesContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			degreesContainer.HAnchor = HAnchor.ParentLeftRight;
-			degreesContainer.Padding = new BorderDouble(5);
-
-			GuiWidget horizontalSpacer = new GuiWidget();
-			horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-			TextWidget degreesLabel = new TextWidget("Degrees:".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			degreesContainer.AddChild(degreesLabel);
-			degreesContainer.AddChild(horizontalSpacer);
-
-			MHNumberEdit degreesControl = new MHNumberEdit(45, pixelWidth: 40, allowNegatives: true, increment: 5, minValue: -360, maxValue: 360);
-			degreesControl.VAnchor = Agg.UI.VAnchor.ParentTop;
-			degreesContainer.AddChild(degreesControl);
-
-			buttonPanel.AddChild(degreesContainer);
-
-			FlowLayoutWidget rotateButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			rotateButtonContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			buttonPanel.AddChild(rotateButtonContainer);
-
-			buttonPanel.AddChild(previewWidget.GenerateHorizontalRule());
-			previewWidget.textImageButtonFactory.FixedWidth = 0;
+			// Update the injected item and the scene selection
+			injectedItem = workItem;
+			view3DWidget.Scene.SelectedItem = injectedItem;
 		}
 
 		internal void SetInitialFocus()
@@ -407,6 +389,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			private double lastHeightValue = 1;
 			private double lastSizeValue = 1;
+			private bool hasUnderline;
 
 			private TypeFace boldTypeFace;
 
@@ -417,7 +400,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			public IObject3D CreateText(string wordText, double wordSize, double wordHeight, double characterSpacing, bool createUnderline)
 			{
-				var tempScene = new Object3D { ItemType = Object3DTypes.Group };
+				var groupItem = new Object3D { ItemType = Object3DTypes.Group };
 
 				StyledTypeFace typeFace = new StyledTypeFace(boldTypeFace, 12);
 				TypeFacePrinter printer = new TypeFacePrinter(wordText, typeFace);
@@ -443,9 +426,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						};
 						characterObject.ExtraData.Spacing.x = printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset;
 
-						tempScene.Children.Add(characterObject);
-
-
+						groupItem.Children.Add(characterObject);
 
 						//public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
 						{
@@ -462,26 +443,26 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					//processingProgressControl.PercentComplete = ((i + 1) * 95 / wordText.Length);
 				}
 
-				SetWordSpacing(tempScene, characterSpacing);
-				SetWordSize(tempScene, wordSize);
-				SetWordHeight(tempScene, wordHeight);
+				SetWordSpacing(groupItem, characterSpacing);
+				SetWordSize(groupItem, wordSize);
+				SetWordHeight(groupItem, wordHeight);
 
 				if (createUnderline)
 				{
-					tempScene.Children.Add(CreateUnderline(tempScene));
+					groupItem.Children.Add(CreateUnderline(groupItem));
 				}
 
 				// jlewin - restore progress
 				//processingProgressControl.PercentComplete = 95;
 
-				return tempScene;
+				return groupItem;
 			}
 
-			private IObject3D CreateUnderline(IObject3D scene)
+			private IObject3D CreateUnderline(IObject3D group)
 			{
-				if (scene.HasItems)
+				if (group.HasItems)
 				{
-					AxisAlignedBoundingBox bounds = scene.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox();
 					
 					double xSize = bounds.XSize;
 					double ySize = lastSizeValue * 3;
@@ -501,42 +482,39 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				return null;
 			}
 
-			private bool hasUnderline;
-
-			public void EnableUnderline(IObject3D scene, bool enableUnderline)
+			public void EnableUnderline(IObject3D group, bool enableUnderline)
 			{
 				hasUnderline = enableUnderline;
 
-				if (enableUnderline && scene.HasItems)
+				if (enableUnderline && group.HasItems)
 				{
 					// we need to add the underline
-					scene.Children.Add(CreateUnderline(scene));
+					group.Children.Add(CreateUnderline(group));
 				}
-				else if (scene.HasItems)
+				else if (group.HasItems)
 				{
 					// we need to remove the underline
-					scene.Children.Remove(scene.Children.Last());
+					group.Children.Remove(group.Children.Last());
 				}
 			}
 
-
-			public void RebuildUnderline(IObject3D scene)
+			public void RebuildUnderline(IObject3D group)
 			{
-				if (hasUnderline && scene.HasItems)
+				if (hasUnderline && group.HasItems)
 				{
 					// Remove the underline object
-					scene.Children.Remove(scene.Children.Last());
+					group.Children.Remove(group.Children.Last());
 
 					// we need to add the underline
-					CreateUnderline(scene);
+					CreateUnderline(group);
 				}
 			}
 
-			public void SetWordSpacing(IObject3D scene, double spacing, bool rebuildUnderline = false)
+			public void SetWordSpacing(IObject3D group, double spacing, bool rebuildUnderline = false)
 			{
-				if (scene.HasItems)
+				if (group.HasItems)
 				{
-					foreach (var sceneItem in scene.Children)
+					foreach (var sceneItem in group.Children)
 					{
 						Vector3 startPosition = Vector3.Transform(Vector3.Zero, sceneItem.Matrix);
 
@@ -548,20 +526,20 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					if(rebuildUnderline)
 					{
-						RebuildUnderline(scene);
+						RebuildUnderline(group);
 					}
 				}
 			}
 
-			public void SetWordSize(IObject3D scene, double newSize, bool rebuildUnderline = false)
+			public void SetWordSize(IObject3D group, double newSize, bool rebuildUnderline = false)
 			{
 				// take out the last scale
 				double oldSize = 1.0 / lastSizeValue;
 
 				Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
-				if (scene.HasItems)
+				if (group.HasItems)
 				{
-					foreach (var object3D in scene.Children)
+					foreach (var object3D in group.Children)
 					{
 						object3D.Matrix = PlatingHelper.ApplyAtPosition(object3D.Matrix, Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize)), new Vector3(bedCenter));
 						object3D.Matrix = PlatingHelper.ApplyAtPosition(object3D.Matrix, Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize)), new Vector3(bedCenter));
@@ -571,16 +549,16 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					if (rebuildUnderline)
 					{
-						RebuildUnderline(scene);
+						RebuildUnderline(group);
 					}
 				}
 			}
 
-			public void SetWordHeight(IObject3D scene, double newHeight, bool rebuildUnderline = false)
+			public void SetWordHeight(IObject3D group, double newHeight, bool rebuildUnderline = false)
 			{
-				if (scene.HasItems)
+				if (group.HasItems)
 				{
-					foreach (var sceneItem in scene.Children)
+					foreach (var sceneItem in group.Children)
 					{
 						// take out the last scale
 						double oldHeight = lastHeightValue;
@@ -593,7 +571,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					if (rebuildUnderline)
 					{
-						RebuildUnderline(scene);
+						RebuildUnderline(group);
 					}
 				}
 			}
