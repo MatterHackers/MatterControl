@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ItemType = Object3DTypes.Group
 				};
 
-				ClearSelection(newGroup.Children, Scene.SelectedItem);
+				ClearSelectionApplyChanges(newGroup.Children, Scene.SelectedItem);
 
 				newGroup.CreateTraceables();
 

@@ -875,7 +875,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									}
 									else if (ModifierKeys != Keys.Shift)
 									{
-										ClearSelection(children);
+										ClearSelectionApplyChanges(children);
 
 										Scene.SelectedItem = hitObject;
 									}
@@ -916,7 +916,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							Scene.ModifyChildren(ClearSelection);
+							Scene.ModifyChildren(ClearSelectionApplyChanges);
 						}
 
 						SelectedTransformChanged?.Invoke(this, null);
@@ -925,17 +925,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ClearSelection(List<IObject3D> sceneChildren)
+		private void ClearSelectionApplyChanges(List<IObject3D> sceneChildren)
 		{
-			ClearSelection(sceneChildren, Scene.SelectedItem);
-			Scene.SelectedItem = null;
+			ClearSelectionApplyChanges(sceneChildren, Scene.SelectedItem);
+			Scene.ClearSelection();
 		}
 
-		private void ClearSelection(List<IObject3D> sceneGraph, IObject3D selectionContext, Object3DTypes typeToCollapse = Object3DTypes.SelectionGroup, int depth = int.MaxValue)
+		private void ClearSelectionApplyChanges(List<IObject3D> sceneChildren, IObject3D selectionContext, Object3DTypes typeToCollapse = Object3DTypes.SelectionGroup, int depth = int.MaxValue)
 		{
 			if (selectionContext != null && selectionContext.ItemType == typeToCollapse)
 			{
-				sceneGraph.Remove(selectionContext);
+				sceneChildren.Remove(selectionContext);
 
 				// Remove the children from the selection and back into the root of the scene
 				foreach (var child in selectionContext.Children)
@@ -944,11 +944,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (child.ItemType == Object3DTypes.SelectionGroup && depth > 0)
 					{
-						ClearSelection(sceneGraph, child, typeToCollapse, depth - 1);
+						ClearSelectionApplyChanges(sceneChildren, child, typeToCollapse, depth - 1);
 					}
 					else
 					{
-						sceneGraph.Add(child);
+						sceneChildren.Add(child);
 					}
 				}
 			}
@@ -1557,17 +1557,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DeleteSelectedMesh()
 		{
-			// don't ever delete the last mesh
-			if (Scene.HasSelection
-				&& Scene.Children.Count > 1)
+			if (Scene.HasSelection && Scene.Children.Count > 1)
 			{
 				// jlewin 
-				//int removingIndex = SelectedMeshGroupIndex;
 				//undoBuffer.Add(new DeleteUndoCommand(this, removingIndex));
-
-				//MeshGroups.RemoveAt(removingIndex);
-
-				Scene.SelectedItem.Children.Clear();
+				Scene.ModifyChildren(children =>
+				{
+					children.Remove(Scene.SelectedItem);
+					Scene.ClearSelection();
+				});
 
 				PartHasBeenChanged();
 			}
@@ -2234,7 +2232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 				}
 
-				Scene.ModifyChildren(ClearSelection);
+				Scene.ModifyChildren(ClearSelectionApplyChanges);
 			}
 		}
 
