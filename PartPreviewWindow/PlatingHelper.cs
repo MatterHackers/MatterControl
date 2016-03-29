@@ -214,52 +214,30 @@ namespace MatterHackers.MatterControl
 			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.x + bounds.XSize / 2, -boundsCenter.y + bounds.YSize / 2, 0));
 		}
 
-		public static void FindPositionForGroupAndAddToPlate(MeshGroup meshGroupToAdd, IObject3D scene)
+		public static void MoveToOpenPosition(IObject3D objectToAdd, IObject3D scene)
 		{
-			if (meshGroupToAdd == null || meshGroupToAdd.Meshes.Count < 1)
+			if (objectToAdd == null || objectToAdd.MeshGroup.Meshes.Count < 1)
 			{
 				return;
 			}
 
-			// first find the bounds of what is already here.
+			// find the bounds of all items in the scene
 			AxisAlignedBoundingBox allPlacedMeshBounds = scene.Children.GetUnionedAxisAlignedBoundingBox();
-
-			var newItem = new Object3D
-			{
-				ItemType = Object3DTypes.Model,
-				MeshGroup = meshGroupToAdd
-			};
-
-			scene.Children.Add(newItem);
-
+			
 			// move the part to the total bounds lower left side
-			Vector3 meshLowerLeft = newItem.GetAxisAlignedBoundingBox().minXYZ;
-			newItem.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
+			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox().minXYZ;
+			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 
-			MoveMeshGroupToOpenPosition(scene, allPlacedMeshBounds);
+			// keep moving the item until its in an open slot 
+			MoveToOpenPosition(objectToAdd, scene, allPlacedMeshBounds);
 
-			PlaceMeshGroupOnBed(newItem);
+			//PlaceMeshGroupOnBed(objectToAdd);
 		}
 
-		static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(MeshGroup meshGroup, Matrix4X4 transform)
+		public static void MoveToOpenPosition(IObject3D itemToMove, IObject3D scene, AxisAlignedBoundingBox allPlacedMeshBounds)
 		{
-			return meshGroup.GetAxisAlignedBoundingBox(transform);
-		}
-
-		public static void MoveMeshGroupToOpenPosition(IObject3D scene, AxisAlignedBoundingBox allPlacedMeshBounds)
-		{
-			/*
-			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[0], meshTransforms[0]);
-			for (int i = 1; i < meshGroupToMoveIndex; i++)
-			{
-				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[i], meshTransforms[i]);
-				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
-			} */
-
 			double xStart = allPlacedMeshBounds.minXYZ.x;
 			double yStart = allPlacedMeshBounds.minXYZ.y;
-
-			IObject3D itemToMove = scene.Children.Last();
 
 			// find a place to put it that doesn't hit anything
 			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox();
@@ -272,8 +250,6 @@ namespace MatterHackers.MatterControl
 			int currentSize = 1;
 			bool partPlaced = false;
 
-			int itemToMoveIndex = scene.Children.Count;
-
 			while (!partPlaced && itemToMove != null)
 			{
 				int yStep = 0;
@@ -281,7 +257,7 @@ namespace MatterHackers.MatterControl
 				// check far right edge
 				for (yStep = 0; yStep < currentSize; yStep++)
 				{
-					partPlaced = CheckPosition(itemToMoveIndex, scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
+					partPlaced = CheckPosition(scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 
 					if (partPlaced)
 					{
@@ -295,7 +271,7 @@ namespace MatterHackers.MatterControl
 					// check top edge 
 					for (xStep = 0; xStep < currentSize; xStep++)
 					{
-						partPlaced = CheckPosition(itemToMoveIndex, scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
+						partPlaced = CheckPosition(scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 
 						if (partPlaced)
 						{
@@ -307,7 +283,7 @@ namespace MatterHackers.MatterControl
 					{
 						xStep = currentSize;
 						// check top right point
-						partPlaced = CheckPosition(itemToMoveIndex, scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
+						partPlaced = CheckPosition(scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 					}
 				}
 
@@ -317,7 +293,7 @@ namespace MatterHackers.MatterControl
 			itemToMove.Matrix *= transform;
 		}
 
-		private static bool CheckPosition(int meshGroupToMoveIndex, IObject3D scene, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
+		private static bool CheckPosition(IObject3D scene, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
 		{
 			double xStepAmount = 5;
 			double yStepAmount = 5;
@@ -329,21 +305,25 @@ namespace MatterHackers.MatterControl
 
 			AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
 
-			for (int i = 0; i < meshGroupToMoveIndex; i++)
+			foreach (IObject3D meshToTest in scene.Children)
 			{
-				IObject3D meshToTest = scene.Children[i];
 				if (meshToTest != itemToMove)
 				{
 					AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox();
 					AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
 					if (intersection.XSize > 0 && intersection.YSize > 0)
 					{
-						return true;
+						return false;
 					}
 				}
 			}
 
-			return false;
+			return true;
+		}
+
+		static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(MeshGroup meshGroup, Matrix4X4 transform)
+		{
+			return meshGroup.GetAxisAlignedBoundingBox(transform);
 		}
 
 		/*

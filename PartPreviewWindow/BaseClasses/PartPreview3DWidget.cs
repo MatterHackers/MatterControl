@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public abstract class PartPreview3DWidget : PartPreviewWidget
 	{
+		// HACK: jlewin - move back to view3DWidget.cs as a private member once the hack for embedded editors is removed
 		public FlowLayoutWidget doEdittingButtonsContainer;
 
 		public readonly int EditButtonHeight = 44;
@@ -64,6 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 
+		// Proxy to MeshViewerWidget
 		public InteractiveScene Scene => meshViewerWidget.Scene;
 
 		private event EventHandler unregisterEvents;
