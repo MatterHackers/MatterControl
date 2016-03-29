@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		protected static readonly int DefaultScrollBarWidth = 120;
 
+		public ProgressControl processingProgressControl;
+
 		protected bool autoRotating = false;
 		protected bool allowAutoRotate = false;
 
@@ -63,6 +65,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private event EventHandler unregisterEvents;
 
 		protected ViewControls3D viewControls3D;
+
+		protected FlowLayoutWidget editPlateButtonsContainer;
 
 		private bool needToRecretaeBed = false;
 
@@ -83,6 +87,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
+
+		public virtual void LockEditControls()
+		{
+		}
+
+		public virtual void UnlockEditControls()
+		{
+		}
 
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo info)
 		{
@@ -176,7 +188,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		protected static SolidSlider InsertUiForSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
+		public static SolidSlider InsertUiForSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
 			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)

@@ -46,9 +46,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class View3DCreatorWidget : PartPreview3DWidget
 	{
-		protected ProgressControl processingProgressControl;
-		private FlowLayoutWidget editPlateButtonsContainer;
-
 		protected Button saveButton;
 		protected Button saveAndExitButton;
 		private Button closeButton;
@@ -154,7 +151,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.PartSelectVisible = partSelectVisible;
 		}
 
-		protected void LockEditControls()
+		protected virtual void AddToBottomToolbar(GuiWidget parentContainer)
+		{
+		}
+
+		protected virtual void AddToSidebar(GuiWidget sidePanel)
+		{
+		}
+
+		public override void LockEditControls()
 		{
 			editPlateButtonsContainer.Visible = false;
 			buttonRightPanelDisabledCover.Visible = true;
@@ -165,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		protected virtual void UnlockEditControls()
+		public override void UnlockEditControls()
 		{
 			buttonRightPanelDisabledCover.Visible = false;
 			processingProgressControl.Visible = false;
@@ -173,13 +178,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editPlateButtonsContainer.Visible = true;
 		}
 
-		protected virtual void AddToBottomToolbar(GuiWidget parentContainer)
-		{
-		}
-
-		protected virtual void AddToWordEditMenu(GuiWidget wordOptionContainer)
-		{
-		}
 
 		protected virtual FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
 		{
@@ -188,30 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				// put in the word editing menu
-				{
-					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-					expandWordOptions.Margin = new BorderDouble(bottom: 2);
-					buttonRightPanel.AddChild(expandWordOptions);
-
-					FlowLayoutWidget wordOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-					{
-						HAnchor = HAnchor.ParentLeftRight,
-						Visible = false
-					};
-
-					buttonRightPanel.AddChild(wordOptionContainer);
-
-					// 
-					AddToWordEditMenu(wordOptionContainer);
-
-					expandWordOptions.CheckedStateChanged += (sender, e) =>
-					{
-						wordOptionContainer.Visible = expandWordOptions.Checked;
-					};
-
-					expandWordOptions.Checked = true;
-				}
+				AddToSidebar(buttonRightPanel);
 
 				GuiWidget verticalSpacer = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
 				buttonRightPanel.AddChild(verticalSpacer);
