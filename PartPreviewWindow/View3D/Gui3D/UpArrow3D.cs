@@ -110,7 +110,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 			zHitHeight = info.hitPosition.z;
-			transformOnMouseDown = MeshViewerToDrawWith.Scene.SelectedItem.Matrix;
+			if (MeshViewerToDrawWith.Scene.SelectedItem != null)
+			{
+				transformOnMouseDown = MeshViewerToDrawWith.Scene.SelectedItem.Matrix;
+			}
 
 			base.OnMouseDown(mouseEvent3D);
 		}

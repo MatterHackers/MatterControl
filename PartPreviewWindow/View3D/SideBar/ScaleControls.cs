@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			newScale[axis] = scaleIn;
 			Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
 
-			selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem.MeshGroup, selectedItem.Matrix, totalScale);
+			selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, selectedItem.Matrix, totalScale);
 
 			// keep the bottom where it was
 

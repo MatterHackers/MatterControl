@@ -1028,7 +1028,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
 		{
-			if (undoTransform != Scene.SelectedItem.Matrix)
+			if (undoTransform != Scene.SelectedItem?.Matrix)
 			{
 				// jlewin
 				//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
@@ -1162,9 +1162,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationX(radians);
-					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem.MeshGroup, Scene.SelectedItem.Matrix, rotation);
-					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
-					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
+                    Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, Scene.SelectedItem.Matrix, rotation);
 					//undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
@@ -1181,7 +1180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationY(radians);
-					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem.MeshGroup, Scene.SelectedItem.Matrix, rotation);
+					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, Scene.SelectedItem.Matrix, rotation);
 
 					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
@@ -1203,7 +1202,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationZ(radians);
-					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem.MeshGroup, Scene.SelectedItem.Matrix, rotation);
+					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, Scene.SelectedItem.Matrix, rotation);
 
 					//Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					//SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
