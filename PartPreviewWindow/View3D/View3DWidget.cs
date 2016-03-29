@@ -1564,8 +1564,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Scene.ModifyChildren(children =>
 				{
 					children.Remove(Scene.SelectedItem);
-					Scene.ClearSelection();
 				});
+
+				Scene.SelectLastChild();
 
 				PartHasBeenChanged();
 			}
