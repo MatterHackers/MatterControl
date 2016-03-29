@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl
 
 		public static void MoveToOpenPosition(IObject3D objectToAdd, IObject3D scene)
 		{
-			if (objectToAdd == null || objectToAdd.MeshGroup.Meshes.Count < 1)
+			if (objectToAdd == null || !scene.HasChildren)
 			{
 				return;
 			}
