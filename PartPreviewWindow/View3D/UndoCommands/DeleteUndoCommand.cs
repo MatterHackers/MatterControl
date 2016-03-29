@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private int deletedIndex;
 		private View3DWidget view3DWidget;
 		private Matrix4X4 deletedTransform;
-		PlatingMeshGroupData deletedPlatingData;
+		PlatingData deletedPlatingData;
 
 		IObject3D meshGroupThatWasDeleted;
 
