@@ -1853,14 +1853,74 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
-		private void MergeAndSavePartsDoWork(SaveAsWindow.SaveAsReturnInfo returnInfo)
+
+
+		public void ProcessTree(IObject3D object3D)
 		{
-			if (Path.GetExtension(printItemWrapper.FileLocation) == ".xml")
+
+		}
+
+		public void SaveScene(string filePath)
+		{
+			var itemsToSave = from object3D in Scene.Descendants()
+							  where object3D.MeshPath == null &&
+									object3D.ItemType == Object3DTypes.Model &&
+									object3D.MeshGroup != null &&
+									object3D.MeshGroup.Meshes.Count > 0
+							  select object3D;
+
+			foreach(var item in itemsToSave)
 			{
-				meshViewerWidget.SaveScene();
+				SimpleSave(item);
 			}
 
-			/* Classic save implementation temporarily disabled
+			File.WriteAllText(filePath, JsonConvert.SerializeObject(Scene, Formatting.Indented));
+		}
+
+		private void SimpleSave(IObject3D object3D)
+		{
+			string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
+
+			MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+
+			try
+			{
+				// TODO: jlewin - temp path works for testing, still need to build library path and fix cache purge to be scene aware 
+				//
+				// get a new location to save to
+				string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
+
+				// save to the new temp location
+				bool savedSuccessfully = MeshFileIo.Save(
+					new List<MeshGroup> { object3D.MeshGroup }, 
+					tempFileNameToSaveTo, 
+					outputInfo, 
+					ReportProgressChanged);
+
+				if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
+				{
+					object3D.MeshPath = tempFileNameToSaveTo;
+				}
+			}
+			catch (Exception ex)
+			{
+				Trace.WriteLine("Error saving file: ", ex.Message);
+			}
+		}
+
+		private void MergeAndSavePartsDoWork(SaveAsWindow.SaveAsReturnInfo returnInfo)
+		{
+			if (Path.GetExtension(printItemWrapper.FileLocation) != ".mcx")
+			{
+				printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".mcx");
+				printItemWrapper.PrintItem.Commit();
+			}
+
+			SaveScene(printItemWrapper.FileLocation);
+
+			return;
+
+			/* Classic save implementation temporarily disabled */
 
 			if (returnInfo != null)
 			{
@@ -1871,20 +1931,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
+			//PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			try
 			{
-				// push all the transforms into the meshes
-				for (int i = 0; i < MeshGroups.Count; i++)
-				{
-					MeshGroups[i].Transform(asyncMeshGroupTransforms[i]);
-
-					bool continueProcessing;
-					ReportProgressChanged((i + 1) * .4 / MeshGroups.Count, "", out continueProcessing);
-				}
-
 				string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
 
 				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
@@ -1893,6 +1944,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (returnInfo == null)
 				{
 					var fileInfo = new FileInfo(printItemWrapper.FileLocation);
+
+					string altFilePath = Path.ChangeExtension(fileInfo.FullName, ".mcx");
+					SaveScene(altFilePath);
 
 					bool requiresTypeChange = !fileInfo.Extension.Equals(".amf", StringComparison.OrdinalIgnoreCase);
 					if (requiresTypeChange && !printItemWrapper.UseIncrementedNameDuringTypeChange)
@@ -1935,7 +1989,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
 
 						// save to the new temp location
-						bool savedSuccessfully = MeshFileIo.Save(MeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
+						bool savedSuccessfully = false; // = MeshFileIo.Save(MeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
 
 						// Swap out the files if the save operation completed successfully 
 						if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
@@ -1960,7 +2014,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else // we are saving a new file and it will not exist until we are done
 				{
-					MeshFileIo.Save(MeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
+					//MeshFileIo.Save(MeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
 				}
 
 				// Wait for a second to report the file changed to give the OS a chance to finish closing it.
@@ -2004,8 +2058,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
 				});
 			}
-		}
-		*/
 		}
 
 		private void MergeAndSavePartsDoCompleted()
