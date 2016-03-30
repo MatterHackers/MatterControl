@@ -927,24 +927,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ClearSelectionApplyChanges(List<IObject3D> sceneChildren)
 		{
-			ClearSelectionApplyChanges(sceneChildren, Scene.SelectedItem);
+			CollapseObjectIntoScene(sceneChildren, Scene.SelectedItem);
 			Scene.ClearSelection();
 		}
 
-		private void ClearSelectionApplyChanges(List<IObject3D> sceneChildren, IObject3D selectionContext, Object3DTypes typeToCollapse = Object3DTypes.SelectionGroup, int depth = int.MaxValue)
+		public void CollapseObjectIntoScene(List<IObject3D> sceneChildren, IObject3D objectToRemove, Object3DTypes typeFilter = Object3DTypes.SelectionGroup, int depth = int.MaxValue)
 		{
-			if (selectionContext != null && selectionContext.ItemType == typeToCollapse)
+			if (objectToRemove != null && objectToRemove.ItemType == typeFilter)
 			{
-				sceneChildren.Remove(selectionContext);
+				sceneChildren.Remove(objectToRemove);
 
-				// Remove the children from the selection and back into the root of the scene
-				foreach (var child in selectionContext.Children)
+				// Move each child from objectToRemove into the scene, applying the parent transform to each
+				foreach (var child in objectToRemove.Children)
 				{
-					child.Matrix *= selectionContext.Matrix;
+					child.Matrix *= objectToRemove.Matrix;
 
 					if (child.ItemType == Object3DTypes.SelectionGroup && depth > 0)
 					{
-						ClearSelectionApplyChanges(sceneChildren, child, typeToCollapse, depth - 1);
+						CollapseObjectIntoScene(sceneChildren, child, typeFilter, depth - 1);
 					}
 					else
 					{
@@ -1026,7 +1026,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
 		{
-			if (undoTransform != Scene.SelectedItem?.Matrix)
+			if (Scene.HasSelection && undoTransform != Scene.SelectedItem?.Matrix)
 			{
 				undoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
 			}
