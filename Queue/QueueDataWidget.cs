@@ -43,6 +43,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
+using MatterHackers.PolygonMesh;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -176,7 +180,42 @@ namespace MatterHackers.MatterControl.PrintQueue
 						createButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createButton.Click += (sender, e) =>
 						{
-							OpenPluginChooserWindow();
+							var printItemWrapper = new PrintItemWrapper(new PrintItem { DateAdded = DateTime.Now })
+							{
+								Name = "New Part",
+								FileLocation = Path.Combine(
+									ApplicationDataStorage.Instance.ApplicationLibraryDataPath,
+									Path.ChangeExtension(Path.GetRandomFileName(), ".mcx"))
+							};
+
+							PathStorage side = new PathStorage();
+							side.MoveTo(0, 0);
+							side.LineTo(10, 0);
+							side.LineTo(10, 20);
+							side.LineTo(0, 20);
+							MeshGroup meshGroupToAdd = new MeshGroup(VertexSourceToMesh.Revolve(side, 30));
+
+							// Create a file on disk with the simple cylinder contents
+							string tempFile = Path.Combine(
+									ApplicationDataStorage.Instance.ApplicationLibraryDataPath,
+									Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
+
+							MeshFileIo.Save(meshGroupToAdd.Meshes.First(), tempFile);
+
+							// Create a mostly empty .mcx
+							var mostlyEmptyObject = new Object3D();
+							mostlyEmptyObject.Children.Add(new Object3D()
+							{
+								ItemType = Object3DTypes.Model,
+								MeshPath = tempFile
+							});
+							File.WriteAllText(printItemWrapper.FileLocation, JsonConvert.SerializeObject(mostlyEmptyObject));
+
+							QueueData.Instance.AddItem(printItemWrapper);
+
+							QueueData.Instance.SelectedIndex = QueueData.Instance.GetIndex(printItemWrapper);
+
+							//OpenPluginChooserWindow();
 						};
 					}
 

@@ -69,6 +69,9 @@ namespace MatterHackers.MatterControl
 		private static bool processingThumbnail = false;
 		private ImageBuffer buildingThumbnailImage = new Agg.Image.ImageBuffer();
 
+		// TODO: temporarily work around exception when trying to gen thumbnails for new file type
+		private bool supportsThumbnails = true;
+
 		private RGBA_Bytes normalBackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 		private ImageBuffer noThumbnailImage = new Agg.Image.ImageBuffer();
@@ -172,11 +175,17 @@ namespace MatterHackers.MatterControl
 				}
 				
 				printItemWrapper = value;
-				
+
+				supportsThumbnails = false;
+
 				thumbNailHasBeenCreated = false;
 				if (ItemWrapper != null)
 				{
 					PrintItemWrapper.FileHasChanged.RegisterEvent(item_FileHasChanged, ref unregisterEvents);
+
+					supportsThumbnails = !string.IsNullOrEmpty(printItemWrapper.FileLocation) &&
+					 File.Exists(printItemWrapper.FileLocation) &&
+					Path.GetExtension(printItemWrapper.FileLocation).ToLower() != ".mcp";
 				}
 			}
 		}
@@ -222,11 +231,12 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
-		
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			//Trigger thumbnail generation if neeeded
-			if (!thumbNailHasBeenCreated && !processingThumbnail)
+			string stlHashCode = this.ItemWrapper.FileHashCode.ToString();
+			if (!thumbNailHasBeenCreated && !processingThumbnail && supportsThumbnails)
 			{
 				if (SetImageFast())
 				{

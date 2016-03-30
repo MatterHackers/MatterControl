@@ -1309,11 +1309,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			continueProcessing = true;
 		}
 
-		private void ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
+		private async Task ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
 		{
 			SwitchStateToNotEditing();
 
-			Scene.Children.Clear();
+			Scene.ModifyChildren(children => children.Clear());
 
 			if (printItemWrapper != null)
 			{
@@ -1334,13 +1334,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					bedCenter = ActiveSliceSettings.Instance.BedCenter;
 				}
 
-				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, doCentering, bedCenter);
+				await meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, doCentering, bedCenter);
 
 				PartHasBeenChanged();
 				Invalidate();
 			}
 
 			partHasBeenEdited = false;
+
+			if (string.IsNullOrEmpty(printItemWrapper.PrintItem.FileLocation))
+			{
+				EnterEditAndCreateSelectionData();
+			}
 		}
 
 		private void CreateOptionsContent()
