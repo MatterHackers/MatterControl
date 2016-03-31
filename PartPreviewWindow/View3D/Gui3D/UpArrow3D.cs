@@ -90,11 +90,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (MouseOver)
 				{
-					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
+					GLHelper.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
 				}
 				else
 				{
-					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
+					GLHelper.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
 				}
 			}
 

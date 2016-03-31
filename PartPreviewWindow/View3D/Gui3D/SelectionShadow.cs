@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox();
 
 				Mesh bottomBounds = PlatonicSolids.CreateCube(selectedBounds.XSize, selectedBounds.YSize, .1);
-				RenderMeshToGl.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
+				GLHelper.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
 			}
 
 			base.DrawGlContent(e);

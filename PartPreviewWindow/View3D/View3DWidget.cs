@@ -450,6 +450,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             DrawBefore += CreateBooleanTestGeometry;
             DrawAfter += RemoveBooleanTestGeometry;
 #endif
+			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+        }
+
+		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+		{
+			return;
+			if (Scene.SelectedItem != null)
+			{
+				foreach (var primitive in Scene.SelectedItem.ExtraData.MeshTraceables)
+				{
+					DebugBvh.Render(primitive, Scene.SelectedItem.Matrix);
+				}
+			}
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
