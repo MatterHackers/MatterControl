@@ -141,9 +141,7 @@
   <ItemGroup>
     <Compile Include="BrailleGrade2Mapping.cs" />
     <Compile Include="BrailleGrade2.cs" />
-    <Compile Include="BrailleBuilderMainWindow.cs" />
-    <Compile Include="BrailleBuilder.cs" />
-    <Compile Include="View3DBrailleBuilder.cs" />
+    <Compile Include="BrailleCreatorSidebar.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">

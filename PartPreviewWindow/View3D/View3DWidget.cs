@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public interface ISideBarToolCreator
 	{
-		GuiWidget CreateSideBarTool(PartPreview3DWidget widget);
-    }
+		GuiWidget CreateSideBarTool(View3DWidget widget);
+	}
 
 	public class SideBarPlugin : ISideBarToolCreator
 	{
-		public virtual GuiWidget CreateSideBarTool(PartPreview3DWidget widget)
+		public virtual GuiWidget CreateSideBarTool(View3DWidget widget)
 		{
 			return null;
 		}
@@ -89,6 +89,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public partial class View3DWidget : PartPreview3DWidget
 	{
+		public FlowLayoutWidget doEdittingButtonsContainer;
+
+		public readonly int EditButtonHeight = 44;
+
 		private UndoBuffer undoBuffer = new UndoBuffer();
 		private Action afterSaveCallback = null;
 		private bool editorThatRequestedSave = false;
@@ -125,6 +129,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool wasInSelectMode = false;
 
 		public event EventHandler SelectedTransformChanged;
+
+		protected FlowLayoutWidget editPlateButtonsContainer;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
 		{
@@ -968,69 +974,86 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Vector3 LastHitPosition { get; private set; }
 
+		public IntersectInfo GetIntersectPosition(MouseEventArgs mouseEvent)
+		{
+			//Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
+			Vector2 meshViewerWidgetScreenPosition = mouseEvent.Position;
+
+
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(mouseEvent.Position);
+
+			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
+		}
+
+		public void MoveSelectedObject(MouseEventArgs mouseEvent)
+		{
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
+
+			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
+			if (info != null)
+			{
+				// move the mesh back to the start position
+				{
+					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
+					Scene.SelectedItem.Matrix *= totalTransform;
+				}
+
+				Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
+
+				double snapGridDistance = meshViewerWidget.SnapGridDistance;
+				if (snapGridDistance > 0)
+				{
+					// snap this position to the grid
+					AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+
+					double xSnapOffset = selectedBounds.minXYZ.x;
+					// snap the x position
+					if (CurrentSelectInfo.HitQuadrant == HitQuadrant.RB
+						|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
+					{
+						// switch to the other side
+						xSnapOffset = selectedBounds.maxXYZ.x;
+					}
+					double xToSnap = xSnapOffset + delta.x;
+
+					double snappedX = ((int)((xToSnap / snapGridDistance) + .5)) * snapGridDistance;
+					delta.x = snappedX - xSnapOffset;
+
+					double ySnapOffset = selectedBounds.minXYZ.y;
+					// snap the y position
+					if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LT
+						|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
+					{
+						// switch to the other side
+						ySnapOffset = selectedBounds.maxXYZ.y;
+					}
+					double yToSnap = ySnapOffset + delta.y;
+
+					double snappedY = ((int)((yToSnap / snapGridDistance) + .5)) * snapGridDistance;
+					delta.y = snappedY - ySnapOffset;
+				}
+
+				// move the mesh back to the new position
+				{
+					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
+
+					Scene.SelectedItem.Matrix *= totalTransform;
+
+					CurrentSelectInfo.LastMoveDelta = delta;
+				}
+
+				LastHitPosition = info.hitPosition;
+
+				Invalidate();
+			}
+		}
+
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && CurrentSelectInfo.DownOnPart)
 			{
-				Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-				Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-				IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
-				if (info != null)
-				{
-					// move the mesh back to the start position
-					{
-						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
-						Scene.SelectedItem.Matrix *= totalTransform;
-					}
-
-					Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
-
-					double snapGridDistance = meshViewerWidget.SnapGridDistance;
-					if (snapGridDistance > 0)
-					{
-						// snap this position to the grid
-						AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
-
-						double xSnapOffset = selectedBounds.minXYZ.x;
-						// snap the x position
-						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.RB
-							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
-						{
-							// switch to the other side
-							xSnapOffset = selectedBounds.maxXYZ.x;
-						}
-						double xToSnap = xSnapOffset + delta.x;
-
-						double snappedX = ((int)((xToSnap / snapGridDistance) + .5)) * snapGridDistance;
-						delta.x = snappedX - xSnapOffset;
-
-						double ySnapOffset = selectedBounds.minXYZ.y;
-						// snap the y position
-						if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LT
-							|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
-						{
-							// switch to the other side
-							ySnapOffset = selectedBounds.maxXYZ.y;
-						}
-						double yToSnap = ySnapOffset + delta.y;
-
-						double snappedY = ((int)((yToSnap / snapGridDistance) + .5)) * snapGridDistance;
-						delta.y = snappedY - ySnapOffset;
-					}
-
-					// move the mesh back to the new position
-					{
-						Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
-
-						Scene.SelectedItem.Matrix *= totalTransform;
-
-						CurrentSelectInfo.LastMoveDelta = delta;
-					}
-
-					LastHitPosition = info.hitPosition;
-
-					Invalidate();
-				}
+				MoveSelectedObject(mouseEvent);
 			}
 
 			base.OnMouseMove(mouseEvent);
@@ -1353,11 +1376,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			partHasBeenEdited = false;
-
-			if (string.IsNullOrEmpty(printItemWrapper.PrintItem.FileLocation))
-			{
-				EnterEditAndCreateSelectionData();
-			}
 		}
 
 		private void CreateOptionsContent()
@@ -1772,7 +1790,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 		*/
 
-		private void LockEditControls()
+		public void LockEditControls()
 		{
 			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
 			enterEditButtonsContainer.Visible = false;
@@ -2289,7 +2307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void UnlockEditControls()
+		public void UnlockEditControls()
 		{
 			buttonRightPanelDisabledCover.Visible = false;
 			processingProgressControl.Visible = false;

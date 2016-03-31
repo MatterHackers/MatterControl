@@ -136,9 +136,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TextCreatorMainWindow.cs" />
-    <Compile Include="TextCreator.cs" />
-    <Compile Include="View3DTextCreator.cs" />
+    <Compile Include="TextCreatorSidebar.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">

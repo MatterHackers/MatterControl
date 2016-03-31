@@ -51,15 +51,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public abstract class PartPreview3DWidget : PartPreviewWidget
 	{
-		// HACK: jlewin - move back to view3DWidget.cs as a private member once the hack for embedded editors is removed
-		public FlowLayoutWidget doEdittingButtonsContainer;
-
-		public readonly int EditButtonHeight = 44;
-
 		protected static readonly int DefaultScrollBarWidth = 120;
-
-		public ProgressControl processingProgressControl;
-
+		
 		protected bool autoRotating = false;
 		protected bool allowAutoRotate = false;
 
@@ -71,8 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private event EventHandler unregisterEvents;
 
 		protected ViewControls3D viewControls3D;
-
-		protected FlowLayoutWidget editPlateButtonsContainer;
 
 		private bool needToRecretaeBed = false;
 
@@ -93,14 +84,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
-
-		public virtual void LockEditControls()
-		{
-		}
-
-		public virtual void UnlockEditControls()
-		{
-		}
 
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo info)
 		{
