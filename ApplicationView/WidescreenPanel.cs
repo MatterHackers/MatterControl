@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl
 			AddChild(ColumnOne);
 			leftBorderLine = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
 			leftBorderLine.Width = 15;
-			leftBorderLine.DrawBefore += (widget, graphics2D) =>
+			leftBorderLine.BeforeDraw += (widget, graphics2D) =>
 			{
 				RectangleDouble bounds = widget.LocalBounds;
 				bounds.Left += 3;

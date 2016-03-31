@@ -432,16 +432,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 			throw new NotImplementedException();
 		}
 
-		private bool firstDraw = true;
-
-		public override void OnDraw(Graphics2D graphics2D)
+		public override void OnFirstDraw(Graphics2D graphics2D)
 		{
-			if (firstDraw)
-			{
-				firstDraw = false;
-				EnsureSelection();
-			}
-			base.OnDraw(graphics2D);
+			EnsureSelection();
+			base.OnFirstDraw(graphics2D);
 		}
 
 		public override void OnClosed(EventArgs e)

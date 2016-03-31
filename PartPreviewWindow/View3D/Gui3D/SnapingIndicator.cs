@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 			this.DrawOnTop = true;
-			MeshViewerToDrawWith.DrawAfter += new DrawEventHandler(MeshViewerToDrawWith_Draw);
+			MeshViewerToDrawWith.AfterDraw += new DrawEventHandler(MeshViewerToDrawWith_Draw);
 		}
 
 		public override void SetPosition()

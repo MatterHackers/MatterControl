@@ -45,43 +45,41 @@ namespace MatterHackers.MatterControl
 			StatisticsTracker testTracker = new StatisticsTracker("SwitchBetweenTabs");
 			bool clickFirstItem = true;
 			bool done = false;
-			bool firstDraw = true;
 			AutomationRunner clickPreview;
 			Stopwatch timeSinceLastClick = Stopwatch.StartNew();
 			Stopwatch totalDrawTime = Stopwatch.StartNew();
 			int drawCount = 0;
 
-			DrawEventHandler beforeDraw = (sender, e) =>
-			{
-				if (firstDraw)
+			DrawEventHandler firstDraw;
+            firstDraw = (sender1, e1) =>
+            {
+				clickPreview = new AutomationRunner();
+				Task.Run(() =>
 				{
-					clickPreview = new AutomationRunner();
-					Task.Run(() =>
+					while (!done)
 					{
-						while (!done)
+						if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > switchTimeSeconds)
 						{
-							if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > switchTimeSeconds)
+							if (clickFirstItem)
 							{
-								if (clickFirstItem)
-								{
-									clickPreview.ClickByName(firstWidgetName);
-								}
-								else
-								{
-									clickPreview.ClickByName(secondWidgetName);
-								}
-								clickFirstItem = !clickFirstItem;
-								timeSinceLastClick.Restart();
+								clickPreview.ClickByName(firstWidgetName);
 							}
+							else
+							{
+								clickPreview.ClickByName(secondWidgetName);
+							}
+							clickFirstItem = !clickFirstItem;
+							timeSinceLastClick.Restart();
 						}
-					});
-					firstDraw = false;
-				}
+					}
+				});
+			};
+			container.FirstDraw += firstDraw;
 
+			container.BeforeDraw += (sender, e) =>
+			{
 				totalDrawTime.Restart();
 			};
-
-			container.DrawBefore += beforeDraw;
 
 			DrawEventHandler afterDraw = null;
 			afterDraw = (sender, e) =>
@@ -93,14 +91,14 @@ namespace MatterHackers.MatterControl
 					if (testTracker.Count == 100)
 					{
 						Trace.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
-						container.DrawBefore -= beforeDraw;
-						container.DrawBefore -= afterDraw;
+						container.FirstDraw -= firstDraw;
+						container.BeforeDraw -= afterDraw;
 						done = true;
 					}
 				}
 			};
 
-			container.DrawAfter += afterDraw;
+			container.AfterDraw += afterDraw;
 		}
 
 		public static void ClickStuff(GuiWidget container, string[] clickThings, double secondsBetweenClicks = .1)
@@ -120,10 +118,10 @@ namespace MatterHackers.MatterControl
 					}
 				});
 
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
 
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 		}
 
 		public static void CreateButtonOpensPluginWindow(GuiWidget container, double secondsBetweenClicks = .1)
@@ -139,9 +137,9 @@ namespace MatterHackers.MatterControl
 					testRunner.ClickByName("Queue Tab");
 					testRunner.ClickByName("Design Tool Button");
 				});
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 			
 		}
 
@@ -163,9 +161,9 @@ namespace MatterHackers.MatterControl
 					testrunner.ClickByName("Library Add To Queue Button");
 					testrunner.ClickByName("Queue Tab");
 				});
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 		}
 
 		public static void RenameLibraryItem(GuiWidget container, double secondsBetweenClicks = .1)
@@ -190,9 +188,9 @@ namespace MatterHackers.MatterControl
 
 					
 				});
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 		}
 
 		public static void CreateAndRenameLocalLibraryFolder(GuiWidget container, double secondsBetweenClicks = .1)
@@ -219,9 +217,9 @@ namespace MatterHackers.MatterControl
 
 
 				});
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 		}
 
 		//This is Temporary and will probably be moved once we get a functional test harness!!!

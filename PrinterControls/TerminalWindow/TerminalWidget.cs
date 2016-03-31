@@ -207,20 +207,14 @@ namespace MatterHackers.MatterControl
 			FileDialog.SaveFileDialog(saveParams, onExportLogFileSelected);
 		}
 
-		private bool firstDraw = true;
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
 #if !__ANDROID__
-			if (firstDraw)
-			{
-				filterOutput.Checked = UserSettings.Instance.Fields.GetBool(TerminalFilterOutputKey, false);
-				firstDraw = false;
-				UiThread.RunOnIdle(manualCommandTextEdit.Focus);
-			}
-#endif
-			base.OnDraw(graphics2D);
+		public override void OnFirstDraw(Graphics2D graphics2D)
+		{
+			filterOutput.Checked = UserSettings.Instance.Fields.GetBool(TerminalFilterOutputKey, false);
+			UiThread.RunOnIdle(manualCommandTextEdit.Focus);
+			base.OnFirstDraw(graphics2D);
 		}
+#endif
 
 		readonly static string writeFaildeWaring = "WARNING: Write Failed!".Localize();
 		readonly static string cantAccessPath = "Can't access '{0}'.".Localize();

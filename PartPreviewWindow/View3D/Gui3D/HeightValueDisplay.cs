@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			VAnchor = VAnchor.FitToChildren;
 			HAnchor = HAnchor.FitToChildren;
 
-			MeshViewerToDrawWith.DrawAfter += new DrawEventHandler(MeshViewerToDrawWith_Draw);
+			MeshViewerToDrawWith.AfterDraw += new DrawEventHandler(MeshViewerToDrawWith_Draw);
 		}
 
 		private MeshViewerWidget MeshViewerToDrawWith { get { return view3DWidget.meshViewerWidget; } }

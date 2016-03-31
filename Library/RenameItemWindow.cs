@@ -127,20 +127,14 @@ namespace MatterHackers.MatterControl
 			ShowAsSystemWindow();
 		}
 
-		bool firstDraw = true;
-		public override void OnDraw(Graphics2D graphics2D)
+		public override void OnFirstDraw(Graphics2D graphics2D)
 		{
-			if (firstDraw)
+			UiThread.RunOnIdle(() =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					saveAsNameWidget.Focus();
-					saveAsNameWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
-				});
-
-				firstDraw = false;
-			}
-			base.OnDraw(graphics2D);
+				saveAsNameWidget.Focus();
+				saveAsNameWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
+			});
+			base.OnFirstDraw(graphics2D);
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)

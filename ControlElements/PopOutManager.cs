@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 			UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.MainView.DrawAfter += ShowOnNextMatterControlDraw;
+				ApplicationController.Instance.MainView.AfterDraw += ShowOnNextMatterControlDraw;
 			});
 
 			widgetWithPopContent.Closed += (sender, e) =>
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
-			ApplicationController.Instance.MainView.DrawAfter -= ShowOnNextMatterControlDraw;
+			ApplicationController.Instance.MainView.AfterDraw -= ShowOnNextMatterControlDraw;
 		}
 
 		private void SystemWindow_Closing(object sender, WidgetClosingEnventArgs closingEvent)

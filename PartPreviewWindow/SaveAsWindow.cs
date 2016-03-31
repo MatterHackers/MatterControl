@@ -160,19 +160,14 @@ namespace MatterHackers.MatterControl
 			saveAsButton.Enabled = true;
 		}
 
-		bool firstDraw = true;
-		public override void OnDraw(Graphics2D graphics2D)
+		public override void OnFirstDraw(Graphics2D graphics2D)
 		{
-			if (firstDraw)
+			if (textToAddWidget != null
+				&& !ActiveTheme.Instance.IsTouchScreen)
 			{
-				if (textToAddWidget != null
-					&& !ActiveTheme.Instance.IsTouchScreen)
-				{
-					UiThread.RunOnIdle(textToAddWidget.Focus);
-				}
-				firstDraw = false;
+				UiThread.RunOnIdle(textToAddWidget.Focus);
 			}
-			base.OnDraw(graphics2D);
+			base.OnFirstDraw(graphics2D);
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)
