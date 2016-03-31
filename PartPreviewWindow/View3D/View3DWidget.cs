@@ -972,13 +972,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public Vector3 LastHitPosition { get; private set; }
-
 		public IntersectInfo GetIntersectPosition(MouseEventArgs mouseEvent)
 		{
 			//Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
 			Vector2 meshViewerWidgetScreenPosition = mouseEvent.Position;
-
 
 			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(mouseEvent.Position);
 
@@ -1042,8 +1039,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					CurrentSelectInfo.LastMoveDelta = delta;
 				}
-
-				LastHitPosition = info.hitPosition;
 
 				Invalidate();
 			}
