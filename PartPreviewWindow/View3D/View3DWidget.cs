@@ -1376,11 +1376,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			partHasBeenEdited = false;
-
-			if (string.IsNullOrEmpty(printItemWrapper.PrintItem.FileLocation))
-			{
-				EnterEditAndCreateSelectionData();
-			}
 		}
 
 		private void CreateOptionsContent()
