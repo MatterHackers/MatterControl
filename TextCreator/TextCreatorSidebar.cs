@@ -49,136 +49,6 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
-	public class View3DTextCreator : View3DCreatorWidget
-	{
-		private bool firstDraw = true;
-
-		TextCreatorSidebar textCreator;
-
-		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-
-		public View3DTextCreator(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
-			: base(viewerVolume, bedCenter, bedShape, "TextCreator_", partSelectVisible: true)
-		{
-		}
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseDown(mouseEvent);
-			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
-			{
-				if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-
-					IntersectInfo info = new IntersectInfo();
-
-					IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
-					if (hitObject != null)
-					{
-						CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.z, null);
-						CurrentSelectInfo.DownOnPart = true;
-
-						transformOnMouseDown = hitObject.Matrix;
-
-						if (hitObject != Scene.SelectedItem)
-						{
-
-						}
-					}
-				}
-			}
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (firstDraw)
-			{
-#if !__ANDROID__
-				textCreator.SetInitialFocus();
-#endif
-				//textToAddWidget.Text = "Test Text";
-				firstDraw = false;
-			}
-			//DoCsgTest();
-			base.OnDraw(graphics2D);
-		}
-
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
-		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && CurrentSelectInfo.DownOnPart)
-			{
-				Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-				Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-				IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
-				if (info != null)
-				{
-
-					Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
-
-					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
-					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
-					CurrentSelectInfo.LastMoveDelta = delta;
-
-					Scene.SelectedItem.Matrix *= totalTransform;
-
-					Invalidate();
-				}
-			}
-
-			base.OnMouseMove(mouseEvent);
-		}
-
-		protected override void AddToSidebar(GuiWidget sidePanel)
-		{
-			textCreator = new TextCreatorSidebar();
-			textCreator.IsSystemWindow = true;
-			textCreator.TextInserted += (s, e) =>
-			{
-				saveButton.Visible = true;
-				saveAndExitButton.Visible = true;
-			};
-
-			var mainContainer = textCreator.CreateSideBarTool(this);
-			mainContainer.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-			sidePanel.AddChild(mainContainer);
-		}
-
-		protected override void AddToBottomToolbar(GuiWidget parentContainer)
-		{
-			textCreator.AddToBottomToolbar(parentContainer);
-
-			// jlewin - this looks like "Undo on esc", needs confirmation
-			KeyDown += (s, e) =>
-			{
-				if (e != null && !e.Handled && e.KeyCode == Keys.Escape)
-				{
-					if (CurrentSelectInfo.DownOnPart)
-					{
-						CurrentSelectInfo.DownOnPart = false;
-						Scene.SelectedItem.Matrix *= transformOnMouseDown;
-						Invalidate();
-					}
-				}
-			};
-		}
-
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
-		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-				&& CurrentSelectInfo.DownOnPart
-				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
-			{
-				saveButton.Visible = true;
-				saveAndExitButton.Visible = true;
-			}
-
-			CurrentSelectInfo.DownOnPart = false;
-
-			base.OnMouseUp(mouseEvent);
-		}
-	}
-
 	public class TextCreatorSidebar : SideBarPlugin
 	{
 		public event EventHandler TextInserted;
@@ -194,7 +64,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		private String wordText;
 
 		private TextGenerator textGenerator;
-		private PartPreview3DWidget view3DWidget;
+		private View3DWidget view3DWidget;
 
 		private IObject3D injectedItem = null;
 
@@ -204,7 +74,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public bool IsSystemWindow { get; set; } = false;
 
-		public override GuiWidget CreateSideBarTool(PartPreview3DWidget widget)
+		public override GuiWidget CreateSideBarTool(View3DWidget widget)
 		{
 			textGenerator = new TextGenerator();
 			this.view3DWidget = widget;
@@ -336,7 +206,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
 
-				(view3DWidget as View3DWidget).InsertNewItem(injectedItem);
+				view3DWidget.InsertNewItem(injectedItem);
 
 				view3DWidget.UnlockEditControls();
 			}

@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public interface ISideBarToolCreator
 	{
-		GuiWidget CreateSideBarTool(PartPreview3DWidget widget);
-    }
+		GuiWidget CreateSideBarTool(View3DWidget widget);
+	}
 
 	public class SideBarPlugin : ISideBarToolCreator
 	{
-		public virtual GuiWidget CreateSideBarTool(PartPreview3DWidget widget)
+		public virtual GuiWidget CreateSideBarTool(View3DWidget widget)
 		{
 			return null;
 		}
@@ -89,6 +89,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public partial class View3DWidget : PartPreview3DWidget
 	{
+		public FlowLayoutWidget doEdittingButtonsContainer;
+
+		public readonly int EditButtonHeight = 44;
+
 		private UndoBuffer undoBuffer = new UndoBuffer();
 		private Action afterSaveCallback = null;
 		private bool editorThatRequestedSave = false;
@@ -125,6 +129,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool wasInSelectMode = false;
 
 		public event EventHandler SelectedTransformChanged;
+
+		protected FlowLayoutWidget editPlateButtonsContainer;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
 		{
@@ -1772,7 +1778,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 		*/
 
-		private void LockEditControls()
+		public void LockEditControls()
 		{
 			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
 			enterEditButtonsContainer.Visible = false;
@@ -2289,7 +2295,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void UnlockEditControls()
+		public void UnlockEditControls()
 		{
 			buttonRightPanelDisabledCover.Visible = false;
 			processingProgressControl.Visible = false;

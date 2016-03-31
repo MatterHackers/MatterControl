@@ -49,51 +49,6 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
-	public class View3DBrailleBuilder : View3DCreatorWidget
-	{
-		private bool firstDraw = true;
-		BrailleCreatorSidebar brailleCreator;
-
-		public View3DBrailleBuilder(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
-			: base(viewerVolume, bedCenter, bedShape, "BrailleBuilder_", partSelectVisible: false)
-		{
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (firstDraw)
-			{
-#if !__ANDROID__
-				brailleCreator.SetInitialFocus();
-#endif
-				//textToAddWidget.Text = "Test Text";
-				firstDraw = false;
-			}
-
-			base.OnDraw(graphics2D);
-		}
-
-		protected override void AddToSidebar(GuiWidget sidePanel)
-		{
-			brailleCreator = new BrailleCreatorSidebar();
-			brailleCreator.IsSystemWindow = true;
-			brailleCreator.TextInserted += (s, e) =>
-			{
-				saveButton.Visible = true;
-				saveAndExitButton.Visible = true;
-			};
-
-			var mainContainer = brailleCreator.CreateSideBarTool(this);
-			mainContainer.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-			sidePanel.AddChild(mainContainer);
-		}
-
-		protected override void AddToBottomToolbar(GuiWidget parentContainer)
-		{
-			brailleCreator.AddToBottomToolbar(parentContainer);
-		}
-	}
-
 	public class BrailleCreatorSidebar : SideBarPlugin
 	{
 		public event EventHandler TextInserted;
@@ -109,7 +64,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private String wordText;
 
 		private BrailleGenerator brailleGenerator;
-		private PartPreview3DWidget view3DWidget;
+		private View3DWidget view3DWidget;
 
 		private IObject3D injectedItem = null;
 
@@ -119,7 +74,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public bool IsSystemWindow { get; set; } = false;
 
-		public override GuiWidget CreateSideBarTool(PartPreview3DWidget widget)
+		public override GuiWidget CreateSideBarTool(View3DWidget widget)
 		{
 			brailleGenerator = new BrailleGenerator();
 			this.view3DWidget = widget;
@@ -277,7 +232,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
 
-				(view3DWidget as View3DWidget).InsertNewItem(injectedItem);
+				view3DWidget.InsertNewItem(injectedItem);
 
 				view3DWidget.UnlockEditControls();
 			}
