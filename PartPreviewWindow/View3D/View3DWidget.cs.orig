@@ -450,6 +450,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             DrawBefore += CreateBooleanTestGeometry;
             DrawAfter += RemoveBooleanTestGeometry;
 #endif
+<<<<<<< HEAD
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
         }
 
@@ -463,6 +464,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					DebugBvh.Render(primitive, Scene.SelectedItem.Matrix);
 				}
 			}
+=======
+			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += trackballTumbleWidget_DrawGlContent;
+
+		}
+
+		private void trackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+		{
+			if(allObjects != null)
+			{
+				//DebugBvh.Render(allObjects, Matrix4X4.Identity);
+            }
+>>>>>>> master
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
@@ -1577,6 +1590,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+<<<<<<< HEAD
 		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
 		{
 			if (Scene.HasSelection)
@@ -1602,6 +1616,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+=======
+>>>>>>> master
 		private void ExitEditingAndSaveIfRequired(bool response)
 		{
 			if (response == true)
@@ -1652,6 +1668,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+<<<<<<< HEAD
+=======
+		IPrimitive allObjects;
+        private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex, ref IntersectInfo info)
+		{
+			meshHitIndex = 0;
+			if (MeshGroupExtraData.Count == 0 || MeshGroupExtraData[0].meshTraceableData == null)
+			{
+				return false;
+			}
+
+			List<IPrimitive> mesheTraceables = new List<IPrimitive>();
+			for (int i = 0; i < MeshGroupExtraData.Count; i++)
+			{
+				foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
+				{
+					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i]));
+				}
+			}
+			allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables, 0);
+
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
+			info = allObjects.GetClosestIntersection(ray);
+			if (info != null)
+			{
+				CurrentSelectInfo.PlaneDownHitPos = info.hitPosition;
+				CurrentSelectInfo.LastMoveDelta = new Vector3();
+
+				for (int i = 0; i < MeshGroupExtraData.Count; i++)
+				{
+					List<IPrimitive> insideBounds = new List<IPrimitive>();
+					foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
+					{
+						traceData.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
+					}
+					if (insideBounds.Contains(info.closestHitObject))
+					{
+						meshHitIndex = i;
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public GuiWidget GenerateHorizontalRule()
+		{
+			GuiWidget horizontalRule = new GuiWidget();
+			horizontalRule.Height = 1;
+			horizontalRule.Margin = new BorderDouble(0, 1, 0, 3);
+			horizontalRule.HAnchor = HAnchor.ParentLeftRight;
+			horizontalRule.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
+			return horizontalRule;
+		}
+
+>>>>>>> master
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
 			if (Scene.HasChildren && filesToLoad != null && filesToLoad.Length > 0)
