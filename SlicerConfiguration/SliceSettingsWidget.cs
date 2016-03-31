@@ -98,6 +98,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AddChild(saveButton);
 			this.AddChild(revertbutton);
 			this.AddChild(new HorizontalSpacer());
+			//this.DebugShowBounds = true;
 		}
 
 		private void saveButton_Click(object sender, EventArgs mouseEvent)
@@ -271,8 +272,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private TabControl categoryTabs;
 		private AltGroupBox noConnectionMessageContainer;
-		private FlowLayoutWidget settingsControlBar;
+		private SettingsControlBar settingsControlBar;
 		private FlowLayoutWidget settingsSaveBar;
+		private string activeMaterialPreset;
 
 		public SliceSettingsWidget()
 		{
@@ -287,9 +289,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			pageTopToBottomLayout.Padding = new BorderDouble(3, 0);
 			this.AddChild(pageTopToBottomLayout);
 
-			settingsControlBar = new SettingsControlBar();
-			pageTopToBottomLayout.AddChild(settingsControlBar);
+			settingsControlBar = new SettingsControlBar()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay,
+				Padding = new BorderDouble(8, 12, 8, 8)
+			};
+			this.activeMaterialPreset = settingsControlBar.activeMaterialPreset;
 
+			pageTopToBottomLayout.AddChild(settingsControlBar);
 			settingsSaveBar = new SliceSettingsSaveBar();
 			settingsSaveBar.Visible = false;
 			pageTopToBottomLayout.AddChild(settingsSaveBar);
@@ -517,6 +525,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				TabPage groupTabPage = new TabPage(groupTabLabel);
 				groupTabPage.HAnchor = HAnchor.ParentLeftRight;
 
+				//Side Tabs
 				SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, group.Name + " Tab", 14,
 				   ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
 				groupTabWidget.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -529,6 +538,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string subGroupTitle = subGroup.Name;
 					int numberOfCopies = 1;
+					
 					if (subGroup.Name == "Extruder X")
 					{
 						numberOfCopies = ActiveSliceSettings.Instance.ExtruderCount;
@@ -845,6 +855,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							int.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit intEditWidget = new MHNumberEdit(currentValue, pixelWidth: intEditWidth, tabIndex: tabIndexForItem++);
 							intEditWidget.ToolTipText = settingData.HelpText;
+							CheckBox test = new CheckBox("XXX");
+							test.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test.Visible = false;
 							intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
@@ -854,6 +867,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							leftToRightLayout.AddChild(intEditWidget);
 							leftToRightLayout.AddChild(getSettingInfoData(settingData));
+							leftToRightLayout.AddChild(test);
 						}
 						break;
 
@@ -868,9 +882,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
 								CallEventsOnSettingsChange(settingData);
 							};
+							CheckBox test2 = new CheckBox("ZZZ");
+							test2.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test2.Visible = false;
 							doubleEditWidget.SelectAllOnFocus = true;
 							leftToRightLayout.AddChild(doubleEditWidget);
 							leftToRightLayout.AddChild(getSettingInfoData(settingData));
+							leftToRightLayout.AddChild(test2);
 						}
 						break;
 
@@ -934,9 +952,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								CallEventsOnSettingsChange(settingData);
 							};
 							doubleEditWidget.SelectAllOnFocus = true;
-
+							CheckBox test3 = new CheckBox("GGG");
+							test3.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test3.Visible = false;
 							content.AddChild(doubleEditWidget);
 							content.AddChild(getSettingInfoData(settingData));
+							content.AddChild(test3);
 
 							if (settingData.QuickMenuSettings.Count > 0)
 							{
@@ -961,8 +982,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								CallEventsOnSettingsChange(settingData);
 							};
 							doubleEditWidget.SelectAllOnFocus = true;
+							CheckBox test4 = new CheckBox("FFF");
+							test4.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test4.Visible = false;
 							leftToRightLayout.AddChild(doubleEditWidget);
 							leftToRightLayout.AddChild(getSettingInfoData(settingData));
+							leftToRightLayout.AddChild(test4);
 						}
 						break;
 
@@ -1005,9 +1030,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									textEditWidget.SetSelection(0, percentIndex-1);
 								}
 							};
-
+							
 							content.AddChild(stringEdit);
 							content.AddChild(getSettingInfoData(settingData));
+							CheckBox test5 = new CheckBox("OOO");
+							test5.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test5.Visible = false;
+							content.AddChild(test5);
 
 							if (settingData.QuickMenuSettings.Count > 0)
 							{
@@ -1089,6 +1118,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							content.AddChild(stringEdit);
 							content.AddChild(getSettingInfoData(settingData));
+							CheckBox test6 = new CheckBox("BBB");
+							test6.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test6.Visible = false;
+							content.AddChild(test6);
 
 							if (settingData.QuickMenuSettings.Count > 0)
 							{
@@ -1121,7 +1154,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								CallEventsOnSettingsChange(settingData);
 							};
+							CheckBox test7 = new CheckBox("YYY");
+							test7.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test7.Visible = false;
 							leftToRightLayout.AddChild(checkBoxWidget);
+							leftToRightLayout.AddChild(test7);
 						}
 						break;
 
@@ -1134,7 +1171,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text);
 								CallEventsOnSettingsChange(settingData);
 							};
+							CheckBox test8 = new CheckBox("JJJ");
+							test8.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test8.Visible = false;
 							leftToRightLayout.AddChild(stringEdit);
+							leftToRightLayout.AddChild(test8);
 						}
 						break;
 
@@ -1147,7 +1188,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text.Replace("\n", "\\n"));
 								CallEventsOnSettingsChange(settingData);
 							};
+							CheckBox test9 = new CheckBox("VVV");
+							test9.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test9.Visible = false;
 							leftToRightLayout.AddChild(stringEdit);
+							leftToRightLayout.AddChild(test9);
 						}
 						break;
 
@@ -1174,7 +1219,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									CallEventsOnSettingsChange(settingData);
 								};
 							}
+							CheckBox test10 = new CheckBox("RRR");
+							test10.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test10.Visible = false;
 							leftToRightLayout.AddChild(selectableOptions);
+							leftToRightLayout.AddChild(test10);
 						}
 						break;
 
@@ -1200,7 +1249,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								CallEventsOnSettingsChange(settingData);
 							};
+							CheckBox test11 = new CheckBox("HHH");
+							test11.Visible = false;
 							leftToRightLayout.AddChild(checkBoxWidget);
+							leftToRightLayout.AddChild(test11);
 						}
 						break;
 
@@ -1237,7 +1289,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								CallEventsOnSettingsChange(settingData);
 							};
 							yEditWidget.SelectAllOnFocus = true;
+							CheckBox test12 = new CheckBox("OPP");
+							test12.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+							test12.Visible = false;
 							leftToRightLayout.AddChild(yEditWidget);
+							leftToRightLayout.AddChild(test12);
 						}
 						break;
 
@@ -1267,7 +1323,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									CallEventsOnSettingsChange(settingData);
 								};
 								yEditWidget.SelectAllOnFocus = true;
+								CheckBox test13 = new CheckBox("LLL");
+								test13.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+								test13.Visible = false;
 								leftToRightLayout.AddChild(yEditWidget);
+								leftToRightLayout.AddChild(test13);
 							}
 						}
 						break;
@@ -1297,6 +1357,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (addQualityOverlay || addMaterialOverlay)
 			{
 				SettingPresetOverlay overlay = new SettingPresetOverlay();
+				overlay.DebugShowBounds = true;
 				overlay.HAnchor = HAnchor.ParentLeftRight;
 				overlay.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 
@@ -1310,9 +1371,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				editButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
 				clickToEdit.AddChild(editButton);
+				container.BackgroundColor = RGBA_Bytes.Orange;
+				TextWidget xxx = new TextWidget(this.activeMaterialPreset);
+				xxx.HAnchor = HAnchor.ParentRight;
+				xxx.VAnchor = VAnchor.ParentCenterTop;
+				xxx.Margin = new BorderDouble(10,0,0,0);
+				container.AddChild(xxx);
 
 				if (addQualityOverlay)
 				{
+					container.BackgroundColor = RGBA_Bytes.Yellow;
 					overlay.OverlayColor = qualityOverlayColor;
 					clickToEdit.OverlayColor = qualityOverlayColor;
 					editButton.Click += (sender, e) =>
@@ -1366,8 +1434,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					});
 				};
 
-				container.AddChild(overlay);
-				container.AddChild(clickToEdit);
+				//container.AddChild(overlay);
+				//container.AddChild(clickToEdit);
 			}
 
 			return container;
