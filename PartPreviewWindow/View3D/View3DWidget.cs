@@ -459,6 +459,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
         }
 
+		public IObject3D DragDropSource { get; set; }
+
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
 			return;
@@ -530,6 +532,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			base.OnKeyDown(keyEvent);
 		}
+
+		public bool IsEditing => !enterEditButtonsContainer.Visible;
 
 		public bool DragingPart
 		{
@@ -723,12 +727,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
+		// TODO: Just realized we don't implement DragLeave, meaning that injected items can't be removed. Must implement
+		public override void OnDragDrop(FileDropEventArgs fileDropArgs)
 		{
-			if (AllowDragDrop())
+			if (AllowDragDrop() && fileDropArgs.DroppedFiles.Count == 1)
 			{
+				// Item is already in the scene
+				DragDropSource = null;
+			}
+			else if (AllowDragDrop())
+			{
+				// Items need to be added to the scene
 				pendingPartsToLoad.Clear();
-				foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
+				foreach (string droppedFileName in fileDropArgs.DroppedFiles)
 				{
 					string extension = Path.GetExtension(droppedFileName).ToLower();
 					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
@@ -752,39 +763,143 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			base.OnDragDrop(fileDropEventArgs);
+			base.OnDragDrop(fileDropArgs);
 		}
 
-		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+		public override void OnDragEnter(FileDropEventArgs fileDropArgs)
 		{
 			if (AllowDragDrop())
 			{
-				foreach (string file in fileDropEventArgs.DroppedFiles)
+				foreach (string file in fileDropArgs.DroppedFiles)
 				{
 					string extension = Path.GetExtension(file).ToLower();
 					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
-						fileDropEventArgs.AcceptDrop = true;
+						fileDropArgs.AcceptDrop = true;
 					}
 				}
+
+				if(fileDropArgs.AcceptDrop)
+				{
+					DragDropSource = new Object3D
+					{
+						ItemType = Object3DTypes.Model,
+						MeshGroup = new MeshGroup(PlatonicSolids.CreateCube(10, 10, 10))
+					};
+				}
 			}
-			base.OnDragEnter(fileDropEventArgs);
+			base.OnDragEnter(fileDropArgs);
 		}
 
-		public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
+		public override async void OnDragOver(FileDropEventArgs fileDropArgs)
 		{
-			if (AllowDragDrop())
+			if (AllowDragDrop() && fileDropArgs.DroppedFiles.Count == 1) 
 			{
-				foreach (string file in fileDropEventArgs.DroppedFiles)
+				var screenSpaceMousePosition = this.TransformToScreenSpace(new Vector2(fileDropArgs.X, fileDropArgs.Y));
+				if (AltDragOver(screenSpaceMousePosition))
 				{
-					string extension = Path.GetExtension(file).ToLower();
-					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
+					DragDropSource.MeshPath = fileDropArgs.DroppedFiles.First();
+
+					base.OnDragOver(fileDropArgs);
+
+					// TODO: How to we handle mesh load errors? How do we report success?
+					IObject3D loadedItem = await Task.Run(() =>
 					{
-						fileDropEventArgs.AcceptDrop = true;
+						return Object3D.Load(
+							DragDropSource.MeshPath,
+							meshViewerWidget.CachedMeshes,
+							meshViewerWidget.ReportProgress0to100);
+					});
+
+					if (loadedItem != null)
+					{
+						Scene.ModifyChildren(children =>
+						{
+							DragDropSource.MeshGroup.Meshes.Clear();
+							DragDropSource.Children.AddRange(loadedItem.Children);
+						});
 					}
 				}
 			}
-			base.OnDragOver(fileDropEventArgs);
+
+			base.OnDragOver(fileDropArgs);
+		}
+
+		private GuiWidget topMostParent;
+
+		private PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
+
+		public override void OnFirstDraw(Graphics2D graphics2D)
+		{
+			topMostParent = this.TopmostParent();
+
+			base.OnFirstDraw(graphics2D);
+		}
+
+		/// <summary>
+		/// Provides a View3DWidget specific drag implementation
+		/// </summary>
+		/// <param name="screenSpaceMousePosition">The screen space mouse position.</param>
+		/// <returns>A value indicating in the DragDropSource was added to the scene</returns>
+		public bool AltDragOver(Vector2 screenSpaceMousePosition)
+		{
+			if (WidgetHasBeenClosed)
+			{
+				return false;
+			}
+
+			bool itemAddedToScene = false;
+
+			var meshViewerPosition = this.meshViewerWidget.TransformToScreenSpace(meshViewerWidget.LocalBounds);
+
+			if (meshViewerPosition.Contains(screenSpaceMousePosition) && DragDropSource != null)
+			{
+				var localPosition = this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition);
+
+				// Inject queued to add items that are not yet in the scene
+				if (!Scene.Children.Contains(DragDropSource))
+				{
+					// Set the hitplane to the bed plane
+					CurrentSelectInfo.HitPlane = bedPlane;
+
+					// Find intersection position of the mouse with the bed plane
+					var intersectInfo = GetIntersectPosition(screenSpaceMousePosition);
+					if (intersectInfo == null)
+					{
+						return false;
+					}
+
+					// Set the initial transform on the inject part to the current transform mouse position
+					var sourceItemBounds = DragDropSource.GetAxisAlignedBoundingBox();
+					var center = sourceItemBounds.Center;
+
+					DragDropSource.Matrix = Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
+					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.hitPosition));
+
+					CurrentSelectInfo.PlaneDownHitPos = intersectInfo.hitPosition;
+					CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
+
+					// Add item to scene and select it
+					Scene.ModifyChildren(children =>
+					{
+						children.Add(DragDropSource);
+					});
+					Scene.Select(DragDropSource);
+
+					itemAddedToScene = true;
+				}
+
+				if (Scene.HasSelection)
+				{
+					// Pass the mouse position, transformed to local cords, through to the view3D widget to move the target item
+					localPosition = meshViewerWidget.TransformFromScreenSpace(screenSpaceMousePosition);
+					MoveSelectedObject(localPosition);
+				}
+
+				return itemAddedToScene;
+			}
+
+			return false;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -984,9 +1099,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
 
-		public void MoveSelectedObject(MouseEventArgs mouseEvent)
+		public void MoveSelectedObject(Vector2 localMousePostion)
 		{
-			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePostion);
 			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
@@ -1050,7 +1165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && CurrentSelectInfo.DownOnPart)
 			{
-				MoveSelectedObject(mouseEvent);
+				MoveSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
 			}
 
 			base.OnMouseMove(mouseEvent);

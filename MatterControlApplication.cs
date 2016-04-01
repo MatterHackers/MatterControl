@@ -51,6 +51,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
@@ -389,6 +390,8 @@ namespace MatterHackers.MatterControl
 				return instance;
 			}
 		}
+
+		public View3DWidget ActiveView3DWidget { get; internal set; }
 
 		public static MatterControlApplication CreateInstance()
 		{

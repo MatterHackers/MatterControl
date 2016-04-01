@@ -47,6 +47,8 @@ using Newtonsoft.Json;
 using MatterHackers.PolygonMesh;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -554,6 +556,86 @@ namespace MatterHackers.MatterControl.PrintQueue
 					libraryToSaveTo.Dispose();
 				}
 			}
+		}
+
+		private View3DWidget view3DWidget;
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
+
+			if(view3DWidget == null)
+			{
+				return;
+			}
+
+			view3DWidget.DragDropSource = new Object3D
+			{
+				ItemType = Object3DTypes.Model,
+				MeshGroup = new MeshGroup(PlatonicSolids.CreateCube(10, 10, 10))
+			};
+
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public async override void OnMouseMove(MouseEventArgs mouseArgs)
+		{
+			if (!WidgetHasBeenClosed &&
+				view3DWidget?.DragDropSource != null)
+			{
+				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+				if(view3DWidget.AltDragOver(screenSpaceMousePosition))
+				{
+					var dropItem = view3DWidget.DragDropSource;
+
+					dropItem.MeshPath = this.queueDataView.SelectedPrintItem.FileLocation;
+
+					base.OnMouseMove(mouseArgs);
+
+					// TODO: How to we handle mesh load errors? How do we report success?
+					IObject3D loadedItem = await Task.Run(() =>
+					{
+						return Object3D.Load(
+							dropItem.MeshPath,
+							view3DWidget.meshViewerWidget.CachedMeshes,
+							view3DWidget.meshViewerWidget.ReportProgress0to100);
+					});
+
+					if (loadedItem != null)
+					{
+						view3DWidget.Scene.ModifyChildren(children =>
+						{
+							dropItem.MeshGroup.Meshes.Clear();
+							dropItem.Children.AddRange(loadedItem.Children);
+						});
+					}
+				}
+				
+				// TODO: If we derived from scrollable container, we could disable scroll in this drag context and enable on mouse up
+			}
+
+			base.OnMouseMove(mouseArgs);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseArgs)
+		{
+			if (view3DWidget.DragDropSource != null && view3DWidget.Scene.Children.Contains(view3DWidget.DragDropSource))
+			{
+				// Mouse and widget positions
+				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+				var meshViewerPosition = this.view3DWidget.meshViewerWidget.TransformToScreenSpace(view3DWidget.meshViewerWidget.LocalBounds);
+
+				// If the mouse is not within the meshViewer, remove the inserted drag item
+				if (!meshViewerPosition.Contains(screenSpaceMousePosition))
+				{
+					view3DWidget.Scene.ModifyChildren(children => children.Remove(view3DWidget.DragDropSource));
+					view3DWidget.Scene.ClearSelection();
+				}
+			}
+
+			view3DWidget.DragDropSource = null;
+
+			base.OnMouseUp(mouseArgs);
 		}
 
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
