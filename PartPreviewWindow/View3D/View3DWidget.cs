@@ -801,10 +801,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (AllowDragDrop() && fileDropArgs.DroppedFiles.Count == 1) 
 			{
 				var screenSpaceMousePosition = this.TransformToScreenSpace(new Vector2(fileDropArgs.X, fileDropArgs.Y));
+
+				// If the DragDropSource was added to the scene on this DragOver call, we start a task to replace 
+				// the "loading" mesh with the actual file contents
 				if (AltDragOver(screenSpaceMousePosition))
 				{
 					DragDropSource.MeshPath = fileDropArgs.DroppedFiles.First();
 
+					// Run the rest of the OnDragOver pipeline since we're starting a new thread and won't finish for an unknown time
 					base.OnDragOver(fileDropArgs);
 
 					// TODO: How to we handle mesh load errors? How do we report success?
@@ -824,8 +828,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							DragDropSource.Children.AddRange(loadedItem.Children);
 						});
 					}
+
+					// Don't fall through to the base.OnDragOver because we preemptively invoked it above
+					return;
 				}
 			}
+
+			// AcceptDrop anytime a DropSource has been queued
+			fileDropArgs.AcceptDrop = DragDropSource != null;
 
 			base.OnDragOver(fileDropArgs);
 		}
@@ -861,7 +871,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var localPosition = this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition);
 
-				// Inject queued to add items that are not yet in the scene
+				// Inject the DragDropSource if it's missing from the scene, using the default "loading" mesh
 				if (!Scene.Children.Contains(DragDropSource))
 				{
 					// Set the hitplane to the bed plane
@@ -898,7 +908,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// Pass the mouse position, transformed to local cords, through to the view3D widget to move the target item
 					localPosition = meshViewerWidget.TransformFromScreenSpace(screenSpaceMousePosition);
-					MoveSelectedObject(localPosition);
+					DragSelectedObject(localPosition);
 				}
 
 				return itemAddedToScene;
@@ -1104,7 +1114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
 
-		public void MoveSelectedObject(Vector2 localMousePostion)
+		public void DragSelectedObject(Vector2 localMousePostion)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePostion);
 			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
@@ -1168,9 +1178,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && CurrentSelectInfo.DownOnPart)
+			if (CurrentSelectInfo.DownOnPart && meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
-				MoveSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
+				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
 			}
 
 			base.OnMouseMove(mouseEvent);
