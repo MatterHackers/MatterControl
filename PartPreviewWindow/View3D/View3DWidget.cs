@@ -468,7 +468,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (var primitive in Scene.SelectedItem.ExtraData.MeshTraceables)
 				{
-					DebugBvh.Render(primitive, Scene.SelectedItem.Matrix);
+					primitive.RenderBvhRecursive(Scene.SelectedItem.Matrix);
 				}
 			}
 		}
