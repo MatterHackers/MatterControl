@@ -972,12 +972,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public IntersectInfo GetIntersectPosition(MouseEventArgs mouseEvent)
+		public IntersectInfo GetIntersectPosition(Vector2 screenSpacePosition)
 		{
 			//Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-			Vector2 meshViewerWidgetScreenPosition = mouseEvent.Position;
 
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(mouseEvent.Position);
+			// Translate to local
+			Vector2 localPosition = this.TransformFromScreenSpace(screenSpacePosition);
+
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(localPosition);
 
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
@@ -985,7 +987,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void MoveSelectedObject(MouseEventArgs mouseEvent)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 			if (info != null)
@@ -1760,7 +1762,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							return;
 						}
 
-						var loadedGroup = new Object3D { MeshGroup = new MeshGroup() };
+						var loadedGroup = new Object3D {
+							MeshGroup = new MeshGroup(),
+							MeshPath = loadedFileName
+						};
 
 						foreach (var meshGroup in loadedMeshGroups)
 						{

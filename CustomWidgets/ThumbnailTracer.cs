@@ -429,7 +429,7 @@ namespace MatterHackers.RayTracer
 
 			public Ray GetRay(double screenX, double screenY)
 			{
-				return trackballTumbleWidget.GetRayFromScreen(new Vector2(screenX, screenY));
+				return trackballTumbleWidget.GetRayForLocalBounds(new Vector2(screenX, screenY));
 			}
 		}
 	}
