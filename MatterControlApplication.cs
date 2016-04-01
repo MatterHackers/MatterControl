@@ -58,7 +58,6 @@ namespace MatterHackers.MatterControl
     public class MatterControlApplication : SystemWindow
 	{
 		public static bool CameraPreviewActive = false;
-		public static Action AfterFirstDraw = null;
 		public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
@@ -567,7 +566,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnFirstDraw(Graphics2D graphics2D)
+		public override void OnLoad(EventArgs args)
 		{
 			UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
@@ -601,9 +600,7 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 
-			AfterFirstDraw?.Invoke();
-
-			base.OnFirstDraw(graphics2D);
+			base.OnLoad(args);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)

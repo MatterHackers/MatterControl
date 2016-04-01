@@ -106,10 +106,10 @@ namespace MatterHackers.MatterControl
 			ShowAsSystemWindow();
 		}
 
-		public override void OnFirstDraw(Graphics2D graphics2D)
+		public override void OnLoad(EventArgs args)
 		{
 			UiThread.RunOnIdle(folderNameWidget.Focus);
-			base.OnFirstDraw(graphics2D);
+			base.OnLoad(args);
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)

@@ -357,10 +357,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private View3DWidget view3DWidget;
 
+		public bool AllowSelectionChange => !this.editMode && view3DWidget?.IsEditing == false;
+
 		private void SelectedIndexChanged(object sender, EventArgs e)
 		{
 			// Skip this processing while in EditMode
-			if (this.editMode || view3DWidget?.IsEditing == true)
+			if (!AllowSelectionChange)
 			{
 				return;
 			}
@@ -438,12 +440,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			throw new NotImplementedException();
 		}
 
-		public override void OnFirstDraw(Graphics2D graphics2D)
+		public override void OnLoad(EventArgs args)
 		{
 			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
 
 			EnsureSelection();
-			base.OnFirstDraw(graphics2D);
+			base.OnLoad(args);
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -525,7 +527,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			// Hard-coded processing rule to avoid changing the SelectedIndex when clicks occur
 			// with the thumbnail region - aka the first 55 pixels
-			if (mouseEvent.X < 56) return;
+			if (mouseEvent.X < 56 || !AllowSelectionChange)
+			{
+				return;
+			}
 
 			GuiWidget widgetClicked = ((GuiWidget)sender);
 			for (int index = 0; index < topToBottomItemList.Children.Count; index++)

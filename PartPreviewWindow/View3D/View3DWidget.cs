@@ -840,12 +840,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
 
-		public override void OnFirstDraw(Graphics2D graphics2D)
+		public override void OnLoad(EventArgs args)
 		{
 			ClearBedAndLoadPrintItemWrapper(printItemWrapper);
 			topMostParent = this.TopmostParent();
 
-			base.OnFirstDraw(graphics2D);
+			base.OnLoad(args);
 		}
 
 		/// <summary>

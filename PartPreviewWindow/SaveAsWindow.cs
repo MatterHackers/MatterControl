@@ -160,14 +160,14 @@ namespace MatterHackers.MatterControl
 			saveAsButton.Enabled = true;
 		}
 
-		public override void OnFirstDraw(Graphics2D graphics2D)
+		public override void OnLoad(EventArgs args)
 		{
 			if (textToAddWidget != null
 				&& !ActiveTheme.Instance.IsTouchScreen)
 			{
 				UiThread.RunOnIdle(textToAddWidget.Focus);
 			}
-			base.OnFirstDraw(graphics2D);
+			base.OnLoad(args);
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)

@@ -50,8 +50,7 @@ namespace MatterHackers.MatterControl
 			Stopwatch totalDrawTime = Stopwatch.StartNew();
 			int drawCount = 0;
 
-			DrawEventHandler firstDraw;
-            firstDraw = (sender1, e1) =>
+			EventHandler formLoad = (sender1, e1) =>
             {
 				clickPreview = new AutomationRunner();
 				Task.Run(() =>
@@ -74,7 +73,8 @@ namespace MatterHackers.MatterControl
 					}
 				});
 			};
-			container.FirstDraw += firstDraw;
+
+			container.Load += formLoad;
 
 			container.BeforeDraw += (sender, e) =>
 			{
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 					if (testTracker.Count == 100)
 					{
 						Trace.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
-						container.FirstDraw -= firstDraw;
+						container.Load -= formLoad;
 						container.BeforeDraw -= afterDraw;
 						done = true;
 					}
