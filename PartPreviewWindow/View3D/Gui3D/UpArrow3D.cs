@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
 						upArrow = loadedMeshGroups[0].Meshes[0];
 
-						CollisionVolume = Object3D.CreateTraceDataForMesh(upArrow);
+						CollisionVolume = upArrow.CreateTraceData();
 					}
 				}
 			}

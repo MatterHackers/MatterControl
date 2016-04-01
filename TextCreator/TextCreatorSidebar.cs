@@ -298,7 +298,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 							characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
 						}
-						characterObject.CreateTraceables();
 
 						currentRatioDone += ratioPerMeshGroup;
 					}
@@ -337,7 +336,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						ItemType = Object3DTypes.Model,
 						Matrix = Matrix4X4.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2)
 					};
-					lineObject.CreateTraceables();
 
 					return lineObject;
 				}
