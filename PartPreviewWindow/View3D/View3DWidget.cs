@@ -540,6 +540,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			get { return CurrentSelectInfo.DownOnPart; }
 		}
 
+		public void AddUndoOperation(IUndoRedoCommand operation)
+		{
+			undoBuffer.Add(operation);
+		}
+
 		private void AddGridSnapSettings(GuiWidget widgetToAddTo)
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget()
