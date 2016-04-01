@@ -972,12 +972,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public IntersectInfo GetIntersectPosition(MouseEventArgs mouseEvent)
+		public IntersectInfo GetIntersectPosition(Vector2 screenSpacePosition)
 		{
 			//Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-			Vector2 meshViewerWidgetScreenPosition = mouseEvent.Position;
 
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(mouseEvent.Position);
+			// Translate to local
+			Vector2 localPosition = this.TransformFromScreenSpace(screenSpacePosition);
+
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(localPosition);
 
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
@@ -985,7 +987,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void MoveSelectedObject(MouseEventArgs mouseEvent)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 			if (info != null)
@@ -1701,12 +1703,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void loadAndAddPartsToPlate(string[] filesToLoadIncludingZips)
 		{
-			// TODO: ******************** !!!!!!!!!!!!!!! ********************
-		}
-
-		/*
-		private void loadAndAddPartsToPlate(string[] filesToLoadIncludingZips)
-		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			List<string> filesToLoad = new List<string>();
@@ -1757,33 +1753,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						double ratioPerSubMesh = ratioPerFile / loadedMeshGroups.Count;
 						double subMeshRatioDone = 0;
 
-						for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++)
+						var tempScene = new Object3D();
+
+						// During startup we load and reload the main control multiple times. When this occurs, sometimes the reportProgress0to100 will set
+						// continueProcessing to false and MeshFileIo.LoadAsync will return null. In those cases, we need to exit rather than process the loaded MeshGroup
+						if (loadedMeshGroups == null)
 						{
-							MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
-
-							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, Matrix4X4.Identity, MeshGroupExtraData, MeshGroups, asyncMeshGroupTransforms);
-							if (WidgetHasBeenClosed)
-							{
-								return;
-							}
-							PlatingHelper.CreateITraceableForMeshGroup(MeshGroupExtraData, MeshGroups, MeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
-							{
-								continueProcessing = !this.WidgetHasBeenClosed;
-								double ratioAvailable = (ratioPerFile * .5);
-								//                    done outer loop  +  done this loop  +first 1/2 (load)+  this part * ratioAvailable
-								double currentRatio = currentRatioDone + subMeshRatioDone + ratioAvailable + progress0To1 * ratioPerSubMesh;
-								ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
-							});
-
-							subMeshRatioDone += ratioPerSubMesh;
+							return;
 						}
+
+						var loadedGroup = new Object3D {
+							MeshGroup = new MeshGroup(),
+							MeshPath = loadedFileName
+						};
+
+						foreach (var meshGroup in loadedMeshGroups)
+						{
+							loadedGroup.Children.Add(new Object3D() { MeshGroup = meshGroup });
+						}
+
+						tempScene.Children.Add(loadedGroup);
+
+						PlatingHelper.MoveToOpenPosition(tempScene, this.Scene);
+						tempScene.CreateTraceables();
+
+						this.InsertNewItem(tempScene);
 					}
 
 					currentRatioDone += ratioPerFile;
 				}
 			}
 		}
-		*/
 
 		public void LockEditControls()
 		{
