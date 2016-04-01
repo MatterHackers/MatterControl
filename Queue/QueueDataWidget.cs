@@ -631,6 +631,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 					view3DWidget.Scene.ModifyChildren(children => children.Remove(view3DWidget.DragDropSource));
 					view3DWidget.Scene.ClearSelection();
 				}
+				else
+				{
+					// Create and push the undo operation
+					view3DWidget.AddUndoOperation(
+						new InsertCommand(view3DWidget, view3DWidget.DragDropSource));
+				}
 			}
 
 			view3DWidget.DragDropSource = null;
