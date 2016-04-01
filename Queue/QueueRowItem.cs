@@ -427,7 +427,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void onQueueItemClick(object sender, EventArgs e)
 		{
-			if (queueDataView.EditMode)
+			if (queueDataView.AllowSelectionChange)
 			{
 				if (this.isSelectedItem)
 				{

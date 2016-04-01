@@ -208,11 +208,11 @@ namespace MatterHackers.MatterControl
 		}
 
 #if !__ANDROID__
-		public override void OnFirstDraw(Graphics2D graphics2D)
+		public override void OnLoad(EventArgs args)
 		{
 			filterOutput.Checked = UserSettings.Instance.Fields.GetBool(TerminalFilterOutputKey, false);
 			UiThread.RunOnIdle(manualCommandTextEdit.Focus);
-			base.OnFirstDraw(graphics2D);
+			base.OnLoad(args);
 		}
 #endif
 

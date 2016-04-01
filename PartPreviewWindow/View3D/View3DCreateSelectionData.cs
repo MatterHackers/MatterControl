@@ -49,9 +49,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			processingProgressControl.ProcessType = "Preparing Meshes".Localize() + ":";
 
+			// Force trace data generation
 			foreach(var object3D in Scene.Children)
 			{
-				object3D.CreateTraceables();
+				object3D.TraceData();
 			}
 
 			bool continueProcessing2;

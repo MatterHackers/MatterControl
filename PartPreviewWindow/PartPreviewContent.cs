@@ -163,11 +163,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AddChild(tabControl);
 		}
 
-		public override void OnFirstDraw(Graphics2D graphics2D)
+		public override void OnLoad(EventArgs args)
 		{
 			MatterControlApplication.Instance.ActiveView3DWidget = partPreviewView;
 
-			base.OnFirstDraw(graphics2D);
+			base.OnLoad(args);
 		}
 
 		public void SwitchToGcodeView()

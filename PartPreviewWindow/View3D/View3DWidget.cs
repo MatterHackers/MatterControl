@@ -465,10 +465,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return;
 			if (Scene.SelectedItem != null)
 			{
-				foreach (var primitive in Scene.SelectedItem.ExtraData.MeshTraceables)
-				{
-					primitive.RenderBvhRecursive(Scene.SelectedItem.Matrix);
-				}
+				Scene.SelectedItem.TraceData().RenderBvhRecursive(Scene.SelectedItem.Matrix);
 			}
 		}
 
@@ -843,12 +840,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
 
-		public override void OnFirstDraw(Graphics2D graphics2D)
+		public override void OnLoad(EventArgs args)
 		{
 			ClearBedAndLoadPrintItemWrapper(printItemWrapper);
 			topMostParent = this.TopmostParent();
 
-			base.OnFirstDraw(graphics2D);
+			base.OnLoad(args);
 		}
 
 		/// <summary>
@@ -1899,7 +1896,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						tempScene.Children.Add(loadedGroup);
 
 						PlatingHelper.MoveToOpenPosition(tempScene, this.Scene);
-						tempScene.CreateTraceables();
 
 						this.InsertNewItem(tempScene);
 					}

@@ -383,7 +383,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 						characterObject.ExtraData.Spacing = printer.GetOffsetLeftOfCharacterIndex(i);
 						characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, unscaledLetterHeight / 2));
-						characterObject.CreateTraceables();
 
 						group.Children.Add(characterObject);
 					}
@@ -499,7 +498,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					};
 
 					basePlateObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, 0));
-					basePlateObject.CreateTraceables();
 
 					return basePlateObject;
 				}
