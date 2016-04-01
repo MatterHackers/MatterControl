@@ -66,7 +66,6 @@ namespace MatterHackers.MatterControl
 		private string confirmExit = "Confirm Exit".Localize();
 		private bool DoCGCollectEveryDraw = false;
 		private int drawCount = 0;
-		private bool firstDraw = true;
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 		private Gaming.Game.DataViewGraph msGraph = new Gaming.Game.DataViewGraph(new Vector2(20, 500), 50, 50, 0, 200);
 		private string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
@@ -568,44 +567,21 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-        public override void OnDraw(Graphics2D graphics2D)
+		public override void OnFirstDraw(Graphics2D graphics2D)
 		{
-			totalDrawTime.Restart();
-			GuiWidget.DrawCount = 0;
-			using (new PerformanceTimer("Draw Timer", "MC Draw"))
-			{
-				base.OnDraw(graphics2D);
-			}
-			totalDrawTime.Stop();
+			UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
-			millisecondTimer.Update((int)totalDrawTime.ElapsedMilliseconds);
-
-			if (ShowMemoryUsed)
+			foreach (string arg in commandLineArgs)
 			{
-				long memory = GC.GetTotalMemory(false);
-				this.Title = "Allocated = {0:n0} : {1:000}ms, d{2} Size = {3}x{4}, onIdle = {5:00}:{6:00}, widgetsDrawn = {7}".FormatWith(memory, millisecondTimer.GetAverage(), drawCount++, this.Width, this.Height, UiThread.CountExpired, UiThread.Count, GuiWidget.DrawCount);
-				if (DoCGCollectEveryDraw)
+				string argExtension = Path.GetExtension(arg).ToUpper();
+				if (argExtension.Length > 1
+					&& MeshFileIo.ValidFileExtensions().Contains(argExtension))
 				{
-					GC.Collect();
+					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
 				}
 			}
 
-			if (firstDraw)
-			{
-				UiThread.RunOnIdle(DoAutoConnectIfRequired);
-
-				firstDraw = false;
-				foreach (string arg in commandLineArgs)
-				{
-					string argExtension = Path.GetExtension(arg).ToUpper();
-					if (argExtension.Length > 1
-						&& MeshFileIo.ValidFileExtensions().Contains(argExtension))
-					{
-						QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
-					}
-				}
-
-				TerminalWindow.ShowIfLeftOpen();
+			TerminalWindow.ShowIfLeftOpen();
 
 #if false
 			{
@@ -625,7 +601,31 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 
-				AfterFirstDraw?.Invoke();
+			AfterFirstDraw?.Invoke();
+
+			base.OnFirstDraw(graphics2D);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			totalDrawTime.Restart();
+			GuiWidget.DrawCount = 0;
+			using (new PerformanceTimer("Draw Timer", "MC Draw"))
+			{
+				base.OnDraw(graphics2D);
+			}
+			totalDrawTime.Stop();
+
+			millisecondTimer.Update((int)totalDrawTime.ElapsedMilliseconds);
+
+			if (ShowMemoryUsed)
+			{
+				long memory = GC.GetTotalMemory(false);
+				this.Title = "Allocated = {0:n0} : {1:000}ms, d{2} Size = {3}x{4}, onIdle = {5:00}:{6:00}, widgetsDrawn = {7}".FormatWith(memory, millisecondTimer.GetAverage(), drawCount++, this.Width, this.Height, UiThread.CountExpired, UiThread.Count, GuiWidget.DrawCount);
+				if (DoCGCollectEveryDraw)
+				{
+					GC.Collect();
+				}
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);

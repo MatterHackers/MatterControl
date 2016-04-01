@@ -102,7 +102,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private CheckBox expandViewOptions;
 		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
-		private bool firstDraw = true;
 		private bool hasDrawn = false;
 		private FlowLayoutWidget materialOptionContainer;
 
@@ -846,6 +845,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnFirstDraw(Graphics2D graphics2D)
 		{
+			ClearBedAndLoadPrintItemWrapper(printItemWrapper);
 			topMostParent = this.TopmostParent();
 
 			base.OnFirstDraw(graphics2D);
@@ -919,12 +919,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (firstDraw)
-			{
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-				firstDraw = false;
-			}
-
 			if (Scene.HasSelection)
 			{
 				foreach (InteractionVolume volume in meshViewerWidget.interactionVolumes)
