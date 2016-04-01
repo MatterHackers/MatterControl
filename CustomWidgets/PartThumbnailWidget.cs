@@ -234,6 +234,11 @@ namespace MatterHackers.MatterControl
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			if(ItemWrapper == null)
+			{
+				return;
+			}
+
 			//Trigger thumbnail generation if neeeded
 			string stlHashCode = this.ItemWrapper.FileHashCode.ToString();
 			if (!thumbNailHasBeenCreated && !processingThumbnail && supportsThumbnails)

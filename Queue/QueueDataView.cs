@@ -32,6 +32,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
@@ -354,10 +355,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 			SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 		}
 
+		private View3DWidget view3DWidget;
+
 		private void SelectedIndexChanged(object sender, EventArgs e)
 		{
 			// Skip this processing while in EditMode
-			if (this.editMode) return;
+			if (this.editMode || view3DWidget?.IsEditing == true)
+			{
+				return;
+			}
 
 			OnSelectedIndexChanged();
 			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
@@ -434,6 +440,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnFirstDraw(Graphics2D graphics2D)
 		{
+			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
+
 			EnsureSelection();
 			base.OnFirstDraw(graphics2D);
 		}
