@@ -26,8 +26,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-//#define DoBooleanTest
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -89,6 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public partial class View3DWidget : PartPreview3DWidget
 	{
+		bool DoBooleanTest = false;
 		public FlowLayoutWidget doEdittingButtonsContainer;
 
 		public readonly int EditButtonHeight = 44;
@@ -451,10 +450,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.ResetView();
 
-#if DoBooleanTest
-            DrawBefore += CreateBooleanTestGeometry;
-            DrawAfter += RemoveBooleanTestGeometry;
-#endif
+			if (DoBooleanTest)
+			{
+				BeforeDraw += CreateBooleanTestGeometry;
+				AfterDraw += RemoveBooleanTestGeometry;
+			}
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
         }
 
@@ -594,9 +594,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			widgetToAddTo.AddChild(container);
 		}
 
-#if DoBooleanTest
-        MeshGroup booleanGroup;
-        Matrix4X4 groupTransform;
+#region DoBooleanTest
+        Object3D booleanObject;
 		Vector3 offset = new Vector3();
 		Vector3 direction = new Vector3(.11, .12, .13);
 		Vector3 rotCurrent = new Vector3();
@@ -607,7 +606,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			try
 			{
-				booleanGroup = new MeshGroup();
+				MeshGroup booleanGroup = new MeshGroup();
 
 				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Union, AxisAlignedBoundingBox.Union, new Vector3(100, 0, 20), "U"));
 				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Subtract, null, new Vector3(100, 100, 20), "S"));
@@ -616,10 +615,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				offset += direction;
 				rotCurrent += rotChange;
 				scaleCurrent += scaleChange;
-				meshViewerWidget.MeshGroups.Add(booleanGroup);
 
-				groupTransform = Matrix4X4.Identity;
-				meshViewerWidget.MeshGroupTransforms.Add(groupTransform);
+				Scene.Children.Add(booleanObject = new Object3D()
+				{
+					MeshGroup = booleanGroup,
+					Matrix = Matrix4X4.Identity,
+				});
 			}
 			catch(Exception e2)
 			{
@@ -631,10 +632,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Mesh ApplyBoolean(Func<Mesh, Mesh, Mesh> meshOpperation, Func<AxisAlignedBoundingBox, AxisAlignedBoundingBox, AxisAlignedBoundingBox> aabbOpperation, Vector3 centering, string opp)
 		{
 			Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
-			boxA = PlatonicSolids.CreateIcosahedron(35);
+			//boxA = PlatonicSolids.CreateIcosahedron(35);
 			boxA.Translate(centering);
 			Mesh boxB = PlatonicSolids.CreateCube(40, 40, 40);
-			boxB = PlatonicSolids.CreateIcosahedron(35);
+			//boxB = PlatonicSolids.CreateIcosahedron(35);
 
 			for (int i = 0; i < 3; i++)
 			{
@@ -698,14 +699,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RemoveBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
         {
-			if (meshViewerWidget.MeshGroups.Contains(booleanGroup))
+			if (meshViewerWidget.Scene.Children.Contains(booleanObject))
 			{
-				meshViewerWidget.MeshGroups.Remove(booleanGroup);
-				meshViewerWidget.MeshGroupTransforms.Remove(groupTransform);
+				meshViewerWidget.Scene.Children.Remove(booleanObject);
 				UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
 			}
         }
-#endif
+		#endregion DoBooleanTest
 
 		public enum AutoRotate { Enabled, Disabled };
 
