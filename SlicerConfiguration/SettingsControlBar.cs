@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private event EventHandler unregisterEvents;
 		public string activeMaterialPreset;
+		public string activeQualityPreset;
 
 		public SettingsControlBar()
 		{
@@ -50,7 +51,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
 			}
 
-			this.AddChild(new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality"));
+			SliceSelectorWidget qualityPresetDropDown = new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality");
+			this.activeQualityPreset = qualityPresetDropDown.DropDownList.SelectedLabel;
+			this.AddChild(qualityPresetDropDown);
 			this.AddChild(new GuiWidget(8, 0));
 
 			if (numberOfHeatedExtruders > 1)
@@ -70,9 +73,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				SliceSelectorWidget xxx = new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material");
-				this.activeMaterialPreset = xxx.DropDownList.SelectedLabel;
-				this.AddChild(xxx);
+				SliceSelectorWidget materialPresetDropDown = new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material");
+				this.activeMaterialPreset = materialPresetDropDown.DropDownList.SelectedLabel;
+				this.AddChild(materialPresetDropDown);
 			}
 
 			this.Height = 60 * TextWidget.GlobalPointSizeScaleRatio;
