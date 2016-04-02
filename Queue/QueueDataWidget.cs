@@ -588,7 +588,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					var dropItem = view3DWidget.DragDropSource;
 
-					dropItem.MeshPath = this.queueDataView.SelectedPrintItem.FileLocation;
+					dropItem.MeshPath = queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation;
 
 					base.OnMouseMove(mouseArgs);
 

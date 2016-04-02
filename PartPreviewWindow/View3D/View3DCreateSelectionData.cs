@@ -68,6 +68,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				enterEditButtonsContainer.Visible = false;
 			}
 
+			this.IsEditing = true;
+
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			if (Scene.HasChildren)
 			{
