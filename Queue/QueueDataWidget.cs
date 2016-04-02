@@ -609,7 +609,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 							Vector3 meshGroupCenter = bounds.Center;
 							dropItem.MeshGroup.Meshes.Clear();
 							dropItem.Children.AddRange(loadedItem.Children);
-							dropItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, 0);
+							dropItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dropItem.GetAxisAlignedBoundingBox().minXYZ.z);
 						});
 					}
 				}

@@ -824,7 +824,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Vector3 meshGroupCenter = bounds.Center;
 							DragDropSource.MeshGroup.Meshes.Clear();
 							DragDropSource.Children.AddRange(loadedItem.Children);
-							DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, 0);
+							DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -DragDropSource.GetAxisAlignedBoundingBox().minXYZ.z);
 						});
 					}
 
