@@ -592,7 +592,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 					base.OnMouseMove(mouseArgs);
 
-					// TODO: How to we handle mesh load errors? How do we report success?
+					// TODO: How do we handle mesh load errors? How do we report success?
 					IObject3D loadedItem = await Task.Run(() =>
 					{
 						return Object3D.Load(
@@ -605,8 +605,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 					{
 						view3DWidget.Scene.ModifyChildren(children =>
 						{
+							AxisAlignedBoundingBox bounds = loadedItem.GetAxisAlignedBoundingBox();
+							Vector3 meshGroupCenter = bounds.Center;
 							dropItem.MeshGroup.Meshes.Clear();
 							dropItem.Children.AddRange(loadedItem.Children);
+							dropItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, 0);
 						});
 					}
 				}

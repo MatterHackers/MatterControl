@@ -820,8 +820,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Scene.ModifyChildren(children =>
 						{
+							AxisAlignedBoundingBox bounds = loadedItem.GetAxisAlignedBoundingBox();
+							Vector3 meshGroupCenter = bounds.Center;
 							DragDropSource.MeshGroup.Meshes.Clear();
 							DragDropSource.Children.AddRange(loadedItem.Children);
+							DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, 0);
 						});
 					}
 
