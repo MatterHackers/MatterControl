@@ -25,7 +25,7 @@
     "PresentationName": "Bed Temperature",
     "HelpText": "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees",
+    "ExtraSettings": "degrees C",
     "ShowIfSet": "has_heated_bed"
   },
   {
@@ -333,7 +333,7 @@
     "PresentationName": "Bed First Layer",
     "HelpText": "The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.",
     "DataEditType": "DOUBLE",
-    "ExtraSettings": "degrees",
+    "ExtraSettings": "degrees C",
     "ShowIfSet": "has_heated_bed"
   },
   {
@@ -362,7 +362,7 @@
     "PresentationName": "Extrude First Layer",
     "HelpText": "The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "degrees C"
   },
   {
     "SlicerConfigName": "g0",
@@ -863,7 +863,7 @@
     "PresentationName": "Slow Down If Layer Print\\nTime Is Below",
     "HelpText": "The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.",
     "DataEditType": "INT",
-    "ExtraSettings": "Seconds"
+    "ExtraSettings": "seconds"
   },
   {
     "SlicerConfigName": "small_perimeter_speed",
@@ -919,7 +919,7 @@
     "PresentationName": "Temp Lower Amount",
     "HelpText": "This is the amount to lower the temperature of an extruder that is not currently printing.",
     "DataEditType": "DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "degrees C"
   },
   {
     "SlicerConfigName": "start_gcode",
@@ -1102,21 +1102,21 @@
     "PresentationName": "Extruder Temperature",
     "HelpText": "The target temperature the extruder will attempt to reach during the print.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "degrees C"
   },
   {
     "SlicerConfigName": "extruder_wipe_temperature",
     "PresentationName": "Extruder Wipe Temperature",
     "HelpText": "The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "degrees C"
   },
   {
     "SlicerConfigName": "bed_remove_part_temperature",
     "PresentationName": "Bed Remove Part Temperature",
     "HelpText": "The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees",
+    "ExtraSettings": "degrees C",
     "ShowIfSet": "has_heated_bed"
   },
   {

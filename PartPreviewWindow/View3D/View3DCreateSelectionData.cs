@@ -45,9 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CreateSelectionData()
 		{
-			string makingCopyLabel = LocalizedString.Get("Preparing Meshes");
-			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-			processingProgressControl.ProcessType = makingCopyLabelFull;
+			processingProgressControl.ProcessType = "Preparing Meshes".Localize() + ":";
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -58,10 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double currentRatioDone = 0;
 			for (int i = 0; i < asyncMeshGroups.Count; i++)
 			{
-				PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-				asyncPlatingDatas.Add(newInfo);
-
-				MeshGroup meshGroup = asyncMeshGroups[i];
+				asyncPlatingDatas.Add(new PlatingMeshGroupData());
 
 				// create the selection info
 				PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>

@@ -456,6 +456,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             DrawBefore += CreateBooleanTestGeometry;
             DrawAfter += RemoveBooleanTestGeometry;
 #endif
+			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += trackballTumbleWidget_DrawGlContent;
+
+		}
+
+		private void trackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+		{
+			if(allObjects != null)
+			{
+				//DebugBvh.Render(allObjects, Matrix4X4.Identity);
+            }
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
@@ -840,7 +850,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			hasDrawn = true;
 			base.OnDraw(graphics2D);
-			DrawStuffForSelectedPart(graphics2D);
 		}
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
@@ -1539,31 +1548,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
-		{
-			if (SelectedMeshGroup != null)
-			{
-				AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform);
-				Vector3 boundsCenter = selectedBounds.Center;
-				Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
-
-				Vector2 centerTopScreenPosition = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(centerTop);
-				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
-				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
-
-				PathStorage zArrow = new PathStorage();
-				zArrow.MoveTo(-6, -2);
-				zArrow.curve3(0, -4);
-				zArrow.LineTo(6, -2);
-				zArrow.LineTo(0, 12);
-				zArrow.LineTo(-6, -2);
-
-				VertexSourceApplyTransform translate = new VertexSourceApplyTransform(zArrow, Affine.NewTranslation(centerTopScreenPosition));
-
-				//graphics2D.Render(translate, RGBA_Bytes.Black);
-			}
-		}
-
 		private void ExitEditingAndSaveIfRequired(bool response)
 		{
 			if (response == true)
@@ -1614,7 +1598,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex, ref IntersectInfo info)
+		IPrimitive allObjects;
+        private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex, ref IntersectInfo info)
 		{
 			meshHitIndex = 0;
 			if (MeshGroupExtraData.Count == 0 || MeshGroupExtraData[0].meshTraceableData == null)
@@ -1630,7 +1615,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i]));
 				}
 			}
-			IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
+			allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables, 0);
 
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
 			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);

@@ -40,6 +40,7 @@ using System.Collections.Generic;
 namespace MatterHackers.MatterControl
 {
 	using Localizations;
+	using System.Collections;
 	using Polygon = List<IntPoint>;
 
 	using Polygons = List<List<IntPoint>>;
@@ -395,19 +396,27 @@ namespace MatterHackers.MatterControl
 
 			foreach (Face face in mesh.Faces)
 			{
-				positions.Clear();
-				foreach (Vertex vertex in face.Vertices())
+				if (false)
 				{
-					positions.Add(vertex.Position);
+					MeshFaceTraceable triangle = new MeshFaceTraceable(face);
+					allPolys.Add(triangle);
 				}
-
-				// We should use the teselator for this if it is greater than 3.
-				Vector3 next = positions[1];
-				for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
+				else
 				{
-					TriangleShape triangel = new TriangleShape(positions[0], next, positions[positionIndex], null);
-					allPolys.Add(triangel);
-					next = positions[positionIndex];
+					positions.Clear();
+					foreach (Vertex vertex in face.Vertices())
+					{
+						positions.Add(vertex.Position);
+					}
+
+					// We should use the tessellator for this if it is greater than 3.
+					Vector3 next = positions[1];
+					for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
+					{
+						TriangleShape triangle = new TriangleShape(positions[0], next, positions[positionIndex], null);
+						allPolys.Add(triangle);
+						next = positions[positionIndex];
+					}
 				}
 
 				if (reportProgress != null)
@@ -440,6 +449,112 @@ namespace MatterHackers.MatterControl
 			currentTransform *= transformToApply;
 			currentTransform *= Matrix4X4.CreateTranslation(postionToApplyAt);
 			return currentTransform;
+		}
+	}
+
+	public class MeshFaceTraceable : IPrimitive
+	{
+		Face face;
+		public MeshFaceTraceable(Face face)
+		{
+			this.face = face;
+		}
+
+		public RGBA_Floats GetColor(IntersectInfo info) { return RGBA_Floats.Red; }
+
+		public MaterialAbstract Material { get { return null; } set { } }
+
+		public bool GetContained(List<IPrimitive> results, AxisAlignedBoundingBox subRegion)
+		{
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox();
+			if (bounds.Contains(subRegion))
+			{
+				results.Add(this);
+				return true;
+			}
+
+			return false;
+		}
+
+		public IntersectInfo GetClosestIntersection(Ray ray)
+		{
+			// find the point on the plane
+			Vector3[] positions = new Vector3[3];
+			int index = 0;
+			foreach (FaceEdge faceEdge in face.FaceEdges())
+			{
+				positions[index++] = faceEdge.firstVertex.Position;
+				if(index==3)
+				{
+					break;
+				}
+            }
+			Plane plane = new Plane(positions[0], positions[1], positions[2]);
+			double distanceToHit;
+			bool hitFrontOfPlane;
+			if (plane.RayHitPlane(ray, out distanceToHit, out hitFrontOfPlane))
+			{
+				Vector3 polyPlaneIntersection = ray.origin + ray.directionNormal * distanceToHit;
+				if (face.PointInPoly(polyPlaneIntersection))
+				{
+					IntersectInfo info = new IntersectInfo();
+					info.closestHitObject = this;
+					info.distanceToHit = distanceToHit;
+					info.hitPosition = polyPlaneIntersection;
+                    info.normalAtHit = face.normal;
+					info.hitType = IntersectionType.FrontFace;
+					return info;
+	            }
+			}
+
+			return null;
+		}
+
+		public int FindFirstRay(RayBundle rayBundle, int rayIndexToStartCheckingFrom)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void GetClosestIntersections(RayBundle rayBundle, int rayIndexToStartCheckingFrom, IntersectInfo[] intersectionsForBundle)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable IntersectionIterator(Ray ray)
+		{
+			throw new NotImplementedException();
+		}
+
+		public double GetSurfaceArea()
+		{
+			AxisAlignedBoundingBox aabb = GetAxisAlignedBoundingBox();
+
+			double minDimension = Math.Min(aabb.XSize, Math.Min(aabb.YSize, aabb.ZSize));
+			if(minDimension == aabb.XSize)
+			{
+				return aabb.YSize * aabb.ZSize;
+			}
+			else if(minDimension == aabb.YSize)
+			{
+				return aabb.XSize * aabb.ZSize;
+			}
+
+			return aabb.XSize * aabb.YSize;
+		}
+
+		public AxisAlignedBoundingBox GetAxisAlignedBoundingBox()
+		{
+			return face.GetAxisAlignedBoundingBox();
+        }
+
+		public Vector3 GetCenter()
+		{
+			return face.GetCenter();
+		}
+
+		public double GetIntersectCost()
+		{
+			return 700;
 		}
 	}
 }
