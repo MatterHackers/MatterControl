@@ -529,7 +529,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnKeyDown(keyEvent);
 		}
 
-		public bool IsEditing => !enterEditButtonsContainer.Visible;
+		public bool IsEditing { get; private set; }
 
 		public bool DragingPart
 		{
@@ -2406,6 +2406,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SwitchStateToNotEditing()
 		{
+			IsEditing = false;
+
 			if (!enterEditButtonsContainer.Visible)
 			{
 				enterEditButtonsContainer.Visible = true;

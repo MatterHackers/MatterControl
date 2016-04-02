@@ -38,6 +38,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -354,10 +355,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 		}
-
-		private View3DWidget view3DWidget;
-
-		public bool AllowSelectionChange => !this.editMode && view3DWidget?.IsEditing == false;
+		
+		public bool AllowSelectionChange
+		{
+			get
+			{
+				return !this.editMode && this.formHasLoaded && MatterControlApplication.Instance.ActiveView3DWidget?.IsEditing == false;
+			}
+		}
 
 		private void SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -442,8 +447,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnLoad(EventArgs args)
 		{
-			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
-
 			EnsureSelection();
 			base.OnLoad(args);
 		}
@@ -523,20 +526,24 @@ namespace MatterHackers.MatterControl.PrintQueue
 			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
 		}
 
+		public QueueRowItem DragSourceRowItem { get; private set; }
+
 		private void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
 		{
 			// Hard-coded processing rule to avoid changing the SelectedIndex when clicks occur
 			// with the thumbnail region - aka the first 55 pixels
 			if (mouseEvent.X < 56 || !AllowSelectionChange)
 			{
+				// Find the clicked item and grab its child QueueRowItem child, storing the result in DragSourceRowItem for use in drag/drop
+				var queueItemDragSource = topToBottomItemList.Children?.Where(item => item == sender).FirstOrDefault();
+				DragSourceRowItem = queueItemDragSource.Children<QueueRowItem>().FirstOrDefault();
+
 				return;
 			}
 
-			GuiWidget widgetClicked = ((GuiWidget)sender);
 			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
 			{
-				GuiWidget child = topToBottomItemList.Children[index];
-				if (child == widgetClicked)
+				if (sender == topToBottomItemList.Children[index])
 				{
 					SelectedIndex = index;
 				}
