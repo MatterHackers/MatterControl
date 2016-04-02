@@ -532,11 +532,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 				return;
 			}
 
-			GuiWidget widgetClicked = ((GuiWidget)sender);
 			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
 			{
-				GuiWidget child = topToBottomItemList.Children[index];
-				if (child == widgetClicked)
+				if (sender == topToBottomItemList.Children[index])
 				{
 					SelectedIndex = index;
 				}
