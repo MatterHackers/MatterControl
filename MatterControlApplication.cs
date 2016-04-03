@@ -52,6 +52,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl
 {

@@ -45,6 +45,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Localizations;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl
 {
