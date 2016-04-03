@@ -463,9 +463,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
 			return;
-			if (Scene.SelectedItem != null)
+			if (Scene?.TraceData() != null)
 			{
-				Scene.SelectedItem.TraceData().RenderBvhRecursive(Scene.SelectedItem.Matrix);
+				Scene.TraceData().RenderBvhRecursive(Scene.Matrix);
 			}
 		}
 
