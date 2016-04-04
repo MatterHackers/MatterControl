@@ -437,13 +437,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return addItemButton;
 		}
 
-		public override void OnLoad(EventArgs args)
-		{
-			view3DWidget.Parents<SystemWindow>().Last().AfterDraw += ScreenDrawAfter;
-
-			base.OnLoad(args);
-		}
-
 		private static FlowLayoutWidget CreateButtonState(string buttonLable, ImageBuffer buttonImage, RGBA_Bytes color, RGBA_Bytes textColor)
 		{
 			FlowLayoutWidget flowLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -463,14 +456,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Selectable = false,
 			});
 			return flowLayout;
-		}
-
-		private void ScreenDrawAfter(GuiWidget drawingWidget, DrawEventArgs e)
-		{
-			Graphics2D graphics = e.graphics2D;
-
-			graphics.Circle(mouseMovePosition, 5, RGBA_Bytes.Cyan);
-			graphics.Rectangle(meshViewerPosition, RGBA_Bytes.Cyan);
 		}
 	}
 }

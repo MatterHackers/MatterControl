@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"print_leveling_required_to_print",
 			"print_leveling_solution",
 			"resume_gcode",
-			"support_material_threshold",
 			"temperature",
 			"z_can_be_negative",
 

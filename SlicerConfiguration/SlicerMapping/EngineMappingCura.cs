@@ -93,6 +93,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("support_material_create_internal_support", "supportEverywhere"),
 				new ScaledSingleNumber("support_material_xy_distance", "supportXYDistance", 1000),
 				new ScaledSingleNumber("support_material_z_distance", "supportZDistance", 1000),
+				new MappedSetting("spiral_vase", "spiralizeMode"),
+
+				// This needs to be passed to cura (but not matter slice). The actual value is set in "support_material", "supportAngle" but is found in this value.
+				new VisibleButNotMappedToEngine("support_material_threshold"),
 
 				new SupportTypeMapping("support_type", "supportType"),
 

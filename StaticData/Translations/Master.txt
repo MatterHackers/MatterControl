@@ -4678,3 +4678,6 @@ Translated:Braille
 English:Update
 Translated:Update
 
+English:Outer Surface
+Translated:Outer Surface
+
