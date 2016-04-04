@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AfterDraw += RemoveBooleanTestGeometry;
 			}
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
-        }
+		}
 
 		public IObject3D DragDropSource { get; set; }
 
@@ -1548,29 +1548,66 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
+			var selectedItem = Scene.SelectedItem;
+
 			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType.TryGetValue(Scene.SelectedItem.GetType(), out mappedEditors);
+			objectEditorsByType.TryGetValue(selectedItem.GetType(), out mappedEditors);
+
+			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: VAnchor.FitToChildren);
 
 			if (mappedEditors != null)
 			{
-				foreach (var editor in mappedEditors)
+				AnchoredDropDownList dropDownList = new AnchoredDropDownList("", maxHeight: 300)
 				{
-					// Show editors in dropdown
+					Margin = new BorderDouble(0, 3)
+				};
 
-					// Select active editor
-
-					// Show active edtor
-					Console.WriteLine("Showing... " + editor);
-
-					selectedObjectPanel.CloseAllChildren();
-
-					var newEditor = editor.Create(Scene.SelectedItem, this);
-
-					selectedObjectPanel.AddChild(newEditor);
-
-
+				foreach (IObject3DEditor editor in mappedEditors)
+				{
+					MenuItem menuItem = dropDownList.AddItem(editor.Name);
+					menuItem.Selected += (s, e2) =>
+					{
+						ShowObjectEditor(editor);
+					};
 				}
+
+				selectedObjectPanel.RemoveAllChildren();
+				selectedObjectPanel.AddChild(dropDownList);
+				selectedObjectPanel.AddChild(editorPanel);
+
+				// Select the active editor or fall back to the first if not found
+				IObject3DEditor activeEditor = (from editor in mappedEditors
+								   let type = editor.GetType()
+								   where type.Name == selectedItem.ActiveEditor
+								   select editor).FirstOrDefault();
+
+				if(activeEditor == null)
+				{
+					activeEditor = mappedEditors.First();
+				}
+
+				int selectedIndex = 0;
+				for(int i = 0; i < dropDownList.MenuItems.Count; i++)
+				{
+					if(dropDownList.MenuItems[i].Text == activeEditor.Name)
+					{
+						selectedIndex = i;
+						break;
+					}
+				}
+
+				dropDownList.SelectedIndex = selectedIndex;
+
+				ShowObjectEditor(activeEditor);
 			}
+		}
+
+		private void ShowObjectEditor(IObject3DEditor editor)
+		{
+
+			editorPanel.CloseAllChildren();
+			var newEditor = editor.Create(Scene.SelectedItem, this);
+			editorPanel.AddChild(newEditor);
 		}
 
 		private void DeleteSelectedMesh()
@@ -1841,6 +1878,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
 		private GuiWidget selectedObjectPanel;
+		private FlowLayoutWidget editorPanel;
 
 		public void ProcessTree(IObject3D object3D)
 		{

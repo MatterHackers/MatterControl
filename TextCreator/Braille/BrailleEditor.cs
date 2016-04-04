@@ -66,61 +66,50 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var tabButton = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("BRAILLE".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-			tabButton.Margin = new BorderDouble(bottom: 2);
-			mainContainer.AddChild(tabButton);
-
 			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Visible = true
+				HAnchor = HAnchor.AbsolutePosition,
+				Visible = true,
+				Width = view3DWidget.WhiteButtonFactory.FixedWidth
 			};
 			mainContainer.AddChild(tabContainer);
-
-			tabButton.CheckedStateChanged += (sender, e) =>
-			{
-				tabContainer.Visible = tabButton.Checked;
-			};
-
-			// put in the user alpha check box
-			{
-				includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
-				{
-					ToolTipText = "Show normal text above the braille".Localize(),
-					Checked = false,
-					Margin = new BorderDouble(10, 5),
-					HAnchor = HAnchor.ParentLeft
-				};
-
-				tabContainer.AddChild(includeText);
-				includeText.CheckedStateChanged += (s, e) => RebuildText(textToAddWidget.Text);
-			}
-
-			// put in the user alpha check box
-			{
-				useGrade2 = new CheckBox(new CheckBoxViewText("Use Grade 2".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
-				useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions)".Localize();
-				useGrade2.Checked = false;
-				useGrade2.Margin = new BorderDouble(10, 5);
-				useGrade2.HAnchor = HAnchor.ParentLeft;
-				tabContainer.AddChild(useGrade2);
-				useGrade2.CheckedStateChanged += (sender, e) =>
-				{
-					RebuildText(textToAddWidget.Text);
-				};
-			}
 
 			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(5)
+				Margin = new BorderDouble(5),
+				Text = injectedItem.Text
 			};
 			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
 			tabContainer.AddChild(textToAddWidget);
 
-			Button insertTextButton = view3DWidget.textImageButtonFactory.Generate("Insert".Localize());
-			insertTextButton.Click += (s, e) => RebuildText(textToAddWidget.Text);
-			tabContainer.AddChild(insertTextButton);
+			includeText = new CheckBox(new CheckBoxViewText("Include Text".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
+			{
+				ToolTipText = "Show normal text above the braille".Localize(),
+				Checked = false,
+				Margin = new BorderDouble(10, 5),
+				HAnchor = HAnchor.ParentLeft
+			};
+
+			tabContainer.AddChild(includeText);
+			includeText.CheckedStateChanged += (s, e) => RebuildText(textToAddWidget.Text);
+
+			useGrade2 = new CheckBox(new CheckBoxViewText("Use Grade 2".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
+			useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions)".Localize();
+			useGrade2.Checked = false;
+			useGrade2.Margin = new BorderDouble(10, 5);
+			useGrade2.HAnchor = HAnchor.ParentLeft;
+			tabContainer.AddChild(useGrade2);
+			useGrade2.CheckedStateChanged += (sender, e) =>
+			{
+				RebuildText(textToAddWidget.Text);
+			};
+			
+			Button updateButton = view3DWidget.textImageButtonFactory.Generate("Update".Localize());
+			updateButton.Margin = new BorderDouble(5);
+			updateButton.HAnchor = HAnchor.ParentRight;
+			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);
+			tabContainer.AddChild(updateButton);
 
 			// put in a link to the wikipedia article
 			{
@@ -144,6 +133,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			return mainContainer;
 		}
+
+		public string Name { get; } = "Braille";
 
 		private async void RebuildText(string brailleText)
 		{

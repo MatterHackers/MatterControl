@@ -57,7 +57,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				ItemType = Object3DTypes.Group,
 				Text = wordText,
-				Spacing = characterSpacing
+				Spacing = characterSpacing,
+				ActiveEditor = "TextEditor"
 			};
 
 			StyledTypeFace typeFace = new StyledTypeFace(boldTypeFace, 12);

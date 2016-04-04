@@ -66,21 +66,23 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var tabButton = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("TEXT".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-			tabButton.Margin = new BorderDouble(bottom: 2);
-			mainContainer.AddChild(tabButton);
-
 			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Visible = true
+				HAnchor = HAnchor.AbsolutePosition,
+				Visible = true,
+				Width = view3DWidget.WhiteButtonFactory.FixedWidth
 			};
 			mainContainer.AddChild(tabContainer);
 
-			tabButton.CheckedStateChanged += (sender, e) =>
+			textToAddWidget = new MHTextEditWidget("", messageWhenEmptyAndNotSelected: "Text".Localize())
 			{
-				tabContainer.Visible = !tabButton.Checked;
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(5),
+				Text = injectedItem.Text,
+				Width = 50
 			};
+			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
+			tabContainer.AddChild(textToAddWidget);
 
 			spacingScrollBar = PartPreview3DWidget.InsertUiForSlider(tabContainer, "Spacing:".Localize(), .5, 1);
 			spacingScrollBar.ValueChanged += (sender, e) =>
@@ -91,19 +93,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				}
 			};
 
-			textToAddWidget = new MHTextEditWidget("", messageWhenEmptyAndNotSelected: "Text".Localize())
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(5),
-
-			};
-			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
-			tabContainer.AddChild(textToAddWidget);
-
-			Button insertTextButton = view3DWidget.textImageButtonFactory.Generate("Insert".Localize());
-			insertTextButton.Click += (s, e) => RebuildText(textToAddWidget.Text);
-			tabContainer.AddChild(insertTextButton);
-
 			createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
 			{
 				Checked = true,
@@ -113,8 +102,16 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
 			tabContainer.AddChild(createUnderline);
 
+			Button updateButton = view3DWidget.textImageButtonFactory.Generate("Update".Localize());
+			updateButton.Margin = new BorderDouble(5);
+			updateButton.HAnchor = HAnchor.ParentRight;
+			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);
+			tabContainer.AddChild(updateButton);
+
 			return mainContainer;
 		}
+
+		public string Name { get; } = "Text";
 
 		private void ResetWordLayoutSettings()
 		{

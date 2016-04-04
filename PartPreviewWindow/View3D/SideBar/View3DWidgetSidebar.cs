@@ -215,6 +215,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.ParentBottomTop;
 		}
 
+
+		// InitializeComponent is called after the Sidebar property has been assigned as SidebarPlugins
+		// are passed an instance of the View3DWidget and expect to be able to access the Sidebar to
+		// call create button methods
 		public void InitializeComponents()
 		{
 			PluginFinder<SideBarPlugin> SideBarPlugins = new PluginFinder<SideBarPlugin>();

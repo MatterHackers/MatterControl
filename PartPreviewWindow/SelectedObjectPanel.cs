@@ -40,8 +40,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class SelectedObjectPanel : FlowLayoutWidget
 	{
-		private RadioButton partSelectButton;
-
 		public SelectedObjectPanel() : base(FlowDirection.TopToBottom)
 		{
 			var buttonHeight = 40;
@@ -59,11 +57,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-
-			partSelectButton = textImageButtonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "partSelect.png"));
-			partSelectButton.ToolTipText = "Select Part".Localize();
-			partSelectButton.Margin = new BorderDouble(3);
-			AddChild(partSelectButton);
 
 			Margin = new BorderDouble(5);
 			HAnchor |= HAnchor.ParentRight;

@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public interface IObject3DEditor
 	{
+		string Name { get; }
 		IEnumerable<Type> SupportedTypes();
 		GuiWidget Create(IObject3D item, View3DWidget parentView3D);
 	}

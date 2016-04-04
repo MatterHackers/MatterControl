@@ -61,7 +61,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			var group = new TextObject
 			{
 				ItemType = Object3DTypes.Group,
-				Text = wordText
+				Text = wordText,
+				ActiveEditor = "BrailleEditor"
 			};
 
 			TypeFacePrinter brailPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(brailTypeFace, 12));
