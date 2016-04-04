@@ -4669,3 +4669,12 @@ Translated:BRAILLE
 English:TEXT
 Translated:TEXT
 
+English:Text
+Translated:Text
+
+English:Braille
+Translated:Braille
+
+English:Update
+Translated:Update
+

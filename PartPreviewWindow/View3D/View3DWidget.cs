@@ -1935,118 +1935,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MergeAndSavePartsDoWork(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
-			if (Path.GetExtension(printItemWrapper.FileLocation) != ".mcx")
-			{
-				printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".mcx");
-				printItemWrapper.PrintItem.Commit();
-			}
-
-			SaveScene(printItemWrapper.FileLocation);
-
-			return;
-
-			/* Classic save implementation temporarily disabled */
-
-			if (returnInfo != null)
-			{
-				PrintItem printItem = new PrintItem();
-				printItem.Name = returnInfo.newName;
-				printItem.FileLocation = Path.GetFullPath(returnInfo.fileNameAndPath);
-				printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider.GetProviderLocator());
-			}
-
-			// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
-			//PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			string mcxPath = Path.ChangeExtension(printItemWrapper.FileLocation, ".mcx");
+
 			try
 			{
-				string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
-
-				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-
 				// If null we are replacing a file from the current print item wrapper
 				if (returnInfo == null)
 				{
-					var fileInfo = new FileInfo(printItemWrapper.FileLocation);
-
-					string altFilePath = Path.ChangeExtension(fileInfo.FullName, ".mcx");
-					SaveScene(altFilePath);
-
-					bool requiresTypeChange = !fileInfo.Extension.Equals(".amf", StringComparison.OrdinalIgnoreCase);
-					if (requiresTypeChange && !printItemWrapper.UseIncrementedNameDuringTypeChange)
+					// Only save as .mcx
+					if (Path.GetExtension(printItemWrapper.FileLocation) != ".mcx")
 					{
-						// Not using incremented file name, simply change to AMF
-						printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".amf");
-					}
-					else if (requiresTypeChange)
-					{
-						string newFileName;
-						string incrementedFileName;
-
-						// Switching from .stl, .obj or similar to AMF. Save the file and update the
-						// the filename with an incremented (n) value to reflect the extension change in the UI 
-						string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
-
-						// Drop bracketed number sections from our source filename to ensure we don't generate something like "file (1) (1).amf"
-						if (fileName.Contains("("))
-						{
-							fileName = fileNameNumberMatch.Replace(fileName, "").Trim();
-						}
-
-						// Generate and search for an incremented file name until no match is found at the target directory
-						int foundCount = 0;
-						do
-						{
-							newFileName = string.Format("{0} ({1})", fileName, ++foundCount);
-							incrementedFileName = Path.Combine(fileInfo.DirectoryName, newFileName + ".amf");
-
-							// Continue incrementing while any matching file exists
-						} while (Directory.GetFiles(fileInfo.DirectoryName, newFileName + ".*").Any());
-
-						// Change the FileLocation to the new AMF file
-						printItemWrapper.FileLocation = incrementedFileName;
-					}
-
-					try
-					{
-						// get a new location to save to
-						string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
-
-						// save to the new temp location
-						bool savedSuccessfully = false; // = MeshFileIo.Save(MeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
-
-						// Swap out the files if the save operation completed successfully 
-						if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
-						{
-							// Ensure the target path is clear
-							if(File.Exists(printItemWrapper.FileLocation))
-							{
-								File.Delete(printItemWrapper.FileLocation);
-							}
-
-							// Move the newly saved file back into place
-							File.Move(tempFileNameToSaveTo, printItemWrapper.FileLocation);
-
-							// Once the file is swapped back into place, update the PrintItem to account for extension change
-							printItemWrapper.PrintItem.Commit();
-						}
-					}
-					catch(Exception ex)
-					{
-						Trace.WriteLine("Error saving file: ", ex.Message);
+						printItemWrapper.FileLocation = mcxPath;
 					}
 				}
 				else // we are saving a new file and it will not exist until we are done
 				{
-					//MeshFileIo.Save(MeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
+					PrintItem printItem = new PrintItem();
+					printItem.Name = returnInfo.newName;
+					printItem.FileLocation = Path.GetFullPath(mcxPath);
+
+					printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider.GetProviderLocator());
 				}
+
+				SaveScene(mcxPath);
+
+				printItemWrapper.PrintItem.Commit();
 
 				// Wait for a second to report the file changed to give the OS a chance to finish closing it.
 				UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
 
-				if (returnInfo != null
-					&& returnInfo.destinationLibraryProvider != null)
+				if (returnInfo?.destinationLibraryProvider != null)
 				{
 					// save this part to correct library provider
 					LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
@@ -2062,27 +1981,151 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				saveSucceded = true;
 			}
-			catch (System.UnauthorizedAccessException e2)
+			catch (Exception ex)
 			{
-				Debug.Print(e2.Message);
-				GuiWidget.BreakInDebugger();
-				saveSucceded = false;
-				UiThread.RunOnIdle(() =>
-				{
-					//Do something special when unauthorized?
-					StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-				});
+				Trace.WriteLine("Error saving file: ", ex.Message);
 			}
-			catch (Exception e)
-			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-				saveSucceded = false;
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-				});
-			}
+
+			return;
+
+			///* Classic save implementation temporarily disabled */
+
+			//if (returnInfo != null)
+			//{
+			//	PrintItem printItem = new PrintItem();
+			//	printItem.Name = returnInfo.newName;
+			//	printItem.FileLocation = Path.GetFullPath(returnInfo.fileNameAndPath);
+			//	printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider.GetProviderLocator());
+			//}
+
+			//// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
+			////PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
+
+			//Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			//try
+			//{
+			//	string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
+
+			//	MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+
+			//	// If null we are replacing a file from the current print item wrapper
+			//	if (returnInfo == null)
+			//	{
+			//		var fileInfo = new FileInfo(printItemWrapper.FileLocation);
+
+			//		string altFilePath = Path.ChangeExtension(fileInfo.FullName, ".mcx");
+			//		SaveScene(altFilePath);
+
+			//		bool requiresTypeChange = !fileInfo.Extension.Equals(".amf", StringComparison.OrdinalIgnoreCase);
+			//		if (requiresTypeChange && !printItemWrapper.UseIncrementedNameDuringTypeChange)
+			//		{
+			//			// Not using incremented file name, simply change to AMF
+			//			printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".amf");
+			//		}
+			//		else if (requiresTypeChange)
+			//		{
+			//			string newFileName;
+			//			string incrementedFileName;
+
+			//			// Switching from .stl, .obj or similar to AMF. Save the file and update the
+			//			// the filename with an incremented (n) value to reflect the extension change in the UI 
+			//			string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+
+			//			// Drop bracketed number sections from our source filename to ensure we don't generate something like "file (1) (1).amf"
+			//			if (fileName.Contains("("))
+			//			{
+			//				fileName = fileNameNumberMatch.Replace(fileName, "").Trim();
+			//			}
+
+			//			// Generate and search for an incremented file name until no match is found at the target directory
+			//			int foundCount = 0;
+			//			do
+			//			{
+			//				newFileName = string.Format("{0} ({1})", fileName, ++foundCount);
+			//				incrementedFileName = Path.Combine(fileInfo.DirectoryName, newFileName + ".amf");
+
+			//				// Continue incrementing while any matching file exists
+			//			} while (Directory.GetFiles(fileInfo.DirectoryName, newFileName + ".*").Any());
+
+			//			// Change the FileLocation to the new AMF file
+			//			printItemWrapper.FileLocation = incrementedFileName;
+			//		}
+
+			//		try
+			//		{
+			//			// get a new location to save to
+			//			string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
+
+			//			// save to the new temp location
+			//			bool savedSuccessfully = false; // = MeshFileIo.Save(MeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
+
+			//			// Swap out the files if the save operation completed successfully 
+			//			if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
+			//			{
+			//				// Ensure the target path is clear
+			//				if(File.Exists(printItemWrapper.FileLocation))
+			//				{
+			//					File.Delete(printItemWrapper.FileLocation);
+			//				}
+
+			//				// Move the newly saved file back into place
+			//				File.Move(tempFileNameToSaveTo, printItemWrapper.FileLocation);
+
+			//				// Once the file is swapped back into place, update the PrintItem to account for extension change
+			//				printItemWrapper.PrintItem.Commit();
+			//			}
+			//		}
+			//		catch(Exception ex)
+			//		{
+			//			Trace.WriteLine("Error saving file: ", ex.Message);
+			//		}
+			//	}
+			//	else // we are saving a new file and it will not exist until we are done
+			//	{
+			//		//MeshFileIo.Save(MeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
+			//	}
+
+			//	// Wait for a second to report the file changed to give the OS a chance to finish closing it.
+			//	UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
+
+			//	if (returnInfo != null
+			//		&& returnInfo.destinationLibraryProvider != null)
+			//	{
+			//		// save this part to correct library provider
+			//		LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
+			//		if (libraryToSaveTo != null)
+			//		{
+			//			libraryToSaveTo.AddItem(printItemWrapper);
+			//			libraryToSaveTo.Dispose();
+			//		}
+			//	}
+			//	else // we have already saved it and the library should pick it up
+			//	{
+			//	}
+
+			//	saveSucceded = true;
+			//}
+			//catch (System.UnauthorizedAccessException e2)
+			//{
+			//	Debug.Print(e2.Message);
+			//	GuiWidget.BreakInDebugger();
+			//	saveSucceded = false;
+			//	UiThread.RunOnIdle(() =>
+			//	{
+			//		//Do something special when unauthorized?
+			//		StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+			//	});
+			//}
+			//catch (Exception e)
+			//{
+			//	Debug.Print(e.Message);
+			//	GuiWidget.BreakInDebugger();
+			//	saveSucceded = false;
+			//	UiThread.RunOnIdle(() =>
+			//	{
+			//		StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+			//	});
+			//}
 		}
 
 		private void MergeAndSavePartsDoCompleted()
