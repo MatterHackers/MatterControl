@@ -43,76 +43,6 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsSaveBar : FlowLayoutWidget
-	{
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		private Button saveButton;
-		private Button revertbutton;
-
-		public SliceSettingsSaveBar()
-		{
-			textImageButtonFactory.FixedWidth = 80 * TextWidget.GlobalPointSizeScaleRatio;
-			textImageButtonFactory.fontSize = (int)(10 * TextWidget.GlobalPointSizeScaleRatio);
-
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
-
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 180);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 180);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.Margin = new BorderDouble(left: 2);
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
-			this.Padding = new BorderDouble(5);
-
-			string unsavedMessageText = "Unsaved Changes".Localize();
-			TextWidget unsavedMessage = new TextWidget("{0}:".FormatWith(unsavedMessageText), pointSize: 10 * TextWidget.GlobalPointSizeScaleRatio);
-			unsavedMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			unsavedMessage.VAnchor = VAnchor.ParentCenter;
-
-			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert").ToUpper(), centerText: true);
-			revertbutton.VAnchor = VAnchor.ParentCenter;
-			revertbutton.Visible = true;
-			revertbutton.Margin = new BorderDouble(5, 0, 0, 0);
-			revertbutton.Click += new EventHandler(revertbutton_Click);
-
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 255);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 255);
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save").ToUpper(), centerText: true);
-			saveButton.Name = "Save Slice Settings Button";
-			saveButton.VAnchor = VAnchor.ParentCenter;
-			saveButton.Visible = true;
-			saveButton.Margin = new BorderDouble(5, 0, 5, 0);
-			saveButton.Click += new EventHandler(saveButton_Click);
-
-			this.AddChild(new HorizontalSpacer());
-			this.AddChild(unsavedMessage);
-			this.AddChild(saveButton);
-			this.AddChild(revertbutton);
-			this.AddChild(new HorizontalSpacer());
-			//this.DebugShowBounds = true;
-		}
-
-		private void saveButton_Click(object sender, EventArgs mouseEvent)
-		{
-			Datastore.Instance.dbSQLite.RunInTransaction(ActiveSliceSettings.Instance.CommitChanges);
-		}
-
-		private void revertbutton_Click(object sender, EventArgs mouseEvent)
-		{
-			ActiveSliceSettings.Instance.LoadAllSettings();
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-		}
-	}
 
 	public class SliceSettingsDetailControl : FlowLayoutWidget
 	{
@@ -274,7 +204,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private TabControl categoryTabs;
 		private AltGroupBox noConnectionMessageContainer;
 		private SettingsControlBar settingsControlBar;
-		private FlowLayoutWidget settingsSaveBar;
 		private string activeMaterialPreset;
 		private string activeQualityPreset;
 		private bool addMaterialOverlay;
@@ -310,10 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.activeQualityPreset = settingsControlBar.activeQualityPreset;
 
 			pageTopToBottomLayout.AddChild(settingsControlBar);
-			settingsSaveBar = new SliceSettingsSaveBar();
-			settingsSaveBar.Visible = false;
-			pageTopToBottomLayout.AddChild(settingsSaveBar);
-
+			
 			noConnectionMessageContainer = new AltGroupBox(new TextWidget(LocalizedString.Get("No Printer Selected"), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
 			noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -406,24 +332,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			this.AnchorAll();
-			SetStatusDisplay();
-		}
-
-		private void onCommitStatusChanged(object sender, EventArgs e)
-		{
-			SetStatusDisplay();
-		}
-
-		private void SetStatusDisplay()
-		{
-			if (ActiveSliceSettings.Instance.HasUncommittedChanges)
-			{
-				settingsSaveBar.Visible = true;
-			}
-			else
-			{
-				settingsSaveBar.Visible = false;
-			}
 		}
 
 		public string UserLevel
@@ -482,7 +390,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(APP_onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			ActiveSliceSettings.Instance.CommitStatusChanged.RegisterEvent(onCommitStatusChanged, ref unregisterEvents);
 		}
 
 		public override void OnClosed(EventArgs e)
