@@ -39,6 +39,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using MatterHackers.MatterControl.DataStorage;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -278,8 +279,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private string activeQualityPreset;
 		private bool addMaterialOverlay;
         private bool addQualityOverlay;
-		private TextWidget materialPresetLabel;
+		private TextWidget materialPresetLabel
+		{
+			get;
+			set;
+		}
 		private TextWidget qualityPresetLabel;
+		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		public SliceSettingsWidget()
 		{
@@ -753,6 +759,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private static Dictionary<string, RootedObjectEventHandler> functionsToCallOnChange = new Dictionary<string, RootedObjectEventHandler>();
+		private bool revertVisible;
 
 		public static void RegisterForSettingsChange(string settingName, EventHandler functionToCallOnChange, ref EventHandler functionThatWillBeCalledToUnregisterEvent)
 		{
@@ -792,10 +799,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			bool addQualityOverlay = false;
 			bool addMaterialOverlay = false;
+			Button revertButton;
 
 			RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 108);
 			RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 108);
 			RGBA_Bytes userSettingOverlayColor = new RGBA_Bytes(0, 0, 255, 108);
+
+			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
+
+			//this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.FixedHeight = 15 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.fontSize = 8;
+			this.textImageButtonFactory.borderWidth = 1;
+			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+
+			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
+			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+			this.HAnchor = HAnchor.ParentLeftRight;
+
 
 			if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
 			{
@@ -946,10 +971,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									}
 								}
 
-								if(addMaterialOverlay)
+								if(ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
 								{
-                                    container.BackgroundColor = userSettingOverlayColor;
+									revertVisible = true;
+									container.BackgroundColor = userSettingOverlayColor;
+									revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
+									revertButton.HAnchor = HAnchor.ParentRight;
+									revertButton.VAnchor = VAnchor.ParentCenter;
+
+									materialPresetLabel.Visible = false;
+									materialPresetLabel.DebugShowBounds = true;
+
+									container.AddChild(revertButton);
+
+									// Find the sibling TextWidget that represents the materialPresetLabel and hide it
+									var presetLabel = container.Children<TextWidget>().FirstOrDefault();
+									if(presetLabel != null)
+									{
+										presetLabel.Visible = false;
+									}
 								}
+								else
+								{
+									revertVisible = false;
+								}
+
 								// also always save to the local setting
 								SaveSetting(settingData.SlicerConfigName, numberEdit.Value.ToString());
 
@@ -1377,6 +1423,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					materialPresetLabel.PointSize = 8;
 					container.AddChild(materialPresetLabel);
 					container.BackgroundColor = materialOverlayColor;
+
+					materialPresetLabel.Visible = !revertVisible;
 
 					overlay.OverlayColor = materialOverlayColor;
 					clickToEdit.OverlayColor = materialOverlayColor;
