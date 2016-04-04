@@ -581,7 +581,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public async override void OnMouseMove(MouseEventArgs mouseArgs)
 		{
 			if (!WidgetHasBeenClosed &&
-				view3DWidget?.DragDropSource != null)
+				view3DWidget?.DragDropSource != null &&
+				queueDataView.DragSourceRowItem != null)
 			{
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
 				if(view3DWidget.AltDragOver(screenSpaceMousePosition))

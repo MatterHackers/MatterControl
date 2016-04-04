@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2014, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,45 +27,40 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.VectorMath;
+using System;
+using System.IO;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class DeleteCommand : IUndoRedoCommand
+
+	public class SelectedObjectPanel : FlowLayoutWidget
 	{
-		private IObject3D item;
-
-		private View3DWidget view3DWidget;
-
-		public DeleteCommand(View3DWidget view3DWidget, IObject3D deletingItem)
+		public SelectedObjectPanel() : base(FlowDirection.TopToBottom)
 		{
-			this.view3DWidget = view3DWidget;
-			this.item = deletingItem;
-		}
+			var buttonHeight = 40;
 
-		public void Do()
-		{
-			view3DWidget.Scene.ModifyChildren(children =>
+			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory()
 			{
-				children.Remove(item);
-			});
+				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FixedHeight = buttonHeight,
+				FixedWidth = buttonHeight,
+				AllowThemeToAdjustImage = false,
+				checkedBorderColor = RGBA_Bytes.White
+			};
 
-			view3DWidget.Scene.SelectLastChild();
+			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 
-			view3DWidget.PartHasBeenChanged();
-		}
-
-		public void Undo()
-		{
-			view3DWidget.Scene.ModifyChildren(children =>
-			{
-				children.Add(item);
-			});
-
-			view3DWidget.Scene.Select(item);
-
-			view3DWidget.PartHasBeenChanged();
+			Margin = new BorderDouble(5);
+			HAnchor |= HAnchor.ParentRight;
+			VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren;
 		}
 	}
 }

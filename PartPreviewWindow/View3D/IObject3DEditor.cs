@@ -26,46 +26,19 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+//#define DoBooleanTest
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class DeleteCommand : IUndoRedoCommand
+	public interface IObject3DEditor
 	{
-		private IObject3D item;
-
-		private View3DWidget view3DWidget;
-
-		public DeleteCommand(View3DWidget view3DWidget, IObject3D deletingItem)
-		{
-			this.view3DWidget = view3DWidget;
-			this.item = deletingItem;
-		}
-
-		public void Do()
-		{
-			view3DWidget.Scene.ModifyChildren(children =>
-			{
-				children.Remove(item);
-			});
-
-			view3DWidget.Scene.SelectLastChild();
-
-			view3DWidget.PartHasBeenChanged();
-		}
-
-		public void Undo()
-		{
-			view3DWidget.Scene.ModifyChildren(children =>
-			{
-				children.Add(item);
-			});
-
-			view3DWidget.Scene.Select(item);
-
-			view3DWidget.PartHasBeenChanged();
-		}
+		string Name { get; }
+		IEnumerable<Type> SupportedTypes();
+		GuiWidget Create(IObject3D item, View3DWidget parentView3D);
 	}
 }
