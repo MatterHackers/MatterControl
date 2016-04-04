@@ -27,14 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Threading;
+using MatterHackers.DataConverters3D;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -56,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (Scene.IsSelected(Object3DTypes.SelectionGroup))
 					{
-						// Create and perform the delete operation 
+						// Create and perform the delete operation
 						var operation = new GroupCommand(this, Scene.SelectedItem);
 						operation.Do();
 

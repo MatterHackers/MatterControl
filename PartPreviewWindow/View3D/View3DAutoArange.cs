@@ -28,23 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
+using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	internal class ArangeUndoCommand : IUndoRedoCommand
 	{
-		List<TransformUndoCommand> allUndoTransforms = new List<TransformUndoCommand>();
+		private List<TransformUndoCommand> allUndoTransforms = new List<TransformUndoCommand>();
 
 		public ArangeUndoCommand(View3DWidget view3DWidget, List<Matrix4X4> preArrangeTarnsforms, List<Matrix4X4> postArrangeTarnsforms)
 		{

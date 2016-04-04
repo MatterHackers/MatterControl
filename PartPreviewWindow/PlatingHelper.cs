@@ -39,6 +39,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
+	using DataConverters3D;
 	using Localizations;
 	using System.Collections;
 	using System.Linq;

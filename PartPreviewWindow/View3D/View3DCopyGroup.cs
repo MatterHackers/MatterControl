@@ -27,14 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -77,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void InsertNewItem(IObject3D newItem)
 		{
-			// Create and perform a new insert operation 
+			// Create and perform a new insert operation
 			var insertOperation = new InsertCommand(this, newItem);
 			insertOperation.Do();
 
