@@ -97,20 +97,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Action afterSaveCallback = null;
 		private bool editorThatRequestedSave = false;
 		private FlowLayoutWidget enterEditButtonsContainer;
-		private CheckBox expandMaterialOptions;
-		private CheckBox expandRotateOptions;
-		private CheckBox expandViewOptions;
 		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
-		private FlowLayoutWidget materialOptionContainer;
 
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
 		private List<string> pendingPartsToLoad = new List<string>();
 		private PrintItemWrapper printItemWrapper;
 		private ProgressControl processingProgressControl;
-		private FlowLayoutWidget rotateOptionContainer;
 		private SaveAsWindow saveAsWindow = null;
 		private SplitButton saveButtons;
 		private bool saveSucceded = true;
@@ -123,11 +118,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool viewIsInEditModePreLock = false;
 
-		private FlowLayoutWidget viewOptionContainer;
 
 		private bool wasInSelectMode = false;
 
 		public event EventHandler SelectedTransformChanged;
+		public View3DWidgetSidebar Sidebar;
 
 		protected FlowLayoutWidget editPlateButtonsContainer;
 
@@ -168,9 +163,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			buttonRightPanel = CreateRightButtonPanel(viewerVolume.y);
-			buttonRightPanel.Name = "buttonRightPanel";
-			buttonRightPanel.Visible = false;
+			Sidebar = new View3DWidgetSidebar(this, viewerVolume.y, undoBuffer);
+			Sidebar.Name = "buttonRightPanel";
+			Sidebar.Visible = false;
+			Sidebar.InitializeComponents();
+
+			Scene.SelectionChanged += Scene_SelectionChanged;
 
 			CreateOptionsContent();
 
@@ -364,14 +362,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GuiWidget buttonRightPanelHolder = new GuiWidget(HAnchor.FitToChildren, VAnchor.ParentBottomTop);
 			buttonRightPanelHolder.Name = "buttonRightPanelHolder";
 			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
-			buttonRightPanelHolder.AddChild(buttonRightPanel);
-			buttonRightPanel.VisibleChanged += (sender, e) =>
+			buttonRightPanelHolder.AddChild(Sidebar);
+			Sidebar.VisibleChanged += (sender, e) =>
 			{
-				buttonRightPanelHolder.Visible = buttonRightPanel.Visible;
+				buttonRightPanelHolder.Visible = Sidebar.Visible;
 			};
 
 			viewControls3D = new ViewControls3D(meshViewerWidget);
-
 			viewControls3D.ResetView += (sender, e) =>
 			{
 				meshViewerWidget.ResetView();
@@ -405,6 +402,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 			AddChild(viewControls3D);
+
+
+			/* TODO: Why doesn't this pattern work but using new SelectedObjectPanel object does?
+			selectedObjectPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Width = 215,
+				Margin = new BorderDouble(0, 0, buttonRightPanel.Width + 5, 5),
+				BackgroundColor = RGBA_Bytes.Red,
+				HAnchor = HAnchor.ParentRight,
+				VAnchor = VAnchor.ParentTop
+			}; */
+
+			selectedObjectPanel = new SelectedObjectPanel()
+			{
+				Width = 215,
+				Margin = new BorderDouble(0, 0, Sidebar.Width + 5, 5),
+			};
+
+			AddChild(selectedObjectPanel);
 
 			UiThread.RunOnIdle(AutoSpin);
 
@@ -540,59 +556,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void AddUndoOperation(IUndoRedoCommand operation)
 		{
 			undoBuffer.Add(operation);
-		}
-
-		private void AddGridSnapSettings(GuiWidget widgetToAddTo)
-		{
-			FlowLayoutWidget container = new FlowLayoutWidget()
-			{
-				Margin = new BorderDouble(5, 0) * TextWidget.GlobalPointSizeScaleRatio,
-			};
-
-			TextWidget snapGridLabel = new TextWidget("Snap Grid".Localize())
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(3, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio,
-			};
-
-			container.AddChild(snapGridLabel);
-
-			StyledDropDownList selectableOptions = new StyledDropDownList("Custom", Direction.Up)
-			{
-				VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
-			};
-
-			Dictionary<double, string> snapSettings = new Dictionary<double, string>()
-			{
-				{ 0, "Off" },
-				{ .1, "0.1" },
-				{ .25, "0.25" },
-				{ .5, "0.5" },
-				{ 1, "1" },
-				{ 2, "2" },
-				{ 5, "5" },
-			};
-
-			foreach (KeyValuePair<double, string> snapSetting in snapSettings)
-			{
-				double valueLocal = snapSetting.Key;
-
-				MenuItem newItem = selectableOptions.AddItem(snapSetting.Value);
-				if (meshViewerWidget.SnapGridDistance == valueLocal)
-				{
-					selectableOptions.SelectedLabel = snapSetting.Value;
-				}
-
-				newItem.Selected += (sender, e) =>
-				{
-					meshViewerWidget.SnapGridDistance = snapSetting.Key;
-				};
-			}
-
-			container.AddChild(selectableOptions);
-
-			widgetToAddTo.AddChild(container);
 		}
 
 #region DoBooleanTest
@@ -1059,7 +1022,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							Scene.ModifyChildren(ClearSelectionApplyChanges);
+							if(!Scene.HasSelection)
+							{
+								return;
+							}
+
+							if(Scene.SelectedItem.ItemType == Object3DTypes.SelectionGroup)
+							{
+								Scene.ModifyChildren(ClearSelectionApplyChanges);
+							}
+							else
+							{
+								Scene.ClearSelection();
+							}
 						}
 
 						SelectedTransformChanged?.Invoke(this, null);
@@ -1227,7 +1202,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 		}
 
-		private void AddMaterialControls(FlowLayoutWidget buttonPanel)
+		internal void AddMaterialControls(FlowLayoutWidget buttonPanel)
 		{
 			extruderButtons.Clear();
 			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount; extruderIndex++)
@@ -1408,7 +1383,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			flowToAddTo.AddChild(saveButtons);
 		}
 
-
 		private bool AllowDragDrop()
 		{
 			if ((!enterEditButtonsContainer.Visible
@@ -1502,10 +1476,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CreateOptionsContent()
 		{
-			AddRotateControls(rotateOptionContainer);
+			AddRotateControls(Sidebar.rotateOptionContainer);
 		}
 
-		private void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
+		internal void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
 		{
 			string renderTypeString = UserSettings.Instance.get("defaultRenderSetting");
 			if (renderTypeString == null)
@@ -1562,146 +1536,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
+		public List<IObject3DEditor> objectEditors = new List<IObject3DEditor>();
+
+		public Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
+
+		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
-			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			buttonRightPanel.Width = 200;
-
-			// put in undo redo
+			if(!Scene.HasSelection)
 			{
-				FlowLayoutWidget undoRedoButtons = new FlowLayoutWidget()
-				{
-					VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
-					HAnchor = HAnchor.FitToChildren | HAnchor.ParentCenter,
-				};
-				double oldWidth = WhiteButtonFactory.FixedWidth;
-				WhiteButtonFactory.FixedWidth = WhiteButtonFactory.FixedWidth / 2;
-				Button undoButton = WhiteButtonFactory.Generate("Undo".Localize(), centerText: true);
-				undoButton.Name = "3D View Undo";
-				undoButton.Enabled = false;
-				undoButton.Click += (sender, e) =>
-				{
-					undoBuffer.Undo();
-				};
-				undoRedoButtons.AddChild(undoButton);
-
-				Button redoButton = WhiteButtonFactory.Generate("Redo".Localize(), centerText: true);
-				redoButton.Name = "3D View Redo";
-				redoButton.Enabled = false;
-				redoButton.Click += (sender, e) =>
-				{
-					undoBuffer.Redo();
-				};
-				undoRedoButtons.AddChild(redoButton);
-				buttonRightPanel.AddChild(undoRedoButtons);
-
-				undoBuffer.Changed += (sender, e) =>
-				{
-					undoButton.Enabled = undoBuffer.UndoCount > 0;
-					redoButton.Enabled = undoBuffer.RedoCount > 0;
-				};
-				WhiteButtonFactory.FixedWidth = oldWidth;
+				selectedObjectPanel.RemoveAllChildren();
+				return;
 			}
 
+			HashSet<IObject3DEditor> mappedEditors;
+			objectEditorsByType.TryGetValue(Scene.SelectedItem.GetType(), out mappedEditors);
+
+			if (mappedEditors != null)
 			{
-				BorderDouble buttonMargin = new BorderDouble(top: 3);
-
-				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
-				buttonRightPanel.AddChild(expandRotateOptions);
-				expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
-
-				rotateOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				rotateOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-				rotateOptionContainer.Visible = false;
-				buttonRightPanel.AddChild(rotateOptionContainer);
-
-				buttonRightPanel.AddChild(new ScaleControls(this));
-
-				buttonRightPanel.AddChild(new MirrorControls(this));
-
-				PluginFinder<SideBarPlugin> SideBarPlugins = new PluginFinder<SideBarPlugin>();
-				foreach (SideBarPlugin plugin in SideBarPlugins.Plugins)
+				foreach (var editor in mappedEditors)
 				{
-					buttonRightPanel.AddChild(plugin.CreateSideBarTool(this));
+					// Show editors in dropdown
+
+					// Select active editor
+
+					// Show active edtor
+					Console.WriteLine("Showing... " + editor);
+
+					selectedObjectPanel.CloseAllChildren();
+
+					var newEditor = editor.Create(Scene.SelectedItem, this);
+
+					selectedObjectPanel.AddChild(newEditor);
+
+
 				}
-
-				// put in the material options
-				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
-
-				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
-				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
-
-				if (numberOfExtruders > 1)
-				{
-					buttonRightPanel.AddChild(expandMaterialOptions);
-
-					materialOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					materialOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					materialOptionContainer.Visible = false;
-
-					buttonRightPanel.AddChild(materialOptionContainer);
-					AddMaterialControls(materialOptionContainer);
-				}
-
-				// put in the view options
-				{
-					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-					expandViewOptions.Margin = new BorderDouble(bottom: 2);
-					buttonRightPanel.AddChild(expandViewOptions);
-					expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
-
-					viewOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					viewOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					viewOptionContainer.Padding = new BorderDouble(left: 4);
-					viewOptionContainer.Visible = false;
-					{
-						CheckBox showBedCheckBox = new CheckBox("Show Print Bed".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-						showBedCheckBox.Checked = true;
-						showBedCheckBox.CheckedStateChanged += (sender, e) =>
-						{
-							meshViewerWidget.RenderBed = showBedCheckBox.Checked;
-						};
-						viewOptionContainer.AddChild(showBedCheckBox);
-
-						if (buildHeight > 0)
-						{
-							CheckBox showBuildVolumeCheckBox = new CheckBox("Show Print Area".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-							showBuildVolumeCheckBox.Checked = false;
-							showBuildVolumeCheckBox.Margin = new BorderDouble(bottom: 5);
-							showBuildVolumeCheckBox.CheckedStateChanged += (sender, e) =>
-							{
-								meshViewerWidget.RenderBuildVolume = showBuildVolumeCheckBox.Checked;
-							};
-							viewOptionContainer.AddChild(showBuildVolumeCheckBox);
-						}
-
-						if (ActiveTheme.Instance.IsTouchScreen)
-						{
-							UserSettings.Instance.set("defaultRenderSetting", RenderTypes.Shaded.ToString());
-						}
-						else
-						{
-							CreateRenderTypeRadioButtons(viewOptionContainer);
-						}
-					}
-					buttonRightPanel.AddChild(viewOptionContainer);
-				}
-
-				GuiWidget verticalSpacer = new GuiWidget();
-				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
-				buttonRightPanel.AddChild(verticalSpacer);
-
-				AddGridSnapSettings(buttonRightPanel);
 			}
-
-			buttonRightPanel.Padding = new BorderDouble(6, 6);
-			buttonRightPanel.Margin = new BorderDouble(0, 1);
-			buttonRightPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			buttonRightPanel.VAnchor = VAnchor.ParentBottomTop;
-
-			return buttonRightPanel;
 		}
 
 		private void DeleteSelectedMesh()
@@ -1753,42 +1622,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SwitchStateToNotEditing();
 				// and reload the part
 				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-			}
-		}
-
-		private void expandMaterialOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (expandMaterialOptions.Checked == true)
-			{
-				expandRotateOptions.Checked = false;
-				expandViewOptions.Checked = false;
-			}
-			materialOptionContainer.Visible = expandMaterialOptions.Checked;
-		}
-
-		private void expandRotateOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (rotateOptionContainer.Visible != expandRotateOptions.Checked)
-			{
-				if (expandRotateOptions.Checked == true)
-				{
-					expandViewOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				rotateOptionContainer.Visible = expandRotateOptions.Checked;
-			}
-		}
-
-		private void expandViewOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (viewOptionContainer.Visible != expandViewOptions.Checked)
-			{
-				if (expandViewOptions.Checked == true)
-				{
-					expandRotateOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				viewOptionContainer.Visible = expandViewOptions.Checked;
 			}
 		}
 
@@ -2007,7 +1840,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
-
+		private GuiWidget selectedObjectPanel;
 
 		public void ProcessTree(IObject3D object3D)
 		{
@@ -2359,7 +2192,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-
 		private void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
 		{
 			PrintItemWrapper senderItem = sender as PrintItemWrapper;
@@ -2416,7 +2248,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				enterEditButtonsContainer.Visible = true;
 				processingProgressControl.Visible = false;
-				buttonRightPanel.Visible = false;
+				Sidebar.Visible = false;
 				doEdittingButtonsContainer.Visible = false;
 				viewControls3D.PartSelectVisible = false;
 				if (viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect)

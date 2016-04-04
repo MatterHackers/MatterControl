@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Scene.SelectFirstChild();
 
-				buttonRightPanel.Visible = true;
+				Sidebar.Visible = true;
 				UnlockEditControls();
 				viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
