@@ -110,10 +110,10 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
 
 					for (int i = 0; i <= 4; i++)
-						{
-							testRunner.ClickByName(copyButtonName);
-							testRunner.Wait(1);
-						}
+					{
+						testRunner.ClickByName(copyButtonName);
+						testRunner.Wait(1);
+					}
 					
 					//Get MeshGroupCount before Group is clicked
 					System.Threading.Thread.Sleep(2000);
@@ -454,12 +454,21 @@ namespace MatterHackers.MatterControl.UI
 		[Test, RequiresSTA, RunInApplicationDomain]
 		public void SaveAsToDownloads()
 		{
+			string outputFilename = "Save As Downloads";
+			string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+			string downloadsPath = Path.Combine(userProfilePath, "Downloads");
+			string pathToMcx = Path.Combine(downloadsPath, outputFilename + ".mcx");
+
+			if (File.Exists(pathToMcx))
+			{
+				File.Delete(pathToMcx);
+			}
+
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
 					//Navigate to Downloads
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
@@ -478,7 +487,6 @@ namespace MatterHackers.MatterControl.UI
 						testRunner.Wait(1);
 					}
 
-
 					//Click Save As button to save changes to the part
 					testRunner.ClickByName("Save As Menu");
 					testRunner.Wait(1);
@@ -486,25 +494,25 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.Wait(1);
 
 					//Type in name of new part and then save to Downloads
-					testRunner.Type("Save As Downloads");
+					testRunner.Type(outputFilename);
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
 					testRunner.Wait(1);
 					testRunner.ClickByName("Save As Save Button");
 
-					//Make sure there is a new Downloads item with a name that matches the new opart
+					//Make sure there is a new Downloads item with a name that matches the new part
 					testRunner.Wait(1);
 					testRunner.ClickByName("Library Tab");
 					testRunner.ClickByName("Bread Crumb Button Home");
 					testRunner.Wait(1);
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Save As Downloads", 5));
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item " + outputFilename, 5));
 
 					//Do clean up for Downloads
-					testRunner.ClickByName("Row Item Save As Downloads", 2);
-					testRunner.ClickByName("Library Edit Button");
-					testRunner.ClickByName("Library Remove Item Button");
+					//testRunner.ClickByName("Row Item " + outputFilename, 2);
+					//testRunner.ClickByName("Library Edit Button");
+					//testRunner.ClickByName("Library Remove Item Button");
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
+					//MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
