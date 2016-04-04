@@ -19,7 +19,7 @@ using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.UI
 {
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.PartPreview"), RunInApplicationDomain]
 	public class PartPreviewTests
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -50,21 +50,21 @@ namespace MatterHackers.MatterControl.UI
 					//Click Edit button to make edit controls visible
 					testRunner.ClickByName("3D View Edit");
 					testRunner.Wait(1);
-					int partCountBeforeCopy = view3D.MeshGroups.Count();
+					int partCountBeforeCopy = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
 					
 					
 					//Click Copy button and count MeshGroups 
 					testRunner.ClickByName(copyButtonName);
 					System.Threading.Thread.Sleep(2000);
-					int partCountAfterCopy = view3D.MeshGroups.Count();
+					int partCountAfterCopy = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partCountAfterCopy == 2);
 					testRunner.Wait(1);
 
 					//Click Copy button a second time and count MeshGroups again
 					testRunner.ClickByName(copyButtonName);
 					System.Threading.Thread.Sleep(2000);
-					int partCountAfterSecondCopy = view3D.MeshGroups.Count();
+					int partCountAfterSecondCopy = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partCountAfterSecondCopy == 3);
 
 
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.UI
 					//Click Edit button to make edit controls visible
 					testRunner.ClickByName("3D View Edit");
 					testRunner.Wait(1);
-					int partCountBeforeCopy = view3D.MeshGroups.Count();
+					int partCountBeforeCopy = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
 
 					for (int i = 0; i <= 4; i++)
@@ -117,18 +117,18 @@ namespace MatterHackers.MatterControl.UI
 					
 					//Get MeshGroupCount before Group is clicked
 					System.Threading.Thread.Sleep(2000);
-					int partsOnBedBeforeGroup = view3D.MeshGroups.Count();
+					int partsOnBedBeforeGroup = view3D.Scene.Children.Count();
 					resultsHarness.AddTestResult(partsOnBedBeforeGroup == 6);
 
 					//Click Group Button and get MeshGroup count after Group button is clicked
 					testRunner.ClickByName("3D View Group");
 					System.Threading.Thread.Sleep(2000);
-					int partsOnBedAfterGroup = view3D.MeshGroups.Count();
+					int partsOnBedAfterGroup = view3D.Scene.Children.Count();
 					resultsHarness.AddTestResult(partsOnBedAfterGroup == 1);
 
 					testRunner.ClickByName("3D View Ungroup");
 					System.Threading.Thread.Sleep(2000);
-					int partsOnBedAfterUngroup = view3D.MeshGroups.Count();
+					int partsOnBedAfterUngroup = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partsOnBedAfterUngroup == 6);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.UI
 					//Click Edit button to make edit controls visible
 					testRunner.ClickByName("3D View Edit");
 					testRunner.Wait(1);
-					int partCountBeforeCopy = view3D.MeshGroups.Count();
+					int partCountBeforeCopy = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
 
 					for (int i = 0; i <= 4; i++)
@@ -180,13 +180,13 @@ namespace MatterHackers.MatterControl.UI
 
 					//Get MeshGroupCount before Group is clicked
 					System.Threading.Thread.Sleep(2000);
-					int partsOnBedBeforeRemove= view3D.MeshGroups.Count();
+					int partsOnBedBeforeRemove= view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partsOnBedBeforeRemove == 6);
 
 					//Check that MeshCount decreases by 1 
 					testRunner.ClickByName("3D View Remove");
 					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterRemove = view3D.MeshGroups.Count();
+					int meshCountAfterRemove = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(meshCountAfterRemove == 5);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.UI
 					//Click Edit button to make edit controls visible
 					testRunner.ClickByName("3D View Edit");
 					testRunner.Wait(1);
-					int partCountBeforeCopy = view3D.MeshGroups.Count();
+					int partCountBeforeCopy = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
 
 					for (int i = 0; i <= 4; i++)
@@ -241,10 +241,10 @@ namespace MatterHackers.MatterControl.UI
 					for(int x = 0; x <= 4; x++)
 					{
 
-						int meshCountBeforeUndo = view3D.MeshGroups.Count();
+						int meshCountBeforeUndo = view3D.Scene.Children.Count;
 						testRunner.ClickByName("3D View Undo");
 						System.Threading.Thread.Sleep(2000);
-						int meshCountAfterUndo = view3D.MeshGroups.Count();
+						int meshCountAfterUndo = view3D.Scene.Children.Count;
 						resultsHarness.AddTestResult(meshCountAfterUndo == meshCountBeforeUndo - 1);
 						
 					}
@@ -253,10 +253,10 @@ namespace MatterHackers.MatterControl.UI
 
 					for(int z = 0; z <= 4; z++)
 					{
-						int meshCountBeforeRedo = view3D.MeshGroups.Count();
+						int meshCountBeforeRedo = view3D.Scene.Children.Count;
 						testRunner.ClickByName("3D View Redo");
 						System.Threading.Thread.Sleep(2000);
-						int meshCountAfterRedo = view3D.MeshGroups.Count();
+						int meshCountAfterRedo = view3D.Scene.Children.Count;
 						resultsHarness.AddTestResult(meshCountAfterRedo == meshCountBeforeRedo + 1);
 
 					}
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.UI
 					//Click Edit button to make edit controls visible
 					testRunner.ClickByName("3D View Edit");
 					testRunner.Wait(1);
-					int partCountBeforeCopy = view3D.MeshGroups.Count();
+					int partCountBeforeCopy = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
 
 					for (int i = 0; i <= 4; i++)
@@ -312,21 +312,21 @@ namespace MatterHackers.MatterControl.UI
 
 					testRunner.Wait(1);
 
-					int meshCountAfterCopy = view3D.MeshGroups.Count();
+					int meshCountAfterCopy = view3D.Scene.Children.Count;
 					testRunner.ClickByName("3D View Remove");
 					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterRemove = view3D.MeshGroups.Count();
+					int meshCountAfterRemove = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(meshCountAfterRemove == 5);
 
 
 					testRunner.ClickByName("3D View Undo");
 					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterUndo = view3D.MeshGroups.Count();
+					int meshCountAfterUndo = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(meshCountAfterUndo == 6);
 
 					testRunner.ClickByName("3D View Redo");
 					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterRedo = view3D.MeshGroups.Count();
+					int meshCountAfterRedo = view3D.Scene.Children.Count;
 					resultsHarness.AddTestResult(meshCountAfterRedo == 5);
 					
 					MatterControlUtilities.CloseMatterControl(testRunner);
