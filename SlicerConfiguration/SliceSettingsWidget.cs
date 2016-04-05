@@ -44,144 +44,7 @@ using System.Linq;
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 
-	public class SliceSettingsDetailControl : FlowLayoutWidget
-	{
-		private const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
-		private const string SliceSettingsLevelEntry = "SliceSettingsLevel";
-
-		private CheckBox showHelpBox;
-		private StyledDropDownList settingsDetailSelector;
-
-		public DropDownMenu sliceOptionsMenuDropList;
-		private TupleList<string, Func<bool>> slicerOptionsMenuItems;
-
-		public SliceSettingsDetailControl()
-		{
-			showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
-			showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
-			// add in the ability to turn on and off help text
-			{
-				showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				showHelpBox.Margin = new BorderDouble(right: 3);
-				showHelpBox.VAnchor = VAnchor.ParentCenter;
-				showHelpBox.Cursor = Cursors.Hand;
-				showHelpBox.CheckedStateChanged += RebuildSlicerSettings;
-
-				this.AddChild(showHelpBox);
-			}
-
-			settingsDetailSelector = new StyledDropDownList("Basic", maxHeight: 200);
-			settingsDetailSelector.Name = "User Level Dropdown";
-			settingsDetailSelector.AddItem(LocalizedString.Get("Basic"), "Simple");
-			settingsDetailSelector.AddItem(LocalizedString.Get("Standard"), "Intermediate");
-			settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
-			if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
-				&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
-			{
-				settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
-			}
-
-			settingsDetailSelector.SelectionChanged += new EventHandler(SettingsDetail_SelectionChanged);
-			settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
-			settingsDetailSelector.Margin = new BorderDouble(5, 3);
-            settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
-
-			this.AddChild(settingsDetailSelector);
-			this.AddChild(GetSliceOptionsMenuDropList());
-		}
-
-		private DropDownMenu GetSliceOptionsMenuDropList()
-		{
-			if (sliceOptionsMenuDropList == null)
-			{
-				sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ");
-				sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
-				sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
-                sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
-				sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
-				sliceOptionsMenuDropList.BorderWidth = 1;
-				sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
-				sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
-
-				SetMenuItems();
-			}
-
-			return sliceOptionsMenuDropList;
-		}
-
-		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string menuSelection = ((DropDownMenu)sender).SelectedValue;
-			foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-			{
-				// if the menu we select is this one
-				if (item.Item1 == menuSelection)
-				{
-					// call its function
-					item.Item2();
-				}
-			}
-		}
-
-		private void SetMenuItems()
-		{
-			string importTxt = LocalizedString.Get("Import");
-			string importTxtFull = string.Format("{0}", importTxt);
-			string exportTxt = LocalizedString.Get("Export");
-			string exportTxtFull = string.Format("{0}", exportTxt);
-			//Set the name and callback function of the menu items
-			slicerOptionsMenuItems = new TupleList<string, Func<bool>>
-			{
-				{importTxtFull, ImportQueueMenu_Click},
-				{exportTxtFull, ExportQueueMenu_Click},
-			};
-
-			//Add the menu items to the menu itself
-			foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-			{
-				sliceOptionsMenuDropList.AddItem(item.Item1);
-			}
-		}
-
-		private bool ImportQueueMenu_Click()
-		{
-			UiThread.RunOnIdle(() =>
-				{
-					ActiveSliceSettings.Instance.LoadSettingsFromIni();
-				});
-			return true;
-		}
-
-		private bool ExportQueueMenu_Click()
-		{
-			UiThread.RunOnIdle(ActiveSliceSettings.Instance.SaveAs);
-			return true;
-		}
-
-		private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
-		{
-			RebuildSlicerSettings(null, null);
-		}
-
-		private void RebuildSlicerSettings(object sender, EventArgs e)
-		{
-			UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
-			UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
-
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-		}
-
-		public string SelectedValue
-		{
-			get { return settingsDetailSelector.SelectedValue; }
-		}
-
-		public bool ShowingHelp
-		{
-			get { return showHelpBox.Checked; }
-		}
-	}
-
+	
 	public class SliceSettingsWidget : GuiWidget
 	{
 		private static List<string> settingToReloadUiWhenChanged = new List<string>()
@@ -704,8 +567,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			GuiWidget container = new GuiWidget();
 			FlowLayoutWidget leftToRightLayout = new FlowLayoutWidget();
 
-			bool addQualityOverlay = false;
-			bool addMaterialOverlay = false;
+			bool isQualityPreset = false;
+			bool isMaterialPreset = false;
 			Button revertButton;
 
 			RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 108);
@@ -773,17 +636,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     }
 #endif
 					settingName.Width = minSettingNameWidth;
-					//settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
 					leftToRightLayout.AddChild(settingName);
 				}
 
 				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
 				{
-					addMaterialOverlay = true;
+					isMaterialPreset = true;
 				}
 				else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
 				{
-					addQualityOverlay = true;
+					isQualityPreset = true;
 				}
 
 				switch (settingData.DataEditType)
@@ -884,13 +746,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								revertButton.HAnchor = HAnchor.ParentRight;
 								revertButton.VAnchor = VAnchor.ParentCenter;
 								revertButton.Margin = new BorderDouble(0, 0, 10, 0);
+
 								revertButton.Click += (x, y) =>
 								{
-									if(addMaterialOverlay)
+									var revertButtonTest = container.Children<Button>().FirstOrDefault();
+									if (isMaterialPreset)
 									{
 										container.BackgroundColor = materialOverlayColor;
+										revertButtonTest.Visible = false;
 										revertVisible = false;
-										presetLabel.Visible = true;
 									}
 								};
 
@@ -1283,24 +1147,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			container.AddChild(leftToRightLayout);
 
-			if (addQualityOverlay || addMaterialOverlay)
+			if (isQualityPreset || isMaterialPreset)
 			{
-				SettingPresetOverlay overlay = new SettingPresetOverlay();
-				overlay.DebugShowBounds = true;
-				overlay.HAnchor = HAnchor.ParentLeftRight;
-				overlay.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 
-				SettingPresetClick clickToEdit = new SettingPresetClick();
-				clickToEdit.HAnchor = HAnchor.ParentLeftRight;
-				clickToEdit.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-				clickToEdit.Visible = false;
-
-				Button editButton = buttonFactory.Generate("Edit Preset".Localize().ToUpper());
-				editButton.HAnchor = Agg.UI.HAnchor.ParentCenter;
-				editButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-				clickToEdit.AddChild(editButton);
-
-				if (addQualityOverlay)
+				if (isQualityPreset)
 				{
 
 					qualityPresetLabel = new TextWidget(this.activeQualityPreset);
@@ -1313,23 +1163,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					container.BackgroundColor = qualityOverlayColor;
 					//materialPresetLabel.Visible = !revertVisible;
 
-					overlay.OverlayColor = qualityOverlayColor;
-					clickToEdit.OverlayColor = qualityOverlayColor;
-					editButton.Click += (sender, e) =>
-					{
-						if (ApplicationController.Instance.EditQualityPresetsWindow == null)
-						{
-							ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-							ApplicationController.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditQualityPresetsWindow = null; };
-						}
-						else
-						{
-							ApplicationController.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-							ApplicationController.Instance.EditQualityPresetsWindow.BringToFront();
-						}
-					};
 				}
-				else if (addMaterialOverlay)
+				else if (isMaterialPreset)
 				{
 					materialPresetLabel = new TextWidget(this.activeMaterialPreset);
 					materialPresetLabel.HAnchor = HAnchor.ParentRight;
@@ -1341,42 +1176,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					container.BackgroundColor = materialOverlayColor;
 
 					materialPresetLabel.Visible = !revertVisible;
-
-					overlay.OverlayColor = materialOverlayColor;
-					clickToEdit.OverlayColor = materialOverlayColor;
-					editButton.Click += (sender, e) =>
-					{
-						if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
-						{
-							ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
-							ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditMaterialPresetsWindow = null; };
-						}
-						else
-						{
-							ApplicationController.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
-							ApplicationController.Instance.EditMaterialPresetsWindow.BringToFront();
-						}
-					};
 				}
-
-				container.MouseEnterBounds += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						overlay.Visible = false;
-						clickToEdit.Visible = true;
-					});
-				};
-
-				container.MouseLeaveBounds += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						overlay.Visible = true;
-						clickToEdit.Visible = false;
-					});
-				};
-
 			}
 
 			return container;

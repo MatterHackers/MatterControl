@@ -245,6 +245,7 @@
     <Compile Include="Library\Provider\LibraryProvider.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
     <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingsDetailControl.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
