@@ -86,7 +86,6 @@ namespace MatterHackers.MatterControl.UI
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
 					SystemWindow systemWindow;
 
 					//Navigate to Local Library 
@@ -107,7 +106,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("3D View Edit");
 					testRunner.Wait(1);
 					int partCountBeforeCopy = view3D.Scene.Children.Count;
-					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
+					resultsHarness.AddTestResult(partCountBeforeCopy == 1, "1 part exists");
 
 					for (int i = 0; i <= 4; i++)
 					{
@@ -117,19 +116,28 @@ namespace MatterHackers.MatterControl.UI
 					
 					//Get MeshGroupCount before Group is clicked
 					System.Threading.Thread.Sleep(2000);
-					int partsOnBedBeforeGroup = view3D.Scene.Children.Count();
-					resultsHarness.AddTestResult(partsOnBedBeforeGroup == 6);
+					int partsOnBedBeforeGroup = view3D.Scene.Children.Count;
+					resultsHarness.AddTestResult(partsOnBedBeforeGroup == 6, "6 copies exist");
+
+					// Select all parts on the bed
+					var allObjects = view3D.Scene.Children.ToArray();
+					view3D.Scene.ClearSelection();
+
+					foreach(var item in allObjects)
+					{
+						view3D.Scene.AddToSelection(item);
+					}
 
 					//Click Group Button and get MeshGroup count after Group button is clicked
 					testRunner.ClickByName("3D View Group");
 					System.Threading.Thread.Sleep(2000);
-					int partsOnBedAfterGroup = view3D.Scene.Children.Count();
-					resultsHarness.AddTestResult(partsOnBedAfterGroup == 1);
+					int partsOnBedAfterGroup = view3D.Scene.Children.Count;
+					resultsHarness.AddTestResult(partsOnBedAfterGroup == 1, "After group count equals 1");
 
 					testRunner.ClickByName("3D View Ungroup");
 					System.Threading.Thread.Sleep(2000);
 					int partsOnBedAfterUngroup = view3D.Scene.Children.Count;
-					resultsHarness.AddTestResult(partsOnBedAfterUngroup == 6);
+					resultsHarness.AddTestResult(partsOnBedAfterUngroup == 6, "After ungroup count equals 6, actual: " + partsOnBedAfterUngroup);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
