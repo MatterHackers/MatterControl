@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2016, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -47,6 +47,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public static int selectedQueueItemIndex = -1;
 
 		private event EventHandler unregisterEvents;
+
+		private bool downOnMouse = false;
 
 		// make this private so it can only be built from the Instance
 		private void SetDisplayAttributes()
@@ -320,7 +322,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				topToBottomItemList.AddChild(new WrappedQueueRowItem(this, QueueData.Instance.GetPrintItemWrapper(i)));
 			}
 
-			this.MouseLeaveBounds += control_MouseLeaveBounds;
+			this.MouseLeaveBounds += (sender, e) => HoverIndex = -1; ;
 
 			QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
 			QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
@@ -435,9 +437,23 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnClosed(e);
 		}
 
-		private void control_MouseLeaveBounds(object sender, EventArgs e)
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			HoverIndex = -1;
+			downOnMouse = true;
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
+		{
+			downOnMouse = false;
+			this.SuppressScroll = false;
+			base.OnMouseUp(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			this.SuppressScroll = downOnMouse && !PositionWithinLocalBounds(mouseEvent.X, 20);
+			base.OnMouseMove(mouseEvent);
 		}
 
 		private bool settingLocalBounds = false;
