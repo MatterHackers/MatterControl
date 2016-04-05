@@ -427,20 +427,17 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void onQueueItemClick(object sender, EventArgs e)
 		{
-			if (queueDataView.AllowSelectionChange)
+			if (this.isSelectedItem)
 			{
-				if (this.isSelectedItem)
-				{
-					this.isSelectedItem = false;
-					this.selectionCheckBox.Checked = false;
-					queueDataView.SelectedItems.Remove(this);
-				}
-				else
-				{
-					this.isSelectedItem = true;
-					this.selectionCheckBox.Checked = true;
-					queueDataView.SelectedItems.Add(this);
-				}
+				this.isSelectedItem = false;
+				this.selectionCheckBox.Checked = false;
+				queueDataView.SelectedItems.Remove(this);
+			}
+			else
+			{
+				this.isSelectedItem = true;
+				this.selectionCheckBox.Checked = true;
+				queueDataView.SelectedItems.Add(this);
 			}
 		}
 
