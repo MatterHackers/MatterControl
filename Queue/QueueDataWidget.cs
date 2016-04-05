@@ -470,18 +470,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		void PrintItemSelectionChanged(object sender, EventArgs e)
 		{
-			if (queueDataView.AllowSelectionChange)
+			// Set the selection to the selected print item.
+			QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
+			if (selectedItem != null)
 			{
-				// Set the selection to the selected print item.
-				QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
-				if (selectedItem != null)
+				if (this.queueDataView.SelectedItems.Count > 0
+					|| !this.queueDataView.SelectedItems.Contains(selectedItem))
 				{
-					if (this.queueDataView.SelectedItems.Count > 0
-						|| !this.queueDataView.SelectedItems.Contains(selectedItem))
-					{
-						this.queueDataView.ClearSelectedItems();
-						this.queueDataView.SelectedItems.Add(selectedItem);
-					}
+					this.queueDataView.ClearSelectedItems();
+					this.queueDataView.SelectedItems.Add(selectedItem);
 				}
 			}
 		}
