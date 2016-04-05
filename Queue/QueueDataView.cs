@@ -400,8 +400,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			IndexArgs addedIndexArgs = e as IndexArgs;
 			PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
-			QueueRowItem queueItem = new QueueRowItem(item, this);
-			AddChild(queueItem, addedIndexArgs.Index);
+			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item), addedIndexArgs.Index);
 
 			EnsureSelection();
 		}
