@@ -596,7 +596,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						return Object3D.Load(
 							dropItem.MeshPath,
 							view3DWidget.meshViewerWidget.CachedMeshes,
-							view3DWidget.meshViewerWidget.ReportProgress0to100);
+							new DragDropLoadProgress(view3DWidget, dropItem).UpdateLoadProgress);
 					});
 
 					if (loadedItem != null)

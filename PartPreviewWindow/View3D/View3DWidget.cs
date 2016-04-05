@@ -65,6 +65,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		InteractionVolume CreateInteractionVolume(View3DWidget widget);
 	}
 
+	public class DragDropLoadProgress
+	{
+		IObject3D trackingObject;
+		View3DWidget view3DWidget;
+		private ProgressBar progressBar;
+
+		public DragDropLoadProgress(View3DWidget view3DWidget, IObject3D trackingObject)
+		{
+			this.trackingObject = trackingObject;
+			this.view3DWidget = view3DWidget;
+			view3DWidget.AfterDraw += View3DWidget_AfterDraw;
+			progressBar = new ProgressBar(80, 15)
+			{
+				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+			};
+		}
+
+		private void View3DWidget_AfterDraw(GuiWidget drawingWidget, DrawEventArgs e)
+		{
+			if (view3DWidget?.meshViewerWidget?.TrackballTumbleWidget != null)
+			{
+				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox();
+				Vector3 renderPosition = bounds.Center;
+				Vector2 cornerScreenSpace = view3DWidget.meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(renderPosition) - new Vector2(40, 20);
+
+				e.graphics2D.PushTransform();
+				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
+				Affine accumulatedTransform = currentGraphics2DTransform * Affine.NewTranslation(cornerScreenSpace.x, cornerScreenSpace.y);
+				e.graphics2D.SetTransform(accumulatedTransform);
+
+				progressBar.OnDraw(e.graphics2D);
+				e.graphics2D.PopTransform();
+			}
+		}
+
+		public void UpdateLoadProgress(double progress0To1, string processingState, out bool continueProcessing)
+		{
+			continueProcessing = true;
+			progressBar.RatioComplete = progress0To1;
+			if (progress0To1 == 1)
+			{
+				view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
+				view3DWidget = null;
+			}
+        }
+	}
+
 	public class InteractionVolumePlugin : IInteractionVolumeCreator
 	{
 		public virtual InteractionVolume CreateInteractionVolume(View3DWidget widget)
@@ -777,7 +824,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						return Object3D.Load(
 							DragDropSource.MeshPath,
 							meshViewerWidget.CachedMeshes,
-							meshViewerWidget.ReportProgress0to100);
+							new DragDropLoadProgress(this, DragDropSource).UpdateLoadProgress);
 					});
 
 					if (loadedItem != null && DragDropSource != null)
