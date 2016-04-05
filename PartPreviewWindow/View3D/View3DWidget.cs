@@ -852,7 +852,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var sourceItemBounds = DragDropSource.GetAxisAlignedBoundingBox();
 					var center = sourceItemBounds.Center;
 
-					DragDropSource.Matrix = Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
+					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
 					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.hitPosition));
 
 					CurrentSelectInfo.PlaneDownHitPos = intersectInfo.hitPosition;
