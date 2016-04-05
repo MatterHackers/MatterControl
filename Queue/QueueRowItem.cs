@@ -348,15 +348,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 				StyledMessageBox.ShowMessageBox(onDeleteFileConfirm, alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO);
 			}
 
-			int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
-			QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);
+			int index = QueueData.Instance.GetIndex(PrintItemWrapper);
+			UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 		}
 
 		private static void onConfirmRemove(bool messageBoxResponse)
 		{
 			if (messageBoxResponse)
 			{
-				QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(itemToRemove));
+				int index = QueueData.Instance.GetIndex(itemToRemove);
+				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 			}
 		}
 

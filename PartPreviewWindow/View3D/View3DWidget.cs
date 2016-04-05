@@ -780,7 +780,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							meshViewerWidget.ReportProgress0to100);
 					});
 
-					if (loadedItem != null)
+					if (loadedItem != null && DragDropSource != null)
 					{
 						Scene.ModifyChildren(children =>
 						{
