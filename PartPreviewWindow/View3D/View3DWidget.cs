@@ -923,9 +923,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			}
 
+			if(mouseEvent.Button == MouseButtons.Right ||
+				mouseEvent.Button == MouseButtons.Middle)
+			{
+				meshViewerWidget.SuppressUiVolumes = true;
+			}
+
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
-
 
 			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
 			{
@@ -939,6 +944,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (!meshViewerWidget.MouseDownOnInteractionVolume)
 					{
+						meshViewerWidget.SuppressUiVolumes = true;
+
 						IntersectInfo info = new IntersectInfo();
 
 						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
@@ -1137,6 +1144,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					PartHasBeenChanged();
 				}
 			}
+
+			meshViewerWidget.SuppressUiVolumes = false;
 
 			CurrentSelectInfo.DownOnPart = false;
 
