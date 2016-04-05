@@ -327,7 +327,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
 			QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToQueue, ref unregisterEvents);
-			QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
 
@@ -398,27 +397,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void ItemAddedToQueue(object sender, EventArgs e)
 		{
-			IndexArgs addedIndexArgs = e as IndexArgs;
+			var addedIndexArgs = e as ItemChangedArgs;			
 			PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
-			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item), addedIndexArgs.Index);
+			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item));
 
 			EnsureSelection();
 		}
 
 		private void ItemRemovedFromToQueue(object sender, EventArgs e)
 		{
-			IndexArgs removeIndexArgs = e as IndexArgs;
+			var removeIndexArgs = e as ItemChangedArgs;
 			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
 			EnsureSelection();
 			if (QueueData.Instance.Count > 0 && SelectedIndex > QueueData.Instance.Count - 1)
 			{
 				SelectedIndex = Math.Max(SelectedIndex - 1, 0);
 			}
-		}
-
-		private void QueueOrderChanged(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -429,10 +423,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
