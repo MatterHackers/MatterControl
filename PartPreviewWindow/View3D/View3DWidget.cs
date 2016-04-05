@@ -923,9 +923,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			}
 
+			if(mouseEvent.Button == MouseButtons.Right ||
+				mouseEvent.Button == MouseButtons.Middle)
+			{
+				meshViewerWidget.SuppressUiVolumes = true;
+			}
+
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
-
 
 			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
 			{
@@ -939,6 +944,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (!meshViewerWidget.MouseDownOnInteractionVolume)
 					{
+						meshViewerWidget.SuppressUiVolumes = true;
+
 						IntersectInfo info = new IntersectInfo();
 
 						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
@@ -948,44 +955,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							if (hitObject != Scene.SelectedItem)
 							{
-								Scene.ModifyChildren(children =>
+								if (Scene.SelectedItem == null)
 								{
-									if (Scene.SelectedItem == null)
-									{
-										// No selection exists
-										Scene.Select(hitObject);
-									}
-									else if (ModifierKeys == Keys.Shift && !Scene.SelectedItem.Children.Contains(hitObject))
-									{
-										// We're adding a new item to the selection. To do so we wrap the selected item
-										// in a new group and all he new item with a new group
-										var newSelectionGroup = new Object3D
-										{
-											ItemType = Object3DTypes.SelectionGroup,
-											MeshGroup = new MeshGroup()
-										};
-
-										newSelectionGroup.Children.Add(Scene.SelectedItem);
-										newSelectionGroup.Children.Add(hitObject);
-
-										// Swap items
-										children.Remove(Scene.SelectedItem);
-										children.Remove(hitObject);
-										children.Add(newSelectionGroup);
-
-										Scene.Select(newSelectionGroup);
-									}
-									else if (Scene.SelectedItem == hitObject || Scene.SelectedItem.Children.Contains(hitObject))
-									{
-										// Selection should not be cleared and drag should occur
-									}
-									else if (ModifierKeys != Keys.Shift)
+									// No selection exists
+									Scene.Select(hitObject);
+								}
+								else if (ModifierKeys == Keys.Shift && !Scene.SelectedItem.Children.Contains(hitObject))
+								{
+									Scene.AddToSelection(hitObject);
+								}
+								else if (Scene.SelectedItem == hitObject || Scene.SelectedItem.Children.Contains(hitObject))
+								{
+									// Selection should not be cleared and drag should occur
+								}
+								else if (ModifierKeys != Keys.Shift)
+								{
+									Scene.ModifyChildren(children =>
 									{
 										ClearSelectionApplyChanges(children);
+									});
 
-										Scene.Select(hitObject);
-									}
-								});
+									Scene.Select(hitObject);
+								}
 
 								PartHasBeenChanged();
 							}
@@ -1043,33 +1034,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ClearSelectionApplyChanges(List<IObject3D> sceneChildren)
+		public void ClearSelectionApplyChanges(List<IObject3D> target)
 		{
-			CollapseObjectIntoScene(sceneChildren, Scene.SelectedItem);
+			Scene.SelectedItem.CollapseInto(target);
 			Scene.ClearSelection();
-		}
-
-		public void CollapseObjectIntoScene(List<IObject3D> sceneChildren, IObject3D objectToRemove, Object3DTypes typeFilter = Object3DTypes.SelectionGroup, int depth = int.MaxValue)
-		{
-			if (objectToRemove != null && objectToRemove.ItemType == typeFilter)
-			{
-				sceneChildren.Remove(objectToRemove);
-
-				// Move each child from objectToRemove into the scene, applying the parent transform to each
-				foreach (var child in objectToRemove.Children)
-				{
-					child.Matrix *= objectToRemove.Matrix;
-
-					if (child.ItemType == Object3DTypes.SelectionGroup && depth > 0)
-					{
-						CollapseObjectIntoScene(sceneChildren, child, typeFilter, depth - 1);
-					}
-					else
-					{
-						sceneChildren.Add(child);
-					}
-				}
-			}
 		}
 
 		public IntersectInfo GetIntersectPosition(Vector2 screenSpacePosition)
@@ -1176,6 +1144,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					PartHasBeenChanged();
 				}
 			}
+
+			meshViewerWidget.SuppressUiVolumes = false;
 
 			CurrentSelectInfo.DownOnPart = false;
 
