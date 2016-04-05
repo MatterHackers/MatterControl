@@ -864,9 +864,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue;
 							}
 							doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget.MarkAsStartingState();
-
-							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+							
+							doubleEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 							{
+								// Find the sibling TextWidget that represents the materialPresetLabel and hide it
+								var presetLabel = container.Children<TextWidget>().FirstOrDefault();
 								NumberEdit numberEdit = (NumberEdit)sender;
 								// If this setting sets other settings, then do that.
 								if (ChangesMultipleOtherSettings
@@ -878,21 +880,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									}
 								}
 
-								if(ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+								revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
+								revertButton.HAnchor = HAnchor.ParentRight;
+								revertButton.VAnchor = VAnchor.ParentCenter;
+								revertButton.Margin = new BorderDouble(0, 0, 10, 0);
+								revertButton.Click += (x, y) =>
+								{
+									if(addMaterialOverlay)
+									{
+										container.BackgroundColor = materialOverlayColor;
+										revertVisible = false;
+										presetLabel.Visible = true;
+									}
+								};
+
+								if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3) || ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
 								{
 									revertVisible = true;
 									container.BackgroundColor = userSettingOverlayColor;
-									revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
-									revertButton.HAnchor = HAnchor.ParentRight;
-									revertButton.VAnchor = VAnchor.ParentCenter;
-
 									materialPresetLabel.Visible = false;
-									materialPresetLabel.DebugShowBounds = true;
-
 									container.AddChild(revertButton);
 
-									// Find the sibling TextWidget that represents the materialPresetLabel and hide it
-									var presetLabel = container.Children<TextWidget>().FirstOrDefault();
+
 									if(presetLabel != null)
 									{
 										presetLabel.Visible = false;
@@ -1301,9 +1310,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					qualityPresetLabel.Margin = new BorderDouble(10, 0, 0, 0);
 					qualityPresetLabel.PointSize = 8;
 					container.AddChild(qualityPresetLabel);
-
-
 					container.BackgroundColor = qualityOverlayColor;
+					//materialPresetLabel.Visible = !revertVisible;
+
 					overlay.OverlayColor = qualityOverlayColor;
 					clickToEdit.OverlayColor = qualityOverlayColor;
 					editButton.Click += (sender, e) =>
@@ -1368,8 +1377,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					});
 				};
 
-				//container.AddChild(overlay);
-				//container.AddChild(clickToEdit);
 			}
 
 			return container;
