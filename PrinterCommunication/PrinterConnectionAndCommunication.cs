@@ -2889,7 +2889,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						lock (locker)
 						{
 							serialPort.Write(lineToWrite);
-							if (false) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
+							if (true) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
 							{
 								timeSinceRecievedOk.Stop();
 								if (!haveHookedDrawing)
