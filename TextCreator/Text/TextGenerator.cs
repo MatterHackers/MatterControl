@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				{
 					var characterObject = new Object3D()
 					{
-						MeshGroup = new MeshGroup(textMesh),
+						Mesh = textMesh,
 						ItemType = Object3DTypes.Model
 					};
 					characterObject.ExtraData.Spacing.x = printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset;
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				var lineObject = new Object3D()
 				{
-					MeshGroup = new MeshGroup(PlatonicSolids.CreateCube(xSize, ySize, zSize)),
+					Mesh = PlatonicSolids.CreateCube(xSize, ySize, zSize),
 					ItemType = Object3DTypes.Model,
 					Matrix = Matrix4X4.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2)
 				};

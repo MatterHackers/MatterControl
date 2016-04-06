@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 #endif
 					var characterObject = new Object3D()
 					{
-						MeshGroup = new MeshGroup(textMesh),
+						Mesh = textMesh,
 						ItemType = Object3DTypes.Model
 					};
 
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				var basePlateObject = new BraileBasePlate()
 				{
-					MeshGroup = new MeshGroup(baseMeshResult),
+					Mesh = baseMeshResult,
 					ItemType = Object3DTypes.Model
 				};
 

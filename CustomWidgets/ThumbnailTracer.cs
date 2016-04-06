@@ -43,7 +43,7 @@ namespace MatterHackers.RayTracer
 	using MatterHackers.Agg.RasterizerScanline;
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.RayTracer.Light;
-
+	using System.Linq;
 	public class ThumbnailTracer
 	{
 		public ImageBuffer destImage;
@@ -64,6 +64,30 @@ namespace MatterHackers.RayTracer
 		private Scene scene;
 		private Point2D size;
 		public TrackballTumbleWidget trackballTumbleWidget;
+
+		public ThumbnailTracer(IObject3D item, int width, int height)
+		{
+			size = new Point2D(width, height);
+			trackballTumbleWidget = new TrackballTumbleWidget();
+			trackballTumbleWidget.DoOpenGlDrawing = false;
+			trackballTumbleWidget.LocalBounds = new RectangleDouble(0, 0, width, height);
+
+			// HACK: This is a very simple approach that is unlikely to work. A real fix would be to make the renderer consider IObject3D graphs
+			var allItems = from object3D in item.Descendants()
+						   where object3D.Mesh != null
+						   select object3D.Mesh;
+
+			loadedMeshGroups = new List<MeshGroup>();
+
+			var meshGroup = new MeshGroup();
+			meshGroup.Meshes.AddRange(allItems);
+			loadedMeshGroups.Add(meshGroup);
+
+			SetRenderPosition(loadedMeshGroups);
+
+			trackballTumbleWidget.AnchorCenter();
+		}
+
 		public ThumbnailTracer(List<MeshGroup> meshGroups, int width, int height)
 		{
 			size = new Point2D(width, height);

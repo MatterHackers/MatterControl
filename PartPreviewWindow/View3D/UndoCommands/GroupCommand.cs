@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// This is the original do() case. The selection group exists in the scene and must be flattened into a new grouped
 				var flattenedGroup = new Object3D
 				{
-					MeshGroup = new MeshGroup(),
 					ItemType = Object3DTypes.Group
 				};
 

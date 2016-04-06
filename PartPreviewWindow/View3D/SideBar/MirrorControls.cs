@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (view3DWidget.Scene.HasSelection)
 				{
 					var selectedItem = view3DWidget.Scene.SelectedItem;
-					selectedItem.MeshGroup.ReverseFaceEdges();
+					selectedItem.Mesh.ReverseFaceEdges();
 					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(-1, 1, 1));
 					view3DWidget.PartHasBeenChanged();
 					Invalidate();
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (view3DWidget.Scene.HasSelection)
 				{
 					var selectedItem = view3DWidget.Scene.SelectedItem;
-					selectedItem.MeshGroup.ReverseFaceEdges();
+					selectedItem.Mesh.ReverseFaceEdges();
 					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(1, -1, 1));
 					view3DWidget.PartHasBeenChanged();
 					Invalidate();
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (view3DWidget.Scene.HasSelection)
 				{
 					var selectedItem = view3DWidget.Scene.SelectedItem;
-					selectedItem.MeshGroup.ReverseFaceEdges();
+					selectedItem.Mesh.ReverseFaceEdges();
 					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(1, 1, -1));
 					view3DWidget.PartHasBeenChanged();
 					Invalidate();
