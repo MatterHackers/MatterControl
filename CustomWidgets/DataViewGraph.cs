@@ -205,7 +205,7 @@ namespace Gaming.Game
 				renderer.Render(StrockedTransformedLinesToDraw, history.m_Color);
 
 				String Text = historyKeyValue.Key + ": Min:" + MinMin.ToString("0.0") + " Max:" + MaxMax.ToString("0.0") + " Avg:" + MaxAverage.ToString("0.0");
-				renderer.DrawString(Text, m_Position.x, TextHeight - m_Height);
+				renderer.DrawString(Text, m_Position.x, TextHeight, backgroundColor: new RGBA_Bytes(RGBA_Bytes.White, 220));
 				TextHeight -= 20;
 			}
 

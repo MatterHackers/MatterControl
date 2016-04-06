@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineStartCallBacks.AddCallbackToKey("start", FoundStart);
 			ReadLineStartCallBacks.AddCallbackToKey("start", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallbackToKey("ok", PrinterSentOk);
+			ReadLineStartCallBacks.AddCallbackToKey("ok", SuppressEcho);
 			ReadLineStartCallBacks.AddCallbackToKey("wait", SuppressEcho);
 			ReadLineStartCallBacks.AddCallbackToKey("T:", SuppressEcho); // repetier
 
@@ -1628,6 +1628,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 								if (dataLastRead.Length > 0)
 								{
+									if(lastLineRead.StartsWith("ok"))
+									{
+										timeSinceRecievedOk.Restart();
+									}
 									lastLineRead = dataLastRead.Substring(0, returnPosition);
 									dataLastRead = dataLastRead.Substring(returnPosition + 1);
 
@@ -2179,12 +2183,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											 // never leave the extruder and the bed hot
 				DonePrintingSdFile(this, null);
 			}
-		}
-
-		public void PrinterSentOk(object sender, EventArgs e)
-		{
-			timeSinceRecievedOk.Restart();
-			SuppressEcho(sender, e);
 		}
 
         public void SuppressEcho(object sender, EventArgs e)
@@ -2890,10 +2888,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						lock (locker)
 						{
-							if(false) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
+							serialPort.Write(lineToWrite);
+							if (false) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
 							{
 								timeSinceRecievedOk.Stop();
-								if(!haveHookedDrawing)
+								if (!haveHookedDrawing)
 								{
 									MatterControlApplication.Instance.DrawAfter += (sender, e) =>
 									{
@@ -2901,12 +2900,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									};
 									haveHookedDrawing = true;
 								}
-								if (timeSinceRecievedOk.ElapsedMilliseconds < 100)
-								{
-									sendTimeAfterOkGraph.AddData("ms", timeSinceRecievedOk.ElapsedMilliseconds);
-								}
+								sendTimeAfterOkGraph.AddData("ms", timeSinceRecievedOk.ElapsedMilliseconds);
 							}
-							serialPort.Write(lineToWrite);
 							timeSinceLastWrite.Restart();
 							timeHaveBeenWaitingForOK.Restart();
 						}
