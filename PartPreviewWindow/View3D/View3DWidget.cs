@@ -935,38 +935,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return false;
 		}
 
+
+		/// <summary>
+		/// Loads the referenced DragDropSource object.
+		/// </summary>
+		/// <param name="dragSource">The drag source at the original time of invocation.</param>
+		/// <returns></returns>
 		public async Task LoadDragSource()
 		{
-			// TODO: How do we handle mesh load errors? How do we report success?
+			// The drag source at the original time of invocation.</param>
+			IObject3D dragSource = DragDropSource;
+			if (dragSource == null)
+			{
+				return;
+			}
+
 			IObject3D loadedItem = await Task.Run(() =>
 			{
 				return Object3D.Load(
-					DragDropSource.MeshPath,
+					dragSource.MeshPath,
 					meshViewerWidget.CachedMeshes,
-					new DragDropLoadProgress(this, DragDropSource).UpdateLoadProgress);
+					new DragDropLoadProgress(this, dragSource).UpdateLoadProgress);
 			});
 
-			if (loadedItem != null && DragDropSource != null)
+			if (loadedItem != null)
 			{
+				// TODO: Changing an item in the scene has a risk of collection modified during enumeration errors. This approach works as 
+				// a proof of concept but needs to take the more difficult route of managing state and swapping the dragging instance with 
+				// the new loaded item data
 				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox().Center;
-
-				// TODO: How can we keep the scale and rotation of the original? Maybe just extract the translation from the dropItem?
-				loadedItem.Matrix = DragDropSource.Matrix;
-				loadedItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -DragDropSource.GetAxisAlignedBoundingBox().minXYZ.z);
-
-				Scene.ModifyChildren(children =>
-				{
-					children.Remove(DragDropSource);
-					children.Add(loadedItem);
-				});
-
-				// Swap the loadedItem in as the DragSource to prevent AltDragDrop from adding it again
-				DragDropSource = loadedItem;
-
-				Scene.Select(loadedItem);
+				dragSource.Mesh = loadedItem.Mesh;
+				dragSource.Children.AddRange(loadedItem.Children);
+				dragSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragSource.GetAxisAlignedBoundingBox().minXYZ.z);
 			}
 		}
-
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
