@@ -219,9 +219,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		//RGBA_Bytes selectedColor = new RGBA_Bytes(0, 95, 107, 255);
 		private RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
 
-		private int hoverIndex = -1;
-		private int dragIndex = -1;
-
 		public int Count
 		{
 			get
@@ -247,62 +244,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.SendToChildren(objectToRout);
 		}
 
-		public int DragIndex
-		{
-			get
-			{
-				return dragIndex;
-			}
-			set
-			{
-				if (value < -1 || value >= topToBottomItemList.Children.Count)
-				{
-					throw new ArgumentOutOfRangeException();
-				}
-
-				if (value != dragIndex)
-				{
-					dragIndex = value;
-				}
-			}
-		}
-
-		public int HoverIndex
-		{
-			get
-			{
-				return hoverIndex;
-			}
-			set
-			{
-				if (value < -1 || value >= topToBottomItemList.Children.Count)
-				{
-					throw new ArgumentOutOfRangeException();
-				}
-
-				if (value != hoverIndex)
-				{
-					hoverIndex = value;
-					
-					for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-					{
-						GuiWidget child = topToBottomItemList.Children[index];
-						if (index == HoverIndex)
-						{
-							((QueueRowItem)child.Children[0]).IsHoverItem = true;
-						}
-						else if (((QueueRowItem)child.Children[0]).IsHoverItem == true)
-						{
-							((QueueRowItem)child.Children[0]).IsHoverItem = false;
-						}
-						child.Invalidate();
-					}
-
-					Invalidate();
-				}
-			}
-		}
-
 		public QueueDataView()
 		{
 			Name = "PrintQueueControl";
@@ -322,7 +263,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 				topToBottomItemList.AddChild(new WrappedQueueRowItem(this, QueueData.Instance.GetPrintItemWrapper(i)));
 			}
 
-			this.MouseLeaveBounds += (sender, e) => HoverIndex = -1; ;
+			this.MouseLeaveBounds += (sender, e) =>
+			{
+				if (HoverItem != null)
+				{
+					HoverItem.IsHoverItem = false;
+				}
+			};
 
 			QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
 			QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
@@ -511,6 +458,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 				}
 			}
 		}
+
+		public QueueRowItem HoverItem { get; internal set; }
 
 		public QueueRowItem SelectedPrintQueueItem()
 		{
