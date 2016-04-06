@@ -4522,3 +4522,9 @@ Translated:Import EEPROM Settings
 English:Import EEPROM
 Translated:Import EEPROM
 
+English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
+Translated:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
+
+English:Show Firmware Updater
+Translated:Show Firmware Updater
+

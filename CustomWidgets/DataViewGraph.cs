@@ -1,4 +1,3 @@
-using Gaming.Core;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
@@ -26,7 +25,7 @@ namespace Gaming.Game
 		internal class HistoryData
 		{
 			private int m_Capacity;
-			private TwoSidedStack<double> m_Data;
+			private List<double> m_Data;
 
 			internal double m_TotalValue;
 			internal RGBA_Bytes m_Color;
@@ -35,7 +34,7 @@ namespace Gaming.Game
 			{
 				m_Color = Color.GetAsRGBA_Bytes();
 				m_Capacity = Capacity;
-				m_Data = new TwoSidedStack<double>();
+				m_Data = new List<double>();
 				Reset();
 			}
 
@@ -51,9 +50,10 @@ namespace Gaming.Game
 			{
 				if (m_Data.Count == m_Capacity)
 				{
-					m_TotalValue -= m_Data.PopHead();
-				}
-				m_Data.PushTail(Value);
+                    m_TotalValue -= m_Data[0];
+					m_Data.RemoveAt(0);
+                }
+				m_Data.Add(Value);
 
 				m_TotalValue += Value;
 			}
@@ -61,7 +61,7 @@ namespace Gaming.Game
 			internal void Reset()
 			{
 				m_TotalValue = 0;
-				m_Data.Zero();
+				m_Data.Clear();
 			}
 
 			internal double GetItem(int ItemIndex)
@@ -204,7 +204,7 @@ namespace Gaming.Game
 				StrockedTransformedLinesToDraw = new Stroke(TransformedLinesToDraw);
 				renderer.Render(StrockedTransformedLinesToDraw, history.m_Color);
 
-				String Text = historyKeyValue.Key + ": Min:" + MinMin.ToString("0.0") + " Max:" + MaxMax.ToString("0.0");
+				String Text = historyKeyValue.Key + ": Min:" + MinMin.ToString("0.0") + " Max:" + MaxMax.ToString("0.0") + " Avg:" + MaxAverage.ToString("0.0");
 				renderer.DrawString(Text, m_Position.x, TextHeight - m_Height);
 				TextHeight -= 20;
 			}

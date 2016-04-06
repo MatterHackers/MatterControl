@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Gaming.Game;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
@@ -174,6 +175,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private List<string> LinesToWriteQueue = new List<string>();
 
+		DataViewGraph sendTimeAfterOkGraph = new DataViewGraph(new Vector2(320, 500), 150, 150, 0, 30);
+
 		private GCodeFile loadedGCode = new GCodeFileLoaded();
 
 		private GCodeFileStream gCodeFileStream0 = null;
@@ -222,6 +225,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private Stopwatch timeSinceLastWrite = new Stopwatch();
 
+		private Stopwatch timeSinceRecievedOk = new Stopwatch();
+
 		private Stopwatch timeSinceStartedPrint = new Stopwatch();
 
 		private Stopwatch timeWaitingForSdProgress = new Stopwatch();
@@ -244,7 +249,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineStartCallBacks.AddCallbackToKey("start", FoundStart);
 			ReadLineStartCallBacks.AddCallbackToKey("start", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallbackToKey("ok", SuppressEcho);
+			ReadLineStartCallBacks.AddCallbackToKey("ok", PrinterSentOk);
 			ReadLineStartCallBacks.AddCallbackToKey("wait", SuppressEcho);
 			ReadLineStartCallBacks.AddCallbackToKey("T:", SuppressEcho); // repetier
 
@@ -1675,7 +1680,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						timeSinceLastReadAnything.Restart();
 					}
 
-					Thread.Sleep(1);
+					if (PrinterIsPrinting)
+					{
+						Thread.Sleep(0);
+					}
+					else
+					{
+						Thread.Sleep(1);
+					}
 				}
 				catch (TimeoutException e)
 				{
@@ -2169,7 +2181,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void SuppressEcho(object sender, EventArgs e)
+		public void PrinterSentOk(object sender, EventArgs e)
+		{
+			timeSinceRecievedOk.Restart();
+			SuppressEcho(sender, e);
+		}
+
+        public void SuppressEcho(object sender, EventArgs e)
 		{
 			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 			foundStringEventArgs.SendToDelegateFunctions = false;
@@ -2843,7 +2861,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						SendLineToPrinterNow("M114");
 					}
 
-
 					// write data to communication
 					{
 						StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
@@ -2873,6 +2890,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						lock (locker)
 						{
+							if(false) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
+							{
+								timeSinceRecievedOk.Stop();
+								if(!haveHookedDrawing)
+								{
+									MatterControlApplication.Instance.DrawAfter += (sender, e) =>
+									{
+										sendTimeAfterOkGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), e.graphics2D);
+									};
+									haveHookedDrawing = true;
+								}
+								if (timeSinceRecievedOk.ElapsedMilliseconds < 100)
+								{
+									sendTimeAfterOkGraph.AddData("ms", timeSinceRecievedOk.ElapsedMilliseconds);
+								}
+							}
 							serialPort.Write(lineToWrite);
 							timeSinceLastWrite.Restart();
 							timeHaveBeenWaitingForOK.Restart();
@@ -2906,6 +2939,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 		}
+
+		bool haveHookedDrawing = false;
 
 		public class ReadThread
 		{
