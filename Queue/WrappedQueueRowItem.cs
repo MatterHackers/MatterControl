@@ -59,17 +59,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 			AddChild(this.queueRowItem);
 		}
 
-		public override void OnMouseEnter(MouseEventArgs mouseEvent)
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			queueRowItem.IsHoverItem = true;
-			base.OnMouseEnter(mouseEvent);
+			queueDataView.HoverItem = queueRowItem;
+
+			base.OnMouseEnterBounds(mouseEvent);
 		}
 
-		public override void OnMouseLeave(MouseEventArgs mouseEvent)
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
 		{
 			queueRowItem.IsHoverItem = false;
-			base.OnMouseLeave(mouseEvent);
+			base.OnMouseLeaveBounds(mouseEvent);
 		}
+
 
 		Vector2 mouseDownAt;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
