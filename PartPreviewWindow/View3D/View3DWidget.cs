@@ -632,26 +632,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			try
 			{
-				MeshGroup booleanGroup = new MeshGroup();
+				IObject3D booleanGroup = new Object3D { ItemType = Object3DTypes.Group };
 
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Union, AxisAlignedBoundingBox.Union, new Vector3(100, 0, 20), "U"));
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Subtract, null, new Vector3(100, 100, 20), "S"));
-				booleanGroup.Meshes.Add(ApplyBoolean(PolygonMesh.Csg.CsgOperations.Intersect, AxisAlignedBoundingBox.Intersection , new Vector3(100, 200, 20), "I"));
+
+				booleanGroup.Children.Add(new Object3D()
+				{
+					Mesh = ApplyBoolean(PolygonMesh.Csg.CsgOperations.Union, AxisAlignedBoundingBox.Union, new Vector3(100, 0, 20), "U")
+				});
+
+				booleanGroup.Children.Add(new Object3D()
+				{
+					Mesh = ApplyBoolean(PolygonMesh.Csg.CsgOperations.Subtract, null, new Vector3(100, 100, 20), "S")
+				});
+
+				booleanGroup.Children.Add(new Object3D()
+				{
+					Mesh = ApplyBoolean(PolygonMesh.Csg.CsgOperations.Intersect, AxisAlignedBoundingBox.Intersection, new Vector3(100, 200, 20), "I")
+				});
 
 				offset += direction;
 				rotCurrent += rotChange;
 				scaleCurrent += scaleChange;
 
-				Scene.Children.Add(booleanObject = new Object3D()
+				Scene.ModifyChildren(children =>
 				{
-					MeshGroup = booleanGroup,
-					Matrix = Matrix4X4.Identity,
+					children.Add(booleanGroup);
 				});
 			}
 			catch(Exception e2)
 			{
 				string text = e2.Message;
-                int a = 0;
+				int a = 0;
 			}
 		}
 
@@ -811,7 +822,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					DragDropSource = new Object3D
 					{
 						ItemType = Object3DTypes.Model,
-						MeshGroup = new MeshGroup(PlatonicSolids.CreateCube(10, 10, 10))
+						Mesh = PlatonicSolids.CreateCube(10, 10, 10)
 					};
 				}
 			}
@@ -833,26 +844,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Run the rest of the OnDragOver pipeline since we're starting a new thread and won't finish for an unknown time
 					base.OnDragOver(fileDropArgs);
 
-					// TODO: How to we handle mesh load errors? How do we report success?
-					IObject3D loadedItem = await Task.Run(() =>
-					{
-						return Object3D.Load(
-							DragDropSource.MeshPath,
-							meshViewerWidget.CachedMeshes,
-							new DragDropLoadProgress(this, DragDropSource).UpdateLoadProgress);
-					});
-
-					if (loadedItem != null && DragDropSource != null)
-					{
-						Scene.ModifyChildren(children =>
-						{
-							AxisAlignedBoundingBox bounds = loadedItem.GetAxisAlignedBoundingBox();
-							Vector3 meshGroupCenter = bounds.Center;
-							DragDropSource.MeshGroup.Meshes.Clear();
-							DragDropSource.Children.AddRange(loadedItem.Children);
-							DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -DragDropSource.GetAxisAlignedBoundingBox().minXYZ.z);
-						});
-					}
+					LoadDragSource();
 
 					// Don't fall through to the base.OnDragOver because we preemptively invoked it above
 					return;
@@ -942,6 +934,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			return false;
 		}
+
+		public async Task LoadDragSource()
+		{
+			// TODO: How do we handle mesh load errors? How do we report success?
+			IObject3D loadedItem = await Task.Run(() =>
+			{
+				return Object3D.Load(
+					DragDropSource.MeshPath,
+					meshViewerWidget.CachedMeshes,
+					new DragDropLoadProgress(this, DragDropSource).UpdateLoadProgress);
+			});
+
+			if (loadedItem != null && DragDropSource != null)
+			{
+				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox().Center;
+
+				// TODO: How can we keep the scale and rotation of the original? Maybe just extract the translation from the dropItem?
+				loadedItem.Matrix = DragDropSource.Matrix;
+				loadedItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -DragDropSource.GetAxisAlignedBoundingBox().minXYZ.z);
+
+				Scene.ModifyChildren(children =>
+				{
+					children.Remove(DragDropSource);
+					children.Add(loadedItem);
+				});
+
+				// Swap the loadedItem in as the DragSource to prevent AltDragDrop from adding it again
+				DragDropSource = loadedItem;
+
+				Scene.Select(loadedItem);
+			}
+		}
+
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
@@ -1254,14 +1279,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (Scene.HasSelection)
 					{
-						foreach (Mesh mesh in Scene.SelectedItem.MeshGroup.Meshes)
+						// TODO: In the new model, we probably need to iterate this object and all its children, setting 
+						// some state along the way or modify the tree processing to pass the parent value down the chain
+						MeshMaterialData material = MeshMaterialData.Get(Scene.SelectedItem.Mesh);
+						if (material.MaterialIndex != extruderIndexLocal + 1)
 						{
-							MeshMaterialData material = MeshMaterialData.Get(mesh);
-							if (material.MaterialIndex != extruderIndexLocal + 1)
-							{
-								material.MaterialIndex = extruderIndexLocal + 1;
-								PartHasBeenChanged();
-							}
+							material.MaterialIndex = extruderIndexLocal + 1;
+							PartHasBeenChanged();
 						}
 					}
 				};
@@ -1270,9 +1294,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (Scene.HasSelection)
 					{
-						Mesh mesh = Scene.SelectedItem.MeshGroup.Meshes[0];
-						MeshMaterialData material = MeshMaterialData.Get(mesh);
-
+						// TODO: Likely needs to be reviewed as described above and in the context of the scene graph
+						MeshMaterialData material = MeshMaterialData.Get(Scene.SelectedItem.Mesh);
 						for (int i = 0; i < extruderButtons.Count; i++)
 						{
 							if (material.MaterialIndex - 1 == i)
@@ -1790,13 +1813,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 
 						var loadedGroup = new Object3D {
-							MeshGroup = new MeshGroup(),
 							MeshPath = loadedFileName
 						};
 
+						// TODO: Shouldn't Object3D.Load already cover this task?
 						foreach (var meshGroup in loadedMeshGroups)
 						{
-							loadedGroup.Children.Add(new Object3D() { MeshGroup = meshGroup });
+							foreach(var mesh in meshGroup.Meshes)
+							{
+								loadedGroup.Children.Add(new Object3D() { Mesh = mesh });
+							}
 						}
 
 						tempScene.Children.Add(loadedGroup);
@@ -1831,23 +1857,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
 		{
 			Matrix4X4 objectToWold = objectToLayFlatGroup.Matrix;
-            IObject3D objectToLayFlat = objectToLayFlatGroup.Children[0];
-            Vertex lowestVertex = objectToLayFlat.MeshGroup.Meshes[0].Vertices[0];
+			IObject3D objectToLayFlat = objectToLayFlatGroup.Children[0];
+
+			Vertex lowestVertex = objectToLayFlat.Mesh.Vertices[0];
 
 			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, objectToWold);
-			Mesh meshToLayFlat = null;
-			foreach (Mesh meshToCheck in objectToLayFlat.MeshGroup.Meshes)
+
+			IObject3D itemToLayFlat = null;
+
+			// Process each child, checking for the lowest vertex
+			foreach (IObject3D itemToCheck in objectToLayFlat.Children.Where(child => child.Mesh != null))
 			{
 				// find the lowest point on the model
-				for (int testIndex = 1; testIndex < meshToCheck.Vertices.Count; testIndex++)
+				for (int testIndex = 1; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
 				{
-					Vertex vertex = meshToCheck.Vertices[testIndex];
+					Vertex vertex = itemToCheck.Mesh.Vertices[testIndex];
 					Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
 					if (vertexPosition.z < lowestVertexPosition.z)
 					{
-						lowestVertex = meshToCheck.Vertices[testIndex];
+						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
 						lowestVertexPosition = vertexPosition;
-						meshToLayFlat = meshToCheck;
+						itemToLayFlat = itemToCheck;
 					}
 				}
 			}
@@ -1919,11 +1949,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void SaveScene(string filePath)
 		{
+			// TODO: Drop children of items containing populated MeshPath attributes
 			var itemsToSave = from object3D in Scene.Descendants()
 							  where object3D.MeshPath == null &&
-									object3D.ItemType == Object3DTypes.Model &&
-									object3D.MeshGroup != null &&
-									object3D.MeshGroup.Meshes.Count > 0
+									object3D.Mesh != null
 							  select object3D;
 
 			foreach(var item in itemsToSave)
@@ -1949,7 +1978,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// save to the new temp location
 				bool savedSuccessfully = MeshFileIo.Save(
-					new List<MeshGroup> { object3D.MeshGroup }, 
+					new List<MeshGroup> { new MeshGroup(object3D.Mesh) }, 
 					tempFileNameToSaveTo, 
 					outputInfo, 
 					ReportProgressChanged);

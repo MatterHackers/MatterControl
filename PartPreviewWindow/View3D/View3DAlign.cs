@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -52,18 +53,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			// try to move all the not selected meshes relative to the selected mesh
-			AxisAlignedBoundingBox selectedOriginalBounds = Scene.SelectedItem.MeshGroup.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox selectedOriginalBounds = Scene.SelectedItem.Mesh.GetAxisAlignedBoundingBox();
 			Vector3 selectedOriginalCenter = selectedOriginalBounds.Center;
-			AxisAlignedBoundingBox selectedCurrentBounds = Scene.SelectedItem.MeshGroup.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
+			AxisAlignedBoundingBox selectedCurrentBounds = Scene.SelectedItem.Mesh.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
 			Vector3 selctedCurrentCenter = selectedCurrentBounds.Center;
 			for (int meshGroupToMoveIndex = 0; meshGroupToMoveIndex < Scene.Children.Count; meshGroupToMoveIndex++)
 			{
-				MeshGroup meshGroupToMove = Scene.Children[meshGroupToMoveIndex].MeshGroup;
-				if (meshGroupToMove != Scene.SelectedItem)
+				IObject3D item = Scene.Children[meshGroupToMoveIndex];
+				if (item != Scene.SelectedItem)
 				{
-					AxisAlignedBoundingBox groupToMoveOriginalBounds = meshGroupToMove.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox groupToMoveOriginalBounds = item.GetAxisAlignedBoundingBox();
 					Vector3 groupToMoveOriginalCenter = groupToMoveOriginalBounds.Center;
-					AxisAlignedBoundingBox groupToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(Scene.Children[meshGroupToMoveIndex].Matrix);
+					AxisAlignedBoundingBox groupToMoveBounds = item.GetAxisAlignedBoundingBox(Scene.Children[meshGroupToMoveIndex].Matrix);
 					Vector3 groupToMoveCenter = groupToMoveBounds.Center;
 
 					Vector3 originalCoordinatesDelta = groupToMoveOriginalCenter - selectedOriginalCenter;
@@ -79,18 +80,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			/* TODO: Align needs reconsidered
 			// now put all the meshes into just one group
-			MeshGroup meshGroupWeAreKeeping = Scene.SelectedItem.MeshGroup;
+			IObject3D itemWeAreKeeping = Scene.SelectedItem;
 			for (int meshGroupToMoveIndex = Scene.Children.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
 			{
-				MeshGroup meshGroupToMove = Scene.Children[meshGroupToMoveIndex].MeshGroup;
-				if (meshGroupToMove != meshGroupWeAreKeeping)
+				IObject3D itemToMove = Scene.Children[meshGroupToMoveIndex];
+				if (itemToMove != itemWeAreKeeping)
 				{
 					// move all the meshes into the new aligned mesh group
-					for (int moveIndex = 0; moveIndex < meshGroupToMove.Meshes.Count; moveIndex++)
+					for (int moveIndex = 0; moveIndex < itemToMove.Meshes.Count; moveIndex++)
 					{
-						Mesh mesh = meshGroupToMove.Meshes[moveIndex];
-						meshGroupWeAreKeeping.Meshes.Add(mesh);
+						Mesh mesh = itemToMove.Meshes[moveIndex];
+						itemWeAreKeeping.Meshes.Add(mesh);
 					}
 
 					Scene.Children.RemoveAt(meshGroupToMoveIndex);
@@ -99,6 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					//asyncMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
 				}
 			}
+			*/
 
 			// TODO: ******************** !!!!!!!!!!!!!!! ********************
 			/*

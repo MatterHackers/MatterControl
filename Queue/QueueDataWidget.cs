@@ -569,13 +569,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 			view3DWidget.DragDropSource = new Object3D
 			{
 				ItemType = Object3DTypes.Model,
-				MeshGroup = new MeshGroup(PlatonicSolids.CreateCube(10, 10, 10))
+				Mesh = PlatonicSolids.CreateCube(10, 10, 10)
 			};
 
 			base.OnMouseDown(mouseEvent);
 		}
 
-		public async override void OnMouseMove(MouseEventArgs mouseArgs)
+		public override void OnMouseMove(MouseEventArgs mouseArgs)
 		{
 			if (!WidgetHasBeenClosed &&
 				view3DWidget?.DragDropSource != null &&
@@ -584,32 +584,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
 				if(view3DWidget.AltDragOver(screenSpaceMousePosition))
 				{
-					var dropItem = view3DWidget.DragDropSource;
-
-					dropItem.MeshPath = queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation;
+					view3DWidget.DragDropSource.MeshPath = queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation;
 
 					base.OnMouseMove(mouseArgs);
 
-					// TODO: How do we handle mesh load errors? How do we report success?
-					IObject3D loadedItem = await Task.Run(() =>
-					{
-						return Object3D.Load(
-							dropItem.MeshPath,
-							view3DWidget.meshViewerWidget.CachedMeshes,
-							new DragDropLoadProgress(view3DWidget, dropItem).UpdateLoadProgress);
-					});
-
-					if (loadedItem != null)
-					{
-						view3DWidget.Scene.ModifyChildren(children =>
-						{
-							AxisAlignedBoundingBox bounds = loadedItem.GetAxisAlignedBoundingBox();
-							Vector3 meshGroupCenter = bounds.Center;
-							dropItem.MeshGroup.Meshes.Clear();
-							dropItem.Children.AddRange(loadedItem.Children);
-							dropItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dropItem.GetAxisAlignedBoundingBox().minXYZ.z);
-						});
-					}
+					view3DWidget.LoadDragSource();
 				}
 				
 				// TODO: If we derived from scrollable container, we could disable scroll in this drag context and enable on mouse up

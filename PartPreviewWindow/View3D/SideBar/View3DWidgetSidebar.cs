@@ -362,13 +362,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Task.Run(() =>
 					{
-						MeshGroup meshGroup = createMeshFunction().MeshGroup;
-						meshGroup.Meshes[0].Triangulate();
+						IObject3D item = createMeshFunction();
+						item.Mesh.Triangulate();
 
-						List<MeshGroup> meshGroups = new List<MeshGroup>();
-						meshGroups.Add(meshGroup);
-
-						ThumbnailTracer tracer = new ThumbnailTracer(meshGroups, 64, 64);
+						ThumbnailTracer tracer = new ThumbnailTracer(item, 64, 64);
 						tracer.DoTrace();
 
 						buttonImage.SetRecieveBlender(new BlenderPreMultBGRA());
