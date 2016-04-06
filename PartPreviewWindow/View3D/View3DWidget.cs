@@ -522,7 +522,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
 
-		public IObject3D DragDropSource { get; set; }
+		private IObject3D dragDropSource; 
+		public IObject3D DragDropSource
+		{
+			get
+			{
+				return dragDropSource;
+			}
+
+			set
+			{
+				dragDropSource = value;
+
+				// Suppress ui volumes when dragDropSource is not null
+				meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
+			}
+		}
 
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
