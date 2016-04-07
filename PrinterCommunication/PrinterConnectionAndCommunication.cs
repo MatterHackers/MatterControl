@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private List<string> LinesToWriteQueue = new List<string>();
 
-		DataViewGraph sendTimeAfterOkGraph = new DataViewGraph(new Vector2(320, 500), 150, 150, 0, 30);
+		DataViewGraph sendTimeAfterOkGraph;
 
 		private GCodeFile loadedGCode = new GCodeFileLoaded();
 
@@ -2894,13 +2894,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								timeSinceRecievedOk.Stop();
 								if (!haveHookedDrawing)
 								{
-									MatterControlApplication.Instance.DrawAfter += (sender, e) =>
-									{
-										sendTimeAfterOkGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), e.graphics2D);
-									};
+									sendTimeAfterOkGraph = new DataViewGraph(150, 150, 0, 30);
+									MatterControlApplication.Instance.AddChild(sendTimeAfterOkGraph);
 									haveHookedDrawing = true;
 								}
-								sendTimeAfterOkGraph.AddData("ms", timeSinceRecievedOk.ElapsedMilliseconds);
+								sendTimeAfterOkGraph.AddData("ok->send", timeSinceRecievedOk.ElapsedMilliseconds);
 							}
 							timeSinceLastWrite.Restart();
 							timeHaveBeenWaitingForOK.Restart();

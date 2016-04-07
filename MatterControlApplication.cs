@@ -51,6 +51,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GCodeVisualizer;
+using Gaming.Game;
 
 namespace MatterHackers.MatterControl
 {
@@ -67,7 +68,7 @@ namespace MatterHackers.MatterControl
 		private int drawCount = 0;
 		private bool firstDraw = true;
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-		private Gaming.Game.DataViewGraph msGraph = new Gaming.Game.DataViewGraph(new Vector2(20, 500), 50, 50, 0, 200);
+		private DataViewGraph msGraph;
 		private string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
 		private bool ShowMemoryUsed = false;
 		private Stopwatch totalDrawTime = new Stopwatch();
