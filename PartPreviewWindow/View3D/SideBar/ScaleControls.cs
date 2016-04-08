@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Matrix4X4 startingTransform = view3DWidget.Scene.SelectedItem.Matrix;
 					SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
-					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(view3DWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox().Size[axisIndex]));
+					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(view3DWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Size[axisIndex]));
 					OnSelectedTransformChanged(null, null);
 					view3DWidget.AddUndoForSelectedMeshGroupTransform(startingTransform);
 				}
@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void ScaleAxis(double scaleIn, int axis)
 		{
 			var selectedItem = view3DWidget.Scene.SelectedItem;
-			AxisAlignedBoundingBox originalMeshBounds = selectedItem.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox originalMeshBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 			AxisAlignedBoundingBox scaledBounds = selectedItem.GetAxisAlignedBoundingBox(selectedItem.Matrix);
 
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (view3DWidget.Scene.HasSelection)
 			{
 				// because we remove any current scale before we change to a new one we only get the size of the base mesh data
-				AxisAlignedBoundingBox originalMeshBounds = view3DWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox originalMeshBounds = view3DWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				double currentSize = originalMeshBounds.Size[axis];
 				double desiredSize = sizeDisplay[axis].GetValue();
@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));
 
 				// set the scaling to be this new size
-				AxisAlignedBoundingBox originalMeshBounds = selectedItem.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox originalMeshBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				AxisAlignedBoundingBox scaledBounds = selectedItem.GetAxisAlignedBoundingBox(selectedItem.Matrix);
 				Vector3 currentScale = new Vector3();
 				currentScale.x = scaledBounds.XSize / originalMeshBounds.XSize;

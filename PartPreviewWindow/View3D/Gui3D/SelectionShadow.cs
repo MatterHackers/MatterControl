@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void SetPosition()
 		{
-			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = selectedBounds.Center;
 
 			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.x, boundsCenter.y, 0.1));
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (MeshViewerToDrawWith.Scene.HasSelection)
 			{
 				// draw the bounds on the bed
-				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				Mesh bottomBounds = PlatonicSolids.CreateCube(selectedBounds.XSize, selectedBounds.YSize, .1);
 				GLHelper.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);

@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (view3DWidget?.meshViewerWidget?.TrackballTumbleWidget != null)
 			{
-				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				Vector3 renderPosition = bounds.Center;
 				Vector2 cornerScreenSpace = view3DWidget.meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(renderPosition) - new Vector2(40, 20);
 
@@ -544,7 +544,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return;
 			if (Scene?.TraceData() != null)
 			{
-				Scene.TraceData().RenderBvhRecursive(Scene.Matrix);
+				Scene.TraceData().RenderBvhRecursive(Scene.Matrix, 0, 3);
 			}
 		}
 
@@ -903,7 +903,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					// Set the initial transform on the inject part to the current transform mouse position
-					var sourceItemBounds = DragDropSource.GetAxisAlignedBoundingBox();
+					var sourceItemBounds = DragDropSource.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					var center = sourceItemBounds.Center;
 
 					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
@@ -963,10 +963,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// TODO: Changing an item in the scene has a risk of collection modified during enumeration errors. This approach works as 
 				// a proof of concept but needs to take the more difficult route of managing state and swapping the dragging instance with 
 				// the new loaded item data
-				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox().Center;
+				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
 				dragSource.Mesh = loadedItem.Mesh;
 				dragSource.Children.AddRange(loadedItem.Children);
-				dragSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragSource.GetAxisAlignedBoundingBox().minXYZ.z);
+				dragSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragSource.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
 			}
 		}
 
@@ -1075,7 +1075,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
 
-							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 							if (info.hitPosition.x < selectedBounds.Center.x)
 							{
@@ -1161,7 +1161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
-					AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 					double xSnapOffset = selectedBounds.minXYZ.x;
 					// snap the x position
@@ -2284,7 +2284,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty;
-				foreach(var aabb in Scene.Children.Select(item => item.GetAxisAlignedBoundingBox()))
+				foreach(var aabb in Scene.Children.Select(item => item.GetAxisAlignedBoundingBox(Matrix4X4.Identity)))
 				{
 					allBounds += aabb;
 				}
