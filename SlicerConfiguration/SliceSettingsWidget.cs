@@ -658,9 +658,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							int.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit intEditWidget = new MHNumberEdit(currentValue, pixelWidth: intEditWidth, tabIndex: tabIndexForItem++);
 							intEditWidget.ToolTipText = settingData.HelpText;
-							intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+							intEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+								CreateSliceSettingContainer(container, settingData);
 								CallEventsOnSettingsChange(settingData);
 							};
 							intEditWidget.SelectAllOnFocus = true;
@@ -732,7 +734,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							doubleEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 							{
 								presetChanged = true;
-								// Find the sibling TextWidget that represents the materialPresetLabel and hide it
 								NumberEdit numberEdit = (NumberEdit)sender;
 								// If this setting sets other settings, then do that.
 								if (ChangesMultipleOtherSettings
@@ -1147,6 +1148,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			revertButton.HAnchor = HAnchor.ParentRight;
 			revertButton.VAnchor = VAnchor.ParentCenter;
 			revertButton.Margin = new BorderDouble(0, 0, 10, 0);
+			
 			revertButton.Click += (sender, e) =>
 			{
 				presetChanged = false;
@@ -1169,7 +1171,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			container.AddChild(revertButton);
 
-			//
 			if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
 			{
 				if (!presetChanged)
