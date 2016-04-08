@@ -69,13 +69,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private SettingsControlBar settingsControlBar;
 		private string activeMaterialPreset;
 		private string activeQualityPreset;
-		private bool addMaterialOverlay;
-        private bool addQualityOverlay;
+		private bool presetChanged = false;
 		private TextWidget materialPresetLabel
 		{
 			get;
 			set;
 		}
+		Button revertButton;
 		private TextWidget qualityPresetLabel;
 		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -569,15 +569,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			bool isQualityPreset = false;
 			bool isMaterialPreset = false;
-			Button revertButton;
 
 			RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 108);
 			RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 108);
 			RGBA_Bytes userSettingOverlayColor = new RGBA_Bytes(0, 0, 255, 108);
 
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
-
-			//this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
 			this.textImageButtonFactory.FixedHeight = 15 * TextWidget.GlobalPointSizeScaleRatio;
 			this.textImageButtonFactory.fontSize = 8;
 			this.textImageButtonFactory.borderWidth = 1;
@@ -588,8 +585,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
 			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
 			this.HAnchor = HAnchor.ParentLeftRight;
+
+			revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
+			revertButton.HAnchor = HAnchor.ParentRight;
+			revertButton.VAnchor = VAnchor.ParentCenter;
+			revertButton.Margin = new BorderDouble(0, 0, 10, 0);
+
 
 
 			if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
@@ -729,8 +731,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							
 							doubleEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
 								// Find the sibling TextWidget that represents the materialPresetLabel and hide it
-								var presetLabel = container.Children<TextWidget>().FirstOrDefault();
 								NumberEdit numberEdit = (NumberEdit)sender;
 								// If this setting sets other settings, then do that.
 								if (ChangesMultipleOtherSettings
@@ -741,24 +743,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										SaveSetting(setting, numberEdit.Value.ToString() + "mm");
 									}
 								}
+								TestFunction(container, settingData);
+								
 
-								revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
-								revertButton.HAnchor = HAnchor.ParentRight;
-								revertButton.VAnchor = VAnchor.ParentCenter;
-								revertButton.Margin = new BorderDouble(0, 0, 10, 0);
-
-								revertButton.Click += (x, y) =>
-								{
-									var revertButtonTest = container.Children<Button>().FirstOrDefault();
-									if (isMaterialPreset)
-									{
-										container.BackgroundColor = materialOverlayColor;
-										revertButtonTest.Visible = false;
-										revertVisible = false;
-									}
-								};
-
-								if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3) || ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
+								/*if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3) || ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
 								{
 									revertVisible = true;
 									container.BackgroundColor = userSettingOverlayColor;
@@ -774,7 +762,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								else
 								{
 									revertVisible = false;
-								}
+								}*/
 
 								// also always save to the local setting
 								SaveSetting(settingData.SlicerConfigName, numberEdit.Value.ToString());
@@ -1174,12 +1162,122 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					materialPresetLabel.PointSize = 8;
 					container.AddChild(materialPresetLabel);
 					container.BackgroundColor = materialOverlayColor;
-
 					materialPresetLabel.Visible = !revertVisible;
 				}
 			}
 
 			return container;
+		}
+
+		private void TestFunction(GuiWidget container, OrganizerSettingsData settingData)
+		{
+			//Initialize all widgets to be added to container
+			TextWidget qualityPresetLabel = new TextWidget(this.activeQualityPreset);
+			qualityPresetLabel.HAnchor = HAnchor.ParentRight;
+			qualityPresetLabel.VAnchor = VAnchor.ParentCenter;
+			qualityPresetLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			qualityPresetLabel.Margin = new BorderDouble(10, 0, 0, 0);
+			qualityPresetLabel.PointSize = 8;
+
+			TextWidget materialPresetLabel = new TextWidget(this.activeMaterialPreset);
+			materialPresetLabel.HAnchor = HAnchor.ParentRight;
+			materialPresetLabel.VAnchor = VAnchor.ParentCenter;
+			materialPresetLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			materialPresetLabel.Margin = new BorderDouble(10, 0, 0, 0);
+			materialPresetLabel.PointSize = 8;
+
+			RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 108);
+			RGBA_Bytes userSettingOverlayColor = new RGBA_Bytes(0, 0, 255, 108);
+			RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 108);
+
+			var presetLabel = container.Children<TextWidget>().FirstOrDefault();
+			//var revertButtonTest = container.Children<Button>().FirstOrDefault();
+
+			Button revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
+			revertButton.HAnchor = HAnchor.ParentRight;
+			revertButton.VAnchor = VAnchor.ParentCenter;
+			revertButton.Margin = new BorderDouble(0, 0, 10, 0);
+			container.AddChild(revertButton);
+
+
+			revertButton.Click += (sender, e) =>
+			{
+				presetChanged = false;
+				var revertButtonTest = container.Children<Button>().FirstOrDefault();
+				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+				{
+					presetChanged = false;
+					container.BackgroundColor = materialOverlayColor;
+					revertVisible = false;
+					revertButton.Visible = false;
+					presetLabel.Visible = true;
+				}
+			};
+
+
+			if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+			{
+				if (!presetChanged)
+				{
+
+					container.BackgroundColor = materialOverlayColor;
+					container.AddChild(materialPresetLabel);
+					revertButton.Visible = false;
+				}
+				else
+				{
+					container.BackgroundColor = userSettingOverlayColor;
+					presetLabel.Visible = false;
+					revertButton.Visible = true;
+				}
+
+			}
+
+			if(ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
+			{
+
+				container.BackgroundColor = qualityOverlayColor;
+				container.AddChild(qualityPresetLabel);
+
+			}
+
+
+			/*var presetLabel = container.Children<TextWidget>().FirstOrDefault();
+			RGBA_Bytes userSettingOverlayColor = new RGBA_Bytes(0, 0, 255, 108);
+			
+
+			Button revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
+			revertButton.HAnchor = HAnchor.ParentRight;
+			revertButton.VAnchor = VAnchor.ParentCenter;
+			revertButton.Margin = new BorderDouble(0, 0, 10, 0);
+			revertButton.Click += (sender, e) =>
+			{
+				var revertButtonTest = container.Children<Button>().FirstOrDefault();
+				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+				{
+					container.BackgroundColor = materialOverlayColor;
+					revertVisible = false;
+					revertButton.Visible = false;
+					presetLabel.Visible = true;
+				}
+			};
+
+			if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+			{
+				container.BackgroundColor = userSettingOverlayColor;
+				revertVisible = true;
+				materialPresetLabel.Visible = false;
+				container.AddChild(revertButton);
+
+				if (presetLabel != null)
+				{
+					presetLabel.Visible = false;
+				}
+			}
+			else
+			{
+				revertVisible = false;
+			}*/
 		}
 
 		private GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, GuiWidget content, InternalTextEditWidget internalTextWidget)
