@@ -196,9 +196,11 @@ namespace MatterHackers.MatterControl
 			foreach (FileNameAndPresentationName queuePartFileName in queuPartFilesToAdd)
 			{
 				List<MeshGroup> loadedMeshGroups = null;
+
 				if (File.Exists(queuePartFileName.fileName))
 				{
-					loadedMeshGroups = MeshFileIo.Load(queuePartFileName.fileName);
+					IObject3D loadedItem = MeshFileIo.Load(queuePartFileName.fileName);
+					loadedMeshGroups = new List<MeshGroup> { loadedItem.Flatten() };
 				}
 
 				if (loadedMeshGroups != null)
@@ -217,6 +219,7 @@ namespace MatterHackers.MatterControl
 							aabb = AxisAlignedBoundingBox.Union(aabb, meshGroup.GetAxisAlignedBoundingBox());
 						}
 					}
+
 					RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
 					double widthInMM = bounds2D.Width + PartMarginMM * 2;
 					double textSpaceMM = 5;

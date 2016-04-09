@@ -285,6 +285,12 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
+		private static ImageBuffer BuildImageFromMeshGroups(IObject3D item, string stlHashCode, Point2D size)
+		{
+			// TODO: Render IObject3D as ImageBuffer
+			throw new NotImplementedException();
+		}
+
 		private static ImageBuffer BuildImageFromMeshGroups(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
 		{
 			if (loadedMeshGroups != null
@@ -444,7 +450,7 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
-			List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(this.ItemWrapper.FileLocation);
+			IObject3D loadedItem = MeshFileIo.Load(this.ItemWrapper.FileLocation);
 
 			RenderType renderType = GetRenderType(this.ItemWrapper.FileLocation);
 
@@ -452,7 +458,7 @@ namespace MatterHackers.MatterControl
 			{
 				case RenderType.RAY_TRACE:
 					{
-						ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
+						ThumbnailTracer tracer = new ThumbnailTracer(loadedItem, BigRenderSize.x, BigRenderSize.y);
 						tracer.DoTrace();
 
 						bigRender = tracer.destImage;
@@ -461,25 +467,19 @@ namespace MatterHackers.MatterControl
 
 				case RenderType.PERSPECTIVE:
 					{
-						ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
+						ThumbnailTracer tracer = new ThumbnailTracer(loadedItem, BigRenderSize.x, BigRenderSize.y);
 						this.thumbnailImage = new ImageBuffer(this.buildingThumbnailImage);
 						this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
 
 						bigRender = new ImageBuffer(BigRenderSize.x, BigRenderSize.y, 32, new BlenderBGRA());
 
-						foreach (MeshGroup meshGroup in loadedMeshGroups)
+						foreach (IObject3D item in loadedItem.Children)
 						{
 							double minZ = double.MaxValue;
 							double maxZ = double.MinValue;
-							foreach (Mesh loadedMesh in meshGroup.Meshes)
-							{
-								tracer.GetMinMaxZ(loadedMesh, ref minZ, ref maxZ);
-							}
 
-							foreach (Mesh loadedMesh in meshGroup.Meshes)
-							{
-								tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White, minZ, maxZ);
-							}
+							tracer.GetMinMaxZ(item.Mesh, ref minZ, ref maxZ);
+							tracer.DrawTo(bigRender.NewGraphics2D(), item.Mesh, RGBA_Bytes.White, minZ, maxZ);
 						}
 
 						if (bigRender == null)
@@ -494,7 +494,7 @@ namespace MatterHackers.MatterControl
 
 					this.thumbnailImage = new ImageBuffer(this.buildingThumbnailImage);
 					this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-					bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, BigRenderSize);
+					bigRender = BuildImageFromMeshGroups(loadedItem, stlHashCode, BigRenderSize);
 					if (bigRender == null)
 					{
 						bigRender = new ImageBuffer(this.noThumbnailImage);
