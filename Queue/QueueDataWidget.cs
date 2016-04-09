@@ -580,6 +580,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 				queueDataView.DragSourceRowItem != null)
 			{
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+
+				if(!File.Exists(queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation))
+				{
+					view3DWidget.DragDropSource = null;
+					queueDataView.DragSourceRowItem = null;
+					return;
+				}
+
 				if(view3DWidget.AltDragOver(screenSpaceMousePosition))
 				{
 					view3DWidget.DragDropSource.MeshPath = queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation;
