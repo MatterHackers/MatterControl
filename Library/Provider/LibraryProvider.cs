@@ -124,8 +124,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					if (extension == ".ZIP")
 					{
-						ProjectFileHandler project = new ProjectFileHandler(null);
-						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+						List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
 						if (partFiles != null)
 						{
 							foreach (PrintItem part in partFiles)

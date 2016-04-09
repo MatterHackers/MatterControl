@@ -413,8 +413,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 }
                 else if (extension == ".ZIP")
                 {
-                    ProjectFileHandler project = new ProjectFileHandler(null);
-                    List<PrintItem> partFiles = project.ImportFromProjectArchive(fileToAdd);
+                    List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(fileToAdd);
                     if (partFiles != null)
                     {
                         foreach (PrintItem part in partFiles)
@@ -503,8 +502,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 							string extension = Path.GetExtension(fileNameToLoad).ToUpper();
 							if (extension == ".ZIP")
 							{
-								ProjectFileHandler project = new ProjectFileHandler(null);
-								List<PrintItem> partFiles = project.ImportFromProjectArchive(fileNameToLoad);
+								List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(fileNameToLoad);
 								if (partFiles != null)
 								{
 									foreach (PrintItem part in partFiles)

@@ -69,8 +69,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					using (MemoryStream arrowStream = new MemoryStream())
 					{
 						staticDataStream.CopyTo(arrowStream, 1 << 16);
-						List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
-						upArrow = loadedMeshGroups[0].Meshes[0];
+						IObject3D item  = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
+						upArrow = item.Mesh;
 
 						CollisionVolume = upArrow.CreateTraceData();
 					}

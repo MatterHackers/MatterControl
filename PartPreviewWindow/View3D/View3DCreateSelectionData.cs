@@ -43,24 +43,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?".Localize();
 		private static string PartsNotPrintableTitle = "Parts not in print area".Localize();
 
-		private void CreateSelectionData()
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			processingProgressControl.ProcessType = "Preparing Meshes".Localize() + ":";
-
-			// Force trace data generation
-			foreach(var object3D in Scene.Children)
-			{
-				object3D.TraceData();
-			}
-
-			bool continueProcessing2;
-			ReportProgressChanged(1, "Creating GL Data", out continueProcessing2);
-
-			meshViewerWidget.CreateGlDataForMeshes(Scene.Children);
-		}
-
 		private async void EnterEditAndCreateSelectionData()
 		{
 			if (enterEditButtonsContainer.Visible == true)
@@ -71,13 +53,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.IsEditing = true;
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+
+			processingProgressControl.Visible = true;
+			LockEditControls();
+			viewIsInEditModePreLock = true;
+
 			if (Scene.HasChildren)
 			{
-				processingProgressControl.Visible = true;
-				LockEditControls();
-				viewIsInEditModePreLock = true;
+				// CreateSelectionData()
+				await Task.Run(() =>
+				{
+					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+					processingProgressControl.ProcessType = "Preparing Meshes".Localize() + ":";
 
-				await Task.Run((System.Action)CreateSelectionData);
+					// Force trace data generation
+					foreach (var object3D in Scene.Children)
+					{
+						object3D.TraceData();
+					}
+
+					// TODO: Why were we recreating GLData on edit? 
+					//bool continueProcessing2;
+					//ReportProgressChanged(1, "Creating GL Data", out continueProcessing2);
+					//meshViewerWidget.CreateGlDataForMeshes(Scene.Children);
+				});
 
 				if (WidgetHasBeenClosed)
 				{
@@ -85,45 +84,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				Scene.SelectFirstChild();
-
-				Sidebar.Visible = true;
-				UnlockEditControls();
-				viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-
-				Invalidate();
-
-				if (DoAddFileAfterCreatingEditData)
-				{
-					FileDialog.OpenFileDialog(
-						new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-						(openParams) =>
-						{
-							LoadAndAddPartsToPlate(openParams.FileNames);
-						});
-					DoAddFileAfterCreatingEditData = false;
-				}
-				else if (pendingPartsToLoad.Count > 0)
-				{
-					LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-					pendingPartsToLoad.Clear();
-				}
-				else
-				{
-					if (!PartsAreInPrintVolume())
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							StyledMessageBox.ShowMessageBox((doCentering) =>
-							{
-								if (doCentering)
-								{
-									AutoArrangePartsInBackground();
-								}
-							}, PartsNotPrintableMessage, PartsNotPrintableTitle, StyledMessageBox.MessageType.YES_NO, "Center on Bed".Localize(), "Cancel".Localize());
-						});
-					}
-				}
 			}
+
+			Sidebar.Visible = true;
+			UnlockEditControls();
+			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+
+			Invalidate();
 		}
 	}
 }

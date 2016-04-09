@@ -193,7 +193,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
-		private List<string> pendingPartsToLoad = new List<string>();
 		private PrintItemWrapper printItemWrapper;
 		private ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
@@ -819,28 +818,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else if (AllowDragDrop())
 			{
 				// Items need to be added to the scene
-				pendingPartsToLoad.Clear();
-				foreach (string droppedFileName in fileDropArgs.DroppedFiles)
-				{
-					string extension = Path.GetExtension(droppedFileName).ToLower();
-					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
-					{
-						pendingPartsToLoad.Add(droppedFileName);
-					}
-				}
-
-				if (pendingPartsToLoad.Count > 0)
+				var partsToAdd = (from droppedFileName in fileDropArgs.DroppedFiles
+								  let extension = Path.GetExtension(droppedFileName).ToLower()
+								  where !string.IsNullOrEmpty(extension) && ApplicationSettings.OpenDesignFileParams.Contains(extension)
+								  select droppedFileName).ToArray();
+			
+				if (partsToAdd.Length > 0)
 				{
 					bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
 					if (enterEditModeBeforeAddingParts)
 					{
 						EnterEditAndCreateSelectionData();
 					}
-					else
-					{
-						LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-						pendingPartsToLoad.Clear();
-					}
+
+					loadAndAddPartsToPlate(partsToAdd);
 				}
 			}
 
@@ -997,7 +988,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				return Object3D.Load(
 					dragSource.MeshPath,
-					meshViewerWidget.CachedMeshes,
+					meshViewerWidget.ItemCache,
 					new DragDropLoadProgress(this, dragSource).UpdateLoadProgress);
 			});
 
@@ -1766,9 +1757,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasChildren && filesToLoad != null && filesToLoad.Length > 0)
 			{
-				string loadingPartLabel = "Loading Parts".Localize();
-				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
-				processingProgressControl.ProcessType = loadingPartLabelFull;
+				processingProgressControl.ProcessType = "Loading Parts".Localize() + ":";
 				processingProgressControl.Visible = true;
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
@@ -1800,12 +1789,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			List<string> filesToLoad = new List<string>();
-			if (filesToLoadIncludingZips != null && filesToLoadIncludingZips.Length > 0)
+			if (filesToLoadIncludingZips?.Any() == true)
 			{
-				for (int i = 0; i < filesToLoadIncludingZips.Length; i++)
+				List<string> filesToLoad = new List<string>();
+				foreach (string loadedFileName in filesToLoadIncludingZips)
 				{
-					string loadedFileName = filesToLoadIncludingZips[i];
 					string extension = Path.GetExtension(loadedFileName).ToUpper();
 					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
 					{
@@ -1813,8 +1801,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					else if (extension == ".ZIP")
 					{
-						ProjectFileHandler project = new ProjectFileHandler(null);
-						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+						List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
 						if (partFiles != null)
 						{
 							foreach (PrintItem part in partFiles)
@@ -1826,12 +1813,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				string progressMessage = "Loading Parts...".Localize();
+
 				double ratioPerFile = 1.0 / filesToLoad.Count;
 				double currentRatioDone = 0;
-				for (int i = 0; i < filesToLoad.Count; i++)
+
+				foreach (string loadedFileName in filesToLoad)
 				{
-					string loadedFileName = filesToLoad[i];
-					List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
+					IObject3D newItem = Object3D.Load(loadedFileName, meshViewerWidget.ItemCache, (double progress0To1, string processingState, out bool continueProcessing) =>
 					{
 						continueProcessing = !this.WidgetHasBeenClosed;
 						double ratioAvailable = (ratioPerFile * .5);
@@ -1843,38 +1831,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						return;
 					}
-					if (loadedMeshGroups != null)
+
+					if (newItem != null)
 					{
-						double ratioPerSubMesh = ratioPerFile / loadedMeshGroups.Count;
-						double subMeshRatioDone = 0;
+						Scene.ModifyChildren(children => children.Add(newItem));
 
-						var tempScene = new Object3D();
+						PlatingHelper.MoveToOpenPosition(newItem, this.Scene);
 
-						// During startup we load and reload the main control multiple times. When this occurs, sometimes the reportProgress0to100 will set
-						// continueProcessing to false and MeshFileIo.LoadAsync will return null. In those cases, we need to exit rather than process the loaded MeshGroup
-						if (loadedMeshGroups == null)
-						{
-							return;
-						}
-
-						var loadedGroup = new Object3D {
-							MeshPath = loadedFileName
-						};
-
-						// TODO: Shouldn't Object3D.Load already cover this task?
-						foreach (var meshGroup in loadedMeshGroups)
-						{
-							foreach(var mesh in meshGroup.Meshes)
-							{
-								loadedGroup.Children.Add(new Object3D() { Mesh = mesh });
-							}
-						}
-
-						tempScene.Children.Add(loadedGroup);
-
-						PlatingHelper.MoveToOpenPosition(tempScene, this.Scene);
-
-						this.InsertNewItem(tempScene);
+						// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
+						//this.InsertNewItem(tempScene);
 					}
 
 					currentRatioDone += ratioPerFile;
