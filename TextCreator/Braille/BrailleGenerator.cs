@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			if (group.HasChildren)
 			{
-				AxisAlignedBoundingBox baseBounds = group.Children.Last().GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox baseBounds = group.Children.Last().GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				// Skip the base item
 				foreach (var sceneItem in group.Children.Take(group.Children.Count - 1))
@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			if (group.HasChildren)
 			{
-				AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				double roundingScale = 20;
 				RectangleDouble baseRect = new RectangleDouble(bounds.minXYZ.x, bounds.minXYZ.y, bounds.maxXYZ.x, bounds.maxXYZ.y);
