@@ -60,6 +60,49 @@ using System.Xml.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public class BaseObject3DEditor : IObject3DEditor
+	{
+		private IObject3D item;
+		private View3DWidget view3DWidget;
+
+		public string Name { get { return "General"; } }
+
+		public IEnumerable<Type> SupportedTypes()
+		{
+			return new Type[] { typeof(Object3D) };
+		}
+
+		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget)
+		{
+			this.view3DWidget = view3DWidget;
+			this.item = item;
+			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.AbsolutePosition,
+				Visible = true,
+				Width = view3DWidget.WhiteButtonFactory.FixedWidth
+			};
+			mainContainer.AddChild(tabContainer);
+
+			Button updateButton = view3DWidget.textImageButtonFactory.Generate("Color".Localize());
+			updateButton.Margin = new BorderDouble(5);
+			updateButton.HAnchor = HAnchor.ParentRight;
+			updateButton.Click += ChangeColor;
+			tabContainer.AddChild(updateButton);
+
+			return mainContainer;
+		}
+
+		Random rand = new Random();
+		private void ChangeColor(object sender, EventArgs e)
+		{
+			item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
+			view3DWidget.Invalidate();
+		}
+	}
+
 	public interface IInteractionVolumeCreator
 	{
 		InteractionVolume CreateInteractionVolume(View3DWidget widget);
