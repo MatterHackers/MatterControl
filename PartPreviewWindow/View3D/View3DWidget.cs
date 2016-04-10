@@ -209,7 +209,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool viewIsInEditModePreLock = false;
 
-
 		private bool wasInSelectMode = false;
 
 		public event EventHandler SelectedTransformChanged;
