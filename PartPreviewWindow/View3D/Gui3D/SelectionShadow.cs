@@ -28,17 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {

@@ -287,7 +287,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							DoAddFileAfterCreatingEditData = true;
 							SwitchStateToEditing();
 						});
 					};
@@ -802,7 +801,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public bool DisplayAllValueData { get; set; }
 
 		public WindowMode windowType { get; set; }
-		private bool DoAddFileAfterCreatingEditData { get; set; }
 
 		public override void OnClosed(EventArgs e)
 		{
