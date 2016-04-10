@@ -111,9 +111,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 			zHitHeight = info.hitPosition.z;
-			if (MeshViewerToDrawWith.Scene.SelectedItem != null)
+
+			var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
+			if (selectedItem != null)
 			{
-				transformOnMouseDown = MeshViewerToDrawWith.Scene.SelectedItem.Matrix;
+				transformOnMouseDown = selectedItem.Matrix;
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -125,16 +127,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (info != null && MeshViewerToDrawWith.Scene.HasSelection)
 			{
+				var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
 				Vector3 delta = new Vector3(0, 0, info.hitPosition.z - zHitHeight);
 
 				// move it back to where it started
-				MeshViewerToDrawWith.Scene.SelectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
+				selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
 
 				if (MeshViewerToDrawWith.SnapGridDistance > 0)
 				{
 					// snap this position to the grid
 					double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
-					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 					// snap the z position
 					double bottom = selectedBounds.minXYZ.z + delta.z;
@@ -143,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// and move it from there to where we are now
-				MeshViewerToDrawWith.Scene.SelectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(delta));
+				selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(delta));
 
 				lastMoveDelta = delta;
 
@@ -160,9 +163,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent3D);
 		}
 
-		public override void SetPosition()
+		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = selectedBounds.Center;
 			Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 

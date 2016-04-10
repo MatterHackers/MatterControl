@@ -69,7 +69,6 @@ namespace MatterHackers.MatterControl
 			Padding = new BorderDouble(4);
 
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
 			this.BoundsChanged += new EventHandler(onBoundsChanges);
 		}
@@ -96,19 +95,8 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void onActivePrintItemChanged(object sender, EventArgs e)
-		{
-			if (NumberOfVisiblePanels() > 1)
-			{
-				UiThread.RunOnIdle(LoadColumnTwo);
-			}
 		}
 
 		private CompactSlidePanel compactSlidePanel;
@@ -130,7 +118,7 @@ namespace MatterHackers.MatterControl
 			ColumnTwo.CloseAllChildren();
 			PopOutManager.SaveIfClosed = true;
 
-			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
+			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled);
 			partViewContent.AnchorAll();
 
 			ColumnTwo.AddChild(partViewContent);

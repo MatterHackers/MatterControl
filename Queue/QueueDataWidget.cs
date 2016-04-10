@@ -182,42 +182,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 						createButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createButton.Click += (sender, e) =>
 						{
-							var printItemWrapper = new PrintItemWrapper(new PrintItem { DateAdded = DateTime.Now })
-							{
-								Name = "New Part",
-								FileLocation = Path.Combine(
-									ApplicationDataStorage.Instance.ApplicationLibraryDataPath,
-									Path.ChangeExtension(Path.GetRandomFileName(), ".mcx"))
-							};
+							// Clear the queue selection
+							QueueData.Instance.SelectedIndex = -1;
 
-							PathStorage side = new PathStorage();
-							side.MoveTo(0, 0);
-							side.LineTo(10, 0);
-							side.LineTo(10, 20);
-							side.LineTo(0, 20);
-							MeshGroup meshGroupToAdd = new MeshGroup(VertexSourceToMesh.Revolve(side, 30));
-
-							// Create a file on disk with the simple cylinder contents
-							string tempFile = Path.Combine(
-									ApplicationDataStorage.Instance.ApplicationLibraryDataPath,
-									Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
-
-							MeshFileIo.Save(meshGroupToAdd.Meshes.First(), tempFile);
-
-							// Create a mostly empty .mcx
-							var mostlyEmptyObject = new Object3D();
-							mostlyEmptyObject.Children.Add(new Object3D()
-							{
-								ItemType = Object3DTypes.Model,
-								MeshPath = tempFile
-							});
-							File.WriteAllText(printItemWrapper.FileLocation, JsonConvert.SerializeObject(mostlyEmptyObject));
-
-							QueueData.Instance.AddItem(printItemWrapper);
-
-							QueueData.Instance.SelectedIndex = QueueData.Instance.GetIndex(printItemWrapper);
-
-							//OpenPluginChooserWindow();
+							// Clear the scene and switch to editing view
+							view3DWidget.ClearBedAndLoadPrintItemWrapper(null, true);
 						};
 					}
 
@@ -532,7 +501,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			QueueData.Instance.AddItem(new PrintItemWrapper(partInfo.PrintItem), partInfo.InsertAfterIndex, QueueData.ValidateSizeOn32BitSystems.Skip);
 		}
 
-		void DoAddToSpecificLibrary(SaveAsWindow.SaveAsReturnInfo returnInfo)
+		void DoAddToSpecificLibrary(SaveAsWindow.SaveAsReturnInfo returnInfo, Action action)
 		{
 			if (returnInfo != null)
 			{
@@ -580,6 +549,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 				queueDataView.DragSourceRowItem != null)
 			{
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+
+				if(!File.Exists(queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation))
+				{
+					view3DWidget.DragDropSource = null;
+					queueDataView.DragSourceRowItem = null;
+					return;
+				}
+
 				if(view3DWidget.AltDragOver(screenSpaceMousePosition))
 				{
 					view3DWidget.DragDropSource.MeshPath = queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation;
