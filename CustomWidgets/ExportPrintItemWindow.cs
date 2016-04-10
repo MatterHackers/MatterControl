@@ -439,8 +439,8 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							IObject3D meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
-							MeshFileIo.Save(meshGroups, filePathToSave);
+							IObject3D item = Object3D.Load(printItemWrapper.FileLocation);
+							MeshFileIo.Save(item, filePathToSave);
 						}
 						ShowFileIfRequested(filePathToSave);
 					}
@@ -491,7 +491,7 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							IObject3D loadedItem = MeshFileIo.Load(printItemWrapper.FileLocation);
+							IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation);
 							MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave);
 						}
 						ShowFileIfRequested(filePathToSave);
