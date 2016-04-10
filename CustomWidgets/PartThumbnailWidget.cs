@@ -287,8 +287,8 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer BuildImageFromMeshGroups(IObject3D item, string stlHashCode, Point2D size)
 		{
-			// TODO: Render IObject3D as ImageBuffer
-			throw new NotImplementedException();
+			// TODO: Fix thumbnails
+			return StaticData.Instance.LoadImage(Path.Combine("Icons", "FileDialog", "folder.png"));
 		}
 
 		private static ImageBuffer BuildImageFromMeshGroups(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)

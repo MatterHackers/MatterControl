@@ -191,7 +191,6 @@
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformUndoCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DCreateSelectionData.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DAutoArange.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DCopyGroup.cs" />
