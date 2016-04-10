@@ -72,10 +72,6 @@ namespace MatterHackers.Localizations
 			MatterControlTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
 		}
 
-		public static void ClearTranslationMap()
-		{
-			MatterControlTranslationMap = new TranslationMap("Translations", "na");
-		}
 		public static string Localize(this string englishString)
 		{
 			return Get(englishString);
