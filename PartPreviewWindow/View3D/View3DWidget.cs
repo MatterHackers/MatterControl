@@ -1014,9 +1014,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasSelection)
 			{
+				var selectedItem = Scene.SelectedItem;
+
 				foreach (InteractionVolume volume in meshViewerWidget.interactionVolumes)
 				{
-					volume.SetPosition();
+					volume.SetPosition(selectedItem);
 				}
 			}
 

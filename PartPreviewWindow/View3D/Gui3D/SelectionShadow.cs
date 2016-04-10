@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -51,9 +52,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.view3DWidget = view3DWidget;
 		}
 
-		public override void SetPosition()
+		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = selectedBounds.Center;
 
 			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.x, boundsCenter.y, 0.1));
