@@ -1593,37 +1593,95 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			{
-				RadioButton renderTypeShaded = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypeShaded.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
+				RadioButton renderTypeCheckBox = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
 
-				renderTypeShaded.CheckedStateChanged += (sender, e) =>
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
-					meshViewerWidget.RenderType = RenderTypes.Shaded;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Shaded;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					}
 				};
-				viewOptionContainer.AddChild(renderTypeShaded);
+				viewOptionContainer.AddChild(renderTypeCheckBox);
 			}
 
 			{
-				RadioButton renderTypeOutlines = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypeOutlines.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
-				renderTypeOutlines.CheckedStateChanged += (sender, e) =>
+				RadioButton renderTypeCheckBox = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
-					meshViewerWidget.RenderType = RenderTypes.Outlines;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Outlines;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					}
 				};
-				viewOptionContainer.AddChild(renderTypeOutlines);
+				viewOptionContainer.AddChild(renderTypeCheckBox);
 			}
 
 			{
-				RadioButton renderTypePolygons = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypePolygons.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
-				renderTypePolygons.CheckedStateChanged += (sender, e) =>
+				RadioButton renderTypeCheckBox = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
-					meshViewerWidget.RenderType = RenderTypes.Polygons;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Polygons;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					}
 				};
-				viewOptionContainer.AddChild(renderTypePolygons);
+				viewOptionContainer.AddChild(renderTypeCheckBox);
+			}
+
+			{
+				RadioButton renderTypeCheckBox = new RadioButton("Overhang".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Overhang);
+
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
+				{
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Overhang;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+						foreach (var meshAndTransform in Scene.VisibleMeshes(Matrix4X4.Identity))
+						{
+							meshAndTransform.MeshData.MarkAsChanged();
+							// change the color to be the right thing
+							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshAndTransform.MeshData, (faceEdge) =>
+							{
+								Vector3 normal = faceEdge.containingFace.normal;
+								normal = Vector3.TransformVector(normal, meshAndTransform.Matrix).GetNormal();
+								VertexColorData colorData = new VertexColorData();
+
+								double startColor = 223.0 / 360.0;
+								double endColor = 5.0 / 360.0;
+								double delta = endColor - startColor;
+
+								RGBA_Bytes color = RGBA_Floats.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
+								if (normal.z < 0)
+								{
+									color = RGBA_Floats.FromHSL(startColor - delta * normal.z, .99, .49).GetAsRGBA_Bytes();
+								}
+
+								colorData.red = color.red;
+								colorData.green = color.green;
+								colorData.blue = color.blue;
+								return colorData;
+							});
+						}
+					}
+					else
+					{
+						foreach (var meshTransform in Scene.VisibleMeshes(Matrix4X4.Identity))
+						{
+							// turn off the overhang colors
+						}
+					}
+				};
+
+				viewOptionContainer.AddChild(renderTypeCheckBox);
 			}
 		}
 
