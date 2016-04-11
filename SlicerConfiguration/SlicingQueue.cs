@@ -203,7 +203,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return new string[] { fileToSlice };
 
 				case ".AMF":
-					List<MeshGroup> meshGroups = MeshFileIo.Load(fileToSlice);
+					// TODO: Figure out if we need to flatten the scene (non-MatterSlice) or if we can pass the mcx or amf files to MatterSlice and have it load IObject3Ds
+					throw new NotImplementedException();
+
+					// TODO: Short term workaround to get anything compiling after a long porting process
+					List<MeshGroup> meshGroups = null; // MeshFileIo.Load(fileToSlice);
 					if (meshGroups != null)
 					{
 						List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
@@ -250,7 +254,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (doMergeInSlicer)
 							{
 								int meshCount = meshGroup.Meshes.Count;
-                                for (int meshIndex =0; meshIndex< meshCount; meshIndex++)
+								for (int meshIndex =0; meshIndex< meshCount; meshIndex++)
 								{
 									Mesh mesh = meshGroup.Meshes[meshIndex];
 									if ((meshIndex % 2) == 0)

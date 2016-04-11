@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				IObject3D item = Scene.Children[meshGroupToMoveIndex];
 				if (item != Scene.SelectedItem)
 				{
-					AxisAlignedBoundingBox groupToMoveOriginalBounds = item.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox groupToMoveOriginalBounds = item.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					Vector3 groupToMoveOriginalCenter = groupToMoveOriginalBounds.Center;
 					AxisAlignedBoundingBox groupToMoveBounds = item.GetAxisAlignedBoundingBox(Scene.Children[meshGroupToMoveIndex].Matrix);
 					Vector3 groupToMoveCenter = groupToMoveBounds.Center;

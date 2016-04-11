@@ -4681,3 +4681,9 @@ Translated:Update
 English:Outer Surface
 Translated:Outer Surface
 
+English:Color
+Translated:Color
+
+English:Overhang
+Translated:Overhang
+

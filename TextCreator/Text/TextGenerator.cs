@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					//public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
 					{
-						AxisAlignedBoundingBox bounds = characterObject.GetAxisAlignedBoundingBox();
+						AxisAlignedBoundingBox bounds = characterObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 						Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 						characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			if (group.HasChildren)
 			{
-				AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				double xSize = bounds.XSize;
 				double ySize = lastSizeValue * 3;

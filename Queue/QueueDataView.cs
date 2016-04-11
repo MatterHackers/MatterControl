@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					if (this.editMode == false)
 					{
 						this.ClearSelectedItems();
-						this.EnsureSelection();
+						this.SelectedIndex = -1;
 					}
 					else
 					{
@@ -281,7 +281,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			selectedQueueItemIndex = Math.Min(selectedQueueItemIndex, QueueData.Instance.Count - 1);
 			SelectedIndex = selectedQueueItemIndex;
-			EnsureSelection();
 		}
 
 		private void SaveCurrentlySelctedItemIndex(object sender, EventArgs e)
@@ -348,7 +347,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
 			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item));
 
-			EnsureSelection();
+			SelectedIndex = addedIndexArgs.Index;
 		}
 
 		private void ItemRemovedFromToQueue(object sender, EventArgs e)
@@ -364,7 +363,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnLoad(EventArgs args)
 		{
-			EnsureSelection();
 			base.OnLoad(args);
 		}
 

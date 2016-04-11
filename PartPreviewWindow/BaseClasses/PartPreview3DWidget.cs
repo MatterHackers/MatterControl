@@ -86,29 +86,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
 
-		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo info)
+		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
 			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
-			double closestDistance = double.PositiveInfinity;
-
-			IObject3D hitObject = null;
-
-			foreach (Object3D object3D in Scene.Children)
+			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
+			if (intersectionInfo != null)
 			{
-				double distance = object3D.DistanceToHit(ray, ref info);
-				if (distance < closestDistance)
+				foreach (Object3D object3D in Scene.Children)
 				{
-					CurrentSelectInfo.PlaneDownHitPos = info.hitPosition;
-					CurrentSelectInfo.LastMoveDelta = new Vector3();
-					closestDistance = distance;
-
-					hitObject = object3D;
+					if (object3D.TraceData().Contains(intersectionInfo.closestHitObject))
+					{
+						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.hitPosition;
+						CurrentSelectInfo.LastMoveDelta = new Vector3();
+						return object3D;
+					}
 				}
 			}
 
-			return hitObject;
+			return null;
 		}
 
 		public GuiWidget GenerateHorizontalRule()

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (MeshViewerToDrawWith.Scene.HasSelection)
 					{
 						// draw the hight from the bottom to the bed
-						AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+						AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 						Vector2 screenPosition = new Vector2(-100, 0);
 						Vector3[] bottomPoints = new Vector3[4];

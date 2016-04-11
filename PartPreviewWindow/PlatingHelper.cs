@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl
 		*/
 		public static void PlaceMeshGroupOnBed(IObject3D object3D)
 		{
-			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl
 
 		public static void PlaceMeshAtHeight(IObject3D objectToMove, double zHeight)
 		{
-			AxisAlignedBoundingBox bounds = objectToMove.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox bounds = objectToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 			objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.z));
 		}
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl
 			AxisAlignedBoundingBox allPlacedMeshBounds = scene.Children.GetUnionedAxisAlignedBoundingBox();
 			
 			// move the part to the total bounds lower left side
-			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox().minXYZ;
+			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 
 			// keep moving the item until its in an open slot 
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl
 			double yStart = allPlacedMeshBounds.minXYZ.y;
 
 			// find a place to put it that doesn't hit anything
-			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 			// add in a few mm so that it will not be touching
 			itemToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (meshToTest != itemToMove)
 				{
-					AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
 					if (intersection.XSize > 0 && intersection.YSize > 0)
 					{
@@ -416,7 +416,7 @@ namespace MatterHackers.MatterControl
 
 		public static Matrix4X4 ApplyAtCenter(IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
 		{
-			return ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(), object3DToApplayTo.Matrix, transformToApply);
+			return ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplayTo.Matrix, transformToApply);
 		}
 
 		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)

@@ -60,6 +60,49 @@ using System.Xml.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public class BaseObject3DEditor : IObject3DEditor
+	{
+		private IObject3D item;
+		private View3DWidget view3DWidget;
+
+		public string Name { get { return "General"; } }
+
+		public IEnumerable<Type> SupportedTypes()
+		{
+			return new Type[] { typeof(Object3D) };
+		}
+
+		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget)
+		{
+			this.view3DWidget = view3DWidget;
+			this.item = item;
+			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.AbsolutePosition,
+				Visible = true,
+				Width = view3DWidget.WhiteButtonFactory.FixedWidth
+			};
+			mainContainer.AddChild(tabContainer);
+
+			Button updateButton = view3DWidget.textImageButtonFactory.Generate("Color".Localize());
+			updateButton.Margin = new BorderDouble(5);
+			updateButton.HAnchor = HAnchor.ParentRight;
+			updateButton.Click += ChangeColor;
+			tabContainer.AddChild(updateButton);
+
+			return mainContainer;
+		}
+
+		Random rand = new Random();
+		private void ChangeColor(object sender, EventArgs e)
+		{
+			item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
+			view3DWidget.Invalidate();
+		}
+	}
+
 	public interface IInteractionVolumeCreator
 	{
 		InteractionVolume CreateInteractionVolume(View3DWidget widget);
@@ -86,7 +129,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (view3DWidget?.meshViewerWidget?.TrackballTumbleWidget != null)
 			{
-				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				Vector3 renderPosition = bounds.Center;
 				Vector2 cornerScreenSpace = view3DWidget.meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(renderPosition) - new Vector2(40, 20);
 
@@ -109,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
 				view3DWidget = null;
 			}
-        }
+		}
 	}
 
 	public class InteractionVolumePlugin : IInteractionVolumeCreator
@@ -140,6 +183,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public readonly int EditButtonHeight = 44;
 
+		private static string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?".Localize();
+		private static string PartsNotPrintableTitle = "Parts not in print area".Localize();
+
 		private UndoBuffer undoBuffer = new UndoBuffer();
 		private Action afterSaveCallback = null;
 		private bool editorThatRequestedSave = false;
@@ -150,13 +196,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
-		private List<string> pendingPartsToLoad = new List<string>();
 		private PrintItemWrapper printItemWrapper;
 		private ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private SplitButton saveButtons;
 		private bool saveSucceded = true;
-		private EventHandler SelectionChanged;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
@@ -164,7 +208,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 
 		private bool viewIsInEditModePreLock = false;
-
 
 		private bool wasInSelectMode = false;
 
@@ -194,7 +237,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GuiWidget viewArea = new GuiWidget();
 			viewArea.AnchorAll();
 			{
-				meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "Press 'Add' to select an item.".Localize());
+				meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
 
 				PutOemImageOnBed();
 
@@ -243,8 +286,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							DoAddFileAfterCreatingEditData = true;
-							EnterEditAndCreateSelectionData();
+							SwitchStateToEditing();
 						});
 					};
 					if (printItemWrapper != null
@@ -258,7 +300,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					enterEdittingButton.Margin = new BorderDouble(right: 4);
 					enterEdittingButton.Click += (sender, e) =>
 					{
-						EnterEditAndCreateSelectionData();
+						SwitchStateToEditing();
 					};
 
 					if (printItemWrapper != null
@@ -380,13 +422,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							if (saveButtons.Visible)
 							{
-								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?".Localize(), "Save Changes".Localize(), StyledMessageBox.MessageType.YES_NO);
+								StyledMessageBox.ShowMessageBox(
+									ExitEditingAndSaveIfRequested, 
+									"Would you like to save your changes before exiting the editor?".Localize(), 
+									"Save Changes".Localize(), 
+									StyledMessageBox.MessageType.YES_NO);
 							}
 							else
 							{
 								if (partHasBeenEdited)
 								{
-									ExitEditingAndSaveIfRequired(false);
+									ExitEditingAndSaveIfRequested(false);
 								}
 								else
 								{
@@ -492,6 +538,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
 			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
@@ -544,7 +591,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return;
 			if (Scene?.TraceData() != null)
 			{
-				Scene.TraceData().RenderBvhRecursive(Scene.Matrix);
+				Scene.TraceData().RenderBvhRecursive(Scene.Matrix, 0, 3);
 			}
 		}
 
@@ -753,7 +800,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public bool DisplayAllValueData { get; set; }
 
 		public WindowMode windowType { get; set; }
-		private bool DoAddFileAfterCreatingEditData { get; set; }
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -776,28 +822,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else if (AllowDragDrop())
 			{
 				// Items need to be added to the scene
-				pendingPartsToLoad.Clear();
-				foreach (string droppedFileName in fileDropArgs.DroppedFiles)
-				{
-					string extension = Path.GetExtension(droppedFileName).ToLower();
-					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
-					{
-						pendingPartsToLoad.Add(droppedFileName);
-					}
-				}
-
-				if (pendingPartsToLoad.Count > 0)
+				var partsToAdd = (from droppedFileName in fileDropArgs.DroppedFiles
+								  let extension = Path.GetExtension(droppedFileName).ToLower()
+								  where !string.IsNullOrEmpty(extension) && ApplicationSettings.OpenDesignFileParams.Contains(extension)
+								  select droppedFileName).ToArray();
+			
+				if (partsToAdd.Length > 0)
 				{
 					bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
 					if (enterEditModeBeforeAddingParts)
 					{
-						EnterEditAndCreateSelectionData();
+						SwitchStateToEditing();
 					}
-					else
-					{
-						LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-						pendingPartsToLoad.Clear();
-					}
+
+					loadAndAddPartsToPlate(partsToAdd);
 				}
 			}
 
@@ -863,7 +901,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnLoad(EventArgs args)
 		{
-			ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+			ClearBedAndLoadPrintItemWrapper(printItemWrapper, true);
 			topMostParent = this.TopmostParent();
 
 			base.OnLoad(args);
@@ -903,7 +941,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					// Set the initial transform on the inject part to the current transform mouse position
-					var sourceItemBounds = DragDropSource.GetAxisAlignedBoundingBox();
+					var sourceItemBounds = DragDropSource.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					var center = sourceItemBounds.Center;
 
 					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
@@ -935,7 +973,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return false;
 		}
 
-
 		/// <summary>
 		/// Loads the referenced DragDropSource object.
 		/// </summary>
@@ -954,7 +991,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				return Object3D.Load(
 					dragSource.MeshPath,
-					meshViewerWidget.CachedMeshes,
+					meshViewerWidget.ItemCache,
 					new DragDropLoadProgress(this, dragSource).UpdateLoadProgress);
 			});
 
@@ -963,10 +1000,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// TODO: Changing an item in the scene has a risk of collection modified during enumeration errors. This approach works as 
 				// a proof of concept but needs to take the more difficult route of managing state and swapping the dragging instance with 
 				// the new loaded item data
-				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox().Center;
+				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
 				dragSource.Mesh = loadedItem.Mesh;
 				dragSource.Children.AddRange(loadedItem.Children);
-				dragSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragSource.GetAxisAlignedBoundingBox().minXYZ.z);
+				dragSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragSource.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
 			}
 		}
 
@@ -974,9 +1011,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasSelection)
 			{
+				var selectedItem = Scene.SelectedItem;
+
 				foreach (InteractionVolume volume in meshViewerWidget.interactionVolumes)
 				{
-					volume.SetPosition();
+					volume.SetPosition(selectedItem);
 				}
 			}
 
@@ -1075,7 +1114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
 
-							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 							if (info.hitPosition.x < selectedBounds.Center.x)
 							{
@@ -1161,7 +1200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
-					AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 					double xSnapOffset = selectedBounds.minXYZ.x;
 					// snap the x position
@@ -1292,22 +1331,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				this.SelectionChanged += (sender, e) =>
-				{
-					if (Scene.HasSelection)
-					{
-						// TODO: Likely needs to be reviewed as described above and in the context of the scene graph
-						MeshMaterialData material = MeshMaterialData.Get(Scene.SelectedItem.Mesh);
-						for (int i = 0; i < extruderButtons.Count; i++)
-						{
-							if (material.MaterialIndex - 1 == i)
-							{
-								((RadioButton)extruderButtons[i]).Checked = true;
-							}
-						}
-					}
-				};
-
 				buttonPanel.AddChild(colorSelectionContainer);
 			}
 		}
@@ -1419,7 +1442,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TupleList<string, Func<bool>> buttonList = new TupleList<string, Func<bool>>();
 			buttonList.Add("Save".Localize(), () =>
 			{
-				MergeAndSavePartsToCurrentMeshFile();
+				if(printItemWrapper == null)
+				{
+					UiThread.RunOnIdle(OpenSaveAsWindow);
+				}
+				else
+				{
+					SaveChanges(null);
+				}
+
 				return true;
 			});
 
@@ -1431,9 +1462,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
 			splitButtonFactory.FixedHeight = 40 * TextWidget.GlobalPointSizeScaleRatio;
+
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
 			saveButtons.Visible = false;
-
 			saveButtons.Margin = new BorderDouble();
 			saveButtons.VAnchor |= VAnchor.ParentCenter;
 
@@ -1497,17 +1528,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			continueProcessing = true;
 		}
 
-		private async Task ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
+		public async Task ClearBedAndLoadPrintItemWrapper(PrintItemWrapper newPrintItem, bool switchToEditingMode = false)
 		{
-			SwitchStateToNotEditing();
+			if(switchToEditingMode)
+			{
+				SwitchStateToEditing();
+			}
+			else
+			{
+				SwitchStateToNotEditing();
+			}
 
 			Scene.ModifyChildren(children => children.Clear());
 
-			if (printItemWrapper != null)
+			PrintItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+
+			if (newPrintItem != null)
 			{
 				// remove it first to make sure we don't double add it
-				PrintItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-				PrintItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents); ;
+				PrintItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
 
 				// don't load the mesh until we get all the rest of the interface built
 				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
@@ -1522,12 +1561,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					bedCenter = ActiveSliceSettings.Instance.BedCenter;
 				}
 
-				await meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, doCentering, bedCenter);
+				await meshViewerWidget.LoadMesh(newPrintItem.FileLocation, doCentering, bedCenter);
 
-				PartHasBeenChanged();
 				Invalidate();
 			}
 
+			this.printItemWrapper = newPrintItem;
+
+			PartHasBeenChanged();
 			partHasBeenEdited = false;
 		}
 
@@ -1559,37 +1600,95 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			{
-				RadioButton renderTypeShaded = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypeShaded.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
+				RadioButton renderTypeCheckBox = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
 
-				renderTypeShaded.CheckedStateChanged += (sender, e) =>
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
-					meshViewerWidget.RenderType = RenderTypes.Shaded;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Shaded;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					}
 				};
-				viewOptionContainer.AddChild(renderTypeShaded);
+				viewOptionContainer.AddChild(renderTypeCheckBox);
 			}
 
 			{
-				RadioButton renderTypeOutlines = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypeOutlines.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
-				renderTypeOutlines.CheckedStateChanged += (sender, e) =>
+				RadioButton renderTypeCheckBox = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
-					meshViewerWidget.RenderType = RenderTypes.Outlines;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Outlines;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					}
 				};
-				viewOptionContainer.AddChild(renderTypeOutlines);
+				viewOptionContainer.AddChild(renderTypeCheckBox);
 			}
 
 			{
-				RadioButton renderTypePolygons = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypePolygons.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
-				renderTypePolygons.CheckedStateChanged += (sender, e) =>
+				RadioButton renderTypeCheckBox = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
-					meshViewerWidget.RenderType = RenderTypes.Polygons;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Polygons;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					}
 				};
-				viewOptionContainer.AddChild(renderTypePolygons);
+				viewOptionContainer.AddChild(renderTypeCheckBox);
+			}
+
+			{
+				RadioButton renderTypeCheckBox = new RadioButton("Overhang".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Overhang);
+
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
+				{
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Overhang;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+						foreach (var meshAndTransform in Scene.VisibleMeshes(Matrix4X4.Identity))
+						{
+							meshAndTransform.MeshData.MarkAsChanged();
+							// change the color to be the right thing
+							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshAndTransform.MeshData, (faceEdge) =>
+							{
+								Vector3 normal = faceEdge.containingFace.normal;
+								normal = Vector3.TransformVector(normal, meshAndTransform.Matrix).GetNormal();
+								VertexColorData colorData = new VertexColorData();
+
+								double startColor = 223.0 / 360.0;
+								double endColor = 5.0 / 360.0;
+								double delta = endColor - startColor;
+
+								RGBA_Bytes color = RGBA_Floats.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
+								if (normal.z < 0)
+								{
+									color = RGBA_Floats.FromHSL(startColor - delta * normal.z, .99, .49).GetAsRGBA_Bytes();
+								}
+
+								colorData.red = color.red;
+								colorData.green = color.green;
+								colorData.blue = color.blue;
+								return colorData;
+							});
+						}
+					}
+					else
+					{
+						foreach (var meshTransform in Scene.VisibleMeshes(Matrix4X4.Identity))
+						{
+							// turn off the overhang colors
+						}
+					}
+				};
+
+				viewOptionContainer.AddChild(renderTypeCheckBox);
 			}
 		}
 
@@ -1705,15 +1804,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ExitEditingAndSaveIfRequired(bool response)
+		private void ExitEditingAndSaveIfRequested(bool userResponseYesSave)
 		{
-			if (response == true)
+			if (userResponseYesSave)
 			{
-				MergeAndSavePartsToCurrentMeshFile(SwitchStateToNotEditing);
+				SaveChanges(null, SwitchStateToNotEditing);
 			}
 			else
 			{
+				// Discard changes in scene, revert back to original state
 				SwitchStateToNotEditing();
+
 				// and reload the part
 				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
 			}
@@ -1723,9 +1824,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasChildren && filesToLoad != null && filesToLoad.Length > 0)
 			{
-				string loadingPartLabel = "Loading Parts".Localize();
-				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
-				processingProgressControl.ProcessType = loadingPartLabelFull;
+				processingProgressControl.ProcessType = "Loading Parts".Localize() + ":";
 				processingProgressControl.Visible = true;
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
@@ -1757,12 +1856,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			List<string> filesToLoad = new List<string>();
-			if (filesToLoadIncludingZips != null && filesToLoadIncludingZips.Length > 0)
+			if (filesToLoadIncludingZips?.Any() == true)
 			{
-				for (int i = 0; i < filesToLoadIncludingZips.Length; i++)
+				List<string> filesToLoad = new List<string>();
+				foreach (string loadedFileName in filesToLoadIncludingZips)
 				{
-					string loadedFileName = filesToLoadIncludingZips[i];
 					string extension = Path.GetExtension(loadedFileName).ToUpper();
 					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
 					{
@@ -1770,8 +1868,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					else if (extension == ".ZIP")
 					{
-						ProjectFileHandler project = new ProjectFileHandler(null);
-						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+						List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
 						if (partFiles != null)
 						{
 							foreach (PrintItem part in partFiles)
@@ -1783,12 +1880,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				string progressMessage = "Loading Parts...".Localize();
+
 				double ratioPerFile = 1.0 / filesToLoad.Count;
 				double currentRatioDone = 0;
-				for (int i = 0; i < filesToLoad.Count; i++)
+
+				foreach (string loadedFileName in filesToLoad)
 				{
-					string loadedFileName = filesToLoad[i];
-					List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
+					IObject3D newItem = Object3D.Load(loadedFileName, meshViewerWidget.ItemCache, (double progress0To1, string processingState, out bool continueProcessing) =>
 					{
 						continueProcessing = !this.WidgetHasBeenClosed;
 						double ratioAvailable = (ratioPerFile * .5);
@@ -1800,38 +1898,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						return;
 					}
-					if (loadedMeshGroups != null)
+
+					if (newItem != null)
 					{
-						double ratioPerSubMesh = ratioPerFile / loadedMeshGroups.Count;
-						double subMeshRatioDone = 0;
+						Scene.ModifyChildren(children => children.Add(newItem));
 
-						var tempScene = new Object3D();
+						PlatingHelper.MoveToOpenPosition(newItem, this.Scene);
 
-						// During startup we load and reload the main control multiple times. When this occurs, sometimes the reportProgress0to100 will set
-						// continueProcessing to false and MeshFileIo.LoadAsync will return null. In those cases, we need to exit rather than process the loaded MeshGroup
-						if (loadedMeshGroups == null)
-						{
-							return;
-						}
-
-						var loadedGroup = new Object3D {
-							MeshPath = loadedFileName
-						};
-
-						// TODO: Shouldn't Object3D.Load already cover this task?
-						foreach (var meshGroup in loadedMeshGroups)
-						{
-							foreach(var mesh in meshGroup.Meshes)
-							{
-								loadedGroup.Children.Add(new Object3D() { Mesh = mesh });
-							}
-						}
-
-						tempScene.Children.Add(loadedGroup);
-
-						PlatingHelper.MoveToOpenPosition(tempScene, this.Scene);
-
-						this.InsertNewItem(tempScene);
+						// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
+						//this.InsertNewItem(tempScene);
 					}
 
 					currentRatioDone += ratioPerFile;
@@ -1944,306 +2019,87 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GuiWidget selectedObjectPanel;
 		private FlowLayoutWidget editorPanel;
 
-		public void ProcessTree(IObject3D object3D)
-		{
-
-		}
-
-		public void SaveScene(string filePath)
-		{
-			// TODO: Drop children of items containing populated MeshPath attributes
-			var itemsToSave = from object3D in Scene.Descendants()
-							  where object3D.MeshPath == null &&
-									object3D.Mesh != null
-							  select object3D;
-
-			foreach(var item in itemsToSave)
-			{
-				SimpleSave(item);
-			}
-
-			File.WriteAllText(filePath, JsonConvert.SerializeObject(Scene, Formatting.Indented));
-		}
-
-		private void SimpleSave(IObject3D object3D)
-		{
-			string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
-
-			MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-
-			try
-			{
-				// TODO: jlewin - temp path works for testing, still need to build library path and fix cache purge to be scene aware 
-				//
-				// get a new location to save to
-				string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
-
-				// save to the new temp location
-				bool savedSuccessfully = MeshFileIo.Save(
-					new List<MeshGroup> { new MeshGroup(object3D.Mesh) }, 
-					tempFileNameToSaveTo, 
-					outputInfo, 
-					ReportProgressChanged);
-
-				if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
-				{
-					object3D.MeshPath = tempFileNameToSaveTo;
-				}
-			}
-			catch (Exception ex)
-			{
-				Trace.WriteLine("Error saving file: ", ex.Message);
-			}
-		}
-
-		private void MergeAndSavePartsDoWork(SaveAsWindow.SaveAsReturnInfo returnInfo)
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			string mcxPath = Path.ChangeExtension(printItemWrapper.FileLocation, ".mcx");
-
-			try
-			{
-				// If null we are replacing a file from the current print item wrapper
-				if (returnInfo == null)
-				{
-					// Only save as .mcx
-					if (Path.GetExtension(printItemWrapper.FileLocation) != ".mcx")
-					{
-						printItemWrapper.FileLocation = mcxPath;
-					}
-				}
-				else // we are saving a new file and it will not exist until we are done
-				{
-					PrintItem printItem = new PrintItem();
-					printItem.Name = returnInfo.newName;
-					printItem.FileLocation = Path.GetFullPath(mcxPath);
-
-					printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider.GetProviderLocator());
-				}
-
-				SaveScene(mcxPath);
-
-				printItemWrapper.PrintItem.Commit();
-
-				// Wait for a second to report the file changed to give the OS a chance to finish closing it.
-				UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
-
-				if (returnInfo?.destinationLibraryProvider != null)
-				{
-					// save this part to correct library provider
-					LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
-					if (libraryToSaveTo != null)
-					{
-						libraryToSaveTo.AddItem(printItemWrapper);
-						libraryToSaveTo.Dispose();
-					}
-				}
-				else // we have already saved it and the library should pick it up
-				{
-				}
-
-				saveSucceded = true;
-			}
-			catch (Exception ex)
-			{
-				Trace.WriteLine("Error saving file: ", ex.Message);
-			}
-
-			return;
-
-			///* Classic save implementation temporarily disabled */
-
-			//if (returnInfo != null)
-			//{
-			//	PrintItem printItem = new PrintItem();
-			//	printItem.Name = returnInfo.newName;
-			//	printItem.FileLocation = Path.GetFullPath(returnInfo.fileNameAndPath);
-			//	printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider.GetProviderLocator());
-			//}
-
-			//// we sent the data to the async lists but we will not pull it back out (only use it as a temp holder).
-			////PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-			//Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			//try
-			//{
-			//	string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
-
-			//	MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-
-			//	// If null we are replacing a file from the current print item wrapper
-			//	if (returnInfo == null)
-			//	{
-			//		var fileInfo = new FileInfo(printItemWrapper.FileLocation);
-
-			//		string altFilePath = Path.ChangeExtension(fileInfo.FullName, ".mcx");
-			//		SaveScene(altFilePath);
-
-			//		bool requiresTypeChange = !fileInfo.Extension.Equals(".amf", StringComparison.OrdinalIgnoreCase);
-			//		if (requiresTypeChange && !printItemWrapper.UseIncrementedNameDuringTypeChange)
-			//		{
-			//			// Not using incremented file name, simply change to AMF
-			//			printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".amf");
-			//		}
-			//		else if (requiresTypeChange)
-			//		{
-			//			string newFileName;
-			//			string incrementedFileName;
-
-			//			// Switching from .stl, .obj or similar to AMF. Save the file and update the
-			//			// the filename with an incremented (n) value to reflect the extension change in the UI 
-			//			string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
-
-			//			// Drop bracketed number sections from our source filename to ensure we don't generate something like "file (1) (1).amf"
-			//			if (fileName.Contains("("))
-			//			{
-			//				fileName = fileNameNumberMatch.Replace(fileName, "").Trim();
-			//			}
-
-			//			// Generate and search for an incremented file name until no match is found at the target directory
-			//			int foundCount = 0;
-			//			do
-			//			{
-			//				newFileName = string.Format("{0} ({1})", fileName, ++foundCount);
-			//				incrementedFileName = Path.Combine(fileInfo.DirectoryName, newFileName + ".amf");
-
-			//				// Continue incrementing while any matching file exists
-			//			} while (Directory.GetFiles(fileInfo.DirectoryName, newFileName + ".*").Any());
-
-			//			// Change the FileLocation to the new AMF file
-			//			printItemWrapper.FileLocation = incrementedFileName;
-			//		}
-
-			//		try
-			//		{
-			//			// get a new location to save to
-			//			string tempFileNameToSaveTo = ApplicationDataStorage.Instance.GetTempFileName("amf");
-
-			//			// save to the new temp location
-			//			bool savedSuccessfully = false; // = MeshFileIo.Save(MeshGroups, tempFileNameToSaveTo, outputInfo, ReportProgressChanged);
-
-			//			// Swap out the files if the save operation completed successfully 
-			//			if (savedSuccessfully && File.Exists(tempFileNameToSaveTo))
-			//			{
-			//				// Ensure the target path is clear
-			//				if(File.Exists(printItemWrapper.FileLocation))
-			//				{
-			//					File.Delete(printItemWrapper.FileLocation);
-			//				}
-
-			//				// Move the newly saved file back into place
-			//				File.Move(tempFileNameToSaveTo, printItemWrapper.FileLocation);
-
-			//				// Once the file is swapped back into place, update the PrintItem to account for extension change
-			//				printItemWrapper.PrintItem.Commit();
-			//			}
-			//		}
-			//		catch(Exception ex)
-			//		{
-			//			Trace.WriteLine("Error saving file: ", ex.Message);
-			//		}
-			//	}
-			//	else // we are saving a new file and it will not exist until we are done
-			//	{
-			//		//MeshFileIo.Save(MeshGroups, printItemWrapper.FileLocation, outputInfo, ReportProgressChanged);
-			//	}
-
-			//	// Wait for a second to report the file changed to give the OS a chance to finish closing it.
-			//	UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
-
-			//	if (returnInfo != null
-			//		&& returnInfo.destinationLibraryProvider != null)
-			//	{
-			//		// save this part to correct library provider
-			//		LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
-			//		if (libraryToSaveTo != null)
-			//		{
-			//			libraryToSaveTo.AddItem(printItemWrapper);
-			//			libraryToSaveTo.Dispose();
-			//		}
-			//	}
-			//	else // we have already saved it and the library should pick it up
-			//	{
-			//	}
-
-			//	saveSucceded = true;
-			//}
-			//catch (System.UnauthorizedAccessException e2)
-			//{
-			//	Debug.Print(e2.Message);
-			//	GuiWidget.BreakInDebugger();
-			//	saveSucceded = false;
-			//	UiThread.RunOnIdle(() =>
-			//	{
-			//		//Do something special when unauthorized?
-			//		StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-			//	});
-			//}
-			//catch (Exception e)
-			//{
-			//	Debug.Print(e.Message);
-			//	GuiWidget.BreakInDebugger();
-			//	saveSucceded = false;
-			//	UiThread.RunOnIdle(() =>
-			//	{
-			//		StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-			//	});
-			//}
-		}
-
-		private void MergeAndSavePartsDoCompleted()
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-			UnlockEditControls();
-
-			// NOTE: we do not pull the data back out of the async lists.
-			if (saveSucceded)
-			{
-				saveButtons.Visible = false;
-			}
-
-			if (afterSaveCallback != null)
-			{
-				afterSaveCallback();
-			}
-		}
-
-		private async void MergeAndSavePartsToCurrentMeshFile(Action eventToCallAfterSave = null)
+		private async void SaveChanges(SaveAsWindow.SaveAsReturnInfo returnInfo = null, Action eventToCallAfterSave = null)
 		{
 			editorThatRequestedSave = true;
 			afterSaveCallback = eventToCallAfterSave;
 
 			if (Scene.HasChildren)
 			{
-				string progressSavingPartsLabel = "Saving".Localize();
-				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
-				processingProgressControl.ProcessType = progressSavingPartsLabelFull;
+				processingProgressControl.ProcessType = "Saving".Localize() + ":";
 				processingProgressControl.Visible = true;
 				processingProgressControl.PercentComplete = 0;
+
 				LockEditControls();
 
-				await Task.Run(() => MergeAndSavePartsDoWork(null));
-				MergeAndSavePartsDoCompleted();
-			}
-		}
+				// Perform the actual save operation
+				await Task.Run(() =>
+				{
+					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-		private async void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
-		{
-			editorThatRequestedSave = true;
-			if (Scene.HasChildren)
-			{
-				string progressSavingPartsLabel = "Saving".Localize();
-				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
-				processingProgressControl.ProcessType = progressSavingPartsLabelFull;
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
+					try
+					{
+						// If null we are replacing a file from the current print item wrapper
+						if (returnInfo == null)
+						{
+							// Only save as .mcx
+							if (Path.GetExtension(printItemWrapper.FileLocation) != ".mcx")
+							{
+								printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".mcx");
+							}
+						}
+						else // Otherwise we are saving a new file
+						{
+							printItemWrapper = new PrintItemWrapper(
+								new PrintItem()
+								{
+									Name = returnInfo.newName,
+									FileLocation = Path.ChangeExtension(returnInfo.fileNameAndPath, ".mcx")
+								}, 
+								returnInfo.destinationLibraryProvider.GetProviderLocator());
+						}
 
-				await Task.Run(() => MergeAndSavePartsDoWork(returnInfo));
-				MergeAndSavePartsDoCompleted();
+						// Reset the cache to the new data
+						//meshViewerWidget.ItemCache[printItemWrapper.FileLocation] = Scene;
+						meshViewerWidget.ItemCache.Remove(printItemWrapper.FileLocation);
+
+						// TODO: Hook up progress reporting
+						Scene.Save(printItemWrapper.FileLocation, ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
+
+						printItemWrapper.PrintItem.Commit();
+
+						// Wait for a second to report the file changed to give the OS a chance to finish closing it.
+						UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
+
+						// Save to the destination provider, otherwise it already exists and has a file monitor
+						if (returnInfo?.destinationLibraryProvider != null)
+						{
+							// save this part to correct library provider
+							LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
+							if (libraryToSaveTo != null)
+							{
+								libraryToSaveTo.AddItem(printItemWrapper);
+								libraryToSaveTo.Dispose();
+							}
+						}
+
+						saveSucceded = true;
+					}
+					catch (Exception ex)
+					{
+						Trace.WriteLine("Error saving file: ", ex.Message);
+					}
+				});
+
+				// Post Save cleanup
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
+
+				UnlockEditControls();
+				saveButtons.Visible = !saveSucceded;
+				afterSaveCallback?.Invoke();
 			}
 		}
 
@@ -2267,14 +2123,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UnlockEditControls();
 			}
 
-			SelectionChanged?.Invoke(this, null);
+			// Used to be bound to SelectionChanged event that no one was using and that overlapped with Queue SelectionChanged events that already signify this state change. 
+			// Eliminate unnecessary event and restore later if some external caller needs this hook
+			if (Scene.HasSelection)
+			{
+				// TODO: Likely needs to be reviewed as described above and in the context of the scene graph
+				MeshMaterialData material = MeshMaterialData.Get(Scene.SelectedItem.Mesh);
+				for (int i = 0; i < extruderButtons.Count; i++)
+				{
+					if (material.MaterialIndex - 1 == i)
+					{
+						((RadioButton)extruderButtons[i]).Checked = true;
+					}
+				}
+			}
 
 			if (openMode == OpenMode.Editing)
 			{
-				UiThread.RunOnIdle(EnterEditAndCreateSelectionData);
+				UiThread.RunOnIdle(SwitchStateToEditing);
 			}
-
-			meshViewerWidget.ResetView();
 		}
 
 		private bool PartsAreInPrintVolume()
@@ -2284,7 +2151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty;
-				foreach(var aabb in Scene.Children.Select(item => item.GetAxisAlignedBoundingBox()))
+				foreach(var aabb in Scene.Children.Select(item => item.GetAxisAlignedBoundingBox(Matrix4X4.Identity)))
 				{
 					allBounds += aabb;
 				}
@@ -2322,13 +2189,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (saveAsWindow == null)
 			{
-				List<ProviderLocatorNode> providerLocator = null;
-				if (printItemWrapper.SourceLibraryProviderLocator != null)
-				{
-					providerLocator = printItemWrapper.SourceLibraryProviderLocator;
-				}
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator, true, true);
-				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
+				saveAsWindow = new SaveAsWindow(SaveChanges, printItemWrapper?.SourceLibraryProviderLocator, true, true);
+				saveAsWindow.Closed += SaveAsWindow_Closed;
 			}
 			else
 			{
@@ -2402,6 +2264,61 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Scene.ModifyChildren(ClearSelectionApplyChanges);
 			}
+		}
+
+		internal async void SwitchStateToEditing()
+		{
+			if (enterEditButtonsContainer.Visible == true)
+			{
+				enterEditButtonsContainer.Visible = false;
+			}
+
+			this.IsEditing = true;
+
+			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+
+			processingProgressControl.Visible = true;
+			LockEditControls();
+			viewIsInEditModePreLock = true;
+
+			if (Scene.HasChildren)
+			{
+				// CreateSelectionData()
+				await Task.Run(() =>
+				{
+					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+					processingProgressControl.ProcessType = "Preparing Meshes".Localize() + ":";
+
+					// Force trace data generation
+					foreach (var object3D in Scene.Children)
+					{
+						object3D.TraceData();
+					}
+
+					// TODO: Why were we recreating GLData on edit? 
+					//bool continueProcessing2;
+					//ReportProgressChanged(1, "Creating GL Data", out continueProcessing2);
+					//meshViewerWidget.CreateGlDataForMeshes(Scene.Children);
+				});
+
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
+
+				Scene.SelectFirstChild();
+			}
+
+			Sidebar.Visible = true;
+			UnlockEditControls();
+			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+
+			Invalidate();
+		}
+
+		private void onActivePrintItemChanged(object sender, EventArgs e)
+		{
+			ClearBedAndLoadPrintItemWrapper(PrinterConnectionAndCommunication.Instance.ActivePrintItem);
 		}
 
 		public void UnlockEditControls()
