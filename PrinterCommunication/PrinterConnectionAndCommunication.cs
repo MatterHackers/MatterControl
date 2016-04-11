@@ -1112,12 +1112,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					int extruderIndex0Based = Math.Min((int)exturderIndex, MAX_EXTRUDERS - 1);
-					SetTargetExtruderTemperature(extruderIndex0Based, tempBeingSet);
+					targetExtruderTemperature[extruderIndex0Based] = tempBeingSet;
 				}
 				else
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-					SetTargetExtruderTemperature(0, tempBeingSet);
+					targetExtruderTemperature[0] = tempBeingSet;
 				}
 				OnExtruderTemperatureSet(e);
 			}

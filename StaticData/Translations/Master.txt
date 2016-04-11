@@ -4528,3 +4528,12 @@ Translated:This will only work on specific hardware. Do not use unless you are s
 English:Show Firmware Updater
 Translated:Show Firmware Updater
 
+English:Add a new Macro
+Translated:Add a new Macro
+
+English:Give the macro a name
+Translated:Give the macro a name
+
+English:This should be in 'G-Code'
+Translated:This should be in 'G-Code'
+
