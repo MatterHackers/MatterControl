@@ -363,7 +363,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Task.Run(() =>
 					{
 						IObject3D item = createMeshFunction();
-						item.Mesh.Triangulate();
+						item.Mesh?.Triangulate();
 
 						ThumbnailTracer tracer = new ThumbnailTracer(item, 64, 64);
 						tracer.DoTrace();
