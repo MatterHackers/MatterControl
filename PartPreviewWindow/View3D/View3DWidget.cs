@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
 				processingProgressControl.Visible = false;
 
-				// If the window is embeded (in the center pannel) and there is no item loaded then don't show the add button
+				// If the window is embedded (in the center panel) and there is no item loaded then don't show the add button
 				enterEditButtonsContainer = new FlowLayoutWidget();
 				{
 					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
