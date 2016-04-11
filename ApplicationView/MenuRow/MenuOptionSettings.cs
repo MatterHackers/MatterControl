@@ -28,7 +28,7 @@ namespace MatterHackers.MatterControl
 			{
 				{"Settings".Localize(), openPrintingPanel_Click},
 				{"Controls".Localize(), openControlsPanel_Click},
-				{"Terminal".Localize(), openTermanialPanel_Click},
+				{"Terminal".Localize(), openTerminalPanel_Click},
 			};
 		}
 
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
-		private bool openTermanialPanel_Click()
+		private bool openTerminalPanel_Click()
 		{
 			UiThread.RunOnIdle(TerminalWindow.Show);
 			return true;
