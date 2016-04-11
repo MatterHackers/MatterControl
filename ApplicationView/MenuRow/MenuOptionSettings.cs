@@ -25,14 +25,14 @@ namespace MatterHackers.MatterControl
 		override protected TupleList<string, Func<bool>> GetMenuItems()
 		{
 			return new TupleList<string, Func<bool>>
-            {
-                {LocalizedString.Get("Settings"), openPrintingPannel_Click},
-                {LocalizedString.Get("Controls"), openControlsPannel_Click},
-				{LocalizedString.Get("Terminal"), openTermanialPannel_Click},
-            };
+			{
+				{"Settings".Localize(), openPrintingPanel_Click},
+				{"Controls".Localize(), openControlsPanel_Click},
+				{"Terminal".Localize(), openTerminalPanel_Click},
+			};
 		}
 
-		private bool openPrintingPannel_Click()
+		private bool openPrintingPanel_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
-		private bool openControlsPannel_Click()
+		private bool openControlsPanel_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
-		private bool openTermanialPannel_Click()
+		private bool openTerminalPanel_Click()
 		{
 			UiThread.RunOnIdle(TerminalWindow.Show);
 			return true;
