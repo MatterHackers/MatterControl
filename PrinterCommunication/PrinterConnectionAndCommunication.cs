@@ -1119,7 +1119,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					targetExtruderTemperature[0] = tempBeingSet;
 				}
-				OnExtruderTemperatureSet(e);
+				OnExtruderTemperatureSet(new TemperatureEventArgs((int)exturderIndex, tempBeingSet));
 			}
 		}
 
@@ -2889,7 +2889,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						lock (locker)
 						{
 							serialPort.Write(lineToWrite);
-							if (true) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
+							if (false) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
 							{
 								timeSinceRecievedOk.Stop();
 								if (!haveHookedDrawing)
