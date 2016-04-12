@@ -202,12 +202,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					extrudersUsed[0] = true;
 					return new string[] { fileToSlice };
 
+				case ".MCX":
 				case ".AMF":
-					// TODO: Figure out if we need to flatten the scene (non-MatterSlice) or if we can pass the mcx or amf files to MatterSlice and have it load IObject3Ds
-					throw new NotImplementedException();
-
-					// TODO: Short term workaround to get anything compiling after a long porting process
-					List<MeshGroup> meshGroups = null; // MeshFileIo.Load(fileToSlice);
+					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
+					List<MeshGroup> meshGroups = new List<MeshGroup> { Object3D.Load(fileToSlice).Flatten() };
 					if (meshGroups != null)
 					{
 						List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
@@ -321,8 +319,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Directory.CreateDirectory(folderToSaveStlsTo);
 			}
-			MeshOutputSettings settings = new MeshOutputSettings();
-			settings.MaterialIndexsToSave = materialIndexsToSaveInThisSTL;
+
+			MeshOutputSettings settings = new MeshOutputSettings()
+			{
+				MaterialIndexsToSave = materialIndexsToSaveInThisSTL
+			};
+
 			string extruder1StlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
 			MeshFileIo.Save(extruderMeshGroup, extruder1StlFileToSlice, settings);
 			return extruder1StlFileToSlice;
@@ -343,7 +345,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					bool doMergeInSlicer = false;
 					string mergeRules = "";
 					doMergeInSlicer = ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
-                    string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
+					string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
 					string fileToSlice = stlFileLocations[0];
 					// check that the STL file is currently on disk
 					if (File.Exists(fileToSlice))

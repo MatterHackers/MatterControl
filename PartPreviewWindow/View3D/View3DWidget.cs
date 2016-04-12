@@ -538,7 +538,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
 			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
@@ -2314,11 +2313,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			Invalidate();
-		}
-
-		private void onActivePrintItemChanged(object sender, EventArgs e)
-		{
-			ClearBedAndLoadPrintItemWrapper(PrinterConnectionAndCommunication.Instance.ActivePrintItem);
 		}
 
 		public void UnlockEditControls()

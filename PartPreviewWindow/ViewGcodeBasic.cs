@@ -88,13 +88,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private MeshViewerWidget.BedShape bedShape;
 		private int sliderWidth;
 
-		public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowMode)
+		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowMode)
 		{
 			this.viewerVolume = viewerVolume;
 			this.bedShape = bedShape;
 			this.bedCenter = bedCenter;
 			this.windowMode = windowMode;
-			this.printItem = printItem;
 
 			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
 			{
@@ -119,10 +118,51 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
 		}
 
+		public void LoadItem(PrintItemWrapper printItem)
+		{
+			this.printItem = printItem;
+			Clear3DGCode(null, null);
+
+			//firstProcessingMessage = "Loading G-Code...".Localize();
+			if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
+			{
+				gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
+			}
+			else
+			{
+				if (File.Exists(printItem.FileLocation))
+				{
+					string gcodePathAndFileName = printItem.GetGCodePathAndFileName();
+					bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
+
+					//if (printItem.SlicingHadError)
+					//{
+					//	firstProcessingMessage = slicingErrorMessage;
+					//}
+					//else
+					//{
+					//	firstProcessingMessage = pressGenerateMessage;
+					//}
+
+					if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
+					{
+						gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
+					}
+
+					// we only hook these up to make sure we can regenerate the gcode when we want
+					printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
+					printItem.SlicingDone += sliceItem_Done;
+				}
+				//else
+				//{
+				//	firstProcessingMessage = string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name);
+				//}
+			}
+		}
+
 		private void Clear3DGCode(object sender, EventArgs e)
 		{
-			if (gcodeViewWidget != null
-				&& gcodeViewWidget.gCodeRenderer != null)
+			if (gcodeViewWidget?.gCodeRenderer != null)
 			{
 				gcodeViewWidget.gCodeRenderer.Clear3DGCode();
 				gcodeViewWidget.Invalidate();
@@ -194,49 +234,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			gcodeDisplayWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 			string firstProcessingMessage = "Press 'Add' to select an item.".Localize();
-
-			if (printItem != null)
-			{
-				firstProcessingMessage = "Loading G-Code...".Localize();
-				if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
-				{
-					gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
-				}
-				else
-				{
-					if (File.Exists(printItem.FileLocation))
-					{
-						string gcodePathAndFileName = printItem.GetGCodePathAndFileName();
-						bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
-
-						if (printItem.SlicingHadError)
-						{
-							firstProcessingMessage = slicingErrorMessage;
-						}
-						else
-						{
-							firstProcessingMessage = pressGenerateMessage;
-						}
-
-						if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
-						{
-							gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
-						}
-
-						// we only hook these up to make sure we can regenerate the gcode when we want
-						printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-						printItem.SlicingDone += sliceItem_Done;
-					}
-					else
-					{
-						firstProcessingMessage = string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name);
-					}
-				}
-			}
-			else
-			{
-				generateGCodeButton.Visible = false;
-			}
 
 			SetProcessingMessage(firstProcessingMessage);
 			centerPartPreviewAndControls.AddChild(gcodeDisplayWidget);
@@ -1121,7 +1118,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
 			printItem.SlicingDone -= sliceItem_Done;
 
-			UiThread.RunOnIdle(CreateAndAddChildren);
+			UiThread.RunOnIdle(() => LoadItem(printItem));
+			
 			startedSliceFromGenerateButton = false;
 		}
 	}
