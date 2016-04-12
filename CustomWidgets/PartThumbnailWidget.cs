@@ -285,12 +285,6 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		private static ImageBuffer BuildImageFromMeshGroups(IObject3D item, string stlHashCode, Point2D size)
-		{
-			// TODO: Fix thumbnails
-			return StaticData.Instance.LoadImage(Path.Combine("Icons", "FileDialog", "folder.png"));
-		}
-
 		private static ImageBuffer BuildImageFromMeshGroups(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
 		{
 			if (loadedMeshGroups != null
@@ -450,7 +444,7 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
-			IObject3D loadedItem = MeshFileIo.Load(this.ItemWrapper.FileLocation);
+			IObject3D loadedItem = Object3D.Load(this.ItemWrapper.FileLocation);
 
 			RenderType renderType = GetRenderType(this.ItemWrapper.FileLocation);
 
@@ -461,7 +455,7 @@ namespace MatterHackers.MatterControl
 						ThumbnailTracer tracer = new ThumbnailTracer(loadedItem, BigRenderSize.x, BigRenderSize.y);
 						tracer.DoTrace();
 
-						bigRender = tracer.destImage;
+						bigRender = (tracer.destImage != null) ? tracer.destImage : new ImageBuffer(this.noThumbnailImage);
 					}
 					break;
 
@@ -494,7 +488,7 @@ namespace MatterHackers.MatterControl
 
 					this.thumbnailImage = new ImageBuffer(this.buildingThumbnailImage);
 					this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-					bigRender = BuildImageFromMeshGroups(loadedItem, stlHashCode, BigRenderSize);
+					bigRender = BuildImageFromMeshGroups(loadedItem.ToMeshGroupList(), stlHashCode, BigRenderSize);
 					if (bigRender == null)
 					{
 						bigRender = new ImageBuffer(this.noThumbnailImage);
