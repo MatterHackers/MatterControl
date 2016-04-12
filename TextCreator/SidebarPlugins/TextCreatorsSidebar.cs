@@ -33,11 +33,17 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.Plugins.BrailleBuilder;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
 	public class TextCreatorsSidebar : SideBarPlugin
 	{
+		private static IObject3D textItem;
+		private static IObject3D brailleItem;
+
 		public override GuiWidget CreateSideBarTool(View3DWidget view3DWidget)
 		{
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -60,25 +66,51 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonRow.AddChild(
-				view3DWidget.Sidebar.CreateAddButton("Text".Localize(), "pyramid.png", () =>
+				view3DWidget.Sidebar.CreateAddButton("Text".Localize(), "textcreator.png", () =>
 				{
-					var textGenerator = new TextGenerator();
-
-					return textGenerator.CreateText(
+					if(textItem == null)
+					{
+						var generator = new TextGenerator();
+						var generatedItem = generator.CreateText(
 							"Text".Localize(),
 							1,
 							.25,
 							1,
 							true);
+
+						textItem = new Object3D()
+						{
+							ItemType = Object3DTypes.Model,
+							Mesh = MeshFileIo.DoMerge(generatedItem.ToMeshGroupList(), new MeshOutputSettings())
+						}; 
+					}
+
+					return textItem;
 				}));
 
 			buttonRow.AddChild(
-				view3DWidget.Sidebar.CreateAddButton("Braille".Localize(), "pyramid.png", () =>
+				view3DWidget.Sidebar.CreateAddButton("Braille".Localize(), "braillecreator.png", () =>
 				{
-					var textGenerator = new BrailleGenerator();
-					string braille = "Braille".Localize();
+					if (brailleItem == null)
+					{
+						string braille = "Braille".Localize();
 
-					return textGenerator.CreateText(braille, 1,	.25, true, braille);
+						var generator = new BrailleGenerator();
+						var generatedItem = generator.CreateText(
+							braille,
+							1,
+							.25,
+							true,
+							braille);
+
+						brailleItem = new Object3D()
+						{
+							ItemType = Object3DTypes.Model,
+							Mesh = MeshFileIo.DoMerge(generatedItem.ToMeshGroupList(), new MeshOutputSettings())
+						};
+					}
+
+					return brailleItem;
 				}));
 
 			tabContainer.AddChild(buttonRow);
