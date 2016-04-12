@@ -44,6 +44,7 @@ namespace MatterHackers.RayTracer
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.RayTracer.Light;
 	using System.Linq;
+
 	public class ThumbnailTracer
 	{
 		public ImageBuffer destImage;
@@ -53,6 +54,8 @@ namespace MatterHackers.RayTracer
 		private Transform allObjectsHolder;
 
 		private List<MeshGroup> loadedMeshGroups;
+
+		private bool hasOneOrMoreMesh;
 
 		//RayTracer raytracer = new RayTracer(AntiAliasing.None, true, true, true, true, true);
 		//RayTracer raytracer = new RayTracer(AntiAliasing.Low, true, true, true, true, true);
@@ -72,37 +75,24 @@ namespace MatterHackers.RayTracer
 			trackballTumbleWidget.DoOpenGlDrawing = false;
 			trackballTumbleWidget.LocalBounds = new RectangleDouble(0, 0, width, height);
 
-			// HACK: This is a very simple approach that is unlikely to work. A real fix would be to make the renderer consider IObject3D graphs
-			var allItems = from object3D in item.Descendants()
-						   where object3D.Mesh != null
-						   select object3D.Mesh;
+			loadedMeshGroups = item.ToMeshGroupList();
 
-			loadedMeshGroups = new List<MeshGroup>();
-
-			var meshGroup = new MeshGroup();
-			meshGroup.Meshes.AddRange(allItems);
-			loadedMeshGroups.Add(meshGroup);
-
-			SetRenderPosition(loadedMeshGroups);
-
-			trackballTumbleWidget.AnchorCenter();
-		}
-
-		public ThumbnailTracer(List<MeshGroup> meshGroups, int width, int height)
-		{
-			size = new Point2D(width, height);
-			trackballTumbleWidget = new TrackballTumbleWidget();
-			trackballTumbleWidget.DoOpenGlDrawing = false;
-			trackballTumbleWidget.LocalBounds = new RectangleDouble(0, 0, width, height);
-
-			loadedMeshGroups = meshGroups;
-			SetRenderPosition(loadedMeshGroups);
-
-			trackballTumbleWidget.AnchorCenter();
+			hasOneOrMoreMesh = loadedMeshGroups.SelectMany(mg => mg.Meshes).Where(mesh => mesh != null).Any();
+			if (hasOneOrMoreMesh)
+			{
+				SetRenderPosition(loadedMeshGroups);
+				trackballTumbleWidget.AnchorCenter();
+			}
 		}
 
 		public void DoTrace()
 		{
+			if (!hasOneOrMoreMesh)
+			{
+				destImage = null;
+				return;
+			}
+
 			CreateScene();
 			RectangleInt rect = new RectangleInt(0, 0, size.x, size.y);
 			if (destImage == null || destImage.Width != rect.Width || destImage.Height != rect.Height)
@@ -117,7 +107,7 @@ namespace MatterHackers.RayTracer
 		public void SetRenderPosition(List<MeshGroup> loadedMeshGroups)
 		{
 			trackballTumbleWidget.TrackBallController.Reset();
-            trackballTumbleWidget.TrackBallController.Scale = .03;
+			trackballTumbleWidget.TrackBallController.Scale = .03;
 
 			trackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
 			trackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));

@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -61,6 +62,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AnchorAll();
 			this.Load(printItem);
 
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+
 			// We do this after showing the system window so that when we try and take focus of the parent window (the system window)
 			// it exists and can give the focus to its child the gcode window.
 			if (printItem != null
@@ -74,6 +77,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.CloseAllChildren();
 			this.Load(printItem);
+		}
+
+		private async void onActivePrintItemChanged(object sender, EventArgs e)
+		{
+			var printItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+			await partPreviewView.ClearBedAndLoadPrintItemWrapper(printItem);
+			viewGcodeBasic.LoadItem(printItem);
 		}
 
 		private void Load(PrintItemWrapper printItem)
@@ -117,7 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gcodeWindowMode = ViewGcodeBasic.WindowMode.StandAlone;
 			}
 
-			viewGcodeBasic = new ViewGcodeBasic(printItem,
+			viewGcodeBasic = new ViewGcodeBasic(
 				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
 				ActiveSliceSettings.Instance.BedCenter,
 				ActiveSliceSettings.Instance.BedShape, gcodeWindowMode);
