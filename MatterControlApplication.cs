@@ -53,6 +53,7 @@ using System.Threading.Tasks;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.DataConverters3D;
+using MatterHackers.GuiAutomation;
 
 namespace MatterHackers.MatterControl
 {
@@ -203,7 +204,7 @@ namespace MatterHackers.MatterControl
 						break;
 
 					case "SLICE_AND_EXPORT_GCODE":
-						if (currentCommandIndex + 1 <= commandLineArgs.Length)
+						if (currentCommandIndex + 1 <= commandLineArgs.Length) 
 						{
 							currentCommandIndex++;
 							string fullPath = commandLineArgs[currentCommandIndex];
@@ -601,7 +602,20 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 
-			base.OnLoad(args);
+			Task.Run((Action)AutomationTest);
+
+		   base.OnLoad(args);
+		}
+
+		private void AutomationTest()
+		{
+			AutomationRunner test = new AutomationRunner();
+			test.Wait(4);
+			test.ClickByName("Library Tab", 5);
+			test.ClickByName("Queue Tab", 5);
+			test.ClickByName("Queue Item SkeletonArm_Med", 5);
+			test.ClickByName("3D View Edit", 5);
+			test.ClickByName("SkeletonArm_Med_IObject3D", 5);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)

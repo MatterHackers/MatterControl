@@ -18,7 +18,6 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("PrinterWhiteListTests")]
 		public void DesktopCalibrationPartsInSettings()
 		{
-
 			string settingsJsonPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "StaticData", "OEMSettings", "Settings.json"));
 
 			if (File.Exists(settingsJsonPath))
@@ -32,7 +31,6 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-
 		[Test, Category("SamplePartsTests")]
 		public void DesktopCalibrationPartsExist()
 		{
@@ -43,9 +41,6 @@ namespace MatterControl.Tests.MatterControl
 			bool hasCoin = files.Where(l => l.Contains("MatterControl - Coin.stl")).Any();
 			Assert.IsTrue(hasCoin, "Expected coin file not found");
 			Assert.IsTrue(hasTabletStand, "Expected stand file not found");
-
 		}
-
-
 	}
 }
