@@ -195,14 +195,7 @@ namespace MatterHackers.MatterControl
 			// first create images for all the parts
 			foreach (FileNameAndPresentationName queuePartFileName in queuPartFilesToAdd)
 			{
-				List<MeshGroup> loadedMeshGroups = null;
-
-				if (File.Exists(queuePartFileName.fileName))
-				{
-					IObject3D loadedItem = MeshFileIo.Load(queuePartFileName.fileName);
-					loadedMeshGroups = new List<MeshGroup> { loadedItem.Flatten() };
-				}
-
+				List<MeshGroup> loadedMeshGroups = Object3D.Load(queuePartFileName.fileName)?.ToMeshGroupList();
 				if (loadedMeshGroups != null)
 				{
 					bool firstMeshGroup = true;
