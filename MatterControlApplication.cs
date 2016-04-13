@@ -54,6 +54,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GuiAutomation;
+using Gaming.Game;
 
 namespace MatterHackers.MatterControl
 {
@@ -68,7 +69,7 @@ namespace MatterHackers.MatterControl
 		private bool DoCGCollectEveryDraw = false;
 		private int drawCount = 0;
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-		private Gaming.Game.DataViewGraph msGraph = new Gaming.Game.DataViewGraph(new Vector2(20, 500), 50, 50, 0, 200);
+		private DataViewGraph msGraph = new DataViewGraph(50, 50, 0, 200);
 		private string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
 		private bool ShowMemoryUsed = false;
 		private Stopwatch totalDrawTime = new Stopwatch();
@@ -610,7 +611,10 @@ namespace MatterHackers.MatterControl
 #if DEBUG
 		private void ShowNamesUnderMouse(GuiWidget drawingWidget, DrawEventArgs e)
 		{
-			throw new NotImplementedException();
+			if (showNamesUnderMouse)
+			{
+				//throw new NotImplementedException();
+			}
 		}
 
 		bool showNamesUnderMouse = false;
