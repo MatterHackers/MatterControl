@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 case State.waitingForBedTemp:
                     {
                         double bedTemp = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
-                        bool tempWithinRange = bedTemp >= targetTemp - sameTempRange && bedTemp <= targetTemp + sameTempRange;
+                        bool tempWithinRange = bedTemp >= targetTemp - sameTempRange;
                         if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
                         {
                             timeHaveBeenAtTemp.Start();
