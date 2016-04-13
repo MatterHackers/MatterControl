@@ -601,10 +601,19 @@ namespace MatterHackers.MatterControl
 				}, 1);
 			}
 #endif
-		   base.OnLoad(args);
+#if DEBUG
+			AfterDraw += ShowNamesUnderMouse;
+#endif
+			base.OnLoad(args);
 		}
 
 #if DEBUG
+		private void ShowNamesUnderMouse(GuiWidget drawingWidget, DrawEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		bool showNamesUnderMouse = false;
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
 			if (keyEvent.KeyCode == Keys.F2)
@@ -613,7 +622,7 @@ namespace MatterHackers.MatterControl
 			}
 			else if(keyEvent.KeyCode == Keys.F1)
 			{
-
+				showNamesUnderMouse = !showNamesUnderMouse;
 			}
 
 			base.OnKeyDown(keyEvent);
