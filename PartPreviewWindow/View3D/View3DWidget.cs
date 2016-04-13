@@ -2145,7 +2145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Used to be bound to SelectionChanged event that no one was using and that overlapped with Queue SelectionChanged events that already signify this state change. 
 			// Eliminate unnecessary event and restore later if some external caller needs this hook
-			if (Scene.HasSelection)
+			if (Scene.HasSelection && Scene.SelectedItem.Mesh != null)
 			{
 				// TODO: Likely needs to be reviewed as described above and in the context of the scene graph
 				MeshMaterialData material = MeshMaterialData.Get(Scene.SelectedItem.Mesh);
