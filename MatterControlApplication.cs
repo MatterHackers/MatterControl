@@ -604,16 +604,33 @@ namespace MatterHackers.MatterControl
 #endif
 #if DEBUG
 			AfterDraw += ShowNamesUnderMouse;
+			MouseMove += MatterControlApplication_MouseMove;
 #endif
 			base.OnLoad(args);
 		}
 
+		private void MatterControlApplication_MouseMove(object sender, MouseEventArgs e)
+		{
+			mousePosition = e.Position;
+        }
+
 #if DEBUG
+		Vector2 mousePosition;
 		private void ShowNamesUnderMouse(GuiWidget drawingWidget, DrawEventArgs e)
 		{
 			if (showNamesUnderMouse)
 			{
-				//throw new NotImplementedException();
+				List<WidgetAndPosition> namedChildren = new List<WidgetAndPosition>();
+				this.FindNamedChildrenRecursive("", namedChildren, new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1 , mousePosition.y + 1), SearchType.Partial);
+				int offset = 0;
+				foreach(var child in namedChildren)
+				{
+					if (child.name != null)
+					{
+						e.graphics2D.DrawString(child.name, 10, 50 + offset, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+						offset += 20;
+                    }
+				}
 			}
 		}
 

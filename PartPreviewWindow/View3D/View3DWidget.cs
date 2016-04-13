@@ -903,27 +903,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ClearBedAndLoadPrintItemWrapper(printItemWrapper, true);
 			topMostParent = this.TopmostParent();
 
-			// some debug code to be able to click on parts
-			if (false)
-			{
-				meshViewerWidget.AfterDraw += (sender, e) =>
-				{
-					foreach (var child in Scene.Children)
-					{
-					//if (child.MeshPath != null && Path.GetFileName(child.MeshPath) == nameToSearchFor)
-					{
-							AxisAlignedBoundingBox bounds = Scene.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-							bounds = Scene.TraceData().GetAxisAlignedBoundingBox();
-							Vector3 renderPosition = bounds.Center;
-							Vector2 objectCenterScreenSpace = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(renderPosition);
-							Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.x, (int)objectCenterScreenSpace.y);
-
-							e.graphics2D.Circle(objectCenterScreenSpace, 5, RGBA_Bytes.Magenta);
-						}
-					}
-				};
-			}
-
 			base.OnLoad(args);
 		}
 
@@ -1581,7 +1560,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					bedCenter = ActiveSliceSettings.Instance.BedCenter;
 				}
 
-				await meshViewerWidget.LoadMesh(newPrintItem.FileLocation, doCentering, bedCenter);
+				await meshViewerWidget.LoadMesh(newPrintItem.FileLocation, doCentering, bedCenter, newPrintItem.Name);
 
 				Invalidate();
 			}

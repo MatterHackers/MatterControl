@@ -48,10 +48,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PlaneShape hitPlane;
 		private Vector3 lastMoveDelta;
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private Mesh upArrow;
+
+		private static IObject3D upArrowItem = null;
+
 		private View3DWidget view3DWidget;
 		private double zHitHeight;
-
+		
 		public UpArrow3D(View3DWidget view3DWidget)
 			: base(null, view3DWidget.meshViewerWidget)
 		{
@@ -61,21 +63,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			DrawOnTop = true;
 
 			this.view3DWidget = view3DWidget;
-			string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
-			if (StaticData.Instance.FileExists(arrowFile))
-			{
-				using (Stream staticDataStream = StaticData.Instance.OpenSteam(arrowFile))
-				{
-					using (MemoryStream arrowStream = new MemoryStream())
-					{
-						staticDataStream.CopyTo(arrowStream, 1 << 16);
-						IObject3D item  = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
-						upArrow = item.Mesh;
 
-						CollisionVolume = upArrow.CreateTraceData();
-					}
+			if (upArrowItem == null)
+			{
+				string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
+				using (Stream arrowStream = StaticData.Instance.OpenSteam(arrowFile))
+				{
+					upArrowItem = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
 				}
 			}
+
+			CollisionVolume = upArrowItem.TraceData();
 		}
 
 		public override void DrawGlContent(EventArgs e)
@@ -91,11 +89,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (MouseOver)
 				{
-					GLHelper.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
+					GLHelper.Render(upArrowItem.Mesh, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
 				}
 				else
 				{
-					GLHelper.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
+					GLHelper.Render(upArrowItem.Mesh, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
 				}
 			}
 
