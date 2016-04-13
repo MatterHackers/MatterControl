@@ -71,18 +71,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					if(textItem == null)
 					{
 						var generator = new TextGenerator();
-						var generatedItem = generator.CreateText(
+						textItem = generator.CreateText(
 							"Text".Localize(),
 							1,
 							.25,
 							1,
 							true);
-
-						textItem = new Object3D()
-						{
-							ItemType = Object3DTypes.Model,
-							Mesh = MeshFileIo.DoMerge(generatedItem.ToMeshGroupList(), new MeshOutputSettings())
-						}; 
 					}
 
 					return textItem;
@@ -96,18 +90,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						string braille = "Braille".Localize();
 
 						var generator = new BrailleGenerator();
-						var generatedItem = generator.CreateText(
+						brailleItem = generator.CreateText(
 							braille,
 							1,
 							.25,
 							true,
 							braille);
-
-						brailleItem = new Object3D()
-						{
-							ItemType = Object3DTypes.Model,
-							Mesh = MeshFileIo.DoMerge(generatedItem.ToMeshGroupList(), new MeshOutputSettings())
-						};
 					}
 
 					return brailleItem;

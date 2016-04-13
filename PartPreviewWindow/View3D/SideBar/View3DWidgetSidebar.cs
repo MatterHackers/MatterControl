@@ -37,6 +37,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
@@ -363,6 +364,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Task.Run(() =>
 					{
 						IObject3D item = createMeshFunction();
+
+						// If the item has an empty mesh but children, flatten them into a mesh and swap the new item into place
+						if (item.Mesh == null && item.HasChildren)
+						{
+							item = new Object3D()
+							{
+								ItemType = Object3DTypes.Model,
+								Mesh = MeshFileIo.DoMerge(item.ToMeshGroupList(), new MeshOutputSettings())
+							};
+						}
+
 						item.Mesh?.Triangulate();
 
 						ThumbnailTracer tracer = new ThumbnailTracer(item, 64, 64);
