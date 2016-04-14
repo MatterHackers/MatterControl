@@ -4663,3 +4663,6 @@ Translated:Round Roof
 English:Honey Comb
 Translated:Honey Comb
 
+English:Apply leveling to G-Code during export
+Translated:Apply leveling to G-Code during export
+

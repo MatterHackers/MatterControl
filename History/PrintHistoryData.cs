@@ -29,7 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -42,6 +44,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public bool ShowTimestamp;
 		private static PrintHistoryData instance;
 
+		private static event EventHandler unregisterEvents;
+
 		public static PrintHistoryData Instance
 		{
 			get
@@ -49,8 +53,29 @@ namespace MatterHackers.MatterControl.PrintHistory
 				if (instance == null)
 				{
 					instance = new PrintHistoryData();
-				}
+					PrinterConnectionAndCommunication.Instance.ConnectionSucceeded.RegisterEvent(CheckIfNeedToResumePrint, ref unregisterEvents);
+                }
 				return instance;
+			}
+		}
+
+		public static void CheckIfNeedToResumePrint(object sender, EventArgs e)
+		{
+			foreach (PrintTask lastPrint in Instance.GetHistoryItems(1))
+			{
+				if (!lastPrint.PrintComplete // Top Print History Item is not complete
+				&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
+				&& File.Exists(lastPrint.PrintingGCodeFileName)) // PrintingGCodeFileName is still on disk
+				{
+					//StyledMessageBox.ShowMessageBox(ResumeFailedPrintProcessDialogResponse, resumeFailedPrintMessage, resumeFailedPrintTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater);
+				}
+			}
+		}
+		
+		private static void ResumeFailedPrintProcessDialogResponse(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
 			}
 		}
 

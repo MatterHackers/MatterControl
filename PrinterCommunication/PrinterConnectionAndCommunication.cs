@@ -237,6 +237,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private FoundStringStartsWithCallbacks WriteLineStartCallBacks = new FoundStringStartsWithCallbacks();
 
+		private double secondsSinceUpdateHistory = 0;
+
 		private PrinterConnectionAndCommunication()
 		{
 			MonitorPrinterTemperature = true;
@@ -1282,15 +1284,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			OnEnabledChanged(e);
 		}
 
-		public void OnConnectionSucceeded(EventArgs e)
-		{
-			CommunicationState = CommunicationStates.Connected;
-
-			ConnectionSucceeded.CallEvents(this, e);
-
-			OnEnabledChanged(e);
-		}
-
 		public void OnIdle()
 		{
 			if (PrinterIsConnected && ReadThread.NumRunning == 0)
@@ -1631,6 +1624,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											// now send any command that initialize this printer
 											string connectGCode = ActiveSliceSettings.Instance.GetActiveValue("connect_gcode");
 											SendLineToPrinterNow(connectGCode);
+
+											// and call back anyone who would like to know we connected
+											UiThread.RunOnIdle(() => ConnectionSucceeded.CallEvents(this, null));
 
 											// run the print leveling wizard if we need to for this printer
 											if (ActiveSliceSettings.Instance.LevelingRequiredToPrint
@@ -2335,11 +2331,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// OnConnectonSuccess event if we're connected and not Disconnecting
 				connectThread.Join(JoinThreadTimeoutMs);
 
-				if (PrinterIsConnected && CommunicationState != CommunicationStates.Disconnecting)
-				{
-					OnConnectionSucceeded(null);
-				}
-
 				return false;
 			}
 		}
@@ -2722,10 +2713,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							waitingForPosition.Restart();
 						}
 
-						if(currentSentLine.StartsWith("; LAYER:"))
+						double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
+						if (secondsSinceUpdateHistory > secondsSinceStartedPrint
+							|| secondsSinceUpdateHistory + 5 < secondsSinceStartedPrint)
 						{
 							activePrintTask.PercentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 							activePrintTask.Commit();
+							secondsSinceUpdateHistory = secondsSinceStartedPrint;
+							Debug.WriteLine(activePrintTask.PercentDone.ToString());
                         }
 
 						if (trimedLine.Length > 0)
