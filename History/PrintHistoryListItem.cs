@@ -143,6 +143,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 						timeIndicator = new TextWidget(string.Format("{0}min", printTask.PrintTimeMinutes), pointSize: 12 * pointSizeFactor);
 					}
 
+					if (printTask.PercentDone > 0)
+					{
+						timeIndicator.AutoExpandBoundsToText = true;
+						timeIndicator.Text += " ({0:0.0}%)".FormatWith(printTask.PercentDone);
+					}
+
 					timeIndicator.Margin = new BorderDouble(right: 6);
 					timeIndicator.TextColor = timeTextColor;
 
@@ -271,7 +277,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 					timestampColumn.AddChild(horizontalLine);
 					timestampColumn.AddChild(startTimeContainer);
 
-					timestampColumn.Width = rightOverlayWidth;
+					timestampColumn.HAnchor = HAnchor.ParentLeftRight;
+					timestampColumn.Padding = new BorderDouble(5, 0, 15, 0);
 
 					primaryFlow.AddChild(timestampColumn);
 				}

@@ -463,6 +463,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
 
 										activePrintTask.PrintEnd = DateTime.Now;
+										activePrintTask.PercentDone = 100;
 										activePrintTask.PrintComplete = true;
 										activePrintTask.Commit();
 									}
