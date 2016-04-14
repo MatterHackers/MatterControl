@@ -1395,6 +1395,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonRightPanel.Width = 200;
 
 			// put in undo redo
+			if(false) // this will not be enabled until the new scene_bundle gets merged
 			{
 				FlowLayoutWidget undoRedoButtons = new FlowLayoutWidget()
 				{
