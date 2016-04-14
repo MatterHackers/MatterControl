@@ -27,13 +27,13 @@ namespace MatterHackers.MatterControl
 		{
 			return new List<MenuItemAction>
             {
-				new MenuItemAction("Settings".Localize(), openPrintingPannel_Click),
-				new MenuItemAction("Controls".Localize(), openControlsPannel_Click),
-				new MenuItemAction("Terminal".Localize(), openTermanialPannel_Click),
+				new MenuItemAction("Settings".Localize(), openPrintingPanel_Click),
+				new MenuItemAction("Controls".Localize(), openControlsPanel_Click),
+				new MenuItemAction("Terminal".Localize(), openTermanialPanel_Click),
             };
 		}
 
-		private void openPrintingPannel_Click()
+		private void openPrintingPanel_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		private void openControlsPannel_Click()
+		private void openControlsPanel_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		private void openTermanialPannel_Click()
+		private void openTermanialPanel_Click()
 		{
 			UiThread.RunOnIdle(TerminalWindow.Show);
 		}

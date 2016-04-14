@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Gaming.Game;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
@@ -175,6 +176,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private List<string> LinesToWriteQueue = new List<string>();
 
+		DataViewGraph sendTimeAfterOkGraph;
+
 		private GCodeFile loadedGCode = new GCodeFileLoaded();
 
 		private GCodeFileStream gCodeFileStream0 = null;
@@ -222,6 +225,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private Stopwatch timeSinceLastReadAnything = new Stopwatch();
 
 		private Stopwatch timeSinceLastWrite = new Stopwatch();
+
+		private Stopwatch timeSinceRecievedOk = new Stopwatch();
 
 		private Stopwatch timeSinceStartedPrint = new Stopwatch();
 
@@ -1112,14 +1117,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					int extruderIndex0Based = Math.Min((int)exturderIndex, MAX_EXTRUDERS - 1);
-					SetTargetExtruderTemperature(extruderIndex0Based, tempBeingSet);
+					targetExtruderTemperature[extruderIndex0Based] = tempBeingSet;
 				}
 				else
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-					SetTargetExtruderTemperature(0, tempBeingSet);
+					targetExtruderTemperature[0] = tempBeingSet;
 				}
-				OnExtruderTemperatureSet(e);
+				OnExtruderTemperatureSet(new TemperatureEventArgs((int)exturderIndex, tempBeingSet));
 			}
 		}
 
@@ -1585,6 +1590,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 								if (dataLastRead.Length > 0)
 								{
+									if(lastLineRead.StartsWith("ok"))
+									{
+										timeSinceRecievedOk.Restart();
+									}
 									lastLineRead = dataLastRead.Substring(0, returnPosition);
 									dataLastRead = dataLastRead.Substring(returnPosition + 1);
 
@@ -1651,7 +1660,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						timeSinceLastReadAnything.Restart();
 					}
 
-					Thread.Sleep(1);
+					if (PrinterIsPrinting)
+					{
+						Thread.Sleep(0);
+					}
+					else
+					{
+						Thread.Sleep(1);
+					}
 				}
 				catch (TimeoutException e)
 				{
@@ -2147,7 +2163,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void SuppressEcho(object sender, EventArgs e)
+        public void SuppressEcho(object sender, EventArgs e)
 		{
 			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 			foundStringEventArgs.SendToDelegateFunctions = false;
@@ -2828,7 +2844,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						SendLineToPrinterNow("M114");
 					}
 
-
 					// write data to communication
 					{
 						StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
@@ -2859,6 +2874,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						lock (locker)
 						{
 							serialPort.Write(lineToWrite);
+							if (false) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
+							{
+								timeSinceRecievedOk.Stop();
+								if (!haveHookedDrawing)
+								{
+									sendTimeAfterOkGraph = new DataViewGraph(150, 150, 0, 30);
+									MatterControlApplication.Instance.AddChild(sendTimeAfterOkGraph);
+									haveHookedDrawing = true;
+								}
+								sendTimeAfterOkGraph.AddData("ok->send", timeSinceRecievedOk.ElapsedMilliseconds);
+							}
 							timeSinceLastWrite.Restart();
 							timeHaveBeenWaitingForOK.Restart();
 						}
@@ -2891,6 +2917,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 		}
+
+		bool haveHookedDrawing = false;
 
 		public class ReadThread
 		{
