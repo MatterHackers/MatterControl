@@ -988,10 +988,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IObject3D loadedItem = await Task.Run(() =>
 			{
-				return Object3D.Load(
-					dragSource.MeshPath,
-					meshViewerWidget.ItemCache,
-					new DragDropLoadProgress(this, dragSource).UpdateLoadProgress);
+				return Object3D.Load(dragSource.MeshPath, progress: new DragDropLoadProgress(this, dragSource).UpdateLoadProgress);
 			});
 
 			if (loadedItem != null)
@@ -1560,7 +1557,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					bedCenter = ActiveSliceSettings.Instance.BedCenter;
 				}
 
-				await meshViewerWidget.LoadMesh(newPrintItem.FileLocation, doCentering, bedCenter, newPrintItem.Name);
+				await meshViewerWidget.LoadItemIntoScene(newPrintItem.FileLocation, doCentering, bedCenter, newPrintItem.Name);
 
 				Invalidate();
 			}
@@ -1883,9 +1880,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				double ratioPerFile = 1.0 / filesToLoad.Count;
 				double currentRatioDone = 0;
 
+				var itemCache = new Dictionary<string, IObject3D>();
+
 				foreach (string loadedFileName in filesToLoad)
 				{
-					IObject3D newItem = Object3D.Load(loadedFileName, meshViewerWidget.ItemCache, (double progress0To1, string processingState, out bool continueProcessing) =>
+					IObject3D newItem = Object3D.Load(loadedFileName, itemCache, (double progress0To1, string processingState, out bool continueProcessing) =>
 					{
 						continueProcessing = !this.WidgetHasBeenClosed;
 						double ratioAvailable = (ratioPerFile * .5);
@@ -2057,10 +2056,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								}, 
 								returnInfo.destinationLibraryProvider.GetProviderLocator());
 						}
-
-						// Reset the cache to the new data
-						//meshViewerWidget.ItemCache[printItemWrapper.FileLocation] = Scene;
-						meshViewerWidget.ItemCache.Remove(printItemWrapper.FileLocation);
 
 						// TODO: Hook up progress reporting
 						Scene.Save(printItemWrapper.FileLocation, ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
