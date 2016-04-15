@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), "icon_play_32x32.png");
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
+			startButton.Click += onStartButton_Click;
 
 			configureButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
 			configureButton.ToolTipText = "Run setup configuration for printer.".Localize();
@@ -171,7 +172,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			addButton.Click += onAddButton_Click;
-			startButton.Click += onStartButton_Click;
 			configureButton.Click += onStartButton_Click;
             skipButton.Click += onSkipButton_Click;
 			removeButton.Click += onRemoveButton_Click;

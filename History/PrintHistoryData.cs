@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
@@ -37,6 +39,50 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
+	public static class ResumePrinting
+	{
+		static string resumePrint = "Resume Print".Localize();
+		static string cancelResume = "Cancel".Localize();
+		static string resumeFailedPrintMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?".Localize();
+		static string resumeFailedPrintTitle = "Resume Last Print".Localize();
+		static PrintTask lastPrintTask;
+
+        public static void CheckIfNeedToResumePrint(object sender, EventArgs e)
+		{
+			foreach (PrintTask lastPrint in PrintHistoryData.Instance.GetHistoryItems(1))
+			{
+				if (!lastPrint.PrintComplete // Top Print History Item is not complete
+				&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
+				&& File.Exists(lastPrint.PrintingGCodeFileName)) // PrintingGCodeFileName is still on disk
+				{
+					lastPrintTask = lastPrint;
+                    StyledMessageBox.ShowMessageBox(ResumeFailedPrintProcessDialogResponse, resumeFailedPrintMessage, resumeFailedPrintTitle, StyledMessageBox.MessageType.YES_NO, resumePrint, cancelResume);
+				}
+			}
+		}
+
+		private static void ResumeFailedPrintProcessDialogResponse(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Connected)
+					{
+						PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+						PrinterConnectionAndCommunication.Instance.StartPrint(lastPrintTask.PrintingGCodeFileName, lastPrintTask);
+					}
+				});
+			}
+			else // the resume has been canceled
+			{
+				lastPrintTask.PrintingGCodeFileName = null;
+				lastPrintTask.Commit();
+			}
+		}
+
+	}
+
 	public class PrintHistoryData
 	{
 		public static readonly int RecordLimit = 20;
@@ -53,29 +99,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 				if (instance == null)
 				{
 					instance = new PrintHistoryData();
-					PrinterConnectionAndCommunication.Instance.ConnectionSucceeded.RegisterEvent(CheckIfNeedToResumePrint, ref unregisterEvents);
+					PrinterConnectionAndCommunication.Instance.ConnectionSucceeded.RegisterEvent(ResumePrinting.CheckIfNeedToResumePrint, ref unregisterEvents);
                 }
 				return instance;
-			}
-		}
-
-		public static void CheckIfNeedToResumePrint(object sender, EventArgs e)
-		{
-			foreach (PrintTask lastPrint in Instance.GetHistoryItems(1))
-			{
-				if (!lastPrint.PrintComplete // Top Print History Item is not complete
-				&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
-				&& File.Exists(lastPrint.PrintingGCodeFileName)) // PrintingGCodeFileName is still on disk
-				{
-					//StyledMessageBox.ShowMessageBox(ResumeFailedPrintProcessDialogResponse, resumeFailedPrintMessage, resumeFailedPrintTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater);
-				}
-			}
-		}
-		
-		private static void ResumeFailedPrintProcessDialogResponse(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
 			}
 		}
 

@@ -4666,3 +4666,15 @@ Translated:Honey Comb
 English:Apply leveling to G-Code during export
 Translated:Apply leveling to G-Code during export
 
+English:Resume Print
+Translated:Resume Print
+
+English:It appears your last print failed to complete. Would your like to resume from the last know layer?
+Translated:It appears your last print failed to complete. Would your like to resume from the last know layer?
+
+English:Resume Last Print
+Translated:Resume Last Print
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
+Translated:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
+

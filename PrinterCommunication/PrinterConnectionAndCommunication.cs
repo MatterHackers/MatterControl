@@ -2019,7 +2019,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void StartPrint(string gcodeFilename)
+		public async void StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
 		{
 			if (!PrinterIsConnected || PrinterIsPrinting)
 			{
@@ -2034,11 +2034,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			LinesToWriteQueue.Clear();
 			ClearQueuedGCode();
+			activePrintTask = printTaskToUse;
 
-			BackgroundWorker loadGCodeWorker = new BackgroundWorker();
-			loadGCodeWorker.DoWork += new DoWorkEventHandler(loadGCodeWorker_DoWork);
-			loadGCodeWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadGCodeWorker_RunWorkerCompleted);
-			loadGCodeWorker.RunWorkerAsync(gcodeFilename);
+			await Task.Run(() =>
+			{
+				LoadGCodeToPrint(gcodeFilename);
+			});
+			DoneLoadingGCodeToPrint();
 		}
 
 		public bool StartSdCardPrint()
@@ -2127,6 +2129,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				activePrintTask.PrintEnd = DateTime.Now;
 				activePrintTask.PrintComplete = false;
+				activePrintTask.PrintingGCodeFileName = null;
 				activePrintTask.Commit();
 			}
 		}
@@ -2437,15 +2440,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private void loadGCodeWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void LoadGCodeToPrint(string gcodeFilename)
 		{
 			totalGCodeStream?.Dispose();
 
-			string gcodeFilename = e.Argument as string;
 			loadedGCode = GCodeFile.Load(gcodeFilename);
 
 			gCodeFileStream0 = new GCodeFileStream(loadedGCode);
-			pauseHandlingStream1 = new PauseHandlingStream(gCodeFileStream0);
+			if(activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
+			{
+				pauseHandlingStream1 = new PauseHandlingStream(new ResumePrintingStream(loadedGCode, gCodeFileStream0, activePrintTask.PercentDone));
+			}
+			else
+			{
+				pauseHandlingStream1 = new PauseHandlingStream(gCodeFileStream0);
+			}
 			queuedCommandStream2 = new QueuedCommandsStream(pauseHandlingStream1);
 			relativeToAbsoluteStream3 = new RelativeToAbsoluteStream(queuedCommandStream2);
 			printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3);
@@ -2457,7 +2466,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			totalGCodeStream = requestTemperaturesStream9;
 		}
 
-		private void loadGCodeWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		private void DoneLoadingGCodeToPrint()
 		{
 			switch (communicationState)
 			{
@@ -2471,15 +2480,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						ActivePrintItem.PrintItem.Commit();
 					}
 
-					activePrintTask = new PrintTask();
-					activePrintTask.PrintStart = DateTime.Now;
-					activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
-					activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
-					activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
-					activePrintTask.PrintingGCodeFileName = ActivePrintItem.GetGCodePathAndFileName();
-					activePrintTask.PrintComplete = false;
+					if (activePrintTask == null)
+					{
+						activePrintTask = new PrintTask();
+						activePrintTask.PrintStart = DateTime.Now;
+						activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+						activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
+						activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
+						activePrintTask.PrintingGCodeFileName = ActivePrintItem.GetGCodePathAndFileName();
+						activePrintTask.PrintComplete = false;
 
-					activePrintTask.Commit();
+						activePrintTask.Commit();
+					}
 
 					CommunicationState = CommunicationStates.Printing;
 					break;
