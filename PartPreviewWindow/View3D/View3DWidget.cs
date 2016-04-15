@@ -149,7 +149,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			progressBar.RatioComplete = progress0To1;
 			if (progress0To1 == 1)
 			{
-				view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
+				if (view3DWidget != null)
+				{
+					view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
+				}
+
 				view3DWidget = null;
 			}
 		}

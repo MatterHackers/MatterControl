@@ -527,13 +527,18 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
-
-			if(view3DWidget == null)
+			if (view3DWidget == null)
 			{
 				return;
 			}
 
-			view3DWidget.DragDropSource = new Object3D
+			var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
+			var topToBottomItemListBounds = queueDataView.topToBottomItemList.TransformToScreenSpace(queueDataView.topToBottomItemList.LocalBounds);
+
+			bool mouseInQueueItemList = topToBottomItemListBounds.Contains(screenSpaceMousePosition);
+
+			// Clear or assign a drag source
+			view3DWidget.DragDropSource = (!mouseInQueueItemList) ? null : new Object3D
 			{
 				ItemType = Object3DTypes.Model,
 				Mesh = PlatonicSolids.CreateCube(10, 10, 10)
@@ -565,8 +570,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 					view3DWidget.LoadDragSource();
 				}
-				
-				// TODO: If we derived from scrollable container, we could disable scroll in this drag context and enable on mouse up
 			}
 
 			base.OnMouseMove(mouseArgs);

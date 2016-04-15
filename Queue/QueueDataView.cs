@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private event EventHandler unregisterEvents;
 
-		private bool downOnMouse = false;
+		private bool mouseDownWithinQueueItemContainer = false;
 
 		// make this private so it can only be built from the Instance
 		private void SetDisplayAttributes()
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return null;
 		}
 
-		protected FlowLayoutWidget topToBottomItemList;
+		internal FlowLayoutWidget topToBottomItemList;
 
 		private RGBA_Bytes hoverColor = new RGBA_Bytes(204, 204, 204, 255);
 
@@ -374,20 +374,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			downOnMouse = true;
+			var topToBottomItemListBounds = topToBottomItemList.LocalBounds;
+			mouseDownWithinQueueItemContainer = topToBottomItemList.LocalBounds.Contains(mouseEvent.Position);
+
 			base.OnMouseDown(mouseEvent);
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			downOnMouse = false;
+			mouseDownWithinQueueItemContainer = false;
 			this.SuppressScroll = false;
 			base.OnMouseUp(mouseEvent);
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
-			this.SuppressScroll = downOnMouse && !PositionWithinLocalBounds(mouseEvent.X, 20);
+			this.SuppressScroll = mouseDownWithinQueueItemContainer && !PositionWithinLocalBounds(mouseEvent.X, 20);
 			base.OnMouseMove(mouseEvent);
 		}
 
