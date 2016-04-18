@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2016, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DataStorage.ClassicDB;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.VectorMath;
 using System;
@@ -145,53 +146,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PresetListControl settingsRowContainer;
 		private FlowLayoutWidget errorMessageContainer;
 
-		private FlowLayoutWidget GetMiddleRow()
+		private GuiWidget GetMiddleRow()
 		{
-			FlowLayoutWidget container = new FlowLayoutWidget();
-			container.HAnchor = HAnchor.ParentLeftRight;
-			container.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-			container.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			NamedSettingsLayers layerFilter = NamedSettingsLayers.Material;
+			List<SettingsLayer> layerFilters = null;
 
-			FlowLayoutWidget topBottomContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topBottomContainer.AnchorAll();
+			if (layerFilter != NamedSettingsLayers.All)
+			{
+				var settings = ActiveSliceSettings.Instance;
 
-			FlowLayoutWidget addContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			addContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			addContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				// TODO: The editing context needs to provide the key
+				System.Diagnostics.Debugger.Break();
+				string layerKey = settings.ActiveMaterialKey;
 
-			TextWidget errorMessage = new TextWidget("Oops! Please select a setting first.", pointSize: 10);
-			errorMessage.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
+				layerFilters = new List<SettingsLayer> { settings.BaseLayer, settings.OemLayer };
 
-			errorMessageContainer = new FlowLayoutWidget();
-			errorMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			errorMessageContainer.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-			errorMessageContainer.Visible = false;
-			errorMessageContainer.Padding = new BorderDouble(3);
+				switch (layerFilter)
+				{
+					case NamedSettingsLayers.Material:
+						layerFilters.Add(settings.GetMaterialLayer(layerKey));
+						break;
 
-			errorMessageContainer.AddChild(new HorizontalSpacer());
-			errorMessageContainer.AddChild(errorMessage);
-			errorMessageContainer.AddChild(new HorizontalSpacer());
+					case NamedSettingsLayers.Quality:
+						layerFilters.Add(settings.GetQualityLayer(layerKey));
+						break;
+				}
+			}
 
-			addSettingsContainer = new FlowLayoutWidget();
-			addSettingsContainer.Padding = new BorderDouble(3);
-			addSettingsContainer.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-			addSettingsContainer.HAnchor = HAnchor.ParentLeftRight;
+			var settingsWidget = new SliceSettingsWidget(layerFilters, NamedSettingsLayers.Material);
+			settingsWidget.settingsControlBar.Visible = false;
 
-			PopulateAddSettingRow();
-
-			addContainer.AddChild(addSettingsContainer);
-			addContainer.AddChild(errorMessageContainer);
-
-			settingsRowContainer = new PresetListControl();
-			settingsRowContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			LoadSettingsRows();
-
-			topBottomContainer.AddChild(addContainer);
-			topBottomContainer.AddChild(settingsRowContainer);
-
-			container.AddChild(topBottomContainer);
-			return container;
+			return settingsWidget;
 		}
 
 		private FlowLayoutWidget GetBottomRow()
@@ -326,7 +311,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									{
 										itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\\n", " "));
 									}
-									if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(setting.SlicerConfigName))
+									if (ActiveSliceSettings.Instance.ActiveSliceEngine.MapContains(setting.SlicerConfigName))
 									{
 										MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
 										settingMenuItem.Selected += new EventHandler(OnItemSelected);
@@ -376,7 +361,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					OrganizerSettingsData settingData = SliceSettingsOrganizer.Instance.GetSettingsData(item.Key);
 
 					// Don't add row if there is no entry
-					if (settingData != null && ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingData.SlicerConfigName))
+					if (settingData != null && ActiveSliceSettings.Instance.ActiveSliceEngine.MapContains(settingData.SlicerConfigName))
 					{
 						FlowLayoutWidget row = GetSettingsRow(settingData, item.Value.Value);
 						row.Padding = new BorderDouble(3, 3, 3, 6);
@@ -510,7 +495,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double minSettingNameWidth = 400;
 
-			if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
+			if (ActiveSliceSettings.Instance.InBaseConfig(settingData.SlicerConfigName))
 			{
 				int intEditWidth = 60;
 				int doubleEditWidth = 60;
@@ -897,14 +882,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
 			SliceSettingsCollection collection = new SliceSettingsCollection();
 
-			if (ActivePrinterProfile.Instance.ActivePrinter != null)
+			if (ActiveSliceSettings.Instance != null)
 			{
+				// TODO: Review bindings to int printerID
+				int printerID;
+				int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+
 				collection.Name = string.Format("{0} ({1})", windowController.filterLabel, noExistingPresets.ToString());
 				collection.Tag = windowController.filterTag;
-				collection.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+				collection.PrinterId = printerID;
 			}
 
-			windowController.ActivePresetLayer = new SettingsLayer(collection, settingsDictionary);
+			windowController.ActivePresetLayer = new ClassicSqlitePrinterProfiles.ClassicSettingsLayer(collection, settingsDictionary);
 		}
 
 		public int ExistingPresetsCount()
@@ -923,9 +912,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					saveActivePresets();
 					windowController.functionToCallOnSave(this, null);
 					windowController.ChangeToSlicePresetList();
-					ActiveSliceSettings.Instance.LoadAllSettings();
-					// Disabled this as the panel is already reloaded from LoadAllSettings LBB 2015 01 03.
-					//ApplicationController.Instance.ReloadAdvancedControlsPanel();
 				}
 			});
 		}
@@ -950,7 +936,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					settingsDictionary.Add(s.Name, newSetting);
 				}
 
-				SettingsLayer duplicateLayer = new SettingsLayer(duplicateCollection, settingsDictionary);
+				var duplicateLayer = new ClassicSqlitePrinterProfiles.ClassicSettingsLayer(duplicateCollection, settingsDictionary);
 				windowController.ActivePresetLayer = duplicateLayer;
 				windowController.ChangeToSlicePresetDetail();
 			});

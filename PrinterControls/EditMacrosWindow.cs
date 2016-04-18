@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.MatterControl.PrinterControls;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -212,10 +213,14 @@ namespace MatterHackers.MatterControl
 
 		private void initMacro()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter != null)
+			if (ActiveSliceSettings.Instance != null)
 			{
+				// TODO: Review bindings to int printerID
+				int printerID;
+				int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+
 				windowController.ActiveMacro = new CustomCommands();
-				windowController.ActiveMacro.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+				windowController.ActiveMacro.PrinterId = printerID;
 				windowController.ActiveMacro.Name = "Home All";
 				windowController.ActiveMacro.Value = "G28 ; Home All Axes";
 			}

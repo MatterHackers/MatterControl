@@ -19,8 +19,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button printerBaudRateHelpLink;
 		private TextWidget printerBaudRateHelpMessage;
 
-		public SetupStepBaudRate(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinterStatus)
-			: base(windowController, containerWindowToClose, setupPrinterStatus)
+		public SetupStepBaudRate(ConnectionWizard connectionWizard) : base(connectionWizard)
 		{
 			linkButtonFactory.fontSize = 8;
 
@@ -49,7 +48,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string baudRateLabelTextFull = string.Format("{0}:", baudRateLabelText);
 
 			TextWidget baudRateLabel = new TextWidget(baudRateLabelTextFull, 0, 0, 12);
-			baudRateLabel.TextColor = this.defaultTextColor;
+			baudRateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			baudRateLabel.Margin = new BorderDouble(0, 0, 0, 10);
 			baudRateLabel.HAnchor = HAnchor.ParentLeftRight;
 
@@ -104,7 +103,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				BaudRateRadioButton baudOption = new BaudRateRadioButton(baudRate);
 				BaudRateButtonsList.Add(baudOption);
 				baudOption.Margin = baudRateMargin;
-				baudOption.TextColor = this.subContainerTextColor;
+				baudOption.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				if (this.ActivePrinter.BaudRate == baudRate)
 				{
 					baudOption.Checked = true;
@@ -114,7 +113,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			otherBaudRateRadioButton = new RadioButton(LocalizedString.Get("Other"));
 			otherBaudRateRadioButton.Margin = baudRateMargin;
-			otherBaudRateRadioButton.TextColor = this.subContainerTextColor;
+			otherBaudRateRadioButton.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			baudRateContainer.AddChild(otherBaudRateRadioButton);
 
@@ -160,35 +159,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 		}
 
-		private void RecreateCurrentWidget()
-		{
-			// you can call this like this
-			//             AfterUiEvents.AddAction(new AfterUIAction(RecreateCurrentWidget));
-
-			Parent.AddChild(new EditConnectionWidget((ConnectionWindow)Parent, Parent, ActivePrinter));
-			Parent.RemoveChild(this);
-		}
-
-		private void ReloadCurrentWidget(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(RecreateCurrentWidget);
-		}
-
 		private void MoveToNextWidget()
 		{
-			// you can call this like this
-			//             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));
-
-			if (this.currentPrinterSetupStatus.DriversToInstall.Count > 0)
-			{
-				Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
-			else
-			{
-				Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
+			connectionWizard.ChangeToInstallDriverOrComPortOne();
 		}
 
 		private void NextButton_Click(object sender, EventArgs mouseEvent)

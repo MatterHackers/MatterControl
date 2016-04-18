@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					return FileLocation;
 				}
 
-				string engineString = ((int)ActivePrinterProfile.Instance.ActiveSliceEngineType).ToString();
+				string engineString = ((int)ActiveSliceSettings.Instance.ActiveSliceEngineType).ToString();
 
 				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
 				string gcodePathAndFileName = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
@@ -300,11 +300,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 				}
 
 				// check if there is a known line at the end of the file (this will let us know if slicer finished building the file).
-				switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
+				switch (ActiveSliceSettings.Instance.ActiveSliceEngineType)
 				{
-					case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-					case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-					case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
+					case SlicingEngineTypes.CuraEngine:
+					case SlicingEngineTypes.MatterSlice:
+					case SlicingEngineTypes.Slic3r:
 						if (gcodeFileContents.Contains("filament used ="))
 						{
 							gCodeFileIsComplete = true;

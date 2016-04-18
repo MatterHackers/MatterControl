@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             "extruder_offset",
 #endif
 
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((s, e) => needToRecretaeBed = true, ref unregisterEvents);
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => needToRecretaeBed = true, ref unregisterEvents);
 		}
 
 		private void CheckSettingChanged(object sender, EventArgs e)

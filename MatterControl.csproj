@@ -127,8 +127,9 @@
     <Compile Include="AboutPage\UpdateControlData.cs" />
     <Compile Include="AboutPage\UpdateControlView.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlParser.cs" />
-    <Compile Include="ActionBar\ActionBarBaseControls.cs" />
+    <Compile Include="ActionBar\ActionRowBase.cs" />
     <Compile Include="ActionBar\ActionBarPlus.cs" />
+    <Compile Include="ActionBar\PrinterSelector.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterActionRow.cs" />
@@ -142,7 +143,7 @@
     <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="ApplicationView\CompactTabView.cs" />
-    <Compile Include="ApplicationView\ThirdPanelTabView.cs" />
+    <Compile Include="ApplicationView\AdvancedControlsPanel.cs" />
     <Compile Include="ApplicationView\FirstPanelTabView.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
     <Compile Include="ConfigurationPage\CloudSettings\CloudSettingsView.cs" />
@@ -163,7 +164,6 @@
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
-    <Compile Include="CustomWidgets\LibrarySelector\LibraryProviderEventArgs.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItem.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\FolderBreadCrumbWidget.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItemCollection.cs" />
@@ -202,7 +202,6 @@
     <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
     <Compile Include="PartPreviewWindow\ViewGcodeWidget.cs" />
-    <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
     <Compile Include="ConfigurationPage\PrinterConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
@@ -246,6 +245,10 @@
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
     <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsDetailControl.cs" />
+    <Compile Include="SlicerConfiguration\Settings\SettingsProfile.cs" />
+    <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
+    <Compile Include="SlicerConfiguration\Settings\LayeredProfile.cs" />
+    <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
@@ -303,7 +306,6 @@
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
     <Compile Include="ControlElements\ThemeFactory.cs" />
     <Compile Include="CustomWidgets\WizardControl.cs" />
-    <Compile Include="DataStorage\GenerateSampleData.cs" />
     <Compile Include="DataStorage\SQLiteCommon.cs" />
     <Compile Include="DataStorage\SQLiteWin32.cs" />
     <Compile Include="DataStorage\Datastore.cs" />
@@ -322,7 +324,6 @@
     <Compile Include="PrinterCommunication\PrinterConnectionAndCommunication.cs" />
     <Compile Include="PrinterControls\PrintLevelingPlane.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWindow.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\ChooseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepConfigureConnection.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortTwo.cs" />
@@ -332,10 +333,8 @@
     <Compile Include="PrinterControls\PrinterConnections\SetupStepInstallDriver.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ConnectionWindow.cs" />
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\EditConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\PrinterListItems.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupConnectionWidgetBase.cs" />
     <Compile Include="PrinterControls\TemperatureIndicator.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
@@ -355,7 +354,6 @@
     <Compile Include="Queue\QueueDataWidget.cs" />
     <Compile Include="SettingsManagement\ApplicationSettings.cs" />
     <Compile Include="SettingsManagement\UserSettings.cs" />
-    <Compile Include="SlicerConfiguration\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\SettingsControlBar.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
@@ -444,6 +442,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="SlicerConfiguration\Settings\SettingsDiagram.cd" />
     <None Include="packages.config" />
     <None Include="StaticData\PrinterSettings\config.ini" />
     <None Include="StaticData\SliceSettings\Properties.json" />

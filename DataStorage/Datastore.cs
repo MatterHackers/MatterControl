@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			if (TEST_FLAG)
 			{
 				ValidateSchema();
-				GenerateSampleData sampleData = new GenerateSampleData();
+				GenerateSampleData();
 			}
 			else
 			{
@@ -350,6 +350,18 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 			activeSession = new ApplicationSession();
 			dbSQLite.Insert(activeSession);
+		}
+
+		private void GenerateSampleData()
+		{
+			for (int index = 1; index <= 5; index++)
+			{
+				Printer printer = new Printer();
+				printer.ComPort = string.Format("COM{0}", index);
+				printer.BaudRate = "250000";
+				printer.Name = string.Format("Printer {0}", index);
+				Datastore.Instance.dbSQLite.Insert(printer);
+			}
 		}
 
 		// Checks if the datastore contains the appropriate tables - adds them if necessary

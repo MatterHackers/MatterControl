@@ -1,4 +1,5 @@
 ﻿using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
@@ -25,8 +26,12 @@ namespace MatterHackers.MatterControl
 
 		private void LoadDataIfNeeded()
 		{
+			// TODO: Review int printerID
+			int printerID;
+			int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+
 			//Lazy load the data (rather than hook to printer change event)
-			if (ActivePrinterProfile.Instance.ActivePrinter.Id != ActiveSettingsPrinterId)
+			if (printerID != ActiveSettingsPrinterId)
 			{
 				LoadData();
 			}
@@ -35,7 +40,7 @@ namespace MatterHackers.MatterControl
 		public string get(string key)
 		{
 			string result = null;
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			if (ActiveSliceSettings.Instance == null)
 			{
 				//No printer selected
 			}
@@ -53,7 +58,7 @@ namespace MatterHackers.MatterControl
 
 		public void set(string key, string value)
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			if (ActiveSliceSettings.Instance == null)
 			{
 				//No printer selected
 			}
@@ -68,9 +73,13 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
+					// TODO: Review int printerID
+					int printerID;
+					int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+
 					setting = new PrinterSetting();
 					setting.Name = key;
-					setting.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+					setting.PrinterId = printerID;
 
 					settingsDictionary[key] = setting;
 				}
@@ -82,21 +91,25 @@ namespace MatterHackers.MatterControl
 
 		private void LoadData()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter != null)
+			if (ActiveSliceSettings.Instance != null)
 			{
 				settingsDictionary = new Dictionary<string, PrinterSetting>();
 				foreach (PrinterSetting s in GetPrinterSettings())
 				{
 					settingsDictionary[s.Name] = s;
 				}
-				ActiveSettingsPrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+				// TODO: Review int printerID
+				int printerID;
+				int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+
+				ActiveSettingsPrinterId = printerID;
 			}
 		}
 
 		private IEnumerable<PrinterSetting> GetPrinterSettings()
 		{
 			//Retrieve a list of settings from the Datastore
-			string query = string.Format("SELECT * FROM PrinterSetting WHERE PrinterId = {0};", ActivePrinterProfile.Instance.ActivePrinter.Id);
+			string query = string.Format("SELECT * FROM PrinterSetting WHERE PrinterId = {0};", ActiveSliceSettings.Instance.Id);
 			return Datastore.Instance.dbSQLite.Query<PrinterSetting>(query);
 		}
 	}

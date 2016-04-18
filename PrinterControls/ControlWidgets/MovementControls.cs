@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Utilities;
 using MatterHackers.VectorMath;
 using System;
@@ -88,10 +89,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			PrinterConnectionAndCommunication.Instance.OffsetStreamChanged -= OffsetStreamChanged;
 
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
+
 			base.OnClosed(e);
 		}
 
@@ -171,9 +170,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private static string GetMovementSpeedsString()
 		{
 			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
-			if (PrinterConnectionAndCommunication.Instance != null && ActivePrinterProfile.Instance.ActivePrinter != null)
+			if (PrinterConnectionAndCommunication.Instance != null && ActiveSliceSettings.Instance != null)
 			{
-				string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;
+				string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds;
 				if (savedSettings != null && savedSettings != "")
 				{
 					presets = savedSettings;
@@ -188,8 +187,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			StringEventArgs stringEvent = e as StringEventArgs;
 			if (stringEvent != null && stringEvent.Data != null)
 			{
-				ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds = stringEvent.Data;
-				ActivePrinterProfile.Instance.ActivePrinter.Commit();
+				ActiveSliceSettings.Instance.ManualMovementSpeeds = stringEvent.Data;
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
 		}

@@ -174,10 +174,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (File.Exists(openParams.FileName))
 					{
+						// TODO: Review bindings to int printerID
+						int printerID;
+						int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+
 						//Create collection to hold preset settings
 						settingsCollection = new SliceSettingsCollection();
 						settingsCollection.Tag = windowController.filterTag;
-						settingsCollection.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+						settingsCollection.PrinterId = printerID;
 						settingsCollection.Name = System.IO.Path.GetFileNameWithoutExtension(openParams.FileName);
 						settingsCollection.Commit();
 
@@ -211,10 +215,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private IEnumerable<SliceSettingsCollection> GetCollections()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter != null)
+			if (ActiveSliceSettings.Instance != null)
 			{
 				//Retrieve a list of collections matching from the Datastore
-				string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1}  ORDER BY Name;", windowController.filterTag, ActivePrinterProfile.Instance.ActivePrinter.Id);
+				string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1}  ORDER BY Name;", windowController.filterTag, ActiveSliceSettings.Instance.Id);
 				return Datastore.Instance.dbSQLite.Query<SliceSettingsCollection>(query);
 			}
 
@@ -257,33 +261,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				Button materialRemoveLink = linkButtonFactory.Generate("remove");
 				materialRemoveLink.Margin = new BorderDouble(left: 4);
+				this.DebugShowBounds = true;
 				materialRemoveLink.VAnchor = Agg.UI.VAnchor.ParentCenter;
 				materialRemoveLink.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
 						//Unwind this setting if it is currently active
-						if (ActivePrinterProfile.Instance.ActivePrinter != null)
+						if (ActiveSliceSettings.Instance != null)
 						{
+							/*
 							if (preset.Id == ActivePrinterProfile.Instance.ActiveQualitySettingsID)
 							{
 								ActivePrinterProfile.Instance.ActiveQualitySettingsID = 0;
 							}
 
-							string[] activeMaterialPresets = ActivePrinterProfile.Instance.ActivePrinter.MaterialCollectionIds.Split(',');
+							string[] activeMaterialPresets = ActiveSliceSettings.Instance.MaterialCollectionIds.Split(',');
 							for (int i = 0; i < activeMaterialPresets.Count(); i++)
 							{
 								int index = 0;
 								Int32.TryParse(activeMaterialPresets[i], out index);
 								if (preset.Id == index)
 								{
-									ActivePrinterProfile.Instance.SetMaterialSetting(i + 1, 0);
+									ActiveSliceSettings.Instance.SetMaterialPreset(i, "");
 								}
-							}
+							} */
 						}
 						preset.Delete();
 						windowController.ChangeToSlicePresetList();
-						ActiveSliceSettings.Instance.LoadAllSettings();
 						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					});
 				};

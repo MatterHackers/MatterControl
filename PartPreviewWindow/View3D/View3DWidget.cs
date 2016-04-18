@@ -1065,7 +1065,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
 				colorSelectionContainer.Padding = new BorderDouble(5);
 
-				string colorLabelText = "Material {0}".Localize().FormatWith(extruderIndex + 1);
+				string colorLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
+
 				RadioButton extruderSelection = new RadioButton(colorLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				extruderButtons.Add(extruderSelection);
 				extruderSelection.SiblingRadioButtonList = extruderButtons;
@@ -2101,8 +2102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool PartsAreInPrintVolume()
 		{
 			if (ActiveSliceSettings.Instance != null
-				&& !ActiveSliceSettings.Instance.CenterOnBed()
-				&& ActivePrinterProfile.Instance.ActivePrinter != null)
+				&& !ActiveSliceSettings.Instance.CenterOnBed())
 			{
 				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
 				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed

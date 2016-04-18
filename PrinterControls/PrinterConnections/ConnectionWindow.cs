@@ -1,16 +1,21 @@
-﻿using MatterHackers.Agg.UI;
+﻿using System;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
+using MatterHackers.Agg.PlatformAbstract;
+using System.IO;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ConnectionWindow : SystemWindow
+	public class ConnectionWizard : SystemWindow
 	{
-		private Printer activePrinter;
+		protected PrinterInfo activePrinter;
 		private bool editMode = false;
 
-		public ConnectionWindow()
+		public ConnectionWizard()
 			: base(350 * TextWidget.GlobalPointSizeScaleRatio, 500 * TextWidget.GlobalPointSizeScaleRatio)
 		{
 			AlwaysOnTopOfMain = true;
@@ -19,14 +24,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			Title = string.Format("{0} - {1}", connectToPrinterTitle, connectToPrinterTitleEnd);
 			Name = "Printer Connection Window";
 
-			if (GetPrinterRecordCount() > 0)
-			{
-				ChangeToChoosePrinter();
-			}
-			else
-			{
-				ChangeToAddPrinter();
-			}
+			ChangeToAddPrinter();
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -34,85 +32,89 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			MinimumSize = new Vector2(350 * TextWidget.GlobalPointSizeScaleRatio, 400 * TextWidget.GlobalPointSizeScaleRatio);
 		}
 
-		private static ConnectionWindow connectionWindow = null;
-		private static bool connectionWindowIsOpen = false;
+		private static ConnectionWizard connectionWindow = null;
 
 		public static void Show()
 		{
-			if (connectionWindowIsOpen == false)
+			if (connectionWindow != null)
 			{
-				connectionWindow = new ConnectionWindow();
-				connectionWindowIsOpen = true;
-				connectionWindow.Closed += (parentSender, e) =>
-				{
-					connectionWindowIsOpen = false;
-					connectionWindow = null;
-				};
+				connectionWindow.BringToFront();
 			}
 			else
-			{
-				if (connectionWindow != null)
-				{
-					connectionWindow.BringToFront();
-				}
+			{ 
+				connectionWindow = new ConnectionWizard();
+				connectionWindow.Closed += (s, e) => connectionWindow = null;
 			}
 		}
 
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseUp(mouseEvent);
-		}
-
-		private void DoNotChangeWindow()
-		{
-			//Empty function used as default callback for changeToWindowCallback
-		}
-
-		public void ChangeToAddPrinter()
+		internal void ChangeToAddPrinter()
 		{
 			this.activePrinter = null;
-			UiThread.RunOnIdle(DoChangeToAddPrinter);
+			ChangeToStep(new SetupStepMakeModelName(this));
 		}
 
-		private void DoChangeToAddPrinter()
+		private void ChangeToStep(GuiWidget nextStep)
 		{
-			GuiWidget addConnectionWidget = new SetupStepMakeModelName(this, this);
-			this.RemoveAllChildren();
-			this.AddChild(addConnectionWidget);
-			this.Invalidate();
-		}
-
-		public void ChangedToEditPrinter(Printer activePrinter, object state = null)
-		{
-			this.activePrinter = activePrinter;
-			UiThread.RunOnIdle(DoChangeToEditPrinter, state);
-		}
-
-		private void DoChangeToEditPrinter(object state)
-		{
-			GuiWidget addConnectionWidget = new EditConnectionWidget(this, this, activePrinter, state);
-			this.RemoveAllChildren();
-			this.AddChild(addConnectionWidget);
-			this.Invalidate();
-		}
-
-		public void ChangeToChoosePrinter(bool editMode = false)
-		{
-			this.editMode = editMode;
-			UiThread.RunOnIdle(DoChangeToChoosePrinter);
-		}
-
-		public void DoChangeToChoosePrinter()
-		{
-			GuiWidget chooseConnectionWidget = new ChooseConnectionWidget(this, this, this.editMode);
-			this.RemoveAllChildren();
-			this.AddChild(chooseConnectionWidget);
-			this.Invalidate();
+			UiThread.RunOnIdle(() =>
+			{
+				this.RemoveAllChildren();
+				this.AddChild(nextStep);
+				this.Invalidate();
+			});
 		}
 
 		private int GetPrinterRecordCount()
 		{
 			return Datastore.Instance.RecordCount("Printer");
+		}
+
+		internal void ChangeToSetupBaudRate()
+		{
+			ChangeToStep(new SetupStepBaudRate(this));
+		}
+
+		internal void ChangeToInstallDriver()
+		{
+			ChangeToStep(new SetupStepInstallDriver(this));
+		}
+
+		internal void ChangeToSetupComPortOne()
+		{
+			ChangeToStep(new SetupStepComPortOne(this));
+		}
+
+		internal void ChangeToSetupCompPortTwo()
+		{
+			ChangeToStep(new SetupStepComPortTwo(this));
+		}
+
+		internal void ChangeToSetupComPortManual()
+		{
+			ChangeToStep(new SetupStepComPortManual(this));
+		}
+
+		internal void ChangeToInstallDriverOrComPortOne()
+		{
+			if (ActiveSliceSettings.Instance.PrinterDrivers().Count > 0)
+			{
+				ChangeToInstallDriver();
+			}
+			else
+			{
+				ChangeToSetupComPortOne();
+			}
+		}
+
+		internal void ChangeToSetupBaudOrComPortOne()
+		{
+			if (string.IsNullOrEmpty(activePrinter.BaudRate))
+			{
+				ChangeToSetupBaudRate();
+			}
+			else
+			{
+				ChangeToSetupComPortOne();
+			}
 		}
 	}
 }

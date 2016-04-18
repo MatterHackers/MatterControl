@@ -1,4 +1,33 @@
-﻿using MatterHackers.Agg;
+﻿/*
+Copyright (c) 2016, Lars Brubaker
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -10,7 +39,7 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrinterActionRow : ActionRowBase
 	{
-		static private ConnectionWindow connectionWindow;
+		static private ConnectionWizard connectionWindow;
 		private TextImageButtonFactory actionBarButtonFactory = new TextImageButtonFactory();
 		private Button connectPrinterButton;
 		private string disconnectAndCancelMessage = "Disconnect and cancel the current print?".Localize();
@@ -26,12 +55,12 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (connectAfterSelection)
 			{
-				ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(ConnectToActivePrinter, ref staticUnregisterEvents);
+				ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(ConnectToActivePrinter, ref staticUnregisterEvents);
 			}
 
 			if (connectionWindow == null)
 			{
-				connectionWindow = new ConnectionWindow();
+				connectionWindow = new ConnectionWizard();
 
 				connectionWindow.Closed += new EventHandler(ConnectionWindow_Closed);
 			}
@@ -46,10 +75,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -95,7 +121,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
 			disconnectPrinterButton.Cursor = Cursors.Hand;
 
-			selectActivePrinterButton = new PrinterSelectButton();
+			selectActivePrinterButton = new PrinterSelector();
 			selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
 			selectActivePrinterButton.Cursor = Cursors.Hand;
 			if (ApplicationController.Instance.WidescreenMode)
@@ -132,11 +158,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected override void AddHandlers()
 		{
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
-			selectActivePrinterButton.Click += new EventHandler(onSelectActivePrinterButton_Click);
 			connectPrinterButton.Click += new EventHandler(onConnectButton_Click);
 			disconnectPrinterButton.Click += new EventHandler(onDisconnectButtonClick);
 			resetConnectionButton.Click += new EventHandler(resetConnectionButton_Click);
@@ -196,7 +221,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			Button buttonClicked = ((Button)sender);
 			if (buttonClicked.Enabled)
 			{
-				if (ActivePrinterProfile.Instance.ActivePrinter == null)
+				if (ActiveSliceSettings.Instance == null)
 				{
 					OpenConnectionWindow(true);
 				}

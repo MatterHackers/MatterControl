@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		static private SliceEngineInfo getSliceEngineInfoByType(ActivePrinterProfile.SlicingEngineTypes engineType)
+		static private SliceEngineInfo getSliceEngineInfoByType(SlicingEngineTypes engineType)
 		{
 			foreach (SliceEngineInfo info in AvailableSliceEngines)
 			{
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string getSlicerFullPath()
 		{
-			SliceEngineInfo info = getSliceEngineInfoByType(ActivePrinterProfile.Instance.ActiveSliceEngineType);
+			SliceEngineInfo info = getSliceEngineInfoByType(ActiveSliceSettings.Instance.ActiveSliceEngineType);
 			if (info != null)
 			{
 				return info.GetEnginePath();
@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PrintItemWrapper itemToSlice = listOfSlicingItems[0];
 					bool doMergeInSlicer = false;
 					string mergeRules = "";
-					doMergeInSlicer = ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+					doMergeInSlicer = ActiveSliceSettings.Instance.ActiveSliceEngineType == SlicingEngineTypes.MatterSlice;
                     string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
 					string fileToSlice = stlFileLocations[0];
 					// check that the STL file is currently on disk
@@ -355,17 +355,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string commandArgs = "";
 
-							switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
+							switch (ActiveSliceSettings.Instance.ActiveSliceEngineType)
 							{
-								case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
+								case SlicingEngineTypes.Slic3r:
 									commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
 									break;
 
-								case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
+								case SlicingEngineTypes.CuraEngine:
 									commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + fileToSlice + "\"";
 									break;
 
-								case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
+								case SlicingEngineTypes.MatterSlice:
 									{
 										EngineMappingsMatterSlice.WriteMatterSliceSettingsFile(currentConfigurationFileAndPath);
 										if (mergeRules == "")
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							if (OsInformation.OperatingSystem == OSType.Android ||
 								((OsInformation.OperatingSystem == OSType.Mac || runInProcess)
-									&& ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice))
+									&& ActiveSliceSettings.Instance.ActiveSliceEngineType == SlicingEngineTypes.MatterSlice))
 							{
 								itemCurrentlySlicing = itemToSlice;
 								MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;

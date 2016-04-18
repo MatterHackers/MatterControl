@@ -34,6 +34,7 @@ using MatterHackers.VectorMath;
 using System.Text;
 using System.Collections.Generic;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -90,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
 			if (levelingData != null)
 			{
 				switch (levelingData.CurrentPrinterLevelingSystem)

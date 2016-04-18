@@ -36,93 +36,47 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SetupStepConfigureConnection : SetupConnectionWidgetBase
 	{
-		private Button nextButton;
-		private Button skipButton;
-		private TextWidget printerErrorMessage;
-
-		public SetupStepConfigureConnection(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinter)
-			: base(windowController, containerWindowToClose, setupPrinter)
+		public SetupStepConfigureConnection(ConnectionWizard connectionWizard) : base(connectionWizard)
 		{
-			contentRow.AddChild(createPrinterConnectionMessageContainer());
-			{
-				//Construct buttons
-				nextButton = textImageButtonFactory.Generate("Connect");
-				nextButton.Click += new EventHandler(NextButton_Click);
-
-				skipButton = textImageButtonFactory.Generate("Skip");
-				skipButton.Click += new EventHandler(SkipButton_Click);
-
-				//Add buttons to buttonContainer
-				footerRow.AddChild(nextButton);
-				footerRow.AddChild(skipButton);
-				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(cancelButton);
-			}
-		}
-
-		public FlowLayoutWidget createPrinterConnectionMessageContainer()
-		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(5);
 			BorderDouble elementMargin = new BorderDouble(top: 5);
 
-			TextWidget continueMessage = new TextWidget("Would you like to connect to this printer now?", 0, 0, 12);
+			var continueMessage = new TextWidget("Would you like to connect to this printer now?", 0, 0, 12);
 			continueMessage.AutoExpandBoundsToText = true;
 			continueMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			continueMessage.HAnchor = HAnchor.ParentLeftRight;
 			continueMessage.Margin = elementMargin;
 
-			TextWidget continueMessageTwo = new TextWidget("You can always configure this later.", 0, 0, 10);
+			var continueMessageTwo = new TextWidget("You can always configure this later.", 0, 0, 10);
 			continueMessageTwo.AutoExpandBoundsToText = true;
 			continueMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			continueMessageTwo.HAnchor = HAnchor.ParentLeftRight;
 			continueMessageTwo.Margin = elementMargin;
 
-			printerErrorMessage = new TextWidget("", 0, 0, 10);
+			var printerErrorMessage = new TextWidget("", 0, 0, 10);
 			printerErrorMessage.AutoExpandBoundsToText = true;
 			printerErrorMessage.TextColor = RGBA_Bytes.Red;
 			printerErrorMessage.HAnchor = HAnchor.ParentLeftRight;
 			printerErrorMessage.Margin = elementMargin;
 
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			container.Margin = new BorderDouble(5);
 			container.AddChild(continueMessage);
 			container.AddChild(continueMessageTwo);
 			container.AddChild(printerErrorMessage);
-
 			container.HAnchor = HAnchor.ParentLeftRight;
-			return container;
-		}
 
-		private void SkipButton_Click(object sender, EventArgs e)
-		{
-			//Save the printer info to the datastore and exit the setup process
-			this.ActivePrinter.Commit();
-			SaveAndExit();
-		}
+			//Construct buttons
+			var nextButton = textImageButtonFactory.Generate("Connect");
+			nextButton.Click += (s, e) => base.connectionWizard.ChangeToSetupBaudOrComPortOne();
 
-		private void MoveToNextWidget()
-		{
-			// you can call this like this
-			//             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));
-			if (this.ActivePrinter.BaudRate == null)
-			{
-				Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
-			else if (this.currentPrinterSetupStatus.DriversToInstall.Count > 0)
-			{
-				Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
-			else
-			{
-				Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
-		}
+			var skipButton = textImageButtonFactory.Generate("Skip");
+			skipButton.Click += (s, e) => SaveAndExit();
 
-		private void NextButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(MoveToNextWidget);
+			//Add buttons to buttonContainer
+			footerRow.AddChild(nextButton);
+			footerRow.AddChild(skipButton);
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
 		}
 	}
 }

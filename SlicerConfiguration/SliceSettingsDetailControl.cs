@@ -92,7 +92,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ActiveSliceSettings.Instance.LoadSettingsFromIni();
+				// TODO: jlewin
+				throw new NotImplementedException();
+				// ActiveSliceSettings.Instance.LoadSettingsFromIni();
 			});
 			return true;
 		}
@@ -128,9 +130,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//Set the name and callback function of the menu items
 			slicerOptionsMenuItems = new TupleList<string, Func<bool>>
 			{
-				{ "Import".Localize(), ImportSettingsMenu_Click},
-				{"Export".Localize(), ExportSettingsMenu_Click},
-				{"Restore All".Localize(), RestoreAllSettingsMenu_Click},
+				{ "Import".Localize(), ImportSettingsMenu_Click },
+				{ "Export".Localize(), ExportSettingsMenu_Click },
+				{ "Restore All".Localize(), RestoreAllSettingsMenu_Click },
 			};
 
 			//Add the menu items to the menu itself

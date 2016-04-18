@@ -128,8 +128,10 @@ namespace MatterHackers.MatterControl.VersionManagement
 		{
 			RequestManager requestManager = new RequestManager();
 
+// Prevent constant exceptions on debug builds when stepping through code. In debug, let requests stay in limbo until resumed and prevent the timeout exceptions
+#if !DEBUG
 			requestManager.Timeout = this.Timeout;
-
+#endif
 			string jsonToSend = JsonConvert.SerializeObject(requestValues);
 
 			System.Diagnostics.Trace.Write(string.Format("ServiceRequest: {0}\r\n  {1}\r\n", uri, string.Join("\r\n\t", jsonToSend.Split(','))));

@@ -122,6 +122,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static SystemWindow printLevelWizardWindow;
 
+		public static void ShowPrintLevelWizard()
+		{
+			LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
+
+			if (ActiveSliceSettings.Instance.LevelingRequiredToPrint)
+			{
+				// run in the first run state
+				runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
+			}
+
+			ShowPrintLevelWizard(runningState);
+		}
+
 		public static void ShowPrintLevelWizard(LevelWizardBase.RuningState runningState)
 		{
 			if (printLevelWizardWindow == null)
@@ -140,7 +153,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
 		{
-			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
 
 			LevelWizardBase printLevelWizardWindow;
 			switch (levelingData.CurrentPrinterLevelingSystem)

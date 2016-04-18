@@ -3,14 +3,13 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SetupConnectionWidgetBase : ConnectionWidgetBase
 	{
-		public PrinterSetupStatus currentPrinterSetupStatus;
-
 		//private GuiWidget mainContainer;
 
 		protected FlowLayoutWidget headerRow;
@@ -21,28 +20,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
-		public Printer ActivePrinter
-		{
-			get { return currentPrinterSetupStatus.ActivePrinter; }
-		}
-
-		public SetupConnectionWidgetBase(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus printerSetupStatus = null)
-			: base(windowController, containerWindowToClose)
+		public SetupConnectionWidgetBase(ConnectionWizard wizard) : base(wizard)
 		{
 			SetDisplayAttributes();
-
-			if (printerSetupStatus == null)
-			{
-				this.currentPrinterSetupStatus = new PrinterSetupStatus();
-			}
-			else
-			{
-				this.currentPrinterSetupStatus = printerSetupStatus;
-			}
-
-			cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			
+			cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelButton.Name = "Setup Connection Cancel Button";
-			cancelButton.Click += new EventHandler(CancelButton_Click);
+			cancelButton.Click += CancelButton_Click;
 
 			//Create the main container
 			GuiWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -56,10 +40,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 			headerRow.HAnchor = HAnchor.ParentLeftRight;
 			{
-				string defaultHeaderTitle = LocalizedString.Get("3D Printer Setup");
-				headerLabel = new TextWidget(defaultHeaderTitle, pointSize: 14);
+				headerLabel = new TextWidget("3D Printer Setup".Localize(), pointSize: 14);
 				headerLabel.AutoExpandBoundsToText = true;
-				headerLabel.TextColor = this.defaultTextColor;
+				headerLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				headerRow.AddChild(headerLabel);
 			}
 
@@ -83,9 +66,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		protected void SaveAndExit()
 		{
-			this.ActivePrinter.Commit();
-			ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
-			this.containerWindowToClose.Close();
+			ActiveSliceSettings.Instance.RunInTransaction(settings =>
+			{
+				settings.AutoConnectFlag = ActivePrinter.AutoConnectFlag;
+				settings.BaudRate = ActivePrinter.BaudRate;
+				settings.ComPort = ActivePrinter.ComPort;
+				settings.SlicingEngine = ActivePrinter.CurrentSlicingEngine;
+				settings.DriverType = ActivePrinter.DriverType;
+				settings.Id = ActivePrinter.Id;
+				settings.Name = ActivePrinter.Name;
+			});
+
+			UiThread.RunOnIdle(connectionWizard.Close);
 		}
 
 		private void SetDisplayAttributes()
@@ -104,26 +96,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 		}
 
-		private void CloseWindow(object o, EventArgs e)
-		{
-			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			this.containerWindowToClose.Close();
-		}
-
 		private void CancelButton_Click(object sender, EventArgs mouseEvent)
 		{
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			if (GetPrinterRecordCount() > 0)
-			{
-				this.windowController.ChangeToChoosePrinter();
-			}
-			else
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					Parent.Close();
-				});
-			}
+			UiThread.RunOnIdle(connectionWizard.Close);
 		}
 	}
 }

@@ -11,14 +11,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private Button nextButton;
 
-		public SetupStepComPortOne(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinter)
-			: base(windowController, containerWindowToClose, setupPrinter)
+		public SetupStepComPortOne(ConnectionWizard connectionWizard) : base(connectionWizard)
 		{
 			contentRow.AddChild(createPrinterConnectionMessageContainer());
 			{
 				//Construct buttons
-				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
-				nextButton.Click += new EventHandler(NextButton_Click);
+				nextButton = textImageButtonFactory.Generate("Continue".Localize());
+				nextButton.Click += (s, e) => connectionWizard.ChangeToSetupCompPortTwo();
 
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
@@ -68,7 +67,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Manually Configure Connection"));
 			manualLink.Margin = new BorderDouble(0, 5);
-			manualLink.Click += new EventHandler(ManualLink_Click);
+			manualLink.Click += (s, e) => connectionWizard.ChangeToSetupComPortManual();
 
 			string printerMessageFourText = LocalizedString.Get("or");
 			TextWidget printerMessageFour = new TextWidget(printerMessageFourText, 0, 0, 10);
@@ -93,39 +92,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return container;
 		}
 
-		private void ManualLink_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(MoveToManualConfiguration);
-		}
-
-		private void MoveToManualConfiguration()
-		{
-			Parent.AddChild(new SetupStepComPortManual((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-			Parent.RemoveChild(this);
-		}
-
-		private void NextButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(MoveToNextWidget);
-		}
-
-		private void MoveToNextWidget()
-		{
-			Parent.AddChild(new SetupStepComPortTwo((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-			Parent.RemoveChild(this);
-		}
-
 		private void SkipConnectionLink_Click(object sender, EventArgs mouseEvent)
 		{
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			if (GetPrinterRecordCount() > 0)
-			{
-				this.windowController.ChangeToChoosePrinter();
-			}
-			else
-			{
-				Parent.Close();
-			}
+			Parent.Close();
 		}
 	}
 }

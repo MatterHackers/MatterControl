@@ -238,16 +238,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
-			autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+			autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling;
 
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, e) =>
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((sender, e) =>
 			{
-				autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling;
 			}, ref unregisterEvents);
 
-			ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
-				autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling;
 			}, ref unregisterEvents);
 
 			return autoLevelButton;
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private string getConnectionMessage()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			if (ActiveSliceSettings.Instance == null)
 			{
 				return LocalizedString.Get("Press 'Connect' to select a printer.");
 			}
@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		}
 		private void SetVisibleStatus()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter != null)
+			if (ActiveSliceSettings.Instance != null)
 			{
 				if (ActiveSliceSettings.Instance.HasHeatedBed())
 				{

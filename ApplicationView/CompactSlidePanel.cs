@@ -46,22 +46,18 @@ namespace MatterHackers.MatterControl
 
 		private QueueDataView queueDataView;
 
-		private GuiWidget LeftPanel
-		{
-			get { return GetPanel(0); }
-		}
+		const int StandardControlsPanelIndex = 0;
+		const int AdvancedControlsPanelIndex = 1;
 
-		private GuiWidget RightPanel
-		{
-			get { return GetPanel(1); }
-		}
+		private GuiWidget LeftPanel =>  GetPanel(0);
 
-		public double TabBarWidth { get { return mainControlsTabControl.Width; } }
+		private GuiWidget RightPanel => GetPanel(1);
+
+		public double TabBarWidth => mainControlsTabControl.Width;
 
 		private static int lastPanelIndexBeforeReload = 0;
 
-		public CompactSlidePanel(QueueDataView queueDataView)
-			: base(2)
+		public CompactSlidePanel(QueueDataView queueDataView) : base(2)
 		{
 			this.queueDataView = queueDataView;
 
@@ -73,24 +69,27 @@ namespace MatterHackers.MatterControl
 				// construct the main controls tab control
 				mainControlsTabControl = new FirstPanelTabView(queueDataView);
 
-				TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
-				advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-				advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-				advancedControlsButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-				advancedControlsButtonFactory.fontSize = 10;
+				var advancedControlsButtonFactory = new TextImageButtonFactory()
+				{
+					normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					fontSize = 10,
 
-				advancedControlsButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
-				advancedControlsButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				advancedControlsButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+					disabledTextColor = RGBA_Bytes.LightGray,
+					disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+					disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 
-				advancedControlsButtonFactory.invertImageLocation = true;
+					invertImageLocation = true
+				};
+
 				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Settings\n& Controls"), "icon_arrow_right_32x32.png");
-                advancedControlsLinkButton.Name = "SettingsAndControls";
-                advancedControlsLinkButton.ToolTipText = "Switch to Settings, Controls and Options".Localize();
-                advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
+				advancedControlsLinkButton.Name = "SettingsAndControls";
+				advancedControlsLinkButton.ToolTipText = "Switch to Settings, Controls and Options".Localize();
+				advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
 				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
 				advancedControlsLinkButton.Cursor = Cursors.Hand;
-				advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
+				advancedControlsLinkButton.Click += ToggleActivePanel_Click;
 
 				mainControlsTabControl.TabBar.AddChild(new HorizontalSpacer());
 				mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
@@ -100,17 +99,20 @@ namespace MatterHackers.MatterControl
 				this.LeftPanel.AddChild(mainControlsTabControl);
 			}
 
-			// do the right panel
+			// Right panel
+			this.RightPanel.AddChild(new PrintProgressBar());
+
+			var advancedControlsPanel = new AdvancedControlsPanel()
 			{
-				this.RightPanel.AddChild(new PrintProgressBar());
-				ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView(AdvancedControlsButton_Click);
-				thirdPanelTabView.Name = "For - CompactSlidePanel";
-				this.RightPanel.AddChild(thirdPanelTabView);
-			}
+				Name = "For - CompactSlidePanel"
+			};
+			advancedControlsPanel.BackClicked += ToggleActivePanel_Click;
+
+			this.RightPanel.AddChild(advancedControlsPanel);
 
 			WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
 
-			SetPanelIndexImediate(lastPanelIndexBeforeReload);
+			SetPanelIndexImmediate(lastPanelIndexBeforeReload);
 		}
 
 		private void SaveCurrentPanelIndex(object sender, EventArgs e)
@@ -118,30 +120,22 @@ namespace MatterHackers.MatterControl
 			lastPanelIndexBeforeReload = PanelIndex;
 		}
 
-		private void AdvancedControlsButton_Click(object sender, EventArgs mouseEvent)
+		private void ToggleActivePanel_Click(object sender, EventArgs mouseEvent)
 		{
-			if (this.PanelIndex == 0)
+			if (this.PanelIndex == StandardControlsPanelIndex)
 			{
-				this.PanelIndex = 1;
+				this.PanelIndex = AdvancedControlsPanelIndex;
 			}
 			else
 			{
-				this.PanelIndex = 0;
+				this.PanelIndex = StandardControlsPanelIndex;
 			}
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void DoNotChangePanel()
-		{
-			//Empty function used as placeholder
 		}
 	}
 }

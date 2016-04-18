@@ -13,9 +13,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static string DisplayName = "MatterSlice";
 
-		public override ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType()
+		public override SlicingEngineTypes GetSliceEngineType()
 		{
-			return ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+			return SlicingEngineTypes.MatterSlice;
 		}
 
 		public override bool Exists()

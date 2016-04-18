@@ -36,13 +36,14 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
 	public abstract class ApplicationView : GuiWidget
 	{
-		public TopContainerWidget TopContainer;
+		public FlowLayoutWidget TopContainer;
 
 		public abstract void AddElements();
 
@@ -57,14 +58,14 @@ namespace MatterHackers.MatterControl
 		private QueueDataView queueDataView;
 		private GuiWidget menuSeparator;
 		private PrintProgressBar progressBar;
+		private bool topIsHidden = false;
 
 		public CompactApplicationView()
 		{
 			AddElements();
-			Initialize();
-		}
 
-		private bool topIsHidden = false;
+			this.AnchorAll();
+		}
 
 		public override void HideTopContainer()
 		{
@@ -98,7 +99,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.AnchorAll();
 
-			TopContainer = new TopContainerWidget();
+			TopContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			TopContainer.HAnchor = HAnchor.ParentLeftRight;
 
 			ApplicationMenuRow menuRow = new ApplicationMenuRow();
@@ -114,7 +115,6 @@ namespace MatterHackers.MatterControl
 
 			queueDataView = new QueueDataView();
 			TopContainer.AddChild(new ActionBarPlus(queueDataView));
-			TopContainer.SetOriginalHeight();
 
 			container.AddChild(TopContainer);
 
@@ -124,47 +124,7 @@ namespace MatterHackers.MatterControl
 			container.AddChild(menuSeparator);
 			compactTabView = new CompactTabView(queueDataView);
 
-			BottomOverlay bottomOverlay = new BottomOverlay();
-			bottomOverlay.AddChild(compactTabView);
-
-			container.AddChild(bottomOverlay);
-
-			this.AddChild(container);
-		}
-
-		private void Initialize()
-		{
-			this.AnchorAll();
-		}
-	}
-
-	public class TopContainerWidget : FlowLayoutWidget
-	{
-		private double originalHeight;
-
-		public TopContainerWidget()
-			: base(FlowDirection.TopToBottom)
-		{
-		}
-
-		public void SetOriginalHeight()
-		{
-			originalHeight = this.Height;
-		}
-	}
-
-	internal class BottomOverlay : GuiWidget
-	{
-		public BottomOverlay()
-			: base()
-		{
-			this.AnchorAll();
-		}
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseDown(mouseEvent);
-			//ApplicationController.Instance.MainView.HideTopContainer();
+			this.AddChild(compactTabView);
 		}
 	}
 
@@ -188,36 +148,31 @@ namespace MatterHackers.MatterControl
 
 		public override void AddElements()
 		{
-			Stopwatch timer = Stopwatch.StartNew();
-			timer.Start();
+
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.AnchorAll();
 
-			ApplicationMenuRow menuRow = new ApplicationMenuRow();
+			var menuRow = new ApplicationMenuRow();
 			container.AddChild(menuRow);
 
-			GuiWidget menuSeparator = new GuiWidget();
-			menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
-			menuSeparator.Height = 2;
-			menuSeparator.HAnchor = HAnchor.ParentLeftRight;
-			menuSeparator.Margin = new BorderDouble(3, 6, 3, 3);
-
+			var menuSeparator = new GuiWidget()
+			{
+				BackgroundColor = new RGBA_Bytes(200, 200, 200),
+				Height = 2,
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(3, 6, 3, 3)
+			};
 			container.AddChild(menuSeparator);
-			Console.WriteLine("{0} ms 1".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
+
 			widescreenPanel = new WidescreenPanel();
 			container.AddChild(widescreenPanel);
 
-			Console.WriteLine("{0} ms 2".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
-
-			Console.WriteLine("{0} ms 3".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 			using (new PerformanceTimer("ReloadAll", "AddChild"))
 			{
 				this.AddChild(container);
 			}
-			Console.WriteLine("{0} ms 4".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 		}
 
 		private void Initialize()
@@ -267,18 +222,12 @@ namespace MatterHackers.MatterControl
 
 		public void StartLogin()
 		{
-			if (privateStartLogin != null)
-			{
-				privateStartLogin(null, null);
-			}
+			privateStartLogin?.Invoke(null, null);
 		}
 
 		public void StartLogout()
 		{
-			if (privateStartLogout != null)
-			{
-				privateStartLogout(null, null);
-			}
+			privateStartLogout?.Invoke(null, null);
 		}
 
 		public string GetSessionUsername()
@@ -301,13 +250,12 @@ namespace MatterHackers.MatterControl
 				{
 					// give the widget a chance to hear about the close before they are actually closed.
 					PopOutManager.SaveIfClosed = false;
-                    WidescreenPanel.PreChangePanels.CallEvents(this, null);
+					WidescreenPanel.PreChangePanels.CallEvents(this, null);
 					MainView.CloseAllChildren();
 					using (new PerformanceTimer("ReloadAll", "AddElements"))
 					{
 						MainView.AddElements();
 					}
-					DoneReloadingAll.CallEvents(null, null);
 					PopOutManager.SaveIfClosed = true;
 				}
 			});
@@ -315,10 +263,7 @@ namespace MatterHackers.MatterControl
 
 		public void OnApplicationClosed()
 		{
-			if (ApplicationClosed != null)
-			{
-				ApplicationClosed(null, null);
-			}
+			ApplicationClosed?.Invoke(null, null);
 		}
 
 		public static ApplicationController Instance

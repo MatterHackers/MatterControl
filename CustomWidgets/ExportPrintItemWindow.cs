@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl
 			this.Name = "Export Item Window";
 
 			CreateWindowContent();
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
-			ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
+			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
 		}
 
 		private string applyLevelingDuringExportString = "Apply leveling to G-Code during export".Localize();
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.AddChild(exportAsAmfButton);
 			}
 
-			bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
+			bool showExportGCodeButton = ActiveSliceSettings.Instance != null || partIsGCode;
 			if (showExportGCodeButton)
 			{
 				string exportGCodeTextFull = string.Format("{0} G-Code", "Export as".Localize());
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl
 			middleRowContainer.AddChild(new VerticalSpacer());
 
 			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
-			if (showExportGCodeButton && ActivePrinterProfile.Instance.DoPrintLeveling)
+			if (showExportGCodeButton && ActiveSliceSettings.Instance.DoPrintLeveling)
 			{
 				applyLeveling = new CheckBox(LocalizedString.Get(applyLevelingDuringExportString), ActiveTheme.Instance.PrimaryTextColor, 10);
 				applyLeveling.Checked = true;
@@ -308,12 +308,12 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				if (ActivePrinterProfile.Instance.DoPrintLeveling)
+				if (ActiveSliceSettings.Instance.DoPrintLeveling)
 				{
 					GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(source);
 					if (applyLeveling.Checked)
 					{
-						PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+						PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
 						if (levelingData != null)
 						{
 							for (int lineIndex = 0; lineIndex < unleveledGCode.LineCount; lineIndex++)

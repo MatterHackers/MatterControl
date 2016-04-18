@@ -260,14 +260,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
         {
-            Printer activePrinter = PrinterConnectionAndCommunication.Instance.ActivePrinter;
-            if (activePrinter != null
-                && activePrinter.DoPrintLeveling
+            var settings = ActiveSliceSettings.Instance;
+            if (settings?.DoPrintLeveling == true
                 && (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
                 && lineBeingSent.Length > 2
                 && lineBeingSent[2] == ' ')
             {
-                PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(activePrinter);
+                PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
                 return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.BedCenter)
                     .DoApplyLeveling(lineBeingSent, currentDestination, movementMode);
             }
@@ -277,8 +276,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
         {
-            Printer activePrinter = PrinterConnectionAndCommunication.Instance.ActivePrinter;
-            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(activePrinter);
+            PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
             return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.BedCenter)
                 .GetPrintLevelPositionToSample(index, radius);
         }

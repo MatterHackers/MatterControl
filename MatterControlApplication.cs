@@ -146,32 +146,32 @@ namespace MatterHackers.MatterControl
 						DoCGCollectEveryDraw = true;
 						break;
 
-					case "CREATE_AND_SELECT_PRINTER":
-						if (currentCommandIndex + 1 <= commandLineArgs.Length)
-						{
-							currentCommandIndex++;
-							string argument = commandLineArgs[currentCommandIndex];
-							string[] printerData = argument.Split(',');
-							if (printerData.Length >= 2)
-							{
-								Printer ActivePrinter = new Printer();
+					//case "CREATE_AND_SELECT_PRINTER":
+					//	if (currentCommandIndex + 1 <= commandLineArgs.Length)
+					//	{
+					//		currentCommandIndex++;
+					//		string argument = commandLineArgs[currentCommandIndex];
+					//		string[] printerData = argument.Split(',');
+					//		if (printerData.Length >= 2)
+					//		{
+					//			Printer ActivePrinter = new Printer();
 
-								ActivePrinter.Name = "Auto: {0} {1}".FormatWith(printerData[0], printerData[1]);
-								ActivePrinter.Make = printerData[0];
-								ActivePrinter.Model = printerData[1];
+					//			ActivePrinter.Name = "Auto: {0} {1}".FormatWith(printerData[0], printerData[1]);
+					//			ActivePrinter.Make = printerData[0];
+					//			ActivePrinter.Model = printerData[1];
 
-								if (printerData.Length == 3)
-								{
-									ActivePrinter.ComPort = printerData[2];
-								}
+					//			if (printerData.Length == 3)
+					//			{
+					//				ActivePrinter.ComPort = printerData[2];
+					//			}
 
-								PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
-								test.LoadSettingsFromConfigFile(ActivePrinter.Make, ActivePrinter.Model);
-								ActivePrinterProfile.Instance.ActivePrinter = ActivePrinter;
-							}
-						}
+					//			PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
+					//			test.LoadSettingsFromConfigFile(ActivePrinter.Make, ActivePrinter.Model);
+					//			ActiveSliceSettings.Instance = ActivePrinter;
+					//		}
+					//	}
 
-						break;
+					//	break;
 
 					case "CONNECT_TO_PRINTER":
 						if (currentCommandIndex + 1 <= commandLineArgs.Length)
@@ -484,11 +484,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void DoAutoConnectIfRequired()
-		{
-			ActivePrinterProfile.CheckForAndDoAutoConnect();
-		}
-
 		public void LaunchBrowser(string targetUri)
 		{
 			UiThread.RunOnIdle(() =>
@@ -590,7 +585,7 @@ namespace MatterHackers.MatterControl
 
 			if (firstDraw)
 			{
-				UiThread.RunOnIdle(DoAutoConnectIfRequired);
+				UiThread.RunOnIdle(ActiveSliceSettings.CheckForAndDoAutoConnect);
 
 				firstDraw = false;
 				foreach (string arg in commandLineArgs)

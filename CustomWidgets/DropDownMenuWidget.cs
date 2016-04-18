@@ -12,11 +12,6 @@ namespace MatterHackers.Agg.UI
 
 		private TextWidget mainControlText;
 
-		public DropDownMenu(GuiWidget topMenuWidget, Direction direction = Direction.Down)
-			: base(direction)
-		{
-		}
-
 		public DropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
 			: base(direction)
 		{
@@ -29,41 +24,11 @@ namespace MatterHackers.Agg.UI
 			SetStates(topMenuText, pointSize);
 		}
 
-		bool menuAsWideAsItems = true;
-		public bool MenuAsWideAsItems 
-		{
-			get
-			{
-				return menuAsWideAsItems;
-			}
+		public bool MenuAsWideAsItems { get; set; } = true;
 
-			set
-			{
-				menuAsWideAsItems = value;
-			}
-		}
+		public bool DrawDirectionalArrow { get; set; } = true;
 
-		private int borderWidth = 1;
-
-		bool drawDirectionalArrow = true;
-		public bool DrawDirectionalArrow 
-		{
-			get
-			{
-				return drawDirectionalArrow;
-			}
-
-			set
-			{
-				drawDirectionalArrow = value;
-			}
-		}
-
-		public int BorderWidth
-		{
-			get { return borderWidth; }
-			set { borderWidth = value; }
-		}
+		public int BorderWidth { get; set; } = 1;
 
 		public RGBA_Bytes BorderColor { get; set; }
 
@@ -75,17 +40,7 @@ namespace MatterHackers.Agg.UI
 
 		public RGBA_Bytes HoverColor { get; set; }
 
-		private RGBA_Bytes textColor = RGBA_Bytes.Black;
-
-		public RGBA_Bytes TextColor
-		{
-			get { return textColor; }
-			set
-			{
-				textColor = value;
-				//mainControlText.TextColor = TextColor;
-			}
-		}
+		public RGBA_Bytes TextColor { get; set; } = RGBA_Bytes.Black;
 
 		private int selectedIndex = -1;
 
@@ -261,16 +216,16 @@ namespace MatterHackers.Agg.UI
 		private void DrawBorder(Graphics2D graphics2D)
 		{
 			RectangleDouble Bounds = LocalBounds;
-			if (borderWidth > 0)
+			if (BorderWidth > 0)
 			{
-				if (borderWidth == 1)
+				if (BorderWidth == 1)
 				{
 					graphics2D.Rectangle(Bounds, BorderColor);
 				}
 				else
 				{
 					RoundedRect borderRect = new RoundedRect(this.LocalBounds, 0);
-					Stroke strokeRect = new Stroke(borderRect, borderWidth);
+					Stroke strokeRect = new Stroke(borderRect, BorderWidth);
 					graphics2D.Render(strokeRect, BorderColor);
 				}
 			}
