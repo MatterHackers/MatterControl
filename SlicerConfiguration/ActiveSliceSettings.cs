@@ -161,6 +161,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public double GetActiveValueAsDouble(string keyToLookUp, double valueOnError)
+		{
+			double foundValue;
+			if (!double.TryParse(GetActiveValue(keyToLookUp), out foundValue))
+			{
+				return valueOnError;
+            }
+			
+			return foundValue;
+		}
+
 		public string GetMaterialValue(string sliceSetting, int extruderNumber1Based)
 		{
 			int numberOfActiveLayers = activeSettingsLayers.Count;

@@ -34,12 +34,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public class GCodeFileStream : GCodeStream
     {
-        private GCodeFile fileStreaming;
+        public GCodeFile FileStreaming { get; private set; }
         private int printerCommandQueueLineIndex = -1;
 
         public GCodeFileStream(GCodeFile fileStreaming, int startLine = 0)
         {
-            this.fileStreaming = fileStreaming;
+            this.FileStreaming = fileStreaming;
             printerCommandQueueLineIndex = startLine;
         }
 
@@ -51,9 +51,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
         public override string ReadLine()
         {
-            if (printerCommandQueueLineIndex < fileStreaming.LineCount)
+            if (printerCommandQueueLineIndex < FileStreaming.LineCount)
             {
-                return fileStreaming.Instruction(printerCommandQueueLineIndex++).Line;
+                return FileStreaming.Instruction(printerCommandQueueLineIndex++).Line;
             }
 
             return null;

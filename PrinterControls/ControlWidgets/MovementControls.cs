@@ -48,7 +48,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 	{
 		public bool hotKeysEnabled = false;
 		public FlowLayoutWidget manualControlsLayout;
-		private double borderWidth = 2;
 		private Button disableMotors;
 		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
 		private Button homeAllButton;

@@ -2449,7 +2449,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			gCodeFileStream0 = new GCodeFileStream(loadedGCode);
 			if(activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 			{
-				pauseHandlingStream1 = new PauseHandlingStream(new ResumePrintingStream(loadedGCode, gCodeFileStream0, activePrintTask.PercentDone));
+				pauseHandlingStream1 = new PauseHandlingStream(new ResumePrintingStream(gCodeFileStream0, activePrintTask.PercentDone));
 			}
 			else
 			{
@@ -2743,7 +2743,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
 						if (secondsSinceUpdateHistory > secondsSinceStartedPrint
-							|| secondsSinceUpdateHistory + 5 < secondsSinceStartedPrint)
+							|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint)
 						{
 							activePrintTask.PercentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 							activePrintTask.Commit();

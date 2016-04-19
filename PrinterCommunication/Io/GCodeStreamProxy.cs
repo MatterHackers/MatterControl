@@ -52,7 +52,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 		public override string ReadLine()
 		{
-			return internalStream.ReadLine();
+			if (internalStream != null)
+			{
+				return internalStream.ReadLine();
+			}
+
+			return null;
 		}
 
 		public override void SetPrinterPosition(PrinterMove position)
