@@ -358,6 +358,13 @@
     "ExtraSettings": "mm/s or %"
   },
   {
+    "SlicerConfigName": "first_resume_layer_speed",
+    "PresentationName": "Resume Layer Speed",
+    "HelpText": "The speed at which the nozzle will move when resuming a failed print, for 1 layer.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
     "SlicerConfigName": "first_layer_temperature",
     "PresentationName": "Extrude First Layer",
     "HelpText": "The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",

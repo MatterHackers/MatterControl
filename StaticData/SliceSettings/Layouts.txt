@@ -115,6 +115,7 @@ Advanced
         travel_speed
       Modifiers
         first_layer_speed
+        first_resume_layer_speed
       Acceleration Control
         perimeter_acceleration
         infill_acceleration

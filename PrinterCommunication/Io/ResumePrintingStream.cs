@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private GCodeFileStream gCodeFileStream0;
 		private double percentDone;
 		PrinterMove lastDestination;
-        QueuedCommandsStream raiseCommands;
+        QueuedCommandsStream queuedCommands;
 
 		ResumeState resumeState = ResumeState.RemoveHeating;
 
@@ -50,10 +50,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.gCodeFileStream0 = gCodeFileStream0;
 			this.percentDone = percentDone;
 
-			raiseCommands = new QueuedCommandsStream(null);
-			raiseCommands.Add("G91 ; move relative");
-			raiseCommands.Add("G1 Z10 F{0}".FormatWith(MovementControls.ZSpeed));
-			raiseCommands.Add("G90 ; move absolute");
+			queuedCommands = new QueuedCommandsStream(null);
 		}
 
 		public override void Dispose()
@@ -62,28 +59,40 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
-			switch(resumeState)
+			string nextCommand = queuedCommands.ReadLine();
+			if (nextCommand != null)
+			{
+				return nextCommand;
+			}
+			
+			switch (resumeState)
 			{
 				// heat the extrude to remove it from the part
 				case ResumeState.RemoveHeating:
 					// TODO: make sure we heat up all the extruders that we need to (all that are used)
+					queuedCommands.Add("G21; set units to millimeters");
+					queuedCommands.Add("M107; fan off");
+					queuedCommands.Add("T0; set the active extruder to 0");
+					queuedCommands.Add("G90; use absolute coordinates");
+					queuedCommands.Add("G92 E0; reset the expected extruder position");
+					queuedCommands.Add("M82; use absolute distance for extrusion");
+					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.GetMaterialValue("temperature", 1)));
 					resumeState = ResumeState.Raising;
-					return "M109 S{0}".FormatWith(ActiveSliceSettings.Instance.GetMaterialValue("temperature", 1));
+					return "";
 
 				// remove it from the part
 				case ResumeState.Raising:
-					string nextCommand = raiseCommands.ReadLine();
-					if(nextCommand != null)
-					{
-						return nextCommand;
-					}
+					queuedCommands.Add("G91 ; move relative");
+					queuedCommands.Add("G1 Z10 F{0}".FormatWith(MovementControls.ZSpeed));
+					queuedCommands.Add("G90 ; move absolute");
 					resumeState = ResumeState.Homing;
-					goto case ResumeState.Homing;
+					return "";
 
 				// if top homing, home the extruder
 				case ResumeState.Homing:
+					queuedCommands.Add("G28");
 					resumeState = ResumeState.FindingResumeLayer;
-					return "G28";
+					return "";
 					
 				// This is to resume printing if an out a filament occurs. 
 				// Help the user move the extruder down to just touching the part
@@ -112,18 +121,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 						// check if the line is something we want to send to the printer (like a temp)
 						if (line.StartsWith("M109")
-							|| line.StartsWith("M104"))
+							|| line.StartsWith("M104")
+							|| line.StartsWith("T")
+							|| line.StartsWith("M106")
+							|| line.StartsWith("M107"))
 						{
 							return line;
 						}
 					}
 					
 					resumeState = ResumeState.PrimingAndMovingToStart;
-					return "G92 E{0}".FormatWith(lastDestination.extrusion);
+					return "";
 
 				case ResumeState.PrimingAndMovingToStart:
+					// let's prime the extruder move to a good position over the part then start printing
+					queuedCommands.Add("G1 E5");
+					queuedCommands.Add("G1 E4");
+					queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position + new VectorMath.Vector3(0, 0, 5), 0, MovementControls.ZSpeed)));
+					queuedCommands.Add("G1 E5");
+					queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
 					resumeState = ResumeState.PrintingSlow;
-					goto case ResumeState.PrintingSlow;
+					return "";
 
 				case ResumeState.PrintingSlow:
 					string lineToSend = gCodeFileStream0.ReadLine();
@@ -134,7 +152,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 							PrinterMove moveToSend = currentMove;
-							double feedRate = ActiveSliceSettings.Instance.GetActiveValueAsDouble("first_layer_speed", 10) * 60;
+							double feedRate = ActiveSliceSettings.Instance.GetActiveValueAsDouble("first_resume_layer_speed", 10) * 60;
 							moveToSend.feedRate = feedRate;
 
 							lineToSend = CreateMovementLine(moveToSend, lastDestination);
@@ -146,7 +164,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					resumeState = ResumeState.PrintingToEnd;
-					goto case ResumeState.PrintingToEnd;
+					return "";
 
 				case ResumeState.PrintingToEnd:
 					return gCodeFileStream0.ReadLine();

@@ -4681,3 +4681,9 @@ Translated:It appears your last print failed to complete.\n\nWould your like to 
 English:Unable to Connect
 Translated:Unable to Connect
 
+English:The speed at which the nozzle will move when resuming a failed print, for 1 layer.
+Translated:The speed at which the nozzle will move when resuming a failed print, for 1 layer.
+
+English:Resume Layer Speed
+Translated:Resume Layer Speed
+
