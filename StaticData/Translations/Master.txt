@@ -4678,3 +4678,6 @@ Translated:Resume Last Print
 English:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
 Translated:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
 
+English:Unable to Connect
+Translated:Unable to Connect
+

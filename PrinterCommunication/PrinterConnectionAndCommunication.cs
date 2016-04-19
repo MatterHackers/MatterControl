@@ -2861,7 +2861,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
 						if (PrinterIsPrinting)
 						{
-							string lineWidthoutCR = lineToWrite.Substring(0, lineToWrite.Length - 2);
+							string lineWidthoutCR = lineToWrite.TrimEnd();
 							CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("{0} [{1:0.000}]\n".FormatWith(lineWidthoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds)));
 						}
 						else

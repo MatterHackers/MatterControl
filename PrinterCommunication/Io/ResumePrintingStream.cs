@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 					
 					resumeState = ResumeState.PrimingAndMovingToStart;
-					goto case ResumeState.PrimingAndMovingToStart;
+					return "G92 E{0}".FormatWith(lastDestination.extrusion);
 
 				case ResumeState.PrimingAndMovingToStart:
 					resumeState = ResumeState.PrintingSlow;
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 							PrinterMove moveToSend = currentMove;
-							double feedRate = ActiveSliceSettings.Instance.GetActiveValueAsDouble("first_layer_speed", 10);
+							double feedRate = ActiveSliceSettings.Instance.GetActiveValueAsDouble("first_layer_speed", 10) * 60;
 							moveToSend.feedRate = feedRate;
 
 							lineToSend = CreateMovementLine(moveToSend, lastDestination);
@@ -144,6 +144,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 						return lineToSend;
 					}
+
 					resumeState = ResumeState.PrintingToEnd;
 					goto case ResumeState.PrintingToEnd;
 
