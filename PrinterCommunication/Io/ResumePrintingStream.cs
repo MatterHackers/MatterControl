@@ -39,16 +39,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	internal class ResumePrintingStream : GCodeStream
 	{
 		enum ResumeState {  RemoveHeating, Raising, Homing, FindingResumeLayer, SkippingGCode, PrimingAndMovingToStart, PrintingSlow, PrintingToEnd }
-		private GCodeFileStream gCodeFileStream0;
+		private GCodeFileStream internalStream;
 		private double percentDone;
 		PrinterMove lastDestination;
         QueuedCommandsStream queuedCommands;
 
 		ResumeState resumeState = ResumeState.RemoveHeating;
 
-		public ResumePrintingStream(GCodeFileStream gCodeFileStream0, double percentDone)
+		public ResumePrintingStream(GCodeFileStream internalStream, double percentDone)
 		{
-			this.gCodeFileStream0 = gCodeFileStream0;
+			this.internalStream = internalStream;
 			this.percentDone = percentDone;
 
 			queuedCommands = new QueuedCommandsStream(null);
@@ -56,6 +56,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override void Dispose()
 		{
+		}
+
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			lastDestination = position;
+			internalStream.SetPrinterPosition(lastDestination);
 		}
 
 		public override string ReadLine()
@@ -130,9 +136,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case ResumeState.SkippingGCode:
 					// run through the gcode that the device expected looking for things like temp
 					// and skip everything else until we get to the point we left off last time
-					while (gCodeFileStream0.FileStreaming.PercentComplete(gCodeFileStream0.LineIndex) < percentDone)
+					while (internalStream.FileStreaming.PercentComplete(internalStream.LineIndex) < percentDone)
 					{
-						string line = gCodeFileStream0.ReadLine();
+						string line = internalStream.ReadLine();
 
 						lastDestination = GetPosition(line, lastDestination);
 
@@ -181,7 +187,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case ResumeState.PrintingSlow:
 					if (false)
 					{
-						string lineToSend = gCodeFileStream0.ReadLine();
+						string lineToSend = internalStream.ReadLine();
 						if (!lineToSend.StartsWith("; LAYER:"))
 						{
 							if (lineToSend != null
@@ -205,15 +211,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					return "";
 
 				case ResumeState.PrintingToEnd:
-					return gCodeFileStream0.ReadLine();
+					return internalStream.ReadLine();
 			}
 
 			return null;
-		}
-
-		public override void SetPrinterPosition(PrinterMove position)
-		{
-			gCodeFileStream0.SetPrinterPosition(position);
 		}
 	}
 }

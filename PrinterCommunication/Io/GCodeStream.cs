@@ -60,14 +60,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             string lineBeingSent;
             StringBuilder newLine = new StringBuilder("G1 ");
 
-            if (destination.position.x != start.position.x
-                || destination.position.y != start.position.y
-                || destination.position.z != start.position.z)
-            {
-                newLine = newLine.Append(String.Format("X{0:0.##} ", destination.position.x));
-                newLine = newLine.Append(String.Format("Y{0:0.##} ", destination.position.y));
-                newLine = newLine.Append(String.Format("Z{0:0.###} ", destination.position.z));
-            }
+			if (destination.position.x != start.position.x)
+			{
+				newLine = newLine.Append(String.Format("X{0:0.##} ", destination.position.x));
+			}
+			if (destination.position.y != start.position.y)
+			{
+				newLine = newLine.Append(String.Format("Y{0:0.##} ", destination.position.y));
+			}
+			if (destination.position.z != start.position.z)
+			{
+				newLine = newLine.Append(String.Format("Z{0:0.###} ", destination.position.z));
+			}
 
             if (destination.extrusion != start.extrusion)
             {
