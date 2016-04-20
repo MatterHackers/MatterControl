@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,8 +54,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				if (!lastPrint.PrintComplete // Top Print History Item is not complete
 				&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
-				&& File.Exists(lastPrint.PrintingGCodeFileName)) // PrintingGCodeFileName is still on disk
-				{
+				&& File.Exists(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is still on disk
+				&& lastPrint.PercentDone > 0 // we are actually part way into the print
+				&& ActiveSliceSettings.Instance.GetActiveValue("has_hardware_leveling") == "0")
+                {
 					lastPrintTask = lastPrint;
                     StyledMessageBox.ShowMessageBox(ResumeFailedPrintProcessDialogResponse, resumeFailedPrintMessage, resumeFailedPrintTitle, StyledMessageBox.MessageType.YES_NO, resumePrint, cancelResume);
 				}

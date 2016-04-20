@@ -4687,3 +4687,21 @@ Translated:The speed at which the nozzle will move when resuming a failed print,
 English:Resume Layer Speed
 Translated:Resume Layer Speed
 
+English:Set if the z homing moves the extruder away from the bed (z-max homing)
+Translated:Set if the z homing moves the extruder away from the bed (z-max homing)
+
+English:The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.
+Translated:The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.
+
+English:Resume Failed Print
+Translated:Resume Failed Print
+
+English:Home Z Max
+Translated:Home Z Max
+
+English:XY Resume Position
+Translated:XY Resume Position
+
+English:Homing
+Translated:Homing
+

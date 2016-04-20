@@ -358,11 +358,28 @@
     "ExtraSettings": "mm/s or %"
   },
   {
-    "SlicerConfigName": "first_resume_layer_speed",
+    "SlicerConfigName": "resume_first_layer_speed",
     "PresentationName": "Resume Layer Speed",
     "HelpText": "The speed at which the nozzle will move when resuming a failed print, for 1 layer.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "mm/s"
+    "ExtraSettings": "mm/s",
+    "ShowIfSet": "!has_hardware_leveling"
+  },
+  {
+    "SlicerConfigName": "z_homes_to_max",
+    "PresentationName": "Home Z Max",
+    "HelpText": "Set if the z homing moves the extruder away from the bed (z-max homing)",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": "",
+    "ShowIfSet": "!has_hardware_leveling"
+  },
+  {
+    "SlicerConfigName": "resume_position_before_z_home",
+    "PresentationName": "XY Resume Position",
+    "HelpText": "The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.",
+    "DataEditType": "VECTOR2",
+    "ExtraSettings": "mm",
+    "ShowIfSet": "!has_hardware_leveling"
   },
   {
     "SlicerConfigName": "first_layer_temperature",

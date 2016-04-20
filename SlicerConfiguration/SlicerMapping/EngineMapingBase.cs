@@ -46,8 +46,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"bed_size",
 			"bed_temperature",
 			"build_height",
-			"first_resume_layer_speed",
-            "cancel_gcode",
+			"cancel_gcode",
 			"connect_gcode",
 			"has_fan",
 			"has_hardware_leveling",
@@ -59,10 +58,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"print_leveling_method",
 			"print_leveling_required_to_print",
 			"print_leveling_solution",
+			"resume_first_layer_speed",
+			"resume_position_before_z_home",
 			"resume_gcode",
 			"support_material_threshold",
 			"temperature",
 			"z_can_be_negative",
+			"z_homes_to_max",
 
 			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be. 
 			"bed_remove_part_temperature",

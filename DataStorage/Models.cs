@@ -38,6 +38,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
@@ -360,6 +361,9 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 
 		public int PrintTimeSeconds { get; set; }
+		public float PrintingOffsetX { get; set; }
+		public float PrintingOffsetY { get; set; }
+		public float PrintingOffsetZ { get; set; }
 
 		public override void Commit()
 		{

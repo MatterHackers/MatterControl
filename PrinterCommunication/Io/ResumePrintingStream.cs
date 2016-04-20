@@ -32,6 +32,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrinterControls;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -90,7 +91,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				// if top homing, home the extruder
 				case ResumeState.Homing:
-					queuedCommands.Add("G28");
+					if (ActiveSliceSettings.Instance.GetActiveValue("z_homes_to_max") == "1")
+					{
+						queuedCommands.Add("G28");
+					}
+					else
+					{
+						// home x
+						queuedCommands.Add("G28 X0");
+						// home y
+						queuedCommands.Add("G28 Y0");
+						// move to the place we can home z from
+						Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetActiveVector2("resume_position_before_z_home");
+						queuedCommands.Add("G1 X{0:0.000}Y{1:0.000}F{2}".FormatWith(resumePositionXy.x, resumePositionXy.y, MovementControls.XSpeed));
+						// home z
+						queuedCommands.Add("G28 Z0");
+					}
 					resumeState = ResumeState.FindingResumeLayer;
 					return "";
 					
@@ -134,33 +150,54 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					return "";
 
 				case ResumeState.PrimingAndMovingToStart:
-					// let's prime the extruder move to a good position over the part then start printing
-					queuedCommands.Add("G1 E5");
-					queuedCommands.Add("G1 E4");
-					queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position + new VectorMath.Vector3(0, 0, 5), 0, MovementControls.ZSpeed)));
-					queuedCommands.Add("G1 E5");
-					queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
-					resumeState = ResumeState.PrintingSlow;
+					{
+						// let's prime the extruder, move to a good position over the part, then start printing
+						queuedCommands.Add("G1 E5");
+						queuedCommands.Add("G1 E4");
+						if (ActiveSliceSettings.Instance.GetActiveValue("z_homes_to_max") == "0") // we are homed to the bed
+						{
+							// move to the height we can resume printing from
+							Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetActiveVector2("resume_position_before_z_home");
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(resumePositionXy.x, resumePositionXy.y, lastDestination.position.z + 5), 0, MovementControls.ZSpeed)));
+							// move just above the actual print position
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position + new VectorMath.Vector3(0, 0, 5), 0, MovementControls.XSpeed)));
+							// move down to part
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, MovementControls.ZSpeed)));
+						}
+						else
+						{
+							// move to the actual print position
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, MovementControls.ZSpeed)));
+						}
+						// extrude back to our filament start
+						queuedCommands.Add("G1 E5");
+						/// reset the printer to know where it the filament should be
+						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
+						resumeState = ResumeState.PrintingSlow;
+					}
 					return "";
 
 				case ResumeState.PrintingSlow:
-					string lineToSend = gCodeFileStream0.ReadLine();
-					if(!lineToSend.StartsWith("; LAYER:"))
+					if (false)
 					{
-						if (lineToSend != null
-							&& LineIsMovement(lineToSend))
+						string lineToSend = gCodeFileStream0.ReadLine();
+						if (!lineToSend.StartsWith("; LAYER:"))
 						{
-							PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
-							PrinterMove moveToSend = currentMove;
-							double feedRate = ActiveSliceSettings.Instance.GetActiveValueAsDouble("first_resume_layer_speed", 10) * 60;
-							moveToSend.feedRate = feedRate;
+							if (lineToSend != null
+								&& LineIsMovement(lineToSend))
+							{
+								PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
+								PrinterMove moveToSend = currentMove;
+								double feedRate = ActiveSliceSettings.Instance.GetActiveValueAsDouble("resume_first_layer_speed", 10) * 60;
+								moveToSend.feedRate = feedRate;
 
-							lineToSend = CreateMovementLine(moveToSend, lastDestination);
-							lastDestination = currentMove;
+								lineToSend = CreateMovementLine(moveToSend, lastDestination);
+								lastDestination = currentMove;
+								return lineToSend;
+							}
+
 							return lineToSend;
 						}
-
-						return lineToSend;
 					}
 
 					resumeState = ResumeState.PrintingToEnd;

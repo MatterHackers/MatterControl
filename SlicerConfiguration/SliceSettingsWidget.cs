@@ -254,16 +254,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private static List<string> settingToReloadUiWhenChanged = new List<string>()
         {
+            "extruder_count",
+            "extruders_share_temperature",
             "has_fan",
             "has_heated_bed",
-			"print_leveling_required_to_print",
-			"has_hardware_leveling",
             "has_sd_card_reader",
-            "extruder_count",
-			"show_reset_connection",
-            "extruders_share_temperature",
 			"center_part_on_bed",
+			"has_hardware_leveling",
 			"include_firmware_updater",
+			"print_leveling_required_to_print",
+			"show_reset_connection",
         };
 
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
@@ -547,23 +547,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						foreach (OrganizerSettingsData settingInfo in subGroup.SettingDataList)
 						{
-							bool settingShouldBeShown = true;
-							if (settingInfo.ShowIfSet != null
-								&& settingInfo.ShowIfSet != "")
-							{
-								string showValue = "0";
-								string checkName = settingInfo.ShowIfSet;
-								if(checkName.StartsWith("!"))
-								{
-									showValue = "1";
-									checkName = checkName.Substring(1);
-								}
-								string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(checkName);
-								if (sliceSettingValue == showValue)
-								{
-									settingShouldBeShown = false;
-								}
-							}
+							bool settingShouldBeShown = CheckIfShouldBeShown(settingInfo);
 
 							if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName)
 								&& settingShouldBeShown)
@@ -647,6 +631,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return groupTabs;
+		}
+
+		private static bool CheckIfShouldBeShown(OrganizerSettingsData settingInfo)
+		{
+			bool settingShouldBeShown = true;
+			if (settingInfo.ShowIfSet != null
+				&& settingInfo.ShowIfSet != "")
+			{
+				string showValue = "0";
+				string checkName = settingInfo.ShowIfSet;
+				if (checkName.StartsWith("!"))
+				{
+					showValue = "1";
+					checkName = checkName.Substring(1);
+				}
+				string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(checkName);
+				if (sliceSettingValue == showValue)
+				{
+					settingShouldBeShown = false;
+				}
+			}
+
+			return settingShouldBeShown;
 		}
 
 		private void AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingInfo)

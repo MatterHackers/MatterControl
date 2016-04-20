@@ -36,7 +36,6 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
@@ -45,7 +44,6 @@ using MatterHackers.VectorMath;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -2460,6 +2458,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3);
 			waitForTempStream5 = new WaitForTempStream(printLevelingStream4);
 			babyStepsStream6 = new BabyStepsStream(waitForTempStream5);
+			if(activePrintTask != null)
+			{
+				// make sure we are in the position we were when we stopped printing
+				babyStepsStream6.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
+			}
 			extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
 			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
 			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);
@@ -2746,10 +2749,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint)
 						{
 							activePrintTask.PercentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
-							activePrintTask.Commit();
+							activePrintTask.PrintingOffsetX = (float)babyStepsStream6.Offset.x;
+							activePrintTask.PrintingOffsetY = (float)babyStepsStream6.Offset.y;
+							activePrintTask.PrintingOffsetZ = (float)babyStepsStream6.Offset.z;
+                            activePrintTask.Commit();
 							secondsSinceUpdateHistory = secondsSinceStartedPrint;
-							Debug.WriteLine(activePrintTask.PercentDone.ToString());
-                        }
+						}
 
 						if (trimedLine.Length > 0)
 						{

@@ -115,7 +115,6 @@ Advanced
         travel_speed
       Modifiers
         first_layer_speed
-        first_resume_layer_speed
       Acceleration Control
         perimeter_acceleration
         infill_acceleration
@@ -288,6 +287,12 @@ Advanced
       Probe Settings
         manual_probe_paper_width
       Options
+    Resume Failed Print
+      Speed
+        resume_first_layer_speed
+      Homing
+        z_homes_to_max
+        resume_position_before_z_home
     Custom G-Code
       Start G-Code
         start_gcode
