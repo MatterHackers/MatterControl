@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				// remove it from the part
 				case ResumeState.Raising:
+					queuedCommands.Add("M114 ; get current position");
 					queuedCommands.Add("G91 ; move relative");
 					queuedCommands.Add("G1 Z10 F{0}".FormatWith(MovementControls.ZSpeed));
 					queuedCommands.Add("G90 ; move absolute");
