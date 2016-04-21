@@ -54,11 +54,11 @@ namespace MatterHackers.RayTracer
 
 		private List<MeshGroup> loadedMeshGroups;
 
-		//RayTracer raytracer = new RayTracer(AntiAliasing.None, true, true, true, true, true);
-		//RayTracer raytracer = new RayTracer(AntiAliasing.Low, true, true, true, true, true);
-		//RayTracer raytracer = new RayTracer(AntiAliasing.Medium, true, true, true, true, true);
-		//RayTracer raytracer = new RayTracer(AntiAliasing.High, true, true, true, true, true);
-		private RayTracer raytracer = new RayTracer(AntiAliasing.VeryHigh, true, true, true, true, true);
+		//RayTracer rayTracer = new RayTracer(AntiAliasing.None, true, true, true, true, true);
+		//RayTracer rayTracer = new RayTracer(AntiAliasing.Low, true, true, true, true, true);
+		//RayTracer rayTracer = new RayTracer(AntiAliasing.Medium, true, true, true, true, true);
+		//RayTracer rayTracer = new RayTracer(AntiAliasing.High, true, true, true, true, true);
+		private RayTracer rayTracer = new RayTracer(AntiAliasing.VeryHigh, true, true, true, true, true);
 
 		private List<IPrimitive> renderCollection = new List<IPrimitive>();
 		private Scene scene;
@@ -86,8 +86,8 @@ namespace MatterHackers.RayTracer
 				destImage = new ImageBuffer(rect.Width, rect.Height, 32, new BlenderBGRA());
 			}
 
-			raytracer.RayTraceScene(rect, scene);
-			raytracer.CopyColorBufferToImage(destImage, rect);
+			rayTracer.RayTraceScene(rect, scene);
+			rayTracer.CopyColorBufferToImage(destImage, rect);
 		}
 
 		public void SetRenderPosition(List<MeshGroup> loadedMeshGroups)
