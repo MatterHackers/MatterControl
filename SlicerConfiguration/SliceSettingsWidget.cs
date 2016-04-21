@@ -39,217 +39,12 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using MatterHackers.MatterControl.DataStorage;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsSaveBar : FlowLayoutWidget
-	{
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-		private Button saveButton;
-		private Button revertbutton;
-
-		public SliceSettingsSaveBar()
-		{
-			textImageButtonFactory.FixedWidth = 80 * TextWidget.GlobalPointSizeScaleRatio;
-			textImageButtonFactory.fontSize = (int)(10 * TextWidget.GlobalPointSizeScaleRatio);
-
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
-
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 180);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 180);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.Margin = new BorderDouble(left: 2);
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
-			this.Padding = new BorderDouble(5);
-
-			string unsavedMessageText = "Unsaved Changes".Localize();
-			TextWidget unsavedMessage = new TextWidget("{0}:".FormatWith(unsavedMessageText), pointSize: 10 * TextWidget.GlobalPointSizeScaleRatio);
-			unsavedMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			unsavedMessage.VAnchor = VAnchor.ParentCenter;
-
-			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert").ToUpper(), centerText: true);
-			revertbutton.VAnchor = VAnchor.ParentCenter;
-			revertbutton.Visible = true;
-			revertbutton.Margin = new BorderDouble(5, 0, 0, 0);
-			revertbutton.Click += new EventHandler(revertbutton_Click);
-
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 255);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 255);
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save").ToUpper(), centerText: true);
-			saveButton.Name = "Save Slice Settings Button";
-			saveButton.VAnchor = VAnchor.ParentCenter;
-			saveButton.Visible = true;
-			saveButton.Margin = new BorderDouble(5, 0, 5, 0);
-			saveButton.Click += new EventHandler(saveButton_Click);
-
-			this.AddChild(new HorizontalSpacer());
-			this.AddChild(unsavedMessage);
-			this.AddChild(saveButton);
-			this.AddChild(revertbutton);
-			this.AddChild(new HorizontalSpacer());
-		}
-
-		private void saveButton_Click(object sender, EventArgs mouseEvent)
-		{
-			Datastore.Instance.dbSQLite.RunInTransaction(ActiveSliceSettings.Instance.CommitChanges);
-		}
-
-		private void revertbutton_Click(object sender, EventArgs mouseEvent)
-		{
-			ActiveSliceSettings.Instance.LoadAllSettings();
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-		}
-	}
-
-	public class SliceSettingsDetailControl : FlowLayoutWidget
-	{
-		private const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
-		private const string SliceSettingsLevelEntry = "SliceSettingsLevel";
-
-		private CheckBox showHelpBox;
-		private StyledDropDownList settingsDetailSelector;
-
-		public DropDownMenu sliceOptionsMenuDropList;
-		private TupleList<string, Func<bool>> slicerOptionsMenuItems;
-
-		public SliceSettingsDetailControl()
-		{
-			showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
-			showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
-			// add in the ability to turn on and off help text
-			{
-				showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				showHelpBox.Margin = new BorderDouble(right: 3);
-				showHelpBox.VAnchor = VAnchor.ParentCenter;
-				showHelpBox.Cursor = Cursors.Hand;
-				showHelpBox.CheckedStateChanged += RebuildSlicerSettings;
-
-				this.AddChild(showHelpBox);
-			}
-
-			settingsDetailSelector = new StyledDropDownList("Basic", maxHeight: 200);
-			settingsDetailSelector.Name = "User Level Dropdown";
-			settingsDetailSelector.AddItem(LocalizedString.Get("Basic"), "Simple");
-			settingsDetailSelector.AddItem(LocalizedString.Get("Standard"), "Intermediate");
-			settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
-			if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
-				&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
-			{
-				settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
-			}
-
-			settingsDetailSelector.SelectionChanged += new EventHandler(SettingsDetail_SelectionChanged);
-			settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
-			settingsDetailSelector.Margin = new BorderDouble(5, 3);
-            settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
-
-			this.AddChild(settingsDetailSelector);
-			this.AddChild(GetSliceOptionsMenuDropList());
-		}
-
-		private DropDownMenu GetSliceOptionsMenuDropList()
-		{
-			if (sliceOptionsMenuDropList == null)
-			{
-				sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ");
-				sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
-				sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
-                sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
-				sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
-				sliceOptionsMenuDropList.BorderWidth = 1;
-				sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
-				sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
-
-				SetMenuItems();
-			}
-
-			return sliceOptionsMenuDropList;
-		}
-
-		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string menuSelection = ((DropDownMenu)sender).SelectedValue;
-			foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-			{
-				// if the menu we select is this one
-				if (item.Item1 == menuSelection)
-				{
-					// call its function
-					item.Item2();
-				}
-			}
-		}
-
-		private void SetMenuItems()
-		{
-			string importTxt = LocalizedString.Get("Import");
-			string importTxtFull = string.Format("{0}", importTxt);
-			string exportTxt = LocalizedString.Get("Export");
-			string exportTxtFull = string.Format("{0}", exportTxt);
-			//Set the name and callback function of the menu items
-			slicerOptionsMenuItems = new TupleList<string, Func<bool>>
-			{
-				{importTxtFull, ImportQueueMenu_Click},
-				{exportTxtFull, ExportQueueMenu_Click},
-			};
-
-			//Add the menu items to the menu itself
-			foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-			{
-				sliceOptionsMenuDropList.AddItem(item.Item1);
-			}
-		}
-
-		private bool ImportQueueMenu_Click()
-		{
-			UiThread.RunOnIdle(() =>
-				{
-					ActiveSliceSettings.Instance.LoadSettingsFromIni();
-				});
-			return true;
-		}
-
-		private bool ExportQueueMenu_Click()
-		{
-			UiThread.RunOnIdle(ActiveSliceSettings.Instance.SaveAs);
-			return true;
-		}
-
-		private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
-		{
-			RebuildSlicerSettings(null, null);
-		}
-
-		private void RebuildSlicerSettings(object sender, EventArgs e)
-		{
-			UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
-			UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
-
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-		}
-
-		public string SelectedValue
-		{
-			get { return settingsDetailSelector.SelectedValue; }
-		}
-
-		public bool ShowingHelp
-		{
-			get { return showHelpBox.Checked; }
-		}
-	}
-
+	
 	public class SliceSettingsWidget : GuiWidget
 	{
 		private static List<string> settingToReloadUiWhenChanged = new List<string>()
@@ -271,8 +66,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private TabControl categoryTabs;
 		private AltGroupBox noConnectionMessageContainer;
-		private FlowLayoutWidget settingsControlBar;
-		private FlowLayoutWidget settingsSaveBar;
+		private SettingsControlBar settingsControlBar;
+		private string activeMaterialPreset;
+		private string activeQualityPreset;
+		private bool presetChanged = false;
+		private TextWidget materialPresetLabel
+		{
+			get;
+			set;
+		}
+		Button revertButton;
+		private TextWidget qualityPresetLabel;
+		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		public SliceSettingsWidget()
 		{
@@ -287,13 +92,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			pageTopToBottomLayout.Padding = new BorderDouble(3, 0);
 			this.AddChild(pageTopToBottomLayout);
 
-			settingsControlBar = new SettingsControlBar();
+			settingsControlBar = new SettingsControlBar()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay,
+				Padding = new BorderDouble(8, 12, 8, 8)
+			};
+			this.activeMaterialPreset = settingsControlBar.activeMaterialPreset;
+			this.activeQualityPreset = settingsControlBar.activeQualityPreset;
+
 			pageTopToBottomLayout.AddChild(settingsControlBar);
-
-			settingsSaveBar = new SliceSettingsSaveBar();
-			settingsSaveBar.Visible = false;
-			pageTopToBottomLayout.AddChild(settingsSaveBar);
-
+			
 			noConnectionMessageContainer = new AltGroupBox(new TextWidget(LocalizedString.Get("No Printer Selected"), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
 			noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -386,24 +195,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			this.AnchorAll();
-			SetStatusDisplay();
-		}
-
-		private void onCommitStatusChanged(object sender, EventArgs e)
-		{
-			SetStatusDisplay();
-		}
-
-		private void SetStatusDisplay()
-		{
-			if (ActiveSliceSettings.Instance.HasUncommittedChanges)
-			{
-				settingsSaveBar.Visible = true;
-			}
-			else
-			{
-				settingsSaveBar.Visible = false;
-			}
 		}
 
 		public string UserLevel
@@ -462,7 +253,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(APP_onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			ActiveSliceSettings.Instance.CommitStatusChanged.RegisterEvent(onCommitStatusChanged, ref unregisterEvents);
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -517,6 +307,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				TabPage groupTabPage = new TabPage(groupTabLabel);
 				groupTabPage.HAnchor = HAnchor.ParentLeftRight;
 
+				//Side Tabs
 				SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, group.Name + " Tab", 14,
 				   ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
 				groupTabWidget.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -529,6 +320,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string subGroupTitle = subGroup.Name;
 					int numberOfCopies = 1;
+					
 					if (subGroup.Name == "Extruder X")
 					{
 						numberOfCopies = ActiveSliceSettings.Instance.ExtruderCount;
@@ -737,6 +529,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private static Dictionary<string, RootedObjectEventHandler> functionsToCallOnChange = new Dictionary<string, RootedObjectEventHandler>();
+		private bool revertVisible;
 
 		public static void RegisterForSettingsChange(string settingName, EventHandler functionToCallOnChange, ref EventHandler functionThatWillBeCalledToUnregisterEvent)
 		{
@@ -774,11 +567,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			GuiWidget container = new GuiWidget();
 			FlowLayoutWidget leftToRightLayout = new FlowLayoutWidget();
 
-			bool addQualityOverlay = false;
-			bool addMaterialOverlay = false;
+			bool isQualityPreset = false;
+			bool isMaterialPreset = false;
 
-			RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 40);
-			RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 40);
+			RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 108);
+			RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 108);
+			RGBA_Bytes userSettingOverlayColor = new RGBA_Bytes(0, 0, 255, 108);
+
+			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
+			this.textImageButtonFactory.FixedHeight = 15 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.fontSize = 8;
+			this.textImageButtonFactory.borderWidth = 1;
+			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+
+			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
+			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.HAnchor = HAnchor.ParentLeftRight;
+
+			revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
+			revertButton.HAnchor = HAnchor.ParentRight;
+			revertButton.VAnchor = VAnchor.ParentCenter;
+			revertButton.Margin = new BorderDouble(0, 0, 10, 0);
+
+
 
 			if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
 			{
@@ -824,17 +638,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     }
 #endif
 					settingName.Width = minSettingNameWidth;
-					//settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
 					leftToRightLayout.AddChild(settingName);
 				}
 
 				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
 				{
-					addMaterialOverlay = true;
+					isMaterialPreset = true;
 				}
 				else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
 				{
-					addQualityOverlay = true;
+					isQualityPreset = true;
 				}
 
 				switch (settingData.DataEditType)
@@ -845,9 +658,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							int.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit intEditWidget = new MHNumberEdit(currentValue, pixelWidth: intEditWidth, tabIndex: tabIndexForItem++);
 							intEditWidget.ToolTipText = settingData.HelpText;
-							intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+							intEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+								CreateSliceSettingContainer(container, settingData);
 								CallEventsOnSettingsChange(settingData);
 							};
 							intEditWidget.SelectAllOnFocus = true;
@@ -865,6 +680,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							doubleEditWidget.ToolTipText = settingData.HelpText;
 							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
+								presetChanged = true;
+								CreateSliceSettingContainer(container, settingData);
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
 								CallEventsOnSettingsChange(settingData);
 							};
@@ -915,9 +732,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue;
 							}
 							doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget.MarkAsStartingState();
-
-							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+							
+							doubleEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
 								NumberEdit numberEdit = (NumberEdit)sender;
 								// If this setting sets other settings, then do that.
 								if (ChangesMultipleOtherSettings
@@ -928,13 +746,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										SaveSetting(setting, numberEdit.Value.ToString() + "mm");
 									}
 								}
+								CreateSliceSettingContainer(container, settingData);
 
 								// also always save to the local setting
 								SaveSetting(settingData.SlicerConfigName, numberEdit.Value.ToString());
+
 								CallEventsOnSettingsChange(settingData);
 							};
 							doubleEditWidget.SelectAllOnFocus = true;
-
 							content.AddChild(doubleEditWidget);
 							content.AddChild(getSettingInfoData(settingData));
 
@@ -955,8 +774,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							double.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, allowNegatives: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
 							doubleEditWidget.ToolTipText = settingData.HelpText;
-							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+							doubleEditWidget.ActuallNumberEdit.EnterPressed+= (sender, e) =>
 							{
+								presetChanged = true;
+								CreateSliceSettingContainer(container, settingData);
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
 								CallEventsOnSettingsChange(settingData);
 							};
@@ -972,8 +793,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
 							stringEdit.ToolTipText = settingData.HelpText;
-							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
+							stringEdit.ActualTextEditWidget.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
 								TextEditWidget textEditWidget = (TextEditWidget)sender;
 								string text = textEditWidget.Text;
 								text = text.Trim();
@@ -990,6 +812,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									text += "%";
 								}
 								textEditWidget.Text = text;
+								CreateSliceSettingContainer(container, settingData);
 								SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
 								CallEventsOnSettingsChange(settingData);
 							};
@@ -1005,7 +828,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									textEditWidget.SetSelection(0, percentIndex-1);
 								}
 							};
-
+							
 							content.AddChild(stringEdit);
 							content.AddChild(getSettingInfoData(settingData));
 
@@ -1028,8 +851,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							stringEdit.ToolTipText = settingData.HelpText;
 
 							string startingText = stringEdit.Text;
-							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
+							stringEdit.ActualTextEditWidget.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
 								TextEditWidget textEditWidget = (TextEditWidget)sender;
 								// only validate when we lose focus
 								if (!textEditWidget.ContainsFocus)
@@ -1056,7 +880,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									textEditWidget.Text = text;
 									startingText = stringEdit.Text;
 								}
-
+								CreateSliceSettingContainer(container, settingData);
 								SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
 								CallEventsOnSettingsChange(settingData);
 
@@ -1121,6 +945,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								CallEventsOnSettingsChange(settingData);
 							};
+
 							leftToRightLayout.AddChild(checkBoxWidget);
 						}
 						break;
@@ -1129,11 +954,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++);
 							stringEdit.ToolTipText = settingData.HelpText;
-							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
+							stringEdit.ActualTextEditWidget.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
+								CreateSliceSettingContainer(container, settingData);
 								SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text);
 								CallEventsOnSettingsChange(settingData);
 							};
+
 							leftToRightLayout.AddChild(stringEdit);
 						}
 						break;
@@ -1144,9 +972,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							MHTextEditWidget stringEdit = new MHTextEditWidget(convertedNewLines, pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndexForItem++);
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
+								presetChanged = true;
+								CreateSliceSettingContainer(container, settingData);
 								SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text.Replace("\n", "\\n"));
 								CallEventsOnSettingsChange(settingData);
 							};
+
 							leftToRightLayout.AddChild(stringEdit);
 						}
 						break;
@@ -1156,7 +987,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							StyledDropDownList selectableOptions = new StyledDropDownList("None", maxHeight: 200);
 							selectableOptions.ToolTipText = settingData.HelpText;
 							selectableOptions.Margin = new BorderDouble();
-
+							container.DebugShowBounds = true;
 							string[] listItems = settingData.ExtraSettings.Split(',');
 
 							foreach (string listItem in listItems)
@@ -1169,11 +1000,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								newItem.Selected += (sender, e) =>
 								{
+									presetChanged = true;
 									MenuItem menuItem = ((MenuItem)sender);
+									CreateSliceSettingContainer(container, settingData);
 									SaveSetting(settingData.SlicerConfigName, menuItem.Text);
 									CallEventsOnSettingsChange(settingData);
 								};
 							}
+							
 							leftToRightLayout.AddChild(selectableOptions);
 						}
 						break;
@@ -1195,12 +1029,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								else
 								{
+
 									SaveSetting(settingData.SlicerConfigName, "0");
 									// Now hide all of the settings that this control is associated with.
 								}
 								CallEventsOnSettingsChange(settingData);
 							};
+
 							leftToRightLayout.AddChild(checkBoxWidget);
+
 						}
 						break;
 
@@ -1215,24 +1052,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							double.TryParse(xyValueStrings[0], out currentXValue);
 							MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
 							xEditWidget.ToolTipText = settingData.HelpText;
-
+							xEditWidget.Margin = new BorderDouble(0, 0, 60, 0);
 							double currentYValue = 0;
 							double.TryParse(xyValueStrings[1], out currentYValue);
 							MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
 							yEditWidget.ToolTipText = settingData.HelpText;
 
-							xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+							xEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
+								CreateSliceSettingContainer(container, settingData);
 								SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
 								CallEventsOnSettingsChange(settingData);
 							};
 							xEditWidget.SelectAllOnFocus = true;
-
 							leftToRightLayout.AddChild(xEditWidget);
-							leftToRightLayout.AddChild(new HorizontalSpacer());
 
-							yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+							yEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 							{
+								presetChanged = true;
+								CreateSliceSettingContainer(container, settingData);
 								SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
 								CallEventsOnSettingsChange(settingData);
 							};
@@ -1249,19 +1088,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							MHNumberEdit yEditWidget = new MHNumberEdit(offset.y, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
 							yEditWidget.ToolTipText = settingData.HelpText;
 							{
-								xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+								xEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 								{
+									presetChanged = true;
+									CreateSliceSettingContainer(container, settingData);
 									int extruderIndexLocal = extruderIndex;
 									SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
 									CallEventsOnSettingsChange(settingData);
 								};
 								xEditWidget.SelectAllOnFocus = true;
+								xEditWidget.Margin = new BorderDouble(0, 0, 60, 0);
 								leftToRightLayout.AddChild(xEditWidget);
-								leftToRightLayout.AddChild(new HorizontalSpacer());
+
 							}
 							{
-								yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+								yEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
 								{
+									presetChanged = true;
+									CreateSliceSettingContainer(container, settingData);
 									int extruderIndexLocal = extruderIndex;
 									SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
 									CallEventsOnSettingsChange(settingData);
@@ -1291,86 +1135,100 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			container.HAnchor = HAnchor.ParentLeftRight;
 			container.VAnchor = VAnchor.FitToChildren;
-
+			CreateSliceSettingContainer(container, settingData);
 			container.AddChild(leftToRightLayout);
 
-			if (addQualityOverlay || addMaterialOverlay)
-			{
-				SettingPresetOverlay overlay = new SettingPresetOverlay();
-				overlay.HAnchor = HAnchor.ParentLeftRight;
-				overlay.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-
-				SettingPresetClick clickToEdit = new SettingPresetClick();
-				clickToEdit.HAnchor = HAnchor.ParentLeftRight;
-				clickToEdit.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-				clickToEdit.Visible = false;
-
-				Button editButton = buttonFactory.Generate("Edit Preset".Localize().ToUpper());
-				editButton.HAnchor = Agg.UI.HAnchor.ParentCenter;
-				editButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-
-				clickToEdit.AddChild(editButton);
-
-				if (addQualityOverlay)
-				{
-					overlay.OverlayColor = qualityOverlayColor;
-					clickToEdit.OverlayColor = qualityOverlayColor;
-					editButton.Click += (sender, e) =>
-					{
-						if (ApplicationController.Instance.EditQualityPresetsWindow == null)
-						{
-							ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-							ApplicationController.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditQualityPresetsWindow = null; };
-						}
-						else
-						{
-							ApplicationController.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-							ApplicationController.Instance.EditQualityPresetsWindow.BringToFront();
-						}
-					};
-				}
-				else if (addMaterialOverlay)
-				{
-					overlay.OverlayColor = materialOverlayColor;
-					clickToEdit.OverlayColor = materialOverlayColor;
-					editButton.Click += (sender, e) =>
-					{
-						if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
-						{
-							ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
-							ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditMaterialPresetsWindow = null; };
-						}
-						else
-						{
-							ApplicationController.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
-							ApplicationController.Instance.EditMaterialPresetsWindow.BringToFront();
-						}
-					};
-				}
-
-				container.MouseEnterBounds += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						overlay.Visible = false;
-						clickToEdit.Visible = true;
-					});
-				};
-
-				container.MouseLeaveBounds += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						overlay.Visible = true;
-						clickToEdit.Visible = false;
-					});
-				};
-
-				container.AddChild(overlay);
-				container.AddChild(clickToEdit);
-			}
 
 			return container;
+		}
+
+		private void CreateSliceSettingContainer(GuiWidget container, OrganizerSettingsData settingData)
+		{
+			//Initialize all widgets to be added to container
+			TextWidget qualityPresetLabel = new TextWidget(this.activeQualityPreset);
+			qualityPresetLabel.HAnchor = HAnchor.ParentRight;
+			qualityPresetLabel.VAnchor = VAnchor.ParentCenter;
+			qualityPresetLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			qualityPresetLabel.Margin = new BorderDouble(10, 0, 0, 0);
+			qualityPresetLabel.PointSize = 8;
+
+			TextWidget materialPresetLabel = new TextWidget(this.activeMaterialPreset);
+			materialPresetLabel.HAnchor = HAnchor.ParentRight;
+			materialPresetLabel.VAnchor = VAnchor.ParentCenter;
+			materialPresetLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			materialPresetLabel.Margin = new BorderDouble(10, 0, 0, 0);
+			materialPresetLabel.PointSize = 8;
+
+			RGBA_Bytes materialSettingBackgroundColor = new RGBA_Bytes(255, 127, 0, 108);
+			RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(0, 0, 255, 108);
+			RGBA_Bytes qualitySettingBackgroundColor = new RGBA_Bytes(255, 255, 0, 108);
+
+			var presetLabel = container.Children<TextWidget>().FirstOrDefault();
+
+			Button revertButton = textImageButtonFactory.Generate("Revert".ToUpper());
+			revertButton.HAnchor = HAnchor.ParentRight;
+			revertButton.VAnchor = VAnchor.ParentCenter;
+			revertButton.Margin = new BorderDouble(0, 0, 10, 0);
+			
+			revertButton.Click += (sender, e) =>
+			{
+				presetChanged = false;
+				var revertButtonTest = container.Children<Button>().FirstOrDefault();
+				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+				{
+					presetChanged = false;
+					container.BackgroundColor = materialSettingBackgroundColor;
+					revertButton.Visible = false;
+					presetLabel.Visible = true;
+				}
+				if(ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
+				{
+					presetChanged = false;
+					container.BackgroundColor = qualitySettingBackgroundColor;
+					revertButton.Visible = false;
+					presetLabel.Visible = true;
+				}
+			};
+
+			container.AddChild(revertButton);
+
+			if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+			{
+				if (!presetChanged)
+				{
+
+					container.BackgroundColor = materialSettingBackgroundColor;
+					container.AddChild(materialPresetLabel);
+					revertButton.Visible = false;
+				}
+				else
+				{
+					container.BackgroundColor = userSettingBackgroundColor;
+					presetLabel.Visible = false;
+					revertButton.Visible = true;
+				}
+
+			}
+
+			else if(ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
+			{
+				if (!presetChanged)
+				{
+					container.BackgroundColor = qualitySettingBackgroundColor;
+					container.AddChild(qualityPresetLabel);
+					revertButton.Visible = false;
+				}
+				else
+				{
+					container.BackgroundColor = userSettingBackgroundColor;
+					presetLabel.Visible = false;
+					revertButton.Visible = true;
+				}
+			}
+			else
+			{
+				revertButton.Visible = false;
+			}
 		}
 
 		private GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, GuiWidget content, InternalTextEditWidget internalTextWidget)
@@ -1460,6 +1318,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string newValue = string.Join(",", settings);
 			SaveSetting(slicerConfigName, newValue);
 		}
+
 
 		protected void ReloadOptions(object sender, EventArgs e)
 		{

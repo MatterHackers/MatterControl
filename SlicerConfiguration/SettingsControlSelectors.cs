@@ -150,6 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			container.AddChild(editButton);
 			container.AddChild(DropDownList);
+
 			return container;
 		}
 

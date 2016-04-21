@@ -35,12 +35,15 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class EnhancedSettingsControlBar : FlowLayoutWidget
+	public class SettingsControlBar : FlowLayoutWidget
 	{
-		public EnhancedSettingsControlBar()
+		private event EventHandler unregisterEvents;
+		public string activeMaterialPreset;
+		public string activeQualityPreset;
+
+		public SettingsControlBar()
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
-			//this.AddChild(GetSliceEngineContainer());
 
 			int numberOfHeatedExtruders = 1;
 			if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
@@ -48,7 +51,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
 			}
 
-			this.AddChild(new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality"));
+			SliceSelectorWidget qualityPresetDropDown = new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality");
+			this.activeQualityPreset = qualityPresetDropDown.DropDownList.SelectedLabel;
+			this.AddChild(qualityPresetDropDown);
 			this.AddChild(new GuiWidget(8, 0));
 
 			if (numberOfHeatedExtruders > 1)
@@ -68,19 +73,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				this.AddChild(new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material"));
+				SliceSelectorWidget materialPresetDropDown = new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material");
+				this.activeMaterialPreset = materialPresetDropDown.DropDownList.SelectedLabel;
+				this.AddChild(materialPresetDropDown);
 			}
 
-			//this.AddChild(new GuiWidget(6, 0));
-			//this.AddChild(new SliceSelectorWidget("Item", RGBA_Bytes.Violet));
 			this.Height = 60 * TextWidget.GlobalPointSizeScaleRatio;
-		}
 
-		private event EventHandler unregisterEvents;
-
-		private void AddHandlers()
-		{
-			//
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -92,28 +91,5 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnClosed(e);
 		}
 	}
-
-	public class SettingsControlBar : FlowLayoutWidget
-	{
-		public SettingsControlBar()
-			: base(FlowDirection.TopToBottom)
-		{
-			SetDisplayAttributes();
-			AddChildElements();
-		}
-
-		private void SetDisplayAttributes()
-		{
-			this.HAnchor |= HAnchor.ParentLeftRight;
-			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-			this.Padding = new BorderDouble(8, 12, 8, 8);
-		}
-
-		private void AddChildElements()
-		{
-			EnhancedSettingsControlBar topRow = new EnhancedSettingsControlBar();
-			//this.AddChild(bottomRow);
-			this.AddChild(topRow);
-		}
-	}
 }
+	
