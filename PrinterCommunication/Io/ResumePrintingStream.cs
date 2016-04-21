@@ -178,14 +178,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 						// extrude back to our filament start
 						queuedCommands.Add("G1 E5");
-						/// reset the printer to know where it the filament should be
+						/// reset the printer to know where the filament should be
 						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
 						resumeState = ResumeState.PrintingSlow;
 					}
 					return "";
 
 				case ResumeState.PrintingSlow:
-					if (false)
 					{
 						string lineToSend = internalStream.ReadLine();
 						if (!lineToSend.StartsWith("; LAYER:"))
