@@ -907,18 +907,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			windowController.ActivePresetLayer = new SettingsLayer(collection, settingsDictionary);
 		}
 
-		/*public void SetRevertVisibility()
-		{
-			if(ActiveSliceSettings.Instance.HasUncommittedChanges)
-			{
-				//widget visible 
-			}
-			else
-			{
-				//widget invisible
-			}
-		}*/
-
 		public int ExistingPresetsCount()
 		{
 			string query = string.Format("SELECT COUNT(*) FROM SliceSettingsCollection WHERE Tag = '{0}';", windowController.filterTag);

@@ -1159,9 +1159,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			materialPresetLabel.Margin = new BorderDouble(10, 0, 0, 0);
 			materialPresetLabel.PointSize = 8;
 
-			RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 108);
-			RGBA_Bytes userSettingOverlayColor = new RGBA_Bytes(0, 0, 255, 108);
-			RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 108);
+			RGBA_Bytes materialSettingBackgroundColor = new RGBA_Bytes(255, 127, 0, 108);
+			RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(0, 0, 255, 108);
+			RGBA_Bytes qualitySettingBackgroundColor = new RGBA_Bytes(255, 255, 0, 108);
 
 			var presetLabel = container.Children<TextWidget>().FirstOrDefault();
 
@@ -1177,14 +1177,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
 				{
 					presetChanged = false;
-					container.BackgroundColor = materialOverlayColor;
+					container.BackgroundColor = materialSettingBackgroundColor;
 					revertButton.Visible = false;
 					presetLabel.Visible = true;
 				}
 				if(ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
 				{
 					presetChanged = false;
-					container.BackgroundColor = qualityOverlayColor;
+					container.BackgroundColor = qualitySettingBackgroundColor;
 					revertButton.Visible = false;
 					presetLabel.Visible = true;
 				}
@@ -1197,13 +1197,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (!presetChanged)
 				{
 
-					container.BackgroundColor = materialOverlayColor;
+					container.BackgroundColor = materialSettingBackgroundColor;
 					container.AddChild(materialPresetLabel);
 					revertButton.Visible = false;
 				}
 				else
 				{
-					container.BackgroundColor = userSettingOverlayColor;
+					container.BackgroundColor = userSettingBackgroundColor;
 					presetLabel.Visible = false;
 					revertButton.Visible = true;
 				}
@@ -1214,13 +1214,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (!presetChanged)
 				{
-					container.BackgroundColor = qualityOverlayColor;
+					container.BackgroundColor = qualitySettingBackgroundColor;
 					container.AddChild(qualityPresetLabel);
 					revertButton.Visible = false;
 				}
 				else
 				{
-					container.BackgroundColor = userSettingOverlayColor;
+					container.BackgroundColor = userSettingBackgroundColor;
 					presetLabel.Visible = false;
 					revertButton.Visible = true;
 				}
