@@ -8,7 +8,6 @@ namespace MatterHackers.MatterControl
 {
 	public class MHTextEditWidget : GuiWidget
 	{
-		private Stopwatch timeSinceLastTextChanged = new Stopwatch();
 		protected TextEditWidget actuallTextEditWidget;
 		protected TextWidget noContentFieldDescription = null;
 
@@ -28,9 +27,6 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = RGBA_Bytes.White;
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
-
-			actuallTextEditWidget.TextChanged += new EventHandler(internalTextEditWidget_TextChanged);
-			actuallTextEditWidget.InternalTextEditWidget.EditComplete += new EventHandler(InternalTextEditWidget_EditComplete);
 
 			noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: RGBA_Bytes.Gray);
 			noContentFieldDescription.VAnchor = VAnchor.ParentBottom;
@@ -52,39 +48,6 @@ namespace MatterHackers.MatterControl
 					noContentFieldDescription.Visible = false;
 				}
 			}
-		}
-
-		private void InternalTextEditWidget_EditComplete(object sender, EventArgs e)
-		{
-			timeSinceLastTextChanged.Stop();
-		}
-
-		public void OnIdle(object state)
-		{
-			if (timeSinceLastTextChanged.IsRunning)
-			{
-				if (timeSinceLastTextChanged.Elapsed.TotalSeconds > 2)
-				{
-					if (actuallTextEditWidget.InternalTextEditWidget.TextHasChanged())
-					{
-						actuallTextEditWidget.InternalTextEditWidget.OnEditComplete(null);
-					}
-					timeSinceLastTextChanged.Stop();
-				}
-				if (!WidgetHasBeenClosed)
-				{
-					UiThread.RunOnIdle(OnIdle, 1);
-				}
-			}
-		}
-
-		private void internalTextEditWidget_TextChanged(object sender, EventArgs e)
-		{
-			if (!timeSinceLastTextChanged.IsRunning)
-			{
-				UiThread.RunOnIdle(OnIdle, 1);
-			}
-			timeSinceLastTextChanged.Restart();
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
