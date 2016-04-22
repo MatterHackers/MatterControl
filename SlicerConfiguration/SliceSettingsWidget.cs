@@ -1001,7 +1001,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							double.TryParse(xyValueStrings[0], out currentXValue);
 							MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
 							xEditWidget.ToolTipText = settingData.HelpText;
-							xEditWidget.Margin = new BorderDouble(0, 0, 60, 0);
+							xEditWidget.Margin = new BorderDouble(0, 0, 30 * TextWidget.GlobalPointSizeScaleRatio, 0);
 							double currentYValue = 0;
 							double.TryParse(xyValueStrings[1], out currentYValue);
 							MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
@@ -1043,7 +1043,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									CallEventsOnSettingsChange(settingData);
 								};
 								xEditWidget.SelectAllOnFocus = true;
-								xEditWidget.Margin = new BorderDouble(0, 0, 60, 0);
+								xEditWidget.Margin = new BorderDouble(0, 0, 30 * TextWidget.GlobalPointSizeScaleRatio, 0);
 								leftToRightLayout.AddChild(xEditWidget);
 							}
 							{
