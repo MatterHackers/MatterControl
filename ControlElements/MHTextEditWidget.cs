@@ -115,7 +115,6 @@ namespace MatterHackers.MatterControl
 
 	public class MHNumberEdit : GuiWidget
 	{
-		private Stopwatch timeSinceLastTextChanged = new Stopwatch();
 		private NumberEdit actuallNumberEdit;
 
 		public NumberEdit ActuallNumberEdit
@@ -140,9 +139,6 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = RGBA_Bytes.White;
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
-
-			actuallNumberEdit.TextChanged += new EventHandler(internalNumberEdit_TextChanged);
-			actuallNumberEdit.InternalTextEditWidget.EditComplete += new EventHandler(InternalTextEditWidget_EditComplete);
 		}
 
 		public override int TabIndex
@@ -155,39 +151,6 @@ namespace MatterHackers.MatterControl
 			{
 				actuallNumberEdit.TabIndex = value;
 			}
-		}
-
-		private void InternalTextEditWidget_EditComplete(object sender, EventArgs e)
-		{
-			timeSinceLastTextChanged.Stop();
-		}
-
-		public void OnIdle(object state)
-		{
-			if (timeSinceLastTextChanged.IsRunning)
-			{
-				if (timeSinceLastTextChanged.Elapsed.TotalSeconds > 2)
-				{
-					if (actuallNumberEdit.InternalTextEditWidget.TextHasChanged())
-					{
-						actuallNumberEdit.InternalTextEditWidget.OnEditComplete(null);
-					}
-					timeSinceLastTextChanged.Stop();
-				}
-				if (!WidgetHasBeenClosed)
-				{
-					UiThread.RunOnIdle(OnIdle, 1);
-				}
-			}
-		}
-
-		private void internalNumberEdit_TextChanged(object sender, EventArgs e)
-		{
-			if (!timeSinceLastTextChanged.IsRunning)
-			{
-				UiThread.RunOnIdle(OnIdle, 1);
-			}
-			timeSinceLastTextChanged.Restart();
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)

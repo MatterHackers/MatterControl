@@ -623,7 +623,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							int.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit intEditWidget = new MHNumberEdit(currentValue, pixelWidth: intEditWidth, tabIndex: tabIndexForItem++);
 							intEditWidget.ToolTipText = settingData.HelpText;
-							intEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
+							intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								presetChanged = true;
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
@@ -698,7 +698,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 							doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget.MarkAsStartingState();
 
-							doubleEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
+							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								presetChanged = true;
 								NumberEdit numberEdit = (NumberEdit)sender;
@@ -739,7 +739,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							double.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, allowNegatives: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
 							doubleEditWidget.ToolTipText = settingData.HelpText;
-							doubleEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
+							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							 {
 								 presetChanged = true;
 								 CreateSliceSettingContainer(container, settingData);
@@ -758,7 +758,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
 							stringEdit.ToolTipText = settingData.HelpText;
-							stringEdit.ActualTextEditWidget.EnterPressed += (sender, e) =>
+							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								presetChanged = true;
 								TextEditWidget textEditWidget = (TextEditWidget)sender;
@@ -816,7 +816,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							stringEdit.ToolTipText = settingData.HelpText;
 
 							string startingText = stringEdit.Text;
-							stringEdit.ActualTextEditWidget.EnterPressed += (sender, e) =>
+							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								presetChanged = true;
 								TextEditWidget textEditWidget = (TextEditWidget)sender;
@@ -919,7 +919,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++);
 							stringEdit.ToolTipText = settingData.HelpText;
-							stringEdit.ActualTextEditWidget.EnterPressed += (sender, e) =>
+							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								presetChanged = true;
 								CreateSliceSettingContainer(container, settingData);
@@ -1020,7 +1020,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
 							yEditWidget.ToolTipText = settingData.HelpText;
 
-							xEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
+							xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								presetChanged = true;
 								CreateSliceSettingContainer(container, settingData);
@@ -1030,7 +1030,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							xEditWidget.SelectAllOnFocus = true;
 							leftToRightLayout.AddChild(xEditWidget);
 
-							yEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
+							yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								presetChanged = true;
 								CreateSliceSettingContainer(container, settingData);
@@ -1050,7 +1050,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							MHNumberEdit yEditWidget = new MHNumberEdit(offset.y, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
 							yEditWidget.ToolTipText = settingData.HelpText;
 							{
-								xEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
+								xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 								{
 									presetChanged = true;
 									CreateSliceSettingContainer(container, settingData);
@@ -1063,7 +1063,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								leftToRightLayout.AddChild(xEditWidget);
 							}
 							{
-								yEditWidget.ActuallNumberEdit.EnterPressed += (sender, e) =>
+								yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 								{
 									presetChanged = true;
 									CreateSliceSettingContainer(container, settingData);
@@ -1143,7 +1143,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (!presetChanged)
 				{
 					container.BackgroundColor = materialSettingBackgroundColor;
-					container.AddChild(GetOverrideNameWidget(this.activeMaterialPreset));
+					if (this.activeMaterialPreset != null)
+					{
+						container.AddChild(GetOverrideNameWidget(this.activeMaterialPreset));
+					}
 					revertButton.Visible = false;
 				}
 				else
@@ -1158,7 +1161,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (!presetChanged)
 				{
 					container.BackgroundColor = qualitySettingBackgroundColor;
-					container.AddChild(GetOverrideNameWidget(this.activeQualityPreset));
+					if (this.activeQualityPreset != null)
+					{
+						container.AddChild(GetOverrideNameWidget(this.activeQualityPreset));
+					}
 					revertButton.Visible = false;
 				}
 				else

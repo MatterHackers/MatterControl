@@ -1,15 +1,7 @@
-﻿using System;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using MatterHackers.MatterControl.DataStorage;
-using System.Linq;
+using System;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -150,5 +142,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get { return showHelpBox.Checked; }
 		}
 	}
-
 }
