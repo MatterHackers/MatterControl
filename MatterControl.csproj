@@ -357,7 +357,6 @@
     <Compile Include="SettingsManagement\UserSettings.cs" />
     <Compile Include="SlicerConfiguration\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\SettingsControlBar.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsLayerSelector.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicingQueue.cs" />

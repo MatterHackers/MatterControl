@@ -4705,3 +4705,6 @@ Translated:XY Resume Position
 English:Homing
 Translated:Homing
 
+English:Outer Surface
+Translated:Outer Surface
+

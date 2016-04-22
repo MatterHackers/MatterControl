@@ -45,6 +45,9 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	/// AbsoluteBaseSettings = 0, EditableBaseSettings = 1, PresetOverrides... 2-n (examples: QualitySettings = 2, MaterialSettings = 3)
+	public enum RequestedSettingsLayer { MHBaseSettings, OEMSettings, Quality, Material, User }
+
 	public class SettingsLayer
 	{
 		//Container class representing a collection of setting along with the meta info for that collection
@@ -124,7 +127,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			//Ordering matters - Material presets trump Quality
 			globalInstance.LoadSettingsForQuality();
-			globalInstance.LoadSettingsForMaterial(1);
+			globalInstance.LoadSettingsForMaterial();
+			globalInstance.LoadSettingsForUser();
 
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
@@ -141,23 +145,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.HasUncommittedChanges = false;
 		}
 
-		public void LoadSettingsForMaterial(int extruderNumber1Based)
+		public void LoadSettingsForMaterial()
 		{
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
-				SettingsLayer printerSettingsLayer;
+				SettingsLayer materialSettingsLayer;
 				SliceSettingsCollection collection;
-				if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based) != 0)
+				if (ActivePrinterProfile.Instance.GetMaterialSetting(1) != 0)
 				{
-					int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based);
+					int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(1);
 					collection = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
-					printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+					materialSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
 				}
 				else
 				{
-					printerSettingsLayer = new SettingsLayer(new SliceSettingsCollection(), new Dictionary<string, SliceSetting>());
+					materialSettingsLayer = new SettingsLayer(new SliceSettingsCollection(), new Dictionary<string, SliceSetting>());
 				}
-				this.activeSettingsLayers.Add(printerSettingsLayer);
+				this.activeSettingsLayers.Add(materialSettingsLayer);
 			}
 		}
 
@@ -213,19 +217,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
-				SettingsLayer printerSettingsLayer;
+				SettingsLayer qualitySettingsLayer;
 				SliceSettingsCollection collection;
 				if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != 0)
 				{
 					int materialOneSettingsID = ActivePrinterProfile.Instance.ActiveQualitySettingsID;
 					collection = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
-					printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+					qualitySettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
 				}
 				else
 				{
-					printerSettingsLayer = new SettingsLayer(new SliceSettingsCollection(), new Dictionary<string, SliceSetting>());
+					qualitySettingsLayer = new SettingsLayer(new SliceSettingsCollection(), new Dictionary<string, SliceSetting>());
 				}
-				this.activeSettingsLayers.Add(printerSettingsLayer);
+				this.activeSettingsLayers.Add(qualitySettingsLayer);
+			}
+		}
+
+		public void LoadSettingsForUser()
+		{
+			if (ActivePrinterProfile.Instance.ActivePrinter != null)
+			{
+				SettingsLayer userSettingsLayer = new SettingsLayer(new SliceSettingsCollection(), new Dictionary<string, SliceSetting>());
+				this.activeSettingsLayers.Add(userSettingsLayer);
 			}
 		}
 
@@ -589,19 +602,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "Unknown";
 		}
 
+		public void Remove(string sliceSetting, RequestedSettingsLayer requestedLayer)
+		{
+			int layerIndex = (int)requestedLayer;
+			if(activeSettingsLayers[layerIndex].settingsDictionary.ContainsKey(sliceSetting))
+			{
+				activeSettingsLayers[layerIndex].settingsDictionary.Remove(sliceSetting);
+			}
+		}
+
 		/// <summary>
 		/// Returns whether or not the setting is overridden by the active layer
 		/// </summary>
 		/// AbsoluteBaseSettings = 0, EditableBaseSettings = 1, PresetOverrides... 2-n (examples: QualitySettings = 2, MaterialSettings = 3)
 		/// <param name="sliceSetting"></param>
 		/// <returns></returns>
-		public bool SettingExistsInLayer(string sliceSetting, int layer)
+		public bool SettingExistsInLayer(string sliceSetting, RequestedSettingsLayer requestedLayer)
 		{
 			bool settingExistsInLayer;
-			int layerIndex = (int)layer;
+			int layerIndex = (int)requestedLayer;
 			if (layerIndex < activeSettingsLayers.Count)
 			{
-				settingExistsInLayer = (activeSettingsLayers[layerIndex].settingsDictionary.ContainsKey(sliceSetting));
+				settingExistsInLayer = activeSettingsLayers[layerIndex].settingsDictionary.ContainsKey(sliceSetting);
 			}
 			else
 			{
@@ -747,7 +769,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								string settingDefaultValue = settingLine[1].Trim();
 
 								//Add the setting to the active layer
-								SaveValue(keyName, settingDefaultValue);
+								SaveValue(keyName, settingDefaultValue, RequestedSettingsLayer.OEMSettings);
 							}
 						}
 					}
@@ -761,8 +783,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public void SaveValue(string keyName, string keyValue, int layerIndex = 1)
+		public void SaveValue(string keyName, string keyValue, RequestedSettingsLayer settingsLayer)
 		{
+			int layerIndex = (int)settingsLayer;
 			SettingsLayer layer = this.activeSettingsLayers[layerIndex];
 
 			if (layer.settingsDictionary.ContainsKey(keyName)
@@ -789,15 +812,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void CommitChanges()
 		{
-			for (int i = 1; i < this.activeSettingsLayers.Count; i++)
-			{
-				CommitLayerChanges(i);
-			}
+			CommitLayerChanges(RequestedSettingsLayer.OEMSettings);
+			CommitLayerChanges(RequestedSettingsLayer.Material);
+			CommitLayerChanges(RequestedSettingsLayer.Quality);
+			CommitLayerChanges(RequestedSettingsLayer.User);
 			HasUncommittedChanges = false;
 		}
 
-		public void CommitLayerChanges(int layerIndex)
+		public void CommitLayerChanges(RequestedSettingsLayer requestedLayer)
 		{
+			int layerIndex = (int)requestedLayer;
 			SettingsLayer layer = this.activeSettingsLayers[layerIndex];
 			foreach (KeyValuePair<String, SliceSetting> item in layer.settingsDictionary)
 			{
