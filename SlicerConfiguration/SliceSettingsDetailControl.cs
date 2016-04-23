@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingsDetailControl()
 		{
-			showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
+			showHelpBox = new CheckBox(0, 0, "Show Help".Localize(), textSize: 10);
 			showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
 			// add in the ability to turn on and off help text
 			{
@@ -33,9 +33,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			settingsDetailSelector = new StyledDropDownList("Basic", maxHeight: 200);
 			settingsDetailSelector.Name = "User Level Dropdown";
-			settingsDetailSelector.AddItem(LocalizedString.Get("Basic"), "Simple");
-			settingsDetailSelector.AddItem(LocalizedString.Get("Standard"), "Intermediate");
-			settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
+			settingsDetailSelector.AddItem("Basic".Localize(), "Simple");
+			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");
+			settingsDetailSelector.AddItem("Advanced".Localize(), "Advanced");
 			if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
 				&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
 			{
@@ -86,15 +86,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void SetMenuItems()
 		{
-			string importTxt = LocalizedString.Get("Import");
-			string importTxtFull = string.Format("{0}", importTxt);
-			string exportTxt = LocalizedString.Get("Export");
-			string exportTxtFull = string.Format("{0}", exportTxt);
 			//Set the name and callback function of the menu items
 			slicerOptionsMenuItems = new TupleList<string, Func<bool>>
 			{
-				{importTxtFull, ImportQueueMenu_Click},
-				{exportTxtFull, ExportQueueMenu_Click},
+				{ "Import".Localize(), ImportSettingsMenu_Click},
+				{"Export".Localize(), ExportSettingsMenu_Click},
+				{"Restore All".Localize(), RestoreAllSettingsMenu_Click},
 			};
 
 			//Add the menu items to the menu itself
@@ -104,7 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private bool ImportQueueMenu_Click()
+		private bool ImportSettingsMenu_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -113,9 +110,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return true;
 		}
 
-		private bool ExportQueueMenu_Click()
+		private bool ExportSettingsMenu_Click()
 		{
 			UiThread.RunOnIdle(ActiveSliceSettings.Instance.SaveAs);
+			return true;
+		}
+
+		private bool RestoreAllSettingsMenu_Click()
+		{
 			return true;
 		}
 

@@ -92,14 +92,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			pageTopToBottomLayout.AddChild(settingsControlBar);
 
-			noConnectionMessageContainer = new AltGroupBox(new TextWidget(LocalizedString.Get("No Printer Selected"), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+			noConnectionMessageContainer = new AltGroupBox(new TextWidget("No Printer Selected".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
 			noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			noConnectionMessageContainer.Height = 90;
 
-			string noConnectionString = LocalizedString.Get("No printer is currently selected. Please select a printer to edit slice settings.");
-			noConnectionString += "\n\n" + LocalizedString.Get("NOTE: You need to select a printer, but do not need to connect to it.");
+			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
+			noConnectionString += "\n\n" + "NOTE: You need to select a printer, but do not need to connect to it.".Localize();
 			TextWidget noConnectionMessage = new TextWidget(noConnectionString, pointSize: 10);
 			noConnectionMessage.Margin = new BorderDouble(5);
 			noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
 			{
 				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
-				string categoryPageLabel = LocalizedString.Get(category.Name);
+				string categoryPageLabel = category.Name.Localize();
 				TabPage categoryPage = new TabPage(categoryPageLabel);
 				SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, category.Name + " Tab", 16,
 						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
 				tabIndexForItem = 0;
-				string groupTabLabel = LocalizedString.Get(group.Name);
+				string groupTabLabel = group.Name.Localize();
 				TabPage groupTabPage = new TabPage(groupTabLabel);
 				groupTabPage.HAnchor = HAnchor.ParentLeftRight;
 
@@ -489,7 +489,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				AltGroupBox groupBox = new AltGroupBox(LocalizedString.Get("Extra"));
+				AltGroupBox groupBox = new AltGroupBox("Extra".Localize());
 				groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 				groupBox.AddChild(topToBottomSettings);
@@ -551,13 +551,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			GuiWidget container = new GuiWidget();
 			FlowLayoutWidget leftToRightLayout = new FlowLayoutWidget();
 
-			bool isQualityPreset = false;
-			bool isMaterialPreset = false;
-
-			RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 108);
-			RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 108);
-			RGBA_Bytes userSettingOverlayColor = new RGBA_Bytes(0, 0, 255, 108);
-
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
 			this.textImageButtonFactory.FixedHeight = 15 * TextWidget.GlobalPointSizeScaleRatio;
 			this.textImageButtonFactory.fontSize = 8;
@@ -589,24 +582,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (settingData.DataEditType != OrganizerSettingsData.DataEditTypes.MULTI_LINE_TEXT)
 				{
-					string convertedNewLines = settingData.PresentationName.Replace("\\n ", "\n");
-					convertedNewLines = convertedNewLines.Replace("\\n", "\n");
-					convertedNewLines = LocalizedString.Get(convertedNewLines);
-					TextWidget settingName = new TextWidget(convertedNewLines, pointSize: 10);
-					settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-					settingName.VAnchor = Agg.UI.VAnchor.ParentCenter;
+					string localizedPresentationName = settingData.PresentationName.Localize();
 
-					settingName.Width = minSettingNameWidth;
-					leftToRightLayout.AddChild(settingName);
-				}
+					GuiWidget nameHolder = new GuiWidget(HAnchor.AbsolutePosition, VAnchor.FitToChildren | VAnchor.ParentCenter)
+					{
+						Width = minSettingNameWidth,
+						Padding = new BorderDouble(0, 0, 5, 0),
+					};
 
-				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, RequestedSettingsLayer.Material))
-				{
-					isMaterialPreset = true;
-				}
-				else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, RequestedSettingsLayer.Quality))
-				{
-					isQualityPreset = true;
+					{
+						GuiWidget presentationName = new WrappedTextWidget(localizedPresentationName, minSettingNameWidth, pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+						nameHolder.AddChild(presentationName);
+					}
+
+					leftToRightLayout.AddChild(nameHolder);
 				}
 
 				switch (settingData.DataEditType)

@@ -208,7 +208,7 @@
   },
   {
     "SlicerConfigName": "extra_perimeters",
-    "PresentationName": "Generate Extra Perimeters\\n When Needed:",
+    "PresentationName": "Generate Extra Perimeters When Needed:",
     "HelpText": "Allow slicer to generate extra perimeters when needed for sloping walls.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
@@ -286,7 +286,7 @@
   },
   {
     "SlicerConfigName": "fan_below_layer_time",
-    "PresentationName": "Enable Fan If Layer\\nPrint Time Is Below",
+    "PresentationName": "Enable Fan If Layer Print Time Is Below",
     "HelpText": "If a layer is estimated to take less than this to print, the fan will be turned on.",
     "DataEditType": "INT",
     "ExtraSettings": "seconds",
@@ -609,7 +609,7 @@
   },
   {
     "SlicerConfigName": "min_extrusion_before_retract",
-    "PresentationName": "Minimum Extrusion\\nRequiring Retraction",
+    "PresentationName": "Minimum Extrusion Requiring Retraction",
     "HelpText": "The minimum length of filament that must be extruded before a retraction can occur.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
@@ -652,7 +652,7 @@
   },
   {
     "SlicerConfigName": "only_retract_when_crossing_perimeters",
-    "PresentationName": "Only Retract When\\n Crossing Perimeters",
+    "PresentationName": "Only Retract When  Crossing Perimeters",
     "HelpText": "Prevents retraction while within a printing perimeter.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
@@ -771,7 +771,7 @@
   },
   {
     "SlicerConfigName": "retract_before_travel",
-    "PresentationName": "Minimum Travel\\nRequiring Retraction",
+    "PresentationName": "Minimum Travel equiring Retraction",
     "HelpText": "The minimum distance of a non-print move which will trigger a retraction.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
@@ -799,7 +799,7 @@
   },
   {
     "SlicerConfigName": "retract_when_changing_islands",
-    "PresentationName": "Retract When \nChanging Islands",
+    "PresentationName": "Retract When Changing Islands",
     "HelpText": "Force a retraction when moving between islands (distinct parts on the layer).",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
@@ -884,7 +884,7 @@
 	},
   {
     "SlicerConfigName": "slowdown_below_layer_time",
-    "PresentationName": "Slow Down If Layer Print\\nTime Is Below",
+    "PresentationName": "Slow Down If Layer Print Time Is Below",
     "HelpText": "The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.",
     "DataEditType": "INT",
     "ExtraSettings": "seconds"

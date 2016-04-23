@@ -4711,3 +4711,18 @@ Translated:Outer Surface
 English:Restore Default
 Translated:Restore Default
 
+English:Minimum Travel equiring Retraction
+Translated:Minimum Travel equiring Retraction
+
+English:Minimum Extrusion Requiring Retraction
+Translated:Minimum Extrusion Requiring Retraction
+
+English:Slow Down If Layer Print Time Is Below
+Translated:Slow Down If Layer Print Time Is Below
+
+English:Restore All
+Translated:Restore All
+
+English:Retract When Changing Islands
+Translated:Retract When Changing Islands
+
