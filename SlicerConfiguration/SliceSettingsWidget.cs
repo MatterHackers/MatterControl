@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -1081,9 +1082,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			int size = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
 
-			restoreNormal = ColorCirle(size, new RGBA_Bytes(255, 0, 0));
-			restoreHover = ColorCirle(size, new RGBA_Bytes(255, 100, 100));
-			restorePressed = ColorCirle(size, new RGBA_Bytes(128, 0, 0));
+			restoreNormal = ColorCirle(size, new RGBA_Bytes(128, 128, 128));
+			if (OsInformation.OperatingSystem == OSType.Android)
+			{
+				restoreNormal = ColorCirle(size, new RGBA_Bytes(200, 0, 0));
+			}
+			restoreHover = ColorCirle(size, new RGBA_Bytes(200, 0, 0));
+			restorePressed = ColorCirle(size, new RGBA_Bytes(255, 0, 0));
 
 			return restoreNormal;
 		}
