@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingsWidget()
 		{
-			int minSettingNameWidth = (int)(190 * TextWidget.GlobalPointSizeScaleRatio + .5);
+			int minSettingNameWidth = (int)(180 * TextWidget.GlobalPointSizeScaleRatio + .5);
 			buttonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
 			buttonFactory.fontSize = 10;
 			buttonFactory.normalFillColor = RGBA_Bytes.White;
@@ -1122,7 +1122,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 				restoreDefaultButton.ToolTipText = "Restore Default".Localize();
 
-				container.AddChild(restoreDefaultButton, 0);
+				container.AddChild(new GuiWidget(HAnchor.ParentLeftRight));
+				container.AddChild(restoreDefaultButton);
 				existingRestoretButton = restoreDefaultButton;
 			}
 

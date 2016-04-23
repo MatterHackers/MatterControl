@@ -25,7 +25,7 @@
     "PresentationName": "Bed Temperature",
     "HelpText": "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees C",
+    "ExtraSettings": "°C",
     "ShowIfSet": "has_heated_bed"
   },
   {
@@ -304,14 +304,14 @@
     "PresentationName": "Starting Angle",
     "HelpText": "The angle of the infill, measured from the X axis. Not used when bridging.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "°"
   },
   {
     "SlicerConfigName": "fill_density",
     "PresentationName": "Fill Density",
     "HelpText": "The amount of infill material to generate, expressed as a ratio or a percentage.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "% or ratio",
+    "ExtraSettings": "",
     "QuickMenuSettings": [{"MenuName" : "Light", "Value": "10%"},{"MenuName" : "Standard", "Value": "30%"},{"MenuName" : "Heavy", "Value": "90%"}]
   },
   {
@@ -333,7 +333,7 @@
     "PresentationName": "Bed First Layer",
     "HelpText": "The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.",
     "DataEditType": "DOUBLE",
-    "ExtraSettings": "degrees C",
+    "ExtraSettings": "°C",
     "ShowIfSet": "has_heated_bed"
   },
   {
@@ -341,7 +341,7 @@
     "PresentationName": "First Layer",
     "HelpText": "A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm or %\\nleave 0 for default"
+    "ExtraSettings": "mm or %"
   },
   {
     "SlicerConfigName": "first_layer_height",
@@ -386,7 +386,7 @@
     "PresentationName": "Extrude First Layer",
     "HelpText": "The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees C"
+    "ExtraSettings": "°C"
   },
   {
     "SlicerConfigName": "g0",
@@ -506,7 +506,7 @@
     "PresentationName": "Infill",
     "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm or %\\nleave 0 for default"
+    "ExtraSettings": "mm or %"
   },
   {
     "SlicerConfigName": "infill_first",
@@ -711,14 +711,14 @@
     "PresentationName": "Perimeters",
     "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm or %\\nleave 0 for default"
+    "ExtraSettings": "mm or %"
   },
   {
     "SlicerConfigName": "external_perimeter_extrusion_width",
     "PresentationName": "Outside Perimeters",
     "HelpText": "A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm or %\\nleave 0 for default"
+    "ExtraSettings": "mm or %"
   },
   {
     "SlicerConfigName": "perimeter_speed",
@@ -922,7 +922,7 @@
     "PresentationName": "Solid Infill",
     "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm or %\\nleave 0 for default"
+    "ExtraSettings": "mm or %"
   },
   {
     "SlicerConfigName": "solid_infill_speed",
@@ -943,7 +943,7 @@
     "PresentationName": "Temp Lower Amount",
     "HelpText": "This is the amount to lower the temperature of an extruder that is not currently printing.",
     "DataEditType": "DOUBLE",
-    "ExtraSettings": "degrees C"
+    "ExtraSettings": "°C"
   },
   {
     "SlicerConfigName": "start_gcode",
@@ -978,7 +978,7 @@
     "PresentationName": "Starting Angle",
     "HelpText": "The starting angle of the supports.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "°"
   },
   {
     "SlicerConfigName": "support_material_percent",
@@ -992,7 +992,7 @@
     "PresentationName": "Infill Angle",
     "HelpText": "The angle at which the support material lines will be drawn.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "°"
   },
   {
     "SlicerConfigName": "support_material_create_internal_support",
@@ -1083,7 +1083,7 @@
     "PresentationName": "Amount",
     "HelpText": "The minimum angle of overhang for which support material will be created. The angle perpendicular to the bed = 0; parallel with the bed = 90.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees",
+    "ExtraSettings": "°",
     "QuickMenuSettings": [{"MenuName" : "Minimum", "Value": "20"},{"MenuName" : "Standard", "Value": "45"},{"MenuName" : "All", "Value": "90"}]
   },
   {
@@ -1126,21 +1126,21 @@
     "PresentationName": "Extruder Temperature",
     "HelpText": "The target temperature the extruder will attempt to reach during the print.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees C"
+    "ExtraSettings": "°C"
   },
   {
     "SlicerConfigName": "extruder_wipe_temperature",
     "PresentationName": "Extruder Wipe Temperature",
     "HelpText": "The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees C"
+    "ExtraSettings": "°C"
   },
   {
     "SlicerConfigName": "bed_remove_part_temperature",
     "PresentationName": "Bed Remove Part Temperature",
     "HelpText": "The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees C",
+    "ExtraSettings": "°C",
     "ShowIfSet": "has_heated_bed"
   },
   {
@@ -1169,7 +1169,7 @@
     "PresentationName": "Top Solid Infill",
     "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm or %\\nleave 0 for default"
+    "ExtraSettings": "mm or %"
   },
   {
     "SlicerConfigName": "top_solid_infill_speed",
