@@ -3,7 +3,6 @@ MatterControl
 
 |        | Master |
 | ------ | ------ |
-| ------ | ------ |
 | Linux | [![Travis CI-Master](https://travis-ci.org/MatterHackers/MatterControl.svg?branch=master)](https://travis-ci.org/MatterHackers/MatterControl) |
 | Windows | [![AppVeyor-Master](https://ci.appveyor.com/api/projects/status/c85oe36mdgp446uw?svg=true)](https://ci.appveyor.com/project/johnlewin/mattercontrol) |
 
