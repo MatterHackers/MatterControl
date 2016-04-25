@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl
 			currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
 			UpdatePrintStatus();
 
-			if (!WidgetHasBeenClosed)
+			if (!HasBeenClosed)
 			{
 				UiThread.RunOnIdle(OnIdle, 1);
 			}
