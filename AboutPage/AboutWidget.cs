@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(customInfoTopToBottom);
 		}
 
-		public static void DeleteCacheData()
+		public static void DeleteCacheData(int daysOldToDelete)
 		{
 			if(LibraryProviderSQLite.PreloadingCalibrationFiles)
 			{
@@ -115,28 +115,27 @@ namespace MatterHackers.MatterControl
 			//     project-assembly
 			//     project-extract
 			//     stl
-			// delete all unreference models in Library
+			// delete all unreferenced models in Library
 			//   AppData\Local\MatterControl\Library
 			// delete all old update downloads
 			//   AppData\updates
 
 			// start cleaning out unused data
 			// MatterControl\data\gcode
-			RemoveDirectory(ApplicationDataStorage.Instance.GCodeOutputPath);
+			HashSet<string> referencedFilePaths = new HashSet<string>();
+			CleanDirectory(ApplicationDataStorage.Instance.GCodeOutputPath, referencedFilePaths, daysOldToDelete);
 
 			string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 			RemoveDirectory(Path.Combine(userDataPath, "updates"));
 
-			HashSet<string> referencedPrintItemsFilePaths = new HashSet<string>();
-			HashSet<string> referencedThumbnailFiles = new HashSet<string>();
 			// Get a list of all the stl and amf files referenced in the queue.
 			foreach (PrintItemWrapper printItem in QueueData.Instance.PrintItems)
 			{
 				string fileLocation = printItem.FileLocation;
-				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
+				if (!referencedFilePaths.Contains(fileLocation))
 				{
-					referencedPrintItemsFilePaths.Add(fileLocation);
-					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFileName(printItem));
+					referencedFilePaths.Add(fileLocation);
+					referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItem));
 				}
 			}
 
@@ -145,17 +144,17 @@ namespace MatterHackers.MatterControl
 			{
 				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
 				string fileLocation = printItem.FileLocation;
-				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
+				if (!referencedFilePaths.Contains(fileLocation))
 				{
-					referencedPrintItemsFilePaths.Add(fileLocation);
-					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFileName(printItemWrapper));
+					referencedFilePaths.Add(fileLocation);
+					referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItemWrapper));
 				}
 			}
 
 			// If the count is less than 0 then we have never run and we need to populate the library and queue still. So don't delete anything yet.
-			if (referencedPrintItemsFilePaths.Count > 0)
+			if (referencedFilePaths.Count > 0)
 			{
-				CleanDirectory(userDataPath, referencedPrintItemsFilePaths, referencedThumbnailFiles);
+				CleanDirectory(userDataPath, referencedFilePaths, daysOldToDelete);
 			}
 		}
 
@@ -189,12 +188,12 @@ namespace MatterHackers.MatterControl
 			return VersionInfo.Instance.ReleaseVersion;
 		}
 
-		private static int CleanDirectory(string path, HashSet<string> referencedPrintItemsFilePaths, HashSet<string> referencedThumbnailFiles)
+		private static int CleanDirectory(string path, HashSet<string> referencedFilePaths, int daysOldToDelete)
 		{
 			int contentCount = 0;
 			foreach (string directory in Directory.EnumerateDirectories(path))
 			{
-				int directoryContentCount = CleanDirectory(directory, referencedPrintItemsFilePaths, referencedThumbnailFiles);
+				int directoryContentCount = CleanDirectory(directory, referencedFilePaths, daysOldToDelete);
 				if (directoryContentCount == 0)
 				{
 					try
@@ -215,32 +214,19 @@ namespace MatterHackers.MatterControl
 
 			foreach (string file in Directory.EnumerateFiles(path, "*.*"))
 			{
+				bool loadingCalibrationParts = (LibraryProviderSQLite.PreloadingCalibrationFiles && Path.GetDirectoryName(file).Contains("calibration-parts"));
+				bool fileIsNew = new FileInfo(file).LastAccessTime > DateTime.Now.AddDays(-daysOldToDelete);
+
 				switch (Path.GetExtension(file).ToUpper())
 				{
 					case ".STL":
 					case ".AMF":
 					case ".GCODE":
-						// 
-						if (referencedPrintItemsFilePaths.Contains(file) || LibraryProviderSQLite.PreloadingCalibrationFiles && Path.GetDirectoryName(file).Contains("calibration-parts"))
-						{
-							contentCount++;
-						}
-						else
-						{
-							try
-							{
-								File.Delete(file);
-							}
-							catch (Exception)
-							{
-								GuiWidget.BreakInDebugger();
-							}
-						}
-						break;
-
 					case ".PNG":
 					case ".TGA":
-						if (referencedThumbnailFiles.Contains(file))
+						if (referencedFilePaths.Contains(file)
+							|| loadingCalibrationParts
+							|| fileIsNew)
 						{
 							contentCount++;
 						}
@@ -259,7 +245,7 @@ namespace MatterHackers.MatterControl
 
 					case ".JSON":
 						// may want to clean these up eventually
-						contentCount++; // if we delete these we should not incement this
+						contentCount++; // if we delete these we should not increment this
 						break;
 
 					default:
