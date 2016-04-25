@@ -4726,3 +4726,12 @@ Translated:Restore All
 English:Retract When Changing Islands
 Translated:Retract When Changing Islands
 
+English:G-Code to be run before every tool change.
+Translated:G-Code to be run before every tool change.
+
+English:Before Tool Change G-Code
+Translated:Before Tool Change G-Code
+
+English:After Tool Change G-Code
+Translated:After Tool Change G-Code
+

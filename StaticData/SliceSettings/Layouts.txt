@@ -300,7 +300,9 @@ Advanced
         end_gcode
       Layer Change G-Code
         layer_gcode
-      Tool Change G-Code
+      Before Tool Change G-Code
+        before_toolchange_gcode
+      After Tool Change G-Code
         toolchange_gcode
       Pause G-Code
         pause_gcode

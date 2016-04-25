@@ -111,6 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),
 				new MapStartGCode("start_gcode", "startCode", true),
 				new GCodeForSlicer("toolchange_gcode", "toolChangeCode"),
+				new GCodeForSlicer("before_toolchange_gcode", "beforeToolchangeCode"),
 				new ValuePlusConstant("support_material_extruder", "supportExtruder", -1),
 				new ValuePlusConstant("support_material_interface_extruder", "supportInterfaceExtruder", -1),
 				new ValuePlusConstant("raft_extruder", "raftExtruder", -1),

@@ -1159,8 +1159,15 @@
   },
   {
     "SlicerConfigName": "toolchange_gcode",
-    "PresentationName": "Tool Change G-Code",
+    "PresentationName": "After Tool Change G-Code",
     "HelpText": "G-Code to be run after every tool change.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "before_toolchange_gcode",
+    "PresentationName": "Before Tool Change G-Code",
+    "HelpText": "G-Code to be run before every tool change.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },
