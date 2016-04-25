@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using System;
@@ -34,14 +35,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 				PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
-				GuiWidget hSpacer = new GuiWidget();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
 				footerRow.AddChild(connectButton);
-				footerRow.AddChild(hSpacer);
-
+				footerRow.AddChild(new HorizontalSpacer());
 				footerRow.AddChild(cancelButton);
 			}
 		}

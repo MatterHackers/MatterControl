@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.MatterControl.PrinterControls;
@@ -298,9 +299,7 @@ namespace MatterHackers.MatterControl
 				TextWidget buttonLabel = new TextWidget(currentCommand.Name);
 				macroRow.AddChild(buttonLabel);
 
-				FlowLayoutWidget hSpacer = new FlowLayoutWidget();
-				hSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-				macroRow.AddChild(hSpacer);
+				macroRow.AddChild(new HorizontalSpacer());
 
 				Button editLink = linkButtonFactory.Generate(LocalizedString.Get("edit"));
 				editLink.Margin = new BorderDouble(right: 5);

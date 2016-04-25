@@ -6,6 +6,7 @@ using System;
 using MatterHackers.MatterControl.SettingsManagement;
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -60,12 +61,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			nextButton.Name = "Save & Continue Button";
 			nextButton.Click += new EventHandler(NextButton_Click);
 
-			GuiWidget hSpacer = new GuiWidget();
-			hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 			//Add buttons to buttonContainer
 			footerRow.AddChild(nextButton);
-			footerRow.AddChild(hSpacer);
+			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
 
 			usingDefaultName = true;

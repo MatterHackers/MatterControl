@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
@@ -118,10 +119,7 @@ namespace MatterHackers.MatterControl
 
 				for (int axis = 0; axis < 3; axis++)
 				{
-					GuiWidget hSpacer = new GuiWidget();
-					hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-					leftRightEdit.AddChild(hSpacer);
+					leftRightEdit.AddChild(new HorizontalSpacer());
 
 					string axisName = "x";
 					if (axis == 1) axisName = "y";

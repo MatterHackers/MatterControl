@@ -32,6 +32,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -191,9 +192,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 					macroRow.AddChild(demoLabel);
 				}
 
-				FlowLayoutWidget hSpacer = new FlowLayoutWidget();
-				hSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-				macroRow.AddChild(hSpacer);
+				macroRow.AddChild(new HorizontalSpacer());
 
 				CreatorInformation callCorrectFunctionHold = creatorInfo;
 				pluginRow.Click += (sender, e) =>

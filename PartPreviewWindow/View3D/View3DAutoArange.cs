@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					PlatingHelper.ArrangeMeshGroups(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas, ReportProgressChanged);
 				});
 
-				if (WidgetHasBeenClosed)
+				if (HasBeenClosed)
 				{
 					return;
 				}

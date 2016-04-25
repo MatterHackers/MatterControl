@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				await Task.Run((System.Action)CreateSelectionData);
 
-				if (WidgetHasBeenClosed)
+				if (HasBeenClosed)
 				{
 					return;
 				}

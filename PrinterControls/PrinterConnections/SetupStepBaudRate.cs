@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using System;
 using System.Collections.Generic;
 
@@ -29,12 +30,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
 				nextButton.Click += new EventHandler(NextButton_Click);
 
-				GuiWidget hSpacer = new GuiWidget();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
-				footerRow.AddChild(hSpacer);
+				footerRow.AddChild(new HorizontalSpacer());
 				footerRow.AddChild(cancelButton);
 			}
 			BindBaudRateHandlers();

@@ -27,9 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-﻿using MatterHackers.Agg;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 
@@ -91,10 +92,7 @@ namespace MatterHackers.MatterControl
 				advancedControlsLinkButton.Cursor = Cursors.Hand;
 				advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
 
-				GuiWidget hSpacer = new GuiWidget();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-				mainControlsTabControl.TabBar.AddChild(hSpacer);
+				mainControlsTabControl.TabBar.AddChild(new HorizontalSpacer());
 				mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
 				mainControlsTabControl.TabBar.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 				mainControlsTabControl.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;

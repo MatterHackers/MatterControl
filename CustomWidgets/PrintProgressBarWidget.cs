@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
@@ -89,18 +90,15 @@ namespace MatterHackers.MatterControl
 			printTimeElapsed = new TextWidget("", pointSize: 11);
 			printTimeElapsed.Printer.DrawFromHintedCache = true;
 			printTimeElapsed.AutoExpandBoundsToText = true;
-			printTimeElapsed.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			printTimeElapsed.VAnchor = VAnchor.ParentCenter;
 
 			printTimeRemaining = new TextWidget("", pointSize: 11);
 			printTimeRemaining.Printer.DrawFromHintedCache = true;
 			printTimeRemaining.AutoExpandBoundsToText = true;
-			printTimeRemaining.VAnchor = Agg.UI.VAnchor.ParentCenter;
-
-			GuiWidget spacer = new GuiWidget();
-			spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			printTimeRemaining.VAnchor = VAnchor.ParentCenter;
 
 			container.AddChild(printTimeElapsed);
-			container.AddChild(spacer);
+			container.AddChild(new HorizontalSpacer());
 			container.AddChild(printTimeRemaining);
 
 			AddChild(container);
@@ -183,7 +181,7 @@ namespace MatterHackers.MatterControl
 			currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
 			UpdatePrintStatus();
 
-			if (!WidgetHasBeenClosed)
+			if (!HasBeenClosed)
 			{
 				UiThread.RunOnIdle(OnIdle, 1);
 			}

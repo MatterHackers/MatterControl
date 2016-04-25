@@ -101,9 +101,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				buttonPanel.HAnchor = HAnchor.ParentLeftRight;
 				buttonPanel.Padding = new BorderDouble(0, 3);
 				{
-					GuiWidget spacer = new GuiWidget();
-					spacer.HAnchor = HAnchor.ParentLeftRight;
-					buttonPanel.AddChild(spacer);
+					buttonPanel.AddChild(new HorizontalSpacer());
 				}
 
 				allControls.AddChild(searchPanel);

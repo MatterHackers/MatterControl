@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if(!this.WidgetHasBeenClosed)
+				if(!this.HasBeenClosed)
 				{
 					LoadHistoryItems(Count);
 				}

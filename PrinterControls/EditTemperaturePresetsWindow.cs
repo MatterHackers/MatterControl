@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -144,10 +145,7 @@ namespace MatterHackers.MatterControl
 				label.VAnchor = VAnchor.ParentCenter;
 				leftRightEdit.AddChild(label);
 
-				GuiWidget hSpacer = new GuiWidget();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-				leftRightEdit.AddChild(hSpacer);
+				leftRightEdit.AddChild(new HorizontalSpacer());
 
 				MHTextEditWidget typeEdit = new MHTextEditWidget(settingsArray[i], pixelWidth: 60, tabIndex: tab_index++);
 
@@ -172,13 +170,10 @@ namespace MatterHackers.MatterControl
 				leftRightEdit.Padding = new BorderDouble(3);
 				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 
-				GuiWidget hSpacer = new GuiWidget();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 				TextWidget maxWidgetLabel = new TextWidget(LocalizedString.Get("Max Temp"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				maxWidgetLabel.VAnchor = VAnchor.ParentCenter;
 				leftRightEdit.AddChild(maxWidgetLabel);
-				leftRightEdit.AddChild(hSpacer);
+				leftRightEdit.AddChild(new HorizontalSpacer());
 
 				double maxTemperature = 0;
 				double.TryParse(settingsArray[settingsArray.Count() - 1], out maxTemperature);
