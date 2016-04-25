@@ -840,7 +840,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (!string.IsNullOrEmpty(saveParams.FileName))
 			{
-				GenerateConfigFile(saveParams.FileName);
+				GenerateConfigFile(saveParams.FileName, false);
 			}
 		}
 
@@ -861,14 +861,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return this.settingsHashCode;
 		}
 
-		public void GenerateConfigFile(string fileName)
+		public void GenerateConfigFile(string fileName, bool replaceMacroValues)
 		{
 			List<string> configFileAsList = new List<string>();
 
 			foreach (KeyValuePair<String, SliceSetting> setting in this.DefaultSettings)
 			{
 				string activeValue = GetActiveValue(setting.Key);
-				activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
+				if (replaceMacroValues)
+				{
+					activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
+				}
 				string settingString = string.Format("{0} = {1}", setting.Key, activeValue);
 				configFileAsList.Add(settingString);
 			}
