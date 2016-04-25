@@ -1,6 +1,10 @@
 MatterControl
 =============
 
+|        | Master |
+| ------ | ------ |
+| Travis CI | [![Travis CI-Master](https://travis-ci.org/MatterHackers/MatterControl.svg?branch=master)](https://travis-ci.org/MatterHackers/MatterControl) |
+
 [MatterControl](http://www.mattercontrol.com/) is an open-source program designed to control and enhance the desktop 3D printing experience. It's designed to help you get the most out of your 3D printer - making it easy to track, preview, and print your 3D parts. Development of MatterControl is sponsored by [MatterHackers](http://www.matterhackers.com/) and it's partners.
 
 ![Screenshot](http://www.mattercontrol.com/static/mattercontrol/screenshot_slice.png)
