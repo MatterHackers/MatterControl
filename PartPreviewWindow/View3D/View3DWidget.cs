@@ -1252,7 +1252,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AutoSpin()
 		{
-			if (!WidgetHasBeenClosed && autoRotating)
+			if (!HasBeenClosed && autoRotating)
 			{
 				// add it back in to keep it running.
 				UiThread.RunOnIdle(AutoSpin, .04);
@@ -1669,7 +1669,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad));
 
-				if (WidgetHasBeenClosed)
+				if (HasBeenClosed)
 				{
 					return;
 				}
@@ -1728,13 +1728,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					string loadedFileName = filesToLoad[i];
 					List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
 					{
-						continueProcessing = !this.WidgetHasBeenClosed;
+						continueProcessing = !this.HasBeenClosed;
 						double ratioAvailable = (ratioPerFile * .5);
 						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
 						ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
 					});
 
-					if (WidgetHasBeenClosed)
+					if (HasBeenClosed)
 					{
 						return;
 					}
@@ -1748,13 +1748,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
 
 							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, Matrix4X4.Identity, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
-							if (WidgetHasBeenClosed)
+							if (HasBeenClosed)
 							{
 								return;
 							}
 							PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, asyncMeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
 							{
-								continueProcessing = !this.WidgetHasBeenClosed;
+								continueProcessing = !this.HasBeenClosed;
 								double ratioAvailable = (ratioPerFile * .5);
 								//                    done outer loop  +  done this loop  +first 1/2 (load)+  this part * ratioAvailable
 								double currentRatio = currentRatioDone + subMeshRatioDone + ratioAvailable + progress0To1 * ratioPerSubMesh;
@@ -2014,7 +2014,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MergeAndSavePartsDoCompleted()
 		{
-			if (WidgetHasBeenClosed)
+			if (HasBeenClosed)
 			{
 				return;
 			}

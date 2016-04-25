@@ -241,9 +241,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
 			textImageButtonFactory.FixedWidth = 0;
 
-			GuiWidget spacer = new GuiWidget();
-			spacer.HAnchor = HAnchor.ParentLeftRight;
-
 			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += new EventHandler(disableMotors_Click);
@@ -262,7 +259,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			offsetStreamLabel.VAnchor = VAnchor.ParentCenter;
 			homeButtonBar.AddChild(offsetStreamLabel);
 
-			homeButtonBar.AddChild(spacer);
+			homeButtonBar.AddChild(new HorizontalSpacer());
 			homeButtonBar.AddChild(disableMotors);
 			homeButtonBar.AddChild(spacerReleaseShow);
 

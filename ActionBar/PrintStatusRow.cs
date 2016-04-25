@@ -321,7 +321,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				UpdatePrintStatus();
 			}
 
-			if (!WidgetHasBeenClosed)
+			if (!HasBeenClosed)
 			{
 				UiThread.RunOnIdle(OnIdle, 1);
 			}

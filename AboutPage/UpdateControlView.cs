@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using System;
 using System.Diagnostics;
 
@@ -60,9 +61,6 @@ namespace MatterHackers.MatterControl
 				updateStatusText.AutoExpandBoundsToText = true;
 				updateStatusText.VAnchor = VAnchor.ParentCenter;
 
-				GuiWidget horizontalSpacer = new GuiWidget();
-				horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 				checkUpdateLink = textImageButtonFactory.Generate("Check for Update".Localize());
 				checkUpdateLink.VAnchor = VAnchor.ParentCenter;
 				checkUpdateLink.Click += CheckForUpdate;
@@ -79,7 +77,7 @@ namespace MatterHackers.MatterControl
 				installUpdateLink.Visible = false;
 
 				AddChild(updateStatusText);
-				AddChild(horizontalSpacer);
+				AddChild(new HorizontalSpacer());
 				AddChild(checkUpdateLink);
 				AddChild(downloadUpdateLink);
 				AddChild(installUpdateLink);

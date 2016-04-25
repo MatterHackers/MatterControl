@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				await Task.Run((System.Action)AlignSelected);
 
-				if (WidgetHasBeenClosed)
+				if (HasBeenClosed)
 				{
 					return;
 				}

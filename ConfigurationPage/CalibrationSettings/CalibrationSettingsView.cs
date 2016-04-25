@@ -105,9 +105,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			printLevelingStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printLevelingStatusLabel.VAnchor = VAnchor.ParentCenter;
 
-			GuiWidget hSpacer = new GuiWidget();
-			hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 			ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
 				SetPrintLevelButtonVisiblity();

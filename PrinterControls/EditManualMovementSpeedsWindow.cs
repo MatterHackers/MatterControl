@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -137,10 +138,7 @@ namespace MatterHackers.MatterControl
 				axisLabel.VAnchor = VAnchor.ParentCenter;
 				leftRightEdit.AddChild(axisLabel);
 
-				GuiWidget hSpacer = new GuiWidget();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-				leftRightEdit.AddChild(hSpacer);
+				leftRightEdit.AddChild(new HorizontalSpacer());
 
 				// we add this to the listWithValues to make sure we build the string correctly on save.
 				TextWidget typeEdit = new TextWidget(settingsArray[i]);
