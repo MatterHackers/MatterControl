@@ -194,9 +194,6 @@ namespace MatterHackers.MatterControl
 
 					FlowLayoutWidget helperTextWidget = GetHelpTextWidget();
 
-					GuiWidget hspacer = new GuiWidget();
-					hspacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-
 					LinkButtonFactory linkFactory = new LinkButtonFactory();
 					linkFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
 					linkFactory.fontSize = 10;
@@ -208,17 +205,11 @@ namespace MatterHackers.MatterControl
 						helperTextWidget.Visible = !helperTextWidget.Visible;
 					};
 
-					//temperatureIndicator.AddChild(hspacer);
-					//temperatureIndicator.AddChild(helpTextLink);
-
 					this.presetButtonsContainer = GetPresetsContainer();
 					temperatureIndicator.AddChild(new HorizontalSpacer());
 					temperatureIndicator.AddChild(presetButtonsContainer);
 
 					controlRow.AddChild(temperatureIndicator);
-					//controlRow.AddChild(helperTextWidget);
-					//controlRow.AddChild(this.presetButtonsContainer);
-					//controlRow.AddChild(tempSliderContainer);
 				}
 			}
 

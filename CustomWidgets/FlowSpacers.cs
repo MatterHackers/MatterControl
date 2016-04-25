@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public HorizontalSpacer()
 		{
-			HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			HAnchor = HAnchor.ParentLeftRight;
 		}
 	}
 
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public VerticalSpacer()
 		{
-			VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+			VAnchor = VAnchor.ParentBottomTop;
 		}
 	}
 
@@ -54,14 +54,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			: base(1, 1)
 		{
 			BackgroundColor = ActiveTheme.Instance.SecondaryTextColor;
-			HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			HAnchor = HAnchor.ParentLeftRight;
 		}
 
 		public HorizontalLine(RGBA_Bytes backgroundColor)
 			: base(1, 1)
 		{
 			BackgroundColor = backgroundColor;
-			HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			HAnchor = HAnchor.ParentLeftRight;
 		}
 	}
 
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			: base(1, 1)
 		{
 			BackgroundColor = ActiveTheme.Instance.SecondaryTextColor;
-			VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+			VAnchor = VAnchor.ParentBottomTop;
 		}
 	}
 }

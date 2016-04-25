@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 
 using System;
@@ -40,14 +41,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				refreshButton = textImageButtonFactory.Generate(LocalizedString.Get("Refresh"));
 				refreshButton.Click += new EventHandler(RefreshButton_Click);
 
-				GuiWidget hSpacer = new GuiWidget();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
 				footerRow.AddChild(connectButton);
 				footerRow.AddChild(refreshButton);
-				footerRow.AddChild(hSpacer);
+				footerRow.AddChild(new HorizontalSpacer());
 				footerRow.AddChild(cancelButton);
 			}
 		}

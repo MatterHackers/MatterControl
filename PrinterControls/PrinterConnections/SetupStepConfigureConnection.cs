@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 using System;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
@@ -51,13 +52,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				skipButton = textImageButtonFactory.Generate("Skip");
 				skipButton.Click += new EventHandler(SkipButton_Click);
 
-				GuiWidget hSpacer = new GuiWidget();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
 				footerRow.AddChild(skipButton);
-				footerRow.AddChild(hSpacer);
+				footerRow.AddChild(new HorizontalSpacer());
 				footerRow.AddChild(cancelButton);
 			}
 		}

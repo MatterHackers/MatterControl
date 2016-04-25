@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using System;
 using System.Collections.Generic;
@@ -154,9 +155,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					Button refreshListButton = textImageButtonFactory.Generate(LocalizedString.Get("Refresh"));
 					refreshListButton.Click += new EventHandler(EditModeOffLink_Click);
 
-					GuiWidget spacer = new GuiWidget();
-					spacer.HAnchor = HAnchor.ParentLeftRight;
-
 					//Add buttons to ButtonContainer
 					buttonContainer.AddChild(addPrinterButton);
 
@@ -165,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						buttonContainer.AddChild(refreshListButton);
 					}
 
-					buttonContainer.AddChild(spacer);
+					buttonContainer.AddChild(new HorizontalSpacer());
 					buttonContainer.AddChild(closeButton);
 				}
 
