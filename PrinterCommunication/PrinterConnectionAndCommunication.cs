@@ -2123,11 +2123,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
 
-				activePrintTask.PercentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
-
 				activePrintTask.PrintEnd = DateTime.Now;
 				activePrintTask.PrintComplete = false;
-				activePrintTask.PrintingGCodeFileName = null;
+				activePrintTask.PrintingGCodeFileName = "";
 				activePrintTask.Commit();
 			}
 		}
