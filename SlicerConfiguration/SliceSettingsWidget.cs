@@ -338,10 +338,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, copyIndex);
 								topToBottomSettings.AddChild(controlsForThisSetting);
 
-								if (sliceSettingsDetailControl.ShowingHelp)
+								GuiWidget helpBox = AddInHelpText(topToBottomSettings, settingInfo);
+								if (!sliceSettingsDetailControl.ShowingHelp)
 								{
-									AddInHelpText(topToBottomSettings, settingInfo);
+									helpBox.Visible = false;
 								}
+								sliceSettingsDetailControl.ShowHelpChanged += (s, e) =>
+								{
+									helpBox.Visible = sliceSettingsDetailControl.ShowingHelp;
+								};
+								topToBottomSettings.AddChild(helpBox);
 							}
 						}
 
@@ -437,7 +443,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return settingShouldBeShown;
 		}
 
-		private void AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingInfo)
+		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingInfo)
 		{
 			FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			allText.HAnchor = HAnchor.ParentLeftRight;
@@ -453,8 +459,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//helpWidget.HAnchor = HAnchor.ParentLeft;
 			allText.AddChild(helpWidget);
 
-			allText.MinimumSize = new Vector2(textRegionWidth, allText.MinimumSize.y);
-			topToBottomSettings.AddChild(allText);
+			allText.MinimumSize = new Vector2(0, allText.MinimumSize.y);
+			return allText;
 		}
 
 		private TabControl CreateExtraSettingsSideTabsAndPages(int minSettingNameWidth, TabControl categoryTabs, out int count)

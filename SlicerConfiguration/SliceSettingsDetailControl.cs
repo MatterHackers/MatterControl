@@ -7,13 +7,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsDetailControl : FlowLayoutWidget
 	{
-		private const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
-		private const string SliceSettingsLevelEntry = "SliceSettingsLevel";
-
-		private CheckBox showHelpBox;
-		private StyledDropDownList settingsDetailSelector;
-
 		public DropDownMenu sliceOptionsMenuDropList;
+		private const string SliceSettingsLevelEntry = "SliceSettingsLevel";
+		private const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
+		private StyledDropDownList settingsDetailSelector;
+		private CheckBox showHelpBox;
 		private TupleList<string, Func<bool>> slicerOptionsMenuItems;
 
 		public SliceSettingsDetailControl()
@@ -21,15 +19,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			showHelpBox = new CheckBox(0, 0, "Show Help".Localize(), textSize: 10);
 			showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
 			// add in the ability to turn on and off help text
+			showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			showHelpBox.Margin = new BorderDouble(right: 3);
+			showHelpBox.VAnchor = VAnchor.ParentCenter;
+			showHelpBox.Cursor = Cursors.Hand;
+			showHelpBox.CheckedStateChanged += (s, e) =>
 			{
-				showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				showHelpBox.Margin = new BorderDouble(right: 3);
-				showHelpBox.VAnchor = VAnchor.ParentCenter;
-				showHelpBox.Cursor = Cursors.Hand;
-				showHelpBox.CheckedStateChanged += RebuildSlicerSettings;
+				UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
+				ShowHelpChanged?.Invoke(this, null);
+			};
 
-				this.AddChild(showHelpBox);
-			}
+			this.AddChild(showHelpBox);
 
 			settingsDetailSelector = new StyledDropDownList("Basic", maxHeight: 200);
 			settingsDetailSelector.Name = "User Level Dropdown";
@@ -51,6 +51,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AddChild(GetSliceOptionsMenuDropList());
 		}
 
+		public event EventHandler ShowHelpChanged;
+
+		public string SelectedValue
+		{
+			get { return settingsDetailSelector.SelectedValue; }
+		}
+
+		public bool ShowingHelp
+		{
+			get { return showHelpBox.Checked; }
+		}
+
+		private bool ExportSettingsMenu_Click()
+		{
+			UiThread.RunOnIdle(ActiveSliceSettings.Instance.SaveAs);
+			return true;
+		}
+
 		private DropDownMenu GetSliceOptionsMenuDropList()
 		{
 			if (sliceOptionsMenuDropList == null)
@@ -70,6 +88,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return sliceOptionsMenuDropList;
 		}
 
+		private bool ImportSettingsMenu_Click()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				ActiveSliceSettings.Instance.LoadSettingsFromIni();
+			});
+			return true;
+		}
+
 		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
 		{
 			string menuSelection = ((DropDownMenu)sender).SelectedValue;
@@ -82,6 +109,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					item.Item2();
 				}
 			}
+		}
+
+		private void RebuildSlicerSettings(object sender, EventArgs e)
+		{
+			UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
+
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+		}
+
+		private bool RestoreAllSettingsMenu_Click()
+		{
+			return true;
 		}
 
 		private void SetMenuItems()
@@ -101,47 +140,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private bool ImportSettingsMenu_Click()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				ActiveSliceSettings.Instance.LoadSettingsFromIni();
-			});
-			return true;
-		}
-
-		private bool ExportSettingsMenu_Click()
-		{
-			UiThread.RunOnIdle(ActiveSliceSettings.Instance.SaveAs);
-			return true;
-		}
-
-		private bool RestoreAllSettingsMenu_Click()
-		{
-			return true;
-		}
-
 		private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
 		{
 			RebuildSlicerSettings(null, null);
-		}
-
-		private void RebuildSlicerSettings(object sender, EventArgs e)
-		{
-			UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
-			UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
-
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-		}
-
-		public string SelectedValue
-		{
-			get { return settingsDetailSelector.SelectedValue; }
-		}
-
-		public bool ShowingHelp
-		{
-			get { return showHelpBox.Checked; }
 		}
 	}
 }
