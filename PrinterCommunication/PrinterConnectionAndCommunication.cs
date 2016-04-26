@@ -1331,6 +1331,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void OnPrintFinished(EventArgs e)
 		{
 			PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(this.ActivePrintItem));
+
+			bool resetValue = false;
+			foreach (KeyValuePair<String, SliceSetting> currentSetting in ActiveSliceSettings.Instance.DefaultSettings)
+			{
+				string currentValue = ActiveSliceSettings.Instance.GetActiveValue(currentSetting.Key);
+
+				bool valueIsClear = currentValue == "0" | currentValue == "";
+				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(currentSetting.Key);
+				if (data != null 
+					&& data.ResetAtEndOfPrint
+					&& !valueIsClear)
+				{
+					resetValue = true;
+					ActiveSliceSettings.Instance.SaveValue(currentSetting.Key, "", RequestedSettingsLayer.User);
+				}
+			}
+
+			if(resetValue)
+			{
+				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+			}
 		}
 
 		public void PrintActivePart()

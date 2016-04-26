@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public List<string> SetSettingsOnChange = new List<string>();
 
 		public string ShowIfSet { get; set; }
+		
+		public bool ResetAtEndOfPrint { get; set; }
 
 		static public OrganizerSettingsData NewOrganizerSettingData(string slicerConfigName, string presentationName, OrganizerSettingsData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
 		{

@@ -33,7 +33,8 @@
     "PresentationName": "Bottom Clip",
     "HelpText": "The amount to remove from the bottom of the model, in millimeters.",
     "DataEditType": "DOUBLE",
-    "ExtraSettings": "mm"
+    "ExtraSettings": "mm",
+    "ResetAtEndOfPrint" :  true,
   },
   {
     "SlicerConfigName": "bottom_solid_layers",
@@ -47,7 +48,8 @@
     "PresentationName": "Select Layer To Pause:",
     "HelpText": "If you want to select a layer to pause your print on do so here (for changing filament)",
     "DataEditType": "STRING",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "ResetAtEndOfPrint" :  true,
   },
   {
     "SlicerConfigName": "bridge_acceleration",
@@ -936,7 +938,8 @@
     "PresentationName": "Spiral Vase",
     "HelpText": "Forces the print to have only one extrusion and gradually increase the extruder height during the print. Only one part will print at a time with this feature.",
     "DataEditType": "CHECK_BOX",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "ResetAtEndOfPrint" :  true,
   },
   {
     "SlicerConfigName": "standby_temperature_delta",

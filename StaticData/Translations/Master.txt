@@ -4735,3 +4735,21 @@ Translated:Before Tool Change G-Code
 English:After Tool Change G-Code
 Translated:After Tool Change G-Code
 
+English:One Time
+Translated:One Time
+
+English:Single Print Settings
+Translated:Single Print Settings
+
+English:Single Print
+Translated:Single Print
+
+English:Reset at End of Print
+Translated:Reset at End of Print
+
+English:Will Clear at End of Print
+Translated:Will Clear at End of Print
+
+English:Settings Will Clear at End of Print
+Translated:Settings Will Clear at End of Print
+
