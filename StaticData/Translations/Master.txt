@@ -4753,3 +4753,9 @@ Translated:Will Clear at End of Print
 English:Settings Will Clear at End of Print
 Translated:Settings Will Clear at End of Print
 
+English:Max Temp
+Translated:Max Temp
+
+English:Add a new Macro
+Translated:Add a new Macro
+

@@ -107,19 +107,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CreateAndAddChildren();
 
-			SliceSettingsWidget.RegisterForSettingsChange("bed_size", RecreateBedAndPartPosition, ref unregisterEvents);
-			SliceSettingsWidget.RegisterForSettingsChange("print_center", RecreateBedAndPartPosition, ref unregisterEvents);
-			SliceSettingsWidget.RegisterForSettingsChange("build_height", RecreateBedAndPartPosition, ref unregisterEvents);
-			SliceSettingsWidget.RegisterForSettingsChange("bed_shape", RecreateBedAndPartPosition, ref unregisterEvents);
-			SliceSettingsWidget.RegisterForSettingsChange("center_part_on_bed", RecreateBedAndPartPosition, ref unregisterEvents);
+			SliceSettingsWidget.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => ClearGCode(), ref unregisterEvents);
 
-			SliceSettingsWidget.RegisterForSettingsChange("extruder_offset", Clear3DGCode, ref unregisterEvents);
-			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
-
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 		}
 
-		private void Clear3DGCode(object sender, EventArgs e)
+		private void CheckSettingChanged(object sender, EventArgs e)
+		{
+			StringEventArgs stringEvent = e as StringEventArgs;
+			if (stringEvent != null)
+			{
+				if (stringEvent.Data == "bed_size"
+					|| stringEvent.Data == "print_center"
+					|| stringEvent.Data == "build_height"
+					|| stringEvent.Data == "bed_shape"
+					|| stringEvent.Data == "center_part_on_bed")
+				{
+					viewerVolume = new Vector3(ActiveSliceSettings.Instance.BedSize, ActiveSliceSettings.Instance.BuildHeight);
+					bedShape = ActiveSliceSettings.Instance.BedShape;
+					bedCenter = ActiveSliceSettings.Instance.BedCenter;
+
+					double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+
+					UiThread.RunOnIdle(() =>
+					{
+						meshViewerWidget.CreatePrintBed(
+							viewerVolume,
+							bedCenter,
+							bedShape);
+					});
+				}
+				else if(stringEvent.Data == "extruder_offset")
+				{
+					ClearGCode();
+				}
+			}
+		}
+
+		private void ClearGCode()
 		{
 			if (gcodeViewWidget != null
 				&& gcodeViewWidget.gCodeRenderer != null)
@@ -127,23 +153,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gcodeViewWidget.gCodeRenderer.Clear3DGCode();
 				gcodeViewWidget.Invalidate();
 			}
-		}
-
-		private void RecreateBedAndPartPosition(object sender, EventArgs e)
-		{
-			viewerVolume = new Vector3(ActiveSliceSettings.Instance.BedSize, ActiveSliceSettings.Instance.BuildHeight);
-			bedShape = ActiveSliceSettings.Instance.BedShape;
-			bedCenter = ActiveSliceSettings.Instance.BedCenter;
-
-			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-
-			UiThread.RunOnIdle(() =>
-			{
-				meshViewerWidget.CreatePrintBed(
-					viewerVolume,
-					bedCenter,
-					bedShape);
-			});
 		}
 
 		private void CreateAndAddChildren()

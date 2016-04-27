@@ -63,23 +63,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PartPreview3DWidget()
 		{
-			SliceSettingsWidget.RegisterForSettingsChange("bed_size", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
-			SliceSettingsWidget.RegisterForSettingsChange("print_center", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
-			SliceSettingsWidget.RegisterForSettingsChange("build_height", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
-			SliceSettingsWidget.RegisterForSettingsChange("bed_shape", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
-			SliceSettingsWidget.RegisterForSettingsChange("center_part_on_bed", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
-			
-			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
+			SliceSettingsWidget.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 #if false
             "extruder_offset",
 #endif
 
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
+			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((s, e) => needToRecretaeBed = true, ref unregisterEvents);
 		}
 
-		private void SetFlagToRecreateBedAndPartPosition(object sender, EventArgs e)
+		private void CheckSettingChanged(object sender, EventArgs e)
 		{
-			needToRecretaeBed = true;
+			StringEventArgs stringEvent = e as StringEventArgs;
+			if (stringEvent != null)
+			{
+				if (stringEvent.Data == "bed_size"
+					|| stringEvent.Data == "print_center"
+					|| stringEvent.Data == "build_height"
+					|| stringEvent.Data == "bed_shape"
+					|| stringEvent.Data == "center_part_on_bed")
+				{
+					needToRecretaeBed = true;
+				}
+			}
 		}
 
 		private void RecreateBed()
