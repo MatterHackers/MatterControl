@@ -4759,3 +4759,9 @@ Translated:Max Temp
 English:Add a new Macro
 Translated:Add a new Macro
 
+English:Add a new Settings Preset
+Translated:Add a new Settings Preset
+
+English:Import an existing Settings Preset
+Translated:Import an existing Settings Preset
+

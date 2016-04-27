@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     SliceSettingsWidget.SettingsIndexBeingEdited = 3;
                 }
-                // If there is a setting selected then reload the silce setting widget with the presetIndex to edit.
+                // If there is a setting selected then reload the slice setting widget with the presetIndex to edit.
                 ApplicationController.Instance.ReloadAdvancedControlsPanel();
                 // If no setting selected then call onNewItemSelect(object sender, EventArgs e)
 #else
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 #if DO_IN_PLACE_EDIT
             // pop up a dialog to request a new setting name
-            // after getting the new name select it and relead the slice setting widget editing the new setting
+            // after getting the new name select it and reload the slice setting widget editing the new setting
             throw new NotImplementedException();
 #else
 			UiThread.RunOnIdle(() =>
@@ -250,8 +250,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += new EventHandler(onItemSelect);
 			}
 
-			MenuItem addNewPreset = dropDownList.AddItem("<< Add >>", "new");
-			addNewPreset.Selected += new EventHandler(onNewItemSelect);
+			// put in a small bottom region
+			{
+				FlowLayoutWidget container = new FlowLayoutWidget();
+				container.HAnchor = HAnchor.ParentLeftRight;
+
+				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
+				buttonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				buttonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				buttonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				buttonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				buttonFactory.borderWidth = 0;
+
+				Button addPresetButton = buttonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+				addPresetButton.ToolTipText = "Add a new Settings Preset".Localize();
+				addPresetButton.Click += (sender, e) =>
+				{
+					onNewItemSelect(sender, e);
+				};
+				container.AddChild(addPresetButton);
+
+				Button importPresetButton = buttonFactory.Generate(LocalizedString.Get("Import"));
+				importPresetButton.ToolTipText = "Import an existing Settings Preset".Localize();
+				importPresetButton.Click += (sender, e) =>
+				{
+				};
+				container.AddChild(importPresetButton);
+
+				dropDownList.MenuItems.Add(new MenuItem(container));
+			}
 
 			if (filterTag == "material")
 			{
@@ -323,7 +350,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			//If nothing is selected (ie selected engine is not available) set to
+			//If nothing is selected (i.e. selected engine is not available) set to
 			if (SelectedLabel == "")
 			{
 				try
