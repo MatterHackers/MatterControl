@@ -79,7 +79,6 @@
     <Compile Include="MatterControl\PrinterWhiteListTests.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
     <Compile Include="MatterControl\SetupIniTests.cs" />
-    <Compile Include="MatterControl\Slicing\SliceMappingCLassesTets.cs" />
     <Compile Include="MatterControl\Slicing\SliceLayersTests.cs" />
     <Compile Include="MatterControl\LevelingTests.cs" />
     <Compile Include="MatterControl\GCodeStreamTests.cs" />

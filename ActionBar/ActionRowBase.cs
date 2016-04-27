@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2016, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,46 +29,38 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
+using MatterHackers.Agg.VertexSource;
 using System;
-using System.Collections.Generic;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.ActionBar
 {
-	public class SettingsControlBar : FlowLayoutWidget
+	//Base widget for ActionBarRows
+	public abstract class ActionRowBase : FlowLayoutWidget
 	{
-		public SettingsControlBar()
+		public ActionRowBase()
+			: base(FlowDirection.LeftToRight)
+		{
+			Initialize();
+			SetDisplayAttributes();
+			AddChildElements();
+			AddHandlers();
+		}
+
+		protected virtual void Initialize()
+		{
+			//Placeholder for row-specific initialization
+		}
+
+		protected void SetDisplayAttributes()
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
+		}
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+		protected abstract void AddChildElements();
 
-			this.AddChild(new PresetSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality", 0));
-			this.AddChild(new GuiWidget(8, 0));
-
-			if (numberOfHeatedExtruders > 1)
-			{
-				List<RGBA_Bytes> colorList = new List<RGBA_Bytes>() { RGBA_Bytes.Orange, RGBA_Bytes.Violet, RGBA_Bytes.YellowGreen };
-
-				for (int i = 0; i < numberOfHeatedExtruders; i++)
-				{
-					if (i > 0)
-					{
-						this.AddChild(new GuiWidget(8, 0));
-					}
-					int colorIndex = i % colorList.Count;
-					RGBA_Bytes color = colorList[colorIndex];
-					this.AddChild(new PresetSelectorWidget(string.Format("{0} {1}", "Material".Localize(), i), color, "material", i));
-				}
-			}
-			else
-			{
-				this.AddChild(new PresetSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material", 0));
-			}
-
-			this.Height = 60 * TextWidget.GlobalPointSizeScaleRatio;
-
+		protected virtual void AddHandlers()
+		{
+			//Placeholder for row-specific handlers
 		}
 	}
 }
-	

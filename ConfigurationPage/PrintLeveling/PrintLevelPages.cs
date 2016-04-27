@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
-			ActivePrinterProfile.Instance.DoPrintLeveling = false;
+			ActiveSliceSettings.Instance.DoPrintLeveling = false;
 			base.PageIsBecomingActive();
 		}
 	}
@@ -63,13 +63,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
-			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.ProbePaperWidth);
+
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
 			levelingData.SampledPosition0 = probePositions[0].position - paperWidth;
 			levelingData.SampledPosition1 = probePositions[1].position - paperWidth;
 			levelingData.SampledPosition2 = probePositions[2].position - paperWidth;
 
-			ActivePrinterProfile.Instance.DoPrintLeveling = true;
+			// Invoke setter forcing persistence of leveling data
+			ActiveSliceSettings.Instance.PrintLevelingData = levelingData;
+
+			ActiveSliceSettings.Instance.DoPrintLeveling = true;
+
 			base.PageIsBecomingActive();
 		}
 	}
@@ -86,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
-			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
 			levelingData.SampledPositions.Clear();
 			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.ProbePaperWidth);
 			for (int i = 0; i < probePositions.Length; i++)
@@ -94,10 +99,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingData.SampledPositions.Add(probePositions[i].position - paperWidth);
 			}
 
-			levelingData.Commit();
+			// Invoke setter forcing persistence of leveling data
+			ActiveSliceSettings.Instance.PrintLevelingData = levelingData;
 
-
-			ActivePrinterProfile.Instance.DoPrintLeveling = true;
+			ActiveSliceSettings.Instance.DoPrintLeveling = true;
 			base.PageIsBecomingActive();
 		}
 	}
@@ -120,10 +125,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
+
 			base.OnClosed(e);
 		}
 
@@ -178,7 +181,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// This data is currently the offset from the probe to the extruder tip. We need to translate them
 			// into bed offsets and store them.
 
-			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 			// The first point is the user assisted offset to the bed
 			Vector3 userBedSample0 = probePositions[0].position;
 			// The first point sample offset at the limit switch
@@ -193,6 +195,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.ProbePaperWidth);
 
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
 			levelingData.SampledPosition0 = userBedSample0 - paperWidth;
 			levelingData.SampledPosition1 = userBedSample1 - paperWidth;
 			levelingData.SampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0 - paperWidth;
@@ -200,7 +203,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			levelingData.ProbeOffset0 = probeOffset0 - paperWidth;
 			levelingData.ProbeOffset1 = probeOffset1 - paperWidth;
 
-			ActivePrinterProfile.Instance.DoPrintLeveling = true;
+			// Invoke setter forcing persistence of leveling data
+			ActiveSliceSettings.Instance.PrintLevelingData = levelingData;
+
+			ActiveSliceSettings.Instance.DoPrintLeveling = true;
 			base.PageIsBecomingActive();
 		}
 	}
@@ -270,7 +276,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			ActivePrinterProfile.Instance.DoPrintLeveling = false;
+			ActiveSliceSettings.Instance.DoPrintLeveling = false;
 
 			base.PageIsBecomingActive();
 		}

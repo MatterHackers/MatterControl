@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool atxPowerIsOn = false;
 
-		private const int MAX_EXTRUDERS = 16;
+		internal const int MAX_EXTRUDERS = 16;
 
 		private const int MAX_INVALID_CONNECTION_CHARS = 3;
 
@@ -954,17 +954,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public Printer ActivePrinter
-		{
-			get
-			{
-				return ActivePrinterProfile.Instance.ActivePrinter;
-			}
-			private set
-			{
-				ActivePrinterProfile.Instance.ActivePrinter = value;
-			}
-		}
+		// TODO: Consider having callers use the source rather than this proxy? Maybe better to change after arriving on a final type and location for printer settings
+		public SettingsProfile ActivePrinter => ActiveSliceSettings.Instance;
 
 		private int NumberOfLinesInCurrentPrint
 		{
@@ -1056,7 +1047,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return;
 				}
 
-				ConnectToPrinter(PrinterConnectionAndCommunication.Instance.ActivePrinter);
+				ConnectToPrinter();
 			}
 		}
 
@@ -1173,14 +1164,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public double GetActualExtruderTemperature(int extruderIndex0Based)
 		{
 			extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
-
 			return actualExtruderTemperature[extruderIndex0Based];
 		}
+
 
 		public double GetTargetExtruderTemperature(int extruderIndex0Based)
 		{
 			extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
-
 			return targetExtruderTemperature[extruderIndex0Based];
 		}
 
@@ -1332,23 +1322,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(this.ActivePrintItem));
 
-			bool resetValue = false;
-			foreach (KeyValuePair<String, SliceSetting> currentSetting in ActiveSliceSettings.Instance.DefaultSettings)
+			// TODO: Shouldn't this logic be in the UI layer where the controls are owned and hooked in via PrintFinished?
+			bool oneOrMoreValuesReset = false;
+			foreach (var kvp in ActiveSliceSettings.Instance.BaseLayer)
 			{
-				string currentValue = ActiveSliceSettings.Instance.GetActiveValue(currentSetting.Key);
+				string currentValue = ActiveSliceSettings.Instance.GetActiveValue(kvp.Key);
 
 				bool valueIsClear = currentValue == "0" | currentValue == "";
-				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(currentSetting.Key);
-				if (data != null 
-					&& data.ResetAtEndOfPrint
-					&& !valueIsClear)
+				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(kvp.Key);
+				if (data?.ResetAtEndOfPrint == true && !valueIsClear)
 				{
-					resetValue = true;
-					ActiveSliceSettings.Instance.SaveValue(currentSetting.Key, "", RequestedSettingsLayer.User);
+					oneOrMoreValuesReset = true;
+					ActiveSliceSettings.Instance.ClearValue(kvp.Key);
 				}
 			}
 
-			if(resetValue)
+			if(oneOrMoreValuesReset)
 			{
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
@@ -1360,12 +1349,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// If leveling is required or is currently on
 				if (ActiveSliceSettings.Instance.LevelingRequiredToPrint
-					|| ActivePrinterProfile.Instance.DoPrintLeveling)
+					|| ActiveSliceSettings.Instance.DoPrintLeveling)
 				{
-					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-					if(!levelingData.HasBeenRun())
+					PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
+					if(levelingData?.HasBeenRun() != true)
 					{
-						levelingData.RunLevelingWizard();
+						LevelWizardBase.ShowPrintLevelWizard();
 						return;
 					}
 				}
@@ -1548,7 +1537,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// current approach results in unpredictable behavior if the caller fails to close the connection 
 			if (serialPort == null && this.ActivePrinter != null)
 			{
-				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
+				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
 				resetSerialPort.Open();
 
 				Thread.Sleep(500);
@@ -1658,12 +1647,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 											// run the print leveling wizard if we need to for this printer
 											if (ActiveSliceSettings.Instance.LevelingRequiredToPrint
-												|| ActivePrinterProfile.Instance.DoPrintLeveling)
+												|| ActiveSliceSettings.Instance.DoPrintLeveling)
 											{
-												PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-												if (!levelingData.HasBeenRun())
+												PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
+												if (levelingData?.HasBeenRun() != true)
 												{
-													UiThread.RunOnIdle(() => levelingData.RunLevelingWizard() );
+													UiThread.RunOnIdle(LevelWizardBase.ShowPrintLevelWizard);
 												}
 											}
 										}
@@ -1840,7 +1829,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						// We reset the board while attempting to connect, so now we don't have a serial port.
 						// Create one and do the DTR to reset
-						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
+						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
 						resetSerialPort.Open();
 
 						Thread.Sleep(500);
@@ -2202,7 +2191,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).SerialPortAlreadyOpen(serialPortName);
+			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(this.ActivePrinter.DriverType).SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 			{
@@ -2210,7 +2199,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).CreateAndOpen(serialPortName, baudRate, true);
+						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.ActivePrinter.DriverType).CreateAndOpen(serialPortName, baudRate, true);
 #if __ANDROID__
 						ToggleHighLowHeigh(serialPort);
 #endif
@@ -2299,7 +2288,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private void ConnectToPrinter(Printer printerRecord)
+		private void ConnectToPrinter()
 		{
 			PrinterOutputCache.Instance.Clear();
 			LinesToWriteQueue.Clear();
@@ -2504,9 +2493,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					if (activePrintTask == null)
 					{
+						// TODO: Fix printerItemID int requirement
 						activePrintTask = new PrintTask();
 						activePrintTask.PrintStart = DateTime.Now;
-						activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+						activePrintTask.PrinterId = this.ActivePrinter.Id.GetHashCode();
 						activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
 						activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
 						activePrintTask.PrintingGCodeFileName = ActivePrintItem.GetGCodePathAndFileName();

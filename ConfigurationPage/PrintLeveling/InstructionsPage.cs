@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -62,7 +63,8 @@ namespace MatterHackers.MatterControl
 		public static Vector3 ManualControlsFeedRate()
 		{
 			Vector3 feedRate = new Vector3(3000, 3000, 315);
-			string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;
+
+			string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds;
 			if (savedSettings != null && savedSettings != "")
 			{
 				feedRate.x = double.Parse(savedSettings.Split(',')[1]);

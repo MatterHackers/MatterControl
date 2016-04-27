@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2016, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,25 +27,34 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.VectorMath;
-using System;
-using System.Globalization;
-using System.Threading.Tasks;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
+namespace MatterHackers.MatterControl
 {
-	public class LibraryDataViewEventArgs : EventArgs
+	public class PrinterSelector : StyledDropDownList
 	{
-		public LibraryProvider LibraryProvider { get; set; }
-
-		public LibraryDataViewEventArgs(LibraryProvider libraryProvider)
+		public PrinterSelector() : base("Printers".Localize() + "... ")
 		{
-			this.LibraryProvider = libraryProvider;
+			//Add the menu items to the menu itself
+			foreach (var printer in ActiveSliceSettings.ProfileData.Profiles)
+			{
+				this.AddItem(printer.Name, printer.Id.ToString());
+			}
+
+			if (!string.IsNullOrEmpty(ActiveSliceSettings.ProfileData.ActiveProfileID))
+			{
+				this.SelectedValue = ActiveSliceSettings.ProfileData.ActiveProfileID;
+			}
+
+			this.SelectionChanged += (s, e) =>
+			{
+				int printerID;
+				if (int.TryParse(this.SelectedValue, out printerID))
+				{
+					ActiveSliceSettings.SwitchToProfile(printerID);
+				}
+			};
 		}
 	}
 }

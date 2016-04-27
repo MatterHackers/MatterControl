@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MatterHackers.MatterControl.SlicerConfiguration.ActiveSliceSettings">
+    <Position X="7.25" Y="0.5" Width="1.75" />
+    <AssociationLine Name="Instance" Type="MatterHackers.MatterControl.SlicerConfiguration.SettingsProfile">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.574" Y="-0.225" Height="0.182" Width="1.128" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>IBAAAAEAAABAAAAAAAAAAAAAAIAAABAAQAgAAEAAAAA=</HashCode>
+      <FileName>SlicerConfiguration\Settings\ActiveSliceSettings.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Instance" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.SlicerConfiguration.SettingsProfile">
+    <Position X="3.5" Y="0.5" Width="2" />
+    <NestedTypes>
+      <Class Name="MatterHackers.MatterControl.SlicerConfiguration.SettingsProfile.SettingsConverter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>SlicerConfiguration\Settings\SettingsProfile.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <AssociationLine Name="profileLayers" Type="MatterHackers.MatterControl.SlicerConfiguration.LayeredProfile">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.102" Y="0.256" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>JCADAcoArLgkCEwJMG9CQD0AAEAjEMYASRgMAA5VAAQ=</HashCode>
+      <FileName>SlicerConfiguration\Settings\SettingsProfile.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="profileLayers" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.SlicerConfiguration.LayeredProfile">
+    <Position X="7.25" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAACMQEKABAAAABEEAGAAQBAgABAAQEAAQIAAAQBAA=</HashCode>
+      <FileName>SlicerConfiguration\Settings\LayeredProfile.cs</FileName>
+      <NewMemberFileName>SlicerConfiguration\ActiveSliceSettings.cs</NewMemberFileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="QualityLayer" />
+      <Property Name="MaterialLayer" />
+      <Property Name="OemProfile" />
+      <Property Name="UserLayer" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.SlicerConfiguration.SettingsLayer">
+    <Position X="10.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAgAAAAAAEAAAAAQAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>SlicerConfiguration\Settings\SettingsProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.SlicerConfiguration.OemProfile">
+    <Position X="7.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAASAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SlicerConfiguration\Settings\LayeredProfile.cs</FileName>
+      <NewMemberFileName>SlicerConfiguration\ActiveSliceSettings.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.DataStorage.Printer" Collapsed="true">
+    <Position X="0.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAgQgCCCAAAAAAIAAAAgQAAAAAEAAAAAwAIBJEAAA=</HashCode>
+      <FileName>DataStorage\Models.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

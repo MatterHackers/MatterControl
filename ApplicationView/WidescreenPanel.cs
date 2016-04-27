@@ -1,12 +1,4 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
-
-/*
+﻿/*
 Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
@@ -36,6 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -68,15 +68,12 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			Padding = new BorderDouble(4);
 
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
-			this.BoundsChanged += new EventHandler(onBoundsChanges);
-		}
+			// TODO: This hooks seems to invalidate most of the other ActivePrinterChanged subscribers as this destroys and recreates everything
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(null, null), ref unregisterEvents);
 
-		public void ReloadAdvancedControlsPanelTrigger(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
+			this.BoundsChanged += onBoundsChanges;
 		}
 
 		public override void OnParentChanged(EventArgs e)
@@ -96,10 +93,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -207,11 +201,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-		}
-
 		private void RemovePanelsAndCreateEmpties()
 		{
 			CloseAllChildren();
@@ -236,12 +225,6 @@ namespace MatterHackers.MatterControl
 		public void ReloadAdvancedControlsPanel()
 		{
 			PreChangePanels.CallEvents(this, null);
-		}
-
-		public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
-		{
-			ActiveSliceSettings.Instance.LoadAllSettings();
-			ApplicationController.Instance.ReloadAll(null, null);
 		}
 	}
 

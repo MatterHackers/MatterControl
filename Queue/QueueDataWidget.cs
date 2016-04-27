@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						shopButton.Click += (sender, e) =>
 						{
 							double activeFilamentDiameter = 0;
-							if (ActivePrinterProfile.Instance.ActivePrinter != null)
+							if (ActiveSliceSettings.Instance != null)
 							{
 								activeFilamentDiameter = 3;
 								if (ActiveSliceSettings.Instance.FilamentDiameter < 2)
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						buttonPanel1.AddChild(queueMenuContainer);
 					}
 
-					ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((object sender, EventArgs e) =>
+					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((object sender, EventArgs e) =>
 					{
 						queueMenuContainer.RemoveAllChildren();
 						// the printer changed reload the queueMenue

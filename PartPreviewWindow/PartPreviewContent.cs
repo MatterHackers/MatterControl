@@ -98,8 +98,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
 			// put in the 3D view
-			string part3DViewLabelFull = string.Format("{0} {1} ", "3D", "View".Localize()).ToUpper();
-
 			partPreviewView = new View3DWidget(printItem,
 				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
 				ActiveSliceSettings.Instance.BedCenter,
@@ -108,7 +106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				autoRotate3DView,
 				openMode);
 
-			TabPage partPreview3DView = new TabPage(partPreviewView, part3DViewLabelFull);
+			TabPage partPreview3DView = new TabPage(partPreviewView, string.Format("3D {0} ", "View".Localize()).ToUpper());
 
 			// put in the gcode view
 			ViewGcodeBasic.WindowMode gcodeWindowMode = ViewGcodeBasic.WindowMode.Embeded;
@@ -124,20 +122,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (windowMode == View3DWidget.WindowMode.StandAlone)
 			{
-				partPreviewView.Closed += (sender, e) =>
-				{
-					Close();
-				};
-				viewGcodeBasic.Closed += (sender, e) =>
-				{
-					Close();
-				};
+				partPreviewView.Closed += (s, e) => Close();
+				viewGcodeBasic.Closed += (s, e) => Close();
 			}
 
 			layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View").ToUpper());
 
 			int tabPointSize = 16;
-            // add the correct tabs based on wether we are stand alone or embeded
+            // add the correct tabs based on whether we are stand alone or embedded
             Tab threeDViewTab;
             Tab layerViewTab;
             if (windowMode == View3DWidget.WindowMode.StandAlone || OsInformation.OperatingSystem == OSType.Android)
@@ -171,10 +163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 	}

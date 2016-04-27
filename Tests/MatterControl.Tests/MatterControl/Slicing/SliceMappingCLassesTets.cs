@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.DataStorage.ClassicDB;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
@@ -46,10 +47,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 
+			var classicProfile = new ClassicSqlitePrinterProfiles();
+
 			// dirrect values work
 			{
-				ActiveSliceSettings.Instance.SaveValue("primary", "1", 0);
-				ActiveSliceSettings.Instance.SaveValue("reference", "10", 0);
+				classicProfile.SaveValue("primary", "1", 0);
+				classicProfile.SaveValue("reference", "10", 0);
 
 				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("primary", "notused", "reference");
 				Assert.IsTrue(mapper.Value == "1");
@@ -61,8 +64,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 
 			// % reference values work
 			{
-				ActiveSliceSettings.Instance.SaveValue("primary", "13%", 0);
-				ActiveSliceSettings.Instance.SaveValue("reference", "100", 0);
+				classicProfile.SaveValue("primary", "13%", 0);
+				classicProfile.SaveValue("reference", "100", 0);
 
 				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("primary", "notused", "reference");
 				Assert.IsTrue(mapper.Value == "13");
@@ -74,8 +77,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 
 			// and also check for 0
 			{
-				ActiveSliceSettings.Instance.SaveValue("primary", "0", 0);
-				ActiveSliceSettings.Instance.SaveValue("reference", "100", 0);
+				classicProfile.SaveValue("primary", "0", 0);
+				classicProfile.SaveValue("reference", "100", 0);
 
 				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("primary", "notused", "reference");
 				Assert.IsTrue(mapper.Value == "100");

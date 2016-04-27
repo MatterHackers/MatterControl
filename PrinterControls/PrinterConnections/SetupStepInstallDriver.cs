@@ -3,6 +3,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,18 +15,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private FlowLayoutWidget printerDriverContainer;
 		private TextWidget printerDriverMessage;
-		private List<string> driversToInstall;
-
-		//bool driverInstallFinished;
 
 		private Button installButton;
 		private Button skipButton;
 
-		public SetupStepInstallDriver(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinterStatus)
-			: base(windowController, containerWindowToClose, setupPrinterStatus)
+		public SetupStepInstallDriver(ConnectionWizard windowController)
+			: base(windowController)
 		{
-			this.driversToInstall = this.currentPrinterSetupStatus.DriversToInstall;
-
 			headerLabel.Text = string.Format(LocalizedString.Get("Install Communication Driver"));
 			printerDriverContainer = createPrinterDriverContainer();
 			contentRow.AddChild(printerDriverContainer);
@@ -34,33 +30,25 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				installButton = textImageButtonFactory.Generate(LocalizedString.Get("Install Driver"));
 				installButton.Click += (sender, e) =>
 				{
-					UiThread.RunOnIdle(installButton_Click);
+					UiThread.RunOnIdle(() =>
+					{
+						bool canContinue = this.InstallDriver();
+						if (canContinue)
+						{
+							connectionWizard.ChangeToSetupBaudOrComPortOne();
+						}
+					});
 				};
 
 				skipButton = textImageButtonFactory.Generate(LocalizedString.Get("Skip"));
-				skipButton.Click += new EventHandler(skipButton_Click);
+				skipButton.Click += (s, e) => connectionWizard.ChangeToSetupBaudOrComPortOne();
 
 				//Add buttons to buttonContainer
 				footerRow.AddChild(installButton);
 				footerRow.AddChild(skipButton);
 				footerRow.AddChild(new HorizontalSpacer());
-
 				footerRow.AddChild(cancelButton);
 			}
-		}
-
-		private void installButton_Click()
-		{
-			bool canContinue = this.OnSave();
-			if (canContinue)
-			{
-				UiThread.RunOnIdle(MoveToNextWidget);
-			}
-		}
-
-		private void skipButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(MoveToNextWidget);
 		}
 
 		private FlowLayoutWidget createPrinterDriverContainer()
@@ -86,23 +74,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return container;
 		}
 
-		private void MoveToNextWidget()
-		{
-			// you can call this like this
-			//             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));
-
-			if (this.ActivePrinter.BaudRate == null)
-			{
-				Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
-			else
-			{
-				Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
-		}
-
 		private void InstallDriver(string fileName)
 		{
 			switch (OsInformation.OperatingSystem)
@@ -114,9 +85,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						{
 							Process driverInstallerProcess = new Process();
 							// Prepare the process to run
+							
 							// Enter in the command line arguments, everything you would enter after the executable name itself
-
 							driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
+							
 							// Enter the executable to run, including the complete path
 							string printerDriverInstallerExePathAndFileName = Path.GetFullPath(Path.Combine(".", "InfInstaller.exe"));
 
@@ -137,7 +109,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					}
 					else
 					{
-						throw new Exception(string.Format("Can't find dirver {0}.", fileName));
+						throw new Exception(string.Format("Can't find driver {0}.", fileName));
 					}
 					break;
 
@@ -151,8 +123,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						{
 							var driverInstallerProcess = new Process();
 							// Prepare the process to run
+							
 							// Enter in the command line arguments, everything you would enter after the executable name itself
 							driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
+
 							// Enter the executable to run, including the complete path
 							string printerDriverInstallerExePathAndFileName = Path.Combine(".", "InfInstaller.exe");
 
@@ -177,28 +151,28 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					}
 					else
 					{
-						throw new Exception(string.Format("Can't find dirver {0}.", fileName));
+						throw new Exception("Can't find driver: " + fileName);
 					}
 					break;
 			}
 		}
 
-		private bool OnSave()
+		private bool InstallDriver()
 		{
 			try
 			{
-				string printerDriverMessageLabel = LocalizedString.Get("Installing");
-				string printerDriverMessageLabelFull = string.Format("{0}...", printerDriverMessageLabel);
-				printerDriverMessage.Text = printerDriverMessageLabelFull;
-				foreach (string driverPath in this.driversToInstall)
+				printerDriverMessage.Text = "Installing".Localize() + "...";
+
+				foreach (string driverPath in ActiveSliceSettings.Instance.PrinterDrivers())
 				{
 					InstallDriver(driverPath);
 				}
+
 				return true;
 			}
 			catch (Exception)
 			{
-				printerDriverMessage.Text = LocalizedString.Get("Sorry, we were unable to install the driver.");
+				printerDriverMessage.Text = "Sorry, we were unable to install the driver.".Localize();
 				return false;
 			}
 		}

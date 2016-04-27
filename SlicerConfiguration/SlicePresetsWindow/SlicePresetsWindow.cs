@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2016, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DataStorage.ClassicDB;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -41,9 +42,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public EventHandler functionToCallOnSave;
 		public string filterTag;
 		public string filterLabel;
-		public SettingsLayer ActivePresetLayer;
 
-		public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag, bool showList = true, int collectionID = 0)
+		// TODO: Short term compile hack
+		public ClassicSqlitePrinterProfiles.ClassicSettingsLayer ActivePresetLayer
+		{
+			get;
+			set;
+		}
+
+		public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag, bool showList = true, string presetKey = null)
 			: base(640, 480)
 		{
 			AlwaysOnTopOfMain = true;
@@ -61,6 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
+				/*
 				if (collectionID == 0)
 				{
 					ChangeToSlicePresetDetail();
@@ -68,7 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				else
 				{
 					ChangeToSlicePresetDetail(GetCollection(collectionID));
-				}
+				} */
 			}
 			ShowAsSystemWindow();
 			this.MinimumSize = new Vector2(640, 480);
@@ -86,13 +94,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.RemoveAllChildren();
 			this.AddChild(slicePresetWidget);
 			this.Invalidate();
+		}
 
-            ApplicationController.Instance.ReloadAdvancedControlsPanel();		
-        }
-
-		public void ChangeToSlicePresetFromID(int collectionId)
+		public void ChangeToSlicePresetFromID(string collectionId)
 		{
-			ChangeToSlicePresetDetail(GetCollection(collectionId));
+			throw new NotImplementedException();
+			//ChangeToSlicePresetDetail(GetCollection(collectionId));
 		}
 
 		public void ChangeToSlicePresetDetail(SliceSettingsCollection collection = null)
@@ -104,8 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					settingsDictionary[s.Name] = s;
 				}
-
-				this.ActivePresetLayer = new SettingsLayer(collection, settingsDictionary);
+				this.ActivePresetLayer = new ClassicSqlitePrinterProfiles.ClassicSettingsLayer(collection, settingsDictionary);
 			}
 			UiThread.RunOnIdle(DoChangeToSlicePresetDetail);
 		}

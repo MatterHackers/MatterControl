@@ -17,47 +17,18 @@ namespace MatterHackers.MatterControl
 		static public PopOutTextTabWidget sliceSettingsPopOut = null;
 		static public PopOutTextTabWidget controlsPopOut = null;
 
-		public MenuOptionSettings()
-			: base("View".Localize())
+		public MenuOptionSettings() : base("View".Localize())
 		{
-			
 		}
 
-		override protected IEnumerable<MenuItemAction> GetMenuItems()
+		protected override IEnumerable<MenuItemAction> GetMenuItems()
 		{
 			return new List<MenuItemAction>
-            {
-				new MenuItemAction("Settings".Localize(), openPrintingPanel_Click),
-				new MenuItemAction("Controls".Localize(), openControlsPanel_Click),
-				new MenuItemAction("Terminal".Localize(), openTermanialPanel_Click),
-            };
-		}
-
-		private void openPrintingPanel_Click()
-		{
-			UiThread.RunOnIdle(() =>
 			{
-				if (sliceSettingsPopOut != null)
-				{
-					sliceSettingsPopOut.ShowInWindow();
-				}
-			});
-		}
-
-		private void openControlsPanel_Click()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				if (controlsPopOut != null)
-				{
-					controlsPopOut.ShowInWindow();
-				}
-			});
-		}
-
-		private void openTermanialPanel_Click()
-		{
-			UiThread.RunOnIdle(TerminalWindow.Show);
+				new MenuItemAction("Settings".Localize(), () => sliceSettingsPopOut?.ShowInWindow()),
+				new MenuItemAction("Controls".Localize(), () => controlsPopOut?.ShowInWindow()),
+				new MenuItemAction("Terminal".Localize(), () => UiThread.RunOnIdle(TerminalWindow.Show)),
+			};
 		}
 	}
 }

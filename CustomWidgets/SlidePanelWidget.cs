@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void SetPanelIndexImediate(int index)
+		public void SetPanelIndexImmediate(int index)
 		{
 			desiredPanelIndex = index;
 			SetSlidePosition();

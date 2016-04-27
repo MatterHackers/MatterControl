@@ -4,6 +4,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private List<BaudRateRadioButton> BaudRateButtonsList = new List<BaudRateRadioButton>();
 		private FlowLayoutWidget ConnectionControlContainer;
-		private Printer ActivePrinter;
+		private SettingsProfile ActivePrinter;
 		private MHTextEditWidget printerNameInput;
 		private MHTextEditWidget otherBaudRateInput;
 		private MHTextEditWidget printerModelInput;
@@ -366,28 +367,20 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void RefreshComPorts(object sender, EventArgs mouseEvent)
 		{
+			// TODO: Why would refresh change the active state and why would it need to destroy and recreate 
+			// the control rather than just refreshing the content?
 			try
 			{
-				this.ActivePrinter.Name = printerNameInput.Text;
-				this.ActivePrinter.BaudRate = GetSelectedBaudRate();
-				this.ActivePrinter.ComPort = GetSelectedSerialPort();
+				var settings = ActiveSliceSettings.Instance;
+
+				settings.Name = printerNameInput.Text;
+				settings.BaudRate = GetSelectedBaudRate();
+				settings.ComPort = GetSelectedSerialPort();
 			}
 			catch
 			{
 			}
 			this.windowController.ChangedToEditPrinter(this.ActivePrinter, new StateBeforeRefresh(enableAutoconnect.Checked));
-		}
-
-		private void ReloadCurrentWidget(object sender, EventArgs mouseEvent)
-		{
-			if (this.addNewPrinterFlag == true)
-			{
-				this.windowController.ChangeToAddPrinter();
-			}
-			else
-			{
-				this.windowController.ChangedToEditPrinter(this.ActivePrinter);
-			}
 		}
 
 		private void BindSaveButtonHandlers()
@@ -426,22 +419,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				this.ActivePrinter.BaudRate = GetSelectedBaudRate();
 				this.ActivePrinter.ComPort = GetSelectedSerialPort();
-				this.ActivePrinter.Make = printerMakeInput.Text;
-				this.ActivePrinter.Model = printerModelInput.Text;
+
+				// TODO: These should be read only properties that describe what OEM definition your settings came from
+				//this.ActivePrinter.Make = printerMakeInput.Text;
+				//this.ActivePrinter.Model = printerModelInput.Text;
 				this.ActivePrinter.AutoConnectFlag = enableAutoconnect.Checked;
 			}
 			catch
 			{
 				//Unable to retrieve Baud or Port, possibly because they weren't shown as options - needs better handling
-			}
-			this.ActivePrinter.Commit();
-
-			// If the printer we're updating is also the currently active printer or if the ActivePrinter is unassigned,
-			// then we need to update the instance variable to match the new data - the old instance is bound to sql
-			// data that is no longer valid
-			if (ActivePrinterProfile.Instance.ActivePrinter == null || ActivePrinterProfile.Instance.ActivePrinter.Id == this.ActivePrinter.Id)
-			{
-				ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
 			}
 
 			this.windowController.ChangeToChoosePrinter();

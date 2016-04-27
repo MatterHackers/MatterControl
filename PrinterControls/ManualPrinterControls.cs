@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl
 
 		private void SetVisibleControls()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			if (ActiveSliceSettings.Instance == null)
 			{
 				// no printer selected
 				foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)

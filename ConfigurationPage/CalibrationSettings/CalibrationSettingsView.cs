@@ -92,12 +92,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget levelingIcon = new ImageWidget(levelingImage);
 			levelingIcon.Margin = new BorderDouble(right: 6);
 
-			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActivePrinterProfile.Instance.DoPrintLeveling);
+			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.DoPrintLeveling);
 			printLevelingSwitch.VAnchor = VAnchor.ParentCenter;
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				ActivePrinterProfile.Instance.DoPrintLeveling = printLevelingSwitch.Checked;
+				ActiveSliceSettings.Instance.DoPrintLeveling = printLevelingSwitch.Checked;
 			};
 
 			printLevelingStatusLabel = new TextWidget("");
@@ -105,10 +105,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			printLevelingStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printLevelingStatusLabel.VAnchor = VAnchor.ParentCenter;
 
-			ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
 				SetPrintLevelButtonVisiblity();
-				printLevelingSwitch.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
+				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.DoPrintLeveling;
 			}, ref unregisterEvents);
 
 			buttonRow.AddChild(levelingIcon);
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetPrintLevelButtonVisiblity()
 		{
-			if (ActivePrinterProfile.Instance.DoPrintLeveling)
+			if (ActiveSliceSettings.Instance.DoPrintLeveling)
 			{
 				printLevelingStatusLabel.Text = "Software Print Leveling (enabled)".Localize();
 			}
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					currentStatus == PrinterConnectionAndCommunication.CommunicationStates.Connected ||
 					currentStatus == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint;
 
-			if (ActivePrinterProfile.Instance.ActivePrinter == null || !connected)
+			if (ActiveSliceSettings.Instance == null || !connected)
 			{
 				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}

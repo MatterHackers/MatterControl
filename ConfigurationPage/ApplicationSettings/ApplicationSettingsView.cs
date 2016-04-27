@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(GetLanguageControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			GuiWidget sliceEngineControl = GetSliceEngineControl();
-			if (ActivePrinterProfile.Instance.ActivePrinter != null)
+			if (ActiveSliceSettings.Instance != null)
 			{
 				mainContainer.AddChild(sliceEngineControl);
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -399,15 +399,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			if (ActiveSliceSettings.Instance.ExtruderCount > 1)
+			var settings = ActiveSliceSettings.Instance;
+
+			// Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
+			if (settings?.ExtruderCount > 1 && settings.ActiveSliceEngineType != SlicingEngineTypes.MatterSlice)
 			{
-				// Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
-				if (ActivePrinterProfile.Instance.ActiveSliceEngineType != ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
-				{
-					ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
-					ApplicationController.Instance.ReloadAll(null, null);
-				}
-			}
+				settings.ActiveSliceEngineType = SlicingEngineTypes.MatterSlice;
+				ApplicationController.Instance.ReloadAll(null, null);
+			} 
 
 			optionsContainer.AddChild(new SliceEngineSelector("Slice Engine".Localize()));
 			optionsContainer.Width = 200;

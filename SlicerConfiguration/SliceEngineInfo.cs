@@ -13,7 +13,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected abstract string getLinuxPath();
 
-		public abstract ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType();
+		public abstract SlicingEngineTypes GetSliceEngineType();
 
 		public SliceEngineInfo(string name)
 		{

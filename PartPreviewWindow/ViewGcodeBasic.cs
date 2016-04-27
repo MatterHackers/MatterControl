@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SliceSettingsWidget.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => ClearGCode(), ref unregisterEvents);
 
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 		}
 
 		private void CheckSettingChanged(object sender, EventArgs e)

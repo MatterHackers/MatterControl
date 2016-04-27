@@ -83,7 +83,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G90; use absolute coordinates");
 					queuedCommands.Add("G92 E0; reset the expected extruder position");
 					queuedCommands.Add("M82; use absolute distance for extrusion");
-					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.GetMaterialValue("temperature", 1)));
+					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.GetExtruderTemperature(1)));
+
 					resumeState = ResumeState.Raising;
 					return "";
 
@@ -194,7 +195,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							{
 								PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 								PrinterMove moveToSend = currentMove;
-								double feedRate = ActiveSliceSettings.Instance.GetActiveValueAsDouble("resume_first_layer_speed", 10) * 60;
+
+								double feedRate;
+
+								string firstLayerSpeed = ActiveSliceSettings.Instance.GetActiveValue("resume_first_layer_speed");
+								if (!double.TryParse(firstLayerSpeed, out feedRate))
+								{
+									feedRate = 10;
+								}
+								feedRate *= 60;
+
 								moveToSend.feedRate = feedRate;
 
 								lineToSend = CreateMovementLine(moveToSend, lastDestination);

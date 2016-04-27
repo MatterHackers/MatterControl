@@ -493,8 +493,8 @@ namespace MatterHackers.MatterControl
 
 		protected override double GetPreheatTemperature()
 		{
-			string tempValue = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex0Based + 1);
-			if (tempValue == "Unknown")
+			string tempValue = ActiveSliceSettings.Instance.GetExtruderTemperature(extruderIndex0Based);
+			if (string.IsNullOrEmpty(tempValue))
 			{
 				return 0.0;
 			}

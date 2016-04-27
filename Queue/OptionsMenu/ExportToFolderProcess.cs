@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 
-					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+					PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
 
 					// now copy all the gcode to the path given
 					for (int i = 0; i < savedGCodeFileNames.Count; i++)
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						string outputFileName = Path.ChangeExtension(originalFileName, ".gcode");
 						string outputPathAndName = Path.Combine(exportPath, outputFileName);
 
-						if (ActivePrinterProfile.Instance.DoPrintLeveling)
+						if (ActiveSliceSettings.Instance.DoPrintLeveling)
 						{
 							GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(savedGcodeFileName);
 

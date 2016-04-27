@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetPrintLevelButtonVisiblity()
 		{
-			if (ActivePrinterProfile.Instance.DoPrintLeveling)
+			if (ActiveSliceSettings.Instance.DoPrintLeveling)
 			{
 				printLevelingStatusLabel.Text = "Software Print Leveling (enabled)".Localize();
 			}
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetVisibleControls()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			if (ActiveSliceSettings.Instance == null)
 			{
 				// no printer selected
 				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);

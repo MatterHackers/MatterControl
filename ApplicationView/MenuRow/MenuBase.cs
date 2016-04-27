@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 			this.Margin = new BorderDouble(0);
 			this.Padding = new BorderDouble(0);
 			this.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			this.MenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
+			this.MenuDropList.SelectionChanged += MenuDropList_SelectionChanged;
 			this.MenuDropList.OpenOffset = new Vector2(0, 0);
 		}
 
@@ -64,9 +64,9 @@ namespace MatterHackers.MatterControl
 			string menuSelection = ((DropDownMenu)sender).SelectedValue;
 			foreach (MenuItemAction item in menuItems)
 			{
-				if (item.Title == menuSelection)
+				if (item.Title == menuSelection && item.Action != null)
 				{
-					item.Action?.Invoke();
+					UiThread.RunOnIdle(item.Action);
 				}
 			}
 		}

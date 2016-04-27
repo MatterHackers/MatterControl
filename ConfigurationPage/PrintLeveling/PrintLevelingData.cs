@@ -11,11 +11,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class PrintLevelingData
 	{
 		public List<Vector3> SampledPositions = new List<Vector3>();
-		private static bool activelyLoading = false;
-
-		private static Printer activePrinter = null;
-
-		private static PrintLevelingData instance = null;
 
 		private Vector3 probeOffset0Private;
 
@@ -60,7 +55,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (probeOffset0Private != value)
 				{
 					probeOffset0Private = value;
-					Commit();
 				}
 			}
 		}
@@ -73,7 +67,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (probeOffset1Private != value)
 				{
 					probeOffset1Private = value;
-					Commit();
 				}
 			}
 		}
@@ -86,9 +79,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (sampledPosition0Private != value)
 				{
 					sampledPosition0Private = value;
-					Commit();
 				}
-			}
+			} 
 		}
 
 		public Vector3 SampledPosition1
@@ -99,7 +91,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (sampledPosition1Private != value)
 				{
 					sampledPosition1Private = value;
-					Commit();
 				}
 			}
 		}
@@ -112,54 +103,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (sampledPosition2Private != value)
 				{
 					sampledPosition2Private = value;
-					Commit();
 				}
 			}
 		}
 
-		public static PrintLevelingData GetForPrinter(Printer printer)
+		internal static PrintLevelingData Create(string jsonData, string depricatedPositionsCsv3ByXYZ)
 		{
-			if (printer != null)
+			if (!string.IsNullOrEmpty(jsonData))
 			{
-				if (activePrinter != printer)
-				{
-					CreateFromJsonOrLegacy(printer.PrintLevelingJsonData, printer.PrintLevelingProbePositions);
-					activePrinter = printer;
-				}
+				return JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
 			}
-			return instance;
-		}
-
-		public void Commit()
-		{
-			if (!activelyLoading)
+			else if (!string.IsNullOrEmpty(depricatedPositionsCsv3ByXYZ))
 			{
-				string newLevelingInfo = Newtonsoft.Json.JsonConvert.SerializeObject(this);
-
-				// clear the legacy value
-				activePrinter.PrintLevelingProbePositions = "";
-				// set the new value
-				activePrinter.PrintLevelingJsonData = newLevelingInfo;
-				activePrinter.Commit();
-			}
-		}
-
-		private static void CreateFromJsonOrLegacy(string jsonData, string depricatedPositionsCsv3ByXYZ)
-		{
-			if (jsonData != null)
-			{
-				activelyLoading = true;
-				instance = Newtonsoft.Json.JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
-				activelyLoading = false;
-			}
-			else if (depricatedPositionsCsv3ByXYZ != null)
-			{
-				instance = new PrintLevelingData();
-				instance.ParseDepricatedPrintLevelingMeasuredPositions(depricatedPositionsCsv3ByXYZ);
+				var item = new PrintLevelingData();
+				item.ParseDepricatedPrintLevelingMeasuredPositions(depricatedPositionsCsv3ByXYZ);
+				return item;
 			}
 			else
 			{
-				instance = new PrintLevelingData();
+				return new PrintLevelingData();
 			}
 		}
 
@@ -176,9 +138,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					for (int i = 0; i < 3; i++)
 					{
-						sampledPosition0Private[i % 3] = double.Parse(lines[0 * 3 + i]);
-						sampledPosition1Private[i % 3] = double.Parse(lines[1 * 3 + i]);
-						sampledPosition2Private[i % 3] = double.Parse(lines[2 * 3 + i]);
+						sampledPosition0Private[i] = double.Parse(lines[0 * 3 + i]);
+						sampledPosition1Private[i] = double.Parse(lines[1 * 3 + i]);
+						sampledPosition2Private[i] = double.Parse(lines[2 * 3 + i]);
 					}
 				}
 			}
@@ -217,18 +179,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			return true;
-		}
-
-		public void RunLevelingWizard()
-		{
-			LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
-			if (ActiveSliceSettings.Instance.LevelingRequiredToPrint)
-			{
-				// run in the first run state
-				runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
-			}
-
-			LevelWizardBase.ShowPrintLevelWizard(runningState);
 		}
 	}
 }

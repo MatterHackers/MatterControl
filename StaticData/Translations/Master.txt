@@ -3203,7 +3203,7 @@ English:Specify if your printer can control the power supply
 Translated:Specify if your printer can control the power supply
 
 English:Has Power Control
-Translated:Has Power Control
+Translated:Has Power ControlEnglish:The temperature the extruder will be when extruder wipes.
 
 English:The temperature the bed temperature will be set to when part is to be removed.
 Translated:The temperature the bed temperature will be set to when part is to be removed.
@@ -4666,26 +4666,14 @@ Translated:Honey Comb
 English:Apply leveling to G-Code during export
 Translated:Apply leveling to G-Code during export
 
-English:Resume Print
-Translated:Resume Print
+English:Material 0
+Translated:Material 0
 
-English:It appears your last print failed to complete. Would your like to resume from the last know layer?
-Translated:It appears your last print failed to complete. Would your like to resume from the last know layer?
-
-English:Resume Last Print
-Translated:Resume Last Print
-
-English:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
-Translated:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
-
-English:Unable to Connect
-Translated:Unable to Connect
+English:Printers
+Translated:Printers
 
 English:The speed at which the nozzle will move when resuming a failed print, for 1 layer.
 Translated:The speed at which the nozzle will move when resuming a failed print, for 1 layer.
-
-English:Resume Layer Speed
-Translated:Resume Layer Speed
 
 English:Set if the z homing moves the extruder away from the bed (z-max homing)
 Translated:Set if the z homing moves the extruder away from the bed (z-max homing)
@@ -4693,26 +4681,20 @@ Translated:Set if the z homing moves the extruder away from the bed (z-max homin
 English:The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.
 Translated:The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.
 
-English:Resume Failed Print
-Translated:Resume Failed Print
-
-English:Home Z Max
-Translated:Home Z Max
-
-English:XY Resume Position
-Translated:XY Resume Position
-
-English:Homing
-Translated:Homing
-
-English:Outer Surface
-Translated:Outer Surface
+English:Restore All
+Translated:Restore All
 
 English:Restore Default
 Translated:Restore Default
 
+English:Outer Surface
+Translated:Outer Surface
+
 English:Minimum Travel equiring Retraction
 Translated:Minimum Travel equiring Retraction
+
+English:Retract When Changing Islands
+Translated:Retract When Changing Islands
 
 English:Minimum Extrusion Requiring Retraction
 Translated:Minimum Extrusion Requiring Retraction
@@ -4720,11 +4702,11 @@ Translated:Minimum Extrusion Requiring Retraction
 English:Slow Down If Layer Print Time Is Below
 Translated:Slow Down If Layer Print Time Is Below
 
-English:Restore All
-Translated:Restore All
+English:Resume Failed Print
+Translated:Resume Failed Print
 
-English:Retract When Changing Islands
-Translated:Retract When Changing Islands
+English:Homing
+Translated:Homing
 
 English:G-Code to be run before every tool change.
 Translated:G-Code to be run before every tool change.

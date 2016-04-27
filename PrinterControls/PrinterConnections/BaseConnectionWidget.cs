@@ -4,6 +4,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 using System;
@@ -49,9 +50,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 	public class PrinterSelectRadioButton : RadioButton
 	{
-		public Printer printer;
+		public PrinterInfo printer;
 
-		public PrinterSelectRadioButton(Printer printer)
+		public PrinterSelectRadioButton(PrinterInfo printer)
 			: base(printer.Name)
 		{
 			this.printer = printer;
@@ -131,9 +132,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 	public class PrinterActionLink : ActionLink
 	{
-		public Printer LinkedPrinter;
+		public PrinterInfo LinkedPrinter;
 
-		public PrinterActionLink(string text, Printer printer, int fontSize = 10)
+		public PrinterActionLink(string text, PrinterInfo printer, int fontSize = 10)
 			: base(text, fontSize)
 		{
 			this.LinkedPrinter = printer;
@@ -247,23 +248,37 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
 		private bool printerComPortIsAvailable = false;
 
-		protected GuiWidget containerWindowToClose;
-		protected RGBA_Bytes defaultTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		protected RGBA_Bytes defaultBackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		protected RGBA_Bytes subContainerTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		protected RGBA_Bytes labelBackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		protected RGBA_Bytes linkTextColor = ActiveTheme.Instance.SecondaryAccentColor;
-		protected ConnectionWindow windowController;
-		public ActionLinkFactory actionLinkFactory = new ActionLinkFactory();
-
 		private event EventHandler unregisterEvents;
 
-		public ConnectionWidgetBase(ConnectionWindow windowController, GuiWidget containerWindowToClose)
-			: base()
+		private PrinterInfo activePrinter = null;
+		protected PrinterInfo ActivePrinter
 		{
-			this.windowController = windowController;
-			this.containerWindowToClose = containerWindowToClose;
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			get
+			{
+				if(activePrinter == null)
+				{
+					var settings = ActiveSliceSettings.Instance;
+					activePrinter = new PrinterInfo
+					{
+						AutoConnectFlag = settings.AutoConnectFlag,
+						BaudRate = settings.BaudRate,
+						ComPort = settings.ComPort,
+						DriverType = settings.DriverType,
+						Id = settings.Id,
+						Name = settings.Name
+					};
+				}
+
+				return activePrinter;
+			}
+		}
+
+		protected ConnectionWizard connectionWizard;
+
+		public ConnectionWidgetBase(ConnectionWizard wizard)
+		{
+			this.connectionWizard = wizard;
+			ActiveTheme.Instance.ThemeChanged.RegisterEvent((s,e) => this.Invalidate(), ref unregisterEvents);
 		}
 
 		public int GetPrinterRecordCount()
@@ -271,18 +286,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return Datastore.Instance.RecordCount("Printer");
 		}
 
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.linkTextColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.Invalidate();
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -292,7 +298,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				HAnchor = HAnchor.ParentLeft,
 				Margin = new BorderDouble(3, 3, 5, 3),
-				TextColor = this.subContainerTextColor,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Checked = isActivePrinterPort
 			};
 			return comPortOption;
@@ -361,7 +367,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				TextWidget comPortOption = new TextWidget(LocalizedString.Get("No COM ports available"));
 				comPortOption.Margin = new BorderDouble(3, 6, 5, 6);
-				comPortOption.TextColor = this.subContainerTextColor;
+				comPortOption.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				comPortContainer.AddChild(comPortOption);
 			}
 		}

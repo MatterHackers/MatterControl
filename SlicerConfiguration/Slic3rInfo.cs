@@ -10,9 +10,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 		}
 
-		public override ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType()
+		public override SlicingEngineTypes GetSliceEngineType()
 		{
-			return ActivePrinterProfile.SlicingEngineTypes.Slic3r;
+			return SlicingEngineTypes.Slic3r;
 		}
 
 		protected override string getWindowsPath()

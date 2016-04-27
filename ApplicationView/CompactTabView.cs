@@ -207,9 +207,9 @@ namespace MatterHackers.MatterControl
 			QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(OnActivePrintItemChanged, ref unregisterEvents);
-			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAdvancedControlsPanel(), ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadPartPreview, null, 1), ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => UiThread.RunOnIdle(LoadAdvancedControls), ref unregisterEvents);
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
 			// Make sure we are on the right tab when we create this view
@@ -225,28 +225,9 @@ namespace MatterHackers.MatterControl
 		}
 		private event EventHandler unregisterEvents;
 
-		public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
-		{
-			ActiveSliceSettings.Instance.LoadAllSettings();
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-		}
-
-		public void ReloadAdvancedControlsPanel()
-		{
-			UiThread.RunOnIdle(LoadAdvancedControls);
-		}
-
-		public void ReloadAdvancedControlsPanelTrigger(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
+			unregisterEvents?.Invoke(this, null);
 		}
 
 		public void SetUpdateNotification(object sender, EventArgs widgetEvent)
@@ -292,11 +273,6 @@ namespace MatterHackers.MatterControl
 			string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
 			string queueString = string.Format("{1} ({0})", QueueData.Instance.Count, queueStringBeg);
 			QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
-		}
-
-		private void OnActivePrintItemChanged(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(ReloadPartPreview, null, 1);
 		}
 
 		private void ReloadConfigurationWidget()

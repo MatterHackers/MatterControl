@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private bool exportGCodeToFolderButton_Click()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			if (ActiveSliceSettings.Instance == null)
 			{
 				UiThread.RunOnIdle(MustSelectPrinterMessage);
 			}
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private bool exportX3GButton_Click()
 		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			if (ActiveSliceSettings.Instance == null)
 			{
 				UiThread.RunOnIdle(MustSelectPrinterMessage);
 			}
