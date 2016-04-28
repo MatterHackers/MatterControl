@@ -165,8 +165,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string materialKey = layeredProfile.MaterialSettingsKeys[extruderIndex];
 			SettingsLayer layer = layeredProfile.GetMaterialLayer(materialKey);
 
-			string result;
-			layer.TryGetValue("temperature", out result);
+			string result = "0";
+			layer?.TryGetValue("temperature", out result);
 			return result;
 		}
 
