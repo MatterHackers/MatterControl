@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 							if (ActiveSliceSettings.Instance != null)
 							{
 								activeFilamentDiameter = 3;
-								if (ActiveSliceSettings.Instance.FilamentDiameter < 2)
+								if (ActiveSliceSettings.Instance.FilamentDiameter() < 2)
 								{
 									activeFilamentDiameter = 1.75;
 								}

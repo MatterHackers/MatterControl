@@ -44,12 +44,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+			double buildHeight = ActiveSliceSettings.Instance.BuildHeight();
 
 			part3DView = new View3DBrailleBuilder(
-				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-				ActiveSliceSettings.Instance.BedCenter,
-				ActiveSliceSettings.Instance.BedShape);
+				new Vector3(ActiveSliceSettings.Instance.BedSize(), buildHeight),
+				ActiveSliceSettings.Instance.BedCenter(),
+				ActiveSliceSettings.Instance.BedShape());
 
 #if __ANDROID__
 			this.AddChild(new SoftKeyboardContentOffset(part3DView));

@@ -1059,7 +1059,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void AddMaterialControls(FlowLayoutWidget buttonPanel)
 		{
 			extruderButtons.Clear();
-			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount; extruderIndex++)
+			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount(); extruderIndex++)
 			{
 				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 				colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -1319,7 +1319,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& ActiveSliceSettings.Instance.CenterOnBed())
 				{
 					doCentering = MeshViewerWidget.CenterPartAfterLoad.DO;
-					bedCenter = ActiveSliceSettings.Instance.BedCenter;
+					bedCenter = ActiveSliceSettings.Instance.BedCenter();
 				}
 
 				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, doCentering, bedCenter);
@@ -1456,7 +1456,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// put in the material options
-				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount();
 
 				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
@@ -2106,8 +2106,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
 				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
-				RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y);
-				bedRect.Offset(ActiveSliceSettings.Instance.BedCenter - ActiveSliceSettings.Instance.BedSize / 2);
+				RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.BedSize().x, ActiveSliceSettings.Instance.BedSize().y);
+				bedRect.Offset(ActiveSliceSettings.Instance.BedCenter() - ActiveSliceSettings.Instance.BedSize() / 2);
 
 				bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
 

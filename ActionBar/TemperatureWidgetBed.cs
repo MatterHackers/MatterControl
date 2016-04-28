@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected override void SetTargetTemperature()
 		{
-			double targetTemp = ActiveSliceSettings.Instance.BedTemperature;
+			double targetTemp = ActiveSliceSettings.Instance.BedTemperature();
 			if (targetTemp != 0)
 			{
 				double goalTemp = (int)(targetTemp + .5);

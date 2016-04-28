@@ -29,7 +29,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			get
 			{
-				switch (ActiveSliceSettings.Instance.GetActiveValue("print_leveling_solution"))
+				switch (ActiveSliceSettings.Instance.ActiveValue("print_leveling_solution"))
 				{
 					case "2 Point Plane":
 						return LevelingSystem.Probe2Points;

@@ -168,28 +168,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			extrudersUsed.Clear();
 
-			int extruderCount = ActiveSliceSettings.Instance.ExtruderCount;
+			int extruderCount = ActiveSliceSettings.Instance.ExtruderCount();
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
 				extrudersUsed.Add(false);
 			}
 
 			// If we have support enabled and are using an extruder other than 0 for it
-			if (ActiveSliceSettings.Instance.SupportEnabled)
+			if (ActiveSliceSettings.Instance.SupportEnabled())
 			{
-				if (ActiveSliceSettings.Instance.SupportExtruder != 0)
+				if (ActiveSliceSettings.Instance.SupportExtruder() != 0)
 				{
-					int supportExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount - 1, ActiveSliceSettings.Instance.SupportExtruder - 1));
+					int supportExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount() - 1, ActiveSliceSettings.Instance.SupportExtruder() - 1));
 					extrudersUsed[supportExtruder] = true;
 				}
 			}
 
 			// If we have raft enabled and are using an extruder other than 0 for it
-			if (ActiveSliceSettings.Instance.RaftEnabled)
+			if (ActiveSliceSettings.Instance.RaftEnabled())
 			{
-				if (ActiveSliceSettings.Instance.RaftExtruder != 0)
+				if (ActiveSliceSettings.Instance.RaftExtruder() != 0)
 				{
-					int raftExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount - 1, ActiveSliceSettings.Instance.RaftExtruder - 1));
+					int raftExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount() - 1, ActiveSliceSettings.Instance.RaftExtruder() - 1));
 					extrudersUsed[raftExtruder] = true;
 				}
 			}

@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			try
 			{
-				gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.FilamentDiameter);
+				gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.FilamentDiameter());
 			}
 			catch (Exception e)
 			{
@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, CreateRenderInfo(),
 						FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
-						new Vector2[] { ActiveSliceSettings.Instance.GetOffset(0), ActiveSliceSettings.Instance.GetOffset(1) });
+						new Vector2[] { ActiveSliceSettings.Instance.ExtruderOffset(0), ActiveSliceSettings.Instance.ExtruderOffset(1) });
 
 					//using (new PerformanceTimer("GCode Timer", "Render"))
 					{

@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public Vector2 GetPrintLevelPositionToSample(int index, double radius)
         {
-            Vector2 bedCenter = ActiveSliceSettings.Instance.BedCenter;
+            Vector2 bedCenter = ActiveSliceSettings.Instance.BedCenter();
             if (index < NumberOfRadialSamples)
             {
                 Vector2 position = new Vector2(radius, 0);
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			pageOneInstructionsTextThree = pageOneInstructionsTextThree.FormatWith(numberOfRadialSamples+1);
 
-            bool allowLessThanZero = ActiveSliceSettings.Instance.GetActiveValue("z_can_be_negative") == "1";
+            bool allowLessThanZero = ActiveSliceSettings.Instance.ActiveValue("z_can_be_negative") == "1";
             string printLevelWizardTitle = "MatterControl";
             string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
             Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-            double bedRadius = Math.Min(ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y) / 2;
+            double bedRadius = Math.Min(ActiveSliceSettings.Instance.BedSize().x, ActiveSliceSettings.Instance.BedSize().y) / 2;
 
             double startProbeHeight = 5;
             for (int i = 0; i < numberOfRadialSamples + 1; i++)
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 && lineBeingSent[2] == ' ')
             {
                 PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
-                return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.BedCenter)
+                return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.BedCenter())
                     .DoApplyLeveling(lineBeingSent, currentDestination, movementMode);
             }
 
@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
         {
             PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
-            return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.BedCenter)
+            return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.BedCenter())
                 .GetPrintLevelPositionToSample(index, radius);
         }
 

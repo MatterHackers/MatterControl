@@ -1317,7 +1317,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			bool oneOrMoreValuesReset = false;
 			foreach (var kvp in ActiveSliceSettings.Instance.BaseLayer)
 			{
-				string currentValue = ActiveSliceSettings.Instance.GetActiveValue(kvp.Key);
+				string currentValue = ActiveSliceSettings.Instance.ActiveValue(kvp.Key);
 
 				bool valueIsClear = currentValue == "0" | currentValue == "";
 				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(kvp.Key);
@@ -1339,7 +1339,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			try
 			{
 				// If leveling is required or is currently on
-				if (ActiveSliceSettings.Instance.LevelingRequiredToPrint
+				if (ActiveSliceSettings.Instance.LevelingRequiredToPrint()
 					|| ActiveSliceSettings.Instance.DoPrintLeveling)
 				{
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
@@ -1630,14 +1630,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										{
 											CommunicationState = CommunicationStates.Connected;
 											// now send any command that initialize this printer
-											string connectGCode = ActiveSliceSettings.Instance.GetActiveValue("connect_gcode");
+											string connectGCode = ActiveSliceSettings.Instance.ActiveValue("connect_gcode");
 											SendLineToPrinterNow(connectGCode);
 
 											// and call back anyone who would like to know we connected
 											UiThread.RunOnIdle(() => ConnectionSucceeded.CallEvents(this, null));
 
 											// run the print leveling wizard if we need to for this printer
-											if (ActiveSliceSettings.Instance.LevelingRequiredToPrint
+											if (ActiveSliceSettings.Instance.LevelingRequiredToPrint()
 												|| ActiveSliceSettings.Instance.DoPrintLeveling)
 											{
 												PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
@@ -2137,7 +2137,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
-				string cancelGCode = ActiveSliceSettings.Instance.GetActiveValue("cancel_gcode");
+				string cancelGCode = ActiveSliceSettings.Instance.ActiveValue("cancel_gcode");
 				if (cancelGCode.Trim() != "")
 				{
 					// add any gcode we want to print while canceling
@@ -2792,7 +2792,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void TurnOffBedAndExtruders()
 		{
-			for (int i = 0; i < ActiveSliceSettings.Instance.ExtruderCount; i++)
+			for (int i = 0; i < ActiveSliceSettings.Instance.ExtruderCount(); i++)
 			{
 				SetTargetExtruderTemperature(i, 0);
 			}

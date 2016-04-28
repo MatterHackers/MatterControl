@@ -90,16 +90,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RecreateBed()
 		{
-			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+			double buildHeight = ActiveSliceSettings.Instance.BuildHeight();
 
-			UiThread.RunOnIdle(() =>
+			UiThread.RunOnIdle((Action)(() =>
 			{
 				meshViewerWidget.CreatePrintBed(
-					new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-					ActiveSliceSettings.Instance.BedCenter,
-					ActiveSliceSettings.Instance.BedShape);
+					new Vector3(ActiveSliceSettings.Instance.BedSize(), buildHeight),
+					ActiveSliceSettings.Instance.BedCenter(),
+					ActiveSliceSettings.Instance.BedShape());
 				PutOemImageOnBed();
-			});
+			}));
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)

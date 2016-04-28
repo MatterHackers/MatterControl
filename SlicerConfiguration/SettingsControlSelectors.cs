@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem item = (MenuItem)sender;
 			if (filterTag == "material")
 			{
-				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Text)
+				if (activeSettings.MaterialPresetKey(extruderIndex) != item.Text)
 				{
 					activeSettings.SetMaterialPreset(extruderIndex, item.Text);
 				}
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (filterTag == "material")
 				{
-					settingsKey = ActiveSliceSettings.Instance.GetMaterialPresetKey(extruderIndex);
+					settingsKey = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
 				}
 				else
 				{
@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (SliceEngineInfo engineMenuItem in SlicingQueue.AvailableSliceEngines)
 			{
 				bool engineAllowed = true;
-				if (ActiveSliceSettings.Instance.ExtruderCount > 1 && engineMenuItem.Name != "MatterSlice")
+				if (ActiveSliceSettings.Instance.ExtruderCount() > 1 && engineMenuItem.Name != "MatterSlice")
 				{
 					engineAllowed = false;
 				}

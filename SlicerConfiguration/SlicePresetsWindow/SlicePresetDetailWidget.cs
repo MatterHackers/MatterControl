@@ -164,11 +164,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				switch (layerFilter)
 				{
 					case NamedSettingsLayers.Material:
-						layerFilters.Add(settings.GetMaterialLayer(layerKey));
+						layerFilters.Add(settings.MaterialLayer(layerKey));
 						break;
 
 					case NamedSettingsLayers.Quality:
-						layerFilters.Add(settings.GetQualityLayer(layerKey));
+						layerFilters.Add(settings.QualityLayer(layerKey));
 						break;
 				}
 			}
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									{
 										itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\\n", " "));
 									}
-									if (ActiveSliceSettings.Instance.ActiveSliceEngine.MapContains(setting.SlicerConfigName))
+									if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(setting.SlicerConfigName))
 									{
 										MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
 										settingMenuItem.Selected += new EventHandler(OnItemSelected);
@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					OrganizerSettingsData settingData = SliceSettingsOrganizer.Instance.GetSettingsData(item.Key);
 
 					// Don't add row if there is no entry
-					if (settingData != null && ActiveSliceSettings.Instance.ActiveSliceEngine.MapContains(settingData.SlicerConfigName))
+					if (settingData != null && ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingData.SlicerConfigName))
 					{
 						FlowLayoutWidget row = GetSettingsRow(settingData, item.Value.Value);
 						row.Padding = new BorderDouble(3, 3, 3, 6);
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						SliceSetting sliceSetting = new SliceSetting();
 						sliceSetting.Name = addRowSettingData.SlicerConfigName;
-						sliceSetting.Value = ActiveSliceSettings.Instance.GetActiveValue(addRowSettingData.SlicerConfigName); //populate with current
+						sliceSetting.Value = ActiveSliceSettings.Instance.ActiveValue(addRowSettingData.SlicerConfigName); //populate with current
 						sliceSetting.SettingsCollectionId = this.windowController.ActivePresetLayer.settingsCollectionData.Id;
 
 						this.windowController.ActivePresetLayer.settingsDictionary[addRowSettingData.SlicerConfigName] = sliceSetting;
@@ -505,7 +505,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				//Get the current value as a default value
 				if (sliceSettingValue == null)
 				{
-					sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
+					sliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(settingData.SlicerConfigName);
 				}
 
 				//Get the presentation name from the SettingNameLookup

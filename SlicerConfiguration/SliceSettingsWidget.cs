@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					if (subGroup.Name == "Extruder X")
 					{
-						numberOfCopies = ActiveSliceSettings.Instance.ExtruderCount;
+						numberOfCopies = ActiveSliceSettings.Instance.ExtruderCount();
 					}
 
 					for (int copyIndex = 0; copyIndex < numberOfCopies; copyIndex++)
@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							bool settingShouldBeShown = CheckIfShouldBeShown(settingInfo);
 
-							if (ActiveSliceSettings.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName)
+							if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingInfo.SlicerConfigName)
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
@@ -472,7 +472,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					showValue = "1";
 					checkName = checkName.Substring(1);
 				}
-				string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(checkName);
+				string sliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(checkName);
 				if (sliceSettingValue == showValue)
 				{
 					settingShouldBeShown = false;
@@ -526,7 +526,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, kvp.Key))
 					{
 						OrganizerSettingsData settingInfo = new OrganizerSettingsData(kvp.Key, kvp.Key, OrganizerSettingsData.DataEditTypes.STRING);
-						if (ActiveSliceSettings.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName))
+						if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingInfo.SlicerConfigName))
 						{
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, 0);
 							topToBottomSettings.AddChild(controlsForThisSetting);
@@ -591,7 +591,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public void RefreshValue()
 			{
-				string latestValue = ActiveSliceSettings.Instance.GetActiveValue(this.SettingsKey);
+				string latestValue = ActiveSliceSettings.Instance.ActiveValue(this.SettingsKey);
 				//if(latestValue != SettingsValue)
 				{
 					ValueChanged?.Invoke(latestValue);
@@ -612,7 +612,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			GuiWidget container = new GuiWidget();
 			this.HAnchor = HAnchor.ParentLeftRight;
 
-			string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
+			string sliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(settingData.SlicerConfigName);
 
 			var settingsRow = new SettingsRow()
 			{
@@ -731,10 +731,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (ChangesMultipleOtherSettings)
 							{
 								bool allTheSame = true;
-								string setting = ActiveSliceSettings.Instance.GetActiveValue(settingData.SetSettingsOnChange[0]);
+								string setting = ActiveSliceSettings.Instance.ActiveValue(settingData.SetSettingsOnChange[0]);
 								for (int i = 1; i < settingData.SetSettingsOnChange.Count; i++)
 								{
-									string nextSetting = ActiveSliceSettings.Instance.GetActiveValue(settingData.SetSettingsOnChange[i]);
+									string nextSetting = ActiveSliceSettings.Instance.ActiveValue(settingData.SetSettingsOnChange[i]);
 									if (setting != nextSetting)
 									{
 										allTheSame = false;
@@ -1161,7 +1161,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case OrganizerSettingsData.DataEditTypes.OFFSET2:
 						{
-							Vector2 offset = ActiveSliceSettings.Instance.GetOffset(extruderIndex);
+							Vector2 offset = ActiveSliceSettings.Instance.ExtruderOffset(extruderIndex);
 
 							var xEditWidget = new MHNumberEdit(offset.x, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++)
 							{
@@ -1201,7 +1201,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							settingsRow.ValueChanged = (text) =>
 							{
-								Vector2 offset2 = ActiveSliceSettings.Instance.GetOffset(extruderIndex);
+								Vector2 offset2 = ActiveSliceSettings.Instance.ExtruderOffset(extruderIndex);
 								xEditWidget.ActuallNumberEdit.Value = offset2.x;
 								yEditWidget.ActuallNumberEdit.Value = offset2.y;
 							};
@@ -1334,7 +1334,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, GuiWidget content, InternalTextEditWidget internalTextWidget)
 		{
-			string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
+			string sliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(settingData.SlicerConfigName);
 			FlowLayoutWidget totalContent = new FlowLayoutWidget();
 
 			StyledDropDownList selectableOptions = new StyledDropDownList("Custom", maxHeight: 200);
@@ -1372,7 +1372,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
 				{
 					string localName = nameValue.MenuName;
-					string newSliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
+					string newSliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(settingData.SlicerConfigName);
 					if (newSliceSettingValue == nameValue.Value)
 					{
 						selectableOptions.SelectedLabel = localName;
@@ -1392,7 +1392,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, string slicerConfigName, string newSingleValue)
 		{
-			string[] settings = ActiveSliceSettings.Instance.GetActiveValue(slicerConfigName).Split(',');
+			string[] settings = ActiveSliceSettings.Instance.ActiveValue(slicerConfigName).Split(',');
 			if (settings.Length > extruderIndexLocal)
 			{
 				settings[extruderIndexLocal] = newSingleValue;

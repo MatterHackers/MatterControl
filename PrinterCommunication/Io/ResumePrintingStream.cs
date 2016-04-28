@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G90; use absolute coordinates");
 					queuedCommands.Add("G92 E0; reset the expected extruder position");
 					queuedCommands.Add("M82; use absolute distance for extrusion");
-					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.GetExtruderTemperature(1)));
+					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.ExtruderTemperature(1)));
 
 					resumeState = ResumeState.Raising;
 					return "";
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				// if top homing, home the extruder
 				case ResumeState.Homing:
-					if (ActiveSliceSettings.Instance.GetActiveValue("z_homes_to_max") == "1")
+					if (ActiveSliceSettings.Instance.ActiveValue("z_homes_to_max") == "1")
 					{
 						queuedCommands.Add("G28");
 					}
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home y
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
-						Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetActiveVector2("resume_position_before_z_home");
+						Vector2 resumePositionXy = ActiveSliceSettings.Instance.ActiveVector2("resume_position_before_z_home");
 						queuedCommands.Add("G1 X{0:0.000}Y{1:0.000}F{2}".FormatWith(resumePositionXy.x, resumePositionXy.y, MovementControls.XSpeed));
 						// home z
 						queuedCommands.Add("G28 Z0");
@@ -162,10 +162,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// let's prime the extruder, move to a good position over the part, then start printing
 						queuedCommands.Add("G1 E5");
 						queuedCommands.Add("G1 E4");
-						if (ActiveSliceSettings.Instance.GetActiveValue("z_homes_to_max") == "0") // we are homed to the bed
+						if (ActiveSliceSettings.Instance.ActiveValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can resume printing from
-							Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetActiveVector2("resume_position_before_z_home");
+							Vector2 resumePositionXy = ActiveSliceSettings.Instance.ActiveVector2("resume_position_before_z_home");
 							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(resumePositionXy.x, resumePositionXy.y, lastDestination.position.z + 5), 0, MovementControls.ZSpeed)));
 							// move just above the actual print position
 							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position + new VectorMath.Vector3(0, 0, 5), 0, MovementControls.XSpeed)));
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 								double feedRate;
 
-								string firstLayerSpeed = ActiveSliceSettings.Instance.GetActiveValue("resume_first_layer_speed");
+								string firstLayerSpeed = ActiveSliceSettings.Instance.ActiveValue("resume_first_layer_speed");
 								if (!double.TryParse(firstLayerSpeed, out feedRate))
 								{
 									feedRate = 10;

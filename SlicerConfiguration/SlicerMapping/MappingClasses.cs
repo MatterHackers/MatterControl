@@ -41,12 +41,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// do the replacement with {} (curly brackets)
 				{
 					string thingToReplace = "{" + "{0}".FormatWith(keyValue.Key) + "}";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(keyValue.Value));
+					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.ActiveValue(keyValue.Value));
 				}
 				// do the replacement with [] (square brackets) Slic3r uses only square brackets
 				{
 					string thingToReplace = "[" + "{0}".FormatWith(keyValue.Key) + "]";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(keyValue.Value));
+					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.ActiveValue(keyValue.Value));
 				}
 			}
 
@@ -76,14 +76,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public double ParseDoubleFromRawValue(string canonicalSettingsName, double valueOnError = 0)
 		{
-			return ParseDouble(ActiveSliceSettings.Instance.GetActiveValue(canonicalSettingsName), valueOnError);
+			return ParseDouble(ActiveSliceSettings.Instance.ActiveValue(canonicalSettingsName), valueOnError);
 		}
 
 		public string ExportedName { get; }
 
 		public string CanonicalSettingsName { get; }
 
-		public virtual string Value => ActiveSliceSettings.Instance.GetActiveValue(CanonicalSettingsName);
+		public virtual string Value => ActiveSliceSettings.Instance.ActiveValue(CanonicalSettingsName);
 	}
 
 	public class MapFirstValue : MappedSetting
@@ -161,21 +161,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PreStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.GetActiveValue("start_gcode");
+			string startGCode = ActiveSliceSettings.Instance.ActiveValue("start_gcode");
 			string[] preStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> preStartGCode = new List<string>();
 			preStartGCode.Add("; automatic settings before start_gcode");
 			AddDefaultIfNotPresent(preStartGCode, "G21", preStartGCodeLines, "set units to millimeters");
 			AddDefaultIfNotPresent(preStartGCode, "M107", preStartGCodeLines, "fan off");
-			double bed_temperature = ActiveSliceSettings.Instance.BedTemperature;
+			double bed_temperature = ActiveSliceSettings.Instance.BedTemperature();
 			if (bed_temperature > 0)
 			{
 				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
 			}
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount();
 
 			// Start heating all the extruder that we are going to use.
 			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (extrudersUsed.Count > extruderIndex0Based
 					&& extrudersUsed[extruderIndex0Based])
 				{
-					string materialTemperature = ActiveSliceSettings.Instance.GetExtruderTemperature(extruderIndex0Based);
+					string materialTemperature = ActiveSliceSettings.Instance.ExtruderTemperature(extruderIndex0Based);
 					if (!string.IsNullOrEmpty(materialTemperature) && materialTemperature != "0")
 					{
 						string setTempString = "M104 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
@@ -193,14 +193,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
-			if (ActiveSliceSettings.Instance.GetActiveValue("heat_extruder_before_homing") == "1")
+			if (ActiveSliceSettings.Instance.ActiveValue("heat_extruder_before_homing") == "1")
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
 					if (extrudersUsed.Count > extruderIndex0Based
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						string materialTemperature = ActiveSliceSettings.Instance.GetExtruderTemperature(extruderIndex0Based);
+						string materialTemperature = ActiveSliceSettings.Instance.ExtruderTemperature(extruderIndex0Based);
 						if (!string.IsNullOrEmpty(materialTemperature) && materialTemperature != "0")
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
@@ -232,23 +232,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PostStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.GetActiveValue("start_gcode");
+			string startGCode = ActiveSliceSettings.Instance.ActiveValue("start_gcode");
 			string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> postStartGCode = new List<string>();
 			postStartGCode.Add("; automatic settings after start_gcode");
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount();
 
 			// don't set the extruders to heating if we already waited for them to reach temp
-			if (ActiveSliceSettings.Instance.GetActiveValue("heat_extruder_before_homing") != "1")
+			if (ActiveSliceSettings.Instance.ActiveValue("heat_extruder_before_homing") != "1")
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
 					if (extrudersUsed.Count > extruderIndex0Based
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						string materialTemperature = ActiveSliceSettings.Instance.GetExtruderTemperature(extruderIndex0Based);
+						string materialTemperature = ActiveSliceSettings.Instance.ExtruderTemperature(extruderIndex0Based);
 						if (!string.IsNullOrEmpty(materialTemperature) && materialTemperature != "0")
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (base.Value.Contains("mm"))
 				{
 					string withoutMm = base.Value.Replace("mm", "");
-					string distanceString = ActiveSliceSettings.Instance.GetActiveValue(keyToUseAsDenominatorForCount);
+					string distanceString = ActiveSliceSettings.Instance.ActiveValue(keyToUseAsDenominatorForCount);
 					double denominator = ParseDouble(distanceString, 1);
 					int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
 					return layers.ToString();
@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string withoutPercent = base.Value.Replace("%", "");
 					double ratio = ParseDouble(withoutPercent) / 100.0;
-					string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
+					string originalReferenceString = ActiveSliceSettings.Instance.ActiveValue(originalReference);
 					double valueToModify = ParseDouble(originalReferenceString);
 					finalValue = valueToModify * ratio;
 				}
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (finalValue == 0)
 				{
-					finalValue = ParseDouble(ActiveSliceSettings.Instance.GetActiveValue(originalReference));
+					finalValue = ParseDouble(ActiveSliceSettings.Instance.ActiveValue(originalReference));
 				}
 
 				finalValue *= scale;

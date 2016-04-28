@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void UpdateControlVisibility(object sender, EventArgs args)
 		{
-			this.Visible = ActiveSliceSettings.Instance.HasPowerControl;
+			this.Visible = ActiveSliceSettings.Instance.HasPowerControl();
 			this.SetEnableLevel(PrinterConnectionAndCommunication.Instance.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
 		}
 

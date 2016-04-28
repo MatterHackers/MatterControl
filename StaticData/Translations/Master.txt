@@ -4747,3 +4747,24 @@ Translated:Add a new Settings Preset
 English:Import an existing Settings Preset
 Translated:Import an existing Settings Preset
 
+English:The serial port communication speed of the printers firmware.
+Translated:The serial port communication speed of the printers firmware.
+
+English:Home Z Max
+Translated:Home Z Max
+
+English:Resume Layer Speed
+Translated:Resume Layer Speed
+
+English:XY Resume Position
+Translated:XY Resume Position
+
+English:Resume Print
+Translated:Resume Print
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
+Translated:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
+
+English:Resume Last Print
+Translated:Resume Last Print
+

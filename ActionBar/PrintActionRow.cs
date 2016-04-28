@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
 						PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
-						if (levelingData != null && ActiveSliceSettings.Instance.LevelingRequiredToPrint
+						if (levelingData != null && ActiveSliceSettings.Instance.LevelingRequiredToPrint()
 							&& !levelingData.HasBeenRun())
 						{
 							this.activePrintButtons.Add(configureButton);

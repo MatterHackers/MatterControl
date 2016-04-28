@@ -95,13 +95,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 
-			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+			double buildHeight = ActiveSliceSettings.Instance.BuildHeight();
 
 			// put in the 3D view
 			partPreviewView = new View3DWidget(printItem,
-				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-				ActiveSliceSettings.Instance.BedCenter,
-				ActiveSliceSettings.Instance.BedShape,
+				new Vector3(ActiveSliceSettings.Instance.BedSize(), buildHeight),
+				ActiveSliceSettings.Instance.BedCenter(),
+				ActiveSliceSettings.Instance.BedShape(),
 				windowMode,
 				autoRotate3DView,
 				openMode);
@@ -116,9 +116,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			viewGcodeBasic = new ViewGcodeBasic(printItem,
-				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-				ActiveSliceSettings.Instance.BedCenter,
-				ActiveSliceSettings.Instance.BedShape, gcodeWindowMode);
+				new Vector3(ActiveSliceSettings.Instance.BedSize(), buildHeight),
+				ActiveSliceSettings.Instance.BedCenter(),
+				ActiveSliceSettings.Instance.BedShape(), gcodeWindowMode);
 
 			if (windowMode == View3DWidget.WindowMode.StandAlone)
 			{

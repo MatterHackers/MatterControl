@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount();
 
 			this.AddChild(new PresetSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality", 0));
 			this.AddChild(new GuiWidget(8, 0));

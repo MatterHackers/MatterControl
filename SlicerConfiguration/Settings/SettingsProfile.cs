@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string GetExtruderTemperature(int extruderIndex)
+		public string ExtruderTemperature(int extruderIndex)
 		{
 			if (extruderIndex >= layeredProfile.MaterialSettingsKeys.Count)
 			{
@@ -170,12 +170,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return result;
 		}
 
-		internal SettingsLayer GetMaterialLayer(string key)
+		internal SettingsLayer MaterialLayer(string key)
 		{
 			return layeredProfile.GetMaterialLayer(key);
 		}
 
-		internal SettingsLayer GetQualityLayer(string key)
+		internal SettingsLayer QualityLayer(string key)
 		{
 			return layeredProfile.GetQualityLayer(key);
 		}
@@ -187,190 +187,148 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool HasFan()
 		{
-			return GetActiveValue("has_fan") == "1";
+			return ActiveValue("has_fan") == "1";
 		}
 
 		public bool CenterOnBed()
 		{
-			return GetActiveValue("center_part_on_bed") == "1";
+			return ActiveValue("center_part_on_bed") == "1";
 		}
 
 		public bool ShowResetConnection()
 		{
-			return GetActiveValue("show_reset_connection") == "1";
+			return ActiveValue("show_reset_connection") == "1";
 		}
 
 		public bool HasHardwareLeveling()
 		{
-			return GetActiveValue("has_hardware_leveling") == "1";
+			return ActiveValue("has_hardware_leveling") == "1";
 		}
 
 		public bool HasSdCardReader()
 		{
-			return GetActiveValue("has_sd_card_reader") == "1";
+			return ActiveValue("has_sd_card_reader") == "1";
 		}
 
-		public double BedTemperature
+		public double BedTemperature()
 		{
-			get
+			double targetTemp = 0;
+			if (HasHeatedBed())
 			{
-				double targetTemp = 0;
-				if (HasHeatedBed())
-				{
-					double.TryParse(GetActiveValue("bed_temperature"), out targetTemp);
-				}
-				return targetTemp;
+				double.TryParse(ActiveValue("bed_temperature"), out targetTemp);
 			}
+			return targetTemp;
 		}
 
 		/// <summary>
 		/// Control the PS_ON pin via M80/81 if enabled in firmware and printer settings, allowing the printer board to toggle off the ATX power supply
 		/// </summary>
-		public bool HasPowerControl
+		public bool HasPowerControl()
 		{
-			get
-			{
-				return GetActiveValue("has_power_control") == "1";
-			}
+			return ActiveValue("has_power_control") == "1";
 		}
 
 		public bool HasHeatedBed()
 		{
-			return GetActiveValue("has_heated_bed") == "1";
+			return ActiveValue("has_heated_bed") == "1";
 		}
 
-		public bool SupportEnabled
+		public bool SupportEnabled()
 		{
-			get
-			{
-				return GetActiveValue("support_material") == "1";
-			}
+			return ActiveValue("support_material") == "1";
 		}
 
-		public bool ShowFirmwareUpdater
+		public bool ShowFirmwareUpdater()
 		{
-			get
-			{
-				return GetActiveValue("include_firmware_updater") == "Simple Arduino";
-			}
+			return ActiveValue("include_firmware_updater") == "Simple Arduino";
 		}
 
-		public int SupportExtruder
+		public int SupportExtruder()
 		{
-			get
-			{
-				return int.Parse(GetActiveValue("support_material_extruder"));
-			}
+			return int.Parse(ActiveValue("support_material_extruder"));
 		}
 
-		public int[] LayerToPauseOn
+		public int[] LayerToPauseOn()
 		{
-			get
-			{
-				string[] userValues = GetActiveValue("layer_to_pause").Split(';');
+			string[] userValues = ActiveValue("layer_to_pause").Split(';');
 
-				int temp;
-				return userValues.Where(v => int.TryParse(v, out temp)).Select(v =>
-				{
+			int temp;
+			return userValues.Where(v => int.TryParse(v, out temp)).Select(v =>
+			{
 					//Convert from 0 based index to 1 based index
 					int val = int.Parse(v);
 
 					// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
 					return val == 0 ? 1 : val - 1;
-				}).ToArray();
-			}
+			}).ToArray();
 		}
 
-		public double ProbePaperWidth
+		public double ProbePaperWidth()
 		{
-			get
-			{
-				return double.Parse(GetActiveValue("manual_probe_paper_width"));
-			}
+			return double.Parse(ActiveValue("manual_probe_paper_width"));
 		}
 
-		public bool RaftEnabled
+		public bool RaftEnabled()
 		{
-			get
-			{
-				return GetActiveValue("create_raft") == "1";
-			}
+			return ActiveValue("create_raft") == "1";
 		}
 
-		public int RaftExtruder
+		public int RaftExtruder()
 		{
-			get
-			{
-				return int.Parse(GetActiveValue("raft_extruder"));
-			}
+			return int.Parse(ActiveValue("raft_extruder"));
 		}
 
-		public double MaxFanSpeed
+		public double MaxFanSpeed()
 		{
-			get
-			{
-				return ParseDouble(GetActiveValue("max_fan_speed"));
-			}
+			return ParseDouble(ActiveValue("max_fan_speed"));
 		}
 
-		public double FillDensity
+		public double FillDensity()
 		{
-			get
+			string fillDensityValueString = ActiveValue("fill_density");
+			if (fillDensityValueString.Contains("%"))
 			{
-				string fillDensityValueString = GetActiveValue("fill_density");
-				if (fillDensityValueString.Contains("%"))
-				{
-					string onlyNumber = fillDensityValueString.Replace("%", "");
-					double ratio = ParseDouble(onlyNumber) / 100;
-					return ratio;
-				}
-				else
-				{
-					return ParseDouble(GetActiveValue("fill_density"));
-				}
+				string onlyNumber = fillDensityValueString.Replace("%", "");
+				double ratio = ParseDouble(onlyNumber) / 100;
+				return ratio;
+			}
+			else
+			{
+				return ParseDouble(ActiveValue("fill_density"));
 			}
 		}
 
-		public double MinFanSpeed
+		public double MinFanSpeed()
 		{
-			get
-			{
-				return ParseDouble(GetActiveValue("min_fan_speed"));
-			}
+			return ParseDouble(ActiveValue("min_fan_speed"));
 		}
 
-		public double FirstLayerHeight
+		public double FirstLayerHeight()
 		{
-			get
+			string firstLayerValueString = ActiveValue("first_layer_height");
+			if (firstLayerValueString.Contains("%"))
 			{
-				string firstLayerValueString = GetActiveValue("first_layer_height");
-				if (firstLayerValueString.Contains("%"))
-				{
-					string onlyNumber = firstLayerValueString.Replace("%", "");
-					double ratio = ParseDouble(onlyNumber) / 100;
-					return LayerHeight * ratio;
-				}
-				double firstLayerValue;
-				firstLayerValue = ParseDouble(firstLayerValueString);
-
-				return firstLayerValue;
+				string onlyNumber = firstLayerValueString.Replace("%", "");
+				double ratio = ParseDouble(onlyNumber) / 100;
+				return LayerHeight() * ratio;
 			}
+			double firstLayerValue;
+			firstLayerValue = ParseDouble(firstLayerValueString);
+
+			return firstLayerValue;
 		}
 
-		internal string GetMaterialPresetKey(int extruderIndex)
+		internal string MaterialPresetKey(int extruderIndex)
 		{
 			return layeredProfile.GetMaterialPresetKey(extruderIndex);
 		}
 
-		public double FirstLayerExtrusionWidth
+		public double FirstLayerExtrusionWidth()
 		{
-			get
-			{
 				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("first_layer_extrusion_width", "notused", "nozzle_diameter");
 
 				double firstLayerValue = ParseDouble(mapper.Value);
 				return firstLayerValue;
-			}
 		}
 
 		private static double ParseDouble(string firstLayerValueString)
@@ -383,101 +341,75 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return firstLayerValue;
 		}
 
-		public double LayerHeight
+		public double LayerHeight()
 		{
-			get { return ParseDouble(GetActiveValue("layer_height")); }
+			return ParseDouble(ActiveValue("layer_height"));
 		}
 
-		public Vector2 GetBedSize()
+		public Vector2 BedSize()
 		{
-			return BedSize;
+			return ActiveVector2("bed_size");
 		}
 
-		public Vector2 BedSize
+		public MeshVisualizer.MeshViewerWidget.BedShape BedShape()
 		{
-			get
+			switch (ActiveValue("bed_shape"))
 			{
-				return GetActiveVector2("bed_size");
-			}
-		}
+				case "rectangular":
+					return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
 
-		public MeshVisualizer.MeshViewerWidget.BedShape BedShape
-		{
-			get
-			{
-				switch (GetActiveValue("bed_shape"))
-				{
-					case "rectangular":
-						return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
+				case "circular":
+					return MeshVisualizer.MeshViewerWidget.BedShape.Circular;
 
-					case "circular":
-						return MeshVisualizer.MeshViewerWidget.BedShape.Circular;
-
-					default:
+				default:
 #if DEBUG
-						throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetActiveValue("bed_shape")));
+					throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", ActiveValue("bed_shape")));
 #else
                         return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
 #endif
-				}
 			}
 		}
 
-		public Vector2 BedCenter
+		public Vector2 BedCenter()
 		{
-			get
+			return ActiveVector2("print_center");
+		}
+
+		public double BuildHeight()
+		{
+			return ParseDouble(ActiveValue("build_height"));
+		}
+
+		public Vector2 PrintCenter()
+		{
+			return ActiveVector2("print_center");
+		}
+
+		public int ExtruderCount()
+		{
+			if (ExtrudersShareTemperature())
 			{
-				return GetActiveVector2("print_center");
+				return 1;
 			}
-		}
 
-		public double BuildHeight
-		{
-			get
+			int extruderCount;
+			string extruderCountString = ActiveValue("extruder_count");
+			if (!int.TryParse(extruderCountString, out extruderCount))
 			{
-				return ParseDouble(GetActiveValue("build_height"));
+				return 1;
 			}
+
+			return extruderCount;
 		}
 
-		public Vector2 PrintCenter
+		public bool ExtrudersShareTemperature()
 		{
-			get
-			{
-				return GetActiveVector2("print_center");
-			}
+			return (int.Parse(ActiveValue("extruders_share_temperature")) == 1);
 		}
 
-		public int ExtruderCount
+		public Vector2 ExtruderOffset(int extruderIndex)
 		{
-			get
-			{
-				if (ExtrudersShareTemperature)
-				{
-					return 1;
-				}
-
-				int extruderCount;
-				string extruderCountString = GetActiveValue("extruder_count");
-				if (!int.TryParse(extruderCountString, out extruderCount))
-				{
-					return 1;
-				}
-
-				return extruderCount;
-			}
-		}
-
-		public bool ExtrudersShareTemperature
-		{
-			get
-			{
-				return (int.Parse(GetActiveValue("extruders_share_temperature")) == 1);
-			}
-		}
-
-		public Vector2 GetOffset(int extruderIndex)
-		{
-			string currentOffsets = GetActiveValue("extruder_offset");
+			string currentOffsets = ActiveValue("extruder_offset");
 			string[] offsets = currentOffsets.Split(',');
 			int count = 0;
 			foreach (string offset in offsets)
@@ -493,22 +425,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Vector2.Zero;
 		}
 
-		public double NozzleDiameter
+		public double NozzleDiameter()
 		{
-			get { return ParseDouble(GetActiveValue("nozzle_diameter")); }
+			return ParseDouble(ActiveValue("nozzle_diameter"));
 		}
 
-		public double FilamentDiameter
+		public double FilamentDiameter()
 		{
-			get { return ParseDouble(GetActiveValue("filament_diameter")); }
+			return ParseDouble(ActiveValue("filament_diameter"));
 		}
 
-		public bool LevelingRequiredToPrint
+		public bool LevelingRequiredToPrint()
 		{
-			get
-			{
-				return GetActiveValue("print_leveling_required_to_print") == "1";
-			}
+			return ActiveValue("print_leveling_required_to_print") == "1";
 		}
 
 		private PrintLevelingData printLevelingData = null;
@@ -526,7 +455,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						printLevelingData.SampledPosition0,
 						printLevelingData.SampledPosition1,
 						printLevelingData.SampledPosition2,
-						ActiveSliceSettings.Instance.PrintCenter);
+						ActiveSliceSettings.Instance.PrintCenter());
 				}
 
 				return printLevelingData;
@@ -564,7 +493,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						levelingData.SampledPosition0,
 						levelingData.SampledPosition1,
 						levelingData.SampledPosition2,
-						ActiveSliceSettings.Instance.PrintCenter);
+						ActiveSliceSettings.Instance.PrintCenter());
 				}
 			}
 		}
@@ -590,31 +519,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public SliceEngineMapping ActiveSliceEngine
+		public SliceEngineMapping ActiveSliceEngine()
 		{
-			get
+			switch (ActiveSliceEngineType)
 			{
-				switch (ActiveSliceEngineType)
-				{
-					case SlicingEngineTypes.CuraEngine:
-						return EngineMappingCura.Instance;
+				case SlicingEngineTypes.CuraEngine:
+					return EngineMappingCura.Instance;
 
-					case SlicingEngineTypes.MatterSlice:
-						return EngineMappingsMatterSlice.Instance;
+				case SlicingEngineTypes.MatterSlice:
+					return EngineMappingsMatterSlice.Instance;
 
-					case SlicingEngineTypes.Slic3r:
-						return Slic3rEngineMappings.Instance;
+				case SlicingEngineTypes.Slic3r:
+					return Slic3rEngineMappings.Instance;
 
-					default:
-						return null;
-				}
+				default:
+					return null;
 			}
 		}
 
 		///<summary>
 		///Returns the first matching value discovered while enumerating the settings layers
 		///</summary>
-		public string GetActiveValue(string sliceSetting)
+		public string ActiveValue(string sliceSetting)
 		{
 			return layeredProfile.GetValue(sliceSetting);
 		}
@@ -667,9 +593,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public Vector2 GetActiveVector2(string sliceSetting)
+		public Vector2 ActiveVector2(string sliceSetting)
 		{
-			string[] twoValues = GetActiveValue(sliceSetting).Split(',');
+			string[] twoValues = ActiveValue(sliceSetting).Split(',');
 			if (twoValues.Length != 2)
 			{
 				throw new Exception(string.Format("Not parsing {0} as a Vector2", sliceSetting));
@@ -703,7 +629,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				foreach (var kvp in this.BaseLayer)
 				{
-					string activeValue = GetActiveValue(kvp.Key);
+					string activeValue = ActiveValue(kvp.Key);
 					bigStringForHashCode.Append(kvp.Key);
 					bigStringForHashCode.Append(activeValue);
 				}
@@ -719,7 +645,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				foreach (var kvp in this.BaseLayer)
 				{
-					string activeValue = GetActiveValue(kvp.Key);
+					string activeValue = ActiveValue(kvp.Key);
 					if (replaceMacroValues)
 					{
 						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
@@ -734,18 +660,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			try
 			{
-				if (LayerHeight > NozzleDiameter)
+				if (LayerHeight() > NozzleDiameter())
 				{
 					string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), LayerHeight, NozzleDiameter);
+					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), LayerHeight(), NozzleDiameter());
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
-				else if (FirstLayerHeight > NozzleDiameter)
+				else if (FirstLayerHeight() > NozzleDiameter())
 				{
 					string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), FirstLayerHeight, NozzleDiameter);
+					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), FirstLayerHeight(), NozzleDiameter());
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
@@ -754,7 +680,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
 				if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
 				{
-					string[] startGCode = GetActiveValue("start_gcode").Replace("\\n", "\n").Split('\n');
+					string[] startGCode = ActiveValue("start_gcode").Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))
@@ -777,65 +703,65 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				if (FirstLayerExtrusionWidth > NozzleDiameter * 4)
+				if (FirstLayerExtrusionWidth() > NozzleDiameter() * 4)
 				{
 					string error = "'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
-					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetActiveValue("first_layer_extrusion_width"), NozzleDiameter);
+					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), ActiveValue("first_layer_extrusion_width"), NozzleDiameter());
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (FirstLayerExtrusionWidth <= 0)
+				if (FirstLayerExtrusionWidth() <= 0)
 				{
 					string error = "'First Layer Extrusion Width' must be greater than 0.".Localize();
-					string details = string.Format("First Layer Extrusion Width = {0}".Localize(), GetActiveValue("first_layer_extrusion_width"));
+					string details = string.Format("First Layer Extrusion Width = {0}".Localize(), ActiveValue("first_layer_extrusion_width"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (MinFanSpeed > 100)
+				if (MinFanSpeed() > 100)
 				{
 					string error = "The Minimum Fan Speed can only go as high as 100%.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), MinFanSpeed);
+					string details = string.Format("It is currently set to {0}.".Localize(), MinFanSpeed());
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (MaxFanSpeed > 100)
+				if (MaxFanSpeed() > 100)
 				{
 					string error = "The Maximum Fan Speed can only go as high as 100%.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), MaxFanSpeed);
+					string details = string.Format("It is currently set to {0}.".Localize(), MaxFanSpeed());
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (ExtruderCount < 1)
+				if (ExtruderCount() < 1)
 				{
 					string error = "The Extruder Count must be at least 1.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), ExtruderCount);
+					string details = string.Format("It is currently set to {0}.".Localize(), ExtruderCount());
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Features'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (FillDensity < 0 || FillDensity > 1)
+				if (FillDensity() < 0 || FillDensity() > 1)
 				{
 					string error = "The Fill Density must be between 0 and 1.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), FillDensity);
+					string details = string.Format("It is currently set to {0}.".Localize(), FillDensity());
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (FillDensity == 1
-					&& GetActiveValue("infill_type") != "LINES")
+				if (FillDensity() == 1
+					&& ActiveValue("infill_type") != "LINES")
 				{
 					string error = "Solid Infill works best when set to LINES.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), GetActiveValue("infill_type"));
+					string details = string.Format("It is currently set to {0}.".Localize(), ActiveValue("infill_type"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return true;
@@ -873,7 +799,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private bool ValidateGoodSpeedSettingGreaterThan0(string speedSetting, string speedLocation)
 		{
-			string actualSpeedValueString = GetActiveValue(speedSetting);
+			string actualSpeedValueString = ActiveValue(speedSetting);
 			string speedValueString = actualSpeedValueString;
 			if (speedValueString.EndsWith("%"))
 			{
@@ -887,7 +813,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			if (!valueWasNumber
-				|| (ActiveSliceSettings.Instance.ActiveSliceEngine.MapContains(speedSetting)
+				|| (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
 				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);
@@ -1034,7 +960,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var drivers = new List<string>();
 
 			//Determine what if any drivers are needed
-			string infFileNames = GetActiveValue("windows_driver");
+			string infFileNames = ActiveValue("windows_driver");
 			if (!string.IsNullOrEmpty(infFileNames))
 			{
 				string[] fileNames = infFileNames.Split(',');
@@ -1098,7 +1024,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			macroDict["Offset 1.2"] = "M565 Z1.2;\nM500";
 			macroDict["Z Offset"] = "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;";
 
-			string defaultMacros = GetActiveValue("default_macros");
+			string defaultMacros = ActiveValue("default_macros");
 			var printerCustomCommands = new List<CustomCommands>();
 			if (!string.IsNullOrEmpty(defaultMacros))
 			{
