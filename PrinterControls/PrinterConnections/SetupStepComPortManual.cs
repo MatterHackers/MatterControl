@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerComPortError.Text = "Attempting to connect".Localize() + "...";
 				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-				ActiveSliceSettings.Instance.ComPort = GetSelectedSerialPort();
+				ActiveSliceSettings.Instance.SetComPort(GetSelectedSerialPort());
 				PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
 
 				connectButton.Visible = false;

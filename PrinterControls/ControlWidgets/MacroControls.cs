@@ -166,12 +166,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		internal static IEnumerable<CustomCommands> GetMacros()
 		{
-			if (!string.IsNullOrEmpty(ActiveSliceSettings.Instance?.Id))
+			if (!string.IsNullOrEmpty(ActiveSliceSettings.Instance?.Id()))
 			{
 				// TODO: Hook macros into new settings system
 
 				//Retrieve a list of macros from the database
-				string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActiveSliceSettings.Instance.Id);
+				string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActiveSliceSettings.Instance.Id());
 
 				return Datastore.Instance.dbSQLite.Query<CustomCommands>(query);
 			}

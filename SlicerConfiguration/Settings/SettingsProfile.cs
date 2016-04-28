@@ -441,70 +441,64 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private PrintLevelingData printLevelingData = null;
-		public PrintLevelingData PrintLevelingData
+		public PrintLevelingData GetPrintLevelingData()
 		{
-			get
+			if (printLevelingData == null)
 			{
-				if (printLevelingData == null)
-				{
-					printLevelingData = PrintLevelingData.Create(
-						ActiveSliceSettings.Instance,
-						layeredProfile.GetValue("MatterControl.PrintLevelingData"), 
-						layeredProfile.GetValue("MatterControl.PrintLevelingProbePositions"));
+				printLevelingData = PrintLevelingData.Create(
+					ActiveSliceSettings.Instance,
+					layeredProfile.GetValue("MatterControl.PrintLevelingData"),
+					layeredProfile.GetValue("MatterControl.PrintLevelingProbePositions"));
 
-					PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-						printLevelingData.SampledPosition0,
-						printLevelingData.SampledPosition1,
-						printLevelingData.SampledPosition2,
-						ActiveSliceSettings.Instance.PrintCenter());
-				}
+				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
+					printLevelingData.SampledPosition0,
+					printLevelingData.SampledPosition1,
+					printLevelingData.SampledPosition2,
+					ActiveSliceSettings.Instance.PrintCenter());
+			}
 
-				return printLevelingData;
-			}
-			set
-			{
-				printLevelingData = value;
-				layeredProfile.SetActiveValue("MatterControl.PrintLevelingData", JsonConvert.SerializeObject(PrintLevelingData));
-			}
+			return printLevelingData;
 		}
 
-		public bool DoPrintLeveling
+		public void SetPrintLevelingData(PrintLevelingData data)
 		{
-			get
+			printLevelingData = data;
+			layeredProfile.SetActiveValue("MatterControl.PrintLevelingData", JsonConvert.SerializeObject(data));
+
+		}
+
+		public bool DoPrintLeveling()
+		{
+			return layeredProfile.GetValue("MatterControl.PrintLevelingEnabled") == "true";
+		}
+
+		public void DoPrintLeveling(bool doLevling)
+		{
+			// Early exit if already set
+			if (doLevling == this.DoPrintLeveling())
 			{
-				return layeredProfile.GetValue("MatterControl.PrintLevelingEnabled") == "true";
+				return;
 			}
 
-			set
+			layeredProfile.SetActiveValue("MatterControl.PrintLevelingEnabled", doLevling ? "true" : "false");
+
+			DoPrintLevelingChanged.CallEvents(this, null);
+
+			if (doLevling)
 			{
-				// Early exit if already set
-				if(value == this.DoPrintLeveling)
-				{
-					return;
-				}
-
-				layeredProfile.SetActiveValue("MatterControl.PrintLevelingEnabled", value ? "true" : "false");
-
-				DoPrintLevelingChanged.CallEvents(this, null);
-
-				if (value)
-				{
-					PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
-					PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-						levelingData.SampledPosition0,
-						levelingData.SampledPosition1,
-						levelingData.SampledPosition2,
-						ActiveSliceSettings.Instance.PrintCenter());
-				}
+				PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
+					levelingData.SampledPosition0,
+					levelingData.SampledPosition1,
+					levelingData.SampledPosition2,
+					ActiveSliceSettings.Instance.PrintCenter());
 			}
 		}
 
 		private static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.MatterSlice;
 
-		public SlicingEngineTypes ActiveSliceEngineType
+		public SlicingEngineTypes ActiveSliceEngineType()
 		{
-			get
-			{
 				string engineType = layeredProfile.GetValue("MatterControl.SlicingEngine");
 				if (string.IsNullOrEmpty(engineType))
 				{
@@ -513,16 +507,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var engine = (SlicingEngineTypes)Enum.Parse(typeof(SlicingEngineTypes), engineType);
 				return engine;
-			}
-			set
-			{
-				SetActiveValue("MatterControl.SlicingEngine", value.ToString());
-			}
+		}
+
+		public void ActiveSliceEngineType(SlicingEngineTypes type)
+		{
+			SetActiveValue("MatterControl.SlicingEngine", type.ToString());
 		}
 
 		public SliceEngineMapping ActiveSliceEngine()
 		{
-			switch (ActiveSliceEngineType)
+			switch (ActiveSliceEngineType())
 			{
 				case SlicingEngineTypes.CuraEngine:
 					return EngineMappingCura.Instance;
@@ -679,7 +673,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
-				if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
+				if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling())
 				{
 					string[] startGCode = ActiveValue("start_gcode").Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
@@ -829,75 +823,65 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return true;
 		}
 
-		public bool AutoConnectFlag
+		public bool DoAutoConnect()
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.AutoConnectFlag") == "true";
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.AutoConnectFlag", value ? "true" : "false");
-			}
+			return layeredProfile.GetValue("MatterControl.AutoConnectFlag") == "true";
 		}
 
-		public string BaudRate
+		public void SetAutoConnect(bool flag)
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.BaudRate");
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.BaudRate", value);
-			}
+			layeredProfile.SetActiveValue("MatterControl.AutoConnectFlag", flag ? "true" : "false");
 		}
 
-		public string ComPort
+		public string BaudRate()
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.ComPort");
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.ComPort", value);
-			}
+			return layeredProfile.GetValue("MatterControl.BaudRate");
 		}
 
-		public string SlicingEngine
+		public void SetBaudRate(string data)
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.SlicingEngine");
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.SlicingEngine", value);
-			}
+			layeredProfile.SetActiveValue("MatterControl.BaudRate", data);
 		}
 
-		public string DriverType
+		public string ComPort()
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.DriverType");
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.DriverType", value);
-			}
+			return layeredProfile.GetValue("MatterControl.ComPort");
 		}
-		public string DeviceToken
+
+		public void SetComPort(string port)
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.DeviceToken");
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.DeviceToken", value);
-			}
+			layeredProfile.SetActiveValue("MatterControl.ComPort", port);
+		}
+
+
+		public string SlicingEngine()
+		{
+			return layeredProfile.GetValue("MatterControl.SlicingEngine");
+		}
+
+		public void SetSlicingEngine(string engine)
+		{
+			layeredProfile.SetActiveValue("MatterControl.SlicingEngine", engine);
+		}
+
+		public string DriverType()
+		{
+			return layeredProfile.GetValue("MatterControl.DriverType");
+		}
+
+		public void SetDriverType(string driver)
+		{
+			layeredProfile.SetActiveValue("MatterControl.DriverType", driver);
+		}
+
+		public string DeviceToken()
+		{
+			return layeredProfile.GetValue("MatterControl.DeviceToken");
+		}
+
+		public void SetDeviceToken(string token)
+		{
+			layeredProfile.SetActiveValue("MatterControl.DeviceToken", token);
 		}
 
 		public string DeviceType => layeredProfile.GetValue("MatterControl.DeviceType");
@@ -905,44 +889,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string Make => layeredProfile.GetValue("MatterControl.Make");
 
 		// Rename to PrinterName
-		public string Name
+		public string Name()
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.PrinterName");
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.PrinterName", value);
-			}
+			return layeredProfile.GetValue("MatterControl.PrinterName");
 		}
 
-		public string Id
+		public void SetName(string name)
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.PrinterID");
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.PrinterID", value);
-			}
+			layeredProfile.SetActiveValue("MatterControl.PrinterName", name);
+		}
+
+		public string Id()
+		{
+			return layeredProfile.GetValue("MatterControl.PrinterID");
+		}
+
+		public void SetId(string id)
+		{
+			layeredProfile.SetActiveValue("MatterControl.PrinterID", id);
 		}
 
 		public string Model => layeredProfile.GetValue("MatterControl.Model");
 
-		public string ManualMovementSpeeds
+		public string ManualMovementSpeeds()
 		{
-			get
-			{
-				return layeredProfile.GetValue("MatterControl.ManualMovementSpeeds");
-			}
-			set
-			{
-				layeredProfile.SetActiveValue("MatterControl.ManualMovementSpeeds", value);
-			}
+			return layeredProfile.GetValue("MatterControl.ManualMovementSpeeds");
 		}
 
+		public void SetManualMovementSpeeds(string speed)
+		{
+			layeredProfile.SetActiveValue("MatterControl.ManualMovementSpeeds", speed);
+		}
 
 		private List<string> printerDrivers = null;
 

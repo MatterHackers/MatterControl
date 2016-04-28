@@ -68,13 +68,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			ActiveSliceSettings.Instance.RunInTransaction(settings =>
 			{
-				settings.AutoConnectFlag = ActivePrinter.AutoConnectFlag;
-				settings.BaudRate = ActivePrinter.BaudRate;
-				settings.ComPort = ActivePrinter.ComPort;
-				settings.SlicingEngine = ActivePrinter.CurrentSlicingEngine;
-				settings.DriverType = ActivePrinter.DriverType;
-				settings.Id = ActivePrinter.Id;
-				settings.Name = ActivePrinter.Name;
+				settings.SetAutoConnect(ActivePrinter.AutoConnectFlag);
+				settings.SetBaudRate(ActivePrinter.BaudRate);
+				settings.SetComPort(ActivePrinter.ComPort);
+				settings.SetSlicingEngine(ActivePrinter.CurrentSlicingEngine);
+				settings.SetDriverType(ActivePrinter.DriverType);
+				settings.SetId(ActivePrinter.Id);
+				settings.SetName(ActivePrinter.Name);
 			});
 
 			UiThread.RunOnIdle(connectionWizard.Close);

@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
 			if (PrinterConnectionAndCommunication.Instance != null && ActiveSliceSettings.Instance != null)
 			{
-				string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds;
+				string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds();
 				if (savedSettings != null && savedSettings != "")
 				{
 					presets = savedSettings;
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			StringEventArgs stringEvent = e as StringEventArgs;
 			if (stringEvent != null && stringEvent.Data != null)
 			{
-				ActiveSliceSettings.Instance.ManualMovementSpeeds = stringEvent.Data;
+				ActiveSliceSettings.Instance.SetManualMovementSpeeds(stringEvent.Data);
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
 		}

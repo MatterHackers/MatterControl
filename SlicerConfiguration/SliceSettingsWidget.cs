@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			categoryTabs.TabBar.AddChild(new HorizontalSpacer());
 			categoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 
-			if (sliceSettingsDetailControl.SelectedValue == "Advanced" && ActiveSliceSettings.Instance.ActiveSliceEngineType == SlicingEngineTypes.Slic3r)
+			if (sliceSettingsDetailControl.SelectedValue == "Advanced" && ActiveSliceSettings.Instance.ActiveSliceEngineType() == SlicingEngineTypes.Slic3r)
 			{
 				TabPage extraSettingsPage = new TabPage("Other");
 				SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, "Other Tab", 16,

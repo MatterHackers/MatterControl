@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						// TODO: Review bindings to int printerID
 						int printerID;
-						int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+						int.TryParse(ActiveSliceSettings.Instance.Id(), out printerID);
 
 						//Create collection to hold preset settings
 						settingsCollection = new SliceSettingsCollection();
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (ActiveSliceSettings.Instance != null)
 			{
 				//Retrieve a list of collections matching from the Datastore
-				string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1}  ORDER BY Name;", windowController.filterTag, ActiveSliceSettings.Instance.Id);
+				string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1}  ORDER BY Name;", windowController.filterTag, ActiveSliceSettings.Instance.Id());
 				return Datastore.Instance.dbSQLite.Query<SliceSettingsCollection>(query);
 			}
 

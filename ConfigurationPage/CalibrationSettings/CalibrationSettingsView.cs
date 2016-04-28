@@ -92,12 +92,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget levelingIcon = new ImageWidget(levelingImage);
 			levelingIcon.Margin = new BorderDouble(right: 6);
 
-			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.DoPrintLeveling);
+			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.DoPrintLeveling());
 			printLevelingSwitch.VAnchor = VAnchor.ParentCenter;
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				ActiveSliceSettings.Instance.DoPrintLeveling = printLevelingSwitch.Checked;
+				ActiveSliceSettings.Instance.DoPrintLeveling(printLevelingSwitch.Checked);
 			};
 
 			printLevelingStatusLabel = new TextWidget("");
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
 				SetPrintLevelButtonVisiblity();
-				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.DoPrintLeveling;
+				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.DoPrintLeveling();
 			}, ref unregisterEvents);
 
 			buttonRow.AddChild(levelingIcon);
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetPrintLevelButtonVisiblity()
 		{
-			if (ActiveSliceSettings.Instance.DoPrintLeveling)
+			if (ActiveSliceSettings.Instance.DoPrintLeveling())
 			{
 				printLevelingStatusLabel.Text = "Software Print Leveling (enabled)".Localize();
 			}

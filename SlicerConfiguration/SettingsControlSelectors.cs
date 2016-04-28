@@ -328,15 +328,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
 					item.Selected += (sender, e) =>
 					{
-						if (ActiveSliceSettings.Instance.ActiveSliceEngineType != itemEngineType)
+						if (ActiveSliceSettings.Instance.ActiveSliceEngineType() != itemEngineType)
 						{
-							ActiveSliceSettings.Instance.ActiveSliceEngineType = itemEngineType;
+							ActiveSliceSettings.Instance.ActiveSliceEngineType(itemEngineType);
 							ApplicationController.Instance.ReloadAdvancedControlsPanel();
 						}
 					};
 
 					//Set item as selected if it matches the active slice engine
-					if (engineMenuItem.GetSliceEngineType() == ActiveSliceSettings.Instance.ActiveSliceEngineType)
+					if (engineMenuItem.GetSliceEngineType() == ActiveSliceSettings.Instance.ActiveSliceEngineType())
 					{
 						SelectedLabel = engineMenuItem.Name;
 					}

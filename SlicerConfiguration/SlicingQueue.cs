@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string getSlicerFullPath()
 		{
-			SliceEngineInfo info = getSliceEngineInfoByType(ActiveSliceSettings.Instance.ActiveSliceEngineType);
+			SliceEngineInfo info = getSliceEngineInfoByType(ActiveSliceSettings.Instance.ActiveSliceEngineType());
 			if (info != null)
 			{
 				return info.GetEnginePath();
@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PrintItemWrapper itemToSlice = listOfSlicingItems[0];
 					bool doMergeInSlicer = false;
 					string mergeRules = "";
-					doMergeInSlicer = ActiveSliceSettings.Instance.ActiveSliceEngineType == SlicingEngineTypes.MatterSlice;
+					doMergeInSlicer = ActiveSliceSettings.Instance.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice;
                     string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
 					string fileToSlice = stlFileLocations[0];
 					// check that the STL file is currently on disk
@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string commandArgs = "";
 
-							switch (ActiveSliceSettings.Instance.ActiveSliceEngineType)
+							switch (ActiveSliceSettings.Instance.ActiveSliceEngineType())
 							{
 								case SlicingEngineTypes.Slic3r:
 									commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							if (OsInformation.OperatingSystem == OSType.Android ||
 								((OsInformation.OperatingSystem == OSType.Mac || runInProcess)
-									&& ActiveSliceSettings.Instance.ActiveSliceEngineType == SlicingEngineTypes.MatterSlice))
+									&& ActiveSliceSettings.Instance.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice))
 							{
 								itemCurrentlySlicing = itemToSlice;
 								MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;

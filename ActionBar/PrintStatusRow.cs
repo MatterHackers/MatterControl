@@ -238,16 +238,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
-			autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling;
+			autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
 
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((sender, e) =>
 			{
-				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling;
+				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
 			}, ref unregisterEvents);
 
 			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
-				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling;
+				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
 			}, ref unregisterEvents);
 
 			return autoLevelButton;

@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
 		{
 			var settings = ActiveSliceSettings.Instance;
-			if (settings?.DoPrintLeveling == true
+			if (settings?.DoPrintLeveling() == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
 				lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent);
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
 				{
-					ActiveSliceSettings.Instance.DoPrintLeveling = false;
+					ActiveSliceSettings.Instance.DoPrintLeveling(false);
 				}
 
 				probeIndex = 0;
@@ -249,15 +249,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static void SetEquations()
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 
 			// position 0 does not change as it is the distance from the switch trigger to the extruder tip.
 			//levelingData.sampledPosition0 = levelingData.sampledPosition0;
 			levelingData.SampledPosition1 = levelingData.SampledPosition0 + probeRead1;
 			levelingData.SampledPosition2 = levelingData.SampledPosition0 + probeRead2;
 
-			ActiveSliceSettings.Instance.PrintLevelingData = levelingData;
-			ActiveSliceSettings.Instance.DoPrintLeveling = true;
+			ActiveSliceSettings.Instance.SetPrintLevelingData(levelingData);
+			ActiveSliceSettings.Instance.DoPrintLeveling(true);
 		}
 	}
 }

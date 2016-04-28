@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 		{
 			Vector3 feedRate = new Vector3(3000, 3000, 315);
 
-			string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds;
+			string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds();
 			if (savedSettings != null && savedSettings != "")
 			{
 				feedRate.x = double.Parse(savedSettings.Split(',')[1]);

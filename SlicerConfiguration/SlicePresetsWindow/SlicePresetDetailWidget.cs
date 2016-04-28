@@ -886,7 +886,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// TODO: Review bindings to int printerID
 				int printerID;
-				int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+				int.TryParse(ActiveSliceSettings.Instance.Id(), out printerID);
 
 				collection.Name = string.Format("{0} ({1})", windowController.filterLabel, noExistingPresets.ToString());
 				collection.Tag = windowController.filterTag;

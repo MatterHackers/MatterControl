@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			string lineFromChild = base.ReadLine();
 
 			if (lineFromChild != null
-				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling)
+				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling())
 			{
 				if (LineIsMovement(lineFromChild))
 				{
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 			if (levelingData != null)
 			{
 				switch (levelingData.CurrentPrinterLevelingSystem)

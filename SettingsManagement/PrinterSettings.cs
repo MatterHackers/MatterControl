@@ -28,7 +28,7 @@ namespace MatterHackers.MatterControl
 		{
 			// TODO: Review int printerID
 			int printerID;
-			int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+			int.TryParse(ActiveSliceSettings.Instance.Id(), out printerID);
 
 			//Lazy load the data (rather than hook to printer change event)
 			if (printerID != ActiveSettingsPrinterId)
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 				{
 					// TODO: Review int printerID
 					int printerID;
-					int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+					int.TryParse(ActiveSliceSettings.Instance.Id(), out printerID);
 
 					setting = new PrinterSetting();
 					setting.Name = key;
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 				}
 				// TODO: Review int printerID
 				int printerID;
-				int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+				int.TryParse(ActiveSliceSettings.Instance.Id(), out printerID);
 
 				ActiveSettingsPrinterId = printerID;
 			}
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 		private IEnumerable<PrinterSetting> GetPrinterSettings()
 		{
 			//Retrieve a list of settings from the Datastore
-			string query = string.Format("SELECT * FROM PrinterSetting WHERE PrinterId = {0};", ActiveSliceSettings.Instance.Id);
+			string query = string.Format("SELECT * FROM PrinterSetting WHERE PrinterId = {0};", ActiveSliceSettings.Instance.Id());
 			return Datastore.Instance.dbSQLite.Query<PrinterSetting>(query);
 		}
 	}

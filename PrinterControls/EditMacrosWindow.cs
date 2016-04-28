@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl
 			{
 				// TODO: Review bindings to int printerID
 				int printerID;
-				int.TryParse(ActiveSliceSettings.Instance.Id, out printerID);
+				int.TryParse(ActiveSliceSettings.Instance.Id(), out printerID);
 
 				windowController.ActiveMacro = new CustomCommands();
 				windowController.ActiveMacro.PrinterId = printerID;

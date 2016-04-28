@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 			textImageButtonFactory.FixedHeight = 30 * TextWidget.GlobalPointSizeScaleRatio;
 
 			// put in the movement edit controls
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 			if (EditSamplePositionList(levelingData))
 			{
 				for (int i = 0; i < levelingData.SampledPositions.Count; i++)
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl
 
 		private void DoSave_Click()
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 
 			if (EditSamplePositionList(levelingData))
 			{
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl
 				levelingData.SampledPosition2 = positions[2];
 			}
 
-			ActiveSliceSettings.Instance.PrintLevelingData = levelingData;
+			ActiveSliceSettings.Instance.SetPrintLevelingData(levelingData);
 
 			Close();
 		}

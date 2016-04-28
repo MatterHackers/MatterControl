@@ -396,9 +396,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						if (ActiveSliceSettings.Instance.BaudRate != null)
+						if (ActiveSliceSettings.Instance.BaudRate() != null)
 						{
-							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.BaudRate);
+							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.BaudRate());
 						}
 					}
 					catch
@@ -513,9 +513,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string ComPort => ActiveSliceSettings.Instance?.ComPort;
+		public string ComPort => ActiveSliceSettings.Instance?.ComPort();
 
-		public string DriverType => ActiveSliceSettings.Instance?.DriverType;
+		public string DriverType => ActiveSliceSettings.Instance?.DriverType();
 
 		public bool AtxPowerEnabled
 		{
@@ -1340,9 +1340,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// If leveling is required or is currently on
 				if (ActiveSliceSettings.Instance.LevelingRequiredToPrint()
-					|| ActiveSliceSettings.Instance.DoPrintLeveling)
+					|| ActiveSliceSettings.Instance.DoPrintLeveling())
 				{
-					PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
+					PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 					if(levelingData?.HasBeenRun() != true)
 					{
 						LevelWizardBase.ShowPrintLevelWizard();
@@ -1638,9 +1638,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 											// run the print leveling wizard if we need to for this printer
 											if (ActiveSliceSettings.Instance.LevelingRequiredToPrint()
-												|| ActiveSliceSettings.Instance.DoPrintLeveling)
+												|| ActiveSliceSettings.Instance.DoPrintLeveling())
 											{
-												PrintLevelingData levelingData = ActiveSliceSettings.Instance.PrintLevelingData;
+												PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 												if (levelingData?.HasBeenRun() != true)
 												{
 													UiThread.RunOnIdle(LevelWizardBase.ShowPrintLevelWizard);
@@ -2486,7 +2486,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// TODO: Fix printerItemID int requirement
 						activePrintTask = new PrintTask();
 						activePrintTask.PrintStart = DateTime.Now;
-						activePrintTask.PrinterId = this.ActivePrinter.Id.GetHashCode();
+						activePrintTask.PrinterId = this.ActivePrinter.Id().GetHashCode();
 						activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
 						activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
 						activePrintTask.PrintingGCodeFileName = ActivePrintItem.GetGCodePathAndFileName();
