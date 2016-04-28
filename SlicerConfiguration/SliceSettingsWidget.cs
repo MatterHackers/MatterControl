@@ -926,7 +926,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									startingText = stringEdit.Text;
 								}
 								SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
-
+								settingsRow.UpdateStyle();
 								OnSettingsChanged(settingData);
 
 								// make sure we are still looking for the final validation before saving.
