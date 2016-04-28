@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.VectorMath;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -53,7 +54,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 
-			PrintLevelingData levelingData = new PrintLevelingData();
+			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
 
 			double radius = 100;
 			levelingData.SampledPositions = new List<Vector3>();
@@ -89,11 +90,11 @@ namespace MatterControl.Tests.MatterControl
 		}
 		
 		[Test, Category("Leveling")]
-        public void Leveling7PointsCorectInterpolation()
+		public void Leveling7PointsCorectInterpolation()
 		{
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 
-			PrintLevelingData levelingData = new PrintLevelingData();
+			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
 
 			double radius = 100;
 			levelingData.SampledPositions = new List<Vector3>();

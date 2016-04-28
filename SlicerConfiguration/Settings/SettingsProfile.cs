@@ -448,6 +448,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (printLevelingData == null)
 				{
 					printLevelingData = PrintLevelingData.Create(
+						ActiveSliceSettings.Instance,
 						layeredProfile.GetValue("MatterControl.PrintLevelingData"), 
 						layeredProfile.GetValue("MatterControl.PrintLevelingProbePositions"));
 

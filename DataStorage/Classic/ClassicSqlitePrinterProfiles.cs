@@ -81,16 +81,10 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			profileData.Profiles.Add(printerInfo);
 
 			var layeredProfile = ActiveSliceSettings.LoadEmptyProfile();
-
-			//Load printer settings from database as second layer
-
 			layeredProfile.OemProfile = new OemProfile(LoadOemLayer(printer));
 
-			//Ordering matters - Material presets trump Quality
 			LoadQualitySettings(layeredProfile, printer);
 			LoadMaterialSettings(layeredProfile, printer);
-
-			string fullProfilePath = Path.Combine(profilePath, printer.Id + ".json");
 
 			layeredProfile.UserLayer["MatterControl.Make"] = printer.Make ?? "";
 			layeredProfile.UserLayer["MatterControl.Model"] = printer.Model ?? "";
@@ -101,14 +95,22 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.UserLayer["MatterControl.DeviceToken"] = printer.DeviceToken ?? "";
 			layeredProfile.UserLayer["MatterControl.DeviceType"] = printer.DeviceType ?? "";
 
-			// TODO: Where should this be collected from or stored to?
-			//layeredProfile.SetActiveValue("MatterControl.<<<<<LLLLLEVELING>>>>>", printer.PrintLevelingJsonData);
+			// Print leveling
+			var printLevelingData = PrintLevelingData.Create(
+				new SettingsProfile(layeredProfile), 
+				printer.PrintLevelingJsonData, 
+				printer.PrintLevelingProbePositions);
+
+			layeredProfile.UserLayer["MatterControl.PrintLevelingData"] = JsonConvert.SerializeObject(printLevelingData);
+			layeredProfile.UserLayer["MatterControl.PrintLevelingEnabled"] = printer.DoPrintLeveling ? "true" : "false";
+
+			layeredProfile.UserLayer["MatterControl.ManualMovementSpeeds"] = printer.ManualMovementSpeeds;
 
 			// TODO: Where can we find CalibrationFiiles in the current model?
 			//layeredProfile.SetActiveValue("MatterControl.CalibrationFiles", printer.Make);
 
+			string fullProfilePath = Path.Combine(profilePath, printer.Id + ".json");
 			File.WriteAllText(fullProfilePath, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
-
 		}
 
 		private static void LoadMaterialSettings(LayeredProfile layeredProfile, Printer printer)

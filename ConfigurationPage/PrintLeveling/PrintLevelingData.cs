@@ -10,6 +10,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class PrintLevelingData
 	{
+		private SettingsProfile settingsProfile;
+
 		public List<Vector3> SampledPositions = new List<Vector3>();
 
 		private Vector3 probeOffset0Private;
@@ -25,11 +27,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		[JsonConverter(typeof(StringEnumConverter))]
 		public enum LevelingSystem { Probe3Points, Probe2Points, Probe7PointRadial, Probe13PointRadial }
 
+		public PrintLevelingData(SettingsProfile settingsProfile)
+		{
+			this.settingsProfile = settingsProfile;
+		}
+
 		public LevelingSystem CurrentPrinterLevelingSystem
 		{
 			get
 			{
-				switch (ActiveSliceSettings.Instance.ActiveValue("print_leveling_solution"))
+				switch (settingsProfile.ActiveValue("print_leveling_solution"))
 				{
 					case "2 Point Plane":
 						return LevelingSystem.Probe2Points;
@@ -107,21 +114,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		internal static PrintLevelingData Create(string jsonData, string depricatedPositionsCsv3ByXYZ)
+		internal static PrintLevelingData Create(SettingsProfile settingsProfile, string jsonData, string depricatedPositionsCsv3ByXYZ)
 		{
 			if (!string.IsNullOrEmpty(jsonData))
 			{
-				return JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
+				var deserialized = JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
+				deserialized.settingsProfile = settingsProfile;
+
+				return deserialized;
 			}
 			else if (!string.IsNullOrEmpty(depricatedPositionsCsv3ByXYZ))
 			{
-				var item = new PrintLevelingData();
+				var item = new PrintLevelingData(ActiveSliceSettings.Instance);
+				item.settingsProfile = settingsProfile;
 				item.ParseDepricatedPrintLevelingMeasuredPositions(depricatedPositionsCsv3ByXYZ);
+
 				return item;
 			}
 			else
 			{
-				return new PrintLevelingData();
+				return new PrintLevelingData(ActiveSliceSettings.Instance)
+				{
+					settingsProfile = settingsProfile
+				};
 			}
 		}
 
