@@ -4768,3 +4768,33 @@ Translated:It appears your last print failed to complete.\n\nWould your like to 
 English:Resume Last Print
 Translated:Resume Last Print
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm or %
+
+English:count or mm
+Translated:count or mm
+
+English:°
+Translated:°
+
+English:mm/s
+Translated:mm/s
+
+English:mm/s or %
+Translated:mm/s or %
+
+English:%
+Translated:%
+
+English:layers or mm
+Translated:layers or mm
+
+English:°C
+Translated:°C
+
+English:seconds
+Translated:seconds
+

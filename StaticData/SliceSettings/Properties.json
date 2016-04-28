@@ -276,7 +276,7 @@
     "PresentationName": "Default Extrusion Width",
     "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "mm or %\\nleave 0 for auto"
+    "ExtraSettings": "mm or % leave 0 for auto"
   },
   {
     "SlicerConfigName": "fan_always_on",
@@ -818,7 +818,7 @@
     "PresentationName": "Length",
     "HelpText": "The amount the filament will be retracted when changing to a different extruder.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "mm\\nzero to disable"
+    "ExtraSettings": "mm zero to disable"
   },
   {
     "SlicerConfigName": "retract_restart_extra",
