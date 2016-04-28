@@ -62,22 +62,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.functionToCallOnSave = functionToCallOnSave;
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			if (showList)
-			{
-				ChangeToSlicePresetList();
-			}
-			else
-			{
-				/*
-				if (collectionID == 0)
-				{
-					ChangeToSlicePresetDetail();
-				}
-				else
-				{
-					ChangeToSlicePresetDetail(GetCollection(collectionID));
-				} */
-			}
+			ChangeToSlicePresetDetail();
 			ShowAsSystemWindow();
 			this.MinimumSize = new Vector2(640, 480);
 		}
