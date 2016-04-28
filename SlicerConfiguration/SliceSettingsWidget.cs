@@ -1121,7 +1121,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							var xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++)
 							{
 								ToolTipText = settingData.HelpText,
-								Margin = new BorderDouble(0, 0, 30 * TextWidget.GlobalPointSizeScaleRatio, 0),
 								SelectAllOnFocus = true
 							};
 
@@ -1131,7 +1130,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							var yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++)
 							{
 								ToolTipText = settingData.HelpText,
-								SelectAllOnFocus = true
+								SelectAllOnFocus = true,
+								Margin = new BorderDouble(20 * TextWidget.GlobalPointSizeScaleRatio, 0, 0, 0),
 							};
 
 							xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
@@ -1143,6 +1143,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								OnSettingsChanged(settingData);
 							};
 							dataArea.AddChild(xEditWidget);
+							dataArea.AddChild(new TextWidget("x", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+							{
+								VAnchor = VAnchor.ParentCenter,
+								Margin = new BorderDouble(5, 0),
+							});
 
 							yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
@@ -1153,6 +1158,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								OnSettingsChanged(settingData);
 							};
 							dataArea.AddChild(yEditWidget);
+							var yLabel = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren | VAnchor.ParentCenter)
+							{
+								Padding = new BorderDouble(5, 0),
+								HAnchor = HAnchor.ParentLeftRight,
+							};
+							yLabel.AddChild(new WrappedTextWidget("y", 0, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+							unitsArea.AddChild(yLabel);
 
 							settingsRow2.ValueChanged = (text) =>
 							{
@@ -1181,13 +1193,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								ToolTipText = settingData.HelpText,
 								SelectAllOnFocus = true,
-								Margin = new BorderDouble(0, 0, 30 * TextWidget.GlobalPointSizeScaleRatio, 0)
 							};
 
 							var yEditWidget = new MHNumberEdit(offset.y, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++)
 							{
 								ToolTipText = settingData.HelpText,
-								SelectAllOnFocus = true
+								SelectAllOnFocus = true,
+								Margin = new BorderDouble(20 * TextWidget.GlobalPointSizeScaleRatio, 0, 0, 0),
 							};
 
 							xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
@@ -1200,7 +1212,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								OnSettingsChanged(settingData);
 							};
 							dataArea.AddChild(xEditWidget);
-							
+							dataArea.AddChild(new TextWidget("x", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+							{
+								VAnchor = VAnchor.ParentCenter,
+								Margin = new BorderDouble(5, 0),
+							});
+
 							yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								int extruderIndexLocal = extruderIndex;
@@ -1211,6 +1228,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								OnSettingsChanged(settingData);
 							};
 							dataArea.AddChild(yEditWidget);
+							var yLabel = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren | VAnchor.ParentCenter)
+							{
+								Padding = new BorderDouble(5, 0),
+								HAnchor = HAnchor.ParentLeftRight,
+							};
+							yLabel.AddChild(new WrappedTextWidget("y", 0, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+							unitsArea.AddChild(yLabel);
 
 							settingsRow2.ValueChanged = (text) =>
 							{
