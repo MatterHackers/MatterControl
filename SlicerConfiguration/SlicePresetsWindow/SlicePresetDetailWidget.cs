@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Button cancelButton = buttonFactory.Generate(LocalizedString.Get("Cancel"));
 			cancelButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle(windowController.ChangeToSlicePresetList);
+				UiThread.RunOnIdle(windowController.Close);
 			};
 
 			container.AddChild(savePresetButton);
