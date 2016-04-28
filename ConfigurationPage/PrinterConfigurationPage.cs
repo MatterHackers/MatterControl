@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
 			controlsContainer.HAnchor |= HAnchor.ParentCenter;
 
-			AnchoredDropDownList releaseOptionsDropList = new AnchoredDropDownList("Development");
+			var releaseOptionsDropList = new StyledDropDownList("Development");
 			releaseOptionsDropList.Margin = new BorderDouble(0, 3);
 
 			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Release", "release");
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string releaseCode = ((AnchoredDropDownList)sender).SelectedValue;
+			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
 			if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
 			{
 				UserSettings.Instance.set("UpdateFeedType", releaseCode);

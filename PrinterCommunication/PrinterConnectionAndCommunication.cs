@@ -396,9 +396,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						if (this.ActivePrinter.BaudRate != null)
+						if (ActiveSliceSettings.Instance.BaudRate != null)
 						{
-							baudRate = Convert.ToInt32(this.ActivePrinter.BaudRate);
+							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.BaudRate);
 						}
 					}
 					catch
@@ -513,18 +513,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string ComPort
-		{
-			get
-			{
-				string comPort = null;
-				if (this.ActivePrinter != null)
-				{
-					comPort = this.ActivePrinter.ComPort;
-				}
-				return comPort;
-			}
-		}
+		public string ComPort => ActiveSliceSettings.Instance?.ComPort;
+
+		public string DriverType => ActiveSliceSettings.Instance?.DriverType;
 
 		public bool AtxPowerEnabled
 		{
@@ -1537,7 +1528,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// current approach results in unpredictable behavior if the caller fails to close the connection 
 			if (serialPort == null && this.ActivePrinter != null)
 			{
-				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
+				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort);
 				resetSerialPort.Open();
 
 				Thread.Sleep(500);
@@ -1829,7 +1820,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						// We reset the board while attempting to connect, so now we don't have a serial port.
 						// Create one and do the DTR to reset
-						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
+						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort);
 						resetSerialPort.Open();
 
 						Thread.Sleep(500);
@@ -2191,7 +2182,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(this.ActivePrinter.DriverType).SerialPortAlreadyOpen(serialPortName);
+			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 			{
@@ -2199,7 +2190,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.ActivePrinter.DriverType).CreateAndOpen(serialPortName, baudRate, true);
+						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).CreateAndOpen(serialPortName, baudRate, true);
 #if __ANDROID__
 						ToggleHighLowHeigh(serialPort);
 #endif
@@ -2238,7 +2229,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// If the serial port isn't available (i.e. the specified port name wasn't found in GetPortNames()) or the serial
 				// port is already opened in another instance or process, then report the connection problem back to the user
 				connectionFailureMessage = (serialPortIsAlreadyOpen ?
-					string.Format("{0} in use", PrinterConnectionAndCommunication.Instance.ActivePrinter.ComPort) :
+					string.Format("{0} in use", this.ComPort) :
 					LocalizedString.Get("Port not found"));
 
 				OnConnectionFailed(null);
@@ -2262,8 +2253,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
 			if (portNames.Length > 0)
 			{
-				//Debug.WriteLine("Connecting to: {0} {1}".FormatWith(this.ActivePrinter.ComPort, this.BaudRate));
-				AttemptToConnect(this.ActivePrinter.ComPort, this.BaudRate);
+				AttemptToConnect(this.ComPort, this.BaudRate);
 				if (CommunicationState == CommunicationStates.FailedToConnect)
 				{
 					OnConnectionFailed(null);
@@ -2305,11 +2295,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			if (!string.IsNullOrEmpty(currentPortName))
 			{
-				this.ActivePrinter.ComPort = currentPortName;
+				this.ComPort = currentPortName;
 			}
 #endif
 
-			if (SerialPortIsAvailable(this.ActivePrinter.ComPort))
+			if (SerialPortIsAvailable(this.ComPort))
 			{
 				//Create a timed callback to determine whether connection succeeded
 				Timer connectionTimer = new Timer(new TimerCallback(ConnectionCallbackTimer));
@@ -2323,11 +2313,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
-				Debug.WriteLine("Connection failed: {0}".FormatWith(this.ActivePrinter.ComPort));
+				Debug.WriteLine("Connection failed: {0}".FormatWith(this.ComPort));
 
 				connectionFailureMessage = string.Format(
 									"{0} is not available".Localize(),
-									this.ActivePrinter.ComPort);
+									this.ComPort);
 
 				OnConnectionFailed(null);
 			}

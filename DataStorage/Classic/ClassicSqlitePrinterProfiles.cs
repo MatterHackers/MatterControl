@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 {
 	public class ClassicSqlitePrinterProfiles
 	{
-
 		public class ClassicSettingsLayer
 		{
 			//Container class representing a collection of setting along with the meta info for that collection
@@ -93,24 +92,32 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			string fullProfilePath = Path.Combine(profilePath, printer.Id + ".json");
 
+			layeredProfile.UserLayer["MatterControl.Make"] = printer.Make ?? "";
+			layeredProfile.UserLayer["MatterControl.Model"] = printer.Model ?? "";
+			layeredProfile.UserLayer["MatterControl.BaudRate"] = printer.BaudRate ?? "";
+			layeredProfile.UserLayer["MatterControl.ComPort"] = printer.ComPort ?? "";
+			layeredProfile.UserLayer["MatterControl.DefaultMaterialPresets"] = printer.MaterialCollectionIds ?? "";
+			layeredProfile.UserLayer["MatterControl.WindowsDriver"] = printer.DriverType ?? "";
+			layeredProfile.UserLayer["MatterControl.DeviceToken"] = printer.DeviceToken ?? "";
+			layeredProfile.UserLayer["MatterControl.DeviceType"] = printer.DeviceType ?? "";
+
+			// TODO: Where should this be collected from or stored to?
+			//layeredProfile.SetActiveValue("MatterControl.<<<<<LLLLLEVELING>>>>>", printer.PrintLevelingJsonData);
+
+			// TODO: Where can we find CalibrationFiiles in the current model?
+			//layeredProfile.SetActiveValue("MatterControl.CalibrationFiles", printer.Make);
+
 			File.WriteAllText(fullProfilePath, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
-
-			//GET LEVELING DATA from DB
-
-			//PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(printer);
-
-			/*
-			PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-				levelingData.SampledPosition0,
-				levelingData.SampledPosition1,
-				levelingData.SampledPosition2,
-				ActiveSliceSettings.Instance.PrintCenter); */
 
 		}
 
 		private static void LoadMaterialSettings(LayeredProfile layeredProfile, Printer printer)
 		{
-			var materialAssignments = printer.MaterialCollectionIds.Split(',');
+			var materialAssignments = printer.MaterialCollectionIds?.Split(',');
+			if(materialAssignments == null)
+			{
+				return;
+			}
 
 			var collections = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.PrinterId == printer.Id && v.Tag == "material");
 			foreach (var collection in collections)
@@ -176,7 +183,6 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			settings.Add(defaultSettingsLayer);
 		}
 
-		
 		private static ClassicSettingsLayer LoadConfigurationSettingsFromFile(string pathAndFileName, SliceSettingsCollection collection)
 		{
 			Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();

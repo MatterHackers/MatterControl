@@ -1149,6 +1149,44 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			return foundValue;
 		}
+
+		public static SettingsLayer LoadFromIni(TextReader reader)
+		{
+			var layer = new SettingsLayer();
+
+			string line;
+			while ((line = reader.ReadLine()) != null)
+			{
+				var segments = line.Split('=');
+				if (!line.StartsWith("#") && !string.IsNullOrEmpty(line))
+				{
+					string key = segments[0].Trim();
+					layer[key] = segments[1].Trim();
+				}
+			}
+
+			return layer;
+		}
+
+		public static SettingsLayer LoadFromIni(string filePath)
+		{
+			var settings = from line in File.ReadAllLines(filePath)
+						   let segments = line.Split('=')
+						   where !line.StartsWith("#") && !string.IsNullOrEmpty(line)
+						   select new
+						   {
+							   Key = segments[0].Trim(),
+							   Value = segments[1].Trim()
+						   };
+
+			var layer = new SettingsLayer();
+			foreach (var setting in settings)
+			{
+				layer[setting.Key] = setting.Value;
+			}
+
+			return layer;
+		}
 	}
 
 	public class ProfileData

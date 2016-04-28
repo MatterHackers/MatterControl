@@ -272,7 +272,9 @@ Advanced
         extruder_count
         heat_extruder_before_homing
         extruders_share_temperature
+        z_homes_to_max
       Firmware
+        MatterControl.BaudRate
         z_can_be_negative
         gcode_flavor
         use_relative_e_distances
@@ -293,7 +295,6 @@ Advanced
       Speed
         resume_first_layer_speed
       Homing
-        z_homes_to_max
         resume_position_before_z_home
     Custom G-Code
       Start G-Code

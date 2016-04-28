@@ -35,6 +35,8 @@ using Newtonsoft.Json;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.Agg;
 using System.Linq;
+using System.Collections.Generic;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -195,8 +197,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static SettingsLayer LoadMatterHackersBaseLayer()
 		{
-			// TODO: Build if missing?
 			string baseConfigPath = Path.Combine(profilesPath, "config.json");
+			if(!File.Exists(baseConfigPath))
+			{
+				string configIniPath = StaticData.Instance.MapPath(Path.Combine("PrinterSettings", "config.ini"));
+
+				SettingsLayer baseLayer;
+
+				using (var sourceStream = StaticData.Instance.OpenSteam(configIniPath))
+				using (var reader = new StreamReader(sourceStream))
+				{
+					baseLayer = SettingsLayer.LoadFromIni(reader);
+				}
+				File.WriteAllText(baseConfigPath, JsonConvert.SerializeObject(baseLayer));
+
+				return baseLayer;
+			}
+
 			return JsonConvert.DeserializeObject<SettingsLayer>(File.ReadAllText(baseConfigPath));
 		}
 

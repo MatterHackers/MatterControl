@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
@@ -51,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private string filterTag;
 		private string filterLabel;
-		public AnchoredDropDownList DropDownList;
+		public StyledDropDownList DropDownList;
 		private TupleList<string, Func<bool>> DropDownMenuItems = new TupleList<string, Func<bool>>();
 
 		private int extruderIndex; //For multiple materials
@@ -221,9 +222,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #endif
 		}
 
-		private AnchoredDropDownList CreateDropdown()
+		private StyledDropDownList CreateDropdown()
 		{
-			AnchoredDropDownList dropDownList = new AnchoredDropDownList("- default -", maxHeight: 300);
+			var dropDownList = new StyledDropDownList("- default -", maxHeight: 300)
+			{
+				UseLeftIcons = true,
+				HAnchor = HAnchor.ParentLeftRight,
+				MenuItemsPadding = new BorderDouble(10, 4, 10, 6),
+			};
+
 			dropDownList.Margin = new BorderDouble(0, 3);
 			dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
 
@@ -237,7 +244,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += onItemSelect;
 			}
 
-			// put in a small bottom region
+			MenuItem addNewPreset = dropDownList.AddItem("Add New Setting...", "new", InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")));
+			addNewPreset.Selected += onNewItemSelect;
+
+			if (false)
 			{
 				FlowLayoutWidget container = new FlowLayoutWidget();
 				container.HAnchor = HAnchor.ParentLeftRight;
