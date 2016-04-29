@@ -49,13 +49,17 @@ namespace MatterHackers.MatterControl
 			int index = 0;
 			for (int x = 0; x < themeCount / 2; x++)
 			{
-				FlowLayoutWidget columnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-				columnContainer.Width = containerHeight;
-
+				var columnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom)
+				{
+					Width = containerHeight
+				};
 				columnContainer.AddChild(CreateThemeButton(allThemes[index], index));
-				columnContainer.AddChild(CreateThemeButton(allThemes[index + themeCount / 2], index));
+
+				int secondRowIndex = index + themeCount / 2;
+				columnContainer.AddChild(CreateThemeButton(allThemes[secondRowIndex], secondRowIndex));
 
 				this.AddChild(columnContainer);
+
 				index++;
 			}
 			this.BackgroundColor = RGBA_Bytes.White;
