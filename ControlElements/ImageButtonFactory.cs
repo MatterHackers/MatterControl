@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 				InvertLightness.DoInvertLightness(disabledImage);
 			}
 
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
 				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 				InvertLightness.DoInvertLightness(disabledImage);
 			}
 
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
 				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);

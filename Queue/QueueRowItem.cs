@@ -362,7 +362,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void AddHandlers()
 		{
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 		}
 

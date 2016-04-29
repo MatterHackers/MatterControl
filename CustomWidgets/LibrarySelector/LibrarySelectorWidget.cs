@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			PrintItemCollection localPrintItemCollection = printItemCollection;
 			clickThumbnail.Click += (sender, e) =>
 			{
-				if (ActiveTheme.Instance.IsTouchScreen)
+				if (UserSettings.Instance.IsTouchScreen)
 				{
 					if (parentProvider == null)
 					{

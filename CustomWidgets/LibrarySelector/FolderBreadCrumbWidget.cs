@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				this.AddChild(separator);
 
 				Button searchResultsButton = null;
-				if (ActiveTheme.Instance.IsTouchScreen)
+				if (UserSettings.Instance.IsTouchScreen)
 				{
 					searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
 				}

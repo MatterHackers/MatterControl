@@ -102,8 +102,8 @@ namespace MatterHackers.MatterControl
 			TopContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			TopContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			ApplicationMenuRow menuRow = new ApplicationMenuRow();
 #if !__ANDROID__
+			ApplicationMenuRow menuRow = new ApplicationMenuRow();
 			TopContainer.AddChild(menuRow);
 #endif
 
@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl
 		public ApplicationController()
 		{
 			//Name = "MainSlidePanel";
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		public void ThemeChanged(object sender, EventArgs e)
@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl
 					//using (new PerformanceTimer("Startup", "AppController Instance"))
 					{
 						globalInstance = new ApplicationController();
-						if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 						{
 							globalInstance.MainView = new CompactApplicationView();
 						}

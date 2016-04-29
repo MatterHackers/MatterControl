@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddHandlers()
 		{
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		public void ThemeChanged(object sender, EventArgs e)

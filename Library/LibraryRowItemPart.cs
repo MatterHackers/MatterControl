@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 			{
 				this.Height = 65;
 			}
