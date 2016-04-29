@@ -521,11 +521,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				topToBottomSettings.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 
-				foreach (var kvp in ActiveSliceSettings.Instance.BaseLayer)
+				foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
 				{
-					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, kvp.Key))
+					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
 					{
-						OrganizerSettingsData settingInfo = new OrganizerSettingsData(kvp.Key, kvp.Key, OrganizerSettingsData.DataEditTypes.STRING);
+						OrganizerSettingsData settingInfo = new OrganizerSettingsData(keyValue.Key, keyValue.Key, OrganizerSettingsData.DataEditTypes.STRING);
 						if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingInfo.SlicerConfigName))
 						{
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, rightContentWidth, 0);

@@ -275,6 +275,7 @@ Advanced
         z_homes_to_max
       Firmware
         MatterControl.BaudRate
+        MatterControl.ComPort
         z_can_be_negative
         gcode_flavor
         use_relative_e_distances

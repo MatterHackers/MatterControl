@@ -622,10 +622,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var bigStringForHashCode = new StringBuilder();
 
-				foreach (var kvp in this.BaseLayer)
+				foreach (var keyValue in this.BaseLayer)
 				{
-					string activeValue = ActiveValue(kvp.Key);
-					bigStringForHashCode.Append(kvp.Key);
+					string activeValue = ActiveValue(keyValue.Key);
+					bigStringForHashCode.Append(keyValue.Key);
 					bigStringForHashCode.Append(activeValue);
 				}
 
@@ -638,14 +638,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			using (var outstream = new StreamWriter(fileName))
 			{
-				foreach (var kvp in this.BaseLayer)
+				foreach (var keyValue in this.BaseLayer)
 				{
-					string activeValue = ActiveValue(kvp.Key);
+					string activeValue = ActiveValue(keyValue.Key);
 					if (replaceMacroValues)
 					{
 						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
 					}
-					outstream.Write(string.Format("{0} = {1}\n", kvp.Key, activeValue));
+					outstream.Write(string.Format("{0} = {1}\n", keyValue.Key, activeValue));
 					activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
 				}
 			}
@@ -1028,9 +1028,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsLayer(Dictionary<string, string> settingsDictionary)
 		{
-			foreach(var kvp in settingsDictionary)
+			foreach(var keyValue in settingsDictionary)
 			{
-				this[kvp.Key] = kvp.Value;
+				this[keyValue.Key] = keyValue.Value;
 			}
 		}
 

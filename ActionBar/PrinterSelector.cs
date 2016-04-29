@@ -29,7 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -62,7 +64,7 @@ namespace MatterHackers.MatterControl
 				}
 				else if(this.SelectedValue == "new")
 				{
-					int a = 0;
+					UiThread.RunOnIdle(ConnectionWizard.Show);
 				}
 			};
 		}

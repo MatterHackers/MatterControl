@@ -304,31 +304,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (line.Length > 0)
 				{
+					string sanitizedLine = line.Replace('"', ' ').Trim();
 					switch (CountLeadingSpaces(line))
 					{
 						case 0:
-							string userLevelText = line.Replace('"', ' ').Trim();
-							userLevelToAddTo = new OrganizerUserLevel(userLevelText);
-							UserLevels.Add(userLevelText, userLevelToAddTo);
+							userLevelToAddTo = new OrganizerUserLevel(sanitizedLine);
+							UserLevels.Add(sanitizedLine, userLevelToAddTo);
 							break;
 
 						case 2:
-							categoryToAddTo = new OrganizerCategory(line.Replace('"', ' ').Trim());
+							categoryToAddTo = new OrganizerCategory(sanitizedLine);
 							userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
 							break;
 
 						case 4:
-							groupToAddTo = new OrganizerGroup(line.Replace('"', ' ').Trim());
+							groupToAddTo = new OrganizerGroup(sanitizedLine);
 							categoryToAddTo.GroupsList.Add(groupToAddTo);
 							break;
 
 						case 6:
-							subGroupToAddTo = new OrganizerSubGroup(line.Replace('"', ' ').Trim());
+							subGroupToAddTo = new OrganizerSubGroup(sanitizedLine);
 							groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
 							break;
 
 						case 8:
-							OrganizerSettingsData data = GetSettingsData(line.Replace('"', ' ').Trim());
+							OrganizerSettingsData data = GetSettingsData(sanitizedLine);
 							if (data != null)
 							{
 								subGroupToAddTo.SettingDataList.Add(data);
