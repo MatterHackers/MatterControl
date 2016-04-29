@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		public ConnectionWidgetBase(ConnectionWizard wizard)
 		{
 			this.connectionWizard = wizard;
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent((s,e) => this.Invalidate(), ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent((s,e) => this.Invalidate(), ref unregisterEvents);
 		}
 
 		public int GetPrinterRecordCount()

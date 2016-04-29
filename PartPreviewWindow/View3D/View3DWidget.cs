@@ -430,7 +430,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
 			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
 			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
@@ -1338,7 +1338,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string renderTypeString = UserSettings.Instance.get("defaultRenderSetting");
 			if (renderTypeString == null)
 			{
-				if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+				if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 				{
 					renderTypeString = "Shaded";
 				}
@@ -1506,7 +1506,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							viewOptionContainer.AddChild(showBuildVolumeCheckBox);
 						}
 
-						if (ActiveTheme.Instance.IsTouchScreen)
+						if (UserSettings.Instance.IsTouchScreen)
 						{
 							UserSettings.Instance.set("defaultRenderSetting", RenderTypes.Shaded.ToString());
 						}

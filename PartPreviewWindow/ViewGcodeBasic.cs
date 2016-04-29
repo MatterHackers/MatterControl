@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.windowMode = windowMode;
 			this.printItem = printItem;
 
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 			{
 				sliderWidth = 20;
 			}

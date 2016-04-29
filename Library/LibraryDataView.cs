@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			clickThumbnail.Click += (sender, e) =>
 			{
-				if (ActiveTheme.Instance.IsTouchScreen)
+				if (UserSettings.Instance.IsTouchScreen)
 				{
 					if (parentProvider == null)
 					{

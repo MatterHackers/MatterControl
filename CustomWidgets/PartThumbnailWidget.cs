@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl
 			this.Click += DoOnMouseClick;
 			this.MouseEnterBounds += onEnter;
 			this.MouseLeaveBounds += onExit;
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		private void DoOnMouseClick(object sender, EventArgs e)

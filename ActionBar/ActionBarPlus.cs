@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			// Add Child Elements
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Responsive)
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Responsive)
 			{
 				this.AddChild(new ActionBar.PrinterActionRow());
 			}
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			this.Padding = new BorderDouble(bottom: 6);
 
 			// Add Handlers
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		public void ThemeChanged(object sender, EventArgs e)
