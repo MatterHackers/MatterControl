@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -47,12 +49,18 @@ namespace MatterHackers.MatterControl
 				this.SelectedValue = ActiveSliceSettings.ProfileData.ActiveProfileID;
 			}
 
+			this.AddItem("Add New Printer...", "new", InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")));
+
 			this.SelectionChanged += (s, e) =>
 			{
 				int printerID;
 				if (int.TryParse(this.SelectedValue, out printerID))
 				{
 					ActiveSliceSettings.SwitchToProfile(printerID);
+				}
+				else if(this.SelectedValue == "new")
+				{
+					int a = 0;
 				}
 			};
 		}
