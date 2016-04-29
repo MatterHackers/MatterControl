@@ -38,6 +38,8 @@ namespace MatterHackers.MatterControl
 	{
 		public PrinterSelector() : base("Printers".Localize() + "... ")
 		{
+			UseLeftIcons = true;
+
 			//Add the menu items to the menu itself
 			foreach (var printer in ActiveSliceSettings.ProfileData.Profiles)
 			{
