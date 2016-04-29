@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
 
 			mainContainer.AddChild(buttonContainer);
 
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				// the redeem design code button
 				{

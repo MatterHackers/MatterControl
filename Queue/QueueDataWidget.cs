@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						};
 					}
 
-					bool touchScreenMode = ActiveTheme.Instance.IsTouchScreen;
+					bool touchScreenMode = UserSettings.Instance.IsTouchScreen;
 
 					if (OemSettings.Instance.ShowShopButton)
 					{
@@ -704,7 +704,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			menuItems = new List<PrintItemAction>();
 
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				menuItems.Add(new PrintItemAction()
 				{

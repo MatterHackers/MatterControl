@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
 #endif
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetUpdateControl());
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
 #endif
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetModeControl());
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -541,7 +541,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UserSettings.Instance.Fields.IsSimpleMode = false;
 			}
-			ActiveTheme.Instance.ReloadThemeSettings();
 		}
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)

@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void AddHandlers()
 		{
-			//ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+			//ActiveTheme.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
 			GestureFling += (object sender, FlingEventArgs eventArgs) =>
 			{
 				if (!this.libraryDataView.EditMode)
@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 			{
 				this.Height = 65;
 			}

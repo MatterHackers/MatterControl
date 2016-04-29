@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 		public InstructionsPage(string pageDescription, string instructionsText)
 			: base(pageDescription)
 		{
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				extraTextScaling = 1.33333;
 			}

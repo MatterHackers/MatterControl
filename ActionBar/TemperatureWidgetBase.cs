@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(currentTempIndicator);
 			this.AddChild(buttonContainer);
 
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
 			this.MouseEnterBounds += onEnterBounds;
 			this.MouseLeaveBounds += onLeaveBounds;
