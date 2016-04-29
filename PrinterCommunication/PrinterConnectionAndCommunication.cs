@@ -1315,16 +1315,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			// TODO: Shouldn't this logic be in the UI layer where the controls are owned and hooked in via PrintFinished?
 			bool oneOrMoreValuesReset = false;
-			foreach (var kvp in ActiveSliceSettings.Instance.BaseLayer)
+			foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
 			{
-				string currentValue = ActiveSliceSettings.Instance.ActiveValue(kvp.Key);
+				string currentValue = ActiveSliceSettings.Instance.ActiveValue(keyValue.Key);
 
 				bool valueIsClear = currentValue == "0" | currentValue == "";
-				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(kvp.Key);
+				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
 				if (data?.ResetAtEndOfPrint == true && !valueIsClear)
 				{
 					oneOrMoreValuesReset = true;
-					ActiveSliceSettings.Instance.ClearValue(kvp.Key);
+					ActiveSliceSettings.Instance.ClearValue(keyValue.Key);
 				}
 			}
 
