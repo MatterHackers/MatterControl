@@ -44,15 +44,17 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	internal class ButtonEnableData
+	internal class MenuEnableData
 	{
 		internal bool multipleItems;
 		internal bool protectedItems;
 		internal bool collectionItems;
         internal bool shareItems;
+		internal MenuItem menuItemToChange;
 
-        internal ButtonEnableData(bool multipleItems, bool protectedItems, bool collectionItems, bool shareItems = false)
+		internal MenuEnableData(MenuItem menuItemToChange, bool multipleItems, bool protectedItems, bool collectionItems, bool shareItems = false)
 		{
+			this.menuItemToChange = menuItemToChange;
 			this.multipleItems = multipleItems;
 			this.protectedItems = protectedItems;
 			this.collectionItems = collectionItems;
@@ -68,9 +70,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
 
-		private FlowLayoutWidget itemOperationButtons;
+		FlowLayoutWidget breadCrumbAndActionBar;
 		private FolderBreadCrumbWidget breadCrumbWidget;
-		private List<ButtonEnableData> editButtonsEnableData = new List<ButtonEnableData>();
+		private List<MenuEnableData> actionMenuEnableData = new List<MenuEnableData>();
 
 		private Button addToLibraryButton;
 		private Button createFolderButton;
@@ -148,7 +150,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					searchPanel.AddChild(enterEditModeButton);
 					searchPanel.AddChild(leaveEditModeButton);
-
 					searchPanel.AddChild(searchInput);
 					searchPanel.AddChild(searchButton);
 				}
@@ -175,19 +176,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				buttonPanel.MinimumSize = new Vector2(0, 46);
 
                 AddLibraryButtonElements();
-				CreateEditBarButtons();
 
 				//allControls.AddChild(navigationPanel);
 				allControls.AddChild(searchPanel);
-				allControls.AddChild(itemOperationButtons);
 
 				libraryDataView = new LibraryDataView();
 				breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
 				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
 				libraryDataView.ChangedCurrentLibraryProvider += LibraryProviderChanged;
+				breadCrumbAndActionBar = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+				};
 
-				allControls.AddChild(breadCrumbWidget);
+				breadCrumbAndActionBar.AddChild(GetActionsMenu());
+				breadCrumbAndActionBar.AddChild(breadCrumbWidget);
+
+				allControls.AddChild(breadCrumbAndActionBar);
 
 				allControls.AddChild(libraryDataView);
 				allControls.AddChild(buttonPanel);
@@ -198,6 +204,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AddChild(allControls);
 
 			AddHandlers();
+		}
+
+		private GuiWidget GetActionsMenu()
+		{
+			var actionMenu = new DropDownMenu("Action".Localize() + "... ");
+			actionMenu.NormalColor = new RGBA_Bytes();
+			actionMenu.BorderWidth = 1;
+			actionMenu.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
+			actionMenu.MenuAsWideAsItems = false;
+			actionMenu.VAnchor = VAnchor.ParentBottomTop;
+			actionMenu.Margin = new BorderDouble(3);
+			actionMenu.Padding = new BorderDouble(10);
+
+			CreateActionMenuItems(actionMenu);
+			return actionMenu;
 		}
 
 		public string ProviderMessage
@@ -322,113 +343,113 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private void CreateEditBarButtons()
+		List<PrintItemAction> menuItems = new List<PrintItemAction>();
+		private void CreateActionMenuItems(DropDownMenu actionMenu)
 		{
-			itemOperationButtons = new FlowLayoutWidget();
-			itemOperationButtons.Visible = false;
-			itemOperationButtons.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-			itemOperationButtons.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-			double oldWidth = editButtonFactory.FixedWidth;
-			editButtonFactory.FixedWidth = 0;
-
-			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
-			exportItemButton.Name = "Library Export Button";
-			exportItemButton.Margin = new BorderDouble(3, 0);
-			exportItemButton.Click += exportButton_Click;
-			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
-			itemOperationButtons.AddChild(exportItemButton);
-
-			Button editItemButton = editButtonFactory.Generate("Edit".Localize());
-			editItemButton.Name = "Library Edit Item Button";
-			editItemButton.Margin = new BorderDouble(3, 0);
-			editItemButton.Click += editButton_Click;
-			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
-			itemOperationButtons.AddChild(editItemButton);
-
-			// add the remove button
+			actionMenu.SelectionChanged += (sender, e) =>
 			{
-				Button removeFromLibraryButton = editButtonFactory.Generate("Remove".Localize());
-				removeFromLibraryButton.Name = "Library Remove Item Button";
-				removeFromLibraryButton.Margin = new BorderDouble(3, 0);
-				removeFromLibraryButton.Click += deleteFromLibraryButton_Click;
-				editButtonsEnableData.Add(new ButtonEnableData(true, false, true));
-				itemOperationButtons.AddChild(removeFromLibraryButton);
-			}
-
-            
-                        
-            // add the share button            
-            {
-                Button shareFromLibraryButton = editButtonFactory.Generate("Share".Localize());
-				shareFromLibraryButton.ToolTipText = "Share designs from your Cloud Library".Localize();
-                shareFromLibraryButton.Margin = new BorderDouble(3, 0);
-                shareFromLibraryButton.Click += shareFromLibraryButton_Click;                
-                editButtonsEnableData.Add(new ButtonEnableData(false, false, false, true));
-                itemOperationButtons.AddChild(shareFromLibraryButton);
-            }
-
-
-
-			// add a rename button
-			{
-				Button renameFromLibraryButton = editButtonFactory.Generate("Rename".Localize());
-				renameFromLibraryButton.Name = "Rename From Library Button";
-				renameFromLibraryButton.Margin = new BorderDouble(3, 0);
-				editButtonsEnableData.Add(new ButtonEnableData(false, false, true));
-				itemOperationButtons.AddChild(renameFromLibraryButton);
-
-				renameFromLibraryButton.Click += (sender, e) =>
+				string menuSelection = ((DropDownMenu)sender).SelectedValue;
+				foreach (var menuItem in menuItems)
 				{
-					if (libraryDataView.SelectedItems.Count == 1)
+					if (menuItem.Title == menuSelection)
 					{
-						if (renameItemWindow == null)
-						{
-							LibraryRowItem rowItem = libraryDataView.SelectedItems[0];
-							LibraryRowItemPart partItem = rowItem as LibraryRowItemPart;
-							LibraryRowItemCollection collectionItem = rowItem as LibraryRowItemCollection;
-
-							string currentName = libraryDataView.SelectedItems[0].ItemName;
-
-							renameItemWindow = new RenameItemWindow(currentName, (returnInfo) =>
-							{
-								if (partItem != null)
-								{
-									libraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
-								}
-								else if (collectionItem != null)
-								{
-									libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
-								}
-
-								libraryDataView.ClearSelectedItems();
-							});
-
-							renameItemWindow.Closed += (sender2, e2) => { renameItemWindow = null; };
-						}
-						else
-						{
-							renameItemWindow.BringToFront();
-						}
-
-						/*
-						LibraryDataView.CurrentLibraryProvider.RenameCollection(collectionIndex, newName);
-
-						LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-						libraryItem.RenameThisInPrintLibrary(newName.Data);
-
-						 */
+						menuItem.Action?.Invoke(null, null);
 					}
-				};
+				}
+			};
+
+			// export menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Export".Localize(),
+				Action = (s, e) => exportButton_Click(s, null)
+			});
+			actionMenuEnableData.Add(new MenuEnableData(
+				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
+				false, false, false));
+
+			// edit menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Edit".Localize(),
+				Action = (s, e) => editButton_Click(s, null)
+			});
+			actionMenuEnableData.Add(new MenuEnableData(
+				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
+				false, false, false));
+
+			// remove menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Remove".Localize(),
+				Action = (s, e) => deleteFromLibraryButton_Click(s, null)
+			});
+			actionMenuEnableData.Add(new MenuEnableData(
+				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
+				true, false, true));
+
+			// share menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Share".Localize(),
+				Action = (s, e) => shareFromLibraryButton_Click(s, null)
+			});
+			actionMenuEnableData.Add(new MenuEnableData(
+				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
+				false, false, false, true));
+
+			// rename menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Rename".Localize(),
+				Action = (s, e) => renameFromLibraryButton_Click(s, null)
+			});
+			actionMenuEnableData.Add(new MenuEnableData(
+				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
+				false, false, true));
+		}
+
+		private void renameFromLibraryButton_Click(IEnumerable<QueueRowItem> s, object p)
+		{
+			if (libraryDataView.SelectedItems.Count == 1)
+			{
+				if (renameItemWindow == null)
+				{
+					LibraryRowItem rowItem = libraryDataView.SelectedItems[0];
+					LibraryRowItemPart partItem = rowItem as LibraryRowItemPart;
+					LibraryRowItemCollection collectionItem = rowItem as LibraryRowItemCollection;
+
+					string currentName = libraryDataView.SelectedItems[0].ItemName;
+
+					renameItemWindow = new RenameItemWindow(currentName, (returnInfo) =>
+										{
+											if (partItem != null)
+											{
+												libraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
+											}
+											else if (collectionItem != null)
+											{
+												libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
+											}
+
+											libraryDataView.ClearSelectedItems();
+										});
+
+					renameItemWindow.Closed += (sender2, e2) => { renameItemWindow = null; };
+				}
+				else
+				{
+					renameItemWindow.BringToFront();
+				}
+
+				/*
+				LibraryDataView.CurrentLibraryProvider.RenameCollection(collectionIndex, newName);
+
+				LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
+				libraryItem.RenameThisInPrintLibrary(newName.Data);
+
+				 */
 			}
-
-			Button addToQueueButton = editButtonFactory.Generate("Add to Queue".Localize());
-			addToQueueButton.Name = "Library Add To Queue Button";
-			addToQueueButton.Margin = new BorderDouble(3, 0);
-			addToQueueButton.Click += addToQueueButton_Click;
-			editButtonsEnableData.Add(new ButtonEnableData(true, true, false));
-			itemOperationButtons.AddChild(addToQueueButton);
-
-			editButtonFactory.FixedWidth = oldWidth;
 		}
 
 		private event EventHandler unregisterEvents;
@@ -462,7 +483,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void enterEditModeButtonClick(object sender, EventArgs e)
 		{
 			breadCrumbWidget.Visible = false;
-			itemOperationButtons.Visible = true;
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
 			libraryDataView.EditMode = true;
@@ -476,7 +496,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		void DoLeaveEditMode()
 		{
 			breadCrumbWidget.Visible = true;
-			itemOperationButtons.Visible = false;
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
 			libraryDataView.EditMode = false;
@@ -505,62 +524,57 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void onLibraryItemsSelected(object sender, EventArgs e)
 		{
-			SetEditButtonsStates();
+			SetActionMenuStates();
 		}
 
-		private void SetEditButtonsStates()
+		private void SetActionMenuStates()
 		{
 			int selectedCount = libraryDataView.SelectedItems.Count;
 
-			for(int buttonIndex=0; buttonIndex<itemOperationButtons.Children.Count; buttonIndex++)
+			for (int menuIndex = 0; menuIndex < actionMenuEnableData.Count; menuIndex++)
 			{
 				bool enabledStateToSet = (selectedCount > 0);
-				var child = itemOperationButtons.Children[buttonIndex];
-				var button = child as Button;
-				if (button != null)
+				if ((selectedCount > 1 && !actionMenuEnableData[menuIndex].multipleItems))
 				{
-					if ((selectedCount > 1 && !editButtonsEnableData[buttonIndex].multipleItems))
+					enabledStateToSet = false;
+				}
+				else
+				{
+					if (!actionMenuEnableData[menuIndex].protectedItems)
+					{
+						// so we can show for multi items lets check for protected items
+						for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
+						{
+							if (libraryDataView.SelectedItems[itemIndex].Protected)
+							{
+								enabledStateToSet = false;
+							}
+						}
+					}
+
+					if (!actionMenuEnableData[menuIndex].collectionItems)
+					{
+						// so we can show for multi items lets check for protected items
+						for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
+						{
+							bool isColection = (libraryDataView.SelectedItems[itemIndex] as LibraryRowItemCollection) != null;
+							if (isColection)
+							{
+								enabledStateToSet = false;
+							}
+						}
+					}
+				}
+
+				if (actionMenuEnableData[menuIndex].shareItems)
+				{
+					if (!libraryDataView.CurrentLibraryProvider.CanShare)
 					{
 						enabledStateToSet = false;
 					}
-					else
-					{
-						if (!editButtonsEnableData[buttonIndex].protectedItems)
-						{
-							// so we can show for multi items lets check for protected items
-							for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
-							{
-								if (libraryDataView.SelectedItems[itemIndex].Protected)
-								{
-									enabledStateToSet = false;
-								}
-							}
-						}
-
-						if (!editButtonsEnableData[buttonIndex].collectionItems)
-						{
-							// so we can show for multi items lets check for protected items
-							for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
-							{
-								bool isColection = (libraryDataView.SelectedItems[itemIndex] as LibraryRowItemCollection) != null;
-								if (isColection)
-								{
-									enabledStateToSet = false;
-								}
-							}
-						}
-					}
-
-                    if (editButtonsEnableData[buttonIndex].shareItems)
-                    {
-                        if (!libraryDataView.CurrentLibraryProvider.CanShare)
-                        {
-                            enabledStateToSet = false;
-                        }
-                    }
-
-					button.Enabled = enabledStateToSet;
 				}
+
+				actionMenuEnableData[menuIndex].menuItemToChange.Enabled = enabledStateToSet;
 			}
 		}
 
