@@ -140,7 +140,7 @@ namespace MatterHackers.Agg.UI
 
 			foreach (MenuItem item in e.NewItems)
 			{
-				item.MinimumSize = minSize;
+				item.MinimumSize = new Vector2(minSize.x, item.MinimumSize.y);
 				// remove it if it is there so we don't have two. It is ok to remove a delagate that is not present.
 				item.Selected -= new EventHandler(item_Selected);
 				item.Selected += new EventHandler(item_Selected);
@@ -264,10 +264,11 @@ namespace MatterHackers.Agg.UI
 		{
 			MenuItem menuItem = new MenuItem(new GuiWidget(HAnchor.ParentLeftRight, VAnchor.AbsolutePosition)
 			{
-				Height = 3,
+				Height = 2,
 				BackgroundColor = RGBA_Bytes.Gray,
 				Margin = new BorderDouble(3, 1),
-			}, "none");
+				VAnchor = VAnchor.ParentCenter,
+			}, "HorizontalLine");
 			MenuItems.Add(menuItem);
 		}
 	}
