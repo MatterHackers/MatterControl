@@ -358,16 +358,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			};
 
-			// export menu item
-			menuItems.Add(new PrintItemAction()
-			{
-				Title = "Export".Localize(),
-				Action = (s, e) => exportButton_Click(s, null)
-			});
-			actionMenuEnableData.Add(new MenuEnableData(
-				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
-				false, false, false));
-
 			// edit menu item
 			menuItems.Add(new PrintItemAction()
 			{
@@ -377,6 +367,20 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			actionMenuEnableData.Add(new MenuEnableData(
 				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
 				false, false, false));
+
+			actionMenu.AddHorizontalLine();
+
+			// rename menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Rename".Localize(),
+				Action = (s, e) => renameFromLibraryButton_Click(s, null)
+			});
+			actionMenuEnableData.Add(new MenuEnableData(
+				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
+				false, false, true));
+
+			actionMenu.AddHorizontalLine();
 
 			// remove menu item
 			menuItems.Add(new PrintItemAction()
@@ -388,6 +392,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
 				true, false, true));
 
+			// export menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Export".Localize(),
+				Action = (s, e) => exportButton_Click(s, null)
+			});
+			actionMenuEnableData.Add(new MenuEnableData(
+				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
+				false, false, false));
+
 			// share menu item
 			menuItems.Add(new PrintItemAction()
 			{
@@ -398,15 +412,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
 				false, false, false, true));
 
-			// rename menu item
-			menuItems.Add(new PrintItemAction()
-			{
-				Title = "Rename".Localize(),
-				Action = (s, e) => renameFromLibraryButton_Click(s, null)
-			});
-			actionMenuEnableData.Add(new MenuEnableData(
-				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
-				false, false, true));
+			SetActionMenuStates();
 		}
 
 		private void renameFromLibraryButton_Click(IEnumerable<QueueRowItem> s, object p)
