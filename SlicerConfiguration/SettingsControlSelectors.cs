@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += onItemSelect;
 			}
 
-			MenuItem addNewPreset = dropDownList.AddItem("Add New Setting...", "new", InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")));
+			MenuItem addNewPreset = dropDownList.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Setting...", "new");
 			addNewPreset.Selected += onNewItemSelect;
 
 			if (false)

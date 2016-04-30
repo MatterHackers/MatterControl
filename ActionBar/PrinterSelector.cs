@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 				this.SelectedValue = ActiveSliceSettings.ProfileData.ActiveProfileID;
 			}
 
-			this.AddItem("Add New Printer...", "new", InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")));
+			this.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Printer...", "new");
 
 			this.SelectionChanged += (s, e) =>
 			{
