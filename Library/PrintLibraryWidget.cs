@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// the add button
 			{
 				addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
-				addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it.
+				addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it. 
 				addToLibraryButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Library".Localize();
 				addToLibraryButton.Name = "Library Add Button";
 				buttonPanel.AddChild(addToLibraryButton);
@@ -380,8 +380,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
 				false, false, true));
 
-			actionMenu.AddHorizontalLine();
-
 			// remove menu item
 			menuItems.Add(new PrintItemAction()
 			{
@@ -391,6 +389,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			actionMenuEnableData.Add(new MenuEnableData(
 				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
 				true, false, true));
+
+			actionMenu.AddHorizontalLine();
+
+			// add to queue menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Add to Queue".Localize(),
+				Action = (s, e) => addToQueueButton_Click(s, null)
+			});
+			actionMenuEnableData.Add(new MenuEnableData(
+				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
+				true, true, false));
 
 			// export menu item
 			menuItems.Add(new PrintItemAction()
