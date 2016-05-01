@@ -637,7 +637,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsRow2.AddChild(unitsArea);
 			settingsRow2.AddChild(restoreArea);
 
-			if (!ActiveSliceSettings.Instance.InBaseConfig(settingData.SlicerConfigName))
+			if (!ActiveSliceSettings.Instance.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
 				// the setting we think we are adding is not in the config.ini it may have been deprecated
 				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in config.ini", settingData.SlicerConfigName));

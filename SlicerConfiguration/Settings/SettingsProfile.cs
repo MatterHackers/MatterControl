@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using SettingsDictionary = Dictionary<string, string>;
 	using DataStorage;
 	using Agg.PlatformAbstract;
+	using Newtonsoft.Json.Linq;
 	public class SettingsProfile
 	{
 		private static string configFileExtension = "slice";
@@ -92,12 +93,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				layeredProfile.ActiveQualityKey = value;
 			}
-		}
-
-		public bool InBaseConfig(string name)
-		{
-			//Check whether the default settings (layer 0) contain a settings definition
-			return BaseLayer.ContainsKey(name);
 		}
 
 		internal void RunInTransaction(Action<SettingsProfile> action)
@@ -910,6 +905,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public string Model => layeredProfile.GetValue("MatterControl.Model");
+
+		HashSet<string> knownSettings = null;
+		public HashSet<string> KnownSettings
+		{
+			get
+			{
+				if (knownSettings == null)
+				{
+					string propertiesJson = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+					var settingsData = JArray.Parse(propertiesJson);
+
+					knownSettings = new HashSet<string>(settingsData.Select(s => s["SlicerConfigName"].Value<string>()));
+				}
+
+				return knownSettings;
+			}
+		}
 
 		public string ManualMovementSpeeds()
 		{
