@@ -259,17 +259,5 @@ namespace MatterHackers.Agg.UI
 
 			return menuItem;
 		}
-
-		internal void AddHorizontalLine()
-		{
-			MenuItem menuItem = new MenuItem(new GuiWidget(HAnchor.ParentLeftRight, VAnchor.AbsolutePosition)
-			{
-				Height = 2,
-				BackgroundColor = RGBA_Bytes.Gray,
-				Margin = new BorderDouble(3, 1),
-				VAnchor = VAnchor.ParentCenter,
-			}, "HorizontalLine");
-			MenuItems.Add(menuItem);
-		}
 	}
 }
