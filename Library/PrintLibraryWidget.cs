@@ -376,9 +376,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Rename".Localize(),
 				Action = (s, e) => renameFromLibraryButton_Click(s, null)
 			});
-			actionMenuEnableData.Add(new MenuEnableData(
-				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
-				false, false, true));
+			actionMenuEnableData.Add(new MenuEnableData(actionMenu.AddItem(menuItems[menuItems.Count - 1].Title), false, false, true));
 
 			// remove menu item
 			menuItems.Add(new PrintItemAction()
@@ -438,18 +436,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					string currentName = libraryDataView.SelectedItems[0].ItemName;
 
 					renameItemWindow = new RenameItemWindow(currentName, (returnInfo) =>
-										{
-											if (partItem != null)
-											{
-												libraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
-											}
-											else if (collectionItem != null)
-											{
-												libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
-											}
+					{
+						if (partItem != null)
+						{
+							libraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
+						}
+						else if (collectionItem != null)
+						{
+							libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
+						}
 
-											libraryDataView.ClearSelectedItems();
-										});
+						libraryDataView.ClearSelectedItems();
+					});
 
 					renameItemWindow.Closed += (sender2, e2) => { renameItemWindow = null; };
 				}

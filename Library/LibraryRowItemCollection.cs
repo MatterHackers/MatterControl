@@ -77,7 +77,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override bool Protected
 		{
-			get { return false; }
+			get
+			{
+				return currentProvider.IsProtected();
+			}
 		}
 
 		public override void Export()
