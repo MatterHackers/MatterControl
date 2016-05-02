@@ -46,6 +46,22 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
+	internal class ButtonEnableData
+	{
+		internal bool multipleItems;
+		internal bool protectedItems;
+		internal bool collectionItems;
+		internal bool shareItems;
+
+		internal ButtonEnableData(bool multipleItems, bool protectedItems, bool collectionItems, bool shareItems = false)
+		{
+			this.multipleItems = multipleItems;
+			this.protectedItems = protectedItems;
+			this.collectionItems = collectionItems;
+			this.shareItems = shareItems;
+		}
+	}
+
 	public class QueueDataWidget : GuiWidget
 	{
 		public static SendButtonAction sendButtonFunction = null;

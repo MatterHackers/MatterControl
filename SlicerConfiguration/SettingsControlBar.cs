@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					int colorIndex = i % colorList.Count;
 					RGBA_Bytes color = colorList[colorIndex];
-					this.AddChild(new PresetSelectorWidget(string.Format("{0} {1}", "Material".Localize(), i), color, "material", i));
+					this.AddChild(new PresetSelectorWidget(string.Format("{0} {1}", "Material".Localize(), i + 1), color, "material", i));
 				}
 			}
 			else

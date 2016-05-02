@@ -59,11 +59,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			navigationButtonFactory.disabledFillColor = navigationButtonFactory.normalFillColor;
 			navigationButtonFactory.Margin = new BorderDouble(10, 0);
 			navigationButtonFactory.borderWidth = 0;
-		}
 
-		public override void OnBoundsChanged(EventArgs e)
-		{
-			base.OnBoundsChanged(e);
+			HAnchor = HAnchor.ParentLeftRight;
 		}
 
 		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
@@ -137,9 +134,9 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			// while all the buttons don't fit in the control
 			if (this.Parent != null
-				&& this.Parent.Width > 0
+				&& this.Width > 0
 				&& this.Children.Count > 4
-				&& this.GetChildrenBoundsIncludingMargins().Width > this.Parent.Width)
+				&& this.GetChildrenBoundsIncludingMargins().Width > (this.Width - 20))
 			{
 				// lets take out the > and put in a ...
 				this.RemoveChild(1);
@@ -148,7 +145,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				separator.Margin = new BorderDouble(3, 0);
 				this.AddChild(separator, 1);
 
-				while (this.GetChildrenBoundsIncludingMargins().Width > this.Parent.Width
+				while (this.GetChildrenBoundsIncludingMargins().Width > this.Width - 20
 					&& this.Children.Count > 4)
 				{
 					this.RemoveChild(3);

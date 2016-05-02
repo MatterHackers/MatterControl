@@ -140,7 +140,7 @@ namespace MatterHackers.Agg.UI
 
 			foreach (MenuItem item in e.NewItems)
 			{
-				item.MinimumSize = minSize;
+				item.MinimumSize = new Vector2(minSize.x, item.MinimumSize.y);
 				// remove it if it is there so we don't have two. It is ok to remove a delagate that is not present.
 				item.Selected -= new EventHandler(item_Selected);
 				item.Selected += new EventHandler(item_Selected);
@@ -242,25 +242,17 @@ namespace MatterHackers.Agg.UI
 				mainControlText.Margin = MenuItemsPadding;
 			}
 
-			GuiWidget normalTextWithMargin = new GuiWidget();
-			normalTextWithMargin.HAnchor = HAnchor.FitToChildren;
-			normalTextWithMargin.BackgroundColor = MenuItemsBackgroundColor;
-			TextWidget normal = new TextWidget(name, pointSize: pointSize);
-			normal.Margin = MenuItemsPadding;
-			normal.TextColor = MenuItemsTextColor;
-			normalTextWithMargin.AddChild(normal);
-			normalTextWithMargin.VAnchor = VAnchor.FitToChildren;
-
-			GuiWidget hoverTextWithMargin = new GuiWidget();
-			hoverTextWithMargin.HAnchor = HAnchor.FitToChildren;
-			hoverTextWithMargin.BackgroundColor = MenuItemsBackgroundHoverColor;
-			TextWidget hover = new TextWidget(name, pointSize: pointSize);
-			hover.Margin = MenuItemsPadding;
-			hover.TextColor = mainControlText.TextColor;
-			hoverTextWithMargin.AddChild(hover);
-			hoverTextWithMargin.VAnchor = VAnchor.FitToChildren;
-
-			MenuItem menuItem = new MenuItem(new MenuItemStatesView(normalTextWithMargin, hoverTextWithMargin), value);
+			//MenuItem menuItem = new MenuItem(new MenuItemStatesView(normalTextWithMargin, hoverTextWithMargin), value);
+			MenuItem menuItem = new MenuItem(new MenuItemColorStatesView(name)
+			{
+				NormalBackgroundColor = MenuItemsBackgroundColor,
+				NormalTextColor = mainControlText.TextColor,
+				OverBackgroundColor = MenuItemsBackgroundHoverColor,
+				OverTextColor = mainControlText.TextColor,
+				DisabledTextColor = RGBA_Bytes.Gray,
+				PointSize = pointSize,
+				Padding = MenuItemsPadding,
+			}, value);
 			menuItem.Text = name;
 			menuItem.Name = name + " Menu Item";
 			MenuItems.Add(menuItem);

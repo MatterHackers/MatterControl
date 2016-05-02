@@ -166,7 +166,6 @@ namespace MatterHackers.MatterControl.UI
 			testRunner.ClickByName("Select a Printer Button");
 			testRunner.Wait(1);
 
-
 			if (!firstAdd)
 			{
 				testRunner.ClickByName("Add new printer button");

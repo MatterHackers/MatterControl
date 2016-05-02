@@ -1224,6 +1224,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "MatterControl.ComPort",
+    "PresentationName": "ComPort",
+    "HelpText": "",
+    "DataEditType": "STRING",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "vibration_limit",
     "PresentationName": "Vibration Limit",
     "HelpText": "This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.",

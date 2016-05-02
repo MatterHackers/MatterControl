@@ -27,7 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -36,6 +40,8 @@ namespace MatterHackers.MatterControl
 	{
 		public PrinterSelector() : base("Printers".Localize() + "... ")
 		{
+			UseLeftIcons = true;
+
 			//Add the menu items to the menu itself
 			foreach (var printer in ActiveSliceSettings.ProfileData.Profiles)
 			{
@@ -47,12 +53,18 @@ namespace MatterHackers.MatterControl
 				this.SelectedValue = ActiveSliceSettings.ProfileData.ActiveProfileID;
 			}
 
+			this.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Printer...", "new");
+
 			this.SelectionChanged += (s, e) =>
 			{
 				int printerID;
 				if (int.TryParse(this.SelectedValue, out printerID))
 				{
 					ActiveSliceSettings.SwitchToProfile(printerID);
+				}
+				else if(this.SelectedValue == "new")
+				{
+					UiThread.RunOnIdle(ConnectionWizard.Show);
 				}
 			};
 		}

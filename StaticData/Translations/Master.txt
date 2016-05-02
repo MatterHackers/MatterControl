@@ -4798,3 +4798,12 @@ Translated:°C
 English:seconds
 Translated:seconds
 
+English:layers
+Translated:layers
+
+English:Action
+Translated:Action
+
+English:ComPort
+Translated:ComPort
+

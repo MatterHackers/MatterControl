@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using SettingsDictionary = Dictionary<string, string>;
 	using DataStorage;
 	using Agg.PlatformAbstract;
+	using Newtonsoft.Json.Linq;
 	public class SettingsProfile
 	{
 		private static string configFileExtension = "slice";
@@ -92,12 +93,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				layeredProfile.ActiveQualityKey = value;
 			}
-		}
-
-		public bool InBaseConfig(string name)
-		{
-			//Check whether the default settings (layer 0) contain a settings definition
-			return BaseLayer.ContainsKey(name);
 		}
 
 		internal void RunInTransaction(Action<SettingsProfile> action)
@@ -622,10 +617,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var bigStringForHashCode = new StringBuilder();
 
-				foreach (var kvp in this.BaseLayer)
+				foreach (var keyValue in this.BaseLayer)
 				{
-					string activeValue = ActiveValue(kvp.Key);
-					bigStringForHashCode.Append(kvp.Key);
+					string activeValue = ActiveValue(keyValue.Key);
+					bigStringForHashCode.Append(keyValue.Key);
 					bigStringForHashCode.Append(activeValue);
 				}
 
@@ -638,14 +633,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			using (var outstream = new StreamWriter(fileName))
 			{
-				foreach (var kvp in this.BaseLayer)
+				foreach (var keyValue in this.BaseLayer)
 				{
-					string activeValue = ActiveValue(kvp.Key);
+					string activeValue = ActiveValue(keyValue.Key);
 					if (replaceMacroValues)
 					{
 						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
 					}
-					outstream.Write(string.Format("{0} = {1}\n", kvp.Key, activeValue));
+					outstream.Write(string.Format("{0} = {1}\n", keyValue.Key, activeValue));
 					activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
 				}
 			}
@@ -911,6 +906,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string Model => layeredProfile.GetValue("MatterControl.Model");
 
+		HashSet<string> knownSettings = null;
+		public HashSet<string> KnownSettings
+		{
+			get
+			{
+				if (knownSettings == null)
+				{
+					string propertiesJson = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+					var settingsData = JArray.Parse(propertiesJson);
+
+					knownSettings = new HashSet<string>(settingsData.Select(s => s["SlicerConfigName"].Value<string>()));
+				}
+
+				return knownSettings;
+			}
+		}
+
 		public string ManualMovementSpeeds()
 		{
 			return layeredProfile.GetValue("MatterControl.ManualMovementSpeeds");
@@ -1028,9 +1040,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsLayer(Dictionary<string, string> settingsDictionary)
 		{
-			foreach(var kvp in settingsDictionary)
+			foreach(var keyValue in settingsDictionary)
 			{
-				this[kvp.Key] = kvp.Value;
+				this[keyValue.Key] = keyValue.Value;
 			}
 		}
 
