@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					var settings = ActiveSliceSettings.Instance;
 					activePrinter = new PrinterInfo
 					{
-						AutoConnectFlag = settings.DoAutoConnect(),
+						AutoConnect = settings.DoAutoConnect(),
 						BaudRate = settings.BaudRate(),
 						ComPort = settings.ComPort(),
 						DriverType = settings.DriverType(),

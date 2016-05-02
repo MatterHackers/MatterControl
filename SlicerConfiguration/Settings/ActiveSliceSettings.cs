@@ -37,6 +37,7 @@ using MatterHackers.Agg;
 using System.Linq;
 using System.Collections.Generic;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -83,22 +84,57 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Ensure the profiles directory exists
 			Directory.CreateDirectory(profilesPath);
 
-			// Load or import the profiles.json document
-			if (File.Exists(profilesDBPath))
+			if (true)
 			{
-				ProfileData = JsonConvert.DeserializeObject<ProfileData>(File.ReadAllText(profilesDBPath));
+				ProfileData = new ProfileData();
+				
+				foreach(string filePath in Directory.GetFiles(profilesPath, "*.json"))
+				{
+					string fileName = Path.GetFileName(filePath);
+					if (fileName == "config.json" ||  fileName == "profiles.json")
+					{
+						continue;
+					}
+
+					try
+					{
+						var profile = new SettingsProfile(LayeredProfile.LoadFile(filePath));
+						ProfileData.Profiles.Add(new PrinterInfo()
+						{
+							AutoConnect = profile.DoAutoConnect(),
+							BaudRate = profile.BaudRate(),
+							ComPort = profile.ComPort(),
+							DriverType = profile.DriverType(),
+							Id = profile.Id(),
+							Make = profile.Make,
+							Model = profile.Model,
+							Name = profile.Name(),
+						});
+					}
+					catch(Exception ex)
+					{
+						System.Diagnostics.Debug.WriteLine("Error loading profile: {1}\r\n{2}", filePath, ex.Message);
+					}
+				}
 			}
 			else
 			{
-				ProfileData = new ProfileData();
+				// Load or import the profiles.json document
+				if (File.Exists(profilesDBPath))
+				{
+					ProfileData = JsonConvert.DeserializeObject<ProfileData>(File.ReadAllText(profilesDBPath));
+				}
+				else
+				{
+					ProfileData = new ProfileData();
 
-				// Import class profiles from the db into local json files
-				DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(ProfileData, profilesPath);
-				File.WriteAllText(profilesDBPath, JsonConvert.SerializeObject(ProfileData, Formatting.Indented));
+					// Import class profiles from the db into local json files
+					DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(ProfileData, profilesPath);
+					File.WriteAllText(profilesDBPath, JsonConvert.SerializeObject(ProfileData, Formatting.Indented));
 
-				// TODO: Upload new profiles to webservice
+					// TODO: Upload new profiles to webservice
+				}
 			}
-
 			if (!string.IsNullOrEmpty(ProfileData.ActiveProfileID))
 			{
 				Instance = LoadProfile(ProfileData.ActiveProfileID);
@@ -130,6 +166,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var autoConnectProfile = GetAutoConnectProfile(out connectionAvailable);
 			if (autoConnectProfile != null)
 			{
+				Instance = autoConnectProfile;
+
 				//ActiveSliceSettings.Instance = autoConnectProfile;
 				if (connectionAvailable)
 				{
@@ -232,39 +270,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static SettingsProfile GetAutoConnectProfile(out bool connectionAvailable)
 		{
-			// Load the last selected profile, see if the port is active
-
-			// Return the profile if valid
-
-			// otherwise (not the best idea IMO), iterate all profiles, trying to find relevant matches and change the selection dynamically rather than as last selected by the user
-
-			/*
 			string[] comportNames = FrostedSerialPort.GetPortNames();
 
-			Printer printerToSelect = null;
-			connectionAvailable = false;
-
-			foreach (Printer printer in Datastore.Instance.dbSQLite.Query<Printer>("SELECT * FROM Printer;"))
+			var autoConnectPrinters = ProfileData.Profiles.Where(printer => printer.AutoConnect);
+			foreach (var printer in autoConnectPrinters)
 			{
-				if (printer.AutoConnectFlag)
+				bool portIsAvailable = comportNames.Contains(printer.ComPort);
+				if (portIsAvailable)
 				{
-					printerToSelect = printer;
-					bool portIsAvailable = comportNames.Contains(printer.ComPort);
-					if (portIsAvailable)
-					{
-						// We found a printer that we can select and connect to.
-						connectionAvailable = true;
-						return printer;
-					}
+					// We found a printer that we can select and connect to.
+					connectionAvailable = true;
+					return LoadProfile(printer.Id);
 				}
 			}
-			
-			// return a printer we can connect to even though we can't connect
-			return printerToSelect;
-			*/
 
-			connectionAvailable = false;
-			return null;
+			// If not match was found about, replicate the behavior of the old autoconnect logic, which iterated and updated the 
+			// printerToSelect instance, leaving it pointing at the last object before falling into this region
+			PrinterInfo printerToSelect = autoConnectPrinters.LastOrDefault();
+
+			connectionAvailable = printerToSelect != null;
+
+			return connectionAvailable ? LoadProfile(printerToSelect.Id) : null;
 		}
 
 		/*

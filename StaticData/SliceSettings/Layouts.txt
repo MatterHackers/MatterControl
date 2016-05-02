@@ -274,6 +274,7 @@ Advanced
         extruders_share_temperature
         z_homes_to_max
       Firmware
+        MatterControl.AutoConnect
         MatterControl.BaudRate
         MatterControl.ComPort
         z_can_be_negative
