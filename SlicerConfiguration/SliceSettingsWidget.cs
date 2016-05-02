@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -1044,6 +1045,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							dataArea.HAnchor = HAnchor.ParentLeftRight;
 
 							settingsRow2.ValueChanged = (text) => stringEdit.Text = text.Replace("\\n", "\n");
+						}
+						break;
+
+					case OrganizerSettingsData.DataEditTypes.COM_PORT:
+						{
+							var selectableOptions = new StyledDropDownList("None", maxHeight: 200)
+							{
+								ToolTipText = settingData.HelpText,
+								Margin = new BorderDouble()
+							};
+
+							foreach (string listItem in FrostedSerialPort.GetPortNames())
+							{
+								MenuItem newItem = selectableOptions.AddItem(listItem);
+								if (newItem.Text == sliceSettingValue)
+								{
+									selectableOptions.SelectedLabel = sliceSettingValue;
+								}
+
+								newItem.Selected += (sender, e) =>
+								{
+									MenuItem menuItem = ((MenuItem)sender);
+									SaveSetting(settingData.SlicerConfigName, menuItem.Text);
+
+									settingsRow2.UpdateStyle();
+
+									OnSettingsChanged(settingData);
+								};
+							}
+
+							dataArea.AddChild(selectableOptions);
+
+							settingsRow2.ValueChanged = (text) => selectableOptions.SelectedLabel = text;
 						}
 						break;
 

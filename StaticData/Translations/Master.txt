@@ -4807,3 +4807,6 @@ Translated:Action
 English:ComPort
 Translated:ComPort
 
+English:Set the com port to use while connecting to this printer.
+Translated:Set the com port to use while connecting to this printer.
+
