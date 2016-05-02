@@ -989,7 +989,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								Checked = sliceSettingValue == "1"
 							};
-							checkBoxWidget.CheckedStateChanged += (sender, e) =>
+							checkBoxWidget.Click += (sender, e) =>
 							{
 								bool isChecked = ((CheckBox)sender).Checked;
 								SaveSetting(settingData.SlicerConfigName, isChecked ? "1" : "0");
