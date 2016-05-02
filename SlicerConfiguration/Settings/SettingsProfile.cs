@@ -53,20 +53,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private static string configFileExtension = "slice";
 
-		public RootedObjectEventHandler SettingsChanged = new RootedObjectEventHandler();
-
 		public RootedObjectEventHandler DoPrintLevelingChanged = new RootedObjectEventHandler();
 
 		private LayeredProfile layeredProfile;
-
-		private int settingsHashCode;
-
-		private void OnSettingsChanged()
-		{
-			//Set hash code back to 0
-			this.settingsHashCode = 0;
-			SettingsChanged.CallEvents(this, null);
-		}
 
 		public bool PrinterSelected => layeredProfile.OemProfile.OemLayer.Keys.Count > 0;
 
@@ -613,20 +602,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override int GetHashCode()
 		{
-			if (this.settingsHashCode == 0)
+			var bigStringForHashCode = new StringBuilder();
+
+			foreach (var keyValue in this.BaseLayer)
 			{
-				var bigStringForHashCode = new StringBuilder();
-
-				foreach (var keyValue in this.BaseLayer)
-				{
-					string activeValue = ActiveValue(keyValue.Key);
-					bigStringForHashCode.Append(keyValue.Key);
-					bigStringForHashCode.Append(activeValue);
-				}
-
-				this.settingsHashCode = bigStringForHashCode.ToString().GetHashCode();
+				string activeValue = ActiveValue(keyValue.Key);
+				bigStringForHashCode.Append(keyValue.Key);
+				bigStringForHashCode.Append(activeValue);
 			}
-			return this.settingsHashCode;
+
+
+			return bigStringForHashCode.ToString().GetHashCode(); ;
 		}
 
 		public void GenerateConfigFile(string fileName, bool replaceMacroValues)

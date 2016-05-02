@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public PowerControls()
 		{
-			ActiveSliceSettings.Instance.SettingsChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.AtxPowerStateChanged.RegisterEvent(this.UpdatePowerSwitch, ref unregisterEvents);
 
