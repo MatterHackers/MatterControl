@@ -202,13 +202,8 @@ namespace MatterHackers.MatterControl
 
 		public Button GenerateEditButton()
 		{
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
-			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
-			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+			Button editButton = GetThemedEditButton();
 
-			Button editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage, 
-				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
-				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black)));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
 			return editButton;
@@ -218,13 +213,8 @@ namespace MatterHackers.MatterControl
 		{
 			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
-			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
-			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+			editButton = GetThemedEditButton();
 
-			editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage,
-				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
-				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black)));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
 			textWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -234,17 +224,35 @@ namespace MatterHackers.MatterControl
 			return groupLableAndEditControl;
 		}
 
-		public GuiWidget GenerateGroupBoxLabelWithEdit(string label, out Button editButton)
+		public static Button GetThemedEditButton()
 		{
-			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
-
 			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
 			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
 			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
 
-			editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage,
+			Button editButton;
+			if (!ActiveTheme.Instance.IsDarkTheme)
+			{
+				editButton = new Button(0, 0, new ButtonViewThreeImage(WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black),
+				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
+				normalImage));
+			}
+			else
+			{
+				editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage,
 				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
 				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black)));
+			}
+
+			return editButton;
+		}
+
+		public GuiWidget GenerateGroupBoxLabelWithEdit(string label, out Button editButton)
+		{
+			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
+
+			editButton = GetThemedEditButton();
+
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
 			TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12);

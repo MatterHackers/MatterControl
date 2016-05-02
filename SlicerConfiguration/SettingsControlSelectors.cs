@@ -95,11 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			container.HAnchor = HAnchor.ParentLeftRight;
 			container.Padding = new BorderDouble(6, 0);
 
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
-			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
-			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
-
-			editButton = imageButtonFactory.Generate(normalImage, WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray));
+			editButton = TextImageButtonFactory.GetThemedEditButton();
 
 			editButton.VAnchor = VAnchor.ParentCenter;
 			editButton.Margin = new BorderDouble(right: 6);
