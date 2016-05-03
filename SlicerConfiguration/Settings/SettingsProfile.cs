@@ -600,7 +600,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public override int GetHashCode()
+		public long GetLongHashCode()
 		{
 			var bigStringForHashCode = new StringBuilder();
 
@@ -613,13 +613,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string value = bigStringForHashCode.ToString();
 
-			int currentHash = 0;
-			for (int i = 0; i < value.Length; i++)
-			{
-				currentHash += value[i] * 31 ^ value.Length - (i + 1);
-			}
-
-			return currentHash;
+			return agg_basics.ComputeHash(bigStringForHashCode.ToString());
 		}
 
 		public void GenerateConfigFile(string fileName, bool replaceMacroValues)
