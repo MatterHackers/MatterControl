@@ -143,10 +143,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (extruderIndex >= layeredProfile.MaterialSettingsKeys.Count)
 			{
-				return null;
+				// MaterialSettingsKeys is empty or lacks a value for the given extruder index
+				//
+				// If extruder index zero was requested, return the layer cascade temperature value, otherwise null
+				return (extruderIndex == 0) ? layeredProfile.GetValue("temperature") : null;
 			}
 
 			string materialKey = layeredProfile.MaterialSettingsKeys[extruderIndex];
+
+			if (extruderIndex == 0 && (string.IsNullOrEmpty(materialKey) || layeredProfile.UserLayer.ContainsKey("temperature")))
+			{
+				// In the case where a user override exists or MaterialSettingsKeys is populated with multiple extruder 
+				// positions but position 0 is empty and thus unassigned, use layer cascade to resolve temp
+				return layeredProfile.GetValue("temperature");
+			}
+
+			// Otherwise, use the SettingsLayers that is bound to this extruder
 			SettingsLayer layer = layeredProfile.GetMaterialLayer(materialKey);
 
 			string result = "0";
