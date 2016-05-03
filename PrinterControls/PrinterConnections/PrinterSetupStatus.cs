@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 		public void Save()
 		{
 			//Ordering matters - need to get Id for printer prior to loading slice presets
-			this.ActivePrinter.AutoConnectFlag = true;
+			this.ActivePrinter.AutoConnect = true;
 
 			// TODO: Review printerID int requirement
 			int printerID;

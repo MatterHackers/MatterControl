@@ -48,9 +48,9 @@ namespace MatterHackers.MatterControl
 				this.AddItem(printer.Name, printer.Id.ToString());
 			}
 
-			if (!string.IsNullOrEmpty(ActiveSliceSettings.ProfileData.ActiveProfileID))
+			if(ActiveSliceSettings.Instance != null)
 			{
-				this.SelectedValue = ActiveSliceSettings.ProfileData.ActiveProfileID;
+				this.SelectedValue = ActiveSliceSettings.Instance.Id();
 			}
 
 			this.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Printer...", "new");

@@ -453,22 +453,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool DoPrintLeveling()
 		{
-			return layeredProfile.GetValue("MatterControl.PrintLevelingEnabled") == "true";
+			return layeredProfile.GetValue("MatterControl.PrintLevelingEnabled") == "1";
 		}
 
-		public void DoPrintLeveling(bool doLevling)
+		public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
-			if (doLevling == this.DoPrintLeveling())
+			if (doLeveling == this.DoPrintLeveling())
 			{
 				return;
 			}
 
-			layeredProfile.SetActiveValue("MatterControl.PrintLevelingEnabled", doLevling ? "true" : "false");
+			layeredProfile.SetActiveValue("MatterControl.PrintLevelingEnabled", doLeveling ? "1" : "0");
 
 			DoPrintLevelingChanged.CallEvents(this, null);
 
-			if (doLevling)
+			if (doLeveling)
 			{
 				PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
@@ -806,12 +806,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool DoAutoConnect()
 		{
-			return layeredProfile.GetValue("MatterControl.AutoConnectFlag") == "true";
+			return layeredProfile.GetValue("MatterControl.AutoConnect") == "1";
 		}
 
-		public void SetAutoConnect(bool flag)
+		public void SetAutoConnect(bool autoConnectPrinter)
 		{
-			layeredProfile.SetActiveValue("MatterControl.AutoConnectFlag", flag ? "true" : "false");
+			layeredProfile.SetActiveValue("MatterControl.AutoConnect", autoConnectPrinter ? "1" : "0");
 		}
 
 		public string BaudRate()
@@ -819,9 +819,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetValue("MatterControl.BaudRate");
 		}
 
-		public void SetBaudRate(string data)
+		public void SetBaudRate(string baudRate)
 		{
-			layeredProfile.SetActiveValue("MatterControl.BaudRate", data);
+			layeredProfile.SetActiveValue("MatterControl.BaudRate", baudRate);
 		}
 
 		public string ComPort()
@@ -1093,7 +1093,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class ProfileData
 	{
-		public string ActiveProfileID { get; set; }
 		public List<PrinterInfo> Profiles { get; set; } = new List<PrinterInfo>();
 	}
 
@@ -1103,12 +1102,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string Model { get; set; } = "Unknown";
 		public string Name { get; set; }
 		public string ComPort { get; set; }
-		public bool AutoConnectFlag { get; set; }
+		public bool AutoConnect { get; set; }
 		public string Id { get; set; }
 		public string BaudRate { get; set; }
-		public string ProfileToken { get; set; }
 		public string DriverType { get; internal set; }
-		public string CurrentSlicingEngine { get; internal set; }
 
 		internal void Delete()
 		{

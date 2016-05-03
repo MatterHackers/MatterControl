@@ -86,10 +86,13 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			LoadQualitySettings(layeredProfile, printer);
 			LoadMaterialSettings(layeredProfile, printer);
 
+			layeredProfile.UserLayer["MatterControl.PrinterName"] = printer.Name ?? "";
+			layeredProfile.UserLayer["MatterControl.PrinterID"] = printer.Id.ToString();
 			layeredProfile.UserLayer["MatterControl.Make"] = printer.Make ?? "";
 			layeredProfile.UserLayer["MatterControl.Model"] = printer.Model ?? "";
 			layeredProfile.UserLayer["MatterControl.BaudRate"] = printer.BaudRate ?? "";
 			layeredProfile.UserLayer["MatterControl.ComPort"] = printer.ComPort ?? "";
+			layeredProfile.UserLayer["MatterControl.AutoConnect"] = printer.AutoConnect ? "1" : "0";
 			layeredProfile.UserLayer["MatterControl.DefaultMaterialPresets"] = printer.MaterialCollectionIds ?? "";
 			layeredProfile.UserLayer["MatterControl.WindowsDriver"] = printer.DriverType ?? "";
 			layeredProfile.UserLayer["MatterControl.DeviceToken"] = printer.DeviceToken ?? "";

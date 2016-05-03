@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"has_heated_bed",
 			"has_power_control",
 			"has_sd_card_reader",
+			"MatterControl.AutoConnect",
 			"MatterControl.BaudRate",
 			"MatterControl.ComPort",
 			"manual_probe_paper_width",

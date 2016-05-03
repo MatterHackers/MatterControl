@@ -89,6 +89,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public static bool IsLoading { get; private set; } = true;
+
 		static MatterControlApplication()
 		{
 			if (OsInformation.OperatingSystem == OSType.Mac)
@@ -298,6 +300,8 @@ namespace MatterHackers.MatterControl
 
 				DesktopPosition = new Point2D(xpos, ypos);
 			}
+
+			IsLoading = false;
 		}
 
         bool dropWasOnChild = true;
@@ -585,8 +589,6 @@ namespace MatterHackers.MatterControl
 
 			if (firstDraw)
 			{
-				UiThread.RunOnIdle(ActiveSliceSettings.CheckForAndDoAutoConnect);
-
 				firstDraw = false;
 				foreach (string arg in commandLineArgs)
 				{

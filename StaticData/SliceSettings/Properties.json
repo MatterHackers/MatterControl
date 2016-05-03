@@ -1224,6 +1224,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "MatterControl.AutoConnect",
+    "PresentationName": "Auto Connect",
+    "HelpText": "",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "MatterControl.ComPort",
     "PresentationName": "ComPort",
     "HelpText": "Set the com port to use while connecting to this printer.",
