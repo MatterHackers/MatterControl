@@ -493,6 +493,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.MenuItemsPadding = new BorderDouble(10, 4, 10, 6);
 			this.MenuItemsBackgroundHoverColor = ActiveTheme.Instance.PrimaryAccentColor;
 			this.MenuItemsTextHoverColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.MenuItemsTextColor = RGBA_Bytes.Black;
 			this.BorderWidth = 1;
 			this.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
 			this.HoverColor = whiteSemiTransparent;

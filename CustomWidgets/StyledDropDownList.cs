@@ -46,7 +46,8 @@ namespace MatterHackers.MatterControl
 			this.MenuItemsBorderColor = ActiveTheme.Instance.SecondaryTextColor;
 			this.MenuItemsPadding = new BorderDouble(10, 8, 10, 12);
 			this.MenuItemsBackgroundHoverColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.MenuItemsTextHoverColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.MenuItemsTextHoverColor = RGBA_Bytes.Black;
+			this.MenuItemsTextColor = RGBA_Bytes.Black;
 			this.BorderWidth = 1;
 			this.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
 			this.HoverColor = whiteSemiTransparent;
