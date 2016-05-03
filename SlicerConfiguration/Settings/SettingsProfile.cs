@@ -1093,7 +1093,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class ProfileData
 	{
-		public string ActiveProfileID { get; set; }
 		public List<PrinterInfo> Profiles { get; set; } = new List<PrinterInfo>();
 	}
 

@@ -52,10 +52,6 @@ namespace MatterHackers.MatterControl
 			{
 				this.SelectedValue = ActiveSliceSettings.Instance.Id();
 			}
-			else if (!string.IsNullOrEmpty(ActiveSliceSettings.ProfileData.ActiveProfileID))
-			{
-				this.SelectedValue = ActiveSliceSettings.ProfileData.ActiveProfileID;
-			}
 
 			this.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Printer...", "new");
 

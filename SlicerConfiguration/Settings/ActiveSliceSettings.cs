@@ -38,6 +38,7 @@ using System.Linq;
 using System.Collections.Generic;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -74,7 +75,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						BedSettings.SetMakeAndModel(activeInstance.Make, activeInstance.Model);
 					}
 
-					OnActivePrinterChanged(null);
+					if (!MatterControlApplication.IsLoading)
+					{
+						OnActivePrinterChanged(null);
+					}
 				}
 			}
 		}
@@ -135,21 +139,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// TODO: Upload new profiles to webservice
 				}
 			}
-			if (!string.IsNullOrEmpty(ProfileData.ActiveProfileID))
-			{
-				Instance = LoadProfile(ProfileData.ActiveProfileID);
-			}
-			else
-			{
-				// Load an empty profile with just the MatterHackers base settings from config.json
-				Instance = new SettingsProfile(LoadEmptyProfile());
-			}
+
+			ActiveSliceSettings.LoadStartupProfile();
 		}
 
 		public static void SetActiveProfileID(int id)
 		{
-			ProfileData.ActiveProfileID = id.ToString();
-			File.WriteAllText(profilesDBPath, JsonConvert.SerializeObject(ProfileData, Formatting.Indented));
+			UserSettings.Instance.set("ActiveProfileID", id.ToString());
 		}
 
 		public static LayeredProfile LoadEmptyProfile()
@@ -159,21 +155,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static ProfileData ProfileData { get; private set; }
 
-		public static void CheckForAndDoAutoConnect()
+		public static void LoadStartupProfile()
 		{
-			bool connectionAvailable;
+			bool portExists = false;
 
-			var autoConnectProfile = GetAutoConnectProfile(out connectionAvailable);
-			if (autoConnectProfile != null)
+			string[] comportNames = FrostedSerialPort.GetPortNames();
+
+			string lastProfileID = UserSettings.Instance.get("ActiveProfileID");
+
+			var startupProfile = LoadProfile(lastProfileID);
+			if (startupProfile != null)
 			{
-				Instance = autoConnectProfile;
+				portExists = comportNames.Contains(startupProfile.ComPort());
 
-				//ActiveSliceSettings.Instance = autoConnectProfile;
-				if (connectionAvailable)
+				Instance = startupProfile;
+
+				if (portExists && startupProfile.DoAutoConnect())
 				{
-					PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+					UiThread.RunOnIdle(() =>
+					{
+						//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+						PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+					}, 2);
 				}
+			}
+
+			if(Instance == null)
+			{
+				// Load an empty profile with just the MatterHackers base settings from config.json
+				Instance = new SettingsProfile(LoadEmptyProfile());
 			}
 		}
 
@@ -200,12 +210,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return null;
 		}
 
-		internal static SettingsProfile LoadProfile(string profileID)
-		{
-			string profilePath = Path.Combine(profilesPath, profileID + ".json");
-			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
-		}
-
 		internal static void AcquireNewProfile(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
@@ -226,6 +230,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 
 			Instance = new SettingsProfile(layeredProfile);
+		}
+
+		internal static SettingsProfile LoadProfile(string profileID)
+		{
+			string profilePath = Path.Combine(profilesPath, profileID + ".json");
+			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
 		}
 
 		private static SettingsProfile LoadProfileFromDisk(string profilePath)
@@ -268,6 +278,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ActivePrinterChanged.CallEvents(null, e);
 		}
 
+		/*
 		private static SettingsProfile GetAutoConnectProfile(out bool connectionAvailable)
 		{
 			string[] comportNames = FrostedSerialPort.GetPortNames();
@@ -293,8 +304,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return connectionAvailable ? LoadProfile(printerToSelect.Id) : null;
 		}
 
-		/*
-
 		private static SettingsProfile LoadBestProfile()
 		{
 			// Conceptually, load settings means
@@ -316,8 +325,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// or this
 			return LoadProfileFromDisk(printerProfilePath);
 		} */
-
-
 	}
 
 	public enum SlicingEngineTypes { Slic3r, CuraEngine, MatterSlice };
