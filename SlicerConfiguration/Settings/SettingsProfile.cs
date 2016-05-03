@@ -611,8 +611,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				bigStringForHashCode.Append(activeValue);
 			}
 
+			string value = bigStringForHashCode.ToString();
 
-			return bigStringForHashCode.ToString().GetHashCode(); ;
+			int currentHash = 0;
+			for (int i = 0; i < value.Length; i++)
+			{
+				currentHash += value[i] * 31 ^ value.Length - (i + 1);
+			}
+
+			return currentHash;
 		}
 
 		public void GenerateConfigFile(string fileName, bool replaceMacroValues)
