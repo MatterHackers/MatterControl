@@ -234,6 +234,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static SettingsProfile LoadProfile(string profileID)
 		{
+			// Conceptually, LoadProfile should...
+			// 
+			// Find and load a locally cached copy of the profile
+			//   - Query the webservice for the given profile passing along our ETAG
+			//      Result: 304 or error
+			//          Use locally cached copy as it's the latest or we're offline or the service has errored
+			//      Result: 200 (Document updated remotely)
+			//          Determine if the local profile is dirty. If so, we need to perform conflict resolution to work through the issues
+			//          If not, simply write the profile to disk as latest, load and return
+
 			string profilePath = Path.Combine(profilesPath, profileID + ".json");
 			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
 		}
@@ -277,54 +287,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			ActivePrinterChanged.CallEvents(null, e);
 		}
-
-		/*
-		private static SettingsProfile GetAutoConnectProfile(out bool connectionAvailable)
-		{
-			string[] comportNames = FrostedSerialPort.GetPortNames();
-
-			var autoConnectPrinters = ProfileData.Profiles.Where(printer => printer.AutoConnect);
-			foreach (var printer in autoConnectPrinters)
-			{
-				bool portIsAvailable = comportNames.Contains(printer.ComPort);
-				if (portIsAvailable)
-				{
-					// We found a printer that we can select and connect to.
-					connectionAvailable = true;
-					return LoadProfile(printer.Id);
-				}
-			}
-
-			// If not match was found about, replicate the behavior of the old autoconnect logic, which iterated and updated the 
-			// printerToSelect instance, leaving it pointing at the last object before falling into this region
-			PrinterInfo printerToSelect = autoConnectPrinters.LastOrDefault();
-
-			connectionAvailable = printerToSelect != null;
-
-			return connectionAvailable ? LoadProfile(printerToSelect.Id) : null;
-		}
-
-		private static SettingsProfile LoadBestProfile()
-		{
-			// Conceptually, load settings means
-			// Read from state the currently selected profile/printer token
-			//   - Check for/update/load the base MatterHackers layer
-			//   - Check for/update/load the OEM layer
-			//   - Set the quality layer to the currently selected quality profile
-			//   - Set the material layer to the currently selected material profile
-			//   - Check for/update/load the customer layer
-
-			// Load profiles document
-
-			var activeProfile = ProfileData.Profiles.Where(p => p.ProfileToken == ProfileData.ActiveProfileID).FirstOrDefault();
-			if (activeProfile != null)
-			{
-				printerProfilePath = Path.Combine(profilesPath, activeProfile.ProfileToken + ".json");
-			}
-
-			// or this
-			return LoadProfileFromDisk(printerProfilePath);
-		} */
 	}
 
 	public enum SlicingEngineTypes { Slic3r, CuraEngine, MatterSlice };
