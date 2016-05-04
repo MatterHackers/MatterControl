@@ -1,10 +1,10 @@
 filament_diameter = 1.75
 extrusion_multiplier = 0.96
-temperature = 240
+temperature = 250
 extruder_wipe_temperature = 0
 bed_temperature = 80
 bed_remove_part_temperature = 0
-retract_length = 3
+retract_length = 10
 retract_length_tool_change = 10
 retract_speed = 40
 retract_lift = 0
@@ -22,4 +22,3 @@ slowdown_below_layer_time = 5
 min_print_speed = 10
 cool_extruder_lift = 0
 skirt_distance = 2
-support_material_spacing = 2.5
