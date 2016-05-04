@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         private double targetTemp = 0;
         private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
         private double waitAfterReachTempTime = 3;
+        private bool waitWhenCooling = false;
 
         public WaitForTempStream(GCodeStream internalStream)
             : base(internalStream)
@@ -68,6 +69,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                             if (lineToSend.StartsWith("M109")) // extruder set and wait temp
                             {
                                 // send an M104 instead
+				waitWhenCooling = false;
                                 lineToSend = "M104" + lineToSend.Substring(4);
                                 GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
                                 extruderIndex = 0;
@@ -85,17 +87,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                             else if (lineToSend.StartsWith("M190")) // bed set and wait temp
                             {
                                 // send an M140 instead
-                                GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
-                                lineToSend = "M140" + lineToSend.Substring(4);
-                                if (targetTemp > ignoreRequestIfBelowTemp)
-                                {
-                                    state = State.waitingForBedTemp;
-                                    timeHaveBeenAtTemp.Reset();
-                                }
-                                else
-                                {
-                                    return "G4 P1000"; // 1 second
-                                }
+			    	bool gotR = GCodeFile.GetFirstNumberAfter("R", lineToSend, ref targetTemp);
+				bool gotS = GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
+				if (gotR || gotS)
+				{
+					if (targetTemp > ignoreRequestIfBelowTemp)
+					{
+						waitWhenCooling = gotR;
+						lineToSend = "M140 S" + targetTemp.ToString();
+						state = State.waitingForBedTemp;
+						timeHaveBeenAtTemp.Reset();
+					}
+					else
+					{
+					    return "G4 P1000"; // 1 second
+					}
+				}
+				else
+				{
+					return "G4 P1000";
+				}
                             }
                         }
 
@@ -128,7 +139,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 case State.waitingForBedTemp:
                     {
                         double bedTemp = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
-                        bool tempWithinRange = bedTemp >= targetTemp - sameTempRange;
+			bool tempWithinRange;
+			if (waitWhenCooling)
+			{
+				tempWithinRange = bedTemp >= targetTemp - sameTempRange && bedTemp <= targetTemp + sameTempRange;
+			}
+			else
+			{
+                        	tempWithinRange = bedTemp >= targetTemp - sameTempRange;
+			}
                         if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
                         {
                             timeHaveBeenAtTemp.Start();
