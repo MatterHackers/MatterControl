@@ -43,8 +43,11 @@ namespace MatterHackers.MatterControl
 		private RGBA_Bytes completeColor = new RGBA_Bytes(255, 255, 255);
 		private TextWidget printTimeRemaining;
 		private TextWidget printTimeElapsed;
-
+		private event EventHandler unregisterEvents;
 		private bool widgetIsExtended;
+		private Agg.Image.ImageBuffer upImageBuffer;
+		private Agg.Image.ImageBuffer downImageBuffer;
+		private ImageWidget indicatorWidget;
 
 		public bool WidgetIsExtended
 		{
@@ -61,19 +64,13 @@ namespace MatterHackers.MatterControl
 		{
 			if (!WidgetIsExtended)
 			{
-				this.Height = 48;
 				indicatorWidget.Image = downImageBuffer;
 			}
 			else
 			{
-				this.Height = 24;
 				indicatorWidget.Image = upImageBuffer;
 			}
 		}
-
-		private Agg.Image.ImageBuffer upImageBuffer;
-		private Agg.Image.ImageBuffer downImageBuffer;
-		private ImageWidget indicatorWidget;
 
 		public PrintProgressBar(bool widgetIsExtended = true)
 		{
@@ -121,39 +118,31 @@ namespace MatterHackers.MatterControl
 				AddChild(indicatorOverlay);
 			}
 
-			ClickWidget clickOverlay = new ClickWidget();
+			var clickOverlay = new GuiWidget();
 			clickOverlay.AnchorAll();
-			clickOverlay.Click += onProgressBarClick;
-
+			clickOverlay.Click += (s, e) =>
+			{
+				// In touchscreen mode, expand or collapse the print status row when clicked
+				ApplicationView mainView = ApplicationController.Instance.MainView;
+				if(mainView is TouchscreenView)
+				{
+					((TouchscreenView)mainView).ToggleTopContainer();
+				}
+			};
 			AddChild(clickOverlay);
 
-			AddHandlers();
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
+			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+
 			SetThemedColors();
 			UpdatePrintStatus();
 			UiThread.RunOnIdle(OnIdle);
 		}
 
-		private event EventHandler unregisterEvents;
-
-		private void AddHandlers()
-		{
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-		}
-
-		public void onProgressBarClick(object sender, EventArgs e)
-		{
-			ApplicationController.Instance.MainView.ToggleTopContainer();
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print.".Localize();
 		private Button disconnectPrinterButton;
 		private Button resetConnectionButton;
-		private Button selectActivePrinterButton;
+		private PrinterSelector selectActivePrinterButton;
 
 		private event EventHandler unregisterEvents;
 		static EventHandler staticUnregisterEvents;
@@ -124,6 +124,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			selectActivePrinterButton = new PrinterSelector();
 			selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
 			selectActivePrinterButton.Cursor = Cursors.Hand;
+			selectActivePrinterButton.AddPrinter += (s, e) => ConnectionWizard.Show();
 			if (ApplicationController.Instance.WidescreenMode)
 			{
 				selectActivePrinterButton.Margin = new BorderDouble(0, 6, 0, 3);

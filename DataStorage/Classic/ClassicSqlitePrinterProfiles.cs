@@ -98,6 +98,12 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.UserLayer["MatterControl.DeviceToken"] = printer.DeviceToken ?? "";
 			layeredProfile.UserLayer["MatterControl.DeviceType"] = printer.DeviceType ?? "";
 
+			string query = string.Format("SELECT * FROM PrinterSetting WHERE Name = 'PublishBedImage' and PrinterId = {0};", printer.Id);
+			var publishBedImage = Datastore.Instance.dbSQLite.Query<PrinterSetting>(query).FirstOrDefault();
+
+			Debugger.Launch();
+			layeredProfile.UserLayer["MatterControl.PublishBedImage"] = publishBedImage?.Value == "true" ? "1" : "0";
+
 			// Print leveling
 			var printLevelingData = PrintLevelingData.Create(
 				new SettingsProfile(layeredProfile), 

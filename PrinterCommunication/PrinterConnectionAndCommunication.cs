@@ -2292,10 +2292,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
 #if __ANDROID__
 			string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
-
 			if (!string.IsNullOrEmpty(currentPortName))
 			{
-				this.ComPort = currentPortName;
+				// TODO: Ensure that this does *not* cause a write to the settings file and should be an in memory update only
+				ActiveSliceSettings.Instance?.SetComPort(currentPortName);
 			}
 #endif
 
