@@ -33,142 +33,142 @@ using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class WaitForTempStream : GCodeStreamProxy
-    {
-        private double extruderIndex;
-        private double ignoreRequestIfBelowTemp = 20;
-        private double sameTempRange = 1;
-        private State state = State.passthrough;
-        private double targetTemp = 0;
-        private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
-        private double waitAfterReachTempTime = 3;
-        private bool waitWhenCooling = false;
+	public class WaitForTempStream : GCodeStreamProxy
+	{
+		private double extruderIndex;
+		private double ignoreRequestIfBelowTemp = 20;
+		private double sameTempRange = 1;
+		private State state = State.passthrough;
+		private double targetTemp = 0;
+		private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
+		private double waitAfterReachTempTime = 3;
+		private bool waitWhenCooling = false;
 
-        public WaitForTempStream(GCodeStream internalStream)
-            : base(internalStream)
-        {
-        }
+		public WaitForTempStream(GCodeStream internalStream)
+			: base(internalStream)
+		{
+		}
 
-        private enum State
-        { passthrough, waitingForExtruderTemp, waitingForBedTemp };
+		private enum State
+		{ passthrough, waitingForExtruderTemp, waitingForBedTemp };
 
-        public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
-        public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
+		public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
+		public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
 
-        public override string ReadLine()
-        {
-            switch (state)
-            {
-                case State.passthrough:
-                    {
-                        string lineToSend = base.ReadLine();
-
-                        if (lineToSend != null
-                            && lineToSend.StartsWith("M"))
-                        {
-                            if (lineToSend.StartsWith("M109")) // extruder set and wait temp
-                            {
-                                // send an M104 instead
-				waitWhenCooling = false;
-                                lineToSend = "M104" + lineToSend.Substring(4);
-                                GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
-                                extruderIndex = 0;
-                                GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruderIndex);
-                                if (targetTemp > ignoreRequestIfBelowTemp)
-                                {
-                                    state = State.waitingForExtruderTemp;
-                                    timeHaveBeenAtTemp.Reset();
-                                }
-                                else
-                                {
-                                    return "G4 P1000"; // 1 second
-                                }
-                            }
-                            else if (lineToSend.StartsWith("M190")) // bed set and wait temp
-                            {
-                                // send an M140 instead
-			    	bool gotR = GCodeFile.GetFirstNumberAfter("R", lineToSend, ref targetTemp);
-				bool gotS = GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
-				if (gotR || gotS)
-				{
-					if (targetTemp > ignoreRequestIfBelowTemp)
-					{
-						waitWhenCooling = gotR;
-						lineToSend = "M140 S" + targetTemp.ToString();
-						state = State.waitingForBedTemp;
-						timeHaveBeenAtTemp.Reset();
-					}
-					else
-					{
-					    return "G4 P1000"; // 1 second
-					}
-				}
-				else
-				{
-					return "G4 P1000";
-				}
-                            }
-                        }
-
-                        return lineToSend;
-                    }
-
-                case State.waitingForExtruderTemp:
-                    {
-                        double extruderTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature((int)extruderIndex);
-                        bool tempWithinRange = extruderTemp >= targetTemp - sameTempRange && extruderTemp <= targetTemp + sameTempRange;
-                        if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
-                        {
-                            timeHaveBeenAtTemp.Start();
-                        }
-
-                        if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-                            || PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
-                        {
-                            // switch to pass through and continue
-                            state = State.passthrough;
-                            return base.ReadLine();
-                        }
-                        else
-                        {
-                            // send a wait command
-                            return "G4 P1000"; // 1 second
-                        }
-                    }
-
-                case State.waitingForBedTemp:
-                    {
-                        double bedTemp = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
-			bool tempWithinRange;
-			if (waitWhenCooling)
+		public override string ReadLine()
+		{
+			switch (state)
 			{
-				tempWithinRange = bedTemp >= targetTemp - sameTempRange && bedTemp <= targetTemp + sameTempRange;
-			}
-			else
-			{
-                        	tempWithinRange = bedTemp >= targetTemp - sameTempRange;
-			}
-                        if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
-                        {
-                            timeHaveBeenAtTemp.Start();
-                        }
+				case State.passthrough:
+					{
+						string lineToSend = base.ReadLine();
 
-                        if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-                            || PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
-                        {
-                            // switch to pass through and continue
-                            state = State.passthrough;
-                            return base.ReadLine();
-                        }
-                        else
-                        {
-                            // send a wait command
-                            return "G4 P1000"; // 1 second
-                        }
-                    }
-            }
+						if (lineToSend != null
+							&& lineToSend.StartsWith("M"))
+						{
+							if (lineToSend.StartsWith("M109")) // extruder set and wait temp
+							{
+								// send an M104 instead
+								waitWhenCooling = false;
+								lineToSend = "M104" + lineToSend.Substring(4);
+								GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
+								extruderIndex = 0;
+								GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruderIndex);
+								if (targetTemp > ignoreRequestIfBelowTemp)
+								{
+									state = State.waitingForExtruderTemp;
+									timeHaveBeenAtTemp.Reset();
+								}
+								else
+								{
+									return "G4 P1000"; // 1 second
+								}
+							}
+							else if (lineToSend.StartsWith("M190")) // bed set and wait temp
+							{
+								// send an M140 instead
+								bool gotR = GCodeFile.GetFirstNumberAfter("R", lineToSend, ref targetTemp);
+								bool gotS = GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
+								if (gotR || gotS)
+								{
+									if (targetTemp > ignoreRequestIfBelowTemp)
+									{
+										waitWhenCooling = gotR;
+										lineToSend = "M140 S" + targetTemp.ToString();
+										state = State.waitingForBedTemp;
+										timeHaveBeenAtTemp.Reset();
+									}
+									else
+									{
+										return "G4 P1000"; // 1 second
+									}
+								}
+								else
+								{
+									return "G4 P1000";
+								}
+							}
+						}
 
-            return null;
-        }
-    }
+						return lineToSend;
+					}
+
+				case State.waitingForExtruderTemp:
+					{
+						double extruderTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature((int)extruderIndex);
+						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRange && extruderTemp <= targetTemp + sameTempRange;
+						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
+						{
+							timeHaveBeenAtTemp.Start();
+						}
+
+						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
+							|| PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+						{
+							// switch to pass through and continue
+							state = State.passthrough;
+							return base.ReadLine();
+						}
+						else
+						{
+							// send a wait command
+							return "G4 P1000"; // 1 second
+						}
+					}
+
+				case State.waitingForBedTemp:
+					{
+						double bedTemp = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
+						bool tempWithinRange;
+						if (waitWhenCooling)
+						{
+							tempWithinRange = bedTemp >= targetTemp - sameTempRange && bedTemp <= targetTemp + sameTempRange;
+						}
+						else
+						{
+							tempWithinRange = bedTemp >= targetTemp - sameTempRange;
+						}
+						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
+						{
+							timeHaveBeenAtTemp.Start();
+						}
+
+						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
+							|| PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+						{
+							// switch to pass through and continue
+							state = State.passthrough;
+							return base.ReadLine();
+						}
+						else
+						{
+							// send a wait command
+							return "G4 P1000"; // 1 second
+						}
+					}
+			}
+
+			return null;
+		}
+	}
 }
