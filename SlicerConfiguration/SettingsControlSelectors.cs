@@ -153,22 +153,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 
-		private void onItemSelect(object sender, EventArgs e)
+		private void MenuItem_Selected(object sender, EventArgs e)
 		{
 			var activeSettings = ActiveSliceSettings.Instance;
 			MenuItem item = (MenuItem)sender;
 			if (filterTag == "material")
 			{
-				if (activeSettings.MaterialPresetKey(extruderIndex) != item.Text)
+				if (activeSettings.MaterialPresetKey(extruderIndex) != item.Value)
 				{
-					activeSettings.SetMaterialPreset(extruderIndex, item.Text);
+					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
 				}
 			}
 			else if (filterTag == "quality")
 			{
-				if (activeSettings.ActiveQualityKey != item.Text)
+				if (activeSettings.ActiveQualityKey != item.Value)
 				{
-					activeSettings.ActiveQualityKey = item.Text;
+					activeSettings.ActiveQualityKey = item.Value;
 				}
 			}
 
@@ -230,14 +230,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			dropDownList.Margin = new BorderDouble(0, 3);
 			dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
 
-			MenuItem defaultMenuItem = dropDownList.AddItem("- default -", "0");
-			defaultMenuItem.Selected += new EventHandler(onItemSelect);
+			MenuItem defaultMenuItem = dropDownList.AddItem("- default -", "");
+			defaultMenuItem.Selected += MenuItem_Selected;
 
 			var listSource = (filterTag == "material") ? ActiveSliceSettings.Instance.AllMaterialKeys() : ActiveSliceSettings.Instance.AllQualityKeys();
 			foreach (var presetName in listSource)
 			{
 				MenuItem menuItem = dropDownList.AddItem(presetName, presetName);
-				menuItem.Selected += onItemSelect;
+				menuItem.Selected += MenuItem_Selected;
 			}
 
 			MenuItem addNewPreset = dropDownList.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Setting...", "new");
