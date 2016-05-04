@@ -193,6 +193,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		// Base implementation does not do moving.
+		public virtual void MoveItems(int[] indexes)
+		{
+		}
+
 		public abstract void RenameCollection(int collectionIndexToRename, string newName);
 
 		public abstract void RenameItem(int itemIndexToRename, string newName);

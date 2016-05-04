@@ -1226,7 +1226,7 @@
   {
     "SlicerConfigName": "MatterControl.AutoConnect",
     "PresentationName": "Auto Connect",
-    "HelpText": "",
+    "HelpText": "If set, the printer will automatically attempt to connect when selected.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },

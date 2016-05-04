@@ -4810,3 +4810,15 @@ Translated:ComPort
 English:Set the com port to use while connecting to this printer.
 Translated:Set the com port to use while connecting to this printer.
 
+English:If set, the printer will automatically attempt to connect when selected.
+Translated:If set, the printer will automatically attempt to connect when selected.
+
+English:Give the macro a name
+Translated:Give the macro a name
+
+English:This should be in 'G-Code'
+Translated:This should be in 'G-Code'
+
+English:Software Print Leveling
+Translated:Software Print Leveling
+

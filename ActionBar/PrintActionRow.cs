@@ -130,6 +130,13 @@ namespace MatterHackers.MatterControl.ActionBar
 			string pauseButtonText = "Pause".Localize();
 			string pauseButtonMessage = "Pause the current print".Localize();
 			pauseButton = makeButton(pauseButtonText, pauseButtonMessage);
+			pauseButton.Click += (s, e) =>
+			{
+				PrinterConnectionAndCommunication.Instance.RequestPause();
+				pauseButton.Enabled = false;
+			};
+			this.AddChild(pauseButton);
+			allPrintButtons.Add(pauseButton);
 
 			string cancelCancelButtonText = "Cancel Connect".Localize();
 			string cancelConnectButtonMessage = "Stop trying to connect to the printer.".Localize();
@@ -142,6 +149,17 @@ namespace MatterHackers.MatterControl.ActionBar
 			string resumeButtonText = "Resume".Localize();
 			string resumeButtonMessage = "Resume the current print".Localize();
 			resumeButton = makeButton(resumeButtonText, resumeButtonMessage);
+			resumeButton.Click += (s, e) =>
+			{
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				{
+					PrinterConnectionAndCommunication.Instance.Resume();
+				}
+				pauseButton.Enabled = true;
+			};
+
+			this.AddChild(resumeButton);
+			allPrintButtons.Add(resumeButton);
 
 			string reprintButtonText = "Print Again".Localize();
 			string reprintButtonMessage = "Print current item again".Localize();
@@ -165,12 +183,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.AddChild(configureButton);
 			allPrintButtons.Add(configureButton);
-
-			this.AddChild(pauseButton);
-			allPrintButtons.Add(pauseButton);
-
-			this.AddChild(resumeButton);
-			allPrintButtons.Add(resumeButton);
 
 			this.AddChild(doneWithCurrentPartButton);
 			allPrintButtons.Add(doneWithCurrentPartButton);
@@ -204,8 +216,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			configureButton.Click += onStartButton_Click;
             skipButton.Click += onSkipButton_Click;
 			removeButton.Click += onRemoveButton_Click;
-			resumeButton.Click += onResumeButton_Click;
-			pauseButton.Click += onPauseButton_Click;
 			connectButton.Click += onConnectButton_Click;
 			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 
@@ -468,11 +478,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			// we were on.
 		}
 
-		private void onPauseButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.RequestPause();
-		}
-
 		private void onRemoveButton_Click(object sender, EventArgs mouseEvent)
 		{
 			QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
@@ -481,14 +486,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void onReprintButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible);
-		}
-
-		private void onResumeButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-			{
-				PrinterConnectionAndCommunication.Instance.Resume();
-			}
 		}
 
 		private void onSkipButton_Click(object sender, EventArgs mouseEvent)

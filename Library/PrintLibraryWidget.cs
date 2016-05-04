@@ -190,8 +190,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					HAnchor = HAnchor.ParentLeftRight,
 				};
 
-				breadCrumbAndActionBar.AddChild(GetActionsMenu());
 				breadCrumbAndActionBar.AddChild(breadCrumbWidget);
+				breadCrumbAndActionBar.AddChild(GetActionsMenu());
 
 				allControls.AddChild(breadCrumbAndActionBar);
 
@@ -378,6 +378,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 			actionMenuEnableData.Add(new MenuEnableData(actionMenu.AddItem(menuItems[menuItems.Count - 1].Title), false, false, true));
 
+			// move menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Move".Localize(),
+				Action = (s, e) => moveInLibraryButton_Click(s, null)
+			});
+			//actionMenuEnableData.Add(new MenuEnableData(actionMenu.AddItem(menuItems[menuItems.Count - 1].Title), true, false, true));
+
 			// remove menu item
 			menuItems.Add(new PrintItemAction()
 			{
@@ -389,6 +397,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				true, false, true));
 
 			actionMenu.AddHorizontalLine();
+
 
 			// add to queue menu item
 			menuItems.Add(new PrintItemAction()
@@ -632,7 +641,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			libraryDataView.ClearSelectedItems();
 		}
 
-        private void shareFromLibraryButton_Click(object sender, EventArgs e)
+		private void moveInLibraryButton_Click(object sender, EventArgs e)
+		{
+			libraryDataView.SelectedItems.Sort(SortRowItemsOnIndex);
+
+			IEnumerable<LibraryRowItem> partItems = libraryDataView.SelectedItems.Where(item => item is LibraryRowItemPart);
+			if (partItems.Count() > 0)
+			{
+				// If all selected items are LibraryRowItemParts, then we can invoke the batch remove functionality (in the Cloud library scenario)
+				// and perform all moves as part of a single request, with a single notification from Socketeer
+				var indexesToRemove = partItems.Cast<LibraryRowItemPart>().Select(l => l.ItemIndex).ToArray();
+				libraryDataView.CurrentLibraryProvider.MoveItems(indexesToRemove);
+			}
+
+			libraryDataView.ClearSelectedItems();
+		}
+
+		private void shareFromLibraryButton_Click(object sender, EventArgs e)
         {
             if (libraryDataView.SelectedItems.Count == 1)
             {
