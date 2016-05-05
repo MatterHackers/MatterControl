@@ -97,11 +97,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
 			publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
 
-			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(PrinterSettings.Instance.get("PublishBedImage") == "true");
+			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.PublishBedImage());
 			toggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
 				CheckBox thisControl = sender as CheckBox;
-				PrinterSettings.Instance.set("PublishBedImage", thisControl.Checked ? "true" : "false");
+				ActiveSliceSettings.Instance.SetActiveValue("PublishBedImage", thisControl.Checked ? "1" : "0");
 			};
 			publishImageSwitchContainer.AddChild(toggleSwitch);
 

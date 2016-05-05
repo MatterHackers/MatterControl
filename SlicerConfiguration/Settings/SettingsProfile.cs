@@ -176,6 +176,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetQualityLayer(key);
 		}
 
+		internal bool PublishBedImage()
+		{
+			return ActiveValue("MatterControl.PublishBedImage") == "1";
+		}
+
 		internal void SetMaterialPreset(int extruderIndex, string text)
 		{
 			layeredProfile.SetMaterialPreset(extruderIndex, text);
@@ -844,7 +849,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetComPort(string port)
 		{
-			layeredProfile.SetActiveValue("MatterControl.ComPort", port);
+			layeredProfile.UserLayer["MatterControl.ComPort"] = port;
 		}
 
 

@@ -33,11 +33,14 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using System;
 
 namespace MatterHackers.MatterControl
 {
 	public class PrinterSelector : StyledDropDownList
 	{
+		public event EventHandler AddPrinter;
+
 		public PrinterSelector() : base("Printers".Localize() + "... ")
 		{
 			UseLeftIcons = true;
@@ -64,7 +67,10 @@ namespace MatterHackers.MatterControl
 				}
 				else if(this.SelectedValue == "new")
 				{
-					UiThread.RunOnIdle(ConnectionWizard.Show);
+					if(AddPrinter != null)
+					{
+						UiThread.RunOnIdle(() => AddPrinter(this, null));
+					}
 				}
 			};
 		}

@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			printerNameInput.KeyPressed += (s, e) => this.usingDefaultName = false;
 
-			printerNameError = new TextWidget("Give your printer a name.".Localize(), 0, 0, 10)
+			printerNameError = new TextWidget("", 0, 0, 10)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.ParentLeftRight,
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerMakeError = new TextWidget("Select the printer manufacturer".Localize(), 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = elementMargin
 			};
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerModelError = new TextWidget("Select the printer model".Localize(), 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = elementMargin
 			};
@@ -254,9 +254,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 				else
 				{
-					// TODO: Plumb in saving the profile to disk, then setting the instance to be the active profile
-					System.Diagnostics.Debugger.Launch();
-
 					ActiveSliceSettings.AcquireNewProfile(ActivePrinter.Make, ActivePrinter.Model, ActivePrinter.Name);
 					return true;
 				}

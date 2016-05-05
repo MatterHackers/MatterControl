@@ -143,9 +143,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ActiveSliceSettings.LoadStartupProfile();
 		}
 
-		public static void SetActiveProfileID(int id)
+		public static void SetActiveProfileID(string id)
 		{
-			UserSettings.Instance.set("ActiveProfileID", id.ToString());
+			UserSettings.Instance.set("ActiveProfileID", id);
 		}
 
 		public static LayeredProfile LoadEmptyProfile()
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var profile = LoadProfile(id);
 
-			SetActiveProfileID(id);
+			SetActiveProfileID(id.ToString());
 
 			if (profile != null)
 			{
@@ -221,6 +221,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				printerProfile, 
 				baseConfig);
 			layeredProfile.DocumentPath = Path.Combine(profilesPath, guid + ".json");
+			layeredProfile.UserLayer["MatterControl.PrinterID"] = guid.ToString();
+			layeredProfile.UserLayer["MatterControl.PrinterName"] = printerName;
+
 			layeredProfile.Save();
 
 			ProfileData.Profiles.Add(new PrinterInfo
@@ -228,6 +231,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = printerName,
 				Id = guid
 			});
+
+			SetActiveProfileID(guid);
 
 			Instance = new SettingsProfile(layeredProfile);
 		}
@@ -258,7 +263,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string baseConfigPath = Path.Combine(profilesPath, "config.json");
 			if(!File.Exists(baseConfigPath))
 			{
-				string configIniPath = StaticData.Instance.MapPath(Path.Combine("PrinterSettings", "config.ini"));
+				string configIniPath = Path.Combine("PrinterSettings", "config.ini");
 
 				SettingsLayer baseLayer;
 

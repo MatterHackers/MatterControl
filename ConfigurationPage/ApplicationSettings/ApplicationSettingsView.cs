@@ -517,7 +517,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 #else
                 // Re-initialize and load
                 LocalizedString.ResetTranslationMap();
-                ApplicationController.Instance.MainView = new CompactApplicationView();
+                ApplicationController.Instance.MainView = new TouchscreenView();
                 app.RemoveAllChildren();
                 app.AddChild(new SoftKeyboardContentOffset(ApplicationController.Instance.MainView));
                 app.AnchorAll();

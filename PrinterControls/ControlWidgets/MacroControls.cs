@@ -170,10 +170,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				// TODO: Hook macros into new settings system
 
-				//Retrieve a list of macros from the database
-				string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActiveSliceSettings.Instance.Id());
-
-				return Datastore.Instance.dbSQLite.Query<CustomCommands>(query);
+//				//Retrieve a list of macros from the database
+//				string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActiveSliceSettings.Instance.Id());
+//
+//				return Datastore.Instance.dbSQLite.Query<CustomCommands>(query);
 			}
 
 			return Enumerable.Empty<CustomCommands>();
