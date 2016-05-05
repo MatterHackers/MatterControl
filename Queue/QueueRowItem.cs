@@ -123,6 +123,33 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			switch (UnderMouseState)
+			{
+				case UnderMouseState.NotUnderMouse:
+					IsHoverItem = false;
+					break;
+
+				case UnderMouseState.FirstUnderMouse:
+					IsHoverItem = true;
+					break;
+
+				case UnderMouseState.UnderMouseNotFirst:
+					if (ContainsFirstUnderMouseRecursive())
+					{
+						IsHoverItem = true;
+					}
+					else
+					{
+						IsHoverItem = false;
+					}
+					break;
+			}
+
+			base.OnMouseMove(mouseEvent);
+		}
+
 		public PrintItemWrapper PrintItemWrapper { get; set; }
 
 		public static void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)

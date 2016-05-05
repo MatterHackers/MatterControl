@@ -223,9 +223,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		//RGBA_Bytes selectedColor = new RGBA_Bytes(0, 95, 107, 255);
 		private RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
 
-		private int hoverIndex = -1;
-		private int dragIndex = -1;
-
 		public int Count
 		{
 			get
@@ -251,63 +248,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.SendToChildren(objectToRout);
 		}
 
-		public int DragIndex
-		{
-			get
-			{
-				return dragIndex;
-			}
-			set
-			{
-				if (value < -1 || value >= topToBottomItemList.Children.Count)
-				{
-					throw new ArgumentOutOfRangeException();
-				}
-
-				if (value != dragIndex)
-				{
-					dragIndex = value;
-				}
-			}
-		}
-
-		public int HoverIndex
-		{
-			get
-			{
-				return hoverIndex;
-			}
-			set
-			{
-				if (value < -1 || value >= topToBottomItemList.Children.Count)
-				{
-					throw new ArgumentOutOfRangeException();
-				}
-
-				if (value != hoverIndex)
-				{
-					hoverIndex = value;
-					OnHoverIndexChanged();
-
-					for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-					{
-						GuiWidget child = topToBottomItemList.Children[index];
-						if (index == HoverIndex)
-						{
-							((QueueRowItem)child.Children[0]).IsHoverItem = true;
-						}
-						else if (((QueueRowItem)child.Children[0]).IsHoverItem == true)
-						{
-							((QueueRowItem)child.Children[0]).IsHoverItem = false;
-						}
-						child.Invalidate();
-					}
-
-					Invalidate();
-				}
-			}
-		}
-
 		public QueueDataView()
 		{
 			Name = "PrintQueueControl";
@@ -329,7 +269,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 				AddChild(queueItem);
 			}
 
-			this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
 			QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
 			QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToQueue, ref unregisterEvents);
@@ -453,11 +392,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnClosed(e);
 		}
 
-		private void control_MouseLeaveBounds(object sender, EventArgs e)
-		{
-			HoverIndex = -1;
-		}
-
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
@@ -473,8 +407,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void AddItemHandlers(GuiWidget itemHolder)
 		{
-			itemHolder.MouseEnterBounds += new EventHandler(itemToAdd_MouseEnterBounds);
-			itemHolder.MouseLeaveBounds += new EventHandler(itemToAdd_MouseLeaveBounds);
 			itemHolder.MouseDownInBounds += itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
 		}
@@ -513,8 +445,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void itemHolder_ParentChanged(object sender, EventArgs e)
 		{
 			FlowLayoutWidget itemHolder = (FlowLayoutWidget)sender;
-			itemHolder.MouseEnterBounds -= new EventHandler(itemToAdd_MouseEnterBounds);
-			itemHolder.MouseLeaveBounds -= new EventHandler(itemToAdd_MouseLeaveBounds);
 			itemHolder.MouseDownInBounds -= itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
 		}
@@ -569,22 +499,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 
 			return false;
-		}
-
-		private void itemToAdd_MouseEnterBounds(object sender, EventArgs e)
-		{
-			if (WidgetOrChildIsFirstUnderMouse(this))
-			{
-				GuiWidget widgetEntered = ((GuiWidget)sender);
-				for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-				{
-					GuiWidget child = topToBottomItemList.Children[index];
-					if (child == widgetEntered)
-					{
-						HoverIndex = index;
-					}
-				}
-			}
 		}
 
 		public void OnSelectedIndexChanged()
