@@ -220,9 +220,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private StyledDropDownList CreateDropdown()
 		{
-			var dropDownList = new StyledDropDownList("- default -", maxHeight: 300)
+			var dropDownList = new StyledDropDownList("- default -", maxHeight: 300, useLeftIcons: true)
 			{
-				UseLeftIcons = true,
 				HAnchor = HAnchor.ParentLeftRight,
 				MenuItemsPadding = new BorderDouble(10, 4, 10, 6),
 			};

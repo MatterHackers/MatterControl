@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private FlowLayoutWidget searchPanel;
+		private GuiWidget searchPanel;
 
 		static PrintLibraryWidget currentPrintLibraryWidget;
 
@@ -129,33 +129,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				leaveEditModeButton.Visible = false;
 
-				searchPanel = new FlowLayoutWidget();
-				searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-				searchPanel.HAnchor = HAnchor.ParentLeftRight;
-				searchPanel.Padding = new BorderDouble(0);
-				{
-					searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize());
-					searchInput.Name = "Search Library Edit";
-					searchInput.Margin = new BorderDouble(0, 3, 0, 0);
-					searchInput.HAnchor = HAnchor.ParentLeftRight;
-					searchInput.VAnchor = VAnchor.ParentCenter;
-					searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
-
-					double oldWidth = editButtonFactory.FixedWidth;
-					editButtonFactory.FixedWidth = 0;
-					Button searchButton = editButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
-					searchButton.Name = "Search Library Button";
-					searchButton.Click += searchButtonClick;
-					editButtonFactory.FixedWidth = oldWidth;
-
-					searchPanel.AddChild(enterEditModeButton);
-					searchPanel.AddChild(leaveEditModeButton);
-					searchPanel.AddChild(searchInput);
-					searchPanel.AddChild(searchButton);
-				}
-
-				searchPanel.Visible = false;
-
 				FlowLayoutWidget navigationPanel = new FlowLayoutWidget();
 				navigationPanel.HAnchor = HAnchor.ParentLeftRight;
 				navigationPanel.Padding = new BorderDouble(0);
@@ -175,9 +148,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				buttonPanel.Padding = new BorderDouble(0, 3);
 				buttonPanel.MinimumSize = new Vector2(0, 46);
 
-                AddLibraryButtonElements();
+				AddLibraryButtonElements();
 
 				//allControls.AddChild(navigationPanel);
+				searchPanel = CreateSearchPannel();
 				allControls.AddChild(searchPanel);
 
 				libraryDataView = new LibraryDataView();
@@ -191,7 +165,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				};
 
 				breadCrumbAndActionBar.AddChild(breadCrumbWidget);
-				breadCrumbAndActionBar.AddChild(GetActionsMenu());
+				breadCrumbAndActionBar.AddChild(CreateActionsMenu());
 
 				allControls.AddChild(breadCrumbAndActionBar);
 
@@ -206,7 +180,38 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddHandlers();
 		}
 
-		private GuiWidget GetActionsMenu()
+		private GuiWidget CreateSearchPannel()
+		{
+			GuiWidget searchPanel = new FlowLayoutWidget();
+			searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+			searchPanel.HAnchor = HAnchor.ParentLeftRight;
+			searchPanel.Padding = new BorderDouble(0);
+			{
+				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize());
+				searchInput.Name = "Search Library Edit";
+				searchInput.Margin = new BorderDouble(0, 3, 0, 0);
+				searchInput.HAnchor = HAnchor.ParentLeftRight;
+				searchInput.VAnchor = VAnchor.ParentCenter;
+				searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
+
+				double oldWidth = editButtonFactory.FixedWidth;
+				editButtonFactory.FixedWidth = 0;
+				Button searchButton = editButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
+				searchButton.Name = "Search Library Button";
+				searchButton.Click += searchButtonClick;
+				editButtonFactory.FixedWidth = oldWidth;
+
+				searchPanel.AddChild(enterEditModeButton);
+				searchPanel.AddChild(leaveEditModeButton);
+				searchPanel.AddChild(searchInput);
+				searchPanel.AddChild(searchButton);
+			}
+
+			searchPanel.Visible = false;
+			return searchPanel;
+		}
+
+		private GuiWidget CreateActionsMenu()
 		{
 			var actionMenu = new DropDownMenu("Action".Localize() + "... ");
 			actionMenu.NormalColor = new RGBA_Bytes();
