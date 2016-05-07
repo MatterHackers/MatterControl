@@ -16,7 +16,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private bool editMode = false;
 
 		public ConnectionWizard()
-			: base(350 * TextWidget.GlobalPointSizeScaleRatio, 500 * TextWidget.GlobalPointSizeScaleRatio)
+			: base(350 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
 			AlwaysOnTopOfMain = true;
 			string connectToPrinterTitle = LocalizedString.Get("MatterControl");
@@ -29,7 +29,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			this.ShowAsSystemWindow();
-			MinimumSize = new Vector2(350 * TextWidget.GlobalPointSizeScaleRatio, 400 * TextWidget.GlobalPointSizeScaleRatio);
+			MinimumSize = new Vector2(350 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
 		}
 
 		private static ConnectionWizard connectionWindow = null;

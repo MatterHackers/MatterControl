@@ -65,15 +65,15 @@ namespace MatterHackers.MatterControl.ActionBar
 		private event EventHandler unregisterEvents;
 
 		public TemperatureWidgetBase(string textValue)
-			: base(52 * TextWidget.GlobalPointSizeScaleRatio, 52 * TextWidget.GlobalPointSizeScaleRatio)
+			: base(52 * GuiWidget.DeviceScale, 52 * GuiWidget.DeviceScale)
 		{
-			whiteButtonFactory.FixedHeight = 18 * TextWidget.GlobalPointSizeScaleRatio;
+			whiteButtonFactory.FixedHeight = 18 * GuiWidget.DeviceScale;
 			whiteButtonFactory.fontSize = 7;
 			whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
 			whiteButtonFactory.normalTextColor = RGBA_Bytes.DarkGray;
 
 			this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
-			this.Margin = new BorderDouble(0, 2) * TextWidget.GlobalPointSizeScaleRatio;
+			this.Margin = new BorderDouble(0, 2) * GuiWidget.DeviceScale;
 
 			temperatureTypeName = new TextWidget("", pointSize: 8);
 			temperatureTypeName.AutoExpandBoundsToText = true;
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			GuiWidget buttonContainer = new GuiWidget();
 			buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			buttonContainer.Height = 18 * TextWidget.GlobalPointSizeScaleRatio;
+			buttonContainer.Height = 18 * GuiWidget.DeviceScale;
 
 			preheatButton = whiteButtonFactory.Generate("Preheat".Localize().ToUpper());
 			preheatButton.Cursor = Cursors.Hand;

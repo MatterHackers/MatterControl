@@ -1,4 +1,5 @@
 ﻿using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -69,7 +70,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			Agg.Image.ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "camera-24x24.png"));
+			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png");
+			cameraIconImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(24 * GuiWidget.DeviceScale);
+
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
 				InvertLightness.DoInvertLightness(cameraIconImage);
@@ -119,7 +123,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			Agg.Image.ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "terminal-24x24.png"));
+			ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png");
+			terminalSettingsImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(24 * GuiWidget.DeviceScale);
+
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
 				InvertLightness.DoInvertLightness(terminalSettingsImage);
@@ -161,13 +168,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
 
-			Agg.Image.ImageBuffer eePromImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "leveling-24x24.png"));
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png");
+			levelingImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(24 * GuiWidget.DeviceScale);
+			levelingImage = ImageBuffer.CreateScaledImage(levelingImage, iconSize, iconSize);
+
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(eePromImage);
+				InvertLightness.DoInvertLightness(levelingImage);
 			}
-			ImageWidget eePromIcon = new ImageWidget(eePromImage);
-			eePromIcon.Margin = new BorderDouble(right: 6);
+			ImageWidget levelingIcon = new ImageWidget(levelingImage);
+			levelingIcon.Margin = new BorderDouble(right: 6);
 
 			Button configureEePromButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
 			configureEePromButton.Click += new EventHandler(configureEePromButton_Click);

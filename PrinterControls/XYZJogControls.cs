@@ -212,8 +212,8 @@ namespace MatterHackers.MatterControl
 
 					{
 						TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-						buttonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
-						buttonFactory.FixedWidth = 30 * TextWidget.GlobalPointSizeScaleRatio;
+						buttonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
+						buttonFactory.FixedWidth = 30 * GuiWidget.DeviceScale;
 						buttonFactory.fontSize = 8;
 						buttonFactory.Margin = new BorderDouble(0);
 						buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -373,8 +373,8 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget GetHotkeyControlContainer()
 		{
 			TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
-			hotKeyButtonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
-			hotKeyButtonFactory.FixedWidth = 30 * TextWidget.GlobalPointSizeScaleRatio;
+			hotKeyButtonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
+			hotKeyButtonFactory.FixedWidth = 30 * GuiWidget.DeviceScale;
 			hotKeyButtonFactory.fontSize = 8;
 
 			hotKeyButtonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -503,8 +503,8 @@ namespace MatterHackers.MatterControl
 
 			{
 				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-				buttonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
-				buttonFactory.FixedWidth = 30 * TextWidget.GlobalPointSizeScaleRatio;
+				buttonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
+				buttonFactory.FixedWidth = 30 * GuiWidget.DeviceScale;
 				buttonFactory.fontSize = 8;
 				buttonFactory.Margin = new BorderDouble(0);
 				buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -698,13 +698,13 @@ namespace MatterHackers.MatterControl
 
 				if (levelingButtons)
 				{
-					this.Height = 45 * TextWidget.GlobalPointSizeScaleRatio;
-					this.Width = 90 * TextWidget.GlobalPointSizeScaleRatio;
+					this.Height = 45 * GuiWidget.DeviceScale;
+					this.Width = 90 * GuiWidget.DeviceScale;
 				}
 				else
 				{
-					this.Height = 40 * TextWidget.GlobalPointSizeScaleRatio;
-					this.Width = 40 * TextWidget.GlobalPointSizeScaleRatio;
+					this.Height = 40 * GuiWidget.DeviceScale;
+					this.Width = 40 * GuiWidget.DeviceScale;
 				}
 			}
 

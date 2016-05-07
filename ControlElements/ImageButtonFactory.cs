@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 				off = off.Localize();
 			}
 			ToggleSwitchView toggleView = new ToggleSwitchView(on, off,
-				60, 24,
+				60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale,
 				ActiveTheme.Instance.PrimaryBackgroundColor,
 				new RGBA_Bytes(220, 220, 220),
 				ActiveTheme.Instance.PrimaryAccentColor,
@@ -125,13 +125,6 @@ namespace MatterHackers.MatterControl
 				InvertLightness.DoInvertLightness(pressedImage);
 				InvertLightness.DoInvertLightness(hoverImage);
 				InvertLightness.DoInvertLightness(disabledImage);
-			}
-
-			if (ActiveTheme.Instance.IsTouchScreen)
-			{
-				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
-				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);
-				pressedImage.NewGraphics2D().Render(new Stroke(rect, 3), ActiveTheme.Instance.PrimaryTextColor);
 			}
 
 			ButtonViewStates buttonViewWidget = new ButtonViewStates(

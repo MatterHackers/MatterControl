@@ -35,8 +35,8 @@ namespace MatterHackers.MatterControl
 	public class ThemeColorSelectorWidget : FlowLayoutWidget
 	{
 		private GuiWidget colorToChangeTo;
-		private int containerHeight = 34;
-		private int colorSelectSize = 32;
+		private int containerHeight = (int)(34 * GuiWidget.DeviceScale + .5);
+		private int colorSelectSize = (int)(32 * GuiWidget.DeviceScale + .5);
 
 		public ThemeColorSelectorWidget(GuiWidget colorToChangeTo)
 		{

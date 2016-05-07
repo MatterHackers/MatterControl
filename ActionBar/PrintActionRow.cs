@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			textImageButtonFactory.AllowThemeToAdjustImage = false;
 
 			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.FixedHeight = 52 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedHeight = 52 * GuiWidget.DeviceScale;
 			textImageButtonFactory.fontSize = 14;
 			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
 			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);

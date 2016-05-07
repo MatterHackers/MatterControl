@@ -802,7 +802,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void AddLetterControls(FlowLayoutWidget buttonPanel)
 		{
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
 			FlowLayoutWidget degreesContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			degreesContainer.HAnchor = HAnchor.ParentLeftRight;

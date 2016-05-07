@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.AddChild(new PresetSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material", 0));
 			}
 
-			this.Height = 60 * TextWidget.GlobalPointSizeScaleRatio;
+			this.Height = 60 * GuiWidget.DeviceScale;
 
 		}
 	}

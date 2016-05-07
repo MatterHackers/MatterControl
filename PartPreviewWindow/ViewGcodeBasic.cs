@@ -430,7 +430,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonPanel.CloseAllChildren();
 
 			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
 			FlowLayoutWidget modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			modelInfoContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -525,7 +525,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void AddLayerInfo(FlowLayoutWidget buttonPanel)
 		{
 			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
 			FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -551,7 +551,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonPanel.CloseAllChildren();
 
 			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
 			FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -632,7 +632,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 CheckBox transparentExtrusion = new CheckBox(LocalizedString.Get("Transparent"), textColor: ActiveTheme.Instance.PrimaryTextColor)
                 {
                     Checked = gcodeViewWidget.TransparentExtrusion,
-                    Margin = new BorderDouble(5, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio,
+                    Margin = new BorderDouble(5, 0, 0, 0),
                     HAnchor = HAnchor.ParentLeft,
                 };
 

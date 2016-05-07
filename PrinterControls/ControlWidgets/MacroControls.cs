@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void SetDisplayAttributes()
 		{
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.FixedHeight = 24 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
 			this.textImageButtonFactory.fontSize = 12;
 			this.textImageButtonFactory.borderWidth = 1;
 			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);

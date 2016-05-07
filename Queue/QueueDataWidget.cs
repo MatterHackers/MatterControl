@@ -103,7 +103,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			editButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			editButtonFactory.borderWidth = 0;
 			editButtonFactory.Margin = new BorderDouble(10, 0);
-			editButtonFactory.Margin *= TextWidget.GlobalPointSizeScaleRatio;
 
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
@@ -150,7 +149,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					moreMenu = new DropDownMenu("More".Localize() + "... ");
 					moreMenu.NormalColor = new RGBA_Bytes();
-					moreMenu.BorderWidth = 1;
+					moreMenu.BorderWidth = (int)(1 * GuiWidget.DeviceScale + .5);
 					moreMenu.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor,100);
 					moreMenu.MenuAsWideAsItems = false;
 					moreMenu.VAnchor = VAnchor.ParentBottomTop;

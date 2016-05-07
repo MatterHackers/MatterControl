@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				scaleRatioContainer.AddChild(new HorizontalSpacer());
 
-				scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50 * TextWidget.GlobalPointSizeScaleRatio, allowDecimals: true, increment: .05);
+				scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50 * GuiWidget.DeviceScale, allowDecimals: true, increment: .05);
 				scaleRatioControl.SelectAllOnFocus = true;
 				scaleRatioControl.VAnchor = VAnchor.ParentCenter;
 				scaleRatioContainer.AddChild(scaleRatioControl);

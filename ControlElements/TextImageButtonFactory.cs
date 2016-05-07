@@ -226,8 +226,8 @@ namespace MatterHackers.MatterControl
 
 		public static Button GetThemedEditButton()
 		{
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_white_32x32.png");
-			int iconSize = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
+			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_32x32.png");
+			int iconSize = (int)(16 * GuiWidget.DeviceScale);
 			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
 
 			Button editButton;

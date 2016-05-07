@@ -58,20 +58,20 @@ namespace MatterHackers.MatterControl.EeProm
 			topToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
 			topToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			topToBottom.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			topToBottom.Padding = new BorderDouble(3, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			topToBottom.Padding = new BorderDouble(3, 0);
 
 			FlowLayoutWidget row = new FlowLayoutWidget();
 			row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			row.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			GuiWidget descriptionWidget = AddDescription(LocalizedString.Get("Description"));
-			descriptionWidget.Margin = new BorderDouble(left: 3) * TextWidget.GlobalPointSizeScaleRatio;
+			descriptionWidget.Margin = new BorderDouble(left: 3);
 			row.AddChild(descriptionWidget);
 
 			CreateSpacer(row);
 
 			GuiWidget valueText = new TextWidget(LocalizedString.Get("Value"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			valueText.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			valueText.Margin = new BorderDouble(left: 5, right: 60) * TextWidget.GlobalPointSizeScaleRatio;
+			valueText.Margin = new BorderDouble(left: 5, right: 60);
 			row.AddChild(valueText);
 			topToBottom.AddChild(row);
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.EeProm
 			// put in the save button
 			{
 				Button buttonSave = textImageButtonFactory.Generate("Save To EEPROM".Localize());
-				buttonSave.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonSave.Margin = new BorderDouble(0, 3);
 				buttonSave.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.EeProm
 			// put in the import button
 			{
 				Button buttonImport = textImageButtonFactory.Generate("Import".Localize() + "...");
-				buttonImport.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonImport.Margin = new BorderDouble(0, 3);
 				buttonImport.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.EeProm
 			// put in the export button
 			{
 				Button buttonExport = textImageButtonFactory.Generate("Export".Localize() + "...");
-				buttonExport.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonExport.Margin = new BorderDouble(0, 3);
 				buttonExport.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.EeProm
 			// put in the cancel button
 			{
 				Button buttonCancel = textImageButtonFactory.Generate("Close".Localize());
-				buttonCancel.Margin = new BorderDouble(10, 3, 0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonCancel.Margin = new BorderDouble(10, 3, 0, 3);
 				buttonCancel.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.EeProm
 					FlowLayoutWidget row = new FlowLayoutWidget();
 					row.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 					row.AddChild(AddDescription(newSetting.Description));
-					row.Padding = new BorderDouble(5, 0) * TextWidget.GlobalPointSizeScaleRatio;
+					row.Padding = new BorderDouble(5, 0);
 					if ((settingsColmun.Children.Count % 2) == 1)
 					{
 						row.BackgroundColor = new RGBA_Bytes(0, 0, 0, 30);
@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 					double currentValue;
 					double.TryParse(newSetting.Value, out currentValue);
-					MHNumberEdit valueEdit = new MHNumberEdit(currentValue, pixelWidth: 80 * TextWidget.GlobalPointSizeScaleRatio, allowNegatives: true, allowDecimals: true);
+					MHNumberEdit valueEdit = new MHNumberEdit(currentValue, pixelWidth: 80 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true);
 					valueEdit.SelectAllOnFocus = true;
 					valueEdit.TabIndex = currentTabIndex++;
 					valueEdit.VAnchor = Agg.UI.VAnchor.ParentCenter;

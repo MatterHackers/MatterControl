@@ -1,4 +1,5 @@
 ﻿using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -76,7 +77,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.UserRequestedCalibration));
 			};
 
-			Agg.Image.ImageBuffer levelingImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "leveling-24x24.png"));
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png");
+			levelingImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(24 * GuiWidget.DeviceScale);
+			levelingImage = ImageBuffer.CreateScaledImage(levelingImage, iconSize, iconSize);
+
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
 				InvertLightness.DoInvertLightness(levelingImage);

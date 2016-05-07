@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			textImageButtonFactory = new TextImageButtonFactory();
 			textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
-			textImageButtonFactory.FixedHeight = 15 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedHeight = 15 * GuiWidget.DeviceScale;
 			textImageButtonFactory.fontSize = 8;
 			textImageButtonFactory.borderWidth = 1;
 			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
@@ -117,8 +117,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
 			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			int rightContentWidth = (int)(280 * TextWidget.GlobalPointSizeScaleRatio + .5);
-			buttonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
+			int rightContentWidth = (int)(280 * GuiWidget.DeviceScale + .5);
+			buttonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
 			buttonFactory.fontSize = 10;
 			buttonFactory.normalFillColor = RGBA_Bytes.White;
 			buttonFactory.normalTextColor = RGBA_Bytes.DarkGray;
@@ -487,7 +487,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			allText.HAnchor = HAnchor.ParentLeftRight;
-			double textRegionWidth = 380 * TextWidget.GlobalPointSizeScaleRatio;
+			double textRegionWidth = 380 * GuiWidget.DeviceScale;
 			allText.Margin = new BorderDouble(0);
 			allText.Padding = new BorderDouble(5);
 			allText.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
@@ -622,11 +622,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var dataArea = new FlowLayoutWidget();
 			GuiWidget unitsArea = new GuiWidget(HAnchor.AbsolutePosition, VAnchor.FitToChildren | VAnchor.ParentCenter)
 			{
-				Width = 50 * TextWidget.GlobalPointSizeScaleRatio,
+				Width = 50 * GuiWidget.DeviceScale,
 			};
 			GuiWidget restoreArea = new GuiWidget(HAnchor.AbsolutePosition, VAnchor.FitToChildren | VAnchor.ParentCenter)
 			{
-				Width = 30 * TextWidget.GlobalPointSizeScaleRatio,
+				Width = 30 * GuiWidget.DeviceScale,
 			};
 			var settingsRow2 = new SettingsRow()
 			{
@@ -649,10 +649,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				int intEditWidth = (int)(60 * TextWidget.GlobalPointSizeScaleRatio + .5);
-				int doubleEditWidth = (int)(60 * TextWidget.GlobalPointSizeScaleRatio + .5);
-				int vectorXYEditWidth = (int)(60 * TextWidget.GlobalPointSizeScaleRatio + .5);
-				int multiLineEditHeight = (int)(120 * TextWidget.GlobalPointSizeScaleRatio + .5);
+				int intEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+				int doubleEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+				int vectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+				int multiLineEditHeight = (int)(120 * GuiWidget.DeviceScale + .5);
 
 				if (settingData.DataEditType != OrganizerSettingsData.DataEditTypes.MULTI_LINE_TEXT)
 				{
@@ -1165,7 +1165,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								ToolTipText = settingData.HelpText,
 								SelectAllOnFocus = true,
-								Margin = new BorderDouble(20 * TextWidget.GlobalPointSizeScaleRatio, 0, 0, 0),
+								Margin = new BorderDouble(20, 0, 0, 0),
 							};
 
 							xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
@@ -1233,7 +1233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								ToolTipText = settingData.HelpText,
 								SelectAllOnFocus = true,
-								Margin = new BorderDouble(20 * TextWidget.GlobalPointSizeScaleRatio, 0, 0, 0),
+								Margin = new BorderDouble(20, 0, 0, 0),
 							};
 
 							xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
@@ -1377,7 +1377,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ImageBuffer EnsureRestoreButtonImages()
 		{
-			int size = (int)(16 * TextWidget.GlobalPointSizeScaleRatio);
+			int size = (int)(16 * GuiWidget.DeviceScale);
 
 			restoreNormal = ColorCirle(size, new RGBA_Bytes(128, 128, 128));
 			if (OsInformation.OperatingSystem == OSType.Android)
@@ -1396,8 +1396,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Graphics2D normalGraphics = imageBuffer.NewGraphics2D();
 			Vector2 center = new Vector2(size / 2.0, size / 2.0);
 			normalGraphics.Circle(center, size / 2.0, color);
-			normalGraphics.Line(center + new Vector2(-size / 4.0, -size / 4.0), center + new Vector2(size / 4.0, size / 4.0), RGBA_Bytes.White, 2 * TextWidget.GlobalPointSizeScaleRatio);
-			normalGraphics.Line(center + new Vector2(-size / 4.0, size / 4.0), center + new Vector2(size / 4.0, -size / 4.0), RGBA_Bytes.White, 2 * TextWidget.GlobalPointSizeScaleRatio);
+			normalGraphics.Line(center + new Vector2(-size / 4.0, -size / 4.0), center + new Vector2(size / 4.0, size / 4.0), RGBA_Bytes.White, 2 * GuiWidget.DeviceScale);
+			normalGraphics.Line(center + new Vector2(-size / 4.0, size / 4.0), center + new Vector2(size / 4.0, -size / 4.0), RGBA_Bytes.White, 2 * GuiWidget.DeviceScale);
 
 			return imageBuffer;
 		}

@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ContactForm
 		{
 			GuiWidget labelContainer = new GuiWidget();
 			labelContainer.HAnchor = HAnchor.ParentLeftRight;
-			labelContainer.Height = height * TextWidget.GlobalPointSizeScaleRatio;
+			labelContainer.Height = height * GuiWidget.DeviceScale;
 
 			TextWidget formLabel = new TextWidget(labelText, pointSize: fontSize);
 			formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			whiteButtonFactory.FixedWidth = 138 * TextWidget.GlobalPointSizeScaleRatio;
+			whiteButtonFactory.FixedWidth = 138 * GuiWidget.DeviceScale;
 			whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
 			whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
 			whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;

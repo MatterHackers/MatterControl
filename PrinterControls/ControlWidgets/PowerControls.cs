@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 
 			FlowLayoutWidget paddingContainer = new FlowLayoutWidget();
-			paddingContainer.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			paddingContainer.Padding = new BorderDouble(3, 5, 3, 0);
 			{
 				paddingContainer.AddChild(atxPowertoggleSwitch);
 			}
@@ -92,8 +92,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
 
-			this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
-			this.textImageButtonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.FixedWidth = 38 * GuiWidget.DeviceScale;
+			this.textImageButtonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
 			this.textImageButtonFactory.fontSize = 10;
 			this.textImageButtonFactory.borderWidth = 1;
 			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);

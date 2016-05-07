@@ -252,8 +252,9 @@ namespace MatterHackers.MatterControl
 
 			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
 			{
-				TextWidget.GlobalPointSizeScaleRatio = 1.3;
+				GuiWidget.DeviceScale = 1.3;
 			}
+			//GuiWidget.DeviceScale = 2;
 
 			using (new PerformanceTimer("Startup", "MainView"))
 			{

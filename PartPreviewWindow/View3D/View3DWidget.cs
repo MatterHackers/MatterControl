@@ -29,6 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 //#define DoBooleanTest
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -209,7 +212,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						addButton.Enabled = false;
 					}
 
-					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "icon_edit_32x32.png");
+					ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_32x32.png");
+					int iconSize = (int)(14 * GuiWidget.DeviceScale);
+					normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+
+					if (!ActiveTheme.Instance.IsDarkTheme)
+					{
+						InvertLightness.DoInvertLightness(normalImage);
+					}
+
+					Button enterEdittingButton = textImageButtonFactory.GenerateFromImages("Edit".Localize(), normalImage);
 					enterEdittingButton.Name = "3D View Edit";
 					enterEdittingButton.Margin = new BorderDouble(right: 4);
 					enterEdittingButton.Click += (sender, e) =>
@@ -537,14 +549,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget()
 			{
-				Margin = new BorderDouble(5, 0) * TextWidget.GlobalPointSizeScaleRatio,
+				Margin = new BorderDouble(5, 0),
 			};
 
 			TextWidget snapGridLabel = new TextWidget("Snap Grid".Localize())
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(3, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio,
+				Margin = new BorderDouble(3, 0, 0, 0),
 			};
 
 			container.AddChild(snapGridLabel);
@@ -1228,7 +1240,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
-			splitButtonFactory.FixedHeight = 40 * TextWidget.GlobalPointSizeScaleRatio;
+			splitButtonFactory.FixedHeight = 40 * GuiWidget.DeviceScale;
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
 			saveButtons.Visible = false;
 

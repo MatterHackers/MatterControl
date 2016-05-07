@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -232,9 +234,11 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
 			imageButtonFactory.InvertImageColor = false;
-			string notifyIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
-			string notifyHoverIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
-			Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png");
+			levelingImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(16 * GuiWidget.DeviceScale);
+			levelingImage = ImageBuffer.CreateScaledImage(levelingImage, iconSize, iconSize);
+			Button autoLevelButton = imageButtonFactory.Generate(levelingImage, levelingImage);
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();

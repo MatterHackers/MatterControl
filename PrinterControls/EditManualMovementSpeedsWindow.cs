@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			double oldHeight = textImageButtonFactory.FixedHeight;
-			textImageButtonFactory.FixedHeight = 30 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedHeight = 30 * GuiWidget.DeviceScale;
 
 			TextWidget tempTypeLabel = new TextWidget(windowTitle, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 			tempTypeLabel.Margin = new BorderDouble(3);
