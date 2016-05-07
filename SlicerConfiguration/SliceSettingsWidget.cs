@@ -583,6 +583,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			public string SettingsKey { get; set; }
 			public string SettingsValue { get; set; }
 
+			/// <summary>
+			/// Gets or sets the delegate to be invoked when the settings values need to be refreshed. The implementation should 
+			/// take the passed in text value and update its editor to reflect the latest value
+			/// </summary>
 			public Action<string> ValueChanged { get; set; }
 			public Action UpdateStyle { get; set; }
 
@@ -1050,24 +1054,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case OrganizerSettingsData.DataEditTypes.COM_PORT:
 						{
+							// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "MatterControl.ComPort" settings name to
+							// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
+							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to "MatterControl.<machine>.ComPort"
+							// ensuring that a single printer can be shared across different devices and we'll select the correct ComPort in each case
 							var selectableOptions = new StyledDropDownList("None", maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble()
 							};
 
+							string machineSpecificComPortValue = ActiveSliceSettings.Instance.ComPort();
 							foreach (string listItem in FrostedSerialPort.GetPortNames())
 							{
 								MenuItem newItem = selectableOptions.AddItem(listItem);
-								if (newItem.Text == sliceSettingValue)
+								if (newItem.Text == machineSpecificComPortValue)
 								{
-									selectableOptions.SelectedLabel = sliceSettingValue;
+									selectableOptions.SelectedLabel = machineSpecificComPortValue;
 								}
 
 								newItem.Selected += (sender, e) =>
 								{
 									MenuItem menuItem = ((MenuItem)sender);
-									SaveSetting(settingData.SlicerConfigName, menuItem.Text);
+
+									// Directly set the ComPort
+									if (persistenceLayer == null)
+									{
+										ActiveSliceSettings.Instance.SetComPort(menuItem.Text);
+									}
+									else
+									{
+										ActiveSliceSettings.Instance.SetComPort(menuItem.Text, persistenceLayer);
+									}
 
 									settingsRow2.UpdateStyle();
 
@@ -1077,7 +1095,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							dataArea.AddChild(selectableOptions);
 
-							settingsRow2.ValueChanged = (text) => selectableOptions.SelectedLabel = text;
+							settingsRow2.ValueChanged = (text) =>
+							{
+								// Lookup the machine specific comport value rather than the passed in text value
+								selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.ComPort();
+							};
 						}
 						break;
 

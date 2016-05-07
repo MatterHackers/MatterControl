@@ -844,14 +844,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ComPort()
 		{
-			return layeredProfile.GetValue("MatterControl.ComPort");
+			return layeredProfile.GetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName));
 		}
 
 		public void SetComPort(string port)
 		{
-			layeredProfile.UserLayer["MatterControl.ComPort"] = port;
+			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port);
 		}
 
+		public void SetComPort(string port, SettingsLayer layer)
+		{
+			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port, layer);
+		}
 
 		public string SlicingEngine()
 		{
