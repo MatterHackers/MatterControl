@@ -42,7 +42,7 @@ using System;
 
 namespace MatterHackers.MatterControl
 {
-	internal class CompactTabView : TabControl
+	internal class TouchscreenTabView : TabControl
 	{
 		public static int firstPanelCurrentTab = 0;
 		private static readonly string CompactTabView_CurrentTab = "CompactTabView_CurrentTab";
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 		private TabPage TerminalTabPage;
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
-		public CompactTabView(QueueDataView queueDataView)
+		public TouchscreenTabView(QueueDataView queueDataView)
 			: base(Orientation.Vertical)
 		{
 			this.queueDataView = queueDataView;
@@ -208,8 +208,18 @@ namespace MatterHackers.MatterControl
 			QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAdvancedControlsPanel(), ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadPartPreview, null, 1), ref unregisterEvents);
-			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => UiThread.RunOnIdle(LoadAdvancedControls), ref unregisterEvents);
+
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			{
+				// ReloadPartPreview
+				UiThread.RunOnIdle(() =>
+				{
+					partPreviewContainer.Reload(PrinterConnectionAndCommunication.Instance.ActivePrintItem);
+				}, 1);
+
+			}, ref unregisterEvents);
+
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControls), ref unregisterEvents);
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
 			// Make sure we are on the right tab when we create this view
@@ -260,46 +270,29 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void LoadAdvancedControls()
+		private void ReloadAdvancedControls()
 		{
-			RreloadControlsWidget();
-			ReloadConfigurationWidget();
-			ReloadSliceSettingsWidget();
+			// ReloadControlsWidget
+			manualControlsPage.RemoveAllChildren();
+			manualControlsPage.AddChild(new ManualControlsWidget());
+
+			// ReloadConfigurationWidget
+			optionsPage.RemoveAllChildren();
+			optionsPage.AddChild(new PrinterConfigurationScrollWidget());
+
+			// ReloadSliceSettingsWidget
+			sliceTabPage.RemoveAllChildren();
+			sliceTabPage.AddChild(new SliceSettingsWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight, VAnchor = VAnchor.ParentBottomTop
+			});
+
 			this.Invalidate();
 		}
 
 		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
 		{
-			string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
-			string queueString = string.Format("{1} ({0})", QueueData.Instance.Count, queueStringBeg);
-			QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
-		}
-
-		private void ReloadConfigurationWidget()
-		{
-			optionsPage.RemoveAllChildren();
-			optionsPage.AddChild(new PrinterConfigurationScrollWidget());
-		}
-
-		private void ReloadPartPreview(object state = null)
-		{
-			partPreviewContainer.Reload(PrinterConnectionAndCommunication.Instance.ActivePrintItem);
-		}
-
-		private void ReloadSliceSettingsWidget()
-		{
-			sliceTabPage.RemoveAllChildren();
-			sliceSettingsWidget = new SliceSettingsWidget();
-			sliceSettingsWidget.AnchorAll();
-			sliceTabPage.AddChild(sliceSettingsWidget);
-		}
-
-		private void RreloadControlsWidget()
-		{
-			GuiWidget manualPrinterControls = new ManualControlsWidget();
-
-			manualControlsPage.RemoveAllChildren();
-			manualControlsPage.AddChild(manualPrinterControls);
+			QueueTabPage.Text = string.Format("{0} ({1})", "Queue".Localize().ToUpper(), QueueData.Instance.Count);
 		}
 	}
 }
