@@ -474,14 +474,13 @@ namespace MatterHackers.MatterControl
 			return checkBoxButtonViewWidget;
 		}
 
-		public RadioButton GenerateRadioButton(string label, string iconImageName = null)
+		public RadioButton GenerateRadioButton(string label, ImageBuffer iconImage)
 		{
-			ImageBuffer iconImage = null;
-
-			if (iconImageName != null)
+			if (iconImage != null )
 			{
-				iconImage = StaticData.Instance.LoadIcon(iconImageName);
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
+				InvertLightness.DoInvertLightness(iconImage);
+				if (ActiveTheme.Instance.IsDarkTheme
+					&& AllowThemeToAdjustImage)
 				{
 					InvertLightness.DoInvertLightness(iconImage);
 				}
@@ -497,6 +496,16 @@ namespace MatterHackers.MatterControl
 			RadioButton radioButton = new RadioButton(checkBoxButtonViewWidget);
 			radioButton.Margin = Margin;
 			return radioButton;
+		}
+
+		public RadioButton GenerateRadioButton(string label, string iconImageName = null)
+		{
+			if (iconImageName != null)
+			{
+				return GenerateRadioButton(label, StaticData.Instance.LoadIcon(iconImageName));
+			}
+
+			return GenerateRadioButton(label, (ImageBuffer)null);
 		}
 	}
 }
