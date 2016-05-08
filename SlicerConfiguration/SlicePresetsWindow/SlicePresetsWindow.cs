@@ -52,13 +52,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private string configFileExtension = "slice";
 
 		public SlicePresetsWindow(SettingsLayer persistenceLayer, NamedSettingsLayers layerType, string presetsKey)
-				: base(640, 480)
+				: base(641, 481)
 		{
 			this.AlwaysOnTopOfMain = true;
 			this.Title = LocalizedString.Get("Slice Presets Editor");
 			this.persistenceLayer = persistenceLayer;
 			this.layerType = layerType;
 			this.presetsKey = presetsKey;
+			this.MinimumSize = new Vector2(640, 480);
 			this.AnchorAll();
 
 			linkButtonFactory = new LinkButtonFactory()
@@ -90,12 +91,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			this.MinimumSize = new Vector2(640, 480);
-			this.Width = 640;
-			this.Height = 480;
-
-			this.Invalidate();
-			this.PerformLayout();
 		}
 
 		private FlowLayoutWidget GetTopRow()
