@@ -98,6 +98,16 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.UserLayer["MatterControl.DeviceToken"] = printer.DeviceToken ?? "";
 			layeredProfile.UserLayer["MatterControl.DeviceType"] = printer.DeviceType ?? "";
 
+
+			// Import macros from the database
+			var allMacros =  Datastore.Instance.dbSQLite.Query<CustomCommands>("SELECT * FROM CustomCommands WHERE PrinterId = " + printer.Id);
+			layeredProfile.Macros = allMacros.Select(macro => new GCodeMacro()
+			{
+				GCode = macro.Value.Trim(),
+				Name = macro.Name,
+				LastModified = macro.DateLastModified
+			}).ToList();
+
 			string query = string.Format("SELECT * FROM PrinterSetting WHERE Name = 'PublishBedImage' and PrinterId = {0};", printer.Id);
 			var publishBedImage = Datastore.Instance.dbSQLite.Query<PrinterSetting>(query).FirstOrDefault();
 

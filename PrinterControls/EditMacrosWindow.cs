@@ -55,10 +55,6 @@ namespace MatterHackers.MatterControl
 		public MacroDetailWidget(EditMacrosWindow windowController)
 		{
 			this.windowController = windowController;
-			if (this.windowController.ActiveMacro == null)
-			{
-				initMacro();
-			}
 
 			linkButtonFactory.fontSize = 10;
 
@@ -167,7 +163,7 @@ namespace MatterHackers.MatterControl
 			macroCommandLabel.HAnchor = HAnchor.ParentLeftRight;
 			macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
 
-			macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.Value, pixelHeight: 120, multiLine: true);
+			macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.GCode, pixelHeight: 120, multiLine: true);
 			macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
             macroCommandInput.VAnchor = VAnchor.ParentBottomTop;
             macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.ParentBottomTop;
@@ -211,25 +207,6 @@ namespace MatterHackers.MatterControl
 			return formIsValid;
 		}
 
-		private void initMacro()
-		{
-			if (ActiveSliceSettings.Instance != null)
-			{
-				// TODO: Review bindings to int printerID
-				int printerID;
-				int.TryParse(ActiveSliceSettings.Instance.Id(), out printerID);
-
-				windowController.ActiveMacro = new CustomCommands();
-				windowController.ActiveMacro.PrinterId = printerID;
-				windowController.ActiveMacro.Name = "Home All";
-				windowController.ActiveMacro.Value = "G28 ; Home All Axes";
-			}
-			else
-			{
-				throw new Exception("Macros require a printer profile");
-			}
-		}
-
 		private void saveMacro_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(() =>
@@ -246,8 +223,7 @@ namespace MatterHackers.MatterControl
 		private void saveActiveMacro()
 		{
 			windowController.ActiveMacro.Name = macroNameInput.Text;
-			windowController.ActiveMacro.Value = macroCommandInput.Text;
-			windowController.ActiveMacro.Commit();
+			windowController.ActiveMacro.GCode = macroCommandInput.Text;
 		}
 	}
 
@@ -293,7 +269,7 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(presetsFormContainer);
 
-			foreach (CustomCommands currentCommand in MacroControlsWidget.GetMacros())
+			foreach (GCodeMacro macro in ActiveSliceSettings.Instance?.Macros)
 			{
 				FlowLayoutWidget macroRow = new FlowLayoutWidget();
 				macroRow.Margin = new BorderDouble(3, 0, 3, 3);
@@ -301,26 +277,27 @@ namespace MatterHackers.MatterControl
 				macroRow.Padding = new BorderDouble(3);
 				macroRow.BackgroundColor = RGBA_Bytes.White;
 
-				TextWidget buttonLabel = new TextWidget(currentCommand.Name);
+				TextWidget buttonLabel = new TextWidget(macro.Name);
 				macroRow.AddChild(buttonLabel);
 
 				macroRow.AddChild(new HorizontalSpacer());
 
-				Button editLink = linkButtonFactory.Generate(LocalizedString.Get("edit"));
-				editLink.Margin = new BorderDouble(right: 5);
 				// You can't pass a foreach variable into a link function or it wall always be the last item.
 				// So we make a local variable copy of it and pass that. This will get the right one.
-				CustomCommands currentCommandForLinkFunction = currentCommand;
+				var localMacroReference = macro;
+
+				Button editLink = linkButtonFactory.Generate("edit".Localize());
+				editLink.Margin = new BorderDouble(right: 5);
 				editLink.Click += (sender, e) =>
 				{
-					windowController.ChangeToMacroDetail(currentCommandForLinkFunction);
+					windowController.ChangeToMacroDetail(localMacroReference);
 				};
 				macroRow.AddChild(editLink);
 
-				Button removeLink = linkButtonFactory.Generate(LocalizedString.Get("remove"));
+				Button removeLink = linkButtonFactory.Generate("remove".Localize());
 				removeLink.Click += (sender, e) =>
 				{
-					currentCommandForLinkFunction.Delete();
+					ActiveSliceSettings.Instance.Macros.Remove(localMacroReference);
 					windowController.functionToCallOnSave(this, null);
 					windowController.ChangeToMacroList();
 				};
@@ -329,17 +306,21 @@ namespace MatterHackers.MatterControl
 				presetsFormContainer.AddChild(macroRow);
 			}
 
-			Button addMacroButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
 			addMacroButton.ToolTipText = "Add a new Macro".Localize();
-			addMacroButton.Click += new EventHandler(addMacro_Click);
+			addMacroButton.Click += (s, e) =>
+			{
+				windowController.ChangeToMacroDetail(new GCodeMacro()
+				{
+					Name = "Home All",
+					GCode = "G28 ; Home All Axes"
+				});
+			};
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+			Button cancelPresetsButton = textImageButtonFactory.Generate("Close".Localize());
 			cancelPresetsButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					this.windowController.Close();
-				});
+				UiThread.RunOnIdle(() => this.windowController.Close());
 			};
 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -357,18 +338,13 @@ namespace MatterHackers.MatterControl
 			AddChild(topToBottom);
 			this.AnchorAll();
 		}
-
-		private void addMacro_Click(object sender, EventArgs mouseEvent)
-		{
-			windowController.ChangeToMacroDetail();
-		}
 	}
 
 	public class EditMacrosWindow : SystemWindow
 	{
 		public EventHandler functionToCallOnSave;
 
-		public CustomCommands ActiveMacro;
+		public GCodeMacro ActiveMacro;
 
 		public EditMacrosWindow(EventHandler functionToCallOnSave)
 			: base(360, 420)
@@ -396,18 +372,15 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		public void ChangeToMacroDetail(CustomCommands macro = null)
+		public void ChangeToMacroDetail(GCodeMacro macro)
 		{
 			this.ActiveMacro = macro;
-			UiThread.RunOnIdle(DoChangeToMacroDetail);
-		}
-
-		private void DoChangeToMacroDetail()
-		{
-			GuiWidget macroDetailWidget = new MacroDetailWidget(this);
-			this.RemoveAllChildren();
-			this.AddChild(macroDetailWidget);
-			this.Invalidate();
+			UiThread.RunOnIdle(() =>
+			{
+				this.RemoveAllChildren();
+				this.AddChild(new MacroDetailWidget(this));
+				this.Invalidate();
+			});
 		}
 	}
 }

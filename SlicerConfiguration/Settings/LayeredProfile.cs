@@ -36,6 +36,13 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	public class GCodeMacro
+	{
+		public string Name { get; set; }
+		public string GCode { get; set; }
+		public DateTime LastModified { get; set; }
+	}
+
 	public class LayeredProfile
 	{
 		[JsonIgnore]
@@ -49,6 +56,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.OemProfile = printerProfile;
 			this.BaseLayer = baseConfig;
 		}
+
+		public List<GCodeMacro> Macros { get; set; }
 
 		[OnDeserialized]
 		internal void OnDeserializedMethod(StreamingContext context)

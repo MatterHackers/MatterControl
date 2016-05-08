@@ -376,7 +376,6 @@
     <Compile Include="CustomWidgets\DynamicDropDownMenu.cs" />
     <Compile Include="ControlElements\DropDownMenuFactory.cs" />
     <Compile Include="ControlElements\SplitButtonFactory.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\PrinterSetupStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

@@ -224,6 +224,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.UserLayer["MatterControl.PrinterID"] = guid.ToString();
 			layeredProfile.UserLayer["MatterControl.PrinterName"] = printerName;
 
+			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
+			var classicDefaultMacros = layeredProfile.GetValue("default_macros");
+			if (!string.IsNullOrEmpty(classicDefaultMacros))
+			{
+				var namedMacros = new Dictionary<string, string>();
+				namedMacros["Lights On"] = "M42 P6 S255";
+				namedMacros["Lights Off"] = "M42 P6 S0";
+				namedMacros["Offset 0.8"] = "M565 Z0.8;\nM500";
+				namedMacros["Offset 0.9"] = "M565 Z0.9;\nM500";
+				namedMacros["Offset 1"] = "M565 Z1;\nM500";
+				namedMacros["Offset 1.1"] = "M565 Z1.1;\nM500";
+				namedMacros["Offset 1.2"] = "M565 Z1.2;\nM500";
+				namedMacros["Z Offset"] = "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;";
+
+				foreach (string namedMacro in classicDefaultMacros.Split(','))
+				{
+					string gcode;
+					if (namedMacros.TryGetValue(namedMacro.Trim(), out gcode))
+					{
+						layeredProfile.Macros.Add(new GCodeMacro()
+						{
+							Name = namedMacro.Trim(),
+							GCode = gcode
+						});
+					}
+				}
+			}
+
 			layeredProfile.Save();
 
 			ProfileData.Profiles.Add(new PrinterInfo
