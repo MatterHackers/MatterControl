@@ -102,7 +102,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						string presetsKey = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
 						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ActiveSliceSettings.Instance.MaterialLayer(presetsKey), NamedSettingsLayers.Material, presetsKey);
-						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditMaterialPresetsWindow = null; };
+						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) => 
+						{
+							ApplicationController.Instance.EditMaterialPresetsWindow = null;
+							ApplicationController.Instance.ReloadAdvancedControlsPanel();
+						};
 						ApplicationController.Instance.EditMaterialPresetsWindow.ShowAsSystemWindow();
 					}
 					else
@@ -117,7 +121,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						string presetsKey = ActiveSliceSettings.Instance.ActiveQualityKey;
 						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ActiveSliceSettings.Instance.QualityLayer(presetsKey), NamedSettingsLayers.Quality, presetsKey);
-						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditQualityPresetsWindow = null; };
+						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) => 
+						{
+							ApplicationController.Instance.EditQualityPresetsWindow = null;
+							ApplicationController.Instance.ReloadAdvancedControlsPanel();
+						};
 						ApplicationController.Instance.EditQualityPresetsWindow.ShowAsSystemWindow();
 					}
 					else
