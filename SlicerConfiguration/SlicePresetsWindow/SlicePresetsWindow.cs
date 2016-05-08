@@ -39,9 +39,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SlicePresetsWindow : SystemWindow
 	{
-		public EventHandler functionToCallOnSave;
-		public string filterTag;
-		public string filterLabel;
+		private string presetsKey;
+		private SettingsLayer persistenceLayer;
+		private NamedSettingsLayers layerType;
 
 		// TODO: Short term compile hack
 		public ClassicSqlitePrinterProfiles.ClassicSettingsLayer ActivePresetLayer
@@ -50,81 +50,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set;
 		}
 
-		public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag, bool showList = true, string presetKey = null)
+		public SlicePresetsWindow(SettingsLayer persistenceLayer, NamedSettingsLayers layerType, string presetsKey)
 			: base(640, 480)
 		{
 			AlwaysOnTopOfMain = true;
 			Title = LocalizedString.Get("Slice Presets Editor");
 
-			this.filterTag = filterTag;
-			this.filterLabel = filterLabel;
-
-			this.functionToCallOnSave = functionToCallOnSave;
+			this.presetsKey = presetsKey;
+			this.persistenceLayer = persistenceLayer;
+			this.layerType = layerType;
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			ChangeToSlicePresetDetail();
+			DoChangeToSlicePresetDetail();
 			ShowAsSystemWindow();
 			this.MinimumSize = new Vector2(640, 480);
 		}
 
-		public void ChangeToSlicePresetList()
-		{
-			this.ActivePresetLayer = null;
-			UiThread.RunOnIdle(DoChangeToSlicePresetList);
-		}
-
-		private void DoChangeToSlicePresetList()
-		{
-			GuiWidget slicePresetWidget = new SlicePresetListWidget(this);
-			this.RemoveAllChildren();
-			this.AddChild(slicePresetWidget);
-			this.Invalidate();
-		}
-
-		public void ChangeToSlicePresetFromID(string collectionId)
-		{
-			throw new NotImplementedException();
-			//ChangeToSlicePresetDetail(GetCollection(collectionId));
-		}
-
-		public void ChangeToSlicePresetDetail(SliceSettingsCollection collection = null)
-		{
-			if (collection != null)
-			{
-				Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
-				foreach (SliceSetting s in GetCollectionSettings(collection.Id))
-				{
-					settingsDictionary[s.Name] = s;
-				}
-				this.ActivePresetLayer = new ClassicSqlitePrinterProfiles.ClassicSettingsLayer(collection, settingsDictionary);
-			}
-			UiThread.RunOnIdle(DoChangeToSlicePresetDetail);
-		}
-
-		private SliceSettingsCollection GetCollection(int collectionId)
-		{
-			return Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == collectionId).Take(1).FirstOrDefault();
-		}
-
-		private IEnumerable<SliceSettingsCollection> GetPresets(string filterTag)
-		{
-			//Retrieve a list of presets from the Datastore
-			string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = {0};", filterTag);
-			return Datastore.Instance.dbSQLite.Query<SliceSettingsCollection>(query);
-		}
-
-		public IEnumerable<SliceSetting> GetCollectionSettings(int collectionId)
-		{
-			//Retrieve a list of slice settings from the Datastore
-			string query = string.Format("SELECT * FROM SliceSetting WHERE SettingsCollectionID = {0};", collectionId);
-			return Datastore.Instance.dbSQLite.Query<SliceSetting>(query);
-		}
-
 		private void DoChangeToSlicePresetDetail()
 		{
-			GuiWidget macroDetailWidget = new SlicePresetDetailWidget(this);
 			this.RemoveAllChildren();
-			this.AddChild(macroDetailWidget);
+			this.AddChild(new SlicePresetDetailWidget(this, persistenceLayer, layerType, presetsKey));
 			this.Invalidate();
 		}
 	}

@@ -171,6 +171,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetMaterialLayer(key);
 		}
 
+		internal SettingsLayer CreatePresetsLayer(NamedSettingsLayers layerType)
+		{
+			SettingsLayer newLayer = new SettingsLayer();
+			if (layerType == NamedSettingsLayers.Quality)
+			{
+				newLayer.Name = "Quality" + layeredProfile.QualityLayers.Count;
+				layeredProfile.QualityLayers[newLayer.Name] = newLayer;
+			}
+			else
+			{
+				newLayer.Name = "Material" + layeredProfile.MaterialLayers.Count;
+				layeredProfile.MaterialLayers[newLayer.Name] = newLayer;
+			}
+
+			return newLayer;
+		}
+
 		internal SettingsLayer QualityLayer(string key)
 		{
 			return layeredProfile.GetQualityLayer(key);

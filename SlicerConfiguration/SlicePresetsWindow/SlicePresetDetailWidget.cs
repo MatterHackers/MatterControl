@@ -54,16 +54,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Button importPresetButton;
 		private Button exportPresetButton;
 
-		private int tabIndexForItem = 0;
+		private NamedSettingsLayers layerType;
+		private SettingsLayer persistenceLayer;
+		private string presetsKey;
 
-		public SlicePresetDetailWidget(SlicePresetsWindow windowController)
+		public SlicePresetDetailWidget(SlicePresetsWindow windowController, SettingsLayer persistenceLayer, NamedSettingsLayers layerType, string presetsKey)
 		{
+			this.persistenceLayer = persistenceLayer;
+			this.layerType = layerType;
 			this.windowController = windowController;
+			this.presetsKey = presetsKey;
 			this.AnchorAll();
-			if (this.windowController.ActivePresetLayer == null)
-			{
-				initSlicePreset();
-			}
 
 			linkButtonFactory.fontSize = 8;
 			linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
@@ -108,12 +109,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			FlowLayoutWidget firstRow = new FlowLayoutWidget();
 			firstRow.HAnchor = HAnchor.ParentLeftRight;
 
-			TextWidget labelText = new TextWidget("Edit Preset:".FormatWith(windowController.filterLabel.Localize()), pointSize: 14);
+			TextWidget labelText = new TextWidget("Edit Preset:".Localize(), pointSize: 14);
 			labelText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			labelText.VAnchor = VAnchor.ParentCenter;
 			labelText.Margin = new BorderDouble(right: 4);
 
-			presetNameInput = new MHTextEditWidget(windowController.ActivePresetLayer.settingsCollectionData.Name);
+			presetNameInput = new MHTextEditWidget(this.presetsKey);
 			presetNameInput.HAnchor = HAnchor.ParentLeftRight;
 
 			firstRow.AddChild(labelText);
@@ -137,38 +138,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return metaContainer;
 		}
 
-		private SettingsDropDownList categoryDropDownList;
-		private SettingsDropDownList groupDropDownList;
-		private SettingsDropDownList settingDropDownList;
-
 		private GuiWidget GetMiddleRow()
 		{
-			NamedSettingsLayers layerFilter = NamedSettingsLayers.Material;
-			List<SettingsLayer> layerFilters = null;
+			List<SettingsLayer> layerCascade = null;
 
-			if (layerFilter != NamedSettingsLayers.All)
-			{
-				var settings = ActiveSliceSettings.Instance;
+			var settings = ActiveSliceSettings.Instance;
+			layerCascade = new List<SettingsLayer> { settings.BaseLayer, settings.OemLayer, persistenceLayer };
 
-				// TODO: The editing context needs to provide the key
-				System.Diagnostics.Debugger.Break();
-				string layerKey = settings.ActiveMaterialKey;
-
-				layerFilters = new List<SettingsLayer> { settings.BaseLayer, settings.OemLayer };
-
-				switch (layerFilter)
-				{
-					case NamedSettingsLayers.Material:
-						layerFilters.Add(settings.MaterialLayer(layerKey));
-						break;
-
-					case NamedSettingsLayers.Quality:
-						layerFilters.Add(settings.QualityLayer(layerKey));
-						break;
-				}
-			}
-
-			var settingsWidget = new SliceSettingsWidget(layerFilters, NamedSettingsLayers.Material);
+			var settingsWidget = new SliceSettingsWidget(layerCascade, layerType);
 			settingsWidget.settingsControlBar.Visible = false;
 
 			return settingsWidget;
@@ -180,27 +157,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			container.HAnchor = HAnchor.ParentLeftRight;
 			container.Margin = new BorderDouble(top: 3);
 
-			savePresetButton = buttonFactory.Generate(LocalizedString.Get("Save"));
-			duplicatePresetButton = buttonFactory.Generate(LocalizedString.Get("Duplicate"));
-			importPresetButton = buttonFactory.Generate(LocalizedString.Get("Import"));
-			exportPresetButton = buttonFactory.Generate(LocalizedString.Get("Export"));
+			savePresetButton = buttonFactory.Generate("Save".Localize());
+			duplicatePresetButton = buttonFactory.Generate("Duplicate".Localize());
+			importPresetButton = buttonFactory.Generate("Import".Localize());
+			exportPresetButton = buttonFactory.Generate("Export".Localize());
 
-			Button cancelButton = buttonFactory.Generate(LocalizedString.Get("Cancel"));
-			cancelButton.Click += (sender, e) =>
+			Button close = buttonFactory.Generate("Close".Localize());
+			close.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(windowController.Close);
 			};
 
 			container.AddChild(savePresetButton);
 			//Only show duplicate/import/export buttons if setting has been saved.
-			if (windowController.ActivePresetLayer.settingsCollectionData.Id != 0)
+			if (windowController.ActivePresetLayer != null)
 			{
 				container.AddChild(duplicatePresetButton);
 				container.AddChild(importPresetButton);
 				container.AddChild(exportPresetButton);
 			}
 			container.AddChild(new HorizontalSpacer());
-			container.AddChild(cancelButton);
+			container.AddChild(close);
 			return container;
 		}
 
@@ -328,43 +305,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return formIsValid;
 		}
 
-		private void initSlicePreset()
-		{
-			int noExistingPresets = ExistingPresetsCount() + 1;
-
-			Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
-			SliceSettingsCollection collection = new SliceSettingsCollection();
-
-			if (ActiveSliceSettings.Instance != null)
-			{
-				// TODO: Review bindings to int printerID
-				int printerID;
-				int.TryParse(ActiveSliceSettings.Instance.Id(), out printerID);
-
-				collection.Name = string.Format("{0} ({1})", windowController.filterLabel, noExistingPresets.ToString());
-				collection.Tag = windowController.filterTag;
-				collection.PrinterId = printerID;
-			}
-
-			windowController.ActivePresetLayer = new ClassicSqlitePrinterProfiles.ClassicSettingsLayer(collection, settingsDictionary);
-		}
-
-		public int ExistingPresetsCount()
-		{
-			string query = string.Format("SELECT COUNT(*) FROM SliceSettingsCollection WHERE Tag = '{0}';", windowController.filterTag);
-			string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
-			return Convert.ToInt32(result);
-		}
-
 		private void savePresets_Click(object sender, EventArgs mouseEvent)
 		{
+			throw new NotImplementedException();
 			UiThread.RunOnIdle(() =>
 			{
 				if (ValidatePresetsForm())
 				{
 					saveActivePresets();
-					windowController.functionToCallOnSave(this, null);
-					windowController.ChangeToSlicePresetList();
 				}
 			});
 		}
@@ -373,25 +321,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				SliceSettingsCollection duplicateCollection = new SliceSettingsCollection();
-				duplicateCollection.Name = string.Format("{0} (copy)".FormatWith(windowController.ActivePresetLayer.settingsCollectionData.Name));
-				duplicateCollection.Tag = windowController.ActivePresetLayer.settingsCollectionData.Tag;
-				duplicateCollection.PrinterId = windowController.ActivePresetLayer.settingsCollectionData.PrinterId;
-
-				Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
-				IEnumerable<SliceSetting> settingsList = this.windowController.GetCollectionSettings(windowController.ActivePresetLayer.settingsCollectionData.Id);
-				foreach (SliceSetting s in settingsList)
-				{
-					SliceSetting newSetting = new SliceSetting();
-					newSetting.Name = s.Name;
-					newSetting.Value = s.Value;
-
-					settingsDictionary.Add(s.Name, newSetting);
-				}
-
-				var duplicateLayer = new ClassicSqlitePrinterProfiles.ClassicSettingsLayer(duplicateCollection, settingsDictionary);
-				windowController.ActivePresetLayer = duplicateLayer;
-				windowController.ChangeToSlicePresetDetail();
+				// TODO: copy existing directionary to new named instance
+				throw new NotImplementedException();
 			});
 		}
 
