@@ -265,7 +265,6 @@
     <Compile Include="SlicerConfiguration\Slic3rInfo.cs" />
     <Compile Include="SlicerConfiguration\SliceEngineInfo.cs" />
     <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
-    <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetDetailWidget.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayer.cs" />
