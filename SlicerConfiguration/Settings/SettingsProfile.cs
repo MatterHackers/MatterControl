@@ -139,6 +139,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		internal void SaveChanges()
+		{
+			layeredProfile.Save();
+		}
+
 		public string ExtruderTemperature(int extruderIndex)
 		{
 			if (extruderIndex >= layeredProfile.MaterialSettingsKeys.Count)
@@ -1027,36 +1032,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return drivers;
 		}
 
-		public void GetMacros(string make, string model)
-		{
-			Dictionary<string, string> macroDict = new Dictionary<string, string>();
-			macroDict["Lights On"] = "M42 P6 S255";
-			macroDict["Lights Off"] = "M42 P6 S0";
-			macroDict["Offset 0.8"] = "M565 Z0.8;\nM500";
-			macroDict["Offset 0.9"] = "M565 Z0.9;\nM500";
-			macroDict["Offset 1"] = "M565 Z1;\nM500";
-			macroDict["Offset 1.1"] = "M565 Z1.1;\nM500";
-			macroDict["Offset 1.2"] = "M565 Z1.2;\nM500";
-			macroDict["Z Offset"] = "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;";
-
-			string defaultMacros = ActiveValue("default_macros");
-			var printerCustomCommands = new List<CustomCommands>();
-			if (!string.IsNullOrEmpty(defaultMacros))
-			{
-				foreach (string macroName in defaultMacros.Split(','))
-				{
-					string macroValue;
-					if (macroDict.TryGetValue(macroName.Trim(), out macroValue))
-					{
-						CustomCommands customMacro = new CustomCommands();
-						customMacro.Name = macroName.Trim();
-						customMacro.Value = macroValue;
-
-						printerCustomCommands.Add(customMacro);
-					}
-				}
-			}
-		}
+		public List<GCodeMacro> Macros => layeredProfile.Macros;
 	}
 
 	public class SettingsLayer : SettingsDictionary
