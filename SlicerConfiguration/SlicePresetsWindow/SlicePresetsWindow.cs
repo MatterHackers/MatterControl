@@ -43,13 +43,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private SettingsLayer persistenceLayer;
 		private NamedSettingsLayers layerType;
 
-		// TODO: Short term compile hack
-		public ClassicSqlitePrinterProfiles.ClassicSettingsLayer ActivePresetLayer
-		{
-			get;
-			set;
-		}
-
 		public SlicePresetsWindow(SettingsLayer persistenceLayer, NamedSettingsLayers layerType, string presetsKey)
 			: base(640, 480)
 		{

@@ -43,21 +43,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SlicePresetDetailWidget : GuiWidget
 	{
-		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		private TextImageButtonFactory buttonFactory;
+		private LinkButtonFactory linkButtonFactory;
 		private SlicePresetsWindow windowController;
-		private TextWidget presetNameError;
 		private MHTextEditWidget presetNameInput;
-
-		private Button savePresetButton;
-		private Button duplicatePresetButton;
-		private Button importPresetButton;
-		private Button exportPresetButton;
 
 		private NamedSettingsLayers layerType;
 		private SettingsLayer persistenceLayer;
 		private string presetsKey;
-
+		private string configFileExtension = "slice";
+		
 		public SlicePresetDetailWidget(SlicePresetsWindow windowController, SettingsLayer persistenceLayer, NamedSettingsLayers layerType, string presetsKey)
 		{
 			this.persistenceLayer = persistenceLayer;
@@ -66,31 +61,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.presetsKey = presetsKey;
 			this.AnchorAll();
 
-			linkButtonFactory.fontSize = 8;
-			linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
+			linkButtonFactory = new LinkButtonFactory()
+			{
+				fontSize = 8,
+				textColor = ActiveTheme.Instance.SecondaryAccentColor
+			};
+			
+			buttonFactory = new TextImageButtonFactory()
+			{
+				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				borderWidth = 0
+			};
 
-			buttonFactory = new TextImageButtonFactory();
-			buttonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			buttonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			buttonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			buttonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			buttonFactory.borderWidth = 0;
-
-			AddElements();
-			AddHandlers();
-		}
-
-		private void AddHandlers()
-		{
-			savePresetButton.Click += new EventHandler(savePresets_Click);
-			duplicatePresetButton.Click += new EventHandler(duplicatePresets_Click);
-			exportPresetButton.Click += new EventHandler(exportPresets_Click);
-		}
-
-		private void AddElements()
-		{
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainer.Padding = new BorderDouble(3);
+			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = new BorderDouble(3)
+			};
 			mainContainer.AnchorAll();
 
 			mainContainer.AddChild(GetTopRow());
@@ -102,17 +91,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private FlowLayoutWidget GetTopRow()
 		{
-			FlowLayoutWidget metaContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			metaContainer.HAnchor = HAnchor.ParentLeftRight;
-			metaContainer.Padding = new BorderDouble(0, 3);
+			FlowLayoutWidget metaContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Padding = new BorderDouble(0, 3)
+			};
 
-			FlowLayoutWidget firstRow = new FlowLayoutWidget();
-			firstRow.HAnchor = HAnchor.ParentLeftRight;
+			FlowLayoutWidget firstRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
 
-			TextWidget labelText = new TextWidget("Edit Preset:".Localize(), pointSize: 14);
-			labelText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			labelText.VAnchor = VAnchor.ParentCenter;
-			labelText.Margin = new BorderDouble(right: 4);
+			TextWidget labelText = new TextWidget("Edit Preset:".Localize(), pointSize: 14)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(right: 4)
+			};
 
 			presetNameInput = new MHTextEditWidget(this.presetsKey);
 			presetNameInput.HAnchor = HAnchor.ParentLeftRight;
@@ -120,17 +112,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			firstRow.AddChild(labelText);
 			firstRow.AddChild(presetNameInput);
 
-			presetNameError = new TextWidget("This is an error message", 0, 0, 10);
-			presetNameError.TextColor = RGBA_Bytes.Red;
-			presetNameError.HAnchor = HAnchor.ParentLeftRight;
-			presetNameError.Margin = new BorderDouble(top: 3);
-			presetNameError.Visible = false;
-
-			FlowLayoutWidget secondRow = new FlowLayoutWidget();
-			secondRow.HAnchor = HAnchor.ParentLeftRight;
+			FlowLayoutWidget secondRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
 
 			secondRow.AddChild(new GuiWidget(labelText.Width + 4, 1));
-			secondRow.AddChild(presetNameError);
 
 			metaContainer.AddChild(firstRow);
 			metaContainer.AddChild(secondRow);
@@ -140,10 +124,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private GuiWidget GetMiddleRow()
 		{
-			List<SettingsLayer> layerCascade = null;
-
 			var settings = ActiveSliceSettings.Instance;
-			layerCascade = new List<SettingsLayer> { settings.BaseLayer, settings.OemLayer, persistenceLayer };
+			var layerCascade = new List<SettingsLayer> { settings.BaseLayer, settings.OemLayer, persistenceLayer };
 
 			var settingsWidget = new SliceSettingsWidget(layerCascade, layerType);
 			settingsWidget.settingsControlBar.Visible = false;
@@ -153,284 +135,92 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private FlowLayoutWidget GetBottomRow()
 		{
-			FlowLayoutWidget container = new FlowLayoutWidget();
-			container.HAnchor = HAnchor.ParentLeftRight;
-			container.Margin = new BorderDouble(top: 3);
+			FlowLayoutWidget container = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(top: 3)
+			};
+			
+			Button saveButton = buttonFactory.Generate("Save".Localize());
+			saveButton.Click += (s, e) =>
+			{
+				throw new NotImplementedException();
+			};
 
-			savePresetButton = buttonFactory.Generate("Save".Localize());
-			duplicatePresetButton = buttonFactory.Generate("Duplicate".Localize());
-			importPresetButton = buttonFactory.Generate("Import".Localize());
-			exportPresetButton = buttonFactory.Generate("Export".Localize());
+			Button duplicateButton = buttonFactory.Generate("Duplicate".Localize());
+			duplicateButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					// duplicatePresets_Click
+					// TODO: copy existing dictionary to new named instance
+					throw new NotImplementedException();
+				});
+			};
 
-			Button close = buttonFactory.Generate("Close".Localize());
-			close.Click += (sender, e) =>
+			Button importButton = buttonFactory.Generate("Import".Localize());
+			importButton.Click += (s, e) =>
+			{
+				throw new NotImplementedException();
+			};
+
+			Button exportButton = buttonFactory.Generate("Export".Localize());
+			exportButton.Click += (s, e) => UiThread.RunOnIdle(SaveAs);
+
+			Button closeButton = buttonFactory.Generate("Close".Localize());
+			closeButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(windowController.Close);
 			};
 
-			container.AddChild(savePresetButton);
+			container.AddChild(saveButton);
+
 			//Only show duplicate/import/export buttons if setting has been saved.
-			if (windowController.ActivePresetLayer != null)
+			if (false)
 			{
-				container.AddChild(duplicatePresetButton);
-				container.AddChild(importPresetButton);
-				container.AddChild(exportPresetButton);
+				container.AddChild(duplicateButton);
+				container.AddChild(importButton);
+				container.AddChild(exportButton);
 			}
+
 			container.AddChild(new HorizontalSpacer());
-			container.AddChild(close);
+			container.AddChild(closeButton);
+
 			return container;
-		}
-
-		private Dictionary<string, string> settingLayoutData = new Dictionary<string, string>(); //Setting config name, setting 'full' display name (with category/group)
-
-		private Dictionary<string, string> SettingNameLookup
-		{
-			get
-			{
-				if (settingLayoutData.Count == 0)
-				{
-					PopulateLayoutDictionary();
-				}
-				return settingLayoutData;
-			}
-		}
-
-		private void PopulateLayoutDictionary()
-		{
-			// Show all settings
-			var advancedSettings = SliceSettingsOrganizer.Instance.UserLevels["Advanced"];
-
-			foreach (OrganizerCategory category in advancedSettings.CategoriesList)
-			{
-				foreach (OrganizerGroup group in category.GroupsList)
-				{
-					foreach (OrganizerSubGroup subgroup in group.SubGroupsList)
-					{
-						foreach (OrganizerSettingsData setting in subgroup.SettingDataList)
-						{
-							string settingDisplayName = "{0} > {1} > {2}".FormatWith(category.Name, group.Name, setting.PresentationName).Replace("\\n", "").Replace(":", "");
-							settingLayoutData[setting.SlicerConfigName] = settingDisplayName;
-						}
-					}
-				}
-			}
-		}
-
-		private OrganizerSettingsData addRowSettingData;
-
-		private void OnSettingsChanged()
-		{
-			SettingsChanged.CallEvents(this, null);
-		}
-
-		private void SaveSetting(string slicerConfigName, string value)
-		{
-			SaveValue(slicerConfigName, value);
-		}
-
-		private List<SliceSetting> SliceSettingsToRemoveOnCommit = new List<SliceSetting>();
-
-		public RootedObjectEventHandler CommitStatusChanged = new RootedObjectEventHandler();
-		public RootedObjectEventHandler SettingsChanged = new RootedObjectEventHandler();
-
-		public void SaveValue(string keyName, string keyValue)
-		{
-			if (this.windowController.ActivePresetLayer.settingsDictionary.ContainsKey(keyName)
-				&& this.windowController.ActivePresetLayer.settingsDictionary[keyName].Value != keyValue)
-			{
-				this.windowController.ActivePresetLayer.settingsDictionary[keyName].Value = keyValue;
-
-				OnSettingsChanged();
-			}
-			else
-			{
-				SliceSetting sliceSetting = new SliceSetting();
-				sliceSetting.Name = keyName;
-				sliceSetting.Value = keyValue;
-				sliceSetting.SettingsCollectionId = this.windowController.ActivePresetLayer.settingsCollectionData.Id;
-
-				this.windowController.ActivePresetLayer.settingsDictionary[keyName] = sliceSetting;
-
-				OnSettingsChanged();
-			}
-		}
-
-		public void CommitChanges()
-		{
-			foreach (KeyValuePair<String, SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
-			{
-				//Ensure that each setting's collection id matches current collection id (ie for new presets)
-				if (item.Value.SettingsCollectionId != windowController.ActivePresetLayer.settingsCollectionData.Id)
-				{
-					item.Value.SettingsCollectionId = windowController.ActivePresetLayer.settingsCollectionData.Id;
-				}
-				item.Value.Commit();
-			}
-			foreach (SliceSetting item in SliceSettingsToRemoveOnCommit)
-			{
-				item.Delete();
-			}
-		}
-
-		private TextWidget getSettingInfoData(OrganizerSettingsData settingData)
-		{
-			string extraSettings = settingData.ExtraSettings;
-			extraSettings = extraSettings.Replace("\\n", "\n");
-			TextWidget dataTypeInfo = new TextWidget(extraSettings, pointSize: 10);
-			dataTypeInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			dataTypeInfo.Margin = new BorderDouble(5, 0);
-			return dataTypeInfo;
-		}
-
-		private bool ValidatePresetsForm()
-		{
-			ValidationMethods validationMethods = new ValidationMethods();
-
-			List<FormField> formFields = new List<FormField> { };
-			FormField.ValidationHandler[] stringValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty };
-			FormField.ValidationHandler[] nameValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty, validationMethods.StringHasNoSpecialChars };
-
-			formFields.Add(new FormField(presetNameInput, presetNameError, stringValidationHandlers));
-
-			bool formIsValid = true;
-			foreach (FormField formField in formFields)
-			{
-				formField.FieldErrorMessageWidget.Visible = false;
-				bool fieldIsValid = formField.Validate();
-				if (!fieldIsValid)
-				{
-					formIsValid = false;
-				}
-			}
-			return formIsValid;
-		}
-
-		private void savePresets_Click(object sender, EventArgs mouseEvent)
-		{
-			throw new NotImplementedException();
-			UiThread.RunOnIdle(() =>
-			{
-				if (ValidatePresetsForm())
-				{
-					saveActivePresets();
-				}
-			});
-		}
-
-		private void duplicatePresets_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				// TODO: copy existing directionary to new named instance
-				throw new NotImplementedException();
-			});
-		}
-
-		private string configFileExtension = "slice";
-
-		private void exportPresets_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(SaveAs);
 		}
 
 		private void SaveAs()
 		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension);
-			saveParams.FileName = presetNameInput.Text;
+			FileDialog.SaveFileDialog(
+				new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension)
+				{
+					FileName = presetNameInput.Text
+				}, 
+				(saveParams) =>
+				{
+					throw new NotImplementedException();
 
-			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
-		}
+					if (!string.IsNullOrEmpty(saveParams.FileName))
+					{
+						// TODO: If we stil want this functionality, it should be moved to a common helper method off of SettingsLayer and resused throughout
+						//
+						// GenerateConfigFile(saveParams.FileName) ...
 
-		private void onSaveFileSelected(SaveFileDialogParams saveParams)
-		{
-			if (!string.IsNullOrEmpty(saveParams.FileName))
-			{
-				GenerateConfigFile(saveParams.FileName);
-			}
-		}
+						//List<string> configFileAsList = new List<string>();
 
-		public void GenerateConfigFile(string fileName)
-		{
-			List<string> configFileAsList = new List<string>();
+						//foreach (KeyValuePair<String, SliceSetting> setting in windowController.ActivePresetLayer.settingsDictionary)
+						//{
+						//	string settingString = string.Format("{0} = {1}", setting.Value.Name, setting.Value.Value);
+						//	configFileAsList.Add(settingString);
+						//}
+						//string configFileAsString = string.Join("\n", configFileAsList.ToArray());
 
-			foreach (KeyValuePair<String, SliceSetting> setting in windowController.ActivePresetLayer.settingsDictionary)
-			{
-				string settingString = string.Format("{0} = {1}", setting.Value.Name, setting.Value.Value);
-				configFileAsList.Add(settingString);
-			}
-			string configFileAsString = string.Join("\n", configFileAsList.ToArray());
-
-			FileStream fs = new FileStream(fileName, FileMode.Create);
-			StreamWriter sw = new System.IO.StreamWriter(fs);
-			sw.Write(configFileAsString);
-			sw.Close();
-		}
-
-		private void saveActivePresets()
-		{
-			windowController.ActivePresetLayer.settingsCollectionData.Name = presetNameInput.Text;
-			windowController.ActivePresetLayer.settingsCollectionData.Commit();
-			CommitChanges();
-		}
-	}
-
-	internal class PresetListControl : ScrollableWidget
-	{
-		private FlowLayoutWidget topToBottomItemList;
-
-		public PresetListControl()
-		{
-			this.AnchorAll();
-			this.AutoScroll = true;
-			this.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-
-			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-			topToBottomItemList.Margin = new BorderDouble(top: 3);
-
-			base.AddChild(topToBottomItemList);
-		}
-
-		public void RemoveScrollChildren()
-		{
-			topToBottomItemList.RemoveAllChildren();
-		}
-
-		public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
-		{
-			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
-			itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-			itemHolder.AddChild(child);
-			itemHolder.VAnchor = VAnchor.FitToChildren;
-
-			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
-		}
-	}
-
-	public class SettingsDropDownList : DropDownList
-	{
-		private static RGBA_Bytes whiteSemiTransparent = new RGBA_Bytes(255, 255, 255, 100);
-		private static RGBA_Bytes whiteTransparent = new RGBA_Bytes(255, 255, 255, 0);
-
-		public SettingsDropDownList(string noSelectionString, Direction direction = Direction.Down)
-			: base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction, maxHeight: 300)
-		{
-			//this.HAnchor = HAnchor.ParentLeftRight;
-			this.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.MenuItemsBorderWidth = 1;
-			this.MenuItemsBackgroundColor = RGBA_Bytes.White;
-			this.MenuItemsBorderColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.MenuItemsPadding = new BorderDouble(10, 4, 10, 6);
-			this.MenuItemsBackgroundHoverColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.MenuItemsTextHoverColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.MenuItemsTextColor = RGBA_Bytes.Black;
-			this.BorderWidth = 1;
-			this.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.HoverColor = whiteSemiTransparent;
-			this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 0);
-
-			mainControlText.VAnchor = VAnchor.ParentCenter;
+						//FileStream fs = new FileStream(fileName, FileMode.Create);
+						//StreamWriter sw = new System.IO.StreamWriter(fs);
+						//sw.Write(configFileAsString);
+						//sw.Close();
+					}
+				});
 		}
 	}
 }
