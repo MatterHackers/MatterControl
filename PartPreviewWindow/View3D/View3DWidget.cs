@@ -212,16 +212,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						addButton.Enabled = false;
 					}
 
-					ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_32x32.png");
-					int iconSize = (int)(14 * GuiWidget.DeviceScale);
-					normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+					ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_32x32.png", 14, 14);
 
 					if (!ActiveTheme.Instance.IsDarkTheme)
 					{
 						InvertLightness.DoInvertLightness(normalImage);
 					}
 
-					Button enterEdittingButton = textImageButtonFactory.GenerateFromImages("Edit".Localize(), normalImage);
+					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), normalImage);
 					enterEdittingButton.Name = "3D View Edit";
 					enterEdittingButton.Margin = new BorderDouble(right: 4);
 					enterEdittingButton.Click += (sender, e) =>
@@ -1148,7 +1146,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FlowLayoutWidget rotateButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			rotateButtonContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			Button rotateXButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
+			ImageBuffer rotateImage = StaticData.Instance.LoadIcon("icon_rotate_32x32.png", 32, 32);
+			Button rotateXButton = textImageButtonFactory.Generate("", rotateImage);
 			TextWidget centeredX = new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredX.Margin = new BorderDouble(3, 0, 0, 0); centeredX.AnchorCenter(); rotateXButton.AddChild(centeredX);
 			rotateButtonContainer.AddChild(rotateXButton);
 			rotateControls.Add(rotateXButton);
@@ -1166,7 +1165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Button rotateYButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
+			Button rotateYButton = textImageButtonFactory.Generate("", rotateImage);
 			TextWidget centeredY = new TextWidget("Y", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredY.Margin = new BorderDouble(3, 0, 0, 0); centeredY.AnchorCenter(); rotateYButton.AddChild(centeredY);
 			rotateButtonContainer.AddChild(rotateYButton);
 			rotateControls.Add(rotateYButton);
@@ -1184,7 +1183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Button rotateZButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
+			Button rotateZButton = textImageButtonFactory.Generate("", rotateImage);
 			TextWidget centeredZ = new TextWidget("Z", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredZ.Margin = new BorderDouble(3, 0, 0, 0); centeredZ.AnchorCenter(); rotateZButton.AddChild(centeredZ);
 			rotateButtonContainer.AddChild(rotateZButton);
 			rotateControls.Add(rotateZButton);

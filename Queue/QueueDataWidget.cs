@@ -43,6 +43,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -175,7 +176,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				buttonPanel1.Padding = new BorderDouble(0, 3);
 				buttonPanel1.MinimumSize = new Vector2(0, 46);
 				{
-					addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+					addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), StaticData.Instance.LoadIcon("icon_plus.png", 32, 32));
 					addToQueueButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Queue".Localize();
 					buttonPanel1.AddChild(addToQueueButton);
 					addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
@@ -184,7 +185,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 					// put in the creator button
 					{
-						createButton = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
+						createButton = textImageButtonFactory.Generate(LocalizedString.Get("Create"), StaticData.Instance.LoadIcon("icon_creator.png", 32, 32));
 						createButton.ToolTipText = "Choose a Create Tool to generate custom designs".Localize();
 						createButton.Name = "Design Tool Button";
 						buttonPanel1.AddChild(createButton);
@@ -199,7 +200,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 					if (OemSettings.Instance.ShowShopButton)
 					{
-						shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), "icon_shopping_cart_32x32.png");
+						shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 32,32));
 						shopButton.ToolTipText = "Shop online for printing materials".Localize();
 						shopButton.Name = "Buy Materials Button";
 						buttonPanel1.AddChild(shopButton);

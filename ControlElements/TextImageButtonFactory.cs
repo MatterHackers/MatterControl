@@ -188,27 +188,6 @@ namespace MatterHackers.MatterControl
 			return textImageButton;
 		}
 
-		private ImageBuffer LoadUpButtonImage(string imageName)
-		{
-			ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-			StaticData.Instance.LoadIcon(imageName, buffer);
-
-			if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-			{
-				InvertLightness.DoInvertLightness(buffer);
-			}
-			return buffer;
-		}
-
-		public Button GenerateEditButton()
-		{
-			Button editButton = GetThemedEditButton();
-
-			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
-			return editButton;
-		}
-
 		public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
 		{
 			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
@@ -226,22 +205,20 @@ namespace MatterHackers.MatterControl
 
 		public static Button GetThemedEditButton()
 		{
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_32x32.png");
-			int iconSize = (int)(16 * GuiWidget.DeviceScale);
-			normalImage = ImageBuffer.CreateScaledImage(normalImage, iconSize, iconSize);
+			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_32x32.png", 16, 16);
 
 			Button editButton;
-			if (!ActiveTheme.Instance.IsDarkTheme)
+			if (ActiveTheme.Instance.IsDarkTheme)
 			{
-				editButton = new Button(0, 0, new ButtonViewThreeImage(WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black),
-				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
+				editButton = new Button(0, 0, new ButtonViewThreeImage(SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Black),
+				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Gray),
 				normalImage));
 			}
 			else
 			{
 				editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage,
-				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Gray),
-				WhiteToColor.CreateWhiteToColor(normalImage, RGBA_Bytes.Black)));
+				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Gray),
+				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Black)));
 			}
 
 			return editButton;
@@ -280,7 +257,7 @@ namespace MatterHackers.MatterControl
 			return textImageCheckBoxButton;
 		}
 
-		public Button GenerateFromImages(string label, ImageBuffer normalImage, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null, bool centerText = false)
+		public Button Generate(string label, ImageBuffer normalImage, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null, bool centerText = false)
 		{
 			//Create button based on view container widget
 			ButtonViewStates buttonViewWidget = getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage, centerText);
@@ -382,7 +359,7 @@ namespace MatterHackers.MatterControl
 				disabledImage = new ImageBuffer(normalImage);
 			}
 
-			if (!ActiveTheme.Instance.IsDarkTheme
+			if (ActiveTheme.Instance.IsDarkTheme
 				&& AllowThemeToAdjustImage)
 			{
 				if (normalImage != null) InvertLightness.DoInvertLightness(normalImage);

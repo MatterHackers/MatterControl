@@ -27,12 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 using System;
 
 namespace MatterHackers.MatterControl
@@ -54,7 +57,8 @@ namespace MatterHackers.MatterControl
 				this.SelectedValue = ActiveSliceSettings.Instance.Id();
 			}
 
-			this.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Printer...", "new");
+			ImageBuffer plusImage = StaticData.Instance.LoadIcon("icon_plus.png", 32, 32);
+			this.AddItem(plusImage, "Add New Printer...", "new");
 
 			this.SelectionChanged += (s, e) =>
 			{

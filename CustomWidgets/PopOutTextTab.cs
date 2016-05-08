@@ -99,9 +99,7 @@ namespace MatterHackers.Agg.UI
 			tabTitle.AutoExpandBoundsToText = true;
 			leftToRight.AddChild(tabTitle);
 
-			ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon("icon_pop_out_32x32.png");
-			int iconSize = (int)(16 * GuiWidget.DeviceScale);
-			popOutImageClick = ImageBuffer.CreateScaledImage(popOutImageClick, iconSize, iconSize);
+			ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon("icon_pop_out_32x32.png", 16, 16);
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				InvertLightness.DoInvertLightness(popOutImageClick);
