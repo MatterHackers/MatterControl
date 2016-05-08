@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 	public class TouchscreenView : ApplicationView
 	{
 		private FlowLayoutWidget TopContainer;
-		private CompactTabView compactTabView;
+		private TouchscreenTabView touchscreenTabView;
 		private QueueDataView queueDataView;
 		private GuiWidget menuSeparator;
 		private PrintProgressBar progressBar;
@@ -103,9 +103,9 @@ namespace MatterHackers.MatterControl
 
 			container.AddChild(progressBar);
 			container.AddChild(menuSeparator);
-			compactTabView = new CompactTabView(queueDataView);
+			touchscreenTabView = new TouchscreenTabView(queueDataView);
 
-			container.AddChild(compactTabView);
+			container.AddChild(touchscreenTabView);
 			this.AddChild(container);
 		}
 	}

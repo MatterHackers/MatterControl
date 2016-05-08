@@ -142,7 +142,7 @@
     <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
     <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
-    <Compile Include="ApplicationView\CompactTabView.cs" />
+    <Compile Include="ApplicationView\TouchscreenTabView.cs" />
     <Compile Include="ApplicationView\AdvancedControlsPanel.cs" />
     <Compile Include="ApplicationView\FirstPanelTabView.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
