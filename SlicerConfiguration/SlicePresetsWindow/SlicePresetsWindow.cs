@@ -27,8 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DataStorage.ClassicDB;
 using MatterHackers.VectorMath;
@@ -39,93 +41,190 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SlicePresetsWindow : SystemWindow
 	{
-		public EventHandler functionToCallOnSave;
-		public string filterTag;
-		public string filterLabel;
+		private string presetsKey;
+		private SettingsLayer persistenceLayer;
+		private NamedSettingsLayers layerType;
 
-		// TODO: Short term compile hack
-		public ClassicSqlitePrinterProfiles.ClassicSettingsLayer ActivePresetLayer
+		private TextImageButtonFactory buttonFactory;
+		private LinkButtonFactory linkButtonFactory;
+		private MHTextEditWidget presetNameInput;
+
+		private string configFileExtension = "slice";
+
+		public SlicePresetsWindow(SettingsLayer persistenceLayer, NamedSettingsLayers layerType, string presetsKey)
+				: base(641, 481)
 		{
-			get;
-			set;
-		}
+			this.AlwaysOnTopOfMain = true;
+			this.Title = LocalizedString.Get("Slice Presets Editor");
+			this.persistenceLayer = persistenceLayer;
+			this.layerType = layerType;
+			this.presetsKey = presetsKey;
+			this.MinimumSize = new Vector2(640, 480);
+			this.AnchorAll();
 
-		public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag, bool showList = true, string presetKey = null)
-			: base(640, 480)
-		{
-			AlwaysOnTopOfMain = true;
-			Title = LocalizedString.Get("Slice Presets Editor");
+			linkButtonFactory = new LinkButtonFactory()
+			{
+				fontSize = 8,
+				textColor = ActiveTheme.Instance.SecondaryAccentColor
+			};
 
-			this.filterTag = filterTag;
-			this.filterLabel = filterLabel;
+			buttonFactory = new TextImageButtonFactory()
+			{
+				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				borderWidth = 0
+			};
 
-			this.functionToCallOnSave = functionToCallOnSave;
+			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = new BorderDouble(3)
+			};
+			mainContainer.AnchorAll();
+
+			mainContainer.AddChild(GetTopRow());
+			mainContainer.AddChild(GetMiddleRow());
+			mainContainer.AddChild(GetBottomRow());
+
+			this.AddChild(mainContainer);
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			ChangeToSlicePresetDetail();
-			ShowAsSystemWindow();
-			this.MinimumSize = new Vector2(640, 480);
+
 		}
 
-		public void ChangeToSlicePresetList()
+		private FlowLayoutWidget GetTopRow()
 		{
-			this.ActivePresetLayer = null;
-			UiThread.RunOnIdle(DoChangeToSlicePresetList);
-		}
-
-		private void DoChangeToSlicePresetList()
-		{
-			GuiWidget slicePresetWidget = new SlicePresetListWidget(this);
-			this.RemoveAllChildren();
-			this.AddChild(slicePresetWidget);
-			this.Invalidate();
-		}
-
-		public void ChangeToSlicePresetFromID(string collectionId)
-		{
-			throw new NotImplementedException();
-			//ChangeToSlicePresetDetail(GetCollection(collectionId));
-		}
-
-		public void ChangeToSlicePresetDetail(SliceSettingsCollection collection = null)
-		{
-			if (collection != null)
+			FlowLayoutWidget metaContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
-				foreach (SliceSetting s in GetCollectionSettings(collection.Id))
+				HAnchor = HAnchor.ParentLeftRight,
+				Padding = new BorderDouble(0, 3)
+			};
+
+			FlowLayoutWidget firstRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
+
+			TextWidget labelText = new TextWidget("Edit Preset:".Localize(), pointSize: 14)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(right: 4)
+			};
+
+			presetNameInput = new MHTextEditWidget(this.presetsKey);
+			presetNameInput.HAnchor = HAnchor.ParentLeftRight;
+
+			firstRow.AddChild(labelText);
+			firstRow.AddChild(presetNameInput);
+
+			FlowLayoutWidget secondRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
+
+			secondRow.AddChild(new GuiWidget(labelText.Width + 4, 1));
+
+			metaContainer.AddChild(firstRow);
+			metaContainer.AddChild(secondRow);
+
+			return metaContainer;
+		}
+
+		private GuiWidget GetMiddleRow()
+		{
+			var settings = ActiveSliceSettings.Instance;
+			var layerCascade = new List<SettingsLayer> { settings.BaseLayer, settings.OemLayer, persistenceLayer };
+
+			var settingsWidget = new SliceSettingsWidget(layerCascade, layerType);
+			settingsWidget.settingsControlBar.Visible = false;
+
+			return settingsWidget;
+		}
+
+		private FlowLayoutWidget GetBottomRow()
+		{
+			FlowLayoutWidget container = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(top: 3)
+			};
+
+			Button saveButton = buttonFactory.Generate("Save".Localize());
+			saveButton.Click += (s, e) =>
+			{
+				throw new NotImplementedException();
+			};
+
+			Button duplicateButton = buttonFactory.Generate("Duplicate".Localize());
+			duplicateButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
 				{
-					settingsDictionary[s.Name] = s;
-				}
-				this.ActivePresetLayer = new ClassicSqlitePrinterProfiles.ClassicSettingsLayer(collection, settingsDictionary);
+					// duplicatePresets_Click
+					// TODO: copy existing dictionary to new named instance
+					throw new NotImplementedException();
+				});
+			};
+
+			Button importButton = buttonFactory.Generate("Import".Localize());
+			importButton.Click += (s, e) =>
+			{
+				throw new NotImplementedException();
+			};
+
+			Button exportButton = buttonFactory.Generate("Export".Localize());
+			exportButton.Click += (s, e) => UiThread.RunOnIdle(SaveAs);
+
+			Button closeButton = buttonFactory.Generate("Close".Localize());
+			closeButton.Click += (sender, e) =>
+			{
+				UiThread.RunOnIdle(this.Close);
+			};
+
+			container.AddChild(saveButton);
+
+			//Only show duplicate/import/export buttons if setting has been saved.
+			if (false)
+			{
+				container.AddChild(duplicateButton);
+				container.AddChild(importButton);
+				container.AddChild(exportButton);
 			}
-			UiThread.RunOnIdle(DoChangeToSlicePresetDetail);
+
+			container.AddChild(new HorizontalSpacer());
+			container.AddChild(closeButton);
+
+			return container;
 		}
 
-		private SliceSettingsCollection GetCollection(int collectionId)
+		private void SaveAs()
 		{
-			return Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.Id == collectionId).Take(1).FirstOrDefault();
-		}
+			FileDialog.SaveFileDialog(
+				new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension)
+				{
+					FileName = presetNameInput.Text
+				},
+				(saveParams) =>
+				{
+					throw new NotImplementedException();
 
-		private IEnumerable<SliceSettingsCollection> GetPresets(string filterTag)
-		{
-			//Retrieve a list of presets from the Datastore
-			string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = {0};", filterTag);
-			return Datastore.Instance.dbSQLite.Query<SliceSettingsCollection>(query);
-		}
+					if (!string.IsNullOrEmpty(saveParams.FileName))
+					{
+						// TODO: If we stil want this functionality, it should be moved to a common helper method off of SettingsLayer and resused throughout
+						//
+						// GenerateConfigFile(saveParams.FileName) ...
 
-		public IEnumerable<SliceSetting> GetCollectionSettings(int collectionId)
-		{
-			//Retrieve a list of slice settings from the Datastore
-			string query = string.Format("SELECT * FROM SliceSetting WHERE SettingsCollectionID = {0};", collectionId);
-			return Datastore.Instance.dbSQLite.Query<SliceSetting>(query);
-		}
+						//List<string> configFileAsList = new List<string>();
 
-		private void DoChangeToSlicePresetDetail()
-		{
-			GuiWidget macroDetailWidget = new SlicePresetDetailWidget(this);
-			this.RemoveAllChildren();
-			this.AddChild(macroDetailWidget);
-			this.Invalidate();
+						//foreach (KeyValuePair<String, SliceSetting> setting in windowController.ActivePresetLayer.settingsDictionary)
+						//{
+						//	string settingString = string.Format("{0} = {1}", setting.Value.Name, setting.Value.Value);
+						//	configFileAsList.Add(settingString);
+						//}
+						//string configFileAsString = string.Join("\n", configFileAsList.ToArray());
+
+						//FileStream fs = new FileStream(fileName, FileMode.Create);
+						//StreamWriter sw = new System.IO.StreamWriter(fs);
+						//sw.Write(configFileAsString);
+						//sw.Close();
+					}
+				});
 		}
 	}
 }
