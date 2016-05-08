@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			macroButtonContainer.Padding = new BorderDouble(3);
 
 			int buttonCount = 0;
-			foreach (GCodeMacro macro in ActiveSliceSettings.Instance?.Macros)
+			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.Macros)
 			{
 				buttonCount++;
 

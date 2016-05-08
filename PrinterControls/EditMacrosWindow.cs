@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(presetsFormContainer);
 
-			foreach (GCodeMacro macro in ActiveSliceSettings.Instance?.Macros)
+			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.Macros)
 			{
 				FlowLayoutWidget macroRow = new FlowLayoutWidget();
 				macroRow.Margin = new BorderDouble(3, 0, 3, 3);
