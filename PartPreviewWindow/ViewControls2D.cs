@@ -32,6 +32,8 @@ using MatterHackers.Agg.UI;
 using System.IO;
 using MatterHackers.Localizations;
 using System;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -81,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			iconTextImageButtonFactory.FixedWidth = buttonHeight;
 
 			string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = iconTextImageButtonFactory.Generate("", resetViewIconPath);
+			resetViewButton = iconTextImageButtonFactory.Generate("", InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(resetViewIconPath,32,32)));
 			resetViewButton.ToolTipText = "Reset View".Localize();
 			AddChild(resetViewButton);
 			resetViewButton.Click += (sender, e) =>
@@ -90,13 +92,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
-			translateButton = iconTextImageButtonFactory.GenerateRadioButton("", translateIconPath);
+			translateButton = iconTextImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(translateIconPath,32,32));
             translateButton.ToolTipText = "Move".Localize();
             translateButton.Margin = new BorderDouble(3);
 			AddChild(translateButton);
 
 			string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
-			scaleButton = iconTextImageButtonFactory.GenerateRadioButton("", scaleIconPath);
+			scaleButton = iconTextImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(scaleIconPath,32,32));
             scaleButton.ToolTipText = "Zoom".Localize();
             scaleButton.Margin = new BorderDouble(3);
 			AddChild(scaleButton);

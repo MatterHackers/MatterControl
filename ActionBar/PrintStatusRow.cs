@@ -234,10 +234,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
 			imageButtonFactory.InvertImageColor = false;
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png");
-			levelingImage.SetRecieveBlender(new BlenderPreMultBGRA());
-			int iconSize = (int)(16 * GuiWidget.DeviceScale);
-			levelingImage = ImageBuffer.CreateScaledImage(levelingImage, iconSize, iconSize);
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 16, 16);
 			Button autoLevelButton = imageButtonFactory.Generate(levelingImage, levelingImage);
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);

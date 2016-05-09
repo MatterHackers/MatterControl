@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			editButton.Click += (sender, e) =>
 			{
 				if (layerType == NamedSettingsLayers.Material)
-				{
+                {
 					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
 					{
 						string presetsKey = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += MenuItem_Selected;
 			}
 
-			MenuItem addNewPreset = dropDownList.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Setting...", "new");
+			MenuItem addNewPreset = dropDownList.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Setting...", "new");
 			addNewPreset.Selected += (s, e) =>
 			{
 				var newLayer = ActiveSliceSettings.Instance.CreatePresetsLayer(layerType);
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				parent.AddChild(this.dropDownList);
 
 				editButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
-			};
+				};
 
 			try
 			{

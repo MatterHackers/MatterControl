@@ -168,10 +168,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
 
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png");
-			levelingImage.SetRecieveBlender(new BlenderPreMultBGRA());
-			int iconSize = (int)(24 * GuiWidget.DeviceScale);
-			levelingImage = ImageBuffer.CreateScaledImage(levelingImage, iconSize, iconSize);
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24);
 
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{

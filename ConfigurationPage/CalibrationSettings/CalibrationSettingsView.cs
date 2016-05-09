@@ -48,7 +48,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			Button editButton = textImageButtonFactory.GenerateEditButton();
+			Button editButton = TextImageButtonFactory.GetThemedEditButton();
+			editButton.Margin = new BorderDouble(2, 2, 2, 0);
+			editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
+
 			editButton.VAnchor = VAnchor.ParentCenter;
 			editButton.Click += (sender, e) =>
 			{
@@ -77,10 +80,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.UserRequestedCalibration));
 			};
 
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png");
-			levelingImage.SetRecieveBlender(new BlenderPreMultBGRA());
-			int iconSize = (int)(24 * GuiWidget.DeviceScale);
-			levelingImage = ImageBuffer.CreateScaledImage(levelingImage, iconSize, iconSize);
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24);
 
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
