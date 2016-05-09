@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.BaseLayer = baseConfig;
 		}
 
-		public List<GCodeMacro> Macros { get; set; }
+		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
 
 		[OnDeserialized]
 		internal void OnDeserializedMethod(StreamingContext context)

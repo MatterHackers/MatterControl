@@ -224,6 +224,11 @@ namespace MatterHackers.MatterControl
 		{
 			windowController.ActiveMacro.Name = macroNameInput.Text;
 			windowController.ActiveMacro.GCode = macroCommandInput.Text;
+
+			if (!ActiveSliceSettings.Instance.Macros.Contains(windowController.ActiveMacro))
+			{
+				ActiveSliceSettings.Instance.Macros.Add(windowController.ActiveMacro);
+			}
 		}
 	}
 
@@ -269,41 +274,44 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(presetsFormContainer);
 
-			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.Macros)
+			if (ActiveSliceSettings.Instance?.Macros != null)
 			{
-				FlowLayoutWidget macroRow = new FlowLayoutWidget();
-				macroRow.Margin = new BorderDouble(3, 0, 3, 3);
-				macroRow.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-				macroRow.Padding = new BorderDouble(3);
-				macroRow.BackgroundColor = RGBA_Bytes.White;
-
-				TextWidget buttonLabel = new TextWidget(macro.Name);
-				macroRow.AddChild(buttonLabel);
-
-				macroRow.AddChild(new HorizontalSpacer());
-
-				// You can't pass a foreach variable into a link function or it wall always be the last item.
-				// So we make a local variable copy of it and pass that. This will get the right one.
-				var localMacroReference = macro;
-
-				Button editLink = linkButtonFactory.Generate("edit".Localize());
-				editLink.Margin = new BorderDouble(right: 5);
-				editLink.Click += (sender, e) =>
+				foreach (GCodeMacro macro in ActiveSliceSettings.Instance.Macros)
 				{
-					windowController.ChangeToMacroDetail(localMacroReference);
-				};
-				macroRow.AddChild(editLink);
+					FlowLayoutWidget macroRow = new FlowLayoutWidget();
+					macroRow.Margin = new BorderDouble(3, 0, 3, 3);
+					macroRow.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+					macroRow.Padding = new BorderDouble(3);
+					macroRow.BackgroundColor = RGBA_Bytes.White;
 
-				Button removeLink = linkButtonFactory.Generate("remove".Localize());
-				removeLink.Click += (sender, e) =>
-				{
-					ActiveSliceSettings.Instance.Macros.Remove(localMacroReference);
-					windowController.functionToCallOnSave(this, null);
-					windowController.ChangeToMacroList();
-				};
-				macroRow.AddChild(removeLink);
+					TextWidget buttonLabel = new TextWidget(macro.Name);
+					macroRow.AddChild(buttonLabel);
 
-				presetsFormContainer.AddChild(macroRow);
+					macroRow.AddChild(new HorizontalSpacer());
+
+					// You can't pass a foreach variable into a link function or it wall always be the last item.
+					// So we make a local variable copy of it and pass that. This will get the right one.
+					var localMacroReference = macro;
+
+					Button editLink = linkButtonFactory.Generate("edit".Localize());
+					editLink.Margin = new BorderDouble(right: 5);
+					editLink.Click += (sender, e) =>
+					{
+						windowController.ChangeToMacroDetail(localMacroReference);
+					};
+					macroRow.AddChild(editLink);
+
+					Button removeLink = linkButtonFactory.Generate("remove".Localize());
+					removeLink.Click += (sender, e) =>
+					{
+						ActiveSliceSettings.Instance.Macros.Remove(localMacroReference);
+						windowController.functionToCallOnSave(this, null);
+						windowController.ChangeToMacroList();
+					};
+					macroRow.AddChild(removeLink);
+
+					presetsFormContainer.AddChild(macroRow);
+				}
 			}
 
 			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
