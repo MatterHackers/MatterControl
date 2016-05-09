@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.UI
 		/// </summary>
 		public static void OverrideAppDataLocation()
 		{
-			string tempFolderPath = Path.Combine("..", "..", "..", "..", "Tests","temp");
+			string tempFolderPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Tests","temp"));
 
 			ApplicationDataStorage.Instance.OverrideAppDataLocation(
 				Path.Combine(tempFolderPath, runName, $"Test{testID++}"));
