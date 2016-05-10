@@ -42,6 +42,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using System.Threading;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -175,9 +176,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private void AddFolderImage(string iconFileName)
 		{
-			string libraryIconPath = Path.Combine("Icons", "FileDialog", iconFileName);
-			ImageBuffer libraryFolderImage = new ImageBuffer();
-			StaticData.Instance.LoadImage(libraryIconPath, libraryFolderImage);
+			string libraryIconPath = Path.Combine("FileDialog", iconFileName);
+			ImageBuffer libraryFolderImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(libraryIconPath, 65,65));
 			folderImagesForChildren.Add(libraryFolderImage);
 		}
 

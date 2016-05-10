@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -73,10 +74,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (normalFolderImage == null)
 				{
-					string path = Path.Combine("Icons", "FileDialog", "folder.png");
+					string path = Path.Combine("FileDialog", "folder.png");
 
-					normalFolderImage = new ImageBuffer();
-					StaticData.Instance.LoadImage(path, normalFolderImage);
+					normalFolderImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(path, 65,65));
 				}
 
 				return normalFolderImage;
@@ -89,10 +89,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (upFolderImage == null)
 				{
-					string path = Path.Combine("Icons", "FileDialog", "up_folder.png");
+					string path = Path.Combine("FileDialog", "up_folder.png");
 
-					upFolderImage = new ImageBuffer();
-					StaticData.Instance.LoadImage(path, upFolderImage);
+					upFolderImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(path, 65,65));
 				}
 
 				return upFolderImage;
