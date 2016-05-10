@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					string path = Path.Combine("FileDialog", "folder.png");
 
-					normalFolderImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(path, 65,65));
+					normalFolderImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(path));
 				}
 
 				return normalFolderImage;
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					string path = Path.Combine("FileDialog", "up_folder.png");
 
-					upFolderImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(path, 65,65));
+					upFolderImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(path));
 				}
 
 				return upFolderImage;
