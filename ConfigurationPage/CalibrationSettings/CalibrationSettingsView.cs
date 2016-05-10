@@ -80,11 +80,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.UserRequestedCalibration));
 			};
 
-			ImageBuffer levelingImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24));
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24).InvertLightness();
 
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(levelingImage);
+				levelingImage.InvertLightness();
 			}
 
 			ImageWidget levelingIcon = new ImageWidget(levelingImage);

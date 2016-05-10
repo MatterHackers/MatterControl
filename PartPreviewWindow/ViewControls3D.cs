@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			textImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
 
             string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = textImageButtonFactory.Generate("", InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(resetViewIconPath, 32,32)));
+			resetViewButton = textImageButtonFactory.Generate("", StaticData.Instance.LoadIcon(resetViewIconPath, 32,32).InvertLightness());
 			resetViewButton.ToolTipText = "Reset View".Localize();
 			AddChild(resetViewButton);
 			resetViewButton.Click += (sender, e) =>
