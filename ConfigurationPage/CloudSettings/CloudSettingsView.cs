@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			cloudSyncContainer.Margin = new BorderDouble(0, 0, 0, 0);
 			cloudSyncContainer.Padding = new BorderDouble(0);
 
-			ImageBuffer cloudMonitorImage = StaticData.Instance.LoadIcon("cloud-24x24.png");
+			ImageBuffer cloudMonitorImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("cloud-24x24.png"));
 			cloudMonitorImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 			if (!ActiveTheme.Instance.IsDarkTheme)
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-			ImageBuffer notifiImage = StaticData.Instance.LoadIcon("notify-24x24.png");
+			ImageBuffer notifiImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("notify-24x24.png"));
 			notifiImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 			if (!ActiveTheme.Instance.IsDarkTheme)

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -234,7 +235,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
 			imageButtonFactory.InvertImageColor = false;
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 16, 16);
+			ImageBuffer levelingImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("leveling_32x32.png", 16, 16));
 			Button autoLevelButton = imageButtonFactory.Generate(levelingImage, levelingImage);
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);

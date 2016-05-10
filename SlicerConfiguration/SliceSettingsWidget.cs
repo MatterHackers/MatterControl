@@ -1065,34 +1065,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Margin = new BorderDouble()
 							};
 
-							string machineSpecificComPortValue = ActiveSliceSettings.Instance.ComPort();
-							foreach (string listItem in FrostedSerialPort.GetPortNames())
+							selectableOptions.Click += (s, e) =>
 							{
-								MenuItem newItem = selectableOptions.AddItem(listItem);
-								if (newItem.Text == machineSpecificComPortValue)
-								{
-									selectableOptions.SelectedLabel = machineSpecificComPortValue;
-								}
+								AddComMenuItems(settingData, settingsRow, selectableOptions);
+							};
 
-								newItem.Selected += (sender, e) =>
-								{
-									MenuItem menuItem = ((MenuItem)sender);
-
-									// Directly set the ComPort
-									if (persistenceLayer == null)
-									{
-										ActiveSliceSettings.Instance.SetComPort(menuItem.Text);
-									}
-									else
-									{
-										ActiveSliceSettings.Instance.SetComPort(menuItem.Text, persistenceLayer);
-									}
-
-									settingsRow.UpdateStyle();
-
-									OnSettingsChanged(settingData);
-								};
-							}
+							AddComMenuItems(settingData, settingsRow, selectableOptions);
 
 							dataArea.AddChild(selectableOptions);
 
@@ -1392,6 +1370,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsRow.UpdateStyle();
 
 			return container;
+		}
+
+		private void AddComMenuItems(OrganizerSettingsData settingData, SettingsRow settingsRow, StyledDropDownList selectableOptions)
+		{
+			selectableOptions.MenuItems.Clear();
+			string machineSpecificComPortValue = ActiveSliceSettings.Instance.ComPort();
+			foreach (string listItem in FrostedSerialPort.GetPortNames())
+			{
+				MenuItem newItem = selectableOptions.AddItem(listItem);
+				if (newItem.Text == machineSpecificComPortValue)
+				{
+					selectableOptions.SelectedLabel = machineSpecificComPortValue;
+				}
+
+				newItem.Selected += (sender, e) =>
+				{
+					MenuItem menuItem = ((MenuItem)sender);
+
+					// Directly set the ComPort
+					if (persistenceLayer == null)
+					{
+						ActiveSliceSettings.Instance.SetComPort(menuItem.Text);
+					}
+					else
+					{
+						ActiveSliceSettings.Instance.SetComPort(menuItem.Text, persistenceLayer);
+					}
+
+					settingsRow.UpdateStyle();
+
+					OnSettingsChanged(settingData);
+				};
+			}
 		}
 
 		static ImageBuffer restoreNormal = EnsureRestoreButtonImages();

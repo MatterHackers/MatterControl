@@ -188,6 +188,29 @@ namespace MatterHackers.MatterControl
 			return textImageButton;
 		}
 
+		public Button GenerateTooltipButton(string label, ImageBuffer normalImageName, ImageBuffer hoverImageName = null, ImageBuffer pressedImageName = null, ImageBuffer disabledImageName = null)
+		{
+			//Create button based on view container widget
+			ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName);
+
+			Button textImageButton = new Button(0, 0, buttonViewWidget);
+			textImageButton.Margin = new BorderDouble(0);
+			textImageButton.Padding = new BorderDouble(0);
+
+			//Override the width if requested
+			if (this.FixedWidth != 0)
+			{
+				buttonViewWidget.Width = this.FixedWidth;
+				textImageButton.Width = this.FixedWidth;
+			}
+
+			//Override the height if requested
+			buttonViewWidget.Height = this.FixedHeight;
+			textImageButton.Height = this.FixedHeight;
+
+			return textImageButton;
+		}
+
 		public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
 		{
 			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
@@ -210,7 +233,7 @@ namespace MatterHackers.MatterControl
 			Button editButton;
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
-				editButton = new Button(0, 0, new ButtonViewThreeImage(SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Black),
+				editButton = new Button(0, 0, new ButtonViewThreeImage(SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White),
 				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Gray),
 				normalImage));
 			}

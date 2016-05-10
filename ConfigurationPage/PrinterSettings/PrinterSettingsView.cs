@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png");
+			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png",24,24);
 			cameraIconImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png");
+			ImageBuffer terminalSettingsImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24));
 			terminalSettingsImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 
