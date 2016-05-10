@@ -1224,6 +1224,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "MatterControl.PrinterName",
+    "PresentationName": "Printer Name",
+    "HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
+    "DataEditType": "STRING",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "MatterControl.AutoConnect",
     "PresentationName": "Auto Connect",
     "HelpText": "If set, the printer will automatically attempt to connect when selected.",

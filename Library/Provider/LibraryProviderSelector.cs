@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private void AddFolderImage(string iconFileName)
 		{
 			string libraryIconPath = Path.Combine("FileDialog", iconFileName);
-			ImageBuffer libraryFolderImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(libraryIconPath));
+			ImageBuffer libraryFolderImage = StaticData.Instance.LoadIcon(libraryIconPath).InvertLightness();
 			folderImagesForChildren.Add(libraryFolderImage);
 		}
 
