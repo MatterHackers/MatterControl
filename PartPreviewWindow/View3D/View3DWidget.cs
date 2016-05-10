@@ -1446,7 +1446,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandRotateOptions);
 				expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
@@ -1469,7 +1469,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount();
 
-				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
 				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
 
@@ -1487,7 +1487,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in the view options
 				{
-					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 					expandViewOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandViewOptions);
 					expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;

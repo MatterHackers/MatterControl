@@ -4828,3 +4828,18 @@ Translated:Edit Preset:
 English:Preset Name:
 Translated:Preset Name:
 
+English:This is the name of your printer that will be displayed in the choose printer menu.
+Translated:This is the name of your printer that will be displayed in the choose printer menu.
+
+English:Local Computer
+Translated:Local Computer
+
+English:Connection
+Translated:Connection
+
+English:Interface
+Translated:Interface
+
+English:Behavior
+Translated:Behavior
+
