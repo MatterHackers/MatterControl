@@ -4843,3 +4843,6 @@ Translated:Interface
 English:Behavior
 Translated:Behavior
 
+English:Connection Info
+Translated:Connection Info
+

@@ -260,9 +260,10 @@ Advanced
         build_height
         z_offset
         bed_shape
-    Local Computer
-      Connection
+    Connection Info
+      Name
         MatterControl.PrinterName
+      Connection
         MatterControl.AutoConnect
         MatterControl.BaudRate
         MatterControl.ComPort
