@@ -72,12 +72,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			cloudSyncContainer.Margin = new BorderDouble(0, 0, 0, 0);
 			cloudSyncContainer.Padding = new BorderDouble(0);
 
-			ImageBuffer cloudMonitorImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("cloud-24x24.png"));
+			ImageBuffer cloudMonitorImage = StaticData.Instance.LoadIcon("cloud-24x24.png").InvertLightness();
 			cloudMonitorImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(cloudMonitorImage);
+				cloudMonitorImage.InvertLightness();
 			}
 
             ImageWidget cloudSyncIcon = new ImageWidget(cloudMonitorImage);
@@ -119,12 +119,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-			ImageBuffer notifiImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("notify-24x24.png"));
+			ImageBuffer notifiImage = StaticData.Instance.LoadIcon("notify-24x24.png").InvertLightness();
 			notifiImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(notifiImage);
+				notifiImage.InvertLightness();
 			}
 
 			ImageWidget notificationSettingsIcon = new ImageWidget(notifiImage);

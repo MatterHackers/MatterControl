@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			iconTextImageButtonFactory.FixedWidth = buttonHeight;
 
 			string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = iconTextImageButtonFactory.Generate("", InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon(resetViewIconPath,32,32)));
+			resetViewButton = iconTextImageButtonFactory.Generate("", StaticData.Instance.LoadIcon(resetViewIconPath,32,32).InvertLightness());
 			resetViewButton.ToolTipText = "Reset View".Localize();
 			AddChild(resetViewButton);
 			resetViewButton.Click += (sender, e) =>
