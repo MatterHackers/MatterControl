@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(cameraIconImage);
+				cameraIconImage.InvertLightness();
 			}
 
 			ImageWidget cameraIcon = new ImageWidget(cameraIconImage);
@@ -123,13 +123,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			ImageBuffer terminalSettingsImage = InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24));
+			ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
 			terminalSettingsImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(terminalSettingsImage);
+				terminalSettingsImage.InvertLightness();
 			}
 
 			ImageWidget terminalIcon = new ImageWidget(terminalSettingsImage);
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(levelingImage);
+				levelingImage.InvertLightness();
 			}
 			ImageWidget levelingIcon = new ImageWidget(levelingImage);
 			levelingIcon.Margin = new BorderDouble(right: 6);

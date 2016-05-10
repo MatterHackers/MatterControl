@@ -102,7 +102,7 @@ namespace MatterHackers.Agg.UI
 			ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon("icon_pop_out_32x32.png", 16, 16);
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(popOutImageClick);
+				popOutImageClick.InvertLightness();
 			}
 
 			ImageBuffer popOutImage = new ImageBuffer(popOutImageClick);

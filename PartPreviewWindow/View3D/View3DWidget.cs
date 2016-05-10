@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (!ActiveTheme.Instance.IsDarkTheme)
 					{
-						InvertLightness.DoInvertLightness(normalImage);
+						normalImage.InvertLightness();
 					}
 
 					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), normalImage);

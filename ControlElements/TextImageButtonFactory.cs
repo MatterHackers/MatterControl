@@ -385,10 +385,10 @@ namespace MatterHackers.MatterControl
 			if (ActiveTheme.Instance.IsDarkTheme
 				&& AllowThemeToAdjustImage)
 			{
-				if (normalImage != null) InvertLightness.DoInvertLightness(normalImage);
-				if (pressedImage != null) InvertLightness.DoInvertLightness(pressedImage);
-				if (hoverImage != null) InvertLightness.DoInvertLightness(hoverImage);
-				if (disabledImage != null) InvertLightness.DoInvertLightness(disabledImage);
+				if (normalImage != null) normalImage.InvertLightness();
+				if (pressedImage != null) pressedImage.InvertLightness();
+				if (hoverImage != null) hoverImage.InvertLightness();
+				if (disabledImage != null) disabledImage.InvertLightness();
 			}
 
 			if (invertImageLocation)
@@ -444,7 +444,7 @@ namespace MatterHackers.MatterControl
 
 				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
 				{
-					InvertLightness.DoInvertLightness(normalImage);
+					normalImage.InvertLightness();
 				}
 			}
 
@@ -453,7 +453,7 @@ namespace MatterHackers.MatterControl
 				StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
 				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
 				{
-					InvertLightness.DoInvertLightness(pressedImage);
+					pressedImage.InvertLightness();
 				}
 			}
 
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl
 				StaticData.Instance.LoadIcon(normalToPressedImageName, normalToPressedImage);
 				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
 				{
-					InvertLightness.DoInvertLightness(normalToPressedImage);
+					normalToPressedImage.InvertLightness();
 				}
 			}
 
@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl
 				StaticData.Instance.LoadIcon(pressedToNormalImageName, pressedToNormalImage);
 				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
 				{
-					InvertLightness.DoInvertLightness(pressedToNormalImage);
+					pressedToNormalImage.InvertLightness();
 				}
 			}
 
@@ -501,11 +501,11 @@ namespace MatterHackers.MatterControl
 		{
 			if (iconImage != null )
 			{
-				InvertLightness.DoInvertLightness(iconImage);
+				iconImage.InvertLightness();
 				if (ActiveTheme.Instance.IsDarkTheme
 					&& AllowThemeToAdjustImage)
 				{
-					InvertLightness.DoInvertLightness(iconImage);
+					iconImage.InvertLightness();
 				}
 			}
 

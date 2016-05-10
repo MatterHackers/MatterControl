@@ -95,11 +95,11 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected override void AddChildElements()
 		{
-			addButton = textImageButtonFactory.GenerateTooltipButton("Add".Localize(), InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png",32,32)));
+			addButton = textImageButtonFactory.GenerateTooltipButton("Add".Localize(), StaticData.Instance.LoadIcon("icon_circle_plus.png",32,32).InvertLightness());
 			addButton.ToolTipText = "Add a file to be printed".Localize();
 			addButton.Margin = new BorderDouble(6, 6, 6, 3);
 
-			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32)));
+			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32).InvertLightness());
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
 			startButton.Click += onStartButton_Click;
@@ -110,13 +110,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			string connectButtonText = "Connect".Localize();
 			string connectButtonMessage = "Connect to the printer".Localize();
-			connectButton = textImageButtonFactory.GenerateTooltipButton(connectButtonText, InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32)));
+			connectButton = textImageButtonFactory.GenerateTooltipButton(connectButtonText, StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32).InvertLightness());
 			connectButton.ToolTipText = connectButtonMessage;
 			connectButton.Margin = new BorderDouble(6, 6, 6, 3);
 
 			string resetConnectionButtontText = "Reset".Localize();
 			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
-			resetConnectionButton = textImageButtonFactory.GenerateTooltipButton(resetConnectionButtontText, InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("e_stop4.png", 32,32)));
+			resetConnectionButton = textImageButtonFactory.GenerateTooltipButton(resetConnectionButtontText, StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
 			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
 			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
 			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);

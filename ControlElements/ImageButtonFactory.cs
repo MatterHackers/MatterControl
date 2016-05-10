@@ -80,10 +80,10 @@ namespace MatterHackers.MatterControl
 
 			if (!ActiveTheme.Instance.IsDarkTheme && InvertImageColor)
 			{
-				InvertLightness.DoInvertLightness(normalImage);
-				InvertLightness.DoInvertLightness(pressedImage);
-				InvertLightness.DoInvertLightness(hoverImage);
-				InvertLightness.DoInvertLightness(disabledImage);
+				normalImage.InvertLightness();
+				pressedImage.InvertLightness();
+				hoverImage.InvertLightness();
+				disabledImage.InvertLightness();
 			}
 
 			if (ActiveTheme.Instance.IsTouchScreen)
@@ -121,10 +121,10 @@ namespace MatterHackers.MatterControl
 
 			if (!ActiveTheme.Instance.IsDarkTheme && InvertImageColor)
 			{
-				InvertLightness.DoInvertLightness(normalImage);
-				InvertLightness.DoInvertLightness(pressedImage);
-				InvertLightness.DoInvertLightness(hoverImage);
-				InvertLightness.DoInvertLightness(disabledImage);
+				normalImage.InvertLightness();
+				pressedImage.InvertLightness();
+				hoverImage.InvertLightness();
+				disabledImage.InvertLightness();
 			}
 
 			ButtonViewStates buttonViewWidget = new ButtonViewStates(
