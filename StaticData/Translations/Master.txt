@@ -4825,3 +4825,6 @@ Translated:Software Print Leveling
 English:Edit Preset:
 Translated:Edit Preset:
 
+English:Preset Name:
+Translated:Preset Name:
+

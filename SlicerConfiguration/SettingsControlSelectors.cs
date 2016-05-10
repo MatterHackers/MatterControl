@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				parent.AddChild(this.dropDownList);
 
 				editButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
-				};
+			};
 
 			try
 			{

@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			FlowLayoutWidget firstRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
 
-			TextWidget labelText = new TextWidget("Edit Preset:".Localize(), pointSize: 14)
+			TextWidget labelText = new TextWidget("Preset Name:".Localize(), pointSize: 14)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.ParentCenter,

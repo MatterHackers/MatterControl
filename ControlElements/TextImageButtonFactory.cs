@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
 			{
 				editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage,
 				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Gray),
-				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Black)));
+				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White)));
 			}
 
 			return editButton;
