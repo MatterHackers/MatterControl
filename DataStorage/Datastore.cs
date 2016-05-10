@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		bool wasExited = false;
 		public bool ConnectionError = false;
 		public ISQLite dbSQLite;
-		private static string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
+		private string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
 		private static Datastore globalInstance;
 		private ApplicationSession activeSession;
 		private bool TEST_FLAG = false;
