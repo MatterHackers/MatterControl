@@ -1,14 +1,11 @@
-﻿using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.UI.Tests;
+﻿using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
 using System;
-using System.IO;
 
-namespace MatterHackers.MatterControl.UI
+namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class SqLiteLibraryProviderTests
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
