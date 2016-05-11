@@ -253,6 +253,13 @@ Advanced
       Enable
         cool_extruder_lift
   Printer
+    Connection Info
+      Description
+        MatterControl.PrinterName
+      Connection
+        MatterControl.AutoConnect
+        MatterControl.BaudRate
+        MatterControl.ComPort
     Print Area
       Size and Coordinates
         bed_size
@@ -260,13 +267,6 @@ Advanced
         build_height
         z_offset
         bed_shape
-    Connection Info
-      Name
-        MatterControl.PrinterName
-      Connection
-        MatterControl.AutoConnect
-        MatterControl.BaudRate
-        MatterControl.ComPort
     Features
       Interface
         show_reset_connection

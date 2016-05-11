@@ -95,10 +95,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						OriginRelativeParent = screenPosition;
 
 						// draw the line that is on the ground
-						double yGround = (int)(startLineGroundPos.y + .5) + .5;
+						double yGround = Math.Round(startLineGroundPos.y) + .5;
 						drawEvent.graphics2D.Line(startLineGroundPos.x, yGround, startLineGroundPos.x + HorizontalLineLength - 5, yGround, RGBA_Bytes.Black);
 						// and the line that is at the base of the selection
-						double ySelection = (int)(startLineSelectionPos.y + .5) + .5;
+						double ySelection = Math.Round(startLineSelectionPos.y) + .5;
 						drawEvent.graphics2D.Line(startLineSelectionPos.x, ySelection, startLineSelectionPos.x + HorizontalLineLength - 5, ySelection, RGBA_Bytes.Black);
 
 						// draw the vertical line that shows the measurement
