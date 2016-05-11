@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2016, Kevin Pope, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -55,25 +55,30 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"G1 X0 Y0 Z0 E0 F500",
 				"M105",
-				"G1 X6 Y0 Z0 F2500",
-				"G1 X12 Y0 Z0",
-				"G1 X18 Y0 Z0",
+				"G1 X6 F2500",
+				"G1 X12",
+				"G1 X18",
 				"G28",
-				"G1 X12 Y0 Z0 F500",
-				"G1 X6 Y0 Z0",
-				"G1 X0 Y0 Z0",
+				"G1 X12 F500",
+				"G1 X6",
+				"G1 X0",
 				null,
 			};
 
 			MaxLengthStream maxLengthStream = new MaxLengthStream(new TestGCodeStream(lines), 6);
 
 			int expectedIndex = 0;
-			string correctedLine = maxLengthStream.ReadLine();
-			Assert.IsTrue(correctedLine == expected[expectedIndex++]);
-			while (correctedLine != null)
+			string actualLine = maxLengthStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream"); 
+
+			while (actualLine != null)
 			{
-				correctedLine = maxLengthStream.ReadLine();
-				Assert.IsTrue(correctedLine == expected[expectedIndex++]);
+				actualLine = maxLengthStream.ReadLine();
+				expectedLine = expected[expectedIndex++];
+
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream");
 			}
 		}
 	}
@@ -116,14 +121,14 @@ namespace MatterControl.Tests.MatterControl
 
 				"; the printer pauses",
 				"", // G91 is removed
-				"G1 X10 Y10 Z20 E20 F12000", // altered to be absolute
+				"G1 Z20 E20 F12000", // altered to be absolute
 				"G90",
 
 				"; the user moves the printer",
 
 				"; the printer un-pauses",
 				"", // G91 is removed
-				"G1 X10 Y10 Z10 E30.8",
+				"G1 Z10 E30.8",
 				"G90",
 				null,
 			};
@@ -131,14 +136,17 @@ namespace MatterControl.Tests.MatterControl
 			PauseHandlingStream pauseHandlingStream = new PauseHandlingStream(new TestGCodeStream(inputLines));
 
 			int expectedIndex = 0;
-			string correctedLine = pauseHandlingStream.ReadLine();
+			string actualLine = pauseHandlingStream.ReadLine();
 			string expectedLine = expected[expectedIndex++];
-            Assert.IsTrue(correctedLine == expectedLine);
-			while (correctedLine != null)
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
+
+			while (actualLine != null)
 			{
 				expectedLine = expected[expectedIndex++];
-				correctedLine = pauseHandlingStream.ReadLine();
-				Assert.IsTrue(correctedLine == expectedLine);
+				actualLine = pauseHandlingStream.ReadLine();
+
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
 			}
 		}
 	}
