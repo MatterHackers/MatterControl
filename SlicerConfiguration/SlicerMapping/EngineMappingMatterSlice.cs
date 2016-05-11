@@ -136,6 +136,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
 			new MapItemToBool("generateSupportPerimeter", "support_material_create_perimeter"),
 
+			new MapItemToBool("outputOnlyFirstLayer", "output_only_first_layer"),
+
 			new MapItemToBool("generateSupport", "support_material"),
 
 			new MapItem("supportPercent", "support_material_percent"),
