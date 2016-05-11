@@ -1,22 +1,11 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
+﻿using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
 using NUnit.Framework;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using MatterHackers.GuiAutomation;
-using MatterHackers.Agg.PlatformAbstract;
-using System.IO;
-using MatterHackers.MatterControl.CreatorPlugins;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.DataStorage;
-using System.Diagnostics;
 
-namespace MatterHackers.MatterControl.UI
+namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class SliceSetingsTests
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -27,8 +16,6 @@ namespace MatterHackers.MatterControl.UI
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
-
 					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
 
 					//Navigate to Local Library 
