@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2016, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,32 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl;
-using NUnit.Framework;
 using MatterHackers.Agg;
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.VectorMath;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.VectorMath;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.IO;
 
 namespace MatterControl.Tests.MatterControl
 {
-
-    [TestFixture]
-    public class LevelingTests
-    {
+	[TestFixture]
+	public class LevelingTests
+	{
 		[Test, Category("Leveling")]
 		public void Leveling7PointsNeverGetsTooHigh()
 		{
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
+			MatterControlUtilities.OverrideAppDataLocation();
 
 			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
 
@@ -78,21 +74,23 @@ namespace MatterControl.Tests.MatterControl
 				Vector2 currentTestPoint = new Vector2(radius, 0);
 				currentTestPoint.Rotate(MathHelper.Tau / totalPoints * curPoint);
 				Vector3 destPosition = new Vector3(currentTestPoint, 0);
-				
+
 				Vector3 outPosition = levelingFunctions7Point.GetPositionWithZOffset(destPosition);
 				Assert.IsTrue(outPosition.z <= 10);
-				
+
 				string outPositionString = levelingFunctions7Point.DoApplyLeveling(GetGCodeString(destPosition), destPosition, PrinterMachineInstruction.MovementTypes.Absolute);
 				double outZ = 0;
 				Assert.IsTrue(GCodeFile.GetFirstNumberAfter("Z", outPositionString, ref outZ));
 				Assert.IsTrue(outZ <= 10);
 			}
 		}
-		
+
 		[Test, Category("Leveling")]
 		public void Leveling7PointsCorectInterpolation()
 		{
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
+			MatterControlUtilities.OverrideAppDataLocation();
 
 			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
 
@@ -195,6 +193,6 @@ namespace MatterControl.Tests.MatterControl
 			return "G1 X{0:0.##} Y{1:0.##} Z{2:0.###}".FormatWith(destPosition.x, destPosition.y, destPosition.z);
 		}
 
-        // TODO: do all the same tests for 13 point leveling.
-    }
+		// TODO: do all the same tests for 13 point leveling.
+	}
 }
