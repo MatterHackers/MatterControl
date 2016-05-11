@@ -10,16 +10,18 @@ using System.Text;
 using System.Globalization;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.Tests.Automation;
 
 namespace MatterControl.Tests.MatterControl
 {
 	class PrinterChooserUnitTests
 	{
-
 		[Test]
 		public void PrinterChooserHonorsWhitelist()
 		{
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
+			MatterControlUtilities.OverrideAppDataLocation();
 
 			// Whitelist on non-OEM builds should contain all printers
 			var printChooser = new PrinterChooser();
@@ -57,9 +59,5 @@ namespace MatterControl.Tests.MatterControl
 			var fieldInfo = typeof(OemSettings).GetField("printerWhiteList", BindingFlags.Instance | BindingFlags.NonPublic);
 			fieldInfo.SetValue(OemSettings.Instance, newValue);
 		}
-
-
 	}
-
-
 }
