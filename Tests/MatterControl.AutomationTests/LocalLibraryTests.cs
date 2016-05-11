@@ -1,22 +1,12 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
+﻿using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using MatterHackers.GuiAutomation;
-using MatterHackers.Agg.PlatformAbstract;
-using System.IO;
-using MatterHackers.MatterControl.CreatorPlugins;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.DataStorage;
-using System.Diagnostics;
 
-namespace MatterHackers.MatterControl.UI
+namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddSingleItemToLocalLibrary
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -29,7 +19,6 @@ namespace MatterHackers.MatterControl.UI
 				{
 
 					string itemName = "Row Item " + "Fennec Fox";
-
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("Library Tab");
@@ -64,7 +53,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddMultipleItemsToLocalLibrary
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -122,7 +111,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddAMFItemToLocalLibrary
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -169,7 +158,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddZipFileToLocalLibrary
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -222,7 +211,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class RenameButtonRenamesLibraryRowItem
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -272,7 +261,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class UserCanSuccessfullyCreateAndRenameLibraryFolder
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -321,7 +310,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class LibraryEditButtonOpensUpPartPreviewWindow
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -360,7 +349,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class OneLibraryItemSelectedRemoveButtonRemovesItem
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -402,7 +391,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class MultipleLibraryItemsSelectedRemoveButtonRemovesItem
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -463,7 +452,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddToQueueButtonAddsSingleItemToQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -526,7 +515,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddToQueueButtonAddsMultipleItemsToQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -604,7 +593,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ClickLibraryTumbnailWidgetOpensPartPreview
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]

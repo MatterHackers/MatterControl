@@ -1,23 +1,13 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
+﻿using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
 using NUnit.Framework;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using MatterHackers.GuiAutomation;
-using MatterHackers.Agg.PlatformAbstract;
-using System.IO;
-using MatterHackers.MatterControl.CreatorPlugins;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.DataStorage;
 using System.Diagnostics;
-using System.Collections.Generic;
-using MatterHackers.MatterControl.UI;
-namespace MatterControl.AutomationTests
+using System.IO;
+
+namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
 	public class ExportItemsFromDownloads
 	{
 
