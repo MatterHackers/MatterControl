@@ -1189,17 +1189,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void HomeAxis(Axis axis)
 		{
 			string command = "G28";
-			if ((axis & Axis.X) == Axis.X)
+
+			// If we are homing everything we don't need to add any details
+			if (!axis.HasFlag(Axis.XYZ))
 			{
-				command += " X0";
-			}
-			if ((axis & Axis.Y) == Axis.Y)
-			{
-				command += " Y0";
-			}
-			if ((axis & Axis.Z) == Axis.Z)
-			{
-				command += " Z0";
+				if ((axis & Axis.X) == Axis.X)
+				{
+					command += " X0";
+				}
+				if ((axis & Axis.Y) == Axis.Y)
+				{
+					command += " Y0";
+				}
+				if ((axis & Axis.Z) == Axis.Z)
+				{
+					command += " Z0";
+				}
 			}
 
 			SendLineToPrinterNow(command);
