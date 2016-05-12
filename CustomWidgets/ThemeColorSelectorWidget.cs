@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -77,8 +78,9 @@ namespace MatterHackers.MatterControl
 			colorButton.Name = index.ToString();
 			colorButton.Click += (sender, mouseEvent) =>
 			{
-				UserSettings.Instance.set("ActiveThemeIndex", ((GuiWidget)sender).Name);
-				ActiveTheme.Instance.LoadThemeSettings(int.Parse(((GuiWidget)sender).Name));
+				string themeIndex = ((GuiWidget)sender).Name;
+				ActiveSliceSettings.Instance.SetActiveValue("MatterControl.ActiveThemeIndex", themeIndex);
+				ActiveTheme.Instance.LoadThemeSettings(int.Parse(themeIndex));
 			};
 
 			colorButton.MouseEnterBounds += (sender, mouseEvent) =>
