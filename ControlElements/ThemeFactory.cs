@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
 /*
 Copyright (c) 2014, Kevin Pope
 All rights reserved.
@@ -9,10 +10,10 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
+list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -187,8 +188,9 @@ namespace MatterHackers.MatterControl
 
 		public ActiveTheme()
 		{
+
 			//Load the default theme by index
-			if (UserSettings.Instance.get("ActiveThemeIndex") == null)
+			if (string.IsNullOrEmpty(ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex")))
 			{
 				bool foundOemColor = false;
 				for (int i = 0; i < AvailableThemes.Count; i++)
@@ -196,7 +198,7 @@ namespace MatterHackers.MatterControl
 					Theme current = AvailableThemes[i];
 					if (current.Name == OemSettings.Instance.ThemeColor)
 					{
-						UserSettings.Instance.set("ActiveThemeIndex", i.ToString());
+						ActiveSliceSettings.Instance.SetActiveValue("MatterControl.ActiveThemeIndex", i.ToString());
 						foundOemColor = true;
 						break;
 					}
@@ -204,14 +206,14 @@ namespace MatterHackers.MatterControl
 
 				if (!foundOemColor)
 				{
-					UserSettings.Instance.set("ActiveThemeIndex", defaultThemeIndex.ToString());
+					ActiveSliceSettings.Instance.SetActiveValue("MatterControl.ActiveThemeIndex", defaultThemeIndex.ToString());
 				}
 			}
 
 			int themeIndex;
 			try
 			{
-				themeIndex = Convert.ToInt32(UserSettings.Instance.get("ActiveThemeIndex"));
+				themeIndex = Convert.ToInt32(ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex"));
 			}
 			catch
 			{
@@ -240,7 +242,7 @@ namespace MatterHackers.MatterControl
 			OnThemeChanged(null);
 		}
 
-		public void LoadThemeSettings(int index)
+		public void LoadThemeSettings(int index, bool supressReloadEvent = false)
 		{
 			//Validate new theme selection and change theme
 			if (index > -1 && index < AvailableThemes.Count)
@@ -249,13 +251,38 @@ namespace MatterHackers.MatterControl
 				{
 					this.loadedTheme = this.AvailableThemes[index];
 					this.activeThemeIndex = index;
-					OnThemeChanged(null);
+
+					if (!supressReloadEvent)
+					{
+						OnThemeChanged(null);
+					}
 				}
 			}
 			else
 			{
 				throw new Exception("Invalid theme selection");
 			}
+		}
+
+		/// <summary>
+		/// Switches to the ActivePrinter theme without firing the ThemeChanged event. This is useful when changing printers and
+		/// allows the theme state to be updated before the ActivePrinterChanged event fires, resulting in a single ReloadAll
+		/// occurring rather than two
+		/// </summary>
+		public void SwitchToPrinterThemeWithoutReloadEvent()
+		{
+			int themeIndex;
+			try
+			{
+				themeIndex = Convert.ToInt32(ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex"));
+			}
+			catch
+			{
+				GuiWidget.BreakInDebugger();
+				themeIndex = defaultThemeIndex;
+			}
+
+			LoadThemeSettings(themeIndex, supressReloadEvent: true);
 		}
 
 		private List<Theme> GetAvailableThemes()

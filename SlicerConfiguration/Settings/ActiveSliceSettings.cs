@@ -75,6 +75,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						BedSettings.SetMakeAndModel(activeInstance.Make, activeInstance.Model);
 					}
 
+					ActiveTheme.Instance.SwitchToPrinterThemeWithoutReloadEvent();
+
 					if (!MatterControlApplication.IsLoading)
 					{
 						OnActivePrinterChanged(null);
@@ -152,11 +154,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ActiveSliceSettings.LoadStartupProfile();
 		}
 
-		public static void SetActiveProfileID(string id)
-		{
-			UserSettings.Instance.set("ActiveProfileID", id);
-		}
-
 		public static LayeredProfile LoadEmptyProfile()
 		{
 			return new LayeredProfile(new OemProfile(), LoadMatterHackersBaseLayer());
@@ -200,7 +197,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var profile = LoadProfile(id);
 
-			SetActiveProfileID(id.ToString());
+			UserSettings.Instance.set("ActiveProfileID", id.ToString());
 
 			if (profile != null)
 			{
@@ -269,7 +266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Id = guid
 			});
 
-			SetActiveProfileID(guid);
+			UserSettings.Instance.set("ActiveProfileID", guid);
 
 			Instance = new SettingsProfile(layeredProfile);
 		}
