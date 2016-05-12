@@ -695,7 +695,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							dataArea.AddChild(intEditWidget);
 							unitsArea.AddChild(GetExtraSettingsWidget(settingData));
 
-							settingsRow.ValueChanged = (text) => intEditWidget.Text = text;
+							settingsRow.ValueChanged = (text) =>
+							{
+								intEditWidget.Text = text;
+								OnSettingsChanged(settingData);
+							};
 						}
 						break;
 
@@ -724,6 +728,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								double currentValue2 = 0;
 								double.TryParse(text, out currentValue2);
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue2;
+								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -808,6 +813,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								double currentValue2 = 0;
 								double.TryParse(text, out currentValue2);
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue2;
+								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -836,6 +842,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								double currentValue2;
 								double.TryParse(text, out currentValue2);
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue2;
+								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -896,7 +903,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								dataArea.AddChild(content);
 							}
 
-							settingsRow.ValueChanged = (text) => stringEdit.Text = text;
+							settingsRow.ValueChanged = (text) =>
+							{
+								stringEdit.Text = text;
+								OnSettingsChanged(settingData);
+							};
 						}
 						break;
 
@@ -981,7 +992,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								dataArea.AddChild(content);
 							}
 
-							settingsRow.ValueChanged = (text) => stringEdit.Text = text;
+							settingsRow.ValueChanged = (text) =>
+							{
+								stringEdit.Text = text;
+								OnSettingsChanged(settingData);
+							};
 						}
 						break;
 
@@ -1006,7 +1021,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							dataArea.AddChild(checkBoxWidget);
 
-							settingsRow.ValueChanged = (text) => checkBoxWidget.Checked = text == "1";
+							settingsRow.ValueChanged = (text) =>
+							{
+								checkBoxWidget.Checked = text == "1";
+								OnSettingsChanged(settingData);
+							};
 						}
 						break;
 
@@ -1024,7 +1043,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							dataArea.AddChild(stringEdit);
 
-							settingsRow.ValueChanged = (text) => stringEdit.Text = text;
+							settingsRow.ValueChanged = (text) =>
+							{
+								stringEdit.Text = text;
+								OnSettingsChanged(settingData);
+							};
 						}
 						break;
 
@@ -1049,7 +1072,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							dataArea.AddChild(stringEdit);
 							dataArea.HAnchor = HAnchor.ParentLeftRight;
 
-							settingsRow.ValueChanged = (text) => stringEdit.Text = text.Replace("\\n", "\n");
+							settingsRow.ValueChanged = (text) =>
+							{
+								stringEdit.Text = text.Replace("\\n", "\n");
+								OnSettingsChanged(settingData);
+							};
 						}
 						break;
 
@@ -1078,6 +1105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								// Lookup the machine specific comport value rather than the passed in text value
 								selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.ComPort();
+								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1111,7 +1139,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							dataArea.AddChild(selectableOptions);
 
-							settingsRow.ValueChanged = (text) => selectableOptions.SelectedLabel = text;
+							settingsRow.ValueChanged = (text) =>
+							{
+								selectableOptions.SelectedLabel = text;
+								OnSettingsChanged(settingData);
+							};
 						}
 						break;
 
@@ -1138,7 +1170,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							dataArea.AddChild(checkBoxWidget);
 
-							settingsRow.ValueChanged = (text) => checkBoxWidget.Checked = text == "1";
+							settingsRow.ValueChanged = (text) =>
+							{
+								checkBoxWidget.Checked = text == "1";
+								OnSettingsChanged(settingData);
+							};
 						}
 						break;
 
@@ -1215,6 +1251,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								double.TryParse(xyValueStrings2[1], out currentValue2);
 								yEditWidget.ActuallNumberEdit.Value = currentValue2;
+
+								OnSettingsChanged(settingData);
 							};
 
 						}
@@ -1276,6 +1314,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Vector2 offset2 = ActiveSliceSettings.Instance.ExtruderOffset(extruderIndex);
 								xEditWidget.ActuallNumberEdit.Value = offset2.x;
 								yEditWidget.ActuallNumberEdit.Value = offset2.y;
+								OnSettingsChanged(settingData);
 							};
 
 						}
