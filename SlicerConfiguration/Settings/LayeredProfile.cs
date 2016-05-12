@@ -169,7 +169,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal void Save()
 		{
-			File.WriteAllText(DocumentPath, JsonConvert.SerializeObject(this));
+			if (!string.IsNullOrEmpty(DocumentPath))
+			{
+				File.WriteAllText(DocumentPath, JsonConvert.SerializeObject(this));
+			}
 		}
 
 		/// <summary>
