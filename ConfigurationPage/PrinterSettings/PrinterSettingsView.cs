@@ -52,15 +52,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			SetVisibleControls();
 		}
 
-		private EditLevelingSettingsWindow editLevelingSettingsWindow;
 		private TextWidget printLevelingStatusLabel;
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -70,7 +66,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png",24,24);
+			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png",24,24).InvertLightness();
 			cameraIconImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 
@@ -82,7 +78,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget cameraIcon = new ImageWidget(cameraIconImage);
 			cameraIcon.Margin = new BorderDouble(right: 6);
 
-			TextWidget cameraLabel = new TextWidget("Camera Monitoring");
+			TextWidget cameraLabel = new TextWidget("Camera Monitoring".Localize());
 			cameraLabel.AutoExpandBoundsToText = true;
 			cameraLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			cameraLabel.VAnchor = VAnchor.ParentCenter;

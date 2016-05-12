@@ -91,7 +91,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (true)
 			{
 				ProfileData = new ProfileData();
-				
+
+				if (!File.Exists(profilesDBPath))
+				{
+					// Import class profiles from the db into local json files
+					DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(ProfileData, profilesPath);
+					File.WriteAllText(profilesDBPath, JsonConvert.SerializeObject(ProfileData, Formatting.Indented));
+
+					// TODO: Upload new profiles to webservice
+				}
+
 				foreach(string filePath in Directory.GetFiles(profilesPath, "*.json"))
 				{
 					string fileName = Path.GetFileName(filePath);
