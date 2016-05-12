@@ -98,6 +98,10 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.UserLayer["MatterControl.DeviceToken"] = printer.DeviceToken ?? "";
 			layeredProfile.UserLayer["MatterControl.DeviceType"] = printer.DeviceType ?? "";
 
+			if (string.IsNullOrEmpty(UserSettings.Instance.get("ActiveProfileID")))
+			{
+				UserSettings.Instance.set("ActiveProfileID", printer.Id.ToString());
+			}
 
 			// Import macros from the database
 			var allMacros =  Datastore.Instance.dbSQLite.Query<CustomCommands>("SELECT * FROM CustomCommands WHERE PrinterId = " + printer.Id);
@@ -111,7 +115,6 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			string query = string.Format("SELECT * FROM PrinterSetting WHERE Name = 'PublishBedImage' and PrinterId = {0};", printer.Id);
 			var publishBedImage = Datastore.Instance.dbSQLite.Query<PrinterSetting>(query).FirstOrDefault();
 
-			Debugger.Launch();
 			layeredProfile.UserLayer["MatterControl.PublishBedImage"] = publishBedImage?.Value == "true" ? "1" : "0";
 
 			// Print leveling

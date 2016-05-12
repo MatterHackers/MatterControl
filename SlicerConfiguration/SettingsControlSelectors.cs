@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2016, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -97,10 +97,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			editButton.Click += (sender, e) =>
 			{
 				if (layerType == NamedSettingsLayers.Material)
-                {
+				{
 					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
 					{
 						string presetsKey = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
+						if (string.IsNullOrEmpty(presetsKey))
+						{
+							return;
+						}
+
 						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ActiveSliceSettings.Instance.MaterialLayer(presetsKey), NamedSettingsLayers.Material, presetsKey);
 						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) => 
 						{
@@ -120,6 +125,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (ApplicationController.Instance.EditQualityPresetsWindow == null)
 					{
 						string presetsKey = ActiveSliceSettings.Instance.ActiveQualityKey;
+						if (string.IsNullOrEmpty(presetsKey))
+						{
+							return;
+						}
+
 						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ActiveSliceSettings.Instance.QualityLayer(presetsKey), NamedSettingsLayers.Quality, presetsKey);
 						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) => 
 						{
@@ -145,6 +155,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var activeSettings = ActiveSliceSettings.Instance;
 			MenuItem item = (MenuItem)sender;
+
 			if (layerType == NamedSettingsLayers.Material)
 			{
 				if (activeSettings.MaterialPresetKey(extruderIndex) != item.Value)
