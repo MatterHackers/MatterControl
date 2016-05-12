@@ -4846,3 +4846,6 @@ Translated:Behavior
 English:Connection Info
 Translated:Connection Info
 
+English:Camera Monitoring
+Translated:Camera Monitoring
+
