@@ -1,0 +1,10 @@
+temperature = 230
+bed_temperature = 80
+infill_speed = 55
+top_solid_infill_speed = 45
+external_perimeter_speed = 45
+perimeter_speed = 50
+slowdown_below_layer_time = 15
+min_fan_speed = 10
+max_fan_speed = 20
+extruder_wipe_temperature = 160
