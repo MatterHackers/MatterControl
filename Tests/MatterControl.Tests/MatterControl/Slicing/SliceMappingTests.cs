@@ -27,13 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.MatterControl.DataStorage.ClassicDB;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.VectorMath;
 using NUnit.Framework;
-using System.IO;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 {
