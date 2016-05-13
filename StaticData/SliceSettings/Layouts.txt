@@ -8,7 +8,7 @@ Simple
         support_material
         create_raft
   Printer
-    Connection Info
+    Connection
       Description
         MatterControl.PrinterName
       Connection
@@ -69,7 +69,7 @@ Intermediate
         min_fan_speed
         max_fan_speed
   Printer
-    Connection Info
+    Connection
       Description
         MatterControl.PrinterName
       Connection
@@ -269,7 +269,7 @@ Advanced
       Enable
         cool_extruder_lift
   Printer
-    Connection Info
+    Connection
       Description
         MatterControl.PrinterName
       Connection
