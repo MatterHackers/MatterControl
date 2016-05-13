@@ -1221,7 +1221,8 @@
     "PresentationName": "Baud Rate",
     "HelpText": "The serial port communication speed of the printers firmware.",
     "DataEditType": "INT",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "QuickMenuSettings": [{"MenuName" : "115200", "Value": "115200"},{"MenuName" : "250000", "Value": "250000"}]
   },
   {
     "SlicerConfigName": "MatterControl.PrinterName",

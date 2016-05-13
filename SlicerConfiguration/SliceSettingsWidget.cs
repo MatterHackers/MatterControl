@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 		private SliceSettingsDetailControl sliceSettingsDetailControl;
 
-		private TabControl categoryTabs;
+		private TabControl topCategoryTabs;
 		private AltGroupBox noConnectionMessageContainer;
 		internal SettingsControlBar settingsControlBar;
 
@@ -153,23 +153,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			noConnectionMessageContainer.AddChild(noConnectionMessage);
 			pageTopToBottomLayout.AddChild(noConnectionMessageContainer);
 
-			categoryTabs = new TabControl();
-			categoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			categoryTabs.Margin = new BorderDouble(top: 8);
-			categoryTabs.AnchorAll();
+			topCategoryTabs = new TabControl();
+			topCategoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			topCategoryTabs.Margin = new BorderDouble(top: 8);
+			topCategoryTabs.AnchorAll();
 
 			sliceSettingsDetailControl = new SliceSettingsDetailControl();
 
 			List<TabBar> sideTabBarsListForLayout = new List<TabBar>();
-			for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
+			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{
-				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
+				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[topCategoryIndex];
 				string categoryPageLabel = category.Name.Localize();
 				TabPage categoryPage = new TabPage(categoryPageLabel);
 				SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, category.Name + " Tab", 16,
 						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
 				categoryPage.AnchorAll();
-				categoryTabs.AddTab(textTabWidget);
+				topCategoryTabs.AddTab(textTabWidget);
 
 				TabControl sideTabs = CreateSideTabsAndPages(rightContentWidth, category);
 				sideTabBarsListForLayout.Add(sideTabs.TabBar);
@@ -177,8 +177,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				categoryPage.AddChild(sideTabs);
 			}
 
-			categoryTabs.TabBar.AddChild(new HorizontalSpacer());
-			categoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
+			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
+			topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 
 			if (sliceSettingsDetailControl.SelectedValue == "Advanced" && ActiveSliceSettings.Instance.ActiveSliceEngineType() == SlicingEngineTypes.Slic3r)
 			{
@@ -187,10 +187,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
 				extraSettingsPage.AnchorAll();
 				int count;
-				TabControl extraSettingsSideTabs = CreateExtraSettingsSideTabsAndPages(rightContentWidth, categoryTabs, out count);
+				TabControl extraSettingsSideTabs = CreateExtraSettingsSideTabsAndPages(rightContentWidth, topCategoryTabs, out count);
 				if (count > 0)
 				{
-					categoryTabs.AddTab(extraSettingsTextTabWidget);
+					topCategoryTabs.AddTab(extraSettingsTextTabWidget);
 					sideTabBarsListForLayout.Add(extraSettingsSideTabs.TabBar);
 					extraSettingsPage.AddChild(extraSettingsSideTabs);
 				}
@@ -206,13 +206,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.y);
 			}
 
-			if (sideTabBarsListForLayout.Count == 1)
+			// check if there is only one left side tab. If so hide the left tabs and expand the content.
+			foreach(var tabList in sideTabBarsListForLayout)
 			{
-				sideTabBarsListForLayout[0].MinimumSize = new Vector2(0, 0);
-				sideTabBarsListForLayout[0].Width = 0;
+				if(tabList.CountVisibleChildren() == 1)
+				{
+					tabList.MinimumSize = new Vector2(0, 0);
+					tabList.Width = 0;
+				}
 			}
 
-			pageTopToBottomLayout.AddChild(categoryTabs);
+			pageTopToBottomLayout.AddChild(topCategoryTabs);
 			AddHandlers();
 			SetVisibleControls();
 
@@ -220,11 +224,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				string settingsName = "SliceSettingsWidget_CurrentTab";
 				string selectedTab = UserSettings.Instance.get(settingsName);
-				categoryTabs.SelectTab(selectedTab);
+				topCategoryTabs.SelectTab(selectedTab);
 
-				categoryTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+				topCategoryTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
 				{
-					UserSettings.Instance.set(settingsName, categoryTabs.TabBar.SelectedTabName);
+					UserSettings.Instance.set(settingsName, topCategoryTabs.TabBar.SelectedTabName);
 				};
 			}
 
@@ -246,8 +250,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void CurrentlyActiveCategory(out int index, out string name)
 		{
-			index = categoryTabs.SelectedTabIndex;
-			name = categoryTabs.SelectedTabName;
+			index = topCategoryTabs.SelectedTabIndex;
+			name = topCategoryTabs.SelectedTabName;
 		}
 
 		public void CurrentlyActiveGroup(out int index, out string name)
@@ -255,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			index = 0;
 			name = "";
 
-			TabPage currentPage = categoryTabs.GetActivePage();
+			TabPage currentPage = topCategoryTabs.GetActivePage();
 			TabControl currentGroup = null;
 
 			if (currentPage.Children.Count > 0)
@@ -311,13 +315,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (ActiveSliceSettings.Instance != null)
 			{
-				categoryTabs.Visible = true;
+				topCategoryTabs.Visible = true;
 				settingsControlBar.Visible = true;
 				noConnectionMessageContainer.Visible = false;
 			}
 			else
 			{
-				categoryTabs.Visible = false;
+				topCategoryTabs.Visible = false;
 				settingsControlBar.Visible = false;
 				noConnectionMessageContainer.Visible = true;
 			}
@@ -327,9 +331,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private TabControl CreateSideTabsAndPages(int rightContentWidth, OrganizerCategory category)
 		{
-			TabControl groupTabs = new TabControl(Orientation.Vertical);
-			groupTabs.Margin = new BorderDouble(0, 0, 0, 5);
-			groupTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
+			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
+			leftSideGroupTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
 				tabIndexForItem = 0;
@@ -416,7 +420,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 					groupTabPage.AddChild(scrollOnGroupTab);
-					groupTabs.AddTab(groupTabWidget);
+					leftSideGroupTabs.AddTab(groupTabWidget);
 
 					// Make sure we have the right scroll position when we create this view
 					// This code is not working yet. Scroll widgets get a scroll event when the tab becomes visible that is always reseting them.
@@ -449,15 +453,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				string settingsTypeName = "SliceSettingsWidget_{0}_CurrentTab".FormatWith(category.Name);
 				string selectedTab = UserSettings.Instance.get(settingsTypeName);
-				groupTabs.SelectTab(selectedTab);
+				leftSideGroupTabs.SelectTab(selectedTab);
 
-				groupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+				leftSideGroupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
 				{
-					UserSettings.Instance.set(settingsTypeName, groupTabs.TabBar.SelectedTabName);
+					UserSettings.Instance.set(settingsTypeName, leftSideGroupTabs.TabBar.SelectedTabName);
 				};
 			}
 
-			return groupTabs;
+			return leftSideGroupTabs;
 		}
 
 		private static bool CheckIfShouldBeShown(OrganizerSettingsData settingInfo)
@@ -506,14 +510,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private TabControl CreateExtraSettingsSideTabsAndPages(int rightContentWidth, TabControl categoryTabs, out int count)
 		{
 			count = 0;
-			TabControl sideTabs = new TabControl(Orientation.Vertical);
-			sideTabs.Margin = new BorderDouble(0, 0, 0, 5);
-			sideTabs.TabBar.BorderColor = RGBA_Bytes.White;
+			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
+			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
+			leftSideGroupTabs.TabBar.BorderColor = RGBA_Bytes.White;
 			{
 				TabPage groupTabPage = new TabPage("Extra Settings");
 				SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, "Extra Settings Tab", 14,
 				   ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-				sideTabs.AddTab(groupTabWidget);
+				leftSideGroupTabs.AddTab(groupTabWidget);
 
 				FlowLayoutWidget subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				subGroupLayoutTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
@@ -550,7 +554,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 				groupTabPage.AddChild(scrollOnGroupTab);
 			}
-			return sideTabs;
+			return leftSideGroupTabs;
 		}
 
 		private GuiWidget GetExtraSettingsWidget(OrganizerSettingsData settingData)
@@ -676,6 +680,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					case OrganizerSettingsData.DataEditTypes.INT:
 						{
+							FlowLayoutWidget content = new FlowLayoutWidget();
 							int currentValue;
 							int.TryParse(sliceSettingValue, out currentValue);
 
@@ -692,8 +697,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								OnSettingsChanged(settingData);
 							};
 
-							dataArea.AddChild(intEditWidget);
+							content.AddChild(intEditWidget);
 							unitsArea.AddChild(GetExtraSettingsWidget(settingData));
+
+							if (settingData.QuickMenuSettings.Count > 0)
+							{
+								dataArea.AddChild(CreateQuickMenu(settingData, content, intEditWidget.ActuallNumberEdit.InternalTextEditWidget));
+							}
+							else
+							{
+								dataArea.AddChild(content);
+							}
 
 							settingsRow.ValueChanged = (text) =>
 							{
@@ -1509,7 +1523,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			content.VAnchor = VAnchor.ParentCenter;
 			totalContent.AddChild(content);
 
-			internalTextWidget.EditComplete += (sender, e) =>
+			SettingChanged.RegisterEvent((sender, e) =>
 			{
 				bool foundSetting = false;
 				foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
@@ -1528,7 +1542,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					selectableOptions.SelectedLabel = "Custom";
 				}
-			};
+			}, ref unregisterEvents);
 
 			return totalContent;
 		}
