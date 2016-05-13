@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl
 
 		public static Button GetThemedEditButton()
 		{
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_32x32.png", 16, 16);
+			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit.png", 16, 16);
 
 			Button editButton;
 			if (ActiveTheme.Instance.IsDarkTheme)

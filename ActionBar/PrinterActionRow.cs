@@ -152,12 +152,49 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.AddChild(connectPrinterButton);
 			this.AddChild(disconnectPrinterButton);
-			this.AddChild(selectActivePrinterButton);
+
+			FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			printerSelectorAndEditButton.AddChild(selectActivePrinterButton);
+			Button editButton = TextImageButtonFactory.GetThemedEditButton();
+			editButton.VAnchor = VAnchor.ParentCenter;
+			editButton.Click += EditButton_Click;
+			printerSelectorAndEditButton.AddChild(editButton);
+			this.AddChild(printerSelectorAndEditButton);
+
 			this.AddChild(resetConnectionButton);
 			//this.AddChild(CreateOptionsMenu());
 		}
 
-		protected override void AddHandlers()
+		private void EditButton_Click(object sender, EventArgs e)
+		{
+			Button editButton = sender as Button;
+			if (editButton != null)
+			{
+				editButton.Closed += (s, e2) =>
+				{
+					editButton.Click -= EditButton_Click;
+				};
+
+				Task.Run((Action)AutomationTest);
+			}
+		}
+
+		private void AutomationTest()
+		{
+			AutomationRunner test = new AutomationRunner("C:/TestImages");
+			test.Wait(2);
+			test.ClickByName("SettingsAndControls");
+			test.Wait(2);
+			test.ClickImage("BackButton.png");
+
+			//ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
+		}
+
+
+	protected override void AddHandlers()
 		{
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);

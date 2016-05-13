@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			editButton = TextImageButtonFactory.GetThemedEditButton();
 
 			editButton.VAnchor = VAnchor.ParentCenter;
-			editButton.Margin = new BorderDouble(right: 6);
+			editButton.Margin = new BorderDouble(left: 6);
 			editButton.Click += (sender, e) =>
 			{
 				if (layerType == NamedSettingsLayers.Material)
@@ -145,8 +145,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
-			container.AddChild(editButton);
 			container.AddChild(dropDownList);
+			container.AddChild(editButton);
 
 			return container;
 		}
