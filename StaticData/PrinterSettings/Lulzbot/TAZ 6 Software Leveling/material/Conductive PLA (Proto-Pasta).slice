@@ -1,0 +1,7 @@
+temperature = 215
+infill_speed = 35
+top_solid_infill_speed = 30
+external_perimeter_speed = 30
+perimeter_speed = 35
+slowdown_below_layer_time = 15
+extruder_wipe_temperature = 150

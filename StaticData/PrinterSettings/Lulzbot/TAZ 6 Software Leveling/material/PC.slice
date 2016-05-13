@@ -1,0 +1,12 @@
+temperature = 290
+bed_temperature = 115
+retract_length = 1.5
+infill_speed = 30
+top_solid_infill_speed = 22
+external_perimeter_speed = 22
+perimeter_speed = 26
+slowdown_below_layer_time = 20
+has_fan = False
+min_fan_speed = 0
+max_fan_speed = 0
+extruder_wipe_temperature = 200
