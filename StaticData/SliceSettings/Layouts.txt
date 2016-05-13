@@ -7,6 +7,14 @@ Simple
       Support Material
         support_material
         create_raft
+  Printer
+    Connection Info
+      Description
+        MatterControl.PrinterName
+      Connection
+        MatterControl.AutoConnect
+        MatterControl.BaudRate
+        MatterControl.ComPort
 Intermediate
   General
     Layers/Surface
@@ -60,6 +68,14 @@ Intermediate
       Fan Speed
         min_fan_speed
         max_fan_speed
+  Printer
+    Connection Info
+      Description
+        MatterControl.PrinterName
+      Connection
+        MatterControl.AutoConnect
+        MatterControl.BaudRate
+        MatterControl.ComPort
 Advanced
   General
     Layers/Surface
