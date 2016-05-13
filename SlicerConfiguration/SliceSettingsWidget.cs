@@ -687,7 +687,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							var intEditWidget = new MHNumberEdit(currentValue, pixelWidth: intEditWidth, tabIndex: tabIndexForItem++)
 							{
 								ToolTipText = settingData.HelpText,
-								SelectAllOnFocus = true
+								SelectAllOnFocus = true,
+								Name = settingData.PresentationName + " Edit",
 							};
 							intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
@@ -1045,8 +1046,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case OrganizerSettingsData.DataEditTypes.STRING:
 						{
-							var stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++);
+							var stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++)
+							{
+								Name = settingData.PresentationName + " Edit",
+							};
 							stringEdit.ToolTipText = settingData.HelpText;
+							
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text);

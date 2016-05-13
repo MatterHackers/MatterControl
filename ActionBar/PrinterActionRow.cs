@@ -29,11 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.GuiAutomation;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -171,6 +173,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void EditButton_Click(object sender, EventArgs e)
 		{
 			Button editButton = sender as Button;
+			editButton.ToolTipText = "Edit Printer Settings".Localize();
 			if (editButton != null)
 			{
 				editButton.Closed += (s, e2) =>
@@ -184,17 +187,24 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void AutomationTest()
 		{
-			AutomationRunner test = new AutomationRunner("C:/TestImages");
-			test.Wait(2);
-			test.ClickByName("SettingsAndControls");
-			test.Wait(2);
-			test.ClickImage("BackButton.png");
-
-			//ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
+			AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated);
+			if (testRunner.NameExists("SettingsAndControls"))
+			{
+				testRunner.ClickByName("SettingsAndControls", 5);
+				testRunner.Wait(.5);
+			}
+			testRunner.ClickByName("SETTINGS Tab");
+			testRunner.ClickByName("Printer Tab");
+			testRunner.ClickByName("Connection Tab", 5);
+			testRunner.MoveToByName("Printer Name Edit", 5);
+			testRunner.MoveToByName("Auto Connect Checkbox", 5);
+			testRunner.MoveToByName("Baud Rate Edit", 5);
+			testRunner.MoveToByName("Printer Name Edit", 5);
+			testRunner.Dispose();
 		}
 
 
-	protected override void AddHandlers()
+		protected override void AddHandlers()
 		{
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);

@@ -4849,3 +4849,9 @@ Translated:Connection Info
 English:Camera Monitoring
 Translated:Camera Monitoring
 
+English:Details
+Translated:Details
+
+English:Edit Printer Settings
+Translated:Edit Printer Settings
+

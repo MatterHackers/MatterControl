@@ -52,6 +52,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GCodeVisualizer;
 using Gaming.Game;
+using MatterHackers.GuiAutomation;
 
 namespace MatterHackers.MatterControl
 {
