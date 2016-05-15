@@ -52,6 +52,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GCodeVisualizer;
 using Gaming.Game;
+using MatterHackers.GuiAutomation;
 
 namespace MatterHackers.MatterControl
 {
@@ -757,6 +758,32 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
+		bool showNamesUnderMouse = false;
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (keyEvent.KeyCode == Keys.F2)
+			{
+				Task.Run((Action)AutomationTest);
+			}
+			else if (keyEvent.KeyCode == Keys.F1)
+			{
+				showNamesUnderMouse = !showNamesUnderMouse;
+			}
+
+			base.OnKeyDown(keyEvent);
+		}
+
+		private void AutomationTest()
+		{
+			AutomationRunner test = new AutomationRunner();
+			test.ClickByName("Library Tab", 5);
+			test.ClickByName("Queue Tab", 5);
+			test.ClickByName("Queue Item SkeletonArm_Med", 5);
+			test.ClickByName("3D View Edit", 5);
+			test.Wait(.2);
+			test.DragByName("SkeletonArm_Med_IObject3D", 5);
+			test.DropByName("SkeletonArm_Med_IObject3D", 5, offset: new Point2D(0, -40));
+		}
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
 			MatterControlApplication.AssertDebugNotDefined();

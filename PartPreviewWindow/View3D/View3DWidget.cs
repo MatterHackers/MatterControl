@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						addButton.Enabled = false;
 					}
 
-					ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit_32x32.png", 14, 14);
+					ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit.png", 14, 14);
 
 					if (!ActiveTheme.Instance.IsDarkTheme)
 					{

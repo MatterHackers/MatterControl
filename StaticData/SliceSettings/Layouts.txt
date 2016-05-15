@@ -11,7 +11,7 @@ Simple
     Connection
       Description
         MatterControl.PrinterName
-      Connection
+      Details
         MatterControl.AutoConnect
         MatterControl.BaudRate
         MatterControl.ComPort
@@ -72,7 +72,7 @@ Intermediate
     Connection
       Description
         MatterControl.PrinterName
-      Connection
+      Details
         MatterControl.AutoConnect
         MatterControl.BaudRate
         MatterControl.ComPort
@@ -272,7 +272,7 @@ Advanced
     Connection
       Description
         MatterControl.PrinterName
-      Connection
+      Details
         MatterControl.AutoConnect
         MatterControl.BaudRate
         MatterControl.ComPort

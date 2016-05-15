@@ -29,11 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.GuiAutomation;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -152,10 +154,57 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.AddChild(connectPrinterButton);
 			this.AddChild(disconnectPrinterButton);
-			this.AddChild(selectActivePrinterButton);
+
+			FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			printerSelectorAndEditButton.AddChild(selectActivePrinterButton);
+			Button editButton = TextImageButtonFactory.GetThemedEditButton();
+			editButton.VAnchor = VAnchor.ParentCenter;
+			editButton.Click += EditButton_Click;
+			printerSelectorAndEditButton.AddChild(editButton);
+			this.AddChild(printerSelectorAndEditButton);
+
 			this.AddChild(resetConnectionButton);
 			//this.AddChild(CreateOptionsMenu());
 		}
+
+		private void EditButton_Click(object sender, EventArgs e)
+		{
+			Button editButton = sender as Button;
+			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
+			if (editButton != null)
+			{
+				editButton.Closed += (s, e2) =>
+				{
+					editButton.Click -= EditButton_Click;
+				};
+
+				Task.Run((Action)AutomationTest);
+			}
+		}
+
+		private void AutomationTest()
+		{
+			AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated);
+			if (testRunner.NameExists("SettingsAndControls"))
+			{
+				testRunner.ClickByName("SettingsAndControls", 5);
+				testRunner.Wait(.5);
+			}
+			testRunner.ClickByName("Slice Settings Tab", .1);
+			testRunner.ClickByName("Slice Settings Tab", .1);
+			testRunner.ClickByName("Slice Settings Tab", .1);
+			testRunner.ClickByName("Printer Tab", .2);
+			testRunner.ClickByName("Connection Tab", .1);
+			testRunner.MoveToByName("Printer Name Edit", .1);
+			testRunner.MoveToByName("Auto Connect Checkbox", .1);
+			testRunner.MoveToByName("Baud Rate Edit", .1);
+			testRunner.MoveToByName("Printer Name Edit", .1);
+			testRunner.Dispose();
+		}
+
 
 		protected override void AddHandlers()
 		{

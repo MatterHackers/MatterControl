@@ -45,6 +45,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Localizations;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl
 {
@@ -115,7 +116,9 @@ namespace MatterHackers.MatterControl
 			if (noThumbnailImage.Width == 0)
 			{
 				StaticData.Instance.LoadIcon(noThumbnailFileName, noThumbnailImage);
+				noThumbnailImage.InvertLightness();
 				StaticData.Instance.LoadIcon(buildingThumbnailFileName, buildingThumbnailImage);
+				buildingThumbnailImage.InvertLightness();
 			}
 			this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
 
