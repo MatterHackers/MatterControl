@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void EditButton_Click(object sender, EventArgs e)
 		{
 			Button editButton = sender as Button;
-			editButton.ToolTipText = "Edit Printer Settings".Localize();
+			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
 			if (editButton != null)
 			{
 				editButton.Closed += (s, e2) =>
@@ -193,13 +193,15 @@ namespace MatterHackers.MatterControl.ActionBar
 				testRunner.ClickByName("SettingsAndControls", 5);
 				testRunner.Wait(.5);
 			}
-			testRunner.ClickByName("SETTINGS Tab");
-			testRunner.ClickByName("Printer Tab");
-			testRunner.ClickByName("Connection Tab", 5);
-			testRunner.MoveToByName("Printer Name Edit", 5);
-			testRunner.MoveToByName("Auto Connect Checkbox", 5);
-			testRunner.MoveToByName("Baud Rate Edit", 5);
-			testRunner.MoveToByName("Printer Name Edit", 5);
+			testRunner.ClickByName("Slice Settings Tab", .1);
+			testRunner.ClickByName("Slice Settings Tab", .1);
+			testRunner.ClickByName("Slice Settings Tab", .1);
+			testRunner.ClickByName("Printer Tab", .2);
+			testRunner.ClickByName("Connection Tab", .1);
+			testRunner.MoveToByName("Printer Name Edit", .1);
+			testRunner.MoveToByName("Auto Connect Checkbox", .1);
+			testRunner.MoveToByName("Baud Rate Edit", .1);
+			testRunner.MoveToByName("Printer Name Edit", .1);
 			testRunner.Dispose();
 		}
 

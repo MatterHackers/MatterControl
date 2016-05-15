@@ -591,7 +591,6 @@ namespace MatterHackers.MatterControl
 
 			if (firstDraw)
 			{
-				DrawAfter += ShowNamesUnderMouse;
 				firstDraw = false;
 				foreach (string arg in commandLineArgs)
 				{

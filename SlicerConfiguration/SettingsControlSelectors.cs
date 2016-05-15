@@ -92,6 +92,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			editButton = TextImageButtonFactory.GetThemedEditButton();
 
+			editButton.ToolTipText = "Edit Selected Setting".Localize();
+
 			editButton.VAnchor = VAnchor.ParentCenter;
 			editButton.Margin = new BorderDouble(left: 6);
 			editButton.Click += (sender, e) =>

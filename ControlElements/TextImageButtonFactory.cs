@@ -233,15 +233,17 @@ namespace MatterHackers.MatterControl
 			Button editButton;
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
-				editButton = new Button(0, 0, new ButtonViewThreeImage(SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White),
-				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Gray),
-				normalImage));
+				editButton = new Button(0, 0, new ButtonViewThreeImage(
+					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(.8).GetAsRGBA_Bytes()),
+					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(.9).GetAsRGBA_Bytes()),
+					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(1).GetAsRGBA_Bytes())));
 			}
 			else
 			{
-				editButton = new Button(0, 0, new ButtonViewThreeImage(normalImage,
-				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.Gray),
-				SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White)));
+				editButton = new Button(0, 0, new ButtonViewThreeImage(
+					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(.4).GetAsRGBA_Bytes()),
+					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(.2).GetAsRGBA_Bytes()),
+					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(0).GetAsRGBA_Bytes())));
 			}
 
 			return editButton;
