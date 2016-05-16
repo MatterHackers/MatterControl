@@ -108,7 +108,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							return;
 						}
 
-						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ActiveSliceSettings.Instance.MaterialLayer(presetsKey), NamedSettingsLayers.Material, presetsKey);
+						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.MaterialLayers, presetsKey)
+						{
+							LayerType = NamedSettingsLayers.Material,
+							SetAsActive = (materialKey) => ActiveSliceSettings.Instance.ActiveMaterialKey = materialKey
+						};
+
+						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(presetsContext);
 						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) => 
 						{
 							ApplicationController.Instance.EditMaterialPresetsWindow = null;
@@ -132,7 +138,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							return;
 						}
 
-						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ActiveSliceSettings.Instance.QualityLayer(presetsKey), NamedSettingsLayers.Quality, presetsKey);
+						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.QualityLayers, presetsKey)
+						{
+							LayerType = NamedSettingsLayers.Quality,
+							SetAsActive = (qualityKey) => ActiveSliceSettings.Instance.ActiveQualityKey = qualityKey
+						};
+
+						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(presetsContext);
 						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) => 
 						{
 							ApplicationController.Instance.EditQualityPresetsWindow = null;
@@ -193,23 +205,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem defaultMenuItem = dropDownList.AddItem("- default -", "");
 			defaultMenuItem.Selected += MenuItem_Selected;
 
-			var listSource = (layerType == NamedSettingsLayers.Material) ? ActiveSliceSettings.Instance.AllMaterialKeys() : ActiveSliceSettings.Instance.AllQualityKeys();
-			foreach (var presetName in listSource)
+			var listSource = (layerType == NamedSettingsLayers.Material) ? ActiveSliceSettings.Instance.MaterialLayers : ActiveSliceSettings.Instance.QualityLayers;
+			foreach (var layer in listSource)
 			{
-				MenuItem menuItem = dropDownList.AddItem(presetName, presetName);
+				if (string.IsNullOrEmpty(layer.Value.Name))
+				{
+					layer.Value.Name = layer.Key;
+				}
+
+				MenuItem menuItem = dropDownList.AddItem(layer.Value.Name, layer.Value.ID);
 				menuItem.Selected += MenuItem_Selected;
 			}
 
 			MenuItem addNewPreset = dropDownList.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Setting...", "new");
 			addNewPreset.Selected += (s, e) =>
 			{
-				var newLayer = ActiveSliceSettings.Instance.CreatePresetsLayer(layerType);
+				var newLayer = new SettingsLayer();
 				if (layerType == NamedSettingsLayers.Quality)
 				{
-					ActiveSliceSettings.Instance.ActiveQualityKey = newLayer.Name;
+					newLayer.Name = "Quality" + ActiveSliceSettings.Instance.QualityLayers.Count;
+					ActiveSliceSettings.Instance.QualityLayers[newLayer.Name] = newLayer;
+					ActiveSliceSettings.Instance.ActiveQualityKey = newLayer.ID;
 				}
-				else if (layerType == NamedSettingsLayers.Material)
+				else
 				{
+					newLayer.Name = "Material" + ActiveSliceSettings.Instance.MaterialLayers.Count;
+					ActiveSliceSettings.Instance.MaterialLayers[newLayer.Name] = newLayer;
+					ActiveSliceSettings.Instance.ActiveMaterialKey = newLayer.ID;
 					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.Name);
 				}
 

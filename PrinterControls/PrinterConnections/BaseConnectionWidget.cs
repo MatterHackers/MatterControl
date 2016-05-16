@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						BaudRate = settings.BaudRate(),
 						ComPort = settings.ComPort(),
 						DriverType = settings.DriverType(),
-						Id = settings.Id(),
+						Id = settings.ID,
 						Name = settings.Name()
 					};
 				}

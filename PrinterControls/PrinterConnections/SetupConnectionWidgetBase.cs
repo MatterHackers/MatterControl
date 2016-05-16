@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				settings.SetBaudRate(ActivePrinter.BaudRate);
 				settings.SetComPort(ActivePrinter.ComPort);
 				settings.SetDriverType(ActivePrinter.DriverType);
-				settings.SetId(ActivePrinter.Id);
 				settings.SetName(ActivePrinter.Name);
 			});
 

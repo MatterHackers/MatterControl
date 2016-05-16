@@ -36,39 +36,55 @@ using MatterHackers.MatterControl.DataStorage.ClassicDB;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	public class PresetsContext
+	{
+		public Dictionary<string, SettingsLayer> PresetsDictionary { get; }
+		public SettingsLayer PersistenceLayer { get; }
+		public Action<string> SetAsActive { get; set; }
+		public NamedSettingsLayers LayerType { get; set; }
+
+		private string presetsKey;
+
+		public PresetsContext(Dictionary<string, SettingsLayer> parentDictionary, string presetsKey)
+		{
+			this.presetsKey = presetsKey;
+			this.PersistenceLayer = parentDictionary[presetsKey];
+			this.PresetsDictionary = parentDictionary;
+		}
+	}
+
 	public class SlicePresetsWindow : SystemWindow
 	{
-		private string presetsKey;
-		private SettingsLayer persistenceLayer;
-		private NamedSettingsLayers layerType;
-
-		private TextImageButtonFactory buttonFactory;
-		private LinkButtonFactory linkButtonFactory;
+		private PresetsContext presetsContext;
 		private MHTextEditWidget presetNameInput;
 
+		private string initialPresetName = null;
 		private string configFileExtension = "slice";
 
-		public SlicePresetsWindow(SettingsLayer persistenceLayer, NamedSettingsLayers layerType, string presetsKey)
+		private static Regex numberMatch = new Regex("\\s*\\(\\d+\\)", RegexOptions.Compiled);
+
+
+		public SlicePresetsWindow(PresetsContext presetsContext)
 				: base(641, 481)
 		{
+			this.presetsContext = presetsContext;
 			this.AlwaysOnTopOfMain = true;
 			this.Title = LocalizedString.Get("Slice Presets Editor");
-			this.persistenceLayer = persistenceLayer;
-			this.layerType = layerType;
-			this.presetsKey = presetsKey;
 			this.MinimumSize = new Vector2(640, 480);
 			this.AnchorAll();
 
-			linkButtonFactory = new LinkButtonFactory()
+			var linkButtonFactory = new LinkButtonFactory()
 			{
 				fontSize = 8,
 				textColor = ActiveTheme.Instance.SecondaryAccentColor
 			};
 
-			buttonFactory = new TextImageButtonFactory()
+			var buttonFactory = new TextImageButtonFactory()
 			{
 				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
 				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -85,39 +101,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			mainContainer.AddChild(GetTopRow());
 			mainContainer.AddChild(GetMiddleRow());
-			mainContainer.AddChild(GetBottomRow());
+			mainContainer.AddChild(GetBottomRow(buttonFactory));
 
 			this.AddChild(mainContainer);
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
 		}
 
 		private FlowLayoutWidget GetTopRow()
 		{
-			FlowLayoutWidget metaContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var metaContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				Padding = new BorderDouble(0, 3)
 			};
 
-			FlowLayoutWidget firstRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
-
-			TextWidget labelText = new TextWidget("Preset Name:".Localize(), pointSize: 14)
+			var labelText = new TextWidget("Preset Name:".Localize(), pointSize: 14)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(right: 4)
 			};
 
-			presetNameInput = new MHTextEditWidget(this.presetsKey);
+			initialPresetName = presetsContext.PersistenceLayer.Name;
+			presetNameInput = new MHTextEditWidget(initialPresetName);
 			presetNameInput.HAnchor = HAnchor.ParentLeftRight;
 
+			var firstRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
 			firstRow.AddChild(labelText);
 			firstRow.AddChild(presetNameInput);
 
-			FlowLayoutWidget secondRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
-
+			var secondRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
 			secondRow.AddChild(new GuiWidget(labelText.Width + 4, 1));
 
 			metaContainer.AddChild(firstRow);
@@ -129,26 +143,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget GetMiddleRow()
 		{
 			var settings = ActiveSliceSettings.Instance;
-			var layerCascade = new List<SettingsLayer> { settings.BaseLayer, settings.OemLayer, persistenceLayer };
+			var layerCascade = new List<SettingsLayer> { presetsContext.PersistenceLayer, settings.OemLayer, settings.BaseLayer};
 
-			var settingsWidget = new SliceSettingsWidget(layerCascade, layerType);
+			var settingsWidget = new SliceSettingsWidget(layerCascade, presetsContext.LayerType);
 			settingsWidget.settingsControlBar.Visible = false;
 
 			return settingsWidget;
 		}
 
-		private FlowLayoutWidget GetBottomRow()
+		private string GetNonCollidingName(string profileName, IEnumerable<string> existingNames)
 		{
-			FlowLayoutWidget container = new FlowLayoutWidget()
+			if (!existingNames.Contains(profileName))
+			{
+				return profileName;
+			}
+			else
+			{
+
+				int currentIndex = 1;
+				string possiblePrinterName;
+
+				do
+				{
+					possiblePrinterName = String.Format("{0} ({1})", profileName, currentIndex++);
+				} while (existingNames.Contains(possiblePrinterName));
+
+				return possiblePrinterName;
+			}
+		}
+
+		private FlowLayoutWidget GetBottomRow(TextImageButtonFactory buttonFactory)
+		{
+			var container = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = new BorderDouble(top: 3)
-			};
-
-			Button saveButton = buttonFactory.Generate("Save".Localize());
-			saveButton.Click += (s, e) =>
-			{
-				throw new NotImplementedException();
 			};
 
 			Button duplicateButton = buttonFactory.Generate("Duplicate".Localize());
@@ -156,9 +185,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					// duplicatePresets_Click
-					// TODO: copy existing dictionary to new named instance
-					throw new NotImplementedException();
+					string sanitizedName = numberMatch.Replace(presetNameInput.Text, "").Trim();
+					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetsDictionary.Values.Select(preset => preset.Name));
+
+					this.Close();
+
+					var clonedLayer = presetsContext.PersistenceLayer.Clone();
+					clonedLayer.Name = newProfileName;
+					presetsContext.PresetsDictionary[clonedLayer.ID] = clonedLayer;
+
+					presetsContext.SetAsActive(clonedLayer.ID);
 				});
 			};
 
@@ -174,15 +210,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Button closeButton = buttonFactory.Generate("Close".Localize());
 			closeButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle(this.Close);
+				UiThread.RunOnIdle(() =>
+				{
+					if (initialPresetName != presetNameInput.Text)
+					{
+						presetsContext.PersistenceLayer.Name = presetNameInput.Text;
+
+						// TODO: If we get to the point where we refresh rather than reload, we need
+						// to rebuild the target droplist to display the new name
+						ApplicationController.Instance.ReloadAdvancedControlsPanel();
+					}
+					this.Close();
+				});
 			};
 
-			container.AddChild(saveButton);
+			container.AddChild(duplicateButton);
 
 			//Only show duplicate/import/export buttons if setting has been saved.
 			if (false)
 			{
-				container.AddChild(duplicateButton);
 				container.AddChild(importButton);
 				container.AddChild(exportButton);
 			}

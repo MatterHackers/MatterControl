@@ -86,8 +86,9 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			LoadQualitySettings(layeredProfile, printer);
 			LoadMaterialSettings(layeredProfile, printer);
 
+			layeredProfile.ID = printer.Id.ToString();
+
 			layeredProfile.UserLayer["MatterControl.PrinterName"] = printer.Name ?? "";
-			layeredProfile.UserLayer["MatterControl.PrinterID"] = printer.Id.ToString();
 			layeredProfile.UserLayer["MatterControl.Make"] = printer.Make ?? "";
 			layeredProfile.UserLayer["MatterControl.Model"] = printer.Model ?? "";
 			layeredProfile.UserLayer["MatterControl.BaudRate"] = printer.BaudRate ?? "";
@@ -133,6 +134,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			// TODO: Where can we find CalibrationFiiles in the current model?
 			//layeredProfile.SetActiveValue("MatterControl.CalibrationFiles", printer.Make);
 
+			layeredProfile.ID = printer.Id.ToString();
 			string fullProfilePath = Path.Combine(profilePath, printer.Id + ".json");
 			File.WriteAllText(fullProfilePath, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
 		}

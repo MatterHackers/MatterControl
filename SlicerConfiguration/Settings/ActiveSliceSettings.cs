@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							BaudRate = profile.BaudRate(),
 							ComPort = profile.ComPort(),
 							DriverType = profile.DriverType(),
-							Id = profile.Id(),
+							Id = profile.ID,
 							Make = profile.Make,
 							Model = profile.Model,
 							Name = profile.Name(),
@@ -193,11 +193,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal static void SwitchToProfile(int id)
+		internal static void SwitchToProfile(string printerID)
 		{
-			var profile = LoadProfile(id);
+			var profile = LoadProfile(printerID);
 
-			UserSettings.Instance.set("ActiveProfileID", id.ToString());
+			UserSettings.Instance.set("ActiveProfileID", printerID);
 
 			if (profile != null)
 			{
@@ -205,16 +205,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal static SettingsProfile LoadProfile(int id)
-		{
-			string profileID = ProfileData.Profiles.Where(p => p.Id == id.ToString()).FirstOrDefault()?.Id.ToString();
-			if (!string.IsNullOrEmpty(profileID))
-			{
-				return LoadProfile(profileID);
-			}
-			
-			return null;
-		}
 
 		internal static void AcquireNewProfile(string make, string model, string printerName)
 		{
@@ -223,11 +213,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			OemProfile printerProfile = LoadHttpOemProfile(make, model);
 			SettingsLayer baseConfig = LoadMatterHackersBaseLayer();
 
-			var layeredProfile = new LayeredProfile(
-				printerProfile, 
-				baseConfig);
-			layeredProfile.DocumentPath = Path.Combine(profilesPath, guid + ".json");
-			layeredProfile.UserLayer["MatterControl.PrinterID"] = guid.ToString();
+			var layeredProfile = new LayeredProfile(printerProfile, baseConfig)
+			{
+				ID = guid,
+				DocumentPath = Path.Combine(profilesPath, guid + ".json")
+			};
 			layeredProfile.UserLayer["MatterControl.PrinterName"] = printerName;
 
 			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
@@ -256,6 +246,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						});
 					}
 				}
+			}
+
+			// Copy OemProfile presets into user layers
+			foreach(var layer in layeredProfile.OemProfile.MaterialLayers)
+			{
+				layeredProfile.MaterialLayers[layer.Key] = layer.Value;
+			}
+
+			foreach (var layer in layeredProfile.OemProfile.QualityLayers)
+			{
+				layeredProfile.QualityLayers[layer.Key] = layer.Value;
 			}
 
 			layeredProfile.Save();
