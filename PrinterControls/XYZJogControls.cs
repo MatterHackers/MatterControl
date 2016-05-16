@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.CustomWidgets;
 using System.Collections.ObjectModel;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl
 {
@@ -385,7 +386,7 @@ namespace MatterHackers.MatterControl
 			hotkeyControlContainer.ToolTipText = "Enable cursor keys for movement";
 			hotkeyControlContainer.Margin = new BorderDouble(left: 10);
 
-            RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", "hot_key_small_white.png");
+            RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).InvertLightness());
 			hotKeyButton.Margin = new BorderDouble(5);
             hotKeyButton.FocusChanged += (sender, e) =>
             {
