@@ -443,7 +443,9 @@
     <None Include="StaticData\PrinterSettings\config.ini" />
     <None Include="StaticData\SliceSettings\Properties.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="SlicerConfiguration\SettingsEditors\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>

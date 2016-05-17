@@ -117,7 +117,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
 			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			int rightContentWidth = (int)(280 * GuiWidget.DeviceScale + .5);
 			buttonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
 			buttonFactory.fontSize = 10;
 			buttonFactory.normalFillColor = RGBA_Bytes.White;
@@ -171,7 +170,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				categoryPage.AnchorAll();
 				topCategoryTabs.AddTab(textTabWidget);
 
-				TabControl sideTabs = CreateSideTabsAndPages(rightContentWidth, category);
+				TabControl sideTabs = CreateSideTabsAndPages(category);
 				sideTabBarsListForLayout.Add(sideTabs.TabBar);
 
 				categoryPage.AddChild(sideTabs);
@@ -187,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
 				extraSettingsPage.AnchorAll();
 				int count;
-				TabControl extraSettingsSideTabs = CreateExtraSettingsSideTabsAndPages(rightContentWidth, topCategoryTabs, out count);
+				TabControl extraSettingsSideTabs = CreateExtraSettingsSideTabsAndPages(topCategoryTabs, out count);
 				if (count > 0)
 				{
 					topCategoryTabs.AddTab(extraSettingsTextTabWidget);
@@ -329,7 +328,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private int tabIndexForItem = 0;
 
-		private TabControl CreateSideTabsAndPages(int rightContentWidth, OrganizerCategory category)
+		private TabControl CreateSideTabsAndPages(OrganizerCategory category)
 		{
 			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
 			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
@@ -371,6 +370,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
 						topToBottomSettings.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
+						this.HAnchor = HAnchor.ParentLeftRight;
+
 						foreach (OrganizerSettingsData settingInfo in subGroup.SettingDataList)
 						{
 							bool settingShouldBeShown = CheckIfShouldBeShown(settingInfo);
@@ -379,7 +380,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
-								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, rightContentWidth, copyIndex);
+								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, copyIndex);
 								topToBottomSettings.AddChild(controlsForThisSetting);
 
 								GuiWidget helpBox = AddInHelpText(topToBottomSettings, settingInfo);
@@ -507,8 +508,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return allText;
 		}
 
-		private TabControl CreateExtraSettingsSideTabsAndPages(int rightContentWidth, TabControl categoryTabs, out int count)
+		private TabControl CreateExtraSettingsSideTabsAndPages(TabControl categoryTabs, out int count)
 		{
+			int rightContentWidth = (int)(280 * GuiWidget.DeviceScale + .5);
 			count = 0;
 			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
 			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
@@ -526,6 +528,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				topToBottomSettings.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 
+				this.HAnchor = HAnchor.ParentLeftRight;
+
 				foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
 				{
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
@@ -533,7 +537,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						OrganizerSettingsData settingInfo = new OrganizerSettingsData(keyValue.Key, keyValue.Key, OrganizerSettingsData.DataEditTypes.STRING);
 						if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingInfo.SlicerConfigName))
 						{
-							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, rightContentWidth, 0);
+							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, 0);
 							topToBottomSettings.AddChild(controlsForThisSetting);
 							count++;
 						}
@@ -624,10 +628,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return ActiveSliceSettings.Instance.GetActiveValue(slicerConfigName, layerCascade);
 		}
 
-		private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double rightContentWidth, int extruderIndex)
+		private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, int extruderIndex)
 		{
 			GuiWidget container = new GuiWidget();
-			this.HAnchor = HAnchor.ParentLeftRight;
 
 			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 

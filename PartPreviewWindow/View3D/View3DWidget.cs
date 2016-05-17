@@ -214,11 +214,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit.png", 14, 14);
 
-					if (!ActiveTheme.Instance.IsDarkTheme)
-					{
-						normalImage.InvertLightness();
-					}
-
 					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), normalImage);
 					enterEdittingButton.Name = "3D View Edit";
 					enterEdittingButton.Margin = new BorderDouble(right: 4);

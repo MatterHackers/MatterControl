@@ -187,11 +187,22 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void AutomationTest()
 		{
-			AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated);
+			AutomationRunner testRunner = null;
+			if (false)
+			{
+				testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated);
+			}
+			else
+			{
+				testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
+				testRunner.TimeToMoveMouse = 0;
+				testRunner.UpDelaySeconds = 0;
+			}
+
 			if (testRunner.NameExists("SettingsAndControls"))
 			{
 				testRunner.ClickByName("SettingsAndControls", 5);
-				testRunner.Wait(.5);
+				testRunner.Wait(.2);
 			}
 			testRunner.ClickByName("Slice Settings Tab", .1);
 			testRunner.ClickByName("Slice Settings Tab", .1);
@@ -204,7 +215,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			testRunner.MoveToByName("Printer Name Edit", .1);
 			testRunner.Dispose();
 		}
-
 
 		protected override void AddHandlers()
 		{
