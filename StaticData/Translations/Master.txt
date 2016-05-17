@@ -4861,3 +4861,6 @@ Translated:Edit Selected Setting
 English:Edit Current Printer Settings
 Translated:Edit Current Printer Settings
 
+English:Printer Settings
+Translated:Printer Settings
+

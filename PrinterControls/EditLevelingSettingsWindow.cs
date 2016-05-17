@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl
 		public EditLevelingSettingsWindow()
 			: base(400, 370)
 		{
+			AlwaysOnTopOfMain = true;
 			Title = LocalizedString.Get("Leveling Settings".Localize());
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);

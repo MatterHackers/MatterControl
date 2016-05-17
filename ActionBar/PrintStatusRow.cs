@@ -237,7 +237,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			imageButtonFactory.InvertImageColor = false;
 			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 16, 16).InvertLightness();
 			Button autoLevelButton = imageButtonFactory.Generate(levelingImage, levelingImage);
-			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
 			autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
