@@ -4864,3 +4864,9 @@ Translated:Edit Current Printer Settings
 English:Printer Settings
 Translated:Printer Settings
 
+English:Delete the currently selected printer profile.
+Translated:Delete the currently selected printer profile.
+
+English:Delete Printer
+Translated:Delete Printer
+

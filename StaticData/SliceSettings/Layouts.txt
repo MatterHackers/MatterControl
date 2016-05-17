@@ -15,6 +15,7 @@ Simple
         MatterControl.AutoConnect
         MatterControl.BaudRate
         MatterControl.ComPort
+        MatterControl.DeletePrinter
 Intermediate
   General
     Layers/Surface
@@ -76,6 +77,7 @@ Intermediate
         MatterControl.AutoConnect
         MatterControl.BaudRate
         MatterControl.ComPort
+        MatterControl.DeletePrinter
 Advanced
   General
     Layers/Surface
@@ -276,6 +278,7 @@ Advanced
         MatterControl.AutoConnect
         MatterControl.BaudRate
         MatterControl.ComPort
+        MatterControl.DeletePrinter
     Print Area
       Size and Coordinates
         bed_size

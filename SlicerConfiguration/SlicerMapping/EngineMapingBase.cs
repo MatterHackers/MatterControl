@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"MatterControl.AutoConnect",
 			"MatterControl.BaudRate",
 			"MatterControl.ComPort",
+			"MatterControl.DeletePrinter",
 			"manual_probe_paper_width",
 			"pause_gcode",
 			"print_leveling_method",
