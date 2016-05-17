@@ -1225,8 +1225,15 @@
     "QuickMenuSettings": [{"MenuName" : "115200", "Value": "115200"},{"MenuName" : "250000", "Value": "250000"}]
   },
   {
+    "SlicerConfigName": "MatterControl.DeletePrinter",
+    "PresentationName": "",
+    "HelpText": "Delete the currently selected printer profile.",
+    "DataEditType": "DELETE_PRINTER",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "MatterControl.PrinterName",
-    "PresentationName": "Printer Name",
+    "PresentationName": "",
     "HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
     "DataEditType": "STRING",
     "ExtraSettings": ""

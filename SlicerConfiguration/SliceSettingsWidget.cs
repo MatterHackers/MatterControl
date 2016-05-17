@@ -1137,6 +1137,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
+					case OrganizerSettingsData.DataEditTypes.DELETE_PRINTER:
+						{
+							// This is a place holder type to allow us to put in the control that will allow the deletion of a printer profile
+							TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
+							buttonFactory.normalTextColor = RGBA_Bytes.Red;
+							var button = buttonFactory.Generate("Delete Printer".Localize());
+							button.Click += (s, e) =>
+							{
+								StyledMessageBox.ShowMessageBox((doDelete) =>
+								{
+									if (doDelete)
+									{
+										// delete it
+									}
+								}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
+							};
+							dataArea.AddChild(button);
+						}
+						break;
+
 					case OrganizerSettingsData.DataEditTypes.LIST:
 						{
 							var selectableOptions = new StyledDropDownList("None", maxHeight: 200)
