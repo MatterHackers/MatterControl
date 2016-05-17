@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
 			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png", 24, 24);
-			if (!ActiveTheme.Instance.IsDarkTheme)
+			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				helpIconImage.InvertLightness();
 			}
