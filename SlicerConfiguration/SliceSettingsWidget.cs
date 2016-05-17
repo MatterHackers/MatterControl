@@ -91,18 +91,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private TextImageButtonFactory textImageButtonFactory;
 
-		private List<SettingsLayer> layerFilters = null;
+		private List<SettingsLayer> layerCascade = null;
 		private SettingsLayer persistenceLayer = null;
 
 		private NamedSettingsLayers viewFilter;
 
-		public SliceSettingsWidget(List<SettingsLayer> layerFilters = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
+		public SliceSettingsWidget(List<SettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
 		{
-			this.layerFilters = layerFilters;
+			this.layerCascade = layerCascade;
 			this.viewFilter = viewFilter;
 
 			// The last layer of the layerFilters is the target persistence layer
-			persistenceLayer = layerFilters?.Last() ?? ActiveSliceSettings.Instance.UserLayer;
+			persistenceLayer = layerCascade?.First() ?? ActiveSliceSettings.Instance.UserLayer;
 
 			textImageButtonFactory = new TextImageButtonFactory();
 			textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
@@ -465,7 +465,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		private static bool CheckIfShouldBeShown(OrganizerSettingsData settingInfo)
+		private bool CheckIfShouldBeShown(OrganizerSettingsData settingInfo)
 		{
 			bool settingShouldBeShown = true;
 			if (settingInfo.ShowIfSet != null
@@ -478,7 +478,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					showValue = "1";
 					checkName = checkName.Substring(1);
 				}
-				string sliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(checkName);
+				string sliceSettingValue = GetActiveValue(checkName, layerCascade);
 				if (sliceSettingValue == showValue)
 				{
 					settingShouldBeShown = false;
@@ -605,9 +605,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			}
 
-			public void RefreshValue()
+			public void RefreshValue(IEnumerable<SettingsLayer> layerFilters)
 			{
-				string latestValue = ActiveSliceSettings.Instance.ActiveValue(this.SettingsKey);
+				string latestValue = GetActiveValue(this.SettingsKey, layerFilters);
 				//if(latestValue != SettingsValue)
 				{
 					ValueChanged?.Invoke(latestValue);
@@ -623,11 +623,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 108);
 		private static readonly RGBA_Bytes qualitySettingBackgroundColor = new RGBA_Bytes(255, 255, 0, 108);
 
-		private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, int extruderIndex)
+		private static string GetActiveValue(string slicerConfigName, IEnumerable<SettingsLayer> layerCascade)
+		{
+			return ActiveSliceSettings.Instance.GetActiveValue(slicerConfigName, layerCascade);
+		}
+
+		private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double rightContentWidth, int extruderIndex)
 		{
 			GuiWidget container = new GuiWidget();
 
-			string sliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(settingData.SlicerConfigName);
+			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 
 			GuiWidget nameArea = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren | VAnchor.ParentCenter);
 			var dataArea = new FlowLayoutWidget();
@@ -768,10 +773,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (ChangesMultipleOtherSettings)
 							{
 								bool allTheSame = true;
-								string setting = ActiveSliceSettings.Instance.ActiveValue(settingData.SetSettingsOnChange[0]);
+								string setting = GetActiveValue(settingData.SetSettingsOnChange[0], layerCascade);
 								for (int i = 1; i < settingData.SetSettingsOnChange.Count; i++)
 								{
-									string nextSetting = ActiveSliceSettings.Instance.ActiveValue(settingData.SetSettingsOnChange[i]);
+									string nextSetting = GetActiveValue(settingData.SetSettingsOnChange[i], layerCascade);
 									if (setting != nextSetting)
 									{
 										allTheSame = false;
@@ -1376,7 +1381,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ActiveSliceSettings.Instance.ClearValue(settingData.SlicerConfigName, persistenceLayer);
 				}
 
-				settingsRow.RefreshValue();
+				settingsRow.RefreshValue(layerCascade);
 			};
 
 			restoreArea.AddChild(restoreButton);
@@ -1403,7 +1408,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					restoreButton.Visible = true;
 				}
-				else if (layerFilters == null)
+				else if (layerCascade == null)
 				{
 					if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
 					{
@@ -1499,7 +1504,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, GuiWidget content, InternalTextEditWidget internalTextWidget)
 		{
-			string sliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(settingData.SlicerConfigName);
+			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 			FlowLayoutWidget totalContent = new FlowLayoutWidget();
 
 			StyledDropDownList selectableOptions = new StyledDropDownList("Custom", maxHeight: 200);
@@ -1537,7 +1542,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
 				{
 					string localName = nameValue.MenuName;
-					string newSliceSettingValue = ActiveSliceSettings.Instance.ActiveValue(settingData.SlicerConfigName);
+					string newSliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 					if (newSliceSettingValue == nameValue.Value)
 					{
 						selectableOptions.SelectedLabel = localName;
@@ -1557,7 +1562,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, string slicerConfigName, string newSingleValue)
 		{
-			string[] settings = ActiveSliceSettings.Instance.ActiveValue(slicerConfigName).Split(',');
+			string[] settings = GetActiveValue(slicerConfigName, layerCascade).Split(',');
 			if (settings.Length > extruderIndexLocal)
 			{
 				settings[extruderIndexLocal] = newSingleValue;

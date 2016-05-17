@@ -2491,7 +2491,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// TODO: Fix printerItemID int requirement
 						activePrintTask = new PrintTask();
 						activePrintTask.PrintStart = DateTime.Now;
-						activePrintTask.PrinterId = this.ActivePrinter.Id().GetHashCode();
+						activePrintTask.PrinterId = this.ActivePrinter.ID.GetHashCode();
 						activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
 						activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
 						activePrintTask.PrintingGCodeFileName = ActivePrintItem.GetGCodePathAndFileName();

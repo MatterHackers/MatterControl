@@ -64,13 +64,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile = profile;
 		}
 
+		public string ID => layeredProfile.ID;
+
 		public SettingsLayer BaseLayer => layeredProfile.BaseLayer;
 
 		public SettingsLayer OemLayer => layeredProfile.OemProfile.OemLayer;
 
 		public SettingsLayer UserLayer => layeredProfile.UserLayer;
 
-		public string ActiveMaterialKey => layeredProfile.ActiveMaterialKey;
+		public string ActiveMaterialKey
+		{
+			get
+			{
+				return layeredProfile.ActiveMaterialKey;
+			}
+			set
+			{
+				layeredProfile.ActiveMaterialKey = value;
+			}
+		}
 
 		public string ActiveQualityKey
 		{
@@ -92,15 +104,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Commit
 		}
 
-		public IEnumerable<string> AllMaterialKeys()
-		{
-			return layeredProfile.AllMaterialKeys();
-		}
+		public Dictionary<string, SettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
 
-		public IEnumerable<string> AllQualityKeys()
-		{
-			return layeredProfile.AllQualityKeys();
-		}
+		public Dictionary<string, SettingsLayer> QualityLayers => layeredProfile.QualityLayers;
 
 		public class SettingsConverter
 		{
@@ -174,23 +180,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal SettingsLayer MaterialLayer(string key)
 		{
 			return layeredProfile.GetMaterialLayer(key);
-		}
-
-		internal SettingsLayer CreatePresetsLayer(NamedSettingsLayers layerType)
-		{
-			SettingsLayer newLayer = new SettingsLayer();
-			if (layerType == NamedSettingsLayers.Quality)
-			{
-				newLayer.Name = "Quality" + layeredProfile.QualityLayers.Count;
-				layeredProfile.QualityLayers[newLayer.Name] = newLayer;
-			}
-			else
-			{
-				newLayer.Name = "Material" + layeredProfile.MaterialLayers.Count;
-				layeredProfile.MaterialLayers[newLayer.Name] = newLayer;
-			}
-
-			return newLayer;
 		}
 
 		internal SettingsLayer QualityLayer(string key)
@@ -563,9 +552,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetValue(sliceSetting);
 		}
 
-		public string GetActiveValue(string sliceSetting, IEnumerable<SettingsLayer> layers)
+		public string GetActiveValue(string sliceSetting, IEnumerable<SettingsLayer> layerCascade)
 		{
-			return layeredProfile.GetValue(sliceSetting, layers);
+			return layeredProfile.GetValue(sliceSetting, layerCascade);
 		}
 
 		public void SetActiveValue(string sliceSetting, string sliceValue)
@@ -924,16 +913,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetActiveValue("MatterControl.PrinterName", name);
 		}
 
-		public string Id()
-		{
-			return layeredProfile.GetValue("MatterControl.PrinterID");
-		}
-
-		public void SetId(string id)
-		{
-			layeredProfile.SetActiveValue("MatterControl.PrinterID", id);
-		}
-
 		public string Model => layeredProfile.GetValue("MatterControl.Model");
 
 		HashSet<string> knownSettings = null;
@@ -1047,9 +1026,61 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string Name { get; set; }
-		public string Source { get; set; }
-		public string ETag { get; set; }
+		public string ID
+		{
+			get
+			{
+				// TODO: Short term hack to silently upgrade existing profiles with missing ID
+				string layerKey = ValueOrDefault("MatterControl.LayerID");
+				if (string.IsNullOrEmpty(layerKey))
+				{
+					layerKey = Guid.NewGuid().ToString();
+					ID = layerKey;
+				}
+
+				return layerKey;
+			}
+			set
+			{
+				this["MatterControl.LayerID"] = value;
+			}
+		}
+
+		public string Name
+		{
+			get
+			{
+				return ValueOrDefault("MatterControl.LayerName");
+			}
+			set
+			{
+				this["MatterControl.LayerName"] = value;
+			}
+		}
+
+		public string Source
+		{
+			get
+			{
+				return ValueOrDefault("MatterControl.LayerSource");
+			}
+			set
+			{
+				this["MatterControl.LayerSource"] = value;
+			}
+		}
+
+		public string ETag
+		{
+			get
+			{
+				return ValueOrDefault("MatterControl.LayerETag");
+			}
+			set
+			{
+				this["MatterControl.LayerETag"] = value;
+			}
+		}
 
 		public string ValueOrDefault(string key, string defaultValue = "")
 		{
@@ -1103,6 +1134,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return layer;
+		}
+
+		public SettingsLayer Clone()
+		{
+			string id = Guid.NewGuid().ToString();
+			return new SettingsLayer(this as Dictionary<string, string>)
+			{
+				ID = id,
+				Name = this.Name,
+				ETag = this.ETag,
+				Source = this.Source
+			};
 		}
 	}
 

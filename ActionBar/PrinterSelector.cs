@@ -52,9 +52,9 @@ namespace MatterHackers.MatterControl
 				this.AddItem(printer.Name, printer.Id.ToString());
 			}
 
-			if(ActiveSliceSettings.Instance != null)
+			if (ActiveSliceSettings.Instance != null)
 			{
-				this.SelectedValue = ActiveSliceSettings.Instance.Id();
+				this.SelectedValue = ActiveSliceSettings.Instance.ID;
 			}
 
 			ImageBuffer plusImage = StaticData.Instance.LoadIcon("icon_plus.png", 32, 32);
@@ -62,17 +62,17 @@ namespace MatterHackers.MatterControl
 
 			this.SelectionChanged += (s, e) =>
 			{
-				int printerID;
-				if (int.TryParse(this.SelectedValue, out printerID))
+				string printerID = this.SelectedValue;
+				if (printerID == "new")
 				{
-					ActiveSliceSettings.SwitchToProfile(printerID);
-				}
-				else if(this.SelectedValue == "new")
-				{
-					if(AddPrinter != null)
+					if (AddPrinter != null)
 					{
 						UiThread.RunOnIdle(() => AddPrinter(this, null));
 					}
+				}
+				else
+				{
+					ActiveSliceSettings.SwitchToProfile(printerID);
 				}
 			};
 		}
