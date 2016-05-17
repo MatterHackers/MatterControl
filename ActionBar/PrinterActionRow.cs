@@ -181,23 +181,15 @@ namespace MatterHackers.MatterControl.ActionBar
 					editButton.Click -= EditButton_Click;
 				};
 
-				Task.Run((Action)AutomationTest);
+				Task.Run((Action)ShowPrinterSettings);
 			}
 		}
 
-		private void AutomationTest()
+		private void ShowPrinterSettings()
 		{
-			AutomationRunner testRunner = null;
-			if (false)
-			{
-				testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated);
-			}
-			else
-			{
-				testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-				testRunner.TimeToMoveMouse = 0;
-				testRunner.UpDelaySeconds = 0;
-			}
+			AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
+			testRunner.TimeToMoveMouse = 0;
+			testRunner.UpDelaySeconds = 0;
 
 			if (testRunner.NameExists("SettingsAndControls"))
 			{
@@ -205,14 +197,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				testRunner.Wait(.2);
 			}
 			testRunner.ClickByName("Slice Settings Tab", .1);
-			testRunner.ClickByName("Slice Settings Tab", .1);
-			testRunner.ClickByName("Slice Settings Tab", .1);
 			testRunner.ClickByName("Printer Tab", .2);
 			testRunner.ClickByName("Connection Tab", .1);
-			testRunner.MoveToByName("Printer Name Edit", .1);
-			testRunner.MoveToByName("Auto Connect Checkbox", .1);
-			testRunner.MoveToByName("Baud Rate Edit", .1);
-			testRunner.MoveToByName("Printer Name Edit", .1);
 			testRunner.Dispose();
 		}
 
