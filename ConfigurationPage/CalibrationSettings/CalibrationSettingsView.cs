@@ -10,6 +10,7 @@ using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
@@ -45,6 +46,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private FlowLayoutWidget GetAutoLevelControl()
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.Name = "AutoLevelRowItem";
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 

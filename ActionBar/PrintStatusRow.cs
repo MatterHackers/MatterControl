@@ -246,6 +246,14 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			testRunner.ClickByName("Slice Settings Tab", .1);
 			testRunner.ClickByName("Options Tab", .2);
+
+			SystemWindow containingWindow;
+			var autoLevelRowItem = testRunner.GetWidgetByName("AutoLevelRowItem", out containingWindow, .2);
+			if (autoLevelRowItem != null)
+			{
+				new AttentionGetter(autoLevelRowItem);
+			}
+
 			testRunner.Dispose();
 		}
 
