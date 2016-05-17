@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -208,8 +209,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png");
+			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png", 24, 24);
+			if (!ActiveTheme.Instance.IsDarkTheme)
+			{
+				helpIconImage.InvertLightness();
+			}
 			ImageWidget homeIconImageWidget = new ImageWidget(helpIconImage);
+
 			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
 			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
 			RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
