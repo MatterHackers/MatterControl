@@ -111,7 +111,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.MaterialLayers, presetsKey)
 						{
 							LayerType = NamedSettingsLayers.Material,
-							SetAsActive = (materialKey) => ActiveSliceSettings.Instance.ActiveMaterialKey = materialKey
+							SetAsActive = (materialKey) =>
+							{
+								ActiveSliceSettings.Instance.ActiveMaterialKey = materialKey;
+								ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, materialKey);
+							}
 						};
 
 						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(presetsContext);
