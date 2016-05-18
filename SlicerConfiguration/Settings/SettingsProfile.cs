@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using DataStorage;
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
+	using System.Collections.ObjectModel;
 	public class SettingsProfile
 	{
 		private static string configFileExtension = "slice";
@@ -1151,7 +1152,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class ProfileData
 	{
-		public List<PrinterInfo> Profiles { get; set; } = new List<PrinterInfo>();
+		public ObservableCollection<PrinterInfo> Profiles { get; set; } = new ObservableCollection<PrinterInfo>();
 	}
 
 	public class PrinterInfo

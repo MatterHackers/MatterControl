@@ -103,6 +103,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// TODO: Upload new profiles to webservice
 				}
 
+				ProfileData.Profiles.CollectionChanged += Profiles_CollectionChanged;
+
 				foreach(string filePath in Directory.GetFiles(profilesPath, "*.json"))
 				{
 					string fileName = Path.GetFileName(filePath);
@@ -152,6 +154,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			ActiveSliceSettings.LoadStartupProfile();
+		}
+
+		private static void Profiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+			{
+				string profilePath = Path.Combine(profilesPath, Instance.ID + ".json");
+				if (File.Exists(profilePath))
+				{
+					File.Delete(profilePath);
+				}
+
+				// Refresh after remove
+				UiThread.RunOnIdle(() => Instance = new SettingsProfile(LoadEmptyProfile()));
+			}
 		}
 
 		public static LayeredProfile LoadEmptyProfile()
