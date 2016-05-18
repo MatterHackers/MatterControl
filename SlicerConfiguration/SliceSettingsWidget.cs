@@ -1268,7 +1268,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								OnSettingsChanged(settingData);
 							};
 							dataArea.AddChild(xEditWidget);
-							dataArea.AddChild(new TextWidget("x", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+							dataArea.AddChild(new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 							{
 								VAnchor = VAnchor.ParentCenter,
 								Margin = new BorderDouble(5, 0),
@@ -1288,7 +1288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Padding = new BorderDouble(5, 0),
 								HAnchor = HAnchor.ParentLeftRight,
 							};
-							yLabel.AddChild(new WrappedTextWidget("y", 0, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+							yLabel.AddChild(new WrappedTextWidget("Y", 0, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 							unitsArea.AddChild(yLabel);
 
 							settingsRow.ValueChanged = (text) =>
@@ -1332,14 +1332,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								int extruderIndexLocal = extruderIndex;
-								SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
+								SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "X" + yEditWidget.ActuallNumberEdit.Value.ToString());
 
 								settingsRow.UpdateStyle();
 
 								OnSettingsChanged(settingData);
 							};
 							dataArea.AddChild(xEditWidget);
-							dataArea.AddChild(new TextWidget("x", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+							dataArea.AddChild(new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 							{
 								VAnchor = VAnchor.ParentCenter,
 								Margin = new BorderDouble(5, 0),
@@ -1348,7 +1348,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								int extruderIndexLocal = extruderIndex;
-								SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
+								SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "X" + yEditWidget.ActuallNumberEdit.Value.ToString());
 
 								settingsRow.UpdateStyle();
 
@@ -1360,7 +1360,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Padding = new BorderDouble(5, 0),
 								HAnchor = HAnchor.ParentLeftRight,
 							};
-							yLabel.AddChild(new WrappedTextWidget("y", 0, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+							yLabel.AddChild(new WrappedTextWidget("Y", 0, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 							unitsArea.AddChild(yLabel);
 
 							settingsRow.ValueChanged = (text) =>

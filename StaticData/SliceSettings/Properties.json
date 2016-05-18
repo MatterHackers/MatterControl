@@ -1247,8 +1247,8 @@
   },
   {
     "SlicerConfigName": "MatterControl.ComPort",
-    "PresentationName": "ComPort",
-    "HelpText": "Set the com port to use while connecting to this printer.",
+    "PresentationName": "COM Port",
+    "HelpText": "The COM port to use while connecting to this printer.",
     "DataEditType": "COM_PORT",
     "ExtraSettings": ""
   },
