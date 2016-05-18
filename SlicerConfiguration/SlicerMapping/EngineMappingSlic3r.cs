@@ -77,8 +77,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override bool MapContains(string key)
 		{
-			// Visible items are anything not in the hiddenSettings set
-			return !hiddenSettings.Contains(key);
+			// Visible items are anything not in the hiddenSettings set or that start with 'MatterControl.'
+			return !hiddenSettings.Contains(key) || key.StartsWith("MatterControl.");
 		}
 	}
 }
