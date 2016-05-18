@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class PresetsContext
 	{
 		public Dictionary<string, SettingsLayer> PresetsDictionary { get; }
-		public SettingsLayer PersistenceLayer { get; }
+		public SettingsLayer PersistenceLayer { get; set; }
 		public Action<string> SetAsActive { get; set; }
 		public NamedSettingsLayers LayerType { get; set; }
 
@@ -60,14 +60,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class SlicePresetsWindow : SystemWindow
 	{
+		private static Regex numberMatch = new Regex("\\s*\\(\\d+\\)", RegexOptions.Compiled);
+
 		private PresetsContext presetsContext;
 		private MHTextEditWidget presetNameInput;
 
 		private string initialPresetName = null;
 		private string configFileExtension = "slice";
 
-		private static Regex numberMatch = new Regex("\\s*\\(\\d+\\)", RegexOptions.Compiled);
-
+		private GuiWidget middleRow;
 
 		public SlicePresetsWindow(PresetsContext presetsContext)
 				: base(641, 481)
@@ -99,8 +100,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			mainContainer.AnchorAll();
 
+			middleRow = new GuiWidget();
+			middleRow.AnchorAll();
+			middleRow.AddChild(CreateSliceSettingsWidget(presetsContext.PersistenceLayer));
+
 			mainContainer.AddChild(GetTopRow());
-			mainContainer.AddChild(GetMiddleRow());
+			mainContainer.AddChild(middleRow);
 			mainContainer.AddChild(GetBottomRow(buttonFactory));
 
 			this.AddChild(mainContainer);
@@ -110,40 +115,48 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private FlowLayoutWidget GetTopRow()
 		{
-			var metaContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var topRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
 				Padding = new BorderDouble(0, 3)
 			};
 
-			var labelText = new TextWidget("Preset Name:".Localize(), pointSize: 14)
+			// Add label
+			topRow.AddChild(new TextWidget("Preset Name:".Localize(), pointSize: 14)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(right: 4)
+			});
+
+			// Add textbox
+			initialPresetName = presetsContext.PersistenceLayer.Name;
+			presetNameInput = new MHTextEditWidget(initialPresetName)
+			{
+				HAnchor = HAnchor.ParentLeftRight
 			};
 
-			initialPresetName = presetsContext.PersistenceLayer.Name;
-			presetNameInput = new MHTextEditWidget(initialPresetName);
-			presetNameInput.HAnchor = HAnchor.ParentLeftRight;
+			presetNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
+			{
+				if (!this.Focused && this.Text != initialPresetName)
+				{
+					presetsContext.PersistenceLayer.Name = presetNameInput.Text;
+				}
+			};
 
-			var firstRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
-			firstRow.AddChild(labelText);
-			firstRow.AddChild(presetNameInput);
+			topRow.AddChild(presetNameInput);
 
-			var secondRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight);
-			secondRow.AddChild(new GuiWidget(labelText.Width + 4, 1));
-
-			metaContainer.AddChild(firstRow);
-			metaContainer.AddChild(secondRow);
-
-			return metaContainer;
+			// Return container
+			return topRow;
 		}
 
-		private GuiWidget GetMiddleRow()
+		private GuiWidget CreateSliceSettingsWidget(SettingsLayer persistenceLayer)
 		{
-			var settings = ActiveSliceSettings.Instance;
-			var layerCascade = new List<SettingsLayer> { presetsContext.PersistenceLayer, settings.OemLayer, settings.BaseLayer};
+			var layerCascade = new List<SettingsLayer>
+			{
+				persistenceLayer,
+				ActiveSliceSettings.Instance.OemLayer,
+				ActiveSliceSettings.Instance.BaseLayer
+			};
 
 			var settingsWidget = new SliceSettingsWidget(layerCascade, presetsContext.LayerType);
 			settingsWidget.settingsControlBar.Visible = false;
@@ -159,7 +172,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-
 				int currentIndex = 1;
 				string possiblePrinterName;
 
@@ -188,13 +200,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string sanitizedName = numberMatch.Replace(presetNameInput.Text, "").Trim();
 					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetsDictionary.Values.Select(preset => preset.Name));
 
-					this.Close();
-
 					var clonedLayer = presetsContext.PersistenceLayer.Clone();
 					clonedLayer.Name = newProfileName;
 					presetsContext.PresetsDictionary[clonedLayer.ID] = clonedLayer;
 
 					presetsContext.SetAsActive(clonedLayer.ID);
+					presetsContext.PersistenceLayer = clonedLayer;
+
+					middleRow.CloseAllChildren();
+					middleRow.AddChild(CreateSliceSettingsWidget(clonedLayer));
+
+					presetNameInput.Text = newProfileName;
 				});
 			};
 
@@ -212,10 +228,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					if (initialPresetName != presetNameInput.Text)
+					if (initialPresetName != presetsContext.PersistenceLayer.Name)
 					{
-						presetsContext.PersistenceLayer.Name = presetNameInput.Text;
-
 						// TODO: If we get to the point where we refresh rather than reload, we need
 						// to rebuild the target droplist to display the new name
 						ApplicationController.Instance.ReloadAdvancedControlsPanel();
