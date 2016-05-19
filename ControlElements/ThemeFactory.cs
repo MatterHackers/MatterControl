@@ -271,14 +271,12 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public void SwitchToPrinterThemeWithoutReloadEvent()
 		{
+			string activeThemeIndex = ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex");
+
 			int themeIndex;
-			try
+			if (string.IsNullOrEmpty(activeThemeIndex) || !int.TryParse(activeThemeIndex, out themeIndex))
 			{
-				themeIndex = Convert.ToInt32(ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex"));
-			}
-			catch
-			{
-				GuiWidget.BreakInDebugger();
+				// Fall back to default theme if user settings are missing or invalid
 				themeIndex = defaultThemeIndex;
 			}
 
