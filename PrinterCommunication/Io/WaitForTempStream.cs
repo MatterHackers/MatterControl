@@ -148,6 +148,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							tempWithinRange = bedTemp >= targetTemp - sameTempRange;
 						}
+
+						// Added R code for M190
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
 						{
 							timeHaveBeenAtTemp.Start();

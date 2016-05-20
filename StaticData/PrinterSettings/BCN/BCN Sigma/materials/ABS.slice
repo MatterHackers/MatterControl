@@ -1,0 +1,4 @@
+temperature = 245
+bed_temperature = 100
+min_fan_speed = 0
+max_fan_speed = 0
