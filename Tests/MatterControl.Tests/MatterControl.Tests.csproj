@@ -70,7 +70,7 @@
     <Compile Include="MatterControl\MatterControlUtilities.cs" />
     <Compile Include="MatterControl\HtmlParser.cs" />
     <Compile Include="MatterControl\LibraryProviderTests.cs" />
-    <Compile Include="MatterControl\PrinterCallBackTests.cs" />
+    <Compile Include="MatterControl\ConfigIniTests.cs" />
     <Compile Include="MatterControl\PrinterChooserUnitTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
     <Compile Include="MatterControl\PrinterWhiteListTests.cs" />
