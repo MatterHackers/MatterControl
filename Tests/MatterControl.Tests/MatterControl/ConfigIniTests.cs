@@ -179,15 +179,16 @@ namespace MatterControl.Tests.MatterControl
 			ValidateOnAllPrinters(printer =>
 			{
 				string bottomSolidLayers = printer.SettingsLayer.ValueOrDefault("bottom_solid_layers");
-
-				// TODO: Remove once validated and resolved
-				if (bottomSolidLayers != "1mm")
+				if (!string.IsNullOrEmpty(bottomSolidLayers))
 				{
-					printer.RuleViolated = true;
-					return;
-				}
+					if (bottomSolidLayers != "1mm")
+					{
+						printer.RuleViolated = true;
+						return;
+					}
 
-				Assert.AreEqual("1mm", bottomSolidLayers, "[bottom_solid_layers] must be 1mm: " + printer.RelativeConfigPath);
+					Assert.AreEqual("1mm", bottomSolidLayers, "[bottom_solid_layers] must be 1mm: " + printer.RelativeConfigPath);
+				}
 			});
 		}
 
