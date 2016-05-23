@@ -236,11 +236,8 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		// TODO: Name did not reflect behavior or fails too frequently to be accurate
-		//public void LayerHeightLessThanNozzleDiameter()
-
 		[Test]
-		public void LayerHeightLessOrEqualToNozzleDiameter()
+		public void LayerHeightLessThanNozzleDiameter()
 		{
 			ValidateOnAllPrinters(printer =>
 			{
@@ -254,7 +251,7 @@ namespace MatterControl.Tests.MatterControl
 					return;
 				}
 
-				Assert.LessOrEqual(layerHeight, nozzleDiameter, "[layer_height] must be less than [nozzle_diameter]: " + printer.RelativeConfigPath);
+				Assert.Less(layerHeight, nozzleDiameter, "[layer_height] must be less than [nozzle_diameter]: " + printer.RelativeConfigPath);
 			});
 		}
 
@@ -294,7 +291,7 @@ namespace MatterControl.Tests.MatterControl
 					Assert.Less(firstLayerExtrusionWidthToTest, firstLayerExtrusionWidthThreshold, "[first_layer_extrusion_width] greater than acceptable value: " + printer.RelativeConfigPath);
 
 					// TODO: We're not validating first_layer_extrusion_width as we have the product of nozzleDiameter and firstLayerExtrusionWidth. Seems confusing
-					Assert.Greater(firstLayerExtrusionWidthToTest, 0, "First layer extrusion width cannot be zero");
+					Assert.Greater(firstLayerExtrusionWidthToTest, 0, "First layer extrusion width cannot be zero: " + printer.RelativeConfigPath);
 				}
 			});
 		}
@@ -318,7 +315,7 @@ namespace MatterControl.Tests.MatterControl
 						return;
 					}
 
-					Assert.Greater(firstLayerExtrusionWidth, 0, "[first_layer_extrusion_width] must be greater than zero");
+					Assert.Greater(firstLayerExtrusionWidth, 0, "[first_layer_extrusion_width] must be greater than zero: " + printer.RelativeConfigPath);
 				}
 			});
 		}
@@ -329,16 +326,9 @@ namespace MatterControl.Tests.MatterControl
 			ValidateOnAllPrinters(printer =>
 			{
 				string supportMaterialExtruder = printer.SettingsLayer.ValueOrDefault("support_material_extruder");
-				if (!string.IsNullOrEmpty(supportMaterialExtruder))
+				if (!string.IsNullOrEmpty(supportMaterialExtruder) && printer.Oem != "Esagono")
 				{
-					// TODO: Remove once validated and resolved
-					if (supportMaterialExtruder != "1")
-					{
-						printer.RuleViolated = true;
-						return;
-					}
-
-					Assert.AreEqual("1", supportMaterialExtruder, "[support_material_extruder] must be assigned to extruder 1");
+					Assert.AreEqual("1", supportMaterialExtruder, "[support_material_extruder] must be assigned to extruder 1: " + printer.RelativeConfigPath);
 				}
 			});
 		}
@@ -349,15 +339,8 @@ namespace MatterControl.Tests.MatterControl
 			ValidateOnAllPrinters(printer =>
 			{
 				string supportMaterialInterfaceExtruder = printer.SettingsLayer.ValueOrDefault("support_material_interface_extruder");
-				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder))
+				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder) && printer.Oem != "Esagono")
 				{
-					// TODO: Remove once validated and resolved
-					if (supportMaterialInterfaceExtruder != "1")
-					{
-						printer.RuleViolated = true;
-						return;
-					}
-
 					Assert.AreEqual("1", supportMaterialInterfaceExtruder, "[support_material_interface_extruder] must be assigned to extruder 1");
 				}
 			});
@@ -396,7 +379,9 @@ namespace MatterControl.Tests.MatterControl
 				}
 			}
 
-			Assert.IsTrue(ruleViolations.Count == 0, "One or more printers violate this rule: " + string.Join("\r\n", ruleViolations.ToArray()));
+			Assert.IsTrue(
+				ruleViolations.Count == 0, /* Use == instead of Assert.AreEqual to better convey failure details */
+				string.Format("One or more printers violate this rule: \r\n\r\n{0}\r\n", string.Join("\r\n", ruleViolations.ToArray())));
 		}
 
 		private class PrinterConfig
