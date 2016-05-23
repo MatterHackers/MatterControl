@@ -37,8 +37,8 @@ namespace MatterHackers.MatterControl
 		private static RGBA_Bytes whiteSemiTransparent = new RGBA_Bytes(255, 255, 255, 100);
 		private static RGBA_Bytes whiteTransparent = new RGBA_Bytes(255, 255, 255, 0);
 
-		public StyledDropDownList(string noSelectionString, Direction direction = Direction.Down, double maxHeight = 0)
-			: base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction, maxHeight)
+		public StyledDropDownList(string noSelectionString, Direction direction = Direction.Down, double maxHeight = 0, bool useLeftIcons = false)
+			: base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction, maxHeight, useLeftIcons)
 		{
 			this.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			this.MenuItemsBorderWidth = 1;
@@ -46,7 +46,8 @@ namespace MatterHackers.MatterControl
 			this.MenuItemsBorderColor = ActiveTheme.Instance.SecondaryTextColor;
 			this.MenuItemsPadding = new BorderDouble(10, 8, 10, 12);
 			this.MenuItemsBackgroundHoverColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.MenuItemsTextHoverColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.MenuItemsTextHoverColor = RGBA_Bytes.Black;
+			this.MenuItemsTextColor = RGBA_Bytes.Black;
 			this.BorderWidth = 1;
 			this.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
 			this.HoverColor = whiteSemiTransparent;

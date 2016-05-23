@@ -104,6 +104,8 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// <param name="path">The new AppData path.</param>
 		internal void OverrideAppDataLocation(string path)
 		{
+			Console.WriteLine("Tests Overriding ApplicationUserDataPath to: " + path);
+
 			// Ensure the target directory exists
 			Directory.CreateDirectory(path);
 
@@ -201,7 +203,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		bool wasExited = false;
 		public bool ConnectionError = false;
 		public ISQLite dbSQLite;
-		private static string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
+		private string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
 		private static Datastore globalInstance;
 		private ApplicationSession activeSession;
 		private bool TEST_FLAG = false;

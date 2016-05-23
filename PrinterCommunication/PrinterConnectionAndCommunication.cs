@@ -1173,17 +1173,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void HomeAxis(Axis axis)
 		{
 			string command = "G28";
-			if ((axis & Axis.X) == Axis.X)
+
+			// If we are homing everything we don't need to add any details
+			if (!axis.HasFlag(Axis.XYZ))
 			{
-				command += " X0";
-			}
-			if ((axis & Axis.Y) == Axis.Y)
-			{
-				command += " Y0";
-			}
-			if ((axis & Axis.Z) == Axis.Z)
-			{
-				command += " Z0";
+				if ((axis & Axis.X) == Axis.X)
+				{
+					command += " X0";
+				}
+				if ((axis & Axis.Y) == Axis.Y)
+				{
+					command += " Y0";
+				}
+				if ((axis & Axis.Z) == Axis.Z)
+				{
+					command += " Z0";
+				}
 			}
 
 			SendLineToPrinterNow(command);
@@ -2292,10 +2297,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
 #if __ANDROID__
 			string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
-
 			if (!string.IsNullOrEmpty(currentPortName))
 			{
-				this.ComPort = currentPortName;
+				// TODO: Ensure that this does *not* cause a write to the settings file and should be an in memory update only
+				ActiveSliceSettings.Instance?.SetComPort(currentPortName);
 			}
 #endif
 
@@ -2486,7 +2491,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// TODO: Fix printerItemID int requirement
 						activePrintTask = new PrintTask();
 						activePrintTask.PrintStart = DateTime.Now;
-						activePrintTask.PrinterId = this.ActivePrinter.Id().GetHashCode();
+						activePrintTask.PrinterId = this.ActivePrinter.ID.GetHashCode();
 						activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
 						activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
 						activePrintTask.PrintingGCodeFileName = ActivePrintItem.GetGCodePathAndFileName();

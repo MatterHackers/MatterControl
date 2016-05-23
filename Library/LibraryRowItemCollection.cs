@@ -77,7 +77,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override bool Protected
 		{
-			get { return false; }
+			get
+			{
+				return currentProvider.IsProtected();
+			}
 		}
 
 		public override void Export()
@@ -188,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			this.Height = 50 * TextWidget.GlobalPointSizeScaleRatio;
+			this.Height = 50 * GuiWidget.DeviceScale;
 
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);

@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					// snap the z position
 					double bottom = selectedBounds.minXYZ.z + delta.z;
-					double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
+					double snappedBottom = (Math.Round((bottom / snapGridDistance))) * snapGridDistance;
 					delta.z = snappedBottom - selectedBounds.minXYZ.z;
 				}
 

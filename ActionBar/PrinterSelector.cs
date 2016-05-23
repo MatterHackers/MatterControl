@@ -27,44 +27,52 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl
 {
 	public class PrinterSelector : StyledDropDownList
 	{
-		public PrinterSelector() : base("Printers".Localize() + "... ")
-		{
-			UseLeftIcons = true;
+		public event EventHandler AddPrinter;
 
+		public PrinterSelector() : base("Printers".Localize() + "... ", useLeftIcons: true)
+		{
 			//Add the menu items to the menu itself
 			foreach (var printer in ActiveSliceSettings.ProfileData.Profiles)
 			{
 				this.AddItem(printer.Name, printer.Id.ToString());
 			}
 
-			if (!string.IsNullOrEmpty(ActiveSliceSettings.ProfileData.ActiveProfileID))
+			if (ActiveSliceSettings.Instance != null)
 			{
-				this.SelectedValue = ActiveSliceSettings.ProfileData.ActiveProfileID;
+				this.SelectedValue = ActiveSliceSettings.Instance.ID;
 			}
 
-			this.AddItem(InvertLightness.DoInvertLightness(StaticData.Instance.LoadIcon("icon_circle_plus.png")), "Add New Printer...", "new");
+			ImageBuffer plusImage = StaticData.Instance.LoadIcon("icon_plus.png", 32, 32);
+			this.AddItem(plusImage, "Add New Printer...", "new");
 
 			this.SelectionChanged += (s, e) =>
 			{
-				int printerID;
-				if (int.TryParse(this.SelectedValue, out printerID))
+				string printerID = this.SelectedValue;
+				if (printerID == "new")
+				{
+					if (AddPrinter != null)
+					{
+						UiThread.RunOnIdle(() => AddPrinter(this, null));
+					}
+				}
+				else
 				{
 					ActiveSliceSettings.SwitchToProfile(printerID);
-				}
-				else if(this.SelectedValue == "new")
-				{
-					UiThread.RunOnIdle(ConnectionWizard.Show);
 				}
 			};
 		}

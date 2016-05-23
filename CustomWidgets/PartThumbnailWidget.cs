@@ -45,6 +45,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Localizations;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl
 {
@@ -93,13 +94,13 @@ namespace MatterHackers.MatterControl
 			switch (size)
 			{
 				case ImageSizes.Size50x50:
-					this.Width = 50 * TextWidget.GlobalPointSizeScaleRatio;
-					this.Height = 50 * TextWidget.GlobalPointSizeScaleRatio;
+					this.Width = 50 * GuiWidget.DeviceScale;
+					this.Height = 50 * GuiWidget.DeviceScale;
 					break;
 
 				case ImageSizes.Size115x115:
-					this.Width = 115 * TextWidget.GlobalPointSizeScaleRatio;
-					this.Height = 115 * TextWidget.GlobalPointSizeScaleRatio;
+					this.Width = 115 * GuiWidget.DeviceScale;
+					this.Height = 115 * GuiWidget.DeviceScale;
 					break;
 
 				default:
@@ -115,7 +116,9 @@ namespace MatterHackers.MatterControl
 			if (noThumbnailImage.Width == 0)
 			{
 				StaticData.Instance.LoadIcon(noThumbnailFileName, noThumbnailImage);
+				noThumbnailImage.InvertLightness();
 				StaticData.Instance.LoadIcon(buildingThumbnailFileName, buildingThumbnailImage);
+				buildingThumbnailImage.InvertLightness();
 			}
 			this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
 
@@ -662,7 +665,7 @@ namespace MatterHackers.MatterControl
 				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
 				Graphics2D graphics = this.thumbnailImage.NewGraphics2D();
 				Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
-				double yOffset = 8 * Width / 50 * TextWidget.GlobalPointSizeScaleRatio * 1.5;
+				double yOffset = 8 * Width / 50 * GuiWidget.DeviceScale * 1.5;
 				graphics.DrawString("Too Big\nto\nRender", center.x, center.y + yOffset, 8 * Width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
 
 				UiThread.RunOnIdle(this.EnsureImageUpdated);

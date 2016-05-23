@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		// features
 		public string _features { get; set; }
 
-		public bool AutoConnectFlag { get; set; }
+		public bool AutoConnect { get; set; }
 
 		public string BaudRate { get; set; }
 

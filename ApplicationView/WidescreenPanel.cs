@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl
 
 		private FlowLayoutWidget ColumnOne;
 		private FlowLayoutWidget ColumnTwo;
-		private double Force1PanelWidth = 990 * TextWidget.GlobalPointSizeScaleRatio;
-		private double Force2PanelWidth = 1590 * TextWidget.GlobalPointSizeScaleRatio;
+		private double Force1PanelWidth = 990 * GuiWidget.DeviceScale;
+		private double Force2PanelWidth = 1590 * GuiWidget.DeviceScale;
 
 		private GuiWidget leftBorderLine;
 

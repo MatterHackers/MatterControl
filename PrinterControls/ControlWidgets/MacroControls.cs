@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void SetDisplayAttributes()
 		{
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.FixedHeight = 24 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
 			this.textImageButtonFactory.fontSize = 12;
 			this.textImageButtonFactory.borderWidth = 1;
 			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
@@ -79,20 +79,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.ParentLeftRight;
 		}
 
-		public override RectangleDouble LocalBounds
-		{
-			get
-			{
-				return base.LocalBounds;
-			}
-			set
-			{
-				base.LocalBounds = value;
-			}
-		}
-
 		protected void ReloadMacros(object sender, EventArgs e)
 		{
+			ActiveSliceSettings.Instance.SaveChanges();
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 
@@ -140,17 +129,21 @@ namespace MatterHackers.MatterControl.PrinterControls
 			macroButtonContainer.Margin = new BorderDouble(3, 0);
 			macroButtonContainer.Padding = new BorderDouble(3);
 
+			if (ActiveSliceSettings.Instance?.Macros == null)
+			{
+				return macroButtonContainer;
+			}
+
 			int buttonCount = 0;
-			foreach (CustomCommands macro in GetMacros())
+			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.Macros)
 			{
 				buttonCount++;
+
 				Button macroButton = textImageButtonFactory.Generate(macro.Name);
-				macroButton.Text = macro.Value;
+				macroButton.Text = macro.GCode;
 				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (sender, e) =>
-				{
-					SendCommandToPrinter(macroButton.Text);
-				};
+				macroButton.Click += (s, e) => SendCommandToPrinter(macroButton.Text);
+
 				macroButtonContainer.AddChild(macroButton);
 			}
 
@@ -162,21 +155,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 
 			return macroButtonContainer;
-		}
-
-		internal static IEnumerable<CustomCommands> GetMacros()
-		{
-			if (!string.IsNullOrEmpty(ActiveSliceSettings.Instance?.Id()))
-			{
-				// TODO: Hook macros into new settings system
-
-				//Retrieve a list of macros from the database
-				string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActiveSliceSettings.Instance.Id());
-
-				return Datastore.Instance.dbSQLite.Query<CustomCommands>(query);
-			}
-
-			return Enumerable.Empty<CustomCommands>();
 		}
 
 		protected void SendCommandToPrinter(string command)

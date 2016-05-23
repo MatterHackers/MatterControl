@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(0, 4);
+			buttonRow.Margin = new BorderDouble(3, 4);
 
 			TextWidget clearHistoryLabel = new TextWidget("Clear Print History".Localize());
 			clearHistoryLabel.AutoExpandBoundsToText = true;
@@ -517,7 +517,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 #else
                 // Re-initialize and load
                 LocalizedString.ResetTranslationMap();
-                ApplicationController.Instance.MainView = new CompactApplicationView();
+                ApplicationController.Instance.MainView = new TouchscreenView();
                 app.RemoveAllChildren();
                 app.AddChild(new SoftKeyboardContentOffset(ApplicationController.Instance.MainView));
                 app.AnchorAll();

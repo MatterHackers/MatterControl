@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 				off = off.Localize();
 			}
 			ToggleSwitchView toggleView = new ToggleSwitchView(on, off,
-				60, 24,
+				60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale,
 				ActiveTheme.Instance.PrimaryBackgroundColor,
 				new RGBA_Bytes(220, 220, 220),
 				ActiveTheme.Instance.PrimaryAccentColor,
@@ -63,6 +63,11 @@ namespace MatterHackers.MatterControl
 
 		public Button Generate(string normalImageName, string hoverImageName, string pressedImageName = null, string disabledImageName = null)
 		{
+			if (hoverImageName == null)
+			{
+				hoverImageName = normalImageName;
+			}
+
 			if (pressedImageName == null)
 			{
 				pressedImageName = hoverImageName;
@@ -78,37 +83,16 @@ namespace MatterHackers.MatterControl
 			ImageBuffer hoverImage = StaticData.Instance.LoadIcon(hoverImageName);
 			ImageBuffer disabledImage = StaticData.Instance.LoadIcon(disabledImageName);
 
-			if (!ActiveTheme.Instance.IsDarkTheme && InvertImageColor)
-			{
-				InvertLightness.DoInvertLightness(normalImage);
-				InvertLightness.DoInvertLightness(pressedImage);
-				InvertLightness.DoInvertLightness(hoverImage);
-				InvertLightness.DoInvertLightness(disabledImage);
-			}
-
-			if (ActiveTheme.Instance.IsTouchScreen)
-			{
-				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
-				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);
-				pressedImage.NewGraphics2D().Render(new Stroke(rect, 3), ActiveTheme.Instance.PrimaryTextColor);
-			}
-
-			ButtonViewStates buttonViewWidget = new ButtonViewStates(
-				new ImageWidget(normalImage),
-				new ImageWidget(hoverImage),
-				new ImageWidget(pressedImage),
-				new ImageWidget(disabledImage)
-			);
-
-			//Create button based on view container widget
-			Button imageButton = new Button(0, 0, buttonViewWidget);
-			imageButton.Margin = new BorderDouble(0);
-			imageButton.Padding = new BorderDouble(0);
-			return imageButton;
+			return Generate(normalImage, pressedImage, hoverImage, disabledImage);
 		}
 
 		public Button Generate(ImageBuffer normalImage, ImageBuffer hoverImage, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
 		{
+			if(hoverImage == null)
+			{
+				hoverImage = normalImage;
+			}
+
 			if (pressedImage == null)
 			{
 				pressedImage = hoverImage;
@@ -121,17 +105,10 @@ namespace MatterHackers.MatterControl
 
 			if (!ActiveTheme.Instance.IsDarkTheme && InvertImageColor)
 			{
-				InvertLightness.DoInvertLightness(normalImage);
-				InvertLightness.DoInvertLightness(pressedImage);
-				InvertLightness.DoInvertLightness(hoverImage);
-				InvertLightness.DoInvertLightness(disabledImage);
-			}
-
-			if (ActiveTheme.Instance.IsTouchScreen)
-			{
-				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
-				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);
-				pressedImage.NewGraphics2D().Render(new Stroke(rect, 3), ActiveTheme.Instance.PrimaryTextColor);
+				normalImage.InvertLightness();
+				pressedImage.InvertLightness();
+				hoverImage.InvertLightness();
+				disabledImage.InvertLightness();
 			}
 
 			ButtonViewStates buttonViewWidget = new ButtonViewStates(

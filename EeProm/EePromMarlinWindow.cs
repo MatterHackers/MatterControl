@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.EeProm
 #if true
 				{
 					Button buttonImport = textImageButtonFactory.Generate("Import".Localize() + "...");
-					buttonImport.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+					buttonImport.Margin = new BorderDouble(0, 3);
 					buttonImport.Click += (sender, e) =>
 					{
 						UiThread.RunOnIdle(() =>
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.EeProm
 				// put in the export button
 				{
 					Button buttonExport = textImageButtonFactory.Generate("Export".Localize() + "...");
-					buttonExport.Margin = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+					buttonExport.Margin = new BorderDouble(0, 3);
 					buttonExport.Click += (sender, e) =>
 					{
 						UiThread.RunOnIdle(() =>

@@ -66,16 +66,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			{
 				FlowLayoutWidget tuningRatiosLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				tuningRatiosLayout.Margin = new BorderDouble(0, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio;
+				tuningRatiosLayout.Margin = new BorderDouble(0, 0, 0, 0);
 				tuningRatiosLayout.HAnchor = HAnchor.ParentLeftRight;
-				tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
+				tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0);
 
-				double sliderWidth = 300;
-				double sliderThumbWidth = 10;
+				double sliderWidth = 300 * GuiWidget.DeviceScale;
+				double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 				if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
 				{
-					sliderWidth = 280;
-					sliderThumbWidth = 20;
+					sliderThumbWidth = 15 * GuiWidget.DeviceScale;
 				}
 
 				TextWidget subheader = new TextWidget("", pointSize: 4, textColor: ActiveTheme.Instance.PrimaryTextColor);
@@ -85,14 +84,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					FlowLayoutWidget feedRateLeftToRight;
 					{
-						feedRateValue = new NumberEdit(0, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * TextWidget.GlobalPointSizeScaleRatio);
+						feedRateValue = new NumberEdit(0, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale);
 						feedRateValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
 
 						feedRateLeftToRight = new FlowLayoutWidget();
 						feedRateLeftToRight.HAnchor = HAnchor.ParentLeftRight;
 
 						feedRateDescription = new TextWidget(LocalizedString.Get("Speed Multiplier"));
-						feedRateDescription.MinimumSize = new Vector2(140, 0) * TextWidget.GlobalPointSizeScaleRatio;
+						feedRateDescription.MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale;
 						feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 						feedRateDescription.VAnchor = VAnchor.ParentCenter;
 						feedRateLeftToRight.AddChild(feedRateDescription);
@@ -129,15 +128,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					TextWidget extrusionDescription;
 					{
-						extrusionValue = new NumberEdit(0, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * TextWidget.GlobalPointSizeScaleRatio);
+						extrusionValue = new NumberEdit(0, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale);
 						extrusionValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
 
 						FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 						leftToRight.HAnchor = HAnchor.ParentLeftRight;
-						leftToRight.Margin = new BorderDouble(top: 10) * TextWidget.GlobalPointSizeScaleRatio;
+						leftToRight.Margin = new BorderDouble(top: 10);
 
 						extrusionDescription = new TextWidget(LocalizedString.Get("Extrusion Multiplier"));
-						extrusionDescription.MinimumSize = new Vector2(140, 0) * TextWidget.GlobalPointSizeScaleRatio;
+						extrusionDescription.MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale;
 						extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 						extrusionDescription.VAnchor = VAnchor.ParentCenter;
 						leftToRight.AddChild(extrusionDescription);

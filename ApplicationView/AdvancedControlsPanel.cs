@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -98,7 +99,7 @@ namespace MatterHackers.MatterControl
 			TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 			advancedControlsButtonFactory.fontSize = 14;
 			advancedControlsButtonFactory.invertImageLocation = false;
-			backButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Back"), "icon_arrow_left_32x32.png");
+			backButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Back"), StaticData.Instance.LoadIcon("icon_arrow_left_32x32.png", 32,32));
 			backButton.ToolTipText = "Switch to Queue, Library and History".Localize();
 			backButton.Margin = new BorderDouble(right: 3);
 			backButton.VAnchor = VAnchor.ParentBottom;

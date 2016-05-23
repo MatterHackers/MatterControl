@@ -35,19 +35,15 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Linq;
-using System.Collections.Generic;
 
-namespace MatterHackers.MatterControl.UI
+namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI")]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public static class MatterControlUtilities
 	{
 		private static bool saveImagesForDebug = true;
@@ -222,7 +218,7 @@ namespace MatterHackers.MatterControl.UI
 		/// </summary>
 		public static void OverrideAppDataLocation()
 		{
-			string tempFolderPath = Path.Combine("..", "..", "..", "..", "Tests","temp");
+			string tempFolderPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Tests","temp"));
 
 			ApplicationDataStorage.Instance.OverrideAppDataLocation(
 				Path.Combine(tempFolderPath, runName, $"Test{testID++}"));

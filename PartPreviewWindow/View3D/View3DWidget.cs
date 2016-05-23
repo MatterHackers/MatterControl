@@ -29,6 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 //#define DoBooleanTest
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -209,7 +212,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						addButton.Enabled = false;
 					}
 
-					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "icon_edit_32x32.png");
+					ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit.png", 14, 14);
+
+					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), normalImage);
 					enterEdittingButton.Name = "3D View Edit";
 					enterEdittingButton.Margin = new BorderDouble(right: 4);
 					enterEdittingButton.Click += (sender, e) =>
@@ -537,14 +542,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget()
 			{
-				Margin = new BorderDouble(5, 0) * TextWidget.GlobalPointSizeScaleRatio,
+				Margin = new BorderDouble(5, 0),
 			};
 
 			TextWidget snapGridLabel = new TextWidget("Snap Grid".Localize())
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(3, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio,
+				Margin = new BorderDouble(3, 0, 0, 0),
 			};
 
 			container.AddChild(snapGridLabel);
@@ -975,7 +980,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						double xToSnap = xSnapOffset + delta.x;
 
-						double snappedX = ((int)((xToSnap / snapGridDistance) + .5)) * snapGridDistance;
+						double snappedX = (Math.Round((xToSnap / snapGridDistance))) * snapGridDistance;
 						delta.x = snappedX - xSnapOffset;
 
 						double ySnapOffset = selectedBounds.minXYZ.y;
@@ -988,7 +993,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						double yToSnap = ySnapOffset + delta.y;
 
-						double snappedY = ((int)((yToSnap / snapGridDistance) + .5)) * snapGridDistance;
+						double snappedY = (Math.Round((yToSnap / snapGridDistance))) * snapGridDistance;
 						delta.y = snappedY - ySnapOffset;
 					}
 
@@ -1136,7 +1141,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FlowLayoutWidget rotateButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			rotateButtonContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			Button rotateXButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
+			ImageBuffer rotateImage = StaticData.Instance.LoadIcon("icon_rotate_32x32.png", 32, 32);
+			Button rotateXButton = textImageButtonFactory.Generate("", rotateImage);
 			TextWidget centeredX = new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredX.Margin = new BorderDouble(3, 0, 0, 0); centeredX.AnchorCenter(); rotateXButton.AddChild(centeredX);
 			rotateButtonContainer.AddChild(rotateXButton);
 			rotateControls.Add(rotateXButton);
@@ -1154,7 +1160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Button rotateYButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
+			Button rotateYButton = textImageButtonFactory.Generate("", rotateImage);
 			TextWidget centeredY = new TextWidget("Y", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredY.Margin = new BorderDouble(3, 0, 0, 0); centeredY.AnchorCenter(); rotateYButton.AddChild(centeredY);
 			rotateButtonContainer.AddChild(rotateYButton);
 			rotateControls.Add(rotateYButton);
@@ -1172,7 +1178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Button rotateZButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
+			Button rotateZButton = textImageButtonFactory.Generate("", rotateImage);
 			TextWidget centeredZ = new TextWidget("Z", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredZ.Margin = new BorderDouble(3, 0, 0, 0); centeredZ.AnchorCenter(); rotateZButton.AddChild(centeredZ);
 			rotateButtonContainer.AddChild(rotateZButton);
 			rotateControls.Add(rotateZButton);
@@ -1228,7 +1234,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
-			splitButtonFactory.FixedHeight = 40 * TextWidget.GlobalPointSizeScaleRatio;
+			splitButtonFactory.FixedHeight = 40 * GuiWidget.DeviceScale;
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
 			saveButtons.Visible = false;
 
@@ -1435,7 +1441,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandRotateOptions);
 				expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
@@ -1458,7 +1464,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount();
 
-				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
 				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
 
@@ -1476,7 +1482,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in the view options
 				{
-					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 					expandViewOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandViewOptions);
 					expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;

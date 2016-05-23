@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -93,11 +95,11 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected override void AddChildElements()
 		{
-			addButton = textImageButtonFactory.GenerateTooltipButton("Add".Localize(), "icon_circle_plus.png");
+			addButton = textImageButtonFactory.GenerateTooltipButton("Add".Localize(), StaticData.Instance.LoadIcon("icon_circle_plus.png",32,32).InvertLightness());
 			addButton.ToolTipText = "Add a file to be printed".Localize();
 			addButton.Margin = new BorderDouble(6, 6, 6, 3);
 
-			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), "icon_play_32x32.png");
+			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32).InvertLightness());
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
 			startButton.Click += onStartButton_Click;
@@ -108,13 +110,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			string connectButtonText = "Connect".Localize();
 			string connectButtonMessage = "Connect to the printer".Localize();
-			connectButton = textImageButtonFactory.GenerateTooltipButton(connectButtonText, "icon_power_32x32.png");
+			connectButton = textImageButtonFactory.GenerateTooltipButton(connectButtonText, StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32).InvertLightness());
 			connectButton.ToolTipText = connectButtonMessage;
 			connectButton.Margin = new BorderDouble(6, 6, 6, 3);
 
 			string resetConnectionButtontText = "Reset".Localize();
 			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
-			resetConnectionButton = textImageButtonFactory.GenerateTooltipButton(resetConnectionButtontText, "e_stop4.png");
+			resetConnectionButton = textImageButtonFactory.GenerateTooltipButton(resetConnectionButtontText, StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
 			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
 			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
 			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);
@@ -130,6 +132,13 @@ namespace MatterHackers.MatterControl.ActionBar
 			string pauseButtonText = "Pause".Localize();
 			string pauseButtonMessage = "Pause the current print".Localize();
 			pauseButton = makeButton(pauseButtonText, pauseButtonMessage);
+			pauseButton.Click += (s, e) =>
+			{
+				PrinterConnectionAndCommunication.Instance.RequestPause();
+				pauseButton.Enabled = false;
+			};
+			this.AddChild(pauseButton);
+			allPrintButtons.Add(pauseButton);
 
 			string cancelCancelButtonText = "Cancel Connect".Localize();
 			string cancelConnectButtonMessage = "Stop trying to connect to the printer.".Localize();
@@ -142,6 +151,17 @@ namespace MatterHackers.MatterControl.ActionBar
 			string resumeButtonText = "Resume".Localize();
 			string resumeButtonMessage = "Resume the current print".Localize();
 			resumeButton = makeButton(resumeButtonText, resumeButtonMessage);
+			resumeButton.Click += (s, e) =>
+			{
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				{
+					PrinterConnectionAndCommunication.Instance.Resume();
+				}
+				pauseButton.Enabled = true;
+			};
+
+			this.AddChild(resumeButton);
+			allPrintButtons.Add(resumeButton);
 
 			string reprintButtonText = "Print Again".Localize();
 			string reprintButtonMessage = "Print current item again".Localize();
@@ -165,12 +185,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.AddChild(configureButton);
 			allPrintButtons.Add(configureButton);
-
-			this.AddChild(pauseButton);
-			allPrintButtons.Add(pauseButton);
-
-			this.AddChild(resumeButton);
-			allPrintButtons.Add(resumeButton);
 
 			this.AddChild(doneWithCurrentPartButton);
 			allPrintButtons.Add(doneWithCurrentPartButton);
@@ -204,8 +218,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			configureButton.Click += onStartButton_Click;
             skipButton.Click += onSkipButton_Click;
 			removeButton.Click += onRemoveButton_Click;
-			resumeButton.Click += onResumeButton_Click;
-			pauseButton.Click += onPauseButton_Click;
 			connectButton.Click += onConnectButton_Click;
 			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 
@@ -241,7 +253,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			textImageButtonFactory.AllowThemeToAdjustImage = false;
 
 			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.FixedHeight = 52 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedHeight = 52 * GuiWidget.DeviceScale;
 			textImageButtonFactory.fontSize = 14;
 			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
 			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
@@ -468,11 +480,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			// we were on.
 		}
 
-		private void onPauseButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.RequestPause();
-		}
-
 		private void onRemoveButton_Click(object sender, EventArgs mouseEvent)
 		{
 			QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
@@ -481,14 +488,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void onReprintButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible);
-		}
-
-		private void onResumeButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-			{
-				PrinterConnectionAndCommunication.Instance.Resume();
-			}
 		}
 
 		private void onSkipButton_Click(object sender, EventArgs mouseEvent)

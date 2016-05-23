@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		ProgressControl processingProgressControl;
 		private void AddLoadingProgressBar()
 		{
-			processingProgressControl = new ProgressControl("Downloading...".Localize(), RGBA_Bytes.Black, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5, 0)
+			processingProgressControl = new ProgressControl("Downloading...".Localize(), RGBA_Bytes.Black, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * GuiWidget.DeviceScale), 5, 0)
             {
                 PointSize = 8,
             };

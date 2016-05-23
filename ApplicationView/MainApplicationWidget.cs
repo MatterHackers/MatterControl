@@ -43,45 +43,25 @@ namespace MatterHackers.MatterControl
 {
 	public abstract class ApplicationView : GuiWidget
 	{
-		public FlowLayoutWidget TopContainer;
-
 		public abstract void AddElements();
-
-		public abstract void HideTopContainer();
-
-		public abstract void ToggleTopContainer();
 	}
 
-	public class CompactApplicationView : ApplicationView
+	public class TouchscreenView : ApplicationView
 	{
-		private CompactTabView compactTabView;
+		private FlowLayoutWidget TopContainer;
+		private TouchscreenTabView touchscreenTabView;
 		private QueueDataView queueDataView;
 		private GuiWidget menuSeparator;
 		private PrintProgressBar progressBar;
 		private bool topIsHidden = false;
 
-		public CompactApplicationView()
+		public TouchscreenView()
 		{
 			AddElements();
-
 			this.AnchorAll();
 		}
 
-		public override void HideTopContainer()
-		{
-			if (!topIsHidden)
-			{
-				progressBar.WidgetIsExtended = false;
-
-				//To do - Animate this (KP)
-				this.menuSeparator.Visible = true;
-				this.TopContainer.Visible = false;
-
-				topIsHidden = true;
-			}
-		}
-
-		public override void ToggleTopContainer()
+		public void ToggleTopContainer()
 		{
 			topIsHidden = !topIsHidden;
 			progressBar.WidgetIsExtended = !progressBar.WidgetIsExtended;
@@ -102,8 +82,9 @@ namespace MatterHackers.MatterControl
 			TopContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			TopContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			ApplicationMenuRow menuRow = new ApplicationMenuRow();
 #if !__ANDROID__
+			// The application menu bar, which is suppressed on Android
+			ApplicationMenuRow menuRow = new ApplicationMenuRow();
 			TopContainer.AddChild(menuRow);
 #endif
 
@@ -122,40 +103,35 @@ namespace MatterHackers.MatterControl
 
 			container.AddChild(progressBar);
 			container.AddChild(menuSeparator);
-			compactTabView = new CompactTabView(queueDataView);
+			touchscreenTabView = new TouchscreenTabView(queueDataView);
 
-			this.AddChild(compactTabView);
+			container.AddChild(touchscreenTabView);
+			this.AddChild(container);
 		}
 	}
 
-	public class ResponsiveApplicationView : ApplicationView
+	public class DesktopView : ApplicationView
 	{
 		private WidescreenPanel widescreenPanel;
 
-		public ResponsiveApplicationView()
+		public DesktopView()
 		{
 			AddElements();
-			Initialize();
-		}
-
-		public override void ToggleTopContainer()
-		{
-		}
-
-		public override void HideTopContainer()
-		{
+			this.AnchorAll();
 		}
 
 		public override void AddElements()
 		{
-
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.AnchorAll();
 
+#if !__ANDROID__
+			// The application menu bar, which is suppressed on Android
 			var menuRow = new ApplicationMenuRow();
 			container.AddChild(menuRow);
+#endif
 
 			var menuSeparator = new GuiWidget()
 			{
@@ -173,11 +149,6 @@ namespace MatterHackers.MatterControl
 			{
 				this.AddChild(container);
 			}
-		}
-
-		private void Initialize()
-		{
-			this.AnchorAll();
 		}
 	}
 
@@ -277,11 +248,11 @@ namespace MatterHackers.MatterControl
 						globalInstance = new ApplicationController();
 						if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
 						{
-							globalInstance.MainView = new CompactApplicationView();
+							globalInstance.MainView = new TouchscreenView();
 						}
 						else
 						{
-							globalInstance.MainView = new ResponsiveApplicationView();
+							globalInstance.MainView = new DesktopView();
 						}
 					}
 				}

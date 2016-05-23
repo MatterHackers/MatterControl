@@ -8,6 +8,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PluginSystem;
 using System;
 using System.IO;
+using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -18,31 +19,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private Button configureNotificationSettingsButton;
 
-        private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-
-
 		public CloudSettingsWidget()
 			: base(LocalizedString.Get("Cloud"))
 		{
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
-			notificationSettingsContainer = new DisableableWidget();            
+			notificationSettingsContainer = new DisableableWidget();
 			notificationSettingsContainer.AddChild(GetNotificationControls());
 			mainContainer.AddChild(notificationSettingsContainer);
-            mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-            cloudSyncContainer = new DisableableWidget();
-            cloudSyncContainer.AddChild(GetCloudSyncDashboardControls());
-            mainContainer.AddChild(cloudSyncContainer);
+			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			cloudSyncContainer = new DisableableWidget();
+			cloudSyncContainer.AddChild(GetCloudSyncDashboardControls());
+			mainContainer.AddChild(cloudSyncContainer);
 
 			AddChild(mainContainer);
-
 
 			AddHandlers();
 		}
 
 		private void SetDisplayAttributes()
 		{
-
 			this.Margin = new BorderDouble(2, 4, 2, 0);
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
 			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
@@ -76,16 +72,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			cloudSyncContainer.Margin = new BorderDouble(0, 0, 0, 0);
 			cloudSyncContainer.Padding = new BorderDouble(0);
 
-			Agg.Image.ImageBuffer cloudMonitorImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "cloud-24x24.png"));
+			ImageBuffer cloudMonitorImage = StaticData.Instance.LoadIcon("cloud-24x24.png").InvertLightness();
+			cloudMonitorImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(cloudMonitorImage);
+				cloudMonitorImage.InvertLightness();
 			}
 
             ImageWidget cloudSyncIcon = new ImageWidget(cloudMonitorImage);
             cloudSyncIcon.Margin = new BorderDouble(right: 6, bottom: 6);
+			cloudSyncIcon.VAnchor = VAnchor.ParentCenter;
 
-            TextWidget cloudSyncLabel = new TextWidget("Cloud Sync".Localize());
+			TextWidget cloudSyncLabel = new TextWidget("Cloud Sync".Localize());
             cloudSyncLabel.AutoExpandBoundsToText = true;
             cloudSyncLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             cloudSyncLabel.VAnchor = VAnchor.ParentCenter;
@@ -94,10 +93,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             Button cloudSyncGoLink = linkButtonFactory.Generate("Go to Dashboard".Localize().ToUpper());
             cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser";
             cloudSyncGoLink.Click += new EventHandler(cloudSyncGoButton_Click);
+			cloudSyncGoLink.VAnchor = VAnchor.ParentCenter;
 
-            cloudSyncContainer.AddChild(cloudSyncIcon);
+
+			cloudSyncContainer.AddChild(cloudSyncIcon);
             cloudSyncContainer.AddChild(cloudSyncLabel);
-            cloudSyncContainer.AddChild(new HorizontalSpacer());
+            cloudSyncContainer.AddChild(new HorizontalSpacer()
+			{
+				VAnchor = VAnchor.ParentCenter,
+			});
             cloudSyncContainer.AddChild(cloudSyncGoLink);
 
 			return cloudSyncContainer;
@@ -115,13 +119,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-			Agg.Image.ImageBuffer notificationSettingsImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "notify-24x24.png"));
+			ImageBuffer notifiImage = StaticData.Instance.LoadIcon("notify-24x24.png").InvertLightness();
+			notifiImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(24 * GuiWidget.DeviceScale);
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(notificationSettingsImage);
+				notifiImage.InvertLightness();
 			}
 
-			ImageWidget notificationSettingsIcon = new ImageWidget(notificationSettingsImage);
+			ImageWidget notificationSettingsIcon = new ImageWidget(notifiImage);
+			notificationSettingsIcon.VAnchor = VAnchor.ParentCenter;
 			notificationSettingsIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
 			configureNotificationSettingsButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());

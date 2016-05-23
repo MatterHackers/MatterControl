@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -594,7 +595,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				// put in the word editing menu
 				{
-					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 					expandWordOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandWordOptions);
 
@@ -802,7 +803,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void AddLetterControls(FlowLayoutWidget buttonPanel)
 		{
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
 			FlowLayoutWidget degreesContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			degreesContainer.HAnchor = HAnchor.ParentLeftRight;

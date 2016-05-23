@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
@@ -385,7 +387,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonRightPanel.Width = 200;
 			{
 				string label = "Model".Localize().ToUpper();
-				expandModelOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton(label, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandModelOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton(label, StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 				expandModelOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandModelOptions);
 				expandModelOptions.Checked = true;
@@ -395,7 +397,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				//modelOptionsContainer.Visible = false;
 				buttonRightPanel.AddChild(modelOptionsContainer);
 
-				expandDisplayOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandDisplayOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 				expandDisplayOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandDisplayOptions);
 				expandDisplayOptions.Checked = false;
@@ -430,7 +432,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonPanel.CloseAllChildren();
 
 			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
 			FlowLayoutWidget modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			modelInfoContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -525,7 +527,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void AddLayerInfo(FlowLayoutWidget buttonPanel)
 		{
 			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
 			FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -551,7 +553,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonPanel.CloseAllChildren();
 
 			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
 			FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -632,7 +634,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 CheckBox transparentExtrusion = new CheckBox(LocalizedString.Get("Transparent"), textColor: ActiveTheme.Instance.PrimaryTextColor)
                 {
                     Checked = gcodeViewWidget.TransparentExtrusion,
-                    Margin = new BorderDouble(5, 0, 0, 0) * TextWidget.GlobalPointSizeScaleRatio,
+                    Margin = new BorderDouble(5, 0, 0, 0),
                     HAnchor = HAnchor.ParentLeft,
                 };
 

@@ -439,8 +439,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Vector2 end = new Vector2(gridSizeMm.x, y) + gridOffset;
 					transform.transform(ref start);
 					transform.transform(ref end);
-					grid.MoveTo((int)(start.x + .5), (int)(start.y + .5) + .5);
-					grid.LineTo((int)(int)(end.x + .5), (int)(end.y + .5) + .5);
+					grid.MoveTo(Math.Round(start.x), Math.Round(start.y));
+					grid.LineTo(Math.Round(end.x), Math.Round(end.y));
 				}
 
 				for (int x = 0; x <= gridSizeMm.x; x += 10)

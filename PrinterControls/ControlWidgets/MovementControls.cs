@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -135,7 +136,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				manualControlsLayout.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 				manualControlsLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
-				manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
+				manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
 				{
 					FlowLayoutWidget leftToRightContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 
@@ -201,39 +202,44 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			FlowLayoutWidget homeButtonBar = new FlowLayoutWidget();
 			homeButtonBar.HAnchor = HAnchor.ParentLeftRight;
-			homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6) * TextWidget.GlobalPointSizeScaleRatio;
+			homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6);
 			homeButtonBar.Padding = new BorderDouble(0);
 
 			textImageButtonFactory.borderWidth = 1;
 			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png");
+			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png", 24, 24);
+			if (ActiveTheme.Instance.IsDarkTheme)
+			{
+				helpIconImage.InvertLightness();
+			}
 			ImageWidget homeIconImageWidget = new ImageWidget(helpIconImage);
-			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
-			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * TextWidget.GlobalPointSizeScaleRatio;
+
+			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
+			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
 			RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
 			textImageButtonFactory.normalFillColor = new RGBA_Bytes(180, 180, 180);
 			homeAllButton = textImageButtonFactory.Generate(LocalizedString.Get("ALL"));
 			this.textImageButtonFactory.normalFillColor = oldColor;
 			homeAllButton.ToolTipText = "Home X, Y and Z";
-			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeAllButton.Click += new EventHandler(homeAll_Click);
 
-			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
 			homeXButton = textImageButtonFactory.Generate("X", centerText: true);
 			homeXButton.ToolTipText = "Home X";
-			homeXButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeXButton.Click += new EventHandler(homeXButton_Click);
 
 			homeYButton = textImageButtonFactory.Generate("Y", centerText: true);
 			homeYButton.ToolTipText = "Home Y";
-			homeYButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeYButton.Click += new EventHandler(homeYButton_Click);
 
 			homeZButton = textImageButtonFactory.Generate("Z", centerText: true);
 			homeZButton.ToolTipText = "Home Z";
-			homeZButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeZButton.Click += new EventHandler(homeZButton_Click);
 
 			textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
@@ -244,7 +250,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			disableMotors.Click += new EventHandler(disableMotors_Click);
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			GuiWidget spacerReleaseShow = new GuiWidget(10 * TextWidget.GlobalPointSizeScaleRatio, 0);
+			GuiWidget spacerReleaseShow = new GuiWidget(10 * GuiWidget.DeviceScale, 0);
 
 			homeButtonBar.AddChild(homeIconImageWidget);
 			homeButtonBar.AddChild(homeAllButton);
@@ -289,7 +295,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			FlowLayoutWidget hwDestinationBar = new FlowLayoutWidget();
 			hwDestinationBar.HAnchor = HAnchor.ParentLeftRight;
-			hwDestinationBar.Margin = new BorderDouble(3, 0, 3, 6) * TextWidget.GlobalPointSizeScaleRatio;
+			hwDestinationBar.Margin = new BorderDouble(3, 0, 3, 6);
 			hwDestinationBar.Padding = new BorderDouble(0);
 
 			TextWidget xPosition = new TextWidget("X: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);

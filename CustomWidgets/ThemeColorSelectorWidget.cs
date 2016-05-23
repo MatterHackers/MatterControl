@@ -29,14 +29,15 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
 	public class ThemeColorSelectorWidget : FlowLayoutWidget
 	{
 		private GuiWidget colorToChangeTo;
-		private int containerHeight = 34;
-		private int colorSelectSize = 32;
+		private int containerHeight = (int)(34 * GuiWidget.DeviceScale + .5);
+		private int colorSelectSize = (int)(32 * GuiWidget.DeviceScale + .5);
 
 		public ThemeColorSelectorWidget(GuiWidget colorToChangeTo)
 		{
@@ -77,8 +78,9 @@ namespace MatterHackers.MatterControl
 			colorButton.Name = index.ToString();
 			colorButton.Click += (sender, mouseEvent) =>
 			{
-				UserSettings.Instance.set("ActiveThemeIndex", ((GuiWidget)sender).Name);
-				ActiveTheme.Instance.LoadThemeSettings(int.Parse(((GuiWidget)sender).Name));
+				string themeIndex = ((GuiWidget)sender).Name;
+				ActiveSliceSettings.Instance.SetActiveValue("MatterControl.ActiveThemeIndex", themeIndex);
+				ActiveTheme.Instance.LoadThemeSettings(int.Parse(themeIndex));
 			};
 
 			colorButton.MouseEnterBounds += (sender, mouseEvent) =>

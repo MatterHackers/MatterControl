@@ -65,14 +65,14 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				topToBottom.Padding = new BorderDouble(3, 0, 3, 5) * TextWidget.GlobalPointSizeScaleRatio;
+				topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 			}
 
 			// Creates Header
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			headerRow.HAnchor = HAnchor.ParentLeftRight;
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0) * TextWidget.GlobalPointSizeScaleRatio;
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
+			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			//Creates Text and adds into header
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
 				middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
 				// normally the padding for the middle container should be just (5) all around. The has extra top space
-				middleRowContainer.Padding = new BorderDouble(5, 5, 5, 15) * TextWidget.GlobalPointSizeScaleRatio;
+				middleRowContainer.Padding = new BorderDouble(5, 5, 5, 15);
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				buttonRow.HAnchor = HAnchor.ParentLeftRight;
-				buttonRow.Padding = new BorderDouble(0, 3) * TextWidget.GlobalPointSizeScaleRatio;
+				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
 
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl
 				double wrappingSize = middleRowContainer.Width - (middleRowContainer.Padding.Width + messageContainer.Margin.Width);
 				if (wrappingSize > 0)
 				{
-					EnglishTextWrapping wrapper = new EnglishTextWrapping(12 * extraTextScaling * TextWidget.GlobalPointSizeScaleRatio);
+					EnglishTextWrapping wrapper = new EnglishTextWrapping(12 * extraTextScaling * GuiWidget.DeviceScale);
 					string wrappedMessage = wrapper.InsertCRs(unwrappedMessage, wrappingSize);
 					messageContainer.Text = wrappedMessage;
 				}

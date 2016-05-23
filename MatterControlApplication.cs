@@ -52,6 +52,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GCodeVisualizer;
 using Gaming.Game;
+using MatterHackers.GuiAutomation;
 
 namespace MatterHackers.MatterControl
 {
@@ -88,6 +89,8 @@ namespace MatterHackers.MatterControl
 				return new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
 			}
 		}
+
+		public static bool IsLoading { get; private set; } = true;
 
 		static MatterControlApplication()
 		{
@@ -250,8 +253,9 @@ namespace MatterHackers.MatterControl
 
 			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
 			{
-				TextWidget.GlobalPointSizeScaleRatio = 1.3;
+				GuiWidget.DeviceScale = 1.3;
 			}
+			//GuiWidget.DeviceScale = 2;
 
 			using (new PerformanceTimer("Startup", "MainView"))
 			{
@@ -298,6 +302,8 @@ namespace MatterHackers.MatterControl
 
 				DesktopPosition = new Point2D(xpos, ypos);
 			}
+
+			IsLoading = false;
 		}
 
         bool dropWasOnChild = true;
@@ -395,8 +401,8 @@ namespace MatterHackers.MatterControl
 		{
 			// try and open our window matching the last size that we had for it.
 			string windowSize = ApplicationSettings.Instance.get("WindowSize");
-			int width = 1280;
-			int height = 720;
+			int width = 600;
+			int height = 600;
 			if (windowSize != null && windowSize != "")
 			{
 				string[] sizes = windowSize.Split(',');
@@ -585,8 +591,6 @@ namespace MatterHackers.MatterControl
 
 			if (firstDraw)
 			{
-				UiThread.RunOnIdle(ActiveSliceSettings.CheckForAndDoAutoConnect);
-
 				firstDraw = false;
 				foreach (string arg in commandLineArgs)
 				{
@@ -754,6 +758,32 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
+		bool showNamesUnderMouse = false;
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (keyEvent.KeyCode == Keys.F2)
+			{
+				Task.Run((Action)AutomationTest);
+			}
+			else if (keyEvent.KeyCode == Keys.F1)
+			{
+				showNamesUnderMouse = !showNamesUnderMouse;
+			}
+
+			base.OnKeyDown(keyEvent);
+		}
+
+		private void AutomationTest()
+		{
+			AutomationRunner test = new AutomationRunner();
+			test.ClickByName("Library Tab", 5);
+			test.ClickByName("Queue Tab", 5);
+			test.ClickByName("Queue Item SkeletonArm_Med", 5);
+			test.ClickByName("3D View Edit", 5);
+			test.Wait(.2);
+			test.DragByName("SkeletonArm_Med_IObject3D", 5);
+			test.DropByName("SkeletonArm_Med_IObject3D", 5, offset: new Point2D(0, -40));
+		}
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
 			MatterControlApplication.AssertDebugNotDefined();

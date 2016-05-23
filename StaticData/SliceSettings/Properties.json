@@ -1221,13 +1221,35 @@
     "PresentationName": "Baud Rate",
     "HelpText": "The serial port communication speed of the printers firmware.",
     "DataEditType": "INT",
+    "ExtraSettings": "",
+    "QuickMenuSettings": [{"MenuName" : "115200", "Value": "115200"},{"MenuName" : "250000", "Value": "250000"}]
+  },
+  {
+    "SlicerConfigName": "MatterControl.DeletePrinter",
+    "PresentationName": "",
+    "HelpText": "Delete the currently selected printer profile.",
+    "DataEditType": "DELETE_PRINTER",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "MatterControl.PrinterName",
+    "PresentationName": "",
+    "HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
+    "DataEditType": "STRING",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "MatterControl.AutoConnect",
+    "PresentationName": "Auto Connect",
+    "HelpText": "If set, the printer will automatically attempt to connect when selected.",
+    "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },
   {
     "SlicerConfigName": "MatterControl.ComPort",
-    "PresentationName": "ComPort",
-    "HelpText": "",
-    "DataEditType": "STRING",
+    "PresentationName": "COM Port",
+    "HelpText": "The COM port to use while connecting to this printer.",
+    "DataEditType": "COM_PORT",
     "ExtraSettings": ""
   },
   {

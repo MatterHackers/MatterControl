@@ -49,24 +49,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using DataStorage;
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
+	using System.Collections.ObjectModel;
 	public class SettingsProfile
 	{
 		private static string configFileExtension = "slice";
 
-		public RootedObjectEventHandler SettingsChanged = new RootedObjectEventHandler();
-
 		public RootedObjectEventHandler DoPrintLevelingChanged = new RootedObjectEventHandler();
 
 		private LayeredProfile layeredProfile;
-
-		private int settingsHashCode;
-
-		private void OnSettingsChanged()
-		{
-			//Set hash code back to 0
-			this.settingsHashCode = 0;
-			SettingsChanged.CallEvents(this, null);
-		}
 
 		public bool PrinterSelected => layeredProfile.OemProfile.OemLayer.Keys.Count > 0;
 
@@ -75,13 +65,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile = profile;
 		}
 
+		public string ID => layeredProfile.ID;
+
 		public SettingsLayer BaseLayer => layeredProfile.BaseLayer;
 
 		public SettingsLayer OemLayer => layeredProfile.OemProfile.OemLayer;
 
 		public SettingsLayer UserLayer => layeredProfile.UserLayer;
 
-		public string ActiveMaterialKey => layeredProfile.ActiveMaterialKey;
+		public string ActiveMaterialKey
+		{
+			get
+			{
+				return layeredProfile.ActiveMaterialKey;
+			}
+			set
+			{
+				layeredProfile.ActiveMaterialKey = value;
+			}
+		}
 
 		public string ActiveQualityKey
 		{
@@ -103,15 +105,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Commit
 		}
 
-		public IEnumerable<string> AllMaterialKeys()
-		{
-			return layeredProfile.AllMaterialKeys();
-		}
+		public Dictionary<string, SettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
 
-		public IEnumerable<string> AllQualityKeys()
-		{
-			return layeredProfile.AllQualityKeys();
-		}
+		public Dictionary<string, SettingsLayer> QualityLayers => layeredProfile.QualityLayers;
 
 		public class SettingsConverter
 		{
@@ -150,14 +146,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		internal void SaveChanges()
+		{
+			layeredProfile.Save();
+		}
+
 		public string ExtruderTemperature(int extruderIndex)
 		{
 			if (extruderIndex >= layeredProfile.MaterialSettingsKeys.Count)
 			{
-				return null;
+				// MaterialSettingsKeys is empty or lacks a value for the given extruder index
+				//
+				// If extruder index zero was requested, return the layer cascade temperature value, otherwise null
+				return (extruderIndex == 0) ? layeredProfile.GetValue("temperature") : null;
 			}
 
 			string materialKey = layeredProfile.MaterialSettingsKeys[extruderIndex];
+
+			if (extruderIndex == 0 && (string.IsNullOrEmpty(materialKey) || layeredProfile.UserLayer.ContainsKey("temperature")))
+			{
+				// In the case where a user override exists or MaterialSettingsKeys is populated with multiple extruder 
+				// positions but position 0 is empty and thus unassigned, use layer cascade to resolve temp
+				return layeredProfile.GetValue("temperature");
+			}
+
+			// Otherwise, use the SettingsLayers that is bound to this extruder
 			SettingsLayer layer = layeredProfile.GetMaterialLayer(materialKey);
 
 			string result = "0";
@@ -173,6 +186,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal SettingsLayer QualityLayer(string key)
 		{
 			return layeredProfile.GetQualityLayer(key);
+		}
+
+		internal bool PublishBedImage()
+		{
+			return ActiveValue("MatterControl.PublishBedImage") == "1";
 		}
 
 		internal void SetMaterialPreset(int extruderIndex, string text)
@@ -464,22 +482,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool DoPrintLeveling()
 		{
-			return layeredProfile.GetValue("MatterControl.PrintLevelingEnabled") == "true";
+			return layeredProfile.GetValue("MatterControl.PrintLevelingEnabled") == "1";
 		}
 
-		public void DoPrintLeveling(bool doLevling)
+		public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
-			if (doLevling == this.DoPrintLeveling())
+			if (doLeveling == this.DoPrintLeveling())
 			{
 				return;
 			}
 
-			layeredProfile.SetActiveValue("MatterControl.PrintLevelingEnabled", doLevling ? "true" : "false");
+			layeredProfile.SetActiveValue("MatterControl.PrintLevelingEnabled", doLeveling ? "1" : "0");
 
 			DoPrintLevelingChanged.CallEvents(this, null);
 
-			if (doLevling)
+			if (doLeveling)
 			{
 				PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
@@ -535,9 +553,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetValue(sliceSetting);
 		}
 
-		public string GetActiveValue(string sliceSetting, IEnumerable<SettingsLayer> layers)
+		public string GetActiveValue(string sliceSetting, IEnumerable<SettingsLayer> layerCascade)
 		{
-			return layeredProfile.GetValue(sliceSetting, layers);
+			return layeredProfile.GetValue(sliceSetting, layerCascade);
 		}
 
 		public void SetActiveValue(string sliceSetting, string sliceValue)
@@ -611,22 +629,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public override int GetHashCode()
+		public long GetLongHashCode()
 		{
-			if (this.settingsHashCode == 0)
+			var bigStringForHashCode = new StringBuilder();
+
+			foreach (var keyValue in this.BaseLayer)
 			{
-				var bigStringForHashCode = new StringBuilder();
-
-				foreach (var keyValue in this.BaseLayer)
-				{
-					string activeValue = ActiveValue(keyValue.Key);
-					bigStringForHashCode.Append(keyValue.Key);
-					bigStringForHashCode.Append(activeValue);
-				}
-
-				this.settingsHashCode = bigStringForHashCode.ToString().GetHashCode();
+				string activeValue = ActiveValue(keyValue.Key);
+				bigStringForHashCode.Append(keyValue.Key);
+				bigStringForHashCode.Append(activeValue);
 			}
-			return this.settingsHashCode;
+
+			string value = bigStringForHashCode.ToString();
+
+			return agg_basics.ComputeHash(bigStringForHashCode.ToString());
 		}
 
 		public void GenerateConfigFile(string fileName, bool replaceMacroValues)
@@ -820,12 +836,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool DoAutoConnect()
 		{
-			return layeredProfile.GetValue("MatterControl.AutoConnectFlag") == "true";
+			return layeredProfile.GetValue("MatterControl.AutoConnect") == "1";
 		}
 
-		public void SetAutoConnect(bool flag)
+		public void SetAutoConnect(bool autoConnectPrinter)
 		{
-			layeredProfile.SetActiveValue("MatterControl.AutoConnectFlag", flag ? "true" : "false");
+			layeredProfile.SetActiveValue("MatterControl.AutoConnect", autoConnectPrinter ? "1" : "0");
 		}
 
 		public string BaudRate()
@@ -833,21 +849,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetValue("MatterControl.BaudRate");
 		}
 
-		public void SetBaudRate(string data)
+		public void SetBaudRate(string baudRate)
 		{
-			layeredProfile.SetActiveValue("MatterControl.BaudRate", data);
+			layeredProfile.SetActiveValue("MatterControl.BaudRate", baudRate);
 		}
 
 		public string ComPort()
 		{
-			return layeredProfile.GetValue("MatterControl.ComPort");
+			return layeredProfile.GetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName));
 		}
 
 		public void SetComPort(string port)
 		{
-			layeredProfile.SetActiveValue("MatterControl.ComPort", port);
+			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port);
 		}
 
+		public void SetComPort(string port, SettingsLayer layer)
+		{
+			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port, layer);
+		}
 
 		public string SlicingEngine()
 		{
@@ -892,16 +912,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetName(string name)
 		{
 			layeredProfile.SetActiveValue("MatterControl.PrinterName", name);
-		}
-
-		public string Id()
-		{
-			return layeredProfile.GetValue("MatterControl.PrinterID");
-		}
-
-		public void SetId(string id)
-		{
-			layeredProfile.SetActiveValue("MatterControl.PrinterID", id);
 		}
 
 		public string Model => layeredProfile.GetValue("MatterControl.Model");
@@ -1002,36 +1012,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return drivers;
 		}
 
-		public void GetMacros(string make, string model)
-		{
-			Dictionary<string, string> macroDict = new Dictionary<string, string>();
-			macroDict["Lights On"] = "M42 P6 S255";
-			macroDict["Lights Off"] = "M42 P6 S0";
-			macroDict["Offset 0.8"] = "M565 Z0.8;\nM500";
-			macroDict["Offset 0.9"] = "M565 Z0.9;\nM500";
-			macroDict["Offset 1"] = "M565 Z1;\nM500";
-			macroDict["Offset 1.1"] = "M565 Z1.1;\nM500";
-			macroDict["Offset 1.2"] = "M565 Z1.2;\nM500";
-			macroDict["Z Offset"] = "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;";
-
-			string defaultMacros = ActiveValue("default_macros");
-			var printerCustomCommands = new List<CustomCommands>();
-			if (!string.IsNullOrEmpty(defaultMacros))
-			{
-				foreach (string macroName in defaultMacros.Split(','))
-				{
-					string macroValue;
-					if (macroDict.TryGetValue(macroName.Trim(), out macroValue))
-					{
-						CustomCommands customMacro = new CustomCommands();
-						customMacro.Name = macroName.Trim();
-						customMacro.Value = macroValue;
-
-						printerCustomCommands.Add(customMacro);
-					}
-				}
-			}
-		}
+		public List<GCodeMacro> Macros => layeredProfile.Macros;
 	}
 
 	public class SettingsLayer : SettingsDictionary
@@ -1046,9 +1027,61 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string Name { get; set; }
-		public string Source { get; set; }
-		public string ETag { get; set; }
+		public string ID
+		{
+			get
+			{
+				// TODO: Short term hack to silently upgrade existing profiles with missing ID
+				string layerKey = ValueOrDefault("MatterControl.LayerID");
+				if (string.IsNullOrEmpty(layerKey))
+				{
+					layerKey = Guid.NewGuid().ToString();
+					ID = layerKey;
+				}
+
+				return layerKey;
+			}
+			set
+			{
+				this["MatterControl.LayerID"] = value;
+			}
+		}
+
+		public string Name
+		{
+			get
+			{
+				return ValueOrDefault("MatterControl.LayerName");
+			}
+			set
+			{
+				this["MatterControl.LayerName"] = value;
+			}
+		}
+
+		public string Source
+		{
+			get
+			{
+				return ValueOrDefault("MatterControl.LayerSource");
+			}
+			set
+			{
+				this["MatterControl.LayerSource"] = value;
+			}
+		}
+
+		public string ETag
+		{
+			get
+			{
+				return ValueOrDefault("MatterControl.LayerETag");
+			}
+			set
+			{
+				this["MatterControl.LayerETag"] = value;
+			}
+		}
 
 		public string ValueOrDefault(string key, string defaultValue = "")
 		{
@@ -1103,12 +1136,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			return layer;
 		}
+
+		public SettingsLayer Clone()
+		{
+			string id = Guid.NewGuid().ToString();
+			return new SettingsLayer(this as Dictionary<string, string>)
+			{
+				ID = id,
+				Name = this.Name,
+				ETag = this.ETag,
+				Source = this.Source
+			};
+		}
 	}
 
 	public class ProfileData
 	{
-		public string ActiveProfileID { get; set; }
-		public List<PrinterInfo> Profiles { get; set; } = new List<PrinterInfo>();
+		public ObservableCollection<PrinterInfo> Profiles { get; set; } = new ObservableCollection<PrinterInfo>();
 	}
 
 	public class PrinterInfo
@@ -1117,12 +1161,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string Model { get; set; } = "Unknown";
 		public string Name { get; set; }
 		public string ComPort { get; set; }
-		public bool AutoConnectFlag { get; set; }
+		public bool AutoConnect { get; set; }
 		public string Id { get; set; }
 		public string BaudRate { get; set; }
-		public string ProfileToken { get; set; }
 		public string DriverType { get; internal set; }
-		public string CurrentSlicingEngine { get; internal set; }
 
 		internal void Delete()
 		{

@@ -188,7 +188,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case ResumeState.PrintingSlow:
 					{
 						string lineToSend = internalStream.ReadLine();
-						if (!lineToSend.StartsWith("; LAYER:"))
+						if (lineToSend != null
+							&& lineToSend.StartsWith("; LAYER:"))
 						{
 							if (lineToSend != null
 								&& LineIsMovement(lineToSend))

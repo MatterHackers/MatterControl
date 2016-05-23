@@ -29,11 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.GuiAutomation;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -46,7 +48,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print.".Localize();
 		private Button disconnectPrinterButton;
 		private Button resetConnectionButton;
-		private Button selectActivePrinterButton;
+		private PrinterSelector selectActivePrinterButton;
 
 		private event EventHandler unregisterEvents;
 		static EventHandler staticUnregisterEvents;
@@ -124,6 +126,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			selectActivePrinterButton = new PrinterSelector();
 			selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
 			selectActivePrinterButton.Cursor = Cursors.Hand;
+			selectActivePrinterButton.AddPrinter += (s, e) => ConnectionWizard.Show();
 			if (ApplicationController.Instance.WidescreenMode)
 			{
 				selectActivePrinterButton.Margin = new BorderDouble(0, 6, 0, 3);
@@ -151,9 +154,52 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.AddChild(connectPrinterButton);
 			this.AddChild(disconnectPrinterButton);
-			this.AddChild(selectActivePrinterButton);
+
+			FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			printerSelectorAndEditButton.AddChild(selectActivePrinterButton);
+			Button editButton = TextImageButtonFactory.GetThemedEditButton();
+			editButton.VAnchor = VAnchor.ParentCenter;
+			editButton.Click += EditButton_Click;
+			printerSelectorAndEditButton.AddChild(editButton);
+			this.AddChild(printerSelectorAndEditButton);
+
 			this.AddChild(resetConnectionButton);
 			//this.AddChild(CreateOptionsMenu());
+		}
+
+		private void EditButton_Click(object sender, EventArgs e)
+		{
+			Button editButton = sender as Button;
+			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
+			if (editButton != null)
+			{
+				editButton.Closed += (s, e2) =>
+				{
+					editButton.Click -= EditButton_Click;
+				};
+
+				Task.Run((Action)ShowPrinterSettings);
+			}
+		}
+
+		private void ShowPrinterSettings()
+		{
+			AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
+			testRunner.TimeToMoveMouse = 0;
+			testRunner.UpDelaySeconds = 0;
+
+			if (testRunner.NameExists("SettingsAndControls"))
+			{
+				testRunner.ClickByName("SettingsAndControls", 5);
+				testRunner.Wait(.2);
+			}
+			testRunner.ClickByName("Slice Settings Tab", .1);
+			testRunner.ClickByName("Printer Tab", .2);
+			testRunner.ClickByName("Connection Tab", .1);
+			testRunner.Dispose();
 		}
 
 		protected override void AddHandlers()

@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						itemToSlice.CurrentlySlicing = true;
 
-						string currentConfigurationFileAndPath = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, "config_" + ActiveSliceSettings.Instance.GetHashCode().ToString() + ".ini");
+						string currentConfigurationFileAndPath = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, "config_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString() + ".ini");
 						ActiveSliceSettings.Instance.GenerateConfigFile(currentConfigurationFileAndPath, true);
 
 						string gcodePathAndFileName = itemToSlice.GetGCodePathAndFileName();

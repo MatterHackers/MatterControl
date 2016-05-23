@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private FlowLayoutWidget searchPanel;
+		private GuiWidget searchPanel;
 
 		static PrintLibraryWidget currentPrintLibraryWidget;
 
@@ -129,33 +129,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				leaveEditModeButton.Visible = false;
 
-				searchPanel = new FlowLayoutWidget();
-				searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-				searchPanel.HAnchor = HAnchor.ParentLeftRight;
-				searchPanel.Padding = new BorderDouble(0);
-				{
-					searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize());
-					searchInput.Name = "Search Library Edit";
-					searchInput.Margin = new BorderDouble(0, 3, 0, 0);
-					searchInput.HAnchor = HAnchor.ParentLeftRight;
-					searchInput.VAnchor = VAnchor.ParentCenter;
-					searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
-
-					double oldWidth = editButtonFactory.FixedWidth;
-					editButtonFactory.FixedWidth = 0;
-					Button searchButton = editButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
-					searchButton.Name = "Search Library Button";
-					searchButton.Click += searchButtonClick;
-					editButtonFactory.FixedWidth = oldWidth;
-
-					searchPanel.AddChild(enterEditModeButton);
-					searchPanel.AddChild(leaveEditModeButton);
-					searchPanel.AddChild(searchInput);
-					searchPanel.AddChild(searchButton);
-				}
-
-				searchPanel.Visible = false;
-
 				FlowLayoutWidget navigationPanel = new FlowLayoutWidget();
 				navigationPanel.HAnchor = HAnchor.ParentLeftRight;
 				navigationPanel.Padding = new BorderDouble(0);
@@ -175,9 +148,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				buttonPanel.Padding = new BorderDouble(0, 3);
 				buttonPanel.MinimumSize = new Vector2(0, 46);
 
-                AddLibraryButtonElements();
+				AddLibraryButtonElements();
 
 				//allControls.AddChild(navigationPanel);
+				searchPanel = CreateSearchPannel();
 				allControls.AddChild(searchPanel);
 
 				libraryDataView = new LibraryDataView();
@@ -190,8 +164,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					HAnchor = HAnchor.ParentLeftRight,
 				};
 
-				breadCrumbAndActionBar.AddChild(GetActionsMenu());
 				breadCrumbAndActionBar.AddChild(breadCrumbWidget);
+				breadCrumbAndActionBar.AddChild(CreateActionsMenu());
 
 				allControls.AddChild(breadCrumbAndActionBar);
 
@@ -206,7 +180,38 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddHandlers();
 		}
 
-		private GuiWidget GetActionsMenu()
+		private GuiWidget CreateSearchPannel()
+		{
+			GuiWidget searchPanel = new FlowLayoutWidget();
+			searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+			searchPanel.HAnchor = HAnchor.ParentLeftRight;
+			searchPanel.Padding = new BorderDouble(0);
+			{
+				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize());
+				searchInput.Name = "Search Library Edit";
+				searchInput.Margin = new BorderDouble(0, 3, 0, 0);
+				searchInput.HAnchor = HAnchor.ParentLeftRight;
+				searchInput.VAnchor = VAnchor.ParentCenter;
+				searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
+
+				double oldWidth = editButtonFactory.FixedWidth;
+				editButtonFactory.FixedWidth = 0;
+				Button searchButton = editButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
+				searchButton.Name = "Search Library Button";
+				searchButton.Click += searchButtonClick;
+				editButtonFactory.FixedWidth = oldWidth;
+
+				searchPanel.AddChild(enterEditModeButton);
+				searchPanel.AddChild(leaveEditModeButton);
+				searchPanel.AddChild(searchInput);
+				searchPanel.AddChild(searchButton);
+			}
+
+			searchPanel.Visible = false;
+			return searchPanel;
+		}
+
+		private GuiWidget CreateActionsMenu()
 		{
 			var actionMenu = new DropDownMenu("Action".Localize() + "... ");
 			actionMenu.NormalColor = new RGBA_Bytes();
@@ -376,9 +381,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Rename".Localize(),
 				Action = (s, e) => renameFromLibraryButton_Click(s, null)
 			});
-			actionMenuEnableData.Add(new MenuEnableData(
-				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
-				false, false, true));
+			actionMenuEnableData.Add(new MenuEnableData(actionMenu.AddItem(menuItems[menuItems.Count - 1].Title), false, false, true));
+
+			// move menu item
+			menuItems.Add(new PrintItemAction()
+			{
+				Title = "Move".Localize(),
+				Action = (s, e) => moveInLibraryButton_Click(s, null)
+			});
+			//actionMenuEnableData.Add(new MenuEnableData(actionMenu.AddItem(menuItems[menuItems.Count - 1].Title), true, false, true));
 
 			// remove menu item
 			menuItems.Add(new PrintItemAction()
@@ -391,6 +402,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				true, false, true));
 
 			actionMenu.AddHorizontalLine();
+
 
 			// add to queue menu item
 			menuItems.Add(new PrintItemAction()
@@ -438,18 +450,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					string currentName = libraryDataView.SelectedItems[0].ItemName;
 
 					renameItemWindow = new RenameItemWindow(currentName, (returnInfo) =>
-										{
-											if (partItem != null)
-											{
-												libraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
-											}
-											else if (collectionItem != null)
-											{
-												libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
-											}
+					{
+						if (partItem != null)
+						{
+							libraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
+						}
+						else if (collectionItem != null)
+						{
+							libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
+						}
 
-											libraryDataView.ClearSelectedItems();
-										});
+						libraryDataView.ClearSelectedItems();
+					});
 
 					renameItemWindow.Closed += (sender2, e2) => { renameItemWindow = null; };
 				}
@@ -634,7 +646,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			libraryDataView.ClearSelectedItems();
 		}
 
-        private void shareFromLibraryButton_Click(object sender, EventArgs e)
+		private void moveInLibraryButton_Click(object sender, EventArgs e)
+		{
+			libraryDataView.SelectedItems.Sort(SortRowItemsOnIndex);
+
+			IEnumerable<LibraryRowItem> partItems = libraryDataView.SelectedItems.Where(item => item is LibraryRowItemPart);
+			if (partItems.Count() > 0)
+			{
+				// If all selected items are LibraryRowItemParts, then we can invoke the batch remove functionality (in the Cloud library scenario)
+				// and perform all moves as part of a single request, with a single notification from Socketeer
+				var indexesToRemove = partItems.Cast<LibraryRowItemPart>().Select(l => l.ItemIndex).ToArray();
+				libraryDataView.CurrentLibraryProvider.MoveItems(indexesToRemove);
+			}
+
+			libraryDataView.ClearSelectedItems();
+		}
+
+		private void shareFromLibraryButton_Click(object sender, EventArgs e)
         {
             if (libraryDataView.SelectedItems.Count == 1)
             {

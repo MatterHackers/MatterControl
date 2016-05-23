@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-		private readonly double TallButtonHeight = 25 * TextWidget.GlobalPointSizeScaleRatio;
+		private readonly double TallButtonHeight = 25 * GuiWidget.DeviceScale;
 
 		public ControlWidgetBase()
 			: base()
@@ -63,8 +63,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		protected static GuiWidget CreateSeparatorLine()
 		{
-			GuiWidget topLine = new GuiWidget(10 * TextWidget.GlobalPointSizeScaleRatio, 1 * TextWidget.GlobalPointSizeScaleRatio);
-			topLine.Margin = new BorderDouble(0, 5) * TextWidget.GlobalPointSizeScaleRatio;
+			GuiWidget topLine = new GuiWidget(10 * GuiWidget.DeviceScale, 1 * GuiWidget.DeviceScale);
+			topLine.Margin = new BorderDouble(0, 5);
 			topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			topLine.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
 			return topLine;

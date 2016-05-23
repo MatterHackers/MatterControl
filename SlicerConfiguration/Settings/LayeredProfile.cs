@@ -33,11 +33,84 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	public class GCodeMacro
+	{
+		public string Name { get; set; }
+		public string GCode { get; set; }
+		public DateTime LastModified { get; set; }
+	}
+
+	public static class ProfileMigrations
+	{
+		public static string MigrateDocument(string filePath, int fromVersion)
+		{
+			var jObject = JObject.Parse(File.ReadAllText(filePath));
+
+			if (fromVersion < 201605131)
+			{
+				var materialLayers = jObject["MaterialLayers"] as JObject;
+				foreach (JProperty layer in materialLayers.Properties().ToList())
+				{
+					layer.Remove();
+
+					string layerID = Guid.NewGuid().ToString();
+
+					var body = layer.Value as JObject;
+					body["MatterControl.LayerID"] = layerID;
+					body["MatterControl.LayerName"] = layer.Name;
+
+					materialLayers[layerID] = layer.Value;
+				}
+
+				var qualityLayers = jObject["QualityLayers"] as JObject;
+				foreach (JProperty layer in qualityLayers.Properties().ToList())
+				{
+					layer.Remove();
+
+					string layerID = Guid.NewGuid().ToString();
+
+					var body = layer.Value as JObject;
+					body["MatterControl.LayerID"] = layerID;
+					body["MatterControl.LayerName"] = layer.Name;
+
+					qualityLayers[layerID] = layer.Value;
+				}
+
+
+				jObject["DocumentVersion"] = 201605131;
+			}
+
+			if (fromVersion < 201605132)
+			{
+				string printerID = Guid.NewGuid().ToString();
+				jObject.Remove("DocumentPath");
+				jObject["ID"] = printerID;
+				jObject["DocumentVersion"] = 201605132;
+
+				File.Delete(filePath);
+				filePath = Path.Combine(Path.GetDirectoryName(filePath), printerID + ".json");
+			}
+
+			File.WriteAllText(
+						filePath,
+						JsonConvert.SerializeObject(jObject, Formatting.Indented));
+
+			return filePath;
+		}
+	}
+
 	public class LayeredProfile
 	{
+		public int DocumentVersion { get; set; }
+
+		public string ID { get; set; }
+
+		public static int LatestVersion { get; } = 201605132;
+
 		[JsonIgnore]
 		internal SettingsLayer QualityLayer { get; private set; }
 
@@ -49,6 +122,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.OemProfile = printerProfile;
 			this.BaseLayer = baseConfig;
 		}
+
+		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
 
 		[OnDeserialized]
 		internal void OnDeserializedMethod(StreamingContext context)
@@ -117,7 +192,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-
 		public string GetMaterialPresetKey(int extruderIndex)
 		{
 			if (extruderIndex >= MaterialSettingsKeys.Count)
@@ -156,11 +230,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
 
+		[JsonIgnore]
 		public string DocumentPath { get; set; }
 
 		internal void Save()
 		{
-			File.WriteAllText(DocumentPath, JsonConvert.SerializeObject(this));
+			if (!string.IsNullOrEmpty(DocumentPath))
+			{
+				File.WriteAllText(DocumentPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+			}
 		}
 
 		/// <summary>
@@ -168,19 +246,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public SettingsLayer UserLayer { get; } = new SettingsLayer();
 
-		public IEnumerable<string> AllMaterialKeys()
-		{
-			return MaterialLayers.Keys.Union(this.OemProfile.MaterialLayers.Keys);
-		}
-
-		public IEnumerable<string> AllQualityKeys()
-		{
-			return QualityLayers.Keys.Union(this.OemProfile.QualityLayers.Keys);
-		}
-
 		internal static LayeredProfile LoadFile(string printerProfilePath)
 		{
 			var layeredProfile = JsonConvert.DeserializeObject<LayeredProfile>(File.ReadAllText(printerProfilePath));
+			if (layeredProfile.DocumentVersion < LayeredProfile.LatestVersion)
+			{
+				printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, layeredProfile.DocumentVersion);
+
+				// Reload the document with the new schema
+				layeredProfile = JsonConvert.DeserializeObject<LayeredProfile>(File.ReadAllText(printerProfilePath));
+			}
+
 			layeredProfile.DocumentPath = printerProfilePath;
 
 			return layeredProfile;
@@ -198,18 +274,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public Dictionary<string, SettingsLayer> QualityLayers { get; } = new Dictionary<string, SettingsLayer>();
 
-
 		///<summary>
 		///Returns the settings value at the 'top' of the stack
 		///</summary>
 		public string GetValue(string sliceSetting)
 		{
-			return GetValue(sliceSetting, settingsLayers);
+			return GetValue(sliceSetting, defaultLayerCascade);
 		}
 
-		public string GetValue(string sliceSetting, IEnumerable<SettingsLayer> layers)
+		public string GetValue(string sliceSetting, IEnumerable<SettingsLayer> layerCascade)
 		{
-			foreach (SettingsLayer layer in layers)
+			if (layerCascade == null)
+			{
+				layerCascade = defaultLayerCascade;
+			}
+
+			foreach (SettingsLayer layer in layerCascade)
 			{
 				string value;
 				if (layer.TryGetValue(sliceSetting, out value))
@@ -223,7 +303,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsLayer BaseLayer { get; set; }
 
-		private IEnumerable<SettingsLayer> settingsLayers
+		private IEnumerable<SettingsLayer> defaultLayerCascade
 		{
 			get
 			{

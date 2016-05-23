@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 		{
 			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			this.Height = 50 * TextWidget.GlobalPointSizeScaleRatio;
+			this.Height = 50 * GuiWidget.DeviceScale;
 
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
@@ -266,17 +266,35 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			AddHandlers();
 		}
 
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			switch (UnderMouseState)
+			{
+				case UnderMouseState.NotUnderMouse:
+					IsHoverItem = false;
+					break;
+
+				case UnderMouseState.FirstUnderMouse:
+					IsHoverItem = true;
+					break;
+
+				case UnderMouseState.UnderMouseNotFirst:
+					if (ContainsFirstUnderMouseRecursive())
+					{
+						IsHoverItem = true;
+					}
+					else
+					{
+						IsHoverItem = false;
+					}
+					break;
+			}
+
+			base.OnMouseMove(mouseEvent);
+		}
+
 		private void AddHandlers()
 		{
-			MouseEnterBounds += (sender, e) =>
-			{
-				IsHoverItem = true;
-			};
-			MouseLeaveBounds += (sender, e) =>
-			{
-				IsHoverItem = false;
-			};
-
 			GestureFling += (object sender, FlingEventArgs eventArgs) =>
 			{
 				if (!this.libraryDataView.EditMode)

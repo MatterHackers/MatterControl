@@ -100,32 +100,20 @@ namespace MatterHackers.MatterControl
 
 			this.Padding = new BorderDouble(0, 0, 6, 0);
 
-			if (AddRightElement != null)
-			{
-				AddRightElement(rightElement);
-			}
+			AddRightElement?.Invoke(rightElement);
 
-			// When the application is first started, plugins are loaded after the MainView control has been initialize,
-			// and such they not around when this constructor executes. In that case, we run the AddRightElement 
-			// delegate after the plugins get initialized via the PluginsLoaded event
-			ApplicationController.Instance.PluginsLoaded.RegisterEvent(PluginsLoaded, ref unregisterEvents);
-		}
-
-		public void PluginsLoaded(object sender, EventArgs e)
-		{
-			if (AddRightElement != null)
+			// When the application is first started, plugins are loaded after the MainView control has been initialized,
+			// and as such they not around when this constructor executes. In that case, we run the AddRightElement 
+			// delegate after the plugins have been initialized via the PluginsLoaded event
+			ApplicationController.Instance.PluginsLoaded.RegisterEvent((s, e) =>
 			{
-				AddRightElement(rightElement);
-			}
+				AddRightElement?.Invoke(rightElement);
+			}, ref unregisterEvents);
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -154,7 +142,7 @@ namespace MatterHackers.MatterControl
 						Button updateStatusMessage = linkButtonFactory.Generate("Update Available".Localize());
 						updateStatusMessage.Click += (sender2, e) =>
 						{
-                            UiThread.RunOnIdle(CheckForUpdateWindow.Show);
+							UiThread.RunOnIdle(CheckForUpdateWindow.Show);
 						};
 						var updateMark = new UpdateNotificationMark();
 						updateMark.Margin = new BorderDouble(0, 0, 3, 2);

@@ -7,6 +7,15 @@ Simple
       Support Material
         support_material
         create_raft
+  Printer
+    Connection
+      Description
+        MatterControl.PrinterName
+      Details
+        MatterControl.AutoConnect
+        MatterControl.BaudRate
+        MatterControl.ComPort
+        MatterControl.DeletePrinter
 Intermediate
   General
     Layers/Surface
@@ -60,6 +69,15 @@ Intermediate
       Fan Speed
         min_fan_speed
         max_fan_speed
+  Printer
+    Connection
+      Description
+        MatterControl.PrinterName
+      Details
+        MatterControl.AutoConnect
+        MatterControl.BaudRate
+        MatterControl.ComPort
+        MatterControl.DeletePrinter
 Advanced
   General
     Layers/Surface
@@ -253,6 +271,14 @@ Advanced
       Enable
         cool_extruder_lift
   Printer
+    Connection
+      Description
+        MatterControl.PrinterName
+      Details
+        MatterControl.AutoConnect
+        MatterControl.BaudRate
+        MatterControl.ComPort
+        MatterControl.DeletePrinter
     Print Area
       Size and Coordinates
         bed_size
@@ -261,22 +287,22 @@ Advanced
         z_offset
         bed_shape
     Features
+      Interface
+        show_reset_connection
+        include_firmware_updater
       Hardware
+        extruder_count
         has_fan
         has_hardware_leveling
         has_heated_bed
         has_sd_card_reader
         has_power_control
-        show_reset_connection
-        include_firmware_updater
-        extruder_count
+      Behavior
+        z_homes_to_max
+        z_can_be_negative
         heat_extruder_before_homing
         extruders_share_temperature
-        z_homes_to_max
       Firmware
-        MatterControl.BaudRate
-        MatterControl.ComPort
-        z_can_be_negative
         gcode_flavor
         use_relative_e_distances
         gcode_arcs

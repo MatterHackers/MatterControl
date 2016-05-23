@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 
 			FlowLayoutWidget fanControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
 			{
 				fanControlsLayout.AddChild(CreateFanControls());
 			}
@@ -80,8 +80,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
 
-			this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
-			this.textImageButtonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.FixedWidth = 38 * GuiWidget.DeviceScale;
+			this.textImageButtonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
 			this.textImageButtonFactory.fontSize = 10;
 			this.textImageButtonFactory.borderWidth = 1;
 			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
 
 			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			leftToRight.Padding = new BorderDouble(3, 0, 0, 5) * TextWidget.GlobalPointSizeScaleRatio;
+			leftToRight.Padding = new BorderDouble(3, 0, 0, 5);
 
 			//Matt's test editing to add a on/off toggle switch
 			bool fanActive = PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0;

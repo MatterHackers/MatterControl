@@ -86,14 +86,39 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			LoadQualitySettings(layeredProfile, printer);
 			LoadMaterialSettings(layeredProfile, printer);
 
+			layeredProfile.ID = printer.Id.ToString();
+
+			layeredProfile.UserLayer["MatterControl.PrinterName"] = printer.Name ?? "";
 			layeredProfile.UserLayer["MatterControl.Make"] = printer.Make ?? "";
 			layeredProfile.UserLayer["MatterControl.Model"] = printer.Model ?? "";
 			layeredProfile.UserLayer["MatterControl.BaudRate"] = printer.BaudRate ?? "";
 			layeredProfile.UserLayer["MatterControl.ComPort"] = printer.ComPort ?? "";
+			layeredProfile.UserLayer["MatterControl.AutoConnect"] = printer.AutoConnect ? "1" : "0";
 			layeredProfile.UserLayer["MatterControl.DefaultMaterialPresets"] = printer.MaterialCollectionIds ?? "";
 			layeredProfile.UserLayer["MatterControl.WindowsDriver"] = printer.DriverType ?? "";
 			layeredProfile.UserLayer["MatterControl.DeviceToken"] = printer.DeviceToken ?? "";
 			layeredProfile.UserLayer["MatterControl.DeviceType"] = printer.DeviceType ?? "";
+
+			if (string.IsNullOrEmpty(UserSettings.Instance.get("ActiveProfileID")))
+			{
+				UserSettings.Instance.set("ActiveProfileID", printer.Id.ToString());
+			}
+
+			layeredProfile.UserLayer["MatterControl.ActiveThemeIndex"] = UserSettings.Instance.get("ActiveThemeIndex");
+
+			// Import macros from the database
+			var allMacros =  Datastore.Instance.dbSQLite.Query<CustomCommands>("SELECT * FROM CustomCommands WHERE PrinterId = " + printer.Id);
+			layeredProfile.Macros = allMacros.Select(macro => new GCodeMacro()
+			{
+				GCode = macro.Value.Trim(),
+				Name = macro.Name,
+				LastModified = macro.DateLastModified
+			}).ToList();
+
+			string query = string.Format("SELECT * FROM PrinterSetting WHERE Name = 'PublishBedImage' and PrinterId = {0};", printer.Id);
+			var publishBedImage = Datastore.Instance.dbSQLite.Query<PrinterSetting>(query).FirstOrDefault();
+
+			layeredProfile.UserLayer["MatterControl.PublishBedImage"] = publishBedImage?.Value == "true" ? "1" : "0";
 
 			// Print leveling
 			var printLevelingData = PrintLevelingData.Create(
@@ -109,6 +134,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			// TODO: Where can we find CalibrationFiiles in the current model?
 			//layeredProfile.SetActiveValue("MatterControl.CalibrationFiles", printer.Make);
 
+			layeredProfile.ID = printer.Id.ToString();
 			string fullProfilePath = Path.Combine(profilePath, printer.Id + ".json");
 			File.WriteAllText(fullProfilePath, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
 		}

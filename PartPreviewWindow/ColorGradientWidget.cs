@@ -74,7 +74,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			Margin = new BorderDouble(5, 5, 200, 50);
-			Margin *= TextWidget.GlobalPointSizeScaleRatio;
 			HAnchor |= Agg.UI.HAnchor.ParentLeft;
 			VAnchor = Agg.UI.VAnchor.ParentTop;
 		}

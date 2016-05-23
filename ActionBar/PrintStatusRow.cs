@@ -28,7 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.GuiAutomation;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -38,6 +42,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -228,16 +233,43 @@ namespace MatterHackers.MatterControl.ActionBar
 			return container;
 		}
 
+		private void ShowPrintLevelSettings()
+		{
+			AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
+			testRunner.TimeToMoveMouse = 0;
+			testRunner.UpDelaySeconds = 0;
+
+			if (testRunner.NameExists("SettingsAndControls"))
+			{
+				testRunner.ClickByName("SettingsAndControls", 5);
+				testRunner.Wait(.2);
+			}
+			testRunner.ClickByName("Slice Settings Tab", .1);
+			testRunner.ClickByName("Options Tab", .2);
+
+			SystemWindow containingWindow;
+			var autoLevelRowItem = testRunner.GetWidgetByName("AutoLevelRowItem", out containingWindow, .2);
+			if (autoLevelRowItem != null)
+			{
+				new AttentionGetter(autoLevelRowItem);
+			}
+
+			testRunner.Dispose();
+		}
+
 		private Button GetAutoLevelIndicator()
 		{
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
 			imageButtonFactory.InvertImageColor = false;
-			string notifyIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
-			string notifyHoverIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
-			Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
-			autoLevelButton.Cursor = Cursors.Hand;
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 16, 16).InvertLightness();
+			Button autoLevelButton = imageButtonFactory.Generate(levelingImage, levelingImage);
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
+			autoLevelButton.Cursor = Cursors.Hand;
+			autoLevelButton.Click += (s, e) => 
+			{
+				Task.Run((Action)ShowPrintLevelSettings);
+			};
 			autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
 
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((sender, e) =>

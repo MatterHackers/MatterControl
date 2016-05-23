@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -83,7 +84,8 @@ namespace MatterHackers.MatterControl
 					invertImageLocation = true
 				};
 
-				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Settings\n& Controls"), "icon_arrow_right_32x32.png");
+				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Settings\n& Controls"), 
+					StaticData.Instance.LoadIcon("icon_arrow_right_32x32.png", 32,32));
 				advancedControlsLinkButton.Name = "SettingsAndControls";
 				advancedControlsLinkButton.ToolTipText = "Switch to Settings, Controls and Options".Localize();
 				advancedControlsLinkButton.Margin = new BorderDouble(right: 3);

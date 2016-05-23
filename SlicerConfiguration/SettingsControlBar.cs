@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount();
 
-			this.AddChild(new PresetSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality", 0));
+			this.AddChild(new PresetSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, NamedSettingsLayers.Quality, 0));
 			this.AddChild(new GuiWidget(8, 0));
 
 			if (numberOfHeatedExtruders > 1)
@@ -58,16 +58,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					int colorIndex = i % colorList.Count;
 					RGBA_Bytes color = colorList[colorIndex];
-					this.AddChild(new PresetSelectorWidget(string.Format("{0} {1}", "Material".Localize(), i + 1), color, "material", i));
+					this.AddChild(new PresetSelectorWidget(string.Format("{0} {1}", "Material".Localize(), i + 1), color, NamedSettingsLayers.Material, i));
 				}
 			}
 			else
 			{
-				this.AddChild(new PresetSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material", 0));
+				this.AddChild(new PresetSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, NamedSettingsLayers.Material, 0));
 			}
 
-			this.Height = 60 * TextWidget.GlobalPointSizeScaleRatio;
-
+			this.Height = 60 * GuiWidget.DeviceScale;
 		}
 	}
 }

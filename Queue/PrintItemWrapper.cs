@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 				string engineString = ((int)ActiveSliceSettings.Instance.ActiveSliceEngineType()).ToString();
 
-				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
+				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString();
 				string gcodePathAndFileName = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
 				return gcodePathAndFileName;
 			}

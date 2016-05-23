@@ -27,25 +27,17 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using MatterHackers.GuiAutomation;
-using MatterHackers.Agg.PlatformAbstract;
 using System.IO;
-using MatterHackers.MatterControl.CreatorPlugins;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.DataStorage;
-using System.Diagnostics;
 
-namespace MatterHackers.MatterControl.UI
+namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain]
 	public class BuyButtonTests
 	{
 		[Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
@@ -78,7 +70,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ClickingCreateButtonOpensPluginWindow
     {
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -121,7 +113,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ExportButtonTest
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -164,7 +156,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
 	public class ExportButtonDisabledNoQueueItems
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -191,7 +183,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueItemThumnailWidget
 	{
 		[Test, RequiresSTA, RunInApplicationDomain] 
@@ -228,7 +220,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ClickCopyButtonMakesACopyOfPrintItemInQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -274,7 +266,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddSingleItemToQueueAddsItem
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -339,7 +331,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddButtonAddsMuiltipleItemsToQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -409,7 +401,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class RemoveButtonClickedRemovesSingleItem
 	{
 
@@ -467,7 +459,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class EditButtonClickedTurnsOnEditMode
 	{
 
@@ -530,7 +522,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
 	public class DoneButtonClickedTurnsOffEditMode
 	{
 
@@ -594,7 +586,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class RemoveButtonClickedRemovesMultipleItems
 	{
 
@@ -661,7 +653,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ExportToZipMenuItemClickedExportsQueueToZip
 	{
 
@@ -757,7 +749,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class SendMenuItemClickedWhileNotLoggedIn
 	{
 
@@ -808,7 +800,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class RemoveAllMenuItemClicked
 	{
 
@@ -878,7 +870,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
 	public class CreatePartSheetMenuItemClickedCreatesPartSheet
 	{
 
@@ -943,7 +935,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueRowItemRemoveViewButtons
 	{
         [Test, RequiresSTA, RunInApplicationDomain]
@@ -1018,7 +1010,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueAddButtonAddsZipToQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -1086,7 +1078,7 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueAddButtonAddsAMFFileToQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -1153,7 +1145,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueAddButtonAddsSTLFileToQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -1217,7 +1209,7 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueAddButtonAddsGcodeFileToQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]

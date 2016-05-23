@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 //#define DoBooleanTest
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -50,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the mirror options
 			{
-				expandMirrorOptions = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("Mirror".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMirrorOptions = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("Mirror".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32,32).InvertLightness());
 				expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
 				this.AddChild(expandMirrorOptions);
 

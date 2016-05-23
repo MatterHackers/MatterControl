@@ -31,6 +31,7 @@ namespace MatterHackers.MatterControl
 			MenuDropList.MenuItemsPadding = new BorderDouble(0);
 			MenuDropList.Margin = new BorderDouble(0);
 			MenuDropList.Padding = new BorderDouble(0);
+			MenuDropList.MenuItemsPadding = new BorderDouble(8, 6, 8, 6);
 
 			MenuDropList.DrawDirectionalArrow = false;
 			MenuDropList.MenuAsWideAsItems = false;
@@ -40,18 +41,24 @@ namespace MatterHackers.MatterControl
 			//Add the menu items to the menu itself
 			foreach (MenuItemAction item in menuItems)
 			{
-				MenuDropList.MenuItemsPadding = new BorderDouble(8, 6, 8, 6) * TextWidget.GlobalPointSizeScaleRatio;
-				MenuItem newItem = MenuDropList.AddItem(item.Title, pointSize: 11);
-				if (item.Action == null)
+				if (item.Title.StartsWith("-----"))
 				{
-					newItem.Enabled = false;
+					MenuDropList.AddHorizontalLine();
+				}
+				else
+				{
+					MenuItem newItem = MenuDropList.AddItem(item.Title, pointSize: 11);
+					if (item.Action == null)
+					{
+						newItem.Enabled = false;
+					}
 				}
 			}
 			MenuDropList.Padding = padding;
 
 			AddChild(MenuDropList);
 			this.Width = GetChildrenBoundsIncludingMargins().Width;
-			this.Height = 22 * TextWidget.GlobalPointSizeScaleRatio;
+			this.Height = 22 * GuiWidget.DeviceScale;
 			this.Margin = new BorderDouble(0);
 			this.Padding = new BorderDouble(0);
 			this.VAnchor = Agg.UI.VAnchor.ParentCenter;

@@ -32,15 +32,13 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.UI;
+using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace MatterControl.Tests
+namespace MatterHackers.MatterControl.Tests
 {
 	[TestFixture, RunInApplicationDomain]
 	public class LibraryProviderSqliteTests

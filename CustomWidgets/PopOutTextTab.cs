@@ -41,6 +41,7 @@ namespace MatterHackers.Agg.UI
 	public class PopOutTextTabWidget : Tab
 	{
 		private PopOutManager popOutManager;
+		Button popOutButton;
 
 		public PopOutTextTabWidget(TabPage tabPageControledByTab, string internalTabName, Vector2 minSize)
 			: this(tabPageControledByTab, internalTabName, minSize, 12)
@@ -72,7 +73,7 @@ namespace MatterHackers.Agg.UI
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (leftToRight.FirstWidgetUnderMouse)
+			if (!popOutButton.FirstWidgetUnderMouse)
 			{
 				OnSelected(mouseEvent);
 			}
@@ -99,10 +100,10 @@ namespace MatterHackers.Agg.UI
 			tabTitle.AutoExpandBoundsToText = true;
 			leftToRight.AddChild(tabTitle);
 
-			ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+			ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon("icon_pop_out_32x32.png", 16, 16);
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(popOutImageClick);
+				popOutImageClick.InvertLightness();
 			}
 
 			ImageBuffer popOutImage = new ImageBuffer(popOutImageClick);
@@ -115,15 +116,15 @@ namespace MatterHackers.Agg.UI
 				}
 			}
 
-			Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
-			popOut.ToolTipText = "Pop This Tab out into its own Window".Localize();
-			popOut.Click += (sender, e) =>
+			popOutButton = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
+			popOutButton.ToolTipText = "Pop This Tab out into its own Window".Localize();
+			popOutButton.Click += (sender, e) =>
 			{
 				popOutManager.ShowContentInWindow();
 			};
-			popOut.Margin = new BorderDouble(3, 0);
-			popOut.VAnchor = VAnchor.ParentTop;
-			leftToRight.AddChild(popOut);
+			popOutButton.Margin = new BorderDouble(3, 0);
+			popOutButton.VAnchor = VAnchor.ParentTop;
+			leftToRight.AddChild(popOutButton);
 
 			widgetState.AddChild(leftToRight);
 			widgetState.SetBoundsToEncloseChildren();

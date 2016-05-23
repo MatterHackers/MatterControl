@@ -1,4 +1,5 @@
 ﻿using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -51,15 +52,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			SetVisibleControls();
 		}
 
-		private EditLevelingSettingsWindow editLevelingSettingsWindow;
 		private TextWidget printLevelingStatusLabel;
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -69,16 +66,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			Agg.Image.ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "camera-24x24.png"));
+			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png",24,24).InvertLightness();
+			cameraIconImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(24 * GuiWidget.DeviceScale);
+
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(cameraIconImage);
+				cameraIconImage.InvertLightness();
 			}
 
 			ImageWidget cameraIcon = new ImageWidget(cameraIconImage);
 			cameraIcon.Margin = new BorderDouble(right: 6);
 
-			TextWidget cameraLabel = new TextWidget("Camera Monitoring");
+			TextWidget cameraLabel = new TextWidget("Camera Monitoring".Localize());
 			cameraLabel.AutoExpandBoundsToText = true;
 			cameraLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			cameraLabel.VAnchor = VAnchor.ParentCenter;
@@ -97,11 +97,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
 			publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
 
-			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(PrinterSettings.Instance.get("PublishBedImage") == "true");
+			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.PublishBedImage());
 			toggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
 				CheckBox thisControl = sender as CheckBox;
-				PrinterSettings.Instance.set("PublishBedImage", thisControl.Checked ? "true" : "false");
+				ActiveSliceSettings.Instance.SetActiveValue("PublishBedImage", thisControl.Checked ? "1" : "0");
 			};
 			publishImageSwitchContainer.AddChild(toggleSwitch);
 
@@ -119,10 +119,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			Agg.Image.ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "terminal-24x24.png"));
+			ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
+			terminalSettingsImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			int iconSize = (int)(24 * GuiWidget.DeviceScale);
+
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(terminalSettingsImage);
+				terminalSettingsImage.InvertLightness();
 			}
 
 			ImageWidget terminalIcon = new ImageWidget(terminalSettingsImage);
@@ -161,13 +164,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
 
-			Agg.Image.ImageBuffer eePromImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "leveling-24x24.png"));
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24);
+
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				InvertLightness.DoInvertLightness(eePromImage);
+				levelingImage.InvertLightness();
 			}
-			ImageWidget eePromIcon = new ImageWidget(eePromImage);
-			eePromIcon.Margin = new BorderDouble(right: 6);
+			ImageWidget levelingIcon = new ImageWidget(levelingImage);
+			levelingIcon.Margin = new BorderDouble(right: 6);
 
 			Button configureEePromButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
 			configureEePromButton.Click += new EventHandler(configureEePromButton_Click);
