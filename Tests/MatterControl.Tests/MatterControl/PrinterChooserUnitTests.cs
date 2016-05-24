@@ -37,6 +37,9 @@ namespace MatterControl.Tests.MatterControl
 			printChooser = new PrinterChooser();
 			Assert.IsTrue(printChooser.CountOfMakes == 2);
 
+			/* 
+			 * Disable Esagono tests
+			 * 
 			SetPrivatePrinterWhiteListMember(new List<string>() { "Esagono" });
 			var manufacturerNameMapping = new ManufacturerNameMapping();
 			manufacturerNameMapping.NameOnDisk = "Esagono";
@@ -52,6 +55,7 @@ namespace MatterControl.Tests.MatterControl
 				}
 			}
 			Assert.IsTrue(!string.IsNullOrEmpty(expectedItem) && expectedItem == "Esagonò");
+			*/
 		}
 
 		private static void SetPrivatePrinterWhiteListMember(List<string> newValue)
