@@ -334,8 +334,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static OemProfile LoadHttpOemProfile(string make, string model)
 		{
+			string url = string.Format(
+				"http://matterdata.azurewebsites.net/api/oemprofiles?manufacturer={0}&model={1}",
+				WebUtility.UrlEncode(make),
+				WebUtility.UrlEncode(model));
+
 			var client = new WebClient();
-			string profileText = client.DownloadString(string.Format("http://matterdata.azurewebsites.net/api/oemprofiles/{0}/{1}/", make, model));
+
+			string profileText = client.DownloadString(url);
 			var printerProfile = JsonConvert.DeserializeObject<OemProfile>(profileText);
 			return printerProfile;
 		}
