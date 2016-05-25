@@ -91,25 +91,17 @@ namespace MatterControl.Tests.MatterControl
 			ValidateOnAllPrinters(printer =>
 			{
 				string extruderCountString = printer.SettingsLayer.ValueOrDefault("extruder_count");
-
-				// TODO: Should extruder count be required as originally expected?
-				if (string.IsNullOrEmpty(extruderCountString))
+				if (!string.IsNullOrEmpty(extruderCountString))
 				{
-					Console.WriteLine("extruder_count missing: " + printer.RelativeConfigPath);
-					return;
+					int extruderCount;
+					if (!int.TryParse(extruderCountString, out extruderCount))
+					{
+						Assert.Fail("Invalid [extruder_count] value (int parse failed): " + printer.RelativeConfigPath);
+					}
+
+					// Must be greater than zero
+					Assert.Greater(extruderCount, 0, "[extruder_count]: " + printer.RelativeConfigPath);
 				}
-
-				// Must exist in all configs
-				Assert.IsNotNullOrEmpty(extruderCountString, "[extruder_count] must exist: " + printer.RelativeConfigPath);
-
-				int extruderCount;
-				if (!int.TryParse(extruderCountString, out extruderCount))
-				{
-					Assert.Fail("Invalid [extruder_count] value (int parse failed): " + printer.RelativeConfigPath);
-				}
-
-				// Must be greater than zero
-				Assert.Greater(extruderCount, 0, "[extruder_count]: " + printer.RelativeConfigPath);
 			});
 		}
 
@@ -213,27 +205,43 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
-		public void FirstLayerHeightLessThanNozzleDiameter()
+		public void FirstLayerHeightLessThanNozzleDiameterXExtrusionMultiplier()
 		{
 			ValidateOnAllPrinters(printer =>
 			{
 				float nozzleDiameter = float.Parse(printer.SettingsLayer.ValueOrDefault("nozzle_diameter"));
 				float layerHeight = float.Parse(printer.SettingsLayer.ValueOrDefault("layer_height"));
 
+
+				float firstLayerExtrusionWidth;
+
+				string firstLayerExtrusionWidthString = printer.SettingsLayer.ValueOrDefault("first_layer_extrusion_width");
+				if (!string.IsNullOrEmpty(firstLayerExtrusionWidthString) && firstLayerExtrusionWidthString.Trim() != "0")
+				{
+					firstLayerExtrusionWidth = ValueOrPercentageOf(firstLayerExtrusionWidthString, nozzleDiameter);
+				}
+				else
+				{
+					firstLayerExtrusionWidth = nozzleDiameter;
+				}
+
 				string firstLayerHeightString = printer.SettingsLayer.ValueOrDefault("first_layer_height");
 				if (!string.IsNullOrEmpty(firstLayerHeightString))
 				{
 					float firstLayerHeight = ValueOrPercentageOf(firstLayerHeightString, layerHeight);
 
+					double minimumLayerHeight = firstLayerExtrusionWidth * 0.85;
+
 					// TODO: Remove once validated and resolved
-					if (firstLayerHeight >= nozzleDiameter)
+					if (firstLayerHeight >= minimumLayerHeight)
 					{
 						printer.RuleViolated = true;
 						return;
 					}
 
-					Assert.Less(firstLayerHeight, nozzleDiameter, "[first_layer_height] must be less than [nozzle_diameter]: " + printer.RelativeConfigPath);
+					Assert.Less(firstLayerHeight, minimumLayerHeight, "[first_layer_height] must be less than [firstLayerExtrusionWidth]: " + printer.RelativeConfigPath);
 				}
+				
 			});
 		}
 
@@ -245,20 +253,21 @@ namespace MatterControl.Tests.MatterControl
 				float nozzleDiameter = float.Parse(printer.SettingsLayer.ValueOrDefault("nozzle_diameter"));
 				float layerHeight = float.Parse(printer.SettingsLayer.ValueOrDefault("layer_height"));
 
+				double minimumLayerHeight = nozzleDiameter * 0.85;
+
 				// TODO: Remove once validated and resolved
-				if (layerHeight >= nozzleDiameter)
+				if (layerHeight >= minimumLayerHeight)
 				{
 					printer.RuleViolated = true;
 					return;
 				}
 
-				Assert.Less(layerHeight, nozzleDiameter, "[layer_height] must be less than [nozzle_diameter]: " + printer.RelativeConfigPath);
+				Assert.Less(layerHeight, minimumLayerHeight, "[layer_height] must be less than [minimumLayerHeight]: " + printer.RelativeConfigPath);
 			});
 		}
 
-		// TODO: Requires review
 		[Test]
-		public void LayerHeightAcceptable()
+		public void FirstLayerExtrusionWidthGreaterThanNozzleDiameterIfSet()
 		{
 			ValidateOnAllPrinters(printer =>
 			{
@@ -268,55 +277,13 @@ namespace MatterControl.Tests.MatterControl
 				if (!string.IsNullOrEmpty(firstLayerExtrusionWidthString))
 				{
 					float firstLayerExtrusionWidth = ValueOrPercentageOf(firstLayerExtrusionWidthString, nozzleDiameter);
-
-					// TODO: Why are we finding the product of the extrusion width and nozzleDiameter?
-					float firstLayerExtrusionWidthToTest = firstLayerExtrusionWidth * nozzleDiameter;
-					float firstLayerExtrusionWidthThreshold = nozzleDiameter * 4;
-
-					if (firstLayerExtrusionWidthToTest >= firstLayerExtrusionWidthThreshold ||
-						firstLayerExtrusionWidthToTest <= 0 )
+					if (firstLayerExtrusionWidth == 0)
 					{
-						if (firstLayerExtrusionWidthToTest >= firstLayerExtrusionWidthThreshold)
-						{
-							Console.WriteLine("Extrusion width greater than threshold: " + printer.RelativeConfigPath);
-						}
-						else if (firstLayerExtrusionWidthToTest <= 0)
-						{
-							Console.WriteLine("Extrusion width <= 0: " + printer.RelativeConfigPath);
-						}
-
-						printer.RuleViolated = true;
+						// Ignore zeros
 						return;
 					}
 
-					Assert.Less(firstLayerExtrusionWidthToTest, firstLayerExtrusionWidthThreshold, "[first_layer_extrusion_width] greater than acceptable value: " + printer.RelativeConfigPath);
-
-					// TODO: We're not validating first_layer_extrusion_width as we have the product of nozzleDiameter and firstLayerExtrusionWidth. Seems confusing
-					Assert.Greater(firstLayerExtrusionWidthToTest, 0, "First layer extrusion width cannot be zero: " + printer.RelativeConfigPath);
-				}
-			});
-		}
-
-		[Test]
-		public void FirstLayerExtrusionWidthGreaterThanZero()
-		{
-			ValidateOnAllPrinters(printer =>
-			{
-				float nozzleDiameter = float.Parse(printer.SettingsLayer.ValueOrDefault("nozzle_diameter"));
-
-				string firstLayerExtrusionWidthString = printer.SettingsLayer.ValueOrDefault("first_layer_extrusion_width");
-				if (!string.IsNullOrEmpty(firstLayerExtrusionWidthString))
-				{
-					float firstLayerExtrusionWidth = ValueOrPercentageOf(firstLayerExtrusionWidthString, nozzleDiameter);
-
-					// TODO: Remove once validated and resolved
-					if (firstLayerExtrusionWidth <= 0)
-					{
-						printer.RuleViolated = true;
-						return;
-					}
-
-					Assert.Greater(firstLayerExtrusionWidth, 0, "[first_layer_extrusion_width] must be greater than zero: " + printer.RelativeConfigPath);
+					Assert.GreaterOrEqual(firstLayerExtrusionWidth, nozzleDiameter, "[first_layer_extrusion_width] must be nozzle diameter or greater: " + printer.RelativeConfigPath);
 				}
 			});
 		}
