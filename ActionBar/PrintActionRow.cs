@@ -113,6 +113,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			connectButton = textImageButtonFactory.GenerateTooltipButton(connectButtonText, StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32).InvertLightness());
 			connectButton.ToolTipText = connectButtonMessage;
 			connectButton.Margin = new BorderDouble(6, 6, 6, 3);
+			connectButton.Click += onConnectButton_Click;
 
 			string resetConnectionButtontText = "Reset".Localize();
 			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
@@ -218,7 +219,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			configureButton.Click += onStartButton_Click;
             skipButton.Click += onSkipButton_Click;
 			removeButton.Click += onRemoveButton_Click;
-			connectButton.Click += onConnectButton_Click;
 			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };

@@ -181,25 +181,8 @@ namespace MatterHackers.MatterControl.ActionBar
 					editButton.Click -= EditButton_Click;
 				};
 
-				Task.Run((Action)ShowPrinterSettings);
+				UiNavigation.GoToPrinterSettings("MatterControl.BaudRate Edit Field,MatterControl.AutoConnect Edit Field,MatterControl.ComPort Edit Field");
 			}
-		}
-
-		private void ShowPrinterSettings()
-		{
-			AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-			testRunner.TimeToMoveMouse = 0;
-			testRunner.UpDelaySeconds = 0;
-
-			if (testRunner.NameExists("SettingsAndControls"))
-			{
-				testRunner.ClickByName("SettingsAndControls", 5);
-				testRunner.Wait(.2);
-			}
-			testRunner.ClickByName("Slice Settings Tab", .1);
-			testRunner.ClickByName("Printer Tab", .2);
-			testRunner.ClickByName("Connection Tab", .1);
-			testRunner.Dispose();
 		}
 
 		protected override void AddHandlers()
