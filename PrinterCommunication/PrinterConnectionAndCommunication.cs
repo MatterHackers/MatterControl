@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
@@ -2325,6 +2326,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									this.ComPort);
 
 				OnConnectionFailed(null);
+
+				UiNavigation.GoToPrinterSettings("MatterControl.ComPort Edit Field");
 			}
 		}
 

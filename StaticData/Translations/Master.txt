@@ -4870,3 +4870,12 @@ Translated:Delete the currently selected printer profile.
 English:Delete Printer
 Translated:Delete Printer
 
+English:Estimated Print Time
+Translated:Estimated Print Time
+
+English:The COM port to use while connecting to this printer.
+Translated:The COM port to use while connecting to this printer.
+
+English:COM Port
+Translated:COM Port
+

@@ -654,6 +654,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsRow.AddChild(dataArea);
 			settingsRow.AddChild(unitsArea);
 			settingsRow.AddChild(restoreArea);
+			settingsRow.Name = settingData.SlicerConfigName + " Edit Field";
 
 			if (!ActiveSliceSettings.Instance.KnownSettings.Contains(settingData.SlicerConfigName))
 			{

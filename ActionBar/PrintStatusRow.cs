@@ -233,30 +233,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			return container;
 		}
 
-		private void ShowPrintLevelSettings()
-		{
-			AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-			testRunner.TimeToMoveMouse = 0;
-			testRunner.UpDelaySeconds = 0;
-
-			if (testRunner.NameExists("SettingsAndControls"))
-			{
-				testRunner.ClickByName("SettingsAndControls", 5);
-				testRunner.Wait(.2);
-			}
-			testRunner.ClickByName("Slice Settings Tab", .1);
-			testRunner.ClickByName("Options Tab", .2);
-
-			SystemWindow containingWindow;
-			var autoLevelRowItem = testRunner.GetWidgetByName("AutoLevelRowItem", out containingWindow, .2);
-			if (autoLevelRowItem != null)
-			{
-				new AttentionGetter(autoLevelRowItem);
-			}
-
-			testRunner.Dispose();
-		}
-
 		private Button GetAutoLevelIndicator()
 		{
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
@@ -268,7 +244,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Click += (s, e) => 
 			{
-				Task.Run((Action)ShowPrintLevelSettings);
+				UiNavigation.GoToPrintLevelSettings();
 			};
 			autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
 
