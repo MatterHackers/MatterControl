@@ -5,6 +5,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -51,6 +52,10 @@ namespace MatterHackers.MatterControl
 		private static WizardWindow setupWizardWindow = null;
 		private static bool connectionWindowIsOpen = false;
 
+		public static Func<bool> ShouldShowAuthPanel { get; set; }
+
+		public static Action ShowAuthDialog;
+
 		public static void Show(bool openToHome = false)
 		{
 			if (connectionWindowIsOpen == false)
@@ -84,12 +89,15 @@ namespace MatterHackers.MatterControl
 
 		public void ChangeToSetupPrinterForm()
 		{
-			UiThread.RunOnIdle(DoChangeToSetupPrinterForm);
-		}
-
-		private void DoChangeToSetupPrinterForm()
-		{
-			this.ChangeToAddPrinter();
+			bool showAuthPanel = ShouldShowAuthPanel?.Invoke() ?? false;
+			if (showAuthPanel)
+			{
+				UiThread.RunOnIdle(ChangeToAuthPanel);
+			}
+			else
+			{
+				UiThread.RunOnIdle(ChangeToAddPrinter);
+			}
 		}
 
 		public void ChangeToConnectForm(bool editMode = false)
@@ -156,7 +164,6 @@ namespace MatterHackers.MatterControl
 			return Datastore.Instance.RecordCount("Printer");
 		}
 
-
 		internal void ChangeToAddPrinter()
 		{
 			this.activePrinter = null;
@@ -222,5 +229,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		internal void ChangeToAuthPanel()
+		{
+			ChangeToStep(new ShowAuthPanel(this));
+		}
 	}
 }
