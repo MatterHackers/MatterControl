@@ -255,6 +255,11 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters(printer =>
 			{
+				if (printer.SettingsLayer.ValueOrDefault("output_only_first_layer") == "1")
+				{
+					return;
+				}
+
 				float nozzleDiameter = float.Parse(printer.SettingsLayer.ValueOrDefault("nozzle_diameter"));
 				float layerHeight = float.Parse(printer.SettingsLayer.ValueOrDefault("layer_height"));
 
