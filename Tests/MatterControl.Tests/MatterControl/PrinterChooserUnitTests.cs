@@ -23,19 +23,31 @@ namespace MatterControl.Tests.MatterControl
 
 			MatterControlUtilities.OverrideAppDataLocation();
 
+			var manufacturers = new string[] { "3D Factory", "3D Stuffmaker", "Airwolf 3D", "BCN", "BeeVeryCreative", "Blue Eagle Labs", "Deezmaker", "FlashForge", "gCreate", "IRA3D", "JumpStart", "Leapfrog", "Lulzbot", "MAKEiT", "Maker's Tool Works", "MakerBot", "MakerGear", "Me3D", "OpenBeam", "Organic Thinking System", "Other", "Portabee", "Printrbot", "PrintSpace", "Revolution 3D Printers", "ROBO 3D", "SeeMeCNC", "Solidoodle", "Tosingraf", "Type A Machines", "Ultimaker", "Velleman", "Wanhao" };
+
+			var allManufacturers = manufacturers.Select(m => new KeyValuePair<string, string>(m, m)).ToList();
+
+			BoundDropList dropList;
+
 			// Whitelist on non-OEM builds should contain all printers
-			var printChooser = new PrinterChooser();
-			
-			Assert.IsTrue(printChooser.CountOfMakes > 15);
+			dropList = new BoundDropList("Test");
+			dropList.ListSource = allManufacturers;
+			Assert.Greater(dropList.MenuItems.Count, 20);
 
-			// Set private member to override settings.json values for this test
-			SetPrivatePrinterWhiteListMember(new List<string>() { "3D Stuffmaker" });
-			printChooser = new PrinterChooser();
-			Assert.IsTrue(printChooser.CountOfMakes == 1);
+			var whitelist = new List<string> { "3D Stuffmaker" };
 
-			SetPrivatePrinterWhiteListMember(new List<string>() { "Airwolf 3D", "3D Stuffmaker" });
-			printChooser = new PrinterChooser();
-			Assert.IsTrue(printChooser.CountOfMakes == 2);
+			OemSettings.Instance.SetManufacturers(allManufacturers, whitelist);
+
+			dropList = new BoundDropList("Test");
+			dropList.ListSource = OemSettings.Instance.AllManufacturers;
+			Assert.AreEqual(1, dropList.MenuItems.Count);
+
+			whitelist.Add("Airwolf 3D");
+			OemSettings.Instance.SetManufacturers(allManufacturers, whitelist);
+
+			dropList = new BoundDropList("Test");
+			dropList.ListSource = OemSettings.Instance.AllManufacturers;
+			Assert.AreEqual(2, dropList.MenuItems.Count);
 
 			/* 
 			 * Disable Esagono tests
@@ -58,10 +70,5 @@ namespace MatterControl.Tests.MatterControl
 			*/
 		}
 
-		private static void SetPrivatePrinterWhiteListMember(List<string> newValue)
-		{
-			var fieldInfo = typeof(OemSettings).GetField("printerWhiteList", BindingFlags.Instance | BindingFlags.NonPublic);
-			fieldInfo.SetValue(OemSettings.Instance, newValue);
-		}
 	}
 }

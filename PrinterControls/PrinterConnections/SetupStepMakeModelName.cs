@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.Agg.PlatformAbstract;
+using System.IO;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -16,46 +18,68 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private FlowLayoutWidget printerModelContainer;
 		private FlowLayoutWidget printerMakeContainer;
-		private FlowLayoutWidget printerNameContainer;
 
 		private MHTextEditWidget printerNameInput;
 
 		private TextWidget printerNameError;
-		private TextWidget printerModelError;
-		private TextWidget printerMakeError;
-
-		private PrinterChooser printerManufacturerSelector;
 
 		private Button nextButton;
 
 		private bool usingDefaultName;
 
+		private static BorderDouble elementMargin = new BorderDouble(top: 3);
+
+		private BoundDropList printerManufacturerSelector;
+		private BoundDropList printerModelSelector;
+
 		public SetupStepMakeModelName(ConnectionWizard windowController) : base(windowController)
 		{
+			var allManufacturers = StaticData.Instance.GetDirectories("PrinterSettings").Select(p => Path.GetFileName(p.TrimEnd(new[] { '/', '\\' })));
+
 			//Construct inputs
-			printerNameContainer = createPrinterNameContainer();
-			printerMakeContainer = createPrinterMakeContainer();
-
-			if (printerManufacturerSelector.CountOfMakes == 1)
+			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
 			{
-				ActivePrinter.Make = printerManufacturerSelector.ManufacturerDropList.SelectedValue;
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = elementMargin,
+				Name = "Select Make",
+				ListSource = OemSettings.Instance.AllManufacturers
+			};
 
-				printerMakeContainer.Visible = false;
-				printerModelContainer = createPrinterModelContainer(printerManufacturerSelector.ManufacturerDropList.SelectedValue);
-				printerModelContainer.Visible = true;
-			}
-			else
+			printerManufacturerSelector.SelectionChanged += ManufacturerDropList_SelectionChanged;
+
+			printerMakeContainer = CreateSelectionContainer(
+				"Make".Localize() + ":",
+				"Select the printer manufacturer".Localize(), 
+				printerManufacturerSelector);
+
+			if (printerManufacturerSelector.MenuItems.Count == 1)
 			{
-				printerModelContainer = createPrinterModelContainer();
+				ActivePrinter.Make = printerManufacturerSelector.SelectedValue;
 			}
+
+			printerModelSelector = new BoundDropList(string.Format("- {0} -", "Select Model".Localize()), maxHeight: 200)
+			{
+				Name = "Select Model",
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = elementMargin,
+			};
+			printerModelSelector.SelectionChanged += ModelDropList_SelectionChanged;
+
+			if (printerModelSelector.MenuItems.Count == 1)
+			{
+				// SelectIfOnlyOneModel
+				printerModelSelector.SelectedIndex = 0;
+			}
+
+			printerModelContainer = CreateSelectionContainer("Model".Localize(), "Select the printer model".Localize(), printerModelSelector);
 
 			//Add inputs to main container
-			contentRow.AddChild(printerNameContainer);
+			contentRow.AddChild(createPrinterNameContainer());
 			contentRow.AddChild(printerMakeContainer);
 			contentRow.AddChild(printerModelContainer);
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Save & Continue"));
+			nextButton = textImageButtonFactory.Generate("Save & Continue".Localize());
 			nextButton.Name = "Save & Continue Button";
 			nextButton.Click += (s, e) =>
 			{
@@ -114,73 +138,36 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return container;
 		}
 
-		private FlowLayoutWidget createPrinterMakeContainer()
+		private FlowLayoutWidget CreateSelectionContainer(string labelText, string validationMessage, DropDownList selector)
 		{
-			BorderDouble elementMargin = new BorderDouble(top: 3);
-
-			TextWidget printerManufacturerLabel = new TextWidget("Make".Localize() + ":", 0, 0, 12)
+			var sectionLabel = new TextWidget(labelText, 0, 0, 12)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = elementMargin
 			};
 
-			printerManufacturerSelector = new PrinterChooser()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = elementMargin
-			};
-			printerManufacturerSelector.ManufacturerDropList.SelectionChanged += ManufacturerDropList_SelectionChanged;
-
-			printerMakeError = new TextWidget("Select the printer manufacturer".Localize(), 0, 0, 10)
+			var validationTextWidget = new TextWidget(validationMessage, 0, 0, 10)
 			{
 				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = elementMargin
 			};
 
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(0, 5);
-			container.AddChild(printerManufacturerLabel);
-			container.AddChild(printerManufacturerSelector);
-			container.AddChild(printerMakeError);
-			container.HAnchor = HAnchor.ParentLeftRight;
-
-			return container;
-		}
-
-		private FlowLayoutWidget createPrinterModelContainer(string make = "Other")
-		{
-			BorderDouble elementMargin = new BorderDouble(top: 3);
-
-			TextWidget printerModelLabel = new TextWidget("Model".Localize() + ":", 0, 0, 12)
+			selector.SelectionChanged += (s, e) =>
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = elementMargin
+				validationTextWidget.Visible = selector.SelectedLabel.StartsWith("-"); // The default values have "- Title -"
 			};
 
-			ModelChooser printerModelSelector = new ModelChooser(make)
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = elementMargin
-			};
-			printerModelSelector.ModelDropList.SelectionChanged += new EventHandler(ModelDropList_SelectionChanged);
-			printerModelSelector.SelectIfOnlyOneModel();
-
-			printerModelError = new TextWidget("Select the printer model".Localize(), 0, 0, 10)
-			{
-				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = elementMargin
+				Margin = new BorderDouble(0, 5),
+				HAnchor = HAnchor.ParentLeftRight
 			};
 
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(0, 5);
-			container.AddChild(printerModelLabel);
-			container.AddChild(printerModelSelector);
-			container.AddChild(printerModelError);
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.AddChild(sectionLabel);
+			container.AddChild(selector);
+			container.AddChild(validationTextWidget);
 
 			return container;
 		}
@@ -189,35 +176,30 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			ActivePrinter.Make = ((DropDownList)sender).SelectedValue;
 			ActivePrinter.Model = null;
-			ReconstructModelSelector();
-			SetElementVisibility();
-		}
 
-		private void ReconstructModelSelector()
-		{
-			//reconstruct model selector
-			int currentIndex = contentRow.GetChildIndex(printerModelContainer);
-			contentRow.RemoveChild(printerModelContainer);
+			// ReconstructModelSelector
+			string pathToModels = Path.Combine("PrinterSettings", ActivePrinter.Make);
+			var models = StaticData.Instance.GetDirectories(pathToModels).Select(p => Path.GetFileName(p.TrimEnd(new[] { '/', '\\' })));
 
-			printerModelContainer = createPrinterModelContainer(ActivePrinter.Make);
-			contentRow.AddChild(printerModelContainer, currentIndex);
+			printerModelSelector.ListSource = models.Select(modelName => new KeyValuePair<string, string>(modelName, modelName)).ToList();
+
 			contentRow.Invalidate();
 
-			printerMakeError.Visible = false;
+			SetElementVisibility();
 		}
 
 		private void ModelDropList_SelectionChanged(object sender, EventArgs e)
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ActivePrinter.Model = ((DropDownList)sender).SelectedLabel;
+				StyledDropDownList dropList = (StyledDropDownList) sender;
+				ActivePrinter.Model = dropList.SelectedLabel;
 
-				printerModelError.Visible = false;
 				SetElementVisibility();
 				if (usingDefaultName)
 				{
 					// Use ManufacturerDropList.SelectedLabel instead of ActivePrinter.Make to ensure the mapped Unicode values are picked up
-					string mappedMakeText = printerManufacturerSelector.ManufacturerDropList.SelectedLabel;
+					string mappedMakeText = printerManufacturerSelector.SelectedLabel;
 
 					string printerInputName = String.Format("{0} {1}", mappedMakeText, this.ActivePrinter.Model);
 					var names = ActiveSliceSettings.ProfileData.Profiles.Where(p => p.Name.StartsWith(printerInputName)).Select(p => p.Name).ToList();
