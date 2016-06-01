@@ -649,14 +649,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			using (var outstream = new StreamWriter(fileName))
 			{
-				foreach (var keyValue in this.BaseLayer)
+				foreach (var key in this.KnownSettings.Where(k => !k.StartsWith("MatterControl.")))
 				{
-					string activeValue = ActiveValue(keyValue.Key);
+					string activeValue = ActiveValue(key);
 					if (replaceMacroValues)
 					{
 						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
 					}
-					outstream.Write(string.Format("{0} = {1}\n", keyValue.Key, activeValue));
+					outstream.Write(string.Format("{0} = {1}\n", key, activeValue));
 					activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
 				}
 			}
