@@ -30,7 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.PlatformAbstract;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {
@@ -46,13 +49,6 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				{
 					string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
 					instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
-#if false
-                    string output = JsonConvert.SerializeObject(instance, Formatting.Indented);
-                    using (StreamWriter outfile = new StreamWriter("Settings.json"))
-                    {
-                        outfile.Write(output);
-                    }
-#endif
 				}
 
 				return instance;
@@ -71,45 +67,68 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public bool CheckForUpdatesOnFirstRun = false;
 
-		private List<string> printerWhiteList = new List<string>();
-
-		public List<string> PrinterWhiteList { get { return printerWhiteList; } }
+		public List<string> PrinterWhiteList { get; private set; } = new List<string>();
 
 		public List<ManufacturerNameMapping> ManufacturerNameMappings { get; set; }
 
-		// TODO: Is this ever initialized and if so, how, given there's no obvious references and only one use of the property
-		private List<string> preloadedLibraryFiles = new List<string>();
+		public List<string> PreloadedLibraryFiles { get; } = new List<string>();
 
-		public List<string> PreloadedLibraryFiles { get { return preloadedLibraryFiles; } }
+		internal void SetManufacturers(List<KeyValuePair<string, string>> manufacturers, List<string> whitelist = null)
+		{
+			if (whitelist != null)
+			{
+				this.PrinterWhiteList = whitelist;
+			}
 
+			// Apply whitelist
+			var whiteListedItems = manufacturers?.Where(keyValue => PrinterWhiteList.Contains(keyValue.Key));
+			if (whiteListedItems == null)
+			{
+				AllManufacturers = new List<KeyValuePair<string, string>>();
+				return;
+			}
+
+			var newItems = new List<KeyValuePair<string, string>>();
+
+			// Apply manufacturer name mappings
+			foreach (var keyValue in whiteListedItems)
+			{
+				string labelText = keyValue.Value;
+
+				// Override the manufacturer name if a manufacturerNameMappings exists
+				string mappedName = ManufacturerNameMappings.Where(m => m.NameOnDisk == keyValue.Key).FirstOrDefault()?.NameOnDisk;
+				if (!string.IsNullOrEmpty(mappedName))
+				{
+					labelText = mappedName;
+				}
+
+				newItems.Add(new KeyValuePair<string, string>(keyValue.Key, labelText));
+			}
+
+			AllManufacturers = newItems;
+		}
+
+		public List<KeyValuePair<string, string>> AllManufacturers { get; private set; }
 		
+		[OnDeserialized]
+		private void Deserialized(StreamingContext context)
+		{
+			var manufacturers = StaticData.Instance.GetDirectories("PrinterSettings").Select(p => Path.GetFileName(p.TrimEnd(new[] { '/', '\\' })));
+
+			SetManufacturers(manufacturers.Select(m => new KeyValuePair<string, string>(m, m)).ToList());
+		}
 
 		private OemSettings()
 		{
-#if false // test saving the file
-            printerWhiteList.Add("one");
-            printerWhiteList.Add("two");
-            PreloadedLibraryFiles.Add("uno");
-            PreloadedLibraryFiles.Add("dos");
-            AffiliateCode = "testcode";
-            string pathToOemSettings = Path.Combine(".", "OEMSettings", "Settings.json");
-            File.WriteAllText(pathToOemSettings, JsonConvert.SerializeObject(this, Formatting.Indented));
-#endif
 			this.ManufacturerNameMappings = new List<ManufacturerNameMapping>();
 		}
 	}
 
 	public class ManufacturerNameMapping
 	{
-		public string NameOnDisk
-		{
-			get; set;
-		}
+		public string NameOnDisk { get; set; }
 
-		public string NameToDisplay
-		{
-			get; set;
-		}
+		public string NameToDisplay { get; set; }
 	}
 }
 
