@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -37,37 +38,44 @@ namespace MatterHackers.MatterControl
 {
 	public static class UiNavigation
 	{
+		static bool runingNavigation;
+
 		public static void GoToPrinterSettings(string widgetNameToHighlight)
 		{
-			Task.Run(() =>
+			if (!runingNavigation)
 			{
-				AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-				testRunner.TimeToMoveMouse = 0;
-				testRunner.UpDelaySeconds = 0;
-
-				if (testRunner.NameExists("SettingsAndControls"))
+				runingNavigation = true;
+				Task.Run(() =>
 				{
-					testRunner.ClickByName("SettingsAndControls", 5);
-					testRunner.Wait(.2);
-				}
-				testRunner.ClickByName("Slice Settings Tab", .1);
-				testRunner.ClickByName("Printer Tab", .2);
-				testRunner.ClickByName("Connection Tab", .1);
+					AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
+					testRunner.TimeToMoveMouse = 0;
+					testRunner.UpDelaySeconds = 0;
 
-				if (widgetNameToHighlight.Contains(","))
-				{
-					foreach (string item in widgetNameToHighlight.Split(','))
+					if (testRunner.NameExists("SettingsAndControls"))
 					{
-						HighlightWidget(testRunner, item);
+						testRunner.ClickByName("SettingsAndControls", 5);
+						testRunner.Wait(.2);
 					}
-				}
-				else
-				{
-					HighlightWidget(testRunner, widgetNameToHighlight);
-				}
+					testRunner.ClickByName("Slice Settings Tab", .1);
+					testRunner.ClickByName("Printer Tab", .2);
+					testRunner.ClickByName("Connection Tab", .1);
 
-				testRunner.Dispose();
-			});
+					if (widgetNameToHighlight.Contains(","))
+					{
+						foreach (string item in widgetNameToHighlight.Split(','))
+						{
+							HighlightWidget(testRunner, item);
+						}
+					}
+					else
+					{
+						HighlightWidget(testRunner, widgetNameToHighlight);
+					}
+
+					testRunner.Dispose();
+					runingNavigation = false;
+				});
+			}
 		}
 
 		public static void GoToPrintLevelSettings()
@@ -97,13 +105,14 @@ namespace MatterHackers.MatterControl
 			var autoLevelRowItem = testRunner.GetWidgetByName(widgetNameToHighlight, out containingWindow, .2);
 			if (autoLevelRowItem != null)
 			{
-				new AttentionGetter(autoLevelRowItem);
+				AttentionGetter.GetAttention(autoLevelRowItem);
 			}
 		}
 	}
 
 	public class AttentionGetter
 	{
+		static HashSet<GuiWidget> runingAttentons = new HashSet<GuiWidget>();
 		private double animationDelay = 1 / 20.0;
 		private int cycles = 3;
 		private double lightnessChange = 1;
@@ -112,10 +121,21 @@ namespace MatterHackers.MatterControl
 		private Stopwatch timeSinceStart = null;
 		private GuiWidget widgetToHighlight;
 
-		public AttentionGetter(GuiWidget widgetToHighlight)
+		private AttentionGetter(GuiWidget widgetToHighlight)
 		{
 			this.widgetToHighlight = widgetToHighlight;
 			widgetToHighlight.DrawAfter += ConnectToWidget;
+		}
+
+		public static AttentionGetter GetAttention(GuiWidget widgetToHighlight)
+		{
+			if(!runingAttentons.Contains(widgetToHighlight))
+			{
+				runingAttentons.Add(widgetToHighlight);
+				return new AttentionGetter(widgetToHighlight);
+			}
+
+			return null;
 		}
 
 		private void ChangeBackgroundColor()
@@ -139,6 +159,8 @@ namespace MatterHackers.MatterControl
 				if (widgetToHighlight.HasBeenClosed || timeSinceStart.Elapsed.TotalSeconds > cycles * pulseTime)
 				{
 					widgetToHighlight.BackgroundColor = startColor;
+					widgetToHighlight.DrawAfter -= ConnectToWidget;
+					runingAttentons.Remove(widgetToHighlight);
 					widgetToHighlight = null;
 					return;
 				}
