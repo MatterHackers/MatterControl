@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				int totalMinutesInPrint = (int)(totalSecondsInPrint / 60 - totalHoursInPrint * 60);
 				totalSecondsInPrint = totalSecondsInPrint % 60;
 
-				string totalTimeLabel = LocalizedString.Get("Estimated Print Time");
+				string totalTimeLabel = LocalizedString.Get("Estimated Print Time:");
 				string calculatingLabel = LocalizedString.Get("Calculating...");
 				string totalPrintTimeText;
 
