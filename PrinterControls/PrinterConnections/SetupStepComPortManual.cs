@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private event EventHandler unregisterEvents;
 
-		public SetupStepComPortManual(ConnectionWizard connectionWizard) : base(connectionWizard)
+		public SetupStepComPortManual(WizardWindow connectionWizard) : base(connectionWizard)
 		{
 			linkButtonFactory.fontSize = 8;
 
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void MoveToNextWidget(object state)
 		{
-			connectionWizard.ChangeToInstallDriverOrComPortOne();
+			wizardWindow.ChangeToInstallDriverOrComPortOne();
 		}
 
 		private void ConnectButton_Click(object sender, EventArgs mouseEvent)

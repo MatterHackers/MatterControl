@@ -4879,3 +4879,33 @@ Translated:The COM port to use while connecting to this printer.
 English:COM Port
 Translated:COM Port
 
+English:Setup Wizard
+Translated:Setup Wizard
+
+English:Setup Options
+Translated:Setup Options
+
+English:Please wait. Generating printer profile
+Translated:Please wait. Generating printer profile
+
+English:Connect Your Device
+Translated:Connect Your Device
+
+English:Instructions:
+Translated:Instructions:
+
+English:1. Power on your 3D Printer.
+Translated:1. Power on your 3D Printer.
+
+English:2. Attach your 3D Printer via USB.
+Translated:2. Attach your 3D Printer via USB.
+
+English:3. Press 'Connect'.
+Translated:3. Press 'Connect'.
+
+English:(Press 'Skip' to setup connection later)
+Translated:(Press 'Skip' to setup connection later)
+
+English:Troubleshoot
+Translated:Troubleshoot
+

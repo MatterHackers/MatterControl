@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private event EventHandler unregisterEvents;
 
-		public SetupStepComPortTwo(ConnectionWizard windowController) : base(windowController)
+		public SetupStepComPortTwo(WizardWindow windowController) : base(windowController)
 		{
 			startingPortNames = FrostedSerialPort.GetPortNames();
 			contentRow.AddChild(createPrinterConnectionMessageContainer());
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate("Manual Configuration".Localize());
 			manualLink.Margin = new BorderDouble(0, 5);
-			manualLink.Click += (s, e) => connectionWizard.ChangeToSetupComPortManual();
+			manualLink.Click += (s, e) => wizardWindow.ChangeToSetupComPortManual();
 
 			printerErrorMessage = new TextWidget("", 0, 0, 10);
 			printerErrorMessage.AutoExpandBoundsToText = true;

@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.AddChild(new ActionBar.PrinterActionRow());
 			}
-			this.AddChild(new PrintStatusRow(queueDataView));
+			this.AddChild(PrintStatusRow.Create(queueDataView));
 			this.Padding = new BorderDouble(bottom: 6);
 
 			// Add Handlers
