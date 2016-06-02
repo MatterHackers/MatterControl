@@ -8,7 +8,7 @@ using System;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupConnectionWidgetBase : ConnectionWidgetBase
+	public class SetupConnectionWidgetBase : WizardPanel
 	{
 		//private GuiWidget mainContainer;
 

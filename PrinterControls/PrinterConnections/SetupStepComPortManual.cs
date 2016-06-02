@@ -1,24 +1,34 @@
 ﻿using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SetupStepComPortManual : SetupConnectionWidgetBase
 	{
+		private static Regex linuxDefaultUIFilter = new Regex("/dev/ttyS*\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
 		private Button nextButton;
 		private Button connectButton;
 		private Button refreshButton;
 		private Button printerComPortHelpLink;
 
+		private bool printerComPortIsAvailable = false;
+
 		private TextWidget printerComPortHelpMessage;
 		private TextWidget printerComPortError;
 
 		private event EventHandler unregisterEvents;
+		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
 
 		public SetupStepComPortManual(WizardWindow connectionWizard) : base(connectionWizard)
 		{
@@ -151,5 +161,86 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerComPortError.Text = "Oops! Please select a serial port.".Localize();
 			}
 		}
+
+		protected void CreateSerialPortControls(FlowLayoutWidget comPortContainer, string activePrinterSerialPort)
+		{
+			int portIndex = 0;
+			string[] allPorts = FrostedSerialPort.GetPortNames();
+			IEnumerable<string> filteredPorts;
+
+			if (OsInformation.OperatingSystem == OSType.X11)
+			{
+				// A default and naive filter that works well on Ubuntu 14
+				filteredPorts = allPorts.Where(portName => portName != "/dev/tty" && !linuxDefaultUIFilter.Match(portName).Success);
+			}
+			else
+			{
+				// looks_like_mac -- serialPort.StartsWith("/dev/tty."); looks_like_pc -- serialPort.StartsWith("COM")
+				filteredPorts = allPorts.Where(portName => portName.StartsWith("/dev/tty.") || portName.StartsWith("COM"));
+			}
+
+			IEnumerable<string> portsToCreate = filteredPorts.Any() ? filteredPorts : allPorts;
+
+			// Add a radio button for each filtered port
+			foreach (string portName in portsToCreate)
+			{
+				SerialPortIndexRadioButton comPortOption = createComPortOption(portName, activePrinterSerialPort == portName);
+				if (comPortOption.Checked)
+				{
+					printerComPortIsAvailable = true;
+				}
+
+				SerialPortButtonsList.Add(comPortOption);
+				comPortContainer.AddChild(comPortOption);
+
+				portIndex++;
+			}
+
+			// Add a virtual entry for serial ports that were previously configured but are not currently connected
+			if (!printerComPortIsAvailable && activePrinterSerialPort != null)
+			{
+				SerialPortIndexRadioButton comPortOption = createComPortOption(activePrinterSerialPort, true);
+				comPortOption.Enabled = false;
+
+				comPortContainer.AddChild(comPortOption);
+				SerialPortButtonsList.Add(comPortOption);
+				portIndex++;
+			}
+
+			//If there are still no com ports show a message to that effect
+			if (portIndex == 0)
+			{
+				TextWidget comPortOption = new TextWidget(LocalizedString.Get("No COM ports available"));
+				comPortOption.Margin = new BorderDouble(3, 6, 5, 6);
+				comPortOption.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				comPortContainer.AddChild(comPortOption);
+			}
+		}
+
+		private SerialPortIndexRadioButton createComPortOption(string portName, bool isActivePrinterPort)
+		{
+			SerialPortIndexRadioButton comPortOption = new SerialPortIndexRadioButton(portName, portName)
+			{
+				HAnchor = HAnchor.ParentLeft,
+				Margin = new BorderDouble(3, 3, 5, 3),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Checked = isActivePrinterPort
+			};
+			return comPortOption;
+		}
+
+		private string GetSelectedSerialPort()
+		{
+			foreach (SerialPortIndexRadioButton button in SerialPortButtonsList)
+			{
+				if (button.Checked)
+				{
+					return button.PortValue;
+				}
+			}
+
+			throw new Exception(LocalizedString.Get("Could not find a selected button."));
+		}
+
 	}
 }
