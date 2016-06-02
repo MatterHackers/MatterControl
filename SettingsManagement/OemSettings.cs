@@ -28,11 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.DataStorage;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization;
 
 namespace MatterHackers.MatterControl.SettingsManagement
@@ -84,7 +87,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			var whiteListedItems = manufacturers?.Where(keyValue => PrinterWhiteList.Contains(keyValue.Key));
 			if (whiteListedItems == null)
 			{
-				AllManufacturers = new List<KeyValuePair<string, string>>();
+				AllOems = new List<KeyValuePair<string, string>>();
 				return;
 			}
 
@@ -105,17 +108,52 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				newItems.Add(new KeyValuePair<string, string>(keyValue.Key, labelText));
 			}
 
-			AllManufacturers = newItems;
+			AllOems = newItems;
 		}
 
-		public List<KeyValuePair<string, string>> AllManufacturers { get; private set; }
-		
+		public List<KeyValuePair<string, string>> AllOems { get; private set; }
+
+		public Dictionary<string, List<string>> OemProfiles { get; private set; }
+
 		[OnDeserialized]
 		private void Deserialized(StreamingContext context)
 		{
-			var manufacturers = StaticData.Instance.GetDirectories("PrinterSettings").Select(p => Path.GetFileName(p.TrimEnd(new[] { '/', '\\' })));
+			// TODO: Enable caching
+			// Load the cached data from disk
+			// Extract the ETAG
+			// Request the latest content, passing along the ETAG
+			// Refresh our cache if needed, otherwise stick with the cached data
 
-			SetManufacturers(manufacturers.Select(m => new KeyValuePair<string, string>(m, m)).ToList());
+			// For now, refresh every time
+			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
+
+			// Ensure directory exists
+			Directory.CreateDirectory(cacheDirectory);
+
+			// Cache file path
+			string cachePath = Path.Combine(cacheDirectory, "oemprofiles.json");
+
+			try
+			{
+				var fileInfo = new FileInfo(cachePath);
+				if (!fileInfo.Exists || (DateTime.Now - fileInfo.LastWriteTime).TotalHours > 1)
+				{
+					string url = "http://matterdata.azurewebsites.net/api/oemprofiles";
+
+					var client = new WebClient();
+
+					File.WriteAllText(cachePath, client.DownloadString(url));
+				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Trace.WriteLine("An unexpected exception occurred while requesting the latest oem profiles: \r\n" + ex.Message);
+			}
+
+			string profilesText = File.ReadAllText(cachePath);
+			OemProfiles = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(profilesText);
+
+			SetManufacturers(OemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList());
 		}
 
 		private OemSettings()
