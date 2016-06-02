@@ -34,15 +34,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public SetupStepMakeModelName(WizardWindow windowController) : base(windowController)
 		{
-			var allManufacturers = StaticData.Instance.GetDirectories("PrinterSettings").Select(p => Path.GetFileName(p.TrimEnd(new[] { '/', '\\' })));
-
-			//Construct inputs
 			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = elementMargin,
 				Name = "Select Make",
-				ListSource = OemSettings.Instance.AllManufacturers
+				ListSource = OemSettings.Instance.AllOems
 			};
 
 			printerManufacturerSelector.SelectionChanged += ManufacturerDropList_SelectionChanged;
@@ -178,11 +175,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			ActivePrinter.Make = ((DropDownList)sender).SelectedValue;
 			ActivePrinter.Model = null;
 
-			// ReconstructModelSelector
-			string pathToModels = Path.Combine("PrinterSettings", ActivePrinter.Make);
-			var models = StaticData.Instance.GetDirectories(pathToModels).Select(p => Path.GetFileName(p.TrimEnd(new[] { '/', '\\' })));
+			List<string> printers;
+			if (!OemSettings.Instance.OemProfiles.TryGetValue(ActivePrinter.Make, out printers))
+			{
+				printers = new List<string>();
+			}
 
-			printerModelSelector.ListSource = models.Select(modelName => new KeyValuePair<string, string>(modelName, modelName)).ToList();
+			printerModelSelector.ListSource = printers.Select(name => new KeyValuePair<string, string>(name, name)).ToList();
 
 			contentRow.Invalidate();
 

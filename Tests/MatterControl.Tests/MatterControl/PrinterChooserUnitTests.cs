@@ -39,14 +39,14 @@ namespace MatterControl.Tests.MatterControl
 			OemSettings.Instance.SetManufacturers(allManufacturers, whitelist);
 
 			dropList = new BoundDropList("Test");
-			dropList.ListSource = OemSettings.Instance.AllManufacturers;
+			dropList.ListSource = OemSettings.Instance.AllOems;
 			Assert.AreEqual(1, dropList.MenuItems.Count);
 
 			whitelist.Add("Airwolf 3D");
 			OemSettings.Instance.SetManufacturers(allManufacturers, whitelist);
 
 			dropList = new BoundDropList("Test");
-			dropList.ListSource = OemSettings.Instance.AllManufacturers;
+			dropList.ListSource = OemSettings.Instance.AllOems;
 			Assert.AreEqual(2, dropList.MenuItems.Count);
 
 			/* 
