@@ -125,16 +125,25 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			// Refresh our cache if needed, otherwise stick with the cached data
 
 			// For now, refresh every time
+			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
 
-			string cachePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "oemprofiles.json");
+			// Ensure directory exists
+			Directory.CreateDirectory(cacheDirectory);
+
+			// Cache file path
+			string cachePath = Path.Combine(cacheDirectory, "oemprofiles.json");
 
 			try
 			{
-				string url = "http://matterdata.azurewebsites.net/api/oemprofiles";
+				var fileInfo = new FileInfo(cachePath);
+				if (!fileInfo.Exists || (DateTime.Now - fileInfo.LastWriteTime).TotalHours > 1)
+				{
+					string url = "http://matterdata.azurewebsites.net/api/oemprofiles";
 
-				var client = new WebClient();
+					var client = new WebClient();
 
-				File.WriteAllText(cachePath, client.DownloadString(url));
+					File.WriteAllText(cachePath, client.DownloadString(url));
+				}
 			}
 			catch (Exception ex)
 			{
