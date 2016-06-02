@@ -37,17 +37,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		}
 	}
 
-	public class BaudRateRadioButton : RadioButton
-	{
-		public int BaudRate;
-
-		public BaudRateRadioButton(string label)
-			: base(label)
-		{
-			BaudRate = int.Parse(label);
-		}
-	}
-
 	public class PrinterSelectRadioButton : RadioButton
 	{
 		public PrinterInfo printer;
@@ -242,7 +231,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		}
 	}
 
-	public class ConnectionWidgetBase : GuiWidget
+	public class ConnectionWidgetBase : WizardPanel
 	{
 		private static Regex linuxDefaultUIFilter = new Regex("/dev/ttyS*\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
@@ -273,11 +262,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 		}
 
-		protected ConnectionWizard connectionWizard;
-
-		public ConnectionWidgetBase(ConnectionWizard wizard)
+		public ConnectionWidgetBase(WizardWindow wizard)
+			: base(wizard)
 		{
-			this.connectionWizard = wizard;
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent((s,e) => this.Invalidate(), ref unregisterEvents);
 		}
 

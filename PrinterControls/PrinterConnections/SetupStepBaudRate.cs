@@ -9,7 +9,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SetupStepBaudRate : SetupConnectionWidgetBase
 	{
-		private List<BaudRateRadioButton> BaudRateButtonsList = new List<BaudRateRadioButton>();
+		private List<RadioButton> BaudRateButtonsList = new List<RadioButton>();
 		private FlowLayoutWidget printerBaudRateContainer;
 		private TextWidget printerBaudRateError;
 		private GuiWidget baudRateWidget;
@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button printerBaudRateHelpLink;
 		private TextWidget printerBaudRateHelpMessage;
 
-		public SetupStepBaudRate(ConnectionWizard connectionWizard) : base(connectionWizard)
+		public SetupStepBaudRate(WizardWindow connectionWizard) : base(connectionWizard)
 		{
 			linkButtonFactory.fontSize = 8;
 
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			foreach (string baudRate in baudRates)
 			{
-				BaudRateRadioButton baudOption = new BaudRateRadioButton(baudRate);
+				RadioButton baudOption = new RadioButton(baudRate);
 				BaudRateButtonsList.Add(baudOption);
 				baudOption.Margin = baudRateMargin;
 				baudOption.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private void BindBaudRateHandlers()
 		{
 			otherBaudRateRadioButton.CheckedStateChanged += BindBaudRate_Select;
-			foreach (BaudRateRadioButton button in BaudRateButtonsList)
+			foreach (RadioButton button in BaudRateButtonsList)
 			{
 				button.CheckedStateChanged += BindBaudRate_Select;
 			}
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void MoveToNextWidget()
 		{
-			connectionWizard.ChangeToInstallDriverOrComPortOne();
+			wizardWindow.ChangeToInstallDriverOrComPortOne();
 		}
 
 		private void NextButton_Click(object sender, EventArgs mouseEvent)
@@ -211,11 +211,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private string GetSelectedBaudRate()
 		{
-			foreach (BaudRateRadioButton button in BaudRateButtonsList)
+			foreach (RadioButton button in BaudRateButtonsList)
 			{
 				if (button.Checked)
 				{
-					return button.BaudRate.ToString();
+					return button.Text;
 				}
 			}
 			if (otherBaudRateRadioButton.Checked)

@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SetupStepConfigureConnection : SetupConnectionWidgetBase
 	{
-		public SetupStepConfigureConnection(ConnectionWizard connectionWizard) : base(connectionWizard)
+		public SetupStepConfigureConnection(WizardWindow connectionWizard) : base(connectionWizard)
 		{
 			BorderDouble elementMargin = new BorderDouble(top: 5);
 
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			//Construct buttons
 			var nextButton = textImageButtonFactory.Generate("Connect");
-			nextButton.Click += (s, e) => base.connectionWizard.ChangeToSetupBaudOrComPortOne();
+			nextButton.Click += (s, e) => wizardWindow.ChangeToSetupBaudOrComPortOne();
 
 			var skipButton = textImageButtonFactory.Generate("Skip");
 			skipButton.Click += (s, e) => SaveAndExit();

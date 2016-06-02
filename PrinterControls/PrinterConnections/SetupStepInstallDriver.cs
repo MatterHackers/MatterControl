@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button installButton;
 		private Button skipButton;
 
-		public SetupStepInstallDriver(ConnectionWizard windowController)
+		public SetupStepInstallDriver(WizardWindow windowController)
 			: base(windowController)
 		{
 			headerLabel.Text = string.Format(LocalizedString.Get("Install Communication Driver"));
@@ -35,13 +35,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						bool canContinue = this.InstallDriver();
 						if (canContinue)
 						{
-							connectionWizard.ChangeToSetupBaudOrComPortOne();
+							wizardWindow.ChangeToSetupBaudOrComPortOne();
 						}
 					});
 				};
 
 				skipButton = textImageButtonFactory.Generate(LocalizedString.Get("Skip"));
-				skipButton.Click += (s, e) => connectionWizard.ChangeToSetupBaudOrComPortOne();
+				skipButton.Click += (s, e) => wizardWindow.ChangeToSetupBaudOrComPortOne();
 
 				//Add buttons to buttonContainer
 				footerRow.AddChild(installButton);

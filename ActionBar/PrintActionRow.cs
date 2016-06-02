@@ -437,7 +437,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (ActiveSliceSettings.Instance == null)
 			{
 #if __ANDROID__
-				SetupWizardWindow.Show();
+				WizardWindow.Show();
 #else
 				PrinterActionRow.OpenConnectionWindow(true);
 #endif

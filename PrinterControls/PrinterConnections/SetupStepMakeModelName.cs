@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private BoundDropList printerManufacturerSelector;
 		private BoundDropList printerModelSelector;
 
-		public SetupStepMakeModelName(ConnectionWizard windowController) : base(windowController)
+		public SetupStepMakeModelName(WizardWindow windowController) : base(windowController)
 		{
 			var allManufacturers = StaticData.Instance.GetDirectories("PrinterSettings").Select(p => Path.GetFileName(p.TrimEnd(new[] { '/', '\\' })));
 
@@ -86,7 +86,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				bool canContinue = this.OnSave();
 				if (canContinue)
 				{
-					UiThread.RunOnIdle(connectionWizard.Close);
+					wizardWindow.ChangeToSetupBaudRate();
+					//UiThread.RunOnIdle(connectionWizard.Close);
 				}
 			};
 

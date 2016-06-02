@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrinterActionRow : ActionRowBase
 	{
-		static private ConnectionWizard connectionWindow;
 		private TextImageButtonFactory actionBarButtonFactory = new TextImageButtonFactory();
 		private Button connectPrinterButton;
 		private string disconnectAndCancelMessage = "Disconnect and cancel the current print?".Localize();
@@ -60,19 +59,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(ConnectToActivePrinter, ref staticUnregisterEvents);
 			}
 
-			if (connectionWindow == null)
-			{
-				connectionWindow = new ConnectionWizard();
-
-				connectionWindow.Closed += new EventHandler(ConnectionWindow_Closed);
-			}
-			else
-			{
-				if (connectionWindow != null)
-				{
-					connectionWindow.BringToFront();
-				}
-			}
+			WizardWindow.Show();
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -126,7 +113,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			selectActivePrinterButton = new PrinterSelector();
 			selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
 			selectActivePrinterButton.Cursor = Cursors.Hand;
-			selectActivePrinterButton.AddPrinter += (s, e) => ConnectionWizard.Show();
+			selectActivePrinterButton.AddPrinter += (s, e) => WizardWindow.Show();
 			if (ApplicationController.Instance.WidescreenMode)
 			{
 				selectActivePrinterButton.Margin = new BorderDouble(0, 6, 0, 3);
@@ -213,10 +200,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			actionBarButtonFactory.invertImageLocation = true;
 			actionBarButtonFactory.borderWidth = 0;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		}
-		static private void ConnectionWindow_Closed(object sender, EventArgs e)
-		{
-			connectionWindow = null;
 		}
 
 		static public void ConnectToActivePrinter(object sender, EventArgs e)

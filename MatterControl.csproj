@@ -245,6 +245,12 @@
     <Compile Include="Library\Provider\LibraryProvider.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
     <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
+    <Compile Include="SetupWizard\SetupWizardConnect.cs" />
+    <Compile Include="SetupWizard\WizardPanel.cs" />
+    <Compile Include="SetupWizard\SetupWizardHome.cs" />
+    <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
+    <Compile Include="SetupWizard\SetupWizardWifi.cs" />
+    <Compile Include="SetupWizard\WizardWindow.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsDetailControl.cs" />
     <Compile Include="SlicerConfiguration\Settings\SettingsProfile.cs" />
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
@@ -329,7 +335,6 @@
     <Compile Include="PrinterControls\PrinterConnections\SetupStepMakeModelName.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepBaudRate.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepInstallDriver.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\ConnectionWindow.cs" />
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />

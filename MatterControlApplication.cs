@@ -72,6 +72,11 @@ namespace MatterHackers.MatterControl
 		private DataViewGraph msGraph;
 		private string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
 		private bool ShowMemoryUsed = false;
+
+		public void ConfigureWifi()
+		{
+		}
+
 		private Stopwatch totalDrawTime = new Stopwatch();
 
 #if true//!DEBUG
@@ -797,6 +802,11 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
 			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
 			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
+		}
+
+		public bool IsNetworkConnected()
+		{
+			return true;
 		}
 	}
 }

@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
-		public SetupConnectionWidgetBase(ConnectionWizard wizard) : base(wizard)
+		public SetupConnectionWidgetBase(WizardWindow wizard) : base(wizard)
 		{
 			SetDisplayAttributes();
 			
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				settings.SetName(ActivePrinter.Name);
 			});
 
-			UiThread.RunOnIdle(connectionWizard.Close);
+			UiThread.RunOnIdle(wizardWindow.Close);
 		}
 
 		private void SetDisplayAttributes()
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private void CancelButton_Click(object sender, EventArgs mouseEvent)
 		{
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			UiThread.RunOnIdle(connectionWizard.Close);
+			UiThread.RunOnIdle(wizardWindow.Close);
 		}
 	}
 }
