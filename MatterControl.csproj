@@ -230,6 +230,7 @@
     <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PrinterControls\PrinterConnections\ShowAuthPanel.cs" />
     <Compile Include="PrinterControls\TerminalWindow\PrinterOutputCache.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TextScrolBar.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
