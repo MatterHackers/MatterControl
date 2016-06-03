@@ -19,65 +19,47 @@ namespace MatterHackers.MatterControl
 		protected FlowLayoutWidget headerRow;
 		protected FlowLayoutWidget contentRow;
 		protected FlowLayoutWidget footerRow;
+
 		protected TextWidget headerLabel;
 		protected Button cancelButton;
+
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		protected TextImageButtonFactory whiteImageButtonFactory = new TextImageButtonFactory();
+		protected TextImageButtonFactory whiteImageButtonFactory;
 		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		protected GuiWidget containerWindowToClose;
-		protected RGBA_Bytes defaultTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		protected RGBA_Bytes defaultBackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		protected RGBA_Bytes subContainerTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		protected RGBA_Bytes labelBackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		protected RGBA_Bytes linkTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
+
 		protected WizardWindow wizardWindow;
 
-		event EventHandler unregisterEvents;
+		protected GuiWidget mainContainer;
 
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.linkTextColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.Invalidate();
-		}
+		private event EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
-		}
-
-		PrinterInfo activePrinter;
-		public PrinterInfo ActivePrinter
-		{
-			get
-			{
-				if (activePrinter == null)
-				{
-					var settings = ActiveSliceSettings.Instance;
-					activePrinter = new PrinterInfo
-					{
-						AutoConnect = settings.DoAutoConnect(),
-						BaudRate = settings.BaudRate(),
-						ComPort = settings.ComPort(),
-						DriverType = settings.DriverType(),
-						Id = settings.ID,
-						Name = settings.Name()
-					};
-				}
-
-				return activePrinter;
-			}
-		}
-
-		public WizardPanel(WizardWindow windowController, string unlocalizedTextForCancelButton = "Cancel")
+		public WizardPanel(WizardWindow wizardWindow, string unlocalizedTextForCancelButton = "Cancel", TextImageButtonFactory textButtonFactory = null)
 			: base()
 		{
-			this.wizardWindow = windowController;
-			this.textImageButtonFactory.fontSize = 16;
+			this.wizardWindow = wizardWindow;
 
-			SetWhiteButtonAttributes();
+			// Use either the requested button factory or a default with fontSize == 16
+			this.textImageButtonFactory = textButtonFactory ??  new TextImageButtonFactory() { fontSize = 16 };
+
+			whiteImageButtonFactory = new TextImageButtonFactory()
+			{
+				normalFillColor = RGBA_Bytes.White,
+				disabledFillColor = RGBA_Bytes.White,
+				fontSize = 16,
+				borderWidth = 1,
+
+				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+				hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+
+				disabledTextColor = RGBA_Bytes.DarkGray,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				normalTextColor = RGBA_Bytes.Black,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FixedWidth = 200
+			};
 
 			this.AnchorAll();
 
@@ -85,10 +67,13 @@ namespace MatterHackers.MatterControl
 
 			cancelButton = textImageButtonFactory.Generate(unlocalizedTextForCancelButton.Localize());
 			cancelButton.Name = unlocalizedTextForCancelButton;
-			cancelButton.Click += new EventHandler(CancelButton_Click);
+			cancelButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() => this.wizardWindow?.Close());
+			};
 
 			//Create the main container
-			GuiWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			mainContainer.AnchorAll();
 			mainContainer.Padding = new BorderDouble(12, 12, 12, 0);
 			mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -99,8 +84,7 @@ namespace MatterHackers.MatterControl
 			headerRow.Padding = new BorderDouble(0, 12);
 			headerRow.HAnchor = HAnchor.ParentLeftRight;
 			{
-				string defaultHeaderTitle = "Setup Wizard".Localize();
-				headerLabel = new TextWidget(defaultHeaderTitle, pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor);
+				headerLabel = new TextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor);
 				headerLabel.AutoExpandBoundsToText = true;
 				headerRow.AddChild(headerLabel);
 			}
@@ -123,48 +107,15 @@ namespace MatterHackers.MatterControl
 			this.AddChild(mainContainer);
 		}
 
-		protected void SaveAndExit()
+		public void ThemeChanged(object sender, EventArgs e)
 		{
-			throw new NotImplementedException();
-			/*
-			this.ActivePrinter.Commit();
-			ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
-			this.containerWindowToClose.Close(); */
-
+			this.Invalidate();
 		}
 
-		void SetWhiteButtonAttributes()
+		public override void OnClosed(EventArgs e)
 		{
-			whiteImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			whiteImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
-			whiteImageButtonFactory.fontSize = 16;
-			whiteImageButtonFactory.borderWidth = 1;
-
-			whiteImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			whiteImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			whiteImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			whiteImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			whiteImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			whiteImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			whiteImageButtonFactory.FixedWidth = 200;
-		}
-
-		void CloseWindow(object o, EventArgs e)
-		{
-			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			this.wizardWindow.Close();
-		}
-
-		void CancelButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				if (Parent != null)
-				{
-					Parent.Close();
-				}
-			});
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 }

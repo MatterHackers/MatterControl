@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 		{
 			contentRow.AddChild(new TextWidget("Wifi Setup".Localize() + ":", 0, 0, labelFontSize)
 			{
-				TextColor = this.defaultTextColor,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(bottom: 10)
 			});
 

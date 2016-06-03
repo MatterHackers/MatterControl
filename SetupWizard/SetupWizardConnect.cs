@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 			string printerNameLabelTxt = LocalizedString.Get("Connect Your Device");
 			string printerNameLabelTxtFull = string.Format ("{0}:", printerNameLabelTxt);
 			TextWidget printerNameLabel = new TextWidget(printerNameLabelTxtFull, 0, 0, labelFontSize);
-			printerNameLabel.TextColor = this.defaultTextColor;
+			printerNameLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printerNameLabel.Margin = new BorderDouble(bottom: 10);
 
 			contentRow.AddChild(printerNameLabel);
