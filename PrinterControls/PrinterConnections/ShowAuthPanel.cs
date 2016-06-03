@@ -32,7 +32,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ShowAuthPanel : SetupConnectionWidgetBase
+	public class ShowAuthPanel : ConnectionWizardPanel
 	{
 		public ShowAuthPanel(WizardWindow connectionWizard) : base(connectionWizard)
 		{

@@ -34,7 +34,7 @@ using System;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepConfigureConnection : SetupConnectionWidgetBase
+	public class SetupStepConfigureConnection : ConnectionWizardPanel
 	{
 		public SetupStepConfigureConnection(WizardWindow connectionWizard) : base(connectionWizard)
 		{

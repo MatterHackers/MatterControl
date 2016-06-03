@@ -339,7 +339,7 @@
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\SetupConnectionWidgetBase.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\ConnectionWizardPanel.cs" />
     <Compile Include="PrinterControls\TemperatureIndicator.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
     <Compile Include="Library\LibraryDataView.cs" />

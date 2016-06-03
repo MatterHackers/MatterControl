@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortManual : SetupConnectionWidgetBase
+	public class SetupStepComPortManual : ConnectionWizardPanel
 	{
 		private static Regex linuxDefaultUIFilter = new Regex("/dev/ttyS*\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 

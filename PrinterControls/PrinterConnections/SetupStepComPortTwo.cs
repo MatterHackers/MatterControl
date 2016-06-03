@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortTwo : SetupConnectionWidgetBase
+	public class SetupStepComPortTwo : ConnectionWizardPanel
 	{
 		private string[] startingPortNames;
 		private string[] currentPortNames;

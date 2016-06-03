@@ -11,7 +11,7 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepInstallDriver : SetupConnectionWidgetBase
+	public class SetupStepInstallDriver : ConnectionWizardPanel
 	{
 		private FlowLayoutWidget printerDriverContainer;
 		private TextWidget printerDriverMessage;

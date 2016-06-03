@@ -14,7 +14,7 @@ using System.IO;
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	//Normally step one of the setup process
-	public class SetupStepMakeModelName : SetupConnectionWidgetBase
+	public class SetupStepMakeModelName : ConnectionWizardPanel
 	{
 		private FlowLayoutWidget printerModelContainer;
 		private FlowLayoutWidget printerMakeContainer;
