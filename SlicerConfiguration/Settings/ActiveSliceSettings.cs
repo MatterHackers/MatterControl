@@ -92,19 +92,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public static void SwitchToPrinterThemeWithoutReloadEvent()
 		{
+			int defaultThemeIndex = 1;
+
+			int themeIndex;
 			if (ActiveSliceSettings.Instance != null)
 			{
-				try
+				string activeThemeIndex = ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex");
+				if (string.IsNullOrEmpty(activeThemeIndex) || !int.TryParse(activeThemeIndex, out themeIndex))
 				{
-					int themeIndex = Convert.ToInt32(ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex"));
+					themeIndex = defaultThemeIndex;
+				}
 
-					ActiveTheme.SuspendEvents();
-					ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
-					ActiveTheme.ResumeEvents();
-				}
-				catch
-				{
-				}
+				ActiveTheme.SuspendEvents();
+				ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
+				ActiveTheme.ResumeEvents();
 			}
 		}
 
