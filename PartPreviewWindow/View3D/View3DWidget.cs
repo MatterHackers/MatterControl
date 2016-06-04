@@ -554,7 +554,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			container.AddChild(snapGridLabel);
 
-			StyledDropDownList selectableOptions = new StyledDropDownList("Custom", Direction.Up)
+			DropDownList selectableOptions = new DropDownList("Custom", Direction.Up)
 			{
 				VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
 			};

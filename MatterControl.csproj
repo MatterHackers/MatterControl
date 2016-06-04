@@ -307,7 +307,6 @@
     <Compile Include="CustomWidgets\PrintProgressBarWidget.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
-    <Compile Include="CustomWidgets\StyledDropDownList.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
     <Compile Include="CustomWidgets\WizardControl.cs" />
     <Compile Include="DataStorage\SQLiteCommon.cs" />
