@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		private void AddHandlers()
 		{
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 			contactFormWidget.Closed += (sender, e) => { Close(); };
 		}
 

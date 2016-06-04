@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
+	public enum ApplicationDisplayType { Responsive, Touchscreen };
+
 	public class UserSettings
 	{
 		private static UserSettings globalInstance = null;
@@ -89,5 +91,22 @@ namespace MatterHackers.MatterControl
 			setting.Value = value;
 			setting.Commit();
 		}
+
+		public ApplicationDisplayType DisplayMode
+		{
+			get
+			{
+				if (this.get("ApplicationDisplayMode") == "touchscreen")
+				{
+					return ApplicationDisplayType.Touchscreen;
+				}
+				else
+				{
+					return ApplicationDisplayType.Responsive;
+				}
+			}
+		}
+
+		public bool IsTouchScreen => this.get("ApplicationDisplayMode") == "touchscreen";
 	}
 }

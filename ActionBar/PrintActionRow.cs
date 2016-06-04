@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelPrinting); };
 			reprintButton.Click += onReprintButton_Click;
 			doneWithCurrentPartButton.Click += onDoneWithCurrentPartButton_Click;
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		protected void DisableActiveButtons()
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (!PrinterConnectionAndCommunication.Instance.PrinterIsConnected
 				&& PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
 			{
-				if (ActiveTheme.Instance.IsTouchScreen)
+				if (UserSettings.Instance.IsTouchScreen)
 				{
 					this.activePrintButtons.Add(connectButton);
 				}
@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl.ActionBar
 							this.activePrintButtons.Add(pauseButton);
 							this.activePrintButtons.Add(cancelButton);
 						}
-						else if (ActiveTheme.Instance.IsTouchScreen)
+						else if (UserSettings.Instance.IsTouchScreen)
 						{
 							this.activePrintButtons.Add(resetConnectionButton);
 						}
@@ -363,7 +363,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
 				&& ActiveSliceSettings.Instance.ShowResetConnection()
-				&& ActiveTheme.Instance.IsTouchScreen)
+				&& UserSettings.Instance.IsTouchScreen)
 			{
 				this.activePrintButtons.Add(resetConnectionButton);
 				ShowActiveButtons();

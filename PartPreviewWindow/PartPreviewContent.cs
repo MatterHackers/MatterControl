@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.Padding = new BorderDouble(top: 6);
 
 			RGBA_Bytes selectedTabColor;
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Responsive)
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Responsive)
 			{
 				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				selectedTabColor = ActiveTheme.Instance.TabLabelSelected;

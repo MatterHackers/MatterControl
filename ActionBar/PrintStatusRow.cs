@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public static GuiWidget Create(QueueDataView queueDataView)
 		{
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				return new TouchScreenPrintStatusRow(queueDataView);
 			}

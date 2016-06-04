@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 
 			AddChild(container);
 
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				upImageBuffer = StaticData.Instance.LoadIcon("TouchScreen/arrow_up_32x24.png");
 				downImageBuffer = StaticData.Instance.LoadIcon("TouchScreen/arrow_down_32x24.png");
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
 			SetThemedColors();
 			UpdatePrintStatus();

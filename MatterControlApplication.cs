@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl
 
 			GuiWidget.DefaultEnforceIntegerBounds = true;
 
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 			{
 				GuiWidget.DeviceScale = 1.3;
 			}
@@ -394,11 +394,42 @@ namespace MatterHackers.MatterControl
 			{
 				if (instance == null)
 				{
+					LoadUITheme();
 					instance = CreateInstance();
 					instance.ShowAsSystemWindow();
 				}
 
 				return instance;
+			}
+		}
+
+		public static void LoadUITheme()
+		{
+			//Load the default theme by index
+			if (string.IsNullOrEmpty(UserSettings.Instance.get("ActiveThemeIndex")))
+			{
+				for (int i = 0; i < ActiveTheme.AvailableThemes.Count; i++)
+				{
+					IThemeColors current = ActiveTheme.AvailableThemes[i];
+					if (current.Name == OemSettings.Instance.ThemeColor)
+					{
+						UserSettings.Instance.set("ActiveThemeIndex", i.ToString());
+						break;
+					}
+				}
+			}
+
+			int themeIndex;
+			if (int.TryParse(UserSettings.Instance.get("ActiveThemeIndex"), out themeIndex) && themeIndex < ActiveTheme.AvailableThemes.Count)
+			{
+				try
+				{
+					ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
+				}
+				catch
+				{
+					GuiWidget.BreakInDebugger();
+				}
 			}
 		}
 

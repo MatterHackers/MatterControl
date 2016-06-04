@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 		public WizardControl()
 		{
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				extraTextScaling = 1.33333;
 			}
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
 
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				topToBottom.Padding = new BorderDouble(12);
 			}

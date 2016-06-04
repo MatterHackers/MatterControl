@@ -43,65 +43,61 @@ namespace MatterHackers.MatterControl
 		{
 			this.Padding = new BorderDouble(2, 0);
 			this.colorToChangeTo = colorToChangeTo;
-			int themeCount = ActiveTheme.Instance.AvailableThemes.Count;
+			int themeCount = ActiveTheme.AvailableThemes.Count;
+
+			var allThemes = ActiveTheme.AvailableThemes;
 
 			int index = 0;
 			for (int x = 0; x < themeCount / 2; x++)
 			{
-				FlowLayoutWidget columnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-				columnContainer.Width = containerHeight;
+				var columnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom)
+				{
+					Width = containerHeight
+				};
+				columnContainer.AddChild(CreateThemeButton(allThemes[index], index));
 
-				Button buttonOne = getThemeButton(index);
-				Button buttonTwo = getThemeButton(index + themeCount / 2);
-
-				columnContainer.AddChild(buttonTwo);
-				columnContainer.AddChild(buttonOne);
+				int secondRowIndex = index + themeCount / 2;
+				columnContainer.AddChild(CreateThemeButton(allThemes[secondRowIndex], secondRowIndex));
 
 				this.AddChild(columnContainer);
+
 				index++;
 			}
 			this.BackgroundColor = RGBA_Bytes.White;
 			this.Width = containerHeight * (themeCount / 2);
 		}
 
-		public Button getThemeButton(int index)
+		public Button CreateThemeButton(IThemeColors theme, int index)
 		{
-			GuiWidget normal = new GuiWidget(colorSelectSize, colorSelectSize);
-			normal.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].primaryAccentColor;
-			GuiWidget hover = new GuiWidget(colorSelectSize, colorSelectSize);
-			hover.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].secondaryAccentColor;
-			GuiWidget pressed = new GuiWidget(colorSelectSize, colorSelectSize);
-			pressed.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].secondaryAccentColor;
-			GuiWidget disabled = new GuiWidget(colorSelectSize, colorSelectSize);
+			var normal = new GuiWidget(colorSelectSize, colorSelectSize);
+			normal.BackgroundColor = theme.PrimaryAccentColor;
 
-			Button colorButton = new Button(0, 0, new ButtonViewStates(normal, hover, pressed, disabled));
-			colorButton.Name = index.ToString();
-			colorButton.Click += (sender, mouseEvent) =>
+			var hover = new GuiWidget(colorSelectSize, colorSelectSize);
+			hover.BackgroundColor = theme.SecondaryAccentColor;
+
+			var pressed = new GuiWidget(colorSelectSize, colorSelectSize);
+			pressed.BackgroundColor = theme.SecondaryAccentColor;
+
+			var disabled = new GuiWidget(colorSelectSize, colorSelectSize);
+
+			var colorButton = new Button(0, 0, new ButtonViewStates(normal, hover, pressed, disabled));
+			colorButton.Click += (s, e) =>
 			{
-				string themeIndex = ((GuiWidget)sender).Name;
-				ActiveSliceSettings.Instance.SetActiveValue("MatterControl.ActiveThemeIndex", themeIndex);
-				ActiveTheme.Instance.LoadThemeSettings(int.Parse(themeIndex));
+				UserSettings.Instance.set("ActiveThemeIndex", index.ToString());
+				ActiveTheme.Instance = theme;
 			};
 
-			colorButton.MouseEnterBounds += (sender, mouseEvent) =>
+			colorButton.MouseEnterBounds += (s, e) =>
 			{
-				colorToChangeTo.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].primaryAccentColor;
+				colorToChangeTo.BackgroundColor = theme.PrimaryAccentColor;
 			};
 
-			colorButton.MouseLeaveBounds += (sender, mouseEvent) =>
+			colorButton.MouseLeaveBounds += (s, e) =>
 			{
 				colorToChangeTo.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			};
 
 			return colorButton;
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-			RectangleDouble border = LocalBounds;
-			border.Deflate(new BorderDouble(1));
-			//graphics2D.Rectangle(border, ActiveTheme.Instance.SecondaryBackgroundColor, 4);
 		}
 	}
 }

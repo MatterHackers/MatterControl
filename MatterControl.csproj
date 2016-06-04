@@ -309,7 +309,6 @@
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="CustomWidgets\StyledDropDownList.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
-    <Compile Include="ControlElements\ThemeFactory.cs" />
     <Compile Include="CustomWidgets\WizardControl.cs" />
     <Compile Include="DataStorage\SQLiteCommon.cs" />
     <Compile Include="DataStorage\SQLiteWin32.cs" />
