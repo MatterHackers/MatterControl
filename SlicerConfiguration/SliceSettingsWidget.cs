@@ -1114,7 +1114,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to "MatterControl.<machine>.ComPort"
 							// ensuring that a single printer can be shared across different devices and we'll select the correct ComPort in each case
-							var selectableOptions = new StyledDropDownList("None", maxHeight: 200)
+							var selectableOptions = new DropDownList("None", maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble()
@@ -1167,7 +1167,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case OrganizerSettingsData.DataEditTypes.LIST:
 						{
-							var selectableOptions = new StyledDropDownList("None", maxHeight: 200)
+							var selectableOptions = new DropDownList("None", maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble()
@@ -1466,7 +1466,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return container;
 		}
 
-		private void AddComMenuItems(OrganizerSettingsData settingData, SettingsRow settingsRow, StyledDropDownList selectableOptions)
+		private void AddComMenuItems(OrganizerSettingsData settingData, SettingsRow settingsRow, DropDownList selectableOptions)
 		{
 			selectableOptions.MenuItems.Clear();
 			string machineSpecificComPortValue = ActiveSliceSettings.Instance.ComPort();
@@ -1535,7 +1535,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 			FlowLayoutWidget totalContent = new FlowLayoutWidget();
 
-			StyledDropDownList selectableOptions = new StyledDropDownList("Custom", maxHeight: 200);
+			DropDownList selectableOptions = new DropDownList("Custom", maxHeight: 200);
 			selectableOptions.Margin = new BorderDouble(0, 0, 10, 0);
 
 			foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
