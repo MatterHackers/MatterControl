@@ -2727,7 +2727,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (firstLineToResendIndex < allCheckSumLinesSent.Count)
 				{
-					WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\n", "resend");
+					WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\r\n", "resend");
 				}
 				else
 				{
