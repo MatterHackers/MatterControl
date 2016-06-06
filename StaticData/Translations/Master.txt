@@ -4912,3 +4912,15 @@ Translated:Troubleshoot
 English:Estimated Print Time:
 Translated:Estimated Print Time:
 
+English:Are you sure you want to delete your currently selected printer?
+Translated:Are you sure you want to delete your currently selected printer?
+
+English:Delete Printer?
+Translated:Delete Printer?
+
+English:The Fill Density must be between 0 and 1.
+Translated:The Fill Density must be between 0 and 1.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
+
