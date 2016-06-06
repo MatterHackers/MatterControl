@@ -71,9 +71,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerModelContainer = CreateSelectionContainer("Model".Localize(), "Select the printer model".Localize(), printerModelSelector);
 
 			//Add inputs to main container
-			contentRow.AddChild(createPrinterNameContainer());
 			contentRow.AddChild(printerMakeContainer);
 			contentRow.AddChild(printerModelContainer);
+			contentRow.AddChild(createPrinterNameContainer());
 
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Save & Continue".Localize());

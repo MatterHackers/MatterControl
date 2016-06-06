@@ -53,6 +53,7 @@ using System.Threading.Tasks;
 using MatterHackers.GCodeVisualizer;
 using Gaming.Game;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl
 {
@@ -659,6 +660,12 @@ namespace MatterHackers.MatterControl
 #endif
 
 				AfterFirstDraw?.Invoke();
+
+				if (ActiveSliceSettings.ProfileData.Profiles.Count == 0)
+				{
+					// Start the setup wizard if no profiles exist
+					UiThread.RunOnIdle(() => WizardWindow.Show());
+				}
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
