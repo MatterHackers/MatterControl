@@ -75,13 +75,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						BedSettings.SetMakeAndModel(activeInstance.Make, activeInstance.Model);
 					}
 
-					ActiveTheme.Instance.SwitchToPrinterThemeWithoutReloadEvent();
+					SwitchToPrinterThemeWithoutReloadEvent();
 
 					if (!MatterControlApplication.IsLoading)
 					{
 						OnActivePrinterChanged(null);
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Switches to the ActivePrinter theme without firing the ThemeChanged event. This is useful when changing printers and
+		/// allows the theme state to be updated before the ActivePrinterChanged event fires, resulting in a single ReloadAll
+		/// occurring rather than two
+		/// </summary>
+		public static void SwitchToPrinterThemeWithoutReloadEvent()
+		{
+			int defaultThemeIndex = 1;
+
+			int themeIndex;
+			if (ActiveSliceSettings.Instance != null)
+			{
+				string activeThemeIndex = ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex");
+				if (string.IsNullOrEmpty(activeThemeIndex) || !int.TryParse(activeThemeIndex, out themeIndex))
+				{
+					themeIndex = defaultThemeIndex;
+				}
+
+				ActiveTheme.SuspendEvents();
+				ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
+				ActiveTheme.ResumeEvents();
 			}
 		}
 

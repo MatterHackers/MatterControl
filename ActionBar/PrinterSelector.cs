@@ -40,7 +40,7 @@ using System;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterSelector : StyledDropDownList
+	public class PrinterSelector : DropDownList
 	{
 		public event EventHandler AddPrinter;
 

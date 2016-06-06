@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public DropDownMenu sliceOptionsMenuDropList;
 		private const string SliceSettingsLevelEntry = "SliceSettingsLevel";
 		private const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
-		private StyledDropDownList settingsDetailSelector;
+		private DropDownList settingsDetailSelector;
 		private CheckBox showHelpBox;
 		private TupleList<string, Func<bool>> slicerOptionsMenuItems;
 
@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.AddChild(showHelpBox);
 
-			settingsDetailSelector = new StyledDropDownList("Basic", maxHeight: 200);
+			settingsDetailSelector = new DropDownList("Basic", maxHeight: 200);
 			settingsDetailSelector.Name = "User Level Dropdown";
 			settingsDetailSelector.AddItem("Basic".Localize(), "Simple");
 			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");

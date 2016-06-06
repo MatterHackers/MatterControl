@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PartPreviewWidget()
 		{
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 			{
 				SideBarButtonWidth = 180;
 				ShortButtonHeight = 40;

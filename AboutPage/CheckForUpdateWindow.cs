@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl.AboutPage
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
         string pathToStableBuildFeatures;
-        StyledDropDownList releaseOptionsDropList;
+        DropDownList releaseOptionsDropList;
         FlowLayoutWidget additionalInfoContainer;
         TextWidget stableInfoLabel;
         TextWidget alphaInfoLabel;
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.AboutPage
             feedLabel.VAnchor = VAnchor.ParentCenter;
             feedLabel.Margin = new BorderDouble(left: 5);
 
-            releaseOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+            releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
             releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
             MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Stable".Localize(), "release");
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.AboutPage
             additionalInfoContainer.HAnchor = HAnchor.ParentLeftRight;
             additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
 
-            string aboutUpdateChannel = "Changing your update channnel will change the version of MatterControl  \nthat you recieve when updating:";
+            string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl  \nthat you receive when updating:";
             updateChannelLabel = new TextWidget(aboutUpdateChannel);
             updateChannelLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             updateChannelLabel.HAnchor = HAnchor.ParentLeftRight;
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.AboutPage
         {
             //getAdditionalFeedInfo();
             
-            string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+            string releaseCode = ((DropDownList)sender).SelectedValue;
             if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
             {    
                 UserSettings.Instance.set("UpdateFeedType", releaseCode);

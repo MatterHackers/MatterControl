@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 			this.AnchorAll();
 
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
 			cancelButton = textImageButtonFactory.Generate(unlocalizedTextForCancelButton.Localize());
 			cancelButton.Name = unlocalizedTextForCancelButton;

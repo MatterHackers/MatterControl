@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls3D(MeshViewerWidget meshViewerWidget)
 		{
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 			{
 				buttonHeight = 40;
 			}
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetMeshViewerDisplayTheme();
 			partSelectButton.CheckedStateChanged += SetMeshViewerDisplayTheme;
 
-			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		private event EventHandler unregisterEvents;

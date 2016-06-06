@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		private Button languageRestartButton;
 		private Button configureUpdateFeedButton;
-		public StyledDropDownList releaseOptionsDropList;
+		public DropDownList releaseOptionsDropList;
 		private string cannotRestartWhilePrintIsActiveMessage;
 		private string cannotRestartWhileActive;
 
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
 #endif
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetUpdateControl());
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
 #endif
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetModeControl());
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			StyledDropDownList interfaceOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
 			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(interfaceOptionsDropList);
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get("ApplicationDisplayMode");
 			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
 			{
-				string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+				string releaseCode = ((DropDownList)sender).SelectedValue;
 				if (releaseCode != UserSettings.Instance.get("ApplicationDisplayMode"))
 				{
 					UserSettings.Instance.set("ApplicationDisplayMode", releaseCode);
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			StyledDropDownList interfaceModeDropList = new StyledDropDownList("Standard", maxHeight: 200);
+			DropDownList interfaceModeDropList = new DropDownList("Standard", maxHeight: 200);
 			interfaceModeDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(interfaceModeDropList);
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			releaseOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+			releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
 			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(releaseOptionsDropList);
@@ -431,7 +431,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			StyledDropDownList interfaceOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
 			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(interfaceOptionsDropList);
@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get("ThumbnailRenderingMode");
 			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
 			{
-				string thumbnailRenderingMode = ((StyledDropDownList)sender).SelectedValue;
+				string thumbnailRenderingMode = ((DropDownList)sender).SelectedValue;
 				if (thumbnailRenderingMode != UserSettings.Instance.get("ThumbnailRenderingMode"))
 				{
 					UserSettings.Instance.set("ThumbnailRenderingMode", thumbnailRenderingMode);
@@ -532,7 +532,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void InterfaceModeDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string isSimpleMode = ((StyledDropDownList)sender).SelectedValue;
+			string isSimpleMode = ((DropDownList)sender).SelectedValue;
 			if (isSimpleMode == "True")
 			{
 				UserSettings.Instance.Fields.IsSimpleMode = true;
@@ -541,12 +541,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UserSettings.Instance.Fields.IsSimpleMode = false;
 			}
-			ActiveTheme.Instance.ReloadThemeSettings();
 		}
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+			string releaseCode = ((DropDownList)sender).SelectedValue;
 			if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
 			{
 				UserSettings.Instance.set("UpdateFeedType", releaseCode);
@@ -555,7 +554,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string languageCode = ((DropDownList)sender).SelectedValue;
+			string languageCode = ((Agg.UI.DropDownList)sender).SelectedValue;
 			if (languageCode != UserSettings.Instance.get("Language"))
 			{
 				UserSettings.Instance.set("Language", languageCode);

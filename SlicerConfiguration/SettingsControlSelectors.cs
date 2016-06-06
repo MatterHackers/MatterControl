@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private Button editButton;
 		private NamedSettingsLayers layerType;
-		private StyledDropDownList dropDownList;
+		private DropDownList dropDownList;
 
 		private int extruderIndex; //For multiple materials
 
@@ -195,9 +195,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 		}
 
-		private StyledDropDownList CreateDropdown()
+		private DropDownList CreateDropdown()
 		{
-			var dropDownList = new StyledDropDownList("- default -", maxHeight: 300, useLeftIcons: true)
+			var dropDownList = new DropDownList("- default -", maxHeight: 300, useLeftIcons: true)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				MenuItemsPadding = new BorderDouble(10, 4, 10, 6),
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class SliceEngineSelector : StyledDropDownList
+	public class SliceEngineSelector : DropDownList
 	{
 		public SliceEngineSelector(string label)
 			: base(label)

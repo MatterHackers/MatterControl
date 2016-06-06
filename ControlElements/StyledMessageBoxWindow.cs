@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl
 		public StyledMessageBox(Action<bool> callback, String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string no)
 			: base(width, height)
 		{
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				extraTextScaling = 1.33333;
 			}
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 			unwrappedMessage = message;
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
-			if (ActiveTheme.Instance.IsTouchScreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				topToBottom.Padding = new BorderDouble(12, 12, 13, 8);
 			}
