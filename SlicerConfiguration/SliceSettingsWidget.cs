@@ -380,8 +380,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
-								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, copyIndex);
-								topToBottomSettings.AddChild(controlsForThisSetting);
+								bool addControl;
+								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, copyIndex, out addControl);
+								if (addControl)
+								{
+									topToBottomSettings.AddChild(controlsForThisSetting);
+								}
 
 								GuiWidget helpBox = AddInHelpText(topToBottomSettings, settingInfo);
 								if (!sliceSettingsDetailControl.ShowingHelp)
@@ -537,8 +541,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						OrganizerSettingsData settingInfo = new OrganizerSettingsData(keyValue.Key, keyValue.Key, OrganizerSettingsData.DataEditTypes.STRING);
 						if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingInfo.SlicerConfigName))
 						{
-							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, 0);
-							topToBottomSettings.AddChild(controlsForThisSetting);
+							bool addControl;
+							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, 0, out addControl);
+							if (addControl)
+							{
+								topToBottomSettings.AddChild(controlsForThisSetting);
+							}
 							count++;
 						}
 					}
@@ -628,8 +636,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return ActiveSliceSettings.Instance.GetActiveValue(slicerConfigName, layerCascade);
 		}
 
-		private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, int extruderIndex)
+		private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, int extruderIndex, out bool addControl)
 		{
+			addControl = true;
 			GuiWidget container = new GuiWidget();
 
 			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
@@ -1110,6 +1119,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case OrganizerSettingsData.DataEditTypes.COM_PORT:
 						{
+#if __ANDROID__
+							addControl = false;
+#endif
 							// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "MatterControl.ComPort" settings name to
 							// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to "MatterControl.<machine>.ComPort"
