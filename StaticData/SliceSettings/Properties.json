@@ -815,8 +815,8 @@
   },
   {
     "SlicerConfigName": "retract_restart_extra_toolchange",
-    "PresentationName": "Length",
-    "HelpText": "The amount the filament will be retracted when changing to a different extruder.",
+    "PresentationName": "Extra Length After Tool Change",
+    "HelpText": "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm zero to disable"
   },
