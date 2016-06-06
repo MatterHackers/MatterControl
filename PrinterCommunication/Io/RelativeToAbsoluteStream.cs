@@ -41,6 +41,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         protected PrinterMove lastDestination = new PrinterMove();
         public PrinterMove LastDestination { get { return lastDestination; } }
 
+		PrinterMove accumulatedRelativeMoves;
+
         bool absoluteMode = true;
 
         public RelativeToAbsoluteStream(GCodeStream internalStream)
@@ -52,6 +54,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         {
 			lastDestination = position;
 			internalStream.SetPrinterPosition(lastDestination);
+			accumulatedRelativeMoves = new PrinterMove();
 		}
 
 		public string ProcessLine(string lineToProcess)
@@ -80,9 +83,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 				else
 				{
-					currentDestination = GetPosition(lineToProcess, PrinterMove.Zero);
-					double feedRate = currentDestination.feedRate;
-					currentDestination += lastDestination;
+					PrinterMove relativeMove = GetPosition(lineToProcess, PrinterMove.Zero);
+					double feedRate = relativeMove.feedRate;
+					accumulatedRelativeMoves += relativeMove;
+
+					currentDestination = lastDestination + accumulatedRelativeMoves;
+
 					currentDestination.feedRate = feedRate;
 
 					lineToProcess = CreateMovementLine(currentDestination, lastDestination);
