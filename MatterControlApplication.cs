@@ -437,8 +437,8 @@ namespace MatterHackers.MatterControl
 		{
 			// try and open our window matching the last size that we had for it.
 			string windowSize = ApplicationSettings.Instance.get("WindowSize");
-			int width = 600;
-			int height = 600;
+			int width = 601;
+			int height = 601;
 			if (windowSize != null && windowSize != "")
 			{
 				string[] sizes = windowSize.Split(',');
