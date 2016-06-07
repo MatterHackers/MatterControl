@@ -337,7 +337,7 @@ namespace MatterControl.Tests.MatterControl
 				string supportMaterialInterfaceExtruder = layer.Settings.ValueOrDefault("support_material_interface_extruder");
 				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder) && printer.Oem != "Esagono")
 				{
-					Assert.AreEqual("1", supportMaterialInterfaceExtruder, "[support_material_interface_extruder] must be assigned to extruder 1");
+					Assert.AreEqual("1", supportMaterialInterfaceExtruder, "[support_material_interface_extruder] must be assigned to extruder 1: " + layer.RelativePath);
 				}
 			});
 		}
