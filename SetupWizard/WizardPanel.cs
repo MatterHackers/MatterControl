@@ -34,8 +34,6 @@ namespace MatterHackers.MatterControl
 
 		protected GuiWidget mainContainer;
 
-		private event EventHandler unregisterEvents;
-
 		public WizardPanel(WizardWindow wizardWindow, string unlocalizedTextForCancelButton = "Cancel", TextImageButtonFactory textButtonFactory = null)
 			: base()
 		{
@@ -78,8 +76,6 @@ namespace MatterHackers.MatterControl
 
 			this.AnchorAll();
 
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-
 			cancelButton = textImageButtonFactory.Generate(unlocalizedTextForCancelButton.Localize());
 			cancelButton.Name = unlocalizedTextForCancelButton;
 			cancelButton.Click += (s, e) =>
@@ -87,34 +83,43 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(() => this.wizardWindow?.Close());
 			};
 
-			//Create the main container
-			mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainer.AnchorAll();
-			mainContainer.Padding = new BorderDouble(12, 12, 12, 0);
-			mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			//Create the header row for the widget
-			headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-			headerRow.Padding = new BorderDouble(0, 12);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			// Create the main container
+			mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				headerLabel = new TextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor);
-				headerLabel.AutoExpandBoundsToText = true;
-				headerRow.AddChild(headerLabel);
-			}
+				Padding = new BorderDouble(12, 12, 12, 0),
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+			};
+			mainContainer.AnchorAll();
 
-			//Create the main control container
-			contentRow = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			contentRow.Padding = new BorderDouble(10);
-			contentRow.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			contentRow.HAnchor = HAnchor.ParentLeftRight;
-			contentRow.VAnchor = VAnchor.ParentBottomTop;
+			// Create the header row for the widget
+			headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				Margin = new BorderDouble(0, 3, 0, 0),
+				Padding = new BorderDouble(0, 12),
+				HAnchor = HAnchor.ParentLeftRight
+			};
 
-			//Create the footer (button) container
-			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			footerRow.HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight;
-			footerRow.Margin = new BorderDouble(0, 6);
+			headerLabel = new TextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
+			{
+				AutoExpandBoundsToText = true
+			};
+			headerRow.AddChild(headerLabel);
+
+			// Create the main control container
+			contentRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = new BorderDouble(10),
+				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop
+			};
+
+			// Create the footer (button) container
+			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight,
+				Margin = new BorderDouble(0, 6)
+			};
 
 			mainContainer.AddChild(headerRow);
 			mainContainer.AddChild(contentRow);
@@ -132,17 +137,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.AddChild(mainContainer);
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.Invalidate();
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
 		}
 	}
 }
