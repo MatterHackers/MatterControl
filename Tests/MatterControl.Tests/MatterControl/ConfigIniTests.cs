@@ -53,7 +53,11 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, layer) =>
 			{
-
+				// Bed size is not required in slice files
+				if (layer.RelativePath.IndexOf(".slice", StringComparison.OrdinalIgnoreCase) != -1)
+				{
+					return;
+				}
 
 				string bedSize = layer.Settings.ValueOrDefault("bed_size");
 
@@ -72,6 +76,12 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, layer) =>
 			{
+				// Printer center is not required in slice files
+				if (layer.RelativePath.IndexOf(".slice", StringComparison.OrdinalIgnoreCase) != -1)
+				{
+					return;
+				}
+
 				string printCenter = layer.Settings.ValueOrDefault("print_center");
 
 				// Must exist in all configs
