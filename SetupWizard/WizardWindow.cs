@@ -2,6 +2,7 @@
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -219,7 +220,7 @@ namespace MatterHackers.MatterControl
 
 		internal void ChangeToSetupBaudOrComPortOne()
 		{
-			if (string.IsNullOrEmpty(activePrinter.BaudRate))
+			if (string.IsNullOrEmpty(PrinterConnectionAndCommunication.Instance?.ActivePrinter?.BaudRate()))
 			{
 				ChangeToSetupBaudRate();
 			}

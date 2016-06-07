@@ -4924,3 +4924,15 @@ Translated:The Fill Density must be between 0 and 1.
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
 
+English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
+Translated:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
+
+English:Extra Length After Tool Change
+Translated:Extra Length After Tool Change
+
+English:mm zero to disable
+Translated:mm zero to disable
+
+English:Connection Troubleshooting
+Translated:Connection Troubleshooting
+
