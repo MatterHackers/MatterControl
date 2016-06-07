@@ -83,8 +83,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				bool canContinue = this.OnSave();
 				if (canContinue)
 				{
-					wizardWindow.ChangeToSetupBaudRate();
-					//UiThread.RunOnIdle(connectionWizard.Close);
+#if __ANDROID__
+					wizardWindow.ChangeToConnectForm();
+#else
+					wizardWindow.ChangeToInstallDriver();
+#endif
 				}
 			};
 

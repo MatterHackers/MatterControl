@@ -114,9 +114,9 @@ namespace MatterHackers.MatterControl
 	{
 		static HashSet<GuiWidget> runingAttentons = new HashSet<GuiWidget>();
 		private double animationDelay = 1 / 20.0;
-		private int cycles = 3;
+		private int cycles = 1;
 		private double lightnessChange = 1;
-		private double pulseTime = .8;
+		private double pulseTime = 1.38;
 		private RGBA_Bytes startColor;
 		private Stopwatch timeSinceStart = null;
 		private GuiWidget widgetToHighlight;
