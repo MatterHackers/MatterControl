@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private BoundDropList printerManufacturerSelector;
 		private BoundDropList printerModelSelector;
 
-		public SetupStepMakeModelName(WizardWindow windowController) : base(windowController)
+		public SetupStepMakeModelName()
 		{
 			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
 			{
@@ -84,9 +84,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				if (canContinue)
 				{
 #if __ANDROID__
-					wizardWindow.ChangeToConnectForm();
+					WizardWindow.ChangeToConnectForm();
 #else
-					wizardWindow.ChangeToInstallDriver();
+					WizardWindow.ChangeToInstallDriver();
 #endif
 				}
 			};

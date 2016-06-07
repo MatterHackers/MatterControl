@@ -12,8 +12,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private PrinterInfo activePrinter;
 
-		public ConnectionWizardPanel(WizardWindow wizard) 
-			: base(wizard, "Cancel")
+		public ConnectionWizardPanel() : base("Cancel")
 		{
 			cancelButton.Click += (s, e) => PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 		}
@@ -51,7 +50,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				settings.SetName(ActivePrinter.Name);
 			});
 
-			UiThread.RunOnIdle(wizardWindow.Close);
+			UiThread.RunOnIdle(WizardWindow.Close);
 		}
 	}
 }

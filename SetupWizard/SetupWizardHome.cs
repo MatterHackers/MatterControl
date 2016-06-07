@@ -17,22 +17,17 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
-{   
 	//Normally step one of the setup process
 	public class SetupWizardHome : WizardPanel
-	{        
-		TextImageButtonFactory setupButtonFactory = new TextImageButtonFactory();
-
-		public SetupWizardHome(WizardWindow windowController)
-			: base(windowController, unlocalizedTextForCancelButton: "Done")
+	{
+		public SetupWizardHome()
+			: base(unlocalizedTextForCancelButton: "Done")
 		{
 			headerLabel.Text = "Setup Options".Localize();
-			SetButtonAttributes();
 
-			contentRow.AddChild(new SetupPrinterView(this.wizardWindow));
-			contentRow.AddChild(new SetupAccountView(this.wizardWindow));
-
-			contentRow.AddChild(new EnterCodesView(this.wizardWindow));
+			contentRow.AddChild(new SetupPrinterView() { WizardWindow = this.WizardWindow });
+			contentRow.AddChild(new SetupAccountView() { WizardWindow = this.WizardWindow });
+			contentRow.AddChild(new EnterCodesView() { WizardWindow = this.WizardWindow });
 
 			GuiWidget hSpacer = new GuiWidget();
 			hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -43,18 +38,6 @@ namespace MatterHackers.MatterControl
 
 			cancelButton.Text = "Back".Localize();
 		}
-
-		private void SetButtonAttributes()
-		{   
-			setupButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			setupButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			setupButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			setupButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			setupButtonFactory.normalFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			setupButtonFactory.fontSize = 16;
-			setupButtonFactory.FixedWidth = 420;
-			setupButtonFactory.ImageSpacing = 20;
-		}
 	}
 
 	public class EnterCodesView : SetupViewBase
@@ -62,71 +45,61 @@ namespace MatterHackers.MatterControl
 		public static EventHandler RedeemDesignCode;
 		public static EventHandler EnterShareCode;
 
-		public EnterCodesView(WizardWindow windowController)
-			: base("", windowController)
+		public EnterCodesView() : base("")
 		{
-			FlowLayoutWidget buttonContainer = new FlowLayoutWidget();
-			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
-			buttonContainer.Margin = new BorderDouble(0, 14);
-
+			FlowLayoutWidget buttonContainer = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(0, 14)
+			};
 			mainContainer.AddChild(buttonContainer);
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				// the redeem design code button
+				Button redeemPurchaseButton = textImageButtonFactory.Generate("Redeem Purchase".Localize());
+				redeemPurchaseButton.Enabled = true; // The library selector (the first library selected) is protected so we can't add to it.
+				redeemPurchaseButton.Name = "Redeem Code Button";
+				redeemPurchaseButton.Margin = new BorderDouble(0, 0, 10, 0);
+				redeemPurchaseButton.Click += (sender, e) =>
 				{
-					Button redeemPurchaseButton = textImageButtonFactory.Generate("Redeem Purchase".Localize());
-					redeemPurchaseButton.Enabled = true; // The library selector (the first library selected) is protected so we can't add to it.
-					redeemPurchaseButton.Name = "Redeem Code Button";
-					buttonContainer.AddChild(redeemPurchaseButton);
-					redeemPurchaseButton.Margin = new BorderDouble(0, 0, 10, 0);
-					redeemPurchaseButton.Click += (sender, e) =>
-					{
-						if (RedeemDesignCode != null)
-						{
-							RedeemDesignCode(this, null);
-						}
-					};
-				}
+					RedeemDesignCode?.Invoke(this, null);
+				};
+				buttonContainer.AddChild(redeemPurchaseButton);
 
 				// the redeem a share code button
+				Button redeemShareButton = textImageButtonFactory.Generate("Enter Share Code".Localize());
+				redeemShareButton.Enabled = true; // The library selector (the first library selected) is protected so we can't add to it.
+				redeemShareButton.Name = "Enter Share Code";
+				redeemShareButton.Margin = new BorderDouble(0, 0, 3, 0);
+				redeemShareButton.Click += (sender, e) =>
 				{
-					Button redeemShareButton = textImageButtonFactory.Generate("Enter Share Code".Localize());
-					redeemShareButton.Enabled = true; // The library selector (the first library selected) is protected so we can't add to it.
-					redeemShareButton.Name = "Enter Share Code";
-					buttonContainer.AddChild(redeemShareButton);
-					redeemShareButton.Margin = new BorderDouble(0, 0, 3, 0);
-					redeemShareButton.Click += (sender, e) =>
-					{
-						if (EnterShareCode != null)
-						{
-							EnterShareCode(this, null);
-						}
-					};
-				}
+					EnterShareCode?.Invoke(this, null);
+				};
+
+				buttonContainer.AddChild(redeemShareButton);
 			}
 		}
 	}
 
 	public class SetupPrinterView : SetupViewBase
 	{
-		Button disconnectButton;
+		private Button disconnectButton;
+		private TextWidget connectionStatus;
+		private event EventHandler unregisterEvents;
 
-		TextWidget connectionStatus;
-
-		event EventHandler unregisterEvents;
-
-		public SetupPrinterView(WizardWindow windowController)
-			: base("Printer Profile", windowController)
+		public SetupPrinterView()
+			: base("Printer Profile")
 		{
 			var buttonContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = new BorderDouble (0, 14)
 			};
+			mainContainer.AddChild(buttonContainer);
 
 			var printerSelector = new PrinterSelector();
-			printerSelector.AddPrinter += (s, e) => this.windowController.ChangeToSetupPrinterForm();
+			printerSelector.AddPrinter += (s, e) => WizardWindow.ChangeToSetupPrinterForm();
 			FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -144,11 +117,9 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				windowController.ChangeToHome();
+				WizardWindow.ChangeToHome();
 			};
 			buttonContainer.AddChild(disconnectButton);
-
-			mainContainer.AddChild(buttonContainer);
 
 			connectionStatus = new TextWidget("Status:", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
@@ -178,13 +149,12 @@ namespace MatterHackers.MatterControl
 
 	public class SetupAccountView : SetupViewBase
 	{
-		Button signInButton;
-		Button signOutButton;
-		event EventHandler unregisterEvents;
-		TextWidget statusMessage;
+		private Button signInButton;
+		private Button signOutButton;
+		private TextWidget statusMessage;
 
-		public SetupAccountView(WizardWindow windowController)
-			: base("My Account", windowController)
+		public SetupAccountView()
+			: base("My Account")
 		{
 			bool signedIn = true;
 			string username = ApplicationController.Instance.GetSessionUsername();
@@ -195,7 +165,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			mainContainer.AddChild(new TextWidget(username, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			//mainContainer.AddChild(new TextWidget(statusDescription, pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget();
 			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -213,23 +182,13 @@ namespace MatterHackers.MatterControl
 			signOutButton.VAnchor = VAnchor.ParentCenter;
 			signOutButton.Click += new EventHandler(signOutButton_Click);
 			signOutButton.Visible = signedIn;		
-
 			buttonContainer.AddChild(signOutButton);
 
 			statusMessage = new TextWidget("Please wait...", pointSize: 12, textColor: ActiveTheme.Instance.SecondaryAccentColor);
 			statusMessage.Visible = false;
-
 			buttonContainer.AddChild(statusMessage);
 
 			mainContainer.AddChild(buttonContainer);
-
-			ApplicationController.Instance.DoneReloadingAll.RegisterEvent(onDoneReloading, ref unregisterEvents);
-
-		}
-
-		void onDoneReloading(object sender, EventArgs e)
-		{
-			this.windowController.ChangeToHome();
 		}
 
 		void signInButton_Click(object sender, EventArgs e)
@@ -258,44 +217,37 @@ namespace MatterHackers.MatterControl
 	public class SetupViewBase : AltGroupBox
 	{
 		protected readonly int TallButtonHeight = 28;
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		protected RGBA_Bytes separatorLineColor;
+		protected TextImageButtonFactory textImageButtonFactory;
 		protected FlowLayoutWidget mainContainer;
-		protected WizardWindow windowController;
 
-		public SetupViewBase(string title,WizardWindow windowController)
+		internal WizardWindow WizardWindow { get; set; }
+
+		public SetupViewBase(string title)
 			: base(title != "" ? new TextWidget(title, pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor) : null)
 		{
-			this.windowController = windowController;
+			this.Margin = new BorderDouble(2, 10, 2, 0);
 
-			SetDisplayAttributes();
-			mainContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-			mainContainer.HAnchor = HAnchor.ParentLeftRight;
-			mainContainer.Margin = new BorderDouble(6,0,0,6);
+			textImageButtonFactory = new TextImageButtonFactory()
+			{
+				normalFillColor = RGBA_Bytes.Transparent,
+				disabledFillColor = RGBA_Bytes.White,
+				FixedHeight = TallButtonHeight,
+				fontSize = 16,
+				borderWidth = 1,
+				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+				hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+				disabledTextColor = RGBA_Bytes.DarkGray,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				normalTextColor = ActiveTheme.Instance.SecondaryTextColor,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			};
+
+			mainContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(6, 0, 0, 6)
+			};
 			AddChild(mainContainer);
 		}
-
-		private void SetDisplayAttributes()
-		{
-			//this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
-			this.Margin = new BorderDouble(2, 10, 2, 0);
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
-
-			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-			this.textImageButtonFactory.fontSize = 16;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.linkButtonFactory.fontSize = 11;
-		}       
 	}
 }

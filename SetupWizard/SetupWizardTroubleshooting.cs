@@ -35,21 +35,17 @@ namespace MatterHackers.MatterControl
 		}
 #endif
 
-		public SetupWizardTroubleshooting(WizardWindow windowController)
-			: base(windowController)
+		public SetupWizardTroubleshooting()
 		{
 			RefreshStatus();
 
 			//Construct buttons
-			cancelButton = whiteImageButtonFactory.Generate(LocalizedString.Get("Cancel"), centerText:true);
-			cancelButton.Click += (sender, e) =>
-			{
-				this.wizardWindow.ChangeToPanel(new SetupWizardConnect(windowController));
-			};
+			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
+			cancelButton.Click += (s, e) => this.WizardWindow.ChangeToConnectForm();
 			
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
-			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.wizardWindow.Close);
+			nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
 			nextButton.Visible = false;
 
 			//Add buttons to buttonContainer

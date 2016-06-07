@@ -33,8 +33,7 @@ namespace MatterHackers.MatterControl
 		FlowLayoutWidget retryButtonContainer;
 		FlowLayoutWidget connectButtonContainer;
 
-		public SetupWizardConnect(WizardWindow windowController)
-			: base(windowController)
+		public SetupWizardConnect()
 		{
 			string printerNameLabelTxt = LocalizedString.Get("Connect Your Device");
 			string printerNameLabelTxtFull = string.Format ("{0}:", printerNameLabelTxt);
@@ -125,7 +124,7 @@ namespace MatterHackers.MatterControl
 
 		void TroubleshootButton_Click(object sender, EventArgs mouseEvent)
 		{
-			wizardWindow.ChangeToTroubleshooting();
+			WizardWindow.ChangeToTroubleshooting();
 		}
 
 		void NextButton_Click(object sender, EventArgs mouseEvent)
@@ -133,7 +132,7 @@ namespace MatterHackers.MatterControl
 			this.generalError.Text = "Please wait...";
 			this.generalError.Visible = true;
 			nextButton.Visible = false;
-			UiThread.RunOnIdle(this.wizardWindow.Close);
+			UiThread.RunOnIdle(this.WizardWindow.Close);
 		}
 
 		private void communicationStateChanged(object sender, EventArgs args)

@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
+﻿
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -30,15 +21,12 @@ namespace MatterHackers.MatterControl
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
 
-		protected WizardWindow wizardWindow;
+		internal WizardWindow WizardWindow;
 
 		protected GuiWidget mainContainer;
 
-		public WizardPanel(WizardWindow wizardWindow, string unlocalizedTextForCancelButton = "Cancel", TextImageButtonFactory textButtonFactory = null)
-			: base()
+		public WizardPanel(string unlocalizedTextForCancelButton = "Cancel", TextImageButtonFactory textButtonFactory = null)
 		{
-			this.wizardWindow = wizardWindow;
-
 			whiteImageButtonFactory = new TextImageButtonFactory()
 			{
 				normalFillColor = RGBA_Bytes.White,
@@ -80,7 +68,7 @@ namespace MatterHackers.MatterControl
 			cancelButton.Name = unlocalizedTextForCancelButton;
 			cancelButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() => this.wizardWindow?.Close());
+				UiThread.RunOnIdle(() => WizardWindow?.Close());
 			};
 
 			// Create the main container
