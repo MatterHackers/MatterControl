@@ -23,12 +23,6 @@ namespace MatterHackers.MatterControl
 	{        
 		TextImageButtonFactory setupButtonFactory = new TextImageButtonFactory();
 
-		Button addProfileButton;
-		Button editProfilesButton;
-		Button setupWifiButton;
-		Button troubleshootButton;
-		Button accountButton;
-
 		public SetupWizardHome(WizardWindow windowController)
 			: base(windowController, unlocalizedTextForCancelButton: "Done")
 		{
@@ -133,7 +127,16 @@ namespace MatterHackers.MatterControl
 
 			var printerSelector = new PrinterSelector();
 			printerSelector.AddPrinter += (s, e) => this.windowController.ChangeToSetupPrinterForm();
-			buttonContainer.AddChild(printerSelector);
+			FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			printerSelectorAndEditButton.AddChild(printerSelector);
+			Button editButton = TextImageButtonFactory.GetThemedEditButton();
+			editButton.VAnchor = VAnchor.ParentCenter;
+			editButton.Click += UiNavigation.GoToEditPrinter_Click;
+			printerSelectorAndEditButton.AddChild(editButton);
+			buttonContainer.AddChild(printerSelectorAndEditButton);
 
 			disconnectButton = textImageButtonFactory.Generate("Disconnect");
 			disconnectButton.Margin = new BorderDouble(left: 12);

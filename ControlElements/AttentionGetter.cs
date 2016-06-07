@@ -30,6 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -40,41 +43,65 @@ namespace MatterHackers.MatterControl
 	{
 		static bool runingNavigation;
 
+		public static void GoToEditPrinter_Click(object sender, EventArgs e)
+		{
+			Button editButton = sender as Button;
+			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
+			if (editButton != null)
+			{
+				editButton.Closed += (s, e2) =>
+				{
+					editButton.Click -= GoToEditPrinter_Click;
+				};
+
+				UiNavigation.GoToPrinterSettings("MatterControl.BaudRate Edit Field,MatterControl.AutoConnect Edit Field,MatterControl.ComPort Edit Field");
+			}
+		}
+
 		public static void GoToPrinterSettings(string widgetNameToHighlight)
 		{
-			if (!runingNavigation)
+			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null)
 			{
-				runingNavigation = true;
-				Task.Run(() =>
+				if (!runingNavigation)
 				{
-					AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-					testRunner.TimeToMoveMouse = 0;
-					testRunner.UpDelaySeconds = 0;
-
-					if (testRunner.NameExists("SettingsAndControls"))
+					runingNavigation = true;
+					Task.Run(() =>
 					{
-						testRunner.ClickByName("SettingsAndControls", 5);
-						testRunner.Wait(.2);
-					}
-					testRunner.ClickByName("Slice Settings Tab", .1);
-					testRunner.ClickByName("Printer Tab", .2);
-					testRunner.ClickByName("Connection Tab", .1);
+						AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
+						testRunner.TimeToMoveMouse = 0;
+						testRunner.UpDelaySeconds = 0;
 
-					if (widgetNameToHighlight.Contains(","))
-					{
-						foreach (string item in widgetNameToHighlight.Split(','))
+						if (testRunner.NameExists("Done"))
 						{
-							HighlightWidget(testRunner, item);
+							testRunner.ClickByName("Done");
+							testRunner.Wait(.2);
 						}
-					}
-					else
-					{
-						HighlightWidget(testRunner, widgetNameToHighlight);
-					}
 
-					testRunner.Dispose();
-					runingNavigation = false;
-				});
+						if (testRunner.NameExists("SettingsAndControls"))
+						{
+							testRunner.ClickByName("SettingsAndControls", 5);
+							testRunner.Wait(.2);
+						}
+						testRunner.ClickByName("Slice Settings Tab", .1);
+						testRunner.ClickByName("Printer Tab", .2);
+						testRunner.ClickByName("Connection Tab", .1);
+
+						if (widgetNameToHighlight.Contains(","))
+						{
+							foreach (string item in widgetNameToHighlight.Split(','))
+							{
+								HighlightWidget(testRunner, item);
+							}
+						}
+						else
+						{
+							HighlightWidget(testRunner, widgetNameToHighlight);
+						}
+
+						testRunner.Dispose();
+						runingNavigation = false;
+					});
+				}
 			}
 		}
 

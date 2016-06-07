@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print.".Localize();
 		private Button disconnectPrinterButton;
 		private Button resetConnectionButton;
-		private PrinterSelector selectActivePrinterButton;
+		private PrinterSelector printerSelector;
 
 		private event EventHandler unregisterEvents;
 		static EventHandler staticUnregisterEvents;
@@ -110,19 +110,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
 			disconnectPrinterButton.Cursor = Cursors.Hand;
 
-			selectActivePrinterButton = new PrinterSelector();
-			selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
-			selectActivePrinterButton.Cursor = Cursors.Hand;
-			selectActivePrinterButton.AddPrinter += (s, e) => WizardWindow.Show();
-			if (ApplicationController.Instance.WidescreenMode)
-			{
-				selectActivePrinterButton.Margin = new BorderDouble(0, 6, 0, 3);
-			}
-			else
-			{
-				selectActivePrinterButton.Margin = new BorderDouble(0, 6, 6, 3);
-			}
-
 			string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
 			resetConnectionButton = actionBarButtonFactory.Generate(resetConnectionText, "e_stop4.png");
 			if (ApplicationController.Instance.WidescreenMode)
@@ -146,30 +133,27 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 			};
-			printerSelectorAndEditButton.AddChild(selectActivePrinterButton);
+			printerSelector = new PrinterSelector();
+			printerSelector.HAnchor = HAnchor.ParentLeftRight;
+			printerSelector.Cursor = Cursors.Hand;
+			printerSelector.AddPrinter += (s, e) => WizardWindow.Show();
+			if (ApplicationController.Instance.WidescreenMode)
+			{
+				printerSelector.Margin = new BorderDouble(0, 6, 0, 3);
+			}
+			else
+			{
+				printerSelector.Margin = new BorderDouble(0, 6, 6, 3);
+			}
+			printerSelectorAndEditButton.AddChild(printerSelector);
 			Button editButton = TextImageButtonFactory.GetThemedEditButton();
 			editButton.VAnchor = VAnchor.ParentCenter;
-			editButton.Click += EditButton_Click;
+			editButton.Click += UiNavigation.GoToEditPrinter_Click;
 			printerSelectorAndEditButton.AddChild(editButton);
 			this.AddChild(printerSelectorAndEditButton);
 
 			this.AddChild(resetConnectionButton);
 			//this.AddChild(CreateOptionsMenu());
-		}
-
-		private void EditButton_Click(object sender, EventArgs e)
-		{
-			Button editButton = sender as Button;
-			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
-			if (editButton != null)
-			{
-				editButton.Closed += (s, e2) =>
-				{
-					editButton.Click -= EditButton_Click;
-				};
-
-				UiNavigation.GoToPrinterSettings("MatterControl.BaudRate Edit Field,MatterControl.AutoConnect Edit Field,MatterControl.ComPort Edit Field");
-			}
 		}
 
 		protected override void AddHandlers()
@@ -224,7 +208,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				PrinterConnectionAndCommunication.Instance.Stop();
 				PrinterConnectionAndCommunication.Instance.Disable();
-				selectActivePrinterButton.Invalidate();
+				printerSelector.Invalidate();
 			}
 		}
 
@@ -258,7 +242,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			else
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				selectActivePrinterButton.Invalidate();
+				printerSelector.Invalidate();
 			}
 		}
 
