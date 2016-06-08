@@ -28,6 +28,9 @@ namespace MatterHackers.MatterControl
 
 		private CriteriaRow connectToPrinterRow;
 
+		// Used in Android
+		private System.Threading.Timer checkForPermissionTimer;
+
 #if __ANDROID__
 		private static UsbManager usbManager
 		{
@@ -41,7 +44,7 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
-			cancelButton.Click += (s, e) => this.WizardWindow.ChangeToConnectForm();
+			cancelButton.Click += (s, e) => this.WizardWindow.ChangeToPanel<SetupWizardConnect>();
 			
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Continue".Localize());
@@ -68,20 +71,14 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
 			if(checkForPermissionTimer != null)
 			{
 				checkForPermissionTimer.Dispose();
 			}
 
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
-
-		System.Threading.Timer checkForPermissionTimer;
 
 		private void RefreshStatus()
 		{

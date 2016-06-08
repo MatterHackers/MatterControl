@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			nextButton.Name = "Connection Wizard Skip Sign In Button";
 			nextButton.Click += (sender, e) =>
 			{
-				WizardWindow.ChangeToAddPrinter();
+				WizardWindow.ChangeToPanel<SetupStepMakeModelName>();
 			};
 
 			var signInButton = textImageButtonFactory.Generate("Sign In");

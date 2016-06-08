@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl
 
 		void TroubleshootButton_Click(object sender, EventArgs mouseEvent)
 		{
-			WizardWindow.ChangeToTroubleshooting();
+			WizardWindow.ChangeToPanel<SetupWizardTroubleshooting>();
 		}
 
 		void NextButton_Click(object sender, EventArgs mouseEvent)

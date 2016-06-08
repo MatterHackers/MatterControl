@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate("Manual Configuration".Localize());
 			manualLink.Margin = new BorderDouble(0, 5);
-			manualLink.Click += (s, e) => WizardWindow.ChangeToSetupComPortManual();
+			manualLink.Click += (s, e) => WizardWindow.ChangeToPanel<SetupStepComPortManual>();
 
 			printerErrorMessage = new TextWidget("", 0, 0, 10);
 			printerErrorMessage.AutoExpandBoundsToText = true;

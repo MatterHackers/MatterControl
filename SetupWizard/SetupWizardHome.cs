@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				WizardWindow.ChangeToHome();
+				WizardWindow.ChangeToPanel<SetupWizardHome>();
 			};
 			buttonContainer.AddChild(disconnectButton);
 
