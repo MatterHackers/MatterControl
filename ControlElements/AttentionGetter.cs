@@ -105,27 +105,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static void GoToPrintLevelSettings()
-		{
-			Task.Run(() =>
-			{
-				AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-				testRunner.TimeToMoveMouse = 0;
-				testRunner.UpDelaySeconds = 0;
-
-				if (testRunner.NameExists("SettingsAndControls"))
-				{
-					testRunner.ClickByName("SettingsAndControls", 5);
-					testRunner.Wait(.2);
-				}
-				testRunner.ClickByName("Options Tab", .2);
-
-				HighlightWidget(testRunner, "AutoLevelRowItem");
-
-				testRunner.Dispose();
-			});
-		}
-
 		private static void HighlightWidget(AutomationRunner testRunner, string widgetNameToHighlight)
 		{
 			SystemWindow containingWindow;

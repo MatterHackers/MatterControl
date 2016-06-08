@@ -254,6 +254,9 @@ namespace MatterHackers.MatterControl
 						{
 							globalInstance.MainView = new DesktopView();
 						}
+
+						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(null, null), ref globalInstance.unregisterEvents);
+
 					}
 				}
 				return globalInstance;
