@@ -4936,3 +4936,24 @@ Translated:mm zero to disable
 English:Connection Troubleshooting
 Translated:Connection Troubleshooting
 
+English:Generate Extra Perimeters When Needed:
+Translated:Generate Extra Perimeters When Needed:
+
+English:mm2
+Translated:mm2
+
+English:Only Retract When  Crossing Perimeters
+Translated:Only Retract When  Crossing Perimeters
+
+English:mm/s�
+Translated:mm/s�
+
+English:mm or % leave 0 for auto
+Translated:mm or % leave 0 for auto
+
+English:Enable Fan If Layer Print Time Is Below
+Translated:Enable Fan If Layer Print Time Is Below
+
+English:Hz
+Translated:Hz
+
