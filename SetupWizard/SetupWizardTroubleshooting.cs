@@ -20,7 +20,7 @@ using Android.Content;
 
 namespace MatterHackers.MatterControl
 {   
-	public class SetupWizardTroubleshooting : WizardPanel
+	public class SetupWizardTroubleshooting : WizardPage
 	{
 		private Button nextButton;
 
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
-			cancelButton.Click += (s, e) => this.WizardWindow.ChangeToPanel<AndroidConnectDevicePanel>();
+			cancelButton.Click += (s, e) => this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
 			
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Continue".Localize());

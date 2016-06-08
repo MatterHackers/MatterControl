@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-	public class AndroidConnectDevicePanel : WizardPanel
+	public class AndroidConnectDevicePage : WizardPage
 	{  
 		private event EventHandler unregisterEvents;
 
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget retryButtonContainer;
 		private FlowLayoutWidget connectButtonContainer;
 
-		public AndroidConnectDevicePanel()
+		public AndroidConnectDevicePage()
 		{
 			TextWidget printerNameLabel = new TextWidget("Connect Your Device".Localize() + ":", 0, 0, labelFontSize)
 			{
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			troubleshootButton = whiteImageButtonFactory.Generate("Troubleshoot".Localize(), centerText:true);
-			troubleshootButton.Click += (s, e) => WizardWindow.ChangeToPanel<SetupWizardTroubleshooting>();
+			troubleshootButton.Click += (s, e) => WizardWindow.ChangeToPage<SetupWizardTroubleshooting>();
 
 			retryButtonContainer = new FlowLayoutWidget()
 			{

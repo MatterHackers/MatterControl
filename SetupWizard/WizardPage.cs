@@ -5,7 +5,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
-	public class WizardPanel : GuiWidget
+	public class WizardPage : GuiWidget
 	{
 		protected FlowLayoutWidget headerRow;
 		protected FlowLayoutWidget contentRow;
@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl
 
 		protected GuiWidget mainContainer;
 
-		public WizardPanel(string unlocalizedTextForCancelButton = "Cancel", TextImageButtonFactory textButtonFactory = null)
+		public WizardPage(string unlocalizedTextForCancelButton = "Cancel", TextImageButtonFactory textButtonFactory = null)
 		{
 			whiteImageButtonFactory = new TextImageButtonFactory()
 			{
