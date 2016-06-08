@@ -36,7 +36,8 @@ namespace MatterHackers.MatterControl
 			if (oemName == null)
 			{
 				string[] printerWhiteListStrings = OemSettings.Instance.PrinterWhiteList.ToArray();
-				if (printerWhiteListStrings.Length > 1)
+				if (printerWhiteListStrings.Length == 0
+					|| printerWhiteListStrings.Length > 1)
 				{
 					oemName = "MatterHackers";
 				}
