@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ExtraSettings { get; set; }
 
-		public bool CustomeSaveFunction { get; set; }
+		public bool ShowAsOverride { get; set; } = true;
 
 		public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
 

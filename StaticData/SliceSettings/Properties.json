@@ -1223,7 +1223,7 @@
     "DataEditType": "INT",
     "ExtraSettings": "",
     "QuickMenuSettings": [{"MenuName" : "115200", "Value": "115200"},{"MenuName" : "250000", "Value": "250000"}],
-    "CustomeSaveFunction": true
+    "ShowAsOverride": false
   },
   {
     "SlicerConfigName": "MatterControl.DeletePrinter",
@@ -1231,7 +1231,7 @@
     "HelpText": "Delete the currently selected printer profile.",
     "DataEditType": "DELETE_PRINTER",
     "ExtraSettings": "",
-    "CustomeSaveFunction": true
+    "ShowAsOverride": false
   },
   {
     "SlicerConfigName": "MatterControl.PrinterName",
@@ -1239,7 +1239,7 @@
     "HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
     "DataEditType": "STRING",
     "ExtraSettings": "",
-    "CustomeSaveFunction": true
+    "ShowAsOverride": false
   },
   {
     "SlicerConfigName": "MatterControl.AutoConnect",
@@ -1247,10 +1247,10 @@
     "HelpText": "If set, the printer will automatically attempt to connect when selected.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": "",
-    "CustomeSaveFunction": true
+    "ShowAsOverride": false
   },
   {
-    "CustomeSaveFunction": true,
+    "ShowAsOverride": false,
     "DataEditType": "COM_PORT",
     "ExtraSettings": "",
     "HelpText": "The COM port to use while connecting to this printer.",

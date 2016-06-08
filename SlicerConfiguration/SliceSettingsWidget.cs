@@ -490,7 +490,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (viewFilter == NamedSettingsLayers.Material || viewFilter == NamedSettingsLayers.Quality)
 			{
-				if (settingData.CustomeSaveFunction)
+				if (!settingData.ShowAsOverride)
 				{
 					settingShouldBeShown = false;
 				}
@@ -1409,7 +1409,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			container.VAnchor = VAnchor.FitToChildren;
 
 			Button restoreButton = null;
-			if (!settingData.CustomeSaveFunction)
+			if (settingData.ShowAsOverride)
 			{
 				restoreButton = new Button(new ButtonViewStates(new ImageWidget(restoreNormal), new ImageWidget(restoreHover), new ImageWidget(restorePressed), new ImageWidget(restoreNormal)))
 				{
@@ -1447,7 +1447,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					switch (this.viewFilter)
 					{
 						case NamedSettingsLayers.All:
-							if (!settingData.CustomeSaveFunction)
+							if (settingData.ShowAsOverride)
 							{
 								settingsRow.BackgroundColor = userSettingBackgroundColor;
 							}
