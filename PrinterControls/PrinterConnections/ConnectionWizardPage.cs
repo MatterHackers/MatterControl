@@ -8,11 +8,11 @@ using System;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ConnectionWizardPanel : WizardPanel
+	public class ConnectionWizardPage : WizardPage
 	{
 		private PrinterInfo activePrinter;
 
-		public ConnectionWizardPanel() : base("Cancel")
+		public ConnectionWizardPage() : base("Cancel")
 		{
 			cancelButton.Click += (s, e) => PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 		}

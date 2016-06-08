@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepBaudRate : ConnectionWizardPanel
+	public class SetupStepBaudRate : ConnectionWizardPage
 	{
 		private List<RadioButton> BaudRateButtonsList = new List<RadioButton>();
 		private FlowLayoutWidget printerBaudRateContainer;
