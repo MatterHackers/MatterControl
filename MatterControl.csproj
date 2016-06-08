@@ -246,7 +246,7 @@
     <Compile Include="Library\Provider\LibraryProvider.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
     <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
-    <Compile Include="SetupWizard\SetupWizardConnect.cs" />
+    <Compile Include="SetupWizard\AndroidConnectDevicePanel.cs" />
     <Compile Include="SetupWizard\WizardPanel.cs" />
     <Compile Include="SetupWizard\SetupWizardHome.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
@@ -328,7 +328,6 @@
     <Compile Include="PrinterControls\PrintLevelingPlane.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWindow.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\SetupStepConfigureConnection.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortTwo.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortOne.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepMakeModelName.cs" />
