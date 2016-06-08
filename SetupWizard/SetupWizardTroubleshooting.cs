@@ -28,6 +28,9 @@ namespace MatterHackers.MatterControl
 
 		private CriteriaRow connectToPrinterRow;
 
+		// Used in Android
+		private System.Threading.Timer checkForPermissionTimer;
+
 #if __ANDROID__
 		private static UsbManager usbManager
 		{
@@ -35,21 +38,17 @@ namespace MatterHackers.MatterControl
 		}
 #endif
 
-		public SetupWizardTroubleshooting(WizardWindow windowController)
-			: base(windowController)
+		public SetupWizardTroubleshooting()
 		{
 			RefreshStatus();
 
 			//Construct buttons
-			cancelButton = whiteImageButtonFactory.Generate(LocalizedString.Get("Cancel"), centerText:true);
-			cancelButton.Click += (sender, e) =>
-			{
-				this.wizardWindow.ChangeToPanel(new SetupWizardConnect(windowController));
-			};
+			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
+			cancelButton.Click += (s, e) => this.WizardWindow.ChangeToPanel<SetupWizardConnect>();
 			
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
-			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.wizardWindow.Close);
+			nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
 			nextButton.Visible = false;
 
 			//Add buttons to buttonContainer
@@ -72,20 +71,14 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
 			if(checkForPermissionTimer != null)
 			{
 				checkForPermissionTimer.Dispose();
 			}
 
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
-
-		System.Threading.Timer checkForPermissionTimer;
 
 		private void RefreshStatus()
 		{

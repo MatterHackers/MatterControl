@@ -11,13 +11,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private Button nextButton;
 
-		public SetupStepComPortOne(WizardWindow connectionWizard) : base(connectionWizard)
+		public SetupStepComPortOne()
 		{
 			contentRow.AddChild(createPrinterConnectionMessageContainer());
 			{
 				//Construct buttons
 				nextButton = textImageButtonFactory.Generate("Continue".Localize());
-				nextButton.Click += (s, e) => connectionWizard.ChangeToSetupCompPortTwo();
+				nextButton.Click += (s, e) => WizardWindow.ChangeToPanel<SetupStepComPortTwo>();
 
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Manually Configure Connection"));
 			manualLink.Margin = new BorderDouble(0, 5);
-			manualLink.Click += (s, e) => wizardWindow.ChangeToSetupComPortManual();
+			manualLink.Click += (s, e) => WizardWindow.ChangeToPanel<SetupStepComPortManual>();
 
 			string printerMessageFourText = LocalizedString.Get("or");
 			TextWidget printerMessageFour = new TextWidget(printerMessageFourText, 0, 0, 10);

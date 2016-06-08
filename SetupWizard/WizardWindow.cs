@@ -12,8 +12,9 @@ namespace MatterHackers.MatterControl
 {
 	public class WizardWindow : SystemWindow
 	{
-		private bool editMode = false;
-		protected PrinterInfo activePrinter;
+		public static Func<bool> ShouldShowAuthPanel { get; set; }
+		public static Action ShowAuthDialog;
+		private static WizardWindow wizardWindow = null;
 
 		public WizardWindow(bool openToHome = false)
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
@@ -23,20 +24,15 @@ namespace MatterHackers.MatterControl
 
 			if (openToHome)
 			{
-				ChangeToHome();
+				ChangeToPanel<SetupWizardHome>();
 			}
 			else
 			{
-				//Todo - detect wifi connectivity
+				// Todo - detect wifi connectivity
 				bool WifiDetected = MatterControlApplication.Instance.IsNetworkConnected();
-
 				if (!WifiDetected)
 				{
-					ChangeToWifiForm();
-				}
-				else if (GetPrinterRecordCount() > 0)
-				{
-					ChangeToSetupPrinterForm();
+					ChangeToPanel<SetupWizardWifi>();
 				}
 				else
 				{
@@ -44,48 +40,23 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(8);
 			this.ShowAsSystemWindow();
-			MinimumSize = new Vector2(350 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
+			this.MinimumSize = new Vector2(350 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
 		}
-
-		private static WizardWindow setupWizardWindow = null;
-		private static bool connectionWindowIsOpen = false;
-
-		public static Func<bool> ShouldShowAuthPanel { get; set; }
-
-		public static Action ShowAuthDialog;
 
 		public static void Show(bool openToHome = false)
 		{
-			if (connectionWindowIsOpen == false)
+			if (wizardWindow == null)
 			{
-				setupWizardWindow = new WizardWindow(openToHome);
-				connectionWindowIsOpen = true;
-				setupWizardWindow.Closed += (parentSender, e) =>
-				{
-					connectionWindowIsOpen = false;
-					setupWizardWindow = null;
-				};
+				wizardWindow = new WizardWindow(openToHome);
+				wizardWindow.Closed += (s, e) => wizardWindow = null;
 			}
 			else
 			{
-				if (setupWizardWindow != null)
-				{
-					setupWizardWindow.BringToFront();
-				}
+				wizardWindow.BringToFront();
 			}
-		}
-
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseUp(mouseEvent);
-		}
-
-		private void DoNotChangeWindow()
-		{
-			//Empty function used as default callback for changeToWindowCallback
 		}
 
 		public void ChangeToSetupPrinterForm()
@@ -93,128 +64,23 @@ namespace MatterHackers.MatterControl
 			bool showAuthPanel = ShouldShowAuthPanel?.Invoke() ?? false;
 			if (showAuthPanel)
 			{
-				UiThread.RunOnIdle(ChangeToAuthPanel);
+				ChangeToPanel<ShowAuthPanel>();
 			}
 			else
 			{
-				UiThread.RunOnIdle(ChangeToAddPrinter);
+				ChangeToPanel<SetupStepMakeModelName>();
 			}
-		}
-
-		public void ChangeToConnectForm(bool editMode = false)
-		{
-			this.editMode = editMode;
-			UiThread.RunOnIdle(DoChangeToConnectForm);
-		}
-
-		public void DoChangeToConnectForm()
-		{
-			GuiWidget chooseConnectionWidget = new SetupWizardConnect(this);
-			this.RemoveAllChildren();
-			this.AddChild(chooseConnectionWidget);
-			this.Invalidate();
-		}
-
-		public void ChangeToTroubleshooting()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				GuiWidget wizardForm = new SetupWizardTroubleshooting(this);
-				this.RemoveAllChildren();
-				this.AddChild(wizardForm);
-				this.Invalidate();
-			});
-		}
-
-		public void ChangeToWifiForm(bool editMode = false)
-		{
-			this.editMode = editMode;
-			UiThread.RunOnIdle(DoChangeToWifiForm, null);
-		}
-
-		public void ChangeToPanel(WizardPanel panelToChangeTo)
-		{
-			this.RemoveAllChildren();
-			this.AddChild(panelToChangeTo);
-			this.Invalidate();
-		}
-
-		public void DoChangeToWifiForm(object state)
-		{
-			GuiWidget chooseConnectionWidget = new SetupWizardWifi(this);
-			this.RemoveAllChildren();
-			this.AddChild(chooseConnectionWidget);
-			this.Invalidate();
-		}
-
-		public void ChangeToHome()
-		{
-			UiThread.RunOnIdle(DoChangeToHome, null);
-		}
-
-		public void DoChangeToHome(object state)
-		{
-			GuiWidget homeWidget = new SetupWizardHome(this);
-			this.RemoveAllChildren();
-			this.AddChild(homeWidget);
-			this.Invalidate();
-		}
-
-		private int GetPrinterRecordCount()
-		{
-			return Datastore.Instance.RecordCount("Printer");
-		}
-
-		internal void ChangeToAddPrinter()
-		{
-			this.activePrinter = null;
-			ChangeToStep(new SetupStepMakeModelName(this));
-		}
-
-		private void ChangeToStep(GuiWidget nextStep)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				this.RemoveAllChildren();
-				this.AddChild(nextStep);
-				this.Invalidate();
-			});
-		}
-
-		internal void ChangeToSetupBaudRate()
-		{
-			ChangeToStep(new SetupStepBaudRate(this));
-		}
-
-		internal void ChangeToInstallDriver()
-		{
-			ChangeToStep(new SetupStepInstallDriver(this));
-		}
-
-		internal void ChangeToSetupComPortOne()
-		{
-			ChangeToStep(new SetupStepComPortOne(this));
-		}
-
-		internal void ChangeToSetupCompPortTwo()
-		{
-			ChangeToStep(new SetupStepComPortTwo(this));
-		}
-
-		internal void ChangeToSetupComPortManual()
-		{
-			ChangeToStep(new SetupStepComPortManual(this));
 		}
 
 		internal void ChangeToInstallDriverOrComPortOne()
 		{
 			if (ActiveSliceSettings.Instance.PrinterDrivers().Count > 0)
 			{
-				ChangeToInstallDriver();
+				ChangeToPanel<SetupStepInstallDriver>();
 			}
 			else
 			{
-				ChangeToSetupComPortOne();
+				ChangeToPanel<SetupStepComPortOne>();
 			}
 		}
 
@@ -222,17 +88,22 @@ namespace MatterHackers.MatterControl
 		{
 			if (string.IsNullOrEmpty(PrinterConnectionAndCommunication.Instance?.ActivePrinter?.BaudRate()))
 			{
-				ChangeToSetupBaudRate();
+				ChangeToPanel<SetupStepBaudRate>();
 			}
 			else
 			{
-				ChangeToSetupComPortOne();
+				ChangeToPanel<SetupStepComPortOne>();
 			}
 		}
 
-		internal void ChangeToAuthPanel()
+		internal void ChangeToPanel<PanelType>() where PanelType : WizardPanel, new()
 		{
-			ChangeToStep(new ShowAuthPanel(this));
+			UiThread.RunOnIdle(() =>
+			{
+				this.RemoveAllChildren();
+				this.AddChild(new PanelType() { WizardWindow = this });
+				this.Invalidate();
+			});
 		}
 	}
 }
