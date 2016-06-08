@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ExtraSettings { get; set; }
 
+		public bool ShowAsOverride { get; set; } = true;
+
 		public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
 
 		public List<string> SetSettingsOnChange = new List<string>();
