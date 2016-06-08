@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Margin = new BorderDouble(0, 0, 0, 1)
 			};
 
-			printerNameInput = new MHTextEditWidget(this.ActivePrinter.Name)
+			printerNameInput = new MHTextEditWidget("")
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 			};

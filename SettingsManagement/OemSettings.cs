@@ -85,9 +85,10 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 			// Apply whitelist
 			var whiteListedItems = manufacturers?.Where(keyValue => PrinterWhiteList.Contains(keyValue.Key));
-			if (whiteListedItems == null)
+			if (whiteListedItems == null
+				|| whiteListedItems.Count() == 0)
 			{
-				AllOems = new List<KeyValuePair<string, string>>();
+				AllOems = new List<KeyValuePair<string, string>>(manufacturers);
 				return;
 			}
 
