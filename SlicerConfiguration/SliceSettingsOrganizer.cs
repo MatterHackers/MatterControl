@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ExtraSettings { get; set; }
 
+		public bool CustomeSaveFunction { get; set; }
+
 		public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
 
 		public List<string> SetSettingsOnChange = new List<string>();

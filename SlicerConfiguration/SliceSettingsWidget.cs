@@ -372,31 +372,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						this.HAnchor = HAnchor.ParentLeftRight;
 
-						foreach (OrganizerSettingsData settingInfo in subGroup.SettingDataList)
+						foreach (OrganizerSettingsData settingData in subGroup.SettingDataList)
 						{
-							bool settingShouldBeShown = CheckIfShouldBeShown(settingInfo);
+							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
 
-							if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingInfo.SlicerConfigName)
+							if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingData.SlicerConfigName)
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
 								bool addControl;
-								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, copyIndex, out addControl);
+								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingData, copyIndex, out addControl);
 								if (addControl)
 								{
 									topToBottomSettings.AddChild(controlsForThisSetting);
+									GuiWidget helpBox = AddInHelpText(topToBottomSettings, settingData);
+									if (!sliceSettingsDetailControl.ShowingHelp)
+									{
+										helpBox.Visible = false;
+									}
+									sliceSettingsDetailControl.ShowHelpChanged += (s, e) =>
+									{
+										helpBox.Visible = sliceSettingsDetailControl.ShowingHelp;
+									};
+									topToBottomSettings.AddChild(helpBox);
 								}
-
-								GuiWidget helpBox = AddInHelpText(topToBottomSettings, settingInfo);
-								if (!sliceSettingsDetailControl.ShowingHelp)
-								{
-									helpBox.Visible = false;
-								}
-								sliceSettingsDetailControl.ShowHelpChanged += (s, e) =>
-								{
-									helpBox.Visible = sliceSettingsDetailControl.ShowingHelp;
-								};
-								topToBottomSettings.AddChild(helpBox);
 							}
 						}
 
@@ -469,14 +468,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		private bool CheckIfShouldBeShown(OrganizerSettingsData settingInfo)
+		private bool CheckIfShouldBeShown(OrganizerSettingsData settingData)
 		{
 			bool settingShouldBeShown = true;
-			if (settingInfo.ShowIfSet != null
-				&& settingInfo.ShowIfSet != "")
+			if (settingData.ShowIfSet != null
+				&& settingData.ShowIfSet != "")
 			{
 				string showValue = "0";
-				string checkName = settingInfo.ShowIfSet;
+				string checkName = settingData.ShowIfSet;
 				if (checkName.StartsWith("!"))
 				{
 					showValue = "1";
@@ -489,10 +488,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			if (viewFilter == NamedSettingsLayers.Material || viewFilter == NamedSettingsLayers.Quality)
+			{
+				if (settingData.CustomeSaveFunction)
+				{
+					settingShouldBeShown = false;
+				}
+			}
+
 			return settingShouldBeShown;
 		}
 
-		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingInfo)
+		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingData)
 		{
 			FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			allText.HAnchor = HAnchor.ParentLeftRight;
@@ -503,7 +510,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double helpPointSize = 10;
 
-			GuiWidget helpWidget = new WrappedTextWidget(settingInfo.HelpText, textRegionWidth, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
+			GuiWidget helpWidget = new WrappedTextWidget(settingData.HelpText, textRegionWidth, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
 			helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
 			//helpWidget.HAnchor = HAnchor.ParentLeft;
 			allText.AddChild(helpWidget);
@@ -538,11 +545,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
 					{
-						OrganizerSettingsData settingInfo = new OrganizerSettingsData(keyValue.Key, keyValue.Key, OrganizerSettingsData.DataEditTypes.STRING);
-						if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingInfo.SlicerConfigName))
+						OrganizerSettingsData settingData = new OrganizerSettingsData(keyValue.Key, keyValue.Key, OrganizerSettingsData.DataEditTypes.STRING);
+						if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingData.SlicerConfigName))
 						{
 							bool addControl;
-							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, 0, out addControl);
+							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingData, 0, out addControl);
 							if (addControl)
 							{
 								topToBottomSettings.AddChild(controlsForThisSetting);
@@ -1401,30 +1408,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			container.HAnchor = HAnchor.ParentLeftRight;
 			container.VAnchor = VAnchor.FitToChildren;
 
-			var restoreButton = new Button(new ButtonViewStates(new ImageWidget(restoreNormal), new ImageWidget(restoreHover), new ImageWidget(restorePressed), new ImageWidget(restoreNormal)))
+			Button restoreButton = null;
+			if (!settingData.CustomeSaveFunction)
 			{
-				Name = "Restore " + settingData.SlicerConfigName,
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(0, 0, 5, 0),
-				ToolTipText = "Restore Default".Localize()
-			};
+				restoreButton = new Button(new ButtonViewStates(new ImageWidget(restoreNormal), new ImageWidget(restoreHover), new ImageWidget(restorePressed), new ImageWidget(restoreNormal)))
+				{
+					Name = "Restore " + settingData.SlicerConfigName,
+					VAnchor = VAnchor.ParentCenter,
+					Margin = new BorderDouble(0, 0, 5, 0),
+					ToolTipText = "Restore Default".Localize()
+				};
 
-			restoreButton.Click += (sender, e) =>
-			{
+				restoreButton.Click += (sender, e) =>
+				{
 				// Revert the user override 
 				if (persistenceLayer == null)
-				{
-					ActiveSliceSettings.Instance.ClearValue(settingData.SlicerConfigName);
-				}
-				else
-				{
-					ActiveSliceSettings.Instance.ClearValue(settingData.SlicerConfigName, persistenceLayer);
-				}
+					{
+						ActiveSliceSettings.Instance.ClearValue(settingData.SlicerConfigName);
+					}
+					else
+					{
+						ActiveSliceSettings.Instance.ClearValue(settingData.SlicerConfigName, persistenceLayer);
+					}
 
-				settingsRow.RefreshValue(layerCascade);
-			};
+					settingsRow.RefreshValue(layerCascade);
+				};
 
-			restoreArea.AddChild(restoreButton);
+				restoreArea.AddChild(restoreButton);
+			}
 
 			container.AddChild(settingsRow);
 
@@ -1436,7 +1447,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					switch (this.viewFilter)
 					{
 						case NamedSettingsLayers.All:
-							settingsRow.BackgroundColor = userSettingBackgroundColor;
+							if (!settingData.CustomeSaveFunction)
+							{
+								settingsRow.BackgroundColor = userSettingBackgroundColor;
+							}
 							break;
 						case NamedSettingsLayers.Material:
 							settingsRow.BackgroundColor = materialSettingBackgroundColor;
@@ -1446,7 +1460,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							break;
 					}
 
-					restoreButton.Visible = true;
+					if(restoreButton != null) restoreButton.Visible = true;
 				}
 				else if (layerCascade == null)
 				{
@@ -1463,11 +1477,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						settingsRow.BackgroundColor = RGBA_Bytes.Transparent;
 					}
 
-					restoreButton.Visible = false;
+					if (restoreButton != null) restoreButton.Visible = false;
 				}
 				else
 				{
-					restoreButton.Visible = false;
+					if (restoreButton != null) restoreButton.Visible = false;
 					settingsRow.BackgroundColor = RGBA_Bytes.Transparent;
 				}
 			};

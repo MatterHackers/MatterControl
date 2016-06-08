@@ -1222,35 +1222,40 @@
     "HelpText": "The serial port communication speed of the printers firmware.",
     "DataEditType": "INT",
     "ExtraSettings": "",
-    "QuickMenuSettings": [{"MenuName" : "115200", "Value": "115200"},{"MenuName" : "250000", "Value": "250000"}]
+    "QuickMenuSettings": [{"MenuName" : "115200", "Value": "115200"},{"MenuName" : "250000", "Value": "250000"}],
+    "CustomeSaveFunction": true
   },
   {
     "SlicerConfigName": "MatterControl.DeletePrinter",
     "PresentationName": "",
     "HelpText": "Delete the currently selected printer profile.",
     "DataEditType": "DELETE_PRINTER",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "CustomeSaveFunction": true
   },
   {
     "SlicerConfigName": "MatterControl.PrinterName",
     "PresentationName": "",
     "HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
     "DataEditType": "STRING",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "CustomeSaveFunction": true
   },
   {
     "SlicerConfigName": "MatterControl.AutoConnect",
     "PresentationName": "Auto Connect",
     "HelpText": "If set, the printer will automatically attempt to connect when selected.",
     "DataEditType": "CHECK_BOX",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "CustomeSaveFunction": true
   },
   {
-    "SlicerConfigName": "MatterControl.ComPort",
-    "PresentationName": "COM Port",
-    "HelpText": "The COM port to use while connecting to this printer.",
+    "CustomeSaveFunction": true,
     "DataEditType": "COM_PORT",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "HelpText": "The COM port to use while connecting to this printer.",
+    "PresentationName": "COM Port",
+    "SlicerConfigName": "MatterControl.ComPort"
   },
   {
     "SlicerConfigName": "vibration_limit",
@@ -1260,11 +1265,11 @@
     "ExtraSettings": "Hz"
   },
   {
-    "SlicerConfigName": "wipe",
-    "PresentationName": "Wipe Before Retract",
-    "HelpText": "The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.",
     "DataEditType": "CHECK_BOX",
-    "ExtraSettings": ""
+    "ExtraSettings": "",
+    "HelpText": "The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.",
+    "PresentationName": "Wipe Before Retract",
+    "SlicerConfigName": "wipe"
   },
   {
     "SlicerConfigName": "wipe_shield_distance",
