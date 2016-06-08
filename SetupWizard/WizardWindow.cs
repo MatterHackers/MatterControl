@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl
 
 			if (openToHome)
 			{
-				ChangeToPage<SetupWizardHome>();
+				ChangeToPage<AndroidSetupOptionsPage>();
 			}
 			else
 			{

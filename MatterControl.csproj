@@ -248,7 +248,7 @@
     <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
     <Compile Include="SetupWizard\WizardPage.cs" />
-    <Compile Include="SetupWizard\SetupWizardHome.cs" />
+    <Compile Include="SetupWizard\AndroidSetupOptionsPage.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
