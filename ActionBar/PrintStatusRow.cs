@@ -613,7 +613,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			setupButton.VAnchor = VAnchor.ParentCenter;
 			setupButton.Click += (sender, e) =>
 			{
-				WizardWindow.Show(true);
+				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
+				//WizardWindow.Show(true);
 			};
 
 			this.AddChild(printStatusContainer);
