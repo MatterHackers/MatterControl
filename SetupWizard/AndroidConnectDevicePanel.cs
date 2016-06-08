@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-	public class SetupWizardConnect : WizardPanel
+	public class AndroidConnectDevicePanel : WizardPanel
 	{  
 		private event EventHandler unregisterEvents;
 
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget retryButtonContainer;
 		private FlowLayoutWidget connectButtonContainer;
 
-		public SetupWizardConnect()
+		public AndroidConnectDevicePanel()
 		{
 			TextWidget printerNameLabel = new TextWidget("Connect Your Device".Localize() + ":", 0, 0, labelFontSize)
 			{

@@ -246,7 +246,7 @@
     <Compile Include="Library\Provider\LibraryProvider.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
     <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
-    <Compile Include="SetupWizard\SetupWizardConnect.cs" />
+    <Compile Include="SetupWizard\AndroidConnectDevicePanel.cs" />
     <Compile Include="SetupWizard\WizardPanel.cs" />
     <Compile Include="SetupWizard\SetupWizardHome.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />

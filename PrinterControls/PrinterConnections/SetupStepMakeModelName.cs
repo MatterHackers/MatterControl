@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				if (canContinue)
 				{
 #if __ANDROID__
-					WizardWindow.ChangeToPanel<SetupWizardConnect>();
+					WizardWindow.ChangeToPanel<AndroidConnectDevicePanel>();
 #else
 					WizardWindow.ChangeToPanel<SetupStepInstallDriver>();
 #endif
