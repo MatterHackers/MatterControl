@@ -1,109 +1,132 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿/*
+Copyright (c) 2016, Kevin Pope, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl
-{   
-	//Normally step one of the setup process
+{
 	public class SetupWizardConnect : WizardPanel
 	{  
-		event EventHandler unregisterEvents;
+		private event EventHandler unregisterEvents;
 
-		TextWidget generalError;
+		private TextWidget generalError;
 
-		Button connectButton;
-		Button skipButton;
-		Button nextButton;
-		Button retryButton;
-		Button troubleshootButton;
+		private Button connectButton;
+		private Button skipButton;
+		private Button nextButton;
+		private Button retryButton;
+		private Button troubleshootButton;
 
-		TextWidget skipMessage;
+		private TextWidget skipMessage;
 
-		FlowLayoutWidget retryButtonContainer;
-		FlowLayoutWidget connectButtonContainer;
+		private FlowLayoutWidget retryButtonContainer;
+		private FlowLayoutWidget connectButtonContainer;
 
 		public SetupWizardConnect()
 		{
-			string printerNameLabelTxt = LocalizedString.Get("Connect Your Device");
-			string printerNameLabelTxtFull = string.Format ("{0}:", printerNameLabelTxt);
-			TextWidget printerNameLabel = new TextWidget(printerNameLabelTxtFull, 0, 0, labelFontSize);
-			printerNameLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerNameLabel.Margin = new BorderDouble(bottom: 10);
-
+			TextWidget printerNameLabel = new TextWidget("Connect Your Device".Localize() + ":", 0, 0, labelFontSize)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(bottom: 10)
+			};
 			contentRow.AddChild(printerNameLabel);
 
-			contentRow.AddChild(new TextWidget(LocalizedString.Get("Instructions:"), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
-			contentRow.AddChild(new TextWidget(LocalizedString.Get("1. Power on your 3D Printer."), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
-			contentRow.AddChild(new TextWidget(LocalizedString.Get("2. Attach your 3D Printer via USB."), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
-			contentRow.AddChild(new TextWidget(LocalizedString.Get("3. Press 'Connect'."), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(new TextWidget("Instructions:".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(new TextWidget("1. Power on your 3D Printer.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(new TextWidget("2. Attach your 3D Printer via USB.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 
 			//Add inputs to main container
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
 
-			connectButtonContainer = new FlowLayoutWidget();
-			connectButtonContainer.HAnchor = HAnchor.ParentLeftRight;
-			connectButtonContainer.Margin = new BorderDouble(0, 6);
+			connectButtonContainer = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(0, 6)
+			};
 
 			//Construct buttons
-			connectButton = whiteImageButtonFactory.Generate(LocalizedString.Get("Connect"),centerText:true);
+			connectButton = whiteImageButtonFactory.Generate("Connect".Localize(),centerText:true);
 			connectButton.Margin = new BorderDouble(0,0,10,0);
 			connectButton.Click += new EventHandler(ConnectButton_Click);
 
-			//Construct buttons
-			skipButton = whiteImageButtonFactory.Generate(LocalizedString.Get("Skip"), centerText:true);
+			skipButton = whiteImageButtonFactory.Generate("Skip".Localize(), centerText:true);
 			skipButton.Click += new EventHandler(NextButton_Click);
 
 			connectButtonContainer.AddChild(connectButton);
 			connectButtonContainer.AddChild(skipButton);
 			connectButtonContainer.AddChild(new HorizontalSpacer());
-
 			contentRow.AddChild(connectButtonContainer);
 
-			skipMessage = new TextWidget(LocalizedString.Get("(Press 'Skip' to setup connection later)"), 0, 0, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-
+			skipMessage = new TextWidget("(Press 'Skip' to setup connection later)".Localize(), 0, 0, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(skipMessage);
 
-			generalError = new TextWidget("", 0, 0, errorFontSize);
-			generalError.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
-			generalError.HAnchor = HAnchor.ParentLeftRight;
-			generalError.Visible = false;
-			generalError.Margin = new BorderDouble(top: 20);
-
+			generalError = new TextWidget("", 0, 0, errorFontSize)
+			{
+				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
+				HAnchor = HAnchor.ParentLeftRight,
+				Visible = false,
+				Margin = new BorderDouble(top: 20),
+			};
 			contentRow.AddChild(generalError);
 
 			//Construct buttons
-			retryButton = whiteImageButtonFactory.Generate(LocalizedString.Get("Retry"), centerText:true);
-			retryButton.Click += new EventHandler(ConnectButton_Click);
+			retryButton = whiteImageButtonFactory.Generate("Retry".Localize(), centerText:true);
+			retryButton.Click += ConnectButton_Click;
 			retryButton.Margin = new BorderDouble(0,0,10,0);
 
 			//Construct buttons
-			troubleshootButton = whiteImageButtonFactory.Generate(LocalizedString.Get("Troubleshoot"), centerText:true);
-			troubleshootButton.Click += new EventHandler(TroubleshootButton_Click);
+			troubleshootButton = whiteImageButtonFactory.Generate("Troubleshoot".Localize(), centerText:true);
+			troubleshootButton.Click += (s, e) => WizardWindow.ChangeToPanel<SetupWizardTroubleshooting>();
 
-			retryButtonContainer = new FlowLayoutWidget();
-			retryButtonContainer.HAnchor = HAnchor.ParentLeftRight;
-			retryButtonContainer.Margin = new BorderDouble(0, 6);
+			retryButtonContainer = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(0, 6),
+				Visible = false
+			};
+			
 			retryButtonContainer.AddChild(retryButton);
 			retryButtonContainer.AddChild(troubleshootButton);
 			retryButtonContainer.AddChild(new HorizontalSpacer());
-			retryButtonContainer.Visible = false;
-
+			
 			contentRow.AddChild(retryButtonContainer);
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
-			nextButton.Click += new EventHandler(NextButton_Click);
+			nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			nextButton.Click += NextButton_Click;
 			nextButton.Visible = false;
 
 			GuiWidget hSpacer = new GuiWidget();
@@ -120,11 +143,6 @@ namespace MatterHackers.MatterControl
 		void ConnectButton_Click(object sender, EventArgs mouseEvent)
 		{
 			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
-		}
-
-		void TroubleshootButton_Click(object sender, EventArgs mouseEvent)
-		{
-			WizardWindow.ChangeToPanel<SetupWizardTroubleshooting>();
 		}
 
 		void NextButton_Click(object sender, EventArgs mouseEvent)
@@ -175,6 +193,12 @@ namespace MatterHackers.MatterControl
 				retryButtonContainer.Visible = true;
 			}
 			this.Invalidate();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 }
