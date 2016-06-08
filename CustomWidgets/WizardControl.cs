@@ -7,13 +7,13 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-	public class WizardPage : GuiWidget
+	public class WizardControlPage : GuiWidget
 	{
 		private string stepDescription = "";
 
 		public string StepDescription { get { return stepDescription; } set { stepDescription = value; } }
 
-		public WizardPage(string stepDescription)
+		public WizardControlPage(string stepDescription)
 		{
 			StepDescription = stepDescription;
 		}
@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		private FlowLayoutWidget bottomToTopLayout;
-		private List<WizardPage> pages = new List<WizardPage>();
+		private List<WizardControlPage> pages = new List<WizardControlPage>();
 		private int pageIndex = 0;
 		public Button backButton;
 		public Button nextButton;
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void AddPage(WizardPage widgetForPage)
+		public void AddPage(WizardControlPage widgetForPage)
 		{
 			pages.Add(widgetForPage);
 			bottomToTopLayout.AddChild(widgetForPage);
