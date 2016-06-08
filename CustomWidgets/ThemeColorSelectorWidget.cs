@@ -80,11 +80,20 @@ namespace MatterHackers.MatterControl
 
 			var disabled = new GuiWidget(colorSelectSize, colorSelectSize);
 
-			var colorButton = new Button(0, 0, new ButtonViewStates(normal, hover, pressed, disabled));
+			var colorButton = new Button(0, 0, new ButtonViewStates(normal, hover, pressed, disabled))
+			{
+				Name = index.ToString()
+			};
 			colorButton.Click += (s, e) =>
 			{
-				UserSettings.Instance.set("ActiveThemeIndex", index.ToString());
-				ActiveTheme.Instance = theme;
+				string themeIndexText = ((GuiWidget)s).Name;
+				int themeIndex;
+
+				if (int.TryParse(themeIndexText, out themeIndex) && themeIndex < ActiveTheme.AvailableThemes.Count)
+				{
+					ActiveSliceSettings.Instance.SetActiveValue("MatterControl.ActiveThemeIndex", themeIndex.ToString());
+					ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
+				}
 			};
 
 			colorButton.MouseEnterBounds += (s, e) =>
