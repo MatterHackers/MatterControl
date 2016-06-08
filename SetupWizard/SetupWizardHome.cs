@@ -26,9 +26,12 @@ namespace MatterHackers.MatterControl
 		{
 			headerLabel.Text = "Setup Options".Localize();
 
-			contentRow.AddChild(new SetupPrinterView() { WizardWindow = this.WizardWindow });
-			contentRow.AddChild(new SetupAccountView() { WizardWindow = this.WizardWindow });
-			contentRow.AddChild(new EnterCodesView() { WizardWindow = this.WizardWindow });
+			textImageButtonFactory.borderWidth = 1;
+			textImageButtonFactory.normalBorderColor = RGBA_Bytes.White;
+
+			contentRow.AddChild(new SetupPrinterView(this.textImageButtonFactory) { WizardPanel = this });
+			contentRow.AddChild(new SetupAccountView(this.textImageButtonFactory));
+			contentRow.AddChild(new EnterCodesView(this.textImageButtonFactory));
 
 			GuiWidget hSpacer = new GuiWidget();
 			hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -46,8 +49,9 @@ namespace MatterHackers.MatterControl
 		public static EventHandler RedeemDesignCode;
 		public static EventHandler EnterShareCode;
 
-		public EnterCodesView() : base("")
+		public EnterCodesView(TextImageButtonFactory textImageButtonFactory) : base("")
 		{
+			this.textImageButtonFactory = textImageButtonFactory;
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -85,13 +89,17 @@ namespace MatterHackers.MatterControl
 
 	public class SetupPrinterView : SetupViewBase
 	{
+		internal WizardPanel WizardPanel { get; set; }
+
 		private Button disconnectButton;
 		private TextWidget connectionStatus;
 		private event EventHandler unregisterEvents;
 
-		public SetupPrinterView()
+		public SetupPrinterView(TextImageButtonFactory textImageButtonFactory)
 			: base("Printer Profile")
 		{
+			this.textImageButtonFactory = textImageButtonFactory;
+
 			var buttonContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -106,7 +114,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(printerSelectorAndEditButton);
 
 			var printerSelector = new PrinterSelector();
-			printerSelector.AddPrinter += (s, e) => WizardWindow.ChangeToSetupPrinterForm();
+			printerSelector.AddPrinter += (s, e) => WizardPanel.WizardWindow.ChangeToSetupPrinterForm();
 			printerSelectorAndEditButton.AddChild(printerSelector);
 
 			var editButton = TextImageButtonFactory.GetThemedEditButton();
@@ -120,7 +128,7 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				WizardWindow.ChangeToPanel<SetupWizardHome>();
+				WizardPanel.WizardWindow.ChangeToPanel<SetupWizardHome>();
 			};
 			buttonContainer.AddChild(disconnectButton);
 
@@ -156,9 +164,11 @@ namespace MatterHackers.MatterControl
 		private Button signOutButton;
 		private TextWidget statusMessage;
 
-		public SetupAccountView()
+		public SetupAccountView(TextImageButtonFactory textImageButtonFactory)
 			: base("My Account")
 		{
+			this.textImageButtonFactory = textImageButtonFactory;
+
 			bool signedIn = true;
 			string username = ApplicationController.Instance.GetSessionUsername();
 			if (username == null)
@@ -176,15 +186,27 @@ namespace MatterHackers.MatterControl
 			signInButton = textImageButtonFactory.Generate("Sign In");
 			signInButton.Margin = new BorderDouble(left: 0);
 			signInButton.VAnchor = VAnchor.ParentCenter;
-			signInButton.Click += new EventHandler(signInButton_Click);
 			signInButton.Visible = !signedIn;
+			signInButton.Click +=  (s, e) => UiThread.RunOnIdle(() =>
+			{
+				signInButton.Visible = false;
+				signOutButton.Visible = false;
+				statusMessage.Visible = true;
+				ApplicationController.Instance.StartLogin();
+			});
 			buttonContainer.AddChild(signInButton);
 
 			signOutButton = textImageButtonFactory.Generate("Sign Out");
 			signOutButton.Margin = new BorderDouble(left: 0);
 			signOutButton.VAnchor = VAnchor.ParentCenter;
-			signOutButton.Click += new EventHandler(signOutButton_Click);
-			signOutButton.Visible = signedIn;		
+			signOutButton.Visible = signedIn;
+			signOutButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				signInButton.Visible = false;
+				signOutButton.Visible = false;
+				statusMessage.Visible = true;
+				ApplicationController.Instance.StartLogout();
+			});
 			buttonContainer.AddChild(signOutButton);
 
 			statusMessage = new TextWidget("Please wait...", pointSize: 12, textColor: ActiveTheme.Instance.SecondaryAccentColor);
@@ -193,57 +215,17 @@ namespace MatterHackers.MatterControl
 
 			mainContainer.AddChild(buttonContainer);
 		}
-
-		void signInButton_Click(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(() =>
-			{ 
-				signInButton.Visible = false;
-				signOutButton.Visible = false;
-				statusMessage.Visible = true;
-				ApplicationController.Instance.StartLogin();
-			});
-		}
-
-		void signOutButton_Click(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(() =>
-			{ 
-				signInButton.Visible = false;
-				signOutButton.Visible = false;
-				statusMessage.Visible = true;
-				ApplicationController.Instance.StartLogout();
-			});
-		}
 	}
 
 	public class SetupViewBase : AltGroupBox
 	{
-		protected readonly int TallButtonHeight = 28;
 		protected TextImageButtonFactory textImageButtonFactory;
 		protected FlowLayoutWidget mainContainer;
-
-		internal WizardWindow WizardWindow { get; set; }
 
 		public SetupViewBase(string title)
 			: base(title != "" ? new TextWidget(title, pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor) : null)
 		{
 			this.Margin = new BorderDouble(2, 10, 2, 0);
-
-			textImageButtonFactory = new TextImageButtonFactory()
-			{
-				normalFillColor = RGBA_Bytes.Transparent,
-				disabledFillColor = RGBA_Bytes.White,
-				FixedHeight = TallButtonHeight,
-				fontSize = 16,
-				borderWidth = 1,
-				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				disabledTextColor = RGBA_Bytes.DarkGray,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				normalTextColor = ActiveTheme.Instance.SecondaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			};
 
 			mainContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom)
 			{
