@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl
 
 			if (openToHome)
 			{
-				ChangeToPanel<SetupWizardHome>();
+				ChangeToPage<SetupWizardHome>();
 			}
 			else
 			{
@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl
 				bool WifiDetected = MatterControlApplication.Instance.IsNetworkConnected();
 				if (!WifiDetected)
 				{
-					ChangeToPanel<SetupWizardWifi>();
+					ChangeToPage<SetupWizardWifi>();
 				}
 				else
 				{
@@ -64,11 +64,11 @@ namespace MatterHackers.MatterControl
 			bool showAuthPanel = ShouldShowAuthPanel?.Invoke() ?? false;
 			if (showAuthPanel)
 			{
-				ChangeToPanel<ShowAuthPanel>();
+				ChangeToPage<ShowAuthPanel>();
 			}
 			else
 			{
-				ChangeToPanel<SetupStepMakeModelName>();
+				ChangeToPage<SetupStepMakeModelName>();
 			}
 		}
 
@@ -76,11 +76,11 @@ namespace MatterHackers.MatterControl
 		{
 			if (ActiveSliceSettings.Instance.PrinterDrivers().Count > 0)
 			{
-				ChangeToPanel<SetupStepInstallDriver>();
+				ChangeToPage<SetupStepInstallDriver>();
 			}
 			else
 			{
-				ChangeToPanel<SetupStepComPortOne>();
+				ChangeToPage<SetupStepComPortOne>();
 			}
 		}
 
@@ -88,15 +88,15 @@ namespace MatterHackers.MatterControl
 		{
 			if (string.IsNullOrEmpty(PrinterConnectionAndCommunication.Instance?.ActivePrinter?.BaudRate()))
 			{
-				ChangeToPanel<SetupStepBaudRate>();
+				ChangeToPage<SetupStepBaudRate>();
 			}
 			else
 			{
-				ChangeToPanel<SetupStepComPortOne>();
+				ChangeToPage<SetupStepComPortOne>();
 			}
 		}
 
-		internal void ChangeToPanel<PanelType>() where PanelType : WizardPanel, new()
+		internal void ChangeToPage<PanelType>() where PanelType : WizardPage, new()
 		{
 			UiThread.RunOnIdle(() =>
 			{

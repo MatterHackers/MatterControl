@@ -35,7 +35,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 namespace MatterHackers.MatterControl
 {
 	//Normally step one of the setup process
-	public class SetupWizardWifi : WizardPanel
+	public class SetupWizardWifi : WizardPage
 	{
 		public SetupWizardWifi()
 		{

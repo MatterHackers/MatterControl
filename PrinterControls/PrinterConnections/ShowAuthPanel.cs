@@ -32,7 +32,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ShowAuthPanel : ConnectionWizardPanel
+	public class ShowAuthPanel : ConnectionWizardPage
 	{
 		public ShowAuthPanel()
 		{
@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			nextButton.Name = "Connection Wizard Skip Sign In Button";
 			nextButton.Click += (sender, e) =>
 			{
-				WizardWindow.ChangeToPanel<SetupStepMakeModelName>();
+				WizardWindow.ChangeToPage<SetupStepMakeModelName>();
 			};
 
 			var signInButton = textImageButtonFactory.Generate("Sign In");

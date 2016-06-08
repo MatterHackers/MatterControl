@@ -14,7 +14,7 @@ using System.IO;
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	//Normally step one of the setup process
-	public class SetupStepMakeModelName : ConnectionWizardPanel
+	public class SetupStepMakeModelName : ConnectionWizardPage
 	{
 		private FlowLayoutWidget printerModelContainer;
 		private FlowLayoutWidget printerMakeContainer;
@@ -84,9 +84,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				if (canContinue)
 				{
 #if __ANDROID__
-					WizardWindow.ChangeToPanel<AndroidConnectDevicePanel>();
+					WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
 #else
-					WizardWindow.ChangeToPanel<SetupStepInstallDriver>();
+					WizardWindow.ChangeToPage<SetupStepInstallDriver>();
 #endif
 				}
 			};

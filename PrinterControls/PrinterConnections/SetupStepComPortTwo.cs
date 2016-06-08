@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortTwo : ConnectionWizardPanel
+	public class SetupStepComPortTwo : ConnectionWizardPage
 	{
 		private string[] startingPortNames;
 		private string[] currentPortNames;
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate("Manual Configuration".Localize());
 			manualLink.Margin = new BorderDouble(0, 5);
-			manualLink.Click += (s, e) => WizardWindow.ChangeToPanel<SetupStepComPortManual>();
+			manualLink.Click += (s, e) => WizardWindow.ChangeToPage<SetupStepComPortManual>();
 
 			printerErrorMessage = new TextWidget("", 0, 0, 10);
 			printerErrorMessage.AutoExpandBoundsToText = true;

@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortManual : ConnectionWizardPanel
+	public class SetupStepComPortManual : ConnectionWizardPage
 	{
 		private static Regex linuxDefaultUIFilter = new Regex("/dev/ttyS*\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			connectButton.Click += ConnectButton_Click;
 
 			refreshButton = textImageButtonFactory.Generate("Refresh".Localize());
-			refreshButton.Click += (s, e) => WizardWindow.ChangeToPanel<SetupStepComPortManual>();
+			refreshButton.Click += (s, e) => WizardWindow.ChangeToPage<SetupStepComPortManual>();
 
 			//Add buttons to buttonContainer
 			footerRow.AddChild(nextButton);

@@ -19,17 +19,17 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 namespace MatterHackers.MatterControl
 { 
 	//Normally step one of the setup process
-	public class SetupWizardHome : WizardPanel
+	public class SetupWizardHome : WizardPage
 	{
 		public SetupWizardHome()
-			: base(unlocalizedTextForCancelButton: "Done")
+			: base("Done")
 		{
 			headerLabel.Text = "Setup Options".Localize();
 
 			textImageButtonFactory.borderWidth = 1;
 			textImageButtonFactory.normalBorderColor = RGBA_Bytes.White;
 
-			contentRow.AddChild(new SetupPrinterView(this.textImageButtonFactory) { WizardPanel = this });
+			contentRow.AddChild(new SetupPrinterView(this.textImageButtonFactory) { WizardPage = this });
 			contentRow.AddChild(new SetupAccountView(this.textImageButtonFactory));
 			contentRow.AddChild(new EnterCodesView(this.textImageButtonFactory));
 
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 
 	public class SetupPrinterView : SetupViewBase
 	{
-		internal WizardPanel WizardPanel { get; set; }
+		internal WizardPage WizardPage { get; set; }
 
 		private Button disconnectButton;
 		private TextWidget connectionStatus;
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(printerSelectorAndEditButton);
 
 			var printerSelector = new PrinterSelector();
-			printerSelector.AddPrinter += (s, e) => WizardPanel.WizardWindow.ChangeToSetupPrinterForm();
+			printerSelector.AddPrinter += (s, e) => WizardPage.WizardWindow.ChangeToSetupPrinterForm();
 			printerSelectorAndEditButton.AddChild(printerSelector);
 
 			var editButton = TextImageButtonFactory.GetThemedEditButton();
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				WizardPanel.WizardWindow.ChangeToPanel<SetupWizardHome>();
+				WizardPage.WizardWindow.ChangeToPage<SetupWizardHome>();
 			};
 			buttonContainer.AddChild(disconnectButton);
 
