@@ -17,6 +17,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
+{ 
 	//Normally step one of the setup process
 	public class SetupWizardHome : WizardPanel
 	{
@@ -98,18 +99,20 @@ namespace MatterHackers.MatterControl
 			};
 			mainContainer.AddChild(buttonContainer);
 
-			var printerSelector = new PrinterSelector();
-			printerSelector.AddPrinter += (s, e) => WizardWindow.ChangeToSetupPrinterForm();
-			FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
+			var printerSelectorAndEditButton = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 			};
+			buttonContainer.AddChild(printerSelectorAndEditButton);
+
+			var printerSelector = new PrinterSelector();
+			printerSelector.AddPrinter += (s, e) => WizardWindow.ChangeToSetupPrinterForm();
 			printerSelectorAndEditButton.AddChild(printerSelector);
-			Button editButton = TextImageButtonFactory.GetThemedEditButton();
+
+			var editButton = TextImageButtonFactory.GetThemedEditButton();
 			editButton.VAnchor = VAnchor.ParentCenter;
 			editButton.Click += UiNavigation.GoToEditPrinter_Click;
 			printerSelectorAndEditButton.AddChild(editButton);
-			buttonContainer.AddChild(printerSelectorAndEditButton);
 
 			disconnectButton = textImageButtonFactory.Generate("Disconnect");
 			disconnectButton.Margin = new BorderDouble(left: 12);
