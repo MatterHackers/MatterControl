@@ -46,9 +46,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public static class ProfileMigrations
 	{
-		public static string MigrateDocument(string filePath, int fromVersion)
+		public static string MigrateDocument(string filePath, int fromVersion = -1)
 		{
 			var jObject = JObject.Parse(File.ReadAllText(filePath));
+
+			if (fromVersion < 201606081)
+			{
+				JObject materialLayers, qualityLayers;
+
+				materialLayers = jObject["MaterialLayers"] as JObject;
+				jObject["MaterialLayers"] = new JArray(materialLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
+
+				qualityLayers = jObject["QualityLayers"] as JObject;
+				jObject["QualityLayers"] = new JArray(qualityLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
+
+				var oemProfile = jObject["OemProfile"] as JObject;
+				oemProfile.Property("MaterialLayers").Remove();
+				oemProfile.Property("QualityLayers").Remove();
+
+				jObject["DocumentVersion"] = 201606081;
+			}
 
 			if (fromVersion < 201605131)
 			{
@@ -109,7 +126,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ID { get; set; }
 
-		public static int LatestVersion { get; } = 201605132;
+		// Latest version should be 2016|06|08|1
+		// Year|month|day|versionForDay (to support multiple revisions on a given day)
+		public static int LatestVersion { get; } = 201606081;
 
 		[JsonIgnore]
 		internal SettingsLayer QualityLayer { get; private set; }
@@ -134,33 +153,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public OemProfile OemProfile { get; set; }
 		
-		internal SettingsLayer GetMaterialLayer(string key)
+		internal SettingsLayer GetMaterialLayer(string layerID)
 		{
-			if (string.IsNullOrEmpty(key))
+			if (string.IsNullOrEmpty(layerID))
 			{
 				return null;
 			}
 
-			// Find the first matching layer in either the user or the OEM layers
-			SettingsLayer layer = null;
-			if (!MaterialLayers.TryGetValue(key, out layer))
-			{
-				OemProfile.MaterialLayers.TryGetValue(key, out layer);
-			}
-
-			return layer;
+			return MaterialLayers.Where(layer => layer.ID == layerID).FirstOrDefault();
 		}
 
-		internal SettingsLayer GetQualityLayer(string key)
+		internal SettingsLayer GetQualityLayer(string layerID)
 		{
-			// Find the first matching layer in either the user or the OEM layers
-			SettingsLayer layer = null;
-			if (key != null && !QualityLayers.TryGetValue(key, out layer))
-			{
-				OemProfile.QualityLayers.TryGetValue(key, out layer);
-			}
-			
-			return layer;
+			return QualityLayers.Where(layer => layer.ID == layerID).FirstOrDefault();
 		}
 
 		public string ActiveMaterialKey
@@ -187,7 +192,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				SetActiveValue("MatterControl.ActiveQualityKey", value);
 				QualityLayer = GetQualityLayer(value);
-
 				Save();
 			}
 		}
@@ -248,15 +252,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static LayeredProfile LoadFile(string printerProfilePath)
 		{
-			var layeredProfile = JsonConvert.DeserializeObject<LayeredProfile>(File.ReadAllText(printerProfilePath));
-			if (layeredProfile.DocumentVersion < LayeredProfile.LatestVersion)
-			{
-				printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, layeredProfile.DocumentVersion);
+			var jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
+			int documentVersion = (int) jObject?.GetValue("DocumentVersion")?.Value<int>();
 
-				// Reload the document with the new schema
-				layeredProfile = JsonConvert.DeserializeObject<LayeredProfile>(File.ReadAllText(printerProfilePath));
+			if (documentVersion < LayeredProfile.LatestVersion)
+			{
+				printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
 			}
 
+			// Reload the document with the new schema
+			var layeredProfile = JsonConvert.DeserializeObject<LayeredProfile>(File.ReadAllText(printerProfilePath));
 			layeredProfile.DocumentPath = printerProfilePath;
 
 			return layeredProfile;
@@ -266,13 +271,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// Should contain both user created and oem specified material layers
 		/// </summary>
-		public Dictionary<string, SettingsLayer> MaterialLayers { get; } = new Dictionary<string, SettingsLayer>();
+		public List<SettingsLayer> MaterialLayers { get; } = new List<SettingsLayer>();
 
 		// TODO: Hookup OEM layers
 		/// <summary>
 		/// Should contain both user created and oem specified quality layers
 		/// </summary>
-		public Dictionary<string, SettingsLayer> QualityLayers { get; } = new Dictionary<string, SettingsLayer>();
+		public List<SettingsLayer> QualityLayers { get; } = new List<SettingsLayer>();
 
 		///<summary>
 		///Returns the settings value at the 'top' of the stack
@@ -376,11 +381,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// List of Material presets from OEM
 		/// </summary>
-		public Dictionary<string, SettingsLayer> MaterialLayers { get; } = new Dictionary<string, SettingsLayer>();
+		public List<SettingsLayer> MaterialLayers { get; } = new List<SettingsLayer>();
 
 		/// <summary>
 		/// List of Quality presets from OEM
 		/// </summary>
-		public Dictionary<string, SettingsLayer> QualityLayers { get; } = new Dictionary<string, SettingsLayer>();
+		public List<SettingsLayer> QualityLayers { get; } = new List<SettingsLayer>();
 	}
 }

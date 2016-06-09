@@ -37,6 +37,7 @@ using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -44,21 +45,16 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler AddPrinter;
 
+		private EventHandler unregisterEvents;
+
 		public PrinterSelector() : base("Printers".Localize() + "... ", useLeftIcons: true)
 		{
-			//Add the menu items to the menu itself
-			foreach (var printer in ActiveSliceSettings.ProfileData.Profiles)
-			{
-				this.AddItem(printer.Name, printer.Id.ToString());
-			}
+			Rebuild();
 
-			if (ActiveSliceSettings.Instance != null)
-			{
-				this.SelectedValue = ActiveSliceSettings.Instance.ID;
-			}
-
-			ImageBuffer plusImage = StaticData.Instance.LoadIcon("icon_plus.png", 32, 32);
-			this.AddItem(plusImage, "Add New Printer...", "new");
+			this.AddItem(
+				StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), 
+				"Add New Printer...", 
+				"new");
 
 			this.SelectionChanged += (s, e) =>
 			{
@@ -75,6 +71,46 @@ namespace MatterHackers.MatterControl
 					ActiveSliceSettings.SwitchToProfile(printerID);
 				}
 			};
+
+			SliceSettingsWidget.SettingChanged.RegisterEvent(SettingChanged, ref unregisterEvents);
+		}
+
+		public void Rebuild()
+		{
+			this.MenuItems.Clear();
+
+			//Add the menu items to the menu itself
+			foreach (var printer in ActiveSliceSettings.ProfileData.Profiles)
+			{
+				this.AddItem(printer.Name, printer.Id.ToString());
+			}
+
+			if (ActiveSliceSettings.Instance != null)
+			{
+				this.SelectedValue = ActiveSliceSettings.Instance.ID;
+				this.mainControlText.Text = ActiveSliceSettings.Instance.Name();
+			}
+		}
+
+		private void SettingChanged(object sender, EventArgs e)
+		{
+			string settingsName = (e as StringEventArgs)?.Data;
+			if (settingsName != null && settingsName == "MatterControl.PrinterName")
+			{
+				var profileInfo = ActiveSliceSettings.ProfileData.Profiles.Where(p => p.Id == ActiveSliceSettings.Instance.ID).FirstOrDefault();
+				if (profileInfo != null)
+				{
+					profileInfo.Name = ActiveSliceSettings.Instance.Name();
+				}
+
+				Rebuild();
+			}
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 }

@@ -105,9 +105,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Commit
 		}
 
-		public Dictionary<string, SettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
+		public List<SettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
 
-		public Dictionary<string, SettingsLayer> QualityLayers => layeredProfile.QualityLayers;
+		public List<SettingsLayer> QualityLayers => layeredProfile.QualityLayers;
 
 		public class SettingsConverter
 		{

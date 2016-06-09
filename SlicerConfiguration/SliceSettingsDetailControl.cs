@@ -122,6 +122,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private bool RestoreAllSettingsMenu_Click()
 		{
+			string warningMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\r\nAre you sure you want to continue?";
+			StyledMessageBox.ShowMessageBox(
+				revertSettings =>
+				{
+					if (revertSettings)
+					{
+						// TODO: We should offer to export the settings before the purge
+						ActiveSliceSettings.Instance.UserLayer.Clear();
+						ActiveSliceSettings.Instance.SaveChanges();
+						ApplicationController.Instance.ReloadAdvancedControlsPanel();
+					}
+				}, 
+				warningMessage.Localize(), 
+				"Revert Settings".Localize(), 
+				StyledMessageBox.MessageType.YES_NO);
+
 			return true;
 		}
 
@@ -132,7 +148,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				{ "Import".Localize(), ImportSettingsMenu_Click },
 				{ "Export".Localize(), ExportSettingsMenu_Click },
-				{ "Restore All".Localize(), RestoreAllSettingsMenu_Click },
+				{ "Reset to defaults".Localize(), RestoreAllSettingsMenu_Click },
+#if DEBUG
+				{ "Bake Overrides".Localize(), BakeOverrides_Click },
+#endif
 			};
 
 			//Add the menu items to the menu itself
@@ -140,6 +159,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				sliceOptionsMenuDropList.AddItem(item.Item1);
 			}
+		}
+
+		private bool BakeOverrides_Click()
+		{
+			var activeSettings = ActiveSliceSettings.Instance;
+			foreach(var keyValue in activeSettings.UserLayer)
+			{
+				activeSettings.OemLayer[keyValue.Key] = keyValue.Value;
+			}
+
+			activeSettings.UserLayer.Clear();
+			activeSettings.SaveChanges();
+
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+
+			return true;
 		}
 
 		private void SettingsDetail_SelectionChanged(object sender, EventArgs e)

@@ -102,13 +102,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
 					{
-						string presetsKey = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
-						if (string.IsNullOrEmpty(presetsKey))
+						string presetsID = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
+						if (string.IsNullOrEmpty(presetsID))
 						{
 							return;
 						}
 
-						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.MaterialLayers, presetsKey)
+						var layerToEdit = ActiveSliceSettings.Instance.MaterialLayers.Where(layer => layer.ID == presetsID).FirstOrDefault();
+
+						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.MaterialLayers, layerToEdit)
 						{
 							LayerType = NamedSettingsLayers.Material,
 							SetAsActive = (materialKey) =>
@@ -136,13 +138,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ApplicationController.Instance.EditQualityPresetsWindow == null)
 					{
-						string presetsKey = ActiveSliceSettings.Instance.ActiveQualityKey;
-						if (string.IsNullOrEmpty(presetsKey))
+						string presetsID = ActiveSliceSettings.Instance.ActiveQualityKey;
+						if (string.IsNullOrEmpty(presetsID))
 						{
 							return;
 						}
 
-						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.QualityLayers, presetsKey)
+						var layerToEdit = ActiveSliceSettings.Instance.QualityLayers.Where(layer => layer.ID == presetsID).FirstOrDefault();
+
+						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.QualityLayers, layerToEdit)
 						{
 							LayerType = NamedSettingsLayers.Quality,
 							SetAsActive = (qualityKey) => ActiveSliceSettings.Instance.ActiveQualityKey = qualityKey
@@ -212,12 +216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var listSource = (layerType == NamedSettingsLayers.Material) ? ActiveSliceSettings.Instance.MaterialLayers : ActiveSliceSettings.Instance.QualityLayers;
 			foreach (var layer in listSource)
 			{
-				if (string.IsNullOrEmpty(layer.Value.Name))
-				{
-					layer.Value.Name = layer.Key;
-				}
-
-				MenuItem menuItem = dropDownList.AddItem(layer.Value.Name, layer.Value.ID);
+				MenuItem menuItem = dropDownList.AddItem(layer.Name, layer.ID);
 				menuItem.Selected += MenuItem_Selected;
 			}
 
@@ -228,13 +227,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (layerType == NamedSettingsLayers.Quality)
 				{
 					newLayer.Name = "Quality" + ActiveSliceSettings.Instance.QualityLayers.Count;
-					ActiveSliceSettings.Instance.QualityLayers[newLayer.Name] = newLayer;
+					ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
 					ActiveSliceSettings.Instance.ActiveQualityKey = newLayer.ID;
 				}
 				else
 				{
 					newLayer.Name = "Material" + ActiveSliceSettings.Instance.MaterialLayers.Count;
-					ActiveSliceSettings.Instance.MaterialLayers[newLayer.Name] = newLayer;
+					ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
 					ActiveSliceSettings.Instance.ActiveMaterialKey = newLayer.ID;
 					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.Name);
 				}
