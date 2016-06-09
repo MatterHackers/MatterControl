@@ -384,7 +384,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					string[] files = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
 					foreach (string filename in files)
 					{
-						if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
+						string fileExtensionLower = Path.GetExtension(filename).ToLower();
+						if (!string.IsNullOrEmpty(fileExtensionLower) 
+							&& ApplicationSettings.LibraryFilterFileExtensions.Contains(fileExtensionLower))
 						{
 							if (upperFilter.Trim() == string.Empty
 								|| FileNameContainsFilter(filename, upperFilter))

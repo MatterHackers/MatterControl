@@ -4960,3 +4960,9 @@ Translated:Hz
 English:Current Settings
 Translated:Current Settings
 
+English:Reset to defaults
+Translated:Reset to defaults
+
+English:Bake Overrides
+Translated:Bake Overrides
+
