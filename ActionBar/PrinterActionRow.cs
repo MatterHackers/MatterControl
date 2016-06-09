@@ -34,6 +34,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -143,6 +144,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(0, 6, rightMarginForWideScreenMode, 3)
 			};
 			printerSelector.AddPrinter += (s, e) => WizardWindow.Show();
+			printerSelector.MinimumSize = new Vector2(printerSelector.MinimumSize.x, connectPrinterButton.MinimumSize.y);
 			printerSelectorAndEditButton.AddChild(printerSelector);
 
 			Button editButton = TextImageButtonFactory.GetThemedEditButton();
