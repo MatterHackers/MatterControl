@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.ActionBar
@@ -133,19 +134,17 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 			};
-			printerSelector = new PrinterSelector();
-			printerSelector.HAnchor = HAnchor.ParentLeftRight;
-			printerSelector.Cursor = Cursors.Hand;
+
+			int rightMarginForWideScreenMode = ApplicationController.Instance.WidescreenMode ? 6 : 0;
+			printerSelector = new PrinterSelector()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Cursor = Cursors.Hand,
+				Margin = new BorderDouble(0, 6, rightMarginForWideScreenMode, 3)
+			};
 			printerSelector.AddPrinter += (s, e) => WizardWindow.Show();
-			if (ApplicationController.Instance.WidescreenMode)
-			{
-				printerSelector.Margin = new BorderDouble(0, 6, 0, 3);
-			}
-			else
-			{
-				printerSelector.Margin = new BorderDouble(0, 6, 6, 3);
-			}
 			printerSelectorAndEditButton.AddChild(printerSelector);
+
 			Button editButton = TextImageButtonFactory.GetThemedEditButton();
 			editButton.VAnchor = VAnchor.ParentCenter;
 			editButton.Click += UiNavigation.GoToEditPrinter_Click;
@@ -153,7 +152,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(printerSelectorAndEditButton);
 
 			this.AddChild(resetConnectionButton);
-			//this.AddChild(CreateOptionsMenu());
 		}
 
 		protected override void AddHandlers()
