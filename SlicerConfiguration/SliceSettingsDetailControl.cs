@@ -149,6 +149,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{ "Import".Localize(), ImportSettingsMenu_Click },
 				{ "Export".Localize(), ExportSettingsMenu_Click },
 				{ "Reset to defaults".Localize(), RestoreAllSettingsMenu_Click },
+#if DEBUG
+				{ "Bake Overrides".Localize(), BakeOverrides_Click },
+#endif
 			};
 
 			//Add the menu items to the menu itself
@@ -156,6 +159,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				sliceOptionsMenuDropList.AddItem(item.Item1);
 			}
+		}
+
+		private bool BakeOverrides_Click()
+		{
+			var activeSettings = ActiveSliceSettings.Instance;
+			foreach(var keyValue in activeSettings.UserLayer)
+			{
+				activeSettings.OemLayer[keyValue.Key] = keyValue.Value;
+			}
+
+			activeSettings.UserLayer.Clear();
+			activeSettings.SaveChanges();
+
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+
+			return true;
 		}
 
 		private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
