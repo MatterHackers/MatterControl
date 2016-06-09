@@ -197,7 +197,7 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test]
+		[Test, Category("FixNeeded")]
 		public void BottomSolidLayersEqualsOneMM()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
@@ -236,7 +236,7 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test]
+		[Test, Category("FixNeeded")]
 		public void FirstLayerHeightLessThanNozzleDiameterXExtrusionMultiplier()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
@@ -282,7 +282,7 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test]
+		[Test, Category("FixNeeded")]
 		public void LayerHeightLessThanNozzleDiameter()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
