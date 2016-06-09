@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using System;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
 			}
 
-			settingsDetailSelector.SelectionChanged += new EventHandler(SettingsDetail_SelectionChanged);
+			settingsDetailSelector.SelectionChanged += (s, e) => RebuildSlicerSettings(null, null); ;
 			settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
 			settingsDetailSelector.Margin = new BorderDouble(5, 3);
 			settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
@@ -53,36 +54,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public event EventHandler ShowHelpChanged;
 
-		public string SelectedValue
-		{
-			get { return settingsDetailSelector.SelectedValue; }
-		}
+		public string SelectedValue => settingsDetailSelector.SelectedValue; 
 
-		public bool ShowingHelp
-		{
-			get { return showHelpBox.Checked; }
-		}
-
-		private bool ExportSettingsMenu_Click()
-		{
-			UiThread.RunOnIdle(ActiveSliceSettings.Instance.SaveAs);
-			return true;
-		}
+		public bool ShowingHelp => showHelpBox.Checked; 
 
 		private DropDownMenu GetSliceOptionsMenuDropList()
 		{
 			if (sliceOptionsMenuDropList == null)
 			{
-				sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ");
-				sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
-				sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
-				sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
-				sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
-				sliceOptionsMenuDropList.BorderWidth = 1;
+				sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ")
+				{
+					HoverColor = new RGBA_Bytes(0, 0, 0, 50),
+					NormalColor = new RGBA_Bytes(0, 0, 0, 0),
+					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100),
+					BackgroundColor = new RGBA_Bytes(0, 0, 0, 0),
+					BorderWidth = 1,
+				};
 				sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
 				sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
 
-				SetMenuItems();
+				//Set the name and callback function of the menu items
+				slicerOptionsMenuItems = new TupleList<string, Func<bool>>
+				{
+					{ "Import".Localize(), ImportSettingsMenu_Click },
+					{ "Export".Localize(), () => {  WizardWindow.Show<ExportSettingsPage>("gah", "Hello"); return true; } /* ExportSettingsMenu_Click */ },
+					{ "Reset to defaults".Localize(),() => { UiThread.RunOnIdle(ResetToDefaults); return true; } },
+				};
+
+				//Add the menu items to the menu itself
+				foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
+				{
+					sliceOptionsMenuDropList.AddItem(item.Item1);
+				}
 			}
 
 			return sliceOptionsMenuDropList;
@@ -116,13 +119,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private void RebuildSlicerSettings(object sender, EventArgs e)
 		{
 			UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
-
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 
-		private bool RestoreAllSettingsMenu_Click()
+		private void ResetToDefaults()
 		{
-			string warningMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\r\nAre you sure you want to continue?";
 			StyledMessageBox.ShowMessageBox(
 				revertSettings =>
 				{
@@ -133,53 +134,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						ActiveSliceSettings.Instance.SaveChanges();
 						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					}
-				}, 
-				warningMessage.Localize(), 
+				},
+				"Resetting to default values will remove your current overrides and restore your original printer settings.\r\nAre you sure you want to continue?".Localize(), 
 				"Revert Settings".Localize(), 
 				StyledMessageBox.MessageType.YES_NO);
-
-			return true;
-		}
-
-		private void SetMenuItems()
-		{
-			//Set the name and callback function of the menu items
-			slicerOptionsMenuItems = new TupleList<string, Func<bool>>
-			{
-				{ "Import".Localize(), ImportSettingsMenu_Click },
-				{ "Export".Localize(), ExportSettingsMenu_Click },
-				{ "Reset to defaults".Localize(), RestoreAllSettingsMenu_Click },
-#if DEBUG
-				{ "Bake Overrides".Localize(), BakeOverrides_Click },
-#endif
-			};
-
-			//Add the menu items to the menu itself
-			foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-			{
-				sliceOptionsMenuDropList.AddItem(item.Item1);
-			}
-		}
-
-		private bool BakeOverrides_Click()
-		{
-			var activeSettings = ActiveSliceSettings.Instance;
-			foreach(var keyValue in activeSettings.UserLayer)
-			{
-				activeSettings.OemLayer[keyValue.Key] = keyValue.Value;
-			}
-
-			activeSettings.UserLayer.Clear();
-			activeSettings.SaveChanges();
-
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-
-			return true;
-		}
-
-		private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
-		{
-			RebuildSlicerSettings(null, null);
 		}
 	}
 }
