@@ -614,19 +614,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return valueAsVector2;
 		}
 
-		public void SaveAs()
+		public void ExportAsMatterControlConfig()
 		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*." + configFileExtension);
-			saveParams.FileName = "default_settings.ini";
-			FileDialog.SaveFileDialog(saveParams, onExportFileSelected);
+			FileDialog.SaveFileDialog(
+			new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings"),
+			(saveParams) =>
+			{
+				File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
+			});
 		}
 
-		private void onExportFileSelected(SaveFileDialogParams saveParams)
+		public void ExportAsSlic3rConfig()
 		{
-			if (!string.IsNullOrEmpty(saveParams.FileName))
-			{
-				GenerateConfigFile(saveParams.FileName, false);
-			}
+			FileDialog.SaveFileDialog(
+				new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*." + configFileExtension)
+				{
+					FileName = "default_settings.ini"
+				},
+				(saveParams) =>
+				{
+					if (!string.IsNullOrEmpty(saveParams.FileName))
+					{
+						GenerateConfigFile(saveParams.FileName, false);
+					}
+				});
+		}
+
+		public void ExportAsCuraConfig()
+		{
+			throw new NotImplementedException();
 		}
 
 		public long GetLongHashCode()
