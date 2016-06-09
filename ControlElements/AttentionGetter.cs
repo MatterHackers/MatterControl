@@ -71,20 +71,12 @@ namespace MatterHackers.MatterControl
 						testRunner.TimeToMoveMouse = 0;
 						testRunner.UpDelaySeconds = 0;
 
-						if (testRunner.NameExists("Done"))
+						UiThread.RunOnIdle(() =>
 						{
-							testRunner.ClickByName("Done");
-							testRunner.Wait(.2);
-						}
+							WizardWindow.Show<EditPrinterSettingsPage>("EditSettings", "Edit Printer Settings");
+						});
 
-						if (testRunner.NameExists("SettingsAndControls"))
-						{
-							testRunner.ClickByName("SettingsAndControls", 5);
-							testRunner.Wait(.2);
-						}
-						testRunner.ClickByName("Slice Settings Tab", .1);
-						testRunner.ClickByName("Printer Tab", .2);
-						testRunner.ClickByName("Connection Tab", .1);
+						testRunner.Wait(.5);
 
 						if (widgetNameToHighlight.Contains(","))
 						{
