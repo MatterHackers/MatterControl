@@ -605,6 +605,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			public string SettingsKey { get; set; }
 			public string SettingsValue { get; set; }
+			private event EventHandler unregisterEvents;
 
 			/// <summary>
 			/// Gets or sets the delegate to be invoked when the settings values need to be refreshed. The implementation should 
@@ -613,11 +614,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			public Action<string> ValueChanged { get; set; }
 			public Action UpdateStyle { get; set; }
 
-			public SettingsRow()
+			public SettingsRow(IEnumerable<SettingsLayer> layerCascade)
 			{
 				Margin = new BorderDouble(0, 2);
 				Padding = new BorderDouble(3);
 				HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+				SettingChanged.RegisterEvent((s, e) =>
+				{
+					if (((StringEventArgs)e).Data == SettingsKey)
+					{
+						string setting = ActiveSliceSettings.Instance.GetActiveValue(SettingsKey, layerCascade);
+						if (SettingsValue != setting)
+						{
+							SettingsValue = setting;
+							ValueChanged?.Invoke(setting);
+						}
+						UpdateStyle?.Invoke();
+					}
+				}, ref unregisterEvents);
+			}
+
+			public override void OnClosed(EventArgs e)
+			{
+				unregisterEvents?.Invoke(this, null);
+				base.OnClosed(e);
 			}
 
 			public void RefreshValue(IEnumerable<SettingsLayer> layerFilters)
@@ -684,7 +705,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Width = 30 * GuiWidget.DeviceScale,
 			};
 
-			var settingsRow = new SettingsRow()
+			var settingsRow = new SettingsRow(layerCascade)
 			{
 				SettingsKey = settingData.SlicerConfigName,
 				SettingsValue = sliceSettingValue,
