@@ -1235,7 +1235,7 @@
   },
   {
     "SlicerConfigName": "MatterControl.PrinterName",
-    "PresentationName": "",
+    "PresentationName": "Printer Name",
     "HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
     "DataEditType": "STRING",
     "ExtraSettings": "",
