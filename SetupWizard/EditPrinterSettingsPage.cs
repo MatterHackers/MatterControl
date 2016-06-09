@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
 			int tabIndex = 0;
 			AddNameSetting("MatterControl.PrinterName", contentRow, ref tabIndex);
 			AddNameSetting("MatterControl.AutoConnect", contentRow, ref tabIndex);
+			AddNameSetting("MatterControl.BaudRate", contentRow, ref tabIndex);
 			AddNameSetting("MatterControl.ComPort", contentRow, ref tabIndex);
 			AddNameSetting("MatterControl.DeletePrinter", contentRow, ref tabIndex);
 
