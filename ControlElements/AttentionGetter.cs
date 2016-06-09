@@ -32,6 +32,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,38 +63,30 @@ namespace MatterHackers.MatterControl
 		{
 			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null)
 			{
-				if (!runingNavigation)
+				Task.Run(() =>
 				{
-					runingNavigation = true;
-					Task.Run(() =>
+					UiThread.RunOnIdle(() =>
 					{
-						AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-						testRunner.TimeToMoveMouse = 0;
-						testRunner.UpDelaySeconds = 0;
+						WizardWindow.Show<EditPrinterSettingsPage>("EditSettings", "Edit Printer Settings");
 
-						UiThread.RunOnIdle(() =>
+						EventHandler unregisterEvents = null;
+						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s,e) =>
 						{
-							WizardWindow.Show<EditPrinterSettingsPage>("EditSettings", "Edit Printer Settings");
-						});
-
-						testRunner.Wait(.5);
-
-						if (widgetNameToHighlight.Contains(","))
-						{
-							foreach (string item in widgetNameToHighlight.Split(','))
+							WizardWindow openWindowInternal = WizardWindow.GetSystemWindow("EditSettings");
+							if(openWindowInternal != null)
 							{
-								HighlightWidget(testRunner, item);
+								UiThread.RunOnIdle(() => openWindowInternal.Close());
 							}
-						}
-						else
-						{
-							HighlightWidget(testRunner, widgetNameToHighlight);
-						}
+						}, ref unregisterEvents);
 
-						testRunner.Dispose();
-						runingNavigation = false;
+						WizardWindow openWindow = WizardWindow.GetSystemWindow("EditSettings");
+						openWindow.Closed += (s2, e2) =>
+						{
+							UiThread.RunOnIdle(() => unregisterEvents?.Invoke(s2, null));
+						};
+
 					});
-				}
+				});
 			}
 		}
 

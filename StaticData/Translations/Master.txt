@@ -4957,3 +4957,6 @@ Translated:Enable Fan If Layer Print Time Is Below
 English:Hz
 Translated:Hz
 
+English:Current Settings
+Translated:Current Settings
+
