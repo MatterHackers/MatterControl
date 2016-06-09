@@ -248,7 +248,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-
 		internal static void AcquireNewProfile(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
