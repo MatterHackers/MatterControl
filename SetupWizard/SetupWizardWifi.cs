@@ -35,10 +35,9 @@ using MatterHackers.MatterControl.CustomWidgets;
 namespace MatterHackers.MatterControl
 {
 	//Normally step one of the setup process
-	public class SetupWizardWifi : WizardPanel
+	public class SetupWizardWifi : WizardPage
 	{
-		public SetupWizardWifi(WizardWindow windowController)
-			: base(windowController)
+		public SetupWizardWifi()
 		{
 			contentRow.AddChild(new TextWidget("Wifi Setup".Localize() + ":", 0, 0, labelFontSize)
 			{
@@ -57,10 +56,10 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			Button skipButton = whiteImageButtonFactory.Generate("Skip".Localize(), centerText: true);
-			skipButton.Click += (s, e) => this.wizardWindow.ChangeToSetupPrinterForm();
+			skipButton.Click += (s, e) => this.WizardWindow.ChangeToSetupPrinterForm();
 
 			Button nextButton = textImageButtonFactory.Generate("Continue".Localize());
-			nextButton.Click += (s, e) => this.wizardWindow.ChangeToSetupPrinterForm();
+			nextButton.Click += (s, e) => this.WizardWindow.ChangeToSetupPrinterForm();
 			nextButton.Visible = false;
 
 			Button configureButton = whiteImageButtonFactory.Generate(LocalizedString.Get("Configure"), centerText: true);

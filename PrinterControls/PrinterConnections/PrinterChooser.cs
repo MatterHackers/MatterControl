@@ -37,7 +37,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
-	public class BoundDropList : StyledDropDownList
+	public class BoundDropList : DropDownList
 	{
 		private List<KeyValuePair<string, string>> listSource;
 

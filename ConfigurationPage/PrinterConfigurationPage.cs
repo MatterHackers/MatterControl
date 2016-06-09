@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl
 
 		private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string languageCode = ((DropDownList)sender).SelectedLabel;
+			string languageCode = ((Agg.UI.DropDownList)sender).SelectedLabel;
 			if (languageCode != UserSettings.Instance.get("Language"))
 			{
 				UserSettings.Instance.set("Language", languageCode);
@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
 			controlsContainer.HAnchor |= HAnchor.ParentCenter;
 
-			var releaseOptionsDropList = new StyledDropDownList("Development");
+			var releaseOptionsDropList = new DropDownList("Development");
 			releaseOptionsDropList.Margin = new BorderDouble(0, 3);
 
 			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Release", "release");
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+			string releaseCode = ((DropDownList)sender).SelectedValue;
 			if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
 			{
 				UserSettings.Instance.set("UpdateFeedType", releaseCode);

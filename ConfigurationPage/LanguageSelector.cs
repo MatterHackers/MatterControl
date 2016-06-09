@@ -1,9 +1,10 @@
-﻿using MatterHackers.VectorMath;
+﻿using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-	public class LanguageSelector : StyledDropDownList
+	public class LanguageSelector : DropDownList
 	{
 		private Dictionary<string, string> languageDict;
 

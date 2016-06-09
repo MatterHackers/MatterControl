@@ -32,11 +32,10 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ShowAuthPanel : ConnectionWizardPanel
+	public class ShowAuthPanel : ConnectionWizardPage
 	{
-		public ShowAuthPanel(WizardWindow connectionWizard) : base(connectionWizard)
+		public ShowAuthPanel()
 		{
-
 			TextWidget userLoginPromptLabel = new TextWidget("Would you like to sign in to access your cloud\nprinter profiles?")
 			{
 				PointSize = 12,
@@ -48,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			nextButton.Name = "Connection Wizard Skip Sign In Button";
 			nextButton.Click += (sender, e) =>
 			{
-				connectionWizard.ChangeToAddPrinter();
+				WizardWindow.ChangeToPage<SetupStepMakeModelName>();
 			};
 
 			var signInButton = textImageButtonFactory.Generate("Sign In");
@@ -56,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			signInButton.Click += (s, e) =>
 			{ 
 				WizardWindow.ShowAuthDialog?.Invoke();
-				UiThread.RunOnIdle(connectionWizard.Close);
+				UiThread.RunOnIdle(WizardWindow.Close);
 	
 			};
 

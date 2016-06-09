@@ -4909,3 +4909,51 @@ Translated:(Press 'Skip' to setup connection later)
 English:Troubleshoot
 Translated:Troubleshoot
 
+English:Estimated Print Time:
+Translated:Estimated Print Time:
+
+English:Are you sure you want to delete your currently selected printer?
+Translated:Are you sure you want to delete your currently selected printer?
+
+English:Delete Printer?
+Translated:Delete Printer?
+
+English:The Fill Density must be between 0 and 1.
+Translated:The Fill Density must be between 0 and 1.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
+
+English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
+Translated:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
+
+English:Extra Length After Tool Change
+Translated:Extra Length After Tool Change
+
+English:mm zero to disable
+Translated:mm zero to disable
+
+English:Connection Troubleshooting
+Translated:Connection Troubleshooting
+
+English:Generate Extra Perimeters When Needed:
+Translated:Generate Extra Perimeters When Needed:
+
+English:mm2
+Translated:mm2
+
+English:Only Retract When  Crossing Perimeters
+Translated:Only Retract When  Crossing Perimeters
+
+English:mm/s�
+Translated:mm/s�
+
+English:mm or % leave 0 for auto
+Translated:mm or % leave 0 for auto
+
+English:Enable Fan If Layer Print Time Is Below
+Translated:Enable Fan If Layer Print Time Is Below
+
+English:Hz
+Translated:Hz
+

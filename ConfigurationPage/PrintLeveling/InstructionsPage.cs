@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class InstructionsPage : WizardPage
+	public class InstructionsPage : WizardControlPage
 	{
 		double extraTextScaling = 1;
 		protected FlowLayoutWidget topToBottomControls;

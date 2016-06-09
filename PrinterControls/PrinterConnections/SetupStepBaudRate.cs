@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepBaudRate : ConnectionWizardPanel
+	public class SetupStepBaudRate : ConnectionWizardPage
 	{
 		private List<RadioButton> BaudRateButtonsList = new List<RadioButton>();
 		private FlowLayoutWidget printerBaudRateContainer;
@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button printerBaudRateHelpLink;
 		private TextWidget printerBaudRateHelpMessage;
 
-		public SetupStepBaudRate(WizardWindow connectionWizard) : base(connectionWizard)
+		public SetupStepBaudRate()
 		{
 			linkButtonFactory.fontSize = 8;
 
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void MoveToNextWidget()
 		{
-			wizardWindow.ChangeToInstallDriverOrComPortOne();
+			WizardWindow.ChangeToInstallDriverOrComPortOne();
 		}
 
 		private void NextButton_Click(object sender, EventArgs mouseEvent)

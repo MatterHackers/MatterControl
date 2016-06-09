@@ -11,7 +11,7 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepInstallDriver : ConnectionWizardPanel
+	public class SetupStepInstallDriver : ConnectionWizardPage
 	{
 		private FlowLayoutWidget printerDriverContainer;
 		private TextWidget printerDriverMessage;
@@ -19,8 +19,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button installButton;
 		private Button skipButton;
 
-		public SetupStepInstallDriver(WizardWindow windowController)
-			: base(windowController)
+		public SetupStepInstallDriver()
 		{
 			headerLabel.Text = string.Format(LocalizedString.Get("Install Communication Driver"));
 			printerDriverContainer = createPrinterDriverContainer();
@@ -35,13 +34,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						bool canContinue = this.InstallDriver();
 						if (canContinue)
 						{
-							wizardWindow.ChangeToSetupBaudOrComPortOne();
+							WizardWindow.ChangeToSetupBaudOrComPortOne();
 						}
 					});
 				};
 
 				skipButton = textImageButtonFactory.Generate(LocalizedString.Get("Skip"));
-				skipButton.Click += (s, e) => wizardWindow.ChangeToSetupBaudOrComPortOne();
+				skipButton.Click += (s, e) => WizardWindow.ChangeToSetupBaudOrComPortOne();
 
 				//Add buttons to buttonContainer
 				footerRow.AddChild(installButton);

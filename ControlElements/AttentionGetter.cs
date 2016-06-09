@@ -30,6 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -40,63 +43,58 @@ namespace MatterHackers.MatterControl
 	{
 		static bool runingNavigation;
 
-		public static void GoToPrinterSettings(string widgetNameToHighlight)
+		public static void GoToEditPrinter_Click(object sender, EventArgs e)
 		{
-			if (!runingNavigation)
+			Button editButton = sender as Button;
+			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
+			if (editButton != null)
 			{
-				runingNavigation = true;
-				Task.Run(() =>
+				editButton.Closed += (s, e2) =>
 				{
-					AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-					testRunner.TimeToMoveMouse = 0;
-					testRunner.UpDelaySeconds = 0;
+					editButton.Click -= GoToEditPrinter_Click;
+				};
 
-					if (testRunner.NameExists("SettingsAndControls"))
-					{
-						testRunner.ClickByName("SettingsAndControls", 5);
-						testRunner.Wait(.2);
-					}
-					testRunner.ClickByName("Slice Settings Tab", .1);
-					testRunner.ClickByName("Printer Tab", .2);
-					testRunner.ClickByName("Connection Tab", .1);
-
-					if (widgetNameToHighlight.Contains(","))
-					{
-						foreach (string item in widgetNameToHighlight.Split(','))
-						{
-							HighlightWidget(testRunner, item);
-						}
-					}
-					else
-					{
-						HighlightWidget(testRunner, widgetNameToHighlight);
-					}
-
-					testRunner.Dispose();
-					runingNavigation = false;
-				});
+				UiNavigation.GoToPrinterSettings("MatterControl.BaudRate Edit Field,MatterControl.AutoConnect Edit Field,MatterControl.ComPort Edit Field");
 			}
 		}
 
-		public static void GoToPrintLevelSettings()
+		public static void GoToPrinterSettings(string widgetNameToHighlight)
 		{
-			Task.Run(() =>
+			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null)
 			{
-				AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
-				testRunner.TimeToMoveMouse = 0;
-				testRunner.UpDelaySeconds = 0;
-
-				if (testRunner.NameExists("SettingsAndControls"))
+				if (!runingNavigation)
 				{
-					testRunner.ClickByName("SettingsAndControls", 5);
-					testRunner.Wait(.2);
+					runingNavigation = true;
+					Task.Run(() =>
+					{
+						AutomationRunner testRunner = new AutomationRunner(inputType: AutomationRunner.InputType.Simulated, drawSimulatedMouse: false);
+						testRunner.TimeToMoveMouse = 0;
+						testRunner.UpDelaySeconds = 0;
+
+						UiThread.RunOnIdle(() =>
+						{
+							WizardWindow.Show<EditPrinterSettingsPage>("EditSettings", "Edit Printer Settings");
+						});
+
+						testRunner.Wait(.5);
+
+						if (widgetNameToHighlight.Contains(","))
+						{
+							foreach (string item in widgetNameToHighlight.Split(','))
+							{
+								HighlightWidget(testRunner, item);
+							}
+						}
+						else
+						{
+							HighlightWidget(testRunner, widgetNameToHighlight);
+						}
+
+						testRunner.Dispose();
+						runingNavigation = false;
+					});
 				}
-				testRunner.ClickByName("Options Tab", .2);
-
-				HighlightWidget(testRunner, "AutoLevelRowItem");
-
-				testRunner.Dispose();
-			});
+			}
 		}
 
 		private static void HighlightWidget(AutomationRunner testRunner, string widgetNameToHighlight)
@@ -114,9 +112,9 @@ namespace MatterHackers.MatterControl
 	{
 		static HashSet<GuiWidget> runingAttentons = new HashSet<GuiWidget>();
 		private double animationDelay = 1 / 20.0;
-		private int cycles = 3;
+		private int cycles = 1;
 		private double lightnessChange = 1;
-		private double pulseTime = .8;
+		private double pulseTime = 1.38;
 		private RGBA_Bytes startColor;
 		private Stopwatch timeSinceStart = null;
 		private GuiWidget widgetToHighlight;

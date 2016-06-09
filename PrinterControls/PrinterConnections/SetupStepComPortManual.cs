@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortManual : ConnectionWizardPanel
+	public class SetupStepComPortManual : ConnectionWizardPage
 	{
 		private static Regex linuxDefaultUIFilter = new Regex("/dev/ttyS*\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private event EventHandler unregisterEvents;
 		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
 
-		public SetupStepComPortManual(WizardWindow connectionWizard) : base(connectionWizard)
+		public SetupStepComPortManual()
 		{
 			linkButtonFactory.fontSize = 8;
 
@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			connectButton.Click += ConnectButton_Click;
 
 			refreshButton = textImageButtonFactory.Generate("Refresh".Localize());
-			refreshButton.Click += (s, e) => connectionWizard.ChangeToSetupComPortManual();
+			refreshButton.Click += (s, e) => WizardWindow.ChangeToPage<SetupStepComPortManual>();
 
 			//Add buttons to buttonContainer
 			footerRow.AddChild(nextButton);
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void MoveToNextWidget(object state)
 		{
-			wizardWindow.ChangeToInstallDriverOrComPortOne();
+			WizardWindow.ChangeToInstallDriverOrComPortOne();
 		}
 
 		private void ConnectButton_Click(object sender, EventArgs mouseEvent)

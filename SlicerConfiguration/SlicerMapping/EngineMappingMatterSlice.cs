@@ -104,6 +104,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("raft_air_gap", "raftAirGap"),
 				new MappedSetting("support_air_gap", "supportAirGap"),
 				new MappedSetting("retract_length_tool_change", "retractionOnExtruderSwitch"),
+				new MappedSetting("retract_restart_extra_toolchange", "unretractExtraOnExtruderSwitch"),
 				new MapFirstValue("retract_length", "retractionOnTravel"),
 				new MapFirstValue("retract_speed", "retractionSpeed"),
 				new MapFirstValue("retract_lift", "retractionZHop"),

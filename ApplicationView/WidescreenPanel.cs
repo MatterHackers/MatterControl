@@ -68,9 +68,6 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			Padding = new BorderDouble(4);
 
-			// TODO: This hooks seems to invalidate most of the other ActivePrinterChanged subscribers as this destroys and recreates everything
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(null, null), ref unregisterEvents);
-
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
 			this.BoundsChanged += onBoundsChanges;

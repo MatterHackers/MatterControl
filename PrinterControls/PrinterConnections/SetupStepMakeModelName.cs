@@ -14,7 +14,7 @@ using System.IO;
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	//Normally step one of the setup process
-	public class SetupStepMakeModelName : ConnectionWizardPanel
+	public class SetupStepMakeModelName : ConnectionWizardPage
 	{
 		private FlowLayoutWidget printerModelContainer;
 		private FlowLayoutWidget printerMakeContainer;
@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private BoundDropList printerManufacturerSelector;
 		private BoundDropList printerModelSelector;
 
-		public SetupStepMakeModelName(WizardWindow windowController) : base(windowController)
+		public SetupStepMakeModelName()
 		{
 			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
 			{
@@ -71,9 +71,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerModelContainer = CreateSelectionContainer("Model".Localize(), "Select the printer model".Localize(), printerModelSelector);
 
 			//Add inputs to main container
-			contentRow.AddChild(createPrinterNameContainer());
 			contentRow.AddChild(printerMakeContainer);
 			contentRow.AddChild(printerModelContainer);
+			contentRow.AddChild(createPrinterNameContainer());
 
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Save & Continue".Localize());
@@ -83,8 +83,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				bool canContinue = this.OnSave();
 				if (canContinue)
 				{
-					wizardWindow.ChangeToSetupBaudRate();
-					//UiThread.RunOnIdle(connectionWizard.Close);
+#if __ANDROID__
+					WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
+#else
+					WizardWindow.ChangeToPage<SetupStepInstallDriver>();
+#endif
 				}
 			};
 
@@ -113,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Margin = new BorderDouble(0, 0, 0, 1)
 			};
 
-			printerNameInput = new MHTextEditWidget(this.ActivePrinter.Name)
+			printerNameInput = new MHTextEditWidget("")
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 			};
@@ -136,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return container;
 		}
 
-		private FlowLayoutWidget CreateSelectionContainer(string labelText, string validationMessage, DropDownList selector)
+		private FlowLayoutWidget CreateSelectionContainer(string labelText, string validationMessage, Agg.UI.DropDownList selector)
 		{
 			var sectionLabel = new TextWidget(labelText, 0, 0, 12)
 			{
@@ -172,7 +175,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void ManufacturerDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			ActivePrinter.Make = ((DropDownList)sender).SelectedValue;
+			ActivePrinter.Make = ((Agg.UI.DropDownList)sender).SelectedValue;
 			ActivePrinter.Model = null;
 
 			List<string> printers;
@@ -192,7 +195,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				StyledDropDownList dropList = (StyledDropDownList) sender;
+				DropDownList dropList = (DropDownList) sender;
 				ActivePrinter.Model = dropList.SelectedLabel;
 
 				SetElementVisibility();
@@ -201,7 +204,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					// Use ManufacturerDropList.SelectedLabel instead of ActivePrinter.Make to ensure the mapped Unicode values are picked up
 					string mappedMakeText = printerManufacturerSelector.SelectedLabel;
 
-					string printerInputName = String.Format("{0} {1}", mappedMakeText, this.ActivePrinter.Model);
+					string printerInputName = string.Format("{0} {1}", mappedMakeText, this.ActivePrinter.Model);
 					var names = ActiveSliceSettings.ProfileData.Profiles.Where(p => p.Name.StartsWith(printerInputName)).Select(p => p.Name).ToList();
 					if (!names.Contains(printerInputName))
 					{
@@ -215,7 +218,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 						do
 						{
-							possiblePrinterName = String.Format("{0} ({1})", printerInputName, printerModelCount++);
+							possiblePrinterName = string.Format("{0} ({1})", printerInputName, printerModelCount++);
 						} while (names.Contains(possiblePrinterName));
 
 						printerNameInput.Text = possiblePrinterName;

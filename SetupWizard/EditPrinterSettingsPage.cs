@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Kevin Pope
+Copyright (c) 2016, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,31 +27,46 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class StyledDropDownList : DropDownList
+	public class EditPrinterSettingsPage : WizardPage
 	{
-		private static RGBA_Bytes whiteSemiTransparent = new RGBA_Bytes(255, 255, 255, 100);
-		private static RGBA_Bytes whiteTransparent = new RGBA_Bytes(255, 255, 255, 0);
-
-		public StyledDropDownList(string noSelectionString, Direction direction = Direction.Down, double maxHeight = 0, bool useLeftIcons = false)
-			: base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction, maxHeight, useLeftIcons)
+		public EditPrinterSettingsPage()
+			: base("Done")
 		{
-			this.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.MenuItemsBorderWidth = 1;
-			this.MenuItemsBackgroundColor = RGBA_Bytes.White;
-			this.MenuItemsBorderColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.MenuItemsPadding = new BorderDouble(10, 8, 10, 12);
-			this.MenuItemsBackgroundHoverColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.MenuItemsTextHoverColor = RGBA_Bytes.Black;
-			this.MenuItemsTextColor = RGBA_Bytes.Black;
-			this.BorderWidth = 1;
-			this.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.HoverColor = whiteSemiTransparent;
-			this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 0);
+			headerLabel.Text = "Current Settings".Localize();
+
+			textImageButtonFactory.borderWidth = 1;
+			textImageButtonFactory.normalBorderColor = RGBA_Bytes.White;
+
+			int tabIndex = 0;
+			AddNameSetting("MatterControl.PrinterName", contentRow, ref tabIndex);
+			AddNameSetting("MatterControl.AutoConnect", contentRow, ref tabIndex);
+			AddNameSetting("MatterControl.ComPort", contentRow, ref tabIndex);
+			AddNameSetting("MatterControl.DeletePrinter", contentRow, ref tabIndex);
+
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
+
+			cancelButton.Text = "Back".Localize();
+		}
+
+		private void AddNameSetting(string sliceSettingsKey, FlowLayoutWidget contentRow, ref int tabIndex)
+		{
+			GuiWidget control = SliceSettingsWidget.CreateSettingControl(sliceSettingsKey, ref tabIndex);
+			if (control != null)
+			{
+				contentRow.AddChild(control);
+			}
 		}
 	}
 }

@@ -246,9 +246,10 @@
     <Compile Include="Library\Provider\LibraryProvider.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
     <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
-    <Compile Include="SetupWizard\SetupWizardConnect.cs" />
-    <Compile Include="SetupWizard\WizardPanel.cs" />
-    <Compile Include="SetupWizard\SetupWizardHome.cs" />
+    <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
+    <Compile Include="SetupWizard\EditPrinterSettingsPage.cs" />
+    <Compile Include="SetupWizard\WizardPage.cs" />
+    <Compile Include="SetupWizard\AndroidSetupOptionsPage.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
@@ -307,7 +308,6 @@
     <Compile Include="CustomWidgets\PrintProgressBarWidget.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
-    <Compile Include="CustomWidgets\StyledDropDownList.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
     <Compile Include="CustomWidgets\WizardControl.cs" />
     <Compile Include="DataStorage\SQLiteCommon.cs" />
@@ -329,7 +329,6 @@
     <Compile Include="PrinterControls\PrintLevelingPlane.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWindow.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\SetupStepConfigureConnection.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortTwo.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortOne.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepMakeModelName.cs" />
@@ -338,7 +337,7 @@
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\ConnectionWizardPanel.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\ConnectionWizardPage.cs" />
     <Compile Include="PrinterControls\TemperatureIndicator.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
     <Compile Include="Library\LibraryDataView.cs" />

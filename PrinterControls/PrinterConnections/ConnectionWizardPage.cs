@@ -8,38 +8,13 @@ using System;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ConnectionWizardPanel : WizardPanel
+	public class ConnectionWizardPage : WizardPage
 	{
 		private PrinterInfo activePrinter;
 
-		public ConnectionWizardPanel(WizardWindow wizard) 
-			: base(
-				  wizard, 
-				  "Cancel", 
-				  new TextImageButtonFactory()
-				  {
-					  normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					  hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					  disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					  pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					  borderWidth = 0
-				  })
+		public ConnectionWizardPage() : base("Cancel")
 		{
-			linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
-			linkButtonFactory.fontSize = 10;
-
-			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
-
 			cancelButton.Click += (s, e) => PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-
-			mainContainer.Padding = new BorderDouble(3, 5, 3, 5);
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
-
-			headerLabel.PointSize = 14;
-			headerLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			contentRow.Padding = new BorderDouble(5);
-			footerRow.Margin = new BorderDouble(0, 3);
 		}
 
 		public PrinterInfo ActivePrinter
@@ -75,7 +50,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				settings.SetName(ActivePrinter.Name);
 			});
 
-			UiThread.RunOnIdle(wizardWindow.Close);
+			UiThread.RunOnIdle(WizardWindow.Close);
 		}
 	}
 }
