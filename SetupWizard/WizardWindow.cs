@@ -51,6 +51,28 @@ namespace MatterHackers.MatterControl
 			this.MinimumSize = new Vector2(350 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
 		}
 
+		public static void Close(string uri)
+		{
+			WizardWindow existingWindow;
+
+			if (allWindows.TryGetValue(uri, out existingWindow))
+			{
+				existingWindow.Close();
+			}
+		}
+
+		public static WizardWindow GetSystemWindow(string uri)
+		{
+			WizardWindow existingWindow;
+
+			if (allWindows.TryGetValue(uri, out existingWindow))
+			{
+				return existingWindow;
+			}
+
+			return null;
+		}
+
 		public static void Show<PanelType>(string uri, string title) where PanelType : WizardPage, new()
 		{
 			WizardWindow existingWindow;
