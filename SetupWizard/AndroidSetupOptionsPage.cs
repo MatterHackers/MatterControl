@@ -37,9 +37,9 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public class AndroidSetupOptionsPage : WizardPage
+	public class SetupOptionsPage : WizardPage
 	{
-		public AndroidSetupOptionsPage()
+		public SetupOptionsPage()
 			: base("Done")
 		{
 			headerLabel.Text = "Setup Options".Localize();
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				WizardPage.WizardWindow.ChangeToPage<AndroidSetupOptionsPage>();
+				WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>();
 			};
 			buttonContainer.AddChild(disconnectButton);
 
