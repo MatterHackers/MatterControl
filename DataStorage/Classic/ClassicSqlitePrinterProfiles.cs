@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			foreach (var collection in collections)
 			{
 				var settingsDictionary = LoadSettings(collection);
-				layeredProfile.MaterialLayers[collection.Name] = new SettingsLayer(settingsDictionary);
+				layeredProfile.MaterialLayers.Add(new SettingsLayer(settingsDictionary));
 			}
 		}
 
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			foreach (var collection in collections)
 			{
 				var settingsDictionary = LoadSettings(collection);
-				layeredProfile.QualityLayers[collection.Name] = new SettingsLayer(settingsDictionary);
+				layeredProfile.QualityLayers.Add(new SettingsLayer(settingsDictionary));
 			}
 		}
 

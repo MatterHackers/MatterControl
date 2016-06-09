@@ -292,15 +292,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Copy OemProfile presets into user layers
-			foreach(var layer in layeredProfile.OemProfile.MaterialLayers)
-			{
-				layeredProfile.MaterialLayers[layer.Key] = layer.Value;
-			}
+			layeredProfile.MaterialLayers.AddRange(layeredProfile.OemProfile.MaterialLayers);
+			layeredProfile.QualityLayers.AddRange(layeredProfile.OemProfile.QualityLayers);
 
-			foreach (var layer in layeredProfile.OemProfile.QualityLayers)
-			{
-				layeredProfile.QualityLayers[layer.Key] = layer.Value;
-			}
+			layeredProfile.OemProfile.MaterialLayers.Clear();
+			layeredProfile.OemProfile.QualityLayers.Clear();
 
 			layeredProfile.Save();
 

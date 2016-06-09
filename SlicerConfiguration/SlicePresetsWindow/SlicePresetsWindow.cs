@@ -43,18 +43,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetsContext
 	{
-		public Dictionary<string, SettingsLayer> PresetsDictionary { get; }
+		public List<SettingsLayer> PresetLayers { get; }
 		public SettingsLayer PersistenceLayer { get; set; }
 		public Action<string> SetAsActive { get; set; }
 		public NamedSettingsLayers LayerType { get; set; }
 
-		private string presetsKey;
-
-		public PresetsContext(Dictionary<string, SettingsLayer> parentDictionary, string presetsKey)
+		public PresetsContext(List<SettingsLayer> settingsLayers, SettingsLayer activeLayer)
 		{
-			this.presetsKey = presetsKey;
-			this.PersistenceLayer = parentDictionary[presetsKey];
-			this.PresetsDictionary = parentDictionary;
+			this.PersistenceLayer = activeLayer;
+			this.PresetLayers = settingsLayers;
 		}
 	}
 
@@ -198,11 +195,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				UiThread.RunOnIdle(() =>
 				{
 					string sanitizedName = numberMatch.Replace(presetNameInput.Text, "").Trim();
-					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetsDictionary.Values.Select(preset => preset.Name));
+					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault("MatterControl.LayerName")));
 
 					var clonedLayer = presetsContext.PersistenceLayer.Clone();
 					clonedLayer.Name = newProfileName;
-					presetsContext.PresetsDictionary[clonedLayer.ID] = clonedLayer;
+					presetsContext.PresetLayers.Add(clonedLayer);
 
 					presetsContext.SetAsActive(clonedLayer.ID);
 					presetsContext.PersistenceLayer = clonedLayer;
