@@ -64,8 +64,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
-
 					//Names of Items to be added
 					string firstItemName = "Row Item " + "Fennec Fox";
 					string secondItemName = "Row Item " + "Batman";
