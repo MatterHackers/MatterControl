@@ -335,12 +335,6 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				// Make exception for extruder assignment on 3D Stuffmaker slice files
-				if (printer.Oem == "3D Stuffmaker" && settings.RelativeFilePath.IndexOf(".slice", StringComparison.OrdinalIgnoreCase) != -1)
-				{
-					return;
-				}
-
 				string supportMaterialExtruder = settings.LayerCascade.GetValue("support_material_extruder");
 				if (!string.IsNullOrEmpty(supportMaterialExtruder) && printer.Oem != "Esagono")
 				{
@@ -354,6 +348,12 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
+				// Make exception for extruder assignment on 3D Stuffmaker slice files
+				if (printer.Oem == "3D Stuffmaker" && settings.RelativeFilePath.IndexOf(".slice", StringComparison.OrdinalIgnoreCase) != -1)
+				{
+					return;
+				}
+
 				string supportMaterialInterfaceExtruder = settings.LayerCascade.GetValue("support_material_interface_extruder");
 				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder) && printer.Oem != "Esagono")
 				{
