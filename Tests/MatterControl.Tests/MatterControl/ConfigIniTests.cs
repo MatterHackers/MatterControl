@@ -197,7 +197,7 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test]
+		[Test, Category("FixNeeded")]
 		public void BottomSolidLayersEqualsOneMM()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
@@ -236,7 +236,7 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test]
+		[Test, Category("FixNeeded")]
 		public void FirstLayerHeightLessThanNozzleDiameterXExtrusionMultiplier()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
@@ -282,7 +282,7 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test]
+		[Test, Category("FixNeeded")]
 		public void LayerHeightLessThanNozzleDiameter()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
@@ -348,6 +348,12 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
+				// Make exception for extruder assignment on 3D Stuffmaker slice files
+				if (printer.Oem == "3D Stuffmaker" && settings.RelativeFilePath.IndexOf(".slice", StringComparison.OrdinalIgnoreCase) != -1)
+				{
+					return;
+				}
+
 				string supportMaterialInterfaceExtruder = settings.LayerCascade.GetValue("support_material_interface_extruder");
 				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder) && printer.Oem != "Esagono")
 				{
