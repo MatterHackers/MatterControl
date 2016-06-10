@@ -4,6 +4,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -100,12 +101,79 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				// TODO: jlewin
-				throw new NotImplementedException();
-				// ActiveSliceSettings.Instance.LoadSettingsFromIni();
+				OpenFileDialogParams openParams = new OpenFileDialogParams("settings files|*.ini;*.printer,");
+				FileDialog.OpenFileDialog(openParams, settingsImportFileSelected);
 			});
+
 			return true;
 		}
+
+		private void settingsImportFileSelected(OpenFileDialogParams openParams)
+		{
+			if (!string.IsNullOrEmpty(openParams.FileName))
+			{
+				string fileContent = File.ReadAllText(openParams.FileName);
+				// figure out what type it is
+				if (Path.GetExtension(openParams.FileName).ToLower() == ".printer")
+				{
+					throw new NotImplementedException("need to import from 'MatterControl.printer' files");
+					// done loading return
+					return;
+				}
+				else
+				{
+					if (fileContent.Contains("layer_height"))
+					{
+						// looks like a slic3r file
+						// clear all the user settings
+						DoRevertToDefaults();
+
+						UiThread.RunOnIdle(() =>
+						{
+							var activeSettings = ActiveSliceSettings.Instance;
+
+							string[] lines = fileContent.Split('\n');
+							foreach (string line in lines)
+							{
+								string[] keyValue = line.Split('=');
+								if (keyValue.Length == 2)
+								{
+									keyValue[0] = keyValue[0].Trim();
+									keyValue[1] = keyValue[1].Trim();
+
+									// put it into the user layer if different
+									string currentValue = activeSettings.GetActiveValue(keyValue[0], null).Trim();
+									if (currentValue != keyValue[1])
+									{
+										activeSettings.UserLayer.Add(keyValue[0], keyValue[1]);
+									}
+								}
+							}
+
+							activeSettings.SaveChanges();
+
+							ApplicationController.Instance.ReloadAdvancedControlsPanel();
+						});
+
+						// done loading return
+						return;
+					}
+					else if (fileContent.Contains(""))
+					{
+						// looks like a cura file
+						throw new NotImplementedException("need to import from 'cure.ini' files");
+						// done loading return
+						return;
+					}
+				}
+
+				// Did not figure out what this file is, let the user know we don't understand it
+				StyledMessageBox.ShowMessageBox(null, "Oops! Do not recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(openParams.FileName)), "Unable to Import".Localize());
+			}
+
+			Invalidate();
+		}
+
 
 		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
 		{
@@ -134,45 +202,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (revertSettings)
 					{
-
-						var activeSettings = ActiveSliceSettings.Instance;
-						var userOverrides = activeSettings.UserLayer.Keys.ToArray();
-
-						// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
-						var keysToRetain = new HashSet<string>(userOverrides.Except(activeSettings.KnownSettings));
-
-						foreach(var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => !settingsItem.ShowAsOverride))
-						{
-							switch(item.SlicerConfigName)
-							{
-								case "MatterControl.BaudRate":
-								case "MatterControl.AutoConnect":
-									// These items are marked as not being overrides but should be cleared on 'reset to defaults'
-									break;
-								default:
-									// All other non-overrides should be retained
-									keysToRetain.Add(item.SlicerConfigName);
-									break;
-							}
-						}
-
-						var keysToRemove = (from keyValue in activeSettings.UserLayer
-											where !keysToRetain.Contains(keyValue.Key)
-											select keyValue.Key).ToList();
-
-						foreach (string key in keysToRemove)
-						{
-							activeSettings.UserLayer.Remove(key);
-						}
-
-						activeSettings.SaveChanges();
-
-						ApplicationController.Instance.ReloadAdvancedControlsPanel();
+						DoRevertToDefaults();
 					}
 				},
 				resetToDefaultsMessage,
-				resetToDefaultsWindowTitle, 
+				resetToDefaultsWindowTitle,
 				StyledMessageBox.MessageType.YES_NO);
+		}
+
+		private static void DoRevertToDefaults()
+		{
+			var activeSettings = ActiveSliceSettings.Instance;
+			var userOverrides = activeSettings.UserLayer.Keys.ToArray();
+
+			// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
+			var keysToRetain = new HashSet<string>(userOverrides.Except(activeSettings.KnownSettings));
+
+			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => !settingsItem.ShowAsOverride))
+			{
+				switch (item.SlicerConfigName)
+				{
+					case "MatterControl.BaudRate":
+					case "MatterControl.AutoConnect":
+						// These items are marked as not being overrides but should be cleared on 'reset to defaults'
+						break;
+					default:
+						// All other non-overrides should be retained
+						keysToRetain.Add(item.SlicerConfigName);
+						break;
+				}
+			}
+
+			var keysToRemove = (from keyValue in activeSettings.UserLayer
+								where !keysToRetain.Contains(keyValue.Key)
+								select keyValue.Key).ToList();
+
+			foreach (string key in keysToRemove)
+			{
+				activeSettings.UserLayer.Remove(key);
+			}
+
+			activeSettings.SaveChanges();
+
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 	}
 }
