@@ -4966,3 +4966,15 @@ Translated:Reset to defaults
 English:Bake Overrides
 Translated:Bake Overrides
 
+English:Export MatterControl settings (*.printer)
+Translated:Export MatterControl settings (*.printer)
+
+English:Export Slic3r settings (*.ini)
+Translated:Export Slic3r settings (*.ini)
+
+English:Export Cura settings (*.ini)
+Translated:Export Cura settings (*.ini)
+
+English:Export Settings
+Translated:Export Settings
+

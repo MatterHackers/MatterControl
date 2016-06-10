@@ -55,16 +55,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				JObject materialLayers, qualityLayers;
 
 				materialLayers = jObject["MaterialLayers"] as JObject;
-				jObject["MaterialLayers"] = new JArray(materialLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
+				if (materialLayers != null)
+				{
+					jObject["MaterialLayers"] = new JArray(materialLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
+					qualityLayers = jObject["QualityLayers"] as JObject;
+					jObject["QualityLayers"] = new JArray(qualityLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
 
-				qualityLayers = jObject["QualityLayers"] as JObject;
-				jObject["QualityLayers"] = new JArray(qualityLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
-
-				var oemProfile = jObject["OemProfile"] as JObject;
-				oemProfile.Property("MaterialLayers").Remove();
-				oemProfile.Property("QualityLayers").Remove();
-
+					var oemProfile = jObject["OemProfile"] as JObject;
+					oemProfile.Property("MaterialLayers").Remove();
+					oemProfile.Property("QualityLayers").Remove();
+				}
 				jObject["DocumentVersion"] = 201606081;
+				fromVersion = 201606081;
 			}
 
 			if (fromVersion < 201605131)
