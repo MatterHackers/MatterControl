@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl
 
 		protected GuiWidget mainContainer;
 
-		public WizardPage(string unlocalizedTextForCancelButton = "Cancel", TextImageButtonFactory textButtonFactory = null)
+		public WizardPage(string unlocalizedTextForCancelButton = "Cancel")
 		{
 			whiteImageButtonFactory = new TextImageButtonFactory()
 			{

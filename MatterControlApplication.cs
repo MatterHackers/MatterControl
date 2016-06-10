@@ -54,6 +54,7 @@ using MatterHackers.GCodeVisualizer;
 using Gaming.Game;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -660,6 +661,11 @@ namespace MatterHackers.MatterControl
 #endif
 
 				AfterFirstDraw?.Invoke();
+
+				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
+				{
+					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
+				}
 
 				if (ActiveSliceSettings.ProfileData.Profiles.Count == 0)
 				{
