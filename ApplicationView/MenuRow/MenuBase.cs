@@ -6,24 +6,24 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-	public abstract class MenuBase : GuiWidget
+	public class MenuItemAction
 	{
-		public class MenuItemAction
+		public MenuItemAction(string title, Action action)
 		{
-			public MenuItemAction(string title, Action action)
-			{
-				this.Title = title;
-				this.Action = action;
-			}
-
-			public string Title { get; set; }
-			public Action Action { get; set; }
+			this.Title = title;
+			this.Action = action;
 		}
 
-		public DropDownMenu MenuDropList;
-		private List<MenuItemAction> menuItems = null;
+		public string Title { get; set; }
+		public Action Action { get; set; }
+	}
 
-		protected abstract IEnumerable<MenuItemAction> GetMenuItems();
+	public abstract class MenuBase : GuiWidget
+	{
+		public DropDownMenu MenuDropList;
+		private List<MenuItemAction> menuActions = null;
+
+		protected abstract IEnumerable<MenuItemAction> GetMenuActions();
 
 		public MenuBase(string menuName)
 		{
@@ -36,10 +36,10 @@ namespace MatterHackers.MatterControl
 			MenuDropList.DrawDirectionalArrow = false;
 			MenuDropList.MenuAsWideAsItems = false;
 
-			menuItems = new List<MenuItemAction>(GetMenuItems());
+			menuActions = new List<MenuItemAction>(GetMenuActions());
 			BorderDouble padding = MenuDropList.MenuItemsPadding;
 			//Add the menu items to the menu itself
-			foreach (MenuItemAction item in menuItems)
+			foreach (MenuItemAction item in menuActions)
 			{
 				if (item.Title.StartsWith("-----"))
 				{
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
 		{
 			string menuSelection = ((DropDownMenu)sender).SelectedValue;
-			foreach (MenuItemAction item in menuItems)
+			foreach (MenuItemAction item in menuActions)
 			{
 				if (item.Title == menuSelection && item.Action != null)
 				{

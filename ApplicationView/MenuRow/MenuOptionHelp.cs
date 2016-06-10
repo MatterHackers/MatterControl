@@ -16,7 +16,7 @@ namespace MatterHackers.MatterControl
 			Name = "Help Menu";
 		}
 
-		protected override IEnumerable<MenuItemAction> GetMenuItems()
+		protected override IEnumerable<MenuItemAction> GetMenuActions()
 		{
 			return new List<MenuItemAction>
 			{
