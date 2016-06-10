@@ -3,6 +3,8 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -14,6 +16,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private DropDownList settingsDetailSelector;
 		private CheckBox showHelpBox;
 		private TupleList<string, Func<bool>> slicerOptionsMenuItems;
+
+		private static string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\r\nAre you sure you want to continue?".Localize();
+		private static string resetToDefaultsWindowTitle = "Revert Settings".Localize();
 
 		public SliceSettingsDetailControl()
 		{
@@ -77,7 +82,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				slicerOptionsMenuItems = new TupleList<string, Func<bool>>
 				{
 					{ "Import".Localize(), ImportSettingsMenu_Click },
-					{ "Export".Localize(), () => {  WizardWindow.Show<ExportSettingsPage>("gah", "Hello"); return true; } /* ExportSettingsMenu_Click */ },
+					{ "Export".Localize(), () => {  WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); return true; } },
 					{ "Reset to defaults".Localize(),() => { UiThread.RunOnIdle(ResetToDefaults); return true; } },
 				};
 
@@ -129,14 +134,44 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (revertSettings)
 					{
-						// TODO: We should offer to export the settings before the purge
-						ActiveSliceSettings.Instance.UserLayer.Clear();
-						ActiveSliceSettings.Instance.SaveChanges();
+
+						var activeSettings = ActiveSliceSettings.Instance;
+						var userOverrides = activeSettings.UserLayer.Keys.ToArray();
+
+						// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
+						var keysToRetain = new HashSet<string>(userOverrides.Except(activeSettings.KnownSettings));
+
+						foreach(var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => !settingsItem.ShowAsOverride))
+						{
+							switch(item.SlicerConfigName)
+							{
+								case "MatterControl.BaudRate":
+								case "MatterControl.AutoConnect":
+									// These items are marked as not being overrides but should be cleared on 'reset to defaults'
+									break;
+								default:
+									// All other non-overrides should be retained
+									keysToRetain.Add(item.SlicerConfigName);
+									break;
+							}
+						}
+
+						var keysToRemove = (from keyValue in activeSettings.UserLayer
+											where !keysToRetain.Contains(keyValue.Key)
+											select keyValue.Key).ToList();
+
+						foreach (string key in keysToRemove)
+						{
+							activeSettings.UserLayer.Remove(key);
+						}
+
+						activeSettings.SaveChanges();
+
 						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					}
 				},
-				"Resetting to default values will remove your current overrides and restore your original printer settings.\r\nAre you sure you want to continue?".Localize(), 
-				"Revert Settings".Localize(), 
+				resetToDefaultsMessage,
+				resetToDefaultsWindowTitle, 
 				StyledMessageBox.MessageType.YES_NO);
 		}
 	}
