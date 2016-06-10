@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public class ExportSettingsPage : WizardPage
 	{
-		private string exportMode = "slic3r";
+		private string exportMode = "mattercontrol";
 
 		public ExportSettingsPage() :
 			base("Cancel")
@@ -47,18 +47,20 @@ namespace MatterHackers.MatterControl
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			contentRow.AddChild(container);
 
-			var renderTypeShaded = new RadioButton("Export Slic3r settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			renderTypeShaded.Checked = true;
-			renderTypeShaded.CheckedStateChanged += (s, e) => exportMode = "slic3r";
-			container.AddChild(renderTypeShaded);
+			var matterControlButton = new RadioButton("Export MatterControl settings (*.printer)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			matterControlButton.CheckedStateChanged += (s, e) => exportMode = "mattercontrol";
+			matterControlButton.Checked = true;
+			container.AddChild(matterControlButton);
 
-			var renderTypeOutlines = new RadioButton("Export Cura settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			renderTypeOutlines.CheckedStateChanged += (s, e) => exportMode = "cura";
-			container.AddChild(renderTypeOutlines);
+			var slic3rButton = new RadioButton("Export Slic3r settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			slic3rButton.CheckedStateChanged += (s, e) => exportMode = "slic3r";
+			container.AddChild(slic3rButton);
 
-			var renderTypePolygons = new RadioButton("Export MatterControl settings (*.printer)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			renderTypePolygons.CheckedStateChanged += (s, e) => exportMode = "mattercontrol";
-			container.AddChild(renderTypePolygons);
+#if DEBUG
+			var curaButton = new RadioButton("Export Cura settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			curaButton.CheckedStateChanged += (s, e) => exportMode = "cura";
+			container.AddChild(curaButton);
+#endif
 
 			var exportButton = textImageButtonFactory.Generate("Export Settings".Localize());
 			exportButton.Click += (s, e) => UiThread.RunOnIdle(exportButton_Click);
