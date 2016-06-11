@@ -248,6 +248,7 @@
     <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
     <Compile Include="SetupWizard\EditPrinterSettingsPage.cs" />
+    <Compile Include="SetupWizard\ImportSettingsPage.cs" />
     <Compile Include="SetupWizard\ExportSettingsPage.cs" />
     <Compile Include="SetupWizard\WizardPage.cs" />
     <Compile Include="SetupWizard\AndroidSetupOptionsPage.cs" />

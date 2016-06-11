@@ -99,72 +99,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private bool ImportSettingsMenu_Click()
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				OpenFileDialogParams openParams = new OpenFileDialogParams("settings files|*.ini;*.printer,");
-				FileDialog.OpenFileDialog(openParams, settingsImportFileSelected);
-			});
-
+			UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
 			return true;
 		}
-
-		private void settingsImportFileSelected(OpenFileDialogParams openParams)
-		{
-			if (!string.IsNullOrEmpty(openParams.FileName))
-			{
-				// figure out what type it is
-				if (Path.GetExtension(openParams.FileName).ToLower() == ".printer")
-				{
-					throw new NotImplementedException("need to import from 'MatterControl.printer' files");
-					// done loading return
-					return;
-				}
-				else
-				{
-					var settingsToImport = SettingsLayer.LoadFromIni(openParams.FileName);
-					string layerHeight;
-
-					bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
-					if (isSlic3r)
-					{
-						// looks like a slic3r file
-						ClearUserOverrides();
-
-						var activeSettings = ActiveSliceSettings.Instance;
-
-						foreach (var item in settingsToImport)
-						{
-							// Compare the value to import to the layer cascade value and only set if different
-							string currentValue = activeSettings.GetActiveValue(item.Key, null).Trim();
-							if (currentValue != item.Value)
-							{
-								activeSettings.UserLayer[item.Key] = item.Value;
-							}
-						}
-
-						activeSettings.SaveChanges();
-
-						UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
-
-						// done loading return
-						return;
-					}
-					else
-					{
-						// looks like a cura file
-						throw new NotImplementedException("need to import from 'cure.ini' files");
-						// done loading return
-						return;
-					}
-				}
-
-				// Did not figure out what this file is, let the user know we don't understand it
-				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(openParams.FileName)), "Unable to Import".Localize());
-			}
-
-			Invalidate();
-		}
-
 
 		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
 		{
@@ -193,7 +130,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (revertSettings)
 					{
-						ClearUserOverrides();
+						ActiveSliceSettings.Instance.ClearUserOverrides();
 						ActiveSliceSettings.Instance.SaveChanges();
 						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					}
@@ -203,37 +140,5 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				StyledMessageBox.MessageType.YES_NO);
 		}
 
-		private static void ClearUserOverrides()
-		{
-			var activeSettings = ActiveSliceSettings.Instance;
-			var userOverrides = activeSettings.UserLayer.Keys.ToArray();
-
-			// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
-			var keysToRetain = new HashSet<string>(userOverrides.Except(activeSettings.KnownSettings));
-
-			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => !settingsItem.ShowAsOverride))
-			{
-				switch (item.SlicerConfigName)
-				{
-					case "MatterControl.BaudRate":
-					case "MatterControl.AutoConnect":
-						// These items are marked as not being overrides but should be cleared on 'reset to defaults'
-						break;
-					default:
-						// All other non-overrides should be retained
-						keysToRetain.Add(item.SlicerConfigName);
-						break;
-				}
-			}
-
-			var keysToRemove = (from keyValue in activeSettings.UserLayer
-								where !keysToRetain.Contains(keyValue.Key)
-								select keyValue.Key).ToList();
-
-			foreach (string key in keysToRemove)
-			{
-				activeSettings.UserLayer.Remove(key);
-			}
-		}
 	}
 }

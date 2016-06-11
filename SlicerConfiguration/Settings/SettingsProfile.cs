@@ -65,7 +65,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile = profile;
 		}
 
-		public string ID => layeredProfile.ID;
+		public string ID
+		{
+			get
+			{
+				return layeredProfile.ID;
+			}
+			set
+			{
+				layeredProfile.ID = value;
+			}
+		}
 
 		public SettingsLayer BaseLayer => layeredProfile.BaseLayer;
 
@@ -145,6 +155,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 		}
+
+		public void ClearUserOverrides()
+		{
+			var userOverrides = this.UserLayer.Keys.ToArray();
+
+			// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
+			var keysToRetain = new HashSet<string>(userOverrides.Except(this.KnownSettings));
+
+			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => !settingsItem.ShowAsOverride))
+			{
+				switch (item.SlicerConfigName)
+				{
+					case "MatterControl.BaudRate":
+					case "MatterControl.AutoConnect":
+						// These items are marked as not being overrides but should be cleared on 'reset to defaults'
+						break;
+					default:
+						// All other non-overrides should be retained
+						keysToRetain.Add(item.SlicerConfigName);
+						break;
+				}
+			}
+
+			var keysToRemove = (from keyValue in this.UserLayer
+								where !keysToRetain.Contains(keyValue.Key)
+								select keyValue.Key).ToList();
+
+			foreach (string key in keysToRemove)
+			{
+				this.UserLayer.Remove(key);
+			}
+		}
+
 
 		internal void SaveChanges()
 		{

@@ -248,6 +248,54 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		internal static void ImportFromExisting(string settingsFilePath)
+		{
+			if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
+			{
+				return;
+			}
+
+			var printerIdentifier = new PrinterInfo
+			{
+				Name = Path.GetFileNameWithoutExtension(settingsFilePath),
+				Id = Guid.NewGuid().ToString()
+			};
+
+			string importType = Path.GetExtension(settingsFilePath).ToLower();
+			switch (importType)
+			{
+				case ".printer":
+					var profile = LoadProfileFromDisk(settingsFilePath);
+					profile.ID = Guid.NewGuid().ToString();
+					break;
+
+				case ".ini":
+					var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
+
+					var oemProfile = new OemProfile(settingsToImport);
+					SettingsLayer baseConfig = LoadMatterHackersBaseLayer();
+
+					var layeredProfile = new LayeredProfile(oemProfile, baseConfig)
+					{
+						ID = printerIdentifier.Id,
+						DocumentPath = Path.Combine(profilesPath, printerIdentifier.Id + ".json")
+					};
+
+					// TODO: Resolve name conflicts
+					layeredProfile.UserLayer["MatterControl.PrinterName"] = printerIdentifier.Name;
+					layeredProfile.Save();
+
+					break;
+			}
+
+			ProfileData.Profiles.Add(printerIdentifier);
+
+			UserSettings.Instance.set("ActiveProfileID", printerIdentifier.Id);
+
+			Instance = LoadProfile(printerIdentifier.Id);
+		}
+
+
 		internal static void AcquireNewProfile(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
