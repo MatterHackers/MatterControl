@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private CheckBox showHelpBox;
 		private TupleList<string, Func<bool>> slicerOptionsMenuItems;
 
-		private static string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\r\nAre you sure you want to continue?".Localize();
+		private static string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
 		private static string resetToDefaultsWindowTitle = "Revert Settings".Localize();
 
 		public SliceSettingsDetailControl()
