@@ -112,7 +112,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (!string.IsNullOrEmpty(openParams.FileName))
 			{
-				string fileContent = File.ReadAllText(openParams.FileName);
 				// figure out what type it is
 				if (Path.GetExtension(openParams.FileName).ToLower() == ".printer")
 				{
@@ -122,43 +121,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 				else
 				{
-					if (fileContent.Contains("layer_height"))
+					var settingsToImport = SettingsLayer.LoadFromIni(openParams.FileName);
+					string layerHeight;
+
+					bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
+					if (isSlic3r)
 					{
 						// looks like a slic3r file
-						// clear all the user settings
-						DoRevertToDefaults();
+						ClearUserOverrides();
 
-						UiThread.RunOnIdle(() =>
+						var activeSettings = ActiveSliceSettings.Instance;
+
+						foreach (var item in settingsToImport)
 						{
-							var activeSettings = ActiveSliceSettings.Instance;
-
-							string[] lines = fileContent.Split('\n');
-							foreach (string line in lines)
+							// Compare the value to import to the layer cascade value and only set if different
+							string currentValue = activeSettings.GetActiveValue(item.Key, null).Trim();
+							if (currentValue != item.Value)
 							{
-								string[] keyValue = line.Split('=');
-								if (keyValue.Length == 2)
-								{
-									keyValue[0] = keyValue[0].Trim();
-									keyValue[1] = keyValue[1].Trim();
-
-									// put it into the user layer if different
-									string currentValue = activeSettings.GetActiveValue(keyValue[0], null).Trim();
-									if (currentValue != keyValue[1])
-									{
-										activeSettings.UserLayer.Add(keyValue[0], keyValue[1]);
-									}
-								}
+								activeSettings.UserLayer[item.Key] = item.Value;
 							}
+						}
 
-							activeSettings.SaveChanges();
+						activeSettings.SaveChanges();
 
-							ApplicationController.Instance.ReloadAdvancedControlsPanel();
-						});
+						UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 
 						// done loading return
 						return;
 					}
-					else if (fileContent.Contains(""))
+					else
 					{
 						// looks like a cura file
 						throw new NotImplementedException("need to import from 'cure.ini' files");
@@ -168,7 +159,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// Did not figure out what this file is, let the user know we don't understand it
-				StyledMessageBox.ShowMessageBox(null, "Oops! Do not recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(openParams.FileName)), "Unable to Import".Localize());
+				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(openParams.FileName)), "Unable to Import".Localize());
 			}
 
 			Invalidate();
@@ -202,7 +193,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (revertSettings)
 					{
-						DoRevertToDefaults();
+						ClearUserOverrides();
+						ActiveSliceSettings.Instance.SaveChanges();
+						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					}
 				},
 				resetToDefaultsMessage,
@@ -210,7 +203,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				StyledMessageBox.MessageType.YES_NO);
 		}
 
-		private static void DoRevertToDefaults()
+		private static void ClearUserOverrides()
 		{
 			var activeSettings = ActiveSliceSettings.Instance;
 			var userOverrides = activeSettings.UserLayer.Keys.ToArray();
@@ -241,10 +234,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				activeSettings.UserLayer.Remove(key);
 			}
-
-			activeSettings.SaveChanges();
-
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 	}
 }
