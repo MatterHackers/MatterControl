@@ -22,6 +22,9 @@ namespace MatterHackers.MatterControl
 		private WizardWindow()
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
+
+			this.AlwaysOnTopOfMain = true;
+
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(8);
 			this.ShowAsSystemWindow();
@@ -31,6 +34,8 @@ namespace MatterHackers.MatterControl
 		private WizardWindow(bool openToHome = false)
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
+			this.AlwaysOnTopOfMain = true;
+
 			AlwaysOnTopOfMain = true;
 			this.Title = "Setup Wizard".Localize();
 

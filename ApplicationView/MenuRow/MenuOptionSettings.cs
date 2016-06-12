@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		protected override IEnumerable<MenuItemAction> GetMenuItems()
+		protected override IEnumerable<MenuItemAction> GetMenuActions()
 		{
 			return new List<MenuItemAction>
 			{
