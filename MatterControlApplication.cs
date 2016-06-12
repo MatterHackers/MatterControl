@@ -662,7 +662,7 @@ namespace MatterHackers.MatterControl
 
 				AfterFirstDraw?.Invoke();
 
-				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
+				if (false && UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
 				{
 					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
 				}
