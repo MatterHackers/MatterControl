@@ -1326,7 +1326,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				string currentValue = ActiveSliceSettings.Instance.ActiveValue(keyValue.Key);
 
 				bool valueIsClear = currentValue == "0" | currentValue == "";
-				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
 				if (data?.ResetAtEndOfPrint == true && !valueIsClear)
 				{
 					oneOrMoreValuesReset = true;
