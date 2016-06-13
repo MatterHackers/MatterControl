@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static LayeredProfile LoadEmptyProfile()
 		{
-			return new LayeredProfile(new OemProfile(), LoadMatterHackersBaseLayer());
+			return new LayeredProfile(new OemProfile(), SliceSettingsOrganizer.Instance.GetDefaultSettings());
 		}
 
 		public static ProfileData ProfileData { get; private set; }
@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
 
 					var oemProfile = new OemProfile(settingsToImport);
-					SettingsLayer baseConfig = LoadMatterHackersBaseLayer();
+					SettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 
 					var layeredProfile = new LayeredProfile(oemProfile, baseConfig)
 					{
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string guid = Guid.NewGuid().ToString();
 
 			OemProfile printerProfile = LoadHttpOemProfile(make, model);
-			SettingsLayer baseConfig = LoadMatterHackersBaseLayer();
+			SettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 
 			var layeredProfile = new LayeredProfile(printerProfile, baseConfig)
 			{
@@ -377,20 +377,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static SettingsProfile LoadProfileFromDisk(string profilePath)
 		{
 			return new SettingsProfile(LayeredProfile.LoadFile(profilePath));
-		}
-
-		private static SettingsLayer LoadMatterHackersBaseLayer()
-		{
-			string baseConfigPath = Path.Combine(profilesPath, "config.json");
-			if(!File.Exists(baseConfigPath))
-			{
-				SettingsLayer baseLayer = SliceSettingsOrganizer.Instance.GetDefaultSettings();
-				File.WriteAllText(baseConfigPath, JsonConvert.SerializeObject(baseLayer));
-
-				return baseLayer;
-			}
-
-			return JsonConvert.DeserializeObject<SettingsLayer>(File.ReadAllText(baseConfigPath));
 		}
 
 		private static OemProfile LoadHttpOemProfile(string make, string model)

@@ -4996,3 +4996,6 @@ Translated:Replace current printer profile
 English:Import Settings
 Translated:Import Settings
 
+English:Oops! Please select a serial port.
+Translated:Oops! Please select a serial port.
+

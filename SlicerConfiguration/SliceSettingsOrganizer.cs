@@ -282,24 +282,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
 		}
 
-		public void SavePropertiesJson()
-		{
-			SettingsLayer baseLayer = ActiveSliceSettings.Instance.BaseLayer;
-
-			foreach (KeyValuePair<string, string> keyValue in baseLayer)
-			{
-				foreach(OrganizerSettingsData setting in SettingsData)
-				{
-					if(setting.SlicerConfigName == keyValue.Key)
-					{
-						setting.DefaultValue = keyValue.Value;
-					}
-				}
-			}
-			string propertiesFileContents = JsonConvert.SerializeObject(SettingsData, Formatting.Indented);
-			File.WriteAllText("Properties.json", propertiesFileContents);
-		}
-
 		private void LoadAndParseSettingsFiles()
 		{
 			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
