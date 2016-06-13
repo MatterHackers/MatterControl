@@ -201,52 +201,5 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			return dictionary;
 		}
-
-		private static void LoadDefaultConfigrationSettings(List<ClassicSettingsLayer> settings)
-		{
-			SliceSettingsCollection defaultCollection = new SliceSettingsCollection();
-			defaultCollection.Name = "__default__";
-			ClassicSettingsLayer defaultSettingsLayer = LoadConfigurationSettingsFromFile(Path.Combine("PrinterSettings", "config.ini"), defaultCollection);
-
-			settings.Add(defaultSettingsLayer);
-		}
-
-		private static ClassicSettingsLayer LoadConfigurationSettingsFromFile(string pathAndFileName, SliceSettingsCollection collection)
-		{
-			Dictionary<string, SliceSetting> settingsDictionary = new Dictionary<string, SliceSetting>();
-			ClassicSettingsLayer activeCollection;
-			try
-			{
-				if (StaticData.Instance.FileExists(pathAndFileName))
-				{
-					foreach (string line in StaticData.Instance.ReadAllLines(pathAndFileName))
-					{
-						//Ignore commented lines
-						if (!line.StartsWith("#"))
-						{
-							string[] settingLine = line.Split('=');
-							string keyName = settingLine[0].Trim();
-							string settingDefaultValue = settingLine[1].Trim();
-
-							SliceSetting sliceSetting = new SliceSetting();
-							sliceSetting.Name = keyName;
-							sliceSetting.Value = settingDefaultValue;
-
-							settingsDictionary.Add(keyName, sliceSetting);
-						}
-					}
-					activeCollection = new ClassicSettingsLayer(collection, settingsDictionary);
-					return activeCollection;
-				}
-				return null;
-			}
-			catch (Exception e)
-			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-				Debug.WriteLine(string.Format("Error loading configuration: {0}", e));
-				return null;
-			}
-		} 
 	}
 }

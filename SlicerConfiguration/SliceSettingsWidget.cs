@@ -718,8 +718,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (!ActiveSliceSettings.Instance.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
-				// the setting we think we are adding is not in the config.ini it may have been deprecated
-				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in config.ini", settingData.SlicerConfigName));
+				// the setting we think we are adding is not in the known settings it may have been deprecated
+				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in known settings", settingData.SlicerConfigName));
 				settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				//settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
 				nameArea.AddChild(settingName);

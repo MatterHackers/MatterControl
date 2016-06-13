@@ -4978,3 +4978,21 @@ Translated:Export Cura settings (*.ini)
 English:Export Settings
 Translated:Export Settings
 
+English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
+Translated:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
+
+English:Revert Settings
+Translated:Revert Settings
+
+English:Import as new printer profile
+Translated:Import as new printer profile
+
+English:Merge into current printer profile
+Translated:Merge into current printer profile
+
+English:Replace current printer profile
+Translated:Replace current printer profile
+
+English:Import Settings
+Translated:Import Settings
+

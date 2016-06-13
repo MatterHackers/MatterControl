@@ -384,15 +384,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string baseConfigPath = Path.Combine(profilesPath, "config.json");
 			if(!File.Exists(baseConfigPath))
 			{
-				string configIniPath = Path.Combine("PrinterSettings", "config.ini");
-
-				SettingsLayer baseLayer;
-
-				using (var sourceStream = StaticData.Instance.OpenSteam(configIniPath))
-				using (var reader = new StreamReader(sourceStream))
-				{
-					baseLayer = SettingsLayer.LoadFromIni(reader);
-				}
+				SettingsLayer baseLayer = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 				File.WriteAllText(baseConfigPath, JsonConvert.SerializeObject(baseLayer));
 
 				return baseLayer;
