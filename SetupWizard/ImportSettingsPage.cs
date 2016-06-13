@@ -46,28 +46,56 @@ namespace MatterHackers.MatterControl
 		public ImportSettingsPage() :
 			base("Cancel")
 		{
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
 			contentRow.AddChild(container);
 
+			// add new profile
 			var newPrinterButton = new RadioButton("Import as new printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			newPrinterButton.CheckedStateChanged += (s, e) => importMode = "new";
 			newPrinterButton.Checked = true;
 			container.AddChild(newPrinterButton);
 			this.importMode = "new";
 
+			container.AddChild(
+				CreateDetailInfo("Add a new printer profile, base on the imported settings, to your list of available printers.\nThis will not change your current settings.")
+				);
+
+			// merge into current settings
 			var mergeButton = new RadioButton("Merge into current printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			mergeButton.CheckedStateChanged += (s, e) => importMode = "merge";
 			container.AddChild(mergeButton);
 
+			container.AddChild(
+				CreateDetailInfo("Merge imported settings and presets into your current profile. \nNote: You will still be able to revert to the factory settings at any time.")
+				);
+
+			// replace current settings
 			var replaceButton = new RadioButton("Replace current printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			replaceButton.CheckedStateChanged += (s, e) => importMode = "replace";
 			container.AddChild(replaceButton);
+
+			container.AddChild(
+				CreateDetailInfo("Replace current settings and presets with the imported profile. \nNote: You will still be able to revert to the factory settings at any time.")
+				);
+
+			// add as preset
+			var newPresetButton = new RadioButton("Add as a new quality preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			newPresetButton.CheckedStateChanged += (s, e) => importMode = "qualityPreset";
+			container.AddChild(newPresetButton);
+
+			container.AddChild(
+				CreateDetailInfo("Add new quality preset(s) with the settings from this import.")
+				);
+
 
 			var importButton = textImageButtonFactory.Generate("Import Settings".Localize());
 			importButton.Click += (s, e) => UiThread.RunOnIdle(() => 
 			{
 				FileDialog.OpenFileDialog(
-						new OpenFileDialogParams("settings files|*.ini;*.printer,"),
+						new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
 						(dialogParams) => ImportSettingsFile(dialogParams.FileName));
 			});
 
@@ -78,6 +106,23 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(importButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
+		}
+
+		private GuiWidget CreateDetailInfo(string detailText)
+		{
+			var wrappedText = new WrappedTextWidget(detailText, 5)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+			};
+
+			var container = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren)
+			{
+				Margin = new BorderDouble(25, 15, 5, 5),
+			};
+
+			container.AddChild(wrappedText);
+
+			return container;
 		}
 
 		private void ImportSettingsFile(string settingsFilePath)
@@ -93,6 +138,10 @@ namespace MatterHackers.MatterControl
 				case "merge":
 				case "replace":
 					ReplaceOrMergeSettings(settingsFilePath);
+					break;
+
+				case "qualityPreset":
+					throw new NotImplementedException("import to preset");
 					break;
 			}
 		}

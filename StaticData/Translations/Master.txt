@@ -4996,3 +4996,12 @@ Translated:Replace current printer profile
 English:Import Settings
 Translated:Import Settings
 
+English:The layers at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:The layers at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+
+English:Layers To Pause:
+Translated:Layers To Pause:
+
+English:Add as a new quality preset
+Translated:Add as a new quality preset
+

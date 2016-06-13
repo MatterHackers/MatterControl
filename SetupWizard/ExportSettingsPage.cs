@@ -34,6 +34,7 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.Localizations;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl
 {
@@ -44,22 +45,40 @@ namespace MatterHackers.MatterControl
 		public ExportSettingsPage() :
 			base("Cancel")
 		{
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
 			contentRow.AddChild(container);
 
+			// export as matter control
 			var matterControlButton = new RadioButton("Export MatterControl settings (*.printer)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			matterControlButton.CheckedStateChanged += (s, e) => exportMode = "mattercontrol";
 			matterControlButton.Checked = true;
 			container.AddChild(matterControlButton);
 
+			container.AddChild(
+				CreateDetailInfo("Export the complete set of features for this profile. All settings, quality and material presets, and editing states.")
+				);
+
+			// export as slic3r
 			var slic3rButton = new RadioButton("Export Slic3r settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			slic3rButton.CheckedStateChanged += (s, e) => exportMode = "slic3r";
 			container.AddChild(slic3rButton);
 
+			container.AddChild(
+				CreateDetailInfo("Export as a config.ini file that can be read by older versions of Matter Control and Slic3r.")
+				);
+
+			// export as cura
 #if DEBUG
 			var curaButton = new RadioButton("Export Cura settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			curaButton.CheckedStateChanged += (s, e) => exportMode = "cura";
 			container.AddChild(curaButton);
+
+			container.AddChild(
+				CreateDetailInfo("Export as a file that can be read by Cura.\nNote: Not all settings are exportable in this format.")
+				);
 #endif
 
 			var exportButton = textImageButtonFactory.Generate("Export Settings".Localize());
@@ -72,6 +91,23 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(exportButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
+		}
+
+		private GuiWidget CreateDetailInfo(string detailText)
+		{
+			var wrappedText = new WrappedTextWidget(detailText, 5)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+			};
+
+			var container = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren)
+			{
+				Margin = new BorderDouble(25, 15, 5, 5),
+			};
+
+			container.AddChild(wrappedText);
+
+			return container;
 		}
 
 		private void exportButton_Click()
