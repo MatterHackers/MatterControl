@@ -372,7 +372,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						this.HAnchor = HAnchor.ParentLeftRight;
 
-						foreach (OrganizerSettingsData settingData in subGroup.SettingDataList)
+						foreach (SliceSettingData settingData in subGroup.SettingDataList)
 						{
 							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
 
@@ -468,7 +468,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		private bool CheckIfShouldBeShown(OrganizerSettingsData settingData)
+		private bool CheckIfShouldBeShown(SliceSettingData settingData)
 		{
 			bool settingShouldBeShown = true;
 			if (settingData.ShowIfSet != null
@@ -499,7 +499,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return settingShouldBeShown;
 		}
 
-		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingData)
+		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, SliceSettingData settingData)
 		{
 			FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			allText.HAnchor = HAnchor.ParentLeftRight;
@@ -545,7 +545,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
 					{
-						OrganizerSettingsData settingData = new OrganizerSettingsData(keyValue.Key, keyValue.Key, OrganizerSettingsData.DataEditTypes.STRING);
+						SliceSettingData settingData = new SliceSettingData(keyValue.Key, keyValue.Key, SliceSettingData.DataEditTypes.STRING);
 						if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingData.SlicerConfigName))
 						{
 							bool addControl;
@@ -576,7 +576,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		private static GuiWidget GetExtraSettingsWidget(OrganizerSettingsData settingData)
+		private static GuiWidget GetExtraSettingsWidget(SliceSettingData settingData)
 		{
 			var nameHolder = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren | VAnchor.ParentCenter)
 			{
@@ -591,7 +591,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
 
-		static private void OnSettingsChanged(OrganizerSettingsData settingData)
+		static private void OnSettingsChanged(SliceSettingData settingData)
 		{
 			SettingChanged.CallEvents(null, new StringEventArgs(settingData.SlicerConfigName));
 
@@ -685,7 +685,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return null;
 		}
 
-		private static GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, List<SettingsLayer> layerCascade, SettingsLayer persistenceLayer,
+		private static GuiWidget CreateSettingInfoUIControls(SliceSettingData settingData, List<SettingsLayer> layerCascade, SettingsLayer persistenceLayer,
 			NamedSettingsLayers viewFilter,
 			int extruderIndex, out bool addControl, ref int tabIndexForItem)
 		{
@@ -732,7 +732,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				int vectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
 				int multiLineEditHeight = (int)(120 * GuiWidget.DeviceScale + .5);
 
-				if (settingData.DataEditType != OrganizerSettingsData.DataEditTypes.MULTI_LINE_TEXT)
+				if (settingData.DataEditType != SliceSettingData.DataEditTypes.MULTI_LINE_TEXT)
 				{
 					var nameHolder = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren | VAnchor.ParentCenter)
 					{
@@ -747,7 +747,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				switch (settingData.DataEditType)
 				{
-					case OrganizerSettingsData.DataEditTypes.INT:
+					case SliceSettingData.DataEditTypes.INT:
 						{
 							FlowLayoutWidget content = new FlowLayoutWidget();
 							int currentValue;
@@ -787,7 +787,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.DOUBLE:
+					case SliceSettingData.DataEditTypes.DOUBLE:
 						{
 							double currentValue;
 							double.TryParse(sliceSettingValue, out currentValue);
@@ -817,7 +817,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.POSITIVE_DOUBLE:
+					case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:
 						{
 							const string multiValuesAreDiffernt = "-";
 							FlowLayoutWidget content = new FlowLayoutWidget();
@@ -902,7 +902,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.OFFSET:
+					case SliceSettingData.DataEditTypes.OFFSET:
 						{
 							double currentValue;
 							double.TryParse(sliceSettingValue, out currentValue);
@@ -931,7 +931,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.DOUBLE_OR_PERCENT:
+					case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
 						{
 							FlowLayoutWidget content = new FlowLayoutWidget();
 
@@ -995,7 +995,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.INT_OR_MM:
+					case SliceSettingData.DataEditTypes.INT_OR_MM:
 						{
 							FlowLayoutWidget content = new FlowLayoutWidget();
 
@@ -1084,7 +1084,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.CHECK_BOX:
+					case SliceSettingData.DataEditTypes.CHECK_BOX:
 						{
 							var checkBoxWidget = new CheckBox("")
 							{
@@ -1113,7 +1113,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.STRING:
+					case SliceSettingData.DataEditTypes.STRING:
 						{
 							var stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++)
 							{
@@ -1139,7 +1139,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.MULTI_LINE_TEXT:
+					case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
 						{
 							string convertedNewLines = sliceSettingValue.Replace("\\n", "\n");
 							var stringEdit = new MHTextEditWidget(convertedNewLines, pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndexForItem++)
@@ -1168,7 +1168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.COM_PORT:
+					case SliceSettingData.DataEditTypes.COM_PORT:
 						{
 #if __ANDROID__
 							addControl = false;
@@ -1201,7 +1201,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.DELETE_PRINTER:
+					case SliceSettingData.DataEditTypes.DELETE_PRINTER:
 						{
 							// This is a place holder type to allow us to put in the control that will allow the deletion of a printer profile
 							TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
@@ -1228,7 +1228,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.LIST:
+					case SliceSettingData.DataEditTypes.LIST:
 						{
 							var selectableOptions = new DropDownList("None", maxHeight: 200)
 							{
@@ -1265,7 +1265,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.HARDWARE_PRESENT:
+					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
 						{
 							var checkBoxWidget = new CheckBox("")
 							{
@@ -1296,7 +1296,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.VECTOR2:
+					case SliceSettingData.DataEditTypes.VECTOR2:
 						{
 							string[] xyValueStrings = sliceSettingValue.Split(',');
 							if (xyValueStrings.Length != 2)
@@ -1376,7 +1376,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						break;
 
-					case OrganizerSettingsData.DataEditTypes.OFFSET2:
+					case SliceSettingData.DataEditTypes.OFFSET2:
 						{
 							Vector2 offset = ActiveSliceSettings.Instance.ExtruderOffset(extruderIndex);
 
@@ -1536,7 +1536,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return container;
 		}
 
-		private static void AddComMenuItems(OrganizerSettingsData settingData, SettingsLayer persistenceLayer, SettingsRow settingsRow, DropDownList selectableOptions)
+		private static void AddComMenuItems(SliceSettingData settingData, SettingsLayer persistenceLayer, SettingsRow settingsRow, DropDownList selectableOptions)
 		{
 			selectableOptions.MenuItems.Clear();
 			string machineSpecificComPortValue = ActiveSliceSettings.Instance.ComPort();
@@ -1600,7 +1600,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return imageBuffer;
 		}
 
-		private static GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, SettingsLayer persistenceLayer, GuiWidget content, InternalTextEditWidget internalTextWidget, List<SettingsLayer> layerCascade)
+		private static GuiWidget CreateQuickMenu(SliceSettingData settingData, SettingsLayer persistenceLayer, GuiWidget content, InternalTextEditWidget internalTextWidget, List<SettingsLayer> layerCascade)
 		{
 			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 			FlowLayoutWidget totalContent = new FlowLayoutWidget();
