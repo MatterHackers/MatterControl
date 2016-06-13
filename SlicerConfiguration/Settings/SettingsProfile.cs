@@ -881,7 +881,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				|| (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
-				OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);
+				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);
 				if (data != null)
 				{
 					string error = string.Format("The '{0}' must be greater than 0.".Localize(), data.PresentationName);

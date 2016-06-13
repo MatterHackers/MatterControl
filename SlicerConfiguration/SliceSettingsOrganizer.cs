@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string Value;
 	}
 
-	public class OrganizerSettingsData
+	public class SliceSettingData
 	{
 		[JsonConverter(typeof(StringEnumConverter))]
 		public enum DataEditTypes { STRING, INT, INT_OR_MM, DOUBLE, POSITIVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, OFFSET2, CHECK_BOX, LIST, MULTI_LINE_TEXT, HARDWARE_PRESENT, COM_PORT, DELETE_PRINTER };
@@ -71,15 +71,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string DefaultValue { get; set; }
 
-		static public OrganizerSettingsData NewOrganizerSettingData(string slicerConfigName, string presentationName, OrganizerSettingsData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
+		static public SliceSettingData NewOrganizerSettingData(string slicerConfigName, string presentationName, SliceSettingData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
 		{
-			return new OrganizerSettingsData(slicerConfigName, presentationName, dataEditType, extraSettings, helpText);
+			return new SliceSettingData(slicerConfigName, presentationName, dataEditType, extraSettings, helpText);
 		}
 
-		static public OrganizerSettingsData NewOrganizerSettingData(string lineFromSettingsFile)
+		static public SliceSettingData NewOrganizerSettingData(string lineFromSettingsFile)
 		{
 			string[] parameters = lineFromSettingsFile.Split('|');
-			OrganizerSettingsData.DataEditTypes valueType = (OrganizerSettingsData.DataEditTypes)Enum.Parse(typeof(OrganizerSettingsData.DataEditTypes), parameters[2].Trim());
+			SliceSettingData.DataEditTypes valueType = (SliceSettingData.DataEditTypes)Enum.Parse(typeof(SliceSettingData.DataEditTypes), parameters[2].Trim());
 			switch (parameters.Length)
 			{
 				case 3:
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public OrganizerSettingsData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
+		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
 		{
 			this.ExtraSettings = extraSettings;
 			this.SlicerConfigName = slicerConfigName;
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set { name = value; }
 		}
 
-		public List<OrganizerSettingsData> SettingDataList { get; private set; } = new List<OrganizerSettingsData>();
+		public List<SliceSettingData> SettingDataList { get; private set; } = new List<SliceSettingData>();
 
 		public OrganizerSubGroup(string groupName)
 		{
@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set { userLevels = value; }
 		}
 
-		public List<OrganizerSettingsData> SettingsData { get; private set; }  = new List<OrganizerSettingsData>();
+		public List<SliceSettingData> SettingsData { get; private set; }  = new List<SliceSettingData>();
 
 		private static SliceSettingsOrganizer instance = null;
 
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
 					{
-						foreach (OrganizerSettingsData settingData in subGroup.SettingDataList)
+						foreach (SliceSettingData settingData in subGroup.SettingDataList)
 						{
 							if (settingData.SlicerConfigName == slicerConfigName)
 							{
@@ -268,9 +268,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return false;
 		}
 
-		public OrganizerSettingsData GetSettingsData(string slicerConfigName)
+		public SliceSettingData GetSettingsData(string slicerConfigName)
 		{
-			foreach (OrganizerSettingsData settingData in SettingsData)
+			foreach (SliceSettingData settingData in SettingsData)
 			{
 				if (settingData.SlicerConfigName == slicerConfigName)
 				{
@@ -282,28 +282,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
 		}
 
-		public void SavePropertiesJson()
-		{
-			SettingsLayer baseLayer = ActiveSliceSettings.Instance.BaseLayer;
-
-			foreach (KeyValuePair<string, string> keyValue in baseLayer)
-			{
-				foreach(OrganizerSettingsData setting in SettingsData)
-				{
-					if(setting.SlicerConfigName == keyValue.Key)
-					{
-						setting.DefaultValue = keyValue.Value;
-					}
-				}
-			}
-			string propertiesFileContents = JsonConvert.SerializeObject(SettingsData, Formatting.Indented);
-			File.WriteAllText("Properties.json", propertiesFileContents);
-		}
-
 		private void LoadAndParseSettingsFiles()
 		{
 			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			SettingsData = JsonConvert.DeserializeObject<List<OrganizerSettingsData>>(propertiesFileContents) as List<OrganizerSettingsData>;
+			SettingsData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents) as List<SliceSettingData>;
 
 			OrganizerUserLevel userLevelToAddTo = null;
 			OrganizerCategory categoryToAddTo = null;
@@ -338,7 +320,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							break;
 
 						case 8:
-							OrganizerSettingsData data = GetSettingsData(sanitizedLine);
+							SliceSettingData data = GetSettingsData(sanitizedLine);
 							if (data != null)
 							{
 								subGroupToAddTo.SettingDataList.Add(data);
@@ -367,7 +349,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
 
-			foreach(OrganizerSettingsData settingsData in this.SettingsData)
+			foreach(SliceSettingData settingsData in this.SettingsData)
 			{
 				settingsDictionary[settingsData.SlicerConfigName] = settingsData.DefaultValue;
 			}
