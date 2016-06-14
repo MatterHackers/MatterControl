@@ -2,6 +2,7 @@
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 
@@ -104,7 +105,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				BaudRateButtonsList.Add(baudOption);
 				baudOption.Margin = baudRateMargin;
 				baudOption.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				if (this.ActivePrinter.BaudRate == baudRate)
+				if (ActiveSliceSettings.Instance.BaudRate() == baudRate)
 				{
 					baudOption.Checked = true;
 				}
@@ -123,12 +124,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			otherBaudRateInput.Visible = false;
 			otherBaudRateInput.HAnchor = HAnchor.ParentLeftRight;
 
-			if (this.ActivePrinter.BaudRate != null)
+			string currentBaudRate = ActiveSliceSettings.Instance.BaudRate();
+			if (currentBaudRate != null)
 			{
-				if (!baudRates.Contains(this.ActivePrinter.BaudRate.ToString()))
+				if (!baudRates.Contains(currentBaudRate))
 				{
 					otherBaudRateRadioButton.Checked = true;
-					otherBaudRateInput.Text = this.ActivePrinter.BaudRate.ToString();
+					otherBaudRateInput.Text = currentBaudRate;
 					otherBaudRateInput.Visible = true;
 				}
 			}
@@ -191,8 +193,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				try
 				{
-					int baudRateInt = Convert.ToInt32(baudRate);
-					this.ActivePrinter.BaudRate = baudRate;
+					ActiveSliceSettings.Instance.SetBaudRate(baudRate);
 					return true;
 				}
 				catch

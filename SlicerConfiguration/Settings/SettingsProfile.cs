@@ -1216,14 +1216,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class PrinterInfo
 	{
-		public string Make { get; set; } = "Unknown";
-		public string Model { get; set; } = "Unknown";
-		public string Name { get; set; }
 		public string ComPort { get; set; }
-		public bool AutoConnect { get; set; }
 		public string Id { get; set; }
-		public string BaudRate { get; set; }
-		public string DriverType { get; internal set; }
+		public string Name { get; set; }
 
 		internal void Delete()
 		{

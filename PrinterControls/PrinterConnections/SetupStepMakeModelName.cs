@@ -32,6 +32,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private BoundDropList printerManufacturerSelector;
 		private BoundDropList printerModelSelector;
 
+		string activeMake;
+		string activeModel;
+		string activeName;
+
 		public SetupStepMakeModelName()
 		{
 			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
@@ -51,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			if (printerManufacturerSelector.MenuItems.Count == 1)
 			{
-				ActivePrinter.Make = printerManufacturerSelector.SelectedValue;
+				activeMake = printerManufacturerSelector.SelectedValue;
 			}
 
 			printerModelSelector = new BoundDropList(string.Format("- {0} -", "Select Model".Localize()), maxHeight: 200)
@@ -103,8 +107,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void SetElementVisibility()
 		{
-			printerModelContainer.Visible = (this.ActivePrinter.Make != null);
-			nextButton.Visible = (this.ActivePrinter.Model != null && this.ActivePrinter.Make != null);
+			nextButton.Visible = (activeModel != null && this.activeMake != null);
 		}
 
 		private FlowLayoutWidget createPrinterNameContainer()
@@ -175,11 +178,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void ManufacturerDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			ActivePrinter.Make = ((Agg.UI.DropDownList)sender).SelectedValue;
-			ActivePrinter.Model = null;
+			activeMake = ((Agg.UI.DropDownList)sender).SelectedValue;
+			activeModel = null;
 
 			List<string> printers;
-			if (!OemSettings.Instance.OemProfiles.TryGetValue(ActivePrinter.Make, out printers))
+			if (!OemSettings.Instance.OemProfiles.TryGetValue(activeMake, out printers))
 			{
 				printers = new List<string>();
 			}
@@ -196,15 +199,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			UiThread.RunOnIdle(() =>
 			{
 				DropDownList dropList = (DropDownList) sender;
-				ActivePrinter.Model = dropList.SelectedLabel;
+				activeModel = dropList.SelectedLabel;
 
 				SetElementVisibility();
 				if (usingDefaultName)
 				{
-					// Use ManufacturerDropList.SelectedLabel instead of ActivePrinter.Make to ensure the mapped Unicode values are picked up
+					// Use ManufacturerDropList.SelectedLabel instead of activeMake to ensure the mapped Unicode values are picked up
 					string mappedMakeText = printerManufacturerSelector.SelectedLabel;
 
-					string printerInputName = string.Format("{0} {1}", mappedMakeText, this.ActivePrinter.Model);
+					string printerInputName = string.Format("{0} {1}", mappedMakeText, activeModel);
 					var names = ActiveSliceSettings.ProfileData.Profiles.Where(p => p.Name.StartsWith(printerInputName)).Select(p => p.Name).ToList();
 					if (!names.Contains(printerInputName))
 					{
@@ -231,15 +234,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			if (!string.IsNullOrEmpty(printerNameInput.Text))
 			{
-				this.ActivePrinter.Name = printerNameInput.Text;
+				activeName = printerNameInput.Text;
 
-				if (this.ActivePrinter.Make == null || this.ActivePrinter.Model == null)
+				if (this.activeMake == null || activeModel == null)
 				{
 					return false;
 				}
 				else
 				{
-					ActiveSliceSettings.AcquireNewProfile(ActivePrinter.Make, ActivePrinter.Model, ActivePrinter.Name);
+					ActiveSliceSettings.AcquireNewProfile(activeMake, activeModel, activeName);
 					return true;
 				}
 			}
