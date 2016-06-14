@@ -782,7 +782,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								intEditWidget.Text = text;
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -812,7 +811,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								double currentValue2 = 0;
 								double.TryParse(text, out currentValue2);
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue2;
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -897,7 +895,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								double currentValue2 = 0;
 								double.TryParse(text, out currentValue2);
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue2;
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -926,7 +923,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								double currentValue2;
 								double.TryParse(text, out currentValue2);
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue2;
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -990,7 +986,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								stringEdit.Text = text;
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1079,7 +1074,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								stringEdit.Text = text;
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1108,7 +1102,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								checkBoxWidget.Checked = text == "1";
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1134,7 +1127,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								stringEdit.Text = text;
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1163,7 +1155,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								stringEdit.Text = text.Replace("\\n", "\n");
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1196,7 +1187,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								// Lookup the machine specific comport value rather than the passed in text value
 								selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.ComPort();
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1260,7 +1250,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								selectableOptions.SelectedLabel = text;
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1291,7 +1280,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								checkBoxWidget.Checked = text == "1";
-								OnSettingsChanged(settingData);
 							};
 						}
 						break;
@@ -1369,8 +1357,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								double.TryParse(xyValueStrings2[1], out currentValue2);
 								yEditWidget.ActuallNumberEdit.Value = currentValue2;
-
-								OnSettingsChanged(settingData);
 							};
 
 						}
@@ -1432,7 +1418,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Vector2 offset2 = ActiveSliceSettings.Instance.ExtruderOffset(extruderIndex);
 								xEditWidget.ActuallNumberEdit.Value = offset2.x;
 								yEditWidget.ActuallNumberEdit.Value = offset2.y;
-								OnSettingsChanged(settingData);
 							};
 
 						}
