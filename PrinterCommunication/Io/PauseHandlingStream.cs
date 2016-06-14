@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public PrinterMove LastDestination { get { return lastDestination; } }
 		PrinterMove moveLocationAtEndOfPauseCode;
 
-		RelativeToAbsoluteStream relativeToAbsoluteConverter;
-
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 			lastDestination = position;
@@ -55,8 +53,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public PauseHandlingStream(GCodeStream internalStream)
 			: base(internalStream)
 		{
-			relativeToAbsoluteConverter = new RelativeToAbsoluteStream(internalStream);
-			internalStream = relativeToAbsoluteConverter;
 		}
 
 		public void Add(string line)
@@ -64,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// lock queue
 			lock (locker)
 			{
-				commandQueue.Add(relativeToAbsoluteConverter.ProcessLine(line));
+				commandQueue.Add(line);
 			}
 		}
 
@@ -138,7 +134,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend == null)
 			{
 				lineToSend = base.ReadLine();
-				lineToSend = relativeToAbsoluteConverter.ProcessLine(lineToSend);
 				if(lineToSend == null)
 				{
 					return lineToSend;
