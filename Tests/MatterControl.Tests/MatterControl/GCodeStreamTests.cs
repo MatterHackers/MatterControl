@@ -82,11 +82,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream");
 			}
 		}
-	}
 
-	[TestFixture]
-	public class GCodePipeTests
-	{
 		public static GCodeStream CreateTestGCodeStream(string[] inputLines)
 		{
 			GCodeStream gCodeFileStream0 = new TestGCodeStream(inputLines);
@@ -223,11 +219,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
 			}
 		}
-	}
 
-[TestFixture]
-	public class GCodePauseStreamTests
-	{
 		[Test, Category("GCodeStream")]
 		public void PauseHandlingStreamTests()
 		{
@@ -257,9 +249,9 @@ namespace MatterControl.Tests.MatterControl
 			string[] expected = new string[]
 			{
 				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0",
-				"G1 X10 Y10 Z10 E10",
-				"G1 X10 Y10 Z10 E30",
+				"G1 X10 Y10 Z10",
+				"G1 E10",
+				"G1 E30",
 
 				"; the printer pauses",
 				"", // G91 is removed
@@ -275,7 +267,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			PauseHandlingStream pauseHandlingStream = new PauseHandlingStream(new TestGCodeStream(inputLines));
+			GCodeStream pauseHandlingStream = CreateTestGCodeStream(inputLines);
 
 			int expectedIndex = 0;
 			string actualLine = pauseHandlingStream.ReadLine();
