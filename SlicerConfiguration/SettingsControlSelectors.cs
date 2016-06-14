@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					newLayer.Name = "Material" + ActiveSliceSettings.Instance.MaterialLayers.Count;
 					ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
 					ActiveSliceSettings.Instance.ActiveMaterialKey = newLayer.ID;
-					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.Name);
+					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.ID);
 				}
 
 				// TODO: Consider adding a .Replace(existingWidget, newWidget) to GuiWidget 
