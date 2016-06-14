@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 		private string exportMode = "mattercontrol";
 
 		public ExportSettingsPage() :
-			base("Cancel")
+			base("Cancel", "Export Wizard")
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

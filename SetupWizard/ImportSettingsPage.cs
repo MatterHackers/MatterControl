@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		private string importMode;
 
 		public ImportSettingsPage() :
-			base("Cancel")
+			base("Cancel", "Import Wizard")
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 			this.importMode = "new";
 
 			container.AddChild(
-				CreateDetailInfo("Add a new printer profile, base on the imported settings, to your list of available printers.\nThis will not change your current settings.")
+				CreateDetailInfo("Add a new printer profile to your list of available printers.\nThis will not change your current settings.")
 				);
 
 			// merge into current settings
@@ -69,29 +69,29 @@ namespace MatterHackers.MatterControl
 			container.AddChild(mergeButton);
 
 			container.AddChild(
-				CreateDetailInfo("Merge imported settings and presets into your current profile. \nNote: You will still be able to revert to the factory settings at any time.")
+				CreateDetailInfo("Merge settings and presets (if any) into your current profile. \nYou will still be able to revert to the factory settings at any time.")
 				);
 
-			// replace current settings
-			var replaceButton = new RadioButton("Replace current printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			replaceButton.CheckedStateChanged += (s, e) => importMode = "replace";
-			container.AddChild(replaceButton);
+			// add as quality preset
+			var newQualityPresetButton = new RadioButton("Import settings as new QUALITY preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			newQualityPresetButton.CheckedStateChanged += (s, e) => importMode = "qualityPreset";
+			container.AddChild(newQualityPresetButton);
 
 			container.AddChild(
-				CreateDetailInfo("Replace current settings and presets with the imported profile. \nNote: You will still be able to revert to the factory settings at any time.")
+				CreateDetailInfo("Add new quality preset with the settings from this import.")
 				);
 
-			// add as preset
-			var newPresetButton = new RadioButton("Add as a new quality preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			newPresetButton.CheckedStateChanged += (s, e) => importMode = "qualityPreset";
-			container.AddChild(newPresetButton);
+			// add as materila preset
+			var newMaterialPresetButton = new RadioButton("Import settings as new MATERIAL preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			newMaterialPresetButton.CheckedStateChanged += (s, e) => importMode = "materialPreset";
+			container.AddChild(newMaterialPresetButton);
 
 			container.AddChild(
-				CreateDetailInfo("Add new quality preset(s) with the settings from this import.")
+				CreateDetailInfo("Add new material preset with the settings from this import.")
 				);
 
 
-			var importButton = textImageButtonFactory.Generate("Import Settings".Localize());
+			var importButton = textImageButtonFactory.Generate("Choose File".Localize());
 			importButton.Click += (s, e) => UiThread.RunOnIdle(() => 
 			{
 				FileDialog.OpenFileDialog(
@@ -136,8 +136,7 @@ namespace MatterHackers.MatterControl
 					break;
 
 				case "merge":
-				case "replace":
-					ReplaceOrMergeSettings(settingsFilePath);
+					MergeSettings(settingsFilePath);
 					break;
 
 				case "qualityPreset":
@@ -146,7 +145,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ReplaceOrMergeSettings(string settingsFilePath)
+		private void MergeSettings(string settingsFilePath)
 		{
 			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
 			{
@@ -165,11 +164,6 @@ namespace MatterHackers.MatterControl
 						if (isSlic3r)
 						{
 							var activeSettings = ActiveSliceSettings.Instance;
-
-							if (importMode == "replace")
-							{
-								activeSettings.ClearUserOverrides();
-							}
 
 							foreach (var item in settingsToImport)
 							{
