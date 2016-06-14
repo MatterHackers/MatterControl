@@ -144,13 +144,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var profile = new SettingsProfile(LayeredProfile.LoadFile(filePath));
 						ProfileData.Profiles.Add(new PrinterInfo()
 						{
-							AutoConnect = profile.DoAutoConnect(),
-							BaudRate = profile.BaudRate(),
-							ComPort = profile.ComPort(),
-							DriverType = profile.DriverType(),
 							Id = profile.ID,
-							Make = profile.Make,
-							Model = profile.Model,
 							Name = profile.Name(),
 						});
 					}
