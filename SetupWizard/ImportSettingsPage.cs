@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 				CreateDetailInfo("Add new quality preset with the settings from this import.")
 				);
 
-			// add as materila preset
+			// add as material preset
 			var newMaterialPresetButton = new RadioButton("Import settings as new MATERIAL preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			newMaterialPresetButton.CheckedStateChanged += (s, e) => importMode = "materialPreset";
 			container.AddChild(newMaterialPresetButton);
@@ -140,9 +140,62 @@ namespace MatterHackers.MatterControl
 					break;
 
 				case "qualityPreset":
-					throw new NotImplementedException("import to preset");
+					ImportToPreset(settingsFilePath);
 					break;
 			}
+		}
+
+		private void ImportToPreset(string settingsFilePath)
+		{
+			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
+			{
+				string importType = Path.GetExtension(settingsFilePath).ToLower();
+				switch (importType)
+				{
+					case ".printer":
+						// open a wizard to ask what to import to the preset
+						throw new NotImplementedException("need to import from 'MatterControl.printer' files");
+						break;
+
+					case ".ini":
+						var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
+						string layerHeight;
+
+						bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
+						if (isSlic3r)
+						{
+							// TODO: this should only be the oem and user layer (not the quality or material layer)
+							var activeSettings = ActiveSliceSettings.Instance;
+
+							foreach (var item in settingsToImport)
+							{
+								// Compare the value to import to the layer cascade value and only set if different
+								string currentValue = activeSettings.GetActiveValue(item.Key, null).Trim();
+								if (currentValue != item.Value)
+								{
+									activeSettings.UserLayer[item.Key] = item.Value;
+								}
+							}
+
+							activeSettings.SaveChanges();
+
+							UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+						}
+						else
+						{
+							// looks like a cura file
+							throw new NotImplementedException("need to import from 'cure.ini' files");
+						}
+						break;
+
+					default:
+						// Did not figure out what this file is, let the user know we don't understand it
+						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+						break;
+				}
+
+			}
+			Invalidate();
 		}
 
 		private void MergeSettings(string settingsFilePath)
@@ -156,6 +209,7 @@ namespace MatterHackers.MatterControl
 						throw new NotImplementedException("need to import from 'MatterControl.printer' files");
 						break;
 
+					case ".slice": // old presets format
 					case ".ini":
 						var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
 						string layerHeight;
@@ -163,6 +217,7 @@ namespace MatterHackers.MatterControl
 						bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
 						if (isSlic3r)
 						{
+							// TODO: this should only be the oem and user layer (not the quality or material layer)
 							var activeSettings = ActiveSliceSettings.Instance;
 
 							foreach (var item in settingsToImport)

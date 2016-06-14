@@ -4999,3 +4999,30 @@ Translated:Import Settings
 English:Oops! Please select a serial port.
 Translated:Oops! Please select a serial port.
 
+English:The layers at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:The layers at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+
+English:Layers To Pause:
+Translated:Layers To Pause:
+
+English:Import Wizard
+Translated:Import Wizard
+
+English:Import settings as new QUALITY preset
+Translated:Import settings as new QUALITY preset
+
+English:Import settings as new MATERIAL preset
+Translated:Import settings as new MATERIAL preset
+
+English:Choose File
+Translated:Choose File
+
+English:Export Wizard
+Translated:Export Wizard
+
+English:Oops! Unable to recognize settings file '{0}'.
+Translated:Oops! Unable to recognize settings file '{0}'.
+
+English:Unable to Import
+Translated:Unable to Import
+

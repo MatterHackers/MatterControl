@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
@@ -81,11 +82,144 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream");
 			}
 		}
-	}
 
-	[TestFixture]
-	public class GCodePauseStreamTests
-	{
+		public static GCodeStream CreateTestGCodeStream(string[] inputLines)
+		{
+			GCodeStream gCodeFileStream0 = new TestGCodeStream(inputLines);
+			GCodeStream pauseHandlingStream1 = new PauseHandlingStream(gCodeFileStream0);
+			GCodeStream queuedCommandStream2 = new QueuedCommandsStream(pauseHandlingStream1);
+			GCodeStream relativeToAbsoluteStream3 = new RelativeToAbsoluteStream(queuedCommandStream2);
+			//GCodeStream printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3);
+			GCodeStream printLevelingStream4 = relativeToAbsoluteStream3;
+			GCodeStream waitForTempStream5 = new WaitForTempStream(printLevelingStream4);
+			GCodeStream babyStepsStream6 = new BabyStepsStream(waitForTempStream5);
+			GCodeStream extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
+			GCodeStream feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
+			GCodeStream totalGCodeStream = feedrateMultiplyerStream8;
+
+			return totalGCodeStream;
+		}
+
+		[Test, Category("GCodeStream")]
+		public void CorrectEOutputPositions()
+		{
+			string[] inputLines = new string[]
+			{
+				"G1 E11 F300",
+				// BCN tool change test
+				// Before:
+				"G92 E0",
+				"G91",
+				"G1 E - 5 F302",
+				"G90",
+				// After:
+				"G91",
+				"G1 E8 F150",
+				"G90",
+				"G4 P0",
+				"G92 E0",
+				"G4 P0",
+				"G91",
+				"G1 E-2 F301",
+				"G90",
+				null,
+			};
+
+			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
+			string[] expected = new string[]
+			{
+				"G1 E11 F300",
+				// before
+				"G92 E0",
+				"",
+				"G1 E-5 F302",
+				"G90",
+				// after
+				"", // G91 is removed
+				"G1 E3 F150", // altered to be absolute
+				"G90",
+				"G4 P0",
+				"G92 E0",
+				"G4 P0",
+				"", // G91 is removed
+				"G1 E-2 F301",
+				"G90",
+				null,
+			};
+
+			GCodeStream testStream = CreateTestGCodeStream(inputLines);
+
+			int expectedIndex = 0;
+			string actualLine = testStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+
+			while (actualLine != null)
+			{
+				actualLine = testStream.ReadLine();
+				if (actualLine == "G92 E0")
+				{
+					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
+				}
+
+				expectedLine = expected[expectedIndex++];
+
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			}
+		}
+
+		[Test, Category("GCodeStream")]
+		public void CorrectZOutputPositions()
+		{
+			string[] inputLines = new string[]
+			{
+				"G1 Z-2 F300",
+				"G92 Z0",
+				"G1 Z5 F300",
+				"G28",
+				null,
+			};
+
+			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
+			string[] expected = new string[]
+			{
+				"G1 Z-1 F300",
+				"G1 Z-2",
+				"G92 Z0",
+				"G1 Z1 F300",
+				"G1 Z2",
+				"G1 Z3",
+				"G1 Z4",
+				"G1 Z5",
+				"G28",
+				null,
+			};
+
+			GCodeStream testStream = CreateTestGCodeStream(inputLines);
+
+			int expectedIndex = 0;
+			string actualLine = testStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+
+			while (actualLine != null)
+			{
+				actualLine = testStream.ReadLine();
+				if (actualLine == "G92 Z0")
+				{
+					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 0));
+				}
+
+				expectedLine = expected[expectedIndex++];
+
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			}
+		}
+
 		[Test, Category("GCodeStream")]
 		public void PauseHandlingStreamTests()
 		{
@@ -115,9 +249,9 @@ namespace MatterControl.Tests.MatterControl
 			string[] expected = new string[]
 			{
 				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0",
-				"G1 X10 Y10 Z10 E10",
-				"G1 X10 Y10 Z10 E30",
+				"G1 X10 Y10 Z10",
+				"G1 E10",
+				"G1 E30",
 
 				"; the printer pauses",
 				"", // G91 is removed
@@ -133,7 +267,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			PauseHandlingStream pauseHandlingStream = new PauseHandlingStream(new TestGCodeStream(inputLines));
+			GCodeStream pauseHandlingStream = CreateTestGCodeStream(inputLines);
 
 			int expectedIndex = 0;
 			string actualLine = pauseHandlingStream.ReadLine();
