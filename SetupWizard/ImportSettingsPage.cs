@@ -44,30 +44,58 @@ namespace MatterHackers.MatterControl
 		private string importMode;
 
 		public ImportSettingsPage() :
-			base("Cancel")
+			base("Cancel", "Import Wizard")
 		{
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
 			contentRow.AddChild(container);
 
+			// add new profile
 			var newPrinterButton = new RadioButton("Import as new printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			newPrinterButton.CheckedStateChanged += (s, e) => importMode = "new";
 			newPrinterButton.Checked = true;
 			container.AddChild(newPrinterButton);
 			this.importMode = "new";
 
+			container.AddChild(
+				CreateDetailInfo("Add a new printer profile to your list of available printers.\nThis will not change your current settings.")
+				);
+
+			// merge into current settings
 			var mergeButton = new RadioButton("Merge into current printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			mergeButton.CheckedStateChanged += (s, e) => importMode = "merge";
 			container.AddChild(mergeButton);
 
-			var replaceButton = new RadioButton("Replace current printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			replaceButton.CheckedStateChanged += (s, e) => importMode = "replace";
-			container.AddChild(replaceButton);
+			container.AddChild(
+				CreateDetailInfo("Merge settings and presets (if any) into your current profile. \nYou will still be able to revert to the factory settings at any time.")
+				);
 
-			var importButton = textImageButtonFactory.Generate("Import Settings".Localize());
+			// add as quality preset
+			var newQualityPresetButton = new RadioButton("Import settings as new QUALITY preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			newQualityPresetButton.CheckedStateChanged += (s, e) => importMode = "qualityPreset";
+			container.AddChild(newQualityPresetButton);
+
+			container.AddChild(
+				CreateDetailInfo("Add new quality preset with the settings from this import.")
+				);
+
+			// add as materila preset
+			var newMaterialPresetButton = new RadioButton("Import settings as new MATERIAL preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			newMaterialPresetButton.CheckedStateChanged += (s, e) => importMode = "materialPreset";
+			container.AddChild(newMaterialPresetButton);
+
+			container.AddChild(
+				CreateDetailInfo("Add new material preset with the settings from this import.")
+				);
+
+
+			var importButton = textImageButtonFactory.Generate("Choose File".Localize());
 			importButton.Click += (s, e) => UiThread.RunOnIdle(() => 
 			{
 				FileDialog.OpenFileDialog(
-						new OpenFileDialogParams("settings files|*.ini;*.printer,"),
+						new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
 						(dialogParams) => ImportSettingsFile(dialogParams.FileName));
 			});
 
@@ -78,6 +106,23 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(importButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
+		}
+
+		private GuiWidget CreateDetailInfo(string detailText)
+		{
+			var wrappedText = new WrappedTextWidget(detailText, 5)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+			};
+
+			var container = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren)
+			{
+				Margin = new BorderDouble(25, 15, 5, 5),
+			};
+
+			container.AddChild(wrappedText);
+
+			return container;
 		}
 
 		private void ImportSettingsFile(string settingsFilePath)
@@ -91,13 +136,16 @@ namespace MatterHackers.MatterControl
 					break;
 
 				case "merge":
-				case "replace":
-					ReplaceOrMergeSettings(settingsFilePath);
+					MergeSettings(settingsFilePath);
+					break;
+
+				case "qualityPreset":
+					throw new NotImplementedException("import to preset");
 					break;
 			}
 		}
 
-		private void ReplaceOrMergeSettings(string settingsFilePath)
+		private void MergeSettings(string settingsFilePath)
 		{
 			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
 			{
@@ -116,11 +164,6 @@ namespace MatterHackers.MatterControl
 						if (isSlic3r)
 						{
 							var activeSettings = ActiveSliceSettings.Instance;
-
-							if (importMode == "replace")
-							{
-								activeSettings.ClearUserOverrides();
-							}
 
 							foreach (var item in settingsToImport)
 							{

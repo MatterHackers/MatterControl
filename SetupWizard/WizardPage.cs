@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl
 
 		protected GuiWidget mainContainer;
 
-		public WizardPage(string unlocalizedTextForCancelButton = "Cancel")
+		public WizardPage(string unlocalizedTextForCancelButton = "Cancel", string unlocalizedTextForTitle = "Setup Wizard")
 		{
 			whiteImageButtonFactory = new TextImageButtonFactory()
 			{
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.ParentLeftRight
 			};
 
-			headerLabel = new TextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
+			headerLabel = new TextWidget(unlocalizedTextForTitle.Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
 			{
 				AutoExpandBoundsToText = true
 			};
