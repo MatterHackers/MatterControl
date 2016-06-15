@@ -152,6 +152,17 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		internal void ChangeToPage(WizardPage pageToChangeTo)
+		{
+			pageToChangeTo.WizardWindow = this;
+			UiThread.RunOnIdle(() =>
+			{
+				this.RemoveAllChildren();
+				this.AddChild(pageToChangeTo);
+				this.Invalidate();
+			});
+		}
+
 		internal void ChangeToPage<PanelType>() where PanelType : WizardPage, new()
 		{
 			UiThread.RunOnIdle(() =>
