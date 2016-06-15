@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			}
 		}
 
-		public static void ImportPrinters(ProfileData profileData, string profilePath)
+		public static void ImportPrinters(ProfileManager profileData, string profilePath)
 		{
 			foreach (Printer printer in Datastore.Instance.dbSQLite.Query<Printer>("SELECT * FROM Printer;"))
 			{
@@ -71,17 +71,18 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			}
 		}
 
-		public static void ImportPrinter(Printer printer, ProfileData profileData, string profilePath)
+		public static void ImportPrinter(Printer printer, ProfileManager profileData, string profilePath)
 		{
 			var printerInfo = new PrinterInfo()
 			{
 				Name = printer.Name,
-				Id = printer.Id.ToString()
+				ID = printer.Id.ToString()
 			};
 			profileData.Profiles.Add(printerInfo);
 
-			var layeredProfile = ActiveSliceSettings.LoadEmptyProfile();
-			layeredProfile.OemProfile = new OemProfile(LoadOemLayer(printer));
+			var layeredProfile = new LayeredProfile(
+				new OemProfile(LoadOemLayer(printer)), 
+				SliceSettingsOrganizer.Instance.GetDefaultSettings());
 
 			LoadQualitySettings(layeredProfile, printer);
 			LoadMaterialSettings(layeredProfile, printer);

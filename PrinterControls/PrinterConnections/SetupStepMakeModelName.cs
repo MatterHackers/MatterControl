@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					string mappedMakeText = printerManufacturerSelector.SelectedLabel;
 
 					string printerInputName = string.Format("{0} {1}", mappedMakeText, activeModel);
-					var names = ActiveSliceSettings.ProfileData.Profiles.Where(p => p.Name.StartsWith(printerInputName)).Select(p => p.Name).ToList();
+					var names = ProfileManager.Instance.ActiveProfiles.Where(p => p.Name.StartsWith(printerInputName)).Select(p => p.Name).ToList();
 					if (!names.Contains(printerInputName))
 					{
 						printerNameInput.Text = printerInputName;
@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 				else
 				{
-					ActiveSliceSettings.AcquireNewProfile(activeMake, activeModel, activeName);
+					ProfileManager.AcquireNewProfile(activeMake, activeModel, activeName);
 					return true;
 				}
 			}
