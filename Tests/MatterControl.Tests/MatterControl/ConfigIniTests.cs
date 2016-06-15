@@ -22,7 +22,7 @@ namespace MatterControl.Tests.MatterControl
 		static ConfigIniTests()
 		{
 			allPrinters = (from configIni in new DirectoryInfo(printerSettingsDirectory).GetFiles("config.ini", System.IO.SearchOption.AllDirectories)
-						   let oemProfile = new OemProfile(SettingsLayer.LoadFromIni(configIni.FullName))
+						   let oemProfile = new OemProfile(PrinterSettingsLayer.LoadFromIni(configIni.FullName))
 						   select new PrinterConfig
 						   {
 							   PrinterName = configIni.Directory.Name,
@@ -33,7 +33,7 @@ namespace MatterControl.Tests.MatterControl
 								   RelativeFilePath = configIni.FullName.Substring(printerSettingsDirectory.Length + 1),
 
 								   // The config.ini layer cascade contains only itself
-								   LayerCascade = new LayeredProfile(oemProfile, new SettingsLayer()),
+								   LayerCascade = new PrinterSettings(oemProfile, new PrinterSettingsLayer()),
 							   },
 							   MatterialLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "material"), oemProfile),
 							   QualityLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "quality"), oemProfile)
@@ -47,7 +47,7 @@ namespace MatterControl.Tests.MatterControl
 					Directory.GetFiles(layersDirectory, "*.slice").Select(file => new LayerInfo()
 					{
 						RelativeFilePath = file.Substring(printerSettingsDirectory.Length + 1),
-						LayerCascade = new LayeredProfile(new OemProfile(SettingsLayer.LoadFromIni(file)), oemProfile.OemLayer)
+						LayerCascade = new PrinterSettings(new OemProfile(PrinterSettingsLayer.LoadFromIni(file)), oemProfile.OemLayer)
 					}).ToList()
 					: new List<LayerInfo>();
 		}
@@ -444,7 +444,7 @@ namespace MatterControl.Tests.MatterControl
 		private class LayerInfo
 		{
 			public string RelativeFilePath { get; set; }
-			public LayeredProfile LayerCascade { get; set; }
+			public PrinterSettings LayerCascade { get; set; }
 		}
 	}
 }

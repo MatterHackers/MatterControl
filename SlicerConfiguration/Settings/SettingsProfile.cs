@@ -55,11 +55,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public RootedObjectEventHandler DoPrintLevelingChanged = new RootedObjectEventHandler();
 
-		private LayeredProfile layeredProfile;
+		private PrinterSettings layeredProfile;
 
 		public bool PrinterSelected => layeredProfile.OemProfile.OemLayer.Keys.Count > 0;
 
-		internal SettingsProfile(LayeredProfile profile)
+		internal SettingsProfile(PrinterSettings profile)
 		{
 			layeredProfile = profile;
 		}
@@ -76,11 +76,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public SettingsLayer BaseLayer => layeredProfile.BaseLayer;
+		public PrinterSettingsLayer BaseLayer => layeredProfile.BaseLayer;
 
-		public SettingsLayer OemLayer => layeredProfile.OemProfile.OemLayer;
+		public PrinterSettingsLayer OemLayer => layeredProfile.OemProfile.OemLayer;
 
-		public SettingsLayer UserLayer => layeredProfile.UserLayer;
+		public PrinterSettingsLayer UserLayer => layeredProfile.UserLayer;
 
 		public string ActiveMaterialKey
 		{
@@ -114,9 +114,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Commit
 		}
 
-		public List<SettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
+		public List<PrinterSettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
 
-		public List<SettingsLayer> QualityLayers => layeredProfile.QualityLayers;
+		public List<PrinterSettingsLayer> QualityLayers => layeredProfile.QualityLayers;
 
 		public class SettingsConverter
 		{
@@ -212,19 +212,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Otherwise, use the SettingsLayers that is bound to this extruder
-			SettingsLayer layer = layeredProfile.GetMaterialLayer(materialKey);
+			PrinterSettingsLayer layer = layeredProfile.GetMaterialLayer(materialKey);
 
 			string result = "0";
 			layer?.TryGetValue("temperature", out result);
 			return result;
 		}
 
-		internal SettingsLayer MaterialLayer(string key)
+		internal PrinterSettingsLayer MaterialLayer(string key)
 		{
 			return layeredProfile.GetMaterialLayer(key);
 		}
 
-		internal SettingsLayer QualityLayer(string key)
+		internal PrinterSettingsLayer QualityLayer(string key)
 		{
 			return layeredProfile.GetQualityLayer(key);
 		}
@@ -357,21 +357,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return ParseDouble(ActiveValue("min_fan_speed"));
 		}
 
-		public double FirstLayerHeight()
-		{
-			string firstLayerValueString = ActiveValue("first_layer_height");
-			if (firstLayerValueString.Contains("%"))
-			{
-				string onlyNumber = firstLayerValueString.Replace("%", "");
-				double ratio = ParseDouble(onlyNumber) / 100;
-				return LayerHeight() * ratio;
-			}
-			double firstLayerValue;
-			firstLayerValue = ParseDouble(firstLayerValueString);
-
-			return firstLayerValue;
-		}
-
 		internal string MaterialPresetKey(int extruderIndex)
 		{
 			return layeredProfile.GetMaterialPresetKey(extruderIndex);
@@ -477,11 +462,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return Vector2.Zero;
-		}
-
-		public double NozzleDiameter()
-		{
-			return ParseDouble(ActiveValue("nozzle_diameter"));
 		}
 
 		public double FilamentDiameter()
@@ -594,7 +574,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetValue(sliceSetting);
 		}
 
-		public string GetActiveValue(string sliceSetting, IEnumerable<SettingsLayer> layerCascade)
+		public T GetValue<T>(string settingsKey) where T : IConvertible
+		{
+			if (typeof(T) == typeof(bool))
+			{
+				return (T)(object) (this.ActiveValue(settingsKey) == "1");
+			}
+			else if (typeof(T) == typeof(int))
+			{
+				int result;
+				int.TryParse(this.ActiveValue(settingsKey), out result);
+				return (T)(object)(result);
+			}
+			else if (typeof(T) == typeof(double))
+			{
+				string settingsStringh = ActiveValue(settingsKey);
+				if (settingsStringh.Contains("%"))
+				{
+					string onlyNumber = settingsStringh.Replace("%", "");
+					double ratio = ParseDouble(onlyNumber) / 100;
+
+					if (settingsKey == "first_layer_height")
+					{
+						return (T)(object)(LayerHeight() * ratio);
+					}
+
+					return (T)(object)(ratio);
+				}
+
+				double result;
+				double.TryParse(this.ActiveValue(settingsKey), out result);
+				return (T)(object)(result);
+			}
+
+			return (T)default(T);
+		}
+
+		public string GetActiveValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
 			return layeredProfile.GetValue(sliceSetting, layerCascade);
 		}
@@ -604,7 +620,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetActiveValue(sliceSetting, sliceValue);
 		}
 
-		public void SetActiveValue(string sliceSetting, string sliceValue, SettingsLayer persistenceLayer)
+		public void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer persistenceLayer)
 		{
 			layeredProfile.SetActiveValue(sliceSetting, sliceValue, persistenceLayer);
 		}
@@ -614,7 +630,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.ClearValue(sliceSetting);
 		}
 
-		public void ClearValue(string sliceSetting, SettingsLayer persistenceLayer)
+		public void ClearValue(string sliceSetting, PrinterSettingsLayer persistenceLayer)
 		{
 			layeredProfile.ClearValue(sliceSetting, persistenceLayer);
 		}
@@ -723,18 +739,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			try
 			{
-				if (LayerHeight() > NozzleDiameter())
+				if (LayerHeight() > GetValue<double>("nozzle_diameter"))
 				{
 					string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), LayerHeight(), NozzleDiameter());
+					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), LayerHeight(), GetValue<double>("nozzle_diameter"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
-				else if (FirstLayerHeight() > NozzleDiameter())
+				else if (GetValue<double>("first_layer_height") > GetValue<double>("nozzle_diameter"))
 				{
 					string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), FirstLayerHeight(), NozzleDiameter());
+					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>("first_layer_height"), GetValue<double>("nozzle_diameter"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
@@ -766,10 +782,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				if (FirstLayerExtrusionWidth() > NozzleDiameter() * 4)
+				if (FirstLayerExtrusionWidth() > GetValue<double>("nozzle_diameter") * 4)
 				{
 					string error = "'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
-					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), ActiveValue("first_layer_extrusion_width"), NozzleDiameter());
+					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), ActiveValue("first_layer_extrusion_width"), GetValue<double>("nozzle_diameter"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
@@ -891,11 +907,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return true;
 		}
 
-		public bool DoAutoConnect()
-		{
-			return layeredProfile.GetValue("MatterControl.AutoConnect") == "1";
-		}
-
 		public void SetAutoConnect(bool autoConnectPrinter)
 		{
 			layeredProfile.SetActiveValue("MatterControl.AutoConnect", autoConnectPrinter ? "1" : "0");
@@ -937,7 +948,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port);
 		}
 
-		public void SetComPort(string port, SettingsLayer layer)
+		public void SetComPort(string port, PrinterSettingsLayer layer)
 		{
 			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port, layer);
 		}
@@ -992,6 +1003,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string Model => layeredProfile.GetValue("MatterControl.Model");
 
+		[JsonIgnore]
 		HashSet<string> knownSettings = null;
 		public HashSet<string> KnownSettings
 		{
@@ -1091,11 +1103,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public List<GCodeMacro> Macros => layeredProfile.Macros;
 	}
 
-	public class SettingsLayer : SettingsDictionary
+	public class PrinterSettingsLayer : SettingsDictionary
 	{
-		public SettingsLayer() { }
+		public PrinterSettingsLayer() { }
 
-		public SettingsLayer(Dictionary<string, string> settingsDictionary)
+		public PrinterSettingsLayer(Dictionary<string, string> settingsDictionary)
 		{
 			foreach(var keyValue in settingsDictionary)
 			{
@@ -1175,9 +1187,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return foundValue;
 		}
 
-		public static SettingsLayer LoadFromIni(TextReader reader)
+		public static PrinterSettingsLayer LoadFromIni(TextReader reader)
 		{
-			var layer = new SettingsLayer();
+			var layer = new PrinterSettingsLayer();
 
 			string line;
 			while ((line = reader.ReadLine()) != null)
@@ -1193,7 +1205,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layer;
 		}
 
-		public static SettingsLayer LoadFromIni(string filePath)
+		public static PrinterSettingsLayer LoadFromIni(string filePath)
 		{
 			var settings = from line in File.ReadAllLines(filePath)
 						   let segments = line.Split('=')
@@ -1204,7 +1216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							   Value = segments[1].Trim()
 						   };
 
-			var layer = new SettingsLayer();
+			var layer = new PrinterSettingsLayer();
 			foreach (var setting in settings)
 			{
 				layer[setting.Key] = setting.Value;
@@ -1213,10 +1225,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layer;
 		}
 
-		public SettingsLayer Clone()
+		public PrinterSettingsLayer Clone()
 		{
 			string id = Guid.NewGuid().ToString();
-			return new SettingsLayer(this as Dictionary<string, string>)
+			return new PrinterSettingsLayer(this as Dictionary<string, string>)
 			{
 				LayerID = id,
 				Name = this.Name,

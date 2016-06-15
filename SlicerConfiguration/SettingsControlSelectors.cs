@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem addNewPreset = dropDownList.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Setting...", "new");
 			addNewPreset.Selected += (s, e) =>
 			{
-				var newLayer = new SettingsLayer();
+				var newLayer = new PrinterSettingsLayer();
 				if (layerType == NamedSettingsLayers.Quality)
 				{
 					newLayer.Name = "Quality" + ActiveSliceSettings.Instance.QualityLayers.Count;
