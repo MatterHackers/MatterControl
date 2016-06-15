@@ -5026,3 +5026,9 @@ Translated:Oops! Unable to recognize settings file '{0}'.
 English:Unable to Import
 Translated:Unable to Import
 
+English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
+Translated:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
+
+English:Import Successful
+Translated:Import Successful
+

@@ -39,9 +39,33 @@ using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl
 {
-	public class ImportSettingsPage : WizardPage
+	public class ImportToPrinterSucceeded : WizardPage
 	{
-		private string importMode;
+		static string successMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
+		public ImportToPrinterSucceeded(string newProfileName) :
+			base("Done", "Import Wizard")
+		{
+			this.headerLabel.Text = "Import Successful".Localize();
+
+			successMessage = successMessage.FormatWith(newProfileName);
+
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			contentRow.AddChild(container);
+
+			var successMessageWidget = new WrappedTextWidget(successMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			container.AddChild(successMessageWidget);
+		}
+	}
+
+		public class ImportSettingsPage : WizardPage
+	{
+		RadioButton newPrinterButton;
+		RadioButton mergeButton;
+		RadioButton newQualityPresetButton;
+		RadioButton newMaterialPresetButton;
 
 		public ImportSettingsPage() :
 			base("Cancel", "Import Wizard")
@@ -53,19 +77,16 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(container);
 
 			// add new profile
-			var newPrinterButton = new RadioButton("Import as new printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			newPrinterButton.CheckedStateChanged += (s, e) => importMode = "new";
+			newPrinterButton = new RadioButton("Import as new printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			newPrinterButton.Checked = true;
 			container.AddChild(newPrinterButton);
-			this.importMode = "new";
 
 			container.AddChild(
 				CreateDetailInfo("Add a new printer profile to your list of available printers.\nThis will not change your current settings.")
 				);
 
 			// merge into current settings
-			var mergeButton = new RadioButton("Merge into current printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			mergeButton.CheckedStateChanged += (s, e) => importMode = "merge";
+			mergeButton = new RadioButton("Merge into current printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			container.AddChild(mergeButton);
 
 			container.AddChild(
@@ -73,8 +94,7 @@ namespace MatterHackers.MatterControl
 				);
 
 			// add as quality preset
-			var newQualityPresetButton = new RadioButton("Import settings as new QUALITY preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			newQualityPresetButton.CheckedStateChanged += (s, e) => importMode = "qualityPreset";
+			newQualityPresetButton = new RadioButton("Import settings as new QUALITY preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			container.AddChild(newQualityPresetButton);
 
 			container.AddChild(
@@ -82,8 +102,7 @@ namespace MatterHackers.MatterControl
 				);
 
 			// add as material preset
-			var newMaterialPresetButton = new RadioButton("Import settings as new MATERIAL preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			newMaterialPresetButton.CheckedStateChanged += (s, e) => importMode = "materialPreset";
+			newMaterialPresetButton = new RadioButton("Import settings as new MATERIAL preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			container.AddChild(newMaterialPresetButton);
 
 			container.AddChild(
@@ -92,11 +111,17 @@ namespace MatterHackers.MatterControl
 
 
 			var importButton = textImageButtonFactory.Generate("Choose File".Localize());
-			importButton.Click += (s, e) => UiThread.RunOnIdle(() => 
+			importButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				FileDialog.OpenFileDialog(
 						new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
-						(dialogParams) => ImportSettingsFile(dialogParams.FileName));
+						(dialogParams) =>
+						{
+							if (!string.IsNullOrEmpty(dialogParams.FileName))
+							{
+								ImportSettingsFile(dialogParams.FileName);
+							}
+						});
 			});
 
 			importButton.Visible = true;
@@ -127,26 +152,42 @@ namespace MatterHackers.MatterControl
 
 		private void ImportSettingsFile(string settingsFilePath)
 		{
-			WizardWindow.Close();
-
-			switch (importMode)
+			if(newPrinterButton.Checked)
 			{
-				case "new":
-					ActiveSliceSettings.ImportFromExisting(settingsFilePath);
-					break;
-
-				case "merge":
-					MergeSettings(settingsFilePath);
-					break;
-
-				case "qualityPreset":
-					ImportToPreset(settingsFilePath);
-					break;
+				ActiveSliceSettings.ImportFromExisting(settingsFilePath);
+				WizardWindow.ChangeToPage(new ImportToPrinterSucceeded(Path.GetFileNameWithoutExtension(settingsFilePath)));
+			}
+			else if(mergeButton.Checked)
+			{
+				MergeSettings(settingsFilePath);
+				WizardWindow.Close();
+			}
+			else if(newQualityPresetButton.Checked)
+			{
+				ImportToPreset(settingsFilePath);
+				WizardWindow.ChangeToPage(new ImportToPrinterSucceeded(Path.GetFileNameWithoutExtension(settingsFilePath))
+				{
+					WizardWindow = this.WizardWindow,
+				});
+			}
+			else if(newMaterialPresetButton.Checked)
+			{
+				ImportToPreset(settingsFilePath);
+				WizardWindow.ChangeToPage(new ImportToPrinterSucceeded(Path.GetFileNameWithoutExtension(settingsFilePath))
+				{
+					WizardWindow = this.WizardWindow,
+				});
 			}
 		}
 
 		private void ImportToPreset(string settingsFilePath)
 		{
+			string presetType = "Quality";
+			if (newMaterialPresetButton.Checked)
+			{
+				presetType = "Material";
+			}
+
 			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
 			{
 				string importType = Path.GetExtension(settingsFilePath).ToLower();
@@ -157,6 +198,7 @@ namespace MatterHackers.MatterControl
 						throw new NotImplementedException("need to import from 'MatterControl.printer' files");
 						break;
 
+					case ".slice": // legacy presets file extension
 					case ".ini":
 						var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
 						string layerHeight;

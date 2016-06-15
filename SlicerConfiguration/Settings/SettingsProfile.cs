@@ -1180,7 +1180,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var settings = from line in File.ReadAllLines(filePath)
 						   let segments = line.Split('=')
-						   where !line.StartsWith("#") && !string.IsNullOrEmpty(line)
+						   where !line.StartsWith("#") && !string.IsNullOrEmpty(line) && segments.Length == 2
 						   select new
 						   {
 							   Key = segments[0].Trim(),

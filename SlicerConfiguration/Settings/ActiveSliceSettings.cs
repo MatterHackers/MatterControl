@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static void Profiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+			if (!MatterControlApplication.IsLoading)
 			{
 				string profilePath = Path.Combine(profilesPath, Instance.ID + ".json");
 				if (File.Exists(profilePath))
@@ -261,6 +261,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				case ".printer":
 					var profile = LoadProfileFromDisk(settingsFilePath);
 					profile.ID = Guid.NewGuid().ToString();
+					profile.SetName(Path.GetFileNameWithoutExtension(settingsFilePath));
+					profile.SaveChanges();
 					break;
 
 				case ".ini":
@@ -278,15 +280,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// TODO: Resolve name conflicts
 					layeredProfile.UserLayer["MatterControl.PrinterName"] = printerIdentifier.Name;
 					layeredProfile.Save();
-
 					break;
 			}
 
 			ProfileData.Profiles.Add(printerIdentifier);
-
-			UserSettings.Instance.set("ActiveProfileID", printerIdentifier.Id);
-
-			Instance = LoadProfile(printerIdentifier.Id);
 		}
 
 
