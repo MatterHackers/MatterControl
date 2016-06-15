@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetPrintLevelButtonVisiblity()
 		{
-			if (ActiveSliceSettings.Instance.DoPrintLeveling())
+			if (ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
 			{
 				printLevelingStatusLabel.Text = "Software Print Leveling (enabled)".Localize();
 			}

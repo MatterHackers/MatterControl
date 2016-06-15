@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
 						PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
-						if (levelingData != null && ActiveSliceSettings.Instance.LevelingRequiredToPrint()
+						if (levelingData != null && ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
 							&& !levelingData.HasBeenRun())
 						{
 							this.activePrintButtons.Add(configureButton);
@@ -362,7 +362,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
-				&& ActiveSliceSettings.Instance.ShowResetConnection()
+				&& ActiveSliceSettings.Instance.GetValue<bool>("show_reset_connection")
 				&& UserSettings.Instance.IsTouchScreen)
 			{
 				this.activePrintButtons.Add(resetConnectionButton);

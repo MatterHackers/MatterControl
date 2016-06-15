@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// If we have support enabled and are using an extruder other than 0 for it
-			if (ActiveSliceSettings.Instance.SupportEnabled())
+			if (ActiveSliceSettings.Instance.GetValue<bool>("support_material"))
 			{
 				if (ActiveSliceSettings.Instance.SupportExtruder() != 0)
 				{
@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// If we have raft enabled and are using an extruder other than 0 for it
-			if (ActiveSliceSettings.Instance.RaftEnabled())
+			if (ActiveSliceSettings.Instance.GetValue<bool>("create_raft"))
 			{
 				if (ActiveSliceSettings.Instance.RaftExtruder() != 0)
 				{
