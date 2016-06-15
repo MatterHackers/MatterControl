@@ -229,67 +229,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetQualityLayer(key);
 		}
 
-		internal bool PublishBedImage()
-		{
-			return ActiveValue("MatterControl.PublishBedImage") == "1";
-		}
-
 		internal void SetMaterialPreset(int extruderIndex, string text)
 		{
 			layeredProfile.SetMaterialPreset(extruderIndex, text);
 		}
 
-		public bool HasFan()
-		{
-			return ActiveValue("has_fan") == "1";
-		}
-
-		public bool CenterOnBed()
-		{
-			return ActiveValue("center_part_on_bed") == "1";
-		}
-
-		public bool ShowResetConnection()
-		{
-			return ActiveValue("show_reset_connection") == "1";
-		}
-
-		public bool HasHardwareLeveling()
-		{
-			return ActiveValue("has_hardware_leveling") == "1";
-		}
-
-		public bool HasSdCardReader()
-		{
-			return ActiveValue("has_sd_card_reader") == "1";
-		}
-
 		public double BedTemperature()
 		{
 			double targetTemp = 0;
-			if (HasHeatedBed())
+			if (this.GetValue<bool>("has_heated_bed"))
 			{
 				double.TryParse(ActiveValue("bed_temperature"), out targetTemp);
 			}
 			return targetTemp;
-		}
-
-		/// <summary>
-		/// Control the PS_ON pin via M80/81 if enabled in firmware and printer settings, allowing the printer board to toggle off the ATX power supply
-		/// </summary>
-		public bool HasPowerControl()
-		{
-			return ActiveValue("has_power_control") == "1";
-		}
-
-		public bool HasHeatedBed()
-		{
-			return ActiveValue("has_heated_bed") == "1";
-		}
-
-		public bool SupportEnabled()
-		{
-			return ActiveValue("support_material") == "1";
 		}
 
 		public bool ShowFirmwareUpdater()
@@ -320,11 +272,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public double ProbePaperWidth()
 		{
 			return double.Parse(ActiveValue("manual_probe_paper_width"));
-		}
-
-		public bool RaftEnabled()
-		{
-			return ActiveValue("create_raft") == "1";
 		}
 
 		public int RaftExtruder()
@@ -426,7 +373,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public int ExtruderCount()
 		{
-			if (ExtrudersShareTemperature())
+			if (this.GetValue<bool>("extruders_share_temperature"))
 			{
 				return 1;
 			}
@@ -439,11 +386,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return extruderCount;
-		}
-
-		public bool ExtrudersShareTemperature()
-		{
-			return (int.Parse(ActiveValue("extruders_share_temperature")) == 1);
 		}
 
 		public Vector2 ExtruderOffset(int extruderIndex)
@@ -467,11 +409,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public double FilamentDiameter()
 		{
 			return ParseDouble(ActiveValue("filament_diameter"));
-		}
-
-		public bool LevelingRequiredToPrint()
-		{
-			return ActiveValue("print_leveling_required_to_print") == "1";
 		}
 
 		private PrintLevelingData printLevelingData = null;
@@ -501,15 +438,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		}
 
-		public bool DoPrintLeveling()
-		{
-			return layeredProfile.GetValue("MatterControl.PrintLevelingEnabled") == "1";
-		}
-
 		public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
-			if (doLeveling == this.DoPrintLeveling())
+			if (doLeveling == this.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
 			{
 				return;
 			}
@@ -757,7 +689,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
-				if (PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling())
+				if (PrinterConnectionAndCommunication.Instance.ActivePrinter.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
 				{
 					string[] startGCode = ActiveValue("start_gcode").Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
@@ -923,10 +855,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile());
 		}
 
-		public bool MarkedForDelete()
-		{
-			return ActiveValue("MatterControl.MarkedForDelete") == "1";
-		}
 
 		public string BaudRate()
 		{

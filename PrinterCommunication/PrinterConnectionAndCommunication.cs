@@ -1345,8 +1345,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			try
 			{
 				// If leveling is required or is currently on
-				if (ActiveSliceSettings.Instance.LevelingRequiredToPrint()
-					|| ActiveSliceSettings.Instance.DoPrintLeveling())
+				if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
+					|| ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
 				{
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 					if(levelingData?.HasBeenRun() != true)
@@ -1359,7 +1359,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
 				{
 					string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
-					if (ActiveSliceSettings.Instance.HasSdCardReader()
+					if (ActiveSliceSettings.Instance.GetValue<bool>("has_sd_card_reader")
 						&& pathAndFile == QueueData.SdCardFileName)
 					{
 						PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
@@ -1643,8 +1643,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											UiThread.RunOnIdle(() => ConnectionSucceeded.CallEvents(this, null));
 
 											// run the print leveling wizard if we need to for this printer
-											if (ActiveSliceSettings.Instance.LevelingRequiredToPrint()
-												|| ActiveSliceSettings.Instance.DoPrintLeveling())
+											if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
+												|| ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
 											{
 												PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 												if (levelingData?.HasBeenRun() != true)

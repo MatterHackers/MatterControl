@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
 			connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
 			disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
-			resetConnectionButton.Visible = ActiveSliceSettings.Instance.ShowResetConnection();
+			resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("show_reset_connection");
 		}
 	}
 }

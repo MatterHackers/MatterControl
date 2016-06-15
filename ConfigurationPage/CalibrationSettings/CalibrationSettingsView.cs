@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			: base("Calibration".Localize())
 		{
 			printLevelingContainer = new DisableableWidget();
-			if (!ActiveSliceSettings.Instance.HasHardwareLeveling())
+			if (!ActiveSliceSettings.Instance.GetValue<bool>("has_hardware_leveling"))
 			{
 				printLevelingContainer.AddChild(GetAutoLevelControl());
 
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget levelingIcon = new ImageWidget(levelingImage);
 			levelingIcon.Margin = new BorderDouble(right: 6);
 
-			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.DoPrintLeveling());
+			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled"));
 			printLevelingSwitch.VAnchor = VAnchor.ParentCenter;
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
-				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.DoPrintLeveling();
+				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled");
 			}, ref unregisterEvents);
 
 			buttonRow.AddChild(levelingIcon);
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(runPrintLevelingButton);
 
 			// only show the switch if leveling can be turned off (it can't if it is required).
-			if (!ActiveSliceSettings.Instance.LevelingRequiredToPrint())
+			if (!ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print"))
 			{
 				buttonRow.AddChild(printLevelingSwitch);
 			}

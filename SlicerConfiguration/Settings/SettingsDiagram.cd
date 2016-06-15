@@ -11,7 +11,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="MatterHackers.MatterControl.SlicerConfiguration.SettingsProfile">
-    <Position X="3.75" Y="1" Width="2" />
+    <Position X="4" Y="1" Width="2" />
     <NestedTypes>
       <Class Name="MatterHackers.MatterControl.SlicerConfiguration.SettingsProfile.SettingsConverter" Collapsed="true">
         <TypeIdentifier>

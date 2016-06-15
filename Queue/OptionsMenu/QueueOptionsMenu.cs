@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			//menuItems.Add(new Tuple<string, Func<bool>>("X3G", null));
 			//menuItems.Add(new Tuple<string, Func<bool>>("Export to Folder".Localize(), exportX3GButton_Click));
 
-			if (ActiveSliceSettings.Instance.HasSdCardReader())
+			if (ActiveSliceSettings.Instance.GetValue<bool>("has_sd_card_reader"))
 			{
 				menuItems.Add(new Tuple<string, Func<bool>>("SD Card", null));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Load Files".Localize(), loadFilesFromSDButton_Click));

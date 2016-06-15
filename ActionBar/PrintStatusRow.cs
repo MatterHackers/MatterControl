@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				temperatureWidgets.AddChild(extruderTemperatureWidget);
 
 				bedTemperatureWidget = new TemperatureWidgetBed();
-				if (ActiveSliceSettings.Instance.HasHeatedBed())
+				if (ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed"))
 				{
 					temperatureWidgets.AddChild(bedTemperatureWidget);
 				}
@@ -252,16 +252,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
 			autoLevelButton.Cursor = Cursors.Hand;
-			autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
+			autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled");
 
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((sender, e) =>
 			{
-				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
+				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled");
 			}, ref unregisterEvents);
 
 			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
-				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
+				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled");
 			}, ref unregisterEvents);
 
 			return autoLevelButton;
@@ -356,7 +356,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (ActiveSliceSettings.Instance != null)
 			{
-				if (ActiveSliceSettings.Instance.HasHeatedBed())
+				if (ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed"))
 				{
 					bedTemperatureWidget.Visible = true;
 				}
@@ -594,7 +594,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			tempWidgets.AddChild(extruderTemperatureWidget);
 			tempWidgets.AddChild(new GuiWidget(6, 6));
-			if (ActiveSliceSettings.Instance.HasHeatedBed())
+			if (ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed"))
 			{
 				tempWidgets.AddChild(bedTemperatureWidget);
 			}
@@ -698,16 +698,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
-			autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
+			autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled");
 
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((sender, e) =>
 			{
-				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
+				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled");
 			}, ref unregisterEvents);
 
 			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
-				autoLevelButton.Visible = ActiveSliceSettings.Instance.DoPrintLeveling();
+				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled");
 			}, ref unregisterEvents);
 
 			return autoLevelButton;
@@ -802,7 +802,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (ActiveSliceSettings.Instance != null)
 			{
-				if (ActiveSliceSettings.Instance.HasHeatedBed())
+				if (ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed"))
 				{
 					bedTemperatureWidget.Visible = true;
 				}

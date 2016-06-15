@@ -1321,8 +1321,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector2 bedCenter = new Vector2();
 				MeshViewerWidget.CenterPartAfterLoad doCentering = MeshViewerWidget.CenterPartAfterLoad.DONT;
 
-				if (ActiveSliceSettings.Instance != null
-				&& ActiveSliceSettings.Instance.CenterOnBed())
+				if (ActiveSliceSettings.Instance?.GetValue<bool>("center_part_on_bed") == true)
 				{
 					doCentering = MeshViewerWidget.CenterPartAfterLoad.DO;
 					bedCenter = ActiveSliceSettings.Instance.BedCenter();
@@ -2107,8 +2106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool PartsAreInPrintVolume()
 		{
-			if (ActiveSliceSettings.Instance != null
-				&& !ActiveSliceSettings.Instance.CenterOnBed())
+			if (ActiveSliceSettings.Instance?.GetValue<bool>("center_part_on_bed") == true)
 			{
 				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
 				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
