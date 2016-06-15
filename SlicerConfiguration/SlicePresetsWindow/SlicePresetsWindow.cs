@@ -43,12 +43,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetsContext
 	{
-		public List<SettingsLayer> PresetLayers { get; }
-		public SettingsLayer PersistenceLayer { get; set; }
+		public List<PrinterSettingsLayer> PresetLayers { get; }
+		public PrinterSettingsLayer PersistenceLayer { get; set; }
 		public Action<string> SetAsActive { get; set; }
 		public NamedSettingsLayers LayerType { get; set; }
 
-		public PresetsContext(List<SettingsLayer> settingsLayers, SettingsLayer activeLayer)
+		public PresetsContext(List<PrinterSettingsLayer> settingsLayers, PrinterSettingsLayer activeLayer)
 		{
 			this.PersistenceLayer = activeLayer;
 			this.PresetLayers = settingsLayers;
@@ -146,9 +146,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return topRow;
 		}
 
-		private GuiWidget CreateSliceSettingsWidget(SettingsLayer persistenceLayer)
+		private GuiWidget CreateSliceSettingsWidget(PrinterSettingsLayer persistenceLayer)
 		{
-			var layerCascade = new List<SettingsLayer>
+			var layerCascade = new List<PrinterSettingsLayer>
 			{
 				persistenceLayer,
 				ActiveSliceSettings.Instance.OemLayer,

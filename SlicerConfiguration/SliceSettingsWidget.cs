@@ -91,12 +91,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private TextImageButtonFactory textImageButtonFactory;
 
-		private List<SettingsLayer> layerCascade = null;
-		private SettingsLayer persistenceLayer = null;
+		private List<PrinterSettingsLayer> layerCascade = null;
+		private PrinterSettingsLayer persistenceLayer = null;
 
 		private NamedSettingsLayers viewFilter;
 
-		public SliceSettingsWidget(List<SettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
+		public SliceSettingsWidget(List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
 		{
 			this.layerCascade = layerCascade;
 			this.viewFilter = viewFilter;
@@ -614,7 +614,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			public Action<string> ValueChanged { get; set; }
 			public Action UpdateStyle { get; set; }
 
-			public SettingsRow(IEnumerable<SettingsLayer> layerCascade)
+			public SettingsRow(IEnumerable<PrinterSettingsLayer> layerCascade)
 			{
 				Margin = new BorderDouble(0, 2);
 				Padding = new BorderDouble(3);
@@ -641,7 +641,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				base.OnClosed(e);
 			}
 
-			public void RefreshValue(IEnumerable<SettingsLayer> layerFilters)
+			public void RefreshValue(IEnumerable<PrinterSettingsLayer> layerFilters)
 			{
 				string latestValue = GetActiveValue(this.SettingsKey, layerFilters);
 				//if(latestValue != SettingsValue)
@@ -659,7 +659,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 108);
 		private static readonly RGBA_Bytes qualitySettingBackgroundColor = new RGBA_Bytes(255, 255, 0, 108);
 
-		private static string GetActiveValue(string slicerConfigName, IEnumerable<SettingsLayer> layerCascade)
+		private static string GetActiveValue(string slicerConfigName, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
 			return ActiveSliceSettings.Instance.GetActiveValue(slicerConfigName, layerCascade);
 		}
@@ -685,7 +685,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return null;
 		}
 
-		private static GuiWidget CreateSettingInfoUIControls(SliceSettingData settingData, List<SettingsLayer> layerCascade, SettingsLayer persistenceLayer,
+		private static GuiWidget CreateSettingInfoUIControls(SliceSettingData settingData, List<PrinterSettingsLayer> layerCascade, PrinterSettingsLayer persistenceLayer,
 			NamedSettingsLayers viewFilter,
 			int extruderIndex, out bool addControl, ref int tabIndexForItem)
 		{
@@ -1514,7 +1514,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return container;
 		}
 
-		private static void AddComMenuItems(SliceSettingData settingData, SettingsLayer persistenceLayer, SettingsRow settingsRow, DropDownList selectableOptions)
+		private static void AddComMenuItems(SliceSettingData settingData, PrinterSettingsLayer persistenceLayer, SettingsRow settingsRow, DropDownList selectableOptions)
 		{
 			selectableOptions.MenuItems.Clear();
 			string machineSpecificComPortValue = ActiveSliceSettings.Instance.ComPort();
@@ -1578,7 +1578,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return imageBuffer;
 		}
 
-		private static GuiWidget CreateQuickMenu(SliceSettingData settingData, SettingsLayer persistenceLayer, GuiWidget content, InternalTextEditWidget internalTextWidget, List<SettingsLayer> layerCascade)
+		private static GuiWidget CreateQuickMenu(SliceSettingData settingData, PrinterSettingsLayer persistenceLayer, GuiWidget content, InternalTextEditWidget internalTextWidget, List<PrinterSettingsLayer> layerCascade)
 		{
 			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 			FlowLayoutWidget totalContent = new FlowLayoutWidget();
@@ -1643,7 +1643,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return totalContent;
 		}
 
-		private static void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, List<SettingsLayer> layerCascade, string slicerConfigName, string newSingleValue, SettingsLayer persistenceLayer)
+		private static void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, List<PrinterSettingsLayer> layerCascade, string slicerConfigName, string newSingleValue, PrinterSettingsLayer persistenceLayer)
 		{
 			string[] settings = GetActiveValue(slicerConfigName, layerCascade).Split(',');
 			if (settings.Length > extruderIndexLocal)
@@ -1678,7 +1678,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 
-		private static void SaveSetting(string name, string value, SettingsLayer persistenceLayer)
+		private static void SaveSetting(string name, string value, PrinterSettingsLayer persistenceLayer)
 		{
 			if (persistenceLayer == null)
 			{

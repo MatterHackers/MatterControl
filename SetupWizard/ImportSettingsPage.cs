@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl
 
 					case ".slice": // legacy presets file extension
 					case ".ini":
-						var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
+						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 						string layerHeight;
 
 						bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl
 
 					case ".slice": // old presets format
 					case ".ini":
-						var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
+						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 						string layerHeight;
 
 						bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);

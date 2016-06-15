@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class LayeredProfile
+	public class PrinterSettings
 	{
 		public int DocumentVersion { get; set; }
 
@@ -134,12 +134,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static int LatestVersion { get; } = 201606081;
 
 		[JsonIgnore]
-		internal SettingsLayer QualityLayer { get; private set; }
+		internal PrinterSettingsLayer QualityLayer { get; private set; }
 
 		[JsonIgnore]
-		internal SettingsLayer MaterialLayer { get; private set; }
+		internal PrinterSettingsLayer MaterialLayer { get; private set; }
 
-		public LayeredProfile(OemProfile printerProfile, SettingsLayer baseConfig)
+		public PrinterSettings(OemProfile printerProfile, PrinterSettingsLayer baseConfig)
 		{
 			this.OemProfile = printerProfile;
 			this.BaseLayer = baseConfig;
@@ -155,8 +155,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public OemProfile OemProfile { get; set; }
+
+		//public SettingsLayer OemLayer { get; set; }
 		
-		internal SettingsLayer GetMaterialLayer(string layerID)
+		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
 		{
 			if (string.IsNullOrEmpty(layerID))
 			{
@@ -166,7 +168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return MaterialLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
-		internal SettingsLayer GetQualityLayer(string layerID)
+		internal PrinterSettingsLayer GetQualityLayer(string layerID)
 		{
 			return QualityLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
@@ -285,33 +287,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// User settings overrides
 		/// </summary>
-		public SettingsLayer UserLayer { get; } = new SettingsLayer();
+		public PrinterSettingsLayer UserLayer { get; } = new PrinterSettingsLayer();
 
-		internal static LayeredProfile LoadFile(string printerProfilePath)
+		internal static PrinterSettings LoadFile(string printerProfilePath)
 		{
 			var jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
 			int documentVersion = (int) jObject?.GetValue("DocumentVersion")?.Value<int>();
 
-			if (documentVersion < LayeredProfile.LatestVersion)
+			if (documentVersion < PrinterSettings.LatestVersion)
 			{
 				printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
 			}
 
 			// Reload the document with the new schema
-			return JsonConvert.DeserializeObject<LayeredProfile>(File.ReadAllText(printerProfilePath));
+			return JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath));
 		}
 
 		// TODO: Hookup OEM layers
 		/// <summary>
 		/// Should contain both user created and oem specified material layers
 		/// </summary>
-		public List<SettingsLayer> MaterialLayers { get; } = new List<SettingsLayer>();
+		public List<PrinterSettingsLayer> MaterialLayers { get; } = new List<PrinterSettingsLayer>();
 
 		// TODO: Hookup OEM layers
 		/// <summary>
 		/// Should contain both user created and oem specified quality layers
 		/// </summary>
-		public List<SettingsLayer> QualityLayers { get; } = new List<SettingsLayer>();
+		public List<PrinterSettingsLayer> QualityLayers { get; } = new List<PrinterSettingsLayer>();
 
 		///<summary>
 		///Returns the settings value at the 'top' of the stack
@@ -321,14 +323,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return GetValue(sliceSetting, defaultLayerCascade);
 		}
 
-		public string GetValue(string sliceSetting, IEnumerable<SettingsLayer> layerCascade)
+		public string GetValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
 			if (layerCascade == null)
 			{
 				layerCascade = defaultLayerCascade;
 			}
 
-			foreach (SettingsLayer layer in layerCascade)
+			foreach (PrinterSettingsLayer layer in layerCascade)
 			{
 				string value;
 				if (layer.TryGetValue(sliceSetting, out value))
@@ -340,9 +342,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
-		public SettingsLayer BaseLayer { get; set; }
+		public PrinterSettingsLayer BaseLayer { get; set; }
 
-		private IEnumerable<SettingsLayer> defaultLayerCascade
+		private IEnumerable<PrinterSettingsLayer> defaultLayerCascade
 		{
 			get
 			{
@@ -375,7 +377,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SetActiveValue(sliceSetting, sliceValue, UserLayer);
 		}
 
-		internal void SetActiveValue(string sliceSetting, string sliceValue, SettingsLayer layer)
+		internal void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer layer)
 		{
 			layer[sliceSetting] = sliceValue;
 			Save();
@@ -386,7 +388,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ClearValue(sliceSetting, UserLayer);
 		}
 
-		internal void ClearValue(string sliceSetting, SettingsLayer layer)
+		internal void ClearValue(string sliceSetting, PrinterSettingsLayer layer)
 		{
 			if(layer.ContainsKey(sliceSetting))
 			{
@@ -404,22 +406,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public OemProfile(Dictionary<string, string> settingsDictionary)
 		{
-			OemLayer = new SettingsLayer(settingsDictionary);
+			OemLayer = new PrinterSettingsLayer(settingsDictionary);
 		}
 
 		/// <summary>
 		/// Printer settings from OEM
 		/// </summary>
-		public SettingsLayer OemLayer { get; } = new SettingsLayer();
+		public PrinterSettingsLayer OemLayer { get; } = new PrinterSettingsLayer();
 
 		/// <summary>
 		/// List of Material presets from OEM
 		/// </summary>
-		public List<SettingsLayer> MaterialLayers { get; } = new List<SettingsLayer>();
+		public List<PrinterSettingsLayer> MaterialLayers { get; } = new List<PrinterSettingsLayer>();
 
 		/// <summary>
 		/// List of Quality presets from OEM
 		/// </summary>
-		public List<SettingsLayer> QualityLayers { get; } = new List<SettingsLayer>();
+		public List<PrinterSettingsLayer> QualityLayers { get; } = new List<PrinterSettingsLayer>();
 	}
 }

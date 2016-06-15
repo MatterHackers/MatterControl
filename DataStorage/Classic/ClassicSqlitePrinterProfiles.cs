@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			};
 			profileData.Profiles.Add(printerInfo);
 
-			var layeredProfile = new LayeredProfile(
+			var layeredProfile = new PrinterSettings(
 				new OemProfile(LoadOemLayer(printer)), 
 				SliceSettingsOrganizer.Instance.GetDefaultSettings());
 
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			File.WriteAllText(fullProfilePath, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
 		}
 
-		private static void LoadMaterialSettings(LayeredProfile layeredProfile, Printer printer)
+		private static void LoadMaterialSettings(PrinterSettings layeredProfile, Printer printer)
 		{
 			var materialAssignments = printer.MaterialCollectionIds?.Split(',');
 			if(materialAssignments == null)
@@ -152,17 +152,17 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			foreach (var collection in collections)
 			{
 				var settingsDictionary = LoadSettings(collection);
-				layeredProfile.MaterialLayers.Add(new SettingsLayer(settingsDictionary));
+				layeredProfile.MaterialLayers.Add(new PrinterSettingsLayer(settingsDictionary));
 			}
 		}
 
-		public static void LoadQualitySettings(LayeredProfile layeredProfile, Printer printer)
+		public static void LoadQualitySettings(PrinterSettings layeredProfile, Printer printer)
 		{
 			var collections = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.PrinterId == printer.Id && v.Tag == "quality");
 			foreach (var collection in collections)
 			{
 				var settingsDictionary = LoadSettings(collection);
-				layeredProfile.QualityLayers.Add(new SettingsLayer(settingsDictionary));
+				layeredProfile.QualityLayers.Add(new PrinterSettingsLayer(settingsDictionary));
 			}
 		}
 

@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return numSpaces;
 		}
 
-		public SettingsLayer GetDefaultSettings()
+		public PrinterSettingsLayer GetDefaultSettings()
 		{
 			Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
 
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsDictionary[settingsData.SlicerConfigName] = settingsData.DefaultValue;
 			}
 
-			return new SettingsLayer(settingsDictionary);
+			return new PrinterSettingsLayer(settingsDictionary);
 		}
 	}
 }
