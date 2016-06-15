@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static SettingsProfile LoadEmptyProfile()
 		{
 			return new SettingsProfile(
-				new PrinterSettings(
+				new LayeredProfile(
 					new OemProfile(), 
 					SliceSettingsOrganizer.Instance.GetDefaultSettings()));
 		}
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static SettingsProfile LoadProfileFromDisk(string profilePath)
 		{
-			return new SettingsProfile(PrinterSettings.LoadFile(profilePath));
+			return new SettingsProfile(LayeredProfile.LoadFile(profilePath));
 		}
 
 		internal static void ImportFromExisting(string settingsFilePath)
@@ -168,12 +168,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case ".ini":
-					var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
+					var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
 
 					var oemProfile = new OemProfile(settingsToImport);
-					PrinterSettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
+					SettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 
-					var layeredProfile = new PrinterSettings(oemProfile, baseConfig)
+					var layeredProfile = new LayeredProfile(oemProfile, baseConfig)
 					{
 						ID = printerInfo.ID,
 					};
@@ -197,9 +197,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string guid = Guid.NewGuid().ToString();
 
 			OemProfile printerProfile = LoadHttpOemProfile(make, model);
-			PrinterSettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
+			SettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 
-			var layeredProfile = new PrinterSettings(printerProfile, baseConfig)
+			var layeredProfile = new LayeredProfile(printerProfile, baseConfig)
 			{
 				ID = guid
 			};
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				try
 				{
-					var profile = new SettingsProfile(PrinterSettings.LoadFile(filePath));
+					var profile = new SettingsProfile(LayeredProfile.LoadFile(filePath));
 					ProfileManager.Instance.Profiles.Add(new PrinterInfo()
 					{
 						ComPort = profile.ComPort(),
