@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 
 		internal void ChangeToInstallDriverOrComPortOne()
 		{
-			if (ActiveSliceSettings.Instance.PrinterDrivers().Count > 0)
+			if (SetupStepInstallDriver.PrinterDrivers().Count > 0)
 			{
 				ChangeToPage<SetupStepInstallDriver>();
 			}

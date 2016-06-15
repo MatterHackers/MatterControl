@@ -244,11 +244,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return targetTemp;
 		}
 
-		public bool ShowFirmwareUpdater()
-		{
-			return ActiveValue("include_firmware_updater") == "Simple Arduino";
-		}
-
 		public int SupportExtruder()
 		{
 			return int.Parse(ActiveValue("support_material_extruder"));
@@ -855,7 +850,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile());
 		}
 
-
 		public string BaudRate()
 		{
 			return layeredProfile.GetValue("MatterControl.BaudRate");
@@ -957,75 +951,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetManualMovementSpeeds(string speed)
 		{
 			layeredProfile.SetActiveValue("MatterControl.ManualMovementSpeeds", speed);
-		}
-
-		private List<string> printerDrivers = null;
-
-		public List<string> PrinterDrivers()
-		{
-			if(printerDrivers == null)
-			{
-				printerDrivers = GetPrintDrivers();
-			}
-
-			return printerDrivers;
-		}
-
-		private List<string> GetPrintDrivers()
-		{
-			var drivers = new List<string>();
-
-			//Determine what if any drivers are needed
-			string infFileNames = ActiveValue("windows_driver");
-			if (!string.IsNullOrEmpty(infFileNames))
-			{
-				string[] fileNames = infFileNames.Split(',');
-				foreach (string fileName in fileNames)
-				{
-					switch (OsInformation.OperatingSystem)
-					{
-						case OSType.Windows:
-
-							string pathForInf = Path.GetFileNameWithoutExtension(fileName);
-
-							// TODO: It's really unexpected that the driver gets copied to the temp folder every time a printer is setup. I'd think this only needs
-							// to happen when the infinstaller is run (More specifically - move this to *after* the user clicks Install Driver)
-
-							string infPath = Path.Combine("Drivers", pathForInf);
-							string infPathAndFileToInstall = Path.Combine(infPath, fileName);
-
-							if (StaticData.Instance.FileExists(infPathAndFileToInstall))
-							{
-								// Ensure the output directory exists
-								string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
-								if (!Directory.Exists(destTempPath))
-								{
-									Directory.CreateDirectory(destTempPath);
-								}
-
-								string destTempInf = Path.GetFullPath(Path.Combine(destTempPath, fileName));
-
-								// Sync each file from StaticData to the location on disk for serial drivers
-								foreach (string file in StaticData.Instance.GetFiles(infPath))
-								{
-									using (Stream outstream = File.OpenWrite(Path.Combine(destTempPath, Path.GetFileName(file))))
-									using (Stream instream = StaticData.Instance.OpenSteam(file))
-									{
-										instream.CopyTo(outstream);
-									}
-								}
-
-								drivers.Add(destTempInf);
-							}
-							break;
-
-						default:
-							break;
-					}
-				}
-			}
-
-			return drivers;
 		}
 
 		public List<GCodeMacro> Macros => layeredProfile.Macros;
