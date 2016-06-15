@@ -667,7 +667,7 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
 				}
 
-				if (ActiveSliceSettings.ProfileData.Profiles.Count == 0)
+				if (ProfileManager.Instance.Profiles.Count == 0)
 				{
 					// Start the setup wizard if no profiles exist
 					UiThread.RunOnIdle(() => WizardWindow.Show());

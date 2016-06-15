@@ -80,9 +80,9 @@ namespace MatterHackers.MatterControl
 			this.MenuItems.Clear();
 
 			//Add the menu items to the menu itself
-			foreach (var printer in ActiveSliceSettings.ProfileData.Profiles)
+			foreach (var printer in ProfileManager.Instance.ActiveProfiles)
 			{
-				this.AddItem(printer.Name, printer.Id.ToString());
+				this.AddItem(printer.Name, printer.ID.ToString());
 			}
 
 			if (ActiveSliceSettings.Instance != null)
@@ -97,10 +97,9 @@ namespace MatterHackers.MatterControl
 			string settingsName = (e as StringEventArgs)?.Data;
 			if (settingsName != null && settingsName == "MatterControl.PrinterName")
 			{
-				var profileInfo = ActiveSliceSettings.ProfileData.Profiles.Where(p => p.Id == ActiveSliceSettings.Instance.ID).FirstOrDefault();
-				if (profileInfo != null)
+				if (ProfileManager.Instance.ActiveProfile != null)
 				{
-					profileInfo.Name = ActiveSliceSettings.Instance.Name();
+					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.Name();
 				}
 
 				Rebuild();

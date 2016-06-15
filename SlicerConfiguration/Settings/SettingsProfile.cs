@@ -43,13 +43,12 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	using System.Net;
 	using ConfigurationPage.PrintLeveling;
 	using SettingsDictionary = Dictionary<string, string>;
 	using DataStorage;
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
-	using System.Collections.ObjectModel;
+
 	public class SettingsProfile
 	{
 		private static string configFileExtension = "slice";
@@ -187,7 +186,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.UserLayer.Remove(key);
 			}
 		}
-
 
 		internal void SaveChanges()
 		{
@@ -903,6 +901,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetActiveValue("MatterControl.AutoConnect", autoConnectPrinter ? "1" : "0");
 		}
 
+		public void SetMarkedForDelete(bool markedForDelete)
+		{
+			// TODO: It's unfortunate that changes to UI elements drive the SettingsChanged event rather than the data model. As such, we must manually
+			// MarkedForDelete and call profile save
+			ProfileManager.Instance.ActiveProfile.MarkedForDelete = markedForDelete;
+			ProfileManager.Instance.Save();
+			SetActiveValue("MatterControl.MarkedForDelete", "1");
+
+			UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile());
+		}
+
+		public bool MarkedForDelete()
+		{
+			return ActiveValue("MatterControl.MarkedForDelete") == "1";
+		}
+
 		public string BaudRate()
 		{
 			return layeredProfile.GetValue("MatterControl.BaudRate");
@@ -955,7 +969,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetDeviceToken(string token)
 		{
-			layeredProfile.SetActiveValue("MatterControl.DeviceToken", token);
+			if (layeredProfile.GetValue("MatterControl.DeviceToken") != token)
+			{
+				layeredProfile.SetActiveValue("MatterControl.DeviceToken", token);
+			}
 		}
 
 		public string DeviceType => layeredProfile.GetValue("MatterControl.DeviceType");
@@ -1086,7 +1103,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string ID
+		public string LayerID
 		{
 			get
 			{
@@ -1095,7 +1112,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (string.IsNullOrEmpty(layerKey))
 				{
 					layerKey = Guid.NewGuid().ToString();
-					ID = layerKey;
+					LayerID = layerKey;
 				}
 
 				return layerKey;
@@ -1201,7 +1218,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string id = Guid.NewGuid().ToString();
 			return new SettingsLayer(this as Dictionary<string, string>)
 			{
-				ID = id,
+				LayerID = id,
 				Name = this.Name,
 				ETag = this.ETag,
 				Source = this.Source
@@ -1209,21 +1226,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class ProfileData
-	{
-		public ObservableCollection<PrinterInfo> Profiles { get; set; } = new ObservableCollection<PrinterInfo>();
-	}
-
 	public class PrinterInfo
 	{
 		public string ComPort { get; set; }
-		public string Id { get; set; }
+		public string ID { get; set; }
 		public string Name { get; set; }
-
-		internal void Delete()
-		{
-			throw new NotImplementedException();
-		}
+		public bool MarkedForDelete { get; set; }
+		public string SHA1 { get; internal set; }
 	}
-
 }

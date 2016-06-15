@@ -1203,14 +1203,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									if (doDelete)
 									{
-										SettingsProfile activePrinter = ActiveSliceSettings.Instance;
-
-										string printerID = activePrinter.ID;
-										var printerInfo = ActiveSliceSettings.ProfileData.Profiles.Where(profile => profile.Id == printerID).FirstOrDefault();
-										if(printerInfo != null)
-										{
-											ActiveSliceSettings.ProfileData.Profiles.Remove(printerInfo);
-										}
+										ActiveSliceSettings.Instance.SetMarkedForDelete(true);
 									}
 								}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
 							};

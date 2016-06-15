@@ -46,10 +46,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class ActiveSliceSettings
 	{
-		private static readonly string userDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
-		private static readonly string profilesPath = Path.Combine(userDataPath, "Profiles");
-		private static readonly string profilesDBPath = Path.Combine(profilesPath, "profiles.json");
-
 		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 
 		private static SettingsProfile activeInstance = null;
@@ -113,90 +109,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ActiveSliceSettings()
 		{
-			// Ensure the profiles directory exists
-			Directory.CreateDirectory(profilesPath);
-
-			if (true)
-			{
-				ProfileData = new ProfileData();
-
-				if (!File.Exists(profilesDBPath))
-				{
-					// Import class profiles from the db into local json files
-					DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(ProfileData, profilesPath);
-					File.WriteAllText(profilesDBPath, JsonConvert.SerializeObject(ProfileData, Formatting.Indented));
-
-					// TODO: Upload new profiles to webservice
-				}
-
-				ProfileData.Profiles.CollectionChanged += Profiles_CollectionChanged;
-
-				foreach(string filePath in Directory.GetFiles(profilesPath, "*.json"))
-				{
-					string fileName = Path.GetFileName(filePath);
-					if (fileName == "config.json" ||  fileName == "profiles.json")
-					{
-						continue;
-					}
-
-					try
-					{
-						var profile = new SettingsProfile(LayeredProfile.LoadFile(filePath));
-						ProfileData.Profiles.Add(new PrinterInfo()
-						{
-							Id = profile.ID,
-							Name = profile.Name(),
-						});
-					}
-					catch(Exception ex)
-					{
-						System.Diagnostics.Debug.WriteLine("Error loading profile: {1}\r\n{2}", filePath, ex.Message);
-					}
-				}
-			}
-			else
-			{
-				// Load or import the profiles.json document
-				if (File.Exists(profilesDBPath))
-				{
-					ProfileData = JsonConvert.DeserializeObject<ProfileData>(File.ReadAllText(profilesDBPath));
-				}
-				else
-				{
-					ProfileData = new ProfileData();
-
-					// Import class profiles from the db into local json files
-					DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(ProfileData, profilesPath);
-					File.WriteAllText(profilesDBPath, JsonConvert.SerializeObject(ProfileData, Formatting.Indented));
-
-					// TODO: Upload new profiles to webservice
-				}
-			}
-
-			ActiveSliceSettings.LoadStartupProfile();
+			LoadStartupProfile();
 		}
-
-		private static void Profiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			if (!MatterControlApplication.IsLoading)
-			{
-				string profilePath = Path.Combine(profilesPath, Instance.ID + ".json");
-				if (File.Exists(profilePath))
-				{
-					File.Delete(profilePath);
-				}
-
-				// Refresh after remove
-				UiThread.RunOnIdle(() => Instance = new SettingsProfile(LoadEmptyProfile()));
-			}
-		}
-
-		public static LayeredProfile LoadEmptyProfile()
-		{
-			return new LayeredProfile(new OemProfile(), SliceSettingsOrganizer.Instance.GetDefaultSettings());
-		}
-
-		public static ProfileData ProfileData { get; private set; }
 
 		public static void LoadStartupProfile()
 		{
@@ -204,13 +118,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string[] comportNames = FrostedSerialPort.GetPortNames();
 
-			string lastProfileID = UserSettings.Instance.get("ActiveProfileID");
-
-			var startupProfile = LoadProfile(lastProfileID);
+			var startupProfile = ProfileManager.LoadProfile(UserSettings.Instance.get("ActiveProfileID"));
 			if (startupProfile != null)
 			{
 				portExists = comportNames.Contains(startupProfile.ComPort());
-
 				Instance = startupProfile;
 
 				if (portExists && startupProfile.DoAutoConnect())
@@ -223,165 +134,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			if(Instance == null)
+			if (Instance == null)
 			{
 				// Load an empty profile with just the MatterHackers base settings from config.json
-				Instance = new SettingsProfile(LoadEmptyProfile());
+				Instance = ProfileManager.LoadEmptyProfile();
 			}
 		}
+
+		public static ProfileManager ProfileData { get; private set; }
 
 		internal static void SwitchToProfile(string printerID)
 		{
-			var profile = LoadProfile(printerID);
+			var profile = ProfileManager.LoadProfile(printerID);
 
 			UserSettings.Instance.set("ActiveProfileID", printerID);
 
-			if (profile != null)
-			{
-				Instance = profile;
-			}
-		}
-
-		internal static void ImportFromExisting(string settingsFilePath)
-		{
-			if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
-			{
-				return;
-			}
-
-			var printerIdentifier = new PrinterInfo
-			{
-				Name = Path.GetFileNameWithoutExtension(settingsFilePath),
-				Id = Guid.NewGuid().ToString()
-			};
-
-			string importType = Path.GetExtension(settingsFilePath).ToLower();
-			switch (importType)
-			{
-				case ".printer":
-					var profile = LoadProfileFromDisk(settingsFilePath);
-					profile.ID = Guid.NewGuid().ToString();
-					profile.SetName(Path.GetFileNameWithoutExtension(settingsFilePath));
-					profile.SaveChanges();
-					break;
-
-				case ".ini":
-					var settingsToImport = SettingsLayer.LoadFromIni(settingsFilePath);
-
-					var oemProfile = new OemProfile(settingsToImport);
-					SettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
-
-					var layeredProfile = new LayeredProfile(oemProfile, baseConfig)
-					{
-						ID = printerIdentifier.Id,
-						DocumentPath = Path.Combine(profilesPath, printerIdentifier.Id + ".json")
-					};
-
-					// TODO: Resolve name conflicts
-					layeredProfile.UserLayer["MatterControl.PrinterName"] = printerIdentifier.Name;
-					layeredProfile.Save();
-					break;
-			}
-
-			ProfileData.Profiles.Add(printerIdentifier);
-		}
-
-
-		internal static void AcquireNewProfile(string make, string model, string printerName)
-		{
-			string guid = Guid.NewGuid().ToString();
-
-			OemProfile printerProfile = LoadHttpOemProfile(make, model);
-			SettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
-
-			var layeredProfile = new LayeredProfile(printerProfile, baseConfig)
-			{
-				ID = guid,
-				DocumentPath = Path.Combine(profilesPath, guid + ".json")
-			};
-			layeredProfile.UserLayer["MatterControl.PrinterName"] = printerName;
-
-			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
-			var classicDefaultMacros = layeredProfile.GetValue("default_macros");
-			if (!string.IsNullOrEmpty(classicDefaultMacros))
-			{
-				var namedMacros = new Dictionary<string, string>();
-				namedMacros["Lights On"] = "M42 P6 S255";
-				namedMacros["Lights Off"] = "M42 P6 S0";
-				namedMacros["Offset 0.8"] = "M565 Z0.8;\nM500";
-				namedMacros["Offset 0.9"] = "M565 Z0.9;\nM500";
-				namedMacros["Offset 1"] = "M565 Z1;\nM500";
-				namedMacros["Offset 1.1"] = "M565 Z1.1;\nM500";
-				namedMacros["Offset 1.2"] = "M565 Z1.2;\nM500";
-				namedMacros["Z Offset"] = "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;";
-
-				foreach (string namedMacro in classicDefaultMacros.Split(','))
-				{
-					string gcode;
-					if (namedMacros.TryGetValue(namedMacro.Trim(), out gcode))
-					{
-						layeredProfile.Macros.Add(new GCodeMacro()
-						{
-							Name = namedMacro.Trim(),
-							GCode = gcode
-						});
-					}
-				}
-			}
-
-			// Copy OemProfile presets into user layers
-			layeredProfile.MaterialLayers.AddRange(layeredProfile.OemProfile.MaterialLayers);
-			layeredProfile.QualityLayers.AddRange(layeredProfile.OemProfile.QualityLayers);
-
-			layeredProfile.OemProfile.MaterialLayers.Clear();
-			layeredProfile.OemProfile.QualityLayers.Clear();
-
-			layeredProfile.Save();
-
-			ProfileData.Profiles.Add(new PrinterInfo
-			{
-				Name = printerName,
-				Id = guid
-			});
-
-			UserSettings.Instance.set("ActiveProfileID", guid);
-
-			Instance = new SettingsProfile(layeredProfile);
-		}
-
-		internal static SettingsProfile LoadProfile(string profileID)
-		{
-			// Conceptually, LoadProfile should...
-			// 
-			// Find and load a locally cached copy of the profile
-			//   - Query the webservice for the given profile passing along our ETAG
-			//      Result: 304 or error
-			//          Use locally cached copy as it's the latest or we're offline or the service has errored
-			//      Result: 200 (Document updated remotely)
-			//          Determine if the local profile is dirty. If so, we need to perform conflict resolution to work through the issues
-			//          If not, simply write the profile to disk as latest, load and return
-
-			string profilePath = Path.Combine(profilesPath, profileID + ".json");
-			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
-		}
-
-		private static SettingsProfile LoadProfileFromDisk(string profilePath)
-		{
-			return new SettingsProfile(LayeredProfile.LoadFile(profilePath));
-		}
-
-		private static OemProfile LoadHttpOemProfile(string make, string model)
-		{
-			string url = string.Format(
-				"http://matterdata.azurewebsites.net/api/oemprofiles?manufacturer={0}&model={1}",
-				WebUtility.UrlEncode(make),
-				WebUtility.UrlEncode(model));
-
-			var client = new WebClient();
-
-			string profileText = client.DownloadString(url);
-			var printerProfile = JsonConvert.DeserializeObject<OemProfile>(profileText);
-			return printerProfile;
+			Instance = profile ?? ProfileManager.LoadEmptyProfile();
 		}
 
 		private static void OnActivePrinterChanged(EventArgs e)

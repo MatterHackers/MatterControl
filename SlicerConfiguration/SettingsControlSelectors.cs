@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							return;
 						}
 
-						var layerToEdit = ActiveSliceSettings.Instance.MaterialLayers.Where(layer => layer.ID == presetsID).FirstOrDefault();
+						var layerToEdit = ActiveSliceSettings.Instance.MaterialLayers.Where(layer => layer.LayerID == presetsID).FirstOrDefault();
 
 						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.MaterialLayers, layerToEdit)
 						{
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							return;
 						}
 
-						var layerToEdit = ActiveSliceSettings.Instance.QualityLayers.Where(layer => layer.ID == presetsID).FirstOrDefault();
+						var layerToEdit = ActiveSliceSettings.Instance.QualityLayers.Where(layer => layer.LayerID == presetsID).FirstOrDefault();
 
 						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.QualityLayers, layerToEdit)
 						{
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var listSource = (layerType == NamedSettingsLayers.Material) ? ActiveSliceSettings.Instance.MaterialLayers : ActiveSliceSettings.Instance.QualityLayers;
 			foreach (var layer in listSource)
 			{
-				MenuItem menuItem = dropDownList.AddItem(layer.Name, layer.ID);
+				MenuItem menuItem = dropDownList.AddItem(layer.Name, layer.LayerID);
 				menuItem.Selected += MenuItem_Selected;
 			}
 
@@ -228,14 +228,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					newLayer.Name = "Quality" + ActiveSliceSettings.Instance.QualityLayers.Count;
 					ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
-					ActiveSliceSettings.Instance.ActiveQualityKey = newLayer.ID;
+					ActiveSliceSettings.Instance.ActiveQualityKey = newLayer.LayerID;
 				}
 				else
 				{
 					newLayer.Name = "Material" + ActiveSliceSettings.Instance.MaterialLayers.Count;
 					ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
-					ActiveSliceSettings.Instance.ActiveMaterialKey = newLayer.ID;
-					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.ID);
+					ActiveSliceSettings.Instance.ActiveMaterialKey = newLayer.LayerID;
+					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.LayerID);
 				}
 
 				// TODO: Consider adding a .Replace(existingWidget, newWidget) to GuiWidget 

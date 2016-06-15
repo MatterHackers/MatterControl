@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					clonedLayer.Name = newProfileName;
 					presetsContext.PresetLayers.Add(clonedLayer);
 
-					presetsContext.SetAsActive(clonedLayer.ID);
+					presetsContext.SetAsActive(clonedLayer.LayerID);
 					presetsContext.PersistenceLayer = clonedLayer;
 
 					middleRow.CloseAllChildren();

@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl
 		{
 			if(newPrinterButton.Checked)
 			{
-				ActiveSliceSettings.ImportFromExisting(settingsFilePath);
+				ProfileManager.ImportFromExisting(settingsFilePath);
 				WizardWindow.ChangeToPage(new ImportToPrinterSucceeded(Path.GetFileNameWithoutExtension(settingsFilePath)));
 			}
 			else if(mergeButton.Checked)

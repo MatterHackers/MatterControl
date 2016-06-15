@@ -34,6 +34,7 @@ using System.Runtime.Serialization;
 using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -162,12 +163,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return null;
 			}
 
-			return MaterialLayers.Where(layer => layer.ID == layerID).FirstOrDefault();
+			return MaterialLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
 		internal SettingsLayer GetQualityLayer(string layerID)
 		{
-			return QualityLayers.Where(layer => layer.ID == layerID).FirstOrDefault();
+			return QualityLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
 		public string ActiveMaterialKey
@@ -236,15 +237,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
 
-		[JsonIgnore]
-		public string DocumentPath { get; set; }
+		private string GenerateSha1()
+		{
+			// Maybe be UTF8 encoded, may not...
+			using (var fileStream = new FileStream(DocumentPath, FileMode.Open))
+			using (var bufferedStream = new BufferedStream(fileStream, 1200000))
+			{
+				return GenerateSha1(bufferedStream);
+			}
+		}
+
+		private string GenerateSha1(Stream stream)
+		{
+			// var timer = Stopwatch.StartNew();
+			using (var sha1 = System.Security.Cryptography.SHA1.Create())
+			{
+				byte[] hash = sha1.ComputeHash(stream);
+				string SHA1 = BitConverter.ToString(hash).Replace("-", String.Empty);
+
+				// Console.WriteLine("{0} {1} {2}", SHA1, timer.ElapsedMilliseconds, filePath);
+				return SHA1;
+			}
+		}
+		
+		private string DocumentPath => Path.Combine(ProfileManager.ProfilesPath, this.ID + ".json");
 
 		internal void Save()
 		{
-			if (!string.IsNullOrEmpty(DocumentPath))
+			string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+
+			// SHA1 value is based on UTF8 encoded file contents
+			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
 			{
-				File.WriteAllText(DocumentPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+				string sha1 = GenerateSha1(memoryStream);
+				this.UserLayer["MatterControl.SHA1"] = sha1;
+
+				var printerInfo = ProfileManager.Instance[this.ID];
+				if (printerInfo != null)
+				{
+					printerInfo.SHA1 = sha1;
+				}
 			}
+
+			File.WriteAllText(DocumentPath, json);
 		}
 
 		/// <summary>
@@ -263,10 +298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Reload the document with the new schema
-			var layeredProfile = JsonConvert.DeserializeObject<LayeredProfile>(File.ReadAllText(printerProfilePath));
-			layeredProfile.DocumentPath = printerProfilePath;
-
-			return layeredProfile;
+			return JsonConvert.DeserializeObject<LayeredProfile>(File.ReadAllText(printerProfilePath));
 		}
 
 		// TODO: Hookup OEM layers
