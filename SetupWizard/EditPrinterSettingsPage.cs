@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 			textImageButtonFactory.normalBorderColor = RGBA_Bytes.White;
 
 			int tabIndex = 0;
-			AddNameSetting("MatterControl.PrinterName", contentRow, ref tabIndex);
+			AddNameSetting(SettingsKey.MatterControl_PrinterName.ToString(), contentRow, ref tabIndex);
 			AddNameSetting("MatterControl.AutoConnect", contentRow, ref tabIndex);
 			AddNameSetting("MatterControl.BaudRate", contentRow, ref tabIndex);
 			AddNameSetting("MatterControl.ComPort", contentRow, ref tabIndex);

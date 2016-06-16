@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			internal set
 			{
-				SetActiveValue("MatterControl.ActiveQualityKey", value);
+				SetValue("MatterControl.ActiveQualityKey", value);
 				QualityLayer = GetQualityLayer(value);
 				Save();
 			}
@@ -351,12 +351,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal void SetActiveValue(string sliceSetting, string sliceValue)
+		internal void SetValue(string sliceSetting, string sliceValue)
 		{
-			SetActiveValue(sliceSetting, sliceValue, UserLayer);
+			SetValue(sliceSetting, sliceValue, UserLayer);
 		}
 
-		internal void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer layer)
+		internal void SetValue(string sliceSetting, string sliceValue, PrinterSettingsLayer layer)
 		{
 			layer[sliceSetting] = sliceValue;
 			Save();

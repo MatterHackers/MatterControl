@@ -49,19 +49,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
 	using MeshVisualizer;
-	public enum SettingsKey
+
+	public static class SettingsKey
 	{
-		bed_shape,
-		bed_size,
-		bed_temperature,
-		has_heated_bed,
-		resume_position_before_z_home,
-		z_homes_to_max,
-		nozzle_diameter,
-		min_fan_speed,
-		extruder_count,
-		extruders_share_temperature,
-		fill_density,
+		public const string bed_shape = nameof(bed_shape);
+		public const string bed_size = nameof(bed_size);
+		public const string bed_temperature = nameof(bed_temperature);
+		public const string has_heated_bed = nameof(has_heated_bed);
+		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
+		public const string z_homes_to_max = nameof(z_homes_to_max);
+		public const string nozzle_diameter = nameof(nozzle_diameter);
+		public const string MatterControl_PrinterName = nameof(MatterControl_PrinterName);
+		public const string min_fan_speed = nameof(min_fan_speed);
+		public const string extruder_count = nameof(extruder_count);
+		public const string extruders_share_temperature = nameof(extruders_share_temperature);
+		public const string fill_density = nameof(fill_density);
 	};
 
 	public class SettingsProfile
@@ -128,12 +130,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetActiveValue(string sliceSetting, string sliceValue)
 		{
-			layeredProfile.SetActiveValue(sliceSetting, sliceValue);
+			layeredProfile.SetValue(sliceSetting, sliceValue);
 		}
 
 		public void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer persistenceLayer)
 		{
-			layeredProfile.SetActiveValue(sliceSetting, sliceValue, persistenceLayer);
+			layeredProfile.SetValue(sliceSetting, sliceValue, persistenceLayer);
 		}
 
 		public void ClearValue(string sliceSetting)
@@ -348,7 +350,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetPrintLevelingData(PrintLevelingData data)
 		{
 			printLevelingData = data;
-			layeredProfile.SetActiveValue("MatterControl.PrintLevelingData", JsonConvert.SerializeObject(data));
+			layeredProfile.SetValue("MatterControl.PrintLevelingData", JsonConvert.SerializeObject(data));
 
 		}
 
@@ -360,7 +362,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			layeredProfile.SetActiveValue("MatterControl.PrintLevelingEnabled", doLeveling ? "1" : "0");
+			layeredProfile.SetValue("MatterControl.PrintLevelingEnabled", doLeveling ? "1" : "0");
 
 			DoPrintLevelingChanged.CallEvents(this, null);
 
@@ -414,11 +416,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		#region Migrate to LayeredProfile 
 
-		public T GetValue<T>(SettingsKey settingsKey) where T : IConvertible
-		{
-			return GetValue<T>(settingsKey.ToString());
-		}
-
 		///<summary>
 		///Returns the first matching value discovered while enumerating the settings layers
 		///</summary>
@@ -430,7 +427,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(int))
 			{
-				if (settingsKey == SettingsKey.extruder_count.ToString()
+				if (settingsKey == SettingsKey.extruder_count
 					&& this.GetValue<bool>(SettingsKey.extruders_share_temperature))
 				{
 					return (T)(object)1;
@@ -472,7 +469,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return (T)(object)(ratio);
 				}
 
-				if (settingsKey == SettingsKey.bed_temperature.ToString()
+				if (settingsKey == SettingsKey.bed_temperature
 					&& !this.GetValue<bool>("has_heated_bed"))
 				{
 					return (T)(object)(0);
@@ -484,7 +481,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(BedShape))
 			{
-				switch (GetValue(settingsKey.ToString()))
+				switch (GetValue(settingsKey))
 				{
 					case "rectangular":
 						return (T)(object)BedShape.Rectangular;
@@ -768,7 +765,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetAutoConnect(bool autoConnectPrinter)
 		{
-			layeredProfile.SetActiveValue("MatterControl.AutoConnect", autoConnectPrinter ? "1" : "0");
+			layeredProfile.SetValue("MatterControl.AutoConnect", autoConnectPrinter ? "1" : "0");
 		}
 
 		public void SetMarkedForDelete(bool markedForDelete)
@@ -790,7 +787,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetBaudRate(string baudRate)
 		{
-			layeredProfile.SetActiveValue("MatterControl.BaudRate", baudRate);
+			layeredProfile.SetValue("MatterControl.BaudRate", baudRate);
 		}
 
 		public string ComPort()
@@ -800,35 +797,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetComPort(string port)
 		{
-			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port);
+			layeredProfile.SetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port);
 		}
 
 		public void SetComPort(string port, PrinterSettingsLayer layer)
 		{
-			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port, layer);
+			layeredProfile.SetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port, layer);
 		}
 
 		public void SetSlicingEngine(string engine)
 		{
-			layeredProfile.SetActiveValue("MatterControl.SlicingEngine", engine);
+			layeredProfile.SetValue("MatterControl.SlicingEngine", engine);
 		}
 
 		public void SetDriverType(string driver)
 		{
-			layeredProfile.SetActiveValue("MatterControl.DriverType", driver);
+			layeredProfile.SetValue("MatterControl.DriverType", driver);
 		}
 
 		public void SetDeviceToken(string token)
 		{
 			if (layeredProfile.GetValue("MatterControl.DeviceToken") != token)
 			{
-				layeredProfile.SetActiveValue("MatterControl.DeviceToken", token);
+				layeredProfile.SetValue("MatterControl.DeviceToken", token);
 			}
 		}
 
 		public void SetName(string name)
 		{
-			layeredProfile.SetActiveValue("MatterControl.PrinterName", name);
+			layeredProfile.SetValue(SettingsKey.MatterControl_PrinterName, name);
 		}
 
 		HashSet<string> knownSettings = null;
@@ -857,7 +854,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetManualMovementSpeeds(string speed)
 		{
-			layeredProfile.SetActiveValue("MatterControl.ManualMovementSpeeds", speed);
+			layeredProfile.SetValue("MatterControl.ManualMovementSpeeds", speed);
 		}
 
 	}

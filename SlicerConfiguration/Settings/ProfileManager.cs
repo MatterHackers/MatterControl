@@ -86,8 +86,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string settingsKey = ((StringEventArgs)e).Data;
 			switch (settingsKey)
 			{
-				case "MatterControl.PrinterName":
-					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue("MatterControl.PrinterName");
+				case SettingsKey.MatterControl_PrinterName:
+					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.MatterControl_PrinterName);
 					Instance.Save();
 					break;
 
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					new OemProfile(), 
 					SliceSettingsOrganizer.Instance.GetDefaultSettings()));
 
-			empytProfile.SetActiveValue("MatterControl.PrinterName", "Printers...".Localize());
+			empytProfile.SetActiveValue(SettingsKey.MatterControl_PrinterName.ToString(), "Printers...".Localize());
 
 			return empytProfile;
 		}
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					};
 
 					// TODO: Resolve name conflicts
-					layeredProfile.UserLayer["MatterControl.PrinterName"] = printerInfo.Name;
+					layeredProfile.UserLayer[SettingsKey.MatterControl_PrinterName.ToString()] = printerInfo.Name;
 
 					Instance.Profiles.Add(printerInfo);
 
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				ID = guid
 			};
-			layeredProfile.UserLayer["MatterControl.PrinterName"] = printerName;
+			layeredProfile.UserLayer[SettingsKey.MatterControl_PrinterName.ToString()] = printerName;
 
 			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
 			var classicDefaultMacros = layeredProfile.GetValue("default_macros");
@@ -316,7 +316,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						ComPort = profile.ComPort(),
 						ID = profile.ID,
-						Name = profile.GetValue("MatterControl.PrinterName"),
+						Name = profile.GetValue(SettingsKey.MatterControl_PrinterName),
 					});
 				}
 				catch (Exception ex)
