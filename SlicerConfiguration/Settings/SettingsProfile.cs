@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		min_fan_speed,
 		extruder_count,
 		extruders_share_temperature,
+		fill_density,
 	};
 
 	public class SettingsProfile
@@ -261,21 +262,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
 				return val == 0 ? 1 : val - 1;
 			}).ToArray();
-		}
-
-		public double FillDensity()
-		{
-			string fillDensityValueString = GetValue("fill_density");
-			if (fillDensityValueString.Contains("%"))
-			{
-				string onlyNumber = fillDensityValueString.Replace("%", "");
-				double ratio = ParseDouble(onlyNumber) / 100;
-				return ratio;
-			}
-			else
-			{
-				return ParseDouble(GetValue("fill_density"));
-			}
 		}
 
 		internal string MaterialPresetKey(int extruderIndex)
@@ -696,16 +682,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if (FillDensity() < 0 || FillDensity() > 1)
+				if (GetValue<double>(SettingsKey.fill_density) < 0 || GetValue<double>(SettingsKey.fill_density) > 1)
 				{
 					string error = "The Fill Density must be between 0 and 1.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), FillDensity());
+					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>(SettingsKey.fill_density));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (FillDensity() == 1
+				if (GetValue<double>(SettingsKey.fill_density) == 1
 					&& GetValue("infill_type") != "LINES")
 				{
 					string error = "Solid Infill works best when set to LINES.".Localize();
