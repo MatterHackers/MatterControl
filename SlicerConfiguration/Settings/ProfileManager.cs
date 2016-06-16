@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			switch (settingsKey)
 			{
 				case "MatterControl.PrinterName":
-					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.Name();
+					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue("MatterControl.PrinterName");
 					Instance.Save();
 					break;
 
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						ComPort = profile.ComPort(),
 						ID = profile.ID,
-						Name = profile.Name(),
+						Name = profile.GetValue("MatterControl.PrinterName"),
 					});
 				}
 				catch (Exception ex)

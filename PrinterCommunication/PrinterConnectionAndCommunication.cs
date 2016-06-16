@@ -397,9 +397,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						if (ActiveSliceSettings.Instance.BaudRate() != null)
+						if (ActiveSliceSettings.Instance.GetValue("MatterControl.BaudRate") != null)
 						{
-							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.BaudRate());
+							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.GetValue("MatterControl.BaudRate"));
 						}
 					}
 					catch
@@ -516,7 +516,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string ComPort => ActiveSliceSettings.Instance?.ComPort();
 
-		public string DriverType => ActiveSliceSettings.Instance?.DriverType();
+		public string DriverType => ActiveSliceSettings.Instance?.GetValue("MatterControl.DriverType");
 
 		public bool AtxPowerEnabled
 		{
