@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				get
 				{
-					Vector2 PrinteCenter = ActiveSliceSettings.Instance.PrintCenter();
+					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
 					return (PrinteCenter.x * 1000).ToString();
 				}
 			}
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				get
 				{
-					Vector2 PrinteCenter = ActiveSliceSettings.Instance.PrintCenter();
+					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
 					return (PrinteCenter.y * 1000).ToString();
 				}
 			}
@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					double lengthToExtrudeMm = ParseDouble(base.Value);
 					// we need to convert mm of filament to mm of extrusion path
-					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter() * MathHelper.Tau * lengthToExtrudeMm;
+					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>("filament_diameter") * MathHelper.Tau * lengthToExtrudeMm;
 					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>("first_layer_height") * ActiveSliceSettings.Instance.GetValue<double>("nozzle_diameter");
 					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 

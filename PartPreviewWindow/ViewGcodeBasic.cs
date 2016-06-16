@@ -126,11 +126,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					|| stringEvent.Data == "bed_shape"
 					|| stringEvent.Data == "center_part_on_bed")
 				{
-					viewerVolume = new Vector3(ActiveSliceSettings.Instance.BedSize(), ActiveSliceSettings.Instance.BuildHeight());
+					viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size"), ActiveSliceSettings.Instance.GetValue<double>("build_height"));
 					bedShape = ActiveSliceSettings.Instance.BedShape();
-					bedCenter = ActiveSliceSettings.Instance.BedCenter();
+					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
 
-					double buildHeight = ActiveSliceSettings.Instance.BuildHeight();
+					double buildHeight = ActiveSliceSettings.Instance.GetValue<double>("build_height");
 
 					UiThread.RunOnIdle(() =>
 					{
@@ -474,7 +474,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// show the filament used
 			modelInfoContainer.AddChild(new TextWidget(filamentLengthLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
-				double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.FilamentDiameter());
+				double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>("filament_diameter"));
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.0} mm", filamentUsed), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -486,7 +486,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string filamentVolumeLabelFull = string.Format("{0}:", filamentVolumeLabel);
 			modelInfoContainer.AddChild(new TextWidget(filamentVolumeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
-				double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.FilamentDiameter());
+				double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>("filament_diameter"));
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm3", filamentMm3 / 1000), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -509,7 +509,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					density = 1.24;
 				}
 
-				double filamentWeightGrams = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(ActiveSliceSettings.Instance.FilamentDiameter(), density);
+				double filamentWeightGrams = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(ActiveSliceSettings.Instance.GetValue<double>("filament_diameter"), density);
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} g", filamentWeightGrams), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;

@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		enum ResumeState {  RemoveHeating, Raising, Homing, FindingResumeLayer, SkippingGCode, PrimingAndMovingToStart, PrintingSlow, PrintingToEnd }
 		private GCodeFileStream internalStream;
 		private double percentDone;
+		double resumeFeedRate;
 		PrinterMove lastDestination;
         QueuedCommandsStream queuedCommands;
 
@@ -50,6 +51,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			this.internalStream = internalStream;
 			this.percentDone = percentDone;
+
+			resumeFeedRate = ActiveSliceSettings.Instance.GetValue<double>("resume_first_layer_speed");
+			if (resumeFeedRate == 0)
+			{
+				resumeFeedRate = 10;
+			}
+			resumeFeedRate *= 60;
 
 			queuedCommands = new QueuedCommandsStream(null);
 		}
@@ -110,7 +118,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home y
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
-						Vector2 resumePositionXy = ActiveSliceSettings.Instance.ActiveVector2("resume_position_before_z_home");
+						Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>("resume_position_before_z_home");
 						queuedCommands.Add("G1 X{0:0.000}Y{1:0.000}F{2}".FormatWith(resumePositionXy.x, resumePositionXy.y, MovementControls.XSpeed));
 						// home z
 						queuedCommands.Add("G28 Z0");
@@ -165,7 +173,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can resume printing from
-							Vector2 resumePositionXy = ActiveSliceSettings.Instance.ActiveVector2("resume_position_before_z_home");
+							Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>("resume_position_before_z_home");
 							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(resumePositionXy.x, resumePositionXy.y, lastDestination.position.z + 5), 0, MovementControls.ZSpeed)));
 							// move just above the actual print position
 							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position + new VectorMath.Vector3(0, 0, 5), 0, MovementControls.XSpeed)));
@@ -188,25 +196,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case ResumeState.PrintingSlow:
 					{
 						string lineToSend = internalStream.ReadLine();
-						if (lineToSend != null
-							&& lineToSend.StartsWith("; LAYER:"))
+						if (lineToSend == null)
 						{
-							if (lineToSend != null
-								&& LineIsMovement(lineToSend))
+							return null;
+						}
+
+						if (!lineToSend.StartsWith("; LAYER:"))
+						{
+							// have not seen the end of this layer so keep printing slow
+							if (LineIsMovement(lineToSend))
 							{
 								PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 								PrinterMove moveToSend = currentMove;
 
-								double feedRate;
-
-								string firstLayerSpeed = ActiveSliceSettings.Instance.GetValue("resume_first_layer_speed");
-								if (!double.TryParse(firstLayerSpeed, out feedRate))
-								{
-									feedRate = 10;
-								}
-								feedRate *= 60;
-
-								moveToSend.feedRate = feedRate;
+								moveToSend.feedRate = resumeFeedRate;
 
 								lineToSend = CreateMovementLine(moveToSend, lastDestination);
 								lastDestination = currentMove;
@@ -217,6 +220,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 					}
 
+					// we only fall through to here after seeing the next "; Layer:"
 					resumeState = ResumeState.PrintingToEnd;
 					return "";
 
