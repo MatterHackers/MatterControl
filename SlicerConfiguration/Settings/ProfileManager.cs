@@ -36,6 +36,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	using Localizations;
 	using System.Collections.ObjectModel;
 	using System.Net;
 
@@ -112,10 +113,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static SettingsProfile LoadEmptyProfile()
 		{
-			return new SettingsProfile(
+			var empytProfile = new SettingsProfile(
 				new PrinterSettings(
 					new OemProfile(), 
 					SliceSettingsOrganizer.Instance.GetDefaultSettings()));
+
+			empytProfile.SetActiveValue("MatterControl.PrinterName", "Printers...".Localize());
+
+			return empytProfile;
 		}
 
 		internal static SettingsProfile LoadProfile(string profileID)
