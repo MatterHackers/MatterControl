@@ -49,6 +49,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
 
+	public enum SettingsKey
+	{
+		bed_size,
+		has_heated_bed,
+		resume_position_before_z_home,
+		z_homes_to_max,
+		nozzle_diameter,
+	};
+
 	public class SettingsProfile
 	{
 		private static string configFileExtension = "slice";
@@ -251,11 +260,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			int temp;
 			return userValues.Where(v => int.TryParse(v, out temp)).Select(v =>
 			{
-					//Convert from 0 based index to 1 based index
-					int val = int.Parse(v);
+				//Convert from 0 based index to 1 based index
+				int val = int.Parse(v);
 
-					// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
-					return val == 0 ? 1 : val - 1;
+				// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
+				return val == 0 ? 1 : val - 1;
 			}).ToArray();
 		}
 
@@ -308,7 +317,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #if DEBUG
 					throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetValue("bed_shape")));
 #else
-                        return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
+					return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
 #endif
 			}
 		}
@@ -402,14 +411,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SlicingEngineTypes ActiveSliceEngineType()
 		{
-				string engineType = layeredProfile.GetValue("MatterControl.SlicingEngine");
-				if (string.IsNullOrEmpty(engineType))
-				{
-					return defaultEngineType;
-				}
+			string engineType = layeredProfile.GetValue("MatterControl.SlicingEngine");
+			if (string.IsNullOrEmpty(engineType))
+			{
+				return defaultEngineType;
+			}
 
-				var engine = (SlicingEngineTypes)Enum.Parse(typeof(SlicingEngineTypes), engineType);
-				return engine;
+			var engine = (SlicingEngineTypes)Enum.Parse(typeof(SlicingEngineTypes), engineType);
+			return engine;
 		}
 
 		public void ActiveSliceEngineType(SlicingEngineTypes type)
@@ -433,6 +442,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				default:
 					return null;
 			}
+		}
+
+		public T GetValue<T>(SettingsKey settingsKey) where T : IConvertible
+		{
+			return GetValue<T>(settingsKey.ToString());
 		}
 
 		///<summary>
@@ -609,18 +623,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			try
 			{
-				if (GetValue<double>("layer_height") > GetValue<double>("nozzle_diameter"))
+				if (GetValue<double>("layer_height") > GetValue<double>(SettingsKey.nozzle_diameter))
 				{
 					string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>("layer_height"), GetValue<double>("nozzle_diameter"));
+					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>("layer_height"), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
-				else if (GetValue<double>("first_layer_height") > GetValue<double>("nozzle_diameter"))
+				else if (GetValue<double>("first_layer_height") > GetValue<double>(SettingsKey.nozzle_diameter))
 				{
 					string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>("first_layer_height"), GetValue<double>("nozzle_diameter"));
+					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>("first_layer_height"), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
@@ -652,10 +666,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				if (GetValue<double>("first_layer_extrusion_width") > GetValue<double>("nozzle_diameter") * 4)
+				if (GetValue<double>("first_layer_extrusion_width") > GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
 					string error = "'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
-					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue("first_layer_extrusion_width"), GetValue<double>("nozzle_diameter"));
+					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue("first_layer_extrusion_width"), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;

@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				// if top homing, home the extruder
 				case ResumeState.Homing:
-					if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "1")
+					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
 					{
 						queuedCommands.Add("G28");
 					}
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home y
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
-						Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>("resume_position_before_z_home");
+						Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.resume_position_before_z_home);
 						queuedCommands.Add("G1 X{0:0.000}Y{1:0.000}F{2}".FormatWith(resumePositionXy.x, resumePositionXy.y, MovementControls.XSpeed));
 						// home z
 						queuedCommands.Add("G28 Z0");
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can resume printing from
-							Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>("resume_position_before_z_home");
+							Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.resume_position_before_z_home);
 							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(resumePositionXy.x, resumePositionXy.y, lastDestination.position.z + 5), 0, MovementControls.ZSpeed)));
 							// move just above the actual print position
 							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position + new VectorMath.Vector3(0, 0, 5), 0, MovementControls.XSpeed)));
