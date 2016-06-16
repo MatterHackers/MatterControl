@@ -793,11 +793,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile());
 		}
 
-		public string BaudRate()
-		{
-			return layeredProfile.GetValue("MatterControl.BaudRate");
-		}
-
 		public void SetBaudRate(string baudRate)
 		{
 			layeredProfile.SetActiveValue("MatterControl.BaudRate", baudRate);
@@ -818,29 +813,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetActiveValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port, layer);
 		}
 
-		public string SlicingEngine()
-		{
-			return layeredProfile.GetValue("MatterControl.SlicingEngine");
-		}
-
 		public void SetSlicingEngine(string engine)
 		{
 			layeredProfile.SetActiveValue("MatterControl.SlicingEngine", engine);
 		}
 
-		public string DriverType()
-		{
-			return layeredProfile.GetValue("MatterControl.DriverType");
-		}
-
 		public void SetDriverType(string driver)
 		{
 			layeredProfile.SetActiveValue("MatterControl.DriverType", driver);
-		}
-
-		public string DeviceToken()
-		{
-			return layeredProfile.GetValue("MatterControl.DeviceToken");
 		}
 
 		public void SetDeviceToken(string token)
@@ -851,25 +831,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string DeviceType => layeredProfile.GetValue("MatterControl.DeviceType");
-
-		public string Make => layeredProfile.GetValue("MatterControl.Make");
-
-		// Rename to PrinterName
-		public string Name()
-		{
-			return layeredProfile.GetValue("MatterControl.PrinterName");
-		}
-
 		public void SetName(string name)
 		{
 			layeredProfile.SetActiveValue("MatterControl.PrinterName", name);
 		}
 
-		public string Model => layeredProfile.GetValue("MatterControl.Model");
+		HashSet<string> knownSettings = null;
 
 		[JsonIgnore]
-		HashSet<string> knownSettings = null;
 		public HashSet<string> KnownSettings
 		{
 			get

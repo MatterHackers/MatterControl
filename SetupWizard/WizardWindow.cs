@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 
 		internal void ChangeToSetupBaudOrComPortOne()
 		{
-			if (string.IsNullOrEmpty(PrinterConnectionAndCommunication.Instance?.ActivePrinter?.BaudRate()))
+			if (string.IsNullOrEmpty(PrinterConnectionAndCommunication.Instance?.ActivePrinter?.GetValue("MatterControl.BaudRate")))
 			{
 				ChangeToPage<SetupStepBaudRate>();
 			}

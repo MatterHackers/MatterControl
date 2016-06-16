@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					activeInstance = value;
 					if (activeInstance != null)
 					{
-						BedSettings.SetMakeAndModel(activeInstance.Make, activeInstance.Model);
+						BedSettings.SetMakeAndModel(activeInstance.GetValue("MatterControl.Make"), activeInstance.GetValue("MatterControl.Model"));
 					}
 
 					SwitchToPrinterTheme(MatterControlApplication.IsLoading);

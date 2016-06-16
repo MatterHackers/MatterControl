@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 			if (ActiveSliceSettings.Instance != null)
 			{
 				this.SelectedValue = ActiveSliceSettings.Instance.ID;
-				this.mainControlText.Text = ActiveSliceSettings.Instance.Name();
+				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue("MatterControl.PrinterName");
 			}
 		}
 
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (ProfileManager.Instance.ActiveProfile != null)
 				{
-					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.Name();
+					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue("MatterControl.PrinterName");
 				}
 
 				Rebuild();
