@@ -115,7 +115,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							LayerType = NamedSettingsLayers.Material,
 							SetAsActive = (materialKey) =>
 							{
-								ActiveSliceSettings.Instance.ActiveMaterialKey = materialKey;
 								ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, materialKey);
 							}
 						};
@@ -234,7 +233,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					newLayer.Name = "Material" + ActiveSliceSettings.Instance.MaterialLayers.Count;
 					ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
-					ActiveSliceSettings.Instance.ActiveMaterialKey = newLayer.LayerID;
 					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.LayerID);
 				}
 
