@@ -450,16 +450,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				switch (GetValue(settingsKey.ToString()))
 				{
 					case "rectangular":
-						return (T)(object)(BedShape.Rectangular);
+						return (T)(object)BedShape.Rectangular;
 
 					case "circular":
-						return (T)(object)(BedShape.Circular);
+						return (T)(object)BedShape.Circular;
 
 					default:
 #if DEBUG
 						throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetValue("bed_shape")));
 #else
-						return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
+						return (T)(object)BedShape.Rectangular;
 #endif
 				}
 			}
