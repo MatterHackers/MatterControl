@@ -10,12 +10,12 @@ Simple
   Printer
     Connection
       Description
-        MatterControl.PrinterName
+        printer_name
       Details
-        MatterControl.AutoConnect
-        MatterControl.BaudRate
-        MatterControl.ComPort
-        MatterControl.DeletePrinter
+        auto_connect
+        baud_rate
+        com_port
+        delete_printer
 Intermediate
   General
     Layers/Surface
@@ -69,12 +69,12 @@ Intermediate
   Printer
     Connection
       Description
-        MatterControl.PrinterName
+        printer_name
       Details
-        MatterControl.AutoConnect
-        MatterControl.BaudRate
-        MatterControl.ComPort
-        MatterControl.DeletePrinter
+        auto_connect
+        baud_rate
+        com_port
+        delete_printer
 Advanced
   General
     Layers/Surface
@@ -270,12 +270,12 @@ Advanced
   Printer
     Connection
       Description
-        MatterControl.PrinterName
+        printer_name
       Details
-        MatterControl.AutoConnect
-        MatterControl.BaudRate
-        MatterControl.ComPort
-        MatterControl.DeletePrinter
+        auto_connect
+        baud_rate
+        com_port
+        delete_printer
     Print Area
       Size and Coordinates
         bed_size

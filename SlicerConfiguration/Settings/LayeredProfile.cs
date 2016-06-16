@@ -51,25 +51,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var jObject = JObject.Parse(File.ReadAllText(filePath));
 
-			if (fromVersion < 201606081)
-			{
-				JObject materialLayers, qualityLayers;
-
-				materialLayers = jObject["MaterialLayers"] as JObject;
-				if (materialLayers != null)
-				{
-					jObject["MaterialLayers"] = new JArray(materialLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
-					qualityLayers = jObject["QualityLayers"] as JObject;
-					jObject["QualityLayers"] = new JArray(qualityLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
-
-					var oemProfile = jObject["OemProfile"] as JObject;
-					oemProfile.Property("MaterialLayers").Remove();
-					oemProfile.Property("QualityLayers").Remove();
-				}
-				jObject["DocumentVersion"] = 201606081;
-				fromVersion = 201606081;
-			}
-
 			if (fromVersion < 201605131)
 			{
 				var materialLayers = jObject["MaterialLayers"] as JObject;
@@ -115,6 +96,144 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				filePath = Path.Combine(Path.GetDirectoryName(filePath), printerID + ".json");
 			}
 
+			if (fromVersion < 201606081)
+			{
+				JObject materialLayers, qualityLayers;
+
+				materialLayers = jObject["MaterialLayers"] as JObject;
+				if (materialLayers != null)
+				{
+					jObject["MaterialLayers"] = new JArray(materialLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
+					qualityLayers = jObject["QualityLayers"] as JObject;
+					jObject["QualityLayers"] = new JArray(qualityLayers.Properties().ToList().Select(layer => layer.Value).ToArray());
+
+					var oemProfile = jObject["OemProfile"] as JObject;
+					oemProfile.Property("MaterialLayers").Remove();
+					oemProfile.Property("QualityLayers").Remove();
+				}
+				jObject["DocumentVersion"] = 201606081;
+			}
+
+			if (fromVersion < 201606161)
+			{
+				var layersToModify = new List<JObject>();
+
+				layersToModify.Add(jObject["UserLayer"] as JObject);
+				layersToModify.Add(jObject["OemProfile"]["OemLayer"] as JObject);
+				layersToModify.AddRange(jObject["MaterialLayers"].Cast<JObject>());
+				layersToModify.AddRange(jObject["QualityLayers"].Cast<JObject>());
+
+				foreach (var layer in layersToModify)
+				{
+					var itemsToAdd = new List<KeyValuePair<string, JToken>>();
+
+					foreach (var token in layer)
+					{
+						if (token.Key.StartsWith("MatterControl."))
+						{
+							itemsToAdd.Add(token);
+						}
+					}
+
+					foreach (var item in itemsToAdd)
+					{
+						layer.Remove(item.Key);
+
+						switch (item.Key)
+						{
+							case "MatterControl.PrinterName":
+								layer.Add("printer_name", item.Value);
+								break;
+
+							case "MatterControl.BaudRate":
+								layer.Add("baud_rate", item.Value);
+								break;
+
+							case "MatterControl.Make":
+								layer.Add("make", item.Value);
+								break;
+
+							case "MatterControl.Model":
+								layer.Add("model", item.Value);
+								break;
+
+							case "MatterControl.ComPort":
+								layer.Add("com_port", item.Value);
+								break;
+
+							case "MatterControl.AutoConnect":
+								layer.Add("auto_connect", item.Value);
+								break;
+
+							case "MatterControl.DefaultMaterialPresets":
+								layer.Add("default_material_presets", item.Value);
+								break;
+
+							case "MatterControl.WindowsDriver":
+								layer.Add("windows_driver", item.Value);
+								break;
+
+							case "MatterControl.DeviceToken":
+								layer.Add("device_token", item.Value);
+								break;
+
+							case "MatterControl.DeviceType":
+								layer.Add("device_type", item.Value);
+								break;
+
+							case "MatterControl.ActiveThemeIndex":
+								layer.Add("active_theme_index", item.Value);
+								break;
+
+							case "MatterControl.PublishBedImage":
+								layer.Add("publish_bed_image", item.Value);
+								break;
+
+							case "MatterControl.PrintLevelingData":
+								layer.Add("print_leveling_data", item.Value);
+								break;
+
+							case "MatterControl.PrintLevelingEnabled":
+								layer.Add("print_leveling_enabled", item.Value);
+								break;
+
+							case "MatterControl.DeletePrinter":
+								layer.Add("delete_printer", item.Value);
+								break;
+
+							case "MatterControl.ManualMovementSpeeds":
+								layer.Add("manual_movement_speeds", item.Value);
+								break;
+
+							case "MatterControl.SHA1":
+								layer.Add("profile_sha1", item.Value);
+								break;
+
+							default:
+
+								if (item.Key.Contains("ComPort"))
+								{
+									var segments = item.Key.Split('.');
+
+									if (segments.Length != 3)
+									{
+										throw new Exception("Why didn't we know how to add this.");
+									}
+									layer.Add(segments[1] + "_com_port", item.Value);
+									break;
+								}
+								else
+								{
+									throw new Exception("Why didn't we know how to add this.");
+								}
+
+						}
+					}
+				}
+
+				jObject["DocumentVersion"] = 201606161;
+			}
+
 			File.WriteAllText(
 						filePath,
 						JsonConvert.SerializeObject(jObject, Formatting.Indented));
@@ -131,7 +250,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		// Latest version should be 2016|06|08|1
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
-		public static int LatestVersion { get; } = 201606081;
+		public static int LatestVersion { get; } = 201606161;
 
 		[JsonIgnore]
 		internal PrinterSettingsLayer QualityLayer { get; private set; }
@@ -256,7 +375,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
 			{
 				string sha1 = GenerateSha1(memoryStream);
-				this.UserLayer["MatterControl.SHA1"] = sha1;
+				this.UserLayer["profile_sha1"] = sha1;
 
 				var printerInfo = ProfileManager.Instance[this.ID];
 				if (printerInfo != null)
@@ -276,7 +395,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal static PrinterSettings LoadFile(string printerProfilePath)
 		{
 			var jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
-			int documentVersion = (int) jObject?.GetValue("DocumentVersion")?.Value<int>();
+
+			int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? 0;
 
 			if (documentVersion < PrinterSettings.LatestVersion)
 			{

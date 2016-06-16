@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 					editButton.Click -= GoToEditPrinter_Click;
 				};
 
-				UiNavigation.GoToPrinterSettings("MatterControl.BaudRate Edit Field,MatterControl.AutoConnect Edit Field,MatterControl.ComPort Edit Field");
+				UiNavigation.GoToPrinterSettings("baud_rate Edit Field,auto_connect Edit Field,com_port Edit Field");
 			}
 		}
 

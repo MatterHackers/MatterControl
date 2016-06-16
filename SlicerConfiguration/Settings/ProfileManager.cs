@@ -86,12 +86,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string settingsKey = ((StringEventArgs)e).Data;
 			switch (settingsKey)
 			{
-				case SettingsKey.MatterControl_PrinterName:
-					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.MatterControl_PrinterName);
+				case SettingsKey.printer_name:
+					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 					Instance.Save();
 					break;
 
-				case "MatterControl.ComPort":
+				case "com_port":
 					Instance.ActiveProfile.ComPort = ActiveSliceSettings.Instance.ComPort();
 					Instance.Save();
 					break;
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					new OemProfile(), 
 					SliceSettingsOrganizer.Instance.GetDefaultSettings()));
 
-			empytProfile.SetActiveValue(SettingsKey.MatterControl_PrinterName.ToString(), "Printers...".Localize());
+			empytProfile.SetActiveValue(SettingsKey.printer_name.ToString(), "Printers...".Localize());
 
 			return empytProfile;
 		}
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					};
 
 					// TODO: Resolve name conflicts
-					layeredProfile.UserLayer[SettingsKey.MatterControl_PrinterName.ToString()] = printerInfo.Name;
+					layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerInfo.Name;
 
 					Instance.Profiles.Add(printerInfo);
 
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				ID = guid
 			};
-			layeredProfile.UserLayer[SettingsKey.MatterControl_PrinterName.ToString()] = printerName;
+			layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
 
 			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
 			var classicDefaultMacros = layeredProfile.GetValue("default_macros");
@@ -316,7 +316,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						ComPort = profile.ComPort(),
 						ID = profile.ID,
-						Name = profile.GetValue(SettingsKey.MatterControl_PrinterName),
+						Name = profile.GetValue(SettingsKey.printer_name),
 					});
 				}
 				catch (Exception ex)

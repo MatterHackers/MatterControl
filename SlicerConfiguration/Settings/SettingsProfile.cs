@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
 		public const string nozzle_diameter = nameof(nozzle_diameter);
-		public const string MatterControl_PrinterName = nameof(MatterControl_PrinterName);
+		public const string printer_name = nameof(printer_name);
 		public const string min_fan_speed = nameof(min_fan_speed);
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
@@ -236,8 +236,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				switch (item.SlicerConfigName)
 				{
-					case "MatterControl.BaudRate":
-					case "MatterControl.AutoConnect":
+					case "baud_rate":
+					case "auto_connect":
 						// These items are marked as not being overrides but should be cleared on 'reset to defaults'
 						break;
 					default:
@@ -334,7 +334,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				printLevelingData = PrintLevelingData.Create(
 					ActiveSliceSettings.Instance,
-					layeredProfile.GetValue("MatterControl.PrintLevelingData"),
+					layeredProfile.GetValue("print_leveling_data"),
 					layeredProfile.GetValue("MatterControl.PrintLevelingProbePositions"));
 
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
@@ -350,19 +350,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetPrintLevelingData(PrintLevelingData data)
 		{
 			printLevelingData = data;
-			layeredProfile.SetValue("MatterControl.PrintLevelingData", JsonConvert.SerializeObject(data));
+			layeredProfile.SetValue("print_leveling_data", JsonConvert.SerializeObject(data));
 
 		}
 
 		public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
-			if (doLeveling == this.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
+			if (doLeveling == this.GetValue<bool>("print_leveling_enabled"))
 			{
 				return;
 			}
 
-			layeredProfile.SetValue("MatterControl.PrintLevelingEnabled", doLeveling ? "1" : "0");
+			layeredProfile.SetValue("print_leveling_enabled", doLeveling ? "1" : "0");
 
 			DoPrintLevelingChanged.CallEvents(this, null);
 
@@ -611,7 +611,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
-				if (PrinterConnectionAndCommunication.Instance.ActivePrinter.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
+				if (PrinterConnectionAndCommunication.Instance.ActivePrinter.GetValue<bool>("print_leveling_enabled"))
 				{
 					string[] startGCode = GetValue("start_gcode").Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
@@ -765,7 +765,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetAutoConnect(bool autoConnectPrinter)
 		{
-			layeredProfile.SetValue("MatterControl.AutoConnect", autoConnectPrinter ? "1" : "0");
+			layeredProfile.SetValue("auto_connect", autoConnectPrinter ? "1" : "0");
 		}
 
 		public void SetMarkedForDelete(bool markedForDelete)
@@ -787,7 +787,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetBaudRate(string baudRate)
 		{
-			layeredProfile.SetValue("MatterControl.BaudRate", baudRate);
+			layeredProfile.SetValue("baud_rate", baudRate);
 		}
 
 		public string ComPort()
@@ -817,15 +817,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetDeviceToken(string token)
 		{
-			if (layeredProfile.GetValue("MatterControl.DeviceToken") != token)
+			if (layeredProfile.GetValue("device_token") != token)
 			{
-				layeredProfile.SetValue("MatterControl.DeviceToken", token);
+				layeredProfile.SetValue("device_token", token);
 			}
 		}
 
 		public void SetName(string name)
 		{
-			layeredProfile.SetValue(SettingsKey.MatterControl_PrinterName, name);
+			layeredProfile.SetValue(SettingsKey.printer_name, name);
 		}
 
 		HashSet<string> knownSettings = null;
@@ -849,12 +849,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ManualMovementSpeeds()
 		{
-			return layeredProfile.GetValue("MatterControl.ManualMovementSpeeds");
+			return layeredProfile.GetValue("manual_movement_speeds");
 		}
 
 		public void SetManualMovementSpeeds(string speed)
 		{
-			layeredProfile.SetValue("MatterControl.ManualMovementSpeeds", speed);
+			layeredProfile.SetValue("manual_movement_speeds", speed);
 		}
 
 	}

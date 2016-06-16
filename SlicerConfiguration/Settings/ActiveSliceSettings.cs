@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					activeInstance = value;
 					if (activeInstance != null)
 					{
-						BedSettings.SetMakeAndModel(activeInstance.GetValue("MatterControl.Make"), activeInstance.GetValue("MatterControl.Model"));
+						BedSettings.SetMakeAndModel(activeInstance.GetValue("MatterControl_Make"), activeInstance.GetValue("model"));
 					}
 
 					SwitchToPrinterTheme(MatterControlApplication.IsLoading);
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			int themeIndex;
 			if (ActiveSliceSettings.Instance != null)
 			{
-				string activeThemeIndex = ActiveSliceSettings.Instance.GetValue("MatterControl.ActiveThemeIndex");
+				string activeThemeIndex = ActiveSliceSettings.Instance.GetValue("active_theme_index");
 				if (string.IsNullOrEmpty(activeThemeIndex) || !int.TryParse(activeThemeIndex, out themeIndex))
 				{
 					themeIndex = defaultThemeIndex;
@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				portExists = comportNames.Contains(startupProfile.ComPort());
 				Instance = startupProfile;
 
-				if (portExists && startupProfile.GetValue<bool>("MatterControl.AutoConnect"))
+				if (portExists && startupProfile.GetValue<bool>("auto_connect"))
 				{
 					UiThread.RunOnIdle(() =>
 					{

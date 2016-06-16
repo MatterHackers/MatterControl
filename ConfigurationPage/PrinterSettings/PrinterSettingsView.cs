@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
 			publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
 
-			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PublishBedImage"));
+			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>("publish_bed_image"));
 			toggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
 				CheckBox thisControl = sender as CheckBox;
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetPrintLevelButtonVisiblity()
 		{
-			if (ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
+			if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
 			{
 				printLevelingStatusLabel.Text = "Software Print Leveling (enabled)".Localize();
 			}

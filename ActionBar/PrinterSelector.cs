@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 			if (ActiveSliceSettings.Instance != null)
 			{
 				this.SelectedValue = ActiveSliceSettings.Instance.ID;
-				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.MatterControl_PrinterName);
+				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
 
 			this.AddItem(
@@ -96,11 +96,11 @@ namespace MatterHackers.MatterControl
 		private void SettingChanged(object sender, EventArgs e)
 		{
 			string settingsName = (e as StringEventArgs)?.Data;
-			if (settingsName != null && settingsName == SettingsKey.MatterControl_PrinterName.ToString())
+			if (settingsName != null && settingsName == SettingsKey.printer_name.ToString())
 			{
 				if (ProfileManager.Instance.ActiveProfile != null)
 				{
-					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.MatterControl_PrinterName);
+					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 				}
 			}
 
