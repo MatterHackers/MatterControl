@@ -244,11 +244,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return targetTemp;
 		}
 
-		public int SupportExtruder()
-		{
-			return int.Parse(GetValue("support_material_extruder"));
-		}
-
 		public int[] LayerToPauseOn()
 		{
 			string[] userValues = GetValue("layer_to_pause").Split(';');
@@ -262,21 +257,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
 					return val == 0 ? 1 : val - 1;
 			}).ToArray();
-		}
-
-		public double ProbePaperWidth()
-		{
-			return double.Parse(GetValue("manual_probe_paper_width"));
-		}
-
-		public int RaftExtruder()
-		{
-			return int.Parse(GetValue("raft_extruder"));
-		}
-
-		public double MaxFanSpeed()
-		{
-			return ParseDouble(GetValue("max_fan_speed"));
 		}
 
 		public double FillDensity()
@@ -304,14 +284,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetMaterialPresetKey(extruderIndex);
 		}
 
-		public double FirstLayerExtrusionWidth()
-		{
-				AsPercentOfReferenceOrDirect mapper = new AsPercentOfReferenceOrDirect("first_layer_extrusion_width", "notused", "nozzle_diameter");
-
-				double firstLayerValue = ParseDouble(mapper.Value);
-				return firstLayerValue;
-		}
-
 		private static double ParseDouble(string firstLayerValueString)
 		{
 			double firstLayerValue;
@@ -320,16 +292,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				throw new Exception(string.Format("Format cannot be parsed. FirstLayerHeight '{0}'", firstLayerValueString));
 			}
 			return firstLayerValue;
-		}
-
-		public double LayerHeight()
-		{
-			return ParseDouble(GetValue("layer_height"));
-		}
-
-		public Vector2 BedSize()
-		{
-			return ActiveVector2("bed_size");
 		}
 
 		public MeshVisualizer.MeshViewerWidget.BedShape BedShape()
@@ -349,21 +311,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
 #endif
 			}
-		}
-
-		public Vector2 BedCenter()
-		{
-			return ActiveVector2("print_center");
-		}
-
-		public double BuildHeight()
-		{
-			return ParseDouble(GetValue("build_height"));
-		}
-
-		public Vector2 PrintCenter()
-		{
-			return ActiveVector2("print_center");
 		}
 
 		public int ExtruderCount()
@@ -401,11 +348,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Vector2.Zero;
 		}
 
-		public double FilamentDiameter()
-		{
-			return ParseDouble(GetValue("filament_diameter"));
-		}
-
 		private PrintLevelingData printLevelingData = null;
 		public PrintLevelingData GetPrintLevelingData()
 		{
@@ -420,7 +362,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printLevelingData.SampledPosition0,
 					printLevelingData.SampledPosition1,
 					printLevelingData.SampledPosition2,
-					ActiveSliceSettings.Instance.PrintCenter());
+					ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"));
 			}
 
 			return printLevelingData;
@@ -452,7 +394,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					levelingData.SampledPosition0,
 					levelingData.SampledPosition1,
 					levelingData.SampledPosition2,
-					ActiveSliceSettings.Instance.PrintCenter());
+					ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"));
 			}
 		}
 
@@ -508,6 +450,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				int.TryParse(this.GetValue(settingsKey), out result);
 				return (T)(object)(result);
 			}
+			else if(typeof(T) == typeof(Vector2))
+			{
+				string[] twoValues = GetValue(settingsKey).Split(',');
+				if (twoValues.Length != 2)
+				{
+					throw new Exception(string.Format("Not parsing {0} as a Vector2", settingsKey));
+				}
+				Vector2 valueAsVector2 = new Vector2();
+				valueAsVector2.x = ParseDouble(twoValues[0]);
+				valueAsVector2.y = ParseDouble(twoValues[1]);
+				return (T)(object)(valueAsVector2);
+			}
 			else if (typeof(T) == typeof(double))
 			{
 				string settingsStringh = GetValue(settingsKey);
@@ -518,7 +472,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					if (settingsKey == "first_layer_height")
 					{
-						return (T)(object)(LayerHeight() * ratio);
+						return (T)(object)(GetValue<double>("layer_height") * ratio);
+					}
+					else if(settingsKey == "first_layer_extrusion_width")
+					{
+						return (T)(object)(GetValue<double>("layer_height") * ratio);
 					}
 
 					return (T)(object)(ratio);
@@ -581,19 +539,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				default:
 					return false;
 			}
-		}
-
-		public Vector2 ActiveVector2(string sliceSetting)
-		{
-			string[] twoValues = GetValue(sliceSetting).Split(',');
-			if (twoValues.Length != 2)
-			{
-				throw new Exception(string.Format("Not parsing {0} as a Vector2", sliceSetting));
-			}
-			Vector2 valueAsVector2 = new Vector2();
-			valueAsVector2.x = ParseDouble(twoValues[0]);
-			valueAsVector2.y = ParseDouble(twoValues[1]);
-			return valueAsVector2;
 		}
 
 		public void ExportAsMatterControlConfig()
@@ -664,10 +609,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			try
 			{
-				if (LayerHeight() > GetValue<double>("nozzle_diameter"))
+				if (GetValue<double>("layer_height") > GetValue<double>("nozzle_diameter"))
 				{
 					string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), LayerHeight(), GetValue<double>("nozzle_diameter"));
+					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>("layer_height"), GetValue<double>("nozzle_diameter"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
@@ -707,7 +652,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				if (FirstLayerExtrusionWidth() > GetValue<double>("nozzle_diameter") * 4)
+				if (GetValue<double>("first_layer_extrusion_width") > GetValue<double>("nozzle_diameter") * 4)
 				{
 					string error = "'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
 					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue("first_layer_extrusion_width"), GetValue<double>("nozzle_diameter"));
@@ -716,7 +661,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if (FirstLayerExtrusionWidth() <= 0)
+				if (GetValue<double>("first_layer_extrusion_width") <= 0)
 				{
 					string error = "'First Layer Extrusion Width' must be greater than 0.".Localize();
 					string details = string.Format("First Layer Extrusion Width = {0}".Localize(), GetValue("first_layer_extrusion_width"));
@@ -734,10 +679,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if (MaxFanSpeed() > 100)
+				if (GetValue<double>("max_fan_speed") > 100)
 				{
 					string error = "The Maximum Fan Speed can only go as high as 100%.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), MaxFanSpeed());
+					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>("max_fan_speed"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;

@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 && lineBeingSent.Length > 2
                 && lineBeingSent[2] == ' ')
             {
-                return GetLevelingFunctions(numberOfRadialSamples, settings.GetPrintLevelingData(), ActiveSliceSettings.Instance.BedCenter())
+                return GetLevelingFunctions(numberOfRadialSamples, settings.GetPrintLevelingData(), ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"))
                     .DoApplyLeveling(lineBeingSent, currentDestination, movementMode);
             }
 
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
         {
             PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
-            return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.BedCenter())
+            return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"))
                 .GetPrintLevelPositionToSample(index, radius);
         }
 
