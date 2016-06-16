@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-            double bedRadius = Math.Min(ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size").x, ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size").y) / 2;
+            double bedRadius = Math.Min(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y) / 2;
 
             double startProbeHeight = 5;
             for (int i = 0; i < numberOfRadialSamples + 1; i++)
