@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			pageOneInstructionsTextThree = pageOneInstructionsTextThree.FormatWith(numberOfRadialSamples+1);
 
-            bool allowLessThanZero = ActiveSliceSettings.Instance.ActiveValue("z_can_be_negative") == "1";
+            bool allowLessThanZero = ActiveSliceSettings.Instance.GetValue("z_can_be_negative") == "1";
             string printLevelWizardTitle = "MatterControl";
             string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
             Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);

@@ -624,7 +624,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (((StringEventArgs)e).Data == SettingsKey)
 					{
-						string setting = ActiveSliceSettings.Instance.GetActiveValue(SettingsKey, layerCascade);
+						string setting = ActiveSliceSettings.Instance.GetValue(SettingsKey, layerCascade);
 						if (SettingsValue != setting)
 						{
 							SettingsValue = setting;
@@ -661,7 +661,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string GetActiveValue(string slicerConfigName, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
-			return ActiveSliceSettings.Instance.GetActiveValue(slicerConfigName, layerCascade);
+			return ActiveSliceSettings.Instance.GetValue(slicerConfigName, layerCascade);
 		}
 
 		public static GuiWidget CreateSettingControl(string sliceSettingsKey, ref int tabIndex)

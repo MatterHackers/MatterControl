@@ -41,12 +41,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// do the replacement with {} (curly brackets)
 				{
 					string thingToReplace = "{" + "{0}".FormatWith(keyValue.Key) + "}";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.ActiveValue(keyValue.Value));
+					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetValue(keyValue.Value));
 				}
 				// do the replacement with [] (square brackets) Slic3r uses only square brackets
 				{
 					string thingToReplace = "[" + "{0}".FormatWith(keyValue.Key) + "]";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.ActiveValue(keyValue.Value));
+					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetValue(keyValue.Value));
 				}
 			}
 
@@ -76,14 +76,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public double ParseDoubleFromRawValue(string canonicalSettingsName, double valueOnError = 0)
 		{
-			return ParseDouble(ActiveSliceSettings.Instance.ActiveValue(canonicalSettingsName), valueOnError);
+			return ParseDouble(ActiveSliceSettings.Instance.GetValue(canonicalSettingsName), valueOnError);
 		}
 
 		public string ExportedName { get; }
 
 		public string CanonicalSettingsName { get; }
 
-		public virtual string Value => ActiveSliceSettings.Instance.ActiveValue(CanonicalSettingsName);
+		public virtual string Value => ActiveSliceSettings.Instance.GetValue(CanonicalSettingsName);
 	}
 
 	public class MapFirstValue : MappedSetting
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PreStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.ActiveValue("start_gcode");
+			string startGCode = ActiveSliceSettings.Instance.GetValue("start_gcode");
 			string[] preStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> preStartGCode = new List<string>();
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
-			if (ActiveSliceSettings.Instance.ActiveValue("heat_extruder_before_homing") == "1")
+			if (ActiveSliceSettings.Instance.GetValue("heat_extruder_before_homing") == "1")
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PostStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.ActiveValue("start_gcode");
+			string startGCode = ActiveSliceSettings.Instance.GetValue("start_gcode");
 			string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> postStartGCode = new List<string>();
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount();
 
 			// don't set the extruders to heating if we already waited for them to reach temp
-			if (ActiveSliceSettings.Instance.ActiveValue("heat_extruder_before_homing") != "1")
+			if (ActiveSliceSettings.Instance.GetValue("heat_extruder_before_homing") != "1")
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (base.Value.Contains("mm"))
 				{
 					string withoutMm = base.Value.Replace("mm", "");
-					string distanceString = ActiveSliceSettings.Instance.ActiveValue(keyToUseAsDenominatorForCount);
+					string distanceString = ActiveSliceSettings.Instance.GetValue(keyToUseAsDenominatorForCount);
 					double denominator = ParseDouble(distanceString, 1);
 					int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
 					return layers.ToString();
@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string withoutPercent = base.Value.Replace("%", "");
 					double ratio = ParseDouble(withoutPercent) / 100.0;
-					string originalReferenceString = ActiveSliceSettings.Instance.ActiveValue(originalReference);
+					string originalReferenceString = ActiveSliceSettings.Instance.GetValue(originalReference);
 					double valueToModify = ParseDouble(originalReferenceString);
 					finalValue = valueToModify * ratio;
 				}
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (finalValue == 0)
 				{
-					finalValue = ParseDouble(ActiveSliceSettings.Instance.ActiveValue(originalReference));
+					finalValue = ParseDouble(ActiveSliceSettings.Instance.GetValue(originalReference));
 				}
 
 				finalValue *= scale;

@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				// if top homing, home the extruder
 				case ResumeState.Homing:
-					if (ActiveSliceSettings.Instance.ActiveValue("z_homes_to_max") == "1")
+					if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "1")
 					{
 						queuedCommands.Add("G28");
 					}
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// let's prime the extruder, move to a good position over the part, then start printing
 						queuedCommands.Add("G1 E5");
 						queuedCommands.Add("G1 E4");
-						if (ActiveSliceSettings.Instance.ActiveValue("z_homes_to_max") == "0") // we are homed to the bed
+						if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can resume printing from
 							Vector2 resumePositionXy = ActiveSliceSettings.Instance.ActiveVector2("resume_position_before_z_home");
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 								double feedRate;
 
-								string firstLayerSpeed = ActiveSliceSettings.Instance.ActiveValue("resume_first_layer_speed");
+								string firstLayerSpeed = ActiveSliceSettings.Instance.GetValue("resume_first_layer_speed");
 								if (!double.TryParse(firstLayerSpeed, out feedRate))
 								{
 									feedRate = 10;

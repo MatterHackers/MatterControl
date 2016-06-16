@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public void DoPause()
 		{
 			// Add the pause_gcode to the loadedGCode.GCodeCommandQueue
-			string pauseGCode = ActiveSliceSettings.Instance.ActiveValue("pause_gcode");
+			string pauseGCode = ActiveSliceSettings.Instance.GetValue("pause_gcode");
 
 			// put in the gcode for pausing (if any)
 			InjectPauseGCode(pauseGCode);
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			InjectPauseGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(ensureAllAxis.x, ensureAllAxis.y, ensureAllAxis.z, moveLocationAtEndOfPauseCode.feedRate + 1));
 			InjectPauseGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(positionBeforeActualPause.x, positionBeforeActualPause.y, positionBeforeActualPause.z, moveLocationAtEndOfPauseCode.feedRate));
 
-			string resumeGCode = ActiveSliceSettings.Instance.ActiveValue("resume_gcode");
+			string resumeGCode = ActiveSliceSettings.Instance.GetValue("resume_gcode");
 			InjectPauseGCode(resumeGCode);
 		}
 

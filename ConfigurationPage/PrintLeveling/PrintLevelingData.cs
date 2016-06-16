@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			get
 			{
-				switch (settingsProfile.ActiveValue("print_leveling_solution"))
+				switch (settingsProfile.GetValue("print_leveling_solution"))
 				{
 					case "2 Point Plane":
 						return LevelingSystem.Probe2Points;

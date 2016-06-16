@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 					int linkCompatibleRow = row;
 					int linkCompatibleAxis = axis;
 					double minValue = double.MinValue;
-					if (axis == 2 && ActiveSliceSettings.Instance.ActiveValue("z_can_be_negative") == "0")
+					if (axis == 2 && ActiveSliceSettings.Instance.GetValue("z_can_be_negative") == "0")
 					{
 						minValue = 0;
 					}

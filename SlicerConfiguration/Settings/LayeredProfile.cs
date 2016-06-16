@@ -318,12 +318,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		///<summary>
 		///Returns the settings value at the 'top' of the stack
 		///</summary>
-		public string GetValue(string sliceSetting)
-		{
-			return GetValue(sliceSetting, defaultLayerCascade);
-		}
-
-		public string GetValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade)
+		public string GetValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 			if (layerCascade == null)
 			{
