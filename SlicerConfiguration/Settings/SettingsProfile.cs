@@ -91,18 +91,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer UserLayer => layeredProfile.UserLayer;
 
-		public string ActiveMaterialKey
-		{
-			get
-			{
-				return layeredProfile.ActiveMaterialKey;
-			}
-			set
-			{
-				layeredProfile.ActiveMaterialKey = value;
-			}
-		}
-
 		public string ActiveQualityKey
 		{
 			get
@@ -230,7 +218,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal PrinterSettingsLayer MaterialLayer(string key)
 		{
-			return layeredProfile.GetMaterialLayer(key);
+			return layeredProfile.GetMaterialLayer(layeredProfile.MaterialSettingsKeys[0]);
 		}
 
 		internal PrinterSettingsLayer QualityLayer(string key)
@@ -798,11 +786,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetMarkedForDelete(bool markedForDelete)
 		{
-			// TODO: It's unfortunate that changes to UI elements drive the SettingsChanged event rather than the data model. As such, we must manually
-			// MarkedForDelete and call profile save
-			ProfileManager.Instance.ActiveProfile.MarkedForDelete = markedForDelete;
-			ProfileManager.Instance.Save();
-			SetActiveValue("MatterControl.MarkedForDelete", "1");
+			var printerInfo = ProfileManager.Instance.ActiveProfile;
+			if (printerInfo != null)
+			{
+				printerInfo.MarkedForDelete = markedForDelete;
+
+				ProfileManager.Instance.Save();
+				SetActiveValue("MatterControl.MarkedForDelete", "1");
+			}
+
+			// Clear selected printer state
+			UserSettings.Instance.set("ActiveProfileID", "");
 
 			UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile());
 		}
