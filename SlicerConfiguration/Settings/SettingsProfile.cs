@@ -381,7 +381,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SlicingEngineTypes ActiveSliceEngineType()
 		{
-			string engineType = layeredProfile.GetValue("MatterControl.SlicingEngine");
+			string engineType = layeredProfile.GetValue("slicing_engine");
 			if (string.IsNullOrEmpty(engineType))
 			{
 				return defaultEngineType;
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ActiveSliceEngineType(SlicingEngineTypes type)
 		{
-			SetActiveValue("MatterControl.SlicingEngine", type.ToString());
+			SetActiveValue("slicing_engine", type.ToString());
 		}
 
 		public SliceEngineMapping ActiveSliceEngine()
@@ -807,7 +807,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetSlicingEngine(string engine)
 		{
-			layeredProfile.SetValue("MatterControl.SlicingEngine", engine);
+			layeredProfile.SetValue("slicing_engine", engine);
 		}
 
 		public void SetDriverType(string driver)
