@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public LevelWizard3Point(LevelWizardBase.RuningState runningState)
 			: base(500, 370, 9)
 		{
-			bool allowLessThanZero = ActiveSliceSettings.Instance.ActiveValue("z_can_be_negative") == "1";
+			bool allowLessThanZero = ActiveSliceSettings.Instance.GetValue("z_can_be_negative") == "1";
 			string printLevelWizardTitle = LocalizedString.Get("MatterControl");
 			string printLevelWizardTitleFull = LocalizedString.Get("Print Leveling Wizard");
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);

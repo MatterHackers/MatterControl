@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
 			AddHandlers();
 			SetVisibleControls();
 
-			if (!pluginsQueuedToAdd && ActiveSliceSettings.Instance.ActiveValue("include_firmware_updater") == "Simple Arduino")
+			if (!pluginsQueuedToAdd && ActiveSliceSettings.Instance.GetValue("include_firmware_updater") == "Simple Arduino")
 			{
 				UiThread.RunOnIdle(AddPlugins);
 				pluginsQueuedToAdd = true;

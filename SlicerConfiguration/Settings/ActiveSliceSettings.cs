@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			int themeIndex;
 			if (ActiveSliceSettings.Instance != null)
 			{
-				string activeThemeIndex = ActiveSliceSettings.Instance.ActiveValue("MatterControl.ActiveThemeIndex");
+				string activeThemeIndex = ActiveSliceSettings.Instance.GetValue("MatterControl.ActiveThemeIndex");
 				if (string.IsNullOrEmpty(activeThemeIndex) || !int.TryParse(activeThemeIndex, out themeIndex))
 				{
 					themeIndex = defaultThemeIndex;

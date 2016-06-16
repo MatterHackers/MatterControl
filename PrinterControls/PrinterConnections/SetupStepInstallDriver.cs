@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var drivers = new List<string>();
 
 			//Determine what if any drivers are needed
-			string infFileNames = ActiveSliceSettings.Instance.ActiveValue("windows_driver");
+			string infFileNames = ActiveSliceSettings.Instance.GetValue("windows_driver");
 			if (!string.IsNullOrEmpty(infFileNames))
 			{
 				string[] fileNames = infFileNames.Split(',');

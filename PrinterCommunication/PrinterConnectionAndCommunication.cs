@@ -1323,7 +1323,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			bool oneOrMoreValuesReset = false;
 			foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
 			{
-				string currentValue = ActiveSliceSettings.Instance.ActiveValue(keyValue.Key);
+				string currentValue = ActiveSliceSettings.Instance.GetValue(keyValue.Key);
 
 				bool valueIsClear = currentValue == "0" | currentValue == "";
 				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
@@ -1636,7 +1636,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										{
 											CommunicationState = CommunicationStates.Connected;
 											// now send any command that initialize this printer
-											string connectGCode = ActiveSliceSettings.Instance.ActiveValue("connect_gcode");
+											string connectGCode = ActiveSliceSettings.Instance.GetValue("connect_gcode");
 											SendLineToPrinterNow(connectGCode);
 
 											// and call back anyone who would like to know we connected
@@ -2143,7 +2143,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
-				string cancelGCode = ActiveSliceSettings.Instance.ActiveValue("cancel_gcode");
+				string cancelGCode = ActiveSliceSettings.Instance.GetValue("cancel_gcode");
 				if (cancelGCode.Trim() != "")
 				{
 					// add any gcode we want to print while canceling

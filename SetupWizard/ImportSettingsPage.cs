@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl
 							foreach (var item in settingsToImport)
 							{
 								// Compare the value to import to the layer cascade value and only set if different
-								string currentValue = activeSettings.GetActiveValue(item.Key, null).Trim();
+								string currentValue = activeSettings.GetValue(item.Key, null).Trim();
 								if (currentValue != item.Value)
 								{
 									activeSettings.UserLayer[item.Key] = item.Value;
@@ -265,7 +265,7 @@ namespace MatterHackers.MatterControl
 							foreach (var item in settingsToImport)
 							{
 								// Compare the value to import to the layer cascade value and only set if different
-								string currentValue = activeSettings.GetActiveValue(item.Key, null).Trim();
+								string currentValue = activeSettings.GetValue(item.Key, null).Trim();
 								if (currentValue != item.Value)
 								{
 									activeSettings.UserLayer[item.Key] = item.Value;
