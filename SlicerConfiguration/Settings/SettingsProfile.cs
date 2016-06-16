@@ -257,6 +257,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetMaterialPresetKey(extruderIndex);
 		}
 
+		internal List<string> MaterialSettingsKeys()
+		{
+			return layeredProfile.MaterialSettingsKeys;
+		}
+
 		private static double ParseDouble(string firstLayerValueString)
 		{
 			double firstLayerValue;

@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public List<PrinterSettingsLayer> PresetLayers { get; }
 		public PrinterSettingsLayer PersistenceLayer { get; set; }
 		public Action<string> SetAsActive { get; set; }
+		public Action DeleteLayer { get; set; }
+
 		public NamedSettingsLayers LayerType { get; set; }
 
 		public PresetsContext(List<PrinterSettingsLayer> settingsLayers, PrinterSettingsLayer activeLayer)
@@ -211,14 +213,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				});
 			};
 
-			Button importButton = buttonFactory.Generate("Import".Localize());
-			importButton.Click += (s, e) =>
+			Button deleteButton = buttonFactory.Generate("Delete".Localize());
+			deleteButton.Click += (s, e) =>
 			{
-				throw new NotImplementedException();
+				UiThread.RunOnIdle(() =>
+				{
+					presetsContext.DeleteLayer();
+					this.Close();
+				});
 			};
-
-			Button exportButton = buttonFactory.Generate("Export".Localize());
-			exportButton.Click += (s, e) => UiThread.RunOnIdle(SaveAs);
 
 			Button closeButton = buttonFactory.Generate("Close".Localize());
 			closeButton.Click += (sender, e) =>
@@ -236,14 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			container.AddChild(duplicateButton);
-
-			//Only show duplicate/import/export buttons if setting has been saved.
-			if (false)
-			{
-				container.AddChild(importButton);
-				container.AddChild(exportButton);
-			}
-
+			container.AddChild(deleteButton);
 			container.AddChild(new HorizontalSpacer());
 			container.AddChild(closeButton);
 
