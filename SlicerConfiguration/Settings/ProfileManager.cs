@@ -130,6 +130,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//          Determine if the local profile is dirty. If so, we need to perform conflict resolution to work through the issues
 			//          If not, simply write the profile to disk as latest, load and return
 
+			// Only load profiles by ID that are defined in the profiles.json document
+			if (ProfileManager.Instance[profileID] == null)
+			{
+				return null;
+			}
+
 			string profilePath = Path.Combine(ProfilesPath, profileID + ".json");
 			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
 		}
@@ -283,6 +289,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		/*
 		private static void LoadProfilesFromDisk()
 		{
 			foreach (string filePath in Directory.GetFiles(ProfilesPath, "*.json"))
@@ -308,7 +315,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					System.Diagnostics.Debug.WriteLine("Error loading profile: {1}\r\n{2}", filePath, ex.Message);
 				}
 			}
-		}
+		}*/
 
 		public void Save()
 		{
