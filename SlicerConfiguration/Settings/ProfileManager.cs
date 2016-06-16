@@ -36,6 +36,8 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	using Agg;
+	using Localizations;
 	using System.Collections.ObjectModel;
 	using System.Net;
 
@@ -48,6 +50,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static ProfileManager Instance;
 
 		private static EventHandler unregisterEvents;
+
+		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
 		static ProfileManager()
 		{
@@ -112,10 +116,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static SettingsProfile LoadEmptyProfile()
 		{
-			return new SettingsProfile(
+			var empytProfile = new SettingsProfile(
 				new PrinterSettings(
 					new OemProfile(), 
 					SliceSettingsOrganizer.Instance.GetDefaultSettings()));
+
+			empytProfile.SetActiveValue("MatterControl.PrinterName", "Printers...".Localize());
+
+			return empytProfile;
 		}
 
 		internal static SettingsProfile LoadProfile(string profileID)
@@ -194,8 +202,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 			}
 
-
-			ActiveSliceSettings.SwitchToProfile(printerInfo.ID);
+			ProfileManager.Instance.Save();
 		}
 
 		internal static void AcquireNewProfile(string make, string model, string printerName)
@@ -284,9 +291,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					File.Delete(profilePath);
 				}
 
-				// Refresh after remove
+				// Refresh after change
 				UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = LoadEmptyProfile());
 			}
+
+			ProfilesListChanged.CallEvents(null, null);
 		}
 
 		/*
