@@ -646,7 +646,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             // put in a simulate extrusion checkbox
-            if (ActiveSliceSettings.Instance.ExtruderCount() > 1)
+            if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: ActiveTheme.Instance.PrimaryTextColor);
 				hideExtruderOffsets.Checked = gcodeViewWidget.HideExtruderOffsets;

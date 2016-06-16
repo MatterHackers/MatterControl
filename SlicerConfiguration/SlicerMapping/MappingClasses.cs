@@ -168,14 +168,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			preStartGCode.Add("; automatic settings before start_gcode");
 			AddDefaultIfNotPresent(preStartGCode, "G21", preStartGCodeLines, "set units to millimeters");
 			AddDefaultIfNotPresent(preStartGCode, "M107", preStartGCodeLines, "fan off");
-			double bed_temperature = ActiveSliceSettings.Instance.BedTemperature();
+			double bed_temperature = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
 			if (bed_temperature > 0)
 			{
 				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
 			}
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount();
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
 			// Start heating all the extruder that we are going to use.
 			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			List<string> postStartGCode = new List<string>();
 			postStartGCode.Add("; automatic settings after start_gcode");
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount();
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
 			// don't set the extruders to heating if we already waited for them to reach temp
 			if (ActiveSliceSettings.Instance.GetValue("heat_extruder_before_homing") != "1")

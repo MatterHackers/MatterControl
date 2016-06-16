@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		z_homes_to_max,
 		nozzle_diameter,
 		min_fan_speed,
+		extruder_count,
+		extruders_share_temperature,
 	};
 
 	public class SettingsProfile
@@ -291,23 +293,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return firstLayerValue;
 		}
 
-		public int ExtruderCount()
-		{
-			if (this.GetValue<bool>("extruders_share_temperature"))
-			{
-				return 1;
-			}
-
-			int extruderCount;
-			string extruderCountString = GetValue("extruder_count");
-			if (!int.TryParse(extruderCountString, out extruderCount))
-			{
-				return 1;
-			}
-
-			return extruderCount;
-		}
-
 		public Vector2 ExtruderOffset(int extruderIndex)
 		{
 			string currentOffsets = GetValue("extruder_offset");
@@ -429,6 +414,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(int))
 			{
+				if (settingsKey == SettingsKey.extruder_count.ToString()
+					&& this.GetValue<bool>(SettingsKey.extruders_share_temperature))
+				{
+					return (T)(object)1;
+				}
+
 				int result;
 				int.TryParse(this.GetValue(settingsKey), out result);
 				return (T)(object)(result);
@@ -696,10 +687,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if (ExtruderCount() < 1)
+				if (GetValue<int>(SettingsKey.extruder_count) < 1)
 				{
 					string error = "The Extruder Count must be at least 1.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), ExtruderCount());
+					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<int>(SettingsKey.extruder_count));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Features'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
