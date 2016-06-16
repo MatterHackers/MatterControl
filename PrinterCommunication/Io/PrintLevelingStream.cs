@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			string lineFromChild = base.ReadLine();
 
 			if (lineFromChild != null
-				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
+				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.GetValue<bool>("print_leveling_enabled"))
 			{
 				if (LineIsMovement(lineFromChild))
 				{

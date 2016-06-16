@@ -2303,7 +2303,7 @@
       }
     ],
     "SetSettingsOnChange": [],
-    "SlicerConfigName": "MatterControl.BaudRate",
+    "SlicerConfigName": "baud_rate",
     "PresentationName": "Baud Rate",
     "HelpText": "The serial port communication speed of the printers firmware.",
     "DataEditType": "INT",
@@ -2316,7 +2316,7 @@
   {
     "QuickMenuSettings": [],
     "SetSettingsOnChange": [],
-    "SlicerConfigName": "MatterControl.DeletePrinter",
+    "SlicerConfigName": "delete_printer",
     "PresentationName": "",
     "HelpText": "Delete the currently selected printer profile.",
     "DataEditType": "DELETE_PRINTER",
@@ -2329,7 +2329,7 @@
   {
     "QuickMenuSettings": [],
     "SetSettingsOnChange": [],
-    "SlicerConfigName": "MatterControl.PrinterName",
+    "SlicerConfigName": "printer_name",
     "PresentationName": "Printer Name",
     "HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
     "DataEditType": "STRING",
@@ -2342,7 +2342,7 @@
   {
     "QuickMenuSettings": [],
     "SetSettingsOnChange": [],
-    "SlicerConfigName": "MatterControl.AutoConnect",
+    "SlicerConfigName": "auto_connect",
     "PresentationName": "Auto Connect",
     "HelpText": "If set, the printer will automatically attempt to connect when selected.",
     "DataEditType": "CHECK_BOX",
@@ -2355,7 +2355,7 @@
   {
     "QuickMenuSettings": [],
     "SetSettingsOnChange": [],
-    "SlicerConfigName": "MatterControl.ComPort",
+    "SlicerConfigName": "com_port",
     "PresentationName": "COM Port",
     "HelpText": "The COM port to use while connecting to this printer.",
     "DataEditType": "COM_PORT",

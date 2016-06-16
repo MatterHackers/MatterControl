@@ -397,9 +397,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						if (ActiveSliceSettings.Instance.GetValue("MatterControl.BaudRate") != null)
+						if (ActiveSliceSettings.Instance.GetValue("baud_rate") != null)
 						{
-							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.GetValue("MatterControl.BaudRate"));
+							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.GetValue("baud_rate"));
 						}
 					}
 					catch
@@ -1346,7 +1346,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// If leveling is required or is currently on
 				if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
-					|| ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
+					|| ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
 				{
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 					if(levelingData?.HasBeenRun() != true)
@@ -1644,7 +1644,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 											// run the print leveling wizard if we need to for this printer
 											if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
-												|| ActiveSliceSettings.Instance.GetValue<bool>("MatterControl.PrintLevelingEnabled"))
+												|| ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
 											{
 												PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
 												if (levelingData?.HasBeenRun() != true)
@@ -2327,7 +2327,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				OnConnectionFailed(null);
 
-				UiNavigation.GoToPrinterSettings("MatterControl.ComPort Edit Field");
+				UiNavigation.GoToPrinterSettings("com_port Edit Field");
 			}
 		}
 
