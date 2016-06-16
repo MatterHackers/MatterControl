@@ -2800,7 +2800,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void TurnOffBedAndExtruders()
 		{
-			for (int i = 0; i < ActiveSliceSettings.Instance.ExtruderCount(); i++)
+			for (int i = 0; i < ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count); i++)
 			{
 				SetTargetExtruderTemperature(i, 0);
 			}

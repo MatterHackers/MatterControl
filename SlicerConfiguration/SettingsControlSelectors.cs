@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (SliceEngineInfo engineMenuItem in SlicingQueue.AvailableSliceEngines)
 			{
 				bool engineAllowed = true;
-				if (ActiveSliceSettings.Instance.ExtruderCount() > 1 && engineMenuItem.Name != "MatterSlice")
+				if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1 && engineMenuItem.Name != "MatterSlice")
 				{
 					engineAllowed = false;
 				}

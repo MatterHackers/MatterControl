@@ -412,7 +412,7 @@ namespace MatterHackers.MatterControl
 
 		private FlowLayoutWidget CreateEButtons(double buttonSeparationDistance)
 		{
-			int extruderCount = ActiveSliceSettings.Instance.ExtruderCount();
+			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
 			FlowLayoutWidget eButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{

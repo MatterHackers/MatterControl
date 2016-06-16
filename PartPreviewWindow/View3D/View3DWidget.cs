@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler SelectedTransformChanged;
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
+		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
 		{
 			this.openMode = openMode;
 			this.windowType = windowType;
@@ -1064,7 +1064,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void AddMaterialControls(FlowLayoutWidget buttonPanel)
 		{
 			extruderButtons.Clear();
-			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount(); extruderIndex++)
+			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count); extruderIndex++)
 			{
 				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 				colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -1461,7 +1461,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// put in the material options
-				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount();
+				int numberOfExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
 				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
@@ -2110,8 +2110,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
 				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
-				RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size").x, ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size").y);
-				bedRect.Offset(ActiveSliceSettings.Instance.GetValue<Vector2>("print_center") - ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size") / 2);
+				RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y);
+				bedRect.Offset(ActiveSliceSettings.Instance.GetValue<Vector2>("print_center") - ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size) / 2);
 
 				bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
 

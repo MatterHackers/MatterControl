@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private TypeFace boldTypeFace;
 
-		public View3DTextCreator(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
+		public View3DTextCreator(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape)
 		{
 			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
 

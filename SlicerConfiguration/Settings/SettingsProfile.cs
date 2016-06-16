@@ -48,14 +48,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using DataStorage;
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
-
+	using MeshVisualizer;
 	public enum SettingsKey
 	{
+		bed_shape,
 		bed_size,
+		bed_temperature,
 		has_heated_bed,
 		resume_position_before_z_home,
 		z_homes_to_max,
 		nozzle_diameter,
+		min_fan_speed,
+		extruder_count,
+		extruders_share_temperature,
+		fill_density,
 	};
 
 	public class SettingsProfile
@@ -231,16 +237,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetMaterialPreset(extruderIndex, text);
 		}
 
-		public double BedTemperature()
-		{
-			double targetTemp = 0;
-			if (this.GetValue<bool>("has_heated_bed"))
-			{
-				double.TryParse(GetValue("bed_temperature"), out targetTemp);
-			}
-			return targetTemp;
-		}
-
 		public int[] LayerToPauseOn()
 		{
 			string[] userValues = GetValue("layer_to_pause").Split(';');
@@ -254,26 +250,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
 				return val == 0 ? 1 : val - 1;
 			}).ToArray();
-		}
-
-		public double FillDensity()
-		{
-			string fillDensityValueString = GetValue("fill_density");
-			if (fillDensityValueString.Contains("%"))
-			{
-				string onlyNumber = fillDensityValueString.Replace("%", "");
-				double ratio = ParseDouble(onlyNumber) / 100;
-				return ratio;
-			}
-			else
-			{
-				return ParseDouble(GetValue("fill_density"));
-			}
-		}
-
-		public double MinFanSpeed()
-		{
-			return ParseDouble(GetValue("min_fan_speed"));
 		}
 
 		internal string MaterialPresetKey(int extruderIndex)
@@ -294,42 +270,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				throw new Exception(string.Format("Format cannot be parsed. FirstLayerHeight '{0}'", firstLayerValueString));
 			}
 			return firstLayerValue;
-		}
-
-		public MeshVisualizer.MeshViewerWidget.BedShape BedShape()
-		{
-			switch (GetValue("bed_shape"))
-			{
-				case "rectangular":
-					return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
-
-				case "circular":
-					return MeshVisualizer.MeshViewerWidget.BedShape.Circular;
-
-				default:
-#if DEBUG
-					throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetValue("bed_shape")));
-#else
-					return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
-#endif
-			}
-		}
-
-		public int ExtruderCount()
-		{
-			if (this.GetValue<bool>("extruders_share_temperature"))
-			{
-				return 1;
-			}
-
-			int extruderCount;
-			string extruderCountString = GetValue("extruder_count");
-			if (!int.TryParse(extruderCountString, out extruderCount))
-			{
-				return 1;
-			}
-
-			return extruderCount;
 		}
 
 		public Vector2 ExtruderOffset(int extruderIndex)
@@ -449,15 +389,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (typeof(T) == typeof(bool))
 			{
-				return (T)(object) (this.GetValue(settingsKey) == "1");
+				return (T)(object)(this.GetValue(settingsKey) == "1");
 			}
 			else if (typeof(T) == typeof(int))
 			{
+				if (settingsKey == SettingsKey.extruder_count.ToString()
+					&& this.GetValue<bool>(SettingsKey.extruders_share_temperature))
+				{
+					return (T)(object)1;
+				}
+
 				int result;
 				int.TryParse(this.GetValue(settingsKey), out result);
 				return (T)(object)(result);
 			}
-			else if(typeof(T) == typeof(Vector2))
+			else if (typeof(T) == typeof(Vector2))
 			{
 				string[] twoValues = GetValue(settingsKey).Split(',');
 				if (twoValues.Length != 2)
@@ -481,7 +427,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						return (T)(object)(GetValue<double>("layer_height") * ratio);
 					}
-					else if(settingsKey == "first_layer_extrusion_width")
+					else if (settingsKey == "first_layer_extrusion_width")
 					{
 						return (T)(object)(GetValue<double>("layer_height") * ratio);
 					}
@@ -489,10 +435,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return (T)(object)(ratio);
 				}
 
+				if (settingsKey == SettingsKey.bed_temperature.ToString()
+					&& !this.GetValue<bool>("has_heated_bed"))
+				{
+					return (T)(object)(0);
+				}
+
 				double result;
 				double.TryParse(this.GetValue(settingsKey), out result);
 				return (T)(object)(result);
 			}
+			else if (typeof(T) == typeof(BedShape))
+			{
+				switch (GetValue(settingsKey.ToString()))
+				{
+					case "rectangular":
+						return (T)(object)BedShape.Rectangular;
+
+					case "circular":
+						return (T)(object)BedShape.Circular;
+
+					default:
+#if DEBUG
+						throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetValue("bed_shape")));
+#else
+						return (T)(object)BedShape.Rectangular;
+#endif
+				}
+			}
+
 
 			return (T)default(T);
 		}
@@ -677,10 +648,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if (MinFanSpeed() > 100)
+				if (GetValue<double>(SettingsKey.min_fan_speed) > 100)
 				{
 					string error = "The Minimum Fan Speed can only go as high as 100%.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), MinFanSpeed());
+					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>(SettingsKey.min_fan_speed));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
@@ -695,25 +666,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if (ExtruderCount() < 1)
+				if (GetValue<int>(SettingsKey.extruder_count) < 1)
 				{
 					string error = "The Extruder Count must be at least 1.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), ExtruderCount());
+					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<int>(SettingsKey.extruder_count));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Features'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (FillDensity() < 0 || FillDensity() > 1)
+				if (GetValue<double>(SettingsKey.fill_density) < 0 || GetValue<double>(SettingsKey.fill_density) > 1)
 				{
 					string error = "The Fill Density must be between 0 and 1.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), FillDensity());
+					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>(SettingsKey.fill_density));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (FillDensity() == 1
+				if (GetValue<double>(SettingsKey.fill_density) == 1
 					&& GetValue("infill_type") != "LINES")
 				{
 					string error = "Solid Infill works best when set to LINES.".Localize();
