@@ -51,11 +51,6 @@ namespace MatterHackers.MatterControl
 		{
 			Rebuild();
 
-			this.AddItem(
-				StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), 
-				"Add New Printer...", 
-				"new");
-
 			this.SelectionChanged += (s, e) =>
 			{
 				string printerID = this.SelectedValue;
@@ -73,6 +68,7 @@ namespace MatterHackers.MatterControl
 			};
 
 			SliceSettingsWidget.SettingChanged.RegisterEvent(SettingChanged, ref unregisterEvents);
+			ProfileManager.ProfilesListChanged.RegisterEvent(SettingChanged, ref unregisterEvents);
 		}
 
 		public void Rebuild()
@@ -90,6 +86,11 @@ namespace MatterHackers.MatterControl
 				this.SelectedValue = ActiveSliceSettings.Instance.ID;
 				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue("MatterControl.PrinterName");
 			}
+
+			this.AddItem(
+				StaticData.Instance.LoadIcon("icon_plus.png", 32, 32),
+				"Add New Printer...",
+				"new");
 		}
 
 		private void SettingChanged(object sender, EventArgs e)
@@ -101,9 +102,9 @@ namespace MatterHackers.MatterControl
 				{
 					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue("MatterControl.PrinterName");
 				}
-
-				Rebuild();
 			}
+
+			Rebuild();
 		}
 
 		public override void OnClosed(EventArgs e)
