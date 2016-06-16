@@ -116,6 +116,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							SetAsActive = (materialKey) =>
 							{
 								ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, materialKey);
+							},
+							DeleteLayer = () => 
+							{
+								var materialKeys = ActiveSliceSettings.Instance.MaterialSettingsKeys();
+								for (var i = 0; i < materialKeys.Count; i++)
+								{
+									if (materialKeys[i] == presetsID)
+									{
+										materialKeys[i] = "";
+									}
+								}
+
+								ActiveSliceSettings.Instance.SetMaterialPreset(extruderIndex, "");
+								ActiveSliceSettings.Instance.MaterialLayers.Remove(layerToEdit);
+								ActiveSliceSettings.Instance.SaveChanges();
+
+								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}
 						};
 
@@ -148,7 +165,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.QualityLayers, layerToEdit)
 						{
 							LayerType = NamedSettingsLayers.Quality,
-							SetAsActive = (qualityKey) => ActiveSliceSettings.Instance.ActiveQualityKey = qualityKey
+							SetAsActive = (qualityKey) => ActiveSliceSettings.Instance.ActiveQualityKey = qualityKey,
+							DeleteLayer = () =>
+							{
+								ActiveSliceSettings.Instance.ActiveQualityKey = "";
+								ActiveSliceSettings.Instance.QualityLayers.Remove(layerToEdit);
+								ActiveSliceSettings.Instance.SaveChanges();
+
+								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
+							}
 						};
 
 						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(presetsContext);
