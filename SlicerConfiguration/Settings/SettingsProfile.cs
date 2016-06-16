@@ -79,6 +79,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile = profile;
 		}
 
+		#region LayeredProfile Proxies
+
 		public string ID
 		{
 			get
@@ -91,11 +93,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public PrinterSettingsLayer BaseLayer => layeredProfile.BaseLayer;
-
-		public PrinterSettingsLayer OemLayer => layeredProfile.OemProfile.OemLayer;
-
-		public PrinterSettingsLayer UserLayer => layeredProfile.UserLayer;
 
 		public string ActiveQualityKey
 		{
@@ -109,6 +106,77 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public PrinterSettingsLayer BaseLayer => layeredProfile.BaseLayer;
+
+		public PrinterSettingsLayer OemLayer => layeredProfile.OemProfile.OemLayer;
+
+		public PrinterSettingsLayer UserLayer => layeredProfile.UserLayer;
+
+		public List<PrinterSettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
+
+		public List<PrinterSettingsLayer> QualityLayers => layeredProfile.QualityLayers;
+
+		public List<GCodeMacro> Macros => layeredProfile.Macros;
+
+		///<summary>
+		///Returns the first matching value discovered while enumerating the settings layers
+		///</summary>
+		public string GetValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			return layeredProfile.GetValue(sliceSetting, layerCascade);
+		}
+
+		public void SetActiveValue(string sliceSetting, string sliceValue)
+		{
+			layeredProfile.SetActiveValue(sliceSetting, sliceValue);
+		}
+
+		public void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer persistenceLayer)
+		{
+			layeredProfile.SetActiveValue(sliceSetting, sliceValue, persistenceLayer);
+		}
+
+		public void ClearValue(string sliceSetting)
+		{
+			layeredProfile.ClearValue(sliceSetting);
+		}
+
+		public void ClearValue(string sliceSetting, PrinterSettingsLayer persistenceLayer)
+		{
+			layeredProfile.ClearValue(sliceSetting, persistenceLayer);
+		}
+
+		internal void SaveChanges()
+		{
+			layeredProfile.Save();
+		}
+
+		internal PrinterSettingsLayer QualityLayer(string key)
+		{
+			return layeredProfile.GetQualityLayer(key);
+		}
+
+		internal void SetMaterialPreset(int extruderIndex, string text)
+		{
+			layeredProfile.SetMaterialPreset(extruderIndex, text);
+		}
+
+		internal List<string> MaterialSettingsKeys()
+		{
+			return layeredProfile.MaterialSettingsKeys;
+		}
+
+		internal string MaterialPresetKey(int extruderIndex)
+		{
+			return layeredProfile.GetMaterialPresetKey(extruderIndex);
+		}
+
+		internal PrinterSettingsLayer MaterialLayer(string key)
+		{
+			return layeredProfile.GetMaterialLayer(layeredProfile.MaterialSettingsKeys[0]);
+		}
+		#endregion
+
 		internal void RunInTransaction(Action<SettingsProfile> action)
 		{
 			// TODO: Implement RunInTransaction
@@ -117,10 +185,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Commit
 		}
 
-		public List<PrinterSettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
-
-		public List<PrinterSettingsLayer> QualityLayers => layeredProfile.QualityLayers;
-
+		/* jlewin - delete after confirmation
 		public class SettingsConverter
 		{
 			public static void LoadConfigurationSettingsFromFileAsUnsaved(string pathAndFileName)
@@ -156,7 +221,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Debug.WriteLine(string.Format("Error loading configuration: {0}", e));
 				}
 			}
-		}
+		}*/
 
 		public void ClearUserOverrides()
 		{
@@ -190,11 +255,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal void SaveChanges()
-		{
-			layeredProfile.Save();
-		}
-
 		public string ExtruderTemperature(int extruderIndex)
 		{
 			if (extruderIndex >= layeredProfile.MaterialSettingsKeys.Count)
@@ -222,21 +282,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return result;
 		}
 
-		internal PrinterSettingsLayer MaterialLayer(string key)
-		{
-			return layeredProfile.GetMaterialLayer(layeredProfile.MaterialSettingsKeys[0]);
-		}
-
-		internal PrinterSettingsLayer QualityLayer(string key)
-		{
-			return layeredProfile.GetQualityLayer(key);
-		}
-
-		internal void SetMaterialPreset(int extruderIndex, string text)
-		{
-			layeredProfile.SetMaterialPreset(extruderIndex, text);
-		}
-
 		public int[] LayerToPauseOn()
 		{
 			string[] userValues = GetValue("layer_to_pause").Split(';');
@@ -250,16 +295,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
 				return val == 0 ? 1 : val - 1;
 			}).ToArray();
-		}
-
-		internal string MaterialPresetKey(int extruderIndex)
-		{
-			return layeredProfile.GetMaterialPresetKey(extruderIndex);
-		}
-
-		internal List<string> MaterialSettingsKeys()
-		{
-			return layeredProfile.MaterialSettingsKeys;
 		}
 
 		private static double ParseDouble(string firstLayerValueString)
@@ -377,6 +412,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		#region Migrate to LayeredProfile 
+
 		public T GetValue<T>(SettingsKey settingsKey) where T : IConvertible
 		{
 			return GetValue<T>(settingsKey.ToString());
@@ -466,34 +503,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 
 			return (T)default(T);
-		}
-
-		///<summary>
-		///Returns the first matching value discovered while enumerating the settings layers
-		///</summary>
-		public string GetValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
-		{
-			return layeredProfile.GetValue(sliceSetting, layerCascade);
-		}
-
-		public void SetActiveValue(string sliceSetting, string sliceValue)
-		{
-			layeredProfile.SetActiveValue(sliceSetting, sliceValue);
-		}
-
-		public void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer persistenceLayer)
-		{
-			layeredProfile.SetActiveValue(sliceSetting, sliceValue, persistenceLayer);
-		}
-
-		public void ClearValue(string sliceSetting)
-		{
-			layeredProfile.ClearValue(sliceSetting);
-		}
-
-		public void ClearValue(string sliceSetting, PrinterSettingsLayer persistenceLayer)
-		{
-			layeredProfile.ClearValue(sliceSetting, persistenceLayer);
 		}
 
 		/// <summary>
@@ -755,6 +764,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return true;
 		}
 
+		#endregion
+
 		public void SetAutoConnect(bool autoConnectPrinter)
 		{
 			layeredProfile.SetActiveValue("MatterControl.AutoConnect", autoConnectPrinter ? "1" : "0");
@@ -849,7 +860,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetActiveValue("MatterControl.ManualMovementSpeeds", speed);
 		}
 
-		public List<GCodeMacro> Macros => layeredProfile.Macros;
 	}
 
 	public class PrinterSettingsLayer : SettingsDictionary
