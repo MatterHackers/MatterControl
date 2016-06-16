@@ -87,10 +87,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector2 bedCenter;
 		private Vector3 viewerVolume;
-		private MeshViewerWidget.BedShape bedShape;
+		private BedShape bedShape;
 		private int sliderWidth;
 
-		public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowMode)
+		public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode)
 		{
 			this.viewerVolume = viewerVolume;
 			this.bedShape = bedShape;
@@ -126,8 +126,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					|| stringEvent.Data == "bed_shape"
 					|| stringEvent.Data == "center_part_on_bed")
 				{
-					viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size"), ActiveSliceSettings.Instance.GetValue<double>("build_height"));
-					bedShape = ActiveSliceSettings.Instance.BedShape();
+					viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), ActiveSliceSettings.Instance.GetValue<double>("build_height"));
+					bedShape = ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape);
 					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
 
 					double buildHeight = ActiveSliceSettings.Instance.GetValue<double>("build_height");

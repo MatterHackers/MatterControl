@@ -48,14 +48,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using DataStorage;
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
-
+	using MeshVisualizer;
 	public enum SettingsKey
 	{
+		bed_shape,
 		bed_size,
+		bed_temperature,
 		has_heated_bed,
 		resume_position_before_z_home,
 		z_homes_to_max,
 		nozzle_diameter,
+		min_fan_speed,
 	};
 
 	public class SettingsProfile
@@ -243,16 +246,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetMaterialPreset(extruderIndex, text);
 		}
 
-		public double BedTemperature()
-		{
-			double targetTemp = 0;
-			if (this.GetValue<bool>("has_heated_bed"))
-			{
-				double.TryParse(GetValue("bed_temperature"), out targetTemp);
-			}
-			return targetTemp;
-		}
-
 		public int[] LayerToPauseOn()
 		{
 			string[] userValues = GetValue("layer_to_pause").Split(';');
@@ -283,11 +276,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public double MinFanSpeed()
-		{
-			return ParseDouble(GetValue("min_fan_speed"));
-		}
-
 		internal string MaterialPresetKey(int extruderIndex)
 		{
 			return layeredProfile.GetMaterialPresetKey(extruderIndex);
@@ -301,25 +289,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				throw new Exception(string.Format("Format cannot be parsed. FirstLayerHeight '{0}'", firstLayerValueString));
 			}
 			return firstLayerValue;
-		}
-
-		public MeshVisualizer.MeshViewerWidget.BedShape BedShape()
-		{
-			switch (GetValue("bed_shape"))
-			{
-				case "rectangular":
-					return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
-
-				case "circular":
-					return MeshVisualizer.MeshViewerWidget.BedShape.Circular;
-
-				default:
-#if DEBUG
-					throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetValue("bed_shape")));
-#else
-					return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
-#endif
-			}
 		}
 
 		public int ExtruderCount()
@@ -456,7 +425,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (typeof(T) == typeof(bool))
 			{
-				return (T)(object) (this.GetValue(settingsKey) == "1");
+				return (T)(object)(this.GetValue(settingsKey) == "1");
 			}
 			else if (typeof(T) == typeof(int))
 			{
@@ -464,7 +433,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				int.TryParse(this.GetValue(settingsKey), out result);
 				return (T)(object)(result);
 			}
-			else if(typeof(T) == typeof(Vector2))
+			else if (typeof(T) == typeof(Vector2))
 			{
 				string[] twoValues = GetValue(settingsKey).Split(',');
 				if (twoValues.Length != 2)
@@ -488,7 +457,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						return (T)(object)(GetValue<double>("layer_height") * ratio);
 					}
-					else if(settingsKey == "first_layer_extrusion_width")
+					else if (settingsKey == "first_layer_extrusion_width")
 					{
 						return (T)(object)(GetValue<double>("layer_height") * ratio);
 					}
@@ -496,10 +465,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return (T)(object)(ratio);
 				}
 
+				if (settingsKey == SettingsKey.bed_temperature.ToString()
+					&& !this.GetValue<bool>("has_heated_bed"))
+				{
+					return (T)(object)(0);
+				}
+
 				double result;
 				double.TryParse(this.GetValue(settingsKey), out result);
 				return (T)(object)(result);
 			}
+			else if (typeof(T) == typeof(BedShape))
+			{
+				switch (GetValue(settingsKey.ToString()))
+				{
+					case "rectangular":
+						return (T)(object)(BedShape.Rectangular);
+
+					case "circular":
+						return (T)(object)(BedShape.Circular);
+
+					default:
+#if DEBUG
+						throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetValue("bed_shape")));
+#else
+						return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
+#endif
+				}
+			}
+
 
 			return (T)default(T);
 		}
@@ -684,10 +678,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if (MinFanSpeed() > 100)
+				if (GetValue<double>(SettingsKey.min_fan_speed) > 100)
 				{
 					string error = "The Minimum Fan Speed can only go as high as 100%.".Localize();
-					string details = string.Format("It is currently set to {0}.".Localize(), MinFanSpeed());
+					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>(SettingsKey.min_fan_speed));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;

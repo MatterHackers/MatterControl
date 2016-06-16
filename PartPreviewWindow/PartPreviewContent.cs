@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.IO;
@@ -99,9 +100,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the 3D view
 			partPreviewView = new View3DWidget(printItem,
-				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size"), buildHeight),
+				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
 				ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"),
-				ActiveSliceSettings.Instance.BedShape(),
+				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape),
 				windowMode,
 				autoRotate3DView,
 				openMode);
@@ -116,9 +117,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			viewGcodeBasic = new ViewGcodeBasic(printItem,
-				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size"), buildHeight),
+				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
 				ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"),
-				ActiveSliceSettings.Instance.BedShape(), gcodeWindowMode);
+				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape), gcodeWindowMode);
 
 			if (windowMode == View3DWidget.WindowMode.StandAlone)
 			{

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 
@@ -79,12 +80,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public static Vector2 GetPrintLevelPositionToSample(int index)
 		{
-			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size");
+			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
 			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
 
-			switch (ActiveSliceSettings.Instance.BedShape())
+			switch (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape))
 			{
-				case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
+				case BedShape.Circular:
 					Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
 					switch (index)
 					{
@@ -101,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							throw new IndexOutOfRangeException();
 					}
 
-				case MeshVisualizer.MeshViewerWidget.BedShape.Rectangular:
+				case BedShape.Rectangular:
 				default:
 					switch (index)
 					{

@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.CreatePrintBed(
 					new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size"), buildHeight),
 					ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"),
-					ActiveSliceSettings.Instance.BedShape());
+					ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
 				PutOemImageOnBed();
 			}));
 		}

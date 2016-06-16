@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private TypeFace brailTypeFace;
 		private TypeFace boldTypeFace;
 
-		public View3DBrailleBuilder(Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape)
+		public View3DBrailleBuilder(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape)
 		{
 			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
 			brailTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
