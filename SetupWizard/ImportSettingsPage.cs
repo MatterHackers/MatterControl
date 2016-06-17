@@ -60,7 +60,32 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-		public class ImportSettingsPage : WizardPage
+	public class ImportToSettingSucceeded : WizardPage
+	{
+		static string successMessage = "You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.".Localize();
+		string settingType;
+
+		public ImportToSettingSucceeded(string newProfileName, string settingType) :
+			base("Done", "Import Wizard")
+		{
+			this.settingType = settingType;
+			this.headerLabel.Text = "Import Successful".Localize();
+
+			successMessage = successMessage.FormatWith(settingType, newProfileName, settingType);
+
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			contentRow.AddChild(container);
+
+			var successMessageWidget = new WrappedTextWidget(successMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			container.AddChild(successMessageWidget);
+		}
+	}
+
+
+	public class ImportSettingsPage : WizardPage
 	{
 		RadioButton newPrinterButton;
 		RadioButton mergeButton;
@@ -199,7 +224,7 @@ namespace MatterHackers.MatterControl
 			else if(newQualityPresetButton.Checked)
 			{
 				ImportToPreset(settingsFilePath);
-				WizardWindow.ChangeToPage(new ImportToPrinterSucceeded(Path.GetFileNameWithoutExtension(settingsFilePath))
+				WizardWindow.ChangeToPage(new ImportToSettingSucceeded(Path.GetFileNameWithoutExtension(settingsFilePath), "Quality".Localize())
 				{
 					WizardWindow = this.WizardWindow,
 				});
@@ -207,7 +232,7 @@ namespace MatterHackers.MatterControl
 			else if(newMaterialPresetButton.Checked)
 			{
 				ImportToPreset(settingsFilePath);
-				WizardWindow.ChangeToPage(new ImportToPrinterSucceeded(Path.GetFileNameWithoutExtension(settingsFilePath))
+				WizardWindow.ChangeToPage(new ImportToSettingSucceeded(Path.GetFileNameWithoutExtension(settingsFilePath), "Material".Localize())
 				{
 					WizardWindow = this.WizardWindow,
 				});
@@ -240,6 +265,9 @@ namespace MatterHackers.MatterControl
 						bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
 						if (isSlic3r)
 						{
+							//newLayer.Name = "Quality" + ActiveSliceSettings.Instance.QualityLayers.Count;
+							//ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+
 							// TODO: this should only be the oem and user layer (not the quality or material layer)
 							var activeSettings = ActiveSliceSettings.Instance;
 
