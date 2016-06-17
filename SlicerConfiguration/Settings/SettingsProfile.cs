@@ -893,11 +893,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("MatterControl.LayerName");
+				return ValueOrDefault("layer_name");
 			}
 			set
 			{
-				this["MatterControl.LayerName"] = value;
+				this["layer_name"] = value;
 			}
 		}
 

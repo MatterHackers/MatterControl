@@ -210,6 +210,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("slicing_engine", item.Value);
 								break;
 
+							case "MatterControl.LayerName":
+								layer.Add("layer_name", item.Value);
+								break;
+
 							default:
 
 								if (item.Key.Contains("ComPort"))
