@@ -267,31 +267,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal void SetValue(string sliceSetting, string sliceValue)
+		internal void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
 		{
-			SetValue(sliceSetting, sliceValue, UserLayer);
-		}
+			var persistenceLayer = layer ?? UserLayer;
 
-		internal void SetValue(string sliceSetting, string sliceValue, PrinterSettingsLayer layer)
-		{
-			layer[sliceSetting] = sliceValue;
-			Save();
-		}
-
-		internal void ClearValue(string sliceSetting)
-		{
-			ClearValue(sliceSetting, UserLayer);
-		}
-
-		internal void ClearValue(string sliceSetting, PrinterSettingsLayer layer)
-		{
-			if(layer.ContainsKey(sliceSetting))
+			// If the setting exists and is set the requested value, exit without setting or saving
+			string existingValue;
+			if (persistenceLayer.TryGetValue(settingsKey, out existingValue) && existingValue == settingsValue)
 			{
-				layer.Remove(sliceSetting);
+				return;
 			}
 
-			// TODO: Reconsider this frequency
+			// Otherwise, set and save
+			persistenceLayer[settingsKey] = settingsValue;
 			Save();
+		}
+
+		internal void ClearValue(string sliceSetting, PrinterSettingsLayer layer = null)
+		{
+			var persistenceLayer = layer ?? UserLayer;
+			if (persistenceLayer.ContainsKey(sliceSetting))
+			{
+				persistenceLayer.Remove(sliceSetting);
+				Save();
+			}
 		}
 	}
 }

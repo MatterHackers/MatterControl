@@ -128,22 +128,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetValue(sliceSetting, layerCascade);
 		}
 
-		public void SetActiveValue(string sliceSetting, string sliceValue)
-		{
-			layeredProfile.SetValue(sliceSetting, sliceValue);
-		}
-
-		public void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer persistenceLayer)
+		public void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer persistenceLayer = null)
 		{
 			layeredProfile.SetValue(sliceSetting, sliceValue, persistenceLayer);
 		}
 
-		public void ClearValue(string sliceSetting)
-		{
-			layeredProfile.ClearValue(sliceSetting);
-		}
-
-		public void ClearValue(string sliceSetting, PrinterSettingsLayer persistenceLayer)
+		public void ClearValue(string sliceSetting, PrinterSettingsLayer persistenceLayer = null)
 		{
 			layeredProfile.ClearValue(sliceSetting, persistenceLayer);
 		}
