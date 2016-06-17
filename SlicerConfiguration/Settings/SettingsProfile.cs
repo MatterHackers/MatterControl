@@ -902,7 +902,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("layer_id");
+				string layerKey = ValueOrDefault("layer_id");
+				if (string.IsNullOrEmpty(layerKey))
+				{
+					// Generate a new GUID when missing or empty. We can't do this in the constructor as the dictionary deserialization will fail if
+					// an existing key exists for layer_id and on new empty layers, we still need to construct an initial identifier. 
+					layerKey = Guid.NewGuid().ToString();
+					LayerID = layerKey;
+				}
+
+				return layerKey;
 			}
 			set
 			{
