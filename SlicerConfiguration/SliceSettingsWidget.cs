@@ -1166,8 +1166,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #endif
 							// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "com_port" settings name to
 							// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
-							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to "MatterControl.<machine>.ComPort"
-							// ensuring that a single printer can be shared across different devices and we'll select the correct ComPort in each case
+							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
+							// ensuring that a single printer can be shared across different devices and we'll select the correct com port in each case
 							var selectableOptions = new DropDownList("None", maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,

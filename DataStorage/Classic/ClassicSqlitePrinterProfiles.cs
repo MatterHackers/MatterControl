@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.UserLayer["manual_movement_speeds"] = printer.ManualMovementSpeeds;
 
 			// TODO: Where can we find CalibrationFiiles in the current model?
-			//layeredProfile.SetActiveValue("MatterControl.CalibrationFiles", printer.Make);
+			//layeredProfile.SetActiveValue(""calibration_files"", ???);
 
 			layeredProfile.ID = printer.Id.ToString();
 			string fullProfilePath = Path.Combine(profilePath, printer.Id + ".json");
