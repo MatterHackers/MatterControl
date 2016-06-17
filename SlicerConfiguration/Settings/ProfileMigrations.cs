@@ -230,6 +230,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("calibration_files", item.Value);
 								break;
 
+							case "MatterControl.ActiveMaterialKey":
+								// Simply delete abandoned setting
+								break;
+
 							default:
 
 								if (item.Key.Contains("ComPort"))
