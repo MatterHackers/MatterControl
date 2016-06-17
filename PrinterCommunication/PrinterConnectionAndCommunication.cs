@@ -516,7 +516,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string ComPort => ActiveSliceSettings.Instance?.ComPort();
 
-		public string DriverType => ActiveSliceSettings.Instance?.GetValue("MatterControl.DriverType");
+		public string DriverType => ActiveSliceSettings.Instance?.GetValue("driver_type");
 
 		public bool AtxPowerEnabled
 		{

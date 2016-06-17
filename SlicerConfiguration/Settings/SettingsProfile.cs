@@ -381,7 +381,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SlicingEngineTypes ActiveSliceEngineType()
 		{
-			string engineType = layeredProfile.GetValue("MatterControl.SlicingEngine");
+			string engineType = layeredProfile.GetValue("slicing_engine");
 			if (string.IsNullOrEmpty(engineType))
 			{
 				return defaultEngineType;
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ActiveSliceEngineType(SlicingEngineTypes type)
 		{
-			SetActiveValue("MatterControl.SlicingEngine", type.ToString());
+			SetActiveValue("slicing_engine", type.ToString());
 		}
 
 		public SliceEngineMapping ActiveSliceEngine()
@@ -774,9 +774,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (printerInfo != null)
 			{
 				printerInfo.MarkedForDelete = markedForDelete;
-
 				ProfileManager.Instance.Save();
-				SetActiveValue("MatterControl.MarkedForDelete", "1");
 			}
 
 			// Clear selected printer state
@@ -792,27 +790,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ComPort()
 		{
-			return layeredProfile.GetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName));
+			return layeredProfile.GetValue($"{Environment.MachineName}_com_port");
 		}
 
 		public void SetComPort(string port)
 		{
-			layeredProfile.SetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port);
+			layeredProfile.SetValue($"{Environment.MachineName}_com_port", port);
 		}
 
 		public void SetComPort(string port, PrinterSettingsLayer layer)
 		{
-			layeredProfile.SetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port, layer);
+			layeredProfile.SetValue($"{Environment.MachineName}_com_port", port, layer);
 		}
 
 		public void SetSlicingEngine(string engine)
 		{
-			layeredProfile.SetValue("MatterControl.SlicingEngine", engine);
+			layeredProfile.SetValue("slicing_engine", engine);
 		}
 
 		public void SetDriverType(string driver)
 		{
-			layeredProfile.SetValue("MatterControl.DriverType", driver);
+			layeredProfile.SetValue("driver_type", driver);
 		}
 
 		public void SetDeviceToken(string token)
@@ -875,19 +873,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				// TODO: Short term hack to silently upgrade existing profiles with missing ID
-				string layerKey = ValueOrDefault("MatterControl.LayerID");
-				if (string.IsNullOrEmpty(layerKey))
-				{
-					layerKey = Guid.NewGuid().ToString();
-					LayerID = layerKey;
-				}
-
-				return layerKey;
+				return ValueOrDefault("layer_id");
 			}
 			set
 			{
-				this["MatterControl.LayerID"] = value;
+				this["layer_id"] = value;
 			}
 		}
 
@@ -895,11 +885,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("MatterControl.LayerName");
+				return ValueOrDefault("layer_name");
 			}
 			set
 			{
-				this["MatterControl.LayerName"] = value;
+				this["layer_name"] = value;
 			}
 		}
 
@@ -907,11 +897,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("MatterControl.LayerSource");
+				return ValueOrDefault("layer_source");
 			}
 			set
 			{
-				this["MatterControl.LayerSource"] = value;
+				this["layer_source"] = value;
 			}
 		}
 
@@ -919,11 +909,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("MatterControl.LayerETag");
+				return ValueOrDefault("layer_etag");
 			}
 			set
 			{
-				this["MatterControl.LayerETag"] = value;
+				this["layer_etag"] = value;
 			}
 		}
 
