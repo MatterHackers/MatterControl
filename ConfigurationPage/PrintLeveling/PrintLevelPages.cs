@@ -135,8 +135,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// first make sure there is no leftover FinishedProbe event
 			PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
 
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
+			var feedRates = ActiveSliceSettings.Instance.ManualMovementSpeeds();
+
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
 			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30");
 			PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
 
@@ -157,7 +159,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					int zStringPos = currentEvent.Data.LastIndexOf("Z:");
 					string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
 					probePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
-					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
+					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
 					PrinterConnectionAndCommunication.Instance.ReadPosition();
 
 					container.nextButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
@@ -313,13 +315,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// don't move the bed lower it will not work when we print.
 				return;
 			}
-			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, -moveAmount, InstructionsPage.ManualControlsFeedRate().z);
+			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, -moveAmount, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
 			PrinterConnectionAndCommunication.Instance.ReadPosition();
 		}
 
 		private void zPlusControl_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmount, InstructionsPage.ManualControlsFeedRate().z);
+			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmount, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
 			PrinterConnectionAndCommunication.Instance.ReadPosition();
 		}
 	}
@@ -349,8 +351,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			base.PageIsBecomingActive();
 
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
+			var feedRates = ActiveSliceSettings.Instance.ManualMovementSpeeds();
+
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
 			PrinterConnectionAndCommunication.Instance.ReadPosition();
 
 			container.backButton.Enabled = false;
@@ -389,8 +393,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// first make sure there is no leftover FinishedProbe event
 			PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
 
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
+			var feedRates = ActiveSliceSettings.Instance.ManualMovementSpeeds();
+
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
 			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30");
 			PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
 
@@ -416,7 +422,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					whereToWriteSamplePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
 
 					// now move to the probe start position
-					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
+					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
 					PrinterConnectionAndCommunication.Instance.ReadPosition();
 				}
 			}
@@ -470,7 +476,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (haveDrawn)
 			{
-				PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, 2, InstructionsPage.ManualControlsFeedRate().z);
+				PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, 2, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
 			}
 			base.PageIsBecomingInactive();
 		}

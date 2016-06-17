@@ -128,22 +128,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetValue(sliceSetting, layerCascade);
 		}
 
-		public void SetActiveValue(string sliceSetting, string sliceValue)
-		{
-			layeredProfile.SetValue(sliceSetting, sliceValue);
-		}
-
-		public void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer persistenceLayer)
+		public void SetActiveValue(string sliceSetting, string sliceValue, PrinterSettingsLayer persistenceLayer = null)
 		{
 			layeredProfile.SetValue(sliceSetting, sliceValue, persistenceLayer);
 		}
 
-		public void ClearValue(string sliceSetting)
-		{
-			layeredProfile.ClearValue(sliceSetting);
-		}
-
-		public void ClearValue(string sliceSetting, PrinterSettingsLayer persistenceLayer)
+		public void ClearValue(string sliceSetting, PrinterSettingsLayer persistenceLayer = null)
 		{
 			layeredProfile.ClearValue(sliceSetting, persistenceLayer);
 		}
@@ -761,6 +751,50 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return true;
 		}
 
+		public Vector3 ManualMovementSpeeds()
+		{
+			Vector3 feedRate = new Vector3(3000, 3000, 315);
+
+			string savedSettings = ActiveSliceSettings.Instance.GetValue("manual_movement_speeds");
+			if (!string.IsNullOrEmpty(savedSettings))
+			{
+				var segments = savedSettings.Split(',');
+				feedRate.x = double.Parse(segments[1]);
+				feedRate.y = double.Parse(segments[3]);
+				feedRate.z = double.Parse(segments[5]);
+			}
+
+			return feedRate;
+		}
+
+		public Dictionary<string, double> GetMovementSpeeds()
+		{
+			Dictionary<string, double> speeds = new Dictionary<string, double>();
+			string movementSpeedsString = GetMovementSpeedsString();
+			string[] allSpeeds = movementSpeedsString.Split(',');
+			for (int i = 0; i < allSpeeds.Length / 2; i++)
+			{
+				speeds.Add(allSpeeds[i * 2 + 0], double.Parse(allSpeeds[i * 2 + 1]));
+			}
+
+			return speeds;
+		}
+
+		public string GetMovementSpeedsString()
+		{
+			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
+			if (PrinterConnectionAndCommunication.Instance != null)
+			{
+				string savedSettings = GetValue("manual_movement_speeds");
+				if (!string.IsNullOrEmpty(savedSettings))
+				{
+					presets = savedSettings;
+				}
+			}
+
+			return presets;
+		}
+
 		#endregion
 
 		public void SetAutoConnect(bool autoConnectPrinter)
@@ -845,11 +879,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string ManualMovementSpeeds()
-		{
-			return layeredProfile.GetValue("manual_movement_speeds");
-		}
-
 		public void SetManualMovementSpeeds(string speed)
 		{
 			layeredProfile.SetValue("manual_movement_speeds", speed);
@@ -873,7 +902,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("layer_id");
+				string layerKey = ValueOrDefault("layer_id");
+				if (string.IsNullOrEmpty(layerKey))
+				{
+					// Generate a new GUID when missing or empty. We can't do this in the constructor as the dictionary deserialization will fail if
+					// an existing key exists for layer_id and on new empty layers, we still need to construct an initial identifier. 
+					layerKey = Guid.NewGuid().ToString();
+					LayerID = layerKey;
+				}
+
+				return layerKey;
 			}
 			set
 			{

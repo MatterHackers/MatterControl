@@ -397,7 +397,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						if (ActiveSliceSettings.Instance.GetValue("baud_rate") != null)
+						if (!string.IsNullOrEmpty(ActiveSliceSettings.Instance.GetValue("baud_rate")))
 						{
 							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.GetValue("baud_rate"));
 						}

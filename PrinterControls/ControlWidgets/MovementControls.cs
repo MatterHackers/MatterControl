@@ -70,20 +70,23 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private event EventHandler unregisterEvents;
 
-		public static double XSpeed { get { return GetMovementSpeeds()["x"]; } }
+		public static double XSpeed => ActiveSliceSettings.Instance.GetMovementSpeeds()["x"];
 
-		public static double YSpeed { get { return GetMovementSpeeds()["y"]; } }
+		public static double YSpeed => ActiveSliceSettings.Instance.GetMovementSpeeds()["y"];
 
-		public static double ZSpeed { get { return GetMovementSpeeds()["z"]; } }
+		public static double ZSpeed => ActiveSliceSettings.Instance.GetMovementSpeeds()["z"];
 
 		public static double EFeedRate(int extruderIndex)
 		{
-			if (GetMovementSpeeds().ContainsKey("e" + extruderIndex.ToString()))
+			var movementSpeeds = ActiveSliceSettings.Instance.GetMovementSpeeds();
+
+			string extruderIndexKey = "e" + extruderIndex.ToString();
+			if (movementSpeeds.ContainsKey(extruderIndexKey))
 			{
-				return GetMovementSpeeds()["e" + extruderIndex.ToString()];
+				return movementSpeeds[extruderIndexKey];
 			}
 
-			return GetMovementSpeeds()["e0"];
+			return movementSpeeds["e0"];
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -116,7 +119,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				if (editManualMovementSettingsWindow == null)
 				{
-					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), GetMovementSpeedsString(), SetMovementSpeeds);
+					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), ActiveSliceSettings.Instance.GetMovementSpeedsString(), SetMovementSpeeds);
 					editManualMovementSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editManualMovementSettingsWindow = null; };
 				}
 				else
@@ -153,34 +156,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 
 			this.AddChild(movementControlsGroupBox);
-		}
-
-		private static Dictionary<string, double> GetMovementSpeeds()
-		{
-			Dictionary<string, double> speeds = new Dictionary<string, double>();
-			string movementSpeedsString = GetMovementSpeedsString();
-			string[] allSpeeds = movementSpeedsString.Split(',');
-			for (int i = 0; i < allSpeeds.Length / 2; i++)
-			{
-				speeds.Add(allSpeeds[i * 2 + 0], double.Parse(allSpeeds[i * 2 + 1]));
-			}
-
-			return speeds;
-		}
-
-		private static string GetMovementSpeedsString()
-		{
-			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
-			if (PrinterConnectionAndCommunication.Instance != null && ActiveSliceSettings.Instance != null)
-			{
-				string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds();
-				if (savedSettings != null && savedSettings != "")
-				{
-					presets = savedSettings;
-				}
-			}
-
-			return presets;
 		}
 
 		private static void SetMovementSpeeds(object seder, EventArgs e)
