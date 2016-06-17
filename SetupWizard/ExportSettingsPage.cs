@@ -40,10 +40,12 @@ namespace MatterHackers.MatterControl
 {
 	public class ExportSettingsPage : WizardPage
 	{
-		private string exportMode = "mattercontrol";
+		RadioButton matterControlButton;
+		RadioButton slic3rButton;
+		RadioButton curaButton;
 
 		public ExportSettingsPage() :
-			base("Cancel", "Export Wizard")
+			base("Cancel", "Export As")
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -51,35 +53,48 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(container);
 
-			// export as matter control
-			var matterControlButton = new RadioButton("Export MatterControl settings (*.printer)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			matterControlButton.CheckedStateChanged += (s, e) => exportMode = "mattercontrol";
-			matterControlButton.Checked = true;
-			container.AddChild(matterControlButton);
+			if (true)
+			{
+				// export as matter control
+				matterControlButton = new RadioButton("MatterControl".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				matterControlButton.Checked = true;
+				container.AddChild(matterControlButton);
 
-			container.AddChild(
-				CreateDetailInfo("Export the complete set of features for this profile. All settings, quality and material presets, and editing states.")
-				);
+				// export as slic3r
+				slic3rButton = new RadioButton("Slic3r".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				container.AddChild(slic3rButton);
 
-			// export as slic3r
-			var slic3rButton = new RadioButton("Export Slic3r settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			slic3rButton.CheckedStateChanged += (s, e) => exportMode = "slic3r";
-			container.AddChild(slic3rButton);
-
-			container.AddChild(
-				CreateDetailInfo("Export as a config.ini file that can be read by older versions of Matter Control and Slic3r.")
-				);
-
-			// export as cura
+				// export as cura
 #if DEBUG
-			var curaButton = new RadioButton("Export Cura settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			curaButton.CheckedStateChanged += (s, e) => exportMode = "cura";
-			container.AddChild(curaButton);
-
-			container.AddChild(
-				CreateDetailInfo("Export as a file that can be read by Cura.\nNote: Not all settings are exportable in this format.")
-				);
+				curaButton = new RadioButton("Cura".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				container.AddChild(curaButton);
 #endif
+			}
+			else
+			{
+				// export as matter control
+				matterControlButton = new RadioButton("Export MatterControl settings (*.printer)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				matterControlButton.Checked = true;
+				container.AddChild(matterControlButton);
+
+				// export as slic3r
+				slic3rButton = new RadioButton("Export Slic3r settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				container.AddChild(slic3rButton);
+
+				container.AddChild(
+					CreateDetailInfo("Export as a config.ini file that can be read by older versions of Matter Control and Slic3r.")
+					);
+
+				// export as cura
+#if DEBUG
+				curaButton = new RadioButton("Export Cura settings (*.ini)".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				container.AddChild(curaButton);
+
+				container.AddChild(
+					CreateDetailInfo("Export as a file that can be read by Cura.\nNote: Not all settings are exportable in this format.")
+					);
+#endif
+			}
 
 			var exportButton = textImageButtonFactory.Generate("Export Settings".Localize());
 			exportButton.Click += (s, e) => UiThread.RunOnIdle(exportButton_Click);
@@ -114,19 +129,17 @@ namespace MatterHackers.MatterControl
 		{
 			WizardWindow.Close();
 
-			switch (exportMode)
+			if (matterControlButton.Checked)
 			{
-				case "slic3r":
-					ActiveSliceSettings.Instance.ExportAsSlic3rConfig();
-					break;
-
-				case "cura":
-					ActiveSliceSettings.Instance.ExportAsCuraConfig();
-					break;
-
-				case "mattercontrol":
-					ActiveSliceSettings.Instance.ExportAsMatterControlConfig();
-					break;
+				ActiveSliceSettings.Instance.ExportAsMatterControlConfig();
+			}
+			else if(slic3rButton.Checked)
+			{
+				ActiveSliceSettings.Instance.ExportAsSlic3rConfig();
+			}
+			else if(curaButton.Checked)
+			{
+				ActiveSliceSettings.Instance.ExportAsCuraConfig();
 			}
 		}
 	}
