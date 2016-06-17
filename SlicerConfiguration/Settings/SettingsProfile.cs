@@ -810,7 +810,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetDriverType(string driver)
 		{
-			layeredProfile.SetValue("MatterControl.DriverType", driver);
+			layeredProfile.SetValue("driver_type", driver);
 		}
 
 		public void SetDeviceToken(string token)

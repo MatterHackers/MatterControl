@@ -170,6 +170,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("device_token", item.Value);
 								break;
 
+							case "MatterControl.DriverType":
+								layer.Add("driver_type", item.Value);
+								break;
+
 							case "MatterControl.DeviceType":
 								layer.Add("device_type", item.Value);
 								break;
