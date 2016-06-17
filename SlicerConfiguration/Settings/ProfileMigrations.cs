@@ -226,6 +226,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("layer_etag", item.Value);
 								break;
 
+							case "MatterControl.CalibrationFiles":
+								layer.Add("calibration_files", item.Value);
+								break;
+
 							default:
 
 								if (item.Key.Contains("ComPort"))
