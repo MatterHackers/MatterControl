@@ -214,6 +214,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("layer_name", item.Value);
 								break;
 
+							case "MatterControl.LayerID":
+								layer.Add("layer_id", item.Value);
+								break;
+
 							default:
 
 								if (item.Key.Contains("ComPort"))
@@ -222,16 +226,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 									if (segments.Length != 3)
 									{
-										throw new Exception("Why didn't we know how to add this.");
+										throw new Exception($"Unable to migrate settings: {item.Key}/{item.Value}");
 									}
 									layer.Add(segments[1] + "_com_port", item.Value);
 									break;
 								}
 								else
 								{
-									throw new Exception("Why didn't we know how to add this.");
+									throw new Exception($"Unable to migrate settings: {item.Key}/{item.Value}");
 								}
-
 						}
 					}
 				}

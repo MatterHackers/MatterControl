@@ -873,19 +873,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				// TODO: Short term hack to silently upgrade existing profiles with missing ID
-				string layerKey = ValueOrDefault("MatterControl.LayerID");
-				if (string.IsNullOrEmpty(layerKey))
-				{
-					layerKey = Guid.NewGuid().ToString();
-					LayerID = layerKey;
-				}
-
-				return layerKey;
+				return ValueOrDefault("layer_id");
 			}
 			set
 			{
-				this["MatterControl.LayerID"] = value;
+				this["layer_id"] = value;
 			}
 		}
 
