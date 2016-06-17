@@ -66,6 +66,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal void OnDeserializedMethod(StreamingContext context)
 		{
 			QualityLayer = GetQualityLayer(ActiveQualityKey);
+
+			string materialSettingsKey = GetMaterialPresetKey(0);
+			if (!string.IsNullOrEmpty(materialSettingsKey))
+			{
+				MaterialLayer = GetMaterialLayer(materialSettingsKey);
+			}
 		}
 
 		public OemProfile OemProfile { get; set; }
@@ -82,7 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return MaterialLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
-		internal PrinterSettingsLayer GetQualityLayer(string layerID)
+		private PrinterSettingsLayer GetQualityLayer(string layerID)
 		{
 			return QualityLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
@@ -130,6 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (extruderIndex == 0)
 			{
+				MaterialLayer = GetMaterialLayer(materialKey);
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
 

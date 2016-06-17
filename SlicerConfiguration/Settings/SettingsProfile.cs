@@ -143,11 +143,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.Save();
 		}
 
-		internal PrinterSettingsLayer QualityLayer(string key)
-		{
-			return layeredProfile.GetQualityLayer(key);
-		}
-
 		internal void SetMaterialPreset(int extruderIndex, string text)
 		{
 			layeredProfile.SetMaterialPreset(extruderIndex, text);
@@ -163,10 +158,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return layeredProfile.GetMaterialPresetKey(extruderIndex);
 		}
 
-		internal PrinterSettingsLayer MaterialLayer(string key)
-		{
-			return layeredProfile.GetMaterialLayer(layeredProfile.MaterialSettingsKeys[0]);
-		}
 		#endregion
 
 		internal void RunInTransaction(Action<SettingsProfile> action)
