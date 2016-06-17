@@ -64,12 +64,13 @@ namespace MatterHackers.MatterControl
 		{
 			Vector3 feedRate = new Vector3(3000, 3000, 315);
 
-			string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds();
-			if (savedSettings != null && savedSettings != "")
+			string savedSettings = ActiveSliceSettings.Instance.GetValue("manual_movement_speeds");
+			if (!string.IsNullOrEmpty(savedSettings))
 			{
-				feedRate.x = double.Parse(savedSettings.Split(',')[1]);
-				feedRate.y = double.Parse(savedSettings.Split(',')[3]);
-				feedRate.z = double.Parse(savedSettings.Split(',')[5]);
+				var segments = savedSettings.Split(',');
+				feedRate.x = double.Parse(segments[1]);
+				feedRate.y = double.Parse(segments[3]);
+				feedRate.z = double.Parse(segments[5]);
 			}
 
 			return feedRate;

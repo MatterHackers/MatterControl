@@ -845,11 +845,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string ManualMovementSpeeds()
-		{
-			return layeredProfile.GetValue("manual_movement_speeds");
-		}
-
 		public void SetManualMovementSpeeds(string speed)
 		{
 			layeredProfile.SetValue("manual_movement_speeds", speed);

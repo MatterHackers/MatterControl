@@ -173,8 +173,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
 			if (PrinterConnectionAndCommunication.Instance != null && ActiveSliceSettings.Instance != null)
 			{
-				string savedSettings = ActiveSliceSettings.Instance.ManualMovementSpeeds();
-				if (savedSettings != null && savedSettings != "")
+				string savedSettings = ActiveSliceSettings.Instance.GetValue("manual_movement_speeds");
+				if (!string.IsNullOrEmpty(savedSettings))
 				{
 					presets = savedSettings;
 				}
