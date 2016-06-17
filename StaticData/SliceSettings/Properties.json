@@ -1410,7 +1410,7 @@
   {
     "QuickMenuSettings": [],
     "SetSettingsOnChange": [],
-    "SlicerConfigName": "randomize_",
+    "SlicerConfigName": "randomize_start",
     "PresentationName": "Randomize Starting Points",
     "HelpText": "Start each new layer from a different vertex to reduce seams.",
     "DataEditType": "CHECK_BOX",
