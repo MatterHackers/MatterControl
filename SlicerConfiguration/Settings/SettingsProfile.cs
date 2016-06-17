@@ -897,11 +897,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("MatterControl.LayerSource");
+				return ValueOrDefault("layer_source");
 			}
 			set
 			{
-				this["MatterControl.LayerSource"] = value;
+				this["layer_source"] = value;
 			}
 		}
 
@@ -909,11 +909,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("MatterControl.LayerETag");
+				return ValueOrDefault("layer_etag");
 			}
 			set
 			{
-				this["MatterControl.LayerETag"] = value;
+				this["layer_etag"] = value;
 			}
 		}
 

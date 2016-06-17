@@ -218,6 +218,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("layer_id", item.Value);
 								break;
 
+							case "MatterControl.LayerSource":
+								layer.Add("layer_source", item.Value);
+								break;
+
+							case "MatterControl.LayerETag":
+								layer.Add("layer_etag", item.Value);
+								break;
+
 							default:
 
 								if (item.Key.Contains("ComPort"))
