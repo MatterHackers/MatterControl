@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string PrintLevelingJsonData { get; set; }
 
-		public string PrintLevelingProbePositions { get; set; } // this is depricated go through PrintLevelingData
+		public string PrintLevelingProbePositions { get; set; } // this is deprecated go through PrintLevelingData
 
 		// store id1,id2... (for N extruders)
 

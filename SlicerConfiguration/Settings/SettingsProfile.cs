@@ -774,9 +774,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (printerInfo != null)
 			{
 				printerInfo.MarkedForDelete = markedForDelete;
-
 				ProfileManager.Instance.Save();
-				SetActiveValue("MatterControl.MarkedForDelete", "1");
 			}
 
 			// Clear selected printer state
@@ -792,17 +790,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ComPort()
 		{
-			return layeredProfile.GetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName));
+			return layeredProfile.GetValue($"{Environment.MachineName}_com_port");
 		}
 
 		public void SetComPort(string port)
 		{
-			layeredProfile.SetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port);
+			layeredProfile.SetValue($"{Environment.MachineName}_com_port", port);
 		}
 
 		public void SetComPort(string port, PrinterSettingsLayer layer)
 		{
-			layeredProfile.SetValue(string.Format("MatterControl.{0}.ComPort", Environment.MachineName), port, layer);
+			layeredProfile.SetValue($"{Environment.MachineName}_com_port", port, layer);
 		}
 
 		public void SetSlicingEngine(string engine)
