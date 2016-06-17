@@ -60,22 +60,6 @@ namespace MatterHackers.MatterControl
 			AnchorAll();
 		}
 
-		public static Vector3 ManualControlsFeedRate()
-		{
-			Vector3 feedRate = new Vector3(3000, 3000, 315);
-
-			string savedSettings = ActiveSliceSettings.Instance.GetValue("manual_movement_speeds");
-			if (!string.IsNullOrEmpty(savedSettings))
-			{
-				var segments = savedSettings.Split(',');
-				feedRate.x = double.Parse(segments[1]);
-				feedRate.y = double.Parse(segments[3]);
-				feedRate.z = double.Parse(segments[5]);
-			}
-
-			return feedRate;
-		}
-
 		public void AddTextField(string instructionsText, int pixelsFromLast)
 		{
 			GuiWidget spacer = new GuiWidget(10, pixelsFromLast);

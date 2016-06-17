@@ -162,8 +162,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				StringBuilder commands = new StringBuilder();
 
-				double zFeedRate = InstructionsPage.ManualControlsFeedRate().z;
-				double xyFeedRate = InstructionsPage.ManualControlsFeedRate().x;
+				var feedRates = ActiveSliceSettings.Instance.ManualMovementSpeeds();
 
 				// make sure the probe offset is set to 0
 				lines.Add("M565 Z0");
@@ -171,10 +170,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// probe position 0
 				probeRead0 = new Vector3(probeFrontLeft, probeStartZHeight);
 				// up in z
-				lines.Add("G1 F{0}".FormatWith(zFeedRate));
+				lines.Add("G1 F{0}".FormatWith(feedRates.z));
 				lines.Add("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
 				// move to xy
-				lines.Add("G1 F{0}".FormatWith(xyFeedRate));
+				lines.Add("G1 F{0}".FormatWith(feedRates.x));
 				lines.Add("G1 X{0}Y{1}Z{2}".FormatWith(probeFrontLeft.x, probeFrontLeft.y, probeStartZHeight));
 				// probe
 				lines.Add("G30");
@@ -182,10 +181,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// probe position 1
 				probeRead1 = new Vector3(probeFrontRight, probeStartZHeight);
 				// up in z
-				lines.Add("G1 F{0}".FormatWith(zFeedRate));
+				lines.Add("G1 F{0}".FormatWith(feedRates.z));
 				lines.Add("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
 				// move to xy
-				lines.Add("G1 F{0}".FormatWith(xyFeedRate));
+				lines.Add("G1 F{0}".FormatWith(feedRates.x));
 				lines.Add("G1 X{0}Y{1}Z{2}".FormatWith(probeFrontRight.x, probeFrontRight.y, probeStartZHeight));
 				// probe
 				lines.Add("G30");
@@ -193,10 +192,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// probe position 2
 				probeRead2 = new Vector3(probeBackLeft, probeStartZHeight);
 				// up in z
-				lines.Add("G1 F{0}".FormatWith(zFeedRate));
+				lines.Add("G1 F{0}".FormatWith(feedRates.z));
 				lines.Add("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
 				// move to xy
-				lines.Add("G1 F{0}".FormatWith(xyFeedRate));
+				lines.Add("G1 F{0}".FormatWith(feedRates.x));
 				lines.Add("G1 X{0}Y{1}Z{2}".FormatWith(probeBackLeft.x, probeBackLeft.y, probeStartZHeight));
 				// probe
 				lines.Add("G30");
