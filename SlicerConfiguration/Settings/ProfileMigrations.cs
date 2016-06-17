@@ -230,7 +230,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("calibration_files", item.Value);
 								break;
 
+							case "MatterControl.ActiveQualityKey":
+								layer.Add("active_quality_key", item.Value);
+								break;
+
 							case "MatterControl.ActiveMaterialKey":
+							case "MatterControl.PrinterID":
 								// Simply delete abandoned setting
 								break;
 

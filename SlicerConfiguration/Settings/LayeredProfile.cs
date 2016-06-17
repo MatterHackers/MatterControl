@@ -91,11 +91,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return GetValue("MatterControl.ActiveQualityKey");
+				return GetValue("active_quality_key");
 			}
 			internal set
 			{
-				SetValue("MatterControl.ActiveQualityKey", value);
+				SetValue("active_quality_key", value);
 				QualityLayer = GetQualityLayer(value);
 				Save();
 			}
