@@ -90,6 +90,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// needs testing, not working
 				new ScaledSingleNumber("support_material_spacing", "supportLineDistance", 1000),
 				new SupportMatterial("support_material", "supportAngle"),
+				new VisibleButNotMappedToEngine("support_material_threshold"),
 				new MappedSetting("support_material_create_internal_support", "supportEverywhere"),
 				new ScaledSingleNumber("support_material_xy_distance", "supportXYDistance", 1000),
 				new ScaledSingleNumber("support_material_z_distance", "supportZDistance", 1000),

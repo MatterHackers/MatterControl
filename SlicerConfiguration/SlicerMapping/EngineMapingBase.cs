@@ -66,7 +66,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"resume_first_layer_speed",
 			"resume_position_before_z_home",
 			"resume_gcode",
-			"support_material_threshold",
 			"temperature",
 			"z_can_be_negative",
 			"z_homes_to_max",
