@@ -453,7 +453,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (settingsKey == SettingsKey.bed_temperature
 					&& !this.GetValue<bool>("has_heated_bed"))
 				{
-					return (T)(object)(0);
+					return (T)Convert.ChangeType(0, typeof(double));
 				}
 
 				double result;
