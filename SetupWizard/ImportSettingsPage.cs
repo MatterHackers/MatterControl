@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.Localizations;
 using System.IO;
 using MatterHackers.Agg;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -57,6 +58,9 @@ namespace MatterHackers.MatterControl
 
 			var successMessageWidget = new WrappedTextWidget(successMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			container.AddChild(successMessageWidget);
+
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
 		}
 	}
 
@@ -81,6 +85,9 @@ namespace MatterHackers.MatterControl
 
 			var successMessageWidget = new WrappedTextWidget(successMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			container.AddChild(successMessageWidget);
+
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
 		}
 	}
 
@@ -241,12 +248,6 @@ namespace MatterHackers.MatterControl
 
 		private void ImportToPreset(string settingsFilePath)
 		{
-			string presetType = "Quality";
-			if (newMaterialPresetButton.Checked)
-			{
-				presetType = "Material";
-			}
-
 			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
 			{
 				string importType = Path.GetExtension(settingsFilePath).ToLower();
@@ -262,28 +263,39 @@ namespace MatterHackers.MatterControl
 						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 						string layerHeight;
 
-						bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
+						bool isSlic3r = importType == ".slice" || settingsToImport.TryGetValue("layer_height", out layerHeight);
 						if (isSlic3r)
 						{
-							//newLayer.Name = "Quality" + ActiveSliceSettings.Instance.QualityLayers.Count;
-							//ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+							var newLayer = new PrinterSettingsLayer();
+							newLayer.Name = Path.GetFileNameWithoutExtension(settingsFilePath);
 
-							// TODO: this should only be the oem and user layer (not the quality or material layer)
-							var activeSettings = ActiveSliceSettings.Instance;
+							// Only be the base and oem layers (not the user, quality or material layer)
+							var baseAndOEMCascade = new List<PrinterSettingsLayer>
+							{
+								ActiveSliceSettings.Instance.OemLayer,
+								ActiveSliceSettings.Instance.BaseLayer
+							};
 
 							foreach (var item in settingsToImport)
 							{
+								string currentValue = ActiveSliceSettings.Instance.GetValue(item.Key, baseAndOEMCascade).Trim();
 								// Compare the value to import to the layer cascade value and only set if different
-								string currentValue = activeSettings.GetValue(item.Key, null).Trim();
 								if (currentValue != item.Value)
 								{
-									activeSettings.UserLayer[item.Key] = item.Value;
+									newLayer[item.Key] = item.Value;
 								}
 							}
 
-							activeSettings.SaveChanges();
+							if (newMaterialPresetButton.Checked)
+							{
+								ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
+							}
+							else
+							{
+								ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+							}
 
-							UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+							ActiveSliceSettings.Instance.SaveChanges();
 						}
 						else
 						{

@@ -5038,3 +5038,15 @@ Translated:The distance between the first layer (the bottom) and the top of the 
 English:Printers...
 Translated:Printers...
 
+English:Current
+Translated:Current
+
+English:Quality preset
+Translated:Quality preset
+
+English:Material preset
+Translated:Material preset
+
+English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.
+Translated:You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.
+

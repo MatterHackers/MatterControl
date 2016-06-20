@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.DataStorage.ClassicDB;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -43,14 +44,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetsContext
 	{
-		public List<PrinterSettingsLayer> PresetLayers { get; }
+		public ObservableCollection<PrinterSettingsLayer> PresetLayers { get; }
 		public PrinterSettingsLayer PersistenceLayer { get; set; }
 		public Action<string> SetAsActive { get; set; }
 		public Action DeleteLayer { get; set; }
 
 		public NamedSettingsLayers LayerType { get; set; }
 
-		public PresetsContext(List<PrinterSettingsLayer> settingsLayers, PrinterSettingsLayer activeLayer)
+		public PresetsContext(ObservableCollection<PrinterSettingsLayer> settingsLayers, PrinterSettingsLayer activeLayer)
 		{
 			this.PersistenceLayer = activeLayer;
 			this.PresetLayers = settingsLayers;

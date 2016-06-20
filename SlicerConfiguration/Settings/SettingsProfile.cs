@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
 	using MeshVisualizer;
-
+	using System.Collections.ObjectModel;
 	public static class SettingsKey
 	{
 		public const string bed_shape = nameof(bed_shape);
@@ -114,9 +114,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer UserLayer => layeredProfile.UserLayer;
 
-		public List<PrinterSettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
+		public ObservableCollection<PrinterSettingsLayer> MaterialLayers => layeredProfile.MaterialLayers;
 
-		public List<PrinterSettingsLayer> QualityLayers => layeredProfile.QualityLayers;
+		public ObservableCollection<PrinterSettingsLayer> QualityLayers => layeredProfile.QualityLayers;
 
 		public List<GCodeMacro> Macros => layeredProfile.Macros;
 
