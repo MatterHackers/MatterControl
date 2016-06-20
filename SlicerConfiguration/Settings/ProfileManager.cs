@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using Agg;
 	using Localizations;
 	using System.Collections.ObjectModel;
+	using System.Collections.Specialized;
 	using System.Net;
 
 	public class ProfileManager
@@ -73,12 +74,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (File.Exists(profilesDBPath))
 			{
 				Instance = JsonConvert.DeserializeObject<ProfileManager>(File.ReadAllText(profilesDBPath));
+				Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
 			}
 		}
 
 		public ProfileManager()
 		{
-			Profiles.CollectionChanged += Profiles_CollectionChanged;
 		}
 
 		internal static void SettingsChanged(object sender, EventArgs e)
@@ -214,7 +215,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var layeredProfile = new PrinterSettings(printerProfile, baseConfig)
 			{
-				ID = guid
+				ID = guid,
+				// TODO: This should really be set by the system that generates the source documents 
+				DocumentVersion = PrinterSettings.LatestVersion
 			};
 			layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
 
@@ -288,49 +291,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static void Profiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
-			{
-				// TODO: This doesn't look right. We need to delete the removed ID not the active on, in case they're different!!!!
-				string profilePath = Path.Combine(ProfilesPath, ActiveSliceSettings.Instance.ID + ".json");
-				if (File.Exists(profilePath))
-				{
-					File.Delete(profilePath);
-				}
-
-				// Refresh after change
-				UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = LoadEmptyProfile());
-			}
+			// Any time the list changes, persist the updates to disk
+			Instance.Save();
 
 			ProfilesListChanged.CallEvents(null, null);
 		}
-
-		/*
-		private static void LoadProfilesFromDisk()
-		{
-			foreach (string filePath in Directory.GetFiles(ProfilesPath, "*.json"))
-			{
-				string fileName = Path.GetFileName(filePath);
-				if (fileName == "config.json" || fileName == "profiles.json")
-				{
-					continue;
-				}
-
-				try
-				{
-					var profile = new SettingsProfile(PrinterSettings.LoadFile(filePath));
-					ProfileManager.Instance.Profiles.Add(new PrinterInfo()
-					{
-						ComPort = profile.ComPort(),
-						ID = profile.ID,
-						Name = profile.GetValue(SettingsKey.printer_name),
-					});
-				}
-				catch (Exception ex)
-				{
-					System.Diagnostics.Debug.WriteLine("Error loading profile: {1}\r\n{2}", filePath, ex.Message);
-				}
-			}
-		}*/
 
 		public void Save()
 		{
