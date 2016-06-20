@@ -289,17 +289,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (layerType == NamedSettingsLayers.Material)
 				{
 					settingsKey = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
+
+					ActiveSliceSettings.Instance.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
+					dropDownList.Closed += (s1, e1) =>
+					{
+						ActiveSliceSettings.Instance.MaterialLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
+					};
 				}
 				else
 				{
 					settingsKey = ActiveSliceSettings.Instance.ActiveQualityKey;
 
-					ActiveSliceSettings.Instance.QualityLayers.CollectionChanged += QualityLayers_CollectionChanged;
-					
-
+					ActiveSliceSettings.Instance.QualityLayers.CollectionChanged += SettingsLayers_CollectionChanged;
 					dropDownList.Closed += (s1, e1) =>
 					{
-						ActiveSliceSettings.Instance.QualityLayers.CollectionChanged -= QualityLayers_CollectionChanged;
+						ActiveSliceSettings.Instance.QualityLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
 					};
 				}
 
@@ -316,7 +320,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dropDownList;
 		}
 
-		private void QualityLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		private void SettingsLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
 			RebuildDropDownList();
 		}

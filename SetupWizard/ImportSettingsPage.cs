@@ -58,6 +58,9 @@ namespace MatterHackers.MatterControl
 
 			var successMessageWidget = new WrappedTextWidget(successMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			container.AddChild(successMessageWidget);
+
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
 		}
 	}
 
@@ -82,6 +85,9 @@ namespace MatterHackers.MatterControl
 
 			var successMessageWidget = new WrappedTextWidget(successMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			container.AddChild(successMessageWidget);
+
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
 		}
 	}
 
@@ -131,7 +137,7 @@ namespace MatterHackers.MatterControl
 
 				// add as material preset
 				newMaterialPresetButton = new RadioButton("Material preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				//container.AddChild(newMaterialPresetButton);
+				container.AddChild(newMaterialPresetButton);
 			}
 			else
 			{
@@ -242,12 +248,6 @@ namespace MatterHackers.MatterControl
 
 		private void ImportToPreset(string settingsFilePath)
 		{
-			string presetType = "Quality";
-			if (newMaterialPresetButton.Checked)
-			{
-				presetType = "Material";
-			}
-
 			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
 			{
 				string importType = Path.GetExtension(settingsFilePath).ToLower();
@@ -286,7 +286,14 @@ namespace MatterHackers.MatterControl
 								}
 							}
 
-							ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+							if (newMaterialPresetButton.Checked)
+							{
+								ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
+							}
+							else
+							{
+								ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+							}
 
 							ActiveSliceSettings.Instance.SaveChanges();
 						}
