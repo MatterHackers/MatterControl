@@ -197,6 +197,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return container;
 		}
 
+		private void RebuildDropDownList()
+		{
+			// TODO: Consider adding a .Replace(existingWidget, newWidget) to GuiWidget 
+			// Replace existing list with updated list
+			var parent = this.dropDownList.Parent;
+
+			if (parent != null)
+			{
+				parent.RemoveChild(this.dropDownList);
+				this.dropDownList.Close();
+
+				this.dropDownList = CreateDropdown();
+				parent.AddChild(this.dropDownList);
+			}
+		}
+
 		private void MenuItem_Selected(object sender, EventArgs e)
 		{
 			var activeSettings = ActiveSliceSettings.Instance;
@@ -261,14 +277,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.LayerID);
 				}
 
-				// TODO: Consider adding a .Replace(existingWidget, newWidget) to GuiWidget 
-				// Replace existing list with updated list
-				var parent = this.dropDownList.Parent;
-				parent.RemoveChild(this.dropDownList);
-				this.dropDownList.Close();
-
-				this.dropDownList = CreateDropdown();
-				parent.AddChild(this.dropDownList);
+				RebuildDropDownList();
 
 				editButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
 			};
@@ -284,6 +293,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				else
 				{
 					settingsKey = ActiveSliceSettings.Instance.ActiveQualityKey;
+
+					ActiveSliceSettings.Instance.QualityLayers.CollectionChanged += QualityLayers_CollectionChanged;
+					
+
+					dropDownList.Closed += (s1, e1) =>
+					{
+						ActiveSliceSettings.Instance.QualityLayers.CollectionChanged -= QualityLayers_CollectionChanged;
+					};
 				}
 
 				if (!string.IsNullOrEmpty(settingsKey))
@@ -297,6 +314,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		
 			return dropDownList;
+		}
+
+		private void QualityLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			RebuildDropDownList();
 		}
 	}
 

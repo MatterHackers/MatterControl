@@ -35,6 +35,7 @@ using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -214,13 +215,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// Should contain both user created and oem specified material layers
 		/// </summary>
-		public List<PrinterSettingsLayer> MaterialLayers { get; } = new List<PrinterSettingsLayer>();
+		public ObservableCollection<PrinterSettingsLayer> MaterialLayers { get; } = new ObservableCollection<PrinterSettingsLayer>();
 
 		// TODO: Hookup OEM layers
 		/// <summary>
 		/// Should contain both user created and oem specified quality layers
 		/// </summary>
-		public List<PrinterSettingsLayer> QualityLayers { get; } = new List<PrinterSettingsLayer>();
+		public ObservableCollection<PrinterSettingsLayer> QualityLayers { get; } = new ObservableCollection<PrinterSettingsLayer>();
 
 		///<summary>
 		///Returns the settings value at the 'top' of the stack
