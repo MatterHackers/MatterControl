@@ -40,6 +40,134 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
+	public class SelectPartsOfPrinterToImport : WizardPage
+	{
+		static string importMessage = "Select the parts of the printer file that you would like to merge into your current profile.".Localize();
+		string settingsFilePath;
+		List<CheckBox> qualityChecks = new List<CheckBox>();
+		List<CheckBox> materialChecks = new List<CheckBox>();
+		PrinterSettings settingsToImport;
+
+		public SelectPartsOfPrinterToImport(string settingsFilePath) :
+			base(unlocalizedTextForTitle: "Import Wizard")
+		{
+			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
+
+			this.headerLabel.Text = "Select Parts to Import".Localize();
+
+			this.settingsFilePath = settingsFilePath;
+
+			var scrollWindow = new ScrollableWidget()
+			{
+				AutoScroll = true,
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop,
+			};
+			scrollWindow.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+			contentRow.AddChild(scrollWindow);
+
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			scrollWindow.AddChild(container);
+
+			var selectPartsMessage = new WrappedTextWidget(importMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			container.AddChild(selectPartsMessage);
+
+			// add in the check boxes to select what to import
+			container.AddChild(new TextWidget("Main Settings:")
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(0, 3, 0, 10),
+			});
+
+			var mainProfileCheckBox = new CheckBox("Printer Profile")
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(5, 0),
+				HAnchor = HAnchor.ParentLeft,
+				Checked = true,
+			};
+			container.AddChild(mainProfileCheckBox);
+
+			if (settingsToImport.QualityLayers.Count > 0)
+			{
+				container.AddChild(new TextWidget("Quality Presets:")
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					Margin = new BorderDouble(0, 3, 0, 15),
+				});
+
+				foreach (var qualitySetting in settingsToImport.QualityLayers)
+				{
+					qualityChecks.Add(new CheckBox(qualitySetting.Name)
+					{
+						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						Margin = new BorderDouble(5, 0, 0, 0),
+						HAnchor = HAnchor.ParentLeft,
+					});
+					container.AddChild(qualityChecks[qualityChecks.Count - 1]);
+				}
+			}
+
+			if (settingsToImport.MaterialLayers.Count > 0)
+			{
+				container.AddChild(new TextWidget("Material Presets:")
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					Margin = new BorderDouble(0, 3, 0, 15),
+				});
+
+				foreach (var materialSetting in settingsToImport.MaterialLayers)
+				{
+					materialChecks.Add(new CheckBox(materialSetting.Name)
+					{
+						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						Margin = new BorderDouble(5, 0),
+						HAnchor = HAnchor.ParentLeft,
+					});
+					container.AddChild(materialChecks[materialChecks.Count - 1]);
+				}
+			}
+
+			var mergeButton = textImageButtonFactory.Generate("Merge".Localize());
+			mergeButton.Name = "Merge Profile";
+			mergeButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() => WizardWindow?.Close());
+
+				var activeSettings = ActiveSliceSettings.Instance;
+
+				var layerCascade = new List<PrinterSettingsLayer>
+				{
+					ActiveSliceSettings.Instance.OemLayer,
+					ActiveSliceSettings.Instance.BaseLayer,
+					ActiveSliceSettings.Instance.UserLayer,
+				};
+
+				foreach (var item in settingsToImport.BaseLayer)
+				{
+					// Compare the value to import to the layer cascade value and only set if different
+					string currentValue = activeSettings.GetValue(item.Key, layerCascade).Trim();
+					string importValue = settingsToImport.GetValue(item.Key, layerCascade).Trim();
+					if (currentValue != item.Value)
+					{
+						activeSettings.UserLayer[item.Key] = item.Value;
+					}
+				}
+
+				activeSettings.SaveChanges();
+
+				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+			};
+			footerRow.AddChild(mergeButton);
+
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
+		}
+	}
+
 	public class ImportToPrinterSucceeded : WizardPage
 	{
 		static string successMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
@@ -226,7 +354,6 @@ namespace MatterHackers.MatterControl
 			else if(mergeButton.Checked)
 			{
 				MergeSettings(settingsFilePath);
-				WizardWindow.Close();
 			}
 			else if(newQualityPresetButton.Checked)
 			{
@@ -322,7 +449,7 @@ namespace MatterHackers.MatterControl
 				switch (importType)
 				{
 					case ".printer":
-						throw new NotImplementedException("need to import from 'MatterControl.printer' files");
+						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath));
 						break;
 
 					case ".slice": // old presets format
@@ -333,7 +460,6 @@ namespace MatterHackers.MatterControl
 						bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
 						if (isSlic3r)
 						{
-							// TODO: this should only be the oem and user layer (not the quality or material layer)
 							var activeSettings = ActiveSliceSettings.Instance;
 
 							foreach (var item in settingsToImport)
@@ -355,9 +481,11 @@ namespace MatterHackers.MatterControl
 							// looks like a cura file
 							throw new NotImplementedException("need to import from 'cure.ini' files");
 						}
+						WizardWindow.Close();
 						break;
 
 					default:
+						WizardWindow.Close();
 						// Did not figure out what this file is, let the user know we don't understand it
 						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 						break;
