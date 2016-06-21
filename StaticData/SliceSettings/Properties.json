@@ -192,7 +192,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "1"
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -426,7 +427,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "1"
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -452,7 +454,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -803,7 +806,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "1"
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -816,7 +820,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -829,7 +834,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "1"
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -842,7 +848,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "None"
+    "DefaultValue": "None",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -868,7 +875,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -881,7 +889,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],
@@ -1024,7 +1033,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged":  true
   },
   {
     "QuickMenuSettings": [],

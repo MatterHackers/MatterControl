@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			BedTemperatureControlWidget = new DisableableWidget();
 			BedTemperatureControlWidget.AddChild(new BedTemperatureControlWidget());
 
-			if (ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed"))
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
 				mainContainer.AddChild(BedTemperatureControlWidget);
 			}

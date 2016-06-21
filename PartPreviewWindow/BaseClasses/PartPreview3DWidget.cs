@@ -77,11 +77,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			StringEventArgs stringEvent = e as StringEventArgs;
 			if (stringEvent != null)
 			{
-				if (stringEvent.Data == "bed_size"
-					|| stringEvent.Data == "print_center"
-					|| stringEvent.Data == "build_height"
-					|| stringEvent.Data == "bed_shape"
-					|| stringEvent.Data == "center_part_on_bed")
+				if (stringEvent.Data == SettingsKey.bed_size
+					|| stringEvent.Data == SettingsKey.print_center
+					|| stringEvent.Data == SettingsKey.build_height
+					|| stringEvent.Data == SettingsKey.bed_shape
+					|| stringEvent.Data == SettingsKey.center_part_on_bed)
 				{
 					needToRecretaeBed = true;
 				}
@@ -90,13 +90,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RecreateBed()
 		{
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>("build_height");
+			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
 
 			UiThread.RunOnIdle((Action)(() =>
 			{
 				meshViewerWidget.CreatePrintBed(
-					new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>("bed_size"), buildHeight),
-					ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"),
+					new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
+					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
 					ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
 				PutOemImageOnBed();
 			}));

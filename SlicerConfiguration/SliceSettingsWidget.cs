@@ -68,20 +68,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class SliceSettingsWidget : GuiWidget
 	{
-		private static List<string> settingToReloadUiWhenChanged = new List<string>()
-		{
-			"extruder_count",
-			"extruders_share_temperature",
-			"has_fan",
-			"has_heated_bed",
-			"has_sd_card_reader",
-			"center_part_on_bed",
-			"has_hardware_leveling",
-			"include_firmware_updater",
-			"print_leveling_required_to_print",
-			"show_reset_connection",
-		};
-
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 		private SliceSettingsDetailControl sliceSettingsDetailControl;
 
@@ -595,7 +581,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			SettingChanged.CallEvents(null, new StringEventArgs(settingData.SlicerConfigName));
 
-			if (settingToReloadUiWhenChanged.Contains(settingData.SlicerConfigName))
+			if (settingData.ReloadUiWhenChanged)
 			{
 				ApplicationController.Instance.ReloadAll(null, null);
 			}

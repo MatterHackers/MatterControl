@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			hiddenSettings.Add("min_extrusion_before_retract");
 			hiddenSettings.Add("support_material_xy_distance");
 			hiddenSettings.Add("support_material_z_distance");
-			hiddenSettings.Add("center_part_on_bed");
+			hiddenSettings.Add(SettingsKey.center_part_on_bed);
 			hiddenSettings.Add("infill_overlap_perimeter");
 			hiddenSettings.Add("support_type");
 			hiddenSettings.Add("infill_type");

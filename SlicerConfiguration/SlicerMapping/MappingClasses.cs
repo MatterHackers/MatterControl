@@ -12,8 +12,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
 			{"first_layer_temperature", "temperature"},
 			{"temperature","temperature"},
-			{"first_layer_bed_temperature","bed_temperature"},
-			{"bed_temperature","bed_temperature"},
+			{"first_layer_bed_temperature",SettingsKey.bed_temperature},
+			{SettingsKey.bed_temperature,SettingsKey.bed_temperature},
 			{"bed_remove_part_temperature","bed_remove_part_temperature"},
 			{"extruder_wipe_temperature","extruder_wipe_temperature"},
 			{"z_offset","z_offset"},

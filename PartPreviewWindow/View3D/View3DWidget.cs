@@ -1321,10 +1321,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector2 bedCenter = new Vector2();
 				MeshViewerWidget.CenterPartAfterLoad doCentering = MeshViewerWidget.CenterPartAfterLoad.DONT;
 
-				if (ActiveSliceSettings.Instance?.GetValue<bool>("center_part_on_bed") == true)
+				if (ActiveSliceSettings.Instance?.GetValue<bool>(SettingsKey.center_part_on_bed) == true)
 				{
 					doCentering = MeshViewerWidget.CenterPartAfterLoad.DO;
-					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
+					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
 				}
 
 				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, doCentering, bedCenter);
@@ -2106,12 +2106,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool PartsAreInPrintVolume()
 		{
-			if (ActiveSliceSettings.Instance?.GetValue<bool>("center_part_on_bed") == true)
+			if (ActiveSliceSettings.Instance?.GetValue<bool>(SettingsKey.center_part_on_bed) == true)
 			{
 				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
 				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
 				RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y);
-				bedRect.Offset(ActiveSliceSettings.Instance.GetValue<Vector2>("print_center") - ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size) / 2);
+				bedRect.Offset(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center) - ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size) / 2);
 
 				bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
 

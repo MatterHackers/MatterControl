@@ -42,10 +42,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		protected HashSet<string> applicationLevelSettings = new HashSet<string>()
 		{
-			"bed_shape",
-			"bed_size",
-			"bed_temperature",
-			"build_height",
+			SettingsKey.bed_shape,
+			SettingsKey.bed_size,
+			SettingsKey.bed_temperature,
+			SettingsKey.build_height,
 			"cancel_gcode",
 			"connect_gcode",
 			"has_fan",

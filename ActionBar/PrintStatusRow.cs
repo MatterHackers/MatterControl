@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				temperatureWidgets.AddChild(extruderTemperatureWidget);
 
 				bedTemperatureWidget = new TemperatureWidgetBed();
-				if (ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed"))
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
 					temperatureWidgets.AddChild(bedTemperatureWidget);
 				}
@@ -802,7 +802,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (ActiveSliceSettings.Instance != null)
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed"))
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
 					bedTemperatureWidget.Visible = true;
 				}

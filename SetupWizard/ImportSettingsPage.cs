@@ -390,7 +390,7 @@ namespace MatterHackers.MatterControl
 						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 						string layerHeight;
 
-						bool isSlic3r = importType == ".slice" || settingsToImport.TryGetValue("layer_height", out layerHeight);
+						bool isSlic3r = importType == ".slice" || settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
 						if (isSlic3r)
 						{
 							var newLayer = new PrinterSettingsLayer();
@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl
 						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 						string layerHeight;
 
-						bool isSlic3r = settingsToImport.TryGetValue("layer_height", out layerHeight);
+						bool isSlic3r = settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
 						if (isSlic3r)
 						{
 							var activeSettings = ActiveSliceSettings.Instance;

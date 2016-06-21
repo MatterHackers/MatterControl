@@ -45,11 +45,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>("build_height");
+			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
 
 			part3DView = new View3DBrailleBuilder(
 				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"),
+				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
 				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
 
 #if __ANDROID__
