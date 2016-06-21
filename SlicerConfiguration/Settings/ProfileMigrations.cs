@@ -236,6 +236,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							case "MatterControl.ActiveMaterialKey":
 							case "MatterControl.PrinterID":
+							case "MatterControl.MarkedForDelete":
+							case "MatterControl.DefaultQualityPreset":
+							case "MatterControl.DefaultMacros":
+							case "MatterControl.DefaultSliceEngine":
 								// Simply delete abandoned setting
 								break;
 
