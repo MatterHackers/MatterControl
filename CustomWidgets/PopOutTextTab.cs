@@ -63,7 +63,7 @@ namespace MatterHackers.Agg.UI
 
 			SetBoundsToEncloseChildren();
 
-			popOutManager = new PopOutManager(TabPageControlledByTab, minSize, tabPageControledByTab.Text, internalTabName);
+			popOutManager = new PopOutManager(TabPage, minSize, tabPageControledByTab.Text, internalTabName);
 		}
 
 		public void ShowInWindow()

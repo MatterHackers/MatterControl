@@ -152,7 +152,11 @@ namespace MatterHackers.MatterControl
 
 				advancedControls.TabBar.TabIndexChanged += (sender, e) =>
 				{
-					UserSettings.Instance.set(ThirdPanelTabView_AdvancedControls_CurrentTab, advancedControls.TabBar.SelectedTabName);
+					string selectedTabName = advancedControls.TabBar.SelectedTabName;
+					if (!string.IsNullOrEmpty(selectedTabName))
+					{
+						UserSettings.Instance.set(ThirdPanelTabView_AdvancedControls_CurrentTab, selectedTabName);
+					}
 				};
 			}
 

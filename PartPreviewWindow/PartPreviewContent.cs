@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget partPreviewView;
 		private ViewGcodeBasic viewGcodeBasic;
 		private TabControl tabControl;
-		private TabPage layerView;
+		private Tab layerViewTab;
 		private View3DWidget.AutoRotate autoRotate3DView;
 		private View3DWidget.OpenMode openMode;
 		private View3DWidget.WindowMode windowMode;
@@ -127,12 +127,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewGcodeBasic.Closed += (s, e) => Close();
 			}
 
-			layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View").ToUpper());
+			TabPage layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View").ToUpper());
 
 			int tabPointSize = 16;
             // add the correct tabs based on whether we are stand alone or embedded
             Tab threeDViewTab;
-            Tab layerViewTab;
             if (windowMode == View3DWidget.WindowMode.StandAlone || OsInformation.OperatingSystem == OSType.Android)
 			{
                 threeDViewTab = new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
@@ -158,7 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void SwitchToGcodeView()
 		{
-			tabControl.TabBar.SwitchToPage(layerView);
+			tabControl.TabBar.SelectTab(layerViewTab);
 			viewGcodeBasic.Focus();
 		}
 

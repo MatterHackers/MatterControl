@@ -213,7 +213,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				topCategoryTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
 				{
-					UserSettings.Instance.set(settingsName, topCategoryTabs.TabBar.SelectedTabName);
+					string selectedTabName = topCategoryTabs.TabBar.SelectedTabName;
+					if (!string.IsNullOrEmpty(selectedTabName))
+					{
+						UserSettings.Instance.set(settingsName, selectedTabName);
+					}
 				};
 			}
 
@@ -447,7 +451,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				leftSideGroupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
 				{
-					UserSettings.Instance.set(settingsTypeName, leftSideGroupTabs.TabBar.SelectedTabName);
+					string selectedTabName = leftSideGroupTabs.TabBar.SelectedTabName;
+					if (!string.IsNullOrEmpty(selectedTabName))
+					{
+						UserSettings.Instance.set(settingsTypeName, selectedTabName);
+					}
 				};
 			}
 
