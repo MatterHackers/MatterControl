@@ -48,9 +48,12 @@ namespace MatterHackers.MatterControl
 		int selectedMaterial = -1;
 		int selectedQuality = -1;
 
-		public SelectPartsOfPrinterToImport(string settingsFilePath) :
+		PrinterSettingsLayer destinationLayer;
+
+		public SelectPartsOfPrinterToImport(string settingsFilePath, PrinterSettingsLayer destinationLayer) :
 			base(unlocalizedTextForTitle: "Import Wizard")
 		{
+			this.destinationLayer = destinationLayer;
 			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
 
 			this.headerLabel.Text = "Select What to Import".Localize();
@@ -195,7 +198,7 @@ namespace MatterHackers.MatterControl
 			{
 				ActiveSliceSettings.Instance.OemLayer,
 				ActiveSliceSettings.Instance.BaseLayer,
-				ActiveSliceSettings.Instance.UserLayer,
+				destinationLayer,
 			};
 
 			PrinterSettingsLayer layerToImport = settingsToImport.BaseLayer;
@@ -207,8 +210,13 @@ namespace MatterHackers.MatterControl
 				{
 					if (!skipKeys.Contains(item.Key))
 					{
-						activeSettings.UserLayer[item.Key] = item.Value;
+						destinationLayer[item.Key] = item.Value;
 					}
+				}
+
+				if (destinationLayer != ActiveSliceSettings.Instance.UserLayer && material.ContainsKey("layer_name"))
+				{
+					destinationLayer["layer_name"] = material["layer_name"];
 				}
 			}
 			else if (selectedQuality > -1)
@@ -219,8 +227,13 @@ namespace MatterHackers.MatterControl
 				{
 					if (!skipKeys.Contains(item.Key))
 					{
-						activeSettings.UserLayer[item.Key] = item.Value;
+						destinationLayer[item.Key] = item.Value;
 					}
+				}
+
+				if (destinationLayer != ActiveSliceSettings.Instance.UserLayer && quality.ContainsKey("layer_name"))
+				{
+					destinationLayer["layer_name"] = quality["layer_name"];
 				}
 			}
 			else
@@ -232,7 +245,7 @@ namespace MatterHackers.MatterControl
 					string importValue = settingsToImport.GetValue(item.Key, layerCascade).Trim();
 					if (currentValue != item.Value)
 					{
-						activeSettings.UserLayer[item.Key] = item.Value;
+						destinationLayer[item.Key] = item.Value;
 					}
 				}
 			}
@@ -241,7 +254,6 @@ namespace MatterHackers.MatterControl
 
 			UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 
-			ProfileManager.ImportFromExisting(settingsFilePath);
 			WizardWindow.ChangeToPage(new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath)))
 			{
 				WizardWindow = this.WizardWindow,
@@ -395,7 +407,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		static string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-		static string importSettingSuccessMessage = "You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.".Localize();
+		static string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
 
 		private void ImportSettingsFile(string settingsFilePath)
 		{
@@ -414,18 +426,10 @@ namespace MatterHackers.MatterControl
 			else if(newQualityPresetButton.Checked)
 			{
 				ImportToPreset(settingsFilePath);
-				WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), "Quality".Localize()))
-				{
-					WizardWindow = this.WizardWindow,
-				});
 			}
 			else if(newMaterialPresetButton.Checked)
 			{
 				ImportToPreset(settingsFilePath);
-				WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), "Material".Localize()))
-				{
-					WizardWindow = this.WizardWindow,
-				});
 			}
 		}
 
@@ -433,12 +437,27 @@ namespace MatterHackers.MatterControl
 		{
 			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
 			{
+				PrinterSettingsLayer newLayer;
+
 				string importType = Path.GetExtension(settingsFilePath).ToLower();
 				switch (importType)
 				{
 					case ".printer":
+						newLayer = new PrinterSettingsLayer();
+						newLayer["layer_name"] = Path.GetFileNameWithoutExtension(settingsFilePath);
+						if (newQualityPresetButton.Checked)
+						{
+							ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+						}
+						else
+						{
+							// newMaterialPresetButton.Checked
+							ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
+						}
+
 						// open a wizard to ask what to import to the preset
-						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath));
+						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath, newLayer));
+
 						break;
 
 					case ".slice": // legacy presets file extension
@@ -449,7 +468,7 @@ namespace MatterHackers.MatterControl
 						bool isSlic3r = importType == ".slice" || settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
 						if (isSlic3r)
 						{
-							var newLayer = new PrinterSettingsLayer();
+							newLayer = new PrinterSettingsLayer();
 							newLayer.Name = Path.GetFileNameWithoutExtension(settingsFilePath);
 
 							// Only be the base and oem layers (not the user, quality or material layer)
@@ -469,16 +488,24 @@ namespace MatterHackers.MatterControl
 								}
 							}
 
+							string section;
 							if (newMaterialPresetButton.Checked)
 							{
 								ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
+								section = "Material".Localize();
 							}
 							else
 							{
 								ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+								section = "Quality".Localize();
 							}
 
 							ActiveSliceSettings.Instance.SaveChanges();
+
+							WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), section))
+							{
+								WizardWindow = this.WizardWindow,
+							});
 						}
 						else
 						{
@@ -505,7 +532,7 @@ namespace MatterHackers.MatterControl
 				switch (importType)
 				{
 					case ".printer":
-						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath));
+						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath, ActiveSliceSettings.Instance.UserLayer));
 						break;
 
 					case ".slice": // old presets format

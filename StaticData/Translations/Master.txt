@@ -5065,3 +5065,15 @@ Translated:Export As
 English:Cura
 Translated:Cura
 
+English:You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.
+Translated:You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.
+
+English:Select what you would like to merge into your current profile.
+Translated:Select what you would like to merge into your current profile.
+
+English:Settings have been merged into your current printer.
+Translated:Settings have been merged into your current printer.
+
+English:Select What to Import
+Translated:Select What to Import
+
