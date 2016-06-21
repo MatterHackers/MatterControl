@@ -27,6 +27,7 @@ namespace MatterHackers.MatterControl
 		public static void ShowMessageBox(Action<bool> callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string no = "")
 		{
 			StyledMessageBox messageBox = new StyledMessageBox(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, no);
+			messageBox.CenterInParent = true;
 			messageBox.ShowAsSystemWindow();
 		}
 

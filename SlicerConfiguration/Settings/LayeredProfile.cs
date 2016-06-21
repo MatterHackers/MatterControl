@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public PrinterSettingsLayer UserLayer { get; } = new PrinterSettingsLayer();
 
-		internal static PrinterSettings LoadFile(string printerProfilePath)
+		public static PrinterSettings LoadFile(string printerProfilePath)
 		{
 			var jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
 

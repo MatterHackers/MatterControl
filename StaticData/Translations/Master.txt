@@ -5050,3 +5050,18 @@ Translated:Material preset
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.
 Translated:You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.
 
+English:Select the parts of the printer file that you would like to merge into your current profile.
+Translated:Select the parts of the printer file that you would like to merge into your current profile.
+
+English:Select Parts to Import
+Translated:Select Parts to Import
+
+English:Merge
+Translated:Merge
+
+English:Export As
+Translated:Export As
+
+English:Cura
+Translated:Cura
+
