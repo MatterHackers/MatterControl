@@ -1,4 +1,33 @@
-﻿using MatterHackers.Agg;
+﻿/*
+Copyright (c) 2016, Lars Brubaker
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using MatterHackers.Agg;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,46 +36,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class GCodeProcessing
 	{
-		private static Dictionary<string, string> replaceWithSettingsStrings = new Dictionary<string, string>()
+		private static MappedSetting[] replaceWithSettingsStrings = new MappedSetting[]
         {
 			// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
-			{"first_layer_temperature", "temperature"},
-			{"temperature","temperature"},
-			{"first_layer_bed_temperature",SettingsKey.bed_temperature},
-			{SettingsKey.bed_temperature,SettingsKey.bed_temperature},
-			{"bed_remove_part_temperature","bed_remove_part_temperature"},
-			{"extruder_wipe_temperature","extruder_wipe_temperature"},
-			{"z_offset","z_offset"},
-			{"retract_length","retract_length"},
-			{"filament_diameter","filament_diameter"},
-			{"first_layer_speed","first_layer_speed"},
-			{"infill_speed","infill_speed"},
-			{"max_fan_speed","max_fan_speed"},
-			{"min_fan_speed","min_fan_speed"},
-			{"min_print_speed","min_print_speed"},
-			{"perimeter_speed","perimeter_speed"},
-			{"retract_speed","retract_speed"},
-			{"support_material_speed","support_material_speed"},
-			{"travel_speed","travel_speed"},
-			{"bridge_fan_speed","bridge_fan_speed"},
-			{"bridge_speed","bridge_speed"},
-			{"raft_print_speed","raft_print_speed"},
-			{"external_perimeter_speed","external_perimeter_speed"},
+			new AsPercentOfReferenceOrDirect("first_layer_speed", "first_layer_speed", "infill_speed", 60),
+			new AsPercentOfReferenceOrDirect("external_perimeter_speed","external_perimeter_speed", "perimeter_speed", 60),
+			new AsPercentOfReferenceOrDirect("raft_print_speed", "raft_print_speed", "infill_speed", 60),
+			new MappedSetting("bed_remove_part_temperature","bed_remove_part_temperature"),
+			new MappedSetting("bridge_fan_speed","bridge_fan_speed"),
+			new MappedSetting("bridge_speed","bridge_speed"),
+			new MappedSetting("extruder_wipe_temperature","extruder_wipe_temperature"),
+			new MappedSetting("filament_diameter","filament_diameter"),
+			new MappedSetting("first_layer_bed_temperature", SettingsKey.bed_temperature),
+			new MappedSetting("first_layer_temperature", "temperature"),
+			new MappedSetting("max_fan_speed","max_fan_speed"),
+			new MappedSetting("min_fan_speed","min_fan_speed"),
+			new MappedSetting("retract_length","retract_length"),
+			new MappedSetting("temperature","temperature"),
+			new MappedSetting("z_offset","z_offset"),
+			new MappedSetting(SettingsKey.bed_temperature,SettingsKey.bed_temperature),
+			new ScaledSingleNumber("infill_speed", "infill_speed", 60),
+			new ScaledSingleNumber("min_print_speed", "min_print_speed", 60),
+			new ScaledSingleNumber("perimeter_speed","perimeter_speed", 60),
+			new ScaledSingleNumber("retract_speed","retract_speed", 60),
+			new ScaledSingleNumber("support_material_speed","support_material_speed", 60),
+			new ScaledSingleNumber("travel_speed", "travel_speed", 60),
 		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)
 		{
-			foreach (KeyValuePair<string, string> keyValue in replaceWithSettingsStrings)
+			foreach (MappedSetting mappedSetting in replaceWithSettingsStrings)
 			{
 				// do the replacement with {} (curly brackets)
 				{
-					string thingToReplace = "{" + "{0}".FormatWith(keyValue.Key) + "}";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetValue(keyValue.Value));
+					string thingToReplace = "{" + "{0}".FormatWith(mappedSetting.CanonicalSettingsName) + "}";
+					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, mappedSetting.Value);
 				}
 				// do the replacement with [] (square brackets) Slic3r uses only square brackets
 				{
-					string thingToReplace = "[" + "{0}".FormatWith(keyValue.Key) + "]";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetValue(keyValue.Value));
+					string thingToReplace = "[" + "{0}".FormatWith(mappedSetting.CanonicalSettingsName) + "]";
+					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, mappedSetting.Value);
 				}
 			}
 

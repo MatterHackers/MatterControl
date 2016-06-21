@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2016, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
