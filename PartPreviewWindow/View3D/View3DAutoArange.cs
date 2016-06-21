@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// offset them to the center of the bed
 				for (int i = 0; i < asyncMeshGroups.Count; i++)
 				{
-					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"), 0));
+					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center), 0));
 				}
 
 				PartHasBeenChanged();

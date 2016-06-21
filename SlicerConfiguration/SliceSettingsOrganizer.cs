@@ -71,6 +71,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string DefaultValue { get; set; }
 
+		public bool ReloadUiWhenChanged { get; set; }
+
 		static public SliceSettingData NewOrganizerSettingData(string slicerConfigName, string presentationName, SliceSettingData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
 		{
 			return new SliceSettingData(slicerConfigName, presentationName, dataEditType, extraSettings, helpText);

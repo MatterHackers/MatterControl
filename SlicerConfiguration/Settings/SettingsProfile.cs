@@ -55,15 +55,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bed_shape = nameof(bed_shape);
 		public const string bed_size = nameof(bed_size);
 		public const string bed_temperature = nameof(bed_temperature);
-		public const string has_heated_bed = nameof(has_heated_bed);
-		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
-		public const string z_homes_to_max = nameof(z_homes_to_max);
-		public const string nozzle_diameter = nameof(nozzle_diameter);
-		public const string printer_name = nameof(printer_name);
-		public const string min_fan_speed = nameof(min_fan_speed);
+		public const string build_height = nameof(build_height);
+		public const string center_part_on_bed = nameof(center_part_on_bed);
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
 		public const string fill_density = nameof(fill_density);
+		public const string first_layer_height = nameof(first_layer_height);
+		public const string has_heated_bed = nameof(has_heated_bed);
+		public const string layer_height = nameof(layer_height);
+		public const string min_fan_speed = nameof(min_fan_speed);
+		public const string nozzle_diameter = nameof(nozzle_diameter);
+		public const string print_center = nameof(print_center);
+		public const string printer_name = nameof(printer_name);
+		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
+		public const string z_homes_to_max = nameof(z_homes_to_max);
 	};
 
 	public class SettingsProfile
@@ -322,7 +327,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printLevelingData.SampledPosition0,
 					printLevelingData.SampledPosition1,
 					printLevelingData.SampledPosition2,
-					ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"));
+					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
 			}
 
 			return printLevelingData;
@@ -354,7 +359,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					levelingData.SampledPosition0,
 					levelingData.SampledPosition1,
 					levelingData.SampledPosition2,
-					ActiveSliceSettings.Instance.GetValue<Vector2>("print_center"));
+					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
 			}
 		}
 
@@ -438,20 +443,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string onlyNumber = settingsStringh.Replace("%", "");
 					double ratio = ParseDouble(onlyNumber) / 100;
 
-					if (settingsKey == "first_layer_height")
+					if (settingsKey == SettingsKey.first_layer_height)
 					{
-						return (T)(object)(GetValue<double>("layer_height") * ratio);
+						return (T)(object)(GetValue<double>(SettingsKey.layer_height) * ratio);
 					}
 					else if (settingsKey == "first_layer_extrusion_width")
 					{
-						return (T)(object)(GetValue<double>("layer_height") * ratio);
+						return (T)(object)(GetValue<double>(SettingsKey.layer_height) * ratio);
 					}
 
 					return (T)(object)(ratio);
 				}
 
 				if (settingsKey == SettingsKey.bed_temperature
-					&& !this.GetValue<bool>("has_heated_bed"))
+					&& !this.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
 					return (T)Convert.ChangeType(0, typeof(double));
 				}
@@ -472,7 +477,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					default:
 #if DEBUG
-						throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetValue("bed_shape")));
+						throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetValue(SettingsKey.bed_shape)));
 #else
 						return (T)(object)BedShape.Rectangular;
 #endif
@@ -574,18 +579,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			try
 			{
-				if (GetValue<double>("layer_height") > GetValue<double>(SettingsKey.nozzle_diameter))
+				if (GetValue<double>(SettingsKey.layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
 				{
 					string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>("layer_height"), GetValue<double>(SettingsKey.nozzle_diameter));
+					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
-				else if (GetValue<double>("first_layer_height") > GetValue<double>(SettingsKey.nozzle_diameter))
+				else if (GetValue<double>(SettingsKey.first_layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
 				{
 					string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>("first_layer_height"), GetValue<double>(SettingsKey.nozzle_diameter));
+					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.first_layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;

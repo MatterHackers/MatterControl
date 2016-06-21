@@ -47,15 +47,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			curaSettings = new MappedSetting[]
 			{
-				new ScaledSingleNumber("layer_height", "layerThickness", 1000),
-				new AsPercentOfReferenceOrDirect("first_layer_height", "initialLayerThickness", "layer_height", 1000),
+				new ScaledSingleNumber(SettingsKey.layer_height, "layerThickness", 1000),
+				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_height, "initialLayerThickness", SettingsKey.layer_height, 1000),
 				new ScaledSingleNumber("filament_diameter", "filamentDiameter", 1000),
 				//filamentFlow
 				//layer0extrusionWidth
-				new ScaledSingleNumber("nozzle_diameter", "extrusionWidth", 1000),
-				new AsCountOrDistance("perimeters", "insetCount", "nozzle_diameter"),
-				new AsCountOrDistance("bottom_solid_layers", "downSkinCount", "layer_height"),
-				new AsCountOrDistance("top_solid_layers", "upSkinCount", "layer_height"),
+				new ScaledSingleNumber(SettingsKey.nozzle_diameter, "extrusionWidth", 1000),
+				new AsCountOrDistance("perimeters", "insetCount", SettingsKey.nozzle_diameter),
+				new AsCountOrDistance("bottom_solid_layers", "downSkinCount", SettingsKey.layer_height),
+				new AsCountOrDistance("top_solid_layers", "upSkinCount", SettingsKey.layer_height),
 				new ScaledSingleNumber("skirt_distance", "skirtDistance", 1000),
 				new MappedSetting("skirts", "skirtLineCount"),
 				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),
@@ -84,8 +84,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new ScaledSingleNumber("retract_lift", "retractionZHop", 1000),
 
 				new MappedSetting("spiral_vase", "spiralizeMode"),
-				new PrintCenterX("print_center", "posx"),
-				new PrintCenterY("print_center", "posy"),
+				new PrintCenterX(SettingsKey.print_center, "posx"),
+				new PrintCenterY(SettingsKey.print_center, "posy"),
 
 				// needs testing, not working
 				new ScaledSingleNumber("support_material_spacing", "supportLineDistance", 1000),
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					double infillRatio0To1 = ParseDouble(base.Value);
 
 					// 400 = solid (extruder width)
-					double nozzle_diameter = ParseDoubleFromRawValue("nozzle_diameter");
+					double nozzle_diameter = ParseDoubleFromRawValue(SettingsKey.nozzle_diameter);
 					double linespacing = 1000;
 					if (infillRatio0To1 > .01)
 					{
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				get
 				{
-					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
+					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
 					return (PrinteCenter.x * 1000).ToString();
 				}
 			}
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				get
 				{
-					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
+					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
 					return (PrinteCenter.y * 1000).ToString();
 				}
 			}
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					double lengthToExtrudeMm = ParseDouble(base.Value);
 					// we need to convert mm of filament to mm of extrusion path
 					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>("filament_diameter") * MathHelper.Tau * lengthToExtrudeMm;
-					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>("first_layer_height") * ActiveSliceSettings.Instance.GetValue<double>("nozzle_diameter");
+					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.first_layer_height) * ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
 					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 
 					return (lineLength * 1000).ToString();

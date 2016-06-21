@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2016, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -52,19 +52,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedToBoolString("avoid_crossing_perimeters", "avoidCrossingPerimeters"),
 				new MappedToBoolString("external_perimeters_first", "outsidePerimetersFirst"),
 				new MappedSetting("bottom_clip_amount", "bottomClipAmount"),
-				new MappedToBoolString("center_part_on_bed", "centerObjectInXy"),
+				new MappedToBoolString(SettingsKey.center_part_on_bed, "centerObjectInXy"),
 				new MappedToBoolString("spiral_vase", "continuousSpiralOuterPerimeter"),
 				new GCodeForSlicer("end_gcode", "endCode"),
 				new MappedSetting("z_offset", "zOffset"),
 				new ExtruderOffsets("extruder_offset", "extruderOffsets"),
-				new MappedSetting("nozzle_diameter", "extrusionWidth"),
+				new MappedSetting(SettingsKey.nozzle_diameter, "extrusionWidth"),
 				new MappedSetting("max_fan_speed", "fanSpeedMaxPercent"),
 				new MappedSetting("min_fan_speed", "fanSpeedMinPercent"),
 				new MappedSetting("filament_diameter", "filamentDiameter"),
 				new MappedSetting("extrusion_multiplier", "extrusionMultiplier"),
-				new AsPercentOfReferenceOrDirect("first_layer_extrusion_width", "firstLayerExtrusionWidth", "nozzle_diameter"),
+				new AsPercentOfReferenceOrDirect("first_layer_extrusion_width", "firstLayerExtrusionWidth", SettingsKey.nozzle_diameter),
 				new AsPercentOfReferenceOrDirect("first_layer_speed", "firstLayerSpeed", "infill_speed"),
-				new AsPercentOfReferenceOrDirect("first_layer_height", "firstLayerThickness", "layer_height"),
+				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_height, "firstLayerThickness", SettingsKey.layer_height),
 				new MappedSetting("disable_fan_first_layers", "firstLayerToAllowFan"),
 				new MappedToBoolString("support_material_create_internal_support", "generateInternalSupport"),
 				new MappedToBoolString("support_material_create_perimeter", "generateSupportPerimeter"),
@@ -83,21 +83,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("fill_angle", "infillStartingAngle"),
 				new MappedToBoolString("wipe", "wipeAfterRetraction"),
 				new MappedSetting("perimeter_speed", "insidePerimetersSpeed"),
-				new MappedSetting("layer_height", "layerThickness"),
+				new MappedSetting(SettingsKey.layer_height, "layerThickness"),
 				new MappedSetting("min_extrusion_before_retract", "minimumExtrusionBeforeRetraction"),
 				new MappedSetting("min_print_speed", "minimumPrintingSpeed"),
 				new MappedSetting("slowdown_below_layer_time", "minimumLayerTimeSeconds"),
 				new MapFirstValue("retract_restart_extra", "unretractExtraExtrusion"),
 				new MapFirstValue("retract_before_travel", "minimumTravelToCauseRetraction"),
-				new AsCountOrDistance("bottom_solid_layers", "numberOfBottomLayers", "layer_height"),
+				new AsCountOrDistance("bottom_solid_layers", "numberOfBottomLayers", SettingsKey.layer_height),
 				new MappedSetting("skirts", "numberOfSkirtLoops"),
 				new MappedSetting("brims", "numberOfBrimLoops"),
-				new AsCountOrDistance("top_solid_layers", "numberOfTopLayers", "layer_height"),
+				new AsCountOrDistance("top_solid_layers", "numberOfTopLayers", SettingsKey.layer_height),
 				new AsPercentOfReferenceOrDirect("top_solid_infill_speed", "topInfillSpeed", "infill_speed"),
 				new AsPercentOfReferenceOrDirect("external_perimeter_speed", "outsidePerimeterSpeed", "perimeter_speed"),
-				new AsPercentOfReferenceOrDirect("external_perimeter_extrusion_width", "outsidePerimeterExtrusionWidth", "nozzle_diameter"),
-				new AsCountOrDistance("perimeters", "numberOfPerimeters", "nozzle_diameter"),
-				new MapPositionToPlaceObjectCenter("print_center", "positionToPlaceObjectCenter"),
+				new AsPercentOfReferenceOrDirect("external_perimeter_extrusion_width", "outsidePerimeterExtrusionWidth", SettingsKey.nozzle_diameter),
+				new AsCountOrDistance("perimeters", "numberOfPerimeters", SettingsKey.nozzle_diameter),
+				new MapPositionToPlaceObjectCenter(SettingsKey.print_center, "positionToPlaceObjectCenter"),
 				// TODO: The raft currently does not handle brim correctly. So it needs to be fixed before it is enabled.
 				new MappedToBoolString("create_raft", "enableRaft"),
 				new MappedSetting("raft_extra_distance_around_part", "raftExtraDistanceAroundPart"),
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("support_material_speed", "supportMaterialSpeed"),
 				new MappedSetting("support_type", "supportType"),
 				new MappedSetting("support_material_xy_distance", "supportXYDistanceFromObject"),
-				new AsCountOrDistance("support_material_interface_layers", "supportInterfaceLayers", "layer_height"),
+				new AsCountOrDistance("support_material_interface_layers", "supportInterfaceLayers", SettingsKey.layer_height),
 				new MappedSetting("travel_speed", "travelSpeed"),
 				new MappedSetting("wipe_shield_distance", "wipeShieldDistanceFromObject"),
 				new MappedSetting("wipe_tower_size", "wipeTowerSize"),
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				get
 				{
-					double nozzleDiameter = ActiveSliceSettings.Instance.GetValue<double>("nozzle_diameter");
+					double nozzleDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
 
 					string extrusionWidth = base.Value;
 
@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					double infillRatio0To1 = ParseDouble(base.Value);
 					// 400 = solid (extruder width)
-					double nozzle_diameter = ParseDoubleFromRawValue("nozzle_diameter");
+					double nozzle_diameter = ParseDoubleFromRawValue(SettingsKey.nozzle_diameter);
 					double linespacing = 1000;
 					if (infillRatio0To1 > .01)
 					{
@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				get
 				{
-					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
+					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
 
 					return "[{0},{1}]".FormatWith(PrinteCenter.x, PrinteCenter.y);
 				}
@@ -331,7 +331,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					double lengthToExtrudeMm = ParseDouble(base.Value);
 					// we need to convert mm of filament to mm of extrusion path
 					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>("filament_diameter") * MathHelper.Tau * lengthToExtrudeMm;
-					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>("first_layer_height") * ActiveSliceSettings.Instance.GetValue<double>("nozzle_diameter");
+					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.first_layer_height) * ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
 					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 
 					return lineLength.ToString();

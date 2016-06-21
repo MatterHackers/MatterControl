@@ -63,7 +63,7 @@ namespace MatterControl.Tests.MatterControl
 					return;
 				}
 
-				string bedSize = settings.LayerCascade.GetValue("bed_size");
+				string bedSize = settings.LayerCascade.GetValue(SettingsKey.bed_size);
 
 				// Must exist in all configs
 				Assert.IsNotNullOrEmpty(bedSize, "[bed_size] must exist: " + settings.RelativeFilePath);
@@ -86,7 +86,7 @@ namespace MatterControl.Tests.MatterControl
 					return;
 				}
 
-				string printCenter = settings.LayerCascade.GetValue("print_center");
+				string printCenter = settings.LayerCascade.GetValue(SettingsKey.print_center);
 
 				// Must exist in all configs
 				Assert.IsNotNullOrEmpty(printCenter, "[print_center] must exist: " + settings.RelativeFilePath);
@@ -246,8 +246,8 @@ namespace MatterControl.Tests.MatterControl
 					return;
 				}
 
-				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue("nozzle_diameter"));
-				float layerHeight = float.Parse(settings.LayerCascade.GetValue("layer_height"));
+				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue(SettingsKey.nozzle_diameter));
+				float layerHeight = float.Parse(settings.LayerCascade.GetValue(SettingsKey.layer_height));
 
 
 				float firstLayerExtrusionWidth;
@@ -262,7 +262,7 @@ namespace MatterControl.Tests.MatterControl
 					firstLayerExtrusionWidth = nozzleDiameter;
 				}
 
-				string firstLayerHeightString = settings.LayerCascade.GetValue("first_layer_height");
+				string firstLayerHeightString = settings.LayerCascade.GetValue(SettingsKey.first_layer_height);
 				if (!string.IsNullOrEmpty(firstLayerHeightString))
 				{
 					float firstLayerHeight = ValueOrPercentageOf(firstLayerHeightString, layerHeight);
@@ -292,8 +292,8 @@ namespace MatterControl.Tests.MatterControl
 					return;
 				}
 
-				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue("nozzle_diameter"));
-				float layerHeight = float.Parse(settings.LayerCascade.GetValue("layer_height"));
+				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue(SettingsKey.nozzle_diameter));
+				float layerHeight = float.Parse(settings.LayerCascade.GetValue(SettingsKey.layer_height));
 
 				double minimumLayerHeight = nozzleDiameter * 0.85;
 
@@ -313,7 +313,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue("nozzle_diameter"));
+				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue(SettingsKey.nozzle_diameter));
 
 				string firstLayerExtrusionWidthString = settings.LayerCascade.GetValue("first_layer_extrusion_width");
 				if (!string.IsNullOrEmpty(firstLayerExtrusionWidthString))

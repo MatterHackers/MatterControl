@@ -139,7 +139,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public bool firstLayerHeightLessThanNozzleDiameter(Dictionary<string, string> currentFile)
 		{
-			string firstLayerHeight = currentFile["first_layer_height"];
+			string firstLayerHeight = currentFile[SettingsKey.first_layer_height];
 			float convertedFirstLayerHeightValue;
 
 			if (firstLayerHeight.Contains("%"))
@@ -152,7 +152,7 @@ namespace MatterControl.Tests.MatterControl
 				convertedFirstLayerHeightValue = float.Parse(firstLayerHeight);
 			}
 
-			string nozzleDiameter = currentFile["nozzle_diameter"];
+			string nozzleDiameter = currentFile[SettingsKey.nozzle_diameter];
 			float convertedNozzleDiameterValue = float.Parse(nozzleDiameter);
 
 			return convertedFirstLayerHeightValue <= convertedNozzleDiameterValue;
@@ -163,7 +163,7 @@ namespace MatterControl.Tests.MatterControl
 			string firstLayerExtrusionWidth = currentFile["first_layer_extrusion_width"];
 			float convertedFirstLayerExtrusionWidth;
 
-			string nozzleDiameter = currentFile["nozzle_diameter"];
+			string nozzleDiameter = currentFile[SettingsKey.nozzle_diameter];
 			float acceptableValue = float.Parse(nozzleDiameter) * 4;
 
 			if (firstLayerExtrusionWidth.Contains("%"))
@@ -199,10 +199,10 @@ namespace MatterControl.Tests.MatterControl
 
 		public bool layerHeightLessThanNozzleDiameter(Dictionary<string,string> currentFile)
 		{
-			string layerHeight = currentFile["layer_height"];
+			string layerHeight = currentFile[SettingsKey.layer_height];
 			float convertedLayerHeight = float.Parse(layerHeight);
 
-			string nozzleDiameter = currentFile["nozzle_diameter"];
+			string nozzleDiameter = currentFile[SettingsKey.nozzle_diameter];
 			float convertedNozzleDiameterValue = float.Parse(nozzleDiameter);
 
 			return convertedLayerHeight <= convertedNozzleDiameterValue;
@@ -211,7 +211,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public bool bedSizeXYSeparatedByComma(Dictionary<string, string> currentFile)
 		{
-			string settingValue = currentFile["bed_size"];
+			string settingValue = currentFile[SettingsKey.bed_size];
 			string[] settingValueToTest = settingValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
 			return settingValueToTest.Length == 2;
@@ -219,7 +219,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public bool printCenterFormatSeparatedByComma(Dictionary<string, string> currentFile)
 		{
-			string settingValue = currentFile["print_center"];
+			string settingValue = currentFile[SettingsKey.print_center];
 			string[] settingValueToTest = settingValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
 			return settingValueToTest.Length == 2;

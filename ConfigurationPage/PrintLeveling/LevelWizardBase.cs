@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static Vector2 GetPrintLevelPositionToSample(int index)
 		{
 			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>("print_center");
+			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
 
 			switch (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape))
 			{
