@@ -438,7 +438,7 @@ namespace MatterHackers.MatterControl
 				{
 					case ".printer":
 						// open a wizard to ask what to import to the preset
-						throw new NotImplementedException("need to import from 'MatterControl.printer' files");
+						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath));
 						break;
 
 					case ".slice": // legacy presets file extension
