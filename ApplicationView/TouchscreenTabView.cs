@@ -229,7 +229,11 @@ namespace MatterHackers.MatterControl
 
 				TabBar.TabIndexChanged += (object sender, EventArgs e) =>
 				{
-					UserSettings.Instance.set(CompactTabView_CurrentTab, TabBar.SelectedTabName);
+					string selectedTabName = TabBar.SelectedTabName;
+					if (!string.IsNullOrEmpty(selectedTabName))
+					{
+						UserSettings.Instance.set(CompactTabView_CurrentTab, selectedTabName);
+					}
 				};
 			}
 		}
