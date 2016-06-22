@@ -5080,3 +5080,24 @@ Translated:Select What to Import
 English:Select section to import to preset.
 Translated:Select section to import to preset.
 
+English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
+Translated:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
+
+English:Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.
+Translated:Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.
+
+English:Cloud Profiles
+Translated:Cloud Profiles
+
+English:Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.
+Translated:Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.
+
+English:Remote Monitoring
+Translated:Remote Monitoring
+
+English:Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.
+Translated:Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.
+
+English:Sign In
+Translated:Sign In
+
