@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl
 
 	public class PlatingMeshGroupData
 	{
-		public Vector3 currentScale = new Vector3(1, 1, 1);
 		public Vector2 spacing;
 		public List<IPrimitive> meshTraceableData = new List<IPrimitive>();
 	}

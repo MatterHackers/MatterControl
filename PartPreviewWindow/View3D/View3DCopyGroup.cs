@@ -87,7 +87,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PartHasBeenChanged();
 
 				// now set the selection to the new copy
-				MeshGroupExtraData[MeshGroups.Count - 1].currentScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
 				SelectedMeshGroupIndex = MeshGroups.Count - 1;
 				undoBuffer.Add(new CopyUndoCommand(this, SelectedMeshGroupIndex));
 			}

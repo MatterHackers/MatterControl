@@ -2106,7 +2106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool PartsAreInPrintVolume()
 		{
-			if (ActiveSliceSettings.Instance?.GetValue<bool>(SettingsKey.center_part_on_bed) == true)
+			if (ActiveSliceSettings.Instance?.GetValue<bool>(SettingsKey.center_part_on_bed) == false)
 			{
 				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
 				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
@@ -2211,7 +2211,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
 			{
 				PlatingMeshGroupData meshData = new PlatingMeshGroupData();
-				meshData.currentScale = MeshGroupExtraData[meshGroupIndex].currentScale;
 				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
 
 				if (traceInfoOpperation == TraceInfoOpperation.DO_COPY)

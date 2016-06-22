@@ -1437,8 +1437,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				restoreButton.Click += (sender, e) =>
 				{
-				// Revert the user override 
-				if (persistenceLayer == null)
+					// Revert the user override 
+					if (persistenceLayer == null)
 					{
 						ActiveSliceSettings.Instance.ClearValue(settingData.SlicerConfigName);
 					}
@@ -1448,6 +1448,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 
 					settingsRow.RefreshValue(layerCascade);
+					OnSettingsChanged(settingData);
 				};
 
 				restoreArea.AddChild(restoreButton);
