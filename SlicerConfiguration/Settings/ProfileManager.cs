@@ -117,10 +117,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static SettingsProfile LoadEmptyProfile()
 		{
-			var empytProfile = new SettingsProfile(
-				new PrinterSettings(
-					new OemProfile(), 
-					SliceSettingsOrganizer.Instance.GetDefaultSettings()));
+			var empytProfile = new SettingsProfile(new PrinterSettings(new OemProfile()));
 
 			empytProfile.SetActiveValue(SettingsKey.printer_name.ToString(), "Printers...".Localize());
 
@@ -186,9 +183,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 
 					var oemProfile = new OemProfile(settingsToImport);
-					PrinterSettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 
-					var layeredProfile = new PrinterSettings(oemProfile, baseConfig)
+					var layeredProfile = new PrinterSettings(oemProfile)
 					{
 						ID = printerInfo.ID,
 					};
@@ -211,9 +207,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string guid = Guid.NewGuid().ToString();
 
 			OemProfile printerProfile = LoadHttpOemProfile(make, model);
-			PrinterSettingsLayer baseConfig = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 
-			var layeredProfile = new PrinterSettings(printerProfile, baseConfig)
+			var layeredProfile = new PrinterSettings(printerProfile)
 			{
 				ID = guid,
 				// TODO: This should really be set by the system that generates the source documents 

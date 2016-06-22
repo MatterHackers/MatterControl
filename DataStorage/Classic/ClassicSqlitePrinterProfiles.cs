@@ -81,8 +81,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			profileData.Profiles.Add(printerInfo);
 
 			var layeredProfile = new PrinterSettings(
-				new OemProfile(LoadOemLayer(printer)), 
-				SliceSettingsOrganizer.Instance.GetDefaultSettings());
+				new OemProfile(LoadOemLayer(printer)));
 
 			LoadQualitySettings(layeredProfile, printer);
 			LoadMaterialSettings(layeredProfile, printer);

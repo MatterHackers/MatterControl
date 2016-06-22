@@ -55,10 +55,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		internal PrinterSettingsLayer MaterialLayer { get; private set; }
 
-		public PrinterSettings(OemProfile printerProfile, PrinterSettingsLayer baseConfig)
+		public PrinterSettings(OemProfile printerProfile)
 		{
 			this.OemProfile = printerProfile;
-			this.BaseLayer = baseConfig;
 		}
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
@@ -245,7 +244,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
-		public PrinterSettingsLayer BaseLayer { get; set; }
+		static PrinterSettingsLayer baseLayerCache = SliceSettingsOrganizer.Instance.GetDefaultSettings();
+		[JsonIgnore]
+		public PrinterSettingsLayer BaseLayer
+		{
+			get
+			{
+				return baseLayerCache;
+			}
+		}
 
 		private IEnumerable<PrinterSettingsLayer> defaultLayerCascade
 		{

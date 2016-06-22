@@ -33,7 +33,7 @@ namespace MatterControl.Tests.MatterControl
 								   RelativeFilePath = configIni.FullName.Substring(printerSettingsDirectory.Length + 1),
 
 								   // The config.ini layer cascade contains only itself
-								   LayerCascade = new PrinterSettings(oemProfile, new PrinterSettingsLayer()),
+								   LayerCascade = new PrinterSettings(oemProfile),
 							   },
 							   MatterialLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "material"), oemProfile),
 							   QualityLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "quality"), oemProfile)
@@ -47,7 +47,7 @@ namespace MatterControl.Tests.MatterControl
 					Directory.GetFiles(layersDirectory, "*.slice").Select(file => new LayerInfo()
 					{
 						RelativeFilePath = file.Substring(printerSettingsDirectory.Length + 1),
-						LayerCascade = new PrinterSettings(new OemProfile(PrinterSettingsLayer.LoadFromIni(file)), oemProfile.OemLayer)
+						LayerCascade = new PrinterSettings(new OemProfile(PrinterSettingsLayer.LoadFromIni(file)))
 					}).ToList()
 					: new List<LayerInfo>();
 		}
