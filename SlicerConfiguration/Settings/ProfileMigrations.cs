@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								break;
 
 							case "MatterControl.PublishBedImage":
-								layer.Add("publish_bed_image", item.Value);
+								layer.Add(SettingsKey.publish_bed_image, item.Value);
 								break;
 
 							case "MatterControl.PrintLevelingData":

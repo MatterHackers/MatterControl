@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			string query = string.Format("SELECT * FROM PrinterSetting WHERE Name = 'PublishBedImage' and PrinterId = {0};", printer.Id);
 			var publishBedImage = Datastore.Instance.dbSQLite.Query<PrinterSetting>(query).FirstOrDefault();
 
-			layeredProfile.UserLayer["publish_bed_image"] = publishBedImage?.Value == "true" ? "1" : "0";
+			layeredProfile.UserLayer[SettingsKey.publish_bed_image] = publishBedImage?.Value == "true" ? "1" : "0";
 
 			// Print leveling
 			var printLevelingData = PrintLevelingData.Create(
