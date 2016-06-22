@@ -41,6 +41,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PrinterSettings
 	{
+		static PrinterSettingsLayer baseLayerCache;
+
 		public int DocumentVersion { get; set; }
 
 		public string ID { get; set; }
@@ -55,8 +57,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		internal PrinterSettingsLayer MaterialLayer { get; private set; }
 
-		public PrinterSettings(OemProfile printerProfile)
+		public PrinterSettings(OemProfile printerProfile, PrinterSettingsLayer baseLayer = null)
 		{
+			baseLayerCache = baseLayer;
 			this.OemProfile = printerProfile;
 		}
 
@@ -244,7 +247,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
-		static PrinterSettingsLayer baseLayerCache;
 		[JsonIgnore]
 		public PrinterSettingsLayer BaseLayer
 		{
