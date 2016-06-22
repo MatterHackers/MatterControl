@@ -244,12 +244,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
-		static PrinterSettingsLayer baseLayerCache = SliceSettingsOrganizer.Instance.GetDefaultSettings();
+		static PrinterSettingsLayer baseLayerCache;
 		[JsonIgnore]
 		public PrinterSettingsLayer BaseLayer
 		{
 			get
 			{
+				if (baseLayerCache == null)
+				{
+					baseLayerCache = SliceSettingsOrganizer.Instance.GetDefaultSettings();
+				}
+
 				return baseLayerCache;
 			}
 		}
