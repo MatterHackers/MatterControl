@@ -56,10 +56,7 @@ namespace MatterHackers.MatterControl
 				string printerID = this.SelectedValue;
 				if (printerID == "new")
 				{
-					if (AddPrinter != null)
-					{
-						UiThread.RunOnIdle(() => AddPrinter(this, null));
-					}
+					// do nothing
 				}
 				else
 				{
@@ -90,7 +87,13 @@ namespace MatterHackers.MatterControl
 			this.AddItem(
 				StaticData.Instance.LoadIcon("icon_plus.png", 32, 32),
 				"Add New Printer...",
-				"new");
+				"new").Click += (s, e) =>
+				{
+					if (AddPrinter != null)
+					{
+						UiThread.RunOnIdle(() => AddPrinter(this, null));
+					}
+				};
 		}
 
 		private void SettingChanged(object sender, EventArgs e)
