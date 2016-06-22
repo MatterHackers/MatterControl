@@ -47,31 +47,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (fromVersion < 201605131)
 			{
 				var materialLayers = jObject["MaterialLayers"] as JObject;
-				foreach (JProperty layer in materialLayers.Properties().ToList())
+				if (materialLayers != null)
 				{
-					layer.Remove();
+					foreach (JProperty layer in materialLayers.Properties().ToList())
+					{
+						layer.Remove();
 
-					string layerID = Guid.NewGuid().ToString();
+						string layerID = Guid.NewGuid().ToString();
 
-					var body = layer.Value as JObject;
-					body["MatterControl.LayerID"] = layerID;
-					body["MatterControl.LayerName"] = layer.Name;
+						var body = layer.Value as JObject;
+						body["MatterControl.LayerID"] = layerID;
+						body["MatterControl.LayerName"] = layer.Name;
 
-					materialLayers[layerID] = layer.Value;
+						materialLayers[layerID] = layer.Value;
+					}
 				}
 
 				var qualityLayers = jObject["QualityLayers"] as JObject;
-				foreach (JProperty layer in qualityLayers.Properties().ToList())
+				if (qualityLayers != null)
 				{
-					layer.Remove();
+					foreach (JProperty layer in qualityLayers.Properties().ToList())
+					{
+						layer.Remove();
 
-					string layerID = Guid.NewGuid().ToString();
+						string layerID = Guid.NewGuid().ToString();
 
-					var body = layer.Value as JObject;
-					body["MatterControl.LayerID"] = layerID;
-					body["MatterControl.LayerName"] = layer.Name;
+						var body = layer.Value as JObject;
+						body["MatterControl.LayerID"] = layerID;
+						body["MatterControl.LayerName"] = layer.Name;
 
-					qualityLayers[layerID] = layer.Value;
+						qualityLayers[layerID] = layer.Value;
+					}
 				}
 
 

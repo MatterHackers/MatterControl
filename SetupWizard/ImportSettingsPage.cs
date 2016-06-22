@@ -529,7 +529,9 @@ namespace MatterHackers.MatterControl
 						else
 						{
 							// looks like a cura file
+#if DEBUG
 							throw new NotImplementedException("need to import from 'cure.ini' files");
+#endif
 						}
 						break;
 
