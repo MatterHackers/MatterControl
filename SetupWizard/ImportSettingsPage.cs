@@ -43,17 +43,25 @@ namespace MatterHackers.MatterControl
 	public class SelectPartsOfPrinterToImport : WizardPage
 	{
 		static string importMessage = "Select what you would like to merge into your current profile.".Localize();
+
 		string settingsFilePath;
 		PrinterSettings settingsToImport;
 		int selectedMaterial = -1;
 		int selectedQuality = -1;
 
 		PrinterSettingsLayer destinationLayer;
+		string sectionName;
 
-		public SelectPartsOfPrinterToImport(string settingsFilePath, PrinterSettingsLayer destinationLayer) :
+		private bool isMergeIntoUserLayer = false;
+
+
+		public SelectPartsOfPrinterToImport(string settingsFilePath, PrinterSettingsLayer destinationLayer, string sectionName = null) :
 			base(unlocalizedTextForTitle: "Import Wizard")
 		{
+			this.isMergeIntoUserLayer = destinationLayer == ActiveSliceSettings.Instance.UserLayer;
 			this.destinationLayer = destinationLayer;
+			this.sectionName = sectionName;
+
 			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
 
 			this.headerLabel.Text = "Select What to Import".Localize();
@@ -75,14 +83,16 @@ namespace MatterHackers.MatterControl
 			};
 			scrollWindow.AddChild(container);
 
-			var selectPartsMessage = new WrappedTextWidget(importMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			container.AddChild(selectPartsMessage);
+			if (isMergeIntoUserLayer)
+			{
+				container.AddChild(new WrappedTextWidget(importMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			}
 
 			// add in the check boxes to select what to import
 			container.AddChild(new TextWidget("Main Settings:")
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				Margin = new BorderDouble(0, 3, 0, 10),
+				Margin = new BorderDouble(0, 3, 0, isMergeIntoUserLayer ? 10 : 0),
 			});
 
 			var mainProfileRadioButton = new RadioButton("Printer Profile")
@@ -167,7 +177,8 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var mergeButton = textImageButtonFactory.Generate("Merge".Localize());
+			var mergeButtonTitle = this.isMergeIntoUserLayer ? "Merge".Localize() : "Import".Localize();
+			var mergeButton = textImageButtonFactory.Generate( mergeButtonTitle);
 			mergeButton.Name = "Merge Profile";
 			mergeButton.Click += (s,e) => UiThread.RunOnIdle(Merge);
 			footerRow.AddChild(mergeButton);
@@ -214,7 +225,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (destinationLayer != ActiveSliceSettings.Instance.UserLayer && material.ContainsKey("layer_name"))
+				if (!isMergeIntoUserLayer && material.ContainsKey("layer_name"))
 				{
 					destinationLayer["layer_name"] = material["layer_name"];
 				}
@@ -231,7 +242,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (destinationLayer != ActiveSliceSettings.Instance.UserLayer && quality.ContainsKey("layer_name"))
+				if (!isMergeIntoUserLayer && quality.ContainsKey("layer_name"))
 				{
 					destinationLayer["layer_name"] = quality["layer_name"];
 				}
@@ -254,7 +265,14 @@ namespace MatterHackers.MatterControl
 
 			UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 
-			WizardWindow.ChangeToPage(new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath)))
+			string successMessage = importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath));
+			if (!isMergeIntoUserLayer)
+			{
+				string sourceName = isMergeIntoUserLayer ? Path.GetFileNameWithoutExtension(settingsFilePath) : destinationLayer["layer_name"];
+				successMessage = ImportSettingsPage.importSettingSuccessMessage.FormatWith(sourceName, sectionName);
+			}
+
+			WizardWindow.ChangeToPage(new ImportSucceeded(successMessage)
 			{
 				WizardWindow = this.WizardWindow,
 			});
@@ -407,7 +425,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		static string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-		static string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
+		internal static string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
 
 		private void ImportSettingsFile(string settingsFilePath)
 		{
@@ -439,15 +457,19 @@ namespace MatterHackers.MatterControl
 			{
 				PrinterSettingsLayer newLayer;
 
+				string sectionName = (newMaterialPresetButton.Checked) ? "Material".Localize() : "Quality".Localize();
+
 				string importType = Path.GetExtension(settingsFilePath).ToLower();
 				switch (importType)
 				{
 					case ".printer":
 						newLayer = new PrinterSettingsLayer();
 						newLayer["layer_name"] = Path.GetFileNameWithoutExtension(settingsFilePath);
+
 						if (newQualityPresetButton.Checked)
 						{
 							ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+
 						}
 						else
 						{
@@ -456,7 +478,7 @@ namespace MatterHackers.MatterControl
 						}
 
 						// open a wizard to ask what to import to the preset
-						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath, newLayer));
+						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath, newLayer, sectionName));
 
 						break;
 
@@ -488,21 +510,18 @@ namespace MatterHackers.MatterControl
 								}
 							}
 
-							string section;
 							if (newMaterialPresetButton.Checked)
 							{
 								ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
-								section = "Material".Localize();
 							}
 							else
 							{
 								ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
-								section = "Quality".Localize();
 							}
 
 							ActiveSliceSettings.Instance.SaveChanges();
 
-							WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), section))
+							WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), sectionName))
 							{
 								WizardWindow = this.WizardWindow,
 							});

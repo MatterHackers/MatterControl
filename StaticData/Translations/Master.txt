@@ -5077,3 +5077,6 @@ Translated:Settings have been merged into your current printer.
 English:Select What to Import
 Translated:Select What to Import
 
+English:Select section to import to preset.
+Translated:Select section to import to preset.
+
