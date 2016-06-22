@@ -665,8 +665,8 @@ namespace MatterHackers.MatterControl
 				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
 				Graphics2D graphics = this.thumbnailImage.NewGraphics2D();
 				Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
-				double yOffset = 8 * Width / 50 * GuiWidget.DeviceScale * 1.5;
-				graphics.DrawString("Too Big\nto\nRender", center.x, center.y + yOffset, 8 * Width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
+				double yOffset = 8 * Width / 50 * GuiWidget.DeviceScale * 2;
+				graphics.DrawString("Reduce\nPolygons\nto\nRender", center.x, center.y + yOffset, 8 * Width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
 
 				UiThread.RunOnIdle(this.EnsureImageUpdated);
 				return true;
