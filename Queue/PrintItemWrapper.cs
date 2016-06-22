@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 									readData[i] = fileSizeAsBytes[i];
 								}
 
-								// push the wirte time
+								// push the write time
 								byte[] writeTimeAsBytes = BitConverter.GetBytes(currentWriteTime);
 								for (int i = 0; i < writeTimeAsBytes.Length; i++)
 								{
