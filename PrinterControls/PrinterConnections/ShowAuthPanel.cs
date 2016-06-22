@@ -27,8 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -36,21 +38,30 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		public ShowAuthPanel()
 		{
-			TextWidget userLoginPromptLabel = new TextWidget("Would you like to sign in to access your cloud\nprinter profiles?")
+			WrappedTextWidget userLoginPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:".Localize(), 12)
 			{
-				PointSize = 12,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 			};
 			contentRow.AddChild(userLoginPromptLabel);
 
-			var nextButton = textImageButtonFactory.Generate("Skip");
+			AddBulletPointAndDescription(contentRow,
+				"Cloud Library".Localize(),
+				"Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.".Localize());
+			AddBulletPointAndDescription(contentRow,
+				"Cloud Profiles".Localize(),
+				"Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.".Localize());
+			AddBulletPointAndDescription(contentRow,
+				"Remote Monitoring".Localize(),
+				"Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.".Localize());
+
+		   var nextButton = textImageButtonFactory.Generate("Skip".Localize());
 			nextButton.Name = "Connection Wizard Skip Sign In Button";
 			nextButton.Click += (sender, e) =>
 			{
 				WizardWindow.ChangeToPage<SetupStepMakeModelName>();
 			};
 
-			var signInButton = textImageButtonFactory.Generate("Sign In");
+			var signInButton = textImageButtonFactory.Generate("Sign In".Localize());
 			signInButton.Name = "Sign In From Connection Wizard Button";
 			signInButton.Click += (s, e) =>
 			{ 
@@ -62,6 +73,21 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			footerRow.AddChild(nextButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(signInButton);
+		}
+
+		private void AddBulletPointAndDescription(FlowLayoutWidget contentRow, string v1, string v2)
+		{
+			contentRow.AddChild(new TextWidget("• " + v1)
+			{
+				HAnchor = HAnchor.ParentLeft,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new Agg.BorderDouble(0, 0, 0, 10),
+			});
+			contentRow.AddChild(new WrappedTextWidget(v2,10)
+			{
+				TextColor = ActiveTheme.Instance.SecondaryTextColor,
+				Margin = new Agg.BorderDouble(20, 5, 5, 5),
+			});
 		}
 	}
 }
