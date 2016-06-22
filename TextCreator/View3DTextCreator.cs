@@ -510,7 +510,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
 			{
 				PlatingMeshGroupData meshData = new PlatingMeshGroupData();
-				meshData.currentScale = MeshGroupExtraData[meshGroupIndex].currentScale;
 				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
 				for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
 				{

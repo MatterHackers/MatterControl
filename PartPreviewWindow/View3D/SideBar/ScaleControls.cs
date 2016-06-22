@@ -151,18 +151,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (view3DWidget.HaveSelection)
 			{
 				Matrix4X4 startingTransform = view3DWidget.SelectedMeshGroupTransform;
-				Vector3 currentScale = view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale;
 
 				double scale = scaleRatioControl.ActuallNumberEdit.Value;
 				if (scale > 0)
 				{
 					ScaleAxis(scale, 0);
-
-					view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale.y = currentScale.y;
-					view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale.z = currentScale.z;
 					ScaleAxis(scale, 1);
-
-					view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale.z = currentScale.z;
 					ScaleAxis(scale, 2);
 				}
 
@@ -267,28 +261,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			AxisAlignedBoundingBox originalMeshBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox();
 
-			AxisAlignedBoundingBox scaledBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
-
-			// first we remove any scale we have applied and then scale to the new value
-			Vector3 axisRemoveScalings = Vector3.One;
-			if(originalMeshBounds.XSize > 0 && scaledBounds.XSize > 0) axisRemoveScalings.x = originalMeshBounds.XSize / scaledBounds.XSize;
-			if (originalMeshBounds.YSize > 0 && scaledBounds.YSize > 0) axisRemoveScalings.y = originalMeshBounds.YSize / scaledBounds.YSize;
-			if (originalMeshBounds.ZSize > 0 && scaledBounds.ZSize > 0) axisRemoveScalings.z = originalMeshBounds.ZSize / scaledBounds.ZSize;
-
-			Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(axisRemoveScalings);
-
-			Vector3 newScale = view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale;
+			Vector3 newScale = Vector3.One;
 			newScale[axis] = scaleIn;
-			Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
+			Matrix4X4 totalScale = Matrix4X4.CreateScale(newScale);
 
 			view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, totalScale);
 
 			// keep the bottom where it was
+			AxisAlignedBoundingBox scaledBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
 			PlatingHelper.PlaceMeshAtHeight(view3DWidget.MeshGroups, view3DWidget.MeshGroupTransforms, view3DWidget.SelectedMeshGroupIndex, scaledBounds.minXYZ.z);
 
 			view3DWidget.PartHasBeenChanged();
 			Invalidate();
-			view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
 			OnSelectedTransformChanged(this, null);
 		}
 
@@ -336,8 +320,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				currentScale.x = scaledBounds.XSize / originalMeshBounds.XSize;
 				currentScale.y = scaledBounds.YSize / originalMeshBounds.YSize;
 				currentScale.z = scaledBounds.ZSize / originalMeshBounds.ZSize;
-
-				view3DWidget.MeshGroupExtraData[view3DWidget.SelectedMeshGroupIndex].currentScale = currentScale;
 			}
 			else
 			{
