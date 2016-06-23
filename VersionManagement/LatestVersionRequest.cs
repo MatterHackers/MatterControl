@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
 			requestValues["UpdateFeedType"] = feedType;
-			uri = "https://mattercontrol.appspot.com/api/1/get-current-release-version";
+			uri = $"{MatterControlApplication.MCWSBaseUri}/api/1/get-current-release-version";
 		}
 
 		public override void Request()

@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl
 				{
 					downloadAttempts++;
 					SetUpdateStatus(UpdateStatusStates.UpdateDownloading);
-					string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
+					string downloadUri = $"{MatterControlApplication.MCWSBaseUri}/downloads/development/{ApplicationSettings.Instance.get("CurrentBuildToken")}";
 
 					//Make HEAD request to determine the size of the download (required by GAE)
 					System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);

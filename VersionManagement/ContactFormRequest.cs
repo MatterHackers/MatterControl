@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			requestValues["Email"] = email;
 			requestValues["FeedbackType"] = "Question";
 			requestValues["Comment"] = string.Format("{0}\n{1}", question, details);
-			uri = "https://mattercontrol.appspot.com/api/1/submit-feedback";
+			uri = $"{MatterControlApplication.MCWSBaseUri}/api/1/submit-feedback";
 		}
 
 		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)

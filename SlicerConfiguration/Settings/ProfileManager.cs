@@ -125,17 +125,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return empytProfile;
 		}
 
+		[JsonIgnore]
+		public string ActiveProfilePath => Path.Combine(ProfileManager.ProfilesPath, ActiveProfile.ID + ".json");
+
+		internal static SettingsProfile LoadProfileFromMCWS(string deviceToken)
+		{
+			WebClient client = new WebClient();
+			string json = client.DownloadString($"{MatterControlApplication.MCWSBaseUri}/api/1/device/get-profile?key={deviceToken}");
+
+			var printerSettings = JsonConvert.DeserializeObject<PrinterSettings>(json);
+			return new SettingsProfile(printerSettings);
+		}
+
 		internal static SettingsProfile LoadProfile(string profileID)
 		{
-			// Conceptually, LoadProfile should...
-			// 
-			// Find and load a locally cached copy of the profile
-			//   - Query the webservice for the given profile passing along our ETAG
-			//      Result: 304 or error
-			//          Use locally cached copy as it's the latest or we're offline or the service has errored
-			//      Result: 200 (Document updated remotely)
-			//          Determine if the local profile is dirty. If so, we need to perform conflict resolution to work through the issues
-			//          If not, simply write the profile to disk as latest, load and return
+			//return LoadProfileFromMCWS(profileID);
 
 			// Only load profiles by ID that are defined in the profiles.json document
 			if (ProfileManager.Instance[profileID] == null)

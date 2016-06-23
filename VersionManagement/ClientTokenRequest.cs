@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		{
 			requestValues["RequestToken"] = "ekshdsd5d5ssss5kels";
 			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
-			uri = "https://mattercontrol.appspot.com/api/1/get-client-consumer-token";
+			uri = $"{MatterControlApplication.MCWSBaseUri}/api/1/get-client-consumer-token";
 		}
 
 		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
