@@ -181,13 +181,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			activeMake = ((Agg.UI.DropDownList)sender).SelectedValue;
 			activeModel = null;
 
-			List<string> printers;
+			Dictionary<string, string> printers;
 			if (!OemSettings.Instance.OemProfiles.TryGetValue(activeMake, out printers))
 			{
-				printers = new List<string>();
+				printers = new Dictionary<string, string>();
 			}
 
-			printerModelSelector.ListSource = printers.Select(name => new KeyValuePair<string, string>(name, name)).ToList();
+			printerModelSelector.ListSource = printers.Select(profile => new KeyValuePair<string, string>(profile.Key, profile.Value)).ToList();
 
 			contentRow.Invalidate();
 
