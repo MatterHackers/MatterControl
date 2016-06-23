@@ -36,11 +36,27 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MacroControls : ControlWidgetBase
 	{
+		static internal string FixMacroName(string input)
+		{
+			int lengthLimit = 24;
+
+			string result = Regex.Replace(input, @"\r\n?|\n", " ");
+
+			if (result.Length > lengthLimit)
+			{
+				result = result.Substring(0, lengthLimit) + "...";
+			}
+
+			return result;
+		}
+
+
 		protected override void AddChildElements()
 		{
 			this.AddChild(new MacroControlsWidget());
@@ -139,7 +155,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				buttonCount++;
 
-				Button macroButton = textImageButtonFactory.Generate(macro.Name);
+				Button macroButton = textImageButtonFactory.Generate(MacroControls.FixMacroName(macro.Name));
 				macroButton.Text = macro.GCode;
 				macroButton.Margin = new BorderDouble(right: 5);
 				macroButton.Click += (s, e) => SendCommandToPrinter(macroButton.Text);

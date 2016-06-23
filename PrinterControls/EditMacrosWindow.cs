@@ -90,10 +90,10 @@ namespace MatterHackers.MatterControl
 			topToBottom.AddChild(presetsFormContainer);
 
 			presetsFormContainer.AddChild(createMacroNameContainer());
-			presetsFormContainer.AddChild(createMacroCommandContainer());
+			presetsFormContainer.AddChild(CreateMacroCommandContainer());
 
 			Button addMacroButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
-			addMacroButton.Click += new EventHandler(saveMacro_Click);
+			addMacroButton.Click += new EventHandler(SaveMacro_Click);
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
 			cancelPresetsButton.Click += (sender, e) =>
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 			macroNameLabel.HAnchor = HAnchor.ParentLeftRight;
 			macroNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
 
-			macroNameInput = new MHTextEditWidget(windowController.ActiveMacro.Name);
+			macroNameInput = new MHTextEditWidget(MacroControls.FixMacroName(windowController.ActiveMacro.Name));
 			macroNameInput.HAnchor = HAnchor.ParentLeftRight;
 
 			string giveMacroANameLabel = LocalizedString.Get("Give the macro a name");
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 			return container;
 		}
 
-		private FlowLayoutWidget createMacroCommandContainer()
+		private FlowLayoutWidget CreateMacroCommandContainer()
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.Margin = new BorderDouble(0, 5);
@@ -207,20 +207,20 @@ namespace MatterHackers.MatterControl
 			return formIsValid;
 		}
 
-		private void saveMacro_Click(object sender, EventArgs mouseEvent)
+		private void SaveMacro_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(() =>
 			{
 				if (ValidateMacroForm())
 				{
-					saveActiveMacro();
-					windowController.functionToCallOnSave(this, null);
+					SaveActiveMacro();
+					windowController.FunctionToCallOnSave(this, null);
 					windowController.ChangeToMacroList();
 				}
 			});
 		}
 
-		private void saveActiveMacro()
+		private void SaveActiveMacro()
 		{
 			windowController.ActiveMacro.Name = macroNameInput.Text;
 			windowController.ActiveMacro.GCode = macroCommandInput.Text;
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl
 					macroRow.Padding = new BorderDouble(3);
 					macroRow.BackgroundColor = RGBA_Bytes.White;
 
-					TextWidget buttonLabel = new TextWidget(macro.Name);
+					TextWidget buttonLabel = new TextWidget(MacroControls.FixMacroName(macro.Name));
 					macroRow.AddChild(buttonLabel);
 
 					macroRow.AddChild(new HorizontalSpacer());
@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl
 					removeLink.Click += (sender, e) =>
 					{
 						ActiveSliceSettings.Instance.Macros.Remove(localMacroReference);
-						windowController.functionToCallOnSave(this, null);
+						windowController.FunctionToCallOnSave(this, null);
 						windowController.ChangeToMacroList();
 					};
 					macroRow.AddChild(removeLink);
@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl
 
 	public class EditMacrosWindow : SystemWindow
 	{
-		public EventHandler functionToCallOnSave;
+		public EventHandler FunctionToCallOnSave;
 
 		public GCodeMacro ActiveMacro;
 
@@ -359,7 +359,7 @@ namespace MatterHackers.MatterControl
 		{
 			AlwaysOnTopOfMain = true;
 			Title = LocalizedString.Get("Macro Editor");
-			this.functionToCallOnSave = functionToCallOnSave;
+			this.FunctionToCallOnSave = functionToCallOnSave;
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			ChangeToMacroList();
 			ShowAsSystemWindow();

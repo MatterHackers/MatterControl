@@ -5101,3 +5101,6 @@ Translated:Check on your prints from anywhere. With cloud monitoring, you have a
 English:Sign In
 Translated:Sign In
 
+English:Unable to connect to server
+Translated:Unable to connect to server
+
