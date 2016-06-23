@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				buttonCount++;
 
-				Button macroButton = textImageButtonFactory.Generate(MacroControls.FixMacroName(macro.Name));
+				Button macroButton = textImageButtonFactory.Generate(MacroControls.FixMacroName(macro.Name)); 
 				macroButton.Text = macro.GCode;
 				macroButton.Margin = new BorderDouble(right: 5);
 				macroButton.Click += (s, e) => SendCommandToPrinter(macroButton.Text);
