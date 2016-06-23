@@ -601,7 +601,7 @@ namespace MatterHackers.MatterControl
 
 		protected override double GetPreheatTemperature()
 		{
-			return ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			return ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature); 
 		}
 
 		protected override double GetActualTemperature()

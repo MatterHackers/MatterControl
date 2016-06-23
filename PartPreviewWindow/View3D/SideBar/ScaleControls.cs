@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (view3DWidget.HaveSelection)
 			{
 				// because we remove any current scale before we change to a new one we only get the size of the base mesh data
-				AxisAlignedBoundingBox originalMeshBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox originalMeshBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
 
 				double currentSize = originalMeshBounds.Size[axis];
 				double desiredSize = sizeDisplay[axis].GetValue();
