@@ -405,6 +405,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+#if DEBUG
+		public static string MCWSBaseUri { get; } = "http://localhost.:9206";
+#else
+		public static string MCWSBaseUri { get;} = "https://mattercontrol.appspot.com";
+#endif
+
 		public static void LoadUITheme()
 		{
 			//Load the default theme by index
