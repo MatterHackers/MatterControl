@@ -53,6 +53,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static EventHandler unregisterEvents;
 
+		public void PermanentDelete(string printerToken)
+		{
+			/*Remove Printer Entity from list of profiles, delete profile on disk and save the Manager.Save()*/
+		}
+
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
 		static ProfileManager()
