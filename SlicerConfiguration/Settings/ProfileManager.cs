@@ -125,9 +125,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return empytProfile;
 		}
 
-		[JsonIgnore]
-		public string ActiveProfilePath => Path.Combine(ProfileManager.ProfilesPath, ActiveProfile.ID + ".json");
-
 		internal static SettingsProfile LoadProfileFromMCWS(string deviceToken)
 		{
 			WebClient client = new WebClient();

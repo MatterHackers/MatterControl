@@ -1026,5 +1026,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string Name { get; set; }
 		public bool MarkedForDelete { get; set; }
 		public string SHA1 { get; internal set; }
+
+		[JsonIgnore]
+		public string ProfilePath => Path.Combine(ProfileManager.ProfilesPath, ID + ".json");
 	}
 }
