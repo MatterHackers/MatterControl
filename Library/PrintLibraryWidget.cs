@@ -596,9 +596,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				if (actionMenuEnableData[menuIndex].shareItems)
 				{
-					if (!libraryDataView.CurrentLibraryProvider.CanShare)
+					if (libraryDataView?.CurrentLibraryProvider != null)
 					{
-						enabledStateToSet = false;
+						if (!libraryDataView.CurrentLibraryProvider.CanShare)
+						{
+							enabledStateToSet = false;
+						}
 					}
 				}
 

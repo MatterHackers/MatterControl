@@ -22,8 +22,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public SetupStepBaudRate()
 		{
-			linkButtonFactory.fontSize = 8;
-
 			printerBaudRateContainer = createPrinterBaudRateContainer();
 			contentRow.AddChild(printerBaudRateContainer);
 			{

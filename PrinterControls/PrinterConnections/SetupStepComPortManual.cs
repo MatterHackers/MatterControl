@@ -32,8 +32,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public SetupStepComPortManual()
 		{
-			linkButtonFactory.fontSize = 8;
-
 			FlowLayoutWidget printerComPortContainer = createComPortContainer();
 			contentRow.AddChild(printerComPortContainer);
 

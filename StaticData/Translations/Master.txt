@@ -5104,3 +5104,15 @@ Translated:Sign In
 English:Unable to connect to server
 Translated:Unable to connect to server
 
+English:What was my password again?
+Translated:What was my password again?
+
+English:Reset Password
+Translated:Reset Password
+
+English:Email Address
+Translated:Email Address
+
+English:A password reset code will be sent to your email.
+Translated:A password reset code will be sent to your email.
+
