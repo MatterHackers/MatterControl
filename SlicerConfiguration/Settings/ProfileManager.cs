@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	using Agg;
 	using Localizations;
+	using VersionManagement;
 	using System.Collections.ObjectModel;
 	using System.Collections.Specialized;
 	using System.Net;
@@ -272,17 +273,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static OemProfile LoadHttpOemProfile(string make, string model)
 		{
-			string url = string.Format(
-				"http://matterdata.azurewebsites.net/api/oemprofiles?manufacturer={0}&model={1}",
-				WebUtility.UrlEncode(make),
-				WebUtility.UrlEncode(model));
-
-			var client = new WebClient();
-
-			string profileText = client.DownloadString(url);
-			var printerProfile = JsonConvert.DeserializeObject<OemProfile>(profileText);
+			RetrievePublicProfileRequest profileRequest = new RetrievePublicProfileRequest();
+			string profText = profileRequest.getPrinterProfileByMakeModel(make, model);
+			var printerProfile = JsonConvert.DeserializeObject<OemProfile>(profText);
+			
 			return printerProfile;
 		}
+
 
 		private static void Profiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
