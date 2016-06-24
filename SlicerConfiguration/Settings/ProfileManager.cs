@@ -53,9 +53,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static EventHandler unregisterEvents;
 
+		// Should be executed after deleting the profile from MCWS and should probably be moved to CloudLibrary
 		public void PermanentDelete(string printerToken)
 		{
-			/*Remove Printer Entity from list of profiles, delete profile on disk and save the Manager.Save()*/
+			// Find and delete the PrinterInfo from the Profiles list
+			var printerInfo = Profiles.Where(p => p.ID == printerToken).FirstOrDefault();
+			Profiles.Remove(printerInfo);
+
+			// Delete the 
+			File.Delete(printerInfo.ProfilePath);
+
+			Instance.Save();
 		}
 
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
