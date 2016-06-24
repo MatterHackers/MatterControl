@@ -63,12 +63,11 @@ namespace MatterControl.Tests.MatterControl
 				File.Delete(expectedProfilePath);
 			}
 			RetrievePublicProfileRequest request = new RetrievePublicProfileRequest();
-			RetrievePublicProfileRequest.DownloadBaseUrl = "https://mattercontrol-test.appspot.com/api/1/device/get-public-profile";
-			string recievedPrinterProfile = request.getPrinterProfileByMakeModel(make,model);
-			RetrievePublicProfileRequest.DownloadBaseUrl = "https://mattercontrol.appspot.com/api/1/device/get-public-profile";
+
+			string recievedPrinterProfile = request.GetPrinterProfileByMakeModel(make,model);
 
 			Assert.IsNotNullOrEmpty(recievedPrinterProfile);
-			//Assert.AreEqual(expectedProfilePath, recievedProfilePath,"Recieved Profile path does not match expected path.");
+			//Assert.AreEqual(expectedProfilePath, recievedProfilePath,"Received Profile path does not match expected path.");
 			//Assert.IsTrue(File.Exists(expectedProfilePath));
 		}
 

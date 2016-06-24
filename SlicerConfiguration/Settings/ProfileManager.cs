@@ -275,10 +275,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static OemProfile LoadHttpOemProfile(string make, string model)
 		{
 			RetrievePublicProfileRequest profileRequest = new RetrievePublicProfileRequest();
-			string profText = profileRequest.getPrinterProfileByMakeModel(make, model);
-			var printerProfile = JsonConvert.DeserializeObject<OemProfile>(profText);
-			
-			return printerProfile;
+			string profileText = profileRequest.GetPrinterProfileByMakeModel(make, model);
+
+			return JsonConvert.DeserializeObject<OemProfile>(profileText);
 		}
 
 
