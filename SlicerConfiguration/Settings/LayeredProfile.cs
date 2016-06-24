@@ -187,6 +187,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (printerInfo != null)
 				{
 					printerInfo.SHA1 = sha1;
+					ProfileManager.Instance.Save();
 				}
 			}
 

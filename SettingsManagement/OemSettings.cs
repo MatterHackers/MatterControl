@@ -38,6 +38,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {
@@ -120,45 +122,28 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		[OnDeserialized]
 		private void Deserialized(StreamingContext context)
 		{
-			// TODO: Enable caching
-			// Load the cached data from disk
-			// Extract the ETAG
-			// Request the latest content, passing along the ETAG
-			// Refresh our cache if needed, otherwise stick with the cached data
+			var oemProfiles = MatterControlApplication.LoadCacheable<Dictionary<string, Dictionary<string, string>>>(
+				"oemprofiles.json", 
+				"profiles",
+				() => 
+				{
+					string responseText = null;
 
-			PublicProfilesRequest profileRequest = new PublicProfilesRequest();
-			profileRequest.Request();
+					var autoResetEvent = new AutoResetEvent(false);
 
-			//// For now, refresh every time
-			//string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
+					var profileRequest = new PublicProfilesRequest();
+					profileRequest.RequestSucceeded += (s, e) => responseText = profileRequest.ResponseValues["ProfileList"];
+					profileRequest.RequestComplete += (s, e) => autoResetEvent.Set();
+					profileRequest.Request();
 
-			//// Ensure directory exists
-			//Directory.CreateDirectory(cacheDirectory);
+					// Block on the current thread until the response has completed
+					autoResetEvent.WaitOne(12000);
 
-			//// Cache file path
-			//string cachePath = Path.Combine(cacheDirectory, "oemprofiles.json");
+					return responseText;
+				});
 
-			//try
-			//{
-			//	var fileInfo = new FileInfo(cachePath);
-			//	if (!fileInfo.Exists || (DateTime.Now - fileInfo.LastWriteTime).TotalHours > 1)
-			//	{
-			//		string url = "http://matterdata.azurewebsites.net/api/oemprofiles";
-
-			//		var client = new WebClient();
-
-			//		File.WriteAllText(cachePath, client.DownloadString(url));
-			//	}
-			//}
-			//catch (Exception ex)
-			//{
-			//	System.Diagnostics.Trace.WriteLine("An unexpected exception occurred while requesting the latest oem profiles: \r\n" + ex.Message);
-			//}
-
-			//string profilesText = File.ReadAllText(cachePath);
-			//OemProfiles = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(profilesText);
-
-			//SetManufacturers(OemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList());
+			OemProfiles = oemProfiles;
+			SetManufacturers(oemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList());
 		}
 
 		private OemSettings()

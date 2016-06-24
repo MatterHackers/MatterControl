@@ -24,21 +24,11 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		internal string URI { get { return uri; } set { uri = value; } }
 
+		public JsonResponseDictionary ResponseValues { get; set; }
+
 		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
 		{
-			//For now, refresh every time
-			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
-			//Ensure directory exists
-			Directory.CreateDirectory(cacheDirectory);
-			//Cache File Path
-			string cachePath = Path.Combine(cacheDirectory, "oemprofiles.json");
-			File.WriteAllText(cachePath, responseValues["ProfileList"]);
-			
-
-			OemSettings.Instance.OemProfiles = JsonConvert.DeserializeObject<Dictionary<string,Dictionary<string,string>>>(responseValues["ProfileList"]);
-			OemSettings.Instance.SetManufacturers(OemSettings.Instance.OemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList());
+			ResponseValues = responseValues;
 		}
-
-
 	}
 }
