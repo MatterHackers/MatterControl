@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal static SettingsProfile LoadProfileFromMCWS(string deviceToken)
 		{
 			WebClient client = new WebClient();
-			string json = client.DownloadString($"{MatterControlApplication.MCWSBaseUri}/api/1/device/get-profile?key={deviceToken}");
+			string json = client.DownloadString($"{MatterControlApplication.MCWSBaseUri}/api/1/device/get-profile?PrinterToken={deviceToken}");
 
 			var printerSettings = JsonConvert.DeserializeObject<PrinterSettings>(json);
 			return new SettingsProfile(printerSettings);
