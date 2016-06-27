@@ -546,7 +546,7 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "29"
+    "DefaultValue": "0.00"
   },
   {
     "QuickMenuSettings": [],
@@ -559,7 +559,7 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "1.24"
+    "DefaultValue": "0.00"
   },
   {
     "QuickMenuSettings": [],
