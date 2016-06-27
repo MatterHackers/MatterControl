@@ -4504,8 +4504,8 @@ Translated:Your Start G-Code should not contain a G30 if you are planning on usi
 English:Loading G-Code
 Translated:Loading G-Code
 
-English:Estimated Weight
-Translated:Estimated Weight
+English:Estimated Mass
+Translated:Estimated Mass
 
 English:Export EEPROM Settings
 Translated:Export EEPROM Settings

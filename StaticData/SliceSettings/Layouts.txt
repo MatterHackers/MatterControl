@@ -219,6 +219,8 @@ Advanced
       Filament
         filament_diameter
         extrusion_multiplier
+        filament_density
+        filament_cost
       Extruder Temperatures
         first_layer_temperature
         temperature

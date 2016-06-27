@@ -58,6 +58,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"baud_rate",
 			"com_port",
 			"delete_printer",
+			"filament_cost",
+			"filament_density",
 			"manual_probe_paper_width",
 			"pause_gcode",
 			"print_leveling_method",
