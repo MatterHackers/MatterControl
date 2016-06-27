@@ -494,24 +494,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
 
-			string weightLabel = "Estimated Weight".Localize();
+			string weightLabel = "Estimated Mass".Localize();
 			string weightLabelFull = string.Format("{0}:", weightLabel);
 			modelInfoContainer.AddChild(new TextWidget(weightLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 			{
-				var density = 1.0;
-				string filamentType = "PLA";
-				if (filamentType == "ABS")
-				{
-					density = 1.04;
-				}
-				else if (filamentType == "PLA")
-				{
-					density = 1.24;
-				}
+				double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>("filament_diameter");
+				double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>("filament_density");
+				double filamentCost = ActiveSliceSettings.Instance.GetValue<double>("filament_cost");
 
-				double filamentWeightGrams = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(ActiveSliceSettings.Instance.GetValue<double>("filament_diameter"), density);
+				double totalMass = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
+				double totalCost = totalMass / 1000 * totalMass;
 
-				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} g", filamentWeightGrams), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
+				string massText;
+				if (totalMass != 0) {
+					massText = string.Format("{0:0.00} g", totalMass);
+				} else {
+					massText = "Unknown";
+				}
+				GuiWidget estimatedPrintTime = new TextWidget(massText, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
 				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
 				modelInfoContainer.AddChild(estimatedPrintTime);
