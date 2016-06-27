@@ -64,7 +64,7 @@ namespace MatterControl.Tests.MatterControl
 			}
 			RetrievePublicProfileRequest request = new RetrievePublicProfileRequest();
 
-			string recievedPrinterProfile = request.GetPrinterProfileByMakeModel(make,model);
+			string recievedPrinterProfile = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
 
 			Assert.IsNotNullOrEmpty(recievedPrinterProfile);
 			//Assert.AreEqual(expectedProfilePath, recievedProfilePath,"Received Profile path does not match expected path.");
