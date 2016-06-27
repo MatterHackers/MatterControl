@@ -13,13 +13,6 @@ namespace MatterHackers.MatterControl.VersionManagement
 		internal static string DownloadBaseUrl { get; } = "https://mattercontrol.appspot.com/api/1/device/get-public-profile";
 #endif
 
-		public string GetPrinterProfileByMakeModel(string make, string model)
-		{
-			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
-			string profiletext = DownloadPrinterProfile(deviceToken);
-			return profiletext;
-		}
-
 		internal static string DownloadPrinterProfile(string deviceToken)
 		{
 			// Keep track of version. When retrieving check version
