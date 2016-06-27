@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using System.Collections.ObjectModel;
 	using System.Collections.Specialized;
 	using System.Net;
+	using SettingsManagement;
 
 	public class ProfileManager
 	{
@@ -287,10 +288,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static OemProfile LoadHttpOemProfile(string make, string model)
 		{
-			RetrievePublicProfileRequest profileRequest = new RetrievePublicProfileRequest();
-			string profileText = profileRequest.GetPrinterProfileByMakeModel(make, model);
+			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
+			return MatterControlApplication.LoadCacheable<OemProfile>(
+				String.Format("{0}.json", deviceToken),
+				"profiles",
+				() =>
+				{
+					string responseText = null;
 
-			return JsonConvert.DeserializeObject<OemProfile>(profileText);
+					responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
+
+					return responseText;
+				});
 		}
 
 
