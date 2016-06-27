@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static SettingsProfile LoadEmptyProfile()
 		{
-			var empytProfile = new SettingsProfile(new PrinterSettings(new OemProfile()));
+			var empytProfile = new SettingsProfile(new PrinterSettings());
 
 			empytProfile.SetActiveValue(SettingsKey.printer_name.ToString(), "Printers...".Localize());
 
@@ -198,11 +198,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				case ".ini":
 					var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 
-					var oemProfile = new OemProfile(settingsToImport);
-
-					var layeredProfile = new PrinterSettings(oemProfile)
+					var layeredProfile = new PrinterSettings()
 					{
 						ID = printerInfo.ID,
+						OemLayer = settingsToImport
 					};
 
 					// TODO: Resolve name conflicts
@@ -222,13 +221,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string guid = Guid.NewGuid().ToString();
 
-			OemProfile printerProfile = LoadHttpOemProfile(make, model);
+			OemProfile oemProfile = LoadHttpOemProfile(make, model);
 
-			var layeredProfile = new PrinterSettings(printerProfile)
+			var layeredProfile = new PrinterSettings()
 			{
 				ID = guid,
 				// TODO: This should really be set by the system that generates the source documents 
-				DocumentVersion = PrinterSettings.LatestVersion
+				DocumentVersion = PrinterSettings.LatestVersion,
+				OemLayer = oemProfile.OemLayer
 			};
 			layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
 
@@ -261,17 +261,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Copy OemProfile presets into user layers
-			foreach (var materialPreset in layeredProfile.OemProfile.MaterialLayers)
+			foreach (var materialPreset in oemProfile.MaterialLayers)
 			{
 				layeredProfile.MaterialLayers.Add(materialPreset);
 			}
-			foreach (var qualityPreset in layeredProfile.OemProfile.QualityLayers)
+			foreach (var qualityPreset in oemProfile.QualityLayers)
 			{
 				layeredProfile.QualityLayers.Add(qualityPreset);
 			}
-
-			layeredProfile.OemProfile.MaterialLayers.Clear();
-			layeredProfile.OemProfile.QualityLayers.Clear();
 
 			layeredProfile.Save();
 

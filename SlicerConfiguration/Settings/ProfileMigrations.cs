@@ -273,6 +273,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				jObject["DocumentVersion"] = 201606161;
 			}
 
+			if (fromVersion < 201606271)
+			{
+				JObject oemProfile = jObject["OemProfile"] as JObject;
+				if (oemProfile != null)
+				{
+					jObject.Property("OemProfile").Remove();
+					jObject["OemLayer"] = oemProfile["OemLayer"];
+
+				}
+				jObject["DocumentVersion"] = 201606271;
+			}
+
 			File.WriteAllText(
 						filePath,
 						JsonConvert.SerializeObject(jObject, Formatting.Indented));
