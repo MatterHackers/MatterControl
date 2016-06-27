@@ -44,7 +44,6 @@ using System.Text;
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	using ConfigurationPage.PrintLeveling;
-	using SettingsDictionary = Dictionary<string, string>;
 	using DataStorage;
 	using Agg.PlatformAbstract;
 	using Newtonsoft.Json.Linq;
@@ -80,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private PrinterSettings layeredProfile;
 
-		public bool PrinterSelected => layeredProfile.OemProfile.OemLayer.Keys.Count > 0;
+		public bool PrinterSelected => layeredProfile.OemLayer.Keys.Count > 0;
 
 		internal SettingsProfile(PrinterSettings profile)
 		{
@@ -116,7 +115,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer BaseLayer => layeredProfile.BaseLayer;
 
-		public PrinterSettingsLayer OemLayer => layeredProfile.OemProfile.OemLayer;
+		public PrinterSettingsLayer OemLayer => layeredProfile.OemLayer;
 
 		public PrinterSettingsLayer UserLayer => layeredProfile.UserLayer;
 
@@ -881,142 +880,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			layeredProfile.SetValue("manual_movement_speeds", speed);
 		}
 
-	}
-
-	public class PrinterSettingsLayer : SettingsDictionary
-	{
-		public PrinterSettingsLayer() { }
-
-		public PrinterSettingsLayer(Dictionary<string, string> settingsDictionary)
-		{
-			foreach(var keyValue in settingsDictionary)
-			{
-				this[keyValue.Key] = keyValue.Value;
-			}
-		}
-
-		public string LayerID
-		{
-			get
-			{
-				string layerKey = ValueOrDefault("layer_id");
-				if (string.IsNullOrEmpty(layerKey))
-				{
-					// Generate a new GUID when missing or empty. We can't do this in the constructor as the dictionary deserialization will fail if
-					// an existing key exists for layer_id and on new empty layers, we still need to construct an initial identifier. 
-					layerKey = Guid.NewGuid().ToString();
-					LayerID = layerKey;
-				}
-
-				return layerKey;
-			}
-			set
-			{
-				this["layer_id"] = value;
-			}
-		}
-
-		public string Name
-		{
-			get
-			{
-				return ValueOrDefault("layer_name");
-			}
-			set
-			{
-				this["layer_name"] = value;
-			}
-		}
-
-		public string Source
-		{
-			get
-			{
-				return ValueOrDefault("layer_source");
-			}
-			set
-			{
-				this["layer_source"] = value;
-			}
-		}
-
-		public string ETag
-		{
-			get
-			{
-				return ValueOrDefault("layer_etag");
-			}
-			set
-			{
-				this["layer_etag"] = value;
-			}
-		}
-
-		public string ValueOrDefault(string key, string defaultValue = "")
-		{
-			string foundValue;
-			this.TryGetValue(key, out foundValue);
-
-			return foundValue ?? defaultValue;
-		}
-
-		public string ValueOrNull(string key)
-		{
-			string foundValue;
-			this.TryGetValue(key, out foundValue);
-
-			return foundValue;
-		}
-
-		public static PrinterSettingsLayer LoadFromIni(TextReader reader)
-		{
-			var layer = new PrinterSettingsLayer();
-
-			string line;
-			while ((line = reader.ReadLine()) != null)
-			{
-				var segments = line.Split('=');
-				if (!line.StartsWith("#") && !string.IsNullOrEmpty(line))
-				{
-					string key = segments[0].Trim();
-					layer[key] = segments[1].Trim();
-				}
-			}
-
-			return layer;
-		}
-
-		public static PrinterSettingsLayer LoadFromIni(string filePath)
-		{
-			var settings = from line in File.ReadAllLines(filePath)
-						   let segments = line.Split('=')
-						   where !line.StartsWith("#") && !string.IsNullOrEmpty(line) && segments.Length == 2
-						   select new
-						   {
-							   Key = segments[0].Trim(),
-							   Value = segments[1].Trim()
-						   };
-
-			var layer = new PrinterSettingsLayer();
-			foreach (var setting in settings)
-			{
-				layer[setting.Key] = setting.Value;
-			}
-
-			return layer;
-		}
-
-		public PrinterSettingsLayer Clone()
-		{
-			string id = Guid.NewGuid().ToString();
-			return new PrinterSettingsLayer(this as Dictionary<string, string>)
-			{
-				LayerID = id,
-				Name = this.Name,
-				ETag = this.ETag,
-				Source = this.Source
-			};
-		}
 	}
 
 	public class PrinterInfo

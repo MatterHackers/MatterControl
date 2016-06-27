@@ -32,8 +32,11 @@ namespace MatterControl.Tests.MatterControl
 							   {
 								   RelativeFilePath = configIni.FullName.Substring(printerSettingsDirectory.Length + 1),
 
-								   // The config.ini layer cascade contains only itself
-								   LayerCascade = new PrinterSettings(oemProfile, new PrinterSettingsLayer()),
+								   // The config.ini layered profile only contains itself and does not fall back to or cascade to anything
+								   PrinterSettings = new PrinterSettings()
+								   {
+									   OemLayer = oemProfile.OemLayer
+								   },
 							   },
 							   MatterialLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "material"), oemProfile),
 							   QualityLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "quality"), oemProfile)
@@ -47,7 +50,7 @@ namespace MatterControl.Tests.MatterControl
 					Directory.GetFiles(layersDirectory, "*.slice").Select(file => new LayerInfo()
 					{
 						RelativeFilePath = file.Substring(printerSettingsDirectory.Length + 1),
-						LayerCascade = new PrinterSettings(new OemProfile(PrinterSettingsLayer.LoadFromIni(file)), oemProfile.OemLayer)
+						PrinterSettings = new PrinterSettings() { OemLayer = PrinterSettingsLayer.LoadFromIni(file), BaseLayer = oemProfile.OemLayer }
 					}).ToList()
 					: new List<LayerInfo>();
 		}
@@ -63,7 +66,7 @@ namespace MatterControl.Tests.MatterControl
 					return;
 				}
 
-				string bedSize = settings.LayerCascade.GetValue(SettingsKey.bed_size);
+				string bedSize = settings.PrinterSettings.GetValue(SettingsKey.bed_size);
 
 				// Must exist in all configs
 				Assert.IsNotNullOrEmpty(bedSize, "[bed_size] must exist: " + settings.RelativeFilePath);
@@ -86,7 +89,7 @@ namespace MatterControl.Tests.MatterControl
 					return;
 				}
 
-				string printCenter = settings.LayerCascade.GetValue(SettingsKey.print_center);
+				string printCenter = settings.PrinterSettings.GetValue(SettingsKey.print_center);
 
 				// Must exist in all configs
 				Assert.IsNotNullOrEmpty(printCenter, "[print_center] must exist: " + settings.RelativeFilePath);
@@ -103,7 +106,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string retractLengthString = settings.LayerCascade.GetValue("retract_length");
+				string retractLengthString = settings.PrinterSettings.GetValue("retract_length");
 				if (!string.IsNullOrEmpty(retractLengthString))
 				{
 					float retractLength;
@@ -122,7 +125,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string extruderCountString = settings.LayerCascade.GetValue("extruder_count");
+				string extruderCountString = settings.PrinterSettings.GetValue("extruder_count");
 				if (!string.IsNullOrEmpty(extruderCountString))
 				{
 					int extruderCount;
@@ -142,7 +145,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string fanSpeedString = settings.LayerCascade.GetValue("min_fan_speed");
+				string fanSpeedString = settings.PrinterSettings.GetValue("min_fan_speed");
 				if (!string.IsNullOrEmpty(fanSpeedString))
 				{
 					// Must be valid int data
@@ -163,7 +166,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string fanSpeedString = settings.LayerCascade.GetValue("max_fan_speed");
+				string fanSpeedString = settings.PrinterSettings.GetValue("max_fan_speed");
 				if (!string.IsNullOrEmpty(fanSpeedString))
 				{
 					// Must be valid int data
@@ -188,7 +191,7 @@ namespace MatterControl.Tests.MatterControl
 				string[] keysToTest = { "start_gcode", "end_gcode" };
 				foreach (string gcodeKey in keysToTest)
 				{
-					string gcode = settings.LayerCascade.GetValue(gcodeKey);
+					string gcode = settings.PrinterSettings.GetValue(gcodeKey);
 					if (gcode.Contains("{") || gcode.Contains("}") )
 					{
 						Assert.Fail(string.Format("[{0}] Curly brackets not allowed: {1}", gcodeKey, settings.RelativeFilePath));
@@ -202,7 +205,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string bottomSolidLayers = settings.LayerCascade.GetValue("bottom_solid_layers");
+				string bottomSolidLayers = settings.PrinterSettings.GetValue("bottom_solid_layers");
 				if (!string.IsNullOrEmpty(bottomSolidLayers))
 				{
 					if (bottomSolidLayers != "1mm")
@@ -221,7 +224,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string startGcode = settings.LayerCascade.GetValue("start_gcode");
+				string startGcode = settings.PrinterSettings.GetValue("start_gcode");
 				Assert.False(startGcode.Contains("first_layer_temperature"), "[start_gcode] should not contain [first_layer_temperature]" + settings.RelativeFilePath);
 			});
 		}
@@ -231,7 +234,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string startGcode = settings.LayerCascade.GetValue("start_gcode");
+				string startGcode = settings.PrinterSettings.GetValue("start_gcode");
 				Assert.False(startGcode.Contains("first_layer_bed_temperature"), "[start_gcode] should not contain [first_layer_bed_temperature]" + settings.RelativeFilePath);
 			});
 		}
@@ -241,18 +244,18 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				if (settings.LayerCascade.GetValue("output_only_first_layer") == "1")
+				if (settings.PrinterSettings.GetValue("output_only_first_layer") == "1")
 				{
 					return;
 				}
 
-				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue(SettingsKey.nozzle_diameter));
-				float layerHeight = float.Parse(settings.LayerCascade.GetValue(SettingsKey.layer_height));
+				float nozzleDiameter = float.Parse(settings.PrinterSettings.GetValue(SettingsKey.nozzle_diameter));
+				float layerHeight = float.Parse(settings.PrinterSettings.GetValue(SettingsKey.layer_height));
 
 
 				float firstLayerExtrusionWidth;
 
-				string firstLayerExtrusionWidthString = settings.LayerCascade.GetValue("first_layer_extrusion_width");
+				string firstLayerExtrusionWidthString = settings.PrinterSettings.GetValue("first_layer_extrusion_width");
 				if (!string.IsNullOrEmpty(firstLayerExtrusionWidthString) && firstLayerExtrusionWidthString.Trim() != "0")
 				{
 					firstLayerExtrusionWidth = ValueOrPercentageOf(firstLayerExtrusionWidthString, nozzleDiameter);
@@ -262,7 +265,7 @@ namespace MatterControl.Tests.MatterControl
 					firstLayerExtrusionWidth = nozzleDiameter;
 				}
 
-				string firstLayerHeightString = settings.LayerCascade.GetValue(SettingsKey.first_layer_height);
+				string firstLayerHeightString = settings.PrinterSettings.GetValue(SettingsKey.first_layer_height);
 				if (!string.IsNullOrEmpty(firstLayerHeightString))
 				{
 					float firstLayerHeight = ValueOrPercentageOf(firstLayerHeightString, layerHeight);
@@ -287,13 +290,13 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				if (settings.LayerCascade.GetValue("output_only_first_layer") == "1")
+				if (settings.PrinterSettings.GetValue("output_only_first_layer") == "1")
 				{
 					return;
 				}
 
-				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue(SettingsKey.nozzle_diameter));
-				float layerHeight = float.Parse(settings.LayerCascade.GetValue(SettingsKey.layer_height));
+				float nozzleDiameter = float.Parse(settings.PrinterSettings.GetValue(SettingsKey.nozzle_diameter));
+				float layerHeight = float.Parse(settings.PrinterSettings.GetValue(SettingsKey.layer_height));
 
 				double minimumLayerHeight = nozzleDiameter * 0.85;
 
@@ -313,9 +316,9 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				float nozzleDiameter = float.Parse(settings.LayerCascade.GetValue(SettingsKey.nozzle_diameter));
+				float nozzleDiameter = float.Parse(settings.PrinterSettings.GetValue(SettingsKey.nozzle_diameter));
 
-				string firstLayerExtrusionWidthString = settings.LayerCascade.GetValue("first_layer_extrusion_width");
+				string firstLayerExtrusionWidthString = settings.PrinterSettings.GetValue("first_layer_extrusion_width");
 				if (!string.IsNullOrEmpty(firstLayerExtrusionWidthString))
 				{
 					float firstLayerExtrusionWidth = ValueOrPercentageOf(firstLayerExtrusionWidthString, nozzleDiameter);
@@ -335,7 +338,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string supportMaterialExtruder = settings.LayerCascade.GetValue("support_material_extruder");
+				string supportMaterialExtruder = settings.PrinterSettings.GetValue("support_material_extruder");
 				if (!string.IsNullOrEmpty(supportMaterialExtruder) && printer.Oem != "Esagono")
 				{
 					Assert.AreEqual("1", supportMaterialExtruder, "[support_material_extruder] must be assigned to extruder 1: " + settings.RelativeFilePath);
@@ -354,7 +357,7 @@ namespace MatterControl.Tests.MatterControl
 					return;
 				}
 
-				string supportMaterialInterfaceExtruder = settings.LayerCascade.GetValue("support_material_interface_extruder");
+				string supportMaterialInterfaceExtruder = settings.PrinterSettings.GetValue("support_material_interface_extruder");
 				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder) && printer.Oem != "Esagono")
 				{
 					Assert.AreEqual("1", supportMaterialInterfaceExtruder, "[support_material_interface_extruder] must be assigned to extruder 1: " + settings.RelativeFilePath);
@@ -444,7 +447,7 @@ namespace MatterControl.Tests.MatterControl
 		private class LayerInfo
 		{
 			public string RelativeFilePath { get; set; }
-			public PrinterSettings LayerCascade { get; set; }
+			public PrinterSettings PrinterSettings { get; set; }
 		}
 	}
 }

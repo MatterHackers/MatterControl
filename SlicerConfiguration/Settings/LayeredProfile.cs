@@ -41,15 +41,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PrinterSettings
 	{
-		static PrinterSettingsLayer baseLayerCache;
+		// Latest version should be 2016|06|08|1
+		// Year|month|day|versionForDay (to support multiple revisions on a given day)
+		public static int LatestVersion { get; } = 201606271;
+
+		private static PrinterSettingsLayer baseLayerCache;
 
 		public int DocumentVersion { get; set; }
 
 		public string ID { get; set; }
 
-		// Latest version should be 2016|06|08|1
-		// Year|month|day|versionForDay (to support multiple revisions on a given day)
-		public static int LatestVersion { get; } = 201606161;
 
 		[JsonIgnore]
 		internal PrinterSettingsLayer QualityLayer { get; private set; }
@@ -57,10 +58,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		internal PrinterSettingsLayer MaterialLayer { get; private set; }
 
-		public PrinterSettings(OemProfile printerProfile, PrinterSettingsLayer baseLayer = null)
+		public PrinterSettings()
 		{
-			baseLayerCache = baseLayer;
-			this.OemProfile = printerProfile;
 		}
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
@@ -77,10 +76,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public OemProfile OemProfile { get; set; }
+		public PrinterSettingsLayer OemLayer { get; set; }
 
-		//public SettingsLayer OemLayer { get; set; }
-		
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
 		{
 			if (string.IsNullOrEmpty(layerID))
@@ -260,6 +257,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				return baseLayerCache;
 			}
+
+			internal set
+			{
+				baseLayerCache = value;
+			}
 		}
 
 		private IEnumerable<PrinterSettingsLayer> defaultLayerCascade
@@ -281,9 +283,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					yield return this.QualityLayer;
 				}
 
-				if (this.OemProfile.OemLayer != null)
+				if (this.OemLayer != null)
 				{
-					yield return this.OemProfile.OemLayer;
+					yield return this.OemLayer;
 				}
 
 				yield return this.BaseLayer;

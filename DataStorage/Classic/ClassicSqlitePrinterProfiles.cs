@@ -80,8 +80,10 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			};
 			profileData.Profiles.Add(printerInfo);
 
-			var layeredProfile = new PrinterSettings(
-				new OemProfile(LoadOemLayer(printer)));
+			var layeredProfile = new PrinterSettings()
+			{
+				OemLayer = LoadOemLayer(printer)
+			};
 
 			LoadQualitySettings(layeredProfile, printer);
 			LoadMaterialSettings(layeredProfile, printer);
@@ -165,7 +167,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			}
 		}
 
-		public static Dictionary<string, string> LoadOemLayer(Printer printer)
+		public static PrinterSettingsLayer LoadOemLayer(Printer printer)
 		{
 			SliceSettingsCollection collection;
 			if (printer.DefaultSettingsCollectionId != 0)
@@ -182,7 +184,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 				printer.DefaultSettingsCollectionId = collection.Id;
 			}
 
-			return LoadSettings(collection);
+			return new PrinterSettingsLayer(LoadSettings(collection));
 		}
 
 		private static Dictionary<string, string> LoadSettings(SliceSettingsCollection collection)
