@@ -133,8 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static SettingsProfile LoadEmptyProfile()
 		{
 			var empytProfile = new SettingsProfile(new PrinterSettings());
-
-			empytProfile.SetActiveValue(SettingsKey.printer_name.ToString(), "Printers...".Localize());
+			empytProfile.UserLayer["printer_name"] = "Printers...".Localize();
 
 			return empytProfile;
 		}

@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private PrinterSettings layeredProfile;
 
-		public bool PrinterSelected => layeredProfile.OemLayer.Keys.Count > 0;
+		public bool PrinterSelected => layeredProfile.OemLayer?.Keys.Count > 0;
 
 		internal SettingsProfile(PrinterSettings profile)
 		{
