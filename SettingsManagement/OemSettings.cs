@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 					profileRequest.Request();
 
 					// Block on the current thread until the response has completed
-					autoResetEvent.WaitOne(12000);
+					autoResetEvent.WaitOne(30000);
 
 					return responseText;
 				});

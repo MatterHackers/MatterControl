@@ -141,8 +141,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static ProfileManager ProfileData { get; private set; }
-
 		internal static void SwitchToProfile(string printerID)
 		{
 			var profile = ProfileManager.LoadProfile(printerID);
