@@ -275,6 +275,7 @@ Advanced
         auto_connect
         baud_rate
         com_port
+        created_date
         delete_printer
     Print Area
       Size and Coordinates
