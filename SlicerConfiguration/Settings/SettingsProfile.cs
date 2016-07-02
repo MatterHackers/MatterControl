@@ -887,8 +887,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string ComPort { get; set; }
 		public string ID { get; set; }
 		public string Name { get; set; }
-		public bool MarkedForDelete { get; set; }
-		public string SHA1 { get; internal set; }
+		public string DeviceToken { get; set; }
+		public bool IsDirty { get; set; } = false;
+		public bool MarkedForDelete { get; set; } = false;
+		public string SHA1 { get; set; }
+
+		public void ChangeID(string newID)
+		{
+			string existingProfile = ProfilePath;
+			if (File.Exists(existingProfile))
+			{
+				this.ID = newID;
+				File.Move(existingProfile, ProfilePath);
+			}
+
+			var profile = ProfileManager.LoadProfile(newID);
+
+			profile.ID = newID;
+			profile.SetActiveValue("device_token", newID);
+			profile.SaveChanges();
+			ProfileManager.Instance.Save();
+		}
 
 		[JsonIgnore]
 		public string ProfilePath => Path.Combine(ProfileManager.ProfilesPath, ID + ".json");
