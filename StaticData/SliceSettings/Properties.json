@@ -538,6 +538,32 @@
   {
     "QuickMenuSettings": [],
     "SetSettingsOnChange": [],
+    "SlicerConfigName": "filament_cost",
+    "PresentationName": "Cost",
+    "HelpText": "The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "$/kg",
+    "ShowAsOverride": true,
+    "ShowIfSet": null,
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "0.00"
+  },
+  {
+    "QuickMenuSettings": [],
+    "SetSettingsOnChange": [],
+    "SlicerConfigName": "filament_density",
+    "PresentationName": "Density",
+    "HelpText": "Material density. Only used for estimating mass in the Layer View.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "g/cm³",
+    "ShowAsOverride": true,
+    "ShowIfSet": null,
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "0.00"
+  },
+  {
+    "QuickMenuSettings": [],
+    "SetSettingsOnChange": [],
     "SlicerConfigName": "filament_diameter",
     "PresentationName": "Diameter",
     "HelpText": "The actual diameter of the filament used for printing.",

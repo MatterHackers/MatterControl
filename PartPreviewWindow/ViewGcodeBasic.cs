@@ -494,24 +494,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
 
-			string weightLabel = "Estimated Weight".Localize();
-			string weightLabelFull = string.Format("{0}:", weightLabel);
-			modelInfoContainer.AddChild(new TextWidget(weightLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			string massLabel = "Estimated Mass".Localize();
+			string massLabelFull = string.Format("{0}:", massLabel);
+			modelInfoContainer.AddChild(new TextWidget(massLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>("filament_diameter");
+			double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>("filament_density");
+			double filamentCost = ActiveSliceSettings.Instance.GetValue<double>("filament_cost");
+
+			double totalMass = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
+			double totalCost = totalMass / 1000 * filamentCost;
 			{
-				var density = 1.0;
-				string filamentType = "PLA";
-				if (filamentType == "ABS")
-				{
-					density = 1.04;
-				}
-				else if (filamentType == "PLA")
-				{
-					density = 1.24;
+				string massText;
+				if (totalMass != 0) {
+					massText = string.Format("{0:0.00} g", totalMass);
+				} else {
+					massText = "Unknown";
 				}
 
-				double filamentWeightGrams = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(ActiveSliceSettings.Instance.GetValue<double>("filament_diameter"), density);
+				GuiWidget estimatedPrintTime = new TextWidget(massText, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
+				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
+				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
+				modelInfoContainer.AddChild(estimatedPrintTime);
+			}
 
-				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} g", filamentWeightGrams), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			string costLabel = "Estimated Cost".Localize();
+			string costLabelFull = string.Format("{0}:", costLabel);
+			modelInfoContainer.AddChild(new TextWidget(costLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			{
+				string costText;
+				if (totalCost != 0) {
+					costText = string.Format("${0:0.00}", totalCost);
+				} else {
+					costText = "Unknown";
+				}
+
+				GuiWidget estimatedPrintTime = new TextWidget(costText, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
 				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
 				modelInfoContainer.AddChild(estimatedPrintTime);
