@@ -519,19 +519,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string costLabel = "Estimated Cost".Localize();
 			string costLabelFull = string.Format("{0}:", costLabel);
-			modelInfoContainer.AddChild(new TextWidget(costLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			if (totalCost != 0)
 			{
-				string costText;
-				if (totalCost != 0) {
+				modelInfoContainer.AddChild(new TextWidget(costLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+				{
+					string costText;
 					costText = string.Format("${0:0.00}", totalCost);
-				} else {
-					costText = "Unknown";
-				}
 
-				GuiWidget estimatedPrintTime = new TextWidget(costText, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
-				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-				modelInfoContainer.AddChild(estimatedPrintTime);
+
+					GuiWidget estimatedPrintTime = new TextWidget(costText, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
+					//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
+					estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
+					modelInfoContainer.AddChild(estimatedPrintTime);
+				}
 			}
 
 			//modelInfoContainer.AddChild(new TextWidget("Layer Count:", textColor: ActiveTheme.Instance.PrimaryTextColor));

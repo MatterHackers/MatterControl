@@ -5116,3 +5116,27 @@ Translated:Email Address
 English:A password reset code will be sent to your email.
 Translated:A password reset code will be sent to your email.
 
+English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
+Translated:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
+
+English:Material density. Only used for estimating mass in the Layer View.
+Translated:Material density. Only used for estimating mass in the Layer View.
+
+English:Estimated Cost
+Translated:Estimated Cost
+
+English:Density
+Translated:Density
+
+English:g/cm³
+Translated:g/cm³
+
+English:Cost
+Translated:Cost
+
+English:$/kg
+Translated:$/kg
+
+English:OEM Date Modified
+Translated:OEM Date Modified
+

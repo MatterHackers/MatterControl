@@ -546,10 +546,19 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0.00"
+    "DefaultValue": "0"
   },
   {
-    "QuickMenuSettings": [],
+    "QuickMenuSettings": [
+      {
+        "MenuName": "PLA",
+        "Value": "1.24"
+      },
+      {
+        "MenuName": "ABS",
+        "Value": "1.04"
+      }
+    ],
     "SetSettingsOnChange": [],
     "SlicerConfigName": "filament_density",
     "PresentationName": "Density",
@@ -559,7 +568,7 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0.00"
+    "DefaultValue": "1.24"
   },
   {
     "QuickMenuSettings": [],

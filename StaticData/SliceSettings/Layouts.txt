@@ -50,6 +50,8 @@ Intermediate
     Filament
       Filament
         filament_diameter
+        filament_density
+        filament_cost
       Extruder Temperatures
         first_layer_temperature
         temperature
