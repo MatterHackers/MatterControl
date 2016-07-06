@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
@@ -193,12 +195,49 @@ namespace MatterHackers.MatterControl
 
 		public void StartLogin()
 		{
-			StartLoginEventHandler?.Invoke(null, null);
+			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			{
+				// can't login while printing
+				UiThread.RunOnIdle(() =>
+					StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't login while printing".Localize())
+				);
+			}
+			else // do the regular login
+			{
+				StartLoginEventHandler?.Invoke(null, null);
+			}
 		}
 
 		public void StartLogout()
 		{
-			StartLogoutEventHandler?.Invoke(null, null);
+			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			{
+				// can't log out while printing
+				UiThread.RunOnIdle(() =>
+					StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't log out while printing".Localize())
+				);
+			}
+			else // do the regular log out
+			{
+				bool allowShowingLogoutWarning = true;
+				if (allowShowingLogoutWarning)
+				{
+					// Warn on logout that no access to user printers and cloud library put a 'Don't ask me again' check box
+					StyledMessageBox.ShowMessageBox((clickedLogout) =>
+					{
+						if (clickedLogout)
+						{
+							StartLogoutEventHandler?.Invoke(null, null);
+						}
+					}, "Are you sure you want to logout? You will not have access to your printer profiles or cloud library.".Localize(), "Logout?".Localize(), StyledMessageBox.MessageType.YES_NO, "Logout".Localize(), "Cancel".Localize());
+				}
+				else // just run the logout event
+				{					
+					StartLogoutEventHandler?.Invoke(null, null);
+				}
+			}
 		}
 
 		public string GetSessionUsername()

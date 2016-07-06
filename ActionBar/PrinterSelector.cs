@@ -33,6 +33,7 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl
 		public event EventHandler AddPrinter;
 
 		private EventHandler unregisterEvents;
+		int lastSelectedIndex = -1;
 
 		public PrinterSelector() : base("Printers".Localize() + "... ", useLeftIcons: true)
 		{
@@ -60,7 +62,22 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					ActiveSliceSettings.SwitchToProfile(printerID);
+					if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+						|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+					{
+						if (this.SelectedIndex != lastSelectedIndex)
+						{
+							UiThread.RunOnIdle(() =>
+							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't switch printers while printing".Localize())
+							);
+							this.SelectedIndex = lastSelectedIndex;
+						}
+					}
+					else
+					{
+						lastSelectedIndex = this.SelectedIndex;
+						ActiveSliceSettings.SwitchToProfile(printerID);
+					}
 				}
 			};
 
@@ -81,6 +98,7 @@ namespace MatterHackers.MatterControl
 			if (ActiveSliceSettings.Instance != null)
 			{
 				this.SelectedValue = ActiveSliceSettings.Instance.ID;
+				lastSelectedIndex = this.SelectedIndex;
 				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
 
