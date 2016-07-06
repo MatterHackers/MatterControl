@@ -162,11 +162,11 @@ namespace MatterHackers.MatterControl
 
 		public delegate string GetSessionInfoDelegate();
 
-		public static event GetSessionInfoDelegate privateGetSessionInfo;
+		public static event GetSessionInfoDelegate GetSessionInfoEventHandler;
 
-		public static event EventHandler privateStartLogin;
+		public static event EventHandler StartLoginEventHandler;
 
-		public static event EventHandler privateStartLogout;
+		public static event EventHandler StartLogoutEventHandler;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
@@ -193,19 +193,19 @@ namespace MatterHackers.MatterControl
 
 		public void StartLogin()
 		{
-			privateStartLogin?.Invoke(null, null);
+			StartLoginEventHandler?.Invoke(null, null);
 		}
 
 		public void StartLogout()
 		{
-			privateStartLogout?.Invoke(null, null);
+			StartLogoutEventHandler?.Invoke(null, null);
 		}
 
 		public string GetSessionUsername()
 		{
-			if (privateGetSessionInfo != null)
+			if (GetSessionInfoEventHandler != null)
 			{
-				return privateGetSessionInfo();
+				return GetSessionInfoEventHandler();
 			}
 			else
 			{
@@ -228,6 +228,7 @@ namespace MatterHackers.MatterControl
 						MainView.AddElements();
 					}
 					PopOutManager.SaveIfClosed = true;
+					DoneReloadingAll?.CallEvents(null, null);
 				}
 			});
 		}

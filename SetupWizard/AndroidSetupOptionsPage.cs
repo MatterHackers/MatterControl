@@ -175,6 +175,7 @@ namespace MatterHackers.MatterControl
 
 	public class SetupAccountView : SetupViewBase
 	{
+		private event EventHandler unregisterEvents;
 		private Button signInButton;
 		private Button signOutButton;
 		private TextWidget statusMessage;
@@ -229,6 +230,23 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(statusMessage);
 
 			mainContainer.AddChild(buttonContainer);
+
+			ApplicationController.Instance.DoneReloadingAll.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
+		}
+
+		private void RemoveAndNewControl(object sender, EventArgs e)
+		{
+			GuiWidget parent = Parent;
+			int thisIndex = parent.GetChildIndex(this);
+			parent.RemoveChild(this);
+			parent.AddChild(new SetupAccountView(this.textImageButtonFactory), thisIndex);
+			this.Close();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 

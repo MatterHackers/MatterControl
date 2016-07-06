@@ -38,17 +38,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	using Agg;
 	using Localizations;
-	using VersionManagement;
-	using System.Collections.ObjectModel;
-	using System.Collections.Specialized;
-	using System.Net;
 	using SettingsManagement;
+	using System.Collections.ObjectModel;
+	using System.Net;
+	using VersionManagement;
 
 	public class ProfileManager
 	{
 		private static readonly string userDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
 		internal static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
-		private static readonly string profilesDBPath = Path.Combine(ProfilesPath, "profiles.json");
+
+		private static string profilesDBPath
+		{
+			get
+			{
+				return Path.Combine(ProfilesPath, "profiles.json");
+			}
+		}
 
 		public static ProfileManager Instance;
 
@@ -61,7 +67,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var printerInfo = Profiles.Where(p => p.ID == printerToken).FirstOrDefault();
 			Profiles.Remove(printerInfo);
 
-			// Delete the 
+			// Delete the
 			File.Delete(printerInfo.ProfilePath);
 
 			Instance.Save();
@@ -78,18 +84,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			Instance = new ProfileManager();
 
-			// One time import
-			if (!File.Exists(profilesDBPath))
-			{
-				// Import classic db based profiles into local json files
-				DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, ProfilesPath);
-			}
-
 			// Load the profiles.json document
 			if (File.Exists(profilesDBPath))
 			{
 				Instance = JsonConvert.DeserializeObject<ProfileManager>(File.ReadAllText(profilesDBPath));
 				Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
+			}
+			else // One time import
+			{
+				// Import classic db based profiles into local json files
+				DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, ProfilesPath);
 			}
 		}
 
@@ -225,7 +229,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var layeredProfile = new PrinterSettings()
 			{
 				ID = guid,
-				// TODO: This should really be set by the system that generates the source documents 
+				// TODO: This should really be set by the system that generates the source documents
 				DocumentVersion = PrinterSettings.LatestVersion,
 				OemLayer = oemProfile.OemLayer
 			};
@@ -298,7 +302,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				});
 		}
 
-
 		private static void Profiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
 			// Any time the list changes, persist the updates to disk
@@ -312,5 +315,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			File.WriteAllText(profilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
 		}
 	}
-
 }

@@ -5140,3 +5140,6 @@ Translated:$/kg
 English:OEM Date Modified
 Translated:OEM Date Modified
 
+English:Accept
+Translated:Accept
+
