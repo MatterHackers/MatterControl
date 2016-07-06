@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string nozzle_diameter = nameof(nozzle_diameter);
 		public const string print_center = nameof(print_center);
 		public const string printer_name = nameof(printer_name);
+		public const string make = nameof(make);
+		public const string model = nameof(model);
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
