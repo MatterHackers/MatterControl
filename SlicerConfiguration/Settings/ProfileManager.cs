@@ -52,7 +52,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return Path.Combine(ProfilesPath, "profiles.json");
+				string username = UserSettings.Instance.get("ActiveUserName");
+
+				return Path.Combine(ProfilesPath, string.IsNullOrEmpty(username) ? "profiles.json" : username + ".json");
 			}
 		}
 
@@ -88,13 +90,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (File.Exists(profilesDBPath))
 			{
 				Instance = JsonConvert.DeserializeObject<ProfileManager>(File.ReadAllText(profilesDBPath));
-				Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
 			}
 			else // One time import
 			{
-				// Import classic db based profiles into local json files
-				DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, ProfilesPath);
+				if (Path.GetFileName(profilesDBPath) == "profiles.json")
+				{
+					// Import classic db based profiles into local json files
+					DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, ProfilesPath);
+				}
 			}
+
+			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
 		}
 
 		public ProfileManager()

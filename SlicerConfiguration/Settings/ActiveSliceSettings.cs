@@ -147,6 +147,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			UserSettings.Instance.set("ActiveProfileID", printerID);
 
+			UserSettings.Instance.set("ActiveUserName", ApplicationController.Instance.GetSessionUsernameForFileSystem());
+
 			Instance = profile ?? ProfileManager.LoadEmptyProfile();
 		}
 

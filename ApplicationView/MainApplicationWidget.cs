@@ -206,6 +206,7 @@ namespace MatterHackers.MatterControl
 			else // do the regular login
 			{
 				StartLoginEventHandler?.Invoke(null, null);
+				UserSettings.Instance.set("ActiveUserName", ApplicationController.Instance.GetSessionUsernameForFileSystem());
 			}
 		}
 
@@ -230,12 +231,14 @@ namespace MatterHackers.MatterControl
 						if (clickedLogout)
 						{
 							StartLogoutEventHandler?.Invoke(null, null);
+							UserSettings.Instance.set("ActiveUserName", "");
 						}
 					}, "Are you sure you want to logout? You will not have access to your printer profiles or cloud library.".Localize(), "Logout?".Localize(), StyledMessageBox.MessageType.YES_NO, "Logout".Localize(), "Cancel".Localize());
 				}
 				else // just run the logout event
 				{					
 					StartLogoutEventHandler?.Invoke(null, null);
+					UserSettings.Instance.set("ActiveUserName", "");
 				}
 			}
 		}
@@ -250,6 +253,24 @@ namespace MatterHackers.MatterControl
 			{
 				return null;
 			}
+		}
+
+		private static string MakeValidFileName(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+			{
+				return name;
+			}
+
+			string invalidChars = System.Text.RegularExpressions.Regex.Escape(new string(System.IO.Path.GetInvalidFileNameChars()));
+			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
+
+			return System.Text.RegularExpressions.Regex.Replace(name, invalidRegStr, "_");
+		}
+
+		public string GetSessionUsernameForFileSystem()
+		{
+			return MakeValidFileName(GetSessionUsername());
 		}
 
 		public void ReloadAll(object sender, EventArgs e)
