@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl
 
 			double helpPointSize = 10;
 			EnglishTextWrapping wrapper = new EnglishTextWrapping(helpPointSize);
-			string[] wrappedText = wrapper.WrapText(HelpText, textRegionWidth - allText.Padding.Width);
+			List<string> wrappedText = wrapper.WrapText(HelpText, textRegionWidth - allText.Padding.Width);
 			foreach (string line in wrappedText)
 			{
 				GuiWidget helpWidget = new TextWidget(line, pointSize: helpPointSize, textColor: RGBA_Bytes.White);

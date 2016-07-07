@@ -49,10 +49,9 @@ public class LicenseAgreementPage : WizardPage
 		scrollable.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
 		contentRow.AddChild(scrollable);
 
-		var textBox = new WrappedTextWidget(eulaText, 200, textColor: ActiveTheme.Instance.PrimaryTextColor)
+		var textBox = new WrappedTextWidget(eulaText, 200, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
 		{
 			DrawFromHintedCache = true,
-			DoubleBuffer = false,
 		};
 		scrollable.AddChild(textBox);
 
