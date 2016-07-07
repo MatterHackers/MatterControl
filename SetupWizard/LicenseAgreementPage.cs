@@ -49,7 +49,11 @@ public class LicenseAgreementPage : WizardPage
 		scrollable.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
 		contentRow.AddChild(scrollable);
 
-		var textBox = new WrappedTextWidget(eulaText, 200, textColor: ActiveTheme.Instance.PrimaryTextColor);
+		var textBox = new WrappedTextWidget(eulaText, 200, textColor: ActiveTheme.Instance.PrimaryTextColor)
+		{
+			DrawFromHintedCache = true,
+			DoubleBuffer = false,
+		};
 		scrollable.AddChild(textBox);
 
 		var acceptButton = textImageButtonFactory.Generate("Accept".Localize());
@@ -70,6 +74,11 @@ public class LicenseAgreementPage : WizardPage
 		footerRow.AddChild(cancelButton);
 
 		footerRow.Visible = true;
+	}
+
+	public override void OnDraw(Graphics2D graphics2D)
+	{
+		base.OnDraw(graphics2D);
 	}
 
 	public override void OnClosed(EventArgs e)

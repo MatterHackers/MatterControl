@@ -1154,6 +1154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Matrix4X4 rotation = Matrix4X4.CreateRotationX(radians);
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
@@ -1172,6 +1173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Matrix4X4 rotation = Matrix4X4.CreateRotationY(radians);
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
@@ -1190,6 +1192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Matrix4X4 rotation = Matrix4X4.CreateRotationZ(radians);
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
+					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
@@ -1208,6 +1211,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					MakeLowestFaceFlat(SelectedMeshGroupIndex);
+					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();

@@ -404,10 +404,27 @@ namespace MatterHackers.MatterControl
 			if (ActiveTheme.Instance.IsDarkTheme
 				&& AllowThemeToAdjustImage)
 			{
-				if (normalImage != null) normalImage.InvertLightness();
-				if (pressedImage != null) pressedImage.InvertLightness();
-				if (hoverImage != null) hoverImage.InvertLightness();
-				if (disabledImage != null) disabledImage.InvertLightness();
+				if (normalImage != null)
+				{
+					// make copies so we don't change source data
+					normalImage = new ImageBuffer(normalImage);
+					normalImage.InvertLightness();
+				}
+				if (pressedImage != null)
+				{
+					pressedImage.InvertLightness();
+					pressedImage = new ImageBuffer(pressedImage);
+				}
+				if (hoverImage != null)
+				{
+					hoverImage = new ImageBuffer(hoverImage);
+					hoverImage.InvertLightness();
+				}
+				if (disabledImage != null)
+				{
+					disabledImage = new ImageBuffer(disabledImage);
+					disabledImage.InvertLightness();
+				}
 			}
 
 			if (invertImageLocation)
