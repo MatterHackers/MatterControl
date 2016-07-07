@@ -91,8 +91,8 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.ID = printer.Id.ToString();
 
 			layeredProfile.UserLayer[SettingsKey.printer_name] = printer.Name ?? "";
-			layeredProfile.UserLayer["MatterControl_Make"] = printer.Make ?? "";
-			layeredProfile.UserLayer["model"] = printer.Model ?? "";
+			layeredProfile.UserLayer[SettingsKey.make] = printer.Make ?? "";
+			layeredProfile.UserLayer[SettingsKey.model] = printer.Model ?? "";
 			layeredProfile.UserLayer["baud_rate"] = printer.BaudRate ?? "";
 			layeredProfile.UserLayer["com_port"] = printer.ComPort ?? "";
 			layeredProfile.UserLayer["auto_connect"] = printer.AutoConnect ? "1" : "0";

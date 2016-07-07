@@ -83,16 +83,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Ensure the profiles directory exists
 			Directory.CreateDirectory(ProfilesPath);
-
-			Instance = new ProfileManager();
-
+			
 			// Load the profiles.json document
 			if (File.Exists(profilesDBPath))
 			{
 				Instance = JsonConvert.DeserializeObject<ProfileManager>(File.ReadAllText(profilesDBPath));
 			}
-			else // One time import
+			else
 			{
+				Instance = new ProfileManager();
+
 				if (Path.GetFileName(profilesDBPath) == "profiles.json")
 				{
 					// Import classic db based profiles into local json files
@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			// In either case, wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
 		}
 
@@ -148,7 +149,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return empytProfile;
 		}
 
-		internal static SettingsProfile LoadProfileFromMCWS(string deviceToken)
+		public static SettingsProfile LoadProfileFromMCWS(string deviceToken)
 		{
 			WebClient client = new WebClient();
 			string json = client.DownloadString($"{MatterControlApplication.MCWSBaseUri}/api/1/device/get-profile?PrinterToken={deviceToken}");
@@ -157,7 +158,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new SettingsProfile(printerSettings);
 		}
 
-		internal static SettingsProfile LoadProfile(string profileID)
+		public static SettingsProfile LoadProfile(string profileID)
 		{
 			//return LoadProfileFromMCWS(profileID);
 
@@ -165,6 +166,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (ProfileManager.Instance[profileID] == null)
 			{
 				return null;
+			}
+
+			if (ActiveSliceSettings.Instance?.ID == profileID)
+			{
+				return ActiveSliceSettings.Instance;
 			}
 
 			string profilePath = Path.Combine(ProfilesPath, profileID + ".json");
@@ -195,6 +201,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				case ".printer":
 					var profile = ProfileManager.LoadProfileFromDisk(settingsFilePath);
 					profile.ID = printerInfo.ID;
+					profile.ClearValue("device_token");
+					printerInfo.DeviceToken = "";
 
 					// TODO: Resolve name conflicts
 					profile.SetName(printerInfo.Name);
@@ -216,14 +224,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// TODO: Resolve name conflicts
 					layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerInfo.Name;
 
+					layeredProfile.ClearValue("device_token");
+					printerInfo.DeviceToken = "";
 					Instance.Profiles.Add(printerInfo);
 
 					layeredProfile.Save();
 
 					break;
 			}
-
-			ProfileManager.Instance.Save();
 		}
 
 		internal static void AcquireNewProfile(string make, string model, string printerName)
@@ -279,13 +287,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				layeredProfile.QualityLayers.Add(qualityPreset);
 			}
 
-			layeredProfile.Save();
-
 			Instance.Profiles.Add(new PrinterInfo
 			{
 				Name = printerName,
 				ID = guid
 			});
+
+			// Update SHA1
+			layeredProfile.Save();
 
 			UserSettings.Instance.set("ActiveProfileID", guid);
 
@@ -300,10 +309,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"profiles",
 				() =>
 				{
-					string responseText = null;
-
-					responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
-
+					string responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
 					return responseText;
 				});
 		}
