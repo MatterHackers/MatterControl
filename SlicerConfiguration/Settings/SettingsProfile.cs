@@ -907,7 +907,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			profile.ID = newID;
 			profile.SetActiveValue("device_token", newID);
-			profile.SaveChanges();
 			ProfileManager.Instance.Save();
 		}
 
