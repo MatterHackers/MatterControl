@@ -5143,3 +5143,24 @@ Translated:OEM Date Modified
 English:Accept
 Translated:Accept
 
+English:Please wait until the print has finished and try again.
+Translated:Please wait until the print has finished and try again.
+
+English:Can't switch printers while printing
+Translated:Can't switch printers while printing
+
+English:Can't log out while printing
+Translated:Can't log out while printing
+
+English:Are you sure you want to logout? You will not have access to your printer profiles or cloud library.
+Translated:Are you sure you want to logout? You will not have access to your printer profiles or cloud library.
+
+English:Logout?
+Translated:Logout?
+
+English:Logout
+Translated:Logout
+
+English:Can't login while printing
+Translated:Can't login while printing
+
