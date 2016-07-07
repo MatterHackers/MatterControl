@@ -287,13 +287,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				layeredProfile.QualityLayers.Add(qualityPreset);
 			}
 
-			layeredProfile.Save();
-
 			Instance.Profiles.Add(new PrinterInfo
 			{
 				Name = printerName,
 				ID = guid
 			});
+
+			// Update SHA1
+			layeredProfile.Save();
 
 			UserSettings.Instance.set("ActiveProfileID", guid);
 
@@ -308,10 +309,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"profiles",
 				() =>
 				{
-					string responseText = null;
-
-					responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
-
+					string responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
 					return responseText;
 				});
 		}
