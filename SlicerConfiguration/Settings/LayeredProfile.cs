@@ -190,6 +190,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			File.WriteAllText(DocumentPath, json);
+
+			ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
 		}
 
 		/// <summary>
