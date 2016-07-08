@@ -162,13 +162,9 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
-		public delegate string GetSessionInfoDelegate();
-
-		public static event GetSessionInfoDelegate GetSessionInfoEventHandler;
-
-		public static event EventHandler StartLoginEventHandler;
-
-		public static event EventHandler StartLogoutEventHandler;
+		public static Action StartLoginEventHandler;
+		public static Action StartLogoutEventHandler;
+		public static Func<string> GetSessionInfo;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
@@ -205,7 +201,7 @@ namespace MatterHackers.MatterControl
 			}
 			else // do the regular login
 			{
-				StartLoginEventHandler?.Invoke(null, null);
+				StartLoginEventHandler?.Invoke();
 				UserSettings.Instance.set("ActiveUserName", ApplicationController.Instance.GetSessionUsernameForFileSystem());
 			}
 		}
@@ -230,14 +226,14 @@ namespace MatterHackers.MatterControl
 					{
 						if (clickedLogout)
 						{
-							StartLogoutEventHandler?.Invoke(null, null);
+							StartLogoutEventHandler?.Invoke();
 							UserSettings.Instance.set("ActiveUserName", "");
 						}
 					}, "Are you sure you want to logout? You will not have access to your printer profiles or cloud library.".Localize(), "Logout?".Localize(), StyledMessageBox.MessageType.YES_NO, "Logout".Localize(), "Cancel".Localize());
 				}
 				else // just run the logout event
 				{					
-					StartLogoutEventHandler?.Invoke(null, null);
+					StartLogoutEventHandler?.Invoke();
 					UserSettings.Instance.set("ActiveUserName", "");
 				}
 			}
@@ -245,9 +241,9 @@ namespace MatterHackers.MatterControl
 
 		public string GetSessionUsername()
 		{
-			if (GetSessionInfoEventHandler != null)
+			if (GetSessionInfo != null)
 			{
-				return GetSessionInfoEventHandler();
+				return GetSessionInfo();
 			}
 			else
 			{

@@ -48,12 +48,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static readonly string userDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
 		internal static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
 
-		private static string profilesDBPath
+		private static string ProfilesDBPath
 		{
 			get
 			{
 				string username = UserSettings.Instance.get("ActiveUserName");
-
 				return Path.Combine(ProfilesPath, string.IsNullOrEmpty(username) ? "profiles.json" : username + ".json");
 			}
 		}
@@ -85,15 +84,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Directory.CreateDirectory(ProfilesPath);
 			
 			// Load the profiles.json document
-			if (File.Exists(profilesDBPath))
+			if (File.Exists(ProfilesDBPath))
 			{
-				Instance = JsonConvert.DeserializeObject<ProfileManager>(File.ReadAllText(profilesDBPath));
+				Instance = JsonConvert.DeserializeObject<ProfileManager>(File.ReadAllText(ProfilesDBPath));
 			}
 			else
 			{
 				Instance = new ProfileManager();
 
-				if (Path.GetFileName(profilesDBPath) == "profiles.json")
+				if (Path.GetFileName(ProfilesDBPath) == "profiles.json")
 				{
 					// Import classic db based profiles into local json files
 					DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, ProfilesPath);
@@ -179,7 +178,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static SettingsProfile LoadProfileFromDisk(string profilePath)
 		{
-			return new SettingsProfile(PrinterSettings.LoadFile(profilePath));
+			if (File.Exists(profilePath))
+			{
+				return new SettingsProfile(PrinterSettings.LoadFile(profilePath));
+			}
+			else
+			{
+				return LoadEmptyProfile();
+			}
 		}
 
 		internal static void ImportFromExisting(string settingsFilePath)
@@ -324,7 +330,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Save()
 		{
-			File.WriteAllText(profilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+			File.WriteAllText(ProfilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
 		}
 	}
 }
