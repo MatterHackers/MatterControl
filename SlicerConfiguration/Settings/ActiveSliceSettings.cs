@@ -80,6 +80,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public static void RefreshActiveInstance(SettingsProfile updatedProfile)
+		{
+			bool themeChanged = activeInstance.GetValue("active_theme_index") != updatedProfile.GetValue("active_theme_index");
+
+			activeInstance = updatedProfile;
+
+			if (themeChanged)
+			{
+				SwitchToPrinterTheme(true);
+			}
+
+			UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+		}
+
 		/// <summary>
 		/// Switches to the ActivePrinter theme without firing the ThemeChanged event. This is useful when changing printers and
 		/// allows the theme state to be updated before the ActivePrinterChanged event fires, resulting in a single ReloadAll
