@@ -102,6 +102,8 @@ namespace MatterHackers.MatterControl
 
 		public static void DeleteCacheData(int daysOldToDelete)
 		{
+			return;
+
 			if(LibraryProviderSQLite.PreloadingCalibrationFiles)
 			{
 				return;
