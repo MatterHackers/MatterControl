@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class ActiveSliceSettings
 	{
 		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
+		public static RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 
 		private static SettingsProfile activeInstance = null;
 		public static SettingsProfile Instance
@@ -88,10 +89,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (themeChanged)
 			{
-				SwitchToPrinterTheme(true);
+				UiThread.RunOnIdle(() => SwitchToPrinterTheme(true));
 			}
-
-			UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+			else
+			{
+				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+			}
 		}
 
 		/// <summary>
