@@ -5164,3 +5164,6 @@ Translated:Logout
 English:Can't login while printing
 Translated:Can't login while printing
 
+English:Cloud Printer Profiles
+Translated:Cloud Printer Profiles
+

@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				"Cloud Library".Localize(),
 				"Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.".Localize());
 			AddBulletPointAndDescription(contentRow,
-				"Cloud Profiles".Localize(),
+				"Cloud Printer Profiles".Localize(),
 				"Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.".Localize());
 			AddBulletPointAndDescription(contentRow,
 				"Remote Monitoring".Localize(),
