@@ -89,10 +89,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (themeChanged)
 			{
-				SwitchToPrinterTheme(true);
+				UiThread.RunOnIdle(() => SwitchToPrinterTheme(true));
 			}
-
-			UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+			else
+			{
+				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+			}
 		}
 
 		/// <summary>
