@@ -157,7 +157,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new SettingsProfile(printerSettings);
 		}
 
-		public static SettingsProfile LoadProfile(string profileID)
+		/// <summary>
+		/// Loads the specified SettingsProfile
+		/// </summary>
+		/// <param name="profileID">The profile ID to load</param>
+		/// <param name="useActiveInstance">Return the in memory instance if already loaded. Alternatively, reload from disk</param>
+		/// <returns></returns>
+		public static SettingsProfile LoadProfile(string profileID, bool useActiveInstance = true)
 		{
 			//return LoadProfileFromMCWS(profileID);
 
@@ -167,7 +173,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return null;
 			}
 
-			if (ActiveSliceSettings.Instance?.ID == profileID)
+			if (useActiveInstance && ActiveSliceSettings.Instance?.ID == profileID)
 			{
 				return ActiveSliceSettings.Instance;
 			}
