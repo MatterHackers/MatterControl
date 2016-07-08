@@ -16,7 +16,7 @@ namespace MatterControl.Tests.MatterControl
 {
 	class PrinterChooserUnitTests
 	{
-		[Test]
+		[Test, Category("FixNeeded" /* Disabled until MCWS production is updated */)]
 		public void PrinterChooserHonorsWhitelist()
 		{
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
