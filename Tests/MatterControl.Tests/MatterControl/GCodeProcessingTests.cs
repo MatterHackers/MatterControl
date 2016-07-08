@@ -44,7 +44,7 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class GCodeProcessingTests
 	{
-		[Test, Category("GCodeProcessing")]
+		[Test, Category("GCodeProcessing"), Category("FixNeeded" /* Disabled until MCWS production is updated */)]
 		public void ReplaceMacroValuesWorking()
 		{
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
