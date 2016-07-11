@@ -201,7 +201,6 @@ namespace MatterHackers.MatterControl
 			}
 			else // do the regular login
 			{
-				UserSettings.Instance.set("ActiveUserName", ApplicationController.Instance.GetSessionUsernameForFileSystem());
 				LoginAction?.Invoke();
 			}
 		}
@@ -226,14 +225,12 @@ namespace MatterHackers.MatterControl
 					{
 						if (clickedLogout)
 						{
-							UserSettings.Instance.set("ActiveUserName", "");
 							LogoutAction?.Invoke();
 						}
 					}, "Are you sure you want to logout? You will not have access to your printer profiles or cloud library.".Localize(), "Logout?".Localize(), StyledMessageBox.MessageType.YES_NO, "Logout".Localize(), "Cancel".Localize());
 				}
 				else // just run the logout event
 				{					
-					UserSettings.Instance.set("ActiveUserName", "");
 					LogoutAction?.Invoke();
 				}
 			}
@@ -356,6 +353,10 @@ namespace MatterHackers.MatterControl
 		public void ChangeCloudSyncStatus(bool userAuthenticated)
 		{
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
+
+			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
+			UserSettings.Instance.set("ActiveUserName", activeUserName);
+			ProfileManager.Reload();
 		}
 
 		public class CloudSyncEventArgs : EventArgs
