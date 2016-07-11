@@ -376,15 +376,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 				StyledMessageBox.ShowMessageBox(onDeleteFileConfirm, alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO);
 			}
 
-			int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
-			QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);
+			int index = QueueData.Instance.GetIndex(PrintItemWrapper);
+			UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 		}
 
 		private static void onConfirmRemove(bool messageBoxResponse)
 		{
 			if (messageBoxResponse)
 			{
-				QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(itemToRemove));
+				int index = QueueData.Instance.GetIndex(itemToRemove);
+				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 			}
 		}
 
@@ -455,20 +456,17 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void onQueueItemClick(object sender, EventArgs e)
 		{
-			if (queueDataView.EditMode)
+			if (this.isSelectedItem)
 			{
-				if (this.isSelectedItem)
-				{
-					this.isSelectedItem = false;
-					this.selectionCheckBox.Checked = false;
-					queueDataView.SelectedItems.Remove(this);
-				}
-				else
-				{
-					this.isSelectedItem = true;
-					this.selectionCheckBox.Checked = true;
-					queueDataView.SelectedItems.Add(this);
-				}
+				this.isSelectedItem = false;
+				this.selectionCheckBox.Checked = false;
+				queueDataView.SelectedItems.Remove(this);
+			}
+			else
+			{
+				this.isSelectedItem = true;
+				this.selectionCheckBox.Checked = true;
+				queueDataView.SelectedItems.Add(this);
 			}
 		}
 

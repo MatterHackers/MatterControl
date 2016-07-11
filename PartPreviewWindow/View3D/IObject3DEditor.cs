@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2016, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,54 +26,19 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+//#define DoBooleanTest
 
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CreatorPlugins;
-using MatterHackers.MatterControl.PluginSystem;
+using MatterHackers.DataConverters3D;
 using System;
+using System.Collections.Generic;
 
-namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-#if false
-	public class BrailleBuilderPlugin : MatterControlPlugin
+	public interface IObject3DEditor
 	{
-		public BrailleBuilderPlugin()
-		{
-		}
-
-		private GuiWidget mainApplication;
-
-		public override void Initialize(GuiWidget application)
-		{
-			CreatorInformation information = new CreatorInformation(LaunchNewBrailleBuilder, "BB_32x32.png", "Braille Builder".Localize());
-			RegisteredCreators.Instance.RegisterLaunchFunction(information);
-			mainApplication = application;
-
-			if (false)
-			{
-				UiThread.RunOnIdle(() =>
-					{
-						LaunchNewBrailleBuilder(null, null);
-					}, .5);
-			}
-		}
-
-		public override string GetPluginInfoJSon()
-		{
-			return "{" +
-				"\"Name\": \"Braille Builder\"," +
-				"\"UUID\": \"9F1152BA-2D9E-44FC-93FD-B55FC6FD8D9E\"," +
-				"\"About\": \"A Creator that allows you to type in text and have it turned into a printable Braille extrusions.\"," +
-				"\"Developer\": \"MatterHackers, Inc.\"," +
-				"\"URL\": \"https://www.matterhackers.com\"" +
-				"}";
-		}
-
-		public void LaunchNewBrailleBuilder(object sender, EventArgs e)
-		{
-			BrailleBuilderMainWindow mainWindow = new BrailleBuilderMainWindow();
-		}
+		string Name { get; }
+		IEnumerable<Type> SupportedTypes();
+		GuiWidget Create(IObject3D item, View3DWidget parentView3D);
 	}
-#endif
 }

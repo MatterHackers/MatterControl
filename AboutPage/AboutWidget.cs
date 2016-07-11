@@ -93,6 +93,9 @@ namespace MatterHackers.MatterControl
 
 		public static void DeleteCacheData(int daysOldToDelete)
 		{
+			// TODO: Enable once the cache mechanism is scene graph aware
+			return;
+
 			if (LibraryProviderSQLite.PreloadingCalibrationFiles)
 			{
 				return;

@@ -27,102 +27,42 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Threading;
+using MatterHackers.DataConverters3D;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void UngroupSelected()
-		{
-			if (SelectedMeshGroupIndex == -1)
-			{
-				SelectedMeshGroupIndex = 0;
-			}
-			string makingCopyLabel = LocalizedString.Get("Ungrouping");
-			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-			processingProgressControl.ProcessType = makingCopyLabelFull;
-
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-			int indexBeingReplaced = SelectedMeshGroupIndex;
-			List<Mesh> discreetMeshes = new List<Mesh>();
-			asyncMeshGroups[indexBeingReplaced].Transform(asyncMeshGroupTransforms[indexBeingReplaced]);
-			// if there are multiple meshes than just make them separate groups
-			if (asyncMeshGroups[indexBeingReplaced].Meshes.Count > 1)
-			{
-				foreach (Mesh mesh in asyncMeshGroups[indexBeingReplaced].Meshes)
-				{
-					discreetMeshes.Add(mesh);
-				}
-			}
-			else // actually try and cut up the mesh into separate parts
-			{
-				discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asyncMeshGroups[indexBeingReplaced], (double progress0To1, string processingState, out bool continueProcessing) =>
-				{
-					ReportProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
-				});
-			}
-
-			asyncMeshGroups.RemoveAt(indexBeingReplaced);
-			asyncPlatingDatas.RemoveAt(indexBeingReplaced);
-			asyncMeshGroupTransforms.RemoveAt(indexBeingReplaced);
-			double ratioPerDiscreetMesh = 1.0 / discreetMeshes.Count;
-			double currentRatioDone = 0;
-			for (int discreetMeshIndex = 0; discreetMeshIndex < discreetMeshes.Count; discreetMeshIndex++)
-			{
-				PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-				asyncPlatingDatas.Add(newInfo);
-				asyncMeshGroups.Add(new MeshGroup(discreetMeshes[discreetMeshIndex]));
-				int addedMeshIndex = asyncMeshGroups.Count - 1;
-				MeshGroup addedMeshGroup = asyncMeshGroups[addedMeshIndex];
-
-				Matrix4X4 transform = Matrix4X4.Identity;
-				asyncMeshGroupTransforms.Add(transform);
-
-				//PlatingHelper.PlaceMeshGroupOnBed(asyncMeshGroups, asyncMeshGroupTransforms, addedMeshIndex, false);
-
-				// and create selection info
-				PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, addedMeshIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
-				{
-					ReportProgressChanged(.5 + progress0To1 * .5 * currentRatioDone, processingState, out continueProcessing);
-				});
-				currentRatioDone += ratioPerDiscreetMesh;
-			}
-		}
-
 		private async void UngroupSelectedMeshGroup()
 		{
-			if (MeshGroups.Count > 0)
+			if (Scene.HasChildren)
 			{
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				await Task.Run((System.Action)UngroupSelected);
+				await Task.Run(() =>
+				{
+					if (Scene.IsSelected(Object3DTypes.Group))
+					{
+						// Create and perform the delete operation
+						var operation = new UngroupCommand(this, Scene.SelectedItem);
+						operation.Do();
+
+						// Store the operation for undo/redo
+						UndoBuffer.Add(operation);
+					}
+				});
 
 				if (HasBeenClosed)
 				{
 					return;
 				}
 
-				// remove the original mesh and replace it with these new meshes
-				PullMeshGroupDataFromAsynchLists();
-
 				// our selection changed to the mesh we just added which is at the end
-				SelectedMeshGroupIndex = MeshGroups.Count - 1;
+				Scene.SelectLastChild();
 
 				UnlockEditControls();
 

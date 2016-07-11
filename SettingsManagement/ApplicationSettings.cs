@@ -18,11 +18,11 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationSettings
 	{
-		public static string LibraryFilterFileExtensions { get { return ".stl,.amf,.gcode"; } }
+		public static string LibraryFilterFileExtensions { get { return ".stl,.amf,.gcode,.mcx"; } }
 
-		public static string OpenPrintableFileParams { get { return "STL, AMF, ZIP, GCODE|*.stl;*.amf;*.zip;*.gcode"; } }
+		public static string OpenPrintableFileParams { get { return "STL, AMF, ZIP, GCODE, MCX|*.stl;*.amf;*.zip;*.gcode;*.mcx"; } }
 
-		public static string OpenDesignFileParams { get { return "STL, AMF, ZIP, GCODE|*.stl;*.amf;*.zip;*.gcode"; } }
+		public static string OpenDesignFileParams { get { return "STL, AMF, ZIP, GCODE, MCX|*.stl;*.amf;*.zip;*.gcode;*.mcx" ; } }
 
 		private static ApplicationSettings globalInstance = null;
 		public Dictionary<string, SystemSetting> settingsDictionary;

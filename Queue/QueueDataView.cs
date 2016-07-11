@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2016, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,11 +32,13 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -45,6 +47,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public static int selectedQueueItemIndex = -1;
 
 		private event EventHandler unregisterEvents;
+
+		private bool mouseDownWithinQueueItemContainer = false;
 
 		// make this private so it can only be built from the Instance
 		private void SetDisplayAttributes()
@@ -69,7 +73,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					if (this.editMode == false)
 					{
 						this.ClearSelectedItems();
-						this.EnsureSelection();
+						this.SelectedIndex = -1;
 					}
 					else
 					{
@@ -205,15 +209,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return null;
 		}
 
-		public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
-
-		public event SelectedValueChangedEventHandler SelectedValueChanged;
-
-		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
-
-		public event HoverValueChangedEventHandler HoverValueChanged;
-
-		protected FlowLayoutWidget topToBottomItemList;
+		internal FlowLayoutWidget topToBottomItemList;
 
 		private RGBA_Bytes hoverColor = new RGBA_Bytes(204, 204, 204, 255);
 
@@ -264,15 +260,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			for (int i = 0; i < QueueData.Instance.Count; i++)
 			{
-				PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(i);
-				QueueRowItem queueItem = new QueueRowItem(item, this);
-				AddChild(queueItem);
+				topToBottomItemList.AddChild(new WrappedQueueRowItem(this, QueueData.Instance.GetPrintItemWrapper(i)));
 			}
+
+			this.MouseLeaveBounds += (sender, e) =>
+			{
+				if (HoverItem != null)
+				{
+					HoverItem.IsHoverItem = false;
+				}
+			};
 
 			QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
 			QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToQueue, ref unregisterEvents);
-			QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
 
@@ -280,7 +281,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			selectedQueueItemIndex = Math.Min(selectedQueueItemIndex, QueueData.Instance.Count - 1);
 			SelectedIndex = selectedQueueItemIndex;
-			EnsureSelection();
 		}
 
 		private void SaveCurrentlySelctedItemIndex(object sender, EventArgs e)
@@ -295,10 +295,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void SelectedIndexChanged(object sender, EventArgs e)
 		{
-			// Skip this processing while in EditMode
-			if (this.editMode) return;
-
-			OnSelectedIndexChanged();
 			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
 			{
 				GuiWidget child = topToBottomItemList.Children[index];
@@ -347,28 +343,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void ItemAddedToQueue(object sender, EventArgs e)
 		{
-			IndexArgs addedIndexArgs = e as IndexArgs;
+			var addedIndexArgs = e as ItemChangedArgs;			
 			PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
-			QueueRowItem queueItem = new QueueRowItem(item, this);
-			AddChild(queueItem, addedIndexArgs.Index);
+			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item));
 
-			EnsureSelection();
+			SelectedIndex = addedIndexArgs.Index;
 		}
 
 		private void ItemRemovedFromToQueue(object sender, EventArgs e)
 		{
-			IndexArgs removeIndexArgs = e as IndexArgs;
+			var removeIndexArgs = e as ItemChangedArgs;
 			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
 			EnsureSelection();
 			if (QueueData.Instance.Count > 0 && SelectedIndex > QueueData.Instance.Count - 1)
 			{
 				SelectedIndex = Math.Max(SelectedIndex - 1, 0);
 			}
-		}
-
-		private void QueueOrderChanged(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -379,30 +369,29 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-			itemHolder.Name = "PrintQueueControl itemHolder";
-			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
-			itemHolder.HAnchor = HAnchor.ParentLeftRight;
-			itemHolder.AddChild(childToAdd);
-			itemHolder.VAnchor = VAnchor.FitToChildren;
-			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
+			var topToBottomItemListBounds = topToBottomItemList.LocalBounds;
+			mouseDownWithinQueueItemContainer = topToBottomItemList.LocalBounds.Contains(mouseEvent.Position);
 
-			AddItemHandlers(itemHolder);
+			base.OnMouseDown(mouseEvent);
 		}
 
-		private void AddItemHandlers(GuiWidget itemHolder)
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			itemHolder.MouseDownInBounds += itemHolder_MouseDownInBounds;
-			itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
+			mouseDownWithinQueueItemContainer = false;
+			this.SuppressScroll = false;
+			base.OnMouseUp(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			this.SuppressScroll = mouseDownWithinQueueItemContainer && !PositionWithinLocalBounds(mouseEvent.X, 20);
+			base.OnMouseMove(mouseEvent);
 		}
 
 		private bool settingLocalBounds = false;
@@ -436,89 +425,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void itemHolder_ParentChanged(object sender, EventArgs e)
-		{
-			FlowLayoutWidget itemHolder = (FlowLayoutWidget)sender;
-			itemHolder.MouseDownInBounds -= itemHolder_MouseDownInBounds;
-			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
-		}
-
-		private void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
-		{
-			// Hard-coded processing rule to avoid changing the SelectedIndex when clicks occur
-			// with the thumbnail region - aka the first 55 pixels
-			if (mouseEvent.X < 56) return;
-
-			GuiWidget widgetClicked = ((GuiWidget)sender);
-			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-			{
-				GuiWidget child = topToBottomItemList.Children[index];
-				if (child == widgetClicked)
-				{
-					SelectedIndex = index;
-				}
-			}
-		}
-
-		private void itemToAdd_MouseLeaveBounds(object sender, EventArgs e)
-		{
-			GuiWidget widgetLeft = ((GuiWidget)sender);
-			if (SelectedIndex >= 0)
-			{
-				if (widgetLeft != topToBottomItemList.Children[SelectedIndex])
-				{
-					widgetLeft.BackgroundColor = new RGBA_Bytes();
-					widgetLeft.Invalidate();
-					Invalidate();
-				}
-			}
-		}
-
-		static bool WidgetOrChildIsFirstUnderMouse(GuiWidget startWidget)
-		{
-			if (startWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
-			{
-				return true;
-			}
-
-			foreach (GuiWidget child in startWidget.Children)
-			{
-				if (child != null)
-				{
-					if (WidgetOrChildIsFirstUnderMouse(child))
-					{
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
-
-		public void OnSelectedIndexChanged()
-		{
-			Invalidate();
-			if (SelectedValueChanged != null)
-			{
-				SelectedValueChanged(this, null);
-			}
-		}
-
-		public void OnHoverIndexChanged()
-		{
-			Invalidate();
-			if (HoverValueChanged != null)
-			{
-				HoverValueChanged(this, null);
-			}
-		}
+		public QueueRowItem DragSourceRowItem { get; internal set; }
 
 		public void ClearSelected()
 		{
 			if (SelectedIndex != -1)
 			{
 				SelectedIndex = -1;
-				OnSelectedIndexChanged();
 			}
 		}
 
@@ -538,15 +451,18 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			set
 			{
-				for (int i = 0; i < Children.Count; i++)
+				for (int i = 0; i < topToBottomItemList.Children.Count; i++)
 				{
-					if (topToBottomItemList.Children[SelectedIndex].Children[0] == value)
+					if (topToBottomItemList.Children[i].Children[0] == value)
 					{
 						SelectedIndex = i;
+						break;
 					}
 				}
 			}
 		}
+
+		public QueueRowItem HoverItem { get; internal set; }
 
 		public QueueRowItem SelectedPrintQueueItem()
 		{

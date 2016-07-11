@@ -29,41 +29,87 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class DeleteCommand : IUndoRedoCommand
+	public class GroupCommand : IUndoRedoCommand
 	{
 		private IObject3D item;
-
 		private View3DWidget view3DWidget;
 
-		public DeleteCommand(View3DWidget view3DWidget, IObject3D deletingItem)
+		public GroupCommand(View3DWidget view3DWidget, IObject3D selectedItem)
 		{
 			this.view3DWidget = view3DWidget;
-			this.item = deletingItem;
+			this.item = selectedItem;
+
+			if(view3DWidget.Scene.SelectedItem == selectedItem)
+			{
+				view3DWidget.Scene.ClearSelection();
+			}
 		}
 
 		public void Do()
 		{
-			view3DWidget.Scene.ModifyChildren(children =>
+			if (view3DWidget.Scene.Children.Contains(item))
 			{
-				children.Remove(item);
-			});
+				// This is the original do() case. The selection group exists in the scene and must be flattened into a new grouped
+				var flattenedGroup = new Object3D
+				{
+					ItemType = Object3DTypes.Group
+				};
 
-			view3DWidget.Scene.SelectLastChild();
+				item.CollapseInto(flattenedGroup.Children, Object3DTypes.SelectionGroup);
+
+				view3DWidget.Scene.ModifyChildren(children =>
+				{
+					children.Remove(item);
+					children.Add(flattenedGroup);
+				});
+
+				// Update the local reference after flattening to make the redo pattern work
+				item = flattenedGroup;
+
+				view3DWidget.Scene.Select(flattenedGroup);
+			}
+			else
+			{
+				// This the undo -> redo() case. The original Selection group has been collapsed and we need to rebuild it
+				view3DWidget.Scene.ModifyChildren(children =>
+				{
+					// Remove all children from the scene
+					foreach (var child in item.Children)
+					{
+						children.Remove(child);
+					}
+
+					// Add the item
+					children.Add(item);
+				});
+
+				view3DWidget.Scene.Select(item);
+			}
 
 			view3DWidget.PartHasBeenChanged();
 		}
 
 		public void Undo()
 		{
+			if (!view3DWidget.Scene.Children.Contains(item))
+			{
+				return;
+			}
+
 			view3DWidget.Scene.ModifyChildren(children =>
 			{
-				children.Add(item);
+				// Remove the group
+				children.Remove(item);
+
+				// Add all children from the group
+				children.AddRange(item.Children);
 			});
 
-			view3DWidget.Scene.Select(item);
+			view3DWidget.Scene.SelectLastChild();
 
 			view3DWidget.PartHasBeenChanged();
 		}

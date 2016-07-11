@@ -129,6 +129,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Submodules\agg-sharp\PlatformWin32\OpenTK.dll</HintPath>
@@ -136,9 +140,13 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TextCreatorMainWindow.cs" />
-    <Compile Include="TextCreator.cs" />
-    <Compile Include="View3DTextCreator.cs" />
+    <Compile Include="Braille\BrailleGenerator.cs" />
+    <Compile Include="Braille\BrailleEditor.cs" />
+    <Compile Include="Braille\BrailleGrade2.cs" />
+    <Compile Include="Braille\BrailleGrade2Mapping.cs" />
+    <Compile Include="SidebarPlugins\TextCreatorsSidebar.cs" />
+    <Compile Include="Text\TextGenerator.cs" />
+    <Compile Include="Text\TextEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
@@ -208,6 +216,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

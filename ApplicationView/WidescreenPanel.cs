@@ -68,7 +68,6 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			Padding = new BorderDouble(4);
 
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
 		}
 
@@ -86,14 +85,6 @@ namespace MatterHackers.MatterControl
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void onActivePrintItemChanged(object sender, EventArgs e)
-		{
-			if (this.VisiblePanelCount > 1)
-			{
-				UiThread.RunOnIdle(LoadColumnTwo);
-			}
 		}
 
 		private CompactSlidePanel compactSlidePanel;
@@ -115,7 +106,7 @@ namespace MatterHackers.MatterControl
 			ColumnTwo.CloseAllChildren();
 			PopOutManager.SaveIfClosed = true;
 
-			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
+			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled);
 			partViewContent.AnchorAll();
 
 			ColumnTwo.AddChild(partViewContent);

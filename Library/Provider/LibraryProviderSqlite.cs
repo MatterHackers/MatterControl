@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -417,17 +418,19 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		protected virtual void AddStlOrGcode(string loadedFileName, string displayName)
 		{
-			string extension = Path.GetExtension(loadedFileName).ToUpper();
-
-			PrintItem printItem = new PrintItem();
-			printItem.Name = displayName;
-			printItem.FileLocation = Path.GetFullPath(loadedFileName);
-			printItem.PrintItemCollectionID = this.baseLibraryCollection.Id;
+			PrintItem printItem = new PrintItem()
+			{
+				Name = displayName,
+				FileLocation = Path.GetFullPath(loadedFileName),
+				PrintItemCollectionID = this.baseLibraryCollection.Id
+			};
 			printItem.Commit();
 
+			string extension = Path.GetExtension(loadedFileName).ToUpper();
 			if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
 			{
-				List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
+				IObject3D loadedItem = MeshFileIo.Load(loadedFileName);
+				var meshToConvertAndSave = new List<MeshGroup> { loadedItem.Flatten() };
 
 				try
 				{

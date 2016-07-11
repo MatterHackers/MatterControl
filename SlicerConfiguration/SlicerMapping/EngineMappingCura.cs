@@ -95,6 +95,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new ScaledSingleNumber("support_material_xy_distance", "supportXYDistance", 1000),
 				new ScaledSingleNumber("support_material_z_distance", "supportZDistance", 1000),
 
+				// This needs to be passed to cura (but not matter slice). The actual value is set in "support_material", "supportAngle" but is found in this value.
+				new VisibleButNotMappedToEngine("support_material_threshold"),
+
 				new SupportTypeMapping("support_type", "supportType"),
 
 				new MappedSetting("slowdown_below_layer_time", "minimalLayerTime"),

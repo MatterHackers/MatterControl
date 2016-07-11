@@ -44,6 +44,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg.PlatformAbstract;
+using Newtonsoft.Json;
+using MatterHackers.PolygonMesh;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -192,7 +198,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 						createButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createButton.Click += (sender, e) =>
 						{
-							OpenPluginChooserWindow();
+							// Clear the queue selection
+							QueueData.Instance.SelectedIndex = -1;
+
+							// Clear the scene and switch to editing view
+							view3DWidget.ClearBedAndLoadPrintItemWrapper(null, true);
 						};
 					}
 
@@ -385,8 +395,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 }
                 else if (extension == ".ZIP")
                 {
-                    ProjectFileHandler project = new ProjectFileHandler(null);
-                    List<PrintItem> partFiles = project.ImportFromProjectArchive(fileToAdd);
+                    List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(fileToAdd);
                     if (partFiles != null)
                     {
                         foreach (PrintItem part in partFiles)
@@ -442,18 +451,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		void PrintItemSelectionChanged(object sender, EventArgs e)
 		{
-			if (!queueDataView.EditMode)
+			// Set the selection to the selected print item.
+			QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
+			if (selectedItem != null)
 			{
-				// Set the selection to the selected print item.
-				QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
-				if (selectedItem != null)
+				if (this.queueDataView.SelectedItems.Count > 0
+					|| !this.queueDataView.SelectedItems.Contains(selectedItem))
 				{
-					if (this.queueDataView.SelectedItems.Count > 0
-						|| !this.queueDataView.SelectedItems.Contains(selectedItem))
-					{
-						this.queueDataView.ClearSelectedItems();
-						this.queueDataView.SelectedItems.Add(selectedItem);
-					}
+					this.queueDataView.ClearSelectedItems();
+					this.queueDataView.SelectedItems.Add(selectedItem);
 				}
 			}
 		}
@@ -478,8 +484,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 							string extension = Path.GetExtension(fileNameToLoad).ToUpper();
 							if (extension == ".ZIP")
 							{
-								ProjectFileHandler project = new ProjectFileHandler(null);
-								List<PrintItem> partFiles = project.ImportFromProjectArchive(fileNameToLoad);
+								List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(fileNameToLoad);
 								if (partFiles != null)
 								{
 									foreach (PrintItem part in partFiles)
@@ -509,7 +514,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			QueueData.Instance.AddItem(new PrintItemWrapper(partInfo.PrintItem), partInfo.InsertAfterIndex, QueueData.ValidateSizeOn32BitSystems.Skip);
 		}
 
-		void DoAddToSpecificLibrary(SaveAsWindow.SaveAsReturnInfo returnInfo)
+		void DoAddToSpecificLibrary(SaveAsWindow.SaveAsReturnInfo returnInfo, Action action)
 		{
 			if (returnInfo != null)
 			{
@@ -528,6 +533,86 @@ namespace MatterHackers.MatterControl.PrintQueue
 					libraryToSaveTo.Dispose();
 				}
 			}
+		}
+
+		private View3DWidget view3DWidget;
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
+			if (view3DWidget == null)
+			{
+				return;
+			}
+
+			var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
+			var topToBottomItemListBounds = queueDataView.topToBottomItemList.TransformToScreenSpace(queueDataView.topToBottomItemList.LocalBounds);
+
+			bool mouseInQueueItemList = topToBottomItemListBounds.Contains(screenSpaceMousePosition);
+
+			// Clear or assign a drag source
+			view3DWidget.DragDropSource = (!mouseInQueueItemList) ? null : new Object3D
+			{
+				ItemType = Object3DTypes.Model,
+				Mesh = PlatonicSolids.CreateCube(10, 10, 10)
+			};
+
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseArgs)
+		{
+			if (!this.HasBeenClosed &&
+				view3DWidget?.DragDropSource != null &&
+				queueDataView.DragSourceRowItem != null)
+			{
+				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+
+				if(!File.Exists(queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation))
+				{
+					view3DWidget.DragDropSource = null;
+					queueDataView.DragSourceRowItem = null;
+					return;
+				}
+
+				if(view3DWidget.AltDragOver(screenSpaceMousePosition))
+				{
+					view3DWidget.DragDropSource.MeshPath = queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation;
+
+					base.OnMouseMove(mouseArgs);
+
+					view3DWidget.LoadDragSource();
+				}
+			}
+
+			base.OnMouseMove(mouseArgs);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseArgs)
+		{
+			if (view3DWidget.DragDropSource != null && view3DWidget.Scene.Children.Contains(view3DWidget.DragDropSource))
+			{
+				// Mouse and widget positions
+				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+				var meshViewerPosition = this.view3DWidget.meshViewerWidget.TransformToScreenSpace(view3DWidget.meshViewerWidget.LocalBounds);
+
+				// If the mouse is not within the meshViewer, remove the inserted drag item
+				if (!meshViewerPosition.Contains(screenSpaceMousePosition))
+				{
+					view3DWidget.Scene.ModifyChildren(children => children.Remove(view3DWidget.DragDropSource));
+					view3DWidget.Scene.ClearSelection();
+				}
+				else
+				{
+					// Create and push the undo operation
+					view3DWidget.AddUndoOperation(
+						new InsertCommand(view3DWidget, view3DWidget.DragDropSource));
+				}
+			}
+
+			view3DWidget.DragDropSource = null;
+
+			base.OnMouseUp(mouseArgs);
 		}
 
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)

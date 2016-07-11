@@ -39,17 +39,13 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
+	using DataConverters3D;
 	using Localizations;
 	using System.Collections;
+	using System.Linq;
 	using Polygon = List<IntPoint>;
 
 	using Polygons = List<List<IntPoint>>;
-
-	public class PlatingMeshGroupData
-	{
-		public Vector2 spacing;
-		public List<IPrimitive> meshTraceableData = new List<IPrimitive>();
-	}
 
 	public static class PlatingHelper
 	{
@@ -105,31 +101,40 @@ namespace MatterHackers.MatterControl
 			return output;
 		}
 
-		public static void ArrangeMeshGroups(List<MeshGroup> asyncMeshGroups, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingMeshGroupData> asyncPlatingDatas,
+		public static void ArrangeMeshGroups(List<IObject3D> object3DList, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingData> MeshGroupExtraData,
+	Action<double, string> reportProgressChanged)
+		{
+			// TODO: ******************** !!!!!!!!!!!!!!! ********************
+		}
+
+		/*
+		public static void ArrangeMeshGroups(List<IObject3D> object3DList, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingMeshGroupData> MeshGroupExtraData,
 			Action<double, string> reportProgressChanged)
 		{
+
+
 			// move them all out of the way
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
+			for (int i = 0; i < MeshGroups.Count; i++)
 			{
 				asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(10000, 10000, 0);
 			}
 
 			// sort them by size
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
+			for (int i = 0; i < MeshGroups.Count; i++)
 			{
-				AxisAlignedBoundingBox iAABB = asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]);
-				for (int j = i + 1; j < asyncMeshGroups.Count; j++)
+				AxisAlignedBoundingBox iAABB = MeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]);
+				for (int j = i + 1; j < MeshGroups.Count; j++)
 				{
-					AxisAlignedBoundingBox jAABB = asyncMeshGroups[j].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[j]);
+					AxisAlignedBoundingBox jAABB = MeshGroups[j].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[j]);
 					if (Math.Max(iAABB.XSize, iAABB.YSize) < Math.Max(jAABB.XSize, jAABB.YSize))
 					{
-						PlatingMeshGroupData tempData = asyncPlatingDatas[i];
-						asyncPlatingDatas[i] = asyncPlatingDatas[j];
-						asyncPlatingDatas[j] = tempData;
+						PlatingMeshGroupData tempData = MeshGroupExtraData[i];
+						MeshGroupExtraData[i] = MeshGroupExtraData[j];
+						MeshGroupExtraData[j] = tempData;
 
-						MeshGroup tempMeshGroup = asyncMeshGroups[i];
-						asyncMeshGroups[i] = asyncMeshGroups[j];
-						asyncMeshGroups[j] = tempMeshGroup;
+						MeshGroup tempMeshGroup = MeshGroups[i];
+						MeshGroups[i] = MeshGroups[j];
+						MeshGroups[j] = tempMeshGroup;
 
 						Matrix4X4 iTransform = asyncMeshGroupTransforms[i];
 						Matrix4X4 jTransform = asyncMeshGroupTransforms[j];
@@ -145,61 +150,60 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
+			double ratioPerMeshGroup = 1.0 / MeshGroups.Count;
 			double currentRatioDone = 0;
 			// put them onto the plate (try the center) starting with the biggest and moving down
-			for (int meshGroupIndex = 0; meshGroupIndex < asyncMeshGroups.Count; meshGroupIndex++)
+			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
 			{
 				reportProgressChanged(currentRatioDone, "Calculating Positions...".Localize());
 
-				MeshGroup meshGroup = asyncMeshGroups[meshGroupIndex];
+				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
 				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupIndex]).minXYZ;
 				asyncMeshGroupTransforms[meshGroupIndex] *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
-				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
+				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, MeshGroupExtraData, MeshGroups, asyncMeshGroupTransforms);
 
 				// and create the trace info so we can select it
-				if (asyncPlatingDatas[meshGroupIndex].meshTraceableData.Count == 0)
+				if (MeshGroupExtraData[meshGroupIndex].meshTraceableData.Count == 0)
 				{
-					PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, meshGroupIndex, null);
+					PlatingHelper.CreateITraceableForMeshGroup(MeshGroupExtraData, MeshGroups, meshGroupIndex, null);
 				}
 
 				currentRatioDone += ratioPerMeshGroup;
 
 				// and put it on the bed
-				PlatingHelper.PlaceMeshGroupOnBed(asyncMeshGroups, asyncMeshGroupTransforms, meshGroupIndex);
+				PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, asyncMeshGroupTransforms, meshGroupIndex);
 			}
 
 			// and finally center whatever we have as a group
 			{
-				AxisAlignedBoundingBox bounds = asyncMeshGroups[0].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[0]);
-				for (int i = 1; i < asyncMeshGroups.Count; i++)
+				AxisAlignedBoundingBox bounds = MeshGroups[0].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[0]);
+				for (int i = 1; i < MeshGroups.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, asyncMeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]));
+					bounds = AxisAlignedBoundingBox.Union(bounds, MeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]));
 				}
 
 				Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-				for (int i = 0; i < asyncMeshGroups.Count; i++)
+				for (int i = 0; i < MeshGroups.Count; i++)
 				{
 					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
 				}
 			}
 		}
-
-		public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
+		*/
+		public static void PlaceMeshGroupOnBed(IObject3D object3D)
 		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
+			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
-			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
+			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
 		}
 
-		public static void PlaceMeshAtHeight(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index, double zHeight)
+		public static void PlaceMeshAtHeight(IObject3D objectToMove, double zHeight)
 		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
-			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+			AxisAlignedBoundingBox bounds = objectToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - boundsCenter.z + bounds.ZSize / 2));
+			objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.z));
 		}
 
 		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
@@ -210,74 +214,50 @@ namespace MatterHackers.MatterControl
 			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.x + bounds.XSize / 2, -boundsCenter.y + bounds.YSize / 2, 0));
 		}
 
-		public static void FindPositionForGroupAndAddToPlate(MeshGroup meshGroupToAdd, Matrix4X4 meshTransform, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> meshesGroupsToAvoid, List<Matrix4X4> meshTransforms)
+		public static void MoveToOpenPosition(IObject3D objectToAdd, IObject3D scene)
 		{
-			if (meshGroupToAdd == null || meshGroupToAdd.Meshes.Count < 1)
+			if (objectToAdd == null || !scene.HasChildren)
 			{
 				return;
 			}
 
-			// first find the bounds of what is already here.
-			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[0], meshTransforms[0]);
-			for (int i = 1; i < meshesGroupsToAvoid.Count; i++)
-			{
-				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[i], meshTransforms[i]);
-				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
-			}
-
-			meshesGroupsToAvoid.Add(meshGroupToAdd);
-
-			PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
-			perMeshInfo.Add(newMeshInfo);
-			meshTransforms.Add(meshTransform);
-
-			int meshGroupIndex = meshesGroupsToAvoid.Count - 1;
-
+			// find the bounds of all items in the scene
+			AxisAlignedBoundingBox allPlacedMeshBounds = scene.Children.GetUnionedAxisAlignedBoundingBox();
+			
 			// move the part to the total bounds lower left side
-			MeshGroup meshGroup = meshesGroupsToAvoid[meshGroupIndex];
-			Vector3 meshLowerLeft = GetAxisAlignedBoundingBox(meshGroup, meshTransforms[meshGroupIndex]).minXYZ;
-			meshTransforms[meshGroupIndex] *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
+			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
+			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 
-			MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
+			// keep moving the item until its in an open slot 
+			MoveToOpenPosition(objectToAdd, scene, allPlacedMeshBounds);
 
-			PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
+			//PlaceMeshGroupOnBed(objectToAdd);
 		}
 
-		static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(MeshGroup meshGroup, Matrix4X4 transform)
+		public static void MoveToOpenPosition(IObject3D itemToMove, IObject3D scene, AxisAlignedBoundingBox allPlacedMeshBounds)
 		{
-			return meshGroup.GetAxisAlignedBoundingBox(transform);
-		}
-
-		public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<Matrix4X4> meshTransforms)
-		{
-			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[0], meshTransforms[0]);
-			for (int i = 1; i < meshGroupToMoveIndex; i++)
-			{
-				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[i], meshTransforms[i]);
-				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
-			}
-
 			double xStart = allPlacedMeshBounds.minXYZ.x;
 			double yStart = allPlacedMeshBounds.minXYZ.y;
 
-			MeshGroup meshGroupToMove = allMeshGroups[meshGroupToMoveIndex];
 			// find a place to put it that doesn't hit anything
-			AxisAlignedBoundingBox meshToMoveBounds = GetAxisAlignedBoundingBox(meshGroupToMove, meshTransforms[meshGroupToMoveIndex]);
+			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
 			// add in a few mm so that it will not be touching
-			meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
-			meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
+			itemToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
+			itemToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
 
 			Matrix4X4 transform = Matrix4X4.Identity;
 			int currentSize = 1;
 			bool partPlaced = false;
-			while (!partPlaced && meshGroupToMoveIndex > 0)
+
+			while (!partPlaced && itemToMove != null)
 			{
 				int yStep = 0;
 				int xStep = currentSize;
 				// check far right edge
 				for (yStep = 0; yStep < currentSize; yStep++)
 				{
-					partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
+					partPlaced = CheckPosition(scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 
 					if (partPlaced)
 					{
@@ -291,7 +271,7 @@ namespace MatterHackers.MatterControl
 					// check top edge 
 					for (xStep = 0; xStep < currentSize; xStep++)
 					{
-						partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
+						partPlaced = CheckPosition(scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 
 						if (partPlaced)
 						{
@@ -303,49 +283,50 @@ namespace MatterHackers.MatterControl
 					{
 						xStep = currentSize;
 						// check top right point
-						partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
+						partPlaced = CheckPosition(scene, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 					}
 				}
 
 				currentSize++;
 			}
 
-			meshTransforms[meshGroupToMoveIndex] *= transform;
+			itemToMove.Matrix *= transform;
 		}
 
-		private static bool CheckPosition(int meshGroupToMoveIndex, List<MeshGroup> allMeshGroups, List<Matrix4X4> meshTransforms, MeshGroup meshGroupToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
+		private static bool CheckPosition(IObject3D scene, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
 		{
 			double xStepAmount = 5;
 			double yStepAmount = 5;
 
 			Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
 			Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
+
 			transform = Matrix4X4.CreateTranslation(newPosition);
+
 			AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
-			bool foundHit = false;
-			for (int i = 0; i < meshGroupToMoveIndex; i++)
+
+			foreach (IObject3D meshToTest in scene.Children)
 			{
-				MeshGroup meshToTest = allMeshGroups[i];
-				if (meshToTest != meshGroupToMove)
+				if (meshToTest != itemToMove)
 				{
-					AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBox(meshToTest, meshTransforms[i]);
+					AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
 					if (intersection.XSize > 0 && intersection.YSize > 0)
 					{
-						foundHit = true;
-						break;
+						return false;
 					}
 				}
 			}
 
-			if (!foundHit)
-			{
-				return true;
-			}
-
-			return false;
+			return true;
 		}
 
+		static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(MeshGroup meshGroup, Matrix4X4 transform)
+		{
+			return meshGroup.GetAxisAlignedBoundingBox(transform);
+		}
+
+		/*
 		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio reportProgress)
 		{
 			if (meshGroups != null)
@@ -431,10 +412,11 @@ namespace MatterHackers.MatterControl
 
 			return allPolys;
 		}
+		*/
 
-		public static Matrix4X4 ApplyAtCenter(IHasAABB meshToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
+		public static Matrix4X4 ApplyAtCenter(IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
 		{
-			return ApplyAtCenter(meshToApplyTo.GetAxisAlignedBoundingBox(currentTransform), currentTransform, transformToApply);
+			return ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplayTo.Matrix, transformToApply);
 		}
 
 		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
@@ -448,112 +430,6 @@ namespace MatterHackers.MatterControl
 			currentTransform *= transformToApply;
 			currentTransform *= Matrix4X4.CreateTranslation(postionToApplyAt);
 			return currentTransform;
-		}
-	}
-
-	public class MeshFaceTraceable : IPrimitive
-	{
-		Face face;
-		public MeshFaceTraceable(Face face)
-		{
-			this.face = face;
-		}
-
-		public RGBA_Floats GetColor(IntersectInfo info) { return RGBA_Floats.Red; }
-
-		public MaterialAbstract Material { get { return null; } set { } }
-
-		public bool GetContained(List<IPrimitive> results, AxisAlignedBoundingBox subRegion)
-		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox();
-			if (bounds.Contains(subRegion))
-			{
-				results.Add(this);
-				return true;
-			}
-
-			return false;
-		}
-
-		public IntersectInfo GetClosestIntersection(Ray ray)
-		{
-			// find the point on the plane
-			Vector3[] positions = new Vector3[3];
-			int index = 0;
-			foreach (FaceEdge faceEdge in face.FaceEdges())
-			{
-				positions[index++] = faceEdge.firstVertex.Position;
-				if(index==3)
-				{
-					break;
-				}
-            }
-			Plane plane = new Plane(positions[0], positions[1], positions[2]);
-			double distanceToHit;
-			bool hitFrontOfPlane;
-			if (plane.RayHitPlane(ray, out distanceToHit, out hitFrontOfPlane))
-			{
-				Vector3 polyPlaneIntersection = ray.origin + ray.directionNormal * distanceToHit;
-				if (face.PointInPoly(polyPlaneIntersection))
-				{
-					IntersectInfo info = new IntersectInfo();
-					info.closestHitObject = this;
-					info.distanceToHit = distanceToHit;
-					info.hitPosition = polyPlaneIntersection;
-                    info.normalAtHit = face.normal;
-					info.hitType = IntersectionType.FrontFace;
-					return info;
-	            }
-			}
-
-			return null;
-		}
-
-		public int FindFirstRay(RayBundle rayBundle, int rayIndexToStartCheckingFrom)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void GetClosestIntersections(RayBundle rayBundle, int rayIndexToStartCheckingFrom, IntersectInfo[] intersectionsForBundle)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IEnumerable IntersectionIterator(Ray ray)
-		{
-			throw new NotImplementedException();
-		}
-
-		public double GetSurfaceArea()
-		{
-			AxisAlignedBoundingBox aabb = GetAxisAlignedBoundingBox();
-
-			double minDimension = Math.Min(aabb.XSize, Math.Min(aabb.YSize, aabb.ZSize));
-			if(minDimension == aabb.XSize)
-			{
-				return aabb.YSize * aabb.ZSize;
-			}
-			else if(minDimension == aabb.YSize)
-			{
-				return aabb.XSize * aabb.ZSize;
-			}
-
-			return aabb.XSize * aabb.YSize;
-		}
-
-		public AxisAlignedBoundingBox GetAxisAlignedBoundingBox()
-		{
-			return face.GetAxisAlignedBoundingBox();
-        }
-
-		public Vector3 GetCenter()
-		{
-			return face.GetCenter();
-		}
-
-		public double GetIntersectCost()
-		{
-			return 700;
 		}
 	}
 }

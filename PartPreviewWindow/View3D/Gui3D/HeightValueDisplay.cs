@@ -66,10 +66,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Vector2 startLineSelectionPos = Vector2.Zero;
 					Vector2 midLinePos = Vector2.Zero;
 
-					if (MeshViewerToDrawWith.HaveSelection)
+					if (MeshViewerToDrawWith.Scene.HasSelection)
 					{
 						// draw the hight from the bottom to the bed
-						AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+						AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 						Vector2 screenPosition = new Vector2(-100, 0);
 						Vector3[] bottomPoints = new Vector3[4];
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						OriginRelativeParent = screenPosition;
 
 						// draw the line that is on the ground
-						double yGround = Math.Round(startLineGroundPos.y) + .5;
+						double yGround = (int)(startLineGroundPos.y + .5) + .5;
 						drawEvent.graphics2D.Line(startLineGroundPos.x, yGround, startLineGroundPos.x + HorizontalLineLength - 5, yGround, RGBA_Bytes.Black);
 						// and the line that is at the base of the selection
 						double ySelection = Math.Round(startLineSelectionPos.y) + .5;

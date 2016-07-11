@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,49 +27,40 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
+using System;
+using System.IO;
+using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class BrailleBuilderMainWindow : SystemWindow
+
+	public class SelectedObjectPanel : FlowLayoutWidget
 	{
-		private View3DBrailleBuilder part3DView;
-
-		public BrailleBuilderMainWindow()
-			: base(690, 340)
+		public SelectedObjectPanel() : base(FlowDirection.TopToBottom)
 		{
-			Title = "MatterControl: Braille Builder";
+			var buttonHeight = 40;
 
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
-
-			part3DView = new View3DBrailleBuilder(
-				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
-				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
-
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(part3DView));
-#else
-			this.AddChild(part3DView);
-#endif
-
-			this.AnchorAll();
-
-			part3DView.Closed += (sender, e) =>
+			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory()
 			{
-				Close();
+				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FixedHeight = buttonHeight,
+				FixedWidth = buttonHeight,
+				AllowThemeToAdjustImage = false,
+				checkedBorderColor = RGBA_Bytes.White
 			};
 
-			Width = 640;
-			Height = 480;
+			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 
-			ShowAsSystemWindow();
-			MinimumSize = new Vector2(400, 300);
+			Margin = new BorderDouble(5);
+			HAnchor |= HAnchor.ParentRight;
+			VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren;
 		}
 	}
 }

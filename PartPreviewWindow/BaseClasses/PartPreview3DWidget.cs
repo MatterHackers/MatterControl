@@ -31,8 +31,11 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
+using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using System;
 using System.IO;
@@ -50,10 +53,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public abstract class PartPreview3DWidget : PartPreviewWidget
 	{
 		protected static readonly int DefaultScrollBarWidth = 120;
-
+		
 		protected bool autoRotating = false;
 		protected bool allowAutoRotate = false;
+
 		public MeshViewerWidget meshViewerWidget;
+
+		// Proxy to MeshViewerWidget
+		public InteractiveScene Scene => meshViewerWidget.Scene;
 
 		private event EventHandler unregisterEvents;
 
@@ -70,6 +77,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #endif
 
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => needToRecretaeBed = true, ref unregisterEvents);
+		}
+
+		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
+
+		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
+		{
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+
+			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
+			if (intersectionInfo != null)
+			{
+				foreach (Object3D object3D in Scene.Children)
+				{
+					if (object3D.TraceData().Contains(intersectionInfo.closestHitObject))
+					{
+						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.hitPosition;
+						CurrentSelectInfo.LastMoveDelta = new Vector3();
+						return object3D;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		public GuiWidget GenerateHorizontalRule()
+		{
+			return new GuiWidget()
+			{
+				Height = 1,
+				Margin = new BorderDouble(0, 1, 0, 3),
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = new RGBA_Bytes(255, 255, 255, 200)
+			};
 		}
 
 		private void CheckSettingChanged(object sender, EventArgs e)
@@ -139,7 +181,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		protected static SolidSlider InsertUiForSlider(FlowLayoutWidget wordOptionContainer, string header, double min = 0, double max = .5)
+		public static SolidSlider InsertUiForSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
 			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
@@ -147,17 +189,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scrollBarWidth = 20;
 			}
 
-			TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			spacingText.Margin = new BorderDouble(10, 3, 3, 5);
-			spacingText.HAnchor = HAnchor.ParentLeft;
+			TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(10, 3, 3, 5),
+				HAnchor = HAnchor.ParentLeft
+			};
 			wordOptionContainer.AddChild(spacingText);
-			SolidSlider namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1);
-			namedSlider.TotalWidthInPixels = DefaultScrollBarWidth;
-			namedSlider.Minimum = min;
-			namedSlider.Maximum = max;
-			namedSlider.Margin = new BorderDouble(3, 5, 3, 3);
-			namedSlider.HAnchor = HAnchor.ParentCenter;
+
+			SolidSlider namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1)
+			{
+				TotalWidthInPixels = DefaultScrollBarWidth,
+				Minimum = min,
+				Maximum = max,
+				Margin = new BorderDouble(3, 5, 3, 3),
+				HAnchor = HAnchor.ParentCenter,
+			};
 			namedSlider.View.BackgroundColor = new RGBA_Bytes();
+
 			wordOptionContainer.AddChild(namedSlider);
 
 			return namedSlider;

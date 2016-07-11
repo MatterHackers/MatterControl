@@ -182,21 +182,25 @@
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
     <Compile Include="PartPreviewWindow\View3D\DebugBvh.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControls.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\UngroupCommand.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\InsertCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteUndoCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\CopyUndoCommand.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\GroupCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SnapingIndicator.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformUndoCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DCreateSelectionData.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DAutoArange.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DCopyGroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DGroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DUngroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\MirrorControls.cs" />
+    <Compile Include="PartPreviewWindow\View3D\IObject3DEditor.cs" />
+    <Compile Include="PartPreviewWindow\View3D\SideBar\View3DWidgetSidebar.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />
+    <Compile Include="PartPreviewWindow\SelectedObjectPanel.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
     <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
@@ -243,7 +247,6 @@
     <Compile Include="Library\Provider\LibraryProviderSqlite.cs" />
     <Compile Include="Library\Provider\LibraryProvider.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
-    <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
     <Compile Include="SetupWizard\EditPrinterSettingsPage.cs" />
     <Compile Include="SetupWizard\ImportSettingsPage.cs" />
@@ -266,6 +269,7 @@
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
     <Compile Include="Utilities\AuthenticationData.cs" />
+    <Compile Include="Queue\WrappedQueueRowItem.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
@@ -421,6 +425,7 @@
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

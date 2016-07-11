@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.Tests.Automation;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,43 +45,41 @@ namespace MatterHackers.MatterControl
 			StatisticsTracker testTracker = new StatisticsTracker("SwitchBetweenTabs");
 			bool clickFirstItem = true;
 			bool done = false;
-			bool firstDraw = true;
 			AutomationRunner clickPreview;
 			Stopwatch timeSinceLastClick = Stopwatch.StartNew();
 			Stopwatch totalDrawTime = Stopwatch.StartNew();
 			int drawCount = 0;
 
-			DrawEventHandler beforeDraw = (sender, e) =>
+			EventHandler formLoad = (sender1, e1) =>
 			{
-				if (firstDraw)
+				clickPreview = new AutomationRunner();
+				Task.Run(() =>
 				{
-					clickPreview = new AutomationRunner();
-					Task.Run(() =>
+					while (!done)
 					{
-						while (!done)
+						if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > switchTimeSeconds)
 						{
-							if (clickPreview != null && timeSinceLastClick.Elapsed.TotalSeconds > switchTimeSeconds)
+							if (clickFirstItem)
 							{
-								if (clickFirstItem)
-								{
-									clickPreview.ClickByName(firstWidgetName);
-								}
-								else
-								{
-									clickPreview.ClickByName(secondWidgetName);
-								}
-								clickFirstItem = !clickFirstItem;
-								timeSinceLastClick.Restart();
+								clickPreview.ClickByName(firstWidgetName);
 							}
+							else
+							{
+								clickPreview.ClickByName(secondWidgetName);
+							}
+							clickFirstItem = !clickFirstItem;
+							timeSinceLastClick.Restart();
 						}
-					});
-					firstDraw = false;
-				}
-
-				totalDrawTime.Restart();
+					}
+				});
 			};
 
-			container.BeforeDraw += beforeDraw;
+			container.Load += formLoad;
+
+			container.BeforeDraw += (sender, e) =>
+			{
+				totalDrawTime.Restart();
+			};
 
 			DrawEventHandler afterDraw = null;
 			afterDraw = (sender, e) =>
@@ -92,7 +91,7 @@ namespace MatterHackers.MatterControl
 					if (testTracker.Count == 100)
 					{
 						Trace.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
-						container.BeforeDraw -= beforeDraw;
+						container.Load -= formLoad;
 						container.BeforeDraw -= afterDraw;
 						done = true;
 					}

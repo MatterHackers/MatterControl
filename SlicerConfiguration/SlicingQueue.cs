@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -201,8 +202,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					extrudersUsed[0] = true;
 					return new string[] { fileToSlice };
 
+				case ".MCX":
 				case ".AMF":
-					List<MeshGroup> meshGroups = MeshFileIo.Load(fileToSlice);
+					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
+					List<MeshGroup> meshGroups = new List<MeshGroup> { Object3D.Load(fileToSlice).Flatten() };
 					if (meshGroups != null)
 					{
 						List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
@@ -249,7 +252,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (doMergeInSlicer)
 							{
 								int meshCount = meshGroup.Meshes.Count;
-                                for (int meshIndex =0; meshIndex< meshCount; meshIndex++)
+								for (int meshIndex =0; meshIndex< meshCount; meshIndex++)
 								{
 									Mesh mesh = meshGroup.Meshes[meshIndex];
 									if ((meshIndex % 2) == 0)
@@ -316,8 +319,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Directory.CreateDirectory(folderToSaveStlsTo);
 			}
-			MeshOutputSettings settings = new MeshOutputSettings();
-			settings.MaterialIndexsToSave = materialIndexsToSaveInThisSTL;
+
+			MeshOutputSettings settings = new MeshOutputSettings()
+			{
+				MaterialIndexsToSave = materialIndexsToSaveInThisSTL
+			};
+
 			string extruder1StlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
 			MeshFileIo.Save(extruderMeshGroup, extruder1StlFileToSlice, settings);
 			return extruder1StlFileToSlice;
@@ -338,7 +345,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					bool doMergeInSlicer = false;
 					string mergeRules = "";
 					doMergeInSlicer = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice;
-                    string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
+					string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
 					string fileToSlice = stlFileLocations[0];
 					// check that the STL file is currently on disk
 					if (File.Exists(fileToSlice))

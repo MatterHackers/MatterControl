@@ -27,108 +27,43 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using System.ComponentModel;
-using System.Globalization;
-using System.Threading;
+using MatterHackers.DataConverters3D;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void GroupSelected()
-		{
-			string makingCopyLabel = LocalizedString.Get("Grouping");
-			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-			processingProgressControl.ProcessType = makingCopyLabelFull;
-
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
-			{
-				asyncMeshGroups[i].Transform(asyncMeshGroupTransforms[i]);
-
-				bool continueProcessing;
-				ReportProgressChanged((i + 1) * .4 / asyncMeshGroups.Count, "", out continueProcessing);
-			}
-
-			if (SelectedMeshGroupIndex == -1)
-			{
-				SelectedMeshGroupIndex = 0;
-			}
-
-			MeshGroup meshGroupWeAreKeeping = asyncMeshGroups[SelectedMeshGroupIndex];
-			for (int meshGroupToMoveIndex = asyncMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
-			{
-				MeshGroup meshGroupToMove = asyncMeshGroups[meshGroupToMoveIndex];
-				if (meshGroupToMove != meshGroupWeAreKeeping)
-				{
-					for (int moveIndex = 0; moveIndex < meshGroupToMove.Meshes.Count; moveIndex++)
-					{
-						Mesh mesh = meshGroupToMove.Meshes[moveIndex];
-						meshGroupWeAreKeeping.Meshes.Add(mesh);
-					}
-
-					asyncMeshGroups.RemoveAt(meshGroupToMoveIndex);
-					asyncMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
-				}
-				else
-				{
-					asyncMeshGroupTransforms[meshGroupToMoveIndex] = Matrix4X4.Identity;
-				}
-			}
-
-			asyncPlatingDatas.Clear();
-			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
-			double currentRatioDone = 0;
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
-			{
-				PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-				asyncPlatingDatas.Add(newInfo);
-
-				MeshGroup meshGroup = asyncMeshGroups[i];
-
-				// create the selection info
-				PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
-				{
-					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
-				});
-
-				currentRatioDone += ratioPerMeshGroup;
-			}
-		}
-
 		private async void GroupSelectedMeshs()
 		{
-			if (MeshGroups.Count > 0)
+			if (Scene.HasChildren)
 			{
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				await Task.Run((System.Action)GroupSelected);
+				var item = Scene.SelectedItem;
+
+				await Task.Run(() =>
+				{
+					if (Scene.IsSelected(Object3DTypes.SelectionGroup))
+					{
+						// Create and perform the delete operation
+						var operation = new GroupCommand(this, Scene.SelectedItem);
+						operation.Do();
+
+						// Store the operation for undo/redo
+						UndoBuffer.Add(operation);
+					}
+				});
 
 				if (HasBeenClosed)
 				{
 					return;
 				}
 
-				// remove the original mesh and replace it with these new meshes
-				PullMeshGroupDataFromAsynchLists();
-
-				// our selection changed to the mesh we just added which is at the end
-				SelectedMeshGroupIndex = MeshGroups.Count - 1;
-
 				UnlockEditControls();
-
-				PartHasBeenChanged();
 
 				Invalidate();
 			}

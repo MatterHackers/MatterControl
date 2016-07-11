@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -105,21 +106,17 @@ namespace MatterHackers.MatterControl
 
 			if (!partIsGCode)
 			{
-				string exportAmfText = LocalizedString.Get("Export as");
-				string exportAmfTextFull = string.Format("{0} AMF", exportAmfText);
-
-				Button exportAsAmfButton = textImageButtonFactory.Generate(exportAmfTextFull);
+				Button exportAsAmfButton = textImageButtonFactory.Generate(string.Format("{0} AMF", "Export as".Localize()));
 				exportAsAmfButton.HAnchor = HAnchor.ParentLeft;
 				exportAsAmfButton.Cursor = Cursors.Hand;
-				exportAsAmfButton.Click += new EventHandler(exportAMF_Click);
+				exportAsAmfButton.Click += exportAMF_Click;
 				middleRowContainer.AddChild(exportAsAmfButton);
 			}
 
 			bool showExportGCodeButton = ActiveSliceSettings.Instance != null || partIsGCode;
 			if (showExportGCodeButton)
 			{
-				string exportGCodeTextFull = string.Format("{0} G-Code", "Export as".Localize());
-				Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
+				Button exportGCode = textImageButtonFactory.Generate(string.Format("{0} G-Code", "Export as".Localize()));
 				exportGCode.Name = "Export as GCode Button";
 				exportGCode.HAnchor = HAnchor.ParentLeft;
 				exportGCode.Cursor = Cursors.Hand;
@@ -134,10 +131,7 @@ namespace MatterHackers.MatterControl
 				foreach (ExportGcodePlugin plugin in exportPluginFinder.Plugins)
 				{
 					//Create export button for each Plugin found
-
-					string exportButtonText = plugin.GetButtonText().Localize();
-
-					Button exportButton = textImageButtonFactory.Generate(exportButtonText);
+					Button exportButton = textImageButtonFactory.Generate(plugin.GetButtonText().Localize());
 					exportButton.HAnchor = HAnchor.ParentLeft;
 					exportButton.Cursor = Cursors.Hand;
 					exportButton.Click += (object sender, EventArgs e) =>
@@ -377,10 +371,12 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath);
-				saveParams.Title = "MatterControl: Export File";
-				saveParams.ActionButtonLabel = "Export";
-				saveParams.FileName = printItemWrapper.Name;
+				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath)
+				{
+					Title = "MatterControl: Export File",
+					ActionButtonLabel = "Export",
+					FileName = printItemWrapper.Name
+				};
 
 				Close();
 				FileDialog.SaveFileDialog(saveParams, onExportAmfFileSelected);
@@ -413,8 +409,8 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
-							MeshFileIo.Save(meshGroups, filePathToSave);
+							IObject3D item = Object3D.Load(printItemWrapper.FileLocation);
+							MeshFileIo.Save(item, filePathToSave);
 						}
 						ShowFileIfRequested(filePathToSave);
 					}
@@ -465,8 +461,8 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
-							MeshFileIo.Save(meshGroups, filePathToSave);
+							IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation);
+							MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave);
 						}
 						ShowFileIfRequested(filePathToSave);
 					}

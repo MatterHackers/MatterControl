@@ -27,12 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,29 +44,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private void AlignSelected()
 		{
-			if (SelectedMeshGroupIndex == -1)
+			if(Scene.HasSelection)
 			{
-				SelectedMeshGroupIndex = 0;
+				Scene.SelectFirstChild();
 			}
+
 			// make sure our thread translates numbers correctly (always do this in a thread)
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			// save our data so we don't mess up the display while doing work
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
 			// try to move all the not selected meshes relative to the selected mesh
-			AxisAlignedBoundingBox selectedOriginalBounds = asyncMeshGroups[SelectedMeshGroupIndex].GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox selectedOriginalBounds = Scene.SelectedItem.Mesh.GetAxisAlignedBoundingBox();
 			Vector3 selectedOriginalCenter = selectedOriginalBounds.Center;
-			AxisAlignedBoundingBox selectedCurrentBounds = asyncMeshGroups[SelectedMeshGroupIndex].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[SelectedMeshGroupIndex]);
+			AxisAlignedBoundingBox selectedCurrentBounds = Scene.SelectedItem.Mesh.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
 			Vector3 selctedCurrentCenter = selectedCurrentBounds.Center;
-			for (int meshGroupToMoveIndex = 0; meshGroupToMoveIndex < asyncMeshGroups.Count; meshGroupToMoveIndex++)
+			for (int meshGroupToMoveIndex = 0; meshGroupToMoveIndex < Scene.Children.Count; meshGroupToMoveIndex++)
 			{
-				MeshGroup meshGroupToMove = asyncMeshGroups[meshGroupToMoveIndex];
-				if (meshGroupToMove != asyncMeshGroups[SelectedMeshGroupIndex])
+				IObject3D item = Scene.Children[meshGroupToMoveIndex];
+				if (item != Scene.SelectedItem)
 				{
-					AxisAlignedBoundingBox groupToMoveOriginalBounds = meshGroupToMove.GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox groupToMoveOriginalBounds = item.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					Vector3 groupToMoveOriginalCenter = groupToMoveOriginalBounds.Center;
-					AxisAlignedBoundingBox groupToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupToMoveIndex]);
+					AxisAlignedBoundingBox groupToMoveBounds = item.GetAxisAlignedBoundingBox(Scene.Children[meshGroupToMoveIndex].Matrix);
 					Vector3 groupToMoveCenter = groupToMoveBounds.Center;
 
 					Vector3 originalCoordinatesDelta = groupToMoveOriginalCenter - selectedOriginalCenter;
@@ -74,54 +74,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (deltaRequired.Length > .0001)
 					{
-						asyncMeshGroupTransforms[meshGroupToMoveIndex] *= Matrix4X4.CreateTranslation(deltaRequired);
+						Scene.Children[meshGroupToMoveIndex].Matrix *= Matrix4X4.CreateTranslation(deltaRequired);
 						PartHasBeenChanged();
 					}
 				}
 			}
 
+			/* TODO: Align needs reconsidered
 			// now put all the meshes into just one group
-			MeshGroup meshGroupWeAreKeeping = asyncMeshGroups[SelectedMeshGroupIndex];
-			for (int meshGroupToMoveIndex = asyncMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
+			IObject3D itemWeAreKeeping = Scene.SelectedItem;
+			for (int meshGroupToMoveIndex = Scene.Children.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
 			{
-				MeshGroup meshGroupToMove = asyncMeshGroups[meshGroupToMoveIndex];
-				if (meshGroupToMove != meshGroupWeAreKeeping)
+				IObject3D itemToMove = Scene.Children[meshGroupToMoveIndex];
+				if (itemToMove != itemWeAreKeeping)
 				{
 					// move all the meshes into the new aligned mesh group
-					for (int moveIndex = 0; moveIndex < meshGroupToMove.Meshes.Count; moveIndex++)
+					for (int moveIndex = 0; moveIndex < itemToMove.Meshes.Count; moveIndex++)
 					{
-						Mesh mesh = meshGroupToMove.Meshes[moveIndex];
-						meshGroupWeAreKeeping.Meshes.Add(mesh);
+						Mesh mesh = itemToMove.Meshes[moveIndex];
+						itemWeAreKeeping.Meshes.Add(mesh);
 					}
 
-					asyncMeshGroups.RemoveAt(meshGroupToMoveIndex);
-					asyncMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
+					Scene.Children.RemoveAt(meshGroupToMoveIndex);
+
+					// TODO: ******************** !!!!!!!!!!!!!!! ********************
+					//asyncMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
 				}
 			}
+			*/
 
-			asyncPlatingDatas.Clear();
-			double ratioPerMeshGroup = 1.0 / asyncMeshGroups.Count;
+			// TODO: ******************** !!!!!!!!!!!!!!! ********************
+			/*
+			double ratioPerMeshGroup = 1.0 / MeshGroups.Count;
 			double currentRatioDone = 0;
-			for (int i = 0; i < asyncMeshGroups.Count; i++)
+			for (int i = 0; i < MeshGroups.Count; i++)
 			{
-				PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-				asyncPlatingDatas.Add(newInfo);
-
-				MeshGroup meshGroup = asyncMeshGroups[i];
-
 				// create the selection info
-				PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
+				PlatingHelper.CreateITraceableForMeshGroup(MeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
 				{
 					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
 				});
 
 				currentRatioDone += ratioPerMeshGroup;
-			}
+			} */
 		}
 
 		private async void AlignToSelectedMeshGroup()
 		{
-			if (MeshGroups.Count > 0)
+			if (Scene.HasChildren)
 			{
 				// set the progress label text
 				processingProgressControl.PercentComplete = 0;
@@ -140,11 +140,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				// remove the original mesh and replace it with these new meshes
-				PullMeshGroupDataFromAsynchLists();
-
 				// our selection changed to the mesh we just added which is at the end
-				SelectedMeshGroupIndex = MeshGroups.Count - 1;
+				Scene.SelectLastChild();
 
 				UnlockEditControls();
 

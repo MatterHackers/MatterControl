@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2016, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,27 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
+using MatterHackers.DataConverters3D;
 
-namespace MatterHackers.MatterControl.Plugins.TextCreator
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class TextCreatorMainWindow : SystemWindow
+	public class UngroupCommand : IUndoRedoCommand
 	{
-		private View3DTextCreator part3DView;
+		private GroupCommand groupCommand;
 
-		public TextCreatorMainWindow()
-			: base(690, 340)
+		public UngroupCommand(View3DWidget view3DWidget, IObject3D ungroupingItem)
 		{
-			Title = "MatterControl: Text Creator";
+			this.groupCommand = new GroupCommand(view3DWidget, ungroupingItem);
+		}
 
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+		public void Do()
+		{
+			groupCommand.Undo();
+		}
 
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
-
-			part3DView = new View3DTextCreator(
-				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
-				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
-
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(part3DView));
-#else
-			this.AddChild(part3DView);
-#endif
-
-			this.AnchorAll();
-
-			part3DView.Closed += (sender, e) =>
-			{
-				Close();
-			};
-
-			Width = 640;
-			Height = 480;
-
-			ShowAsSystemWindow();
-			MinimumSize = new Vector2(400, 300);
+		public void Undo()
+		{
+			groupCommand.Do();
 		}
 	}
 }

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -41,27 +42,13 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-	public class IndexArgs : EventArgs
+	public class ItemChangedArgs : EventArgs
 	{
-		internal int index;
+		public int Index { get; private set; }
 
-		public int Index { get { return index; } }
-
-		internal IndexArgs(int index)
+		internal ItemChangedArgs(int index)
 		{
-			this.index = index;
-		}
-	}
-
-	public class SwapIndexArgs : EventArgs
-	{
-		internal int indexA;
-		internal int indexB;
-
-		internal SwapIndexArgs(int indexA, int indexB)
-		{
-			this.indexA = indexA;
-			this.indexB = indexB;
+			this.Index = index;
 		}
 	}
 
@@ -84,13 +71,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			set
 			{
 				selectedIndex = value;
-				OnSelectedIndexChanged(new IndexArgs(value));
+				OnSelectedIndexChanged(new ItemChangedArgs(value));
 			}
 		}
 
 		public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
-		public RootedObjectEventHandler OrderChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler SelectedIndexChanged = new RootedObjectEventHandler();
 
 		private static QueueData instance;
@@ -108,49 +94,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public void SwapItemsOnIdle(int indexA, int indexB)
-		{
-			UiThread.RunOnIdle(SwapItems, new SwapIndexArgs(indexA, indexB));
-		}
-
-		private void SwapItems(object state)
-		{
-			int indexA = ((SwapIndexArgs)state).indexA;
-			int indexB = ((SwapIndexArgs)state).indexB;
-
-			if (indexA >= 0 && indexA < Count
-				&& indexB >= 0 && indexB < Count
-				&& indexA != indexB)
-			{
-				PrintItemWrapper hold = PrintItems[indexA];
-				PrintItems[indexA] = PrintItems[indexB];
-				PrintItems[indexB] = hold;
-
-				OnOrderChanged(null);
-
-				SaveDefaultQueue();
-			}
-		}
-
-		public void OnOrderChanged(EventArgs e)
-		{
-			OrderChanged.CallEvents(this, e);
-		}
-
-		public void RemoveIndexOnIdle(int index)
-		{
-			UiThread.RunOnIdle(RemoveIndex, new IndexArgs(index));
-		}
-
-		private void RemoveIndex(object state)
-		{
-			IndexArgs removeArgs = state as IndexArgs;
-			if (removeArgs != null)
-			{
-				RemoveAt(removeArgs.index);
-			}
-		}
-
 		public void RemoveAt(int index)
 		{
 			if (index >= 0 && index < Count)
@@ -161,7 +104,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					PrintItems.RemoveAt(index);
 
-					OnItemRemoved(new IndexArgs(index));
+					OnItemRemoved(new ItemChangedArgs(index));
 
 					SaveDefaultQueue();
 				}
@@ -371,14 +314,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 		}
 
 
-		private void DoAddItem(PrintItemWrapper item, int indexToInsert)
+		private void DoAddItem(PrintItemWrapper item, int insertAt)
 		{
-			if (indexToInsert == -1)
+			if (insertAt == -1)
 			{
-				indexToInsert = PrintItems.Count;
+				insertAt = PrintItems.Count; 
 			}
-			PrintItems.Insert(indexToInsert, item);
-			OnItemAdded(new IndexArgs(indexToInsert));
+
+			PrintItems.Insert(insertAt, item);
+			OnItemAdded(new ItemChangedArgs(insertAt));
 			SaveDefaultQueue();
 		}
 

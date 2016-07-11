@@ -97,6 +97,7 @@
     <Compile Include="MatterControl\GCodeStreamTests.cs" />
     <Compile Include="MatterControl\TranslationsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SceneTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
@@ -114,9 +115,17 @@
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
+      <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
+      <Name>DataConverters3D</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
       <Project>{F67AE800-B0C7-42A8-836F-597B4E74591C}</Project>
       <Name>GCodeVisualizer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
+      <Project>{a737bc76-165b-46c6-82b7-8871c7c92942}</Project>
+      <Name>MeshViewer</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
       <Project>{E9102310-0029-4D8F-B1E9-88FBA6147D45}</Project>

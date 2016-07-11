@@ -37,12 +37,13 @@ Intermediate
       Support Material
         support_material
         support_type
+        support_material_threshold
+        support_material_percent
+      Support Options
+        support_material_spacing
         support_material_interface_layers
         support_material_z_gap_layers
         support_material_create_internal_support
-      Support Options
-        support_material_spacing
-        support_material_percent
       Extruders
         support_material_extruder
   Filament
@@ -161,12 +162,12 @@ Advanced
         support_material
         support_type
         support_material_threshold
+        support_material_percent
         support_material_enforce_layers
       Support Options
         support_material_pattern
         support_material_spacing
         support_material_angle
-        support_material_percent
         support_material_infill_angle
         support_material_interface_layers
         support_material_interface_spacing
