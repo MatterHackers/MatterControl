@@ -126,11 +126,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ActiveSliceSettings()
 		{
-			LoadStartupProfile();
-		}
-
-		public static void LoadStartupProfile()
-		{
+			// Load Startup Profile
 			bool portExists = false;
 
 			string[] comportNames = FrostedSerialPort.GetPortNames();
