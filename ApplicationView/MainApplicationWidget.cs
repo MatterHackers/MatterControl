@@ -162,8 +162,8 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
-		public static Action StartLoginEventHandler;
-		public static Action StartLogoutEventHandler;
+		public static Action LoginAction;
+		public static Action LogoutAction;
 		public static Func<string> GetSessionInfo;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
@@ -201,8 +201,7 @@ namespace MatterHackers.MatterControl
 			}
 			else // do the regular login
 			{
-				StartLoginEventHandler?.Invoke();
-				UserSettings.Instance.set("ActiveUserName", ApplicationController.Instance.GetSessionUsernameForFileSystem());
+				LoginAction?.Invoke();
 			}
 		}
 
@@ -226,15 +225,13 @@ namespace MatterHackers.MatterControl
 					{
 						if (clickedLogout)
 						{
-							StartLogoutEventHandler?.Invoke();
-							UserSettings.Instance.set("ActiveUserName", "");
+							LogoutAction?.Invoke();
 						}
 					}, "Are you sure you want to logout? You will not have access to your printer profiles or cloud library.".Localize(), "Logout?".Localize(), StyledMessageBox.MessageType.YES_NO, "Logout".Localize(), "Cancel".Localize());
 				}
 				else // just run the logout event
 				{					
-					StartLogoutEventHandler?.Invoke();
-					UserSettings.Instance.set("ActiveUserName", "");
+					LogoutAction?.Invoke();
 				}
 			}
 		}
@@ -313,7 +310,6 @@ namespace MatterHackers.MatterControl
 						}
 
 						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(null, null), ref globalInstance.unregisterEvents);
-
 					}
 				}
 				return globalInstance;
@@ -357,6 +353,10 @@ namespace MatterHackers.MatterControl
 		public void ChangeCloudSyncStatus(bool userAuthenticated)
 		{
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
+
+			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
+			UserSettings.Instance.set("ActiveUserName", activeUserName);
+			ProfileManager.Reload();
 		}
 
 		public class CloudSyncEventArgs : EventArgs

@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 		private void SettingChanged(object sender, EventArgs e)
 		{
 			string settingsName = (e as StringEventArgs)?.Data;
-			if (settingsName != null && settingsName == SettingsKey.printer_name.ToString())
+			if (settingsName != null && settingsName == SettingsKey.printer_name)
 			{
 				if (ProfileManager.Instance.ActiveProfile != null)
 				{

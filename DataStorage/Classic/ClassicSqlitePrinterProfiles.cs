@@ -101,9 +101,9 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.UserLayer["device_token"] = printer.DeviceToken ?? "";
 			layeredProfile.UserLayer["device_type"] = printer.DeviceType ?? "";
 
-			if (string.IsNullOrEmpty(UserSettings.Instance.get("ActiveProfileID")))
+			if (string.IsNullOrEmpty(ProfileManager.Instance.LastProfileID))
 			{
-				UserSettings.Instance.set("ActiveProfileID", printer.Id.ToString());
+				ProfileManager.Instance.SetLastProfile(printer.Id.ToString());
 			}
 
 			layeredProfile.UserLayer["active_theme_index"] = UserSettings.Instance.get("ActiveThemeIndex");

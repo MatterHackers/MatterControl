@@ -45,6 +45,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class ProfileManager
 	{
+		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
+
+		public static ProfileManager Instance { get; set; }
+
+		private static EventHandler unregisterEvents;
 		private static readonly string userDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
 		internal static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
 
@@ -57,36 +62,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static ProfileManager Instance;
-
-		private static EventHandler unregisterEvents;
-
-		// Should be executed after deleting the profile from MCWS and should probably be moved to CloudLibrary
-		public void PermanentDelete(string printerToken)
-		{
-			// Find and delete the PrinterInfo from the Profiles list
-			var printerInfo = Profiles.Where(p => p.ID == printerToken).FirstOrDefault();
-			Profiles.Remove(printerInfo);
-
-			// Delete the
-			File.Delete(printerInfo.ProfilePath);
-
-			Instance.Save();
-		}
-
-		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
-
 		static ProfileManager()
 		{
 			SliceSettingsWidget.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
 
 			// Ensure the profiles directory exists
 			Directory.CreateDirectory(ProfilesPath);
-			
-			// Load the profiles.json document
+
+			Reload();
+		}
+
+		public ProfileManager()
+		{
+		}
+
+		public static void Reload()
+		{
+			// Load the profiles document
 			if (File.Exists(ProfilesDBPath))
 			{
-				Instance = JsonConvert.DeserializeObject<ProfileManager>(File.ReadAllText(ProfilesDBPath));
+				string json = File.ReadAllText(ProfilesDBPath);
+				Instance = JsonConvert.DeserializeObject<ProfileManager>(json);
 			}
 			else
 			{
@@ -99,12 +95,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			// Load the last profile or an empty profile
+			ActiveSliceSettings.Instance = Instance.LoadLastProfile() ?? LoadEmptyProfile();
+
+			if (Instance != null)
+			{
+				// Release event registration
+				Instance.Profiles.CollectionChanged -= Profiles_CollectionChanged;
+			}
+
+
 			// In either case, wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
-		}
-
-		public ProfileManager()
-		{
 		}
 
 		internal static void SettingsChanged(object sender, EventArgs e)
@@ -143,6 +145,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static SettingsProfile LoadEmptyProfile()
 		{
 			var empytProfile = new SettingsProfile(new PrinterSettings());
+			empytProfile.ID = "EmptyProfile";
 			empytProfile.UserLayer["printer_name"] = "Printers...".Localize();
 
 			return empytProfile;
@@ -155,6 +158,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var printerSettings = JsonConvert.DeserializeObject<PrinterSettings>(json);
 			return new SettingsProfile(printerSettings);
+		}
+
+		public string LastProfileID
+		{
+			get
+			{
+				string activeUserName = UserSettings.Instance.get("ActiveUserName");
+				string settingsKey = $"ActiveProfileID-{activeUserName}";
+
+				return UserSettings.Instance.get(settingsKey);
+			}
+		}
+
+		public SettingsProfile LoadLastProfile()
+		{
+			return LoadProfile(this.LastProfileID);
+		}
+
+		public void SetLastProfile(string printerID)
+		{
+			string activeUserName = UserSettings.Instance.get("ActiveUserName");
+			string settingsKey = $"ActiveProfileID-{activeUserName}";
+
+			UserSettings.Instance.set(settingsKey, printerID);
 		}
 
 		/// <summary>
