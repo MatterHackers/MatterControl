@@ -157,6 +157,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new SettingsProfile(printerSettings);
 		}
 
+		public string LastProfileID
+		{
+			get
+			{
+				string activeUserName = UserSettings.Instance.get("ActiveUserName");
+				string settingsKey = $"ActiveProfileID-{activeUserName}";
+
+				return UserSettings.Instance.get(settingsKey);
+			}
+		}
+
+		public SettingsProfile LoadLastProfile()
+		{
+			return LoadProfile(this.LastProfileID);
+		}
+
+		public void SetLastProfile(string printerID)
+		{
+			string activeUserName = UserSettings.Instance.get("ActiveUserName");
+			string settingsKey = $"ActiveProfileID-{activeUserName}";
+
+			UserSettings.Instance.set(settingsKey, printerID);
+		}
+
 		/// <summary>
 		/// Loads the specified SettingsProfile
 		/// </summary>

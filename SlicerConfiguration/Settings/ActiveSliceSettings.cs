@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string[] comportNames = FrostedSerialPort.GetPortNames();
 
-			var startupProfile = ProfileManager.LoadProfile(UserSettings.Instance.get("ActiveProfileID"));
+			var startupProfile = ProfileManager.Instance.LoadLastProfile();
 			if (startupProfile != null)
 			{
 				portExists = comportNames.Contains(startupProfile.ComPort());
@@ -162,9 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var profile = ProfileManager.LoadProfile(printerID);
 
-			UserSettings.Instance.set("ActiveProfileID", printerID);
-
-			UserSettings.Instance.set("ActiveUserName", ApplicationController.Instance.GetSessionUsernameForFileSystem());
+			ProfileManager.Instance.SetLastProfile(printerID);
 
 			Instance = profile ?? ProfileManager.LoadEmptyProfile();
 		}
