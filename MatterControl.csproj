@@ -175,6 +175,7 @@
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
     <Compile Include="DataStorage\Models.cs" />
+    <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
     <Compile Include="Library\RenameItemWindow.cs" />
     <Compile Include="Library\Provider\LibraryProviderHistory.cs" />
     <Compile Include="Library\Provider\LibraryProviderQueue.cs" />
