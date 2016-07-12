@@ -88,6 +88,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 			// Apply whitelist
 			var whiteListedItems = manufacturers?.Where(keyValue => PrinterWhiteList.Contains(keyValue.Key));
+
 			if (whiteListedItems == null
 				|| whiteListedItems.Count() == 0)
 			{
@@ -143,7 +144,16 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				});
 
 			OemProfiles = oemProfiles;
-			SetManufacturers(oemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList());
+			var manufactures = oemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList();
+			// sort by value (printer name)
+			manufactures.Sort(
+				delegate (KeyValuePair<string, string> pair1,
+				KeyValuePair<string, string> pair2)
+				{
+					return pair1.Value.CompareTo(pair2.Value);
+				}
+				);
+			SetManufacturers(manufactures);
 			Task.Run((Action)downloadMissingProfiles);
 		}
 
