@@ -187,7 +187,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printers = new Dictionary<string, string>();
 			}
 
-			printerModelSelector.ListSource = printers.Select(profile => new KeyValuePair<string, string>(profile.Key, profile.Value)).ToList();
+			var models = printers.Select(profile => new KeyValuePair<string, string>(profile.Key, profile.Value)).ToList();
+			// sort by key (model name)
+			models.Sort(
+				delegate (KeyValuePair<string, string> pair1,
+				KeyValuePair<string, string> pair2)
+				{
+					return pair1.Key.CompareTo(pair2.Key);
+				}
+				);
+			printerModelSelector.ListSource = models;
 
 			contentRow.Invalidate();
 
