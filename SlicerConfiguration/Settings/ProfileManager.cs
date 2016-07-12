@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	using Agg;
 	using Localizations;
+	using DataStorage;
 	using SettingsManagement;
 	using System.Collections.ObjectModel;
 	using System.Net;
@@ -348,7 +349,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"profiles",
 				() =>
 				{
-					string responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
+					string responseText = null;
+					if(!File.Exists(Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles",String.Format("{0}.json",deviceToken))))
+					{
+						responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
+					}
 					return responseText;
 				});
 		}

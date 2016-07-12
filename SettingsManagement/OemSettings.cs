@@ -144,6 +144,24 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 			OemProfiles = oemProfiles;
 			SetManufacturers(oemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList());
+			Task.Run((Action)downloadMissingProfiles);
+		}
+
+		private void downloadMissingProfiles()
+		{
+			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
+			string filePath;
+			foreach (string oem in OemProfiles.Keys)
+			{
+				foreach (string profileKey in OemProfiles[oem].Values)
+				{
+					filePath = Path.Combine(cacheDirectory, String.Format("{0}.json", profileKey));
+					if (!File.Exists(filePath))
+					{
+						File.WriteAllText(filePath, RetrievePublicProfileRequest.DownloadPrinterProfile(profileKey));
+					}
+				}
+			}
 		}
 
 		private OemSettings()
