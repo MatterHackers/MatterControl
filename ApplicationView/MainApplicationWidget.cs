@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl
 		public static Func<string> GetSessionInfo;
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
+		public static Func<PrinterInfo,string, Task> GetPrinterProfile;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using MatterHackers.Agg.UI;
+﻿using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
@@ -31,14 +32,24 @@ namespace MatterHackers.MatterControl.SetupWizard
 			footerRow.AddChild(revertButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
-			revertButton.Click += (s, e) =>
+			revertButton.Click += async (s, e) =>
 			{
 				var checkedButton = radioButtonList.Where(r => r.Checked).FirstOrDefault();
-				if(checkedButton != null)
+				if (checkedButton != null)
 				{
 					string profileToken = printerProfileData[checkedButton.Text];
-					ProfileManager.Instance.LoadProfileFromMCWS(profileToken);
-					//Call get profile
+
+					var activeProfile = ProfileManager.Instance.ActiveProfile;
+
+					// Download the specified json profile
+					await ApplicationController.GetPrinterProfile(activeProfile, profileToken);
+
+					// TODO: handle errors...
+
+					// Update the active instance to the newly downloaded item
+					var jsonProfile = ProfileManager.LoadProfile(activeProfile.ID, false);
+					ActiveSliceSettings.RefreshActiveInstance(jsonProfile);
+					UiThread.RunOnIdle(WizardWindow.Close);
 				}
 			};
 
@@ -47,21 +58,34 @@ namespace MatterHackers.MatterControl.SetupWizard
 
 		private async void LoadHistoryItems()
 		{
-			var printer = ProfileManager.Instance.ActiveProfiles.FirstOrDefault();
+			TextWidget loadingText = new TextWidget("Retrieving History from Web...");
+			loadingText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			scrollWindow.AddChild(loadingText);
+			
 
-			var results = await ApplicationController.GetProfileHistory(printer.DeviceToken);
+			var results = await ApplicationController.GetProfileHistory(ProfileManager.Instance.ActiveProfile.DeviceToken);
 			printerProfileData = results;
-			FlowLayoutWidget radioButtonLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			foreach(var printerProfile in results)
+			if(printerProfileData != null)
 			{
-				var profileVersionButton = new RadioButton(printerProfile.Key.ToString(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				profileVersionButton.Checked = false;
-				radioButtonLayout.AddChild(profileVersionButton);
-				radioButtonList.Add(profileVersionButton);
-				// show them
+				FlowLayoutWidget radioButtonLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				loadingText.Visible= false;
+
+				foreach(var printerProfile in results)
+				{
+					var profileVersionButton = new RadioButton(printerProfile.Key.ToString(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+					profileVersionButton.Checked = false;
+					radioButtonLayout.AddChild(profileVersionButton);
+					radioButtonList.Add(profileVersionButton);
+					// show them
+				}
+				scrollWindow.AddChild(radioButtonLayout);
 			}
-			scrollWindow.AddChild(radioButtonLayout);
+			else
+			{
+				loadingText.Text = "Failed To Download History!";
+				loadingText.TextColor = RGBA_Bytes.Red; //CHANGE TO ERROR COLOR
+			}
+			
 			//remove loading profile text/icon
 		}
 

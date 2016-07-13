@@ -2,6 +2,7 @@
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SetupWizard;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -84,6 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					{ "Import".Localize(), ImportSettingsMenu_Click },
 					{ "Export".Localize(), () => {  WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); return true; } },
+					{ "Printer History".Localize(), () => { WizardWindow.Show<PrinterProfileHistoryPage>("somecontext", "Hello world"); return true; } },
 					{ "Reset to defaults".Localize(),() => { UiThread.RunOnIdle(ResetToDefaults); return true; } },
 				};
 
