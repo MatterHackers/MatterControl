@@ -474,7 +474,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// show the filament used
 			modelInfoContainer.AddChild(new TextWidget(filamentLengthLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
-				double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>("filament_diameter"));
+				double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.0} mm", filamentUsed), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -486,7 +486,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string filamentVolumeLabelFull = string.Format("{0}:", filamentVolumeLabel);
 			modelInfoContainer.AddChild(new TextWidget(filamentVolumeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
-				double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>("filament_diameter"));
+				double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm3", filamentMm3 / 1000), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -497,9 +497,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string massLabel = "Estimated Mass".Localize();
 			string massLabelFull = string.Format("{0}:", massLabel);
 			modelInfoContainer.AddChild(new TextWidget(massLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>("filament_diameter");
-			double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>("filament_density");
-			double filamentCost = ActiveSliceSettings.Instance.GetValue<double>("filament_cost");
+			double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter);
+			double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_density);
+			double filamentCost = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_cost);
 
 			double totalMass = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
 			double totalCost = totalMass / 1000 * filamentCost;

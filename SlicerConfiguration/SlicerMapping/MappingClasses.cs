@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new MappedSetting("bridge_fan_speed","bridge_fan_speed"),
 			new MappedSetting("bridge_speed","bridge_speed"),
 			new MappedSetting("extruder_wipe_temperature","extruder_wipe_temperature"),
-			new MappedSetting("filament_diameter","filament_diameter"),
+			new MappedSetting(SettingsKey.filament_diameter,SettingsKey.filament_diameter),
 			new MappedSetting("first_layer_bed_temperature", SettingsKey.bed_temperature),
 			new MappedSetting("first_layer_temperature", "temperature"),
 			new MappedSetting("max_fan_speed","max_fan_speed"),

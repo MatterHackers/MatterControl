@@ -141,39 +141,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						switch (item.Key)
 						{
 							case "MatterControl.PrinterName":
-								layer.Add("printer_name", item.Value);
+								layer.Add(SettingsKey.printer_name, item.Value);
 								break;
 
 							case "MatterControl.BaudRate":
-								layer.Add("baud_rate", item.Value);
+								layer.Add(SettingsKey.baud_rate, item.Value);
 								break;
 
 							case "MatterControl.Make":
-								layer.Add("make", item.Value);
+								layer.Add(SettingsKey.make, item.Value);
 								break;
 
 							case "MatterControl.Model":
-								layer.Add("model", item.Value);
+								layer.Add(SettingsKey.model, item.Value);
 								break;
 
 							case "MatterControl.ComPort":
-								layer.Add("com_port", item.Value);
+								layer.Add(SettingsKey.com_port, item.Value);
 								break;
 
 							case "MatterControl.AutoConnect":
-								layer.Add("auto_connect", item.Value);
+								layer.Add(SettingsKey.auto_connect, item.Value);
 								break;
 
 							case "MatterControl.DefaultMaterialPresets":
-								layer.Add("default_material_presets", item.Value);
+								layer.Add(SettingsKey.default_material_presets, item.Value);
 								break;
 
 							case "MatterControl.WindowsDriver":
-								layer.Add("windows_driver", item.Value);
+								layer.Add(SettingsKey.windows_driver, item.Value);
 								break;
 
 							case "MatterControl.DeviceToken":
-								layer.Add("device_token", item.Value);
+								layer.Add(SettingsKey.device_token, item.Value);
 								break;
 
 							case "MatterControl.DriverType":
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								break;
 
 							case "MatterControl.DeviceType":
-								layer.Add("device_type", item.Value);
+								layer.Add(SettingsKey.device_type, item.Value);
 								break;
 
 							case "MatterControl.ActiveThemeIndex":
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								break;
 
 							case "MatterControl.DeletePrinter":
-								layer.Add("delete_printer", item.Value);
+								layer.Add(SettingsKey.delete_printer, item.Value);
 								break;
 
 							case "MatterControl.ManualMovementSpeeds":

@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 		private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
 		{
 			fanControlsContainer = new FanControls();
-			if (ActiveSliceSettings.Instance.GetValue<bool>("has_fan"))
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
 			{
 				controlsTopToBottomLayout.AddChild(fanControlsContainer);
 			}
