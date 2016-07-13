@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			: base("Calibration".Localize())
 		{
 			printLevelingContainer = new DisableableWidget();
-			if (!ActiveSliceSettings.Instance.GetValue<bool>("has_hardware_leveling"))
+			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				printLevelingContainer.AddChild(GetAutoLevelControl());
 

@@ -71,8 +71,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
+		public const string device_token = nameof(device_token);
+		public const string baud_rate = nameof(baud_rate);
+		public const string com_port = nameof(com_port);
+		public const string auto_connect = nameof(auto_connect);
+		public const string default_material_presets = nameof(default_material_presets);
+		public const string windows_driver = nameof(windows_driver);
+		public const string device_type = nameof(device_type);
+		public const string cancel_gcode = nameof(cancel_gcode);
+		public const string connect_gcode = nameof(connect_gcode);
+		public const string has_fan = nameof(has_fan);
+		public const string has_hardware_leveling = nameof(has_hardware_leveling);
+		public const string has_power_control = nameof(has_power_control);
+		public const string has_sd_card_reader = nameof(has_sd_card_reader);
+		public const string delete_printer = nameof(delete_printer);
+		public const string created_date = nameof(created_date);
+		public const string filament_cost = nameof(filament_cost);
+		public const string filament_density = nameof(filament_density);
+		public const string filament_diameter = nameof(filament_diameter);
 	};
-
 	public class SettingsProfile
 	{
 		private static string configFileExtension = "slice";
@@ -224,8 +241,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				switch (item.SlicerConfigName)
 				{
-					case "baud_rate":
-					case "auto_connect":
+					case SettingsKey.baud_rate:
+					case SettingsKey.auto_connect:
 						// These items are marked as not being overrides but should be cleared on 'reset to defaults'
 						break;
 					default:
@@ -803,7 +820,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetAutoConnect(bool autoConnectPrinter)
 		{
-			layeredProfile.SetValue("auto_connect", autoConnectPrinter ? "1" : "0");
+			layeredProfile.SetValue(SettingsKey.auto_connect, autoConnectPrinter ? "1" : "0");
 		}
 
 		public void SetMarkedForDelete(bool markedForDelete)
@@ -823,7 +840,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetBaudRate(string baudRate)
 		{
-			layeredProfile.SetValue("baud_rate", baudRate);
+			layeredProfile.SetValue(SettingsKey.baud_rate, baudRate);
 		}
 
 		public string ComPort()
@@ -853,9 +870,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetDeviceToken(string token)
 		{
-			if (layeredProfile.GetValue("device_token") != token)
+			if (layeredProfile.GetValue(SettingsKey.device_token) != token)
 			{
-				layeredProfile.SetValue("device_token", token);
+				layeredProfile.SetValue(SettingsKey.device_token, token);
 			}
 		}
 
@@ -887,7 +904,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			layeredProfile.SetValue("manual_movement_speeds", speed);
 		}
-
 	}
 
 	public class PrinterInfo
@@ -912,7 +928,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var profile = ProfileManager.LoadProfile(newID);
 
 			profile.ID = newID;
-			profile.SetActiveValue("device_token", newID);
+			profile.SetActiveValue(SettingsKey.device_token, newID);
 			ProfileManager.Instance.Save();
 		}
 

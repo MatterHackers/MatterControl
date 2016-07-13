@@ -119,8 +119,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 					Instance.Save();
 					break;
-
-				case "com_port":
+				
+				case SettingsKey.com_port:
 					Instance.ActiveProfile.ComPort = ActiveSliceSettings.Instance.ComPort();
 					Instance.Save();
 					break;
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var empytProfile = new SettingsProfile(new PrinterSettings());
 			empytProfile.ID = "EmptyProfile";
-			empytProfile.UserLayer["printer_name"] = "Printers...".Localize();
+			empytProfile.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
 
 			return empytProfile;
 		}
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				case ".printer":
 					var profile = ProfileManager.LoadProfileFromDisk(settingsFilePath);
 					profile.ID = printerInfo.ID;
-					profile.ClearValue("device_token");
+					profile.ClearValue(SettingsKey.device_token);
 					printerInfo.DeviceToken = "";
 
 					// TODO: Resolve name conflicts
@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// TODO: Resolve name conflicts
 					layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerInfo.Name;
 
-					layeredProfile.ClearValue("device_token");
+					layeredProfile.ClearValue(SettingsKey.device_token);
 					printerInfo.DeviceToken = "";
 					Instance.Profiles.Add(printerInfo);
 

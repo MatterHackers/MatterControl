@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				new ScaledSingleNumber(SettingsKey.layer_height, "layerThickness", 1000),
 				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_height, "initialLayerThickness", SettingsKey.layer_height, 1000),
-				new ScaledSingleNumber("filament_diameter", "filamentDiameter", 1000),
+				new ScaledSingleNumber(SettingsKey.filament_diameter, "filamentDiameter", 1000),
 				//filamentFlow
 				//layer0extrusionWidth
 				new ScaledSingleNumber(SettingsKey.nozzle_diameter, "extrusionWidth", 1000),
@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					double lengthToExtrudeMm = ParseDouble(base.Value);
 					// we need to convert mm of filament to mm of extrusion path
-					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>("filament_diameter") * MathHelper.Tau * lengthToExtrudeMm;
+					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
 					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.first_layer_height) * ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
 					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 

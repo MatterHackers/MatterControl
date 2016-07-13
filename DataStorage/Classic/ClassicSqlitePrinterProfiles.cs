@@ -93,13 +93,13 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.UserLayer[SettingsKey.printer_name] = printer.Name ?? "";
 			layeredProfile.UserLayer[SettingsKey.make] = printer.Make ?? "";
 			layeredProfile.UserLayer[SettingsKey.model] = printer.Model ?? "";
-			layeredProfile.UserLayer["baud_rate"] = printer.BaudRate ?? "";
-			layeredProfile.UserLayer["com_port"] = printer.ComPort ?? "";
-			layeredProfile.UserLayer["auto_connect"] = printer.AutoConnect ? "1" : "0";
-			layeredProfile.UserLayer["default_material_presets"] = printer.MaterialCollectionIds ?? "";
-			layeredProfile.UserLayer["windows_driver"] = printer.DriverType ?? "";
-			layeredProfile.UserLayer["device_token"] = printer.DeviceToken ?? "";
-			layeredProfile.UserLayer["device_type"] = printer.DeviceType ?? "";
+			layeredProfile.UserLayer[SettingsKey.baud_rate] = printer.BaudRate ?? "";
+			layeredProfile.UserLayer[SettingsKey.com_port] = printer.ComPort ?? "";
+			layeredProfile.UserLayer[SettingsKey.auto_connect] = printer.AutoConnect ? "1" : "0";
+			layeredProfile.UserLayer[SettingsKey.default_material_presets] = printer.MaterialCollectionIds ?? "";
+			layeredProfile.UserLayer[SettingsKey.windows_driver] = printer.DriverType ?? "";
+			layeredProfile.UserLayer[SettingsKey.device_token] = printer.DeviceToken ?? "";
+			layeredProfile.UserLayer[SettingsKey.device_type] = printer.DeviceType ?? "";
 
 			if (string.IsNullOrEmpty(ProfileManager.Instance.LastProfileID))
 			{

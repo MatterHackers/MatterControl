@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				portExists = comportNames.Contains(startupProfile.ComPort());
 				Instance = startupProfile;
 
-				if (portExists && startupProfile.GetValue<bool>("auto_connect"))
+				if (portExists && startupProfile.GetValue<bool>(SettingsKey.auto_connect))
 				{
 					UiThread.RunOnIdle(() =>
 					{

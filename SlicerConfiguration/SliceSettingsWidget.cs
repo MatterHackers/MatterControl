@@ -1207,7 +1207,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.OEM_LAYER_DATE:
 						{
-							dataArea.AddChild(new TextWidget(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault("created_date"), textColor: ActiveTheme.Instance.PrimaryTextColor));
+							dataArea.AddChild(new TextWidget(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date), textColor: ActiveTheme.Instance.PrimaryTextColor));
 						}
 						break;
 
