@@ -422,11 +422,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		#region Migrate to LayeredProfile 
 
+		static Dictionary<string, Type> expectedMappingTypes = new Dictionary<string, Type>()
+		{
+			[SettingsKey.extruders_share_temperature] = typeof(int),
+			[SettingsKey.extruder_count] = typeof(int),
+			[SettingsKey.extruders_share_temperature] = typeof(bool),
+			[SettingsKey.has_heated_bed] = typeof(bool),
+			[SettingsKey.nozzle_diameter] = typeof(double),
+			[SettingsKey.bed_temperature] = typeof(double),
+		};
+
+		void ValidateType<T>(string settingsKey)
+		{
+			if(expectedMappingTypes.ContainsKey(settingsKey))
+			{
+				if(expectedMappingTypes[settingsKey] != typeof(T))
+				{
+					throw new Exception("You must request the correct type of this settingsKey.");
+				}
+			}
+
+			if(settingsKey.Contains("%"))
+			{
+				if(typeof(T) != typeof(double))
+				{
+					throw new Exception("To get processing of a % you must request the type as double.");
+				}
+			}
+		}
+
 		///<summary>
 		///Returns the first matching value discovered while enumerating the settings layers
 		///</summary>
 		public T GetValue<T>(string settingsKey) where T : IConvertible
 		{
+#if DEBUG
+			ValidateType<T>(settingsKey);
+#endif
 			if (typeof(T) == typeof(bool))
 			{
 				return (T)(object)(this.GetValue(settingsKey) == "1");
