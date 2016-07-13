@@ -5167,3 +5167,9 @@ Translated:Can't login while printing
 English:Cloud Printer Profiles
 Translated:Cloud Printer Profiles
 
+English:Copy Guest Printers
+Translated:Copy Guest Printers
+
+English:'First Layer Extrusion Width' must be greater than 0.
+Translated:'First Layer Extrusion Width' must be greater than 0.
+

@@ -160,7 +160,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public bool firstLayerExtrusionWidthAcceptableValue(Dictionary<string, string> currentFile)
 		{
-			string firstLayerExtrusionWidth = currentFile["first_layer_extrusion_width"];
+			string firstLayerExtrusionWidth = currentFile[SettingsKey.first_layer_extrusion_width];
 			float convertedFirstLayerExtrusionWidth;
 
 			string nozzleDiameter = currentFile[SettingsKey.nozzle_diameter];
@@ -181,7 +181,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public bool firstLayerExtrusionWidthNotZero(Dictionary<string,string> currentFile)
 		{
-			string firstLayerExtrusionWidth = currentFile["first_layer_extrusion_width"];
+			string firstLayerExtrusionWidth = currentFile[SettingsKey.first_layer_extrusion_width];
 			float convertedFirstLayerExtrusionWidth;
 
 			if(firstLayerExtrusionWidth.Contains("%"))

@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("min_fan_speed", "fanSpeedMinPercent"),
 				new MappedSetting(SettingsKey.filament_diameter, "filamentDiameter"),
 				new MappedSetting("extrusion_multiplier", "extrusionMultiplier"),
-				new AsPercentOfReferenceOrDirect("first_layer_extrusion_width", "firstLayerExtrusionWidth", SettingsKey.nozzle_diameter),
+				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_extrusion_width, "firstLayerExtrusionWidth", SettingsKey.nozzle_diameter),
 				new AsPercentOfReferenceOrDirect("first_layer_speed", "firstLayerSpeed", "infill_speed"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_height, "firstLayerThickness", SettingsKey.layer_height),
 				new MappedSetting("disable_fan_first_layers", "firstLayerToAllowFan"),
