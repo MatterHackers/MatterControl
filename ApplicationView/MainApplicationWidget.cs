@@ -185,12 +185,7 @@ namespace MatterHackers.MatterControl
 		public ApplicationController()
 		{
 			//Name = "MainSlidePanel";
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			ReloadAll(null, null);
+			ActiveTheme.ThemeChanged.RegisterEvent(ReloadAll, ref unregisterEvents);
 		}
 
 		public void StartLogin()
