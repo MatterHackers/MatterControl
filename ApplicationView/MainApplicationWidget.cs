@@ -37,6 +37,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -165,6 +166,8 @@ namespace MatterHackers.MatterControl
 		public static Action LoginAction;
 		public static Action LogoutAction;
 		public static Func<string> GetSessionInfo;
+
+		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
