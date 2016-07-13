@@ -49,11 +49,11 @@ namespace MatterHackers.MatterControl
 			textImageButtonFactory.normalBorderColor = RGBA_Bytes.White;
 
 			int tabIndex = 0;
-			AddNameSetting(SettingsKey.printer_name.ToString(), contentRow, ref tabIndex);
-			AddNameSetting("auto_connect", contentRow, ref tabIndex);
-			AddNameSetting("baud_rate", contentRow, ref tabIndex);
-			AddNameSetting("com_port", contentRow, ref tabIndex);
-			AddNameSetting("delete_printer", contentRow, ref tabIndex);
+			AddNameSetting(SettingsKey.printer_name, contentRow, ref tabIndex);
+			AddNameSetting(SettingsKey.auto_connect, contentRow, ref tabIndex);
+			AddNameSetting(SettingsKey.baud_rate, contentRow, ref tabIndex);
+			AddNameSetting(SettingsKey.com_port, contentRow, ref tabIndex);
+			AddNameSetting(SettingsKey.delete_printer, contentRow, ref tabIndex);
 
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);

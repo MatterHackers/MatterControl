@@ -397,9 +397,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						if (!string.IsNullOrEmpty(ActiveSliceSettings.Instance.GetValue("baud_rate")))
+						if (!string.IsNullOrEmpty(ActiveSliceSettings.Instance.GetValue(SettingsKey.baud_rate)))
 						{
-							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.GetValue("baud_rate"));
+							baudRate = Convert.ToInt32(ActiveSliceSettings.Instance.GetValue(SettingsKey.baud_rate));
 						}
 					}
 					catch
@@ -1359,7 +1359,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
 				{
 					string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
-					if (ActiveSliceSettings.Instance.GetValue<bool>("has_sd_card_reader")
+					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 						&& pathAndFile == QueueData.SdCardFileName)
 					{
 						PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
@@ -1636,7 +1636,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										{
 											CommunicationState = CommunicationStates.Connected;
 											// now send any command that initialize this printer
-											string connectGCode = ActiveSliceSettings.Instance.GetValue("connect_gcode");
+											string connectGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.connect_gcode);
 											SendLineToPrinterNow(connectGCode);
 
 											// and call back anyone who would like to know we connected
@@ -2143,7 +2143,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
-				string cancelGCode = ActiveSliceSettings.Instance.GetValue("cancel_gcode");
+				string cancelGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.cancel_gcode);
 				if (cancelGCode.Trim() != "")
 				{
 					// add any gcode we want to print while canceling

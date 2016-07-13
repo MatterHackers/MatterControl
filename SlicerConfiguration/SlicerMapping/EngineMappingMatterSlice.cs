@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting(SettingsKey.nozzle_diameter, "extrusionWidth"),
 				new MappedSetting("max_fan_speed", "fanSpeedMaxPercent"),
 				new MappedSetting("min_fan_speed", "fanSpeedMinPercent"),
-				new MappedSetting("filament_diameter", "filamentDiameter"),
+				new MappedSetting(SettingsKey.filament_diameter, "filamentDiameter"),
 				new MappedSetting("extrusion_multiplier", "extrusionMultiplier"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_extrusion_width, "firstLayerExtrusionWidth", SettingsKey.nozzle_diameter),
 				new AsPercentOfReferenceOrDirect("first_layer_speed", "firstLayerSpeed", "infill_speed"),
@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					double lengthToExtrudeMm = ParseDouble(base.Value);
 					// we need to convert mm of filament to mm of extrusion path
-					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>("filament_diameter") * MathHelper.Tau * lengthToExtrudeMm;
+					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
 					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.first_layer_height) * ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
 					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 

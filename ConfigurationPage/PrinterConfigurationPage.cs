@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			mainLayoutContainer.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			mainLayoutContainer.Padding = new BorderDouble(top: 10);
 
-			if (!ActiveSliceSettings.Instance.GetValue<bool>("has_hardware_leveling"))
+			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				mainLayoutContainer.AddChild(new CalibrationSettingsWidget());
 			}
