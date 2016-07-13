@@ -50,16 +50,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static ProfileManager Instance { get; set; }
 
-		private static EventHandler unregisterEvents;
-		private static readonly string userDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
-		internal static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
+		public static string ProfileExtension { get; } = ".json";
 
-		private static string ProfilesDBPath
+		private static EventHandler unregisterEvents;
+		private static readonly string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
+		private static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
+		private const string guestDBFileName = "guest.profiles";
+
+		internal static string ProfilesDBPath
 		{
 			get
 			{
 				string username = UserSettings.Instance.get("ActiveUserName");
-				return Path.Combine(ProfilesPath, string.IsNullOrEmpty(username) ? "profiles.json" : username + ".json");
+				return Path.Combine(ProfilesPath, string.IsNullOrEmpty(username) ? guestDBFileName : username + ".profiles");
 			}
 		}
 
@@ -77,6 +80,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 		}
 
+		[JsonIgnore]
+		public bool IsGuestProfile => Path.GetFileName(ProfilesDBPath) == guestDBFileName;
+
 		public static void Reload()
 		{
 			// Load the profiles document
@@ -89,7 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Instance = new ProfileManager();
 
-				if (Path.GetFileName(ProfilesDBPath) == "profiles.json")
+				if (Instance.IsGuestProfile)
 				{
 					// Import classic db based profiles into local json files
 					DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, ProfilesPath);
@@ -119,7 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 					Instance.Save();
 					break;
-				
+
 				case SettingsKey.com_port:
 					Instance.ActiveProfile.ComPort = ActiveSliceSettings.Instance.ComPort();
 					Instance.Save();
@@ -161,6 +167,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new SettingsProfile(printerSettings);
 		}
 
+		[JsonIgnore]
 		public string LastProfileID
 		{
 			get
@@ -185,6 +192,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UserSettings.Instance.set(settingsKey, printerID);
 		}
 
+		public string ProfilePath(PrinterInfo printer)
+		{
+			return Path.Combine(ProfileManager.ProfilesPath, printer.ID + ProfileExtension);
+		}
+
+		public string ProfilePath(string printerID)
+		{
+			return Path.Combine(ProfileManager.ProfilesPath, printerID + ProfileExtension);
+		}
+
 		/// <summary>
 		/// Loads the specified SettingsProfile
 		/// </summary>
@@ -193,9 +210,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <returns></returns>
 		public static SettingsProfile LoadProfile(string profileID, bool useActiveInstance = true)
 		{
-			//return LoadProfileFromMCWS(profileID);
-
-			// Only load profiles by ID that are defined in the profiles.json document
+			// Only load profiles by ID that are defined in the profiles document
 			if (ProfileManager.Instance[profileID] == null)
 			{
 				return null;

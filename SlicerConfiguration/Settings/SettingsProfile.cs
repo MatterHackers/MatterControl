@@ -934,6 +934,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		[JsonIgnore]
-		public string ProfilePath => Path.Combine(ProfileManager.ProfilesPath, ID + ".json");
+		public string ProfilePath => ProfileManager.Instance.ProfilePath(this);
 	}
 }
