@@ -191,7 +191,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			File.WriteAllText(DocumentPath, json);
 
-			ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
+			if (ActiveSliceSettings.Instance.ID == this.ID)
+			{
+				ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
+			}
 		}
 
 		/// <summary>
