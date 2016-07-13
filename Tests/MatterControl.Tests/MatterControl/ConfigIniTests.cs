@@ -255,7 +255,7 @@ namespace MatterControl.Tests.MatterControl
 
 				float firstLayerExtrusionWidth;
 
-				string firstLayerExtrusionWidthString = settings.PrinterSettings.GetValue("first_layer_extrusion_width");
+				string firstLayerExtrusionWidthString = settings.PrinterSettings.GetValue(SettingsKey.first_layer_extrusion_width);
 				if (!string.IsNullOrEmpty(firstLayerExtrusionWidthString) && firstLayerExtrusionWidthString.Trim() != "0")
 				{
 					firstLayerExtrusionWidth = ValueOrPercentageOf(firstLayerExtrusionWidthString, nozzleDiameter);
@@ -318,7 +318,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				float nozzleDiameter = float.Parse(settings.PrinterSettings.GetValue(SettingsKey.nozzle_diameter));
 
-				string firstLayerExtrusionWidthString = settings.PrinterSettings.GetValue("first_layer_extrusion_width");
+				string firstLayerExtrusionWidthString = settings.PrinterSettings.GetValue(SettingsKey.first_layer_extrusion_width);
 				if (!string.IsNullOrEmpty(firstLayerExtrusionWidthString))
 				{
 					float firstLayerExtrusionWidth = ValueOrPercentageOf(firstLayerExtrusionWidthString, nozzleDiameter);

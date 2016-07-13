@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
 		public const string fill_density = nameof(fill_density);
+		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
 		public const string first_layer_height = nameof(first_layer_height);
 		public const string has_heated_bed = nameof(has_heated_bed);
 		public const string layer_height = nameof(layer_height);
@@ -449,14 +450,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						return (T)(object)(GetValue<double>(SettingsKey.layer_height) * ratio);
 					}
-					else if (settingsKey == "first_layer_extrusion_width")
+					else if (settingsKey == SettingsKey.first_layer_extrusion_width)
 					{
 						return (T)(object)(GetValue<double>(SettingsKey.nozzle_diameter) * ratio);
 					}
 
 					return (T)(object)(ratio);
 				}
-				else if (settingsKey == "first_layer_extrusion_width")
+				else if (settingsKey == SettingsKey.first_layer_extrusion_width)
 				{
 					double extrusionResult;
 					double.TryParse(this.GetValue(settingsKey), out extrusionResult);
@@ -630,19 +631,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				if (GetValue<double>("first_layer_extrusion_width") > GetValue<double>(SettingsKey.nozzle_diameter) * 4)
+				if (GetValue<double>(SettingsKey.first_layer_extrusion_width) > GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
 					string error = "'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
-					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue("first_layer_extrusion_width"), GetValue<double>(SettingsKey.nozzle_diameter));
+					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue(SettingsKey.first_layer_extrusion_width), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
-				if (GetValue<double>("first_layer_extrusion_width") <= 0)
+				if (GetValue<double>(SettingsKey.first_layer_extrusion_width) <= 0)
 				{
 					string error = "'First Layer Extrusion Width' must be greater than 0.".Localize();
-					string details = string.Format("First Layer Extrusion Width = {0}".Localize(), GetValue("first_layer_extrusion_width"));
+					string details = string.Format("First Layer Extrusion Width = {0}".Localize(), GetValue(SettingsKey.first_layer_extrusion_width));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
