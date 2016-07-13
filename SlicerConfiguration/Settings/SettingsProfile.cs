@@ -451,10 +451,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					else if (settingsKey == "first_layer_extrusion_width")
 					{
-						return (T)(object)(GetValue<double>(SettingsKey.layer_height) * ratio);
+						return (T)(object)(GetValue<double>(SettingsKey.nozzle_diameter) * ratio);
 					}
 
 					return (T)(object)(ratio);
+				}
+				else if (settingsKey == "first_layer_extrusion_width")
+				{
+					double extrusionResult;
+					double.TryParse(this.GetValue(settingsKey), out extrusionResult);
+					return (T)(object)(extrusionResult == 0 ? GetValue<double>(SettingsKey.nozzle_diameter) : extrusionResult);
 				}
 
 				if (settingsKey == SettingsKey.bed_temperature
