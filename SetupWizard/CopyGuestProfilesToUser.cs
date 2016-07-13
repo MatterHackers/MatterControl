@@ -40,13 +40,13 @@ namespace MatterHackers.MatterControl
 {
 	public class CopyGuestProfilesToUser : WizardPage
 	{
-		static string importMessage = "Select what you would like to merge into your current profile.".Localize();
+		static string importMessage = "Select which printers you would like to copy into the user account '{0}'.";
 
 		List<string> guestProfiles;
 		List<CheckBox> checkBoxes = new List<CheckBox>();
 
 		public CopyGuestProfilesToUser()
-		: base("Cancel", "Copy Guest Printers")
+		: base("Cancel", "Copy Printers to User")
 		{
 			var scrollWindow = new ScrollableWidget()
 			{
@@ -63,7 +63,8 @@ namespace MatterHackers.MatterControl
 			};
 			scrollWindow.AddChild(container);
 
-			container.AddChild(new WrappedTextWidget(importMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			container.AddChild(new WrappedTextWidget(importMessage.FormatWith(ApplicationController.Instance.GetSessionUsername()),
+				10, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
 			guestProfiles = new List<string>()
 			{
@@ -75,10 +76,10 @@ namespace MatterHackers.MatterControl
 
 			if (guestProfiles.Count > 0)
 			{
-				container.AddChild(new TextWidget("Quality Presets:")
+				container.AddChild(new TextWidget("")
 				{
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					Margin = new BorderDouble(0, 3, 0, 15),
+					Margin = new BorderDouble(0, 3, 0, 3),
 				});
 
 				foreach (var profileName in guestProfiles)
