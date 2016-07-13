@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl
 	public class ApplicationController
 	{
 		private static ApplicationController globalInstance;
-		public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
+		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl
 
 		public void ReloadAdvancedControlsPanel()
 		{
-			ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
+			AdvancedControlsPanelReloading.CallEvents(this, null);
 		}
 
 		public LibraryDataView CurrentLibraryDataView = null;
