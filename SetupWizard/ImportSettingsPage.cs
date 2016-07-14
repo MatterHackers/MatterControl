@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl
 				string importType = Path.GetExtension(settingsFilePath).ToLower();
 				switch (importType)
 				{
-					case ".printer":
+					case ProfileManager.ProfileExtension:
 						newLayer = new PrinterSettingsLayer();
 						newLayer["layer_name"] = Path.GetFileNameWithoutExtension(settingsFilePath);
 
@@ -552,7 +552,7 @@ namespace MatterHackers.MatterControl
 				string importType = Path.GetExtension(settingsFilePath).ToLower();
 				switch (importType)
 				{
-					case ".printer":
+					case ProfileManager.ProfileExtension:
 						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath, ActiveSliceSettings.Instance.UserLayer));
 						break;
 

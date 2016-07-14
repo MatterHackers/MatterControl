@@ -50,12 +50,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static ProfileManager Instance { get; set; }
 
-		public static string ProfileExtension { get; } = ".json";
+		public const string ProfileExtension = ".printer";
 
 		private static EventHandler unregisterEvents;
 		private static readonly string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 		private static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
-		private const string guestDBFileName = "guest.profiles";
+
+		private const string userDBExtension = ".profiles";
+		private const string guestDBFileName = "guest" + userDBExtension;
 
 		private static string GuestDBPath => Path.Combine(ProfilesPath, guestDBFileName);
 
@@ -64,7 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				string username = UserSettings.Instance.get("ActiveUserName");
-				return string.IsNullOrEmpty(username) ? GuestDBPath : Path.Combine(ProfilesPath, $"{username}.profiles");
+				return string.IsNullOrEmpty(username) ? GuestDBPath : Path.Combine(ProfilesPath, $"{username}{userDBExtension}");
 			}
 		}
 
@@ -263,7 +265,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string importType = Path.GetExtension(settingsFilePath).ToLower();
 			switch (importType)
 			{
-				case ".printer":
+				case ProfileManager.ProfileExtension:
 					var profile = ProfileManager.LoadProfileFromDisk(settingsFilePath);
 					profile.ID = printerInfo.ID;
 					profile.ClearValue(SettingsKey.device_token);
