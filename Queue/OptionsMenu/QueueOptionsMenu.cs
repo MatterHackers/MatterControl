@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SetupWizard;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
