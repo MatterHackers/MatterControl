@@ -169,6 +169,7 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 		public static Func<PrinterInfo,string, Task> GetPrinterProfile;
+		public static Func<Task> SyncPrinterProfiles;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
@@ -369,8 +370,10 @@ namespace MatterHackers.MatterControl
 			// Ensure SQLite printers are imported
 			profileManager.EnsurePrintersImported();
 
+			var guestDB = ProfileManager.LoadGuestDB();
+
 			// If profiles.json was created, run the import wizard to pull in any SQLite printers
-			if (!profileManager.IsGuestProfile && !profileManager.PrintersImported)
+			if (guestDB?.Profiles != null && guestDB.Profiles.Any() && !profileManager.IsGuestProfile && !profileManager.PrintersImported)
 			{
 				var wizardPage = new CopyGuestProfilesToUser(() =>
 				{

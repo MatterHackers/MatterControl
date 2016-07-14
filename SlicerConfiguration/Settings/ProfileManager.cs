@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return ActiveSliceSettings.Instance;
 			}
 
-			string profilePath = Path.Combine(ProfilesPath, profileID + ".json");
+			string profilePath = Path.Combine(ProfilesPath, profileID +  ProfileManager.ProfileExtension);
 			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
 		}
 
