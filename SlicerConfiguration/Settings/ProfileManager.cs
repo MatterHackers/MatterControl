@@ -330,7 +330,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Instance.Profiles.Add(new PrinterInfo
 			{
 				Name = printerName,
-				ID = guid
+				ID = guid,
+				Make = make,
+				Model = model
 			});
 
 			// Update SHA1

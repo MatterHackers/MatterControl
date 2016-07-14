@@ -912,6 +912,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string ComPort { get; set; }
 		public string ID { get; set; }
 		public string Name { get; set; }
+		public string Make { get; set; }
+		public string Model { get; set; }
 		public string DeviceToken { get; set; }
 		public bool IsDirty { get; set; } = false;
 		public bool MarkedForDelete { get; set; } = false;
