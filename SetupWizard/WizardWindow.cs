@@ -15,6 +15,7 @@ namespace MatterHackers.MatterControl
 	{
 		public static Func<bool> ShouldShowAuthPanel { get; set; }
 		public static Action ShowAuthDialog;
+		public static Action ChangeToAccountCreate;
 		private static WizardWindow wizardWindow = null;
 
 		private static Dictionary<string, WizardWindow> allWindows = new Dictionary<string, WizardWindow>();
