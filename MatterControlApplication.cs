@@ -722,6 +722,7 @@ namespace MatterHackers.MatterControl
 				}
 				ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
 				{
+					ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					if (!ProfileManager.Instance.ActiveProfiles.Any())
 					{
 						// Start the setup wizard if no profiles exist
