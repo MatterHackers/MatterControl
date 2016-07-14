@@ -355,7 +355,33 @@ namespace MatterHackers.MatterControl
 
 			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
 			UserSettings.Instance.set("ActiveUserName", activeUserName);
+
+			UserChanged();
+		}
+
+		// Called after every startup and at the completion of every authentication change
+		public void UserChanged()
+		{
 			ProfileManager.Reload();
+
+			var profileManager = ProfileManager.Instance;
+
+			// Ensure SQLite printers are imported
+			profileManager.EnsurePrintersImported();
+
+			// If profiles.json was created, run the import wizard to pull in any SQLite printers
+			if (!profileManager.IsGuestProfile && !profileManager.PrintersImported)
+			{
+				var wizardPage = new CopyGuestProfilesToUser(() =>
+				{
+					// On success, set state indicating import has been run and update ProfileManager state
+					profileManager.PrintersImported = true;
+					profileManager.Save();
+				});
+
+				// Show the import printers wizard
+				WizardWindow.Show("/CopyGuestProfiles", "Copy Existing Profiles", wizardPage);
+			}
 		}
 
 		public class CloudSyncEventArgs : EventArgs
