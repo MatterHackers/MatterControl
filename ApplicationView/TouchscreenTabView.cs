@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl
 
 			}, ref unregisterEvents);
 
-			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControls), ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControls), ref unregisterEvents);
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
 			// Make sure we are on the right tab when we create this view

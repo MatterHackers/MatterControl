@@ -35,18 +35,18 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Agg;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
 	public class CopyGuestProfilesToUser : WizardPage
 	{
-		static string importMessage = "Select which printers you would like to copy into the user account '{0}'.";
+		static string importMessage = "Select what you would like to merge into your current profile.".Localize();
 
-		List<string> guestProfiles;
 		List<CheckBox> checkBoxes = new List<CheckBox>();
 
-		public CopyGuestProfilesToUser()
-		: base("Cancel", "Copy Printers to User")
+		public CopyGuestProfilesToUser(Action afterProfilesImported)
+		: base("Cancel", "Copy Guest Printers")
 		{
 			var scrollWindow = new ScrollableWidget()
 			{
@@ -63,35 +63,31 @@ namespace MatterHackers.MatterControl
 			};
 			scrollWindow.AddChild(container);
 
-			container.AddChild(new WrappedTextWidget(importMessage.FormatWith(ApplicationController.Instance.GetSessionUsername()),
-				10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			container.AddChild(new WrappedTextWidget(importMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
-			guestProfiles = new List<string>()
-			{
-				"TAZ6",
-				"JumpStart",
-				"Emulator",
-				"Other test printer",
-			};
+			var byCheckbox = new Dictionary<CheckBox, PrinterInfo>();
 
-			if (guestProfiles.Count > 0)
+			var guestProfileManager = ProfileManager.LoadGuestDB();
+			if (guestProfileManager.Profiles.Count > 0)
 			{
-				container.AddChild(new TextWidget("")
+				container.AddChild(new TextWidget("Existing Printers:")
 				{
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					Margin = new BorderDouble(0, 3, 0, 3),
+					Margin = new BorderDouble(0, 3, 0, 15),
 				});
 
-				foreach (var profileName in guestProfiles)
+				foreach (var printerInfo in guestProfileManager.Profiles)
 				{
-					CheckBox importButton = new CheckBox(profileName)
+					var checkBox = new CheckBox(printerInfo.Name)
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
 						HAnchor = HAnchor.ParentLeft,
 					};
-					checkBoxes.Add(importButton);
-					container.AddChild(importButton);
+					checkBoxes.Add(checkBox);
+					container.AddChild(checkBox);
+
+					byCheckbox[checkBox] = printerInfo;
 				}
 			}
 
@@ -99,18 +95,28 @@ namespace MatterHackers.MatterControl
 			copyButton.Click += (s, e) =>
 			{
 				// do the import
-				for(int i=0; i< checkBoxes.Count; i++)
+				foreach(var checkBox in checkBoxes)
 				{
-					var checkBox = checkBoxes[i];
 					if (checkBox.Checked)
 					{
 						// import the printer
+						var printerInfo = byCheckbox[checkBox];
 
+						ProfileManager.Instance.Profiles.Add(printerInfo);
+						guestProfileManager.Profiles.Remove(printerInfo);
 					}
 				}
 
+				guestProfileManager.Save();
+
 				// close the window
-				UiThread.RunOnIdle(WizardWindow.Close);
+				UiThread.RunOnIdle(() =>
+				{
+					WizardWindow.Close();
+
+					// Call back into the original source
+					afterProfilesImported();
+				});
 			};
 
 			copyButton.Visible = true;
