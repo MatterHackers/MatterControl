@@ -60,6 +60,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				WizardWindow.ChangeToPage<SetupStepMakeModelName>();
 			};
+			var createAccountButton = textImageButtonFactory.Generate("Create Account".Localize());
+			createAccountButton.Name = "Create Account From Connection Wizard Button";
+			createAccountButton.Margin = new Agg.BorderDouble(right: 5);
+			createAccountButton.Click += (s, e) =>
+			{
+				WizardWindow.ChangeToAccountCreate();
+				UiThread.RunOnIdle(WizardWindow.Close);
+			};
 
 			var signInButton = textImageButtonFactory.Generate("Sign In".Localize());
 			signInButton.Name = "Sign In From Connection Wizard Button";
@@ -67,11 +75,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{ 
 				WizardWindow.ShowAuthDialog?.Invoke();
 				UiThread.RunOnIdle(WizardWindow.Close);
-	
 			};
 
 			footerRow.AddChild(nextButton);
 			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(createAccountButton);
 			footerRow.AddChild(signInButton);
 		}
 
