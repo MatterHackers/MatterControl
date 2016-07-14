@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 			var byCheckbox = new Dictionary<CheckBox, PrinterInfo>();
 
 			var guestProfileManager = ProfileManager.LoadGuestDB();
-			if (guestProfileManager.Profiles.Count > 0)
+			if (guestProfileManager?.Profiles.Count > 0)
 			{
 				container.AddChild(new TextWidget("Printers to Upload:".Localize())
 				{
