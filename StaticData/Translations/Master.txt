@@ -5173,3 +5173,15 @@ Translated:Copy Guest Printers
 English:'First Layer Extrusion Width' must be greater than 0.
 Translated:'First Layer Extrusion Width' must be greater than 0.
 
+English:It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.
+Translated:It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.
+
+English:Select Printers to Upload
+Translated:Select Printers to Upload
+
+English:Printers to Upload:
+Translated:Printers to Upload:
+
+English:Upload
+Translated:Upload
+
