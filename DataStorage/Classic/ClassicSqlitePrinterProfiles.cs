@@ -143,7 +143,6 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			settingsProfile.SetComPort(printer.ComPort);
 
 			settingsProfile.SaveChanges();
-
 		}
 
 		private static void LoadMaterialSettings(PrinterSettings layeredProfile, Printer printer)

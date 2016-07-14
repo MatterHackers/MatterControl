@@ -41,12 +41,12 @@ namespace MatterHackers.MatterControl
 {
 	public class CopyGuestProfilesToUser : WizardPage
 	{
-		static string importMessage = "Select what you would like to merge into your current profile.".Localize();
+		static string importMessage = "It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.".Localize();
 
 		List<CheckBox> checkBoxes = new List<CheckBox>();
 
 		public CopyGuestProfilesToUser(Action afterProfilesImported)
-		: base("Cancel", "Copy Guest Printers")
+		: base("Cancel", "Select Printers to Upload")
 		{
 			var scrollWindow = new ScrollableWidget()
 			{
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			var guestProfileManager = ProfileManager.LoadGuestDB();
 			if (guestProfileManager?.Profiles.Count > 0)
 			{
-				container.AddChild(new TextWidget("Existing Printers:")
+				container.AddChild(new TextWidget("Printers to Upload:".Localize())
 				{
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					Margin = new BorderDouble(0, 3, 0, 15),
@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
 						HAnchor = HAnchor.ParentLeft,
+						Checked = true,
 					};
 					checkBoxes.Add(checkBox);
 					container.AddChild(checkBox);
@@ -91,8 +92,8 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var copyButton = textImageButtonFactory.Generate("Copy".Localize());
-			copyButton.Click += (s, e) =>
+			var uploadButton = textImageButtonFactory.Generate("Upload".Localize());
+			uploadButton.Click += (s, e) =>
 			{
 				// do the import
 				foreach(var checkBox in checkBoxes)
@@ -119,13 +120,13 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			copyButton.Visible = true;
+			uploadButton.Visible = true;
 			cancelButton.Visible = true;
 
 			cancelButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.Close);
 
 			//Add buttons to buttonContainer
-			footerRow.AddChild(copyButton);
+			footerRow.AddChild(uploadButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
 

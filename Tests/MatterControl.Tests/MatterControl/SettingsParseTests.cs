@@ -18,22 +18,46 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
-			// percent first layer extrusion width
+			// first_layer_extrusion_width
 			{
-				string[] settings = new string[] { SettingsKey.first_layer_extrusion_width, "%150", SettingsKey.nozzle_diameter, ".4" };
-				Assert.AreEqual(GettProfile(settings).GetValue<double>(SettingsKey.first_layer_extrusion_width), .6, .0001);
+				// percent first layer extrusion width
+				{
+					string[] settings = new string[] { SettingsKey.first_layer_extrusion_width, "%150", SettingsKey.nozzle_diameter, ".4" };
+					Assert.AreEqual(GettProfile(settings).GetValue<double>(SettingsKey.first_layer_extrusion_width), .6, .0001);
+				}
+
+				// absolute first layer extrusion width
+				{
+					string[] settings = new string[] { SettingsKey.first_layer_extrusion_width, ".75", SettingsKey.nozzle_diameter, ".4" };
+					Assert.AreEqual(GettProfile(settings).GetValue<double>(SettingsKey.first_layer_extrusion_width), .75, .0001);
+				}
+
+				// 0 first layer extrusion width
+				{
+					string[] settings = new string[] { SettingsKey.first_layer_extrusion_width, "0", SettingsKey.nozzle_diameter, ".4" };
+					Assert.AreEqual(GettProfile(settings).GetValue<double>(SettingsKey.first_layer_extrusion_width), .4, .0001);
+				}
 			}
 
-			// absolute first layer extrusion width
+			// extruder_count
 			{
-				string[] settings = new string[] { SettingsKey.first_layer_extrusion_width, ".75", SettingsKey.nozzle_diameter, ".4" };
-				Assert.AreEqual(GettProfile(settings).GetValue<double>(SettingsKey.first_layer_extrusion_width), .75, .0001);
-			}
+				// normal single
+				{
+					string[] settings = new string[] { SettingsKey.extruder_count, "1", SettingsKey.extruders_share_temperature, "0" };
+					Assert.AreEqual(GettProfile(settings).GetValue<int>(SettingsKey.extruder_count), 1);
+				}
 
-			// 0 first layer extrusion width
-			{
-				string[] settings = new string[] { SettingsKey.first_layer_extrusion_width, "0", SettingsKey.nozzle_diameter, ".4" };
-				Assert.AreEqual(GettProfile(settings).GetValue<double>(SettingsKey.first_layer_extrusion_width), .4, .0001);
+				// normal multiple
+				{
+					string[] settings = new string[] { SettingsKey.extruder_count, "2", SettingsKey.extruders_share_temperature, "0" };
+					Assert.AreEqual(GettProfile(settings).GetValue<int>(SettingsKey.extruder_count), 2);
+				}
+
+				// shared temp
+				{
+					string[] settings = new string[] { SettingsKey.extruder_count, "2", SettingsKey.extruders_share_temperature, "1" };
+					Assert.AreEqual(GettProfile(settings).GetValue<int>(SettingsKey.extruder_count), 1);
+				}
 			}
 		}
 
