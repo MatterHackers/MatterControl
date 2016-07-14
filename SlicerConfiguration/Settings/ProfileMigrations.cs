@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				jObject["DocumentVersion"] = 201605132;
 
 				File.Delete(filePath);
-				filePath = Path.Combine(Path.GetDirectoryName(filePath), printerID + ".json");
+				filePath = Path.Combine(Path.GetDirectoryName(filePath), printerID + ProfileManager.ProfileExtension);
 			}
 
 			if (fromVersion < 201606081)
