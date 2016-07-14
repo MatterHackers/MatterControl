@@ -85,6 +85,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static void Reload()
 		{
+			if (Instance?.Profiles != null)
+			{
+				// Release event registration
+				Instance.Profiles.CollectionChanged -= Profiles_CollectionChanged;
+			}
+
 			// Load the profiles document
 			if (File.Exists(ProfilesDBPath))
 			{
@@ -102,14 +108,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			// Load the last profile or an empty profile
+			// Load the last selected printer profile or an empty profile
 			ActiveSliceSettings.Instance = Instance.LoadLastProfile() ?? LoadEmptyProfile();
-
-			if (Instance != null)
-			{
-				// Release event registration
-				Instance.Profiles.CollectionChanged -= Profiles_CollectionChanged;
-			}
 
 
 			// In either case, wire up the CollectionChanged event
