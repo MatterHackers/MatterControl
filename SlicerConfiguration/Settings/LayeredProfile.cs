@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 		
-		private string DocumentPath => Path.Combine(ProfileManager.ProfilesPath, this.ID + ".json");
+		private string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
 
 		internal void Save()
 		{
@@ -191,7 +191,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			File.WriteAllText(DocumentPath, json);
 
-			ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
+			if (ActiveSliceSettings.Instance.ID == this.ID)
+			{
+				ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
+			}
 		}
 
 		/// <summary>

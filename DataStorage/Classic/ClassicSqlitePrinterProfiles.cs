@@ -137,8 +137,12 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			//layeredProfile.SetActiveValue(""calibration_files"", ???);
 
 			layeredProfile.ID = printer.Id.ToString();
-			string fullProfilePath = Path.Combine(profilePath, printer.Id + ".json");
-			File.WriteAllText(fullProfilePath, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
+
+			layeredProfile.DocumentVersion = PrinterSettings.LatestVersion;
+
+			var settingsProfile = new SettingsProfile(layeredProfile);
+			settingsProfile.SaveChanges();
+
 		}
 
 		private static void LoadMaterialSettings(PrinterSettings layeredProfile, Printer printer)

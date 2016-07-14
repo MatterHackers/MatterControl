@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 			AddChild(advancedTab);
 			AnchorAll();
 
-			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadSliceSettings), ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadSliceSettings), ref unregisterEvents);
 		}
 
 		public static string SliceSettingsTabName { get; } = "Slice Settings Tab";

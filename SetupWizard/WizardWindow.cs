@@ -80,21 +80,16 @@ namespace MatterHackers.MatterControl
 
 		public static void Show<PanelType>(string uri, string title) where PanelType : WizardPage, new()
 		{
-			WizardWindow existingWindow;
+			WizardWindow wizardWindow = GetWindow(uri);
+			wizardWindow.Title = title;
+			wizardWindow.ChangeToPage<PanelType>();
+		}
 
-			if (allWindows.TryGetValue(uri, out existingWindow))
-			{
-				existingWindow.BringToFront();
-			}
-			else
-			{
-				existingWindow = new WizardWindow();
-				existingWindow.Closed += (s, e) => allWindows.Remove(uri);
-				allWindows[uri] = existingWindow;
-			}
-
-			existingWindow.Title = title;
-			existingWindow.ChangeToPage<PanelType>();
+		public static void Show(string uri, string title, WizardPage wizardPage)
+		{
+			WizardWindow wizardWindow = GetWindow(uri);
+			wizardWindow.Title = title;
+			wizardWindow.ChangeToPage(wizardPage);
 		}
 
 		public static void Show(bool openToHome = false)
@@ -108,6 +103,24 @@ namespace MatterHackers.MatterControl
 			{
 				wizardWindow.BringToFront();
 			}
+		}
+
+		private static WizardWindow GetWindow(string uri)
+		{
+			WizardWindow wizardWindow;
+
+			if (allWindows.TryGetValue(uri, out wizardWindow))
+			{
+				wizardWindow.BringToFront();
+			}
+			else
+			{
+				wizardWindow = new WizardWindow();
+				wizardWindow.Closed += (s, e) => allWindows.Remove(uri);
+				allWindows[uri] = wizardWindow;
+			}
+
+			return wizardWindow;
 		}
 
 		public override void OnClosed(EventArgs e)
