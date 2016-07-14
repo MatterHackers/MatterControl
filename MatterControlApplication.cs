@@ -720,12 +720,15 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
 				}
-
-				if (!ProfileManager.Instance.ActiveProfiles.Any())
+				ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
 				{
-					// Start the setup wizard if no profiles exist
-					UiThread.RunOnIdle(() => WizardWindow.Show());
-				}
+					if (!ProfileManager.Instance.ActiveProfiles.Any())
+					{
+						// Start the setup wizard if no profiles exist
+						UiThread.RunOnIdle(() => WizardWindow.Show());
+					}
+				});
+				
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
