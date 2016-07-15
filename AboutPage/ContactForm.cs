@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			labelContainer.HAnchor = HAnchor.ParentLeftRight;
 			labelContainer.Height = 30;
 
-			TextWidget formLabel = new TextWidget(LocalizedString.Get("How can we help?"), pointSize: 16);
+			TextWidget formLabel = new TextWidget(LocalizedString.Get("How can we improve?"), pointSize: 16);
 			formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			formLabel.VAnchor = VAnchor.ParentTop;
 			formLabel.HAnchor = HAnchor.ParentLeft;
@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			: base(500, 550)
 		{
 			AlwaysOnTopOfMain = true;
-			Title = LocalizedString.Get("MatterControl: Submit an Issue");
+			Title = LocalizedString.Get("MatterControl: Submit Feedback");
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 

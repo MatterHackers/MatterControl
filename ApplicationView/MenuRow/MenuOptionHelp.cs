@@ -20,12 +20,12 @@ namespace MatterHackers.MatterControl
 		{
 			return new List<MenuItemAction>
 			{
-				new MenuItemAction("Getting Started".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles/mattercontrol-getting-started")),
-				new MenuItemAction("View Help".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles")),
+				new MenuItemAction("Forums".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol")),
+				new MenuItemAction("Wiki".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com")),
+				new MenuItemAction("Guides and Articles".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol")),
 				new MenuItemAction("Release Notes".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes")),
-				new MenuItemAction("User Manual".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com")),
 				new MenuItemAction("------------------------", null),
-				new MenuItemAction("Report a Bug".Localize(), () => ContactFormWindow.Open()),
+				new MenuItemAction("Report a Bug".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues")),
 				new MenuItemAction("Check For Update".Localize(), () =>
 				{
 					ApplicationMenuRow.AlwaysShowUpdateStatus = true;
