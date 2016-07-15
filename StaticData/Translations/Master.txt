@@ -5185,3 +5185,6 @@ Translated:Printers to Upload:
 English:Upload
 Translated:Upload
 
+English:Printer History
+Translated:Printer History
+
