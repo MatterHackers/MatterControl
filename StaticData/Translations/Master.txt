@@ -5200,3 +5200,21 @@ Translated:Email Address*
 English:Name*
 Translated:Name*
 
+English:MatterControl: Submit Feedback
+Translated:MatterControl: Submit Feedback
+
+English:How can we improve?
+Translated:How can we improve?
+
+English:Forums
+Translated:Forums
+
+English:Wiki
+Translated:Wiki
+
+English:Guides and Arcticles
+Translated:Guides and Arcticles
+
+English:Guides and Articles
+Translated:Guides and Articles
+
