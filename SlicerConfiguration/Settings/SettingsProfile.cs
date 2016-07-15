@@ -85,7 +85,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
-		public const string delete_printer = nameof(delete_printer);
 		public const string created_date = nameof(created_date);
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);

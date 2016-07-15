@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 		private EventHandler unregisterEvents;
 		int lastSelectedIndex = -1;
 
-		public PrinterSelector() : base("Printers".Localize() + "... ", useLeftIcons: true)
+		public PrinterSelector() : base("Printers".Localize() + "... ")
 		{
 			Rebuild();
 

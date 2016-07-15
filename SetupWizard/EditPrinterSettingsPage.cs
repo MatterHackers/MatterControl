@@ -53,7 +53,8 @@ namespace MatterHackers.MatterControl
 			AddNameSetting(SettingsKey.auto_connect, contentRow, ref tabIndex);
 			AddNameSetting(SettingsKey.baud_rate, contentRow, ref tabIndex);
 			AddNameSetting(SettingsKey.com_port, contentRow, ref tabIndex);
-			AddNameSetting(SettingsKey.delete_printer, contentRow, ref tabIndex);
+
+			contentRow.AddChild(SliceSettingsWidget.CretaePrinterExtraControls());
 
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);

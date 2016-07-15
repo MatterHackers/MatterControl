@@ -441,6 +441,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						};
 					}
 				}
+
+				if(group.Name == "Connection")
+				{
+					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CretaePrinterExtraControls());
+				}
 			}
 
 			// Make sure we are on the right tab when we create this view
@@ -656,6 +661,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static string GetActiveValue(string slicerConfigName, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
 			return ActiveSliceSettings.Instance.GetValue(slicerConfigName, layerCascade);
+		}
+
+		public static GuiWidget CretaePrinterExtraControls()
+		{
+			var dataArea = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+
+			// OEM_LAYER_DATE:
+			string lastUpdateTime = "Defalts Update On: {0}".FormatWith(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date));
+			dataArea.AddChild(new TextWidget(lastUpdateTime, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(15, 0, 0, 0);
+			});
+
+			// DELETE_PRINTER:
+			{
+				// This is a place holder type to allow us to put in the control that will allow the deletion of a printer profile
+				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
+				buttonFactory.normalTextColor = RGBA_Bytes.Red;
+				var button = buttonFactory.Generate("Delete Printer".Localize());
+				button.HAnchor = HAnchor.ParentCenter;
+				button.Click += (s, e) =>
+									{
+										StyledMessageBox.ShowMessageBox((doDelete) =>
+										{
+											if (doDelete)
+											{
+												ActiveSliceSettings.Instance.SetMarkedForDelete(true);
+											}
+										}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
+									};
+				dataArea.AddChild(button);
+			}
+
+			return dataArea;
 		}
 
 		public static GuiWidget CreateSettingControl(string sliceSettingsKey, ref int tabIndex)
@@ -1182,32 +1224,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								// Lookup the machine specific comport value rather than the passed in text value
 								selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.ComPort();
 							};
-						}
-						break;
-
-					case SliceSettingData.DataEditTypes.DELETE_PRINTER:
-						{
-							// This is a place holder type to allow us to put in the control that will allow the deletion of a printer profile
-							TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-							buttonFactory.normalTextColor = RGBA_Bytes.Red;
-							var button = buttonFactory.Generate("Delete Printer".Localize());
-							button.Click += (s, e) =>
-							{
-								StyledMessageBox.ShowMessageBox((doDelete) =>
-								{
-									if (doDelete)
-									{
-										ActiveSliceSettings.Instance.SetMarkedForDelete(true);
-									}
-								}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
-							};
-							dataArea.AddChild(button);
-						}
-						break;
-
-					case SliceSettingData.DataEditTypes.OEM_LAYER_DATE:
-						{
-							dataArea.AddChild(new TextWidget(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date), textColor: ActiveTheme.Instance.PrimaryTextColor));
 						}
 						break;
 

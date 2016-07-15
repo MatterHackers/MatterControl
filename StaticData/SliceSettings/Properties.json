@@ -2359,32 +2359,6 @@
     "DefaultValue": "250000"
   },
   {
-	"QuickMenuSettings": [],
-    "SetSettingsOnChange": [],
-    "SlicerConfigName": "created_date",
-    "PresentationName": "OEM Date Modified",
-    "HelpText": "",
-    "DataEditType": "OEM_LAYER_DATE",
-    "ExtraSettings": "",
-    "ShowAsOverride": false,
-    "ShowIfSet": null,
-    "ResetAtEndOfPrint": false,
-    "DefaultValue": ""
-  },
-  {
-    "QuickMenuSettings": [],
-    "SetSettingsOnChange": [],
-    "SlicerConfigName": "delete_printer",
-    "PresentationName": "",
-    "HelpText": "Delete the currently selected printer profile.",
-    "DataEditType": "DELETE_PRINTER",
-    "ExtraSettings": "",
-    "ShowAsOverride": false,
-    "ShowIfSet": null,
-    "ResetAtEndOfPrint": false,
-    "DefaultValue": ""
-  },
-  {
     "QuickMenuSettings": [],
     "SetSettingsOnChange": [],
     "SlicerConfigName": "printer_name",

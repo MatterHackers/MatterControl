@@ -200,10 +200,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("print_leveling_enabled", item.Value);
 								break;
 
-							case "MatterControl.DeletePrinter":
-								layer.Add(SettingsKey.delete_printer, item.Value);
-								break;
-
 							case "MatterControl.ManualMovementSpeeds":
 								layer.Add("manual_movement_speeds", item.Value);
 								break;
