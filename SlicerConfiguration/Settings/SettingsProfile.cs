@@ -851,11 +851,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		#endregion
 
-		public void SetAutoConnect(bool autoConnectPrinter)
-		{
-			layeredProfile.SetValue(SettingsKey.auto_connect, autoConnectPrinter ? "1" : "0");
-		}
-
 		public void SetMarkedForDelete(bool markedForDelete)
 		{
 			var printerInfo = ProfileManager.Instance.ActiveProfile;
