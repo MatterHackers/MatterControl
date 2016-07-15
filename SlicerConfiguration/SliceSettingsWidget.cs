@@ -674,7 +674,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string lastUpdateTime = "Defalts Update On: {0}".FormatWith(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date));
 			dataArea.AddChild(new TextWidget(lastUpdateTime, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(15, 0, 0, 0);
+				HAnchor= HAnchor.ParentCenter,
+				Margin = new BorderDouble(0, 15),
 			});
 
 			// DELETE_PRINTER:
