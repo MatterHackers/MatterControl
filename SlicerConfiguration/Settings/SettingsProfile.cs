@@ -945,6 +945,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ChangeID(string newID)
 		{
+			if (ActiveSliceSettings.Instance.ID == this.ID)
+			{
+				ActiveSliceSettings.Instance.ID = newID;
+			}
+
 			string existingProfile = ProfilePath;
 			if (File.Exists(existingProfile))
 			{
@@ -953,7 +958,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			var profile = ProfileManager.LoadProfile(newID);
-
 			profile.ID = newID;
 			profile.SetActiveValue(SettingsKey.device_token, newID);
 			ProfileManager.Instance.Save();
