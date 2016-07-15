@@ -57,8 +57,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.auto_connect,
 			SettingsKey.baud_rate,
 			SettingsKey.com_port,
-			SettingsKey.created_date,
-			SettingsKey.delete_printer,
 			SettingsKey.filament_cost,
 			SettingsKey.filament_density,
 			"manual_probe_paper_width",

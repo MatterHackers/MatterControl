@@ -15,7 +15,6 @@ Simple
         auto_connect
         baud_rate
         com_port
-        delete_printer
 Intermediate
   General
     Layers/Surface
@@ -76,7 +75,6 @@ Intermediate
         auto_connect
         baud_rate
         com_port
-        delete_printer
 Advanced
   General
     Layers/Surface
@@ -279,8 +277,6 @@ Advanced
         auto_connect
         baud_rate
         com_port
-        created_date
-        delete_printer
     Print Area
       Size and Coordinates
         bed_size

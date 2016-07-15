@@ -5188,3 +5188,15 @@ Translated:Upload
 English:Printer History
 Translated:Printer History
 
+English:Subject*
+Translated:Subject*
+
+English:Message*
+Translated:Message*
+
+English:Email Address*
+Translated:Email Address*
+
+English:Name*
+Translated:Name*
+
