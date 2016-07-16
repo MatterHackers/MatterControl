@@ -36,6 +36,8 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -201,10 +203,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// User settings overrides
 		/// </summary>
 		public PrinterSettingsLayer UserLayer { get; } = new PrinterSettingsLayer();
-
+		//
 		public static PrinterSettings LoadFile(string printerProfilePath)
 		{
-			var jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
+
+			JObject jObject;
+			try
+			{
+				jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
+			}
+			catch
+			{
+				return RecoverProfile(printerProfilePath);
+			}
 
 			int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? 0;
 
@@ -214,7 +225,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Reload the document with the new schema
-			return JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath));
+			try
+			{
+				return JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath));
+			}
+			catch
+			{
+				return RecoverProfile(printerProfilePath);
+			}
+		}
+
+		public static PrinterSettings RecoverProfile(string printerProfilePath)
+		{
+			string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath); 
+			var profile = ProfileManager.Instance[profileKey];
+			string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
+			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ".json";
+			
+			var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
+			oemProfile.ID = profile.ID;
+			oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
+			oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
+
+			var profileHelper = new SettingsProfile(oemProfile);
+			profileHelper.SetComPort(profile.ComPort);
+			profileHelper.SaveChanges();
+
+			return oemProfile;
 		}
 
 		// TODO: Hookup OEM layers
