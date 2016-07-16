@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							return null;
 						}
 
-						if (!lineToSend.StartsWith("; LAYER:"))
+						if (!GCodeFile.IsLayerChange(lineToSend))
 						{
 							// have not seen the end of this layer so keep printing slow
 							if (LineIsMovement(lineToSend))
