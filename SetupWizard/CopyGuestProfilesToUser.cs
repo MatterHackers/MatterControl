@@ -35,18 +35,18 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Agg;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
 	public class CopyGuestProfilesToUser : WizardPage
 	{
-		static string importMessage = "Select what you would like to merge into your current profile.".Localize();
+		static string importMessage = "It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.".Localize();
 
-		List<string> guestProfiles;
 		List<CheckBox> checkBoxes = new List<CheckBox>();
 
-		public CopyGuestProfilesToUser()
-		: base("Cancel", "Copy Guest Printers")
+		public CopyGuestProfilesToUser(Action afterProfilesImported)
+		: base("Cancel", "Select Printers to Upload")
 		{
 			var scrollWindow = new ScrollableWidget()
 			{
@@ -65,60 +65,68 @@ namespace MatterHackers.MatterControl
 
 			container.AddChild(new WrappedTextWidget(importMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
-			guestProfiles = new List<string>()
-			{
-				"TAZ6",
-				"JumpStart",
-				"Emulator",
-				"Other test printer",
-			};
+			var byCheckbox = new Dictionary<CheckBox, PrinterInfo>();
 
-			if (guestProfiles.Count > 0)
+			var guestProfileManager = ProfileManager.LoadGuestDB();
+			if (guestProfileManager?.Profiles.Count > 0)
 			{
-				container.AddChild(new TextWidget("Quality Presets:")
+				container.AddChild(new TextWidget("Printers to Upload:".Localize())
 				{
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					Margin = new BorderDouble(0, 3, 0, 15),
 				});
 
-				foreach (var profileName in guestProfiles)
+				foreach (var printerInfo in guestProfileManager.Profiles)
 				{
-					CheckBox importButton = new CheckBox(profileName)
+					var checkBox = new CheckBox(printerInfo.Name)
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
 						HAnchor = HAnchor.ParentLeft,
+						Checked = true,
 					};
-					checkBoxes.Add(importButton);
-					container.AddChild(importButton);
+					checkBoxes.Add(checkBox);
+					container.AddChild(checkBox);
+
+					byCheckbox[checkBox] = printerInfo;
 				}
 			}
 
-			var copyButton = textImageButtonFactory.Generate("Copy".Localize());
-			copyButton.Click += (s, e) =>
+			var uploadButton = textImageButtonFactory.Generate("Upload".Localize());
+			uploadButton.Click += (s, e) =>
 			{
 				// do the import
-				for(int i=0; i< checkBoxes.Count; i++)
+				foreach(var checkBox in checkBoxes)
 				{
-					var checkBox = checkBoxes[i];
 					if (checkBox.Checked)
 					{
 						// import the printer
+						var printerInfo = byCheckbox[checkBox];
 
+						ProfileManager.Instance.Profiles.Add(printerInfo);
+						guestProfileManager.Profiles.Remove(printerInfo);
 					}
 				}
 
+				guestProfileManager.Save();
+
 				// close the window
-				UiThread.RunOnIdle(WizardWindow.Close);
+				UiThread.RunOnIdle(() =>
+				{
+					WizardWindow.Close();
+
+					// Call back into the original source
+					afterProfilesImported();
+				});
 			};
 
-			copyButton.Visible = true;
+			uploadButton.Visible = true;
 			cancelButton.Visible = true;
 
 			cancelButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.Close);
 
 			//Add buttons to buttonContainer
-			footerRow.AddChild(copyButton);
+			footerRow.AddChild(uploadButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
 

@@ -94,7 +94,6 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.UserLayer[SettingsKey.make] = printer.Make ?? "";
 			layeredProfile.UserLayer[SettingsKey.model] = printer.Model ?? "";
 			layeredProfile.UserLayer[SettingsKey.baud_rate] = printer.BaudRate ?? "";
-			layeredProfile.UserLayer[SettingsKey.com_port] = printer.ComPort ?? "";
 			layeredProfile.UserLayer[SettingsKey.auto_connect] = printer.AutoConnect ? "1" : "0";
 			layeredProfile.UserLayer[SettingsKey.default_material_presets] = printer.MaterialCollectionIds ?? "";
 			layeredProfile.UserLayer[SettingsKey.windows_driver] = printer.DriverType ?? "";
@@ -137,8 +136,13 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			//layeredProfile.SetActiveValue(""calibration_files"", ???);
 
 			layeredProfile.ID = printer.Id.ToString();
-			string fullProfilePath = Path.Combine(profilePath, printer.Id + ".json");
-			File.WriteAllText(fullProfilePath, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
+
+			layeredProfile.DocumentVersion = PrinterSettings.LatestVersion;
+
+			var settingsProfile = new SettingsProfile(layeredProfile);
+			settingsProfile.SetComPort(printer.ComPort);
+
+			settingsProfile.SaveChanges();
 		}
 
 		private static void LoadMaterialSettings(PrinterSettings layeredProfile, Printer printer)

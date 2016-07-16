@@ -50,16 +50,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static ProfileManager Instance { get; set; }
 
-		private static EventHandler unregisterEvents;
-		private static readonly string userDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
-		internal static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
+		public const string ProfileExtension = ".printer";
 
-		private static string ProfilesDBPath
+		private static EventHandler unregisterEvents;
+		private static readonly string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
+		private static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
+
+		private const string userDBExtension = ".profiles";
+		private const string guestDBFileName = "guest" + userDBExtension;
+
+		private static string GuestDBPath => Path.Combine(ProfilesPath, guestDBFileName);
+
+		internal static string ProfilesDBPath
 		{
 			get
 			{
 				string username = UserSettings.Instance.get("ActiveUserName");
-				return Path.Combine(ProfilesPath, string.IsNullOrEmpty(username) ? "profiles.json" : username + ".json");
+				return string.IsNullOrEmpty(username) ? GuestDBPath : Path.Combine(ProfilesPath, $"{username}{userDBExtension}");
 			}
 		}
 
@@ -77,8 +84,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 		}
 
+		[JsonIgnore]
+		public bool IsGuestProfile => Path.GetFileName(ProfilesDBPath) == guestDBFileName;
+
 		public static void Reload()
 		{
+			if (Instance?.Profiles != null)
+			{
+				// Release event registration
+				Instance.Profiles.CollectionChanged -= Profiles_CollectionChanged;
+			}
+
 			// Load the profiles document
 			if (File.Exists(ProfilesDBPath))
 			{
@@ -88,26 +104,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			else
 			{
 				Instance = new ProfileManager();
-
-				if (Path.GetFileName(ProfilesDBPath) == "profiles.json")
-				{
-					// Import classic db based profiles into local json files
-					DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, ProfilesPath);
-				}
 			}
 
-			// Load the last profile or an empty profile
+			// Load the last selected printer profile or an empty profile
 			ActiveSliceSettings.Instance = Instance.LoadLastProfile() ?? LoadEmptyProfile();
-
-			if (Instance != null)
-			{
-				// Release event registration
-				Instance.Profiles.CollectionChanged -= Profiles_CollectionChanged;
-			}
 
 
 			// In either case, wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
+		}
+
+
+		internal static ProfileManager LoadGuestDB()
+		{
+			if (File.Exists(GuestDBPath))
+			{
+				string json = File.ReadAllText(GuestDBPath);
+				return JsonConvert.DeserializeObject<ProfileManager>(json);
+			}
+
+			return null;
 		}
 
 		internal static void SettingsChanged(object sender, EventArgs e)
@@ -119,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 					Instance.Save();
 					break;
-				
+
 				case SettingsKey.com_port:
 					Instance.ActiveProfile.ComPort = ActiveSliceSettings.Instance.ComPort();
 					Instance.Save();
@@ -161,6 +177,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new SettingsProfile(printerSettings);
 		}
 
+		[JsonIgnore]
 		public string LastProfileID
 		{
 			get
@@ -171,6 +188,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return UserSettings.Instance.get(settingsKey);
 			}
 		}
+
+		public bool PrintersImported { get; set; } = false;
 
 		public SettingsProfile LoadLastProfile()
 		{
@@ -185,6 +204,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UserSettings.Instance.set(settingsKey, printerID);
 		}
 
+		public string ProfilePath(PrinterInfo printer)
+		{
+			return Path.Combine(ProfileManager.ProfilesPath, printer.ID + ProfileExtension);
+		}
+
+		public string ProfilePath(string printerID)
+		{
+			return Path.Combine(ProfileManager.ProfilesPath, printerID + ProfileExtension);
+		}
+
 		/// <summary>
 		/// Loads the specified SettingsProfile
 		/// </summary>
@@ -193,9 +222,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <returns></returns>
 		public static SettingsProfile LoadProfile(string profileID, bool useActiveInstance = true)
 		{
-			//return LoadProfileFromMCWS(profileID);
-
-			// Only load profiles by ID that are defined in the profiles.json document
+			// Only load profiles by ID that are defined in the profiles document
 			if (ProfileManager.Instance[profileID] == null)
 			{
 				return null;
@@ -206,7 +233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return ActiveSliceSettings.Instance;
 			}
 
-			string profilePath = Path.Combine(ProfilesPath, profileID + ".json");
+			string profilePath = Path.Combine(ProfilesPath, profileID +  ProfileManager.ProfileExtension);
 			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
 		}
 
@@ -238,7 +265,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string importType = Path.GetExtension(settingsFilePath).ToLower();
 			switch (importType)
 			{
-				case ".printer":
+				case ProfileManager.ProfileExtension:
 					var profile = ProfileManager.LoadProfileFromDisk(settingsFilePath);
 					profile.ID = printerInfo.ID;
 					profile.ClearValue(SettingsKey.device_token);
@@ -358,6 +385,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					return responseText;
 				});
+		}
+
+		public void EnsurePrintersImported()
+		{
+			if (IsGuestProfile && !PrintersImported)
+			{
+				// Import Sqlite printer profiles into local json files
+				DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, ProfilesPath);
+				PrintersImported = true;
+				Save();
+			}
 		}
 
 		private static void Profiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

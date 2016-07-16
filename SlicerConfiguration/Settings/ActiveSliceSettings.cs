@@ -76,6 +76,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (!MatterControlApplication.IsLoading)
 					{
 						OnActivePrinterChanged(null);
+
+						string[] comportNames = FrostedSerialPort.GetPortNames();
+
+						if (Instance.GetValue<bool>(SettingsKey.auto_connect))
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+								PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+							}, 2);
+						}
 					}
 				}
 			}
@@ -127,24 +138,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		static ActiveSliceSettings()
 		{
 			// Load Startup Profile
-			bool portExists = false;
-
-			string[] comportNames = FrostedSerialPort.GetPortNames();
-
 			var startupProfile = ProfileManager.Instance.LoadLastProfile();
 			if (startupProfile != null)
 			{
-				portExists = comportNames.Contains(startupProfile.ComPort());
 				Instance = startupProfile;
-
-				if (portExists && startupProfile.GetValue<bool>(SettingsKey.auto_connect))
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-						PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
-					}, 2);
-				}
 			}
 
 			if (Instance == null)

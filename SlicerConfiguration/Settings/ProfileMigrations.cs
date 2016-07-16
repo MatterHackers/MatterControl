@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				jObject["DocumentVersion"] = 201605132;
 
 				File.Delete(filePath);
-				filePath = Path.Combine(Path.GetDirectoryName(filePath), printerID + ".json");
+				filePath = Path.Combine(Path.GetDirectoryName(filePath), printerID + ProfileManager.ProfileExtension);
 			}
 
 			if (fromVersion < 201606081)
@@ -198,10 +198,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							case "MatterControl.PrintLevelingEnabled":
 								layer.Add("print_leveling_enabled", item.Value);
-								break;
-
-							case "MatterControl.DeletePrinter":
-								layer.Add(SettingsKey.delete_printer, item.Value);
 								break;
 
 							case "MatterControl.ManualMovementSpeeds":

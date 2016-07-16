@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 			AddChild(advancedTab);
 			AnchorAll();
 
-			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadSliceSettings), ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadSliceSettings), ref unregisterEvents);
 		}
 
 		public static string SliceSettingsTabName { get; } = "Slice Settings Tab";
@@ -67,6 +67,10 @@ namespace MatterHackers.MatterControl
 		public void ReloadSliceSettings()
 		{
 			WidescreenPanel.PreChangePanels.CallEvents(null, null);
+			if (advancedTab.HasBeenClosed)
+			{
+				return;
+			}
 
 			// remove the advance control and replace it with new ones built for the selected printer
 			int advancedControlsIndex = GetChildIndex(advancedTab);

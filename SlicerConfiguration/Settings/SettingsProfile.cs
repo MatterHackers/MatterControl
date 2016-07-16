@@ -85,7 +85,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
-		public const string delete_printer = nameof(delete_printer);
 		public const string created_date = nameof(created_date);
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
@@ -422,11 +421,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		#region Migrate to LayeredProfile 
 
+		static Dictionary<string, Type> expectedMappingTypes = new Dictionary<string, Type>()
+		{
+			[SettingsKey.extruders_share_temperature] = typeof(int),
+			[SettingsKey.extruder_count] = typeof(int),
+			[SettingsKey.extruders_share_temperature] = typeof(bool),
+			[SettingsKey.has_heated_bed] = typeof(bool),
+			[SettingsKey.nozzle_diameter] = typeof(double),
+			[SettingsKey.bed_temperature] = typeof(double),
+		};
+
+		void ValidateType<T>(string settingsKey)
+		{
+			if(expectedMappingTypes.ContainsKey(settingsKey))
+			{
+				if(expectedMappingTypes[settingsKey] != typeof(T))
+				{
+					throw new Exception("You must request the correct type of this settingsKey.");
+				}
+			}
+
+			if(settingsKey.Contains("%"))
+			{
+				if(typeof(T) != typeof(double))
+				{
+					throw new Exception("To get processing of a % you must request the type as double.");
+				}
+			}
+		}
+
 		///<summary>
 		///Returns the first matching value discovered while enumerating the settings layers
 		///</summary>
 		public T GetValue<T>(string settingsKey) where T : IConvertible
 		{
+#if DEBUG
+			ValidateType<T>(settingsKey);
+#endif
 			if (typeof(T) == typeof(bool))
 			{
 				return (T)(object)(this.GetValue(settingsKey) == "1");
@@ -819,11 +850,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		#endregion
 
-		public void SetAutoConnect(bool autoConnectPrinter)
-		{
-			layeredProfile.SetValue(SettingsKey.auto_connect, autoConnectPrinter ? "1" : "0");
-		}
-
 		public void SetMarkedForDelete(bool markedForDelete)
 		{
 			var printerInfo = ProfileManager.Instance.ActiveProfile;
@@ -921,6 +947,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ChangeID(string newID)
 		{
+			if (ActiveSliceSettings.Instance.ID == this.ID)
+			{
+				ActiveSliceSettings.Instance.ID = newID;
+			}
+
 			string existingProfile = ProfilePath;
 			if (File.Exists(existingProfile))
 			{
@@ -929,13 +960,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			var profile = ProfileManager.LoadProfile(newID);
-
 			profile.ID = newID;
 			profile.SetActiveValue(SettingsKey.device_token, newID);
 			ProfileManager.Instance.Save();
 		}
 
 		[JsonIgnore]
-		public string ProfilePath => Path.Combine(ProfileManager.ProfilesPath, ID + ".json");
+		public string ProfilePath => ProfileManager.Instance.ProfilePath(this);
 	}
 }

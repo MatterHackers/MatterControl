@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl
 	public class ApplicationController
 	{
 		private static ApplicationController globalInstance;
-		public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
+		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
@@ -169,6 +169,7 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 		public static Func<PrinterInfo,string, Task> GetPrinterProfile;
+		public static Func<Task> SyncPrinterProfiles;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
@@ -185,12 +186,7 @@ namespace MatterHackers.MatterControl
 		public ApplicationController()
 		{
 			//Name = "MainSlidePanel";
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			ReloadAll(null, null);
+			ActiveTheme.ThemeChanged.RegisterEvent(ReloadAll, ref unregisterEvents);
 		}
 
 		public void StartLogin()
@@ -322,7 +318,7 @@ namespace MatterHackers.MatterControl
 
 		public void ReloadAdvancedControlsPanel()
 		{
-			ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
+			AdvancedControlsPanelReloading.CallEvents(this, null);
 		}
 
 		public LibraryDataView CurrentLibraryDataView = null;
@@ -360,7 +356,35 @@ namespace MatterHackers.MatterControl
 
 			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
 			UserSettings.Instance.set("ActiveUserName", activeUserName);
+
+			UserChanged();
+		}
+
+		// Called after every startup and at the completion of every authentication change
+		public void UserChanged()
+		{
 			ProfileManager.Reload();
+
+			var profileManager = ProfileManager.Instance;
+
+			// Ensure SQLite printers are imported
+			profileManager.EnsurePrintersImported();
+
+			var guestDB = ProfileManager.LoadGuestDB();
+
+			// If profiles.json was created, run the import wizard to pull in any SQLite printers
+			if (guestDB?.Profiles != null && guestDB.Profiles.Any() && !profileManager.IsGuestProfile && !profileManager.PrintersImported)
+			{
+				var wizardPage = new CopyGuestProfilesToUser(() =>
+				{
+					// On success, set state indicating import has been run and update ProfileManager state
+					profileManager.PrintersImported = true;
+					profileManager.Save();
+				});
+
+				// Show the import printers wizard
+				WizardWindow.Show("/CopyGuestProfiles", "Upload Printers", wizardPage);
+			}
 		}
 
 		public class CloudSyncEventArgs : EventArgs

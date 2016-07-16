@@ -451,8 +451,8 @@ namespace MatterHackers.MatterControl
 		}
 
 #if DEBUG
-		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
-		public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
+		public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
+		//public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
 #else
 		public static string MCWSBaseUri { get;} = "https://mattercontrol.appspot.com";
 #endif
@@ -694,6 +694,8 @@ namespace MatterHackers.MatterControl
 
 				TerminalWindow.ShowIfLeftOpen();
 
+				ApplicationController.Instance.UserChanged();
+
 #if false
 			{
 				SystemWindow releaseNotes = new SystemWindow(640, 480);
@@ -718,12 +720,16 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
 				}
-
-				if (!ProfileManager.Instance.ActiveProfiles.Any())
+				ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
 				{
-					// Start the setup wizard if no profiles exist
-					UiThread.RunOnIdle(() => WizardWindow.Show());
-				}
+					ApplicationController.Instance.ReloadAdvancedControlsPanel();
+					if (!ProfileManager.Instance.ActiveProfiles.Any())
+					{
+						// Start the setup wizard if no profiles exist
+						UiThread.RunOnIdle(() => WizardWindow.Show());
+					}
+				});
+				
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
