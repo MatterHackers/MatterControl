@@ -66,8 +66,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						if (lineToSend != null
 							&& lineToSend.StartsWith("M"))
 						{
+							// initial test is just to see if it is an M109
 							if (lineToSend.StartsWith("M109")) // extruder set and wait temp
 							{
+								// If it has a control character T or F
+								if (lineToSend.Contains("T") || lineToSend.Contains("F"))
+								{
+									// don't replace it
+									return lineToSend;
+								}
+
+								// if it is a rest (has no S temperature)
+								if (!lineToSend.Contains("S"))
+								{
+									// don't replace it
+									return lineToSend;
+								}
+
 								// send an M104 instead
 								waitWhenCooling = false;
 								lineToSend = "M104" + lineToSend.Substring(4);
