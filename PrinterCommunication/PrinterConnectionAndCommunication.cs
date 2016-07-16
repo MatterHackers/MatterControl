@@ -258,9 +258,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineStartCallBacks.AddCallbackToKey("ok", PrintingCanContinue);
 			ReadLineStartCallBacks.AddCallbackToKey("Done saving file", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallbackToKey("ok T:", ReadTemperatures); // marlin
 			ReadLineStartCallBacks.AddCallbackToKey("ok T0:", ReadTemperatures); // marlin
-			ReadLineStartCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repetier
 			ReadLineStartCallBacks.AddCallbackToKey("B:", ReadTemperatures); // smoothie
 
 			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
@@ -268,6 +266,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
 			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
 			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
+
+			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures);
 
 			ReadLineContainsCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
 			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
