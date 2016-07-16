@@ -197,6 +197,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 				);
 			printerModelSelector.ListSource = models;
+			if (printerModelSelector.MenuItems.Count == 1)
+			{
+				// SelectIfOnlyOneModel
+				printerModelSelector.SelectedIndex = 0;
+			}
 
 			contentRow.Invalidate();
 

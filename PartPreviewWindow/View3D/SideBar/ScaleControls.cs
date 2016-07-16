@@ -271,6 +271,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AxisAlignedBoundingBox scaledBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
 			PlatingHelper.PlaceMeshAtHeight(view3DWidget.MeshGroups, view3DWidget.MeshGroupTransforms, view3DWidget.SelectedMeshGroupIndex, scaledBounds.minXYZ.z);
 
+			PlatingHelper.PlaceMeshGroupOnBed(view3DWidget.MeshGroups, view3DWidget.MeshGroupTransforms, view3DWidget.SelectedMeshGroupIndex);
+
 			view3DWidget.PartHasBeenChanged();
 			Invalidate();
 			OnSelectedTransformChanged(this, null);
