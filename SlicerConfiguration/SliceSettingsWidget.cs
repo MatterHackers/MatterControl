@@ -671,7 +671,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			// OEM_LAYER_DATE:
-			string lastUpdateTime = "Defaults Updated On: {0}".Localize().FormatWith(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date));
+			string lastUpdateTime = "3/1/2016";
+			if (ActiveSliceSettings.Instance?.OemLayer != null)
+			{
+				lastUpdateTime = "Defaults Updated On: { 0} ".Localize().FormatWith(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date));
+			}
+
 			dataArea.AddChild(new TextWidget(lastUpdateTime, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				HAnchor= HAnchor.ParentCenter,
