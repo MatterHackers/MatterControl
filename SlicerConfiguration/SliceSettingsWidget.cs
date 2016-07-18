@@ -671,7 +671,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			// OEM_LAYER_DATE:
-			string lastUpdateTime = "Defalts Update On: {0}".FormatWith(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date));
+			string lastUpdateTime = "Defaults Updated On: {0}".Localize().FormatWith(ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date));
 			dataArea.AddChild(new TextWidget(lastUpdateTime, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				HAnchor= HAnchor.ParentCenter,
