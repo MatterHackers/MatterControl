@@ -23,7 +23,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "rectangular"
+    "DefaultValue": "rectangular",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -166,7 +167,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -179,7 +181,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": ""
+    "DefaultValue": "",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -546,7 +549,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [
@@ -568,7 +572,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "1.24"
+    "DefaultValue": "1.24",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -711,7 +716,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "10"
+    "DefaultValue": "10",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -724,7 +730,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -737,7 +744,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0,0"
+    "DefaultValue": "0,0",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -884,7 +892,8 @@
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
     "DefaultValue": "None",
-    "ReloadUiWhenChanged":  true
+    "ReloadUiWhenChanged":  true,
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -897,7 +906,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -911,7 +921,8 @@
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
     "DefaultValue": "0",
-    "ReloadUiWhenChanged":  true
+    "ReloadUiWhenChanged":  true,
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -1055,7 +1066,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "3 Point Plane"
+    "DefaultValue": "3 Point Plane",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -1069,20 +1081,8 @@
     "ShowIfSet": "!has_hardware_leveling",
     "ResetAtEndOfPrint": false,
     "DefaultValue": "0",
-    "ReloadUiWhenChanged":  true
-  },
-  {
-    "QuickMenuSettings": [],
-    "SetSettingsOnChange": [],
-    "SlicerConfigName": "print_leveling_method",
-    "PresentationName": "Leveling Method",
-    "HelpText": "The print leveling sampling method to use.",
-    "DataEditType": "LIST",
-    "ExtraSettings": "Manual,Use Z Limit Switch,Probe With G30",
-    "ShowAsOverride": true,
-    "ShowIfSet": "!has_hardware_leveling",
-    "ResetAtEndOfPrint": false,
-    "DefaultValue": "Manual"
+    "ReloadUiWhenChanged":  true,
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -1095,7 +1095,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "ResetAtEndOfPrint": false,
-    "DefaultValue": ".1"
+    "DefaultValue": ".1",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -1333,7 +1334,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": ""
+    "DefaultValue": "",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -1476,7 +1478,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": ""
+    "DefaultValue": "",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -2230,7 +2233,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "2"
+    "DefaultValue": "2",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -2356,7 +2360,8 @@
     "ShowAsOverride": false,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "250000"
+    "DefaultValue": "250000",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -2369,7 +2374,8 @@
     "ShowAsOverride": false,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": ""
+    "DefaultValue": "",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -2382,7 +2388,8 @@
     "ShowAsOverride": false,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "true"
+    "DefaultValue": "true",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -2395,7 +2402,8 @@
     "ShowAsOverride": false,
     "ShowIfSet": null,
     "ResetAtEndOfPrint": false,
-    "DefaultValue": ""
+    "DefaultValue": "",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
@@ -2460,7 +2468,8 @@
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "ResetAtEndOfPrint": false,
-    "DefaultValue": "0"
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange":  false
   },
   {
     "QuickMenuSettings": [],
