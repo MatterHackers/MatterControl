@@ -93,34 +93,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class SettingsHelpers
 	{
-		private PrinterSettings parentProfile;
+		private PrinterSettings printerSettings;
 
-		public SettingsHelpers(PrinterSettings parentProfile)
+		public SettingsHelpers(PrinterSettings printerSettings)
 		{
-			this.parentProfile = parentProfile;
+			this.printerSettings = printerSettings;
 		}
 
 		public string ExtruderTemperature(int extruderIndex)
 		{
-			if (extruderIndex >= parentProfile.MaterialSettingsKeys.Count)
+			if (extruderIndex >= printerSettings.MaterialSettingsKeys.Count)
 			{
 				// MaterialSettingsKeys is empty or lacks a value for the given extruder index
 				//
 				// If extruder index zero was requested, return the layer cascade temperature value, otherwise null
-				return (extruderIndex == 0) ? parentProfile.GetValue("temperature") : null;
+				return (extruderIndex == 0) ? printerSettings.GetValue("temperature") : null;
 			}
 
-			string materialKey = parentProfile.MaterialSettingsKeys[extruderIndex];
+			string materialKey = printerSettings.MaterialSettingsKeys[extruderIndex];
 
-			if (extruderIndex == 0 && (string.IsNullOrEmpty(materialKey) || parentProfile.UserLayer.ContainsKey("temperature")))
+			if (extruderIndex == 0 && (string.IsNullOrEmpty(materialKey) || printerSettings.UserLayer.ContainsKey("temperature")))
 			{
 				// In the case where a user override exists or MaterialSettingsKeys is populated with multiple extruder 
 				// positions but position 0 is empty and thus unassigned, use layer cascade to resolve temp
-				return parentProfile.GetValue("temperature");
+				return printerSettings.GetValue("temperature");
 			}
 
 			// Otherwise, use the SettingsLayers that is bound to this extruder
-			PrinterSettingsLayer layer = parentProfile.GetMaterialLayer(materialKey);
+			PrinterSettingsLayer layer = printerSettings.GetMaterialLayer(materialKey);
 
 			string result = "0";
 			layer?.TryGetValue("temperature", out result);
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public int[] LayerToPauseOn()
 		{
-			string[] userValues = parentProfile.GetValue("layer_to_pause").Split(';');
+			string[] userValues = printerSettings.GetValue("layer_to_pause").Split(';');
 
 			int temp;
 			return userValues.Where(v => int.TryParse(v, out temp)).Select(v =>
@@ -169,50 +169,50 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetBaudRate(string baudRate)
 		{
-			parentProfile.SetValue(SettingsKey.baud_rate, baudRate);
+			printerSettings.SetValue(SettingsKey.baud_rate, baudRate);
 		}
 
 		public string ComPort()
 		{
-			return parentProfile.GetValue($"{Environment.MachineName}_com_port");
+			return printerSettings.GetValue($"{Environment.MachineName}_com_port");
 		}
 
 		public void SetComPort(string port)
 		{
-			parentProfile.SetValue($"{Environment.MachineName}_com_port", port);
+			printerSettings.SetValue($"{Environment.MachineName}_com_port", port);
 		}
 
 		public void SetComPort(string port, PrinterSettingsLayer layer)
 		{
-			parentProfile.SetValue($"{Environment.MachineName}_com_port", port, layer);
+			printerSettings.SetValue($"{Environment.MachineName}_com_port", port, layer);
 		}
 
 		public void SetSlicingEngine(string engine)
 		{
-			parentProfile.SetValue("slicing_engine", engine);
+			printerSettings.SetValue("slicing_engine", engine);
 		}
 
 		public void SetDriverType(string driver)
 		{
-			parentProfile.SetValue("driver_type", driver);
+			printerSettings.SetValue("driver_type", driver);
 		}
 
 		public void SetDeviceToken(string token)
 		{
-			if (parentProfile.GetValue(SettingsKey.device_token) != token)
+			if (printerSettings.GetValue(SettingsKey.device_token) != token)
 			{
-				parentProfile.SetValue(SettingsKey.device_token, token);
+				printerSettings.SetValue(SettingsKey.device_token, token);
 			}
 		}
 
 		public void SetName(string name)
 		{
-			parentProfile.SetValue(SettingsKey.printer_name, name);
+			printerSettings.SetValue(SettingsKey.printer_name, name);
 		}
 
 		public void SetManualMovementSpeeds(string speed)
 		{
-			parentProfile.SetValue("manual_movement_speeds", speed);
+			printerSettings.SetValue("manual_movement_speeds", speed);
 		}
 
 		private PrintLevelingData printLevelingData = null;
@@ -222,8 +222,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				printLevelingData = PrintLevelingData.Create(
 					ActiveSliceSettings.Instance,
-					parentProfile.GetValue("print_leveling_data"),
-					parentProfile.GetValue("MatterControl.PrintLevelingProbePositions"));
+					printerSettings.GetValue("print_leveling_data"),
+					printerSettings.GetValue("MatterControl.PrintLevelingProbePositions"));
 
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
 					printLevelingData.SampledPosition0,
@@ -238,20 +238,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetPrintLevelingData(PrintLevelingData data)
 		{
 			printLevelingData = data;
-			parentProfile.SetValue("print_leveling_data", JsonConvert.SerializeObject(data));
+			printerSettings.SetValue("print_leveling_data", JsonConvert.SerializeObject(data));
 		}
 
 		public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
-			if (doLeveling == parentProfile.GetValue<bool>("print_leveling_enabled"))
+			if (doLeveling == printerSettings.GetValue<bool>("print_leveling_enabled"))
 			{
 				return;
 			}
 
-			parentProfile.SetValue("print_leveling_enabled", doLeveling ? "1" : "0");
+			printerSettings.SetValue("print_leveling_enabled", doLeveling ? "1" : "0");
 
-			parentProfile.DoPrintLevelingChanged.CallEvents(this, null);
+			printerSettings.DoPrintLevelingChanged.CallEvents(this, null);
 
 			if (doLeveling)
 			{
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Vector2 ExtruderOffset(int extruderIndex)
 		{
-			string currentOffsets = parentProfile.GetValue("extruder_offset");
+			string currentOffsets = printerSettings.GetValue("extruder_offset");
 			string[] offsets = currentOffsets.Split(',');
 			int count = 0;
 			foreach (string offset in offsets)
@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SlicingEngineTypes ActiveSliceEngineType()
 		{
-			string engineType = parentProfile.GetValue("slicing_engine");
+			string engineType = printerSettings.GetValue("slicing_engine");
 			if (string.IsNullOrEmpty(engineType))
 			{
 				return defaultEngineType;
@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ActiveSliceEngineType(SlicingEngineTypes type)
 		{
-			parentProfile.SetValue("slicing_engine", type.ToString());
+			printerSettings.SetValue("slicing_engine", type.ToString());
 		}
 
 		public SliceEngineMapping ActiveSliceEngine()
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings"),
 			(saveParams) =>
 			{
-				File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(parentProfile, Formatting.Indented));
+				File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printerSettings, Formatting.Indented));
 			});
 		}
 
@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// TODO: No longer valid to check for leading MatterControl. token
 				foreach (var key in PrinterSettings.KnownSettings.Where(k => !k.StartsWith("MatterControl.")))
 				{
-					string activeValue = parentProfile.GetValue(key);
+					string activeValue = printerSettings.GetValue(key);
 					if (replaceMacroValues)
 					{
 						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
@@ -402,7 +402,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
 			if (PrinterConnectionAndCommunication.Instance != null)
 			{
-				string savedSettings = parentProfile.GetValue("manual_movement_speeds");
+				string savedSettings = printerSettings.GetValue("manual_movement_speeds");
 				if (!string.IsNullOrEmpty(savedSettings))
 				{
 					presets = savedSettings;
