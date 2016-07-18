@@ -305,19 +305,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string guid = Guid.NewGuid().ToString();
 
-			OemProfile oemProfile = LoadHttpOemProfile(make, model);
+			var newProfile = LoadHttpOemProfile(make, model);
+			newProfile.ID = guid;
+			newProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
-			var layeredProfile = new PrinterSettings()
-			{
-				ID = guid,
-				// TODO: This should really be set by the system that generates the source documents
-				DocumentVersion = PrinterSettings.LatestVersion,
-				OemLayer = oemProfile.OemLayer
-			};
-			layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
+			newProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
 
 			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
-			var classicDefaultMacros = layeredProfile.GetValue("default_macros");
+			var classicDefaultMacros = newProfile.GetValue("default_macros");
 			if (!string.IsNullOrEmpty(classicDefaultMacros))
 			{
 				var namedMacros = new Dictionary<string, string>();
@@ -335,23 +330,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string gcode;
 					if (namedMacros.TryGetValue(namedMacro.Trim(), out gcode))
 					{
-						layeredProfile.Macros.Add(new GCodeMacro()
+						newProfile.Macros.Add(new GCodeMacro()
 						{
 							Name = namedMacro.Trim(),
 							GCode = gcode
 						});
 					}
 				}
-			}
-
-			// Copy OemProfile presets into user layers
-			foreach (var materialPreset in oemProfile.MaterialLayers)
-			{
-				layeredProfile.MaterialLayers.Add(materialPreset);
-			}
-			foreach (var qualityPreset in oemProfile.QualityLayers)
-			{
-				layeredProfile.QualityLayers.Add(qualityPreset);
 			}
 
 			Instance.Profiles.Add(new PrinterInfo
@@ -363,17 +348,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 
 			// Update SHA1
-			layeredProfile.Save();
+			newProfile.Save();
 
 			UserSettings.Instance.set("ActiveProfileID", guid);
 
-			ActiveSliceSettings.Instance = new SettingsProfile(layeredProfile);
+			ActiveSliceSettings.Instance = new SettingsProfile(newProfile);
 		}
 
-		private static OemProfile LoadHttpOemProfile(string make, string model)
+		private static PrinterSettings LoadHttpOemProfile(string make, string model)
 		{
 			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
-			return MatterControlApplication.LoadCacheable<OemProfile>(
+			return MatterControlApplication.LoadCacheable<PrinterSettings>(
 				String.Format("{0}.json", deviceToken),
 				"profiles",
 				() =>

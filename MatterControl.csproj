@@ -259,7 +259,6 @@
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
     <Compile Include="SlicerConfiguration\Settings\GCodeMacro.cs" />
-    <Compile Include="SlicerConfiguration\Settings\OemProfile.cs" />
     <Compile Include="SlicerConfiguration\Settings\ProfileMigrations.cs" />
     <Compile Include="SlicerConfiguration\Settings\ProfileManager.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettingsLayer.cs" />
