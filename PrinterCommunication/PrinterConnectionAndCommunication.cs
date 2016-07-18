@@ -514,7 +514,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string ComPort => ActiveSliceSettings.Instance?.ComPort();
+		public string ComPort => ActiveSliceSettings.Instance?.Helpers.ComPort();
 
 		public string DriverType => ActiveSliceSettings.Instance?.GetValue("driver_type");
 
@@ -1348,7 +1348,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
 					|| ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
 				{
-					PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if(levelingData?.HasBeenRun() != true)
 					{
 						LevelWizardBase.ShowPrintLevelWizard();
@@ -1646,7 +1646,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
 												|| ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
 											{
-												PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+												PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 												if (levelingData?.HasBeenRun() != true)
 												{
 													UiThread.RunOnIdle(LevelWizardBase.ShowPrintLevelWizard);

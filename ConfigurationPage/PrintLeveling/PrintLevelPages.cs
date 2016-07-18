@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
-			ActiveSliceSettings.Instance.DoPrintLeveling (false);
+			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling (false);
 			base.PageIsBecomingActive();
 		}
 	}
@@ -65,15 +65,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>("manual_probe_paper_width"));
 
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 			levelingData.SampledPosition0 = probePositions[0].position - paperWidth;
 			levelingData.SampledPosition1 = probePositions[1].position - paperWidth;
 			levelingData.SampledPosition2 = probePositions[2].position - paperWidth;
 
 			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.SetPrintLevelingData(levelingData);
+			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
 
-			ActiveSliceSettings.Instance.DoPrintLeveling ( true);
+			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
 
 			base.PageIsBecomingActive();
 		}
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
 			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>("manual_probe_paper_width"));
 			for (int i = 0; i < probePositions.Length; i++)
@@ -100,9 +100,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.SetPrintLevelingData(levelingData);
+			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
 
-			ActiveSliceSettings.Instance.DoPrintLeveling ( true);
+			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
 			base.PageIsBecomingActive();
 		}
 	}
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// first make sure there is no leftover FinishedProbe event
 			PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
 
-			var feedRates = ActiveSliceSettings.Instance.ManualMovementSpeeds();
+			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
 
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					int zStringPos = currentEvent.Data.LastIndexOf("Z:");
 					string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
 					probePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
-					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
+					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
 					PrinterConnectionAndCommunication.Instance.ReadPosition();
 
 					container.nextButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>("manual_probe_paper_width"));
 
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 			levelingData.SampledPosition0 = userBedSample0 - paperWidth;
 			levelingData.SampledPosition1 = userBedSample1 - paperWidth;
 			levelingData.SampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0 - paperWidth;
@@ -206,9 +206,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			levelingData.ProbeOffset1 = probeOffset1 - paperWidth;
 
 			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.SetPrintLevelingData(levelingData);
+			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
 
-			ActiveSliceSettings.Instance.DoPrintLeveling ( true);
+			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
 			base.PageIsBecomingActive();
 		}
 	}
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			ActiveSliceSettings.Instance.DoPrintLeveling ( false);
+			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(false);
 
 			base.PageIsBecomingActive();
 		}
@@ -315,13 +315,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// don't move the bed lower it will not work when we print.
 				return;
 			}
-			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, -moveAmount, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
+			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, -moveAmount, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
 			PrinterConnectionAndCommunication.Instance.ReadPosition();
 		}
 
 		private void zPlusControl_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmount, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
+			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmount, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
 			PrinterConnectionAndCommunication.Instance.ReadPosition();
 		}
 	}
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			base.PageIsBecomingActive();
 
-			var feedRates = ActiveSliceSettings.Instance.ManualMovementSpeeds();
+			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
 
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// first make sure there is no leftover FinishedProbe event
 			PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
 
-			var feedRates = ActiveSliceSettings.Instance.ManualMovementSpeeds();
+			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
 
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					whereToWriteSamplePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
 
 					// now move to the probe start position
-					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
+					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
 					PrinterConnectionAndCommunication.Instance.ReadPosition();
 				}
 			}
@@ -476,7 +476,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (haveDrawn)
 			{
-				PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, 2, ActiveSliceSettings.Instance.ManualMovementSpeeds().z);
+				PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, 2, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
 			}
 			base.PageIsBecomingInactive();
 		}

@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 
-					PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 
 					// now copy all the gcode to the path given
 					for (int i = 0; i < savedGCodeFileNames.Count; i++)

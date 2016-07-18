@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G90; use absolute coordinates");
 					queuedCommands.Add("G92 E0; reset the expected extruder position");
 					queuedCommands.Add("M82; use absolute distance for extrusion");
-					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.ExtruderTemperature(0)));
+					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(0)));
 
 					resumeState = ResumeState.Raising;
 					return "";

@@ -70,15 +70,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private event EventHandler unregisterEvents;
 
-		public static double XSpeed => ActiveSliceSettings.Instance.GetMovementSpeeds()["x"];
+		public static double XSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["x"];
 
-		public static double YSpeed => ActiveSliceSettings.Instance.GetMovementSpeeds()["y"];
+		public static double YSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["y"];
 
-		public static double ZSpeed => ActiveSliceSettings.Instance.GetMovementSpeeds()["z"];
+		public static double ZSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["z"];
 
 		public static double EFeedRate(int extruderIndex)
 		{
-			var movementSpeeds = ActiveSliceSettings.Instance.GetMovementSpeeds();
+			var movementSpeeds = ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds();
 
 			string extruderIndexKey = "e" + extruderIndex.ToString();
 			if (movementSpeeds.ContainsKey(extruderIndexKey))
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				if (editManualMovementSettingsWindow == null)
 				{
-					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), ActiveSliceSettings.Instance.GetMovementSpeedsString(), SetMovementSpeeds);
+					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), ActiveSliceSettings.Instance.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
 					editManualMovementSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editManualMovementSettingsWindow = null; };
 				}
 				else
@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			StringEventArgs stringEvent = e as StringEventArgs;
 			if (stringEvent != null && stringEvent.Data != null)
 			{
-				ActiveSliceSettings.Instance.SetManualMovementSpeeds(stringEvent.Data);
+				ActiveSliceSettings.Instance.Helpers.SetManualMovementSpeeds(stringEvent.Data);
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
 		}

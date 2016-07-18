@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				ActiveSliceSettings.Instance.DoPrintLeveling(printLevelingSwitch.Checked);
+				ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
 			};
 
 			printLevelingStatusLabel = new TextWidget("")

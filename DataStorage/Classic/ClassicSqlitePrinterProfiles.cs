@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			layeredProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
 			var settingsProfile = new SettingsProfile(layeredProfile);
-			settingsProfile.SetComPort(printer.ComPort);
+			settingsProfile.Helpers.SetComPort(printer.ComPort);
 
 			settingsProfile.SaveChanges();
 		}

@@ -68,6 +68,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 
+		public const string ConfigFileExtension = ".slice";
+
 		private const string userDBExtension = ".profiles";
 		private const string guestDBFileName = "guest" + userDBExtension;
 
@@ -126,7 +128,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
 		}
 
-
 		internal static ProfileManager LoadGuestDB()
 		{
 			if (File.Exists(GuestDBPath))
@@ -149,7 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SettingsKey.com_port:
-					Instance.ActiveProfile.ComPort = ActiveSliceSettings.Instance.ComPort();
+					Instance.ActiveProfile.ComPort = ActiveSliceSettings.Instance.Helpers.ComPort();
 					Instance.Save();
 					break;
 			}
@@ -284,7 +285,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printerInfo.DeviceToken = "";
 
 					// TODO: Resolve name conflicts
-					profile.SetName(printerInfo.Name);
+					profile.Helpers.SetName(printerInfo.Name);
 
 					Instance.Profiles.Add(printerInfo);
 

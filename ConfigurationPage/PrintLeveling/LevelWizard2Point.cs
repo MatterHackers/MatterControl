@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
 				{
-					ActiveSliceSettings.Instance.DoPrintLeveling(false);
+					ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(false);
 				}
 
 				probeIndex = 0;
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				StringBuilder commands = new StringBuilder();
 
-				var feedRates = ActiveSliceSettings.Instance.ManualMovementSpeeds();
+				var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
 
 				// make sure the probe offset is set to 0
 				lines.Add("M565 Z0");
@@ -248,15 +248,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static void SetEquations()
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 
 			// position 0 does not change as it is the distance from the switch trigger to the extruder tip.
 			//levelingData.sampledPosition0 = levelingData.sampledPosition0;
 			levelingData.SampledPosition1 = levelingData.SampledPosition0 + probeRead1;
 			levelingData.SampledPosition2 = levelingData.SampledPosition0 + probeRead2;
 
-			ActiveSliceSettings.Instance.SetPrintLevelingData(levelingData);
-			ActiveSliceSettings.Instance.DoPrintLeveling(true);
+			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
+			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(true);
 		}
 	}
 }

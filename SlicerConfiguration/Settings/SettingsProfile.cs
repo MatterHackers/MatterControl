@@ -90,9 +90,334 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_density = nameof(filament_density);
 		public const string filament_diameter = nameof(filament_diameter);
 	};
+
+	public class SettingsHelpers
+	{
+		private SettingsProfile parentProfile;
+		private PrinterSettings layeredProfile;
+
+		public SettingsHelpers(SettingsProfile profile, PrinterSettings layeredProfile)
+		{
+			parentProfile = profile;
+			this.layeredProfile = layeredProfile;
+		}
+
+		public string ExtruderTemperature(int extruderIndex)
+		{
+			if (extruderIndex >= layeredProfile.MaterialSettingsKeys.Count)
+			{
+				// MaterialSettingsKeys is empty or lacks a value for the given extruder index
+				//
+				// If extruder index zero was requested, return the layer cascade temperature value, otherwise null
+				return (extruderIndex == 0) ? layeredProfile.GetValue("temperature") : null;
+			}
+
+			string materialKey = layeredProfile.MaterialSettingsKeys[extruderIndex];
+
+			if (extruderIndex == 0 && (string.IsNullOrEmpty(materialKey) || layeredProfile.UserLayer.ContainsKey("temperature")))
+			{
+				// In the case where a user override exists or MaterialSettingsKeys is populated with multiple extruder 
+				// positions but position 0 is empty and thus unassigned, use layer cascade to resolve temp
+				return layeredProfile.GetValue("temperature");
+			}
+
+			// Otherwise, use the SettingsLayers that is bound to this extruder
+			PrinterSettingsLayer layer = layeredProfile.GetMaterialLayer(materialKey);
+
+			string result = "0";
+			layer?.TryGetValue("temperature", out result);
+			return result;
+		}
+
+		public int[] LayerToPauseOn()
+		{
+			string[] userValues = parentProfile.GetValue("layer_to_pause").Split(';');
+
+			int temp;
+			return userValues.Where(v => int.TryParse(v, out temp)).Select(v =>
+			{
+				//Convert from 0 based index to 1 based index
+				int val = int.Parse(v);
+
+				// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
+				return val == 0 ? 1 : val - 1;
+			}).ToArray();
+		}
+
+		internal double ParseDouble(string firstLayerValueString)
+		{
+			double firstLayerValue;
+			if (!double.TryParse(firstLayerValueString, out firstLayerValue))
+			{
+				throw new Exception(string.Format("Format cannot be parsed. FirstLayerHeight '{0}'", firstLayerValueString));
+			}
+			return firstLayerValue;
+		}
+
+		public void SetMarkedForDelete(bool markedForDelete)
+		{
+			var printerInfo = ProfileManager.Instance.ActiveProfile;
+			if (printerInfo != null)
+			{
+				printerInfo.MarkedForDelete = markedForDelete;
+				ProfileManager.Instance.Save();
+			}
+
+			// Clear selected printer state
+			UserSettings.Instance.set("ActiveProfileID", "");
+
+			UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile());
+		}
+
+		public void SetBaudRate(string baudRate)
+		{
+			layeredProfile.SetValue(SettingsKey.baud_rate, baudRate);
+		}
+
+		public string ComPort()
+		{
+			return layeredProfile.GetValue($"{Environment.MachineName}_com_port");
+		}
+
+		public void SetComPort(string port)
+		{
+			layeredProfile.SetValue($"{Environment.MachineName}_com_port", port);
+		}
+
+		public void SetComPort(string port, PrinterSettingsLayer layer)
+		{
+			layeredProfile.SetValue($"{Environment.MachineName}_com_port", port, layer);
+		}
+
+		public void SetSlicingEngine(string engine)
+		{
+			layeredProfile.SetValue("slicing_engine", engine);
+		}
+
+		public void SetDriverType(string driver)
+		{
+			layeredProfile.SetValue("driver_type", driver);
+		}
+
+		public void SetDeviceToken(string token)
+		{
+			if (layeredProfile.GetValue(SettingsKey.device_token) != token)
+			{
+				layeredProfile.SetValue(SettingsKey.device_token, token);
+			}
+		}
+
+		public void SetName(string name)
+		{
+			layeredProfile.SetValue(SettingsKey.printer_name, name);
+		}
+
+		public void SetManualMovementSpeeds(string speed)
+		{
+			layeredProfile.SetValue("manual_movement_speeds", speed);
+		}
+
+		private PrintLevelingData printLevelingData = null;
+		public PrintLevelingData GetPrintLevelingData()
+		{
+			if (printLevelingData == null)
+			{
+				printLevelingData = PrintLevelingData.Create(
+					ActiveSliceSettings.Instance,
+					layeredProfile.GetValue("print_leveling_data"),
+					layeredProfile.GetValue("MatterControl.PrintLevelingProbePositions"));
+
+				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
+					printLevelingData.SampledPosition0,
+					printLevelingData.SampledPosition1,
+					printLevelingData.SampledPosition2,
+					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
+			}
+
+			return printLevelingData;
+		}
+
+		public void SetPrintLevelingData(PrintLevelingData data)
+		{
+			printLevelingData = data;
+			layeredProfile.SetValue("print_leveling_data", JsonConvert.SerializeObject(data));
+		}
+
+		public void DoPrintLeveling(bool doLeveling)
+		{
+			// Early exit if already set
+			if (doLeveling == parentProfile.GetValue<bool>("print_leveling_enabled"))
+			{
+				return;
+			}
+
+			layeredProfile.SetValue("print_leveling_enabled", doLeveling ? "1" : "0");
+
+			parentProfile.DoPrintLevelingChanged.CallEvents(this, null);
+
+			if (doLeveling)
+			{
+				PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
+					levelingData.SampledPosition0,
+					levelingData.SampledPosition1,
+					levelingData.SampledPosition2,
+					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
+			}
+		}
+
+		public Vector2 ExtruderOffset(int extruderIndex)
+		{
+			string currentOffsets = parentProfile.GetValue("extruder_offset");
+			string[] offsets = currentOffsets.Split(',');
+			int count = 0;
+			foreach (string offset in offsets)
+			{
+				if (count == extruderIndex)
+				{
+					string[] xy = offset.Split('x');
+					return new Vector2(double.Parse(xy[0]), double.Parse(xy[1]));
+				}
+				count++;
+			}
+
+			return Vector2.Zero;
+		}
+
+		private static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.MatterSlice;
+
+		public SlicingEngineTypes ActiveSliceEngineType()
+		{
+			string engineType = layeredProfile.GetValue("slicing_engine");
+			if (string.IsNullOrEmpty(engineType))
+			{
+				return defaultEngineType;
+			}
+
+			var engine = (SlicingEngineTypes)Enum.Parse(typeof(SlicingEngineTypes), engineType);
+			return engine;
+		}
+
+		public void ActiveSliceEngineType(SlicingEngineTypes type)
+		{
+			parentProfile.SetActiveValue("slicing_engine", type.ToString());
+		}
+
+		public SliceEngineMapping ActiveSliceEngine()
+		{
+			switch (ActiveSliceEngineType())
+			{
+				case SlicingEngineTypes.CuraEngine:
+					return EngineMappingCura.Instance;
+
+				case SlicingEngineTypes.MatterSlice:
+					return EngineMappingsMatterSlice.Instance;
+
+				case SlicingEngineTypes.Slic3r:
+					return Slic3rEngineMappings.Instance;
+
+				default:
+					return null;
+			}
+		}
+
+		public void ExportAsMatterControlConfig()
+		{
+			FileDialog.SaveFileDialog(
+			new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings"),
+			(saveParams) =>
+			{
+				File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
+			});
+		}
+
+		public void ExportAsSlic3rConfig()
+		{
+			FileDialog.SaveFileDialog(
+				new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*" + ProfileManager.ConfigFileExtension)
+				{
+					FileName = "default_settings.ini"
+				},
+				(saveParams) =>
+				{
+					if (!string.IsNullOrEmpty(saveParams.FileName))
+					{
+						GenerateConfigFile(saveParams.FileName, false);
+					}
+				});
+		}
+
+		public void GenerateConfigFile(string fileName, bool replaceMacroValues)
+		{
+			using (var outstream = new StreamWriter(fileName))
+			{
+				foreach (var key in SettingsProfile.KnownSettings.Where(k => !k.StartsWith("MatterControl.")))
+				{
+					string activeValue = parentProfile.GetValue(key);
+					if (replaceMacroValues)
+					{
+						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
+					}
+					outstream.Write(string.Format("{0} = {1}\n", key, activeValue));
+					activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
+				}
+			}
+		}
+
+		public void ExportAsCuraConfig()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Vector3 ManualMovementSpeeds()
+		{
+			Vector3 feedRate = new Vector3(3000, 3000, 315);
+
+			string savedSettings = ActiveSliceSettings.Instance.GetValue("manual_movement_speeds");
+			if (!string.IsNullOrEmpty(savedSettings))
+			{
+				var segments = savedSettings.Split(',');
+				feedRate.x = double.Parse(segments[1]);
+				feedRate.y = double.Parse(segments[3]);
+				feedRate.z = double.Parse(segments[5]);
+			}
+
+			return feedRate;
+		}
+
+		public Dictionary<string, double> GetMovementSpeeds()
+		{
+			Dictionary<string, double> speeds = new Dictionary<string, double>();
+			string movementSpeedsString = GetMovementSpeedsString();
+			string[] allSpeeds = movementSpeedsString.Split(',');
+			for (int i = 0; i < allSpeeds.Length / 2; i++)
+			{
+				speeds.Add(allSpeeds[i * 2 + 0], double.Parse(allSpeeds[i * 2 + 1]));
+			}
+
+			return speeds;
+		}
+
+		public string GetMovementSpeedsString()
+		{
+			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
+			if (PrinterConnectionAndCommunication.Instance != null)
+			{
+				string savedSettings = parentProfile.GetValue("manual_movement_speeds");
+				if (!string.IsNullOrEmpty(savedSettings))
+				{
+					presets = savedSettings;
+				}
+			}
+
+			return presets;
+		}
+
+	}
+
 	public class SettingsProfile
 	{
-		private static string configFileExtension = "slice";
+		public SettingsHelpers Helpers { get; set; }
 
 		public RootedObjectEventHandler DoPrintLevelingChanged = new RootedObjectEventHandler();
 
@@ -103,6 +428,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal SettingsProfile(PrinterSettings profile)
 		{
 			layeredProfile = profile;
+
+			this.Helpers = new SettingsHelpers(this, profile);
 		}
 
 		#region LayeredProfile Proxies
@@ -192,50 +519,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Commit
 		}
 
-		/* jlewin - delete after confirmation
-		public class SettingsConverter
-		{
-			public static void LoadConfigurationSettingsFromFileAsUnsaved(string pathAndFileName)
-			{
-				try
-				{
-					if (File.Exists(pathAndFileName))
-					{
-						string[] lines = System.IO.File.ReadAllLines(pathAndFileName);
-						foreach (string line in lines)
-						{
-							//Ignore commented lines
-							if (line.Trim() != "" && !line.StartsWith("#"))
-							{
-								string[] settingLine = line.Split('=');
-								if (settingLine.Length > 1)
-								{
-									string keyName = settingLine[0].Trim();
-									string settingDefaultValue = settingLine[1].Trim();
-
-									//Add the setting to the active layer
-									//SaveValue(keyName, settingDefaultValue);
-									throw new NotImplementedException("load to dictionary");
-								}
-							}
-						}
-					}
-				}
-				catch (Exception e)
-				{
-					Debug.Print(e.Message);
-					GuiWidget.BreakInDebugger();
-					Debug.WriteLine(string.Format("Error loading configuration: {0}", e));
-				}
-			}
-		}*/
-
 		public void ClearUserOverrides()
 		{
 			var userOverrides = this.UserLayer.Keys.ToArray();
 
 			// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
-			var keysToRetain = new HashSet<string>(userOverrides.Except(this.KnownSettings));
+			var keysToRetain = new HashSet<string>(userOverrides.Except(KnownSettings));
 
 			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => !settingsItem.ShowAsOverride))
 			{
@@ -259,163 +548,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (string key in keysToRemove)
 			{
 				this.UserLayer.Remove(key);
-			}
-		}
-
-		public string ExtruderTemperature(int extruderIndex)
-		{
-			if (extruderIndex >= layeredProfile.MaterialSettingsKeys.Count)
-			{
-				// MaterialSettingsKeys is empty or lacks a value for the given extruder index
-				//
-				// If extruder index zero was requested, return the layer cascade temperature value, otherwise null
-				return (extruderIndex == 0) ? layeredProfile.GetValue("temperature") : null;
-			}
-
-			string materialKey = layeredProfile.MaterialSettingsKeys[extruderIndex];
-
-			if (extruderIndex == 0 && (string.IsNullOrEmpty(materialKey) || layeredProfile.UserLayer.ContainsKey("temperature")))
-			{
-				// In the case where a user override exists or MaterialSettingsKeys is populated with multiple extruder 
-				// positions but position 0 is empty and thus unassigned, use layer cascade to resolve temp
-				return layeredProfile.GetValue("temperature");
-			}
-
-			// Otherwise, use the SettingsLayers that is bound to this extruder
-			PrinterSettingsLayer layer = layeredProfile.GetMaterialLayer(materialKey);
-
-			string result = "0";
-			layer?.TryGetValue("temperature", out result);
-			return result;
-		}
-
-		public int[] LayerToPauseOn()
-		{
-			string[] userValues = GetValue("layer_to_pause").Split(';');
-
-			int temp;
-			return userValues.Where(v => int.TryParse(v, out temp)).Select(v =>
-			{
-				//Convert from 0 based index to 1 based index
-				int val = int.Parse(v);
-
-				// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
-				return val == 0 ? 1 : val - 1;
-			}).ToArray();
-		}
-
-		private static double ParseDouble(string firstLayerValueString)
-		{
-			double firstLayerValue;
-			if (!double.TryParse(firstLayerValueString, out firstLayerValue))
-			{
-				throw new Exception(string.Format("Format cannot be parsed. FirstLayerHeight '{0}'", firstLayerValueString));
-			}
-			return firstLayerValue;
-		}
-
-		public Vector2 ExtruderOffset(int extruderIndex)
-		{
-			string currentOffsets = GetValue("extruder_offset");
-			string[] offsets = currentOffsets.Split(',');
-			int count = 0;
-			foreach (string offset in offsets)
-			{
-				if (count == extruderIndex)
-				{
-					string[] xy = offset.Split('x');
-					return new Vector2(double.Parse(xy[0]), double.Parse(xy[1]));
-				}
-				count++;
-			}
-
-			return Vector2.Zero;
-		}
-
-		private PrintLevelingData printLevelingData = null;
-		public PrintLevelingData GetPrintLevelingData()
-		{
-			if (printLevelingData == null)
-			{
-				printLevelingData = PrintLevelingData.Create(
-					ActiveSliceSettings.Instance,
-					layeredProfile.GetValue("print_leveling_data"),
-					layeredProfile.GetValue("MatterControl.PrintLevelingProbePositions"));
-
-				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-					printLevelingData.SampledPosition0,
-					printLevelingData.SampledPosition1,
-					printLevelingData.SampledPosition2,
-					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
-			}
-
-			return printLevelingData;
-		}
-
-		public void SetPrintLevelingData(PrintLevelingData data)
-		{
-			printLevelingData = data;
-			layeredProfile.SetValue("print_leveling_data", JsonConvert.SerializeObject(data));
-
-		}
-
-		public void DoPrintLeveling(bool doLeveling)
-		{
-			// Early exit if already set
-			if (doLeveling == this.GetValue<bool>("print_leveling_enabled"))
-			{
-				return;
-			}
-
-			layeredProfile.SetValue("print_leveling_enabled", doLeveling ? "1" : "0");
-
-			DoPrintLevelingChanged.CallEvents(this, null);
-
-			if (doLeveling)
-			{
-				PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
-				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-					levelingData.SampledPosition0,
-					levelingData.SampledPosition1,
-					levelingData.SampledPosition2,
-					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
-			}
-		}
-
-		private static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.MatterSlice;
-
-		public SlicingEngineTypes ActiveSliceEngineType()
-		{
-			string engineType = layeredProfile.GetValue("slicing_engine");
-			if (string.IsNullOrEmpty(engineType))
-			{
-				return defaultEngineType;
-			}
-
-			var engine = (SlicingEngineTypes)Enum.Parse(typeof(SlicingEngineTypes), engineType);
-			return engine;
-		}
-
-		public void ActiveSliceEngineType(SlicingEngineTypes type)
-		{
-			SetActiveValue("slicing_engine", type.ToString());
-		}
-
-		public SliceEngineMapping ActiveSliceEngine()
-		{
-			switch (ActiveSliceEngineType())
-			{
-				case SlicingEngineTypes.CuraEngine:
-					return EngineMappingCura.Instance;
-
-				case SlicingEngineTypes.MatterSlice:
-					return EngineMappingsMatterSlice.Instance;
-
-				case SlicingEngineTypes.Slic3r:
-					return Slic3rEngineMappings.Instance;
-
-				default:
-					return null;
 			}
 		}
 
@@ -482,8 +614,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					throw new Exception(string.Format("Not parsing {0} as a Vector2", settingsKey));
 				}
 				Vector2 valueAsVector2 = new Vector2();
-				valueAsVector2.x = ParseDouble(twoValues[0]);
-				valueAsVector2.y = ParseDouble(twoValues[1]);
+				valueAsVector2.x = Helpers.ParseDouble(twoValues[0]);
+				valueAsVector2.y = Helpers.ParseDouble(twoValues[1]);
 				return (T)(object)(valueAsVector2);
 			}
 			else if (typeof(T) == typeof(double))
@@ -492,7 +624,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (settingsStringh.Contains("%"))
 				{
 					string onlyNumber = settingsStringh.Replace("%", "");
-					double ratio = ParseDouble(onlyNumber) / 100;
+					double ratio = Helpers.ParseDouble(onlyNumber) / 100;
 
 					if (settingsKey == SettingsKey.first_layer_height)
 					{
@@ -568,37 +700,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public void ExportAsMatterControlConfig()
-		{
-			FileDialog.SaveFileDialog(
-			new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings"),
-			(saveParams) =>
-			{
-				File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(layeredProfile, Formatting.Indented));
-			});
-		}
-
-		public void ExportAsSlic3rConfig()
-		{
-			FileDialog.SaveFileDialog(
-				new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*." + configFileExtension)
-				{
-					FileName = "default_settings.ini"
-				},
-				(saveParams) =>
-				{
-					if (!string.IsNullOrEmpty(saveParams.FileName))
-					{
-						GenerateConfigFile(saveParams.FileName, false);
-					}
-				});
-		}
-
-		public void ExportAsCuraConfig()
-		{
-			throw new NotImplementedException();
-		}
-
 		public long GetLongHashCode()
 		{
 			var bigStringForHashCode = new StringBuilder();
@@ -617,23 +718,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string value = bigStringForHashCode.ToString();
 
 			return agg_basics.ComputeHash(bigStringForHashCode.ToString());
-		}
-
-		public void GenerateConfigFile(string fileName, bool replaceMacroValues)
-		{
-			using (var outstream = new StreamWriter(fileName))
-			{
-				foreach (var key in this.KnownSettings.Where(k => !k.StartsWith("MatterControl.")))
-				{
-					string activeValue = GetValue(key);
-					if (replaceMacroValues)
-					{
-						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
-					}
-					outstream.Write(string.Format("{0} = {1}\n", key, activeValue));
-					activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
-				}
-			}
 		}
 
 		public bool IsValid()
@@ -793,7 +877,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			if (!valueWasNumber
-				|| (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(speedSetting)
+				|| (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
 				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);
@@ -808,132 +892,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return true;
 		}
 
-		public Vector3 ManualMovementSpeeds()
-		{
-			Vector3 feedRate = new Vector3(3000, 3000, 315);
-
-			string savedSettings = ActiveSliceSettings.Instance.GetValue("manual_movement_speeds");
-			if (!string.IsNullOrEmpty(savedSettings))
-			{
-				var segments = savedSettings.Split(',');
-				feedRate.x = double.Parse(segments[1]);
-				feedRate.y = double.Parse(segments[3]);
-				feedRate.z = double.Parse(segments[5]);
-			}
-
-			return feedRate;
-		}
-
-		public Dictionary<string, double> GetMovementSpeeds()
-		{
-			Dictionary<string, double> speeds = new Dictionary<string, double>();
-			string movementSpeedsString = GetMovementSpeedsString();
-			string[] allSpeeds = movementSpeedsString.Split(',');
-			for (int i = 0; i < allSpeeds.Length / 2; i++)
-			{
-				speeds.Add(allSpeeds[i * 2 + 0], double.Parse(allSpeeds[i * 2 + 1]));
-			}
-
-			return speeds;
-		}
-
-		public string GetMovementSpeedsString()
-		{
-			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
-			if (PrinterConnectionAndCommunication.Instance != null)
-			{
-				string savedSettings = GetValue("manual_movement_speeds");
-				if (!string.IsNullOrEmpty(savedSettings))
-				{
-					presets = savedSettings;
-				}
-			}
-
-			return presets;
-		}
-
 		#endregion
 
-		public void SetMarkedForDelete(bool markedForDelete)
-		{
-			var printerInfo = ProfileManager.Instance.ActiveProfile;
-			if (printerInfo != null)
-			{
-				printerInfo.MarkedForDelete = markedForDelete;
-				ProfileManager.Instance.Save();
-			}
-
-			// Clear selected printer state
-			UserSettings.Instance.set("ActiveProfileID", "");
-
-			UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile());
-		}
-
-		public void SetBaudRate(string baudRate)
-		{
-			layeredProfile.SetValue(SettingsKey.baud_rate, baudRate);
-		}
-
-		public string ComPort()
-		{
-			return layeredProfile.GetValue($"{Environment.MachineName}_com_port");
-		}
-
-		public void SetComPort(string port)
-		{
-			layeredProfile.SetValue($"{Environment.MachineName}_com_port", port);
-		}
-
-		public void SetComPort(string port, PrinterSettingsLayer layer)
-		{
-			layeredProfile.SetValue($"{Environment.MachineName}_com_port", port, layer);
-		}
-
-		public void SetSlicingEngine(string engine)
-		{
-			layeredProfile.SetValue("slicing_engine", engine);
-		}
-
-		public void SetDriverType(string driver)
-		{
-			layeredProfile.SetValue("driver_type", driver);
-		}
-
-		public void SetDeviceToken(string token)
-		{
-			if (layeredProfile.GetValue(SettingsKey.device_token) != token)
-			{
-				layeredProfile.SetValue(SettingsKey.device_token, token);
-			}
-		}
-
-		public void SetName(string name)
-		{
-			layeredProfile.SetValue(SettingsKey.printer_name, name);
-		}
-
-		HashSet<string> knownSettings = null;
-
 		[JsonIgnore]
-		public HashSet<string> KnownSettings
+		public static HashSet<string> KnownSettings { get; } = LoadSettingsNamesFromPropertiesJson();
+
+		private static HashSet<string> LoadSettingsNamesFromPropertiesJson()
 		{
-			get
-			{
-				if (knownSettings == null)
-				{
-					string propertiesJson = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-					var settingsData = JArray.Parse(propertiesJson);
+			string propertiesJson = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			var settingsData = JArray.Parse(propertiesJson);
 
-					knownSettings = new HashSet<string>(settingsData.Select(s => s["SlicerConfigName"].Value<string>()));
-				}
-
-				return knownSettings;
-			}
-		}
-
-		public void SetManualMovementSpeeds(string speed)
-		{
-			layeredProfile.SetValue("manual_movement_speeds", speed);
+			return new HashSet<string>(settingsData.Select(s => s["SlicerConfigName"].Value<string>()));
 		}
 	}
 

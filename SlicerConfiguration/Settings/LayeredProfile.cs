@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
 			var profileHelper = new SettingsProfile(oemProfile);
-			profileHelper.SetComPort(profile.ComPort);
+			profileHelper.Helpers.SetComPort(profile.ComPort);
 			profileHelper.SaveChanges();
 
 			UiThread.RunOnIdle(() =>

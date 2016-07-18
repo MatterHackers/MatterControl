@@ -11,9 +11,9 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="MatterHackers.MatterControl.SlicerConfiguration.SettingsProfile">
-    <Position X="4" Y="1" Width="2" />
+    <Position X="4" Y="1" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>wAAAScAELBAGoAAAMEgCKhUEB4AgEFaACgAJQRAFAAU=</HashCode>
+      <HashCode>gAAASEAEKAACgAAAEEgAAAUEAoAAABYAAgAAAwABAAE=</HashCode>
       <FileName>SlicerConfiguration\Settings\SettingsProfile.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -36,8 +36,8 @@
     <ShowAsAssociation>
       <Property Name="QualityLayer" />
       <Property Name="MaterialLayer" />
-      <Property Name="UserLayer" />
       <Property Name="OemLayer" />
+      <Property Name="UserLayer" />
     </ShowAsAssociation>
   </Class>
   <Class Name="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettingsLayer">

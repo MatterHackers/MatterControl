@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, CreateRenderInfo(),
 						FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
-						new Vector2[] { ActiveSliceSettings.Instance.ExtruderOffset(0), ActiveSliceSettings.Instance.ExtruderOffset(1) });
+						new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) });
 
 					//using (new PerformanceTimer("GCode Timer", "Render"))
 					{

@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl
 					GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(source);
 					if (applyLeveling.Checked)
 					{
-						PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+						PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 						if (levelingData != null)
 						{
 							for (int lineIndex = 0; lineIndex < unleveledGCode.LineCount; lineIndex++)
