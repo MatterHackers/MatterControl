@@ -22,7 +22,7 @@ namespace MatterControl.Tests.MatterControl
 		static ConfigIniTests()
 		{
 			allPrinters = (from configIni in new DirectoryInfo(printerSettingsDirectory).GetFiles("config.ini", System.IO.SearchOption.AllDirectories)
-						   let oemProfile = new OemProfile(PrinterSettingsLayer.LoadFromIni(configIni.FullName))
+						   let oemProfile = new PrinterSettings() { OemLayer = PrinterSettingsLayer.LoadFromIni(configIni.FullName) }
 						   select new PrinterConfig
 						   {
 							   PrinterName = configIni.Directory.Name,
@@ -43,7 +43,7 @@ namespace MatterControl.Tests.MatterControl
 						   }).ToList();
 		}
 
-		private static List<LayerInfo> LoadLayers(string layersDirectory, OemProfile oemProfile)
+		private static List<LayerInfo> LoadLayers(string layersDirectory, PrinterSettings oemProfile)
 		{
 			// The slice presets layer cascade contains the preset layer, with config.ini data as a parent
 			return Directory.Exists(layersDirectory) ?
