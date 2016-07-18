@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					Instance.Profiles.Add(printerInfo);
 
-					profile.SaveChanges();
+					profile.Save();
 					break;
 
 				case ".ini":

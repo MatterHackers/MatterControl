@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ActiveSliceEngineType(SlicingEngineTypes type)
 		{
-			parentProfile.SetActiveValue("slicing_engine", type.ToString());
+			parentProfile.SetValue("slicing_engine", type.ToString());
 		}
 
 		public SliceEngineMapping ActiveSliceEngine()
@@ -442,7 +442,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var profile = ProfileManager.LoadProfile(newID);
 			profile.ID = newID;
-			profile.SetActiveValue(SettingsKey.device_token, newID);
+			profile.SetValue(SettingsKey.device_token, newID);
 			ProfileManager.Instance.Save();
 		}
 

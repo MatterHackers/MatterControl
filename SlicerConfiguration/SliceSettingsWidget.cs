@@ -1704,11 +1704,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (persistenceLayer == null)
 			{
-				ActiveSliceSettings.Instance.SetActiveValue(name, value);
+				ActiveSliceSettings.Instance.SetValue(name, value);
 			}
 			else
 			{
-				ActiveSliceSettings.Instance.SetActiveValue(name, value, persistenceLayer);
+				ActiveSliceSettings.Instance.SetValue(name, value, persistenceLayer);
 			}
 		}
 

@@ -6,22 +6,24 @@
       <HashCode>AQAAABAAAAAAAAAAACAAAAQAAAABAAAIQAgAAAAAAAA=</HashCode>
       <FileName>SlicerConfiguration\Settings\ActiveSliceSettings.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Instance" />
+    </ShowAsAssociation>
   </Class>
   <Class Name="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettings">
     <Position X="6.75" Y="1.5" Width="1.75" />
     <AssociationLine Name="UserLayer" Type="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettingsLayer" FixedFromPoint="true">
       <Path>
-        <Point X="8.5" Y="4.334" />
-        <Point X="12" Y="4.334" />
+        <Point X="8.5" Y="4.215" />
+        <Point X="12" Y="4.215" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.131" Y="0.07" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>iAAASMQEKEACggABEEiEAAUFAoAQABYEAgQEAgARBAE=</HashCode>
-      <FileName>SlicerConfiguration\Settings\LayeredProfile.cs</FileName>
-      <NewMemberFileName>SlicerConfiguration\ActiveSliceSettings.cs</NewMemberFileName>
+      <HashCode>iAAASMQEKEACggABEAiEAAUFAoAQABYEAgQEAgARBAE=</HashCode>
+      <FileName>SlicerConfiguration\Settings\PrinterSettings.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="QualityLayer" />
@@ -33,7 +35,7 @@
   <Class Name="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettingsLayer">
     <Position X="12" Y="1.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAQAIAAAgAAAAAAEAAAAAQAAAAAAAAAAEAAAAAAQBA=</HashCode>
+      <HashCode>AAAQAAAAAgAAAAAAEAAAAAQAAAAAAAAAAEAAAAAAQBA=</HashCode>
       <FileName>SlicerConfiguration\Settings\PrinterSettingsLayer.cs</FileName>
     </TypeIdentifier>
   </Class>

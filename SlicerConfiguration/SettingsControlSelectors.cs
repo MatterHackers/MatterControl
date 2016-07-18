@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								ActiveSliceSettings.Instance.SetMaterialPreset(extruderIndex, "");
 								ActiveSliceSettings.Instance.MaterialLayers.Remove(layerToEdit);
-								ActiveSliceSettings.Instance.SaveChanges();
+								ActiveSliceSettings.Instance.Save();
 
 								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								ActiveSliceSettings.Instance.ActiveQualityKey = "";
 								ActiveSliceSettings.Instance.QualityLayers.Remove(layerToEdit);
-								ActiveSliceSettings.Instance.SaveChanges();
+								ActiveSliceSettings.Instance.Save();
 
 								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}

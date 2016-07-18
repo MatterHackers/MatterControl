@@ -261,13 +261,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return oemProfile;
 		}
 
-		// TODO: Refactor rename
-		public void SaveChanges()
-		{
-
-		}
-
-
 		/// <summary>
 		/// Should contain both user created and oem specified material layers
 		/// </summary>
@@ -347,7 +340,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				yield return this.BaseLayer;
 			}
 		}
-
 
 		public SettingsHelpers Helpers { get; set; }
 
@@ -744,10 +736,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new HashSet<string>(settingsData.Select(s => s["SlicerConfigName"].Value<string>()));
 		}
 
-		// TODO: Refactor, rename
-		public void SetActiveValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null) => this.SetValue(settingsKey, settingsValue, layer);
-
-		internal void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
+		public void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
 		{
 			var persistenceLayer = layer ?? UserLayer;
 
