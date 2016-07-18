@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System.Linq;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -140,7 +141,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 			}
 
-			if (lineToSend.StartsWith("; LAYER:"))
+			if (GCodeFile.IsLayerChange(lineToSend))
 			{
 				string layerNumber = lineToSend.Split(':')[1];
 				if (PauseOnLayer(layerNumber))

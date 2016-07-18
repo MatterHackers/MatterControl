@@ -69,6 +69,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		
 		public bool ResetAtEndOfPrint { get; set; }
 
+		public bool RebuildGCodeOnChange { get; set; } = true;
+
 		public string DefaultValue { get; set; }
 
 		public bool ReloadUiWhenChanged { get; set; }

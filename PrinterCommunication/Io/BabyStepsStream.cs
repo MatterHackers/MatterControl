@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			string processedLine = offsetStream.ReadLine();
 			if (processedLine != null
 				&& layerCount < 1
-				&& processedLine.StartsWith("; LAYER:"))
+				&& GCodeFile.IsLayerChange(processedLine))
 			{
 				layerCount++;
 				if (layerCount == 1)
