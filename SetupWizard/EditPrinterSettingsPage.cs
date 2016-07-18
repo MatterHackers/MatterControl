@@ -40,6 +40,8 @@ namespace MatterHackers.MatterControl
 {
 	public class EditPrinterSettingsPage : WizardPage
 	{
+		private EventHandler unregisterEvents = null;
+
 		public EditPrinterSettingsPage()
 			: base("Done")
 		{
@@ -60,6 +62,15 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(cancelButton);
 
 			cancelButton.Text = "Back".Localize();
+
+			// Close this form if the active printer changes
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => 
+			{
+				if (!WizardWindow.HasBeenClosed)
+				{
+					UiThread.RunOnIdle(WizardWindow.Close);
+				}
+			}, ref unregisterEvents);
 		}
 
 		private void AddNameSetting(string sliceSettingsKey, FlowLayoutWidget contentRow, ref int tabIndex)
@@ -69,6 +80,12 @@ namespace MatterHackers.MatterControl
 			{
 				contentRow.AddChild(control);
 			}
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);	
 		}
 	}
 }

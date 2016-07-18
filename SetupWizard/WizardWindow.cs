@@ -67,18 +67,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static WizardWindow GetSystemWindow(string uri)
-		{
-			WizardWindow existingWindow;
-
-			if (allWindows.TryGetValue(uri, out existingWindow))
-			{
-				return existingWindow;
-			}
-
-			return null;
-		}
-
 		public static void Show<PanelType>(string uri, string title) where PanelType : WizardPage, new()
 		{
 			WizardWindow wizardWindow = GetWindow(uri);
