@@ -448,7 +448,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				if (!FrostedSerialPort.HasPermissionToDevice())
 				{
 					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
-					FrostedSerialPort.RequestPermissionToDevice();
+					FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
 				}
 				else
 #endif
@@ -456,6 +456,11 @@ namespace MatterHackers.MatterControl.ActionBar
 					ConnectToActivePrinter();
 				}
 			}
+		}
+
+		void RunTroubleShooting()
+		{
+			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
 		}
 
 		private void ConnectToActivePrinter()

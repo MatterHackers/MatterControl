@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 			printerNameLabel.Margin = new BorderDouble(bottom: 10);
 
 #if __ANDROID__
-			IUsbSerialPort serialPort = FrostedSerialPort.LoadSerialDriver();
+			IUsbSerialPort serialPort = FrostedSerialPort.LoadSerialDriver(null);
 
 #if ANDROID7
 			// Filter out the built-in 002 device and select the first item from the list
