@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 
 	public class AttentionGetter
 	{
-		static HashSet<GuiWidget> runningAttentions = new HashSet<GuiWidget>();
+		private static HashSet<GuiWidget> runningAttentions = new HashSet<GuiWidget>();
 		private double animationDelay = 1 / 20.0;
 		private int cycles = 1;
 		private double lightnessChange = 1;

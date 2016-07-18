@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (!WizardWindow.HasBeenClosed)
 				{
-					WizardWindow.Close();
+					UiThread.RunOnIdle(WizardWindow.Close);
 				}
 			}, ref unregisterEvents);
 		}
