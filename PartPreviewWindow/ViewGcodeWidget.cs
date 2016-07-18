@@ -182,22 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler ActiveLayerChanged;
 
-		public GCodeFile loadedGCode2;
-		public GCodeFile LoadedGCode
-		{
-			get
-			{
-				return loadedGCode2;
-			}
-
-			set
-			{
-				if(value != loadedGCode2)
-				{
-					loadedGCode2 = value;
-				}
-			}
-		}
+		public GCodeFile LoadedGCode { get; set; }
 
 		public int ActiveLayerIndex
 		{
