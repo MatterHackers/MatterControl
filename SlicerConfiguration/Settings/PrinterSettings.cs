@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
 
+		public static RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
+
 		private static PrinterSettingsLayer baseLayerCache;
 
 		public int DocumentVersion { get; set; }
@@ -342,8 +344,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public SettingsHelpers Helpers { get; set; }
-
-		public RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
 
 		public bool PrinterSelected => OemLayer?.Keys.Count > 0;
 

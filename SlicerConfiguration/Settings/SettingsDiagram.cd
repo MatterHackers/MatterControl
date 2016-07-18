@@ -2,6 +2,15 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="MatterHackers.MatterControl.SlicerConfiguration.ActiveSliceSettings">
     <Position X="0.75" Y="0.5" Width="1.75" />
+    <AssociationLine Name="Instance" Type="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettings" FixedFromPoint="true">
+      <Path>
+        <Point X="2.5" Y="0.938" />
+        <Point X="3.75" Y="0.938" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.298" Y="0.07" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AQAAABAAAAAAAAAAACAAAAQAAAABAAAIQAgAAAAAAAA=</HashCode>
       <FileName>SlicerConfiguration\Settings\ActiveSliceSettings.cs</FileName>
@@ -11,18 +20,41 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettings">
-    <Position X="6.75" Y="1.5" Width="1.75" />
+    <Position X="3.75" Y="0.5" Width="3" />
+    <AssociationLine Name="QualityLayer" Type="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettingsLayer" FixedFromPoint="true">
+      <Path>
+        <Point X="6.75" Y="1.722" />
+        <Point X="8.25" Y="1.722" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="MaterialLayer" Type="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettingsLayer" FixedFromPoint="true">
+      <Path>
+        <Point X="6.75" Y="1.295" />
+        <Point X="8.25" Y="1.295" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="OemLayer" Type="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettingsLayer" FixedFromPoint="true">
+      <Path>
+        <Point X="6.75" Y="2.15" />
+        <Point X="8.25" Y="2.15" />
+      </Path>
+    </AssociationLine>
     <AssociationLine Name="UserLayer" Type="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettingsLayer" FixedFromPoint="true">
       <Path>
-        <Point X="8.5" Y="4.215" />
-        <Point X="12" Y="4.215" />
+        <Point X="6.75" Y="2.578" />
+        <Point X="8.25" Y="2.578" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.131" Y="0.07" />
       </MemberNameLabel>
     </AssociationLine>
+    <AssociationLine Name="Helpers" Type="MatterHackers.MatterControl.SlicerConfiguration.SettingsHelpers">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="3.381" Y="0.122" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>iAAASMQEKEACggABEAiEAAUFAoAQABYEAgQEAgARBAE=</HashCode>
+      <HashCode>iAAASOQEKEACggABEAiEAAUFAoAQABYEAgQEAgARBAE=</HashCode>
       <FileName>SlicerConfiguration\Settings\PrinterSettings.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -30,13 +62,21 @@
       <Property Name="MaterialLayer" />
       <Property Name="OemLayer" />
       <Property Name="UserLayer" />
+      <Property Name="Helpers" />
     </ShowAsAssociation>
   </Class>
   <Class Name="MatterHackers.MatterControl.SlicerConfiguration.PrinterSettingsLayer">
-    <Position X="12" Y="1.5" Width="2.5" />
+    <Position X="8.25" Y="0.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAQAAAAAgAAAAAAEAAAAAQAAAAAAAAAAEAAAAAAQBA=</HashCode>
       <FileName>SlicerConfiguration\Settings\PrinterSettingsLayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.SlicerConfiguration.SettingsHelpers">
+    <Position X="11.25" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>QAAAAQQABBAEIAAAIAACKhEABQAgEEQACAAJQBAEAAQ=</HashCode>
+      <FileName>SlicerConfiguration\Settings\SettingsProfile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

@@ -27,28 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ContactForm;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	using ConfigurationPage.PrintLeveling;
-	using DataStorage;
-	using Agg.PlatformAbstract;
-	using Newtonsoft.Json.Linq;
-	using MeshVisualizer;
-	using System.Collections.ObjectModel;
 	public static class SettingsKey
 	{
 		public const string bed_shape = nameof(bed_shape);
@@ -251,7 +242,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			printerSettings.SetValue("print_leveling_enabled", doLeveling ? "1" : "0");
 
-			printerSettings.PrintLevelingEnabledChanged.CallEvents(this, null);
+			PrinterSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
 
 			if (doLeveling)
 			{

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 			CreateWindowContent();
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
-			ActiveSliceSettings.Instance.PrintLevelingEnabledChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
+			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
 		}
 
 		private string applyLevelingDuringExportString = "Apply leveling to G-Code during export".Localize();
