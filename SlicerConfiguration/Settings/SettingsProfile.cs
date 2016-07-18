@@ -605,9 +605,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (var keyValue in this.BaseLayer)
 			{
-				string activeValue = GetValue(keyValue.Key);
-				bigStringForHashCode.Append(keyValue.Key);
-				bigStringForHashCode.Append(activeValue);
+				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+				if (data.RebuildGCodeOnChange)
+				{
+					string activeValue = GetValue(keyValue.Key);
+					bigStringForHashCode.Append(keyValue.Key);
+					bigStringForHashCode.Append(activeValue);
+				}
 			}
 
 			string value = bigStringForHashCode.ToString();

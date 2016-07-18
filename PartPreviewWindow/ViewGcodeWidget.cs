@@ -178,16 +178,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
 
 		public string FileNameAndPath;
-		public GCodeFile loadedGCode;
 		public GCodeRenderer gCodeRenderer;
 
 		public event EventHandler ActiveLayerChanged;
 
+		public GCodeFile loadedGCode2;
 		public GCodeFile LoadedGCode
 		{
 			get
 			{
-				return loadedGCode;
+				return loadedGCode2;
+			}
+
+			set
+			{
+				if(value != loadedGCode2)
+				{
+					loadedGCode2 = value;
+				}
 			}
 		}
 
@@ -208,9 +216,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						activeLayerIndex = 0;
 					}
-					else if (activeLayerIndex >= loadedGCode.NumChangesInZ)
+					else if (activeLayerIndex >= LoadedGCode.NumChangesInZ)
 					{
-						activeLayerIndex = loadedGCode.NumChangesInZ - 1;
+						activeLayerIndex = LoadedGCode.NumChangesInZ - 1;
 					}
 					Invalidate();
 
@@ -230,7 +238,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void SetGCodeAfterLoad(GCodeFile loadedGCode)
 		{
-			this.loadedGCode = loadedGCode;
+			this.LoadedGCode = loadedGCode;
 			if (loadedGCode == null)
 			{
 				TextWidget noGCodeLoaded = new TextWidget(string.Format("Not a valid GCode file."));
@@ -249,15 +257,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void SetInitalLayer()
 		{
 			activeLayerIndex = 0;
-			if (loadedGCode.LineCount > 0)
+			if (LoadedGCode.LineCount > 0)
 			{
 				int firstExtrusionIndex = 0;
-				Vector3 lastPosition = loadedGCode.Instruction(0).Position;
-				double ePosition = loadedGCode.Instruction(0).EPosition;
+				Vector3 lastPosition = LoadedGCode.Instruction(0).Position;
+				double ePosition = LoadedGCode.Instruction(0).EPosition;
 				// let's find the first layer that has extrusion if possible and go to that
-				for (int i = 1; i < loadedGCode.LineCount; i++)
+				for (int i = 1; i < LoadedGCode.LineCount; i++)
 				{
-					PrinterMachineInstruction currentInstruction = loadedGCode.Instruction(i);
+					PrinterMachineInstruction currentInstruction = LoadedGCode.Instruction(i);
 					if (currentInstruction.EPosition > ePosition && lastPosition != currentInstruction.Position)
 					{
 						firstExtrusionIndex = i;
@@ -269,9 +277,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (firstExtrusionIndex > 0)
 				{
-					for (int layerIndex = 0; layerIndex < loadedGCode.NumChangesInZ; layerIndex++)
+					for (int layerIndex = 0; layerIndex < LoadedGCode.NumChangesInZ; layerIndex++)
 					{
-						if (firstExtrusionIndex < loadedGCode.GetInstructionIndexAtLayer(layerIndex))
+						if (firstExtrusionIndex < LoadedGCode.GetInstructionIndexAtLayer(layerIndex))
 						{
 							activeLayerIndex = Math.Max(0, layerIndex - 1);
 							break;
@@ -290,7 +298,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			SetGCodeAfterLoad((GCodeFile)e.Result);
 
-			gCodeRenderer = new GCodeRenderer(loadedGCode);
+			gCodeRenderer = new GCodeRenderer(LoadedGCode);
 
 			await Task.Run(() => DoPostLoadInitialization());
 
@@ -321,7 +329,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (loadedGCode != null)
+			if (LoadedGCode != null)
 			{
 				//using (new PerformanceTimer("GCode Timer", "Total"))
 				{
@@ -579,7 +587,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Load(string gcodePathAndFileName)
 		{
-			loadedGCode = GCodeFile.Load(gcodePathAndFileName);
+			LoadedGCode = GCodeFile.Load(gcodePathAndFileName);
 			SetInitalLayer();
 			CenterPartInView();
 		}
@@ -594,7 +602,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(initialLoading_ProgressChanged);
 			backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(initialLoading_RunWorkerCompleted);
 
-			loadedGCode = null;
+			LoadedGCode = null;
 			GCodeFileLoaded.LoadInBackground(backgroundWorker, gcodePathAndFileName);
 		}
 
@@ -636,8 +644,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void CenterPartInView()
 		{
-			RectangleDouble partBounds = loadedGCode.GetBounds();
-			Vector2 weightedCenter = loadedGCode.GetWeightedCenter();
+			RectangleDouble partBounds = LoadedGCode.GetBounds();
+			Vector2 weightedCenter = LoadedGCode.GetWeightedCenter();
 
 			unscaledRenderOffset = -weightedCenter;
 			layerScale = Math.Min(Height / partBounds.Height, Width / partBounds.Width);

@@ -120,6 +120,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			StringEventArgs stringEvent = e as StringEventArgs;
 			if (stringEvent != null)
 			{
+				if (gcodeViewWidget?.LoadedGCode != null
+					&& (
+					stringEvent.Data == SettingsKey.filament_cost
+					|| stringEvent.Data == SettingsKey.filament_diameter
+					|| stringEvent.Data == SettingsKey.filament_density)
+					)
+				{
+					UpdateMassText();
+					UpdateEstimatedCost();
+				}
+
 				if (stringEvent.Data == SettingsKey.bed_size
 					|| stringEvent.Data == SettingsKey.print_center
 					|| stringEvent.Data == SettingsKey.build_height
@@ -494,51 +505,98 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
 
-			string massLabel = "Estimated Mass".Localize();
-			string massLabelFull = string.Format("{0}:", massLabel);
-			modelInfoContainer.AddChild(new TextWidget(massLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter);
-			double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_density);
-			double filamentCost = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_cost);
+			modelInfoContainer.AddChild(GetEstimatedMassInfo());
+			modelInfoContainer.AddChild(GetEstimatedCostInfo());
 
-			double totalMass = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
-			double totalCost = totalMass / 1000 * filamentCost;
-			{
-				string massText;
-				if (totalMass != 0) {
-					massText = string.Format("{0:0.00} g", totalMass);
-				} else {
-					massText = "Unknown";
-				}
-
-				GuiWidget estimatedPrintTime = new TextWidget(massText, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
-				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-				modelInfoContainer.AddChild(estimatedPrintTime);
-			}
-
-			string costLabel = "Estimated Cost".Localize();
-			string costLabelFull = string.Format("{0}:", costLabel);
-			if (totalCost != 0)
-			{
-				modelInfoContainer.AddChild(new TextWidget(costLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
-				{
-					string costText;
-					costText = string.Format("${0:0.00}", totalCost);
-
-
-					GuiWidget estimatedPrintTime = new TextWidget(costText, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-					//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
-					estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-					modelInfoContainer.AddChild(estimatedPrintTime);
-				}
-			}
-
-			//modelInfoContainer.AddChild(new TextWidget("Layer Count:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
 
 			buttonPanel.AddChild(modelInfoContainer);
 
 			textImageButtonFactory.FixedWidth = oldWidth;
+		}
+
+		double totalMass
+		{
+			get
+			{
+				double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter);
+				double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_density);
+
+				return gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
+			}
+		}
+
+		double totalCost
+		{
+			get
+			{
+				double filamentCost = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_cost);
+				return totalMass / 1000 * filamentCost;
+			}
+		}
+
+		TextWidget massTextWidget;
+
+		void UpdateMassText()
+		{
+			if (totalMass != 0)
+			{
+				massTextWidget.Text = string.Format("{0:0.00} g", totalMass);
+			}
+			else
+			{
+				massTextWidget.Text = "Unknown";
+			}
+		}
+
+		private GuiWidget GetEstimatedMassInfo()
+		{
+			FlowLayoutWidget estimatedMassInfo = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			string massLabel = "Estimated Mass".Localize();
+			string massLabelFull = string.Format("{0}:", massLabel);
+			estimatedMassInfo.AddChild(new TextWidget(massLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			massTextWidget = new TextWidget("", pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+			};
+			massTextWidget.Margin = new BorderDouble(0, 9, 0, 3);
+			estimatedMassInfo.AddChild(massTextWidget);
+
+			UpdateMassText();
+
+			return estimatedMassInfo;
+		}
+
+		FlowLayoutWidget estimatedCostInfo;
+		TextWidget costTextWidget;
+
+		void UpdateEstimatedCost()
+		{
+			costTextWidget.Text = string.Format("${0:0.00}", totalCost);
+			if (totalCost == 0)
+			{
+				estimatedCostInfo.Visible = false;
+			}
+			else
+			{
+				estimatedCostInfo.Visible = true;
+			}
+		}
+
+		private GuiWidget GetEstimatedCostInfo()
+		{
+			estimatedCostInfo = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			string costLabel = "Estimated Cost".Localize();
+			string costLabelFull = string.Format("{0}:", costLabel);
+			estimatedCostInfo.AddChild(new TextWidget(costLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			costTextWidget = new TextWidget("", pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+			};
+			costTextWidget.Margin = new BorderDouble(0, 9, 0, 3);
+			estimatedCostInfo.AddChild(costTextWidget);
+
+			return estimatedCostInfo;
 		}
 
 		private void AddLayerInfo(FlowLayoutWidget buttonPanel)
