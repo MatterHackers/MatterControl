@@ -76,14 +76,13 @@ namespace MatterHackers.MatterControl.SetupWizard
 					profileVersionButton.Checked = false;
 					radioButtonLayout.AddChild(profileVersionButton);
 					radioButtonList.Add(profileVersionButton);
-					// show them
 				}
 				scrollWindow.AddChild(radioButtonLayout);
 			}
 			else
 			{
 				loadingText.Text = "Failed To Download History!";
-				loadingText.TextColor = RGBA_Bytes.Red; //CHANGE TO ERROR COLOR
+				loadingText.TextColor = RGBA_Bytes.Red;
 			}
 			
 			//remove loading profile text/icon
