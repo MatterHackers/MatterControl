@@ -720,15 +720,24 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
 				}
-				ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
+				bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
+				if (showAuthWindow)
 				{
-					ApplicationController.Instance.ReloadAdvancedControlsPanel();
-					if (!ProfileManager.Instance.ActiveProfiles.Any())
+					//Launch window to prompt user to log in
+					UiThread.RunOnIdle(() => WizardWindow.Show());
+				}
+				else
+				{	//If user in logged in sync before checking to prompt to create printer
+					ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
 					{
-						// Start the setup wizard if no profiles exist
-						UiThread.RunOnIdle(() => WizardWindow.Show());
-					}
-				});
+						ApplicationController.Instance.ReloadAdvancedControlsPanel();
+						if (!ProfileManager.Instance.ActiveProfiles.Any())
+						{
+							// Start the setup wizard if no profiles exist
+							UiThread.RunOnIdle(() => WizardWindow.Show());
+						}
+					});
+				}
 				
 			}
 
