@@ -54,7 +54,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static EventHandler unregisterEvents;
 		private static readonly string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-		private static readonly string ProfilesPath = Path.Combine(userDataPath, "Profiles");
+		private static string ProfilesPath
+		{
+			get
+			{
+				string path = Path.Combine(userDataPath, "Profiles");
+				if (!Directory.Exists(path))
+				{
+					Directory.CreateDirectory(path);
+				}
+				return path;
+			}
+		}
+
 
 		private const string userDBExtension = ".profiles";
 		private const string guestDBFileName = "guest" + userDBExtension;
