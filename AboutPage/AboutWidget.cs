@@ -102,8 +102,6 @@ namespace MatterHackers.MatterControl
 
 		public static void DeleteCacheData(int daysOldToDelete)
 		{
-			return;
-
 			if(LibraryProviderSQLite.PreloadingCalibrationFiles)
 			{
 				return;
@@ -190,13 +188,19 @@ namespace MatterHackers.MatterControl
 			return VersionInfo.Instance.ReleaseVersion;
 		}
 
+		static HashSet<string> folderNamesToPreserve = new HashSet<string>()
+		{
+			"profiles",
+		};
+
 		private static int CleanDirectory(string path, HashSet<string> referencedFilePaths, int daysOldToDelete)
 		{
 			int contentCount = 0;
 			foreach (string directory in Directory.EnumerateDirectories(path))
 			{
 				int directoryContentCount = CleanDirectory(directory, referencedFilePaths, daysOldToDelete);
-				if (directoryContentCount == 0)
+				if (directoryContentCount == 0
+					&& !folderNamesToPreserve.Contains(Path.GetFileName(directory)))
 				{
 					try
 					{
