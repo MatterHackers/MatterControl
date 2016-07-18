@@ -38,6 +38,8 @@ using System.Text;
 using System.Collections.ObjectModel;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -235,7 +237,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static PrinterSettings RecoverProfile(string printerProfilePath)
+
+		public static PrinterSettings RecoverProfile(string  printerProfilePath)
 		{
 			string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath); 
 			var profile = ProfileManager.Instance[profileKey];
@@ -250,6 +253,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var profileHelper = new SettingsProfile(oemProfile);
 			profileHelper.SetComPort(profile.ComPort);
 			profileHelper.SaveChanges();
+
+			UiThread.RunOnIdle(() =>
+			{
+				StyledMessageBox.ShowMessageBox(null, "The profile you are attempting to load has been corrupted. We loaded a usable public profile for you instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
+			},1);
 
 			return oemProfile;
 		}
