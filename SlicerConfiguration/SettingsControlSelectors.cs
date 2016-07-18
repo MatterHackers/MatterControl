@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
 					{
-						string presetsID = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
+						string presetsID = ActiveSliceSettings.Instance.GetMaterialPresetKey(extruderIndex);
 						if (string.IsNullOrEmpty(presetsID))
 						{
 							return;
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							},
 							DeleteLayer = () => 
 							{
-								var materialKeys = ActiveSliceSettings.Instance.MaterialSettingsKeys();
+								var materialKeys = ActiveSliceSettings.Instance.MaterialSettingsKeys;
 								for (var i = 0; i < materialKeys.Count; i++)
 								{
 									if (materialKeys[i] == presetsID)
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (layerType == NamedSettingsLayers.Material)
 			{
-				if (activeSettings.MaterialPresetKey(extruderIndex) != item.Value)
+				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Value)
 				{
 					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
 				}
@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (layerType == NamedSettingsLayers.Material)
 				{
-					settingsKey = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
+					settingsKey = ActiveSliceSettings.Instance.GetMaterialPresetKey(extruderIndex);
 
 					ActiveSliceSettings.Instance.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
 					dropDownList.Closed += (s1, e1) =>

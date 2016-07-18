@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			// Print leveling
 			var printLevelingData = PrintLevelingData.Create(
-				new SettingsProfile(layeredProfile), 
+				layeredProfile, 
 				printer.PrintLevelingJsonData, 
 				printer.PrintLevelingProbePositions);
 
@@ -139,10 +139,9 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			layeredProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
-			var settingsProfile = new SettingsProfile(layeredProfile);
-			settingsProfile.Helpers.SetComPort(printer.ComPort);
+			layeredProfile.Helpers.SetComPort(printer.ComPort);
 
-			settingsProfile.SaveChanges();
+			layeredProfile.Save();
 		}
 
 		private static void LoadMaterialSettings(PrinterSettings layeredProfile, Printer printer)

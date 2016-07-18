@@ -172,22 +172,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static SettingsProfile LoadEmptyProfile()
+		public static PrinterSettings LoadEmptyProfile()
 		{
-			var empytProfile = new SettingsProfile(new PrinterSettings());
-			empytProfile.ID = "EmptyProfile";
-			empytProfile.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
+			var emptyProfile = new PrinterSettings() { ID = "EmptyProfile" };
+			emptyProfile.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
 
-			return empytProfile;
+			return emptyProfile;
 		}
 
-		public static SettingsProfile LoadProfileFromMCWS(string deviceToken)
+		public static PrinterSettings LoadProfileFromMCWS(string deviceToken)
 		{
 			WebClient client = new WebClient();
 			string json = client.DownloadString($"{MatterControlApplication.MCWSBaseUri}/api/1/device/get-profile?PrinterToken={deviceToken}");
 
 			var printerSettings = JsonConvert.DeserializeObject<PrinterSettings>(json);
-			return new SettingsProfile(printerSettings);
+			return printerSettings;
 		}
 
 		[JsonIgnore]
@@ -204,7 +203,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool PrintersImported { get; set; } = false;
 
-		public SettingsProfile LoadLastProfile()
+		public PrinterSettings LoadLastProfile()
 		{
 			return LoadProfile(this.LastProfileID);
 		}
@@ -233,7 +232,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <param name="profileID">The profile ID to load</param>
 		/// <param name="useActiveInstance">Return the in memory instance if already loaded. Alternatively, reload from disk</param>
 		/// <returns></returns>
-		public static SettingsProfile LoadProfile(string profileID, bool useActiveInstance = true)
+		public static PrinterSettings LoadProfile(string profileID, bool useActiveInstance = true)
 		{
 			// Only load profiles by ID that are defined in the profiles document
 			if (ProfileManager.Instance[profileID] == null)
@@ -250,11 +249,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
 		}
 
-		internal static SettingsProfile LoadProfileFromDisk(string profilePath)
+		internal static PrinterSettings LoadProfileFromDisk(string profilePath)
 		{
 			if (File.Exists(profilePath))
 			{
-				return new SettingsProfile(PrinterSettings.LoadFile(profilePath));
+				return PrinterSettings.LoadFile(profilePath);
 			}
 			else
 			{
@@ -365,7 +364,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			UserSettings.Instance.set("ActiveProfileID", guid);
 
-			ActiveSliceSettings.Instance = new SettingsProfile(newProfile);
+			ActiveSliceSettings.Instance = newProfile;
 		}
 
 		private static PrinterSettings LoadHttpOemProfile(string make, string model)

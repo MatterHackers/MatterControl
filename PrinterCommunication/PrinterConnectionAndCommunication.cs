@@ -947,7 +947,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		// TODO: Consider having callers use the source rather than this proxy? Maybe better to change after arriving on a final type and location for printer settings
-		public SettingsProfile ActivePrinter => ActiveSliceSettings.Instance;
+		public PrinterSettings ActivePrinter => ActiveSliceSettings.Instance;
 
 		private int NumberOfLinesInCurrentPrint
 		{

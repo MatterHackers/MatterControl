@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class PrintLevelingData
 	{
-		private SettingsProfile settingsProfile;
+		private PrinterSettings settingsProfile;
 
 		public List<Vector3> SampledPositions = new List<Vector3>();
 
@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		[JsonConverter(typeof(StringEnumConverter))]
 		public enum LevelingSystem { Probe3Points, Probe2Points, Probe7PointRadial, Probe13PointRadial }
 
-		public PrintLevelingData(SettingsProfile settingsProfile)
+		public PrintLevelingData(PrinterSettings settingsProfile)
 		{
 			this.settingsProfile = settingsProfile;
 		}
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		internal static PrintLevelingData Create(SettingsProfile settingsProfile, string jsonData, string depricatedPositionsCsv3ByXYZ)
+		internal static PrintLevelingData Create(PrinterSettings settingsProfile, string jsonData, string depricatedPositionsCsv3ByXYZ)
 		{
 			if (!string.IsNullOrEmpty(jsonData))
 			{

@@ -758,7 +758,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsRow.AddChild(restoreArea);
 			settingsRow.Name = settingData.SlicerConfigName + " Edit Field";
 
-			if (!SettingsProfile.KnownSettings.Contains(settingData.SlicerConfigName))
+			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
 				// the setting we think we are adding is not in the known settings it may have been deprecated
 				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in known settings", settingData.SlicerConfigName));
