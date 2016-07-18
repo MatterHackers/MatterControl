@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			printerSettings.SetValue("print_leveling_enabled", doLeveling ? "1" : "0");
 
-			printerSettings.DoPrintLevelingChanged.CallEvents(this, null);
+			printerSettings.PrintLevelingEnabledChanged.CallEvents(this, null);
 
 			if (doLeveling)
 			{

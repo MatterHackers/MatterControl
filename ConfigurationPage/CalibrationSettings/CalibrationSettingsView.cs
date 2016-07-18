@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				Text = "Software Print Leveling".Localize()
 			};
 
-			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+			ActiveSliceSettings.Instance.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{
 				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled");
 			}, ref unregisterEvents);

@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsHelpers Helpers { get; set; }
 
-		public RootedObjectEventHandler DoPrintLevelingChanged = new RootedObjectEventHandler();
+		public RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
 
 		public bool PrinterSelected => OemLayer?.Keys.Count > 0;
 
