@@ -5221,3 +5221,15 @@ Translated:Guides and Articles
 English:Syncing Profiles...
 Translated:Syncing Profiles...
 
+English:G-Code
+Translated:G-Code
+
+English:Defaults Updated On: {0}
+Translated:Defaults Updated On: {0}
+
+English:Defaults Updated On: { 0} 
+Translated:Defaults Updated On: { 0} 
+
+English:Defaults Updated On: {0} 
+Translated:Defaults Updated On: {0} 
+
