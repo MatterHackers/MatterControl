@@ -42,8 +42,6 @@ namespace MatterHackers.MatterControl
 {
 	public static class UiNavigation
 	{
-		static bool runingNavigation;
-
 		public static void GoToEditPrinter_Click(object sender, EventArgs e)
 		{
 			Button editButton = sender as Button;
@@ -63,29 +61,9 @@ namespace MatterHackers.MatterControl
 		{
 			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null)
 			{
-				Task.Run(() =>
+				UiThread.RunOnIdle(() =>
 				{
-					UiThread.RunOnIdle(() =>
-					{
-						WizardWindow.Show<EditPrinterSettingsPage>("EditSettings", "Edit Printer Settings");
-
-						EventHandler unregisterEvents = null;
-						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s,e) =>
-						{
-							WizardWindow openWindowInternal = WizardWindow.GetSystemWindow("EditSettings");
-							if(openWindowInternal != null)
-							{
-								UiThread.RunOnIdle(() => openWindowInternal.Close());
-							}
-						}, ref unregisterEvents);
-
-						WizardWindow openWindow = WizardWindow.GetSystemWindow("EditSettings");
-						openWindow.Closed += (s2, e2) =>
-						{
-							UiThread.RunOnIdle(() => unregisterEvents?.Invoke(s2, null));
-						};
-
-					});
+					WizardWindow.Show<EditPrinterSettingsPage>("EditSettings", "Edit Printer Settings");
 				});
 			}
 		}
@@ -103,7 +81,7 @@ namespace MatterHackers.MatterControl
 
 	public class AttentionGetter
 	{
-		static HashSet<GuiWidget> runingAttentons = new HashSet<GuiWidget>();
+		static HashSet<GuiWidget> runningAttentions = new HashSet<GuiWidget>();
 		private double animationDelay = 1 / 20.0;
 		private int cycles = 1;
 		private double lightnessChange = 1;
@@ -120,9 +98,9 @@ namespace MatterHackers.MatterControl
 
 		public static AttentionGetter GetAttention(GuiWidget widgetToHighlight)
 		{
-			if(!runingAttentons.Contains(widgetToHighlight))
+			if(!runningAttentions.Contains(widgetToHighlight))
 			{
-				runingAttentons.Add(widgetToHighlight);
+				runningAttentions.Add(widgetToHighlight);
 				return new AttentionGetter(widgetToHighlight);
 			}
 
@@ -151,7 +129,7 @@ namespace MatterHackers.MatterControl
 				{
 					widgetToHighlight.BackgroundColor = startColor;
 					widgetToHighlight.DrawAfter -= ConnectToWidget;
-					runingAttentons.Remove(widgetToHighlight);
+					runningAttentions.Remove(widgetToHighlight);
 					widgetToHighlight = null;
 					return;
 				}
