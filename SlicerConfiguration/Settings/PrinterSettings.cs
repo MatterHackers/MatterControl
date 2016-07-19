@@ -726,7 +726,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		#endregion
 
 		[JsonIgnore]
-		public static HashSet<string> KnownSettings { get; } = LoadSettingsNamesFromPropertiesJson();
+		private static HashSet<string> knownSettings;
+		public static HashSet<string> KnownSettings
+		{
+			get
+			{
+				if (knownSettings == null)
+				{
+					knownSettings = LoadSettingsNamesFromPropertiesJson();
+				}
+
+				return knownSettings;
+			}
+		}
 
 		private static HashSet<string> LoadSettingsNamesFromPropertiesJson()
 		{
