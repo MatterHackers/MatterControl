@@ -46,6 +46,7 @@ using MatterHackers.Agg;
 using MatterHackers.VectorMath;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.Agg.PlatformAbstract;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -218,26 +219,50 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		//
 		public static PrinterSettings LoadFile(string printerProfilePath)
 		{
-
-			JObject jObject;
+			JObject jObject = null;
 			try
 			{
 				jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
 			}
 			catch
 			{
+				string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath);
+				var profile = ProfileManager.Instance[profileKey];
+
 				if (MatterControlApplication.IsLoading)
 				{
 					UiThread.RunOnIdle(() =>
 				   {
-					   StyledMessageBox.ShowMessageBox(null, "The profile you are attempting to load has been corrupted. We loaded your last usable profile instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
-				   },4);
+					   bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
+					   if (userIsLoggedIn && profile != null)
+					   {
+						   if (profile != null)
+						   {
+							   RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert());
+						   }
+						   else
+						   {
+							   RevertToOemProfile(printerProfilePath);
+							   WarnAboutRevert();
+						   }
+					   }
+				   }, 4);
 
 					return ProfileManager.LoadEmptyProfile();
 				}
 				else
 				{
-					return RecoverProfile(printerProfilePath);
+					bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
+					if (userIsLoggedIn && profile != null)
+					{
+						RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert());
+						return ProfileManager.LoadEmptyProfile();
+					}
+					else
+					{
+						WarnAboutRevert();
+						return RevertToOemProfile(printerProfilePath);
+					}
 				}
 			}
 
@@ -255,65 +280,63 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch
 			{
-				return RecoverProfile(printerProfilePath);
+				return RevertToOemProfile(printerProfilePath);
 			}
 		}
 
-		public static PrinterSettings RecoverProfile(string printerProfilePath)
+		static bool warningOpen = false;
+		public static void WarnAboutRevert()
+		{
+			if (!warningOpen)
+			{
+				warningOpen = true;
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox((clicedOk) => 
+					{
+						warningOpen = false;
+					}, "The profile you are attempting to load has been corrupted. We loaded your last usable profile instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
+				});
+			}
+		}
+
+		public static PrinterSettings RevertToOemProfile(string printerProfilePath)
 		{
 			string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath);
 			var profile = ProfileManager.Instance[profileKey];
 			
-			bool userIsLoggedIn = ShouldShowAuthPanel?.Invoke() ?? false;
-			if (userIsLoggedIn)
+			string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
+			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ".json";
+
+			var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
+			oemProfile.ID = profile.ID;
+			oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
+			oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
+
+			oemProfile.Helpers.SetComPort(profile.ComPort);
+			oemProfile.Save();
+
+			UiThread.RunOnIdle(() =>
 			{
-				string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
-				string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ".json";
+				StyledMessageBox.ShowMessageBox(null, "The profile you are attempting to load has been corrupted. We loaded a usable public profile for you instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
+			}, 1);
 
-				var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
-				oemProfile.ID = profile.ID;
-				oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
-				oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
-
-				oemProfile.Helpers.SetComPort(profile.ComPort);
-				oemProfile.Save();
-
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox(null, "The profile you are attempting to load has been corrupted. We loaded a usable public profile for you instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
-				}, 1);
-
-				return oemProfile;
-			}
-			else
-			{
-				//return LoadHistoryItems(profile);
-				return new PrinterSettings();
-			}
+			return oemProfile;
 		}
 
-		private static async void LoadHistoryItems(PrinterInfo profile)
+		private static async Task RevertToMostRecentProfile(PrinterInfo profile)
 		{
-			var results = await ApplicationController.GetProfileHistory(profile.DeviceToken);
-			if (results != null)
+			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory(profile.DeviceToken);
+			if (recentProfileHistoryItems != null)
 			{
-				var profileToLoad = results.FirstOrDefault();
-				string profileToken = profileToLoad.Value;
+				string profileToken = recentProfileHistoryItems.OrderByDescending(kvp => kvp.Key).FirstOrDefault().Value;
 
 				// Download the specified json profile
 				await ApplicationController.GetPrinterProfile(profile, profileToken);
-
-				var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(profile.ProfilePath));
-				oemProfile.ID = profile.ID;
-				oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
-				oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
-
-				oemProfile.Helpers.SetComPort(profile.ComPort);
-				oemProfile.Save();
-
+				
 				// Update the active instance to the newly downloaded item
-				var jsonProfile = ProfileManager.LoadProfile(profile.ID, false);
-				ActiveSliceSettings.RefreshActiveInstance(jsonProfile);
+				var printerProfile = ProfileManager.LoadProfile(profile.ID, false);
+				ActiveSliceSettings.RefreshActiveInstance(printerProfile);
 			}
 		}
 
