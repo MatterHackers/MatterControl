@@ -1,9 +1,0 @@
-layer_height = 0.3
-infill_speed = 70
-min_fan_speed = 65
-max_fan_speed = 85
-travel_speed = 130
-perimeter_speed = 70
-external_perimeter_speed = 60%
-top_solid_layers = 2
-bottom_solid_layers = 2

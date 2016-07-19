@@ -1,5 +1,0 @@
-bed_temperature = 95
-temperature = 210
-slowdown_below_layer_time = 15
-max_fan_speed = 50
-min_fan_speed = 0
