@@ -1,5 +1,0 @@
-temperature = 245
-bed_temperature = 30
-skirts = 4
-skirt_distance = 0
-external_perimeter_speed = 30
