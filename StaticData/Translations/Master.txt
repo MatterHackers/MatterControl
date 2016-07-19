@@ -5233,3 +5233,18 @@ Translated:Defaults Updated On: { 0}
 English:Defaults Updated On: {0} 
 Translated:Defaults Updated On: {0} 
 
+English:Properties
+Translated:Properties
+
+English:Qualities
+Translated:Qualities
+
+English:Temperatures
+Translated:Temperatures
+
+English:While Printing
+Translated:While Printing
+
+English:On Tool Change
+Translated:On Tool Change
+
