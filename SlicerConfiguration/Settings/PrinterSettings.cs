@@ -63,6 +63,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ID { get; set; }
 
+		public static Func<bool> ShouldShowAuthPanel { get; set; }
+
 		[JsonIgnore]
 		internal PrinterSettingsLayer QualityLayer { get; private set; }
 
@@ -224,7 +226,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch
 			{
-				return RecoverProfile(printerProfilePath);
+				if (MatterControlApplication.IsLoading)
+				{
+					UiThread.RunOnIdle(() =>
+				   {
+					   StyledMessageBox.ShowMessageBox(null, "The profile you are attempting to load has been corrupted. We loaded your last usable profile instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
+				   },4);
+
+					return ProfileManager.LoadEmptyProfile();
+				}
+				else
+				{
+					return RecoverProfile(printerProfilePath);
+				}
 			}
 
 			int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? 0;
@@ -247,20 +261,60 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static PrinterSettings RecoverProfile(string printerProfilePath)
 		{
-			string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath); 
+			string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath);
 			var profile = ProfileManager.Instance[profileKey];
-			string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
-			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ".json";
 			
-			var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
-			oemProfile.ID = profile.ID;
-			oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
-			oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
+			bool userIsLoggedIn = ShouldShowAuthPanel?.Invoke() ?? false;
+			if (userIsLoggedIn)
+			{
+				string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
+				string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ".json";
 
-			oemProfile.Helpers.SetComPort(profile.ComPort);
-			oemProfile.Save();
+				var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
+				oemProfile.ID = profile.ID;
+				oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
+				oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
-			return oemProfile;
+				oemProfile.Helpers.SetComPort(profile.ComPort);
+				oemProfile.Save();
+
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox(null, "The profile you are attempting to load has been corrupted. We loaded a usable public profile for you instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
+				}, 1);
+
+				return oemProfile;
+			}
+			else
+			{
+				//return LoadHistoryItems(profile);
+				return new PrinterSettings();
+			}
+		}
+
+		private static async void LoadHistoryItems(PrinterInfo profile)
+		{
+			var results = await ApplicationController.GetProfileHistory(profile.DeviceToken);
+			if (results != null)
+			{
+				var profileToLoad = results.FirstOrDefault();
+				string profileToken = profileToLoad.Value;
+
+				// Download the specified json profile
+				await ApplicationController.GetPrinterProfile(profile, profileToken);
+
+				var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(profile.ProfilePath));
+				oemProfile.ID = profile.ID;
+				oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
+				oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
+
+				oemProfile.Helpers.SetComPort(profile.ComPort);
+				oemProfile.Save();
+
+				// Update the active instance to the newly downloaded item
+				var jsonProfile = ProfileManager.LoadProfile(profile.ID, false);
+				ActiveSliceSettings.RefreshActiveInstance(jsonProfile);
+			}
 		}
 
 		/// <summary>
