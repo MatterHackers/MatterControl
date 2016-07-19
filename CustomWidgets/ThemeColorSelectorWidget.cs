@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 
 				if (int.TryParse(themeIndexText, out themeIndex) && themeIndex < ActiveTheme.AvailableThemes.Count)
 				{
-					ActiveSliceSettings.Instance.SetActiveValue("active_theme_index", themeIndex.ToString());
+					ActiveSliceSettings.Instance.SetValue("active_theme_index", themeIndex.ToString());
 					ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
 				}
 			};

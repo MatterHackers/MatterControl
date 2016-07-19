@@ -113,14 +113,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return foundValue ?? defaultValue;
 		}
 
-		public string ValueOrNull(string key)
-		{
-			string foundValue;
-			this.TryGetValue(key, out foundValue);
-
-			return foundValue;
-		}
-
 		public static PrinterSettingsLayer LoadFromIni(TextReader reader)
 		{
 			var layer = new PrinterSettingsLayer();

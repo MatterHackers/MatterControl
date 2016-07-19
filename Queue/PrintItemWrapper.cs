@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					return FileLocation;
 				}
 
-				string engineString = ((int)ActiveSliceSettings.Instance.ActiveSliceEngineType()).ToString();
+				string engineString = ((int)ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType()).ToString();
 
 				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString();
 				string gcodePathAndFileName = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				}
 
 				// check if there is a known line at the end of the file (this will let us know if slicer finished building the file).
-				switch (ActiveSliceSettings.Instance.ActiveSliceEngineType())
+				switch (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
 				{
 					case SlicingEngineTypes.CuraEngine:
 					case SlicingEngineTypes.MatterSlice:

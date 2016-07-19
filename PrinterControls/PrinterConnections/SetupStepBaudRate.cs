@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				try
 				{
-					ActiveSliceSettings.Instance.SetBaudRate(baudRate);
+					ActiveSliceSettings.Instance.Helpers.SetBaudRate(baudRate);
 					return true;
 				}
 				catch

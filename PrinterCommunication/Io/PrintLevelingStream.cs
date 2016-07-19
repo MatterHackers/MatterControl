@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 			if (levelingData != null)
 			{
 				switch (levelingData.CurrentPrinterLevelingSystem)

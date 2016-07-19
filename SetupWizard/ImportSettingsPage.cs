@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			activeSettings.SaveChanges();
+			activeSettings.Save();
 
 			UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 
@@ -519,7 +519,7 @@ namespace MatterHackers.MatterControl
 								ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
 							}
 
-							ActiveSliceSettings.Instance.SaveChanges();
+							ActiveSliceSettings.Instance.Save();
 
 							WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), sectionName))
 							{
@@ -576,7 +576,7 @@ namespace MatterHackers.MatterControl
 								}
 							}
 
-							activeSettings.SaveChanges();
+							activeSettings.Save();
 
 							UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 						}

@@ -131,15 +131,15 @@ namespace MatterHackers.MatterControl
 
 			if (matterControlButton.Checked)
 			{
-				ActiveSliceSettings.Instance.ExportAsMatterControlConfig();
+				ActiveSliceSettings.Instance.Helpers.ExportAsMatterControlConfig();
 			}
 			else if(slic3rButton.Checked)
 			{
-				ActiveSliceSettings.Instance.ExportAsSlic3rConfig();
+				ActiveSliceSettings.Instance.Helpers.ExportAsSlic3rConfig();
 			}
 			else if(curaButton.Checked)
 			{
-				ActiveSliceSettings.Instance.ExportAsCuraConfig();
+				ActiveSliceSettings.Instance.Helpers.ExportAsCuraConfig();
 			}
 		}
 	}

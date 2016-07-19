@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			int layerNumber;
 
-			if (int.TryParse(layer, out layerNumber) && ActiveSliceSettings.Instance.LayerToPauseOn().Contains(layerNumber))
+			if (int.TryParse(layer, out layerNumber) && ActiveSliceSettings.Instance.Helpers.LayerToPauseOn().Contains(layerNumber))
 			{
 				return true;
 			}

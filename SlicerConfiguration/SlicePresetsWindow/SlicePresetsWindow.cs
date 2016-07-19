@@ -66,7 +66,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private MHTextEditWidget presetNameInput;
 
 		private string initialPresetName = null;
-		private string configFileExtension = "slice";
 
 		private GuiWidget middleRow;
 
@@ -250,7 +249,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private void SaveAs()
 		{
 			FileDialog.SaveFileDialog(
-				new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension)
+				new SaveFileDialogParams("Save Slice Preset|*" + ProfileManager.ConfigFileExtension)
 				{
 					FileName = presetNameInput.Text
 				},

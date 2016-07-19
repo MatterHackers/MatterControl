@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 
-		private static SettingsProfile activeInstance = null;
-		public static SettingsProfile Instance
+		private static PrinterSettings activeInstance = null;
+		public static PrinterSettings Instance
 		{
 			get
 			{
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static void RefreshActiveInstance(SettingsProfile updatedProfile)
+		public static void RefreshActiveInstance(PrinterSettings updatedProfile)
 		{
 			bool themeChanged = activeInstance.GetValue("active_theme_index") != updatedProfile.GetValue("active_theme_index");
 

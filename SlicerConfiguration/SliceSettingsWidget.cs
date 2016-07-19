@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
 			topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 
-			if (sliceSettingsDetailControl.SelectedValue == "Advanced" && ActiveSliceSettings.Instance.ActiveSliceEngineType() == SlicingEngineTypes.Slic3r)
+			if (sliceSettingsDetailControl.SelectedValue == "Advanced" && ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.Slic3r)
 			{
 				TabPage extraSettingsPage = new TabPage("Other");
 				SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, "Other Tab", 16,
@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
 
-							if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingData.SlicerConfigName)
+							if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(settingData.SlicerConfigName)
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
@@ -545,7 +545,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
 					{
 						SliceSettingData settingData = new SliceSettingData(keyValue.Key, keyValue.Key, SliceSettingData.DataEditTypes.STRING);
-						if (ActiveSliceSettings.Instance.ActiveSliceEngine().MapContains(settingData.SlicerConfigName))
+						if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(settingData.SlicerConfigName))
 						{
 							bool addControl;
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingData, layerCascade, persistenceLayer, viewFilter, 0, out addControl, ref tabIndexForItem);
@@ -696,7 +696,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										{
 											if (doDelete)
 											{
-												ActiveSliceSettings.Instance.SetMarkedForDelete(true);
+												ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
 											}
 										}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
 									};
@@ -758,7 +758,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsRow.AddChild(restoreArea);
 			settingsRow.Name = settingData.SlicerConfigName + " Edit Field";
 
-			if (!ActiveSliceSettings.Instance.KnownSettings.Contains(settingData.SlicerConfigName))
+			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
 				// the setting we think we are adding is not in the known settings it may have been deprecated
 				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in known settings", settingData.SlicerConfigName));
@@ -1228,7 +1228,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							settingsRow.ValueChanged = (text) =>
 							{
 								// Lookup the machine specific comport value rather than the passed in text value
-								selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.ComPort();
+								selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
 							};
 						}
 						break;
@@ -1379,7 +1379,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.OFFSET2:
 						{
-							Vector2 offset = ActiveSliceSettings.Instance.ExtruderOffset(extruderIndex);
+							Vector2 offset = ActiveSliceSettings.Instance.Helpers.ExtruderOffset(extruderIndex);
 
 							var xEditWidget = new MHNumberEdit(offset.x, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++)
 							{
@@ -1430,11 +1430,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							settingsRow.ValueChanged = (text) =>
 							{
-								Vector2 offset2 = ActiveSliceSettings.Instance.ExtruderOffset(extruderIndex);
+								Vector2 offset2 = ActiveSliceSettings.Instance.Helpers.ExtruderOffset(extruderIndex);
 								xEditWidget.ActuallNumberEdit.Value = offset2.x;
 								yEditWidget.ActuallNumberEdit.Value = offset2.y;
 							};
-
 						}
 						break;
 
@@ -1540,7 +1539,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static void AddComMenuItems(SliceSettingData settingData, PrinterSettingsLayer persistenceLayer, SettingsRow settingsRow, DropDownList selectableOptions)
 		{
 			selectableOptions.MenuItems.Clear();
-			string machineSpecificComPortValue = ActiveSliceSettings.Instance.ComPort();
+			string machineSpecificComPortValue = ActiveSliceSettings.Instance.Helpers.ComPort();
 			foreach (string listItem in FrostedSerialPort.GetPortNames())
 			{
 				MenuItem newItem = selectableOptions.AddItem(listItem);
@@ -1556,11 +1555,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Directly set the ComPort
 					if (persistenceLayer == null)
 					{
-						ActiveSliceSettings.Instance.SetComPort(menuItem.Text);
+						ActiveSliceSettings.Instance.Helpers.SetComPort(menuItem.Text);
 					}
 					else
 					{
-						ActiveSliceSettings.Instance.SetComPort(menuItem.Text, persistenceLayer);
+						ActiveSliceSettings.Instance.Helpers.SetComPort(menuItem.Text, persistenceLayer);
 					}
 
 					settingsRow.UpdateStyle();
@@ -1705,11 +1704,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (persistenceLayer == null)
 			{
-				ActiveSliceSettings.Instance.SetActiveValue(name, value);
+				ActiveSliceSettings.Instance.SetValue(name, value);
 			}
 			else
 			{
-				ActiveSliceSettings.Instance.SetActiveValue(name, value, persistenceLayer);
+				ActiveSliceSettings.Instance.SetValue(name, value, persistenceLayer);
 			}
 		}
 

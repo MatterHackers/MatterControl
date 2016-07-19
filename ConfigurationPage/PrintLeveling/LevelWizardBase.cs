@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 
 			LevelWizardBase printLevelWizardWindow;
 			switch (levelingData.CurrentPrinterLevelingSystem)

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 			CreateWindowContent();
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
-			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
+			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
 		}
 
 		private string applyLevelingDuringExportString = "Apply leveling to G-Code during export".Localize();
@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl
 					GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(source);
 					if (applyLeveling.Checked)
 					{
-						PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+						PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 						if (levelingData != null)
 						{
 							for (int lineIndex = 0; lineIndex < unleveledGCode.LineCount; lineIndex++)

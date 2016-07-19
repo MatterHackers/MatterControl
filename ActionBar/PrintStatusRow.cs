@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled");
 			}, ref unregisterEvents);
 
-			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{
 				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled");
 			}, ref unregisterEvents);
@@ -705,7 +705,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled");
 			}, ref unregisterEvents);
 
-			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{
 				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled");
 			}, ref unregisterEvents);

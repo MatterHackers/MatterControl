@@ -61,17 +61,17 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-		SettingsProfile GettProfile(string[] settings)
+		PrinterSettings GettProfile(string[] settings)
 		{
 			Dictionary<string, string> dictionary = new Dictionary<string, string>();
 			for(int i=0; i<settings.Length; i+=2)
 			{
 				dictionary.Add(settings[i], settings[i + 1]);
 			}
-			var profile = new SettingsProfile(new PrinterSettings()
+			var profile = new PrinterSettings()
 			{
 				OemLayer = new PrinterSettingsLayer(dictionary)
-			});
+			};
 
 			return profile;
 		}
