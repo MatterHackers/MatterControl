@@ -25,6 +25,11 @@ namespace MatterHackers.MatterControl.SetupWizard
 					// Switch to setup wizard if no profiles exist
 					WizardWindow.ChangeToSetupPrinterForm();
 				}
+				else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
+				{
+					//Set as active printer
+					ActiveSliceSettings.SwitchToProfile(ProfileManager.Instance.ActiveProfiles.First().ID);
+				}
 				UiThread.RunOnIdle(WizardWindow.Close);
 			});
 			footerRow.AddChild(new HorizontalSpacer());
