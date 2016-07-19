@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static PrinterSettingsLayer baseLayerCache;
 
-		public int DocumentVersion { get; set; }
+		public int DocumentVersion { get; set; } = LatestVersion;
 
 		public string ID { get; set; }
 
@@ -342,9 +342,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				yield return this.BaseLayer;
 			}
 		}
-
+		[JsonIgnore]
 		public SettingsHelpers Helpers { get; set; }
-
+		[JsonIgnore]
 		public bool PrinterSelected => OemLayer?.Keys.Count > 0;
 
 		internal void RunInTransaction(Action<PrinterSettings> action)
