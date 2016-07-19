@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			toggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
 				CheckBox thisControl = sender as CheckBox;
-				ActiveSliceSettings.Instance.SetActiveValue("PublishBedImage", thisControl.Checked ? "1" : "0");
+				ActiveSliceSettings.Instance.SetValue("PublishBedImage", thisControl.Checked ? "1" : "0");
 			};
 			publishImageSwitchContainer.AddChild(toggleSwitch);
 

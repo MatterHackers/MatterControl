@@ -2301,7 +2301,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (!string.IsNullOrEmpty(currentPortName))
 			{
 				// TODO: Ensure that this does *not* cause a write to the settings file and should be an in memory update only
-				ActiveSliceSettings.Instance?.SetComPort(currentPortName);
+				ActiveSliceSettings.Instance?.Helpers.SetComPort(currentPortName);
 			}
 #endif
 

@@ -37,6 +37,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -277,6 +278,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SlicingEngineTypes ActiveSliceEngineType()
 		{
+			List<SliceEngineInfo> availableEnginens = SlicingQueue.AvailableSliceEngines;
+
+			if (OsInformation.OperatingSystem == OSType.Android
+				|| availableEnginens.Count == 1)
+			{
+				// android only has MatterSlice available, so always return it.
+				return SlicingEngineTypes.MatterSlice;
+			}
+
 			string engineType = printerSettings.GetValue("slicing_engine");
 			if (string.IsNullOrEmpty(engineType))
 			{
