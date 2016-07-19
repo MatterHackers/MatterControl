@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
-		/// Loads the specified SettingsProfile
+		/// Loads the specified PrinterProfile
 		/// </summary>
 		/// <param name="profileID">The profile ID to load</param>
 		/// <param name="useActiveInstance">Return the in memory instance if already loaded. Alternatively, reload from disk</param>

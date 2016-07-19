@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class PrintLevelingData
 	{
-		private PrinterSettings settingsProfile;
+		private PrinterSettings printerProfile;
 
 		public List<Vector3> SampledPositions = new List<Vector3>();
 
@@ -27,16 +27,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		[JsonConverter(typeof(StringEnumConverter))]
 		public enum LevelingSystem { Probe3Points, Probe2Points, Probe7PointRadial, Probe13PointRadial }
 
-		public PrintLevelingData(PrinterSettings settingsProfile)
+		public PrintLevelingData(PrinterSettings printerProfile)
 		{
-			this.settingsProfile = settingsProfile;
+			this.printerProfile = printerProfile;
 		}
 
 		public LevelingSystem CurrentPrinterLevelingSystem
 		{
 			get
 			{
-				switch (settingsProfile.GetValue("print_leveling_solution"))
+				switch (printerProfile.GetValue("print_leveling_solution"))
 				{
 					case "2 Point Plane":
 						return LevelingSystem.Probe2Points;
@@ -114,19 +114,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		internal static PrintLevelingData Create(PrinterSettings settingsProfile, string jsonData, string depricatedPositionsCsv3ByXYZ)
+		internal static PrintLevelingData Create(PrinterSettings printerProfile, string jsonData, string depricatedPositionsCsv3ByXYZ)
 		{
 			if (!string.IsNullOrEmpty(jsonData))
 			{
 				var deserialized = JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
-				deserialized.settingsProfile = settingsProfile;
+				deserialized.printerProfile = printerProfile;
 
 				return deserialized;
 			}
 			else if (!string.IsNullOrEmpty(depricatedPositionsCsv3ByXYZ))
 			{
 				var item = new PrintLevelingData(ActiveSliceSettings.Instance);
-				item.settingsProfile = settingsProfile;
+				item.printerProfile = printerProfile;
 				item.ParseDepricatedPrintLevelingMeasuredPositions(depricatedPositionsCsv3ByXYZ);
 
 				return item;
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				return new PrintLevelingData(ActiveSliceSettings.Instance)
 				{
-					settingsProfile = settingsProfile
+					printerProfile = printerProfile
 				};
 			}
 		}

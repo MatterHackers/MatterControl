@@ -263,8 +263,8 @@
     <Compile Include="SlicerConfiguration\Settings\ProfileMigrations.cs" />
     <Compile Include="SlicerConfiguration\Settings\ProfileManager.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettingsLayer.cs" />
+    <Compile Include="SlicerConfiguration\Settings\SettingsHelpers.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsDetailControl.cs" />
-    <Compile Include="SlicerConfiguration\Settings\SettingsProfile.cs" />
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
