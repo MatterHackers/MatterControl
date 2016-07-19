@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GetRenderType(),
 				gcodeViewWidget.FeatureToStartOnRatio0To1,
 				gcodeViewWidget.FeatureToEndOnRatio0To1,
-				new Vector2[] { ActiveSliceSettings.Instance.ExtruderOffset(0), ActiveSliceSettings.Instance.ExtruderOffset(1) });
+				new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) });
 
 			gcodeViewWidget.gCodeRenderer.Render3D(renderInfo);
 		}

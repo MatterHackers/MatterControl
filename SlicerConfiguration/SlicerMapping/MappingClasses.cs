@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (extrudersUsed.Count > extruderIndex0Based
 					&& extrudersUsed[extruderIndex0Based])
 				{
-					string materialTemperature = ActiveSliceSettings.Instance.ExtruderTemperature(extruderIndex0Based);
+					string materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
 					if (!string.IsNullOrEmpty(materialTemperature) && materialTemperature != "0")
 					{
 						string setTempString = "M104 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (extrudersUsed.Count > extruderIndex0Based
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						string materialTemperature = ActiveSliceSettings.Instance.ExtruderTemperature(extruderIndex0Based);
+						string materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
 						if (!string.IsNullOrEmpty(materialTemperature) && materialTemperature != "0")
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (extrudersUsed.Count > extruderIndex0Based
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						string materialTemperature = ActiveSliceSettings.Instance.ExtruderTemperature(extruderIndex0Based);
+						string materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
 						if (!string.IsNullOrEmpty(materialTemperature) && materialTemperature != "0")
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);

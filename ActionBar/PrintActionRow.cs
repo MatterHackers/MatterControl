@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-						PrintLevelingData levelingData = ActiveSliceSettings.Instance.GetPrintLevelingData();
+						PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 						if (levelingData != null && ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
 							&& !levelingData.HasBeenRun())
 						{

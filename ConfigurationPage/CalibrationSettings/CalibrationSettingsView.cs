@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				ActiveSliceSettings.Instance.DoPrintLeveling(printLevelingSwitch.Checked);
+				ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
 			};
 
 			printLevelingStatusLabel = new TextWidget("")
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				Text = "Software Print Leveling".Localize()
 			};
 
-			ActiveSliceSettings.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{
 				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled");
 			}, ref unregisterEvents);

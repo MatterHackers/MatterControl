@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (revertSettings)
 					{
 						ActiveSliceSettings.Instance.ClearUserOverrides();
-						ActiveSliceSettings.Instance.SaveChanges();
+						ActiveSliceSettings.Instance.Save();
 						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					}
 				},

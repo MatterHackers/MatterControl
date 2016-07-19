@@ -266,7 +266,7 @@
     <Compile Include="SlicerConfiguration\SliceSettingsDetailControl.cs" />
     <Compile Include="SlicerConfiguration\Settings\SettingsProfile.cs" />
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
-    <Compile Include="SlicerConfiguration\Settings\LayeredProfile.cs" />
+    <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />

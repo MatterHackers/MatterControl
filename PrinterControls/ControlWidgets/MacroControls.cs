@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		protected void ReloadMacros(object sender, EventArgs e)
 		{
-			ActiveSliceSettings.Instance.SaveChanges();
+			ActiveSliceSettings.Instance.Save();
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 

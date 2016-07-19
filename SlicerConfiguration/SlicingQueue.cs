@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string getSlicerFullPath()
 		{
-			SliceEngineInfo info = getSliceEngineInfoByType(ActiveSliceSettings.Instance.ActiveSliceEngineType());
+			SliceEngineInfo info = getSliceEngineInfoByType(ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType());
 			if (info != null)
 			{
 				return info.GetEnginePath();
@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PrintItemWrapper itemToSlice = listOfSlicingItems[0];
 					bool doMergeInSlicer = false;
 					string mergeRules = "";
-					doMergeInSlicer = ActiveSliceSettings.Instance.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice;
+					doMergeInSlicer = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice;
                     string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
 					string fileToSlice = stlFileLocations[0];
 					// check that the STL file is currently on disk
@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						itemToSlice.CurrentlySlicing = true;
 
 						string currentConfigurationFileAndPath = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, "config_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString() + ".ini");
-						ActiveSliceSettings.Instance.GenerateConfigFile(currentConfigurationFileAndPath, true);
+						ActiveSliceSettings.Instance.Helpers.GenerateConfigFile(currentConfigurationFileAndPath, true);
 
 						string gcodePathAndFileName = itemToSlice.GetGCodePathAndFileName();
 						bool gcodeFileIsComplete = itemToSlice.IsGCodeFileComplete(gcodePathAndFileName);
@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string commandArgs = "";
 
-							switch (ActiveSliceSettings.Instance.ActiveSliceEngineType())
+							switch (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
 							{
 								case SlicingEngineTypes.Slic3r:
 									commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							if (OsInformation.OperatingSystem == OSType.Android ||
 								((OsInformation.OperatingSystem == OSType.Mac || runInProcess)
-									&& ActiveSliceSettings.Instance.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice))
+									&& ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice))
 							{
 								itemCurrentlySlicing = itemToSlice;
 								MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;

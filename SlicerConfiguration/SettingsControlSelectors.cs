@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
 					{
-						string presetsID = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
+						string presetsID = ActiveSliceSettings.Instance.GetMaterialPresetKey(extruderIndex);
 						if (string.IsNullOrEmpty(presetsID))
 						{
 							return;
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							},
 							DeleteLayer = () => 
 							{
-								var materialKeys = ActiveSliceSettings.Instance.MaterialSettingsKeys();
+								var materialKeys = ActiveSliceSettings.Instance.MaterialSettingsKeys;
 								for (var i = 0; i < materialKeys.Count; i++)
 								{
 									if (materialKeys[i] == presetsID)
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								ActiveSliceSettings.Instance.SetMaterialPreset(extruderIndex, "");
 								ActiveSliceSettings.Instance.MaterialLayers.Remove(layerToEdit);
-								ActiveSliceSettings.Instance.SaveChanges();
+								ActiveSliceSettings.Instance.Save();
 
 								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								ActiveSliceSettings.Instance.ActiveQualityKey = "";
 								ActiveSliceSettings.Instance.QualityLayers.Remove(layerToEdit);
-								ActiveSliceSettings.Instance.SaveChanges();
+								ActiveSliceSettings.Instance.Save();
 
 								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (layerType == NamedSettingsLayers.Material)
 			{
-				if (activeSettings.MaterialPresetKey(extruderIndex) != item.Value)
+				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Value)
 				{
 					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
 				}
@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (layerType == NamedSettingsLayers.Material)
 				{
-					settingsKey = ActiveSliceSettings.Instance.MaterialPresetKey(extruderIndex);
+					settingsKey = ActiveSliceSettings.Instance.GetMaterialPresetKey(extruderIndex);
 
 					ActiveSliceSettings.Instance.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
 					dropDownList.Closed += (s1, e1) =>
@@ -348,15 +348,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
 					item.Selected += (sender, e) =>
 					{
-						if (ActiveSliceSettings.Instance.ActiveSliceEngineType() != itemEngineType)
+						if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() != itemEngineType)
 						{
-							ActiveSliceSettings.Instance.ActiveSliceEngineType(itemEngineType);
+							ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType(itemEngineType);
 							ApplicationController.Instance.ReloadAdvancedControlsPanel();
 						}
 					};
 
 					//Set item as selected if it matches the active slice engine
-					if (engineMenuItem.GetSliceEngineType() == ActiveSliceSettings.Instance.ActiveSliceEngineType())
+					if (engineMenuItem.GetSliceEngineType() == ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
 					{
 						SelectedLabel = engineMenuItem.Name;
 					}
