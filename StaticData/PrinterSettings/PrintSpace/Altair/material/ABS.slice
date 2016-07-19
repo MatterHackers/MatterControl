@@ -1,8 +1,0 @@
-max_fan_speed = 0
-temperature = 235
-bed_temperature = 100
-min_fan_speed = 0
-disable_fan_first_layers = 0
-bridge_fan_speed = 0
-perimeter_speed = 40
-external_perimeter_speed = 45

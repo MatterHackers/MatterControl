@@ -1,7 +1,0 @@
-temperature = 245
-bed_temperature = 30
-skirt_distance = 0
-skirts = 4
-external_perimeter_speed = 20
-top_solid_infill_speed = 30
-perimeter_speed = 30
