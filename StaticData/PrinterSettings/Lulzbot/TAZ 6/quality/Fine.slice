@@ -1,8 +1,0 @@
-layer_height = 0.14
-top_solid_layers = 1.12mm
-retract_length = 1.5
-infill_speed = 40
-top_solid_infill_speed = 45
-external_perimeter_speed = 30
-perimeter_speed = 35
-slowdown_below_layer_time = 20

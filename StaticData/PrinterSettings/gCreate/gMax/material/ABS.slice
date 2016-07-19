@@ -1,4 +1,0 @@
-temperature = 235
-disable_fan_first_layers = 2
-min_fan_speed = 25
-max_fan_speed = 35
