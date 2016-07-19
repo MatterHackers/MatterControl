@@ -46,11 +46,13 @@ Intermediate
       Extruders
         support_material_extruder
   Filament
-    Filament
-      Filament
+    Material
+      Properties
         filament_diameter
         filament_density
+      Qualities
         filament_cost
+    Temperatures
       Extruder Temperatures
         first_layer_temperature
         temperature
@@ -59,7 +61,8 @@ Intermediate
         first_layer_bed_temperature
         bed_temperature
         bed_remove_part_temperature
-      Retraction
+    Retraction
+      While Printing
         retract_length
         retract_speed
         retract_lift
@@ -215,12 +218,14 @@ Advanced
         bottom_clip_amount
         layer_to_pause
   Filament
-    Filament
-      Filament
+    Material
+      Properties
         filament_diameter
         extrusion_multiplier
         filament_density
+      Qualities
         filament_cost
+    Temperatures
       Extruder Temperatures
         first_layer_temperature
         temperature
@@ -229,7 +234,8 @@ Advanced
         first_layer_bed_temperature
         bed_temperature
         bed_remove_part_temperature
-      Retraction
+    Retraction
+      While Printing
         retract_length
         retract_restart_extra
         retract_speed
@@ -239,7 +245,7 @@ Advanced
         retract_when_changing_islands
         min_extrusion_before_retract
         wipe
-      Retraction On Tool Change
+      On Tool Change
         retract_length_tool_change
         retract_restart_extra_toolchange
     Extrusion
