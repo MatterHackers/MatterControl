@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				throw new ArgumentOutOfRangeException("Requested extruder index is outside of bounds: " + extruderIndex);
 			}
 
-			// TODO: This should really be in SettingsProfile and should be run when the extruder count changes
+			// TODO: This should really be in PrinterProfile and should be run when the extruder count changes
 			if (MaterialSettingsKeys.Count <= extruderIndex)
 			{
 				var resizedArray = new string[extruderIndex + 1];

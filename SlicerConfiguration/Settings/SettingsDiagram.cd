@@ -54,7 +54,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>iAAASOQEKEACggABEAiEAAUFAoAQABYEAgQEAgARBAE=</HashCode>
+      <HashCode>iAAASOQEKEACggABEAiEAAUFAoAQABaEAgQEAgARBAE=</HashCode>
       <FileName>SlicerConfiguration\Settings\PrinterSettings.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -76,7 +76,7 @@
     <Position X="11.25" Y="0.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>QAAAAQQABBAEIAAAIAACKhEABQAgEEQACAAJQBAEAAQ=</HashCode>
-      <FileName>SlicerConfiguration\Settings\SettingsProfile.cs</FileName>
+      <FileName>SlicerConfiguration\Settings\SettingsHelpers.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
