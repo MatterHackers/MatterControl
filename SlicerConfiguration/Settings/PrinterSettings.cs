@@ -46,6 +46,7 @@ using MatterHackers.Agg;
 using MatterHackers.VectorMath;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.Agg.PlatformAbstract;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -62,6 +63,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public int DocumentVersion { get; set; } = LatestVersion;
 
 		public string ID { get; set; }
+
+		public static Func<bool> ShouldShowAuthPanel { get; set; }
 
 		[JsonIgnore]
 		internal PrinterSettingsLayer QualityLayer { get; private set; }
@@ -216,15 +219,51 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		//
 		public static PrinterSettings LoadFile(string printerProfilePath)
 		{
-
-			JObject jObject;
+			JObject jObject = null;
 			try
 			{
 				jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
 			}
 			catch
 			{
-				return RecoverProfile(printerProfilePath);
+				string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath);
+				var profile = ProfileManager.Instance[profileKey];
+
+				if (MatterControlApplication.IsLoading)
+				{
+					UiThread.RunOnIdle(() =>
+				   {
+					   bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
+					   if (userIsLoggedIn && profile != null)
+					   {
+						   if (profile != null)
+						   {
+							   RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert(profile));
+						   }
+						   else
+						   {
+							   RevertToOemProfile(printerProfilePath);
+							   WarnAboutRevert(profile);
+						   }
+					   }
+				   }, 4);
+
+					return ProfileManager.LoadEmptyProfile();
+				}
+				else
+				{
+					bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
+					if (userIsLoggedIn && profile != null)
+					{
+						RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert(profile));
+						return ProfileManager.LoadEmptyProfile();
+					}
+					else
+					{
+						WarnAboutRevert(profile);
+						return RevertToOemProfile(printerProfilePath);
+					}
+				}
 			}
 
 			int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? 0;
@@ -241,17 +280,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch
 			{
-				return RecoverProfile(printerProfilePath);
+				return RevertToOemProfile(printerProfilePath);
 			}
 		}
 
-		public static PrinterSettings RecoverProfile(string printerProfilePath)
+		static bool warningOpen = false;
+		public static void WarnAboutRevert(PrinterInfo profile)
+		{ 
+			if (!warningOpen)
+			{
+				warningOpen = true;
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox((clicedOk) => 
+					{
+						warningOpen = false;
+					}, String.Format("The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize(), profile.Make, profile.Model), "Recovered printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
+				});
+			}
+		}
+
+		public static PrinterSettings RevertToOemProfile(string printerProfilePath)
 		{
-			string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath); 
+			string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath);
 			var profile = ProfileManager.Instance[profileKey];
+			
 			string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
 			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ".json";
-			
+
 			var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
 			oemProfile.ID = profile.ID;
 			oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
@@ -261,6 +317,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			oemProfile.Save();
 
 			return oemProfile;
+		}
+
+		private static async Task RevertToMostRecentProfile(PrinterInfo profile)
+		{
+			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory(profile.DeviceToken);
+			if (recentProfileHistoryItems != null)
+			{
+				string profileToken = recentProfileHistoryItems.OrderByDescending(kvp => kvp.Key).FirstOrDefault().Value;
+
+				// Download the specified json profile
+				await ApplicationController.GetPrinterProfile(profile, profileToken);
+				
+				// Update the active instance to the newly downloaded item
+				var printerProfile = ProfileManager.LoadProfile(profile.ID, false);
+				ActiveSliceSettings.RefreshActiveInstance(printerProfile);
+			}
 		}
 
 		/// <summary>
