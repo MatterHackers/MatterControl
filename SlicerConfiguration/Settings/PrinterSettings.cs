@@ -238,12 +238,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					   {
 						   if (profile != null)
 						   {
-							   RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert());
+							   RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert(profile));
 						   }
 						   else
 						   {
 							   RevertToOemProfile(printerProfilePath);
-							   WarnAboutRevert();
+							   WarnAboutRevert(profile);
 						   }
 					   }
 				   }, 4);
@@ -255,12 +255,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
 					if (userIsLoggedIn && profile != null)
 					{
-						RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert());
+						RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert(profile));
 						return ProfileManager.LoadEmptyProfile();
 					}
 					else
 					{
-						WarnAboutRevert();
+						WarnAboutRevert(profile);
 						return RevertToOemProfile(printerProfilePath);
 					}
 				}
@@ -285,8 +285,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		static bool warningOpen = false;
-		public static void WarnAboutRevert()
-		{
+		public static void WarnAboutRevert(PrinterInfo profile)
+		{ 
 			if (!warningOpen)
 			{
 				warningOpen = true;
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					StyledMessageBox.ShowMessageBox((clicedOk) => 
 					{
 						warningOpen = false;
-					}, "The profile you are attempting to load has been corrupted. We loaded your last usable profile instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
+					}, String.Format("The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize(), profile.Make, profile.Model), "Recovered printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
 				});
 			}
 		}
@@ -315,11 +315,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			oemProfile.Helpers.SetComPort(profile.ComPort);
 			oemProfile.Save();
-
-			UiThread.RunOnIdle(() =>
-			{
-				StyledMessageBox.ShowMessageBox(null, "The profile you are attempting to load has been corrupted. We loaded a usable public profile for you instead.".Localize(), "Corrupted printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
-			}, 1);
 
 			return oemProfile;
 		}
