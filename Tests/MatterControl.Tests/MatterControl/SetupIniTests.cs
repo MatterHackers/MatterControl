@@ -22,31 +22,40 @@ namespace MatterControl.Tests.MatterControl
 
 			DirectoryInfo currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
 			var allConfigFile = currentDirectory.Parent.Parent.Parent.Parent.FullName;
-			string pathToPrinterSettings = @"StaticData\PrinterSettings";
+			string pathToPrinterSettings = @"StaticData\Profiles";
 			var fullPathToPrinterSettings = Path.Combine(allConfigFile, pathToPrinterSettings);
 
 			DirectoryInfo test = new DirectoryInfo(fullPathToPrinterSettings);
 
-			IEnumerable<FileInfo> fileList = test.GetFiles(".", System.IO.SearchOption.AllDirectories);
+			var fileList = test.GetFiles("*.printer", System.IO.SearchOption.AllDirectories);
 
-			var allPrinterConfigs = fileList.Where(file => file.Name == "setup.ini");
-
-			foreach(FileInfo file in allPrinterConfigs)
+			foreach(FileInfo file in fileList)
 			{
 				Debug.WriteLine(file.FullName);
 
-				foreach(string line in File.ReadLines(file.FullName))
-				{
-					string needsPrintLeveling = "default_material_presets";
-					string printLevelingType = "default_quality_preset";
+				var lines = File.ReadAllLines(file.FullName);
 
-					if(!line.Contains(needsPrintLeveling) || line.Contains(printLevelingType))
-					{
-						Debug.WriteLine(line);
-					}
+				if(!lines.Contains("default_material_presets", new LineEqualityComparer())|| lines.Contains("default_quality_presets", new LineEqualityComparer()))
+				{
+					Debug.WriteLine(file.Name);
 				}
+
 			}
 		}
+		//We are making sure that a line contains a string but we dont want it to be equal so we are changing the check
+		class LineEqualityComparer : IEqualityComparer<string>
+		{
+			public bool Equals(string x, string y)
+			{
+				return x.Contains(y);
+			}
+
+			public int GetHashCode(string obj)
+			{
+				return obj.GetHashCode();
+			}
+		}
+
 
 	}
 }
