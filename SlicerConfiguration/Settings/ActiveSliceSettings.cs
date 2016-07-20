@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.Agg.UI;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -153,11 +154,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal static void SwitchToProfile(string printerID)
+		internal static async Task SwitchToProfile(string printerID)
 		{
 			var profile = ProfileManager.LoadProfile(printerID);
 
 			ProfileManager.Instance.SetLastProfile(printerID);
+
+			if (profile == null)
+			{
+				var printerInfo = ProfileManager.Instance[printerID];
+
+				await ApplicationController.GetPrinterProfile(printerInfo, null);
+
+				profile = ProfileManager.LoadProfile(printerID);
+			}
 
 			Instance = profile ?? ProfileManager.LoadEmptyProfile();
 		}
