@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Globalization;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using System.Collections.ObjectModel;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -17,30 +18,63 @@ namespace MatterControl.Tests.MatterControl
 	{
 		private static List<PrinterConfig> allPrinters;
 		private static string matterControlDirectory = Path.GetFullPath(Path.Combine("..", "..", "..", ".."));
-		private static string printerSettingsDirectory = Path.GetFullPath(Path.Combine(matterControlDirectory, "StaticData", "PrinterSettings"));
+		private static string printerSettingsDirectory = Path.GetFullPath(Path.Combine(matterControlDirectory, "StaticData", "Profiles"));
 
 		static ConfigIniTests()
 		{
-			allPrinters = (from configIni in new DirectoryInfo(printerSettingsDirectory).GetFiles("config.ini", System.IO.SearchOption.AllDirectories)
-						   let oemProfile = new PrinterSettings() { OemLayer = PrinterSettingsLayer.LoadFromIni(configIni.FullName) }
+			//allPrinters = (from configIni in new DirectoryInfo(printerSettingsDirectory).GetFiles("config.ini", System.IO.SearchOption.AllDirectories)
+			//			   let oemProfile = new PrinterSettings() { OemLayer = PrinterSettingsLayer.LoadFromIni(configIni.FullName) }
+			//			   select new PrinterConfig
+			//			   {
+			//				   PrinterName = configIni.Directory.Name,
+			//				   Oem = configIni.Directory.Parent.Name,
+			//				   ConfigPath = configIni.FullName,
+			//				   ConfigIni = new LayerInfo()
+			//				   {
+			//					   RelativeFilePath = configIni.FullName.Substring(printerSettingsDirectory.Length + 1),
+
+			//					   // The config.ini layered profile only contains itself and does not fall back to or cascade to anything
+			//					   PrinterSettings = new PrinterSettings()
+			//					   {
+			//						   OemLayer = oemProfile.OemLayer
+			//					   },
+			//				   },
+			//				   MatterialLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "material"), oemProfile),
+			//				   QualityLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "quality"), oemProfile)
+			//			   }).ToList();
+
+			allPrinters = (from printerFile in new DirectoryInfo(printerSettingsDirectory).GetFiles("*.printer")
+						   let oemProfile = PrinterSettings.LoadFile(printerFile.FullName)
 						   select new PrinterConfig
 						   {
-							   PrinterName = configIni.Directory.Name,
-							   Oem = configIni.Directory.Parent.Name,
-							   ConfigPath = configIni.FullName,
+							   PrinterName = printerFile.Name,
+							   Oem = printerFile.Directory.Parent.Name,
+							   ConfigPath = printerFile.FullName,
 							   ConfigIni = new LayerInfo()
 							   {
-								   RelativeFilePath = configIni.FullName.Substring(printerSettingsDirectory.Length + 1),
-
-								   // The config.ini layered profile only contains itself and does not fall back to or cascade to anything
-								   PrinterSettings = new PrinterSettings()
-								   {
-									   OemLayer = oemProfile.OemLayer
-								   },
+								   RelativeFilePath = printerFile.FullName.Substring(printerSettingsDirectory.Length + 1),
+								   PrinterSettings = oemProfile
 							   },
-							   MatterialLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "material"), oemProfile),
-							   QualityLayers = LoadLayers(Path.Combine(configIni.Directory.FullName, "quality"), oemProfile)
+							   MatterialLayers = LoadLayersPrinterFile(printerFile.FullName.Substring(printerSettingsDirectory.Length + 1),oemProfile.MaterialLayers),
+							   QualityLayers = LoadLayersPrinterFile(printerFile.FullName.Substring(printerSettingsDirectory.Length + 1),oemProfile.QualityLayers)
 						   }).ToList();
+
+		}
+
+		private static List<LayerInfo> LoadLayersPrinterFile(string relativePath, ObservableCollection<PrinterSettingsLayer> layers)
+		{
+			var list = new List<LayerInfo>();
+
+			foreach( var layer in layers)
+			{
+				new LayerInfo()
+				{
+					RelativeFilePath = relativePath,
+					PrinterSettings = new PrinterSettings() { OemLayer = layer},
+				};
+			}
+
+			return list;
 		}
 
 		private static List<LayerInfo> LoadLayers(string layersDirectory, PrinterSettings oemProfile)
