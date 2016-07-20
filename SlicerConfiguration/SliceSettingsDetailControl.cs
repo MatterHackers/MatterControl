@@ -22,10 +22,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
 		private static string resetToDefaultsWindowTitle = "Revert Settings".Localize();
 
-		public SliceSettingsDetailControl()
+		public SliceSettingsDetailControl(List<PrinterSettingsLayer> layerCascade)
 		{
-			showHelpBox = new CheckBox(0, 0, "Show Help".Localize(), textSize: 10);
-			showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
+			showHelpBox = new CheckBox(0, 0, "Show Help".Localize(), textSize: 10)
+			{
+				VAnchor = VAnchor.ParentCenter,
+			};
+
+			if (layerCascade == null)
+			{
+				// only turn of the help if in the main view and it is set to on
+				showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
+			}
+
 			// add in the ability to turn on and off help text
 			showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			showHelpBox.Margin = new BorderDouble(right: 3);
@@ -33,7 +42,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			showHelpBox.Cursor = Cursors.Hand;
 			showHelpBox.CheckedStateChanged += (s, e) =>
 			{
-				UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
+				if (layerCascade == null)
+				{
+					// only save the help settings if in the main view
+					UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
+				}
 				ShowHelpChanged?.Invoke(this, null);
 			};
 
@@ -44,10 +57,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsDetailSelector.AddItem("Basic".Localize(), "Simple");
 			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");
 			settingsDetailSelector.AddItem("Advanced".Localize(), "Advanced");
-			if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
-				&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
+
+			if (layerCascade == null)
 			{
-				settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
+				// set to the user requested value when in default view
+				if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
+					&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
+				{
+					settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
+				}
+			}
+			else // in settings editor view
+			{
+				// set to advanced
+				settingsDetailSelector.SelectedValue = "Advanced";
 			}
 
 			settingsDetailSelector.SelectionChanged += (s, e) => RebuildSlicerSettings(null, null); ;
@@ -55,8 +78,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsDetailSelector.Margin = new BorderDouble(5, 3);
 			settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
 
-			this.AddChild(settingsDetailSelector);
-			this.AddChild(GetSliceOptionsMenuDropList());
+			if (layerCascade == null)
+			{
+				// only add these in the default view
+				this.AddChild(settingsDetailSelector);
+				this.AddChild(GetSliceOptionsMenuDropList());
+			}
+
+			VAnchor = VAnchor.ParentCenter;
 		}
 
 		public event EventHandler ShowHelpChanged;
@@ -141,6 +170,5 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				resetToDefaultsWindowTitle,
 				StyledMessageBox.MessageType.YES_NO);
 		}
-
 	}
 }
