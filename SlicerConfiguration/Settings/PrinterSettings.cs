@@ -267,7 +267,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? 0;
-
 			if (documentVersion < PrinterSettings.LatestVersion)
 			{
 				printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
@@ -434,16 +433,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
 			var keysToRetain = new HashSet<string>(userOverrides.Except(KnownSettings));
 
-			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => !settingsItem.ShowAsOverride))
+			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
+			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{
 				switch (item.SlicerConfigName)
 				{
 					case SettingsKey.baud_rate:
 					case SettingsKey.auto_connect:
-						// These items are marked as not being overrides but should be cleared on 'reset to defaults'
+						// Items *should* reset to defaults
 						break;
 					default:
-						// All other non-overrides should be retained
+						//Items should *not* reset to defaults
 						keysToRetain.Add(item.SlicerConfigName);
 						break;
 				}
