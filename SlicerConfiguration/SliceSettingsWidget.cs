@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			topCategoryTabs.Margin = new BorderDouble(top: 8);
 			topCategoryTabs.AnchorAll();
 
-			sliceSettingsDetailControl = new SliceSettingsDetailControl();
+			sliceSettingsDetailControl = new SliceSettingsDetailControl(layerCascade);
 
 			List<TabBar> sideTabBarsListForLayout = new List<TabBar>();
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
@@ -216,7 +216,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string selectedTabName = topCategoryTabs.TabBar.SelectedTabName;
 					if (!string.IsNullOrEmpty(selectedTabName))
 					{
-						UserSettings.Instance.set(settingsName, selectedTabName);
+						if (layerCascade == null)
+						{
+							UserSettings.Instance.set(settingsName, selectedTabName);
+						}
 					}
 				};
 			}
@@ -459,7 +462,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string selectedTabName = leftSideGroupTabs.TabBar.SelectedTabName;
 					if (!string.IsNullOrEmpty(selectedTabName))
 					{
-						UserSettings.Instance.set(settingsTypeName, selectedTabName);
+						if (layerCascade == null)
+						{
+							UserSettings.Instance.set(settingsTypeName, selectedTabName);
+						}
 					}
 				};
 			}
