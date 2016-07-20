@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PrinterSettings
 	{
-		// Latest version should be 2016|06|08|1
+		// Latest version should be in the form of:
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
 
