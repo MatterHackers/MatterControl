@@ -624,7 +624,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (((StringEventArgs)e).Data == SettingsKey)
 					{
 						string setting = ActiveSliceSettings.Instance.GetValue(SettingsKey, layerCascade);
-						if (SettingsValue != setting)
+						if (SettingsValue != setting
+						|| SettingsKey == "com_port")
 						{
 							SettingsValue = setting;
 							ValueChanged?.Invoke(setting);
