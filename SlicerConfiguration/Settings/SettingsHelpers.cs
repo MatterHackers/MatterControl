@@ -323,23 +323,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void ExportAsMatterControlConfig()
 		{
 			FileDialog.SaveFileDialog(
-			new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings"),
+			new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
+			{
+				FileName = printerSettings.GetValue(SettingsKey.printer_name)
+			},
 			(saveParams) =>
 			{
-				File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printerSettings, Formatting.Indented));
+				if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+				{
+					File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printerSettings, Formatting.Indented));
+				}
 			});
 		}
 
 		public void ExportAsSlic3rConfig()
 		{
 			FileDialog.SaveFileDialog(
-				new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*" + ProfileManager.ConfigFileExtension)
+				new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*.ini")
 				{
-					FileName = "default_settings.ini"
+					FileName = printerSettings.GetValue(SettingsKey.printer_name)
 				},
 				(saveParams) =>
 				{
-					if (!string.IsNullOrEmpty(saveParams.FileName))
+					if (!string.IsNullOrWhiteSpace(saveParams.FileName))
 					{
 						GenerateConfigFile(saveParams.FileName, false);
 					}
