@@ -282,7 +282,7 @@
     {
       "layer_name": "Vase",
       "layer_id": "c80d4c6a-9771-4dd4-a05a-cbc76216aeb2",
-      "bottom_solid_layers": "4",
+      "bottom_solid_layers": "1mm",
       "fill_density": "0",
       "perimeters": "2",
       "top_solid_layers": "0"

@@ -181,7 +181,7 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test, Category("FixNeeded")]
+		[Test]
 		public void BottomSolidLayersEqualsOneMM()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
