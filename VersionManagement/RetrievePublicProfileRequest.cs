@@ -1,5 +1,6 @@
 ﻿using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using System.IO;
 using System.Net;
 
@@ -18,7 +19,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			// Keep track of version. When retrieving check version
 			string url = DownloadBaseUrl + string.Format("/{0}",deviceToken);
 
-			string profilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath,"Profiles",string.Format("{0}.json",deviceToken));
+			string profilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath,"Profiles",string.Format("{0}{1}",deviceToken, ProfileManager.ProfileExtension));
 
 			WebClient client = new WebClient();
 

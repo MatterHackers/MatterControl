@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.VersionManagement;
 using Newtonsoft.Json;
 using System;
@@ -165,7 +166,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			{
 				foreach (string profileKey in OemProfiles[oem].Values)
 				{
-					filePath = Path.Combine(cacheDirectory, String.Format("{0}.json", profileKey));
+					filePath = Path.Combine(cacheDirectory, String.Format("{0}{1}", profileKey, ProfileManager.ProfileExtension));
 					if (!File.Exists(filePath))
 					{
 						File.WriteAllText(filePath, RetrievePublicProfileRequest.DownloadPrinterProfile(profileKey));

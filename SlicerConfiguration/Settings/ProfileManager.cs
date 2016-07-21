@@ -371,12 +371,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
 			return MatterControlApplication.LoadCacheable<PrinterSettings>(
-				String.Format("{0}.json", deviceToken),
+				String.Format("{0}{1}", deviceToken, ProfileManager.ProfileExtension),
 				"profiles",
 				() =>
 				{
 					string responseText = null;
-					if(!File.Exists(Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles",String.Format("{0}.json",deviceToken))))
+					if(!File.Exists(Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles",String.Format("{0}{1}",deviceToken, ProfileManager.ProfileExtension))))
 					{
 						responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
 					}
