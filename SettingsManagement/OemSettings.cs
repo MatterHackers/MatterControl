@@ -124,10 +124,19 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		[OnDeserialized]
 		private void Deserialized(StreamingContext context)
 		{
-			var oemProfiles = MatterControlApplication.LoadCacheable<Dictionary<string, Dictionary<string, string>>>(
-				"oemprofiles.json", 
+			//Load from Static Data to prepopulate oemProfiles for when user create a printer before load cacheable is done
+			var staticDataList = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(StaticData.Instance.ReadAllText(Path.Combine("Profiles","allModels.json")));
+			var oemProfs = staticDataList.Select(x => new KeyValuePair<string,Dictionary<string,string>>(x.Key ,x.Value.ToDictionary(y=>y,y=>y))).ToDictionary(x=>x.Key,x=>x.Value);
+			OemProfiles = oemProfs;
+			var manufacturesList = staticDataList.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList();
+			SetManufacturers(manufacturesList);
+			//Attempt to update from online
+			Task.Run(() =>
+			{
+				var oemProfiles = MatterControlApplication.LoadCacheable<Dictionary<string, Dictionary<string, string>>>(
+				"oemprofiles.json",
 				"profiles",
-				() => 
+				() =>
 				{
 					string responseText = null;
 
@@ -143,19 +152,24 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 					return responseText;
 				});
-
-			OemProfiles = oemProfiles;
-			var manufactures = oemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList();
-			// sort by value (printer name)
-			manufactures.Sort(
-				delegate (KeyValuePair<string, string> pair1,
-				KeyValuePair<string, string> pair2)
+				//If we failed to get anything from load cacheable dont override potentally populated feilds
+				if(oemProfiles != default(Dictionary < string, Dictionary < string, string>>))
 				{
-					return pair1.Value.CompareTo(pair2.Value);
+					OemProfiles = oemProfiles;
+					var manufactures = oemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList();
+					// sort by value (printer name)
+					manufactures.Sort(
+						delegate (KeyValuePair<string, string> pair1,
+						KeyValuePair<string, string> pair2)
+						{
+							return pair1.Value.CompareTo(pair2.Value);
+						}
+						);
+					SetManufacturers(manufactures);
+					Task.Run((Action)downloadMissingProfiles);
 				}
-				);
-			SetManufacturers(manufactures);
-			Task.Run((Action)downloadMissingProfiles);
+				
+			});
 		}
 
 		private void downloadMissingProfiles()
