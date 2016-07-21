@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			//Attempt to update from online
 			Task.Run(() =>
 			{
-				var oemProfiles = MatterControlApplication.LoadCacheable<Dictionary<string, Dictionary<string, string>>>(
+				var oemProfiles = ApplicationController.LoadCacheable<Dictionary<string, Dictionary<string, string>>>(
 				"oemprofiles.json",
 				"profiles",
 				() =>

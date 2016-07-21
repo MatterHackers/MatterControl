@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetVisibleControls()
 		{
-			if (ActiveSliceSettings.Instance == null)
+			if (!ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				// no printer selected
 				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);

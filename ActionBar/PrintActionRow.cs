@@ -434,11 +434,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onConnectButton_Click(object sender, EventArgs mouseEvent)
 		{
-			if (ActiveSliceSettings.Instance == null)
-			{
-				WizardWindow.ShowPrinterSetup();
-			}
-			else
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 #if __ANDROID__
 				if (!FrostedSerialPort.HasPermissionToDevice())

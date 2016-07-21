@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static PrinterSettings LoadHttpOemProfile(string make, string model)
 		{
 			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
-			return MatterControlApplication.LoadCacheable<PrinterSettings>(
+			return ApplicationController.LoadCacheable<PrinterSettings>(
 				String.Format("{0}{1}", deviceToken, ProfileManager.ProfileExtension),
 				"profiles",
 				() =>

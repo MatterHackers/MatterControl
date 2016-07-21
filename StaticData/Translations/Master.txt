@@ -5248,3 +5248,12 @@ Translated:While Printing
 English:On Tool Change
 Translated:On Tool Change
 
+English:Select a Printer.
+Translated:Select a Printer.
+
+English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
+Translated:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
+
+English:Recovered printer profile
+Translated:Recovered printer profile
+

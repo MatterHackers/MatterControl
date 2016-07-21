@@ -269,9 +269,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private string getConnectionMessage()
 		{
-			if (ActiveSliceSettings.Instance == null)
+			if (!ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				return LocalizedString.Get("Press 'Connect' to select a printer.");
+				return "Select a Printer.".Localize();
 			}
 			else
 			{
@@ -715,9 +715,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private string getConnectionMessage()
 		{
-			if (ActiveSliceSettings.Instance == null)
+			if (!ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				return "Press 'Connect' to select a printer.".Localize();
+				return "Select a printer.".Localize();
 			}
 			else
 			{

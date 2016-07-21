@@ -119,60 +119,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-
-		/// <summary>
-		/// Requests fresh content from online services, falling back to cached content if offline
-		/// </summary>
-		/// <param name="collector">The custom collector function to load the content</param>
-		/// <returns></returns>
-		internal static T LoadCacheable<T>(string cacheKey, string cacheScope, Func<string> collector, string staticDataFallbackPath = null) where T : class
-		{
-			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", cacheScope);
-			string cachePath = Path.Combine(cacheDirectory, cacheKey);
-
-			// Ensure directory exists
-			Directory.CreateDirectory(cacheDirectory);
-
-			try
-			{
-				// Try to update the document
-				string documentText = collector();
-
-				if (!string.IsNullOrEmpty(documentText))
-				{
-					var results = JsonConvert.DeserializeObject<T>(documentText);
-
-					// update cache on success
-					File.WriteAllText(cachePath, documentText);
-					return results;
-				}
-			}
-			catch
-			{
-				// fall back to preexisting cache if failed
-			}
-
-			try
-			{
-				// Load from cache and deserialize
-				return JsonConvert.DeserializeObject<T>(File.ReadAllText(cachePath));
-			}
-			catch
-			{
-				//Fallback to Static Data
-			}
-
-			try
-			{
-				return JsonConvert.DeserializeObject<T>(StaticData.Instance.ReadAllText(staticDataFallbackPath));
-			}
-			catch
-			{
-				return default(T);
-			}
-
-		}
-
 		private MatterControlApplication(double width, double height)
 			: base(width, height)
 		{
