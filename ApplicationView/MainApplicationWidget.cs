@@ -391,5 +391,43 @@ namespace MatterHackers.MatterControl
 		{
 			public bool IsAuthenticated { get; set; }
 		}
+
+		public void OnLoadActions()
+		{
+			ApplicationController.Instance.UserChanged();
+
+			if (false && UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
+			{
+				//UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
+			}
+			bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
+			if (showAuthWindow)
+			{
+				//Launch window to prompt user to log in
+				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+			}
+			else
+			{   //If user in logged in sync before checking to prompt to create printer
+				ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
+				{
+					ApplicationController.Instance.ReloadAdvancedControlsPanel();
+					if (!ProfileManager.Instance.ActiveProfiles.Any())
+					{
+						// Start the setup wizard if no profiles exist
+						UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+					}
+				});
+			}
+
+			if (ActiveSliceSettings.Instance.PrinterSelected
+				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.auto_connect))
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+					PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+				}, 2);
+			}
+		}
 	}
 }

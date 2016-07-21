@@ -16,45 +16,19 @@ namespace MatterHackers.MatterControl
 		public static Func<bool> ShouldShowAuthPanel { get; set; }
 		public static Action ShowAuthDialog;
 		public static Action ChangeToAccountCreate;
-		private static WizardWindow wizardWindow = null;
 
 		private static Dictionary<string, WizardWindow> allWindows = new Dictionary<string, WizardWindow>();
 
 		private WizardWindow()
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
-
 			this.AlwaysOnTopOfMain = true;
 
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(8);
-			this.ShowAsSystemWindow();
 			this.MinimumSize = new Vector2(350 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
-		}
 
-		private WizardWindow(bool openToHome = false)
-			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
-		{
-			this.AlwaysOnTopOfMain = true;
-
-			AlwaysOnTopOfMain = true;
-			this.Title = "Setup Wizard".Localize();
-
-			// Todo - detect wifi connectivity
-			bool WifiDetected = MatterControlApplication.Instance.IsNetworkConnected();
-			if (!WifiDetected)
-			{
-				ChangeToPage<SetupWizardWifi>();
-			}
-			else
-			{
-				ChangeToSetupPrinterForm();
-			}
-
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.Padding = new BorderDouble(8);
 			this.ShowAsSystemWindow();
-			this.MinimumSize = new Vector2(350 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
 		}
 
 		public static void Close(string uri)
@@ -81,17 +55,42 @@ namespace MatterHackers.MatterControl
 			wizardWindow.ChangeToPage(wizardPage);
 		}
 
-		public static void Show(bool openToHome = false)
+		public static void ShowPrinterSetup()
 		{
-			if (wizardWindow == null)
+			WizardWindow wizardWindow = GetWindow("PrinterSetup");
+			wizardWindow.Title = "Setup Wizard".Localize();
+
+			// Do the printer setup logic
+			// Todo - detect wifi connectivity
+			bool WifiDetected = MatterControlApplication.Instance.IsNetworkConnected();
+			if (!WifiDetected)
 			{
-				wizardWindow = new WizardWindow(openToHome);
-				wizardWindow.Closed += (s, e) => wizardWindow = null;
+				wizardWindow.ChangeToPage<SetupWizardWifi>();
 			}
 			else
 			{
-				wizardWindow.BringToFront();
+				wizardWindow.ChangeToSetupPrinterForm();
 			}
+		}
+
+		public static void ShowComPortSetup()
+		{
+			WizardWindow wizardWindow = GetWindow("PrinterSetup");
+			wizardWindow.Title = "Setup Wizard".Localize();
+
+			wizardWindow.ChangeToPage<SetupStepComPortOne>();
+		}
+
+		public static bool IsOpen(string uri)
+		{
+			WizardWindow wizardWindow;
+
+			if (allWindows.TryGetValue(uri, out wizardWindow))
+			{
+				return true;
+			}
+
+			return false;
 		}
 
 		private static WizardWindow GetWindow(string uri)

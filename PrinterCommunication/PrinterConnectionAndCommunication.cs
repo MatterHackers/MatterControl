@@ -2327,7 +2327,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				OnConnectionFailed(null);
 
-				UiNavigation.GoToPrinterSettings("com_port Edit Field");
+#if !__ANDROID__
+				WizardWindow.ShowComPortSetup();
+#endif
 			}
 		}
 

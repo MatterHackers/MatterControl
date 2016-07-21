@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button skipConnectionLink = linkButtonFactory.Generate(LocalizedString.Get("Skip Connection Setup"));
 			skipConnectionLink.Margin = new BorderDouble(0, 8);
-			skipConnectionLink.Click += new EventHandler(SkipConnectionLink_Click);
+			skipConnectionLink.Click += SkipConnectionLink_Click;
 
 			container.AddChild(printerMessageOne);
 			container.AddChild(printerMessageTwo);
@@ -94,8 +94,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void SkipConnectionLink_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			Parent.Close();
+			UiThread.RunOnIdle(() => {
+				PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+				Parent.Close();
+			});
 		}
 	}
 }
