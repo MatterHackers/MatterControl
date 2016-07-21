@@ -381,7 +381,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
 					}
 					return responseText;
-				});
+				},
+				Path.Combine("Profiles",make,String.Format("{0}{1}",model,ProfileManager.ProfileExtension)));
 		}
 
 		public void EnsurePrintersImported()
