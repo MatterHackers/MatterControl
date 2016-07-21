@@ -217,11 +217,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			Button buttonClicked = ((Button)sender);
 			if (buttonClicked.Enabled)
 			{
-				if (ActiveSliceSettings.Instance == null)
-				{
-					OpenConnectionWindow(true);
-				}
-				else
+				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
 					ConnectToActivePrinter(null, null);
 				}

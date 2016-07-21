@@ -74,7 +74,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 
 					SwitchToPrinterTheme(MatterControlApplication.IsLoading);
-					if (!MatterControlApplication.IsLoading)
+					if (!MatterControlApplication.IsLoading
+						&& ActiveSliceSettings.Instance.PrinterSelected)
 					{
 						OnActivePrinterChanged(null);
 
