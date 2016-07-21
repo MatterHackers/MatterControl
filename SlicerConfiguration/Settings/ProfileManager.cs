@@ -79,7 +79,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				string username = UserSettings.Instance.get("ActiveUserName");
+				// Possible workaround for test environment - prevents initializing UserSettings.Instance if no DB exists
+				string username = File.Exists(ApplicationDataStorage.ApplicationUserDataPath) ? UserSettings.Instance.get("ActiveUserName") : null;
 				return string.IsNullOrEmpty(username) ? GuestDBPath : Path.Combine(ProfilesPath, $"{username}{userDBExtension}");
 			}
 		}
