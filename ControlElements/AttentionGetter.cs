@@ -59,7 +59,8 @@ namespace MatterHackers.MatterControl
 
 		public static void GoToPrinterSettings(string widgetNameToHighlight)
 		{
-			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null)
+			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null
+				&& ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				UiThread.RunOnIdle(() =>
 				{
