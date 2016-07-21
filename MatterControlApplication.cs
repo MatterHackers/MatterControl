@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="collector">The custom collector function to load the content</param>
 		/// <returns></returns>
-		internal static T LoadCacheable<T>(string cacheKey, string cacheScope, Func<string> collector) where T : class
+		internal static T LoadCacheable<T>(string cacheKey, string cacheScope, Func<string> collector, string staticDataFallbackPath = null) where T : class
 		{
 			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", cacheScope);
 			string cachePath = Path.Combine(cacheDirectory, cacheKey);
@@ -159,8 +159,18 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
+				//Fallback to Static Data
+			}
+
+			try
+			{
+				return JsonConvert.DeserializeObject<T>(StaticData.Instance.ReadAllText(staticDataFallbackPath));
+			}
+			catch
+			{
 				return default(T);
 			}
+
 		}
 
 		private MatterControlApplication(double width, double height)
