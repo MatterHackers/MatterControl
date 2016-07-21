@@ -238,7 +238,7 @@
       "layer_name": "Nylon Bridge",
       "layer_id": "0efb6f39-2e87-41a8-a074-b370444e4ec7",
       "bed_temperature": "85",
-      "bottom_solid_layers": "2",
+      "bottom_solid_layers": "1mm",
       "bridge_flow_ratio": "1.3",
       "bridge_speed": "50",
       "brim_width": "3",

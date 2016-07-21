@@ -191,7 +191,7 @@
     {
       "layer_name": "High",
       "layer_id": "e160d49b-0e2c-474c-94c0-25e58a11af75",
-      "bottom_solid_layers": "4",
+      "bottom_solid_layers": "1mm",
       "external_perimeter_speed": "60%",
       "infill_speed": "70",
       "layer_height": "0.16",
@@ -204,7 +204,7 @@
     {
       "layer_name": "Low (Quick Print)",
       "layer_id": "7dddeb5a-0bfe-499b-8911-30de40faa881",
-      "bottom_solid_layers": "2",
+      "bottom_solid_layers": "1mm",
       "external_perimeter_speed": "60%",
       "infill_speed": "70",
       "layer_height": "0.3",
@@ -228,7 +228,7 @@
     {
       "layer_name": "Medium (Simple Model)",
       "layer_id": "b9fa9acc-e1a5-4171-9059-e230eaf6ec2d",
-      "bottom_solid_layers": "2",
+      "bottom_solid_layers": "1mm",
       "external_perimeter_speed": "75%",
       "infill_speed": "70",
       "layer_height": "0.24",
