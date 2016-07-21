@@ -451,8 +451,8 @@ namespace MatterHackers.MatterControl
 		}
 
 #if DEBUG
-		public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
-		//public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
+		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
+		public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
 #else
 		public static string MCWSBaseUri { get;} = "https://mattercontrol.appspot.com";
 #endif
