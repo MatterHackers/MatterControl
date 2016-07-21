@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(ConnectToActivePrinter, ref staticUnregisterEvents);
 			}
 
-			WizardWindow.Show();
+			WizardWindow.ShowPrinterSetup();
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Cursor = Cursors.Hand,
 				Margin = new BorderDouble(0, 6, rightMarginForWideScreenMode, 3)
 			};
-			printerSelector.AddPrinter += (s, e) => WizardWindow.Show();
+			printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup();
 			printerSelector.MinimumSize = new Vector2(printerSelector.MinimumSize.x, connectPrinterButton.MinimumSize.y);
 			printerSelectorAndEditButton.AddChild(printerSelector);
 

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014, Lars Brubaker, Kevin Pope
+Copyright (c) 2016, Lars Brubaker, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,6 @@ namespace MatterHackers.MatterControl
     public class MatterControlApplication : SystemWindow
 	{
 		public static bool CameraPreviewActive = false;
-		public static Action AfterFirstDraw = null;
 		public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
@@ -694,7 +693,7 @@ namespace MatterHackers.MatterControl
 
 				TerminalWindow.ShowIfLeftOpen();
 
-				ApplicationController.Instance.UserChanged();
+				ApplicationController.Instance.OnLoadActions();
 
 #if false
 			{
@@ -713,32 +712,6 @@ namespace MatterHackers.MatterControl
 				}, 1);
 			}
 #endif
-
-				AfterFirstDraw?.Invoke();
-
-				if (false && UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
-				{
-					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
-				}
-				bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
-				if (showAuthWindow)
-				{
-					//Launch window to prompt user to log in
-					UiThread.RunOnIdle(() => WizardWindow.Show());
-				}
-				else
-				{	//If user in logged in sync before checking to prompt to create printer
-					ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
-					{
-						ApplicationController.Instance.ReloadAdvancedControlsPanel();
-						if (!ProfileManager.Instance.ActiveProfiles.Any())
-						{
-							// Start the setup wizard if no profiles exist
-							UiThread.RunOnIdle(() => WizardWindow.Show());
-						}
-					});
-				}
-				
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
