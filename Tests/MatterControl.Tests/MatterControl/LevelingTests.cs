@@ -43,6 +43,11 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class LevelingTests
 	{
+		static LevelingTests()
+		{
+			MatterControlUtilities.OverrideAppDataLocation();
+		}
+
 		[Test, Category("Leveling")]
 		public void Leveling7PointsNeverGetsTooHigh()
 		{

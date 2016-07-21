@@ -11,6 +11,7 @@ using System.Globalization;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System.Collections.ObjectModel;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.Tests.Automation;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -23,6 +24,8 @@ namespace MatterControl.Tests.MatterControl
 
 		static ConfigIniTests()
 		{
+			MatterControlUtilities.OverrideAppDataLocation();
+
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine(matterControlDirectory, "StaticData"));
 
 			allPrinters = (from printerFile in new DirectoryInfo(printerSettingsDirectory).GetFiles("*.printer", SearchOption.AllDirectories)
