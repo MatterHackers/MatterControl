@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var profile = ProfileManager.Instance[profileKey];
 			
 			string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
-			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ".json";
+			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ProfileManager.ProfileExtension;
 
 			var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
 			oemProfile.ID = profile.ID;

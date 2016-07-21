@@ -15,25 +15,23 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.Agg.UI;
 using Newtonsoft.Json;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, RunInApplicationDomain]
+	[TestFixture]
 	public class RetrievePublicProfileTest
 	{
 		private string deviceToken = null;
 
-		[Test,RunInApplicationDomain]
+		[Test]
 		public void RetrievePrinterProfileListWorking()
 		{
 
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 
 			string profilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", "oemprofiles.json");
-			if(File.Exists(profilePath))
-			{
-				File.Delete(profilePath);
-			}
+
 			//MatterControlUtilities.OverrideAppDataLocation();
 			AutoResetEvent requestCompleteWaiter = new AutoResetEvent(false);
 			PublicProfilesRequest retrieveProfiles = new PublicProfilesRequest();
@@ -44,8 +42,8 @@ namespace MatterControl.Tests.MatterControl
 
 			retrieveProfiles.Request();
 			Assert.IsTrue(requestCompleteWaiter.WaitOne());
-
-			Assert.IsTrue(File.Exists(profilePath));
+			//Ensures we got success and a list of profiles
+			Assert.IsTrue(retrieveProfiles.ResponseValues.Count == 2);
 
 			//Call Retrieve Profile next
 			RetrievePrinterProfileWorking();
@@ -57,7 +55,7 @@ namespace MatterControl.Tests.MatterControl
 			string make = OemSettings.Instance.OemProfiles.First().Key;
 			string model = OemSettings.Instance.OemProfiles[make].First().Key;
 			deviceToken = OemSettings.Instance.OemProfiles[make][model];
-			string expectedProfilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Profiles", string.Format("{0}.json", deviceToken));
+			string expectedProfilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Profiles", string.Format("{0}{1}", deviceToken, ProfileManager.ProfileExtension));
 			if (File.Exists(expectedProfilePath))
 			{
 				File.Delete(expectedProfilePath);
