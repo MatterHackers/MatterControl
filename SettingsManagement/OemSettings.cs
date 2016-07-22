@@ -136,6 +136,12 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			// Attempt to update from online
 			Task.Run(async () =>
 			{
+				// In public builds this won't be assigned to and we should abort and exit early
+				if (ApplicationController.GetPublicProfileList == null)
+				{
+					return;
+				}
+
 				var oemProfiles = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
 					"oemprofiles.json",
 					"profiles",
