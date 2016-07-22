@@ -243,8 +243,11 @@ namespace MatterHackers.MatterControl
 
 			try
 			{
-				// Load from cache and deserialize
-				return JsonConvert.DeserializeObject<T>(File.ReadAllText(cachePath));
+				if (File.Exists(cachePath))
+				{
+					// Load from cache and deserialize
+					return JsonConvert.DeserializeObject<T>(File.ReadAllText(cachePath));
+				}
 			}
 			catch
 			{
@@ -253,13 +256,18 @@ namespace MatterHackers.MatterControl
 
 			try
 			{
-				return JsonConvert.DeserializeObject<T>(StaticData.Instance.ReadAllText(staticDataFallbackPath));
+				if (staticDataFallbackPath != null
+					&& File.Exists(staticDataFallbackPath))
+				{
+					return JsonConvert.DeserializeObject<T>(StaticData.Instance.ReadAllText(staticDataFallbackPath));
+				}
 			}
 			catch
 			{
 				return default(T);
 			}
 
+			return default(T);
 		}
 
 		public void StartLogout()
