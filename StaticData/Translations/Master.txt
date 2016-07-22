@@ -5257,3 +5257,9 @@ Translated:The profile you are attempting to load has been corrupted. We loaded 
 English:Recovered printer profile
 Translated:Recovered printer profile
 
+English:Sorry! Looks like an account already exists for that email address.
+Translated:Sorry! Looks like an account already exists for that email address.
+
+English:Settings History
+Translated:Settings History
+

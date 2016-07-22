@@ -74,20 +74,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 
 					SwitchToPrinterTheme(MatterControlApplication.IsLoading);
-					if (!MatterControlApplication.IsLoading
-						&& ActiveSliceSettings.Instance.PrinterSelected)
+					if (!MatterControlApplication.IsLoading)
 					{
 						OnActivePrinterChanged(null);
 
 						string[] comportNames = FrostedSerialPort.GetPortNames();
 
-						if (Instance.GetValue<bool>(SettingsKey.auto_connect))
+						if (ActiveSliceSettings.Instance.PrinterSelected)
 						{
-							UiThread.RunOnIdle(() =>
+							if (Instance.GetValue<bool>(SettingsKey.auto_connect))
 							{
+								UiThread.RunOnIdle(() =>
+								{
 								//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 								PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
-							}, 2);
+								}, 2);
+							}
 						}
 					}
 				}
