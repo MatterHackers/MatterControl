@@ -28,7 +28,7 @@ namespace MatterControl.Tests.MatterControl
 		private string deviceToken = null;
 
 		[Test]
-		public async void RetrievePrinterProfileListWorking()
+		public async void GetPublicProfileList()
 		{
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 
@@ -36,14 +36,14 @@ namespace MatterControl.Tests.MatterControl
 
 			//MatterControlUtilities.OverrideAppDataLocation();
 
-			string resultsText = await ApplicationController.GetPublicProfileList();
+			string resultsText = await CloudServices2.MHWebServices.Instance.Devices.GetPublicProfileList();
 
-			var OemProfiles = JsonConvert.DeserializeObject<OemProfileDictionary>(resultsText);
+			var oemProfiles = JsonConvert.DeserializeObject<OemProfileDictionary>(resultsText);
 
-			Assert.IsNotNull(OemProfiles);
+			Assert.IsNotNull(oemProfiles);
 
 			//Ensures we got success and a list of profiles
-			Assert.IsTrue(OemProfiles.Keys.Count > 5);
+			Assert.IsTrue(oemProfiles.Keys.Count > 5);
 
 			//Call Retrieve Profile next
 			RetrievePrinterProfileWorking();
