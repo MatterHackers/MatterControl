@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	using System.Collections.ObjectModel;
 	using System.Net;
 	using VersionManagement;
+	using System.Threading.Tasks;
 
 	public class ProfileManager
 	{
@@ -313,11 +314,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal static void AcquireNewProfile(string make, string model, string printerName)
+		internal static async void AcquireNewProfile(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
 
-			var newProfile = LoadHttpOemProfile(make, model);
+			var newProfile = await LoadHttpOemProfile(make, model);
 			newProfile.ID = guid;
 			newProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
@@ -367,10 +368,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ActiveSliceSettings.Instance = newProfile;
 		}
 
-		private static PrinterSettings LoadHttpOemProfile(string make, string model)
+		private async static Task<PrinterSettings> LoadHttpOemProfile(string make, string model)
 		{
 			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
-			return ApplicationController.LoadCacheable<PrinterSettings>(
+			return await ApplicationController.LoadCacheableAsync<PrinterSettings>(
 				String.Format("{0}{1}", deviceToken, ProfileManager.ProfileExtension),
 				"profiles",
 				() =>
@@ -380,7 +381,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
 					}
-					return responseText;
+					return Task.FromResult(responseText);
 				},
 				Path.Combine("Profiles",make,String.Format("{0}{1}",model,ProfileManager.ProfileExtension)));
 		}
