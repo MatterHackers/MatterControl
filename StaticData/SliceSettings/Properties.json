@@ -1377,8 +1377,8 @@
     "DefaultValue": "0"
   },
   {
-    "QuickMenuSettings": [],
-    "SetSettingsOnChange": [],
+    "QuickMenuSettings": [ ],
+    "SetSettingsOnChange": [ ],
     "SlicerConfigName": "external_perimeter_extrusion_width",
     "PresentationName": "Outside Perimeters",
     "HelpText": "A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.",
@@ -1390,8 +1390,8 @@
     "DefaultValue": "100%"
   },
   {
-    "QuickMenuSettings": [],
-    "SetSettingsOnChange": [],
+    "QuickMenuSettings": [ ],
+    "SetSettingsOnChange": [ ],
     "SlicerConfigName": "perimeter_speed",
     "PresentationName": "Inside Perimeters",
     "HelpText": "The speed at which inside perimeters will print.",
@@ -1403,8 +1403,21 @@
     "DefaultValue": "30"
   },
   {
-    "QuickMenuSettings": [],
-    "SetSettingsOnChange": [],
+    "QuickMenuSettings": [ ],
+    "SetSettingsOnChange": [ ],
+    "SlicerConfigName": "perimeter_start_end_overlap",
+    "PresentationName": "Start end Overlap",
+    "HelpText": "The amount that the perimeter will overlap itself when it completes its loop, as a percent of the Nozzle Diameter.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "%",
+    "ShowAsOverride": true,
+    "ShowIfSet": null,
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "100"
+  },
+  {
+    "QuickMenuSettings": [ ],
+    "SetSettingsOnChange": [ ],
     "SlicerConfigName": "perimeters",
     "PresentationName": "Perimeters",
     "HelpText": "The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.",

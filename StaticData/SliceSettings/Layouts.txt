@@ -89,6 +89,7 @@ Advanced
         avoid_crossing_perimeters
         randomize_start
         external_perimeters_first
+        perimeter_start_end_overlap
       Outer Surface - Top & Bottom
         top_solid_layers
         bottom_solid_layers
