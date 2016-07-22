@@ -44,6 +44,9 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {
+	using Agg.UI;
+	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
+
 	public class OemSettings
 	{
 		private static OemSettings instance = null;
@@ -80,7 +83,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public List<string> PreloadedLibraryFiles { get; } = new List<string>();
 
-		internal void SetManufacturers(List<KeyValuePair<string, string>> manufacturers, List<string> whitelist = null)
+		internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> manufacturers, List<string> whitelist = null)
 		{
 			if (whitelist != null)
 			{
@@ -119,56 +122,44 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public List<KeyValuePair<string, string>> AllOems { get; private set; }
 
-		public Dictionary<string, Dictionary<string, string>> OemProfiles { get; set; }
+		public OemProfileDictionary OemProfiles { get; set; }
 
 		[OnDeserialized]
 		private void Deserialized(StreamingContext context)
 		{
-			//Load from Static Data to prepopulate oemProfiles for when user create a printer before load cacheable is done
-			var staticDataList = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(StaticData.Instance.ReadAllText(Path.Combine("Profiles","allModels.json")));
-			var oemProfs = staticDataList.Select(x => new KeyValuePair<string,Dictionary<string,string>>(x.Key ,x.Value.ToDictionary(y=>y,y=>y))).ToDictionary(x=>x.Key,x=>x.Value);
-			OemProfiles = oemProfs;
-			var manufacturesList = staticDataList.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList();
+			// Load from StaticData to prepopulate oemProfiles for when user create a printer before load cacheable is done
+			OemProfiles = JsonConvert.DeserializeObject<OemProfileDictionary>(StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json")));
+
+			var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem).ToList();
 			SetManufacturers(manufacturesList);
-			//Attempt to update from online
-			Task.Run(() =>
+
+			// Attempt to update from online
+			Task.Run(async () =>
 			{
-				var oemProfiles = ApplicationController.LoadCacheable<Dictionary<string, Dictionary<string, string>>>(
-				"oemprofiles.json",
-				"profiles",
-				() =>
+				// In public builds this won't be assigned to and we should abort and exit early
+				if (ApplicationController.GetPublicProfileList == null)
 				{
-					string responseText = null;
-
-					var autoResetEvent = new AutoResetEvent(false);
-
-					var profileRequest = new PublicProfilesRequest();
-					profileRequest.RequestSucceeded += (s, e) => responseText = profileRequest.ResponseValues["ProfileList"];
-					profileRequest.RequestComplete += (s, e) => autoResetEvent.Set();
-					profileRequest.Request();
-
-					// Block on the current thread until the response has completed
-					autoResetEvent.WaitOne(30000);
-
-					return responseText;
-				});
-				//If we failed to get anything from load cacheable dont override potentally populated feilds
-				if(oemProfiles != default(Dictionary < string, Dictionary < string, string>>))
-				{
-					OemProfiles = oemProfiles;
-					var manufactures = oemProfiles.Select(m => new KeyValuePair<string, string>(m.Key, m.Key)).ToList();
-					// sort by value (printer name)
-					manufactures.Sort(
-						delegate (KeyValuePair<string, string> pair1,
-						KeyValuePair<string, string> pair2)
-						{
-							return pair1.Value.CompareTo(pair2.Value);
-						}
-						);
-					SetManufacturers(manufactures);
-					Task.Run((Action)downloadMissingProfiles);
+					return;
 				}
-				
+
+				var oemProfiles = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
+					"oemprofiles.json",
+					"profiles",
+					ApplicationController.GetPublicProfileList);
+
+				// If we failed to get anything from load cacheable don't override potentially populated fields
+				if(oemProfiles != null)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						OemProfiles = oemProfiles;
+
+						var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
+						SetManufacturers(manufactures);
+
+						Task.Run((Action)downloadMissingProfiles);
+					});
+				}
 			});
 		}
 

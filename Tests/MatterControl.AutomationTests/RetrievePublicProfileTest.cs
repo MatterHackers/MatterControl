@@ -16,37 +16,40 @@ using MatterHackers.Agg.UI;
 using Newtonsoft.Json;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl;
 
 namespace MatterControl.Tests.MatterControl
 {
+	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
+
 	[TestFixture]
 	public class RetrievePublicProfileTest
 	{
 		private string deviceToken = null;
 
-		[Test]
-		public void RetrievePrinterProfileListWorking()
+		[Test, Category("FixNeeded")]
+		public async void GetPublicProfileList()
 		{
-
+			// This test needs to be moved to MCCentral to run against CloudServices or we need the duplicated local services API like the original CloudServicesv2 prototype had
+			/*
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 
 			string profilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", "oemprofiles.json");
 
 			//MatterControlUtilities.OverrideAppDataLocation();
-			AutoResetEvent requestCompleteWaiter = new AutoResetEvent(false);
-			PublicProfilesRequest retrieveProfiles = new PublicProfilesRequest();
-			retrieveProfiles.URI = "https://mattercontrol-test.appspot.com/api/1/device/get-public-profile-list";
 
+			string resultsText = await CloudServices2.MHWebServices.Instance.Devices.GetPublicProfileList();
 
-			retrieveProfiles.RequestComplete += (sender, eArgs) => { requestCompleteWaiter.Set(); };
+			var oemProfiles = JsonConvert.DeserializeObject<OemProfileDictionary>(resultsText);
 
-			retrieveProfiles.Request();
-			Assert.IsTrue(requestCompleteWaiter.WaitOne());
+			Assert.IsNotNull(oemProfiles);
+
 			//Ensures we got success and a list of profiles
-			Assert.IsTrue(retrieveProfiles.ResponseValues.Count == 2);
+			Assert.IsTrue(oemProfiles.Keys.Count > 5);
 
 			//Call Retrieve Profile next
 			RetrievePrinterProfileWorking();
+			*/
 		}
 
 		//[Test,Category("CloudProfiles")]

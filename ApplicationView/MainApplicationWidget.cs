@@ -174,6 +174,7 @@ namespace MatterHackers.MatterControl
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 		public static Func<PrinterInfo,string, Task> GetPrinterProfile;
 		public static Func<Task> SyncPrinterProfiles;
+		public static Func<Task<string>> GetPublicProfileList;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
@@ -214,7 +215,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="collector">The custom collector function to load the content</param>
 		/// <returns></returns>
-		public static T LoadCacheable<T>(string cacheKey, string cacheScope, Func<string> collector, string staticDataFallbackPath = null) where T : class
+		public async static Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, Func<Task<string>> collector, string staticDataFallbackPath = null) where T : class
 		{
 			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", cacheScope);
 			string cachePath = Path.Combine(cacheDirectory, cacheKey);
@@ -225,7 +226,7 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				// Try to update the document
-				string documentText = collector();
+				string documentText = await collector();
 
 				if (!string.IsNullOrEmpty(documentText))
 				{
