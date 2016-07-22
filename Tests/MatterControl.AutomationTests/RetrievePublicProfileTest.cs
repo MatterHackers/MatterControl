@@ -16,34 +16,34 @@ using MatterHackers.Agg.UI;
 using Newtonsoft.Json;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl;
 
 namespace MatterControl.Tests.MatterControl
 {
+	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
+
 	[TestFixture]
 	public class RetrievePublicProfileTest
 	{
 		private string deviceToken = null;
 
 		[Test]
-		public void RetrievePrinterProfileListWorking()
+		public async void RetrievePrinterProfileListWorking()
 		{
-
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 
 			string profilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", "oemprofiles.json");
 
 			//MatterControlUtilities.OverrideAppDataLocation();
-			AutoResetEvent requestCompleteWaiter = new AutoResetEvent(false);
-			PublicProfilesRequest retrieveProfiles = new PublicProfilesRequest();
-			retrieveProfiles.URI = "https://mattercontrol-test.appspot.com/api/1/device/get-public-profile-list";
 
+			string resultsText = await ApplicationController.GetPublicProfileList();
 
-			retrieveProfiles.RequestComplete += (sender, eArgs) => { requestCompleteWaiter.Set(); };
+			var OemProfiles = JsonConvert.DeserializeObject<OemProfileDictionary>(resultsText);
 
-			retrieveProfiles.Request();
-			Assert.IsTrue(requestCompleteWaiter.WaitOne());
+			Assert.IsNotNull(OemProfiles);
+
 			//Ensures we got success and a list of profiles
-			Assert.IsTrue(retrieveProfiles.ResponseValues.Count == 2);
+			Assert.IsTrue(OemProfiles.Keys.Count > 5);
 
 			//Call Retrieve Profile next
 			RetrievePrinterProfileWorking();

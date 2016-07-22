@@ -375,7 +375,6 @@
     <Compile Include="VersionManagement\RetrievePublicProfileRequest.cs" />
     <Compile Include="VersionManagement\LatestVersionRequest.cs" />
     <Compile Include="VersionManagement\ClientTokenRequest.cs" />
-    <Compile Include="VersionManagement\PublicProfilesRequest.cs" />
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
     <Compile Include="VersionManagement\VersionFileHandler.cs" />
     <Compile Include="AboutPage\AboutWidget.cs" />
