@@ -105,6 +105,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100),
 					BackgroundColor = new RGBA_Bytes(0, 0, 0, 0),
 					BorderWidth = 1,
+					MenuAsWideAsItems = false,
+					AlignToRightEdge = true,
 				};
 				sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
 				sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
@@ -114,7 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					{ "Import".Localize(), ImportSettingsMenu_Click },
 					{ "Export".Localize(), () => {  WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); return true; } },
-					{ "Printer History".Localize(), () => { WizardWindow.Show<PrinterProfileHistoryPage>("somecontext", "Hello world"); return true; } },
+					{ "Settings History".Localize(), () => { WizardWindow.Show<PrinterProfileHistoryPage>("somecontext", "Hello world"); return true; } },
 					{ "Reset to defaults".Localize(),() => { UiThread.RunOnIdle(ResetToDefaults); return true; } },
 				};
 

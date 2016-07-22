@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl
 			WizardWindow wizardWindow = GetWindow("PrinterSetup");
 			wizardWindow.Title = "Setup Wizard".Localize();
 
-			wizardWindow.ChangeToPage<SetupStepComPortOne>();
+			wizardWindow.ChangeToPage<SetupStepInstallDriver>();
 		}
 
 		public static bool IsOpen(string uri)

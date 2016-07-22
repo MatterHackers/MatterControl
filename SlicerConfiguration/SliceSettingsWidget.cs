@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				string categoryPageLabel = category.Name.Localize();
 				TabPage categoryPage = new TabPage(categoryPageLabel);
 				SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, category.Name + " Tab", 16,
-						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
+					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
 				categoryPage.AnchorAll();
 				topCategoryTabs.AddTab(textTabWidget);
 
@@ -694,6 +694,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// This is a place holder type to allow us to put in the control that will allow the deletion of a printer profile
 				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
+				buttonFactory.borderWidth = 1;
+				if (ActiveTheme.Instance.IsDarkTheme)
+				{
+					buttonFactory.normalBorderColor = new RGBA_Bytes(99, 99, 99);
+				}
+				else
+				{
+					buttonFactory.normalBorderColor = new RGBA_Bytes(140, 140, 140);
+				}
+
 				buttonFactory.normalTextColor = RGBA_Bytes.Red;
 				var button = buttonFactory.Generate("Delete Printer".Localize());
 				button.HAnchor = HAnchor.ParentCenter;
