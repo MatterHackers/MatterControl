@@ -73,6 +73,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			hiddenSettings.Add("print_leveling_method");
 			hiddenSettings.Add("solid_shell");
 			hiddenSettings.Add("retractWhenChangingIslands");
+			hiddenSettings.Add(SettingsKey.perimeter_start_end_overlap);
 		}
 
 		public override bool MapContains(string key)

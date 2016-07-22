@@ -40,43 +40,73 @@ using MatterHackers.Agg.UI;
 
 namespace MatterControl.Tests.MatterControl
 {
-    [TestFixture]
-    public class TranslationsTests
-    {
+	[TestFixture]
+	public class TranslationsTests
+	{
 		[Test, Category("Translations")]
 		public void RelativeFriendlyDatesTest()
 		{
-			// May 28, 2016 at 3:13 pm
-			DateTime nowTime = new DateTime(2016, 05, 28, 15, 13, 37);
+			{
+				// May 28, 2016 at 3:13 pm
+				DateTime nowTime = new DateTime(2016, 05, 28, 15, 13, 37);
 
-			DateTime testTime = nowTime.AddMinutes(-63);
-			Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.Today);
-			Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2:10 PM");
+				DateTime testTime = nowTime.AddMinutes(-63);
+				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.Today);
+				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2:10 PM");
 
-			testTime = nowTime.AddHours(-25);
-			Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.Yesterday);
-			Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2:13 PM");
+				testTime = nowTime.AddHours(-25);
+				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.Yesterday);
+				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2:13 PM");
 
-			testTime = nowTime.AddDays(-4);
-			Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameWeek);
-			Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "Tuesday 3:13 PM");
+				testTime = nowTime.AddDays(-4);
+				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameWeek);
+				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "Tuesday 3:13 PM");
 
-			testTime = nowTime.AddDays(-6);
-			Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameWeek);
-			Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "Sunday 3:13 PM");
+				testTime = nowTime.AddDays(-6);
+				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameWeek);
+				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "Sunday 3:13 PM");
 
-			testTime = nowTime.AddDays(-7);
-			Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameMonth);
-			Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "21, 3:13 PM");
+				testTime = nowTime.AddDays(-7);
+				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameMonth);
+				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "21, 3:13 PM");
 
-			testTime = nowTime.AddDays(-37);
-			Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameYear);
-			Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "April 21, 3:13 PM");
+				testTime = nowTime.AddDays(-37);
+				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameYear);
+				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "April 21, 3:13 PM");
 
-			testTime = nowTime.AddDays(-364);
-			Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.PastYear);
-			Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2015 May 30, 3:13 PM");
+				testTime = nowTime.AddDays(-364);
+				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.PastYear);
+				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2015 May 30, 3:13 PM");
+			}
+
+			// make a grouped list
+			{
+				// May 28, 2016 at 3:13 pm
+				DateTime nowTime = new DateTime(2016, 05, 28, 15, 13, 37);
+				List<DateTime> allTimes = new List<DateTime>()
+				{
+					nowTime.AddMinutes(-63),
+					nowTime.AddMinutes(-82),
+					nowTime.AddHours(-25),
+					nowTime.AddHours(-31),
+					nowTime.AddDays(-4),
+					nowTime.AddDays(-6),
+					nowTime.AddDays(-7),
+					nowTime.AddDays(-37),
+					nowTime.AddDays(-364),
+				};
+
+				var orderedForDisplay = RelativeTime.GroupTimes(nowTime, allTimes);
+				Assert.IsTrue(orderedForDisplay.Count == 6);
+				Assert.IsTrue(orderedForDisplay[TimeBlock.Today].Count == 2);
+				Assert.IsTrue(orderedForDisplay[TimeBlock.Yesterday].Count == 2);
+				Assert.IsTrue(orderedForDisplay[TimeBlock.SameWeek].Count == 2);
+				Assert.IsTrue(orderedForDisplay[TimeBlock.SameMonth].Count == 1);
+				Assert.IsTrue(orderedForDisplay[TimeBlock.SameYear].Count == 1);
+				Assert.IsTrue(orderedForDisplay[TimeBlock.PastYear].Count == 1);
+			}
 		}
+	
 
 		[Test, Category("Translations")]
         public void EnglishLinesOnlyContainEnglishCharachters()
