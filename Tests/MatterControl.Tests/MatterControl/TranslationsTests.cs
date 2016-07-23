@@ -68,7 +68,7 @@ namespace MatterControl.Tests.MatterControl
 
 				testTime = nowTime.AddDays(-7);
 				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameMonth);
-				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "21, 3:13 PM");
+				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "May 21, 3:13 PM");
 
 				testTime = nowTime.AddDays(-37);
 				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameYear);
