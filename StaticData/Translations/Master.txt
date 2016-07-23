@@ -5263,3 +5263,9 @@ Translated:Sorry! Looks like an account already exists for that email address.
 English:Settings History
 Translated:Settings History
 
+English:The amount that the perimeter will overlap itself when it completes its loop, as a percent of the Nozzle Diameter.
+Translated:The amount that the perimeter will overlap itself when it completes its loop, as a percent of the Nozzle Diameter.
+
+English:Start end Overlap
+Translated:Start end Overlap
+
