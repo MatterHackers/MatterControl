@@ -352,6 +352,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			// Set initial theme to current theme
+			newProfile.SetValue(SettingsKey.active_theme_index, ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_index));
+
 			Instance.Profiles.Add(new PrinterInfo
 			{
 				Name = printerName,
