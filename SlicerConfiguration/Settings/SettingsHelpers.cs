@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
+		public const string active_theme_index = nameof(active_theme_index);
 	};
 
 	public class SettingsHelpers

@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static void RefreshActiveInstance(PrinterSettings updatedProfile)
 		{
-			bool themeChanged = activeInstance.GetValue("active_theme_index") != updatedProfile.GetValue("active_theme_index");
+			bool themeChanged = activeInstance.GetValue(SettingsKey.active_theme_index) != updatedProfile.GetValue(SettingsKey.active_theme_index);
 
 			SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
 
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			int themeIndex;
 			if (ActiveSliceSettings.Instance != null)
 			{
-				string activeThemeIndex = ActiveSliceSettings.Instance.GetValue("active_theme_index");
+				string activeThemeIndex = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_index);
 				if (string.IsNullOrEmpty(activeThemeIndex) || !int.TryParse(activeThemeIndex, out themeIndex))
 				{
 					themeIndex = defaultThemeIndex;
