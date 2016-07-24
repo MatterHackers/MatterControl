@@ -374,19 +374,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private async static Task<PrinterSettings> LoadHttpOemProfile(string make, string model)
 		{
 			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
+			string cacheKey = deviceToken + ProfileManager.ProfileExtension;
+			string cachePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", cacheKey);
+
 			return await ApplicationController.LoadCacheableAsync<PrinterSettings>(
-				String.Format("{0}{1}", deviceToken, ProfileManager.ProfileExtension),
+				cacheKey,
 				"profiles",
 				() =>
 				{
 					string responseText = null;
-					if(!File.Exists(Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles",String.Format("{0}{1}",deviceToken, ProfileManager.ProfileExtension))))
+					if(!File.Exists(cachePath))
 					{
+						// If the cache file for the current deviceToken does not exist, attempt to download it
 						responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
 					}
+
 					return Task.FromResult(responseText);
 				},
-				Path.Combine("Profiles",make,String.Format("{0}{1}",model,ProfileManager.ProfileExtension)));
+				Path.Combine("Profiles",make, model + ProfileManager.ProfileExtension));
 		}
 
 		public void EnsurePrintersImported()
