@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 				totalDrawTime.Restart();
 			};
 
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 
 			DrawEventHandler afterDraw = null;
 			afterDraw = (sender, e) =>
@@ -93,14 +93,14 @@ namespace MatterHackers.MatterControl
 					if (testTracker.Count == 100)
 					{
 						Trace.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(testTracker));
-						container.DrawBefore -= beforeDraw;
-						container.DrawBefore -= afterDraw;
+						container.BeforeDraw -= beforeDraw;
+						container.BeforeDraw -= afterDraw;
 						done = true;
 					}
 				}
 			};
 
-			container.DrawAfter += afterDraw;
+			container.AfterDraw += afterDraw;
 		}
 
 		public static void ClickStuff(GuiWidget container, string[] clickThings, double secondsBetweenClicks = .1)
@@ -120,10 +120,10 @@ namespace MatterHackers.MatterControl
 					}
 				});
 
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
 
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 		}
 
 		public static void CreateButtonOpensPluginWindow(GuiWidget container, double secondsBetweenClicks = .1)
@@ -139,9 +139,9 @@ namespace MatterHackers.MatterControl
 					testRunner.ClickByName("Queue Tab");
 					testRunner.ClickByName("Design Tool Button");
 				});
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 			
 		}
 
@@ -163,9 +163,9 @@ namespace MatterHackers.MatterControl
 					testrunner.ClickByName("Library Add To Queue Button");
 					testrunner.ClickByName("Queue Tab");
 				});
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 		}
 
 		public static void RenameLibraryItem(GuiWidget container, double secondsBetweenClicks = .1)
@@ -190,9 +190,9 @@ namespace MatterHackers.MatterControl
 
 					
 				});
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 		}
 
 		public static void CreateAndRenameLocalLibraryFolder(GuiWidget container, double secondsBetweenClicks = .1)
@@ -219,9 +219,9 @@ namespace MatterHackers.MatterControl
 
 
 				});
-				container.DrawBefore -= beforeDraw;
+				container.BeforeDraw -= beforeDraw;
 			};
-			container.DrawBefore += beforeDraw;
+			container.BeforeDraw += beforeDraw;
 		}
 
 		//This is Temporary and will probably be moved once we get a functional test harness!!!
