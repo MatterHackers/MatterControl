@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			this.fillColor = ActiveTheme.Instance.PrimaryAccentColor;
 			this.borderColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			this.DrawAfter += new DrawEventHandler(bar_Draw);
+			this.AfterDraw += new DrawEventHandler(bar_Draw);
 		}
 
 		private void bar_Draw(GuiWidget drawingWidget, DrawEventArgs drawEvent)
