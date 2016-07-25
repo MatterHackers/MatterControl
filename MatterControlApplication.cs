@@ -69,7 +69,6 @@ namespace MatterHackers.MatterControl
 		private string confirmExit = "Confirm Exit".Localize();
 		private bool DoCGCollectEveryDraw = false;
 		private int drawCount = 0;
-		private bool firstDraw = true;
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 		private DataViewGraph msGraph;
 		private string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
@@ -634,22 +633,25 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (firstDraw)
+			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
+			//msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			foreach (string arg in commandLineArgs)
 			{
-				firstDraw = false;
-				foreach (string arg in commandLineArgs)
+				string argExtension = Path.GetExtension(arg).ToUpper();
+				if (argExtension.Length > 1
+					&& MeshFileIo.ValidFileExtensions().Contains(argExtension))
 				{
-					string argExtension = Path.GetExtension(arg).ToUpper();
-					if (argExtension.Length > 1
-						&& MeshFileIo.ValidFileExtensions().Contains(argExtension))
-					{
-						QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
-					}
+					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
 				}
+			}
 
-				TerminalWindow.ShowIfLeftOpen();
+			TerminalWindow.ShowIfLeftOpen();
 
-				ApplicationController.Instance.OnLoadActions();
+			ApplicationController.Instance.OnLoadActions();
 
 #if false
 			{
@@ -668,10 +670,6 @@ namespace MatterHackers.MatterControl
 				}, 1);
 			}
 #endif
-			}
-
-			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
-			//msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)

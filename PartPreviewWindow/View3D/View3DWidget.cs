@@ -104,7 +104,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private CheckBox expandViewOptions;
 		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
-		private bool firstDraw = true;
 		private bool hasDrawn = false;
 		private FlowLayoutWidget materialOptionContainer;
 		public List<PlatingMeshGroupData> MeshGroupExtraData { get; private set; }
@@ -837,14 +836,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDragOver(fileDropEventArgs);
 		}
 
+		public override void OnLoad(EventArgs args)
+		{
+			ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+			base.OnLoad(args);
+		}
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (firstDraw)
-			{
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-				firstDraw = false;
-			}
-
 			if (HaveSelection)
 			{
 				foreach (InteractionVolume volume in meshViewerWidget.interactionVolumes)
