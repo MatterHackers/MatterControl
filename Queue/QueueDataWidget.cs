@@ -228,10 +228,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					queueMenuContainer.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 					queueMenu = new QueueOptionsMenu();
 					queueMenuContainer.AddChild(queueMenu.MenuDropList);
-					if (!touchScreenMode)
-					{
-						buttonPanel1.AddChild(queueMenuContainer);
-					}
+					buttonPanel1.AddChild(queueMenuContainer);
 
 					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((object sender, EventArgs e) =>
 					{
@@ -703,15 +700,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void SetMenuItems(DropDownMenu dropDownMenu)
 		{
 			menuItems = new List<PrintItemAction>();
-
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				menuItems.Add(new PrintItemAction()
-				{
-					Title = "Remove All".Localize(),
-					Action = (items, queueDataView) => clearAllButton_Click(null, null)
-				});
-			}
 
 			menuItems.Add(new PrintItemAction()
 			{
