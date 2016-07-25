@@ -547,7 +547,10 @@ namespace MatterHackers.MatterControl
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
 
 			TerminalWindow.CloseIfOpen();
-			PrinterConnectionAndCommunication.Instance.Disable();
+			if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
+			{
+				PrinterConnectionAndCommunication.Instance.Disable();
+			}
 			//Close connection to the local datastore
 			Datastore.Instance.Exit();
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
@@ -592,7 +595,10 @@ namespace MatterHackers.MatterControl
 
 				if (continueWithShutdown)
 				{
-					PrinterConnectionAndCommunication.Instance.Disable();
+					if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
+					{
+						PrinterConnectionAndCommunication.Instance.Disable();
+					}
 					this.Close();
 				}
 
