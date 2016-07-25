@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (enableBabysteppingMode)
 			{
-				if ( && zPlusControl.MoveAmount >= 1)
+				if (zPlusControl.MoveAmount >= 1)
 				{
 					movePpointZeroTwoMmButton.Checked = true;
 				}
