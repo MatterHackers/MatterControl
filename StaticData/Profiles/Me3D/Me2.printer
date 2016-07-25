@@ -186,6 +186,7 @@
   "MaterialLayers": [
     {
       "layer_name": "PLA",
+      "filament_density":  "1.24",
       "layer_id": "a0e44f90-dbbc-4d46-85c3-02c502120c33",
       "bed_temperature": "0",
       "first_layer_bed_temperature": "0",

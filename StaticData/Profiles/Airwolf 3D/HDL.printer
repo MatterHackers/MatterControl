@@ -188,6 +188,7 @@
     },
     {
       "layer_name": "PLA",
+      "filament_density":  "1.24",
       "layer_id": "a57b811a-5424-4812-8bcf-d48752055824",
       "bridge_fan_speed": "100",
       "disable_fan_first_layers": "0",

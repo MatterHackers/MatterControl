@@ -291,6 +291,7 @@
     },
     {
       "layer_name": "SimplePrint PLA Max-Black",
+      "filament_density":  "1.24",
       "layer_id": "3876f8af-4bf2-461a-8dc6-ea8ef4534491",
       "filament_diameter": "1.79",
       "first_layer_temperature": "200",
@@ -298,6 +299,7 @@
     },
     {
       "layer_name": "SimplePrint PLA Max-White",
+      "filament_density":  "1.24",
       "layer_id": "fe72d45f-87f3-447d-969e-17a09b8f8994",
       "filament_diameter": "1.79",
       "first_layer_temperature": "200",
