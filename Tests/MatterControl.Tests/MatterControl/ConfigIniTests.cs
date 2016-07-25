@@ -40,6 +40,46 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
+		public void CsvM109BeforeExtrude()
+		{
+			ValidateOnAllPrinters((printer, settings) =>
+			{
+				//Get start_gcode string from settings key
+				string startGcode = settings.GetValue(SettingsKey.start_gcode);
+
+				//Check that the start gcode includes an M109 since many profiles do not
+				if (startGcode.Contains("M109"))
+				{
+					//Split start gcode on end of line 
+					var lines = startGcode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries).Select(l => l.ToUpper().Trim()).ToList();
+
+					//Get new collection of lines that include M109 and/or G1 E
+					string m109Line = lines.Where(l => l.StartsWith("M109 ")).FirstOrDefault();
+					string emptyExtrudeLine = lines.Where(l => l.StartsWith("G1 E")).FirstOrDefault();
+
+					if(m109Line == null)
+					{
+						printer.RuleViolated = true;
+						return;
+					}
+
+					int m109Pos = lines.IndexOf(m109Line);
+					int emptyExtrudePos = lines.IndexOf(emptyExtrudeLine);
+
+					Assert.IsNotNull(m109Line);
+					//Assert.IsNotNull(emptyExtrudeLine);
+					//Assert.Greater(emptyExtrudePos, m109Pos);
+
+					if (emptyExtrudePos < m109Pos)
+					{
+						printer.RuleViolated = true;
+					}
+				}
+			});
+		}
+
+
+		[Test]
 		public void CsvBedSizeExistsAndHasTwoValues()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
