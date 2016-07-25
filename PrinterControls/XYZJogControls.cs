@@ -223,11 +223,11 @@ namespace MatterHackers.MatterControl
 
 						var radioList = new ObservableCollection<GuiWidget>();
 
-						pointZeroOneButton = buttonFactory.GenerateRadioButton("0.02");
-						pointZeroOneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-						pointZeroOneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.02); };
-						pointZeroOneButton.SiblingRadioButtonList = radioList;
-						moveRadioButtons.AddChild(pointZeroOneButton);
+						movePpointZeroTwoMmButton = buttonFactory.GenerateRadioButton("0.02");
+						movePpointZeroTwoMmButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+						movePpointZeroTwoMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.02); };
+						movePpointZeroTwoMmButton.SiblingRadioButtonList = radioList;
+						moveRadioButtons.AddChild(movePpointZeroTwoMmButton);
 
 						RadioButton pointOneButton = buttonFactory.GenerateRadioButton("0.1");
 						pointOneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -235,11 +235,11 @@ namespace MatterHackers.MatterControl
 						pointOneButton.SiblingRadioButtonList = radioList;
 						moveRadioButtons.AddChild(pointOneButton);
 
-						RadioButton oneButton = buttonFactory.GenerateRadioButton("1");
-						oneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-						oneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(1); };
-						oneButton.SiblingRadioButtonList = radioList;
-						moveRadioButtons.AddChild(oneButton);
+						moveOneMmButton = buttonFactory.GenerateRadioButton("1");
+						moveOneMmButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+						moveOneMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(1); };
+						moveOneMmButton.SiblingRadioButtonList = radioList;
+						moveRadioButtons.AddChild(moveOneMmButton);
 
 						tooBigForBabyStepping = new DisableableWidget()
 						{
@@ -324,7 +324,17 @@ namespace MatterHackers.MatterControl
 		{
 			if (enableBabysteppingMode)
 			{
-				pointZeroOneButton.Checked = true;
+				if ( && zPlusControl.MoveAmount >= 1)
+				{
+					movePpointZeroTwoMmButton.Checked = true;
+				}
+			}
+			else
+			{
+				if (zPlusControl.MoveAmount < 1)
+				{
+					moveOneMmButton.Checked = true;
+				}
 			}
 
 			tenButton.Enabled = !enableBabysteppingMode;
@@ -369,7 +379,8 @@ namespace MatterHackers.MatterControl
 		private RadioButton tenButton;
 		private DisableableWidget disableableEButtons;
 		private DisableableWidget tooBigForBabyStepping;
-		private RadioButton pointZeroOneButton;
+		private RadioButton movePpointZeroTwoMmButton;
+		private RadioButton moveOneMmButton;
 
 		private FlowLayoutWidget GetHotkeyControlContainer()
 		{
