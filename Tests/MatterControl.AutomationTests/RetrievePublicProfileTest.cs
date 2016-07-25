@@ -25,8 +25,6 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class RetrievePublicProfileTest
 	{
-		private string deviceToken = null;
-
 		[Test, Category("FixNeeded")]
 		public async void GetPublicProfileList()
 		{
@@ -52,26 +50,29 @@ namespace MatterControl.Tests.MatterControl
 			*/
 		}
 
-		//[Test,Category("CloudProfiles")]
-		public void RetrievePrinterProfileWorking()
+		[Test, Category("CloudProfiles"), Category("FixNeeded")]
+		public async void RetrievePrinterProfileWorking()
 		{
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
 			string make = OemSettings.Instance.OemProfiles.First().Key;
 			string model = OemSettings.Instance.OemProfiles[make].First().Key;
-			deviceToken = OemSettings.Instance.OemProfiles[make][model];
-			string expectedProfilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Profiles", string.Format("{0}{1}", deviceToken, ProfileManager.ProfileExtension));
+			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
+			string cacheKey = deviceToken + ProfileManager.ProfileExtension;
+
+			string expectedProfilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Profiles", cacheKey);
 			if (File.Exists(expectedProfilePath))
 			{
 				File.Delete(expectedProfilePath);
 			}
-			RetrievePublicProfileRequest request = new RetrievePublicProfileRequest();
 
-			string recievedPrinterProfile = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
+			// Test will fail until mechanism can be created that exposes MHWebservices to vanilla MatterControl or until these tests are moved to MCCentral
+			string recievedPrinterProfile = await ApplicationController.DownloadPublicProfileAsync(deviceToken);
 
 			Assert.IsNotNullOrEmpty(recievedPrinterProfile);
+
 			//Assert.AreEqual(expectedProfilePath, recievedProfilePath,"Received Profile path does not match expected path.");
 			//Assert.IsTrue(File.Exists(expectedProfilePath));
 		}
-
-		
 	}
 }

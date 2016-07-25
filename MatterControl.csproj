@@ -372,7 +372,6 @@
     <Compile Include="SlicerConfiguration\SlicingQueue.cs" />
     <Compile Include="Utilities\TupleList.cs" />
     <Compile Include="VersionManagement\ContactFormRequest.cs" />
-    <Compile Include="VersionManagement\RetrievePublicProfileRequest.cs" />
     <Compile Include="VersionManagement\LatestVersionRequest.cs" />
     <Compile Include="VersionManagement\ClientTokenRequest.cs" />
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
