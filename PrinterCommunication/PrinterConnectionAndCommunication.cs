@@ -127,6 +127,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double actualBedTemperature;
 
+		private int currentlyActiveExtruderIndex = 0;
+
 		private double[] actualExtruderTemperature = new double[MAX_EXTRUDERS];
 
 		private CheckSumLines allCheckSumLinesSent = new CheckSumLines();
@@ -309,6 +311,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
 
+			WriteLineStartCallBacks.AddCallbackToKey("T", ExtruderIndexSet);
+		}
+
+		private void ExtruderIndexSet(object sender, EventArgs e)
+		{
+			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
+
+			double extruderBeingSet = 0;
+			if (GCodeFile.GetFirstNumberAfter("T", foundStringEventArgs.LineToCheck, ref extruderBeingSet))
+			{
+				currentlyActiveExtruderIndex = (int)extruderBeingSet;
+			}
 		}
 
 		public void AddToBabyStepOffset(Axis moveAxis, double moveAmount)
@@ -1103,7 +1117,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				else
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-					targetExtruderTemperature[0] = tempBeingSet;
+					targetExtruderTemperature[currentlyActiveExtruderIndex] = tempBeingSet;
 				}
 				OnExtruderTemperatureSet(new TemperatureEventArgs((int)exturderIndex, tempBeingSet));
 			}
@@ -2009,11 +2023,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G91");
 		}
 
-		public void SetTargetExtruderTemperature(int extruderIndex0Based, double temperature)
+		public void SetTargetExtruderTemperature(int extruderIndex0Based, double temperature, bool forceSend = false)
 		{
 			extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
 
-			if (targetExtruderTemperature[extruderIndex0Based] != temperature)
+			if (targetExtruderTemperature[extruderIndex0Based] != temperature
+				|| forceSend)
 			{
 				targetExtruderTemperature[extruderIndex0Based] = temperature;
 				OnExtruderTemperatureSet(new TemperatureEventArgs(extruderIndex0Based, temperature));
@@ -2804,7 +2819,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			for (int i = 0; i < ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count); i++)
 			{
-				SetTargetExtruderTemperature(i, 0);
+				SetTargetExtruderTemperature(i, 0, true);
 			}
 			TargetBedTemperature = 0;
 		}
