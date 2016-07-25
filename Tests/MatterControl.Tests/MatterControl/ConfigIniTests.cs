@@ -146,6 +146,33 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
+		public void PlaAndAbsDensitySetCorrectly()
+		{
+			ValidateOnAllPrinters((printer, settings) =>
+			{
+				if (settings.OemLayer.ContainsKey("layer_name"))
+				{
+					if (settings.OemLayer["layer_name"].ToUpper() == "ABS")
+					{
+						double absDensity = settings.GetValue<double>(SettingsKey.filament_density);
+						if (absDensity != 1.04)
+						{
+							Assert.Fail("[filament_density] value should be set to ABS 1.04: " + printer.RelativeFilePath);
+						}
+					}
+					else if (settings.OemLayer["layer_name"].ToUpper() == "PLA")
+					{
+						double absDensity = settings.GetValue<double>(SettingsKey.filament_density);
+						if (absDensity != 1.24)
+						{
+							Assert.Fail("[filament_density] value should be set to PLA 1.24: " + printer.RelativeFilePath);
+						}
+					}
+				}
+			});
+		}
+
+		[Test]
 		public void MaxFanSpeedOneHundredOrLess()
 		{
 			ValidateOnAllPrinters((printer, settings) =>

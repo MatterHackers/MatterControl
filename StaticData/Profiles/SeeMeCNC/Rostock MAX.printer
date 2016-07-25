@@ -161,6 +161,7 @@
   "MaterialLayers": [
     {
       "layer_name": "ABS",
+      "filament_density":  "1.04",
       "layer_id": "a9b939f5-c8cb-46a4-8f0d-d34674ebe8c7",
       "bed_temperature": "80",
       "bridge_fan_speed": "100",
@@ -197,6 +198,7 @@
     },
     {
       "layer_name": "PLA",
+      "filament_density":  "1.24",
       "layer_id": "dccaa008-b282-4925-ab87-4d737e8b3ae2",
       "bed_temperature": "60",
       "bridge_fan_speed": "100",

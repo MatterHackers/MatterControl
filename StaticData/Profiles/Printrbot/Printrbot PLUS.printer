@@ -128,6 +128,7 @@
   "MaterialLayers": [
     {
       "layer_name": "ABS",
+      "filament_density":  "1.04",
       "layer_id": "55fe2d9c-1972-4afd-a751-84e3f40f00e9",
       "bed_temperature": "110",
       "first_layer_bed_temperature": "110",
@@ -136,6 +137,7 @@
     },
     {
       "layer_name": "PLA",
+      "filament_density":  "1.24",
       "layer_id": "7ffac5c1-2810-4047-abb1-37b6d9323457",
       "bed_temperature": "70",
       "first_layer_bed_temperature": "70",

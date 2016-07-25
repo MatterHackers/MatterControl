@@ -186,6 +186,7 @@
   "MaterialLayers": [
     {
       "layer_name": "ABS",
+      "filament_density":  "1.04",
       "layer_id": "18475fe4-cf02-4ec5-832e-55e11a8d96dc",
       "bed_temperature": "95",
       "max_fan_speed": "50",
@@ -204,6 +205,7 @@
     },
     {
       "layer_name": "PLA",
+      "filament_density":  "1.24",
       "layer_id": "ab93be81-0b0b-477c-a4ae-a96e01295f5f",
       "bed_temperature": "0",
       "max_fan_speed": "100",
