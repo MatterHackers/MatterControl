@@ -380,16 +380,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return await ApplicationController.LoadCacheableAsync<PrinterSettings>(
 				cacheKey,
 				"profiles",
-				() =>
+				async () =>
 				{
 					string responseText = null;
 					if(!File.Exists(cachePath))
 					{
 						// If the cache file for the current deviceToken does not exist, attempt to download it
-						responseText = RetrievePublicProfileRequest.DownloadPrinterProfile(deviceToken);
+						responseText = await ApplicationController.DownloadPublicProfileAsync(deviceToken);
 					}
 
-					return Task.FromResult(responseText);
+					return responseText;
 				},
 				Path.Combine("Profiles",make, model + ProfileManager.ProfileExtension));
 		}

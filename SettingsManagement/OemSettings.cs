@@ -157,24 +157,30 @@ namespace MatterHackers.MatterControl.SettingsManagement
 						var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
 						SetManufacturers(manufactures);
 
-						Task.Run((Action)downloadMissingProfiles);
+						Task.Run((Action)DownloadMissingProfiles);
 					});
 				}
 			});
 		}
 
-		private void downloadMissingProfiles()
+		private async void DownloadMissingProfiles()
 		{
 			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
-			string filePath;
+
 			foreach (string oem in OemProfiles.Keys)
 			{
 				foreach (string profileKey in OemProfiles[oem].Values)
 				{
-					filePath = Path.Combine(cacheDirectory, String.Format("{0}{1}", profileKey, ProfileManager.ProfileExtension));
-					if (!File.Exists(filePath))
+					string cacheKey = profileKey + ProfileManager.ProfileExtension;
+					string cachePath = Path.Combine(cacheDirectory, cacheKey);
+
+					if (!File.Exists(cachePath))
 					{
-						File.WriteAllText(filePath, RetrievePublicProfileRequest.DownloadPrinterProfile(profileKey));
+						string profileJson = await ApplicationController.DownloadPublicProfileAsync(profileKey);
+						if (!string.IsNullOrEmpty(profileJson))
+						{
+							File.WriteAllText(cachePath, profileJson);
+						}
 					}
 				}
 			}
