@@ -175,6 +175,7 @@ namespace MatterHackers.MatterControl
 		public static Func<PrinterInfo,string, Task> GetPrinterProfile;
 		public static Func<Task> SyncPrinterProfiles;
 		public static Func<Task<string>> GetPublicProfileList;
+		public static Func<string, Task<string>> DownloadPublicProfileAsync;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
