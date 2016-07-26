@@ -48,6 +48,8 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
+	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
+
 	public abstract class ApplicationView : GuiWidget
 	{
 		public abstract void AddElements();
@@ -179,8 +181,8 @@ namespace MatterHackers.MatterControl
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 		public static Func<PrinterInfo,string, Task> GetPrinterProfile;
 		public static Func<Task> SyncPrinterProfiles;
-		public static Func<Task<string>> GetPublicProfileList;
-		public static Func<string, Task<string>> DownloadPublicProfileAsync;
+		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
+		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
@@ -221,7 +223,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="collector">The custom collector function to load the content</param>
 		/// <returns></returns>
-		public async static Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, Func<Task<string>> collector, string staticDataFallbackPath = null) where T : class
+		public async static Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, Func<Task<T>> collector, string staticDataFallbackPath = null) where T : class
 		{
 			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", cacheScope);
 			string cachePath = Path.Combine(cacheDirectory, cacheKey);
@@ -232,15 +234,13 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				// Try to update the document
-				string documentText = await collector();
+				T item = await collector();
 
-				if (!string.IsNullOrEmpty(documentText))
+				if (item != null)
 				{
-					var results = JsonConvert.DeserializeObject<T>(documentText);
-
 					// update cache on success
-					File.WriteAllText(cachePath, documentText);
-					return results;
+					File.WriteAllText(cachePath, JsonConvert.SerializeObject(item));
+					return item;
 				}
 			}
 			catch

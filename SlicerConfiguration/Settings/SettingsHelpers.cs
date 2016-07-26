@@ -85,6 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string active_theme_index = nameof(active_theme_index);
 		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string start_gcode = nameof(start_gcode);
+		public const string oem_profile_token = nameof(oem_profile_token);
 	};
 
 	public class SettingsHelpers

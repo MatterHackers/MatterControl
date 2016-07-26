@@ -67,9 +67,9 @@ namespace MatterControl.Tests.MatterControl
 			}
 
 			// Test will fail until mechanism can be created that exposes MHWebservices to vanilla MatterControl or until these tests are moved to MCCentral
-			string recievedPrinterProfile = await ApplicationController.DownloadPublicProfileAsync(deviceToken);
+			var recievedPrinterProfile = await ApplicationController.DownloadPublicProfileAsync(deviceToken);
 
-			Assert.IsNotNullOrEmpty(recievedPrinterProfile);
+			Assert.IsNotNull(recievedPrinterProfile);
 
 			//Assert.AreEqual(expectedProfilePath, recievedProfilePath,"Received Profile path does not match expected path.");
 			//Assert.IsTrue(File.Exists(expectedProfilePath));
