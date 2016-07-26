@@ -15,14 +15,14 @@ using MatterHackers.MatterControl.Tests.Automation;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, Category("ConfigIni")]
-	public class ConfigIniTests
+	[TestFixture, Category("OemProfiles")]
+	public class OemProfileTests
 	{
 		private static List<PrinterConfig> allPrinters;
 		private static string matterControlDirectory = Path.GetFullPath(Path.Combine("..", "..", "..", ".."));
 		private static string printerSettingsDirectory = Path.GetFullPath(Path.Combine(matterControlDirectory, "StaticData", "Profiles"));
 
-		static ConfigIniTests()
+		static OemProfileTests()
 		{
 			MatterControlUtilities.OverrideAppDataLocation();
 
