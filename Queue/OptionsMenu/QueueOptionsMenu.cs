@@ -80,12 +80,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void SetMenuItems()
 		{
 			menuItems = new TupleList<string, Func<bool>>();
+
+#if !__ANDROID__
 			menuItems.Add(new Tuple<string, Func<bool>>("Design".Localize(), null));
 			menuItems.Add(new Tuple<string, Func<bool>>(" Export to Zip".Localize(), exportQueueToZipMenu_Click));
 			menuItems.Add(new Tuple<string, Func<bool>>("G-Code".Localize(), null));
 			menuItems.Add(new Tuple<string, Func<bool>>(" Export to Folder or SD Card".Localize(), exportGCodeToFolderButton_Click));
 			//menuItems.Add(new Tuple<string, Func<bool>>("X3G", null));
 			//menuItems.Add(new Tuple<string, Func<bool>>("Export to Folder".Localize(), exportX3GButton_Click));
+#endif
 
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader))
 			{
