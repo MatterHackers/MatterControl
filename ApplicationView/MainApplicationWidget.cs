@@ -171,6 +171,11 @@ namespace MatterHackers.MatterControl
 		public static Action LogoutAction;
 		public static Func<string> GetSessionInfo;
 
+		/// <summary>
+		/// Allows application components to hook initial SystemWindow Load event without an existing Widget instance
+		/// </summary>
+		public static event EventHandler Load;
+
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 		public static Func<PrinterInfo,string, Task> GetPrinterProfile;
 		public static Func<Task> SyncPrinterProfiles;
@@ -461,6 +466,8 @@ namespace MatterHackers.MatterControl
 
 		public void OnLoadActions()
 		{
+			Load?.Invoke(this, null);
+
 			ApplicationController.Instance.UserChanged();
 
 			if (false && UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")

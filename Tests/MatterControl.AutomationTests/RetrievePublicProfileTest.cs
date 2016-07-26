@@ -32,7 +32,7 @@ namespace MatterControl.Tests.MatterControl
 			/*
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 
-			string profilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", "oemProfiles.json");
+			string profilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", "oemprofiles.json");
 
 			//MatterControlUtilities.OverrideAppDataLocation();
 
