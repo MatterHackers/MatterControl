@@ -133,10 +133,10 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem).ToList();
 			SetManufacturers(manufacturesList);
 
-			ApplicationController.Load += ReloadOemProfiles;
+			ApplicationController.Load += (s,e) =>  ReloadOemProfiles();
 		}
 
-		public async void ReloadOemProfiles(object sender, EventArgs e)
+		public async Task ReloadOemProfiles()
 		{
 			// In public builds this won't be assigned to and we should abort and exit early
 			if (ApplicationController.GetPublicProfileList == null)
