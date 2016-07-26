@@ -48,7 +48,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string disconnectAndCancelMessage = "Disconnect and cancel the current print?".Localize();
 		private string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print.".Localize();
 		private Button disconnectPrinterButton;
-		private Button resetConnectionButton;
 		private PrinterSelector printerSelector;
 
 		private event EventHandler unregisterEvents;
@@ -84,89 +83,115 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			actionBarButtonFactory.hoverBorderColor = new RGBA_Bytes(128, 128, 128);
 
-			string connectString = "Connect".Localize().ToUpper();
-			connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
-			connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
-			if (ApplicationController.Instance.WidescreenMode)
+			// connect and disconnect buttons
 			{
-				connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
+				string connectString = "Connect".Localize().ToUpper();
+				connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
+				connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
+				if (ApplicationController.Instance.WidescreenMode)
+				{
+					connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
+				}
+				else
+				{
+					connectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
+				}
+				connectPrinterButton.VAnchor = VAnchor.ParentTop;
+				connectPrinterButton.Cursor = Cursors.Hand;
+				connectPrinterButton.Click += (s, e) =>
+				{
+					Button buttonClicked = ((Button)s);
+					if (buttonClicked.Enabled)
+					{
+						if (ActiveSliceSettings.Instance.PrinterSelected)
+						{
+							ConnectToActivePrinter(null, null);
+						}
+					}
+				};
+
+				string disconnectString = "Disconnect".Localize().ToUpper();
+				disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
+				disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
+				if (ApplicationController.Instance.WidescreenMode)
+				{
+					disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
+				}
+				else
+				{
+					disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
+				}
+				disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
+				disconnectPrinterButton.Cursor = Cursors.Hand;
+				disconnectPrinterButton.Click += (s, e) => UiThread.RunOnIdle(OnIdleDisconnect);
+
+				// Bind connect button states to active printer state
+				this.SetConnectionButtonVisibleState();
+
+				actionBarButtonFactory.invertImageLocation = true;
+
+				this.AddChild(connectPrinterButton);
+				this.AddChild(disconnectPrinterButton);
 			}
-			else
-			{
-				connectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
-			}
-			connectPrinterButton.VAnchor = VAnchor.ParentTop;
-			connectPrinterButton.Cursor = Cursors.Hand;
 
-			string disconnectString = "Disconnect".Localize().ToUpper();
-			disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
-			disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
-			if (ApplicationController.Instance.WidescreenMode)
+			// printer selector and edit button
 			{
-				disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
-			}
-			else
-			{
-				disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
-			}
-			disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
-			disconnectPrinterButton.Cursor = Cursors.Hand;
+				FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+				};
 
-			string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
-			resetConnectionButton = actionBarButtonFactory.Generate(resetConnectionText, "e_stop4.png");
-			if (ApplicationController.Instance.WidescreenMode)
-			{
-				resetConnectionButton.Margin = new BorderDouble(0, 0, 3, 3);
-			}
-			else
-			{
-				resetConnectionButton.Margin = new BorderDouble(6, 0, 3, 3);
+				int rightMarginForWideScreenMode = ApplicationController.Instance.WidescreenMode ? 6 : 0;
+				printerSelector = new PrinterSelector()
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+					Cursor = Cursors.Hand,
+					Margin = new BorderDouble(0, 6, rightMarginForWideScreenMode, 3)
+				};
+				printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup();
+				// make sure the control can get smaller but maintains its height
+				printerSelector.MinimumSize = new Vector2(0, connectPrinterButton.MinimumSize.y);
+				printerSelectorAndEditButton.AddChild(printerSelector);
+
+				Button editButton = TextImageButtonFactory.GetThemedEditButton();
+				editButton.VAnchor = VAnchor.ParentCenter;
+				editButton.Click += UiNavigation.GoToEditPrinter_Click;
+				printerSelectorAndEditButton.AddChild(editButton);
+				this.AddChild(printerSelectorAndEditButton);
 			}
 
-			// Bind connect button states to active printer state
-			this.SetConnectionButtonVisibleState();
-
-			actionBarButtonFactory.invertImageLocation = true;
-
-			this.AddChild(connectPrinterButton);
-			this.AddChild(disconnectPrinterButton);
-
-			FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
+			// reset connection button
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-			};
+				string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
+				Button resetConnectionButton = actionBarButtonFactory.Generate(resetConnectionText, "e_stop4.png");
+				if (ApplicationController.Instance.WidescreenMode)
+				{
+					resetConnectionButton.Margin = new BorderDouble(0, 0, 3, 3);
+				}
+				else
+				{
+					resetConnectionButton.Margin = new BorderDouble(6, 0, 3, 3);
+				}
+				this.AddChild(resetConnectionButton);
 
-			int rightMarginForWideScreenMode = ApplicationController.Instance.WidescreenMode ? 6 : 0;
-			printerSelector = new PrinterSelector()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Cursor = Cursors.Hand,
-				Margin = new BorderDouble(0, 6, rightMarginForWideScreenMode, 3)
-			};
-			printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup();
-			printerSelector.MinimumSize = new Vector2(printerSelector.MinimumSize.x, connectPrinterButton.MinimumSize.y);
-			printerSelectorAndEditButton.AddChild(printerSelector);
+				resetConnectionButton.Click += new EventHandler((s,e) => PrinterConnectionAndCommunication.Instance.RebootBoard());
 
-			Button editButton = TextImageButtonFactory.GetThemedEditButton();
-			editButton.VAnchor = VAnchor.ParentCenter;
-			editButton.Click += UiNavigation.GoToEditPrinter_Click;
-			printerSelectorAndEditButton.AddChild(editButton);
-			this.AddChild(printerSelectorAndEditButton);
+				SliceSettingsWidget.SettingChanged.RegisterEvent((sender, e) => 
+				{
+					StringEventArgs stringEvent = e as StringEventArgs;
+					if (stringEvent != null)
+					{
+						if (stringEvent.Data == SettingsKey.show_reset_connection)
+						{
+							resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
+						}
+					}
+				}, ref unregisterEvents);
+			}
 
-			this.AddChild(resetConnectionButton);
-		}
-
-		protected override void AddHandlers()
-		{
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-
-			connectPrinterButton.Click += new EventHandler(onConnectButton_Click);
-			disconnectPrinterButton.Click += new EventHandler(onDisconnectButtonClick);
-			resetConnectionButton.Click += new EventHandler(resetConnectionButton_Click);
-
-			base.AddHandlers();
 		}
 
 		protected override void Initialize()
@@ -212,23 +237,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		private void onConnectButton_Click(object sender, EventArgs mouseEvent)
-		{
-			Button buttonClicked = ((Button)sender);
-			if (buttonClicked.Enabled)
-			{
-				if (ActiveSliceSettings.Instance.PrinterSelected)
-				{
-					ConnectToActivePrinter(null, null);
-				}
-			}
-		}
-
-		private void onDisconnectButtonClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(OnIdleDisconnect);
-		}
-
 		private void OnIdleDisconnect()
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
@@ -252,10 +260,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			OpenConnectionWindow();
 		}
 
-		private void resetConnectionButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.RebootBoard();
-		}
 		private void SetConnectionButtonVisibleState()
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
@@ -274,7 +278,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
 			connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
 			disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
-			resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>("show_reset_connection");
 		}
 	}
 }

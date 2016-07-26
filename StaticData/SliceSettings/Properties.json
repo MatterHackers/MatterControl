@@ -936,7 +936,7 @@
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "0",
-		"ReloadUiWhenChanged": true
+		"ReloadUiWhenChanged": false
 	},
 	{
 		"QuickMenuSettings": [ ],
