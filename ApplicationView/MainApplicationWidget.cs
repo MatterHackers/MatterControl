@@ -470,11 +470,6 @@ namespace MatterHackers.MatterControl
 
 			ApplicationController.Instance.UserChanged();
 
-			if (false && UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
-			{
-				//UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
-			}
-
 			if (!System.IO.File.Exists(@"/storage/sdcard0/Download/LaunchTestPrint.stl"))
 			{
 				bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
@@ -494,6 +489,15 @@ namespace MatterHackers.MatterControl
 						UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
 						}
 					});
+				}
+
+				if (OsInformation.OperatingSystem != OSType.Windows)
+				{
+					// show this last so it is on top
+					if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
+					{
+						UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
+					}
 				}
 			}
 			else
