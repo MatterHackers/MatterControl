@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 					{
 						var profile = await ApplicationController.DownloadPublicProfileAsync(profileKey);
 
-						string profileJson = JsonConvert.SerializeObject(profile); ;
+						string profileJson = JsonConvert.SerializeObject(profile);
 						if (!string.IsNullOrEmpty(profileJson))
 						{
 							File.WriteAllText(cachePath, profileJson);
