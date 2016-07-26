@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"heat_extruder_before_homing",
 			"include_firmware_updater",
 			"layer_to_pause",
-			"show_reset_connection",
+			SettingsKey.show_reset_connection,
 			SettingsKey.make,
 			SettingsKey.model,
 			

@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
 		public const string active_theme_index = nameof(active_theme_index);
+		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string start_gcode = nameof(start_gcode);
 	};
 

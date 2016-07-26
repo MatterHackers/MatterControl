@@ -362,7 +362,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
-				&& ActiveSliceSettings.Instance.GetValue<bool>("show_reset_connection")
+				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection)
 				&& UserSettings.Instance.IsTouchScreen)
 			{
 				this.activePrintButtons.Add(resetConnectionButton);
