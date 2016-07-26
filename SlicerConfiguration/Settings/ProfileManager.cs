@@ -382,14 +382,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"profiles",
 				async () =>
 				{
-					string responseText = null;
-					if(!File.Exists(cachePath))
+					if(File.Exists(cachePath))
+					{
+						return null;
+					}
+					else
 					{
 						// If the cache file for the current deviceToken does not exist, attempt to download it
-						responseText = await ApplicationController.DownloadPublicProfileAsync(deviceToken);
+						return await ApplicationController.DownloadPublicProfileAsync(deviceToken);
 					}
-
-					return responseText;
 				},
 				Path.Combine("Profiles",make, model + ProfileManager.ProfileExtension));
 		}
