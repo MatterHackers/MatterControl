@@ -132,8 +132,6 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 			var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem).ToList();
 			SetManufacturers(manufacturesList);
-
-			ApplicationController.Load += (s,e) =>  ReloadOemProfiles();
 		}
 
 		public async Task ReloadOemProfiles()
@@ -157,7 +155,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
 				SetManufacturers(manufactures);
 
-				Task.Run((Action)DownloadMissingProfiles);
+				DownloadMissingProfiles();
 			}
 		}
 
