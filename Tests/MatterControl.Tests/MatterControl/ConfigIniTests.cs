@@ -40,22 +40,22 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
-		public void CsvM109BeforeExtrude()
+		public void StartGCodeWithExtrudesMustFollowM109Heatup()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				//Get start_gcode string from settings key
-				string startGcode = settings.GetValue(SettingsKey.start_gcode);
+				// Get the start_gcode string
+				string startGcode = settings.OemLayer.ValueOrDefault(SettingsKey.start_gcode) ?? string.Empty;
 
-				//Check that the start gcode includes an M109 since many profiles do not
-				if (startGcode.Contains("M109"))
+				// Only validate start_gcode configs that have M109 and extrude statements
+				if (startGcode.Contains("M109") && startGcode.Contains("G1 E"))
 				{
-					//Split start gcode on end of line 
+					// Split start_gcode on newlines 
 					var lines = startGcode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries).Select(l => l.ToUpper().Trim()).ToList();
 
-					//Get new collection of lines that include M109 and/or G1 E
+					// Find first instance of M109 or 'G1 E' extrude
 					string m109Line = lines.Where(l => l.StartsWith("M109 ")).FirstOrDefault();
-					string emptyExtrudeLine = lines.Where(l => l.StartsWith("G1 E")).FirstOrDefault();
+					string extrudeLine = lines.Where(l => l.StartsWith("G1 E")).FirstOrDefault();
 
 					if(m109Line == null)
 					{
@@ -64,20 +64,19 @@ namespace MatterControl.Tests.MatterControl
 					}
 
 					int m109Pos = lines.IndexOf(m109Line);
-					int emptyExtrudePos = lines.IndexOf(emptyExtrudeLine);
+					int extrudePos = lines.IndexOf(extrudeLine);
 
 					Assert.IsNotNull(m109Line);
 					//Assert.IsNotNull(emptyExtrudeLine);
 					//Assert.Greater(emptyExtrudePos, m109Pos);
 
-					if (emptyExtrudePos < m109Pos)
+					if (extrudePos < m109Pos)
 					{
 						printer.RuleViolated = true;
 					}
 				}
 			});
 		}
-
 
 		[Test]
 		public void CsvBedSizeExistsAndHasTwoValues()
