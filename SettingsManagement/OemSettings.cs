@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		private void Deserialized(StreamingContext context)
 		{
 			// Load from StaticData to prepopulate oemProfiles for when user create a printer before load cacheable is done
-			OemProfiles = JsonConvert.DeserializeObject<OemProfileDictionary>(StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemProfiles.json")));
+			OemProfiles = JsonConvert.DeserializeObject<OemProfileDictionary>(StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json")));
 
 			var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem).ToList();
 			SetManufacturers(manufacturesList);
