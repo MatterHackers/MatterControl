@@ -133,34 +133,32 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem).ToList();
 			SetManufacturers(manufacturesList);
 
-			// Attempt to update from online
-			Task.Run(async () =>
+			ApplicationController.Load += (s,e) =>  ReloadOemProfiles();
+		}
+
+		public async Task ReloadOemProfiles()
+		{
+			// In public builds this won't be assigned to and we should abort and exit early
+			if (ApplicationController.GetPublicProfileList == null)
 			{
-				// In public builds this won't be assigned to and we should abort and exit early
-				if (ApplicationController.GetPublicProfileList == null)
-				{
-					return;
-				}
+				return;
+			}
 
-				var oemProfiles = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
-					"oemProfiles.json",
-					"profiles",
-					ApplicationController.GetPublicProfileList);
+			var oemProfiles = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
+				"oemprofiles.json",
+				"profiles",
+				ApplicationController.GetPublicProfileList);
 
-				// If we failed to get anything from load cacheable don't override potentially populated fields
-				if(oemProfiles != null)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						OemProfiles = oemProfiles;
+			// If we failed to get anything from load cacheable don't override potentially populated fields
+			if (oemProfiles != null)
+			{
+				OemProfiles = oemProfiles;
 
-						var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
-						SetManufacturers(manufactures);
+				var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
+				SetManufacturers(manufactures);
 
-						Task.Run((Action)DownloadMissingProfiles);
-					});
-				}
-			});
+				Task.Run((Action)DownloadMissingProfiles);
+			}
 		}
 
 		private async void DownloadMissingProfiles()
