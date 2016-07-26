@@ -235,7 +235,6 @@ namespace MatterHackers.MatterControl
 			{
 				// Try to update the document
 				T item = await collector();
-
 				if (item != null)
 				{
 					// update cache on success

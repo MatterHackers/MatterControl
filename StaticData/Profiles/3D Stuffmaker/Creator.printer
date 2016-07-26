@@ -131,7 +131,7 @@
     "solid_shell": "0",
     "spiral_vase": "0",
     "standby_temperature_delta": "-5",
-    "start_gcode": "M92 X 31.6900 Y31.5515 Z1283 E70.770\\nM205 X40\\nG28 ; home all axes\\nG91\\nG1 E30 F100 ;  Extrude primer filament\\nG90\\nM109 S208 B250 F0.5",
+	"start_gcode": "M92 X 31.6900 Y31.5515 Z1283 E70.770\\nM205 X40\\nG28 ; home all axes\\nG91\\nM109 S208 B250 F0.5\\nG1 E30 F100 ;  Extrude primer filament\\nG90",
     "start_perimeters_at_concave_points": "1",
     "start_perimeters_at_non_overhang": "1",
     "support_air_gap": ".3",
