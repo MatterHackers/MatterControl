@@ -596,6 +596,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			costTextWidget.Margin = new BorderDouble(0, 9, 0, 3);
 			estimatedCostInfo.AddChild(costTextWidget);
 
+			UpdateEstimatedCost();
+
 			return estimatedCostInfo;
 		}
 
