@@ -474,23 +474,31 @@ namespace MatterHackers.MatterControl
 			{
 				//UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
 			}
-			bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
-			if (showAuthWindow)
+
+			if (!System.IO.File.Exists(@"/storage/sdcard0/Download/LaunchTestPrint.stl"))
 			{
-				//Launch window to prompt user to log in
-				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
-			}
-			else
-			{   //If user in logged in sync before checking to prompt to create printer
-				ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
+				bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
+				if (showAuthWindow)
 				{
-					ApplicationController.Instance.ReloadAdvancedControlsPanel();
-					if (!ProfileManager.Instance.ActiveProfiles.Any())
+					//Launch window to prompt user to log in
+					UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+				}
+				else
+				{   //If user in logged in sync before checking to prompt to create printer
+					ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
 					{
+						ApplicationController.Instance.ReloadAdvancedControlsPanel();
+						if (!ProfileManager.Instance.ActiveProfiles.Any())
+						{
 						// Start the setup wizard if no profiles exist
 						UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
-					}
-				});
+						}
+					});
+				}
+			}
+			else
+			{
+				StartPrintingTest();
 			}
 
 			if (ActiveSliceSettings.Instance.PrinterSelected
@@ -502,6 +510,21 @@ namespace MatterHackers.MatterControl
 					PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
 				}, 2);
 			}
+		}
+		private EventHandler unregisterEvent;
+		public void StartPrintingTest()
+		{
+			QueueData.Instance.RemoveAll();
+			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem("LaunchTestPrint", @"/storage/sdcard0/Download/LaunchTestPrint.stl")));
+			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
+			{
+				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Connected)
+				{
+					PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+				}
+			}, ref unregisterEvent);
 		}
 	}
 }
