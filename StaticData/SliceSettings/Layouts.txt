@@ -50,7 +50,6 @@ Intermediate
       Properties
         filament_diameter
         filament_density
-      Qualities
         filament_cost
     Temperatures
       Extruder Temperatures
@@ -222,9 +221,7 @@ Advanced
     Material
       Properties
         filament_diameter
-        extrusion_multiplier
         filament_density
-      Qualities
         filament_cost
     Temperatures
       Extruder Temperatures
@@ -250,6 +247,9 @@ Advanced
         retract_length_tool_change
         retract_restart_extra_toolchange
     Extrusion
+      Flow
+        extrusion_multiplier
+        bridge_flow_ratio
       Extrusion Width
         extrusion_width
         first_layer_extrusion_width
@@ -259,8 +259,6 @@ Advanced
         solid_infill_extrusion_width
         top_infill_extrusion_width
         support_material_extrusion_width
-      Flow
-        bridge_flow_ratio
     Cooling
       Enable
         fan_always_on
