@@ -352,7 +352,7 @@
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
-		"DefaultValue": "M104 S0 ; turn off temperature\\nG28 X0  ; home X axis\\nM84     ; disable motors"
+		"DefaultValue": "M104 S0 ; turn off temperature\\nG28 X0 ; home X axis\\nM84 ; disable motors"
 	},
 	{
 		"QuickMenuSettings": [ ],
@@ -491,7 +491,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "extrusion_multiplier",
 		"PresentationName": "Extrusion Multiplier",
-		"HelpText": "All extrusions are multiplied by this value. Increasing it above 1  will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).",
+		"HelpText": "All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -1262,7 +1262,7 @@
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "only_retract_when_crossing_perimeters",
-		"PresentationName": "Only Retract When  Crossing Perimeters",
+		"PresentationName": "Only Retract When Crossing Perimeters",
 		"HelpText": "Prevents retraction while within a printing perimeter.",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
@@ -1405,7 +1405,19 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
-		"SlicerConfigName": "perimeters",
+		"SlicerConfigName": "perimeter_start_end_overlap",
+		"PresentationName": "Start end Overlap",
+		"HelpText": "The amount that the perimeter will overlap itself when it completes its loop, as a percent of the Nozzle Diameter.",
+		"DataEditType": "POSITIVE_DOUBLE",
+		"ExtraSettings": "%",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "100"
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],		"SlicerConfigName": "perimeters",
 		"PresentationName": "Perimeters",
 		"HelpText": "The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.",
 		"DataEditType": "INT_OR_MM",
