@@ -71,6 +71,23 @@ public class LicenseAgreementPage : WizardPage
 		footerRow.AddChild(cancelButton);
 
 		footerRow.Visible = true;
+
+		UiThread.RunOnIdle(MakeFrontWindow, 1);
+	}
+
+	public override void OnLoad(EventArgs args)
+	{
+		MinimumSize = new MatterHackers.VectorMath.Vector2(Width, Height);
+		base.OnLoad(args);
+	}
+
+	private void MakeFrontWindow()
+	{
+		this.WizardWindow.BringToFront();
+		if (!HasBeenClosed)
+		{
+			UiThread.RunOnIdle(MakeFrontWindow, .3);
+		}
 	}
 
 	public override void OnDraw(Graphics2D graphics2D)
