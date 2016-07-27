@@ -34,6 +34,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Agg;
+using System.Threading.Tasks;
 
 public class LicenseAgreementPage : WizardPage
 {
@@ -47,11 +48,27 @@ public class LicenseAgreementPage : WizardPage
 		scrollable.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
 		contentRow.AddChild(scrollable);
 
-		var textBox = new WrappedTextWidget(eulaText, 200, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
-		{
-			DrawFromHintedCache = true,
-		};
+		var textBox = new WrappedTextWidget("Loading End User License Agreement...", 200, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false);
 		scrollable.AddChild(textBox);
+
+		// wrap the text on a thread and show it when it is ready
+		{
+			UiThread.RunOnIdle(async () =>
+			{
+				WrappedTextWidget eulaTextBox = textBox;
+				await Task.Run(() =>
+				{
+					eulaTextBox = new WrappedTextWidget(eulaText, 200, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
+					{
+						DrawFromHintedCache = true,
+						Name = "LicenseAgreementPage",
+					};
+				});
+
+				scrollable.ScrollArea.RemoveChild(textBox);
+				scrollable.AddChild(eulaTextBox);
+			});
+		}
 
 		var acceptButton = textImageButtonFactory.Generate("Accept".Localize());
 		acceptButton.Click += (s, e) =>
@@ -86,7 +103,7 @@ public class LicenseAgreementPage : WizardPage
 		this.WizardWindow.BringToFront();
 		if (!HasBeenClosed)
 		{
-			UiThread.RunOnIdle(MakeFrontWindow, .3);
+			//UiThread.RunOnIdle(MakeFrontWindow, .3);
 		}
 	}
 
