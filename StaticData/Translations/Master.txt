@@ -5269,3 +5269,9 @@ Translated:The amount that the perimeter will overlap itself when it completes i
 English:Start end Overlap
 Translated:Start end Overlap
 
+English:Select a printer.
+Translated:Select a printer.
+
+English:Unable to Connect
+Translated:Unable to Connect
+
