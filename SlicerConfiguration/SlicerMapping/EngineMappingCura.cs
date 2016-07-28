@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("perimeter_speed", "insetXSpeed"),
 				new AsPercentOfReferenceOrDirect("external_perimeter_speed", "inset0Speed", "perimeter_speed"),
 
-				new ScaledSingleNumber("bottom_clip_amount", "objectSink", 1000),
+				new ScaledSingleNumber(SettingsKey.bottom_clip_amount, "objectSink", 1000),
 
 				new MappedSetting("max_fan_speed", "fanSpeedMin"),
 				new MappedSetting("min_fan_speed", "fanSpeedMax"),
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				new ScaledSingleNumber("retract_lift", "retractionZHop", 1000),
 
-				new MappedSetting("spiral_vase", "spiralizeMode"),
+				new MappedSetting(SettingsKey.spiral_vase, "spiralizeMode"),
 				new PrintCenterX(SettingsKey.print_center, "posx"),
 				new PrintCenterY(SettingsKey.print_center, "posy"),
 
