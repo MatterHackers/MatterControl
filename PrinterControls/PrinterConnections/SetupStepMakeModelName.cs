@@ -90,7 +90,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 #if __ANDROID__
 					WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
 #else
-					WizardWindow.ChangeToPage<SetupStepInstallDriver>();
+					if (OsInformation.OperatingSystem == OSType.Windows)
+					{
+						WizardWindow.ChangeToPage<SetupStepInstallDriver>();
+					}
+					else
+					{
+						WizardWindow.ChangeToPage<SetupStepComPortOne>();
+					}
 #endif
 				}
 			};
