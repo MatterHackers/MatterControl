@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bed_shape = nameof(bed_shape);
 		public const string bed_size = nameof(bed_size);
 		public const string bed_temperature = nameof(bed_temperature);
+		public const string bottom_clip_amount = nameof(bottom_clip_amount);
 		public const string build_height = nameof(build_height);
 		public const string cancel_gcode = nameof(cancel_gcode);
 		public const string center_part_on_bed = nameof(center_part_on_bed);
@@ -71,6 +72,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string layer_height = nameof(layer_height);
+		public const string layer_to_pause = nameof(layer_to_pause);
 		public const string make = nameof(make);
 		public const string min_fan_speed = nameof(min_fan_speed);
 		public const string model = nameof(model);
@@ -84,6 +86,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string z_homes_to_max = nameof(z_homes_to_max);
 		public const string active_theme_index = nameof(active_theme_index);
 		public const string show_reset_connection = nameof(show_reset_connection);
+		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
 		public const string oem_profile_token = nameof(oem_profile_token);
 	};

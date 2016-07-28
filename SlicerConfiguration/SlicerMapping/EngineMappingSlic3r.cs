@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			hiddenSettings.Add("infill_type");
 			hiddenSettings.Add("create_raft");
 			hiddenSettings.Add("z_gap");
-			hiddenSettings.Add("bottom_clip_amount");
+			hiddenSettings.Add(SettingsKey.bottom_clip_amount);
 			hiddenSettings.Add("gcode_output_type");
 			hiddenSettings.Add("raft_extra_distance_around_part");
 			hiddenSettings.Add("output_only_first_layer");
