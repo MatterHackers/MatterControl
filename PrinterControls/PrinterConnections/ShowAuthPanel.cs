@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		public ShowAuthPanel()
 		{
-			WrappedTextWidget userLoginPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:".Localize(), 12)
+			WrappedTextWidget userLoginPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:".Localize())
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 			};
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new Agg.BorderDouble(0, 0, 0, 10),
 			});
-			contentRow.AddChild(new WrappedTextWidget(v2,10)
+			contentRow.AddChild(new WrappedTextWidget(v2)
 			{
 				TextColor = ActiveTheme.Instance.SecondaryTextColor,
 				Margin = new Agg.BorderDouble(20, 5, 5, 5),

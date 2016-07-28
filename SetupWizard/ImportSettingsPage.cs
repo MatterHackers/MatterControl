@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 
 			if (isMergeIntoUserLayer)
 			{
-				container.AddChild(new WrappedTextWidget(importMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+				container.AddChild(new WrappedTextWidget(importMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
 			}
 
 			// add in the check boxes to select what to import
@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(container);
 
-			var successMessageWidget = new WrappedTextWidget(successMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var successMessageWidget = new WrappedTextWidget(successMessage, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			container.AddChild(successMessageWidget);
 
 			footerRow.AddChild(new HorizontalSpacer());
@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget CreateDetailInfo(string detailText)
 		{
-			var wrappedText = new WrappedTextWidget(detailText, 5)
+			var wrappedText = new WrappedTextWidget(detailText)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 			};

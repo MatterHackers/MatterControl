@@ -48,7 +48,7 @@ public class LicenseAgreementPage : WizardPage
 		scrollable.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
 		contentRow.AddChild(scrollable);
 
-		var textBox = new WrappedTextWidget("Loading End User License Agreement...", 200, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false);
+		var textBox = new WrappedTextWidget("Loading End User License Agreement...", textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false);
 		scrollable.AddChild(textBox);
 
 		// wrap the text on a thread and show it when it is ready
@@ -58,7 +58,7 @@ public class LicenseAgreementPage : WizardPage
 				WrappedTextWidget eulaTextBox = textBox;
 				await Task.Run(() =>
 				{
-					eulaTextBox = new WrappedTextWidget(eulaText, 200, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
+					eulaTextBox = new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
 					{
 						DrawFromHintedCache = true,
 						Name = "LicenseAgreementPage",
@@ -90,12 +90,6 @@ public class LicenseAgreementPage : WizardPage
 		footerRow.Visible = true;
 
 		UiThread.RunOnIdle(MakeFrontWindow, 1);
-	}
-
-	public override void OnLoad(EventArgs args)
-	{
-		MinimumSize = new MatterHackers.VectorMath.Vector2(Width, Height);
-		base.OnLoad(args);
 	}
 
 	private void MakeFrontWindow()

@@ -515,7 +515,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double helpPointSize = 10;
 
-			GuiWidget helpWidget = new WrappedTextWidget(settingData.HelpText, textRegionWidth, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
+			GuiWidget helpWidget = new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
+			helpWidget.Width = textRegionWidth;
 			helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
 			//helpWidget.HAnchor = HAnchor.ParentLeft;
 			allText.AddChild(helpWidget);
@@ -589,7 +590,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				HAnchor = HAnchor.ParentLeftRight,
 			};
 
-			nameHolder.AddChild(new WrappedTextWidget(settingData.ExtraSettings.Localize(), 0, pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			nameHolder.AddChild(new WrappedTextWidget(settingData.ExtraSettings.Localize(), pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
 			return nameHolder;
 		}
@@ -799,7 +800,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						HAnchor = HAnchor.ParentLeftRight,
 					};
 
-					nameHolder.AddChild(new WrappedTextWidget(settingData.PresentationName.Localize(), 0, pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+					nameHolder.AddChild(new WrappedTextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
 					nameArea.AddChild(nameHolder);
 				}
@@ -1372,7 +1373,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Padding = new BorderDouble(5, 0),
 								HAnchor = HAnchor.ParentLeftRight,
 							};
-							yLabel.AddChild(new WrappedTextWidget("Y", 0, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+							yLabel.AddChild(new WrappedTextWidget("Y", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 							unitsArea.AddChild(yLabel);
 
 							settingsRow.ValueChanged = (text) =>
@@ -1442,7 +1443,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Padding = new BorderDouble(5, 0),
 								HAnchor = HAnchor.ParentLeftRight,
 							};
-							yLabel.AddChild(new WrappedTextWidget("Y", 0, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+							yLabel.AddChild(new WrappedTextWidget("Y", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 							unitsArea.AddChild(yLabel);
 
 							settingsRow.ValueChanged = (text) =>
