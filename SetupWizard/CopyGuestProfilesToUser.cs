@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			};
 			scrollWindow.AddChild(container);
 
-			container.AddChild(new WrappedTextWidget(importMessage, 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			container.AddChild(new WrappedTextWidget(importMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
 			var byCheckbox = new Dictionary<CheckBox, PrinterInfo>();
 

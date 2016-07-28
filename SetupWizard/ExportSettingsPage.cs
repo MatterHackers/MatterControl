@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget CreateDetailInfo(string detailText)
 		{
-			var wrappedText = new WrappedTextWidget(detailText, 5)
+			var wrappedText = new WrappedTextWidget(detailText)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 			};
