@@ -1,4 +1,5 @@
 ﻿using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -131,7 +132,8 @@ namespace MatterHackers.MatterControl
 
 		internal void ChangeToInstallDriverOrComPortOne()
 		{
-			if (SetupStepInstallDriver.PrinterDrivers().Count > 0)
+			if (SetupStepInstallDriver.PrinterDrivers().Count > 0
+				&& OsInformation.OperatingSystem == OSType.Windows)
 			{
 				ChangeToPage<SetupStepInstallDriver>();
 			}
