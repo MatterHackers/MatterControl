@@ -132,6 +132,11 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			layeredProfile.UserLayer["manual_movement_speeds"] = printer.ManualMovementSpeeds;
 
+			// make sure we clear the one time settings
+			layeredProfile.OemLayer["spiral_vase"] = "";
+			layeredProfile.OemLayer["bottom_clip_amount"] = "";
+			layeredProfile.OemLayer["layer_to_pause"] = "";
+
 			// TODO: Where can we find CalibrationFiiles in the current model?
 			//layeredProfile.SetActiveValue(""calibration_files"", ???);
 
