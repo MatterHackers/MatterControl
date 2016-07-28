@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		
 		private string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
 
-		internal void Save()
+		public void Save()
 		{
 			string json = JsonConvert.SerializeObject(this, Formatting.Indented);
 
@@ -325,12 +325,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				string profileToken = recentProfileHistoryItems.OrderByDescending(kvp => kvp.Key).FirstOrDefault().Value;
 
-				// Download the specified json profile
-				await ApplicationController.GetPrinterProfile(profile, profileToken);
-				
-				// Update the active instance to the newly downloaded item
-				var printerProfile = ProfileManager.LoadProfile(profile.ID, false);
-				ActiveSliceSettings.RefreshActiveInstance(printerProfile);
+				// Download the specified json profile and persist and activate if successful
+				var printerProfile = await ApplicationController.GetPrinterProfileAsync(profile, profileToken);
+				if (printerProfile != null)
+				{
+					// Persist downloaded profile
+					printerProfile.Save();
+
+					// Update active instance without calling ReloadAll
+					ActiveSliceSettings.RefreshActiveInstance(printerProfile);
+				}
 			}
 		}
 
