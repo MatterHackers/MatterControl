@@ -682,9 +682,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string lastUpdateTime = "2016 March 1";
 			if (ActiveSliceSettings.Instance?.OemLayer != null)
 			{
-				lastUpdateTime = ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date);
-				DateTime time = Convert.ToDateTime(lastUpdateTime).ToLocalTime();
-				lastUpdateTime = time.ToString("yyyy MMMM d, ") + time.ToString("h:mm tt");
+				string fromCreatedDate = ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date);
+				try
+				{
+					if (!string.IsNullOrEmpty(fromCreatedDate))
+					{
+						DateTime time = Convert.ToDateTime(fromCreatedDate).ToLocalTime();
+						lastUpdateTime = time.ToString("yyyy MMMM d, ") + time.ToString("h:mm tt");
+					}
+				}
+				catch
+				{
+				}
 			}
 
 			lastUpdateTime = "Defaults Updated On: {0} ".Localize().FormatWith(lastUpdateTime);
