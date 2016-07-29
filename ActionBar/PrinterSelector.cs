@@ -122,10 +122,9 @@ namespace MatterHackers.MatterControl
 				if (ProfileManager.Instance.ActiveProfile != null)
 				{
 					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+					Rebuild();
 				}
 			}
-
-			Rebuild();
 		}
 
 		public override void OnClosed(EventArgs e)
