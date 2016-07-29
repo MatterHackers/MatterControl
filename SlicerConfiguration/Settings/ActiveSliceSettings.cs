@@ -167,9 +167,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var printerInfo = ProfileManager.Instance[printerID];
 
-				await ApplicationController.GetPrinterProfile(printerInfo, null);
-
-				profile = ProfileManager.LoadProfile(printerID);
+				profile = await ApplicationController.GetPrinterProfileAsync(printerInfo, null);
 			}
 
 			Instance = profile ?? ProfileManager.LoadEmptyProfile();

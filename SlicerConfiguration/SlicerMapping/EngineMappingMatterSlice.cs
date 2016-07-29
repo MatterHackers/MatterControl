@@ -51,9 +51,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				new MappedToBoolString("avoid_crossing_perimeters", "avoidCrossingPerimeters"),
 				new MappedToBoolString("external_perimeters_first", "outsidePerimetersFirst"),
-				new MappedSetting("bottom_clip_amount", "bottomClipAmount"),
+				new MappedSetting(SettingsKey.bottom_clip_amount, "bottomClipAmount"),
 				new MappedToBoolString(SettingsKey.center_part_on_bed, "centerObjectInXy"),
-				new MappedToBoolString("spiral_vase", "continuousSpiralOuterPerimeter"),
+				new MappedToBoolString(SettingsKey.spiral_vase, "continuousSpiralOuterPerimeter"),
 				new GCodeForSlicer("end_gcode", "endCode"),
 				new MappedSetting("z_offset", "zOffset"),
 				new ExtruderOffsets("extruder_offset", "extruderOffsets"),

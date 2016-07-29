@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl
 		public static event EventHandler Load;
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
-		public static Func<PrinterInfo,string, Task> GetPrinterProfile;
+		public static Func<PrinterInfo,string, Task<PrinterSettings>> GetPrinterProfileAsync;
 		public static Func<Task> SyncPrinterProfiles;
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
 		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;

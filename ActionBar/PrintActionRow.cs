@@ -445,7 +445,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				else
 #endif
 				{
-					ConnectToActivePrinter();
+					PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+					PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
 				}
 			}
 		}
@@ -453,12 +454,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		void RunTroubleShooting()
 		{
 			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
-		}
-
-		private void ConnectToActivePrinter()
-		{
-			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
 		}
 
 		private void onConfirmCancelPrint(bool messageBoxResponse)

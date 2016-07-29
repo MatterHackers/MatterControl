@@ -2,16 +2,20 @@ End-User License Agreement for MatterControl Software
 
 IMPORTANT: read the following terms carefully before installing, using and copying the Software Product. By installing, using and copying the Software Product you agree to accept all of the following terms. If you do not agree with the terms of this EULA, you must not use the Software Product.
 This End-User License Agreement ("EULA"), effective as of the date you accept the terms hereof (unless returned as specified above, the Effective Date), is a legal agreement entered into between MatterHackers, Inc. with an address at 21098 Bake Parkway, Ste 106, Lake Forest, CA 92630, USA ("MatterHackers") and you, the end user of Software Product. The parties agree as follows:
+
 1. SCOPE
 
 In accordance with the terms herein, MatterHackers grants to you, and you accept from MatterHackers, a non-exclusive, non-transferable and non-assignable, limited license to use the current version of MatterHackers' Software Product. The Software Product is protected by copyright laws and international copyright treaties, as well as other intellectual property laws and treaties. The Software Product is licensed, not sold. All rights not expressly granted are reserved by MatterHackers.
+
 2. DEFINITIONS
 
 Software Product means MatterControl software accompanying this EULA, which includes executable modules and electronic documentation and may include associated media, printed materials, and information available at the product web site protected by copyright laws. The Software Product also includes any updates and supplements to the original Software Product provided by MatterHackers. Any software provided along with the Software Product that is associated with a separate end-user license agreement is licensed to you under the terms of that license agreement.
+
 3. GRANT OF LICENSE
 
 MatterHackers grants you a limited, non-exclusive, non-transferable, non-renewable license to install, use, access, display, run, or otherwise interact with ("RUN") the Software Product. The Software Product is provided to you as a freeware for your own personal use only.
 The EULA permits use of the Software Product during unlimited period free of charge. The Software Product may be used as many times as you like, for as long as you like. You may copy and distribute copies of the Software Product for private use provided that you keep this copyright notice and disclaimer of warranty intact. You must not charge money or fees for the Software Product to anyone.
+
 4. DESCRIPTION OF OTHER RIGHTS AND LIMITATIONS
 
 4.1. You may not resell, or otherwise transfer for value, the Software Product under any circumstances. You may not charge any fees for the copy or use of the Software Product itself. You must not represent in any way that you are selling the Software Product itself. Your distribution of the Software Product will not entitle you to any compensation from MatterHackers.
@@ -20,17 +24,21 @@ The EULA permits use of the Software Product during unlimited period free of cha
 4.4. This EULA does not grant you any rights in connection with any trademarks or service marks of MatterHackers.
 4.5. You may not rent, lease, or lend the Software Product to other users.
 4.6. You may not make any transfers of this EULA and Software Product to a third party.
+
 5. COPYRIGHT
 
 The title and all copyrights in and to the Software Product (including but not limited to any images, photographs, animations, video, audio, music, text, and "applets" incorporated into the Software Product), and all copies of the Software Product are owned at all the time by MatterHackers. All title and intellectual property rights in and to the content which may be accessed through use of the Software Product is the property of the respective content owner and may be protected by applicable copyright or other intellectual property laws and treaties. This EULA grants you no rights to use such content. Software Product documentation is provided in electronic form.
+
 6. LIMITED WARRANTY
 
 UNLESS OTHERWISE EXPLICITLY AGREED TO IN WRITING BY MATTERHACKERS, MATTERHACKERS MAKES NO OTHER WARRANTIES, EXPRESS OR IMPLIED, IN FACT OR IN LAW, INCLUDING, BUT NOT LIMITED TO, ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE OTHER THAN AS SET FORTH IN THIS EULA OR IN THE LIMITED WARRANTY DOCUMENTS PROVIDED WITH THE SOFTWARE PRODUCT.
 MatterHackers makes no warranty that the Software Product will meet your requirements or operate under your specific conditions of use. MatterHackers makes no warranty that operation of the Software Product will be secure, error free, or free from interruption.
 YOU MUST DETERMINE WHETHER THE SOFTWARE PRODUCT SUFFICIENTLY MEETS YOUR REQUIREMENTS FOR SECURITY AND UNINTERRUPTABILITY. YOU BEAR SOLE RESPONSIBILITY AND ALL LIABILITY FOR ANY LOSS INCURRED DUE TO FAILURE OF THE SOFTWARE PRODUCT TO MEET YOUR REQUIREMENTS. MatterHackers WILL NOT, UNDER ANY CIRCUMSTANCES, BE RESPONSIBLE OR LIABLE FOR THE LOSS OF DATA ON ANY COMPUTER OR INFORMATION STORAGE DEVICE, OR THE DAMAGE OF ANY EQUIPMENT DUE TO USE OF THE SOFTWARE PRODUCT.
+
 7. DISCLAIMER OF DAMAGES
 
 Under no circumstances shall MatterHackers, its directors, officers, employees or agents be liable to you or any other party for indirect, consequential, special, incidental, punitive, or exemplary damages of any kind (including, without limitation, damages for loss of business profits, business interruption, loss of business information, or any other pecuniary loss) resulting from this EULA, or from the furnishing, performance, installation, use, or inability to use the Software Product, whether due to a breach of contract, breach of warranty, or the negligence of MatterHackers or any other party, even if MatterHackers is advised beforehand of the possibility of such damages. To the extent that the applicable jurisdiction limits MatterHackers' ability to disclaim any implied warranties, this disclaimer shall be effective to the maximum extent permitted.
+
 8. TERM AND TERMINATION
 
 8.1. This EULA comes into effect when you install the Software Product on your computer, and is effective for the entire period of use of the Software Product.

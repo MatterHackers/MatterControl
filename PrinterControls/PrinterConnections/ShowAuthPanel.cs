@@ -31,6 +31,8 @@ using System;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -58,7 +60,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			nextButton.Name = "Connection Wizard Skip Sign In Button";
 			nextButton.Click += (sender, e) =>
 			{
-				WizardWindow.ChangeToPage<SetupStepMakeModelName>();
+				if (!ProfileManager.Instance.ActiveProfiles.Any())
+				{
+					WizardWindow.ChangeToPage<SetupStepMakeModelName>();
+				}
+				else
+				{
+					UiThread.RunOnIdle(WizardWindow.Close);
+				}
 			};
 			var createAccountButton = textImageButtonFactory.Generate("Create Account".Localize());
 			createAccountButton.Name = "Create Account From Connection Wizard Button";
