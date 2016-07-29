@@ -285,6 +285,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			gCodeRenderer = new GCodeRenderer(LoadedGCode);
 
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				GCodeRenderer.ExtruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+			}
+			else
+			{
+				GCodeRenderer.ExtruderWidth = .4;
+			}
+
 			await Task.Run(() => DoPostLoadInitialization());
 
 			postLoadInitialization_RunWorkerCompleted();
