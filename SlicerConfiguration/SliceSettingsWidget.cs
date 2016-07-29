@@ -920,10 +920,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (ChangesMultipleOtherSettings)
 							{
 								bool allTheSame = true;
-								string setting = GetActiveValue(settingData.SetSettingsOnChange[0], layerCascade);
+								string setting = GetActiveValue(settingData.SetSettingsOnChange[0]["TargetSetting"], layerCascade);
 								for (int i = 1; i < settingData.SetSettingsOnChange.Count; i++)
 								{
-									string nextSetting = GetActiveValue(settingData.SetSettingsOnChange[i], layerCascade);
+									string nextSetting = GetActiveValue(settingData.SetSettingsOnChange[i]["TargetSetting"], layerCascade);
 									if (setting != nextSetting)
 									{
 										allTheSame = false;
@@ -955,9 +955,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								if (ChangesMultipleOtherSettings
 									&& numberEdit.Text != multiValuesAreDiffernt)
 								{
-									foreach (string setting in settingData.SetSettingsOnChange)
 									{
-										ActiveSliceSettings.Instance.SetValue(setting, numberEdit.Value.ToString() + "mm", persistenceLayer);
+										SaveSetting(setting["TargetSetting"], numberEdit.Value.ToString() + "mm", persistenceLayer);
 									}
 								}
 
@@ -1179,7 +1178,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							checkBoxWidget.Click += (sender, e) =>
 							{
 								bool isChecked = ((CheckBox)sender).Checked;
-								ActiveSliceSettings.Instance.SetValue(settingData.SlicerConfigName, isChecked ? "1" : "0", persistenceLayer);
+								SaveSetting(settingData.SlicerConfigName, isChecked ? "1" : "0", persistenceLayer);
+								foreach(var setSettingsData in settingData.SetSettingsOnChange)
+								{
+									string targetValue;
+									if(setSettingsData.TryGetValue(isChecked?"OnValue": "OffValue", out targetValue))
+									{
+										SaveSetting(setSettingsData["TargetSetting"], targetValue, persistenceLayer);
+									}
+								}
 								settingsRow.UpdateStyle();
 
 								OnSettingsChanged(settingData);

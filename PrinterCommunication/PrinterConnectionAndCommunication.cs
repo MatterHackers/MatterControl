@@ -2019,6 +2019,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public bool SerialPortIsAvailable(string portName)
 		//Check is serial port is in the list of available serial ports
 		{
+			if(ActiveSliceSettings.Instance.GetValue("enable_network_printing") == "1")
+			{
+				return true;
+			}
 			try
 			{
 				string[] portNames = FrostedSerialPort.GetPortNames();
