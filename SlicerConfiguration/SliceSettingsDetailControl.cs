@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					{ "Import".Localize(), ImportSettingsMenu_Click },
 					{ "Export".Localize(), () => {  WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); return true; } },
-					{ "Settings History".Localize(), () => { WizardWindow.Show<PrinterProfileHistoryPage>("somecontext", "Hello world"); return true; } },
+					{ "Settings History".Localize(), () => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Profile History"); return true; } },
 					{ "Reset to defaults".Localize(),() => { UiThread.RunOnIdle(ResetToDefaults); return true; } },
 				};
 
