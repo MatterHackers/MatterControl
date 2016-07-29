@@ -155,11 +155,11 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
 				SetManufacturers(manufactures);
 
-				DownloadMissingProfiles();
+				await DownloadMissingProfiles();
 			}
 		}
 
-		private async void DownloadMissingProfiles()
+		private async Task DownloadMissingProfiles()
 		{
 			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
 
