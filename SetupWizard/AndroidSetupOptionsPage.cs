@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl
 			var editButton = TextImageButtonFactory.GetThemedEditButton();
 			editButton.ToolTipText = "Edit Selected Setting".Localize();
 			editButton.VAnchor = VAnchor.ParentCenter;
-			editButton.Click += UiNavigation.GoToEditPrinter_Click;
+			editButton.Click += UiNavigation.OpenEditPrinterWizard_Click;
 			printerSelectorAndEditButton.AddChild(editButton);
 
 			disconnectButton = textImageButtonFactory.Generate("Disconnect");

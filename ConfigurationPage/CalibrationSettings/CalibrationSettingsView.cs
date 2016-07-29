@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetVisibleControls()
 		{
-			if (ActiveSliceSettings.Instance.PrinterSelected
+			if (!ActiveSliceSettings.Instance.PrinterSelected
 				|| PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing
 				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 			{
