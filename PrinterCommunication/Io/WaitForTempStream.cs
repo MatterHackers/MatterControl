@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							// switch to pass through and continue
 							state = State.passthrough;
-							return base.ReadLine();
+							return "";
 						}
 						else
 						{
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							// switch to pass through and continue
 							state = State.passthrough;
-							return base.ReadLine();
+							return "";
 						}
 						else
 						{
