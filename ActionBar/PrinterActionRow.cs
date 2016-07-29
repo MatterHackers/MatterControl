@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 				Button editButton = TextImageButtonFactory.GetThemedEditButton();
 				editButton.VAnchor = VAnchor.ParentCenter;
-				editButton.Click += UiNavigation.GoToEditPrinter_Click;
+				editButton.Click += UiNavigation.OpenEditPrinterWizard_Click;
 				printerSelectorAndEditButton.AddChild(editButton);
 				this.AddChild(printerSelectorAndEditButton);
 			}

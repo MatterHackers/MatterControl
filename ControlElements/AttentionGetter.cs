@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 {
 	public static class UiNavigation
 	{
-		public static void GoToEditPrinter_Click(object sender, EventArgs e)
+		public static void OpenEditPrinterWizard_Click(object sender, EventArgs e)
 		{
 			Button editButton = sender as Button;
 			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
@@ -50,14 +50,14 @@ namespace MatterHackers.MatterControl
 			{
 				editButton.Closed += (s, e2) =>
 				{
-					editButton.Click -= GoToEditPrinter_Click;
+					editButton.Click -= OpenEditPrinterWizard_Click;
 				};
 
-				UiNavigation.GoToPrinterSettings("baud_rate Edit Field,auto_connect Edit Field,com_port Edit Field");
+				UiNavigation.OpenEditPrinterWizard("baud_rate Edit Field,auto_connect Edit Field,com_port Edit Field");
 			}
 		}
 
-		public static void GoToPrinterSettings(string widgetNameToHighlight)
+		public static void OpenEditPrinterWizard(string widgetNameToHighlight)
 		{
 			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null
 				&& ActiveSliceSettings.Instance.PrinterSelected

@@ -107,6 +107,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			configureButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
 			configureButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			configureButton.Margin = new BorderDouble(6, 6, 6, 3);
+			configureButton.Click += onStartButton_Click;
 
 			string connectButtonText = "Connect".Localize();
 			string connectButtonMessage = "Connect to the printer".Localize();
@@ -129,6 +130,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			string removeButtonText = "Remove".Localize();
 			string removeButtonMessage = "Remove current item from queue".Localize();
 			removeButton = makeButton(removeButtonText, removeButtonMessage);
+			removeButton.Click += onRemoveButton_Click;
 
 			string pauseButtonText = "Pause".Localize();
 			string pauseButtonMessage = "Pause the current print".Localize();
@@ -216,9 +218,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			addButton.Click += onAddButton_Click;
-			configureButton.Click += onStartButton_Click;
             skipButton.Click += onSkipButton_Click;
-			removeButton.Click += onRemoveButton_Click;
 			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };

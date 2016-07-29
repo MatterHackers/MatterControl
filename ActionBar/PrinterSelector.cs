@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 			this.MenuItems.Clear();
 
 			//Add the menu items to the menu itself
-			foreach (var printer in ProfileManager.Instance.ActiveProfiles)
+			foreach (var printer in ProfileManager.Instance.ActiveProfiles.OrderBy(p => p.Name))
 			{
 				this.AddItem(printer.Name, printer.ID.ToString());
 			}
