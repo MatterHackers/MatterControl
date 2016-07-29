@@ -4,10 +4,14 @@
 		<assembly path="..\Submodules\agg-sharp\Tests\Agg.Tests\bin\Debug\Agg.Tests.dll" />
 		<assembly path="MatterControl.Tests\bin\Debug\MatterControl.Tests.dll" />
 		<assembly path="..\Submodules\MatterSlice\Tests\MatterSlice.Tests\bin\Debug\MatterSlice.Tests.dll" />
+		<assembly path="MatterControl.AutomationTests\bin\Debug\MatterControl.AutomationTests.dll" />
+		<assembly path="..\..\CloudServicesPlugin\CloudServices.Tests\bin\Debug\CloudServices.Tests.dll" />
 	</Config>
 	<Config name="Release" binpathtype="Auto" runtimeFramework="v4.0.21006">
 		<assembly path="MatterControl.Tests\bin\Release\MatterControl.Tests.dll" />
 		<assembly path="..\Submodules\agg-sharp\Tests\Agg.Tests\bin\Release\Agg.Tests.dll" />
 		<assembly path="..\Submodules\MatterSlice\Tests\MatterSlice.Tests\bin\Release\MatterSlice.Tests.dll" />
+		<assembly path="MatterControl.AutomationTests\bin\Release\MatterControl.AutomationTests.dll" />
+		<assembly path="..\..\CloudServicesPlugin\CloudServices.Tests\bin\Release\CloudServices.Tests.dll" />
 	</Config>
 </NUnitProject>
