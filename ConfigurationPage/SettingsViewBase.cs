@@ -22,22 +22,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetDisplayAttributes()
 		{
-			//this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
 			this.Margin = new BorderDouble(2, 4, 2, 0);
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
 
+			// colors
+			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
+			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
+
+			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+
+			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.Transparent;
+			this.textImageButtonFactory.disabledBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
+			this.textImageButtonFactory.disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
+
+			// other settings
 			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 			this.textImageButtonFactory.fontSize = 11;
 			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			this.linkButtonFactory.fontSize = 11;
 		}

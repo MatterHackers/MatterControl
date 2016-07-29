@@ -5290,3 +5290,12 @@ Translated:Start End Overlap
 English:Layer(s) To Pause:
 Translated:Layer(s) To Pause:
 
+English:Select Printers to Sync
+Translated:Select Printers to Sync
+
+English:Printers to Sync:
+Translated:Printers to Sync:
+
+English:Sync
+Translated:Sync
+

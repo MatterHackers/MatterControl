@@ -21,6 +21,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private event EventHandler unregisterEvents;
 		private EditLevelingSettingsWindow editLevelingSettingsWindow;
 		private TextWidget printLevelingStatusLabel;
+		Button runPrintLevelingButton;
 
 		public CalibrationSettingsWidget()
 			: base("Calibration".Localize())
@@ -50,6 +51,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24).InvertLightness();
+
+			if (!ActiveTheme.Instance.IsDarkTheme)
+			{
+				levelingImage.InvertLightness();
+			}
+
+			ImageWidget levelingIcon = new ImageWidget(levelingImage);
+			levelingIcon.Margin = new BorderDouble(right: 6);
+
+			buttonRow.AddChild(levelingIcon);
+
+			// label
+			printLevelingStatusLabel = new TextWidget("")
+			{
+				AutoExpandBoundsToText = true,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.ParentCenter,
+				Text = "Software Print Leveling".Localize()
+			};
+
+			buttonRow.AddChild(printLevelingStatusLabel);
+
+			// edit button
 			Button editButton = TextImageButtonFactory.GetThemedEditButton();
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
@@ -74,24 +99,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				});
 			};
 
-			Button runPrintLevelingButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			buttonRow.AddChild(editButton);
+
+			buttonRow.AddChild(new HorizontalSpacer());
+
+			// configure button
+			runPrintLevelingButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
 			runPrintLevelingButton.Margin = new BorderDouble(left: 6);
 			runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 			runPrintLevelingButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.UserRequestedCalibration));
 			};
+			buttonRow.AddChild(runPrintLevelingButton);
 
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24).InvertLightness();
-
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				levelingImage.InvertLightness();
-			}
-
-			ImageWidget levelingIcon = new ImageWidget(levelingImage);
-			levelingIcon.Margin = new BorderDouble(right: 6);
-
+			// put in the switch
 			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"));
 			printLevelingSwitch.VAnchor = VAnchor.ParentCenter;
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
@@ -100,24 +122,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
 			};
 
-			printLevelingStatusLabel = new TextWidget("")
-			{
-				AutoExpandBoundsToText = true,
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
-				Text = "Software Print Leveling".Localize()
-			};
-
 			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{
 				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled");
 			}, ref unregisterEvents);
-
-			buttonRow.AddChild(levelingIcon);
-			buttonRow.AddChild(printLevelingStatusLabel);
-			buttonRow.AddChild(editButton);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(runPrintLevelingButton);
 
 			// only show the switch if leveling can be turned off (it can't if it is required).
 			if (!ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print"))
@@ -142,18 +150,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetVisibleControls()
 		{
-			var currentStatus = PrinterConnectionAndCommunication.Instance.CommunicationState;
-			var connected =
-					currentStatus == PrinterConnectionAndCommunication.CommunicationStates.Connected ||
-					currentStatus == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint;
-
-			if (ActiveSliceSettings.Instance == null || !connected)
+			if (ActiveSliceSettings.Instance.PrinterSelected
+				|| PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing
+				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 			{
 				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				runPrintLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
 			}
 			else
 			{
 				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+				runPrintLevelingButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsConnected;
 			}
 		}
 	}

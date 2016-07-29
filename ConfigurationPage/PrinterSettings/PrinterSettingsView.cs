@@ -253,18 +253,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.Invalidate();
 		}
 
-		private void SetPrintLevelButtonVisiblity()
-		{
-			if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
-			{
-				printLevelingStatusLabel.Text = "Software Print Leveling (enabled)".Localize();
-			}
-			else
-			{
-				printLevelingStatusLabel.Text = "Software Print Leveling (disabled)".Localize();
-			}
-		}
-
 		private void SetVisibleControls()
 		{
 			if (!ActiveSliceSettings.Instance.PrinterSelected)
