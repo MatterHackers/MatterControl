@@ -1042,7 +1042,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void ConnectToActivePrinter()
+		public void ConnectToActivePrinter(bool showHelpIfNoPort = false)
 		{
 			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
 			{
@@ -1053,7 +1053,55 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return;
 				}
 
-				ConnectToPrinter();
+				PrinterOutputCache.Instance.Clear();
+				LinesToWriteQueue.Clear();
+				//Attempt connecting to a specific printer
+				this.stopTryingToConnect = false;
+				firmwareType = FirmwareTypes.Unknown;
+				firmwareVersion = null;
+				firmwareUriGcodeSend = false;
+
+				// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
+				// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
+#if __ANDROID__
+				string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
+				if (!string.IsNullOrEmpty(currentPortName))
+				{
+					// TODO: Ensure that this does *not* cause a write to the settings file and should be an in memory update only
+					ActiveSliceSettings.Instance?.Helpers.SetComPort(currentPortName);
+				}
+#endif
+
+				if (SerialPortIsAvailable(this.ComPort))
+				{
+					//Create a timed callback to determine whether connection succeeded
+					Timer connectionTimer = new Timer(new TimerCallback(ConnectionCallbackTimer));
+					connectionTimer.Change(100, 0);
+
+					//Create and start connection thread
+					connectThread = new Thread(Connect_Thread);
+					connectThread.Name = "Connect To Printer";
+					connectThread.IsBackground = true;
+					connectThread.Start();
+				}
+				else
+				{
+					Debug.WriteLine("Connection failed: {0}".FormatWith(this.ComPort));
+
+					connectionFailureMessage = string.Format(
+										"{0} is not available".Localize(),
+										this.ComPort);
+
+					OnConnectionFailed(null);
+
+#if !__ANDROID__
+					// Only pop up the com port helper if the USER actually CLICKED the connect button.
+					if (showHelpIfNoPort)
+					{
+						WizardWindow.ShowComPortSetup();
+					}
+#endif
+				}
 			}
 		}
 
@@ -2296,55 +2344,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			else
 			{
 				t.Change(100, 0);
-			}
-		}
-
-		private void ConnectToPrinter()
-		{
-			PrinterOutputCache.Instance.Clear();
-			LinesToWriteQueue.Clear();
-			//Attempt connecting to a specific printer
-			this.stopTryingToConnect = false;
-			firmwareType = FirmwareTypes.Unknown;
-			firmwareVersion = null;
-			firmwareUriGcodeSend = false;
-
-			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
-			// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
-#if __ANDROID__
-			string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
-			if (!string.IsNullOrEmpty(currentPortName))
-			{
-				// TODO: Ensure that this does *not* cause a write to the settings file and should be an in memory update only
-				ActiveSliceSettings.Instance?.Helpers.SetComPort(currentPortName);
-			}
-#endif
-
-			if (SerialPortIsAvailable(this.ComPort))
-			{
-				//Create a timed callback to determine whether connection succeeded
-				Timer connectionTimer = new Timer(new TimerCallback(ConnectionCallbackTimer));
-				connectionTimer.Change(100, 0);
-
-				//Create and start connection thread
-				connectThread = new Thread(Connect_Thread);
-				connectThread.Name = "Connect To Printer";
-				connectThread.IsBackground = true;
-				connectThread.Start();
-			}
-			else
-			{
-				Debug.WriteLine("Connection failed: {0}".FormatWith(this.ComPort));
-
-				connectionFailureMessage = string.Format(
-									"{0} is not available".Localize(),
-									this.ComPort);
-
-				OnConnectionFailed(null);
-
-#if !__ANDROID__
-				WizardWindow.ShowComPortSetup();
-#endif
 			}
 		}
 

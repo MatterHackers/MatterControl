@@ -53,16 +53,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private event EventHandler unregisterEvents;
 		static EventHandler staticUnregisterEvents;
 
-		public static void OpenConnectionWindow(bool connectAfterSelection = false)
-		{
-			if (connectAfterSelection)
-			{
-				ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(ConnectToActivePrinter, ref staticUnregisterEvents);
-			}
-
-			WizardWindow.ShowPrinterSetup();
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
@@ -105,7 +95,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					{
 						if (ActiveSliceSettings.Instance.PrinterSelected)
 						{
-							ConnectToActivePrinter(null, null);
+							UserRequestedConnectToActivePrinter();
 						}
 					}
 				};
@@ -212,15 +202,15 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 		}
 
-		static public void ConnectToActivePrinter(object sender, EventArgs e)
+		static public void UserRequestedConnectToActivePrinter()
 		{
 			if (staticUnregisterEvents != null)
 			{
-				staticUnregisterEvents(null, e);
+				staticUnregisterEvents(null, null);
 				staticUnregisterEvents = null;
 			}
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
 		}
 
 		private void onActivePrinterChanged(object sender, EventArgs e)
@@ -254,11 +244,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
 			UiThread.RunOnIdle(SetConnectionButtonVisibleState);
-		}
-
-		private void onSelectActivePrinterButton_Click(object sender, EventArgs mouseEvent)
-		{
-			OpenConnectionWindow();
 		}
 
 		private void SetConnectionButtonVisibleState()

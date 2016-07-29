@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 			
 		void ConnectButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
 		}
 
 		void NextButton_Click(object sender, EventArgs mouseEvent)
