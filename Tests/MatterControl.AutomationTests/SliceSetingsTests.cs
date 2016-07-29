@@ -16,6 +16,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
+
 					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
 
 					//Navigate to Local Library 
@@ -68,6 +70,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
 
@@ -108,6 +111,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
 

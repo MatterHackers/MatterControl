@@ -72,8 +72,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
-		public override string ReadLine()
+		public override string ReadLine() 
 		{
+			// Send any commands that are queue before moving on to the internal stream.
 			string nextCommand = queuedCommands.ReadLine();
 			if (nextCommand != null)
 			{

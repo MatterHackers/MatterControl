@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 
 			cancelButton = textImageButtonFactory.Generate(unlocalizedTextForCancelButton.Localize());
-			cancelButton.Name = unlocalizedTextForCancelButton;
+			cancelButton.Name = "Cancel Wizard Button";
 			cancelButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => WizardWindow?.Close());
