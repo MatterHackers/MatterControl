@@ -185,25 +185,19 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void ManufacturerDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			activeMake = ((Agg.UI.DropDownList)sender).SelectedValue;
+			activeMake = ((DropDownList)sender).SelectedValue;
 			activeModel = null;
 
+			// Select the dictionary containing the printerName->printerToken mappings for the current OEM
 			Dictionary<string, string> printers;
 			if (!OemSettings.Instance.OemProfiles.TryGetValue(activeMake, out printers))
 			{
+				// Fall back to an empty dictionary if no match
 				printers = new Dictionary<string, string>();
 			}
 
-			var models = printers.Select(profile => new KeyValuePair<string, string>(profile.Key, profile.Value)).ToList();
-			// sort by key (model name)
-			models.Sort(
-				delegate (KeyValuePair<string, string> pair1,
-				KeyValuePair<string, string> pair2)
-				{
-					return pair1.Key.CompareTo(pair2.Key);
-				}
-				);
-			printerModelSelector.ListSource = models;
+			// Models - sort dictionary results by key and assign to .ListSource
+			printerModelSelector.ListSource = printers.OrderBy(p => p.Key).ToList();
 			if (printerModelSelector.MenuItems.Count == 1)
 			{
 				// SelectIfOnlyOneModel

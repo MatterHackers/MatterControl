@@ -83,8 +83,11 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public List<string> PreloadedLibraryFiles { get; } = new List<string>();
 
-		internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> manufacturers, List<string> whitelist = null)
+		internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> unorderedManufacturers, List<string> whitelist = null)
 		{
+			// Sort manufacturers by name
+			var manufacturers = unorderedManufacturers.OrderBy(k => k.Value);
+
 			if (whitelist != null)
 			{
 				this.PrinterWhiteList = whitelist;
