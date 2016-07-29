@@ -20,6 +20,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					SystemWindow systemWindow;
 
@@ -76,6 +77,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					SystemWindow systemWindow;
 
@@ -139,6 +141,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					SystemWindow systemWindow;
 
@@ -197,6 +200,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					SystemWindow systemWindow;
 
@@ -271,6 +275,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					SystemWindow systemWindow;
 
@@ -337,6 +342,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("Library Tab");
@@ -393,6 +399,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("Library Tab");
@@ -449,6 +456,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//Navigate to Downloads
 					testRunner.ClickByName("Library Tab");

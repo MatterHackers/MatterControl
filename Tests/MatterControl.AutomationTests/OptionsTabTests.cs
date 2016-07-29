@@ -17,6 +17,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					testRunner.ClickByName("SettingsAndControls", 5);
 					testRunner.Wait(2);
 					testRunner.ClickByName("Options Tab", 6);
@@ -56,6 +57,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					testRunner.ClickByName("SettingsAndControls", 5);
 					testRunner.ClickByName("Options Tab", 6);

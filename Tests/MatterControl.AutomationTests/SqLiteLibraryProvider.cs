@@ -16,6 +16,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
+
 					testRunner.ClickByName("Library Tab", 5);
 
 					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");

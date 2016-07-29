@@ -110,6 +110,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
+		public enum PrepAction
+		{
+			CloseLoginAndPrinterSelect,
+		};
+
+		public static void PrepForTestRun(AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseLoginAndPrinterSelect)
+		{
+			switch (preAction)
+			{
+				case PrepAction.CloseLoginAndPrinterSelect:
+					testRunner.ClickByName("Connection Wizard Skip Sign In Button", 5);
+					testRunner.ClickByName("Cancel Wizard Button", 5);
+					break;
+			}
+		}
+
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
 		{
 			string tempFolderPath = Path.Combine("..", "..", "..", "..", "Tests", "temp");

@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//Make sure image does not exist before we click the buy button
 					testRunner.MatchLimit = 500000;
@@ -82,10 +83,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
-					/*
-					 * Tests that clicking the create button opens create tools plugin window
-					 */
+					MatterControlUtilities.PrepForTestRun(testRunner);
+					// Tests that clicking the create button opens create tools plugin window
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//Make sure that plugin window does not exist
 					bool pluginWindowExists1 = testRunner.WaitForName("Plugin Chooser Window", 0);
@@ -125,10 +125,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
-					/*
-					 * Tests that clicking the queue export button with a single item selected opens export item window
-					 */
+					// Tests that clicking the queue export button with a single item selected opens export item window
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//Make sure that the export window does not exist
 					bool exportWindowExists1 = testRunner.WaitForName( "Export Item Window", 0);
@@ -167,7 +165,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-					
+					MatterControlUtilities.PrepForTestRun(testRunner);
+
 					//bool exportButtonExists = testRunner.NameExists("Export Queue Button");
 					bool exportButtonExists = testRunner.WaitForName("Export Queue Button", 10);
 					testRunner.Wait(5);
@@ -194,10 +193,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
-					/*
-					 * Tests that clicking a queue item thumbnail opens a Part Preview window
-					 */ 
+					MatterControlUtilities.PrepForTestRun(testRunner);
+					
+					// Tests that clicking a queue item thumbnail opens a Part Preview window
 
 					bool partPreviewWindowExists1 = testRunner.WaitForName("Part Preview Window Thumbnail", 0);
 					resultsHarness.AddTestResult(partPreviewWindowExists1 == false, "Part Preview Window Does Not Exist");
@@ -231,11 +229,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/* Tests that when the Queue Copy button is clicked:
 					 * 1. The Queue Tab Count is increased by one
 					 * 2. A Queue Row item is created and added to the queue with the correct name
-					 */ 
+					 */
 
 					int queueCountBeforeCopyButtonIsClicked = QueueData.Instance.Count;
 					bool copyIncreasesQueueDataCount = false;
@@ -277,6 +275,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					/*
 					 * Tests that Queue Add button adds a single part to queue:
@@ -342,6 +341,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					/*
 					 * Tests that Add button can add multiple files to the print queue:
@@ -413,6 +413,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
 					 *Tests that when one item is selected  
 					 *1. Queue Item count equals three before the test starts 
@@ -471,6 +472,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
 					 *Tests that when the edit button is clicked we go into editmode (print queue items have checkboxes on them)  
 					 *1. After Edit button is clicked print queue items have check boxes
@@ -534,6 +536,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
 					 *Tests that when one item is selected  
 					 *1. Queue Item count equals three before the test starts 
@@ -598,6 +601,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
 					 *Tests that when one item is selected  
 					 *1. Queue Item count equals three before the test starts 
@@ -665,6 +669,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
 					 *Tests Export to Zip menu item is clicked the queue is compressed and exported to location on disk
 					 *1. Check that there are items in the queue 
@@ -761,6 +766,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
 					 *Tests Export to Zip menu item is clicked the queue is compressed and exported to location on disk
 					 *1. Check that there are items in the queue 
@@ -812,6 +818,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
 					 *Tests that when the Remove All menu item is clicked 
 					 *1. Queue Item count is set to zero
@@ -882,6 +889,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
 					 *Tests that when the Remove All menu item is clicked 
 					 *1. Queue Item count is set to zero
@@ -946,6 +954,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					/*
 					 *Tests:
@@ -1022,6 +1031,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					/* Tests that when the Queue Copy button is clicked:
 					* 1. QueueCount = Zero
@@ -1090,6 +1100,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					/* Tests that when the Queue Copy button is clicked:
 					* 1. QueueCount = Zero
@@ -1157,6 +1168,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					/* Tests that when the Queue Copy button is clicked:
 					* 1. QueueCount = Zero
@@ -1221,6 +1233,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					/* Tests that when the Queue Copy button is clicked:
 					* 1. QueueCount = Zero

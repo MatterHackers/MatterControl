@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				"Remote Monitoring".Localize(),
 				"Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.".Localize());
 
-		   var nextButton = textImageButtonFactory.Generate("Skip".Localize());
+			var nextButton = textImageButtonFactory.Generate("Skip".Localize());
 			nextButton.Name = "Connection Wizard Skip Sign In Button";
 			nextButton.Click += (sender, e) =>
 			{
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var signInButton = textImageButtonFactory.Generate("Sign In".Localize());
 			signInButton.Name = "Sign In From Connection Wizard Button";
 			signInButton.Click += (s, e) =>
-			{ 
+			{
 				WizardWindow.ShowAuthDialog?.Invoke();
 				UiThread.RunOnIdle(WizardWindow.Close);
 			};

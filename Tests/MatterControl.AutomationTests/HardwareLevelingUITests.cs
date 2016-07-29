@@ -16,6 +16,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					//Add printer that has hardware leveling
 					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
 

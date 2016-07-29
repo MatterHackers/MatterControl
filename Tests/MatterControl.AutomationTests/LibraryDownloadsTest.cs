@@ -17,6 +17,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					MatterControlUtilities.CreateDownloadsSubFolder();
 
 					//Navigate to Downloads Library Provider
@@ -72,6 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					MatterControlUtilities.CreateDownloadsSubFolder();
 
@@ -125,9 +127,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					MatterControlUtilities.CreateDownloadsSubFolder();
-
-
+					
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
@@ -179,6 +181,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 					MatterControlUtilities.CreateDownloadsSubFolder();
 
 
@@ -201,8 +204,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("Batman Renamed");
 					testRunner.ClickByName("Rename Button");
 					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Batman Renamed", 2) == true);
-
-
+					
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
@@ -237,6 +239,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 					{
+						MatterControlUtilities.PrepForTestRun(testRunner);
 
 						MatterControlUtilities.CreateDownloadsSubFolder();
 

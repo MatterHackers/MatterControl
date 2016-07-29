@@ -17,6 +17,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					testRunner.ClickByName("File Menu");
 					testRunner.Wait(1);
@@ -44,6 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					testRunner.ClickByName("File Menu");
 					testRunner.Wait(1);
@@ -80,6 +82,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					testRunner.ClickByName("File Menu");
 					testRunner.Wait(1);
@@ -120,6 +123,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					testRunner.ClickByName("File Menu");
 					testRunner.Wait(1);
@@ -146,9 +150,5 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
 		}
-
-
-
-
 	}
 }

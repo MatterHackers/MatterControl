@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
+
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
 					testRunner.ClickByName("Create Folder From Library Button");
