@@ -337,6 +337,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.ClickByName(rowItem);
 
+					MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 					testRunner.ClickByName("Library Edit Item Button");
 
 					//Make sure that Export Item Window exists after Export button is clicked

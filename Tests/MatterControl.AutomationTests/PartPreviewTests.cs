@@ -29,7 +29,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
 					testRunner.Wait(1);
 					testRunner.ClickByName("Row Item Calibration - Box");
-					testRunner.ClickByName("Row Item Calibration - Box Print Button");
+					testRunner.ClickByName("Row Item Calibration - Box View Button");
 					testRunner.Wait(1);
 
 					//Get View3DWidget and count MeshGroups before Copy button is clicked
@@ -47,16 +47,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					
 					//Click Copy button and count MeshGroups 
 					testRunner.ClickByName(copyButtonName);
-					System.Threading.Thread.Sleep(2000);
+					System.Threading.Thread.Sleep(500);
 					int partCountAfterCopy = view3D.MeshGroups.Count();
 					resultsHarness.AddTestResult(partCountAfterCopy == 2);
 					testRunner.Wait(1);
 
 					//Click Copy button a second time and count MeshGroups again
 					testRunner.ClickByName(copyButtonName);
-					System.Threading.Thread.Sleep(2000);
+					System.Threading.Thread.Sleep(500);
 					int partCountAfterSecondCopy = view3D.MeshGroups.Count();
 					resultsHarness.AddTestResult(partCountAfterSecondCopy == 3);
+					view3D.CloseOnIdle();
+					System.Threading.Thread.Sleep(500);
 
 
 					MatterControlUtilities.CloseMatterControl(testRunner);

@@ -337,6 +337,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("LibraryActionMenu");
 			testRunner.ClickByName("Add to Queue Menu Item", 1);
 		}
+
+		public static void LibraryEditSelectedItem(AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("LibraryActionMenu");
+			testRunner.ClickByName("Edit Menu Item", 1);
+		}
 	}
 
 	/// <summary>
