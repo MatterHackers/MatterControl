@@ -333,7 +333,6 @@
     <Compile Include="PartPreviewWindow\ViewGcodeBasic.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
     <Compile Include="Queue\OptionsMenu\PartsSheetCreator.cs" />
-    <Compile Include="Utilities\PerformanceTests.cs" />
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
     <Compile Include="PrinterCommunication\PrinterConnectionAndCommunication.cs" />
     <Compile Include="PrinterControls\PrintLevelingPlane.cs" />

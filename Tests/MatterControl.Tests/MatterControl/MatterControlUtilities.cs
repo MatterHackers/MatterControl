@@ -331,6 +331,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance();
 			return AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, maxTimeToRun);
 		}
+
+		public static void LibraryAddSelectionToQueue(AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("LibraryActionMenu");
+			testRunner.ClickByName("Add to Queue Menu Item", 1);
+		}
 	}
 
 	/// <summary>

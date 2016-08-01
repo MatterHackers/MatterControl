@@ -30,8 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
-using System;
-using System.Collections.Generic;
+using MatterHackers.MatterControl.Tests.Automation;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -147,21 +146,21 @@ namespace MatterHackers.MatterControl
 
 		public static void AddLocalLibraryItemToQueue(GuiWidget container, double secondsBetweenClicks = .1)
 		{
-			AutomationRunner testrunner;
+			AutomationRunner testRunner;
 			DrawEventHandler beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
-				testrunner = new AutomationRunner();
+				testRunner = new AutomationRunner();
 				Task.Run(() =>
 				{
-					testrunner.ClickByName("Library Tab");
-					NavigateToFolder(testrunner, "Local Library Row Item Collection");
+					testRunner.ClickByName("Library Tab");
+					NavigateToFolder(testRunner, "Local Library Row Item Collection");
 					
-					testrunner.ClickByName("Library Edit Button");
-					testrunner.ClickByName("Row Item Calibration - Box");
-					testrunner.Wait(2);
-					testrunner.ClickByName("Library Add To Queue Button");
-					testrunner.ClickByName("Queue Tab");
+					testRunner.ClickByName("Library Edit Button");
+					testRunner.ClickByName("Row Item Calibration - Box");
+					testRunner.Wait(2);
+					MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
+					testRunner.ClickByName("Queue Tab");
 				});
 				container.BeforeDraw -= beforeDraw;
 			};

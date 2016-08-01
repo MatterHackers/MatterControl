@@ -487,7 +487,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 
 					//Add Library Item to the Print Queue
-					testRunner.ClickByName("Library Add To Queue Button");
+					MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
 
 					testRunner.Wait(2);
 
@@ -564,7 +564,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					//Click the Add To Queue button
 					testRunner.Wait(1);
-					testRunner.ClickByName("Library Add To Queue Button");
+					MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
 					testRunner.Wait(2);
 
 					//Make sure Queue Count increases by the correct amount
