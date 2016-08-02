@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.Wait(1);
 					testRunner.ClickByName(rowItemToRename);
-					testRunner.ClickByName("Rename From Library Button");
+					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
 
 					testRunner.Wait(2);
 
@@ -294,8 +294,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("New Folder Row Item Collection");
-					testRunner.ClickByName("Rename From Library Button");
-					testRunner.Wait(1);
+					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
+					testRunner.Wait(.5);
 					testRunner.Type("Renamed Library Folder");
 					testRunner.ClickByName("Rename Button");
 
@@ -338,7 +338,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName(rowItem);
 
 					MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-					testRunner.ClickByName("Library Edit Item Button");
 
 					//Make sure that Export Item Window exists after Export button is clicked
 					bool exportItemWindowExists = testRunner.WaitForName("Part Preview Window", 2);
@@ -378,7 +377,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.ClickByName(rowItem);
 
-					testRunner.ClickByName("Library Remove Item Button");
+					MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 
 					testRunner.Wait(1);
 

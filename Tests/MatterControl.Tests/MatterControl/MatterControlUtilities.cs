@@ -167,42 +167,29 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return false;
 		}
 
-		public static void SelectAndAddPrinter(AutomationRunner testRunner, string make, string model, bool firstAdd)
+		public static void SelectAndAddPrinter(AutomationRunner testRunner, string make, string model)
 		{
-
 			string manufacturer = make + " Menu Item";
 			string printer = model + " Menu Item";
 			string printerProfile = String.Format("{0} {1} Profile", make, model);
 
+			testRunner.ClickByName("Printers... Menu", 2);
 
-			testRunner.ClickByName("Select a Printer Button");
-			testRunner.Wait(1);
+			testRunner.ClickByName("Add New Printer... Menu Item", 2);
 
-			if (!firstAdd)
-			{
-				testRunner.ClickByName("Add new printer button");
-				testRunner.Wait(1);
-			}
+			testRunner.ClickByName("Connection Wizard Skip Sign In Button", 2);
 
-			testRunner.ClickByName("Select Make");
-			testRunner.Wait(1);
+			testRunner.ClickByName("Select Make", 2);
 
-			testRunner.ClickByName(manufacturer);
-			testRunner.Wait(1);
+			testRunner.ClickByName(manufacturer, 2);
 
-			testRunner.ClickByName("Select Model");
-			testRunner.Wait(1);
+			testRunner.ClickByName("Select Model", 2);
 
-			testRunner.ClickByName(printer);
-			testRunner.Wait(1);
+			testRunner.ClickByName(printer, 2);
 
-			testRunner.ClickByName("Save & Continue Button");
-			testRunner.Wait(1);
+			testRunner.ClickByName("Save & Continue Button", 2);
 
-			testRunner.ClickByName("Setup Connection Cancel Button");
-			testRunner.Wait(2);
-
-			testRunner.ClickByName(printerProfile);
+			testRunner.ClickByName("Cancel Wizard Button", 2);
 			testRunner.Wait(1);
 		}
 
@@ -342,6 +329,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.ClickByName("LibraryActionMenu");
 			testRunner.ClickByName("Edit Menu Item", 1);
+		}
+
+		public static void LibraryRenameSelectedItem(AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("LibraryActionMenu");
+			testRunner.ClickByName("Rename Menu Item", 1);
+		}
+
+		public static void LibraryRemoveSelectedItem(AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("LibraryActionMenu");
+			testRunner.ClickByName("Remove Menu Item", 1);
 		}
 	}
 

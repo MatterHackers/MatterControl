@@ -23,9 +23,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.ClickByName("Add Printer Menu Item");
 					testRunner.Wait(1);
-					resultsHarness.AddTestResult(testRunner.WaitForName("Printer Connection Window", 3));
+					resultsHarness.AddTestResult(testRunner.WaitForName("Select Make", 3));
 
-					testRunner.ClickByName("Setup Connection Cancel Button");
+					testRunner.ClickByName("Cancel Wizard Button");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}

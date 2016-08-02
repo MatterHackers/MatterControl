@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("Library Tab");
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("SettingsAndControls");
@@ -113,28 +113,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 					testRunner.ClickByName("SettingsAndControls");
-					testRunner.Wait(1);
-					testRunner.ClickByName("User Level Dropdown");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Advanced Menu Item");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Filament Tab");
-					testRunner.Wait(1);
+					testRunner.Wait(.5);
+					testRunner.ClickByName("User Level Dropdown",1);
+					testRunner.ClickByName("Advanced Menu Item", 1);
+					testRunner.ClickByName("Filament Tab", 1);
+					testRunner.ClickByName("Temperatures Tab", 1);
 					resultsHarness.AddTestResult(testRunner.WaitForName("Bed Temperature Textbox", 2));
 
 					//Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
-					testRunner.ClickByName("Printer Tab");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Features Tab");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Has Heated Bed Checkbox");
+					testRunner.ClickByName("Printer Tab",1);
+					testRunner.ClickByName("Features Tab", 1);
+					testRunner.DragByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(-40, 0));
+					testRunner.MoveToByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(0, 120));
+					testRunner.Drop();
+					testRunner.ClickByName("Has Heated Bed Checkbox", 1);
 					testRunner.Wait(.5);
-					testRunner.ClickByName("Filament Tab");
-					testRunner.Wait(1);
+					testRunner.ClickByName("Filament Tab", 1);
 					bool bedTemperatureTextBoxVisible = testRunner.WaitForName("Bed Temperature Textbox", 2);
 					resultsHarness.AddTestResult(bedTemperatureTextBoxVisible == false);
 

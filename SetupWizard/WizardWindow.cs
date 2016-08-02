@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 			wizardWindow.ChangeToPage(wizardPage);
 		}
 
-		public static void ShowPrinterSetup()
+		public static void ShowPrinterSetup(bool userRequestedNewPrinter = false)
 		{
 			WizardWindow wizardWindow = GetWindow("PrinterSetup");
 			wizardWindow.Title = "Setup Wizard".Localize();
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				wizardWindow.ChangeToSetupPrinterForm();
+				wizardWindow.ChangeToSetupPrinterForm(userRequestedNewPrinter);
 			}
 		}
 
@@ -117,10 +117,11 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		public void ChangeToSetupPrinterForm()
+		public void ChangeToSetupPrinterForm(bool userRequestedNewPrinter = false)
 		{
 			bool showAuthPanel = ShouldShowAuthPanel?.Invoke() ?? false;
-			if (showAuthPanel)
+			if (showAuthPanel
+				&& !userRequestedNewPrinter)
 			{
 				ChangeToPage<ShowAuthPanel>();
 			}

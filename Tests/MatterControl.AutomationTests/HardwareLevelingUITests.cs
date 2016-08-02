@@ -18,18 +18,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					//Add printer that has hardware leveling
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD", true);
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
 
 					testRunner.Wait(1);
-					testRunner.ClickByName("SettingsAndControls");
+					testRunner.ClickByName("SettingsAndControls", 1);
 					testRunner.Wait(1);
-					testRunner.ClickByName("Slice Settings Tab");
-					testRunner.Wait(1);
-					testRunner.ClickByName("User Level Dropdown");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Advanced Menu Item");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Printer Tab");
+					testRunner.ClickByName("Slice Settings Tab", 1);
+					testRunner.ClickByName("User Level Dropdown", 1);
+					testRunner.ClickByName("Advanced Menu Item", 1);
+					testRunner.ClickByName("Printer Tab", 1);
 					testRunner.Wait(1);
 
 					//Make sure Print Leveling tab is not visible 
@@ -37,10 +34,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(testPrintLeveling == false);
 
 					//Add printer that does not have hardware leveling
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Deezmaker", "Bukito", false);
-					testRunner.ClickByName("Slice Settings Tab");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Printer Tab");
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "3D Factory", "MendelMax 1.5");
+					testRunner.Wait(.2);
+					testRunner.ClickByName("Slice Settings Tab",1);
+					testRunner.ClickByName("Printer Tab",1);
 
 					//Make sure Print Leveling tab is visible
 					bool printLevelingVisible = testRunner.WaitForName("Print Leveling Tab", 2);

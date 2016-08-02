@@ -12,7 +12,6 @@ namespace MatterHackers.MatterControl.SetupWizard
 {
 	public class SyncingPrintersPage: WizardPage
 	{
-
 		public SyncingPrintersPage()
 		{
 			TextWidget syncingText = new TextWidget("Syncing Profiles...".Localize(),textColor: ActiveTheme.Instance.PrimaryTextColor);

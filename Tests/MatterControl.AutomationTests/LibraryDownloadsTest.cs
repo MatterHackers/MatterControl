@@ -197,10 +197,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{Enter}");
 
 					//Rename added item
-					testRunner.ClickByName("Library Edit Button", 2);
+					testRunner.ClickByName("Library Edit Button", .5);
 					testRunner.ClickByName("Row Item Batman");
-					testRunner.ClickByName("Rename From Library Button", 2);
-					testRunner.Wait(2);
+					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
+					testRunner.Wait(.5);
 					testRunner.Type("Batman Renamed");
 					testRunner.ClickByName("Rename Button");
 					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Batman Renamed", 2) == true);

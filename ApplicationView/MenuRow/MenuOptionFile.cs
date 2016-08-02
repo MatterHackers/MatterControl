@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new List<MenuItemAction>
 			{
-				new MenuItemAction("Add Printer".Localize(), () => WizardWindow.ShowPrinterSetup()),
+				new MenuItemAction("Add Printer".Localize(), () => WizardWindow.ShowPrinterSetup(true)),
 				new MenuItemAction("Add File To Queue".Localize(), importFile_Click),
 				new MenuItemAction("Redeem Design Code".Localize(), () => RedeemDesignCode?.Invoke(this, null)),
 				new MenuItemAction("Enter Share Code".Localize(), () => EnterShareCode?.Invoke(this, null)),

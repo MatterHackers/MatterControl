@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl
 		{
 			Rebuild();
 
+			this.Name = "Printers... Menu";
+
 			this.SelectionChanged += (s, e) =>
 			{
 				string printerID = this.SelectedValue;
