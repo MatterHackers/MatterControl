@@ -441,12 +441,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static MatterControlApplication CreateInstance()
+		public static MatterControlApplication CreateInstance(int overrideWidth = -1, int overrideHeight = -1)
 		{
 			// try and open our window matching the last size that we had for it.
 			string windowSize = ApplicationSettings.Instance.get("WindowSize");
-			int width = 601;
-			int height = 601;
+			int width = overrideWidth == -1 ? 601 : overrideWidth;
+			int height = overrideHeight == -1 ? 601 : overrideHeight;
 			if (windowSize != null && windowSize != "")
 			{
 				string[] sizes = windowSize.Split(',');
