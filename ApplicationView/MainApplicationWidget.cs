@@ -478,14 +478,15 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
 				}
 				else
-				{   //If user in logged in sync before checking to prompt to create printer
+				{
+					//If user in logged in sync before checking to prompt to create printer
 					ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
 					{
 						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 						if (!ProfileManager.Instance.ActiveProfiles.Any())
 						{
-						// Start the setup wizard if no profiles exist
-						UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+							// Start the setup wizard if no profiles exist
+							UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
 						}
 					});
 				}

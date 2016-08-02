@@ -165,6 +165,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				};
 
 				breadCrumbAndActionBar.AddChild(breadCrumbWidget);
+				breadCrumbAndActionBar.AddChild(new HorizontalSpacer());
 				breadCrumbAndActionBar.AddChild(CreateActionsMenu());
 
 				allControls.AddChild(breadCrumbAndActionBar);
@@ -221,6 +222,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			actionMenu.VAnchor = VAnchor.ParentBottomTop;
 			actionMenu.Margin = new BorderDouble(3);
 			actionMenu.Padding = new BorderDouble(10);
+			actionMenu.Name = "LibraryActionMenu";
 
 			CreateActionMenuItems(actionMenu);
 			return actionMenu;
@@ -402,7 +404,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				true, false, true));
 
 			actionMenu.AddHorizontalLine();
-
 
 			// add to queue menu item
 			menuItems.Add(new PrintItemAction()

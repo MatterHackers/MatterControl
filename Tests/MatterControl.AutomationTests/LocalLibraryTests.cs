@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.Wait(1);
 					testRunner.ClickByName(rowItemToRename);
-					testRunner.ClickByName("Rename From Library Button");
+					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
 
 					testRunner.Wait(2);
 
@@ -294,8 +294,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("New Folder Row Item Collection");
-					testRunner.ClickByName("Rename From Library Button");
-					testRunner.Wait(1);
+					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
+					testRunner.Wait(.5);
 					testRunner.Type("Renamed Library Folder");
 					testRunner.ClickByName("Rename Button");
 
@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.ClickByName(rowItem);
 
-					testRunner.ClickByName("Library Edit Item Button");
+					MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
 					//Make sure that Export Item Window exists after Export button is clicked
 					bool exportItemWindowExists = testRunner.WaitForName("Part Preview Window", 2);
@@ -377,12 +377,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.ClickByName(rowItem);
 
-					testRunner.ClickByName("Library Remove Item Button");
+					MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 
 					testRunner.Wait(1);
 
 					//Make sure that Export Item Window exists after Export button is clicked
-					bool rowItemExists = testRunner.WaitForName(rowItem, 2);
+					bool rowItemExists = testRunner.WaitForName(rowItem, 1);
 					resultsHarness.AddTestResult(rowItemExists == false);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
@@ -438,7 +438,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(rowItemOneExistsBeforeRemove == true);
 					resultsHarness.AddTestResult(rowItemTwoExistsBeforeRemove == true);
 
-					testRunner.ClickByName("Library Remove Item Button");
+					MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 					testRunner.Wait(1);
 
 					//Make sure both selected items are removed
@@ -487,7 +487,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 
 					//Add Library Item to the Print Queue
-					testRunner.ClickByName("Library Add To Queue Button");
+					MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
 
 					testRunner.Wait(2);
 
@@ -564,7 +564,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					//Click the Add To Queue button
 					testRunner.Wait(1);
-					testRunner.ClickByName("Library Add To Queue Button");
+					MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
 					testRunner.Wait(2);
 
 					//Make sure Queue Count increases by the correct amount

@@ -65,6 +65,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatterControl\PerformanceTests.cs" />
     <Compile Include="MatterControl\SettingsParseTests.cs" />
     <Compile Include="MatterControl\GCodeProcessingTests.cs" />
     <Compile Include="MatterControl\LibraryProviderSqliteTests.cs" />

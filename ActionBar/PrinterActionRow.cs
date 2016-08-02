@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					Cursor = Cursors.Hand,
 					Margin = new BorderDouble(0, 6, rightMarginForWideScreenMode, 3)
 				};
-				printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup();
+				printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup(true);
 				// make sure the control can get smaller but maintains its height
 				printerSelector.MinimumSize = new Vector2(0, connectPrinterButton.MinimumSize.y);
 				printerSelectorAndEditButton.AddChild(printerSelector);
