@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 
 					//Make sure that Export Item Window exists after Export button is clicked
-					bool rowItemExists = testRunner.WaitForName(rowItem, 2);
+					bool rowItemExists = testRunner.WaitForName(rowItem, 1);
 					resultsHarness.AddTestResult(rowItemExists == false);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
@@ -438,7 +438,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(rowItemOneExistsBeforeRemove == true);
 					resultsHarness.AddTestResult(rowItemTwoExistsBeforeRemove == true);
 
-					testRunner.ClickByName("Library Remove Item Button");
+					MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 					testRunner.Wait(1);
 
 					//Make sure both selected items are removed
