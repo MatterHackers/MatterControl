@@ -1445,7 +1445,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "print_center",
 		"PresentationName": "Print Center",
-		"HelpText": "The position (X and Y coordinates) of the center of the print bed, in millimeters. Should be 1/2 bed size for Cartesian printers and 0, 0 for Delta printers.",
+		"HelpText": "The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.",
 		"DataEditType": "VECTOR2",
 		"ExtraSettings": "mm",
 		"ShowAsOverride": true,
