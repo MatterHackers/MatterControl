@@ -30,21 +30,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Layer View Tab");
 
-					testRunner.ClickByName("Bread Crumb Button Home");
-					testRunner.Wait(1);
-					testRunner.ClickByName("SettingsAndControls");
-					testRunner.Wait(1);
-					testRunner.ClickByName("User Level Dropdown");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Advanced Menu Item");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Skirt and Raft Tab");
-					testRunner.Wait(1);
+					testRunner.ClickByName("Bread Crumb Button Home", 1);
+					testRunner.ClickByName("SettingsAndControls", 1);
+					testRunner.ClickByName("User Level Dropdown", 1);
+					testRunner.ClickByName("Advanced Menu Item", 1);
+					testRunner.ClickByName("Skirt and Raft Tab", 1);
 
-					testRunner.ClickByName("Create Raft Checkbox");
+					testRunner.ClickByName("Create Raft Checkbox", 1);
 					testRunner.Wait(1.5);
-					testRunner.ClickByName("Save Slice Settings Button");
-					testRunner.ClickByName("Generate Gcode Button");
+					testRunner.ClickByName("Generate Gcode Button", 1);
 					testRunner.Wait(5);
 
 					//Call compare slice settings methode here
@@ -55,7 +49,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests

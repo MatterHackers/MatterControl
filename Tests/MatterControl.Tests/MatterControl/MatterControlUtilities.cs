@@ -292,7 +292,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Action<AutomationTesterHarness> testToRun, 
 			string staticDataPathOverride = null, 
 			double maxTimeToRun = 60, 
-			QueueTemplate queueItemFolderToAdd = QueueTemplate.None)
+			QueueTemplate queueItemFolderToAdd = QueueTemplate.None,
+			int overrideWidth = -1, int overrideHeight = -1)
 		{
 			// Walk back a step in the stack and output the callers name
 			StackTrace st = new StackTrace(false);
@@ -315,7 +316,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.AddItemsToQueue(queueTemplateDirectory);
 			}
 
-			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance();
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 			return AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, maxTimeToRun);
 		}
 
