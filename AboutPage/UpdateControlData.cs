@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 
 		private void CheckVersionStatus()
 		{
-			string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+			string currentBuildToken = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken);
 			string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
 
 			string applicationBuildToken = VersionInfo.Instance.BuildToken;
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl
 
 		private void onVersionRequestSucceeded(object sender, EventArgs e)
 		{
-			string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+			string currentBuildToken = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken);
 			string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
 
 			string applicationBuildToken = VersionInfo.Instance.BuildToken;
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (!WaitingToCompleteTransaction())
 			{
-				string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+				string downloadToken = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken);
 
 				if (downloadToken == null)
 				{
@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl
 				{
 					downloadAttempts++;
 					SetUpdateStatus(UpdateStatusStates.UpdateDownloading);
-					string downloadUri = $"{MatterControlApplication.MCWSBaseUri}/downloads/development/{ApplicationSettings.Instance.get("CurrentBuildToken")}";
+					string downloadUri = $"{MatterControlApplication.MCWSBaseUri}/downloads/development/{ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken)}";
 
 					//Make HEAD request to determine the size of the download (required by GAE)
 					System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
@@ -388,13 +388,13 @@ namespace MatterHackers.MatterControl
 
 		public bool InstallUpdate()
 		{
-			string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+			string downloadToken = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken);
 
 			string updateFileName = Path.Combine(updateFileLocation, "{0}.{1}".FormatWith(downloadToken, InstallerExtension));
 #if __ANDROID__
 			string friendlyFileName = Path.Combine(updateFileLocation, "MatterControlSetup.apk");
 #else
-			string releaseVersion = ApplicationSettings.Instance.get("CurrentReleaseVersion");
+			string releaseVersion = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentReleaseVersion);
 			string friendlyFileName = Path.Combine(updateFileLocation, "MatterControlSetup-{0}.{1}".FormatWith(releaseVersion, InstallerExtension));
 #endif
 

@@ -36,8 +36,28 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.VersionManagement
 {
-	internal class LatestVersionRequest : WebRequestBase
+	public class LatestVersionRequest : WebRequestBase
 	{
+		public static class VersionKey
+		{
+			public const string CurrentBuildToken = nameof(CurrentBuildToken);
+			public const string CurrentBuildNumber = nameof(CurrentBuildNumber);
+			public const string CurrentBuildUrl = nameof(CurrentBuildUrl);
+			public const string CurrentReleaseVersion = nameof(CurrentReleaseVersion);
+			public const string CurrentReleaseDate = nameof(CurrentReleaseDate);
+			public const string UpdateRequired = nameof(UpdateRequired);
+		}
+
+		public static string[] VersionKeys = 
+		{
+			VersionKey.CurrentBuildToken,
+			VersionKey.CurrentBuildNumber,
+			VersionKey.CurrentBuildUrl,
+			VersionKey.CurrentReleaseVersion,
+			VersionKey.CurrentReleaseDate,
+			VersionKey.UpdateRequired,
+		};
+
 		public LatestVersionRequest()
 		{
 			string feedType = UserSettings.Instance.get("UpdateFeedType");
@@ -47,6 +67,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 				UserSettings.Instance.set("UpdateFeedType", feedType);
 			}
 			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
+			//requestValues["TestCode"] = "100"; // will cause response of update available and not required
+			//requestValues["TestCode"] = "101"; // will cause response of update available and required
 			requestValues["UpdateFeedType"] = feedType;
 			uri = $"{MatterControlApplication.MCWSBaseUri}/api/1/get-current-release-version";
 		}
@@ -83,8 +105,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
 		{
-			List<string> responseKeys = new List<string> { "CurrentBuildToken", "CurrentBuildNumber", "CurrentBuildUrl", "CurrentReleaseVersion", "CurrentReleaseDate" };
-			foreach (string key in responseKeys)
+			foreach (string key in VersionKeys)
 			{
 				saveResponse(key, responseValues);
 			}
