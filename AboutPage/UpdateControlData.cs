@@ -31,6 +31,9 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+#if !__ANDROID__
+using MatterHackers.MatterControl.AboutPage;
+#endif
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.VersionManagement;
@@ -56,7 +59,7 @@ namespace MatterHackers.MatterControl
 
 		private UpdateRequestType updateRequestType;
 
-		public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate, UnableToConnectToServer };
+		public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate, UnableToConnectToServer, UpdateRequired };
 
 		private bool WaitingToCompleteTransaction()
 		{
@@ -111,12 +114,21 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		static bool haveShowUpdateRequired = false;
 		private void SetUpdateStatus(UpdateStatusStates updateStatus)
 		{
 			if (this.updateStatus != updateStatus)
 			{
 				this.updateStatus = updateStatus;
 				OnUpdateStatusChanged(null);
+
+				if (this.UpdateRequired && !haveShowUpdateRequired)
+				{
+					haveShowUpdateRequired = true;
+#if !__ANDROID__
+					UiThread.RunOnIdle(CheckForUpdateWindow.Show);
+#endif
+				}
 			}
 		}
 
@@ -156,6 +168,16 @@ namespace MatterHackers.MatterControl
 
 				return instance;
 			}
+		}
+
+		public bool UpdateRequired
+		{
+			get
+			{
+				return updateStatus == UpdateStatusStates.UpdateAvailable && ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.UpdateRequired) == "True";
+			}
+
+			private set {}
 		}
 
 		public void CheckForUpdateUserRequested()

@@ -29,9 +29,7 @@ namespace MatterHackers.MatterControl.AboutPage
         private static CheckForUpdateWindow checkUpdate = null;
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-        string pathToStableBuildFeatures;
         DropDownList releaseOptionsDropList;
-        FlowLayoutWidget additionalInfoContainer;
         TextWidget stableInfoLabel;
         TextWidget alphaInfoLabel;
         TextWidget betaInfoLabel;
@@ -59,9 +57,14 @@ namespace MatterHackers.MatterControl.AboutPage
             currentFeedAndDropDownContainer.HAnchor = HAnchor.ParentLeftRight;
             currentFeedAndDropDownContainer.Margin = new BorderDouble(0,5,0,0);
             currentFeedAndDropDownContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-           
-            TextWidget checkUpdateLabel = new TextWidget("Check for Update".Localize(), pointSize: 20);
-            checkUpdateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+			TextWidget checkUpdateLabel = new TextWidget("Check for Update".Localize(), pointSize: 20);
+			if (UpdateControlData.Instance.UpdateRequired)
+			{
+				checkUpdateLabel = new TextWidget("Update Required".Localize(), pointSize: 20);
+			}
+
+			checkUpdateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             checkUpdateLabel.Margin = new BorderDouble(2, 10, 10, 5);
             
             UpdateControlView updateStatusWidget = new UpdateControlView();
@@ -184,8 +187,15 @@ namespace MatterHackers.MatterControl.AboutPage
             this.AddChild(topToBottom);
 
             additionalInfoContainer.Visible = false;
-            this.Title = "Check for Update".Localize();
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			if (UpdateControlData.Instance.UpdateRequired)
+			{
+				this.Title = "Update Required".Localize();
+			}
+			else
+			{
+				this.Title = "Check for Update".Localize();
+			}
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.ShowAsSystemWindow();
             this.AlwaysOnTopOfMain = true;
 
