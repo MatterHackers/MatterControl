@@ -111,12 +111,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// first go back to where we were after executing the pause code
 			Vector3 positionBeforeActualPause = moveLocationAtEndOfPauseCode.position;
 			InjectPauseGCode("G92 E{0:0.00000}".FormatWith(moveLocationAtEndOfPauseCode.extrusion));
-			Vector3 ensureAllAxis = positionBeforeActualPause + new Vector3(.01, .01, .01);
-			InjectPauseGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(ensureAllAxis.x, ensureAllAxis.y, ensureAllAxis.z, moveLocationAtEndOfPauseCode.feedRate + 1));
+			Vector3 ensureAllAxisAreSent = positionBeforeActualPause + new Vector3(.01, .01, .01);
+			InjectPauseGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(ensureAllAxisAreSent.x, ensureAllAxisAreSent.y, ensureAllAxisAreSent.z, moveLocationAtEndOfPauseCode.feedRate + 1));
 			InjectPauseGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(positionBeforeActualPause.x, positionBeforeActualPause.y, positionBeforeActualPause.z, moveLocationAtEndOfPauseCode.feedRate));
 
 			string resumeGCode = ActiveSliceSettings.Instance.GetValue("resume_gcode");
 			InjectPauseGCode(resumeGCode);
+			InjectPauseGCode("M114"); // make sure we know where we are after this resume code
 		}
 
 		public override string ReadLine()
