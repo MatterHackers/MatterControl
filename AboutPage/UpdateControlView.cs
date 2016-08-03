@@ -130,6 +130,9 @@ namespace MatterHackers.MatterControl
 			UpdateControlData.Instance.InitiateUpdateDownload();
 		}
 
+		static string recommendedUpdateAvailable = "There is a recommended update available.".Localize();
+		static string requiredUpdateAvailable = "There is a required update available.".Localize();
+
 		private void UpdateStatusChanged(object sender, EventArgs e)
 		{
 			switch (UpdateControlData.Instance.UpdateStatus)
@@ -152,7 +155,14 @@ namespace MatterHackers.MatterControl
 					break;
 
 				case UpdateControlData.UpdateStatusStates.UpdateAvailable:
-					updateStatusText.Text = string.Format("There is a recommended update available.".Localize());
+					if (UpdateControlData.Instance.UpdateRequired)
+					{
+						updateStatusText.Text = requiredUpdateAvailable;
+					}
+					else
+					{
+						updateStatusText.Text = recommendedUpdateAvailable;
+					}
 					downloadUpdateLink.Visible = true;
 					installUpdateLink.Visible = false;
 					checkUpdateLink.Visible = false;
