@@ -2883,9 +2883,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					FoundStringEventArgs foundStringEvent = new FoundStringEventArgs(lineWithoutChecksum);
 
 					// If we get a home command, ask the printer where it is after sending it.
-					if (lineWithoutChecksum.StartsWith("G28")
-						|| lineWithoutChecksum.StartsWith("G29")
-						|| lineWithoutChecksum.StartsWith("G92"))
+					if (lineWithoutChecksum.StartsWith("G28") // is a home
+						|| lineWithoutChecksum.StartsWith("G29") // is a bed level
+						|| lineWithoutChecksum.StartsWith("G92") // is a reset of printer position
+						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
 						SendLineToPrinterNow("M114");
 					}

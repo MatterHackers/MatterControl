@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		double resumeFeedRate;
 		PrinterMove lastDestination;
         QueuedCommandsStream queuedCommands;
+		RectangleDouble boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
 
 		ResumeState resumeState = ResumeState.RemoveHeating;
 
@@ -146,11 +147,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case ResumeState.SkippingGCode:
 					// run through the gcode that the device expected looking for things like temp
 					// and skip everything else until we get to the point we left off last time
+					int commandCount = 0;
+					boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
 					while (internalStream.FileStreaming.PercentComplete(internalStream.LineIndex) < percentDone)
 					{
 						string line = internalStream.ReadLine();
+						commandCount++;
 
+						if(line.Contains(";"))
+						{
+							line = line.Split(';')[0];
+						}
 						lastDestination = GetPosition(line, lastDestination);
+
+						if (commandCount > 100)
+						{
+							boundsOfSkippedLayers.ExpandToInclude(lastDestination.position.Xy);
+							if (boundsOfSkippedLayers.Bottom < 10)
+							{
+								int a = 0;
+							}
+						}
 
 						// check if the line is something we want to send to the printer (like a temp)
 						if (line.StartsWith("M109")
@@ -164,30 +181,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 					
 					resumeState = ResumeState.PrimingAndMovingToStart;
+
+					// make sure we always- pick up the last movement
+					boundsOfSkippedLayers.ExpandToInclude(lastDestination.position.Xy);
 					return "";
 
 				case ResumeState.PrimingAndMovingToStart:
 					{
-						// let's prime the extruder, move to a good position over the part, then start printing
-						queuedCommands.Add("G1 E5");
-						queuedCommands.Add("G1 E4");
+
 						if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can resume printing from
 							Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.resume_position_before_z_home);
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(resumePositionXy.x, resumePositionXy.y, lastDestination.position.z + 5), 0, MovementControls.ZSpeed)));
-							// move just above the actual print position
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position + new VectorMath.Vector3(0, 0, 5), 0, MovementControls.XSpeed)));
-							// move down to part
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, MovementControls.ZSpeed)));
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(resumePositionXy.x, resumePositionXy.y, lastDestination.position.z), 0, MovementControls.ZSpeed)));
 						}
-						else
-						{
-							// move to the actual print position
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, MovementControls.ZSpeed)));
-						}
-						// extrude back to our filament start
-						queuedCommands.Add("G1 E5");
+
+						double extruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+						// move to a position outside the printed bounds
+						queuedCommands.Add(CreateMovementLine(new PrinterMove(
+							new Vector3(boundsOfSkippedLayers.Left - extruderWidth*2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.z),
+							0, MovementControls.XSpeed)));
+						
+						// let's prime the extruder
+						queuedCommands.Add("G1 E10 F{0}".FormatWith(MovementControls.EFeedRate(0))); // extrude 10
+						queuedCommands.Add("G1 E9"); // and retract a bit
+
+						// move to the actual print position
+						queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, MovementControls.XSpeed)));
+
 						/// reset the printer to know where the filament should be
 						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
 						resumeState = ResumeState.PrintingSlow;
