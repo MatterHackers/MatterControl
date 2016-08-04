@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var jObject = JObject.Parse(File.ReadAllText(filePath));
 
+			/*
 			if (fromVersion < 201605131)
 			{
 				var materialLayers = jObject["MaterialLayers"] as JObject;
@@ -94,6 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				File.Delete(filePath);
 				filePath = Path.Combine(Path.GetDirectoryName(filePath), printerID + ProfileManager.ProfileExtension);
 			}
+			*/
 
 			if (fromVersion < 201606081)
 			{
