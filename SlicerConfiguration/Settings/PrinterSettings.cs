@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? 0;
+			int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? PrinterSettings.LatestVersion;
 			if (documentVersion < PrinterSettings.LatestVersion)
 			{
 				printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
