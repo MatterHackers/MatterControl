@@ -154,6 +154,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						string line = internalStream.ReadLine();
 						commandCount++;
 
+						// make sure we don't parse comments
 						if(line.Contains(";"))
 						{
 							line = line.Split(';')[0];

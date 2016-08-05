@@ -49,6 +49,7 @@ public class LicenseAgreementPage : WizardPage
 		contentRow.AddChild(scrollable);
 
 		var textBox = new WrappedTextWidget("Loading End User License Agreement...", textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false);
+		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
 		scrollable.AddChild(textBox);
 
 		// wrap the text on a thread and show it when it is ready
