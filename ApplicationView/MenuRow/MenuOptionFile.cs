@@ -10,6 +10,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.IO;
 using System.Linq;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -35,6 +36,7 @@ namespace MatterHackers.MatterControl
 			return new List<MenuItemAction>
 			{
 				new MenuItemAction("Add Printer".Localize(), () => WizardWindow.ShowPrinterSetup(true)),
+				new MenuItemAction("Import Printer".Localize(), ImportPrinter),
 				new MenuItemAction("Add File To Queue".Localize(), importFile_Click),
 				new MenuItemAction("Redeem Design Code".Localize(), () => RedeemDesignCode?.Invoke(this, null)),
 				new MenuItemAction("Enter Share Code".Localize(), () => EnterShareCode?.Invoke(this, null)),
@@ -46,6 +48,24 @@ namespace MatterHackers.MatterControl
 					app.Close();
 				})
 			};
+		}
+
+		private void ImportPrinter()
+		{
+			FileDialog.OpenFileDialog(
+					new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
+					(dialogParams) =>
+					{
+						if (!string.IsNullOrEmpty(dialogParams.FileName))
+						{
+							ImportSettingsFile(dialogParams.FileName);
+						}
+					});
+		}
+
+		private void ImportSettingsFile(string settingsFilePath)
+		{
+			ProfileManager.ImportFromExisting(settingsFilePath);
 		}
 
 		private void importFile_Click()
