@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl
 			MenuDropList.MenuItemsPadding = new BorderDouble(0);
 			MenuDropList.Margin = new BorderDouble(0);
 			MenuDropList.Padding = new BorderDouble(0);
-			MenuDropList.MenuItemsPadding = new BorderDouble(8, 6, 8, 6);
+			MenuDropList.MenuItemsPadding = new BorderDouble(8, 4);// 8, 6, 8, 6);
 
 			MenuDropList.DrawDirectionalArrow = false;
 			MenuDropList.MenuAsWideAsItems = false;

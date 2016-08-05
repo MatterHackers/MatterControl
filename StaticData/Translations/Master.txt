@@ -5308,3 +5308,6 @@ Translated:Update Required
 English:There is a required update available.
 Translated:There is a required update available.
 
+English:Import Printer
+Translated:Import Printer
+
