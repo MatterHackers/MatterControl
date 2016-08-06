@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private TextWidget navigationLabel;
 
 		FlowLayoutWidget breadCrumbAndActionBar;
-		private GuiWidget breadCrumbSpaceHolder;
 		private FolderBreadCrumbWidget breadCrumbWidget;
 		private List<MenuEnableData> actionMenuEnableData = new List<MenuEnableData>();
 
@@ -157,8 +156,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				libraryDataView = new LibraryDataView();
 				breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
-				breadCrumbSpaceHolder = new HorizontalSpacer();
-				breadCrumbSpaceHolder.Visible = false;
+				FlowLayoutWidget breadCrumbSpaceHolder = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+				};
+				breadCrumbSpaceHolder.AddChild(breadCrumbWidget);
 				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
 				libraryDataView.ChangedCurrentLibraryProvider += LibraryProviderChanged;
@@ -167,7 +169,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					HAnchor = HAnchor.ParentLeftRight,
 				};
 
-				breadCrumbAndActionBar.AddChild(breadCrumbWidget);
 				breadCrumbAndActionBar.AddChild(breadCrumbSpaceHolder);
 				breadCrumbAndActionBar.AddChild(CreateActionsMenu());
 
@@ -516,7 +517,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void enterEditModeButtonClick(object sender, EventArgs e)
 		{
 			breadCrumbWidget.Visible = false;
-			breadCrumbSpaceHolder.Visible = true;
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
 			libraryDataView.EditMode = true;
@@ -530,7 +530,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		void DoLeaveEditMode()
 		{
 			breadCrumbWidget.Visible = true;
-			breadCrumbSpaceHolder.Visible = false;
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
 			libraryDataView.EditMode = false;
