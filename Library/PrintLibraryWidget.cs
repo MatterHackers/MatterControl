@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private TextWidget navigationLabel;
 
 		FlowLayoutWidget breadCrumbAndActionBar;
+		private GuiWidget breadCrumbSpaceHolder;
 		private FolderBreadCrumbWidget breadCrumbWidget;
 		private List<MenuEnableData> actionMenuEnableData = new List<MenuEnableData>();
 
@@ -156,6 +157,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				libraryDataView = new LibraryDataView();
 				breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
+				breadCrumbSpaceHolder = new HorizontalSpacer();
+				breadCrumbSpaceHolder.Visible = false;
 				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
 				libraryDataView.ChangedCurrentLibraryProvider += LibraryProviderChanged;
@@ -165,7 +168,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				};
 
 				breadCrumbAndActionBar.AddChild(breadCrumbWidget);
-				breadCrumbAndActionBar.AddChild(new HorizontalSpacer());
+				breadCrumbAndActionBar.AddChild(breadCrumbSpaceHolder);
 				breadCrumbAndActionBar.AddChild(CreateActionsMenu());
 
 				allControls.AddChild(breadCrumbAndActionBar);
@@ -215,6 +218,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget CreateActionsMenu()
 		{
 			var actionMenu = new DropDownMenu("Action".Localize() + "... ");
+			actionMenu.AlignToRightEdge = true;
 			actionMenu.NormalColor = new RGBA_Bytes();
 			actionMenu.BorderWidth = 1;
 			actionMenu.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
@@ -512,6 +516,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void enterEditModeButtonClick(object sender, EventArgs e)
 		{
 			breadCrumbWidget.Visible = false;
+			breadCrumbSpaceHolder.Visible = true;
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
 			libraryDataView.EditMode = true;
@@ -525,6 +530,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		void DoLeaveEditMode()
 		{
 			breadCrumbWidget.Visible = true;
+			breadCrumbSpaceHolder.Visible = false;
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
 			libraryDataView.EditMode = false;
