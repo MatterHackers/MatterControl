@@ -562,7 +562,7 @@ namespace MatterHackers.MatterControl
 						string layerHeight;
 
 						bool isSlic3r = settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
-						if (isSlic3r)
+						//if (isSlic3r)
 						{
 							var activeSettings = ActiveSliceSettings.Instance;
 
@@ -580,10 +580,10 @@ namespace MatterHackers.MatterControl
 
 							UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 						}
-						else
+						//else
 						{
 							// looks like a cura file
-							throw new NotImplementedException("need to import from 'cure.ini' files");
+							//throw new NotImplementedException("need to import from 'cure.ini' files");
 						}
 						WizardWindow.Close();
 						break;
