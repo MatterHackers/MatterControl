@@ -86,7 +86,25 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> unorderedManufacturers, List<string> whitelist = null)
 		{
 			// Sort manufacturers by name
-			var manufacturers = unorderedManufacturers.OrderBy(k => k.Value);
+			List<KeyValuePair<string, string>> manufacturers = new List<KeyValuePair<string, string>>();
+			KeyValuePair<string, string> otherInfo = new KeyValuePair<string, string>(null, null);
+			foreach (var printer in unorderedManufacturers.OrderBy(k => k.Value))
+			{
+				if (printer.Value == "Other")
+				{
+					otherInfo = printer;
+				}
+				else
+				{
+					manufacturers.Add(printer);
+				}
+			}
+
+			if (otherInfo.Key != null)
+			{
+				// add it at the end
+				manufacturers.Add(otherInfo);
+			}
 
 			if (whitelist != null)
 			{
