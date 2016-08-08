@@ -239,8 +239,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			printLevelingData = data;
 			printerSettings.SetValue("print_leveling_data", JsonConvert.SerializeObject(data));
-			// and persist them to disk
-			printerSettings.Save();
 		}
 
 		public void DoPrintLeveling(bool doLeveling)
