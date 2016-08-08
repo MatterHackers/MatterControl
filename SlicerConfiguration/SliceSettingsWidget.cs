@@ -663,8 +663,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private static readonly RGBA_Bytes materialSettingBackgroundColor = new RGBA_Bytes(255, 127, 0, 108);
-		private static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 108);
 		private static readonly RGBA_Bytes qualitySettingBackgroundColor = new RGBA_Bytes(255, 255, 0, 108);
+		// blue user setting color
+		private static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 108);
+		// green user color
+		//private static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(0xff248f24);
 
 		private static string GetActiveValue(string slicerConfigName, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
@@ -1608,18 +1611,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			int size = (int)(16 * GuiWidget.DeviceScale);
 
-			restoreNormal = ColorCirle(size, new RGBA_Bytes(128, 128, 128));
+			restoreNormal = ColorCircle(size, new RGBA_Bytes(128, 128, 128));
 			if (OsInformation.OperatingSystem == OSType.Android)
 			{
-				restoreNormal = ColorCirle(size, new RGBA_Bytes(200, 0, 0));
+				restoreNormal = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
 			}
-			restoreHover = ColorCirle(size, new RGBA_Bytes(200, 0, 0));
-			restorePressed = ColorCirle(size, new RGBA_Bytes(255, 0, 0));
+			restoreHover = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
+			restorePressed = ColorCircle(size, new RGBA_Bytes(255, 0, 0));
 
 			return restoreNormal;
 		}
 
-		private static ImageBuffer ColorCirle(int size, RGBA_Bytes color)
+		private static ImageBuffer ColorCircle(int size, RGBA_Bytes color)
 		{
 			ImageBuffer imageBuffer = new ImageBuffer(size, size, 32, new BlenderBGRA());
 			Graphics2D normalGraphics = imageBuffer.NewGraphics2D();
