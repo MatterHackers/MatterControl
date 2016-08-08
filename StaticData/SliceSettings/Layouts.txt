@@ -308,7 +308,6 @@ Advanced
       Firmware
         gcode_flavor
         use_relative_e_distances
-        gcode_arcs
         g0
       Advanced
         use_firmware_retraction
