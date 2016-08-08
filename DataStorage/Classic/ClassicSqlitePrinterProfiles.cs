@@ -160,8 +160,11 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			var collections = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.PrinterId == printer.Id && v.Tag == "material");
 			foreach (var collection in collections)
 			{
-				var settingsDictionary = LoadSettings(collection);
-				layeredProfile.MaterialLayers.Add(new PrinterSettingsLayer(settingsDictionary));
+				layeredProfile.MaterialLayers.Add(new PrinterSettingsLayer(LoadSettings(collection))
+				{
+					LayerID = Guid.NewGuid().ToString(),
+					Name = collection.Name
+				});
 			}
 		}
 
@@ -170,8 +173,11 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			var collections = Datastore.Instance.dbSQLite.Table<SliceSettingsCollection>().Where(v => v.PrinterId == printer.Id && v.Tag == "quality");
 			foreach (var collection in collections)
 			{
-				var settingsDictionary = LoadSettings(collection);
-				layeredProfile.QualityLayers.Add(new PrinterSettingsLayer(settingsDictionary));
+				layeredProfile.QualityLayers.Add(new PrinterSettingsLayer(LoadSettings(collection))
+				{
+					LayerID = Guid.NewGuid().ToString(),
+					Name = collection.Name
+				});
 			}
 		}
 
