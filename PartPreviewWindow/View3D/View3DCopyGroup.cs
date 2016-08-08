@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// now set the selection to the new copy
 				SelectedMeshGroupIndex = MeshGroups.Count - 1;
-				undoBuffer.Add(new CopyUndoCommand(this, SelectedMeshGroupIndex));
+				UndoBuffer.Add(new CopyUndoCommand(this, SelectedMeshGroupIndex));
 			}
 		}
 	}
