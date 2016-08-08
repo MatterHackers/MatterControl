@@ -156,6 +156,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				libraryDataView = new LibraryDataView();
 				breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
+				FlowLayoutWidget breadCrumbSpaceHolder = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+				};
+				breadCrumbSpaceHolder.AddChild(breadCrumbWidget);
 				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
 				libraryDataView.ChangedCurrentLibraryProvider += LibraryProviderChanged;
@@ -164,8 +169,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					HAnchor = HAnchor.ParentLeftRight,
 				};
 
-				breadCrumbAndActionBar.AddChild(breadCrumbWidget);
-				breadCrumbAndActionBar.AddChild(new HorizontalSpacer());
+				breadCrumbAndActionBar.AddChild(breadCrumbSpaceHolder);
 				breadCrumbAndActionBar.AddChild(CreateActionsMenu());
 
 				allControls.AddChild(breadCrumbAndActionBar);
@@ -215,6 +219,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget CreateActionsMenu()
 		{
 			var actionMenu = new DropDownMenu("Action".Localize() + "... ");
+			actionMenu.AlignToRightEdge = true;
 			actionMenu.NormalColor = new RGBA_Bytes();
 			actionMenu.BorderWidth = 1;
 			actionMenu.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
