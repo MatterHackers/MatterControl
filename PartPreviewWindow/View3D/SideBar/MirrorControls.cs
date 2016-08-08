@@ -84,10 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (view3DWidget.SelectedMeshGroupIndex != -1)
 				{
-					view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
-					view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(-1, 1, 1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate();
+					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(0), () => MirrorOnAxis(0)));
 				}
 			};
 
@@ -98,10 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (view3DWidget.SelectedMeshGroupIndex != -1)
 				{
-					view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
-					view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(1, -1, 1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate();
+					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(1), () => MirrorOnAxis(1)));
 				}
 			};
 
@@ -112,15 +106,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (view3DWidget.SelectedMeshGroupIndex != -1)
 				{
-					view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
-					view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(1, 1, -1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate();
+					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(2), () => MirrorOnAxis(2)));
 				}
 			};
 			buttonPanel.AddChild(buttonContainer);
 			buttonPanel.AddChild(view3DWidget.GenerateHorizontalRule());
 			view3DWidget.textImageButtonFactory.FixedWidth = oldFixedWidth;
+		}
+
+		private void MirrorOnAxis(int axisIndex)
+		{
+			view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
+			Vector3 mirorAxis = Vector3.One;
+			mirorAxis[axisIndex] = -1;
+			view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(mirorAxis));
+			view3DWidget.PartHasBeenChanged();
+			Invalidate();
 		}
 
 		private void expandMirrorOptions_CheckedStateChanged(object sender, EventArgs e)

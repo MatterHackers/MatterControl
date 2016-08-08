@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PullMeshGroupDataFromAsynchLists();
 				List<Matrix4X4> postArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
 
-				undoBuffer.Add(new ArangeUndoCommand(this, preArrangeTarnsforms, postArrangeTarnsforms));
+				UndoBuffer.Add(new ArangeUndoCommand(this, preArrangeTarnsforms, postArrangeTarnsforms));
 
 				UnlockEditControls();
 			}

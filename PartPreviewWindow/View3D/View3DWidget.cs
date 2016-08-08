@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public partial class View3DWidget : PartPreview3DWidget
 	{
-		private UndoBuffer undoBuffer = new UndoBuffer();
+		public UndoBuffer UndoBuffer { get; private set; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 		private Action afterSaveCallback = null;
 		private List<MeshGroup> asyncMeshGroups = new List<MeshGroup>();
@@ -280,6 +280,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ungroupButton.Click += (sender, e) =>
 					{
 						UngroupSelectedMeshGroup();
+						UndoBuffer.ClearHistory();
 					};
 
 					Button groupButton = textImageButtonFactory.Generate("Group".Localize());
@@ -288,6 +289,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					groupButton.Click += (sender, e) =>
 					{
 						GroupSelectedMeshs();
+						UndoBuffer.ClearHistory();
 					};
 
 					Button alignButton = textImageButtonFactory.Generate("Align".Localize());
@@ -295,6 +297,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					alignButton.Click += (sender, e) =>
 					{
 						AlignToSelectedMeshGroup();
+						UndoBuffer.ClearHistory();
 					};
 
 					Button arrangeButton = textImageButtonFactory.Generate("Arrange".Localize());
@@ -497,7 +500,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				case Keys.Z:
 					if (keyEvent.Control)
 					{
-						undoBuffer.Undo();
+						UndoBuffer.Undo();
 						keyEvent.Handled = true;
 						keyEvent.SuppressKeyPress = true;
 					}
@@ -506,7 +509,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				case Keys.Y:
 					if (keyEvent.Control)
 					{
-						undoBuffer.Redo();
+						UndoBuffer.Redo();
 						keyEvent.Handled = true;
 						keyEvent.SuppressKeyPress = true;
 					}
@@ -1018,7 +1021,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (undoTransform != SelectedMeshGroupTransform)
 			{
-				undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+				UndoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 			}
 		}
 
@@ -1154,7 +1157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					UndoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1173,7 +1176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					UndoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1192,7 +1195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(SelectedMeshGroup, SelectedMeshGroupTransform, rotation);
 					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					UndoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1211,7 +1214,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Matrix4X4 undoTransform = SelectedMeshGroupTransform;
 					MakeLowestFaceFlat(SelectedMeshGroupIndex);
 					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-					undoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
+					UndoBuffer.Add(new TransformUndoCommand(this, SelectedMeshGroupIndex, undoTransform, SelectedMeshGroupTransform));
 					PartHasBeenChanged();
 					Invalidate();
 				}
@@ -1404,7 +1407,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonRightPanel.Width = 200;
 
 			// put in undo redo
-			if(false) // this will not be enabled until the new scene_bundle gets merged
+			if(true) // this will not be enabled until the new scene_bundle gets merged
 			{
 				FlowLayoutWidget undoRedoButtons = new FlowLayoutWidget()
 				{
@@ -1418,7 +1421,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				undoButton.Enabled = false;
 				undoButton.Click += (sender, e) =>
 				{
-					undoBuffer.Undo();
+					UndoBuffer.Undo();
 				};
 				undoRedoButtons.AddChild(undoButton);
 
@@ -1427,15 +1430,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				redoButton.Enabled = false;
 				redoButton.Click += (sender, e) =>
 				{
-					undoBuffer.Redo();
+					UndoBuffer.Redo();
 				};
 				undoRedoButtons.AddChild(redoButton);
 				buttonRightPanel.AddChild(undoRedoButtons);
 
-				undoBuffer.Changed += (sender, e) =>
+				UndoBuffer.Changed += (sender, e) =>
 				{
-					undoButton.Enabled = undoBuffer.UndoCount > 0;
-					redoButton.Enabled = undoBuffer.RedoCount > 0;
+					undoButton.Enabled = UndoBuffer.UndoCount > 0;
+					redoButton.Enabled = UndoBuffer.RedoCount > 0;
 				};
 				WhiteButtonFactory.FixedWidth = oldWidth;
 			}
@@ -1548,7 +1551,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& MeshGroups.Count > 1)
 			{
 				int removingIndex = SelectedMeshGroupIndex;
-				undoBuffer.Add(new DeleteUndoCommand(this, removingIndex));
+				UndoBuffer.Add(new DeleteUndoCommand(this, removingIndex));
 
 				MeshGroups.RemoveAt(removingIndex);
 				MeshGroupExtraData.RemoveAt(removingIndex);
