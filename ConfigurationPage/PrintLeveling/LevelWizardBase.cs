@@ -179,11 +179,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					throw new NotImplementedException();
 			}
 
-			printLevelWizardWindow.Closed += (sender, e) =>
-			{
-				ApplicationController.Instance.ReloadAll(null, null);
-			};
-
 			printLevelWizardWindow.ShowAsSystemWindow();
 			return printLevelWizardWindow;
 		}

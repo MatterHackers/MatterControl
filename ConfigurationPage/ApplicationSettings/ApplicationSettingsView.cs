@@ -402,7 +402,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var settings = ActiveSliceSettings.Instance;
 
 			// Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
-			if (settings?.GetValue<int>(SettingsKey.extruder_count) > 1 && settings.Helpers.ActiveSliceEngineType() != SlicingEngineTypes.MatterSlice)
+			if (settings?.GetValue<int>(SettingsKey.extruder_count) > 1 
+				&& settings.Helpers.ActiveSliceEngineType() != SlicingEngineTypes.MatterSlice)
 			{
 				settings.Helpers.ActiveSliceEngineType(SlicingEngineTypes.MatterSlice);
 				ApplicationController.Instance.ReloadAll(null, null);

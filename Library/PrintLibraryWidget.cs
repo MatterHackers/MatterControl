@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		private static CreateFolderWindow createFolderWindow = null;
 		private static RenameItemWindow renameItemWindow = null;
-		private static TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
 
@@ -88,10 +88,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		static PrintLibraryWidget currentPrintLibraryWidget;
 
+		public static void Reload()
+		{
+			currentPrintLibraryWidget.CloseAllChildren();
+			currentPrintLibraryWidget.LoadContent();
+		}
+
 		public PrintLibraryWidget()
 		{
 			currentPrintLibraryWidget = this;
-			SetDisplayAttributes();
+			LoadContent();
+			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
+			libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
+		}
+
+		private void LoadContent()
+		{
+			this.Padding = new BorderDouble(3);
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.AnchorAll();
 
 			textImageButtonFactory.borderWidth = 0;
 
@@ -181,8 +196,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AnchorAll();
 
 			this.AddChild(allControls);
-
-			AddHandlers();
 		}
 
 		private GuiWidget CreateSearchPannel()
@@ -488,12 +501,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private event EventHandler unregisterEvents;
 
-		private void AddHandlers()
-		{
-			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
-			libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
 			if (this.libraryDataView != null
@@ -613,13 +620,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				actionMenuEnableData[menuIndex].menuItemToChange.Enabled = enabledStateToSet;
 			}
-		}
-
-		private void SetDisplayAttributes()
-		{
-			this.Padding = new BorderDouble(3);
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.AnchorAll();
 		}
 
 		public int SortRowItemsOnIndex(LibraryRowItem x, LibraryRowItem y)
