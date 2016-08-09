@@ -47,7 +47,7 @@
     "first_layer_acceleration": "0",
     "first_layer_bed_temperature": "90",
     "first_layer_extrusion_width": "125%",
-    "first_layer_height": "175%",
+    "first_layer_height": "100%",
     "first_layer_speed": "35%",
     "first_layer_temperature": "230",
     "g0": "0",
@@ -82,7 +82,7 @@
     "min_print_speed": "15",
     "min_skirt_length": "4",
     "notes": "",
-    "nozzle_diameter": "0.4",
+    "nozzle_diameter": "0.25",
     "only_retract_when_crossing_perimeters": "1",
     "ooze_prevention": "0",
     "output_filename_format": "[input_filename_base].gcode",
@@ -229,7 +229,6 @@
       "fill_density": "0.35",
       "first_layer_speed": "20",
       "infill_speed": "70",
-      "layer_height": "0.25",
       "max_fan_speed": "0",
       "min_fan_speed": "0",
       "perimeter_speed": "70",
@@ -246,7 +245,6 @@
       "fill_density": "0.35",
       "first_layer_speed": "20",
       "infill_speed": "70",
-      "layer_height": "0.25",
       "max_fan_speed": "0",
       "min_fan_speed": "0",
       "perimeter_speed": "70",
@@ -468,18 +466,12 @@
       "external_perimeter_speed": "40",
       "filament_diameter": "1.59",
       "infill_speed": "40",
-      "layer_height": "0.25",
       "perimeter_speed": "40",
       "temperature": "240",
       "z_offset": "0.05"
     }
   ],
   "QualityLayers": [
-    {
-      "layer_name": "Coarse",
-      "layer_id": "88a7d208-efbe-44ae-bbb0-74ee2adeb2f4",
-      "layer_height": "0.3"
-    },
     {
       "layer_name": "Fine",
       "layer_id": "7061a86c-e917-471b-80c9-d5ffdecd0cba",

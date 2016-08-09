@@ -32,7 +32,7 @@ namespace MatterControl.Tests.MatterControl
 						   select new PrinterConfig
 						   {
 							   PrinterName = printerFile.Name,
-							   Oem = printerFile.Directory.Parent.Name,
+							   Oem = printerFile.Directory.Name,
 							   ConfigPath = printerFile.FullName,
 							   RelativeFilePath = printerFile.FullName.Substring(printerSettingsDirectory.Length + 1),
 							   PrinterSettings = PrinterSettings.LoadFile(printerFile.FullName)
@@ -289,7 +289,7 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test, Category("FixNeeded")]
+		[Test]
 		public void FirstLayerHeightLessThanNozzleDiameterXExtrusionMultiplier()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
@@ -320,22 +320,22 @@ namespace MatterControl.Tests.MatterControl
 				{
 					float firstLayerHeight = ValueOrPercentageOf(firstLayerHeightString, layerHeight);
 
-					double minimumLayerHeight = firstLayerExtrusionWidth * 0.85;
+					double maximumLayerHeight = firstLayerExtrusionWidth * 0.85;
 
 					// TODO: Remove once validated and resolved
-					if (firstLayerHeight >= minimumLayerHeight)
+					if (firstLayerHeight >= maximumLayerHeight)
 					{
 						printer.RuleViolated = true;
 						return;
 					}
 
-					Assert.Less(firstLayerHeight, minimumLayerHeight, "[first_layer_height] must be less than [firstLayerExtrusionWidth]: " + printer.RelativeFilePath);
+					Assert.Less(firstLayerHeight, maximumLayerHeight, "[first_layer_height] must be less than [firstLayerExtrusionWidth]: " + printer.RelativeFilePath);
 				}
 				
 			});
 		}
 
-		[Test, Category("FixNeeded")]
+		[Test]
 		public void LayerHeightLessThanNozzleDiameter()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
@@ -348,16 +348,16 @@ namespace MatterControl.Tests.MatterControl
 				float nozzleDiameter = float.Parse(settings.GetValue(SettingsKey.nozzle_diameter));
 				float layerHeight = float.Parse(settings.GetValue(SettingsKey.layer_height));
 
-				double minimumLayerHeight = nozzleDiameter * 0.85;
+				double maximumLayerHeight = nozzleDiameter * 85;
 
 				// TODO: Remove once validated and resolved
-				if (layerHeight >= minimumLayerHeight)
+				if (layerHeight >= maximumLayerHeight)
 				{
 					printer.RuleViolated = true;
 					return;
 				}
 
-				Assert.Less(layerHeight, minimumLayerHeight, "[layer_height] must be less than [minimumLayerHeight]: " + printer.RelativeFilePath);
+				Assert.Less(layerHeight, maximumLayerHeight, "[layer_height] must be less than [minimumLayerHeight]: " + printer.RelativeFilePath);
 			});
 		}
 
@@ -396,13 +396,13 @@ namespace MatterControl.Tests.MatterControl
 			});
 		}
 
-		[Test, Category("FixNeeded")]
+		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
 				// Make exception for extruder assignment on 3D Stuffmaker slice files
-				if (printer.Oem == "3D Stuffmaker" && printer.RelativeFilePath.IndexOf(".slice", StringComparison.OrdinalIgnoreCase) != -1)
+				if (printer.Oem == "3D Stuffmaker")
 				{
 					return;
 				}
