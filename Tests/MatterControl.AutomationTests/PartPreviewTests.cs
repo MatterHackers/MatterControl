@@ -313,19 +313,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					int meshCountAfterRemove = view3D.MeshGroups.Count();
 					resultsHarness.AddTestResult(meshCountAfterRemove == 5);
 
-					// TODO: undo redo have been removed until 2.0
-					if (false)
-					{
-						testRunner.ClickByName("3D View Undo");
-						System.Threading.Thread.Sleep(2000);
-						int meshCountAfterUndo = view3D.MeshGroups.Count();
-						resultsHarness.AddTestResult(meshCountAfterUndo == 6);
+					testRunner.ClickByName("3D View Undo");
+					System.Threading.Thread.Sleep(2000);
+					int meshCountAfterUndo = view3D.MeshGroups.Count();
+					resultsHarness.AddTestResult(meshCountAfterUndo == 6);
 
-						testRunner.ClickByName("3D View Redo");
-						System.Threading.Thread.Sleep(2000);
-						int meshCountAfterRedo = view3D.MeshGroups.Count();
-						resultsHarness.AddTestResult(meshCountAfterRedo == 5);
-					}
+					testRunner.ClickByName("3D View Redo");
+					System.Threading.Thread.Sleep(2000);
+					int meshCountAfterRedo = view3D.MeshGroups.Count();
+					resultsHarness.AddTestResult(meshCountAfterRedo == 5);
 
 					partPreview.CloseOnIdle();
 					testRunner.Wait(.1);
@@ -337,7 +333,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 8); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 10); // make sure we ran all our tests
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]

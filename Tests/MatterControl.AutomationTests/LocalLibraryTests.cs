@@ -424,11 +424,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type(rowItemPath);
 					testRunner.Type("{Enter}");
 
+					testRunner.Wait(1);
 					string rowItemOne = "Row Item " + "Calibration - Box";
-					testRunner.ClickByName(rowItemOne);
+					testRunner.ClickByName(rowItemOne, 1);
 
 					string rowItemTwo = "Row Item " + "Fennec Fox";
-					testRunner.ClickByName(rowItemTwo);
+					testRunner.ClickByName(rowItemTwo, 1);
 
 					testRunner.Wait(1);
 
