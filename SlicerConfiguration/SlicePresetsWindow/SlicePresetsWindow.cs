@@ -136,10 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			presetNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
 			{
-				if (!this.Focused && this.Text != initialPresetName)
-				{
-					presetsContext.PersistenceLayer.Name = presetNameInput.Text;
-				}
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.layer_name, presetNameInput.Text, presetsContext.PersistenceLayer);
 			};
 
 			topRow.AddChild(presetNameInput);
@@ -197,7 +194,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				UiThread.RunOnIdle(() =>
 				{
 					string sanitizedName = numberMatch.Replace(presetNameInput.Text, "").Trim();
-					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault("layer_name")));
+					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
 
 					var clonedLayer = presetsContext.PersistenceLayer.Clone();
 					clonedLayer.Name = newProfileName;

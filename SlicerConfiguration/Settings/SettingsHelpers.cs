@@ -89,6 +89,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
 		public const string oem_profile_token = nameof(oem_profile_token);
+		public const string layer_name = nameof(layer_name);
 	};
 
 	public class SettingsHelpers

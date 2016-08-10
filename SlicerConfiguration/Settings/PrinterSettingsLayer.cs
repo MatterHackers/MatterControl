@@ -73,11 +73,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return ValueOrDefault("layer_name");
+				return ValueOrDefault(SettingsKey.layer_name);
 			}
 			set
 			{
-				this["layer_name"] = value;
+				this[SettingsKey.layer_name] = value;
 			}
 		}
 
