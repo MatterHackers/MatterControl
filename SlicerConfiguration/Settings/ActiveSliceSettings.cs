@@ -159,18 +159,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static async Task SwitchToProfile(string printerID)
 		{
-			var profile = ProfileManager.LoadProfile(printerID);
-
 			ProfileManager.Instance.SetLastProfile(printerID);
-
-			if (profile == null)
-			{
-				var printerInfo = ProfileManager.Instance[printerID];
-
-				profile = await ApplicationController.GetPrinterProfileAsync(printerInfo, null);
-			}
-
-			Instance = profile ?? ProfileManager.LoadEmptyProfile();
+			Instance = (await ProfileManager.LoadProfileAsync(printerID)) ?? ProfileManager.LoadEmptyProfile();
 		}
 
 		private static void OnActivePrinterChanged(EventArgs e)
