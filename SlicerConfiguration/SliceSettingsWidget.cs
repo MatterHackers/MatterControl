@@ -1213,8 +1213,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
 						{
 							string convertedNewLines = sliceSettingValue.Replace("\\n", "\n");
-							string pathToFont = StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg"));
-							var stringEdit = new MHTextEditWidget(convertedNewLines, pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndexForItem++, typeFace: TypeFace.LoadFrom(pathToFont))
+							var stringEdit = new MHTextEditWidget(convertedNewLines, pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndexForItem++, typeFace: ApplicationController.MonoSpacedTypeFace)
 							{
 								HAnchor = HAnchor.ParentLeftRight,
 							};

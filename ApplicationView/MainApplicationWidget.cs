@@ -48,6 +48,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
+	using Agg.Font;
 	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
 
 	public abstract class ApplicationView : GuiWidget
@@ -216,6 +217,22 @@ namespace MatterHackers.MatterControl
 			{
 				LoginAction?.Invoke();
 			}
+		}
+
+		private static TypeFace monoSpacedTypeFace = null;
+		public static TypeFace MonoSpacedTypeFace
+		{
+			get
+			{
+				if (monoSpacedTypeFace == null)
+				{
+					monoSpacedTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
+				}
+
+				return monoSpacedTypeFace;
+			}
+
+			private set { }
 		}
 
 		/// <summary>

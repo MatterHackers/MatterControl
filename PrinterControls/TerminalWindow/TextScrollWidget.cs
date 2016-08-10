@@ -91,8 +91,7 @@ namespace MatterHackers.MatterControl
 
 		public TextScrollWidget(List<string> sourceLines)
 		{
-			string pathToFont = StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg"));
-			printer = new TypeFacePrinter("", new StyledTypeFace(TypeFace.LoadFrom(pathToFont), 12));
+			printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, 12));
 			printer.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines;
