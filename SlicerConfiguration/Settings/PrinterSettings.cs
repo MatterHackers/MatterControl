@@ -216,96 +216,90 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// User settings overrides
 		/// </summary>
 		public PrinterSettingsLayer UserLayer { get; } = new PrinterSettingsLayer();
-		//
-		public static PrinterSettings LoadFile(string printerProfilePath)
+
+		public static PrinterSettings LoadFile(string printerProfilePath, bool performMigrations = false)
 		{
-			JObject jObject = null;
-			try
+			if (performMigrations)
 			{
-				jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
-			}
-			catch
-			{
-				string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath);
-				var profile = ProfileManager.Instance[profileKey];
+				JObject jObject = null;
 
-				if (MatterControlApplication.IsLoading)
+				try
 				{
-					UiThread.RunOnIdle(() =>
-				   {
-					   bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
-					   if (userIsLoggedIn && profile != null)
-					   {
-						   if (profile != null)
-						   {
-							   RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert(profile));
-						   }
-						   else
-						   {
-							   RevertToOemProfile(printerProfilePath);
-							   WarnAboutRevert(profile);
-						   }
-					   }
-				   }, 4);
-
-					return ProfileManager.LoadEmptyProfile();
+					jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
 				}
-				else
+				catch
 				{
-					bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
-					if (userIsLoggedIn && profile != null)
-					{
-						RevertToMostRecentProfile(profile).ContinueWith((t) => WarnAboutRevert(profile));
-						return ProfileManager.LoadEmptyProfile();
-					}
-					else
-					{
-						WarnAboutRevert(profile);
-						return RevertToOemProfile(printerProfilePath);
-					}
+					return null;
+				}
+
+				int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? PrinterSettings.LatestVersion;
+				if (documentVersion < PrinterSettings.LatestVersion)
+				{
+					printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
 				}
 			}
 
-			int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? PrinterSettings.LatestVersion;
-			if (documentVersion < PrinterSettings.LatestVersion)
-			{
-				printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
-			}
-
-			// Reload the document with the new schema
 			try
 			{
 				return JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath));
 			}
 			catch
 			{
-				return RevertToOemProfile(printerProfilePath);
+				return null;
 			}
 		}
 
-		static bool warningOpen = false;
+		public async static Task<PrinterSettings> RecoverProfile(PrinterInfo printerInfo)
+		{
+			bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
+			if (userIsLoggedIn && printerInfo != null)
+			{
+				// Attempt to load from MCWS history
+				var printerSettings = await GetMostRecentProfile(printerInfo);
+				if (printerSettings == null)
+				{
+					// Fall back to OemProfile defaults if load from history fails
+					printerSettings = RestoreFromOemProfile(printerInfo);
+				}
+					
+				if (printerSettings != null)
+				{
+					// Persist any profile recovered above as the current
+					printerSettings.Save();
+
+					// Update active instance without calling ReloadAll
+					ActiveSliceSettings.RefreshActiveInstance(printerSettings);
+
+					WarnAboutRevert(printerInfo);
+				}
+
+				return printerSettings;
+			}
+
+			return null;
+		}
+
+		private static bool warningWindowOpen = false;
+
 		public static void WarnAboutRevert(PrinterInfo profile)
 		{ 
-			if (!warningOpen)
+			if (!warningWindowOpen)
 			{
-				warningOpen = true;
+				warningWindowOpen = true;
 				UiThread.RunOnIdle(() =>
 				{
 					StyledMessageBox.ShowMessageBox((clicedOk) => 
 					{
-						warningOpen = false;
+						warningWindowOpen = false;
 					}, String.Format("The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize(), profile.Make, profile.Model), "Recovered printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
 				});
 			}
 		}
 
-		public static PrinterSettings RevertToOemProfile(string printerProfilePath)
+		public static PrinterSettings RestoreFromOemProfile(PrinterInfo profile)
 		{
-			string profileKey = Path.GetFileNameWithoutExtension(printerProfilePath);
-			var profile = ProfileManager.Instance[profileKey];
-			
 			string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
-			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles") + "\\" + publicProfileDeviceToken + ProfileManager.ProfileExtension;
+			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", publicProfileDeviceToken + ProfileManager.ProfileExtension);
 
 			var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
 			oemProfile.ID = profile.ID;
@@ -315,27 +309,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			oemProfile.Helpers.SetComPort(profile.ComPort);
 			oemProfile.Save();
 
+			//WarnAboutRevert(profile);
+
 			return oemProfile;
 		}
 
-		private static async Task RevertToMostRecentProfile(PrinterInfo profile)
+		private static async Task<PrinterSettings> GetMostRecentProfile(PrinterInfo printerInfo)
 		{
-			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory(profile.DeviceToken);
+			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory(printerInfo.DeviceToken);
 			if (recentProfileHistoryItems != null)
 			{
 				string profileToken = recentProfileHistoryItems.OrderByDescending(kvp => kvp.Key).FirstOrDefault().Value;
 
-				// Download the specified json profile and persist and activate if successful
-				var printerProfile = await ApplicationController.GetPrinterProfileAsync(profile, profileToken);
-				if (printerProfile != null)
-				{
-					// Persist downloaded profile
-					printerProfile.Save();
-
-					// Update active instance without calling ReloadAll
-					ActiveSliceSettings.RefreshActiveInstance(printerProfile);
-				}
+				// Download and return the specified json profile
+				return await ApplicationController.GetPrinterProfileAsync(printerInfo, profileToken);
 			}
+
+			return null;
 		}
 
 		/// <summary>
