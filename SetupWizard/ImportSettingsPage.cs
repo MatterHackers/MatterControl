@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl
 
 		HashSet<string> skipKeys = new HashSet<string>
 		{
-			"layer_name",
+			SettingsKey.layer_name,
 			"layer_id",
 		};
 
@@ -225,9 +225,9 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (!isMergeIntoUserLayer && material.ContainsKey("layer_name"))
+				if (!isMergeIntoUserLayer && material.ContainsKey(SettingsKey.layer_name))
 				{
-					destinationLayer["layer_name"] = material["layer_name"];
+					destinationLayer[SettingsKey.layer_name] = material[SettingsKey.layer_name];
 				}
 			}
 			else if (selectedQuality > -1)
@@ -242,9 +242,9 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (!isMergeIntoUserLayer && quality.ContainsKey("layer_name"))
+				if (!isMergeIntoUserLayer && quality.ContainsKey(SettingsKey.layer_name))
 				{
-					destinationLayer["layer_name"] = quality["layer_name"];
+					destinationLayer[SettingsKey.layer_name] = quality[SettingsKey.layer_name];
 				}
 			}
 			else
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl
 			string successMessage = importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath));
 			if (!isMergeIntoUserLayer)
 			{
-				string sourceName = isMergeIntoUserLayer ? Path.GetFileNameWithoutExtension(settingsFilePath) : destinationLayer["layer_name"];
+				string sourceName = isMergeIntoUserLayer ? Path.GetFileNameWithoutExtension(settingsFilePath) : destinationLayer[SettingsKey.layer_name];
 				successMessage = ImportSettingsPage.importSettingSuccessMessage.FormatWith(sourceName, sectionName);
 			}
 
@@ -464,7 +464,7 @@ namespace MatterHackers.MatterControl
 				{
 					case ProfileManager.ProfileExtension:
 						newLayer = new PrinterSettingsLayer();
-						newLayer["layer_name"] = Path.GetFileNameWithoutExtension(settingsFilePath);
+						newLayer[SettingsKey.layer_name] = Path.GetFileNameWithoutExtension(settingsFilePath);
 
 						if (newQualityPresetButton.Checked)
 						{

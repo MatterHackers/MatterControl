@@ -56,6 +56,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PresetSelectorWidget(string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex)
 			: base(FlowDirection.TopToBottom)
 		{
+			SliceSettingsWidget.SettingChanged.RegisterEvent((s, e) =>
+			{
+				StringEventArgs stringEvent = e as StringEventArgs;
+				if (stringEvent != null
+				&& stringEvent.Data == SettingsKey.layer_name)
+				{
+					RebuildDropDownList();
+				}
+			}, ref unregisterEvents);
+
 			this.extruderIndex = extruderIndex;
 			this.layerType = layerType;
 			
@@ -318,6 +328,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		
 			return dropDownList;
+		}
+
+		private event EventHandler unregisterEvents;
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
 		}
 
 		private void SettingsLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

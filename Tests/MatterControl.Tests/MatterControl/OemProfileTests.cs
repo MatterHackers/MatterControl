@@ -189,9 +189,9 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				if (settings.OemLayer.ContainsKey("layer_name"))
+				if (settings.OemLayer.ContainsKey(SettingsKey.layer_name))
 				{
-					if (settings.OemLayer["layer_name"].ToUpper() == "ABS")
+					if (settings.OemLayer[SettingsKey.layer_name].ToUpper() == "ABS")
 					{
 						double absDensity = settings.GetValue<double>(SettingsKey.filament_density);
 						if (absDensity != 1.04)
@@ -199,7 +199,7 @@ namespace MatterControl.Tests.MatterControl
 							Assert.Fail("[filament_density] value should be set to ABS 1.04: " + printer.RelativeFilePath);
 						}
 					}
-					else if (settings.OemLayer["layer_name"].ToUpper() == "PLA")
+					else if (settings.OemLayer[SettingsKey.layer_name].ToUpper() == "PLA")
 					{
 						double absDensity = settings.GetValue<double>(SettingsKey.filament_density);
 						if (absDensity != 1.24)

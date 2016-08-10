@@ -136,10 +136,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			presetNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
 			{
-				if (!this.Focused && this.Text != initialPresetName)
-				{
-					presetsContext.PersistenceLayer.Name = presetNameInput.Text;
-				}
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.layer_name, presetNameInput.Text, presetsContext.PersistenceLayer);
+				SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.layer_name));
 			};
 
 			topRow.AddChild(presetNameInput);
@@ -197,7 +195,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				UiThread.RunOnIdle(() =>
 				{
 					string sanitizedName = numberMatch.Replace(presetNameInput.Text, "").Trim();
-					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault("layer_name")));
+					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
 
 					var clonedLayer = presetsContext.PersistenceLayer.Clone();
 					clonedLayer.Name = newProfileName;
@@ -226,16 +224,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Button closeButton = buttonFactory.Generate("Close".Localize());
 			closeButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					if (initialPresetName != presetsContext.PersistenceLayer.Name)
-					{
-						// TODO: If we get to the point where we refresh rather than reload, we need
-						// to rebuild the target droplist to display the new name
-						ApplicationController.Instance.ReloadAdvancedControlsPanel();
-					}
-					this.Close();
-				});
+				this.CloseOnIdle();
 			};
 
 			container.AddChild(duplicateButton);
