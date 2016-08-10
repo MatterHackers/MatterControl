@@ -431,11 +431,18 @@ namespace MatterHackers.MatterControl
 		{
 			if(newPrinterButton.Checked)
 			{
-				ProfileManager.ImportFromExisting(settingsFilePath);
-				WizardWindow.ChangeToPage(new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath)))
+				if(ProfileManager.ImportFromExisting(settingsFilePath))
 				{
-					WizardWindow = this.WizardWindow,
-				});
+					WizardWindow.ChangeToPage(new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath)))
+					{
+						WizardWindow = this.WizardWindow,
+					});
+				}
+				else
+				{
+					displayFailedToImportMessage(settingsFilePath);
+				}
+				
 			}
 			else if(mergeButton.Checked)
 			{
@@ -487,6 +494,7 @@ namespace MatterHackers.MatterControl
 						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 						string layerHeight;
 
+						bool containsValidSetting = false;
 						bool isSlic3r = importType == ".slice" || settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
 						if (isSlic3r)
 						{
@@ -502,35 +510,49 @@ namespace MatterHackers.MatterControl
 
 							foreach (var item in settingsToImport)
 							{
-								string currentValue = ActiveSliceSettings.Instance.GetValue(item.Key, baseAndOEMCascade).Trim();
-								// Compare the value to import to the layer cascade value and only set if different
-								if (currentValue != item.Value)
+								if(ActiveSliceSettings.Instance.Contains(item.Key))
 								{
-									newLayer[item.Key] = item.Value;
+									containsValidSetting = true;
+									string currentValue = ActiveSliceSettings.Instance.GetValue(item.Key, baseAndOEMCascade).Trim();
+									// Compare the value to import to the layer cascade value and only set if different
+									if (currentValue != item.Value)
+									{
+										newLayer[item.Key] = item.Value;
+									}
 								}
+
 							}
 
-							if (newMaterialPresetButton.Checked)
+							if(containsValidSetting)
 							{
-								ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
+								if (newMaterialPresetButton.Checked)
+								{
+									ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
+								}
+								else
+								{
+									ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+								}
+
+								ActiveSliceSettings.Instance.Save();
+
+								WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), sectionName))
+								{
+									WizardWindow = this.WizardWindow,
+								});
 							}
 							else
 							{
-								ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+								displayFailedToImportMessage(settingsFilePath);
 							}
 
-							ActiveSliceSettings.Instance.Save();
-
-							WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), sectionName))
-							{
-								WizardWindow = this.WizardWindow,
-							});
 						}
 						else
 						{
+							displayFailedToImportMessage(settingsFilePath);
 							// looks like a cura file
 #if DEBUG
-							throw new NotImplementedException("need to import from 'cure.ini' files");
+							//throw new NotImplementedException("need to import from 'cure.ini' files");
 #endif
 						}
 						break;
@@ -562,23 +584,35 @@ namespace MatterHackers.MatterControl
 						string layerHeight;
 
 						bool isSlic3r = settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
+						bool containsValidSetting = false;
 						//if (isSlic3r)
 						{
 							var activeSettings = ActiveSliceSettings.Instance;
 
 							foreach (var item in settingsToImport)
 							{
-								// Compare the value to import to the layer cascade value and only set if different
-								string currentValue = activeSettings.GetValue(item.Key, null).Trim();
-								if (currentValue != item.Value)
+								if(activeSettings.Contains(item.Key))
 								{
-									activeSettings.UserLayer[item.Key] = item.Value;
+									containsValidSetting = true;
+									string currentValue = activeSettings.GetValue(item.Key, null).Trim();
+									// Compare the value to import to the layer cascade value and only set if different
+									if (currentValue != item.Value)
+									{
+										activeSettings.UserLayer[item.Key] = item.Value;
+									}
 								}
+								
 							}
+							if(containsValidSetting)
+							{
+								activeSettings.Save();
 
-							activeSettings.Save();
-
-							UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+								UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+							}
+							else
+							{
+								displayFailedToImportMessage(settingsFilePath);
+							}
 						}
 						//else
 						{
@@ -597,6 +631,11 @@ namespace MatterHackers.MatterControl
 
 			}
 			Invalidate();
+		}
+
+		private void displayFailedToImportMessage(string settingsFilePath)
+		{
+			StyledMessageBox.ShowMessageBox(null, "Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 		}
 	}
 }
