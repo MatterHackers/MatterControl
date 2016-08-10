@@ -140,8 +140,7 @@ namespace MatterHackers.MatterControl
 				manualEntryLayout.BackgroundColor = this.backgroundColor;
 				manualEntryLayout.HAnchor = HAnchor.ParentLeftRight;
 				{
-					string pathToFont = StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg"));
-					manualCommandTextEdit = new MHTextEditWidget("", typeFace: TypeFace.LoadFrom(pathToFont));
+					manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace);
 					//manualCommandTextEdit.BackgroundColor = RGBA_Bytes.White;
 					manualCommandTextEdit.Margin = new BorderDouble(right: 3);
 					manualCommandTextEdit.HAnchor = HAnchor.ParentLeftRight;

@@ -127,18 +127,17 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		internal struct MeshSelectInfo
 		{
-			internal bool downOnPart;
-			internal PlaneShape hitPlane;
 			internal Vector3 planeDownHitPos;
 			internal Vector3 lastMoveDelta;
 		}
 
 		private TypeFace brailTypeFace;
-		private TypeFace boldTypeFace;
+		private TypeFace monoSpacedTypeFace;
 
 		public View3DBrailleBuilder(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape)
 		{
-			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
+			monoSpacedTypeFace = ApplicationController.MonoSpacedTypeFace;
+
 			brailTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
 
 			MeshGroupExtraData = new List<PlatingMeshGroupData>();
@@ -374,7 +373,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			TypeFacePrinter brailPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(brailTypeFace, 12));
 
 			int firstNewCharacter = 0;
-			StyledTypeFace boldStyled = new StyledTypeFace(boldTypeFace, 12);
+			StyledTypeFace boldStyled = new StyledTypeFace(monoSpacedTypeFace, 12);
 
 			if (includeText.Checked)
 			{
