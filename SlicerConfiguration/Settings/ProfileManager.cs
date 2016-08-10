@@ -124,7 +124,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Load the last selected printer profile or an empty profile
 			ActiveSliceSettings.Instance = Instance.LoadLastProfile() ?? LoadEmptyProfile();
 
-
 			// In either case, wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
 		}
@@ -206,7 +205,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettings LoadLastProfile()
 		{
-			return LoadProfile(this.LastProfileID);
+			return LoadProfileAsync(this.LastProfileID);
 		}
 
 		public void SetLastProfile(string printerID)
@@ -228,15 +227,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
-		/// Loads the specified PrinterProfile
+		/// Loads the specified PrinterProfile, performing recovery options if required
 		/// </summary>
 		/// <param name="profileID">The profile ID to load</param>
 		/// <param name="useActiveInstance">Return the in memory instance if already loaded. Alternatively, reload from disk</param>
 		/// <returns></returns>
-		public static PrinterSettings LoadProfile(string profileID, bool useActiveInstance = true)
+		public static async Task<PrinterSettings> LoadProfileAsync(string profileID, bool useActiveInstance = true)
 		{
+			var printerInfo = ProfileManager.Instance[profileID];
+
 			// Only load profiles by ID that are defined in the profiles document
-			if (ProfileManager.Instance[profileID] == null)
+			if (printerInfo == null)
 			{
 				return null;
 			}
@@ -246,19 +247,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return ActiveSliceSettings.Instance;
 			}
 
-			string profilePath = Path.Combine(ProfilesPath, profileID +  ProfileManager.ProfileExtension);
-			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
-		}
+			PrinterSettings printerSettings;
 
-		internal static PrinterSettings LoadProfileFromDisk(string profilePath)
-		{
-			if (File.Exists(profilePath))
+			string profilePath = Path.Combine(ProfilesPath, profileID +  ProfileManager.ProfileExtension);
+			if (!File.Exists(profilePath))
 			{
-				return PrinterSettings.LoadFile(profilePath);
+				// Attempt to load from MCWS if missing on disk
+				printerSettings = await ApplicationController.GetPrinterProfileAsync(printerInfo, null);
+				if (printerSettings != null)
+				{
+					// If successful, persist downloaded profile
+					printerSettings.Save();
+				}
+
+				return printerSettings;
+			}
+
+			// LoadOrRecoverProfile - if exists on disk, attempt to load or fall back using recovery logic
+			printerSettings = PrinterSettings.LoadFile(profilePath, performMigrations: true);
+			if (printerSettings != null)
+			{
+				return printerSettings;
 			}
 			else
 			{
-				return LoadEmptyProfile();
+				int delayDuration = MatterControlApplication.IsLoading ? 4 : 0;
+
+				// Schedule a recovery rather than blocking until the MCWS and/or OemProfile restore complete
+				UiThread.RunOnIdle(() => PrinterSettings.RecoverProfile(printerInfo), delayDuration);
+
+				// Return a short lived profile which should be reset after recovery
+				return ProfileManager.LoadEmptyProfile();
 			}
 		}
 
@@ -279,7 +298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			switch (importType)
 			{
 				case ProfileManager.ProfileExtension:
-					var profile = ProfileManager.LoadProfileFromDisk(settingsFilePath);
+					var profile = PrinterSettings.LoadFile(settingsFilePath);
 					profile.ID = printerInfo.ID;
 					profile.ClearValue(SettingsKey.device_token);
 					printerInfo.DeviceToken = "";

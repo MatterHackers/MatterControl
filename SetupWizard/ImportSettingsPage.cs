@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl
 			this.destinationLayer = destinationLayer;
 			this.sectionName = sectionName;
 
+			// TODO: Need to handle load failures for import attempts
 			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
 
 			this.headerLabel.Text = "Select What to Import".Localize();
