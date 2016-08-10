@@ -444,23 +444,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool MarkedForDelete { get; set; } = false;
 		public string SHA1 { get; set; }
 
-		public void ChangeID(string newID)
+		public void ChangeID(string deviceToken)
 		{
 			if (ActiveSliceSettings.Instance.ID == this.ID)
 			{
-				ActiveSliceSettings.Instance.ID = newID;
+				ActiveSliceSettings.Instance.ID = deviceToken;
 			}
 
 			string existingProfile = ProfilePath;
 			if (File.Exists(existingProfile))
 			{
-				this.ID = newID;
+				this.ID = deviceToken;
 				File.Move(existingProfile, ProfilePath);
 			}
 
-			var profile = ProfileManager.LoadProfile(newID);
-			profile.ID = newID;
-			profile.SetValue(SettingsKey.device_token, newID);
+			var profile = PrinterSettings.LoadFile(ProfilePath);
+			profile.ID = deviceToken;
+			profile.SetValue(SettingsKey.device_token, deviceToken);
 			ProfileManager.Instance.Save();
 		}
 
