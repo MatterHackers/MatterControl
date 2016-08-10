@@ -137,6 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			presetNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
 			{
 				ActiveSliceSettings.Instance.SetValue(SettingsKey.layer_name, presetNameInput.Text, presetsContext.PersistenceLayer);
+				SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.layer_name));
 			};
 
 			topRow.AddChild(presetNameInput);
@@ -223,16 +224,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Button closeButton = buttonFactory.Generate("Close".Localize());
 			closeButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					if (initialPresetName != presetsContext.PersistenceLayer.Name)
-					{
-						// TODO: If we get to the point where we refresh rather than reload, we need
-						// to rebuild the target droplist to display the new name
-						ApplicationController.Instance.ReloadAdvancedControlsPanel();
-					}
-					this.Close();
-				});
+				this.CloseOnIdle();
 			};
 
 			container.AddChild(duplicateButton);
