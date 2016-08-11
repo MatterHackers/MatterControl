@@ -594,7 +594,7 @@ namespace MatterHackers.MatterControl
 								if(activeSettings.Contains(item.Key))
 								{
 									containsValidSetting = true;
-									string currentValue = activeSettings.GetValue(item.Key, null).Trim();
+									string currentValue = activeSettings.GetValue(item.Key).Trim();
 									// Compare the value to import to the layer cascade value and only set if different
 									if (currentValue != item.Value)
 									{

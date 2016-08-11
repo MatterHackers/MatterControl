@@ -379,8 +379,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			foreach (PrinterSettingsLayer layer in layerCascade)
 			{
-				string value;
-				if (layer.TryGetValue(sliceSetting, out value))
+				if (layer.ContainsKey(sliceSetting))
 				{
 					return true;
 				}
