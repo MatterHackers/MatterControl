@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (userIsLoggedIn && printerInfo != null)
 			{
 				// Attempt to load from MCWS history
-				var printerSettings = await GetMostRecentProfile(printerInfo);
+				var printerSettings = await GetFirstValidHistoryItem(printerInfo);
 				if (printerSettings == null)
 				{
 					// Fall back to OemProfile defaults if load from history fails
@@ -314,15 +314,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return oemProfile;
 		}
 
-		private static async Task<PrinterSettings> GetMostRecentProfile(PrinterInfo printerInfo)
+		private static async Task<PrinterSettings> GetFirstValidHistoryItem(PrinterInfo printerInfo)
 		{
 			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory(printerInfo.DeviceToken);
 			if (recentProfileHistoryItems != null)
 			{
-				string profileToken = recentProfileHistoryItems.OrderByDescending(kvp => kvp.Key).FirstOrDefault().Value;
-
-				// Download and return the specified json profile
-				return await ApplicationController.GetPrinterProfileAsync(printerInfo, profileToken);
+				// Iterate history, skipping the first item, limiting to the next five, attempt to load and return the first success
+				foreach (var keyValue in recentProfileHistoryItems.OrderByDescending(kvp => kvp.Key).Skip(1).Take(5))
+				{
+					// Attempt to download and parse each profile, returning if successful
+					try
+					{
+						var printerSettings = await ApplicationController.GetPrinterProfileAsync(printerInfo, keyValue.Value);
+						if (printerSettings != null)
+						{
+							return printerSettings;
+						}
+					}
+					catch { }
+				};
 			}
 
 			return null;
