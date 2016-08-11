@@ -492,11 +492,8 @@ namespace MatterHackers.MatterControl
 					case ".slice": // legacy presets file extension
 					case ".ini":
 						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-						string layerHeight;
 
 						bool containsValidSetting = false;
-						bool isSlic3r = importType == ".slice" || settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
-						if (isSlic3r)
 						{
 							newLayer = new PrinterSettingsLayer();
 							newLayer.Name = Path.GetFileNameWithoutExtension(settingsFilePath);
@@ -547,14 +544,7 @@ namespace MatterHackers.MatterControl
 							}
 
 						}
-						else
-						{
-							displayFailedToImportMessage(settingsFilePath);
-							// looks like a cura file
-#if DEBUG
-							//throw new NotImplementedException("need to import from 'cure.ini' files");
-#endif
-						}
+
 						break;
 
 					default:
@@ -580,18 +570,16 @@ namespace MatterHackers.MatterControl
 
 					case ".slice": // old presets format
 					case ".ini":
-						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-						string layerHeight;
-
-						bool isSlic3r = settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
-						bool containsValidSetting = false;
-						//if (isSlic3r)
+						// create a scope for variables
 						{
+							var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
+
+							bool containsValidSetting = false;
 							var activeSettings = ActiveSliceSettings.Instance;
 
 							foreach (var item in settingsToImport)
 							{
-								if(activeSettings.Contains(item.Key))
+								if (activeSettings.Contains(item.Key))
 								{
 									containsValidSetting = true;
 									string currentValue = activeSettings.GetValue(item.Key).Trim();
@@ -601,9 +589,8 @@ namespace MatterHackers.MatterControl
 										activeSettings.UserLayer[item.Key] = item.Value;
 									}
 								}
-								
 							}
-							if(containsValidSetting)
+							if (containsValidSetting)
 							{
 								activeSettings.Save();
 
@@ -613,13 +600,8 @@ namespace MatterHackers.MatterControl
 							{
 								displayFailedToImportMessage(settingsFilePath);
 							}
+							WizardWindow.Close();
 						}
-						//else
-						{
-							// looks like a cura file
-							//throw new NotImplementedException("need to import from 'cure.ini' files");
-						}
-						WizardWindow.Close();
 						break;
 
 					default:

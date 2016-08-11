@@ -65,7 +65,10 @@ namespace MatterHackers.MatterControl
 
 		private void ImportSettingsFile(string settingsFilePath)
 		{
-			ProfileManager.ImportFromExisting(settingsFilePath);
+			if(!ProfileManager.ImportFromExisting(settingsFilePath))
+			{
+				StyledMessageBox.ShowMessageBox(null, "Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+			}
 		}
 
 		private void importFile_Click()
