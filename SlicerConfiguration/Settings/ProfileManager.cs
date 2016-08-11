@@ -257,51 +257,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <returns></returns>
 		public static async Task<PrinterSettings> LoadProfileAsync(string profileID, bool useActiveInstance = true)
 		{
-			var printerInfo = ProfileManager.Instance[profileID];
-
-			// Only load profiles by ID that are defined in the profiles document
-			if (printerInfo == null)
-			{
-				return null;
-			}
-
 			if (useActiveInstance && ActiveSliceSettings.Instance?.ID == profileID)
 			{
 				return ActiveSliceSettings.Instance;
 			}
 
-			PrinterSettings printerSettings;
-
-			string profilePath = Path.Combine(ProfilesPath, profileID +  ProfileManager.ProfileExtension);
-			if (!File.Exists(profilePath))
+			// Only load profiles by ID that are defined in the profiles document
+			var printerInfo = ProfileManager.Instance[profileID];
+			if (printerInfo == null)
 			{
-				// Attempt to load from MCWS if missing on disk
-				printerSettings = await ApplicationController.GetPrinterProfileAsync(printerInfo, null);
-				if (printerSettings != null)
-				{
-					// If successful, persist downloaded profile
-					printerSettings.Save();
-				}
-
-				return printerSettings;
+				return null;
 			}
 
-			// LoadOrRecoverProfile - if exists on disk, attempt to load or fall back using recovery logic
-			printerSettings = PrinterSettings.LoadFile(profilePath, performMigrations: true);
+			// Attempt to load from disk, pull from the web or fall back using recovery logic
+			PrinterSettings printerSettings = LoadWithoutRecovery(profileID);
 			if (printerSettings != null)
 			{
 				return printerSettings;
 			}
 			else
 			{
-				int delayDuration = MatterControlApplication.IsLoading ? 4 : 0;
-
-				// Schedule a recovery rather than blocking until the MCWS and/or OemProfile restore complete
-				UiThread.RunOnIdle(() => PrinterSettings.RecoverProfile(printerInfo), delayDuration);
-
-				// Return a short lived profile which should be reset after recovery
-				return ProfileManager.LoadEmptyProfile();
+				// Attempt to load from MCWS if missing on disk
+				printerSettings = await ApplicationController.GetPrinterProfileAsync?.Invoke (printerInfo, null);
+				if (printerSettings != null)
+				{
+					// If successful, persist downloaded profile and return
+					printerSettings.Save();
+					return printerSettings;
+				}
 			}
+
+			// Otherwise attempt to recover to a working profile
+			return await PrinterSettings.RecoverProfile(printerInfo);
 		}
 
 		internal static bool ImportFromExisting(string settingsFilePath)
