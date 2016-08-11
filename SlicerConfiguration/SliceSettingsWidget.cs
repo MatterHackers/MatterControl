@@ -476,26 +476,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		private bool CheckIfShouldBeShown(SliceSettingData settingData)
+		public static bool ParseShowString(string unsplitSettings, PrinterSettings printerSettings, List<PrinterSettingsLayer> layerCascade)
 		{
-			bool settingShouldBeShown = true;
-			if (settingData.ShowIfSet != null
-				&& settingData.ShowIfSet != "")
+			if (!string.IsNullOrEmpty(unsplitSettings))
 			{
-				string showValue = "0";
-				string checkName = settingData.ShowIfSet;
-				if (checkName.StartsWith("!"))
+				string[] splitSettings = unsplitSettings.Split('&');
+
+				foreach (var inLookupSettings in splitSettings)
 				{
-					showValue = "1";
-					checkName = checkName.Substring(1);
-				}
-				string sliceSettingValue = GetActiveValue(checkName, layerCascade);
-				if (sliceSettingValue == showValue)
-				{
-					settingShouldBeShown = false;
+					var lookupSettings = inLookupSettings;
+					if (!string.IsNullOrEmpty(lookupSettings))
+					{
+						string showValue = "0";
+						if (lookupSettings.StartsWith("!"))
+						{
+							showValue = "1";
+							lookupSettings = lookupSettings.Substring(1);
+						}
+
+						string sliceSettingValue = printerSettings.GetValue(lookupSettings, layerCascade);
+						if (sliceSettingValue == showValue)
+						{
+							return false;
+						}
+					}
 				}
 			}
 
+			return true;
+		}
+
+		private bool CheckIfShouldBeShown(SliceSettingData settingData)
+		{
+			bool settingShouldBeShown = ParseShowString(settingData.ShowIfSet, ActiveSliceSettings.Instance, layerCascade);
 			if (viewFilter == NamedSettingsLayers.Material || viewFilter == NamedSettingsLayers.Quality)
 			{
 				if (!settingData.ShowAsOverride)
