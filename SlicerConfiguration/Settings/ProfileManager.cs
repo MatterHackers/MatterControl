@@ -294,25 +294,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case ".ini":
-					var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-					//Other import paths validate that this is a slicer or MC ini file via checking if layer_height is a setting
-					if(settingsToImport.ContainsKey(SettingsKey.layer_height))
+					//Scope variables
 					{
+						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 						var layeredProfile = new PrinterSettings()
 						{
 							ID = printerInfo.ID,
-							OemLayer = settingsToImport
 						};
 
-						// TODO: Resolve name conflicts
-						layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerInfo.Name;
+						bool containsValidSetting = false;
+						var activeSettings = layeredProfile;
 
-						layeredProfile.ClearValue(SettingsKey.device_token);
-						printerInfo.DeviceToken = "";
-						Instance.Profiles.Add(printerInfo);
+						foreach (var item in settingsToImport)
+						{
+							if (activeSettings.Contains(item.Key))
+							{
+								containsValidSetting = true;
+								string currentValue = activeSettings.GetValue(item.Key).Trim();
+								// Compare the value to import to the layer cascade value and only set if different
+								if (currentValue != item.Value)
+								{
+									activeSettings.OemLayer[item.Key] = item.Value;
+								}
+							}
+						}
+						if(containsValidSetting)
+						{
+							// TODO: Resolve name conflicts
+							layeredProfile.UserLayer[SettingsKey.printer_name] = printerInfo.Name;
 
-						layeredProfile.Save();
-						importSuccessful = true;
+							layeredProfile.ClearValue(SettingsKey.device_token);
+							printerInfo.DeviceToken = "";
+							Instance.Profiles.Add(printerInfo);
+
+							layeredProfile.Save();
+							importSuccessful = true;
+						}
+						
 					}
 					break;
 			}
