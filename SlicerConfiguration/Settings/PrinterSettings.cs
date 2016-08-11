@@ -371,6 +371,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
+		public bool Contains(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			if (layerCascade == null)
+			{
+				layerCascade = defaultLayerCascade;
+			}
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				if (layer.ContainsKey(sliceSetting))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 		[JsonIgnore]
 		public PrinterSettingsLayer BaseLayer
 		{
