@@ -2467,7 +2467,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			loadedGCode = GCodeFile.Load(gcodeFilename);
 
 			gCodeFileStream0 = new GCodeFileStream(loadedGCode);
-			if(activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
+			if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.resume_is_enabled)
+				&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 			{
 				pauseHandlingStream1 = new PauseHandlingStream(new ResumePrintingStream(gCodeFileStream0, activePrintTask.PercentDone));
 			}

@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"print_leveling_required_to_print",
 			"print_leveling_solution",
 			"resume_first_layer_speed",
+			"resume_is_enabled",
 			"resume_position_before_z_home",
 			"resume_gcode",
 			"temperature",
@@ -72,7 +73,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"z_homes_to_max",
 
 			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be. 
-			"bed_remove_part_temperature",
+			SettingsKey.bed_remove_part_temperature,
 			"extruder_wipe_temperature",
 			"heat_extruder_before_homing",
 			"include_firmware_updater",

@@ -16,6 +16,67 @@ namespace MatterControl.Tests.MatterControl
 	public class SettingsParseTests
 	{
 		[Test]
+		public void CheckIfShouldBeShownParseTests()
+		{
+
+			{
+				string[] settings = new string[] { SettingsKey.has_heated_bed, "0" };
+				var profile = GettProfile(settings);
+				Assert.IsFalse(SliceSettingsWidget.ParseShowString("has_heated_bed", profile, null));
+				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed", profile, null));
+			}
+
+			{
+				string[] settings = new string[] { SettingsKey.has_heated_bed, "1" };
+				var profile = GettProfile(settings);
+				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed", profile, null));
+				Assert.IsFalse(SliceSettingsWidget.ParseShowString("!has_heated_bed", profile, null));
+			}
+
+			{
+				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "0" };
+				var profile = GettProfile(settings);
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
+				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+			}
+			{
+				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "1" };
+				var profile = GettProfile(settings);
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+			}
+			{
+				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "0" };
+				var profile = GettProfile(settings);
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
+				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+			}
+			{
+				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1" };
+				var profile = GettProfile(settings);
+				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+			}
+
+			{
+				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1", SettingsKey.has_fan, "1" };
+				var profile = GettProfile(settings);
+				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect&has_fan", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect&!has_fan", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect&has_fan", profile, null));
+				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect&has_fan", profile, null));
+			}
+		}
+
+		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
 			// first_layer_extrusion_width
