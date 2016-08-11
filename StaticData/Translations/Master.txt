@@ -5311,3 +5311,6 @@ Translated:There is a required update available.
 English:Import Printer
 Translated:Import Printer
 
+English:Oops! Settings file '{0}' did not contain any settings we could import.
+Translated:Oops! Settings file '{0}' did not contain any settings we could import.
+

@@ -262,11 +262,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal static void ImportFromExisting(string settingsFilePath)
+		internal static bool ImportFromExisting(string settingsFilePath)
 		{
 			if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
 			{
-				return;
+				return false;
 			}
 
 			var printerInfo = new PrinterInfo
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = Path.GetFileNameWithoutExtension(settingsFilePath),
 				ID = Guid.NewGuid().ToString()
 			};
-
+			bool importSuccessful = false;
 			string importType = Path.GetExtension(settingsFilePath).ToLower();
 			switch (importType)
 			{
@@ -290,28 +290,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Instance.Profiles.Add(printerInfo);
 
 					profile.Save();
+					importSuccessful = true;
 					break;
 
 				case ".ini":
 					var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-
-					var layeredProfile = new PrinterSettings()
+					//Other import paths validate that this is a slicer or MC ini file via checking if layer_height is a setting
+					if(settingsToImport.ContainsKey(SettingsKey.layer_height))
 					{
-						ID = printerInfo.ID,
-						OemLayer = settingsToImport
-					};
+						var layeredProfile = new PrinterSettings()
+						{
+							ID = printerInfo.ID,
+							OemLayer = settingsToImport
+						};
 
-					// TODO: Resolve name conflicts
-					layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerInfo.Name;
+						// TODO: Resolve name conflicts
+						layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerInfo.Name;
 
-					layeredProfile.ClearValue(SettingsKey.device_token);
-					printerInfo.DeviceToken = "";
-					Instance.Profiles.Add(printerInfo);
+						layeredProfile.ClearValue(SettingsKey.device_token);
+						printerInfo.DeviceToken = "";
+						Instance.Profiles.Add(printerInfo);
 
-					layeredProfile.Save();
-
+						layeredProfile.Save();
+						importSuccessful = true;
+					}
 					break;
 			}
+			return importSuccessful;
 		}
 
 		internal static async void AcquireNewProfile(string make, string model, string printerName)
