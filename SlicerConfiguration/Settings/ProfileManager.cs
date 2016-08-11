@@ -121,8 +121,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Instance = new ProfileManager();
 			}
 
-			// Load the last selected printer profile or an empty profile
-			ActiveSliceSettings.Instance = Instance.LoadLastProfile() ?? LoadEmptyProfile();
+			if (!MatterControlApplication.IsLoading && ActiveSliceSettings.Instance.ID != Instance.LastProfileID)
+			{
+				Task.Run(async () =>
+				{
+					var lastProfile = await LoadProfileAsync(Instance.LastProfileID);
+
+					// Load the last selected printer profile or an empty profile
+					ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
+				});
+			}
 
 			// In either case, wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
@@ -195,25 +203,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				string activeUserName = UserSettings.Instance.get("ActiveUserName");
-				string settingsKey = $"ActiveProfileID-{activeUserName}";
-
-				return UserSettings.Instance.get(settingsKey);
+				return UserSettings.Instance.get($"ActiveProfileID-{activeUserName}");
 			}
 		}
 
 		public bool PrintersImported { get; set; } = false;
 
-		public PrinterSettings LoadLastProfile()
+		public PrinterSettings LoadLastProfileWithoutRecovery()
 		{
-			return LoadProfileAsync(this.LastProfileID);
+			return LoadWithoutRecovery(this.LastProfileID);
 		}
 
 		public void SetLastProfile(string printerID)
 		{
 			string activeUserName = UserSettings.Instance.get("ActiveUserName");
-			string settingsKey = $"ActiveProfileID-{activeUserName}";
 
-			UserSettings.Instance.set(settingsKey, printerID);
+			UserSettings.Instance.set($"ActiveProfileID-{activeUserName}", printerID);
 		}
 
 		public string ProfilePath(PrinterInfo printer)
@@ -224,6 +229,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string ProfilePath(string printerID)
 		{
 			return Path.Combine(ProfileManager.ProfilesPath, printerID + ProfileExtension);
+		}
+
+		public static PrinterSettings LoadWithoutRecovery(string profileID)
+		{
+			string profilePath = Path.Combine(ProfilesPath, profileID + ProfileManager.ProfileExtension);
+			if (File.Exists(profilePath))
+			{
+				try
+				{
+					return PrinterSettings.LoadFile(profilePath);
+				}
+				catch
+				{
+					return null;
+				}
+			}
+
+			return null;
 		}
 
 		/// <summary>

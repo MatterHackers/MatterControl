@@ -78,16 +78,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						OnActivePrinterChanged(null);
 
-						string[] comportNames = FrostedSerialPort.GetPortNames();
-
 						if (ActiveSliceSettings.Instance.PrinterSelected)
 						{
 							if (Instance.GetValue<bool>(SettingsKey.auto_connect))
 							{
 								UiThread.RunOnIdle(() =>
 								{
-								//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-								PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+									//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+									PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
 								}, 2);
 							}
 						}
@@ -143,18 +141,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ActiveSliceSettings()
 		{
-			// Load Startup Profile
-			var startupProfile = ProfileManager.Instance.LoadLastProfile();
-			if (startupProfile != null)
-			{
-				Instance = startupProfile;
-			}
-
-			if (Instance == null)
-			{
-				// Load an empty profile with just the MatterHackers base settings from config.json
-				Instance = ProfileManager.LoadEmptyProfile();
-			}
+			// Load last profile or fall back to empty
+			Instance = ProfileManager.Instance.LoadLastProfileWithoutRecovery() ?? ProfileManager.LoadEmptyProfile();
 		}
 
 		internal static async Task SwitchToProfile(string printerID)
