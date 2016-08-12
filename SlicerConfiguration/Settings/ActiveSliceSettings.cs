@@ -98,9 +98,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			bool themeChanged = activeInstance.GetValue(SettingsKey.active_theme_index) != updatedProfile.GetValue(SettingsKey.active_theme_index);
 
-			SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
-
 			activeInstance = updatedProfile;
+
+			SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
 
 			if (themeChanged)
 			{
