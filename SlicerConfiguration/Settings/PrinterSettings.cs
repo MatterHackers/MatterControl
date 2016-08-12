@@ -261,7 +261,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Fall back to OemProfile defaults if load from history fails
 					printerSettings = RestoreFromOemProfile(printerInfo);
 				}
-					
+
+				if (printerSettings == null)
+				{
+					// If we still have failed to recover a profile, create an empty profile with
+					// just enough data to delete the printer
+					printerSettings = ProfileManager.LoadEmptyProfile();
+					printerSettings.ID = printerInfo.ID;
+					printerSettings.UserLayer[SettingsKey.device_token] = printerInfo.DeviceToken;
+					printerSettings.Helpers.SetComPort(printerInfo.ComPort);
+					printerSettings.SetValue(SettingsKey.printer_name, printerInfo.Name);
+
+					// Add any setting value to the OemLayer to pass the .PrinterSelected property
+					printerSettings.OemLayer = new PrinterSettingsLayer();
+					printerSettings.OemLayer.Add("empty", "setting");
+					printerSettings.Save();
+				}
+
 				if (printerSettings != null)
 				{
 					// Persist any profile recovered above as the current
