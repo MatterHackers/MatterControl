@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl
 		public static string MCWSBaseUri { get;} = "https://mattercontrol.appspot.com";
 #endif
 
-		public static void LoadUITheme()
+		public static void LoadUITheme
 		{
 			//Load the default theme by index
 			if (string.IsNullOrEmpty(UserSettings.Instance.get("ActiveThemeIndex")))
