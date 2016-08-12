@@ -298,18 +298,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static PrinterSettings RestoreFromOemProfile(PrinterInfo profile)
 		{
-			string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
-			string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", publicProfileDeviceToken + ProfileManager.ProfileExtension);
+			PrinterSettings oemProfile = null;
 
-			var oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
-			oemProfile.ID = profile.ID;
-			oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
-			oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
+			try
+			{
+				string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
+				string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", publicProfileDeviceToken + ProfileManager.ProfileExtension);
 
-			oemProfile.Helpers.SetComPort(profile.ComPort);
-			oemProfile.Save();
+				oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
+				oemProfile.ID = profile.ID;
+				oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
+				oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
-			//WarnAboutRevert(profile);
+				oemProfile.Helpers.SetComPort(profile.ComPort);
+				oemProfile.Save();
+			}
+			catch { }
 
 			return oemProfile;
 		}
