@@ -125,10 +125,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Task.Run(async () =>
 				{
+					// Load or download on a background thread
 					var lastProfile = await LoadProfileAsync(Instance.LastProfileID);
 
-					// Load the last selected printer profile or an empty profile
-					ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
+					UiThread.RunOnIdle(() =>
+					{
+						// Assign on the UI thread
+						ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
+					});
 				});
 			}
 
