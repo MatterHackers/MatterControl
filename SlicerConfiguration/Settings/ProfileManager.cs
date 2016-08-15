@@ -279,10 +279,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				return printerSettings;
 			}
-			else
+			else if (ApplicationController.GetPrinterProfileAsync != null)
 			{
 				// Attempt to load from MCWS if missing on disk
-				printerSettings = await ApplicationController.GetPrinterProfileAsync?.Invoke (printerInfo, null);
+				printerSettings = await ApplicationController.GetPrinterProfileAsync(printerInfo, null);
 				if (printerSettings != null)
 				{
 					// If successful, persist downloaded profile and return
