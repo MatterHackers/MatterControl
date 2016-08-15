@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl
 			this.destinationLayer = destinationLayer;
 			this.sectionName = sectionName;
 
+			// TODO: Need to handle load failures for import attempts
 			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
 
 			this.headerLabel.Text = "Select What to Import".Localize();
@@ -197,7 +198,7 @@ namespace MatterHackers.MatterControl
 
 		HashSet<string> skipKeys = new HashSet<string>
 		{
-			"layer_name",
+			SettingsKey.layer_name,
 			"layer_id",
 		};
 
@@ -225,9 +226,9 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (!isMergeIntoUserLayer && material.ContainsKey("layer_name"))
+				if (!isMergeIntoUserLayer && material.ContainsKey(SettingsKey.layer_name))
 				{
-					destinationLayer["layer_name"] = material["layer_name"];
+					destinationLayer[SettingsKey.layer_name] = material[SettingsKey.layer_name];
 				}
 			}
 			else if (selectedQuality > -1)
@@ -242,9 +243,9 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (!isMergeIntoUserLayer && quality.ContainsKey("layer_name"))
+				if (!isMergeIntoUserLayer && quality.ContainsKey(SettingsKey.layer_name))
 				{
-					destinationLayer["layer_name"] = quality["layer_name"];
+					destinationLayer[SettingsKey.layer_name] = quality[SettingsKey.layer_name];
 				}
 			}
 			else
@@ -268,7 +269,7 @@ namespace MatterHackers.MatterControl
 			string successMessage = importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath));
 			if (!isMergeIntoUserLayer)
 			{
-				string sourceName = isMergeIntoUserLayer ? Path.GetFileNameWithoutExtension(settingsFilePath) : destinationLayer["layer_name"];
+				string sourceName = isMergeIntoUserLayer ? Path.GetFileNameWithoutExtension(settingsFilePath) : destinationLayer[SettingsKey.layer_name];
 				successMessage = ImportSettingsPage.importSettingSuccessMessage.FormatWith(sourceName, sectionName);
 			}
 
@@ -431,11 +432,18 @@ namespace MatterHackers.MatterControl
 		{
 			if(newPrinterButton.Checked)
 			{
-				ProfileManager.ImportFromExisting(settingsFilePath);
-				WizardWindow.ChangeToPage(new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath)))
+				if(ProfileManager.ImportFromExisting(settingsFilePath))
 				{
-					WizardWindow = this.WizardWindow,
-				});
+					WizardWindow.ChangeToPage(new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath)))
+					{
+						WizardWindow = this.WizardWindow,
+					});
+				}
+				else
+				{
+					displayFailedToImportMessage(settingsFilePath);
+				}
+				
 			}
 			else if(mergeButton.Checked)
 			{
@@ -464,7 +472,7 @@ namespace MatterHackers.MatterControl
 				{
 					case ProfileManager.ProfileExtension:
 						newLayer = new PrinterSettingsLayer();
-						newLayer["layer_name"] = Path.GetFileNameWithoutExtension(settingsFilePath);
+						newLayer[SettingsKey.layer_name] = Path.GetFileNameWithoutExtension(settingsFilePath);
 
 						if (newQualityPresetButton.Checked)
 						{
@@ -485,10 +493,8 @@ namespace MatterHackers.MatterControl
 					case ".slice": // legacy presets file extension
 					case ".ini":
 						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-						string layerHeight;
 
-						bool isSlic3r = importType == ".slice" || settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
-						if (isSlic3r)
+						bool containsValidSetting = false;
 						{
 							newLayer = new PrinterSettingsLayer();
 							newLayer.Name = Path.GetFileNameWithoutExtension(settingsFilePath);
@@ -502,37 +508,44 @@ namespace MatterHackers.MatterControl
 
 							foreach (var item in settingsToImport)
 							{
-								string currentValue = ActiveSliceSettings.Instance.GetValue(item.Key, baseAndOEMCascade).Trim();
-								// Compare the value to import to the layer cascade value and only set if different
-								if (currentValue != item.Value)
+								if(ActiveSliceSettings.Instance.Contains(item.Key))
 								{
-									newLayer[item.Key] = item.Value;
+									containsValidSetting = true;
+									string currentValue = ActiveSliceSettings.Instance.GetValue(item.Key, baseAndOEMCascade).Trim();
+									// Compare the value to import to the layer cascade value and only set if different
+									if (currentValue != item.Value)
+									{
+										newLayer[item.Key] = item.Value;
+									}
 								}
+
 							}
 
-							if (newMaterialPresetButton.Checked)
+							if(containsValidSetting)
 							{
-								ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
+								if (newMaterialPresetButton.Checked)
+								{
+									ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
+								}
+								else
+								{
+									ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+								}
+
+								ActiveSliceSettings.Instance.Save();
+
+								WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), sectionName))
+								{
+									WizardWindow = this.WizardWindow,
+								});
 							}
 							else
 							{
-								ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
+								displayFailedToImportMessage(settingsFilePath);
 							}
 
-							ActiveSliceSettings.Instance.Save();
+						}
 
-							WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), sectionName))
-							{
-								WizardWindow = this.WizardWindow,
-							});
-						}
-						else
-						{
-							// looks like a cura file
-#if DEBUG
-							throw new NotImplementedException("need to import from 'cure.ini' files");
-#endif
-						}
 						break;
 
 					default:
@@ -558,34 +571,38 @@ namespace MatterHackers.MatterControl
 
 					case ".slice": // old presets format
 					case ".ini":
-						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-						string layerHeight;
-
-						bool isSlic3r = settingsToImport.TryGetValue(SettingsKey.layer_height, out layerHeight);
-						//if (isSlic3r)
+						// create a scope for variables
 						{
+							var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
+
+							bool containsValidSetting = false;
 							var activeSettings = ActiveSliceSettings.Instance;
 
 							foreach (var item in settingsToImport)
 							{
-								// Compare the value to import to the layer cascade value and only set if different
-								string currentValue = activeSettings.GetValue(item.Key, null).Trim();
-								if (currentValue != item.Value)
+								if (activeSettings.Contains(item.Key))
 								{
-									activeSettings.UserLayer[item.Key] = item.Value;
+									containsValidSetting = true;
+									string currentValue = activeSettings.GetValue(item.Key).Trim();
+									// Compare the value to import to the layer cascade value and only set if different
+									if (currentValue != item.Value)
+									{
+										activeSettings.UserLayer[item.Key] = item.Value;
+									}
 								}
 							}
+							if (containsValidSetting)
+							{
+								activeSettings.Save();
 
-							activeSettings.Save();
-
-							UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+								UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+							}
+							else
+							{
+								displayFailedToImportMessage(settingsFilePath);
+							}
+							WizardWindow.Close();
 						}
-						//else
-						{
-							// looks like a cura file
-							//throw new NotImplementedException("need to import from 'cure.ini' files");
-						}
-						WizardWindow.Close();
 						break;
 
 					default:
@@ -597,6 +614,11 @@ namespace MatterHackers.MatterControl
 
 			}
 			Invalidate();
+		}
+
+		private void displayFailedToImportMessage(string settingsFilePath)
+		{
+			StyledMessageBox.ShowMessageBox(null, "Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 		}
 	}
 }

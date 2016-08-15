@@ -121,9 +121,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Instance = new ProfileManager();
 			}
 
-			// Load the last selected printer profile or an empty profile
-			ActiveSliceSettings.Instance = Instance.LoadLastProfile() ?? LoadEmptyProfile();
+			if (!MatterControlApplication.IsLoading && ActiveSliceSettings.Instance.ID != Instance.LastProfileID)
+			{
+				Task.Run(async () =>
+				{
+					// Load or download on a background thread
+					var lastProfile = await LoadProfileAsync(Instance.LastProfileID);
 
+					UiThread.RunOnIdle(() =>
+					{
+						// Assign on the UI thread
+						ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
+					});
+				});
+			}
 
 			// In either case, wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
@@ -196,25 +207,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				string activeUserName = UserSettings.Instance.get("ActiveUserName");
-				string settingsKey = $"ActiveProfileID-{activeUserName}";
-
-				return UserSettings.Instance.get(settingsKey);
+				return UserSettings.Instance.get($"ActiveProfileID-{activeUserName}");
 			}
 		}
 
 		public bool PrintersImported { get; set; } = false;
 
-		public PrinterSettings LoadLastProfile()
+		public PrinterSettings LoadLastProfileWithoutRecovery()
 		{
-			return LoadProfile(this.LastProfileID);
+			return LoadWithoutRecovery(this.LastProfileID);
 		}
 
 		public void SetLastProfile(string printerID)
 		{
 			string activeUserName = UserSettings.Instance.get("ActiveUserName");
-			string settingsKey = $"ActiveProfileID-{activeUserName}";
 
-			UserSettings.Instance.set(settingsKey, printerID);
+			UserSettings.Instance.set($"ActiveProfileID-{activeUserName}", printerID);
 		}
 
 		public string ProfilePath(PrinterInfo printer)
@@ -227,46 +235,71 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Path.Combine(ProfileManager.ProfilesPath, printerID + ProfileExtension);
 		}
 
+		public static PrinterSettings LoadWithoutRecovery(string profileID)
+		{
+			string profilePath = Path.Combine(ProfilesPath, profileID + ProfileManager.ProfileExtension);
+			if (File.Exists(profilePath))
+			{
+				try
+				{
+					return PrinterSettings.LoadFile(profilePath);
+				}
+				catch
+				{
+					return null;
+				}
+			}
+
+			return null;
+		}
+
 		/// <summary>
-		/// Loads the specified PrinterProfile
+		/// Loads the specified PrinterProfile, performing recovery options if required
 		/// </summary>
 		/// <param name="profileID">The profile ID to load</param>
 		/// <param name="useActiveInstance">Return the in memory instance if already loaded. Alternatively, reload from disk</param>
 		/// <returns></returns>
-		public static PrinterSettings LoadProfile(string profileID, bool useActiveInstance = true)
+		public static async Task<PrinterSettings> LoadProfileAsync(string profileID, bool useActiveInstance = true)
 		{
-			// Only load profiles by ID that are defined in the profiles document
-			if (ProfileManager.Instance[profileID] == null)
-			{
-				return null;
-			}
-
 			if (useActiveInstance && ActiveSliceSettings.Instance?.ID == profileID)
 			{
 				return ActiveSliceSettings.Instance;
 			}
 
-			string profilePath = Path.Combine(ProfilesPath, profileID +  ProfileManager.ProfileExtension);
-			return File.Exists(profilePath) ? LoadProfileFromDisk(profilePath) : null;
+			// Only load profiles by ID that are defined in the profiles document
+			var printerInfo = ProfileManager.Instance[profileID];
+			if (printerInfo == null)
+			{
+				return null;
+			}
+
+			// Attempt to load from disk, pull from the web or fall back using recovery logic
+			PrinterSettings printerSettings = LoadWithoutRecovery(profileID);
+			if (printerSettings != null)
+			{
+				return printerSettings;
+			}
+			else if (ApplicationController.GetPrinterProfileAsync != null)
+			{
+				// Attempt to load from MCWS if missing on disk
+				printerSettings = await ApplicationController.GetPrinterProfileAsync(printerInfo, null);
+				if (printerSettings != null)
+				{
+					// If successful, persist downloaded profile and return
+					printerSettings.Save();
+					return printerSettings;
+				}
+			}
+
+			// Otherwise attempt to recover to a working profile
+			return await PrinterSettings.RecoverProfile(printerInfo);
 		}
 
-		internal static PrinterSettings LoadProfileFromDisk(string profilePath)
-		{
-			if (File.Exists(profilePath))
-			{
-				return PrinterSettings.LoadFile(profilePath);
-			}
-			else
-			{
-				return LoadEmptyProfile();
-			}
-		}
-
-		internal static void ImportFromExisting(string settingsFilePath)
+		internal static bool ImportFromExisting(string settingsFilePath)
 		{
 			if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
 			{
-				return;
+				return false;
 			}
 
 			var printerInfo = new PrinterInfo
@@ -274,12 +307,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = Path.GetFileNameWithoutExtension(settingsFilePath),
 				ID = Guid.NewGuid().ToString()
 			};
-
+			bool importSuccessful = false;
 			string importType = Path.GetExtension(settingsFilePath).ToLower();
 			switch (importType)
 			{
 				case ProfileManager.ProfileExtension:
-					var profile = ProfileManager.LoadProfileFromDisk(settingsFilePath);
+					var profile = PrinterSettings.LoadFile(settingsFilePath);
 					profile.ID = printerInfo.ID;
 					profile.ClearValue(SettingsKey.device_token);
 					printerInfo.DeviceToken = "";
@@ -290,28 +323,51 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Instance.Profiles.Add(printerInfo);
 
 					profile.Save();
+					importSuccessful = true;
 					break;
 
 				case ".ini":
-					var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-
-					var layeredProfile = new PrinterSettings()
+					//Scope variables
 					{
-						ID = printerInfo.ID,
-						OemLayer = settingsToImport
-					};
+						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
+						var layeredProfile = new PrinterSettings()
+						{
+							ID = printerInfo.ID,
+						};
 
-					// TODO: Resolve name conflicts
-					layeredProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerInfo.Name;
+						bool containsValidSetting = false;
+						var activeSettings = layeredProfile;
 
-					layeredProfile.ClearValue(SettingsKey.device_token);
-					printerInfo.DeviceToken = "";
-					Instance.Profiles.Add(printerInfo);
+						foreach (var item in settingsToImport)
+						{
+							if (activeSettings.Contains(item.Key))
+							{
+								containsValidSetting = true;
+								string currentValue = activeSettings.GetValue(item.Key).Trim();
+								// Compare the value to import to the layer cascade value and only set if different
+								if (currentValue != item.Value)
+								{
+									activeSettings.OemLayer[item.Key] = item.Value;
+								}
+							}
+						}
+						if(containsValidSetting)
+						{
+							// TODO: Resolve name conflicts
+							layeredProfile.UserLayer[SettingsKey.printer_name] = printerInfo.Name;
 
-					layeredProfile.Save();
+							layeredProfile.ClearValue(SettingsKey.device_token);
+							printerInfo.DeviceToken = "";
+							Instance.Profiles.Add(printerInfo);
 
+							layeredProfile.Save();
+							importSuccessful = true;
+						}
+						
+					}
 					break;
 			}
+			return importSuccessful;
 		}
 
 		internal static async void AcquireNewProfile(string make, string model, string printerName)

@@ -78,16 +78,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						OnActivePrinterChanged(null);
 
-						string[] comportNames = FrostedSerialPort.GetPortNames();
-
 						if (ActiveSliceSettings.Instance.PrinterSelected)
 						{
 							if (Instance.GetValue<bool>(SettingsKey.auto_connect))
 							{
 								UiThread.RunOnIdle(() =>
 								{
-								//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-								PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+									//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+									PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
 								}, 2);
 							}
 						}
@@ -100,9 +98,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			bool themeChanged = activeInstance.GetValue(SettingsKey.active_theme_index) != updatedProfile.GetValue(SettingsKey.active_theme_index);
 
-			SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
-
 			activeInstance = updatedProfile;
+
+			SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
 
 			if (themeChanged)
 			{
@@ -143,34 +141,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ActiveSliceSettings()
 		{
-			// Load Startup Profile
-			var startupProfile = ProfileManager.Instance.LoadLastProfile();
-			if (startupProfile != null)
-			{
-				Instance = startupProfile;
-			}
-
-			if (Instance == null)
-			{
-				// Load an empty profile with just the MatterHackers base settings from config.json
-				Instance = ProfileManager.LoadEmptyProfile();
-			}
+			// Load last profile or fall back to empty
+			Instance = ProfileManager.Instance.LoadLastProfileWithoutRecovery() ?? ProfileManager.LoadEmptyProfile();
 		}
 
 		internal static async Task SwitchToProfile(string printerID)
 		{
-			var profile = ProfileManager.LoadProfile(printerID);
-
 			ProfileManager.Instance.SetLastProfile(printerID);
-
-			if (profile == null)
-			{
-				var printerInfo = ProfileManager.Instance[printerID];
-
-				profile = await ApplicationController.GetPrinterProfileAsync(printerInfo, null);
-			}
-
-			Instance = profile ?? ProfileManager.LoadEmptyProfile();
+			Instance = (await ProfileManager.LoadProfileAsync(printerID)) ?? ProfileManager.LoadEmptyProfile();
 		}
 
 		private static void OnActivePrinterChanged(EventArgs e)

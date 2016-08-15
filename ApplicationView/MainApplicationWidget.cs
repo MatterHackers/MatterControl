@@ -48,6 +48,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
+	using Agg.Font;
 	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
 
 	public abstract class ApplicationView : GuiWidget
@@ -216,6 +217,22 @@ namespace MatterHackers.MatterControl
 			{
 				LoginAction?.Invoke();
 			}
+		}
+
+		private static TypeFace monoSpacedTypeFace = null;
+		public static TypeFace MonoSpacedTypeFace
+		{
+			get
+			{
+				if (monoSpacedTypeFace == null)
+				{
+					monoSpacedTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
+				}
+
+				return monoSpacedTypeFace;
+			}
+
+			private set { }
 		}
 
 		/// <summary>
@@ -472,24 +489,26 @@ namespace MatterHackers.MatterControl
 			if (!System.IO.File.Exists(@"/storage/sdcard0/Download/LaunchTestPrint.stl"))
 			{
 				bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
-				if (showAuthWindow)
-				{
-					//Launch window to prompt user to log in
-					UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
-				}
-				else
-				{
-					//If user in logged in sync before checking to prompt to create printer
-					ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
-					{
-						ApplicationController.Instance.ReloadAdvancedControlsPanel();
-						if (!ProfileManager.Instance.ActiveProfiles.Any())
-						{
-							// Start the setup wizard if no profiles exist
-							UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
-						}
-					});
-				}
+                if (showAuthWindow)
+                {
+                    //Launch window to prompt user to log in
+                    UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+                }
+                else
+                {
+                    //If user in logged in sync before checking to prompt to create printer
+                    if (ApplicationController.SyncPrinterProfiles == null)
+                    {
+                        RunSetupIfRequired();
+                    }
+                    else
+                    {
+                        ApplicationController.SyncPrinterProfiles.Invoke().ContinueWith((task) =>
+                        {
+                            RunSetupIfRequired();
+                        });
+                    }
+                }
 
 				if (OsInformation.OperatingSystem != OSType.Windows)
 				{
@@ -515,7 +534,18 @@ namespace MatterHackers.MatterControl
 				}, 2);
 			}
 		}
-		private EventHandler unregisterEvent;
+
+        private static void RunSetupIfRequired()
+        {
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();
+            if (!ProfileManager.Instance.ActiveProfiles.Any())
+            {
+                // Start the setup wizard if no profiles exist
+                UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+            }
+        }
+
+        private EventHandler unregisterEvent;
 		public void StartPrintingTest()
 		{
 			QueueData.Instance.RemoveAll();

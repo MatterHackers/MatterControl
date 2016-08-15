@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -138,7 +140,7 @@ namespace MatterHackers.MatterControl
 				manualEntryLayout.BackgroundColor = this.backgroundColor;
 				manualEntryLayout.HAnchor = HAnchor.ParentLeftRight;
 				{
-					manualCommandTextEdit = new MHTextEditWidget("");
+					manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace);
 					//manualCommandTextEdit.BackgroundColor = RGBA_Bytes.White;
 					manualCommandTextEdit.Margin = new BorderDouble(right: 3);
 					manualCommandTextEdit.HAnchor = HAnchor.ParentLeftRight;

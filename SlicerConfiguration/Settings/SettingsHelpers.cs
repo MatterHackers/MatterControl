@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string device_token = nameof(device_token);
 		public const string device_type = nameof(device_type);
 		public const string extruder_count = nameof(extruder_count);
+		public const string resume_is_enabled = nameof(resume_is_enabled);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
@@ -69,6 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_fan = nameof(has_fan);
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_heated_bed = nameof(has_heated_bed);
+		public const string bed_remove_part_temperature = nameof(bed_remove_part_temperature);
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string layer_height = nameof(layer_height);
@@ -89,6 +91,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
 		public const string oem_profile_token = nameof(oem_profile_token);
+		public const string layer_name = nameof(layer_name);
 	};
 
 	public class SettingsHelpers
@@ -441,23 +444,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool MarkedForDelete { get; set; } = false;
 		public string SHA1 { get; set; }
 
-		public void ChangeID(string newID)
+		public void ChangeID(string deviceToken)
 		{
 			if (ActiveSliceSettings.Instance.ID == this.ID)
 			{
-				ActiveSliceSettings.Instance.ID = newID;
+				ActiveSliceSettings.Instance.ID = deviceToken;
 			}
 
 			string existingProfile = ProfilePath;
 			if (File.Exists(existingProfile))
 			{
-				this.ID = newID;
+				this.ID = deviceToken;
 				File.Move(existingProfile, ProfilePath);
 			}
 
-			var profile = ProfileManager.LoadProfile(newID);
-			profile.ID = newID;
-			profile.SetValue(SettingsKey.device_token, newID);
+			var profile = PrinterSettings.LoadFile(ProfilePath);
+			profile.ID = deviceToken;
+			profile.SetValue(SettingsKey.device_token, deviceToken);
 			ProfileManager.Instance.Save();
 		}
 

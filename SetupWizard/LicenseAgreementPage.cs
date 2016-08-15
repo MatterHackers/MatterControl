@@ -48,28 +48,13 @@ public class LicenseAgreementPage : WizardPage
 		scrollable.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
 		contentRow.AddChild(scrollable);
 
-		var textBox = new WrappedTextWidget("Loading End User License Agreement...", textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false);
+		var textBox = new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
+		{
+			DrawFromHintedCache = true,
+			Name = "LicenseAgreementPage",
+		};
 		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
 		scrollable.AddChild(textBox);
-
-		// wrap the text on a thread and show it when it is ready
-		{
-			UiThread.RunOnIdle(async () =>
-			{
-				WrappedTextWidget eulaTextBox = textBox;
-				await Task.Run(() =>
-				{
-					eulaTextBox = new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
-					{
-						DrawFromHintedCache = true,
-						Name = "LicenseAgreementPage",
-					};
-				});
-
-				scrollable.ScrollArea.RemoveChild(textBox);
-				scrollable.AddChild(eulaTextBox);
-			});
-		}
 
 		var acceptButton = textImageButtonFactory.Generate("Accept".Localize());
 		acceptButton.Click += (s, e) =>

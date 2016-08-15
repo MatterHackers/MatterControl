@@ -5311,3 +5311,12 @@ Translated:There is a required update available.
 English:Import Printer
 Translated:Import Printer
 
+English:Resume Settings
+Translated:Resume Settings
+
+English:Enable Resuming
+Translated:Enable Resuming
+
+English:When this is checked MatterControl will attempt to resume a print in the event of a failure, such as lost connection or lost power.
+Translated:When this is checked MatterControl will attempt to resume a print in the event of a failure, such as lost connection or lost power.
+

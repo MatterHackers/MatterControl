@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								break;
 
 							case "MatterControl.LayerName":
-								layer.Add("layer_name", item.Value);
+								layer.Add(SettingsKey.layer_name, item.Value);
 								break;
 
 							case "MatterControl.LayerID":

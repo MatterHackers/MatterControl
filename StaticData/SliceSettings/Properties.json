@@ -722,6 +722,20 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "resume_is_enabled",
+		"PresentationName": "Enable Resuming",
+		"HelpText": "When this is checked MatterControl will attempt to resume a print in the event of a failure, such as lost connection or lost power.",
+		"DataEditType": "CHECK_BOX",
+		"ExtraSettings": "",
+		"ShowAsOverride": false,
+		"ShowIfSet": "!has_hardware_leveling",
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0",
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "z_homes_to_max",
 		"PresentationName": "Home Z Max",
 		"HelpText": "Set if the z homing moves the extruder away from the bed (z-max homing)",
@@ -731,6 +745,7 @@
 		"ShowIfSet": "!has_hardware_leveling",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "0",
+		"ReloadUiWhenChanged": true,
 		"RebuildGCodeOnChange": false
 	},
 	{
@@ -742,7 +757,7 @@
 		"DataEditType": "VECTOR2",
 		"ExtraSettings": "mm",
 		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling",
+		"ShowIfSet": "!has_hardware_leveling&!z_homes_to_max",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "0,0",
 		"RebuildGCodeOnChange": false

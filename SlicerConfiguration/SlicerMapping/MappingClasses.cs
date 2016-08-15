@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new AsPercentOfReferenceOrDirect("first_layer_speed", "first_layer_speed", "infill_speed", 60),
 			new AsPercentOfReferenceOrDirect("external_perimeter_speed","external_perimeter_speed", "perimeter_speed", 60),
 			new AsPercentOfReferenceOrDirect("raft_print_speed", "raft_print_speed", "infill_speed", 60),
-			new MappedSetting("bed_remove_part_temperature","bed_remove_part_temperature"),
+			new MappedSetting(SettingsKey.bed_remove_part_temperature,SettingsKey.bed_remove_part_temperature),
 			new MappedSetting("bridge_fan_speed","bridge_fan_speed"),
 			new MappedSetting("bridge_speed","bridge_speed"),
 			new MappedSetting("extruder_wipe_temperature","extruder_wipe_temperature"),

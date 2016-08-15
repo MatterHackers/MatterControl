@@ -321,9 +321,9 @@ Advanced
         manual_probe_paper_width
       Options
     Resume Failed Print
-      Speed
+      Resume Settings
+        resume_is_enabled
         resume_first_layer_speed
-      Homing
         resume_position_before_z_home
     Custom G-Code
       Start G-Code
