@@ -1512,7 +1512,7 @@
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "retract_before_travel",
-		"PresentationName": "Minimum Travel equiring Retraction",
+		"PresentationName": "Minimum Travel Requiring Retraction",
 		"HelpText": "The minimum distance of a non-print move which will trigger a retraction.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
