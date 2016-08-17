@@ -27,10 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -83,19 +87,18 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-		public static GCodeStream CreateTestGCodeStream(string[] inputLines)
+		public static GCodeStream CreateTestGCodeStream(string[] inputLines, out List<GCodeStream> streamList)
 		{
-			GCodeStream gCodeFileStream0 = new TestGCodeStream(inputLines);
-			GCodeStream pauseHandlingStream1 = new PauseHandlingStream(gCodeFileStream0);
-			GCodeStream queuedCommandStream2 = new QueuedCommandsStream(pauseHandlingStream1);
-			GCodeStream relativeToAbsoluteStream3 = new RelativeToAbsoluteStream(queuedCommandStream2);
-			//GCodeStream printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3);
-			GCodeStream printLevelingStream4 = relativeToAbsoluteStream3;
-			GCodeStream waitForTempStream5 = new WaitForTempStream(printLevelingStream4);
-			GCodeStream babyStepsStream6 = new BabyStepsStream(waitForTempStream5);
-			GCodeStream extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
-			GCodeStream feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
-			GCodeStream totalGCodeStream = feedrateMultiplyerStream8;
+			streamList = new List<GCodeStream>();
+			streamList.Add(new TestGCodeStream(inputLines));
+			streamList.Add(new PauseHandlingStream(streamList[streamList.Count - 1]));
+			streamList.Add(new QueuedCommandsStream(streamList[streamList.Count - 1]));
+			streamList.Add(new RelativeToAbsoluteStream(streamList[streamList.Count - 1]));
+			streamList.Add(new WaitForTempStream(streamList[streamList.Count - 1]));
+			streamList.Add(new BabyStepsStream(streamList[streamList.Count - 1]));
+			streamList.Add(new ExtrusionMultiplyerStream(streamList[streamList.Count - 1]));
+			streamList.Add(new FeedRateMultiplyerStream(streamList[streamList.Count - 1]));
+			GCodeStream totalGCodeStream = streamList[streamList.Count - 1];
 
 			return totalGCodeStream;
 		}
@@ -148,7 +151,8 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			GCodeStream testStream = CreateTestGCodeStream(inputLines);
+			List<GCodeStream> streamList;
+			GCodeStream testStream = CreateTestGCodeStream(inputLines, out streamList);
 
 			int expectedIndex = 0;
 			string actualLine = testStream.ReadLine();
@@ -198,7 +202,8 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			GCodeStream testStream = CreateTestGCodeStream(inputLines);
+			List<GCodeStream> streamList;
+			GCodeStream testStream = CreateTestGCodeStream(inputLines, out streamList);
 
 			int expectedIndex = 0;
 			string actualLine = testStream.ReadLine();
@@ -267,7 +272,8 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			GCodeStream pauseHandlingStream = CreateTestGCodeStream(inputLines);
+			List<GCodeStream> streamList;
+			GCodeStream pauseHandlingStream = CreateTestGCodeStream(inputLines, out streamList);
 
 			int expectedIndex = 0;
 			string actualLine = pauseHandlingStream.ReadLine();
@@ -279,6 +285,97 @@ namespace MatterControl.Tests.MatterControl
 			{
 				expectedLine = expected[expectedIndex++];
 				actualLine = pauseHandlingStream.ReadLine();
+
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
+			}
+		}
+
+		[Test, Category("GCodeStream")]
+		public void MorePauseHandlingStreamTests()
+		{
+			string[] inputLines = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0",
+				"G1 X11 Y10 Z10 E10",
+				"G1 X12 Y10 Z10 E30",
+
+				"; the printer pauses",
+				"@pause",
+
+				"; do_resume", // just a marker for us to issue a resume
+
+				// move some more
+				"G1 X13 Y10 Z10 E40",
+				"G1 X14 Y10 Z10 E50",
+				"G1 X15 Y10 Z10 E60",
+				null,
+			};
+
+			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
+			string[] expected = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10",
+				"G1 X11 E10",
+				"G1 X12 E30",
+				"; the printer pauses",
+				"",
+				"",
+				"G1 Z20 E20 F12000",
+				"G90",
+				"M114",
+				"",
+				"; do_resume",
+				"G92 E-10",
+				"G1 Z16.67 F3001",
+				"G1 X12.01 Y10.01 Z13.34",
+				"G1 Z10.01",
+				"G1 X12 Y10 Z10 F3000",
+				"",
+				"G1 Z0 E30.8 F12000",
+				"G90",
+				"M114",
+				"G1 X13 Z10 E40",
+				"G1 X14 E50",
+				"G1 X15 E60",
+				null,
+			};
+
+			ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile();
+			// this is the pause and resume from the Eris
+			PrinterSettings settings = ActiveSliceSettings.Instance;
+			settings.SetValue(SettingsKey.pause_gcode, "G91\nG1 Z10 E - 10 F12000\n  G90");
+			settings.SetValue(SettingsKey.resume_gcode, "G91\nG1 Z-10 E10.8 F12000\nG90");
+
+			List<GCodeStream> streamList;
+			GCodeStream pauseHandlingStream = CreateTestGCodeStream(inputLines, out streamList);
+			PauseHandlingStream pauseStream = null;
+			foreach (var stream in streamList)
+			{
+				if (stream as PauseHandlingStream != null)
+				{
+					pauseStream = (PauseHandlingStream)stream;
+					break;
+				}
+			}
+
+			int expectedIndex = 0;
+			string actualLine = pauseHandlingStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
+
+			while (actualLine != null)
+			{
+				expectedLine = expected[expectedIndex++];
+				actualLine = pauseHandlingStream.ReadLine();
+				//Debug.WriteLine("\"{0}\",".FormatWith(actualLine));
+				if (actualLine == "; do_resume")
+				{
+					pauseStream.Resume();
+				}
 
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
 			}
