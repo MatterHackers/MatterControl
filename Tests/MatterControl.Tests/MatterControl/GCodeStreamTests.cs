@@ -28,13 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -343,7 +346,10 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile();
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
+			MatterControlUtilities.OverrideAppDataLocation();
+
 			// this is the pause and resume from the Eris
 			PrinterSettings settings = ActiveSliceSettings.Instance;
 			settings.SetValue(SettingsKey.pause_gcode, "G91\nG1 Z10 E - 10 F12000\n  G90");
