@@ -80,9 +80,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
+
 				string username = UserSettings.Instance.get("ActiveUserName");
-				return string.IsNullOrEmpty(username) ? GuestDBPath : Path.Combine(ProfilesPath, $"{username}{userDBExtension}");
+
+				if (string.IsNullOrEmpty(username))
+				{ 
+					username = GuestDBPath;
+
+					// If ActiveUserName is empty or invalid and the credentials file exists, delete local credentials, resetting to unauthenticated guest mode
+					string sessionFilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "cache", "session.bin");
+					if(File.Exists(sessionFilePath))
+					{
+						File.Delete(sessionFilePath);
+					}
+				}
+				else
+				{
+					username = Path.Combine(ProfilesPath, $"{username}{userDBExtension}");
+				}
+				return username;
 			}
+
 		}
 
 		static ProfileManager()
