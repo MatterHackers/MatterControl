@@ -499,7 +499,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 
-				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm3", filamentMm3 / 1000), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
+				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm³", filamentMm3 / 1000), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
 				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
 				modelInfoContainer.AddChild(estimatedPrintTime);
