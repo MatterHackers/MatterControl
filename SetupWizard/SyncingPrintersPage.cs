@@ -33,8 +33,6 @@ namespace MatterHackers.MatterControl.SetupWizard
 			});
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
-
 		}
-
 	}
 }

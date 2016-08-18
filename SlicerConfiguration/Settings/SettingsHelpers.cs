@@ -43,8 +43,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class SettingsKey
 	{
+		public const string active_theme_index = nameof(active_theme_index);
 		public const string auto_connect = nameof(auto_connect);
 		public const string baud_rate = nameof(baud_rate);
+		public const string bed_remove_part_temperature = nameof(bed_remove_part_temperature);
 		public const string bed_shape = nameof(bed_shape);
 		public const string bed_size = nameof(bed_size);
 		public const string bed_temperature = nameof(bed_temperature);
@@ -59,7 +61,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string device_token = nameof(device_token);
 		public const string device_type = nameof(device_type);
 		public const string extruder_count = nameof(extruder_count);
-		public const string resume_is_enabled = nameof(resume_is_enabled);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
@@ -70,28 +71,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_fan = nameof(has_fan);
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_heated_bed = nameof(has_heated_bed);
-		public const string bed_remove_part_temperature = nameof(bed_remove_part_temperature);
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string layer_height = nameof(layer_height);
+		public const string layer_name = nameof(layer_name);
 		public const string layer_to_pause = nameof(layer_to_pause);
 		public const string make = nameof(make);
 		public const string min_fan_speed = nameof(min_fan_speed);
 		public const string model = nameof(model);
 		public const string nozzle_diameter = nameof(nozzle_diameter);
+		public const string oem_profile_token = nameof(oem_profile_token);
+		public const string pause_gcode = nameof(pause_gcode);
 		public const string perimeter_start_end_overlap = nameof(perimeter_start_end_overlap);
 		public const string print_center = nameof(print_center);
 		public const string printer_name = nameof(printer_name);
 		public const string publish_bed_image = nameof(publish_bed_image);
+		public const string resume_gcode = nameof(resume_gcode);
+		public const string resume_is_enabled = nameof(resume_is_enabled);
 		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
-		public const string windows_driver = nameof(windows_driver);
-		public const string z_homes_to_max = nameof(z_homes_to_max);
-		public const string active_theme_index = nameof(active_theme_index);
 		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
-		public const string oem_profile_token = nameof(oem_profile_token);
-		public const string layer_name = nameof(layer_name);
+		public const string windows_driver = nameof(windows_driver);
+		public const string z_homes_to_max = nameof(z_homes_to_max);
 	};
 
 	public class SettingsHelpers

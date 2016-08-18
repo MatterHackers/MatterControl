@@ -5320,3 +5320,6 @@ Translated:Enable Resuming
 English:When this is checked MatterControl will attempt to resume a print in the event of a failure, such as lost connection or lost power.
 Translated:When this is checked MatterControl will attempt to resume a print in the event of a failure, such as lost connection or lost power.
 
+English:Minimum Travel Requiring Retraction
+Translated:Minimum Travel Requiring Retraction
+
