@@ -90,16 +90,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public static void Reload()
 		{
-			currentPrintLibraryWidget.CloseAllChildren();
+			// Unhook events and close active instance
+			if (currentPrintLibraryWidget.libraryDataView != null)
+			{
+				currentPrintLibraryWidget.libraryDataView.SelectedItems.OnAdd -= currentPrintLibraryWidget.onLibraryItemsSelected;
+				currentPrintLibraryWidget.libraryDataView.SelectedItems.OnRemove -= currentPrintLibraryWidget.onLibraryItemsSelected;
+
+				currentPrintLibraryWidget.CloseAllChildren();
+			}
+
+			// Load and initialize
 			currentPrintLibraryWidget.LoadContent();
+			currentPrintLibraryWidget.libraryDataView.SelectedItems.OnAdd += currentPrintLibraryWidget.onLibraryItemsSelected;
+			currentPrintLibraryWidget.libraryDataView.SelectedItems.OnRemove += currentPrintLibraryWidget.onLibraryItemsSelected;
 		}
 
 		public PrintLibraryWidget()
 		{
 			currentPrintLibraryWidget = this;
-			LoadContent();
-			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
-			libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
+			Reload();
 		}
 
 		private void LoadContent()
