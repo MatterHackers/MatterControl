@@ -741,15 +741,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var button = buttonFactory.Generate("Delete Printer".Localize());
 				button.HAnchor = HAnchor.ParentCenter;
 				button.Click += (s, e) =>
-									{
-										StyledMessageBox.ShowMessageBox((doDelete) =>
-										{
-											if (doDelete)
-											{
-												ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
-											}
-										}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
-									};
+				{
+					StyledMessageBox.ShowMessageBox((doDelete) =>
+					{
+						if (doDelete)
+						{
+							ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
+						}
+					}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
+				};
 				dataArea.AddChild(button);
 			}
 

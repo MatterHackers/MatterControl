@@ -92,8 +92,8 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var uploadButton = textImageButtonFactory.Generate("Sync".Localize());
-			uploadButton.Click += (s, e) =>
+			var syncButton = textImageButtonFactory.Generate("Sync".Localize());
+			syncButton.Click += (s, e) =>
 			{
 				// do the import
 				foreach(var checkBox in checkBoxes)
@@ -120,13 +120,13 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			uploadButton.Visible = true;
+			syncButton.Visible = true;
 			cancelButton.Visible = true;
 
 			cancelButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.Close);
 
 			//Add buttons to buttonContainer
-			footerRow.AddChild(uploadButton);
+			footerRow.AddChild(syncButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
 
