@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void CreateDownloadsSubFolder()
 		{
 
-			Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "Temporary"));
+			Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary"));
 
 		}
 
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			get
 			{
-				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "Temporary");
+				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary");
 			}
 		}
 
