@@ -443,9 +443,16 @@ namespace MatterHackers.MatterControl
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
 
 			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
+
+			string currentUserName = UserSettings.Instance.get("ActiveUserName");
+
 			UserSettings.Instance.set("ActiveUserName", activeUserName);
 
-			UserChanged();
+			// Only fire UserChanged if it actually happened - prevents runaway positive feedback loop
+			if (currentUserName != activeUserName)
+			{
+				UserChanged();
+			}
 		}
 
 		// Called after every startup and at the completion of every authentication change
