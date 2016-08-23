@@ -19,6 +19,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 		ScrollableWidget scrollWindow;
 
 		public PrinterProfileHistoryPage()
+			: base(unlocalizedTextForTitle: "Profile History")
 		{
 			scrollWindow = new ScrollableWidget()
 			{
