@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new List<MenuItemAction>
 			{
-				new MenuItemAction("Add Printer".Localize(), () => WizardWindow.ShowPrinterSetup(true)),
+				new MenuItemAction("Add Printer".Localize(), AddPrinter_Click),
 				new MenuItemAction("Import Printer".Localize(), ImportPrinter),
 				new MenuItemAction("Add File To Queue".Localize(), importFile_Click),
 				new MenuItemAction("Redeem Design Code".Localize(), () => RedeemDesignCode?.Invoke(this, null)),
@@ -68,6 +68,21 @@ namespace MatterHackers.MatterControl
 			if(!ProfileManager.ImportFromExisting(settingsFilePath))
 			{
 				StyledMessageBox.ShowMessageBox(null, "Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+			}
+		}
+
+		private void AddPrinter_Click()
+		{
+			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			{
+				UiThread.RunOnIdle(() =>
+				StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())
+				);
+			}
+			else
+			{
+				WizardWindow.ShowPrinterSetup(true);
 			}
 		}
 

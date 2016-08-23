@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 		public static Func<PrinterInfo,string, Task<PrinterSettings>> GetPrinterProfileAsync;
-		public static Func<Task> SyncPrinterProfiles;
+		public static Func<IProgress<SyncReportType>,Task> SyncPrinterProfiles;
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
 		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
 
@@ -443,9 +443,16 @@ namespace MatterHackers.MatterControl
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
 
 			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
+
+			string currentUserName = UserSettings.Instance.get("ActiveUserName");
+
 			UserSettings.Instance.set("ActiveUserName", activeUserName);
 
-			UserChanged();
+			// Only fire UserChanged if it actually happened - prevents runaway positive feedback loop
+			if (currentUserName != activeUserName)
+			{
+				UserChanged();
+			}
 		}
 
 		// Called after every startup and at the completion of every authentication change
@@ -503,7 +510,7 @@ namespace MatterHackers.MatterControl
                     }
                     else
                     {
-                        ApplicationController.SyncPrinterProfiles.Invoke().ContinueWith((task) =>
+                        ApplicationController.SyncPrinterProfiles.Invoke(null).ContinueWith((task) =>
                         {
                             RunSetupIfRequired();
                         });
@@ -566,5 +573,11 @@ namespace MatterHackers.MatterControl
 			//ApplicationController.Instance.ReloadAll(null, null);
 			PrintLibraryWidget.Reload();
 		}
+	}
+
+	public class SyncReportType
+	{
+		public string actionLabel;
+		public double percComplete;
 	}
 }

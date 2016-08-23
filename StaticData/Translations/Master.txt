@@ -5323,6 +5323,6 @@ Translated:When this is checked MatterControl will attempt to resume a print in 
 English:Minimum Travel Requiring Retraction
 Translated:Minimum Travel Requiring Retraction
 
-English:Oops! Settings file '{0}' did not contain any settings we could import.
-Translated:Oops! Settings file '{0}' did not contain any settings we could import.
+English:Retreiving sync information...
+Translated:Retreiving sync information...
 

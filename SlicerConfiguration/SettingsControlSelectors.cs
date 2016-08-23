@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetSelectorWidget : FlowLayoutWidget
 	{
+		private string defaultMenuItemText = "- default -".Localize();
 		private Button editButton;
 		private NamedSettingsLayers layerType;
 		GuiWidget pullDownContainer;
@@ -105,7 +106,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			editButton = TextImageButtonFactory.GetThemedEditButton();
 
 			editButton.ToolTipText = "Edit Selected Setting".Localize();
-
+			editButton.Enabled = dropDownList.SelectedIndex != -1;
 			editButton.VAnchor = VAnchor.ParentCenter;
 			editButton.Margin = new BorderDouble(left: 6);
 			editButton.Click += (sender, e) =>
@@ -239,11 +240,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			});
+
+			editButton.Enabled = item.Text != defaultMenuItemText;
 		}
 
 		private DropDownList CreateDropdown()
 		{
-			var dropDownList = new DropDownList("- default -", maxHeight: 300, useLeftIcons: true)
+			var dropDownList = new DropDownList(defaultMenuItemText, maxHeight: 300, useLeftIcons: true)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				MenuItemsPadding = new BorderDouble(10, 4, 10, 6),
@@ -252,7 +255,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			dropDownList.Margin = new BorderDouble(0, 3);
 			dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
 
-			MenuItem defaultMenuItem = dropDownList.AddItem("- default -", "");
+			MenuItem defaultMenuItem = dropDownList.AddItem(defaultMenuItemText, "");
 			defaultMenuItem.Selected += MenuItem_Selected;
 
 			var listSource = (layerType == NamedSettingsLayers.Material) ? ActiveSliceSettings.Instance.MaterialLayers : ActiveSliceSettings.Instance.QualityLayers;

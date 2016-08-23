@@ -12,12 +12,17 @@ namespace MatterHackers.MatterControl.SetupWizard
 {
 	public class SyncingPrintersPage: WizardPage
 	{
+		TextWidget syncingDetails;
 		public SyncingPrintersPage()
 		{
 			TextWidget syncingText = new TextWidget("Syncing Profiles...".Localize(),textColor: ActiveTheme.Instance.PrimaryTextColor);
+			syncingDetails = new TextWidget("Retreiving sync information...".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
+			syncingDetails.AutoExpandBoundsToText = true;
 			contentRow.AddChild(syncingText);
+			contentRow.AddChild(syncingDetails);
+			Progress<SyncReportType> progress = new Progress<SyncReportType>(ReportProgress);
 
-			ApplicationController.SyncPrinterProfiles().ContinueWith((task) =>
+			ApplicationController.SyncPrinterProfiles(progress).ContinueWith((task) =>
 			{
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
@@ -33,6 +38,11 @@ namespace MatterHackers.MatterControl.SetupWizard
 			});
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
+		}
+
+		private void ReportProgress(SyncReportType report)
+		{
+			syncingDetails.Text = report.actionLabel;
 		}
 	}
 }
