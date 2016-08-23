@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			SetManufacturers(manufacturesList);
 		}
 
-		public async Task ReloadOemProfiles()
+		public async Task ReloadOemProfiles(IProgress<SyncReportType> syncReport = null)
 		{
 			// In public builds this won't be assigned to and we should abort and exit early
 			if (ApplicationController.GetPublicProfileList == null)
@@ -176,16 +176,18 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
 				SetManufacturers(manufactures);
 
-				await DownloadMissingProfiles();
+				await DownloadMissingProfiles(syncReport);
 			}
 		}
 
-		private async Task DownloadMissingProfiles()
+		private async Task DownloadMissingProfiles(IProgress<SyncReportType> syncReport)
 		{
 			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
-
+			SyncReportType reportValue = new SyncReportType();
+			int index = 0;
 			foreach (string oem in OemProfiles.Keys)
 			{
+				index++;
 				foreach (string profileKey in OemProfiles[oem].Values)
 				{
 					string cacheKey = profileKey + ProfileManager.ProfileExtension;
@@ -200,7 +202,14 @@ namespace MatterHackers.MatterControl.SettingsManagement
 						{
 							File.WriteAllText(cachePath, profileJson);
 						}
+						if (syncReport != null)
+						{
+							reportValue.actionLabel = String.Format("Downloading public profiles for {0}...", oem);
+							reportValue.percComplete = (double)index / OemProfiles.Count;
+							syncReport.Report(reportValue);
+						}
 					}
+					
 				}
 			}
 		}
