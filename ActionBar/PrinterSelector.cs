@@ -113,7 +113,18 @@ namespace MatterHackers.MatterControl
 				{
 					if (AddPrinter != null)
 					{
-						UiThread.RunOnIdle(() => AddPrinter(this, null));
+						if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+							|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+						{
+							UiThread.RunOnIdle(() =>
+							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())
+							);
+							this.SelectedIndex = lastSelectedIndex;
+						}
+						else
+						{
+							UiThread.RunOnIdle(() => AddPrinter(this, null));
+						}
 					}
 				};
 		}
