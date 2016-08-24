@@ -1,5 +1,6 @@
 ﻿using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 using System;
 
@@ -53,6 +54,46 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+		}
+
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void ClearingCheckBoxClearsUserOverride()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
+
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+
+					//Navigate to Local Library 
+					resultsHarness.AddTestResult(testRunner.ClickByName("SettingsAndControls", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Skirt and Raft Tab", 1));
+
+					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Features Tab", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Has Fan Checkbox", 1));
+
+					// Assert that the checkbox is currently unchecked, and there is no user override
+					bool hasFan = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan);
+					// Click the checkbox
+					// Assert the checkbox is checked and the user override is set
+					// Click the cancel user override button
+					// Assert the checkbox is unchecked and there is no user override
+
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 7); // make sure we ran all our tests
 		}
 
 		//Stress Test check & uncheck 1000x
