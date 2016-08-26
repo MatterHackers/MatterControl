@@ -619,7 +619,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (settingData.ReloadUiWhenChanged)
 			{
-				ApplicationController.Instance.ReloadAll(null, null);
+				UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll(null, null));
 			}
 		}
 
@@ -667,14 +667,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			public void RefreshValue(IEnumerable<PrinterSettingsLayer> layerFilters)
 			{
 				string latestValue = GetActiveValue(this.SettingsKey, layerFilters);
-				//if(latestValue != SettingsValue)
-				{
-					ValueChanged?.Invoke(latestValue);
-				}
-
-				UpdateStyle?.Invoke();
-
 				SettingsValue = latestValue;
+				UpdateStyle?.Invoke();
+				ValueChanged?.Invoke(latestValue);
 			}
 		}
 
@@ -1330,7 +1325,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Checked = sliceSettingValue == "1"
 							};
 
-							checkBoxWidget.CheckedStateChanged += (sender, e) =>
+							checkBoxWidget.Click += (sender, e) =>
 							{
 								bool isChecked = ((CheckBox)sender).Checked;
 								ActiveSliceSettings.Instance.SetValue(settingData.SlicerConfigName, isChecked ? "1" : "0", persistenceLayer);

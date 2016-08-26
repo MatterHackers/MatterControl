@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be. 
 			SettingsKey.bed_remove_part_temperature,
 			"extruder_wipe_temperature",
-			"heat_extruder_before_homing",
+			SettingsKey.heat_extruder_before_homing,
 			"include_firmware_updater",
 			"layer_to_pause",
 			SettingsKey.show_reset_connection,
