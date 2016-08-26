@@ -476,6 +476,20 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "expand_thin_walls",
+		"PresentationName": "Expand Thin Walls",
+		"HelpText": "Detect sections of the model that would be too thin to print, expand them, and print them.",
+		"DataEditType": "CHECK_BOX",
+		"ExtraSettings": "",
+		"ShowAsOverride": false,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0",
+		"RebuildGCodeOnChange": true
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "extrusion_axis",
 		"PresentationName": "Extrusion Axis",
 		"HelpText": "This is the identifier used in the G-Code to specify the extruder.",
@@ -639,6 +653,20 @@
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "honeycomb"
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "fill_thin_gaps",
+		"PresentationName": "Fill Thin Gaps",
+		"HelpText": "Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.",
+		"DataEditType": "CHECK_BOX",
+		"ExtraSettings": "",
+		"ShowAsOverride": false,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0",
+		"RebuildGCodeOnChange": true
 	},
 	{
 		"QuickMenuSettings": [ ],

@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			hiddenSettings.Add("support_material_xy_distance");
 			hiddenSettings.Add("support_material_z_distance");
 			hiddenSettings.Add(SettingsKey.center_part_on_bed);
+			hiddenSettings.Add(SettingsKey.expand_thin_walls);
+			hiddenSettings.Add(SettingsKey.fill_thin_gaps);
 			hiddenSettings.Add("infill_overlap_perimeter");
 			hiddenSettings.Add("support_type");
 			hiddenSettings.Add("infill_type");
