@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 27); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 21); // make sure we ran all our tests
 		}
 
 		private static void CheckAndUncheckSetting(AutomationTesterHarness resultsHarness, AutomationRunner testRunner, string settingToChange, string checkBoxName, bool expected)

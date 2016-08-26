@@ -60,12 +60,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string default_material_presets = nameof(default_material_presets);
 		public const string device_token = nameof(device_token);
 		public const string device_type = nameof(device_type);
+		public const string expand_thin_walls = nameof(expand_thin_walls);
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
 		public const string filament_diameter = nameof(filament_diameter);
 		public const string fill_density = nameof(fill_density);
+		public const string fill_thin_gaps = nameof(fill_thin_gaps);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
 		public const string first_layer_height = nameof(first_layer_height);
 		public const string has_fan = nameof(has_fan);
