@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			hiddenSettings.Add("extruder_clearance_height");
 			hiddenSettings.Add("extruder_clearance_radius");
 			hiddenSettings.Add("wipe_shield_distance");
-			hiddenSettings.Add("heat_extruder_before_homing");
+			hiddenSettings.Add(SettingsKey.heat_extruder_before_homing);
 			hiddenSettings.Add("extruders_share_temperature");
 			hiddenSettings.Add("print_leveling_method");
 			hiddenSettings.Add("solid_shell");

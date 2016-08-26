@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
-			if (ActiveSliceSettings.Instance.GetValue("heat_extruder_before_homing") == "1")
+			if (ActiveSliceSettings.Instance.GetValue(SettingsKey.heat_extruder_before_homing) == "1")
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
 			// don't set the extruders to heating if we already waited for them to reach temp
-			if (ActiveSliceSettings.Instance.GetValue("heat_extruder_before_homing") != "1")
+			if (ActiveSliceSettings.Instance.GetValue(SettingsKey.heat_extruder_before_homing) != "1")
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{

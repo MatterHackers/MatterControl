@@ -70,30 +70,49 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					//Navigate to Local Library 
 					resultsHarness.AddTestResult(testRunner.ClickByName("SettingsAndControls", 1));
+					testRunner.Wait(.5);
 					resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1));
 					resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Skirt and Raft Tab", 1));
+					testRunner.Wait(.5);
 
 					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1));
 					resultsHarness.AddTestResult(testRunner.ClickByName("Features Tab", 1));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Has Fan Checkbox", 1));
 
-					// Assert that the checkbox is currently unchecked, and there is no user override
-					bool hasFan = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan);
-					// Click the checkbox
-					// Assert the checkbox is checked and the user override is set
-					// Click the cancel user override button
-					// Assert the checkbox is unchecked and there is no user override
+					CheckAndUncheckSetting(resultsHarness, testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
 
+					CheckAndUncheckSetting(resultsHarness, testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
+			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 7); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 27); // make sure we ran all our tests
+		}
+
+		private static void CheckAndUncheckSetting(AutomationTesterHarness resultsHarness, AutomationRunner testRunner, string settingToChange, string checkBoxName, bool expected)
+		{
+			// Assert that the checkbox is currently unchecked, and there is no user override
+			resultsHarness.AddTestResult(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) == expected);
+			resultsHarness.AddTestResult(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
+
+			// Click the checkbox
+			resultsHarness.AddTestResult(testRunner.ClickByName(checkBoxName, 1));
+			testRunner.Wait(2);
+
+			// Assert the checkbox is checked and the user override is set
+			resultsHarness.AddTestResult(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) != expected);
+			resultsHarness.AddTestResult(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == true);
+
+			// Click the cancel user override button
+			resultsHarness.AddTestResult(testRunner.ClickByName("Restore " + settingToChange, 1));
+			testRunner.Wait(2);
+
+			// Assert the checkbox is unchecked and there is no user override
+			resultsHarness.AddTestResult(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) == expected);
+			resultsHarness.AddTestResult(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 		}
 
 		//Stress Test check & uncheck 1000x
