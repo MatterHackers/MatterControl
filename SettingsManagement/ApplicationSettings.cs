@@ -1,6 +1,7 @@
 ﻿using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using System.Collections.Generic;
+using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -48,6 +49,31 @@ namespace MatterHackers.MatterControl
 			}
 
 			return oemName;
+		}
+
+		private string GetClientTokenKeyName()
+		{
+			string keyName = "ClientToken";
+#if DEBUG
+			keyName += "_Test";
+#else
+			if(OemSettings.Instance.ForceTestEnvironment)
+			{
+				keyName += "_Test";
+			}
+#endif
+
+			return keyName;
+		}
+
+		public string GetClientToken()
+		{
+			return get(GetClientTokenKeyName());
+		}
+
+		public void SetClientToken(string clientToken)
+		{
+			set(GetClientTokenKeyName(), clientToken);
 		}
 
 		public string get(string key)

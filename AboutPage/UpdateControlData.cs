@@ -375,10 +375,10 @@ namespace MatterHackers.MatterControl
 		private UpdateControlData()
 		{
 			CheckVersionStatus();
-			if (ApplicationSettings.Instance.get("ClientToken") != null
+			if (ApplicationSettings.Instance.GetClientToken() != null
 				|| OemSettings.Instance.CheckForUpdatesOnFirstRun)
 			{
-				if (ApplicationSettings.Instance.get("ClientToken") == null)
+				if (ApplicationSettings.Instance.GetClientToken() == null)
 				{
 					updateRequestType = UpdateRequestType.FirstTimeEver;
 				}

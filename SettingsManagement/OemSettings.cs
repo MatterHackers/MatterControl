@@ -65,6 +65,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			}
 		}
 
+		public bool ForceTestEnvironment = false;
+
 		public bool UseSimpleModeByDefault = false;
 
 		public string ThemeColor = "";

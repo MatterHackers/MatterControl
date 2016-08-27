@@ -5332,3 +5332,15 @@ Translated:- default -
 English:Profile History
 Translated:Profile History
 
+English:Detect sections of the model that would be too thin to print, expand them, and print them.
+Translated:Detect sections of the model that would be too thin to print, expand them, and print them.
+
+English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
+Translated:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
+
+English:Expand Thin Walls
+Translated:Expand Thin Walls
+
+English:Fill Thin Gaps
+Translated:Fill Thin Gaps
+
