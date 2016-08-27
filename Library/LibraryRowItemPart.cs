@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
 
-			TextWidget printLabel = new TextWidget("Print".Localize());
+			TextWidget printLabel = new TextWidget("Add to\nQueue".Localize());
 			printLabel.TextColor = RGBA_Bytes.White;
 			printLabel.VAnchor = VAnchor.ParentCenter;
 			printLabel.HAnchor = HAnchor.ParentCenter;
@@ -309,17 +309,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private async void printButton_Click(object sender, EventArgs e)
 		{
 			var newItem = await MakeCopyForQueue();
-
-			if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
-			{
-				QueueData.Instance.AddItem(newItem, indexToInsert: 0);
-				QueueData.Instance.SelectedIndex = 0;
-				PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-			}
-			else
-			{
-				QueueData.Instance.AddItem(newItem);
-			}
+			QueueData.Instance.AddItem(newItem);
 			this.Invalidate();
 		}
 
