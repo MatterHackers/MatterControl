@@ -61,7 +61,14 @@ namespace MatterHackers.MatterControl
 {
     public class MatterControlApplication : SystemWindow
 	{
-		public static bool CameraPreviewActive = false;
+#if DEBUG
+		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
+		public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
+#else
+		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
+#endif
+
+public static bool CameraPreviewActive = false;
 		public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
@@ -115,6 +122,11 @@ namespace MatterHackers.MatterControl
 			if (StaticData.Instance == null) // it may already be initialized by tests
 			{
 				StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
+			}
+
+			if (OemSettings.Instance.ForceTestEnvironment)
+			{
+				MCWSBaseUri = "https://mattercontrol-test.appspot.com";
 			}
 		}
 
@@ -403,13 +415,6 @@ namespace MatterHackers.MatterControl
 				return instance;
 			}
 		}
-
-#if DEBUG
-		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
-		public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
-#else
-		public static string MCWSBaseUri { get;} = "https://mattercontrol.appspot.com";
-#endif
 
 		public static void LoadUITheme()
 		{

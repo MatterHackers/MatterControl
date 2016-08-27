@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			string clientToken = responseValues.get("ClientToken");
 			if (clientToken != null)
 			{
-				ApplicationSettings.Instance.set("ClientToken", clientToken);
+				ApplicationSettings.Instance.SetClientToken(clientToken);
 			}
 		}
 	}

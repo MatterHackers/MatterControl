@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		public override void Request()
 		{
 			//If the client token exists, use it, otherwise wait for client token before making request
-			if (ApplicationSettings.Instance.get("ClientToken") == null)
+			if (ApplicationSettings.Instance.GetClientToken() == null)
 			{
 				ClientTokenRequest request = new ClientTokenRequest();
 				request.RequestSucceeded += new EventHandler(onClientTokenRequestSucceeded);
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		public void onClientTokenReady()
 		{
-			string clientToken = ApplicationSettings.Instance.get("ClientToken");
+			string clientToken = ApplicationSettings.Instance.GetClientToken();
 			requestValues["ClientToken"] = clientToken;
 			if (clientToken != null)
 			{
