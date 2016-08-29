@@ -1,18 +1,3 @@
 {
-  "ThemeColor": "",
-  "AffiliateCode": "5NEP8W",
-  "WindowTitleExtra": "Lars Title",
-  "ShowShopButton": true,
-  "CheckForUpdatesOnFirstRun": false,
-  "ManufacturerNameMappings": [
-  	{
-  		"NameOnDisk": "Esagono",
-  		"NameToDisplay": "Esagonò",
-  	}
-  ],
-  "PreloadedLibraryFiles": [
-	"MatterControl - Coin.stl",
-    "MatterControl - Stand.stl",
-    "Calibration - Box.stl"
-  ]
+	"ForceTestEnvironment": true
 }
