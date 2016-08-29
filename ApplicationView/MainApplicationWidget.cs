@@ -49,6 +49,7 @@ using System.Threading.Tasks;
 namespace MatterHackers.MatterControl
 {
 	using Agg.Font;
+	using System.Reflection;
 	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
 
 	public abstract class ApplicationView : GuiWidget
@@ -196,6 +197,28 @@ namespace MatterHackers.MatterControl
 		private event EventHandler unregisterEvents;
 
 		public bool WidescreenMode { get; set; }
+
+		static int applicationInstanceCount = 0;
+		public static int ApplicationInstanceCount
+		{
+			get
+			{
+				if (applicationInstanceCount == 0)
+				{
+					string applicationName = Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location).ToUpper();
+					Process[] p1 = Process.GetProcesses();
+					foreach (System.Diagnostics.Process pro in p1)
+					{
+						if(pro.ProcessName.ToUpper().Contains(applicationName))
+						{
+							applicationInstanceCount++;
+						}
+					}
+				}
+
+				return applicationInstanceCount;
+			}
+		}
 
 		public ApplicationController()
 		{
