@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl
 				signInButton.Visible = false;
 				signOutButton.Visible = false;
 				statusMessage.Visible = true;
-				ApplicationController.Instance.StartLogin();
+				ApplicationController.Instance.StartSignIn();
 			});
 			buttonContainer.AddChild(signInButton);
 
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl
 				signInButton.Visible = false;
 				signOutButton.Visible = false;
 				statusMessage.Visible = true;
-				ApplicationController.Instance.StartLogout();
+				ApplicationController.Instance.StartSignOut();
 			});
 			buttonContainer.AddChild(signOutButton);
 

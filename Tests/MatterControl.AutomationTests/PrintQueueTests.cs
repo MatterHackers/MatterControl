@@ -753,13 +753,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 	}
 
-
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class SendMenuItemClickedWhileNotLoggedIn
 	{
-
 		[Test, RequiresSTA, RunInApplicationDomain]
-		public void SendMenuItemCLickedNoLogin()
+		public void SendMenuItemCLickedNoSignIn()
 		{
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
@@ -787,9 +785,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Send Menu Item", 2);
 
-					bool loginPromptWindowOpens = testRunner.WaitForName("Ok Button", 2);
+					bool signInPromptWindowOpens = testRunner.WaitForName("Ok Button", 2);
 
-					resultsHarness.AddTestResult(loginPromptWindowOpens == true);
+					resultsHarness.AddTestResult(signInPromptWindowOpens == true);
 
 					testRunner.ClickByName("Ok Button");
 

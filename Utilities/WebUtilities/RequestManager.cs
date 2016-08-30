@@ -84,35 +84,35 @@ namespace MatterHackers.MatterControl
 			return responseFromServer;
 		}
 
-		public HttpWebResponse SendPOSTRequest(string uri, string content, string login, string password, bool allowAutoRedirect)
+		public HttpWebResponse SendPOSTRequest(string uri, string content, string signIn, string password, bool allowAutoRedirect)
 		{
-			HttpWebRequest request = GeneratePOSTRequest(uri, content, login, password, allowAutoRedirect);
+			HttpWebRequest request = GeneratePOSTRequest(uri, content, signIn, password, allowAutoRedirect);
 			return GetResponse(request);
 		}
 
-		public HttpWebResponse SendGETRequest(string uri, string login, string password, bool allowAutoRedirect)
+		public HttpWebResponse SendGETRequest(string uri, string signIn, string password, bool allowAutoRedirect)
 		{
-			HttpWebRequest request = GenerateGETRequest(uri, login, password, allowAutoRedirect);
+			HttpWebRequest request = GenerateGETRequest(uri, signIn, password, allowAutoRedirect);
 			return GetResponse(request);
 		}
 
-		public HttpWebResponse SendRequest(string uri, string content, string method, string login, string password, bool allowAutoRedirect)
+		public HttpWebResponse SendRequest(string uri, string content, string method, string signIn, string password, bool allowAutoRedirect)
 		{
-			HttpWebRequest request = GenerateRequest(uri, content, method, login, password, allowAutoRedirect);
+			HttpWebRequest request = GenerateRequest(uri, content, method, signIn, password, allowAutoRedirect);
 			return GetResponse(request);
 		}
 
-		public HttpWebRequest GenerateGETRequest(string uri, string login, string password, bool allowAutoRedirect)
+		public HttpWebRequest GenerateGETRequest(string uri, string signIn, string password, bool allowAutoRedirect)
 		{
 			return GenerateRequest(uri, null, "GET", null, null, allowAutoRedirect);
 		}
 
-		public HttpWebRequest GeneratePOSTRequest(string uri, string content, string login, string password, bool allowAutoRedirect)
+		public HttpWebRequest GeneratePOSTRequest(string uri, string content, string signIn, string password, bool allowAutoRedirect)
 		{
 			return GenerateRequest(uri, content, "POST", null, null, allowAutoRedirect);
 		}
 
-		internal HttpWebRequest GenerateRequest(string uri, string content, string method, string login, string password, bool allowAutoRedirect)
+		internal HttpWebRequest GenerateRequest(string uri, string content, string method, string signIn, string password, bool allowAutoRedirect)
 		{
 			if (uri == null)
 			{
@@ -128,14 +128,14 @@ namespace MatterHackers.MatterControl
 			// Set cookie container to maintain cookies
 			request.CookieContainer = cookies;
 			request.AllowAutoRedirect = false;
-			// If login is empty use defaul credentials
-			if (string.IsNullOrEmpty(login))
+			// If sign in is empty use defaul credentials
+			if (string.IsNullOrEmpty(signIn))
 			{
 				request.Credentials = CredentialCache.DefaultNetworkCredentials;
 			}
 			else
 			{
-				request.Credentials = new NetworkCredential(login, password);
+				request.Credentials = new NetworkCredential(signIn, password);
 			}
 
 			if (method == "POST")

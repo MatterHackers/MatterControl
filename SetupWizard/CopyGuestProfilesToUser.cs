@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 {
 	public class CopyGuestProfilesToUser : WizardPage
 	{
-		static string importMessage = "It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.".Localize();
+		static string importMessage = "It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you sign in to MatterControl.".Localize();
 
 		List<CheckBox> checkBoxes = new List<CheckBox>();
 

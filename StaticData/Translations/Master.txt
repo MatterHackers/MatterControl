@@ -5344,3 +5344,18 @@ Translated:Expand Thin Walls
 English:Fill Thin Gaps
 Translated:Fill Thin Gaps
 
+English:Sign in Required
+Translated:Sign in Required
+
+English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
+Translated:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
+
+English:Sign Out?
+Translated:Sign Out?
+
+English:Sign Out
+Translated:Sign Out
+
+English:Sign in
+Translated:Sign in
+
