@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(rememberChoice);
 			rememberChoice.CheckedStateChanged += (s, e) =>
 			{
-				UserSettings.Instance.set("SuppressAuthPanel", rememberChoice.Checked.ToString());
+				ApplicationSettings.Instance.set(ApplicationSettingsKey.SuppressAuthPanel, rememberChoice.Checked.ToString());
 			};
 
 			var skipButton = textImageButtonFactory.Generate("Skip".Localize());

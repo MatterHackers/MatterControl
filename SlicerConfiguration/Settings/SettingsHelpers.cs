@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string start_gcode = nameof(start_gcode);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
-	};
+	}
 
 	public class SettingsHelpers
 	{

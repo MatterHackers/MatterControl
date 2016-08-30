@@ -1346,7 +1346,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
 		{
-			string renderTypeString = UserSettings.Instance.get("defaultRenderSetting");
+			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
 			if (renderTypeString == null)
 			{
 				if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
@@ -1357,7 +1357,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					renderTypeString = "Outlines";
 				}
-				UserSettings.Instance.set("defaultRenderSetting", renderTypeString);
+				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
 			}
 			RenderOpenGl.RenderTypes renderType;
 			bool canParse = Enum.TryParse<RenderOpenGl.RenderTypes>(renderTypeString, out renderType);
@@ -1373,7 +1373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				renderTypeShaded.CheckedStateChanged += (sender, e) =>
 				{
 					meshViewerWidget.RenderType = RenderTypes.Shaded;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
 				};
 				viewOptionContainer.AddChild(renderTypeShaded);
 			}
@@ -1384,7 +1384,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				renderTypeOutlines.CheckedStateChanged += (sender, e) =>
 				{
 					meshViewerWidget.RenderType = RenderTypes.Outlines;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
 				};
 				viewOptionContainer.AddChild(renderTypeOutlines);
 			}
@@ -1395,7 +1395,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				renderTypePolygons.CheckedStateChanged += (sender, e) =>
 				{
 					meshViewerWidget.RenderType = RenderTypes.Polygons;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
 				};
 				viewOptionContainer.AddChild(renderTypePolygons);
 			}
@@ -1519,7 +1519,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (UserSettings.Instance.IsTouchScreen)
 						{
-							UserSettings.Instance.set("defaultRenderSetting", RenderTypes.Shaded.ToString());
+							UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, RenderTypes.Shaded.ToString());
 						}
 						else
 						{

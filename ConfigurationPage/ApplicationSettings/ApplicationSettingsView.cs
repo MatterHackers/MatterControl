@@ -227,20 +227,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			MenuItem touchscreenOptionsDropDownItem = interfaceOptionsDropList.AddItem("Touchscreen".Localize(), "touchscreen");
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
-			string currentDisplayModeType = UserSettings.Instance.get("ApplicationDisplayMode");
+			string currentDisplayModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
 
 			if (acceptableUpdateFeedTypeValues.IndexOf(currentDisplayModeType) == -1)
 			{
-				UserSettings.Instance.set("ApplicationDisplayMode", "responsive");
+				UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, "responsive");
 			}
 
-			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get("ApplicationDisplayMode");
+			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
 			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
 			{
 				string releaseCode = ((DropDownList)sender).SelectedValue;
-				if (releaseCode != UserSettings.Instance.get("ApplicationDisplayMode"))
+				if (releaseCode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
 				{
-					UserSettings.Instance.set("ApplicationDisplayMode", releaseCode);
+					UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, releaseCode);
 					displayControlRestartButton.Visible = true;
 				}
 			};
@@ -318,14 +318,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			developmentDropDownItem.Selected += new EventHandler(FixTabDot);
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
-			string currentUpdateFeedType = UserSettings.Instance.get("UpdateFeedType");
+			string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
 
 			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
 			{
-				UserSettings.Instance.set("UpdateFeedType", "release");
+				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
 			}
 
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("UpdateFeedType");
+			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
 			releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
 
 			buttonRow.AddChild(settingsLabel);
@@ -547,9 +547,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{
 			string releaseCode = ((DropDownList)sender).SelectedValue;
-			if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
+			if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
 			{
-				UserSettings.Instance.set("UpdateFeedType", releaseCode);
+				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
 			}
 		}
 
