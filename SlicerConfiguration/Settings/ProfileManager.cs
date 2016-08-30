@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static ProfileManager Instance { get; set; }
 
 		public const string ProfileExtension = ".printer";
+		public const string ConfigFileExtension = ".slice";
 
 		private static object writeLock = new object();
 		private static EventHandler unregisterEvents;
@@ -69,9 +70,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-
-		public const string ConfigFileExtension = ".slice";
-
 		private const string userDBExtension = ".profiles";
 		private const string guestDBFileName = "guest" + userDBExtension;
 
@@ -82,7 +80,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				string username = UserSettings.Instance.get("ActiveUserName");
-
 				if (string.IsNullOrEmpty(username))
 				{ 
 					username = GuestDBPath;
@@ -209,15 +206,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return emptyProfile;
 		}
 
-		public static PrinterSettings LoadProfileFromMCWS(string deviceToken)
-		{
-			WebClient client = new WebClient();
-			string json = client.DownloadString($"{MatterControlApplication.MCWSBaseUri}/api/1/device/get-profile?PrinterToken={deviceToken}");
-
-			var printerSettings = JsonConvert.DeserializeObject<PrinterSettings>(json);
-			return printerSettings;
-		}
-
 		[JsonIgnore]
 		public string LastProfileID
 		{
@@ -238,7 +226,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetLastProfile(string printerID)
 		{
 			string activeUserName = UserSettings.Instance.get("ActiveUserName");
-
 			UserSettings.Instance.set($"ActiveProfileID-{activeUserName}", printerID);
 		}
 
@@ -425,6 +412,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			Instance.Profiles.Add(new PrinterInfo
+			{
+				Name = printerName,
+				ID = guid,
+				Make = make,
+				Model = model
+			});
+
 			// Set initial theme to current theme
 			try
 			{
@@ -433,16 +428,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch
 			{
-
 			}
-
-			Instance.Profiles.Add(new PrinterInfo
-			{
-				Name = printerName,
-				ID = guid,
-				Make = make,
-				Model = model
-			});
 
 			// Update SHA1
 			newProfile.Save();
