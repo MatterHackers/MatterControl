@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public const string ProfileExtension = ".printer";
 
+		private static object writeLock = new object();
 		private static EventHandler unregisterEvents;
 		private static readonly string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 		private static string ProfilesPath
@@ -80,7 +81,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-
 				string username = UserSettings.Instance.get("ActiveUserName");
 
 				if (string.IsNullOrEmpty(username))
@@ -100,7 +100,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 				return username;
 			}
-
 		}
 
 		static ProfileManager()
@@ -524,7 +523,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Save()
 		{
-			File.WriteAllText(ProfilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+			lock(writeLock)
+			{
+				File.WriteAllText(ProfilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+			}
 		}
 	}
 }
