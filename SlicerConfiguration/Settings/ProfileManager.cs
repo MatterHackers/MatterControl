@@ -236,13 +236,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ProfilePath(string printerID)
 		{
-			return Path.Combine(ProfileManager.ProfilesPath, printerID + ProfileExtension);
+			return ProfilePath(this[printerID]);
 		}
 
 		public static PrinterSettings LoadWithoutRecovery(string profileID)
 		{
-			string profilePath = Path.Combine(ProfilesPath, profileID + ProfileManager.ProfileExtension);
-			if (File.Exists(profilePath))
+			string profilePath = Instance[profileID]?.ProfilePath;
+			if (profilePath != null && File.Exists(profilePath))
 			{
 				try
 				{
