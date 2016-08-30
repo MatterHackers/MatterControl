@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string deviceCode;
 
-		private string doNotShowAgainMessage = "Do not show this message again".Localize();
+		private string doNotAskAgainMessage = "Don't ask me again".Localize();
 
 		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
 
@@ -1433,11 +1433,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							// clear the output cache prior to starting a print
 							PrinterOutputCache.Instance.Clear();
 
-							string hideGCodeWarning = ApplicationSettings.Instance.get("HideGCodeWarning");
+							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
 							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
 							{
-								CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotShowAgainMessage);
+								CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage);
 								hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 								hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6, left: 6);
 								hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -1445,11 +1445,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								{
 									if (hideGCodeWarningCheckBox.Checked)
 									{
-										ApplicationSettings.Instance.set("HideGCodeWarning", "true");
+										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
 									}
 									else
 									{
-										ApplicationSettings.Instance.set("HideGCodeWarning", null);
+										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
 									}
 								};
 								StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO);

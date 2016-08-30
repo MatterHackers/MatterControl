@@ -60,16 +60,16 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		public LatestVersionRequest()
 		{
-			string feedType = UserSettings.Instance.get("UpdateFeedType");
+			string feedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
 			if (feedType == null)
 			{
 				feedType = "release";
-				UserSettings.Instance.set("UpdateFeedType", feedType);
+				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, feedType);
 			}
 			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
 			//requestValues["TestCode"] = "100"; // will cause response of update available and not required
 			//requestValues["TestCode"] = "101"; // will cause response of update available and required
-			requestValues["UpdateFeedType"] = feedType;
+			requestValues[UserSettingsKey.UpdateFeedType] = feedType;
 			uri = $"{MatterControlApplication.MCWSBaseUri}/api/1/get-current-release-version";
 		}
 

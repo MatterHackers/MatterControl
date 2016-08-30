@@ -88,14 +88,14 @@ namespace MatterHackers.MatterControl.AboutPage
             developmentDropDownItem.Selected += new EventHandler(FixTabDot);
 
             List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
-            string currentUpdateFeedType = UserSettings.Instance.get("UpdateFeedType");
+            string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
 
             if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
             {
-                UserSettings.Instance.set("UpdateFeedType", "release");
+                UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
             }
 
-            releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("UpdateFeedType");
+            releaseOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
             releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
 
 			string currentBuildNo = VersionInfo.Instance.BuildVersion;
@@ -222,9 +222,9 @@ namespace MatterHackers.MatterControl.AboutPage
             //getAdditionalFeedInfo();
             
             string releaseCode = ((DropDownList)sender).SelectedValue;
-            if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
+            if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
             {    
-                UserSettings.Instance.set("UpdateFeedType", releaseCode);
+                UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
             }
            
         }

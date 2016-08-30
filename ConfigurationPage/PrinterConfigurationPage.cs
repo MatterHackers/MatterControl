@@ -180,14 +180,14 @@ namespace MatterHackers.MatterControl
 			releaseOptionsDropList.MinimumSize = new Vector2(releaseOptionsDropList.LocalBounds.Width, releaseOptionsDropList.LocalBounds.Height);
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
-			string currentUpdateFeedType = UserSettings.Instance.get("UpdateFeedType");
+			string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
 
 			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
 			{
-				UserSettings.Instance.set("UpdateFeedType", "release");
+				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
 			}
 
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("UpdateFeedType");
+			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
 
 			releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
 
@@ -204,9 +204,9 @@ namespace MatterHackers.MatterControl
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{
 			string releaseCode = ((DropDownList)sender).SelectedValue;
-			if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
+			if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
 			{
-				UserSettings.Instance.set("UpdateFeedType", releaseCode);
+				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
 			}
 		}
 

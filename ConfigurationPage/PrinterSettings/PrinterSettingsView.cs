@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			DisableableWidget cameraContainer = new DisableableWidget();
 			cameraContainer.AddChild(GetCameraControl());
 
-			if (ApplicationSettings.Instance.get("HardwareHasCamera") == "true")
+			if (ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true")
 			{
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 				mainContainer.AddChild(cameraContainer);

@@ -5,6 +5,15 @@ using System;
 
 namespace MatterHackers.MatterControl
 {
+	public static class ApplicationSettingsKey
+	{
+		public const string SuppressAuthPanel = nameof(SuppressAuthPanel);
+		public const string HardwareHasCamera = nameof(HardwareHasCamera);
+		public const string HideGCodeWarning = nameof(HideGCodeWarning);
+		public const string DesktopPosition = nameof(DesktopPosition);
+		public const string WindowSize = nameof(WindowSize);
+	}
+
 	public class ApplicationSettings
 	{
 		public static string LibraryFilterFileExtensions { get { return ".stl,.amf,.gcode"; } }

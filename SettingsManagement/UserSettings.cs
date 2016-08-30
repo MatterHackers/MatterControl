@@ -6,6 +6,13 @@ namespace MatterHackers.MatterControl
 {
 	public enum ApplicationDisplayType { Responsive, Touchscreen };
 
+	public static class UserSettingsKey
+	{
+		public const string UpdateFeedType = nameof(UpdateFeedType);
+		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
+		public const string defaultRenderSetting = nameof(defaultRenderSetting);
+	}
+
 	public class UserSettings
 	{
 		private static UserSettings globalInstance = null;
@@ -96,7 +103,7 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				if (this.get("ApplicationDisplayMode") == "touchscreen")
+				if (this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen")
 				{
 					return ApplicationDisplayType.Touchscreen;
 				}
@@ -107,6 +114,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool IsTouchScreen => this.get("ApplicationDisplayMode") == "touchscreen";
+		public bool IsTouchScreen => this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
 	}
 }

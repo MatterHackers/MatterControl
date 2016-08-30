@@ -309,7 +309,7 @@ public static bool CameraPreviewActive = false;
 
 			UiThread.RunOnIdle(CheckOnPrinter);
 
-			string desktopPosition = ApplicationSettings.Instance.get("DesktopPosition");
+			string desktopPosition = ApplicationSettings.Instance.get(ApplicationSettingsKey.DesktopPosition);
 			if (desktopPosition != null && desktopPosition != "")
 			{
 				string[] sizes = desktopPosition.Split(',');
@@ -390,7 +390,7 @@ public static bool CameraPreviewActive = false;
 		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)
 		{
 			// Conditionally spin up error reporting if not on the Stable channel
-			string channel = UserSettings.Instance.get("UpdateFeedType");
+			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
 			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
 			{
 #if !DEBUG
@@ -449,7 +449,7 @@ public static bool CameraPreviewActive = false;
 		public static MatterControlApplication CreateInstance(int overrideWidth = -1, int overrideHeight = -1)
 		{
 			// try and open our window matching the last size that we had for it.
-			string windowSize = ApplicationSettings.Instance.get("WindowSize");
+			string windowSize = ApplicationSettings.Instance.get(ApplicationSettingsKey.WindowSize);
 			int width = overrideWidth == -1 ? 601 : overrideWidth;
 			int height = overrideHeight == -1 ? 601 : overrideHeight;
 			if (windowSize != null && windowSize != "")
@@ -482,7 +482,7 @@ public static bool CameraPreviewActive = false;
 
 #if !DEBUG
 			// Conditionally spin up error reporting if not on the Stable channel
-			string channel = UserSettings.Instance.get("UpdateFeedType");
+			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
 			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
 #endif
 			{
@@ -581,8 +581,8 @@ public static bool CameraPreviewActive = false;
 		public override void OnClosing(out bool CancelClose)
 		{
 			// save the last size of the window so we can restore it next time.
-			ApplicationSettings.Instance.set("WindowSize", string.Format("{0},{1}", Width, Height));
-			ApplicationSettings.Instance.set("DesktopPosition", string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
+			ApplicationSettings.Instance.set(ApplicationSettingsKey.WindowSize, string.Format("{0},{1}", Width, Height));
+			ApplicationSettings.Instance.set(ApplicationSettingsKey.DesktopPosition, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
 
 			//Save a snapshot of the prints in queue
 			QueueData.Instance.SaveDefaultQueue();
@@ -713,7 +713,7 @@ public static bool CameraPreviewActive = false;
 		public void OpenCameraPreview()
 		{
 			//Camera launcher placeholder (KP)
-			if (ApplicationSettings.Instance.get("HardwareHasCamera") == "true")
+			if (ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true")
 			{
 				//Do something
 			}
