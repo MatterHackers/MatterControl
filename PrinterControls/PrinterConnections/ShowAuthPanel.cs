@@ -56,6 +56,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				"Remote Monitoring".Localize(),
 				"Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.".Localize());
 
+			contentRow.AddChild(new VerticalSpacer());
+
+			CheckBox rememberChoice = new CheckBox("Don't ask me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
+			contentRow.AddChild(rememberChoice);
+			rememberChoice.CheckedStateChanged += (s, e) =>
+			{
+				UserSettings.Instance.set("SuppressAuthPanel", rememberChoice.Checked.ToString());
+			};
+
 			var skipButton = textImageButtonFactory.Generate("Skip".Localize());
 			skipButton.Name = "Connection Wizard Skip Sign In Button";
 			skipButton.Click += (sender, e) =>
