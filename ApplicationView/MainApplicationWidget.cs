@@ -525,8 +525,11 @@ namespace MatterHackers.MatterControl
 				bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
                 if (showAuthWindow)
                 {
-                    //Launch window to prompt user to sign in
-                    UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+					if (UserSettings.Instance.get("SuppressAuthPanel") != "True")
+					{
+						//Launch window to prompt user to sign in
+						UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+					}
                 }
                 else
                 {

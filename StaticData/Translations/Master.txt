@@ -5359,3 +5359,9 @@ Translated:Sign Out
 English:Sign in
 Translated:Sign in
 
+English:Sign in to my account
+Translated:Sign in to my account
+
+English:Don't ask me again
+Translated:Don't ask me again
+
