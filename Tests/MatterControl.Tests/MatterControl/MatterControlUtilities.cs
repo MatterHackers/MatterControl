@@ -112,14 +112,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public enum PrepAction
 		{
-			CloseLoginAndPrinterSelect,
+			CloseSignInAndPrinterSelect,
 		};
 
-		public static void PrepForTestRun(AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseLoginAndPrinterSelect)
+		public static void PrepForTestRun(AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
 		{
 			switch (preAction)
 			{
-				case PrepAction.CloseLoginAndPrinterSelect:
+				case PrepAction.CloseSignInAndPrinterSelect:
 					testRunner.ClickByName("Connection Wizard Skip Sign In Button", 5);
 					testRunner.ClickByName("Cancel Wizard Button", 5);
 					break;
@@ -188,6 +188,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(printer, 2);
 
 			testRunner.ClickByName("Save & Continue Button", 2);
+
+			testRunner.Wait(.5);
 
 			testRunner.ClickByName("Cancel Wizard Button", 2);
 			testRunner.Wait(1);

@@ -171,8 +171,8 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
-		public static Action LoginAction;
-		public static Action LogoutAction;
+		public static Action SignInAction;
+		public static Action SignOutAction;
 		public static Func<string> GetSessionInfo;
 
 		/// <summary>
@@ -205,13 +205,17 @@ namespace MatterHackers.MatterControl
 			{
 				if (applicationInstanceCount == 0)
 				{
-					string applicationName = Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location).ToUpper();
-					Process[] p1 = Process.GetProcesses();
-					foreach (System.Diagnostics.Process pro in p1)
+					Assembly mcAssembly = Assembly.GetEntryAssembly();
+					if(mcAssembly != null)
 					{
-						if(pro.ProcessName.ToUpper().Contains(applicationName))
+						string applicationName = Path.GetFileNameWithoutExtension(mcAssembly.Location).ToUpper();
+						Process[] p1 = Process.GetProcesses();
+						foreach (System.Diagnostics.Process pro in p1)
 						{
-							applicationInstanceCount++;
+							if (pro.ProcessName.ToUpper().Contains(applicationName))
+							{
+								applicationInstanceCount++;
+							}
 						}
 					}
 				}
@@ -226,19 +230,19 @@ namespace MatterHackers.MatterControl
 			ActiveTheme.ThemeChanged.RegisterEvent(ReloadAll, ref unregisterEvents);
 		}
 
-		public void StartLogin()
+		public void StartSignIn()
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
 				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 			{
-				// can't login while printing
+				// can't sign in while printing
 				UiThread.RunOnIdle(() =>
-					StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't login while printing".Localize())
+					StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't sign in while printing".Localize())
 				);
 			}
-			else // do the regular login
+			else // do the regular sign in
 			{
-				LoginAction?.Invoke();
+				SignInAction?.Invoke();
 			}
 		}
 
@@ -316,7 +320,7 @@ namespace MatterHackers.MatterControl
 			return default(T);
 		}
 
-		public void StartLogout()
+		public void StartSignOut()
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
 				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
@@ -328,21 +332,21 @@ namespace MatterHackers.MatterControl
 			}
 			else // do the regular log out
 			{
-				bool allowShowingLogoutWarning = true;
-				if (allowShowingLogoutWarning)
+				bool allowShowingSignOutWarning = true;
+				if (allowShowingSignOutWarning)
 				{
-					// Warn on logout that no access to user printers and cloud library put a 'Don't ask me again' check box
-					StyledMessageBox.ShowMessageBox((clickedLogout) =>
+					// Warn on sign out that no access to user printers and cloud library put a 'Don't ask me again' check box
+					StyledMessageBox.ShowMessageBox((clickedSignOut) =>
 					{
-						if (clickedLogout)
+						if (clickedSignOut)
 						{
-							LogoutAction?.Invoke();
+							SignOutAction?.Invoke();
 						}
-					}, "Are you sure you want to logout? You will not have access to your printer profiles or cloud library.".Localize(), "Logout?".Localize(), StyledMessageBox.MessageType.YES_NO, "Logout".Localize(), "Cancel".Localize());
+					}, "Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.".Localize(), "Sign Out?".Localize(), StyledMessageBox.MessageType.YES_NO, "Sign Out".Localize(), "Cancel".Localize());
 				}
-				else // just run the logout event
+				else // just run the sign out event
 				{					
-					LogoutAction?.Invoke();
+					SignOutAction?.Invoke();
 				}
 			}
 		}
@@ -521,7 +525,7 @@ namespace MatterHackers.MatterControl
 				bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
                 if (showAuthWindow)
                 {
-                    //Launch window to prompt user to log in
+                    //Launch window to prompt user to sign in
                     UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
                 }
                 else
