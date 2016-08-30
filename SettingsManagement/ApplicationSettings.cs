@@ -62,6 +62,10 @@ namespace MatterHackers.MatterControl
 				keyName += "_Test";
 			}
 #endif
+			if(ApplicationController.ApplicationInstanceCount > 1)
+			{
+				keyName += "_" + ApplicationController.ApplicationInstanceCount.ToString();
+			}
 
 			return keyName;
 		}
