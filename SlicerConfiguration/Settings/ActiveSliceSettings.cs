@@ -123,14 +123,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
-					string activeThemeName = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_name);
-					if (string.IsNullOrEmpty(activeThemeName))
+					string activeThemeName = "Blue - Light";
+					if (ActiveSliceSettings.Instance.Contains(SettingsKey.active_theme_name))
 					{
-						activeThemeName = "Blue - Light";
+						activeThemeName = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_name);
+						if (string.IsNullOrEmpty(activeThemeName))
+						{
+							activeThemeName = "Blue - Light";
+						}
+						if (!doReloadEvent)
+						{
+							ActiveTheme.SuspendEvents();
+						}
 					}
-					if (!doReloadEvent)
+					else
 					{
-						ActiveTheme.SuspendEvents();
 					}
 					ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
 					ActiveTheme.ResumeEvents();
