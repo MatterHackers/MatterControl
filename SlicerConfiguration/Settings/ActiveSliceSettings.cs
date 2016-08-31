@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static void RefreshActiveInstance(PrinterSettings updatedProfile)
 		{
-			bool themeChanged = activeInstance.GetValue(SettingsKey.active_theme_index) != updatedProfile.GetValue(SettingsKey.active_theme_index);
+			bool themeChanged = activeInstance.GetValue(SettingsKey.active_theme_name) != updatedProfile.GetValue(SettingsKey.active_theme_name);
 
 			activeInstance = updatedProfile;
 
@@ -119,23 +119,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public static void SwitchToPrinterTheme(bool doReloadEvent)
 		{
-			int defaultThemeIndex = ActiveTheme.GetThemeIndex("Blue - Light");
-
-			int themeIndex;
 			if (ActiveSliceSettings.Instance != null)
 			{
-				string activeThemeIndex = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_index);
-				if (string.IsNullOrEmpty(activeThemeIndex) || !int.TryParse(activeThemeIndex, out themeIndex))
+				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
-					themeIndex = defaultThemeIndex;
+					string activeThemeName = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_name);
+					if (string.IsNullOrEmpty(activeThemeName))
+					{
+						activeThemeName = "Blue - Light";
+					}
+					if (!doReloadEvent)
+					{
+						ActiveTheme.SuspendEvents();
+					}
+					ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
+					ActiveTheme.ResumeEvents();
 				}
-
-				if (!doReloadEvent)
-				{
-					ActiveTheme.SuspendEvents();
-				}
-				ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
-				ActiveTheme.ResumeEvents();
 			}
 		}
 

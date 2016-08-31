@@ -427,7 +427,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Set initial theme to current theme
-			newProfile.SetValue(SettingsKey.active_theme_index, ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_index));
+			try
+			{
+				string name = ThemeIndexNameMapping[int.Parse(ActiveSliceSettings.Instance.GetValue("active_theme_index"))];
+				newProfile.SetValue(SettingsKey.active_theme_name, name);
+			}
+			catch
+			{
+
+			}
 
 			Instance.Profiles.Add(new PrinterInfo
 			{
@@ -444,6 +452,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			ActiveSliceSettings.Instance = newProfile;
 		}
+
+		public static Dictionary<int, string> ThemeIndexNameMapping = new Dictionary<int, string>()
+		{
+			{ 0,"Blue - Dark"},
+			{ 1,"Teal - Dark"},
+			{ 2,"Green - Dark"},
+			{ 3,"Light Blue - Dark"},
+			{ 4,"Orange - Dark"},
+			{ 5,"Purple - Dark"},
+			{ 6,"Red - Dark"},
+			{ 7,"Pink - Dark"},
+			{ 8,"Grey - Dark"},
+			{ 9,"Pink - Dark"},
+
+			//Light themes
+			{ 10,"Blue - Light"},
+			{ 11,"Teal - Light"},
+			{ 12,"Green - Light"},
+			{ 13,"Light Blue - Light"},
+			{ 14,"Orange - Light"},
+			{ 15,"Purple - Light"},
+			{ 16,"Red - Light"},
+			{ 17,"Pink - Light"},
+			{ 18,"Grey - Light"},
+			{ 19,"Pink - Light"},
+		};
 
 		private async static Task<PrinterSettings> LoadHttpOemProfile(string make, string model)
 		{

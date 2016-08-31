@@ -11,7 +11,7 @@ namespace MatterHackers.MatterControl
 		public const string UpdateFeedType = nameof(UpdateFeedType);
 		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
 		public const string defaultRenderSetting = nameof(defaultRenderSetting);
-		public const string ActiveThemeIndex = nameof(ActiveThemeIndex);
+		public const string ActiveThemeName = nameof(ActiveThemeName);
 	}
 
 	public class UserSettings

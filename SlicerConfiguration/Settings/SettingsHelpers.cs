@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class SettingsKey
 	{
-		public const string active_theme_index = nameof(active_theme_index);
+		public const string active_theme_name = nameof(active_theme_name);
 		public const string auto_connect = nameof(auto_connect);
 		public const string baud_rate = nameof(baud_rate);
 		public const string bed_remove_part_temperature = nameof(bed_remove_part_temperature);

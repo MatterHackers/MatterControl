@@ -54,10 +54,10 @@ namespace MatterHackers.MatterControl
 				{
 					Width = containerHeight
 				};
-				columnContainer.AddChild(CreateThemeButton(allThemes[index], index));
+				columnContainer.AddChild(CreateThemeButton(allThemes[index]));
 
 				int secondRowIndex = index + themeCount / 2;
-				columnContainer.AddChild(CreateThemeButton(allThemes[secondRowIndex], secondRowIndex));
+				columnContainer.AddChild(CreateThemeButton(allThemes[secondRowIndex]));
 
 				this.AddChild(columnContainer);
 
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 			this.Width = containerHeight * (themeCount / 2);
 		}
 
-		public Button CreateThemeButton(IThemeColors theme, int index)
+		public Button CreateThemeButton(IThemeColors theme)
 		{
 			var normal = new GuiWidget(colorSelectSize, colorSelectSize);
 			normal.BackgroundColor = theme.PrimaryAccentColor;
@@ -82,18 +82,16 @@ namespace MatterHackers.MatterControl
 
 			var colorButton = new Button(0, 0, new ButtonViewStates(normal, hover, pressed, disabled))
 			{
-				Name = index.ToString()
+				Name = theme.Name,
 			};
 			colorButton.Click += (s, e) =>
 			{
-				string themeIndexText = ((GuiWidget)s).Name;
-				int themeIndex;
+				string themeName = ((GuiWidget)s).Name;
 
-				if (int.TryParse(themeIndexText, out themeIndex) && themeIndex < ActiveTheme.AvailableThemes.Count)
-				{
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_index, themeIndex.ToString());
-					ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
-				}
+				// save it for this printer
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_name, themeName);
+
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(themeName);
 			};
 
 			colorButton.MouseEnterBounds += (s, e) =>

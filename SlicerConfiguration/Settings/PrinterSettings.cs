@@ -864,6 +864,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var persistenceLayer = layer ?? UserLayer;
 
+			if(settingsKey == SettingsKey.active_theme_name)
+			{
+				// also save it to the user settings so we can load it first thing on startup before a profile is loaded.
+				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, settingsValue);
+			}
+
 			// If the setting exists and is set the requested value, exit without setting or saving
 			string existingValue;
 			if (persistenceLayer.TryGetValue(settingsKey, out existingValue) && existingValue == settingsValue)

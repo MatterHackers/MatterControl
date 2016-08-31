@@ -28,23 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ContactForm;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.HtmlParsing;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
 
 namespace MatterHackers.MatterControl
 {
@@ -73,7 +64,7 @@ namespace MatterHackers.MatterControl
 			customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
 
 			string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
-			string htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile); 
+			string htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
 
 #if false // test
 			{
@@ -102,7 +93,7 @@ namespace MatterHackers.MatterControl
 
 		public static void DeleteCacheData(int daysOldToDelete)
 		{
-			if(LibraryProviderSQLite.PreloadingCalibrationFiles)
+			if (LibraryProviderSQLite.PreloadingCalibrationFiles)
 			{
 				return;
 			}
@@ -188,7 +179,7 @@ namespace MatterHackers.MatterControl
 			return VersionInfo.Instance.ReleaseVersion;
 		}
 
-		static HashSet<string> folderNamesToPreserve = new HashSet<string>()
+		private static HashSet<string> folderNamesToPreserve = new HashSet<string>()
 		{
 			"profiles",
 		};

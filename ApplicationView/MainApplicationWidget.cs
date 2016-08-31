@@ -206,15 +206,22 @@ namespace MatterHackers.MatterControl
 				if (applicationInstanceCount == 0)
 				{
 					Assembly mcAssembly = Assembly.GetEntryAssembly();
-					if(mcAssembly != null)
+					if (mcAssembly != null)
 					{
 						string applicationName = Path.GetFileNameWithoutExtension(mcAssembly.Location).ToUpper();
 						Process[] p1 = Process.GetProcesses();
 						foreach (System.Diagnostics.Process pro in p1)
 						{
-							if (pro.ProcessName.ToUpper().Contains(applicationName))
+							try
 							{
-								applicationInstanceCount++;
+								if (pro?.ProcessName != null
+								   && pro.ProcessName.ToUpper().Contains(applicationName))
+								{
+									applicationInstanceCount++;
+								}
+							}
+							catch
+							{
 							}
 						}
 					}

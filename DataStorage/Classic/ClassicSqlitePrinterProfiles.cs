@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 				ProfileManager.Instance.SetLastProfile(printer.Id.ToString());
 			}
 
-			layeredProfile.UserLayer[SettingsKey.active_theme_index] = UserSettings.Instance.get(UserSettingsKey.ActiveThemeIndex);
+			layeredProfile.UserLayer[SettingsKey.active_theme_name] = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
 
 			// Import macros from the database
 			var allMacros =  Datastore.Instance.dbSQLite.Query<CustomCommands>("SELECT * FROM CustomCommands WHERE PrinterId = " + printer.Id);
