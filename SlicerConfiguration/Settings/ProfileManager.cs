@@ -62,10 +62,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				string path = Path.Combine(userDataPath, "Profiles");
-				if (!Directory.Exists(path))
+
+				// Determine username
+				string username = ApplicationController.Instance.GetSessionUsernameForFileSystem();
+				if (string.IsNullOrEmpty(username))
 				{
-					Directory.CreateDirectory(path);
+					username = "guest";
 				}
+
+				// Append userName to ProfilesPath
+				path = Path.Combine(path, username);
+
+				// Ensure directory exists
+				Directory.CreateDirectory(path);
+
 				return path;
 			}
 		}
