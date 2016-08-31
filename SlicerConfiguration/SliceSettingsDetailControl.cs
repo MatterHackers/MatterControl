@@ -12,7 +12,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsDetailControl : FlowLayoutWidget
 	{
-		public DropDownMenu sliceOptionsMenuDropList;
 		private const string SliceSettingsLevelEntry = "SliceSettingsLevel";
 		private const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
 		private DropDownList settingsDetailSelector;
@@ -92,40 +91,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string SelectedValue => settingsDetailSelector.SelectedValue; 
 
-		public bool ShowingHelp => showHelpBox.Checked; 
+		public bool ShowingHelp => showHelpBox.Checked;
 
 		private DropDownMenu GetSliceOptionsMenuDropList()
 		{
-			if (sliceOptionsMenuDropList == null)
+			DropDownMenu sliceOptionsMenuDropList;
+			sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ")
 			{
-				sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ")
-				{
-					HoverColor = new RGBA_Bytes(0, 0, 0, 50),
-					NormalColor = new RGBA_Bytes(0, 0, 0, 0),
-					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100),
-					BackgroundColor = new RGBA_Bytes(0, 0, 0, 0),
-					BorderWidth = 1,
-					MenuAsWideAsItems = false,
-					AlignToRightEdge = true,
-				};
-				sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
-				sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
+				HoverColor = new RGBA_Bytes(0, 0, 0, 50),
+				NormalColor = new RGBA_Bytes(0, 0, 0, 0),
+				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100),
+				BackgroundColor = new RGBA_Bytes(0, 0, 0, 0),
+				BorderWidth = 1,
+				MenuAsWideAsItems = false,
+				AlignToRightEdge = true,
+			};
+			sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
 
-				//Set the name and callback function of the menu items
-				slicerOptionsMenuItems = new TupleList<string, Func<bool>>
-				{
-					{ "Import".Localize(), ImportSettingsMenu_Click },
-					{ "Export".Localize(), () => {  WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); return true; } },
-					{ "Settings History".Localize(), () => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Profile History"); return true; } },
-					{ "Reset to defaults".Localize(),() => { UiThread.RunOnIdle(ResetToDefaults); return true; } },
-				};
+			sliceOptionsMenuDropList.AddItem("Import".Localize()).Selected += (s, e) => { ImportSettingsMenu_Click(); };
+			sliceOptionsMenuDropList.AddItem("Export".Localize()).Selected += (s, e) => { WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); };
 
-				//Add the menu items to the menu itself
-				foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-				{
-					sliceOptionsMenuDropList.AddItem(item.Item1);
-				}
-			}
+			MenuItem settingsHistory = sliceOptionsMenuDropList.AddItem("Settings History".Localize());
+			settingsHistory.Selected += (s, e) => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Profile History"); };
+
+			settingsHistory.Enabled = ApplicationController.Instance.GetSessionUsername() != null;
+
+			sliceOptionsMenuDropList.AddItem("Reset to defaults".Localize()).Selected += (s, e) => { UiThread.RunOnIdle(ResetToDefaults); };
 
 			return sliceOptionsMenuDropList;
 		}
@@ -134,20 +125,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
 			return true;
-		}
-
-		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string menuSelection = ((DropDownMenu)sender).SelectedValue;
-			foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-			{
-				// if the menu we select is this one
-				if (item.Item1 == menuSelection)
-				{
-					// call its function
-					item.Item2();
-				}
-			}
 		}
 
 		private void RebuildSlicerSettings(object sender, EventArgs e)

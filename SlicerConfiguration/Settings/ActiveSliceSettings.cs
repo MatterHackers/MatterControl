@@ -136,9 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							ActiveTheme.SuspendEvents();
 						}
 					}
-					else
-					{
-					}
+
 					ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
 					ActiveTheme.ResumeEvents();
 				}
