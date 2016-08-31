@@ -418,31 +418,14 @@ public static bool CameraPreviewActive = false;
 
 		public static void LoadUITheme()
 		{
-			//Load the default theme by index
-			if (string.IsNullOrEmpty(UserSettings.Instance.get("ActiveThemeIndex")))
+			if (string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.ActiveThemeName)))
 			{
-				for (int i = 0; i < ActiveTheme.AvailableThemes.Count; i++)
-				{
-					IThemeColors current = ActiveTheme.AvailableThemes[i];
-					if (current.Name == OemSettings.Instance.ThemeColor)
-					{
-						UserSettings.Instance.set("ActiveThemeIndex", i.ToString());
-						break;
-					}
-				}
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
 			}
-
-			int themeIndex;
-			if (int.TryParse(UserSettings.Instance.get("ActiveThemeIndex"), out themeIndex) && themeIndex < ActiveTheme.AvailableThemes.Count)
+			else
 			{
-				try
-				{
-					ActiveTheme.Instance = ActiveTheme.AvailableThemes[themeIndex];
-				}
-				catch
-				{
-					GuiWidget.BreakInDebugger();
-				}
+				string name = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(name);
 			}
 		}
 

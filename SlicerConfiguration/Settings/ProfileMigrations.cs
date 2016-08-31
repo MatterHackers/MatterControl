@@ -187,7 +187,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								break;
 
 							case "MatterControl.ActiveThemeIndex":
-								layer.Add(SettingsKey.active_theme_index, item.Value);
+								{
+									string themeName = ProfileManager.ThemeIndexNameMapping[int.Parse(ActiveSliceSettings.Instance.GetValue("active_theme_index"))];
+									layer.Add(SettingsKey.active_theme_name, themeName);
+								}
 								break;
 
 							case "MatterControl.PublishBedImage":
