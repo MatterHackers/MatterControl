@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public static void SwitchToPrinterTheme(bool doReloadEvent)
 		{
-			int defaultThemeIndex = 1;
+			int defaultThemeIndex = ActiveTheme.GetThemeIndex("Blue - Light");
 
 			int themeIndex;
 			if (ActiveSliceSettings.Instance != null)

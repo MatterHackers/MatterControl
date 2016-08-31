@@ -419,21 +419,22 @@ public static bool CameraPreviewActive = false;
 		public static void LoadUITheme()
 		{
 			//Load the default theme by index
-			if (string.IsNullOrEmpty(UserSettings.Instance.get("ActiveThemeIndex")))
+			if (string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.ActiveThemeIndex)))
 			{
 				for (int i = 0; i < ActiveTheme.AvailableThemes.Count; i++)
 				{
 					IThemeColors current = ActiveTheme.AvailableThemes[i];
 					if (current.Name == OemSettings.Instance.ThemeColor)
 					{
-						UserSettings.Instance.set("ActiveThemeIndex", i.ToString());
+						UserSettings.Instance.set(UserSettingsKey.ActiveThemeIndex, i.ToString());
 						break;
 					}
 				}
 			}
 
 			int themeIndex;
-			if (int.TryParse(UserSettings.Instance.get("ActiveThemeIndex"), out themeIndex) && themeIndex < ActiveTheme.AvailableThemes.Count)
+			if (int.TryParse(UserSettings.Instance.get(UserSettingsKey.ActiveThemeIndex), out themeIndex) 
+				&& themeIndex < ActiveTheme.AvailableThemes.Count)
 			{
 				try
 				{
