@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onActivePrinterChanged(object sender, EventArgs e)
 		{
-			connectPrinterButton.Enabled = true;
+			connectPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected;
 		}
 
 		private void onConfirmStopPrint(bool messageBoxResponse)
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var communicationState = PrinterConnectionAndCommunication.Instance.CommunicationState;
 
 			// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
-			connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
+			connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect && ActiveSliceSettings.Instance.PrinterSelected;
 			disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
 		}
 	}
