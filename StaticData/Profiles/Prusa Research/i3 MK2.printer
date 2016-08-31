@@ -1,0 +1,80 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": "ahRzfm1hdHRlcmNvbnRyb2wtdGVzdHIUCxIHUHJpbnRlchiAgICA_ISGCgw",
+  "Macros": [],
+  "OemLayer": {
+    "make": "Prusa Research",
+    "model": "i3 MK2",
+    "created_date": "2016-07-21T00:30:42.547Z",
+    "baud_rate": "115200",
+    "windows_driver": "MHSerial.inf",
+    "calibration_files": "Calibration - Box.stl",
+    "start_gcode": "M104 S[temperature] ; set the extruder temp and wait\\nM140 S[bed_temperature]\\nG28 ; home all axes\\nM190 S[bed_temperature] ; set the extruder temp and wait\\nM109 S[temperature]\\nG80 ; Probe\\nG1 Z5 F5000 ; lift nozzle",
+    "filament_diameter": "1.75",
+    "layer_height": "0.2",
+    "first_layer_height": "0.2",
+    "infill_speed": "50",
+    "perimeter_speed": "40",
+    "external_perimeter_speed": "25",
+    "support_material_speed": "40",
+    "bed_size": "250,210",
+    "print_center": "125,105",
+    "build_height": "200",
+    "bed_temperature": "40",
+    "top_solid_infill_speed": "30",
+    "bridge_speed": "15",
+    "cancel_gcode": "G28 X0",
+    "support_air_gap": "0.28",
+    "has_hardware_leveling": "1",
+    "resume_first_layer_speed": "11",
+    "resume_position_before_z_home": "10,0",
+    "manual_probe_paper_width": "0.11",
+    "slicing_engine": "MatterSlice",
+    "travel_speed": "80",
+    "nozzle_diameter": "0.4",
+    "has_sd_card_reader": "1",
+    "active_quality_key": "",
+    "slowdown_below_layer_time": "15"
+  },
+  "ActiveQualityKey": "",
+  "MaterialSettingsKeys": [
+    "b88fb525-f51c-4e78-964c-742ec987888a"
+  ],
+  "MaterialLayers": [
+    {
+      "layer_name": "ABS",
+      "layer_id": "b08458b6-afd7-412b-9e4e-ba6caf28e150",
+      "bed_temperature": "95",
+      "first_layer_bed_temperature": "95",
+      "first_layer_temperature": "235",
+      "temperature": "235",
+      "filament_density": "1.04"
+    },
+    {
+      "layer_name": "PLA",
+      "layer_id": "b88fb525-f51c-4e78-964c-742ec987888a",
+      "bed_temperature": "50",
+      "first_layer_bed_temperature": "0",
+      "first_layer_temperature": "210",
+      "temperature": "200",
+      "filament_density": "1.24"
+    }
+  ],
+  "QualityLayers": [
+    {
+      "layer_name": "Coarse",
+      "layer_id": "72dfb5e8-4b70-45bd-940f-1e79a43bf358",
+      "layer_height": "0.3"
+    },
+    {
+      "layer_name": "Fine",
+      "layer_id": "c450d51d-a7db-4566-b5bb-843aa268061c",
+      "layer_height": "0.1"
+    },
+    {
+      "layer_name": "Standard",
+      "layer_id": "39c0d0c3-713b-4151-bbe1-67b891d91c41",
+      "layer_height": "0.2"
+    }
+  ]
+}
