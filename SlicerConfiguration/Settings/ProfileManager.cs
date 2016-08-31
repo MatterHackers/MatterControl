@@ -367,7 +367,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							layeredProfile.Save();
 							importSuccessful = true;
 						}
-						
 					}
 					break;
 			}
