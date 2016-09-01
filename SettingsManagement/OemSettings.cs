@@ -198,17 +198,19 @@ namespace MatterHackers.MatterControl.SettingsManagement
 					if (!File.Exists(cachePath))
 					{
 						var profile = await ApplicationController.DownloadPublicProfileAsync(profileKey);
-
-						string profileJson = JsonConvert.SerializeObject(profile);
-						if (!string.IsNullOrEmpty(profileJson))
+						if(profile != null)
 						{
-							File.WriteAllText(cachePath, profileJson);
-						}
-						if (syncReport != null)
-						{
-							reportValue.actionLabel = String.Format("Downloading public profiles for {0}...", oem);
-							reportValue.percComplete = (double)index / OemProfiles.Count;
-							syncReport.Report(reportValue);
+							string profileJson = JsonConvert.SerializeObject(profile);
+							if (!String.IsNullOrEmpty(profileJson))
+							{
+								File.WriteAllText(cachePath, profileJson);
+							}
+							if (syncReport != null)
+							{
+								reportValue.actionLabel = String.Format("Downloading public profiles for {0}...", oem);
+								reportValue.percComplete = (double)index / OemProfiles.Count;
+								syncReport.Report(reportValue);
+							}
 						}
 					}
 					
