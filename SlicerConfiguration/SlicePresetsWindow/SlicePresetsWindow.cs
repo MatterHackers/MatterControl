@@ -234,39 +234,5 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			return container;
 		}
-
-		private void SaveAs()
-		{
-			FileDialog.SaveFileDialog(
-				new SaveFileDialogParams("Save Slice Preset|*" + ProfileManager.ConfigFileExtension)
-				{
-					FileName = presetNameInput.Text
-				},
-				(saveParams) =>
-				{
-					throw new NotImplementedException();
-
-					if (!string.IsNullOrEmpty(saveParams.FileName))
-					{
-						// TODO: If we stil want this functionality, it should be moved to a common helper method off of SettingsLayer and resused throughout
-						//
-						// GenerateConfigFile(saveParams.FileName) ...
-
-						//List<string> configFileAsList = new List<string>();
-
-						//foreach (KeyValuePair<String, SliceSetting> setting in windowController.ActivePresetLayer.settingsDictionary)
-						//{
-						//	string settingString = string.Format("{0} = {1}", setting.Value.Name, setting.Value.Value);
-						//	configFileAsList.Add(settingString);
-						//}
-						//string configFileAsString = string.Join("\n", configFileAsList.ToArray());
-
-						//FileStream fs = new FileStream(fileName, FileMode.Create);
-						//StreamWriter sw = new System.IO.StreamWriter(fs);
-						//sw.Write(configFileAsString);
-						//sw.Close();
-					}
-				});
-		}
 	}
 }

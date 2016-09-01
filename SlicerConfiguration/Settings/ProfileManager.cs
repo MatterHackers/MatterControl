@@ -52,7 +52,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static ProfileManager Instance { get; set; }
 
 		public const string ProfileExtension = ".printer";
+		public const string ConfigFileExtension = ".slice";
 
+		private static object writeLock = new object();
 		private static EventHandler unregisterEvents;
 		private static readonly string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 		private static string ProfilesPath
@@ -60,16 +62,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				string path = Path.Combine(userDataPath, "Profiles");
-				if (!Directory.Exists(path))
+
+				// Determine username
+				string username = ApplicationController.Instance.GetSessionUsernameForFileSystem();
+				if (string.IsNullOrEmpty(username))
 				{
-					Directory.CreateDirectory(path);
+					username = "guest";
 				}
+
+				// Append userName to ProfilesPath
+				path = Path.Combine(path, username);
+
+				// Ensure directory exists
+				Directory.CreateDirectory(path);
+
 				return path;
 			}
 		}
-
-
-		public const string ConfigFileExtension = ".slice";
 
 		private const string userDBExtension = ".profiles";
 		private const string guestDBFileName = "guest" + userDBExtension;
@@ -80,9 +89,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-
 				string username = UserSettings.Instance.get("ActiveUserName");
-
 				if (string.IsNullOrEmpty(username))
 				{ 
 					username = GuestDBPath;
@@ -100,7 +107,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 				return username;
 			}
-
 		}
 
 		static ProfileManager()
@@ -210,15 +216,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return emptyProfile;
 		}
 
-		public static PrinterSettings LoadProfileFromMCWS(string deviceToken)
-		{
-			WebClient client = new WebClient();
-			string json = client.DownloadString($"{MatterControlApplication.MCWSBaseUri}/api/1/device/get-profile?PrinterToken={deviceToken}");
-
-			var printerSettings = JsonConvert.DeserializeObject<PrinterSettings>(json);
-			return printerSettings;
-		}
-
 		[JsonIgnore]
 		public string LastProfileID
 		{
@@ -239,7 +236,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetLastProfile(string printerID)
 		{
 			string activeUserName = UserSettings.Instance.get("ActiveUserName");
-
 			UserSettings.Instance.set($"ActiveProfileID-{activeUserName}", printerID);
 		}
 
@@ -250,13 +246,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ProfilePath(string printerID)
 		{
-			return Path.Combine(ProfileManager.ProfilesPath, printerID + ProfileExtension);
+			return ProfilePath(this[printerID]);
 		}
 
 		public static PrinterSettings LoadWithoutRecovery(string profileID)
 		{
-			string profilePath = Path.Combine(ProfilesPath, profileID + ProfileManager.ProfileExtension);
-			if (File.Exists(profilePath))
+			string profilePath = Instance[profileID]?.ProfilePath;
+			if (profilePath != null && File.Exists(profilePath))
 			{
 				try
 				{
@@ -381,7 +377,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							layeredProfile.Save();
 							importSuccessful = true;
 						}
-						
 					}
 					break;
 			}
@@ -426,6 +421,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			Instance.Profiles.Add(new PrinterInfo
+			{
+				Name = printerName,
+				ID = guid,
+				Make = make,
+				Model = model
+			});
+
 			// Set initial theme to current theme
 			try
 			{
@@ -434,16 +437,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch
 			{
-
 			}
-
-			Instance.Profiles.Add(new PrinterInfo
-			{
-				Name = printerName,
-				ID = guid,
-				Make = make,
-				Model = model
-			});
 
 			// Update SHA1
 			newProfile.Save();
@@ -524,7 +518,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Save()
 		{
-			File.WriteAllText(ProfilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+			lock(writeLock)
+			{
+				File.WriteAllText(ProfilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+			}
 		}
 	}
 }
