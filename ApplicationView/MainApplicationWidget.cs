@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				if (staticDataFallbackPath != null
-					&& File.Exists(staticDataFallbackPath))
+					&& StaticData.Instance.FileExists(staticDataFallbackPath))
 				{
 					return JsonConvert.DeserializeObject<T>(StaticData.Instance.ReadAllText(staticDataFallbackPath));
 				}
