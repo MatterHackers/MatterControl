@@ -10,6 +10,9 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.Agg.PlatformAbstract;
 using System.IO;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
+using MatterHackers.MatterControl.PrintQueue;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -82,9 +85,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Save & Continue".Localize());
 			nextButton.Name = "Save & Continue Button";
-			nextButton.Click += (s, e) =>
+			nextButton.Click += async (s, e) =>
 			{
-				bool canContinue = this.OnSave();
+				bool canContinue = await this.OnSave();
 				if (canContinue)
 				{
 #if __ANDROID__
@@ -245,7 +248,47 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			});
 		}
 
-		private bool OnSave()
+		public void LoadCalibrationPrints()
+		{
+			// Load the calibration file names
+			string calibrationFiles = ActiveSliceSettings.Instance.GetValue("calibration_files");
+			if(string.IsNullOrEmpty(calibrationFiles))
+			{
+				return;
+			}
+
+			string[] calibrationPrintFileNames = calibrationFiles.Split(';');
+			if (calibrationPrintFileNames.Length < 1)
+			{
+				return;
+			}
+
+			var libraryProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
+			libraryProvider.EnsureSamplePartsExist(calibrationPrintFileNames);
+
+			var queueItems = QueueData.Instance.GetItemNames();
+
+			// Finally, ensure missing calibration parts are added to the queue if missing
+			var filenamesWithoutExtensions = calibrationPrintFileNames.Select(f => Path.GetFileNameWithoutExtension(f));
+			foreach (string nameOnly in filenamesWithoutExtensions)
+			{
+				if (queueItems.Contains(nameOnly))
+				{
+					continue;
+				}
+
+				// Find the first library item with the given name and add it to the queue
+				PrintItem libraryItem = libraryProvider.GetLibraryItems(nameOnly).FirstOrDefault();
+				if (libraryItem != null)
+				{
+					QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
+				}
+			}
+
+			libraryProvider.Dispose();
+		}
+
+		private async Task<bool> OnSave()
 		{
 			if (!string.IsNullOrEmpty(printerNameInput.Text))
 			{
@@ -257,7 +300,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 				else
 				{
-					ProfileManager.AcquireNewProfile(activeMake, activeModel, activeName);
+					await ProfileManager.AcquireNewProfile(activeMake, activeModel, activeName);
+					LoadCalibrationPrints();
 					return true;
 				}
 			}
