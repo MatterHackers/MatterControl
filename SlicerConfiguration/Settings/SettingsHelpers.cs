@@ -457,13 +457,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ActiveSliceSettings.Instance.ID = newID;
 			}
 
-			this.ID = newID;
-
 			// Ensure the local file with the old ID moves with the new ID change
-			string existingProfile = ProfilePath;
-			if (File.Exists(existingProfile))
+			string existingProfilePath = ProfilePath;
+			if (File.Exists(existingProfilePath))
 			{
-				File.Move(existingProfile, ProfilePath);
+				// Profile ID change must come after existingProfilePath calculation and before ProfilePath getter
+				this.ID = newID;
+				File.Move(existingProfilePath, ProfilePath);
+			}
+			else
+			{
+				this.ID = newID;
 			}
 
 			if (File.Exists(ProfilePath))
