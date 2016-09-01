@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static Func<bool> ShouldShowAuthPanel { get; set; }
 
+		private static object writeLock = new object();
+
 		[JsonIgnore]
 		internal PrinterSettingsLayer QualityLayer { get; private set; }
 
@@ -187,6 +189,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Save()
 		{
+			// Skip save operation if on the EmptyProfile
+			if (!this.PrinterSelected)
+			{
+				return;
+			}
+
 			string json = JsonConvert.SerializeObject(this, Formatting.Indented);
 
 			// SHA1 value is based on UTF8 encoded file contents
@@ -204,7 +212,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			File.WriteAllText(DocumentPath, json);
+			lock (writeLock)
+			{
+				File.WriteAllText(DocumentPath, json);
+			}
 
 			if (ActiveSliceSettings.Instance.ID == this.ID)
 			{

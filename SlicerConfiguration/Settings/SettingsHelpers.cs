@@ -449,23 +449,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool MarkedForDelete { get; set; } = false;
 		public string SHA1 { get; set; }
 
-		public void ChangeID(string deviceToken)
+		public void ChangeID(string newID)
 		{
+			// Update in memory state if IDs match
 			if (ActiveSliceSettings.Instance.ID == this.ID)
 			{
-				ActiveSliceSettings.Instance.ID = deviceToken;
+				ActiveSliceSettings.Instance.ID = newID;
 			}
 
+			this.ID = newID;
+
+			// Ensure the local file with the old ID moves with the new ID change
 			string existingProfile = ProfilePath;
 			if (File.Exists(existingProfile))
 			{
-				this.ID = deviceToken;
 				File.Move(existingProfile, ProfilePath);
 			}
 
-			var profile = PrinterSettings.LoadFile(ProfilePath);
-			profile.ID = deviceToken;
-			profile.SetValue(SettingsKey.device_token, deviceToken);
+			if (File.Exists(ProfilePath))
+			{
+				var profile = PrinterSettings.LoadFile(ProfilePath);
+				profile.ID = newID;
+				profile.Save();
+			}
+
 			ProfileManager.Instance.Save();
 		}
 

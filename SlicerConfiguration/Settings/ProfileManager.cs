@@ -52,7 +52,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static ProfileManager Instance { get; set; }
 
 		public const string ProfileExtension = ".printer";
+		public const string ConfigFileExtension = ".slice";
 
+		private static object writeLock = new object();
 		private static EventHandler unregisterEvents;
 		private static readonly string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 		private static string ProfilesPath
@@ -60,16 +62,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				string path = Path.Combine(userDataPath, "Profiles");
-				if (!Directory.Exists(path))
+
+				// Determine username
+				string username = ApplicationController.Instance.GetSessionUsernameForFileSystem();
+				if (string.IsNullOrEmpty(username))
 				{
-					Directory.CreateDirectory(path);
+					username = "guest";
 				}
+
+				// Append userName to ProfilesPath
+				path = Path.Combine(path, username);
+
+				// Ensure directory exists
+				Directory.CreateDirectory(path);
+
 				return path;
 			}
 		}
-
-
-		public const string ConfigFileExtension = ".slice";
 
 		private const string userDBExtension = ".profiles";
 		private const string guestDBFileName = "guest" + userDBExtension;
@@ -80,9 +89,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-
 				string username = UserSettings.Instance.get("ActiveUserName");
-
 				if (string.IsNullOrEmpty(username))
 				{ 
 					username = GuestDBPath;
@@ -100,7 +107,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 				return username;
 			}
-
 		}
 
 		static ProfileManager()
@@ -210,15 +216,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return emptyProfile;
 		}
 
-		public static PrinterSettings LoadProfileFromMCWS(string deviceToken)
-		{
-			WebClient client = new WebClient();
-			string json = client.DownloadString($"{MatterControlApplication.MCWSBaseUri}/api/1/device/get-profile?PrinterToken={deviceToken}");
-
-			var printerSettings = JsonConvert.DeserializeObject<PrinterSettings>(json);
-			return printerSettings;
-		}
-
 		[JsonIgnore]
 		public string LastProfileID
 		{
@@ -239,7 +236,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetLastProfile(string printerID)
 		{
 			string activeUserName = UserSettings.Instance.get("ActiveUserName");
-
 			UserSettings.Instance.set($"ActiveProfileID-{activeUserName}", printerID);
 		}
 
@@ -250,13 +246,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ProfilePath(string printerID)
 		{
-			return Path.Combine(ProfileManager.ProfilesPath, printerID + ProfileExtension);
+			return ProfilePath(this[printerID]);
 		}
 
 		public static PrinterSettings LoadWithoutRecovery(string profileID)
 		{
-			string profilePath = Path.Combine(ProfilesPath, profileID + ProfileManager.ProfileExtension);
-			if (File.Exists(profilePath))
+			string profilePath = Instance[profileID]?.ProfilePath;
+			if (profilePath != null && File.Exists(profilePath))
 			{
 				try
 				{
@@ -381,7 +377,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							layeredProfile.Save();
 							importSuccessful = true;
 						}
-						
 					}
 					break;
 			}
@@ -442,30 +437,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ActiveSliceSettings.Instance = newProfile;
 		}
 
-		public static Dictionary<int, string> ThemeIndexNameMapping = new Dictionary<int, string>()
+		public static List<string> ThemeIndexNameMapping = new List<string>()
 		{
-			{ 0,"Blue - Dark"},
-			{ 1,"Teal - Dark"},
-			{ 2,"Green - Dark"},
-			{ 3,"Light Blue - Dark"},
-			{ 4,"Orange - Dark"},
-			{ 5,"Purple - Dark"},
-			{ 6,"Red - Dark"},
-			{ 7,"Pink - Dark"},
-			{ 8,"Grey - Dark"},
-			{ 9,"Pink - Dark"},
+			"Blue - Dark",
+			"Teal - Dark",
+			"Green - Dark",
+			"Light Blue - Dark",
+			"Orange - Dark",
+			"Purple - Dark",
+			"Red - Dark",
+			"Pink - Dark",
+			"Grey - Dark",
+			"Pink - Dark",
 
 			//Light themes
-			{ 10,"Blue - Light"},
-			{ 11,"Teal - Light"},
-			{ 12,"Green - Light"},
-			{ 13,"Light Blue - Light"},
-			{ 14,"Orange - Light"},
-			{ 15,"Purple - Light"},
-			{ 16,"Red - Light"},
-			{ 17,"Pink - Light"},
-			{ 18,"Grey - Light"},
-			{ 19,"Pink - Light"},
+			"Blue - Light",
+			"Teal - Light",
+			"Green - Light",
+			"Light Blue - Light",
+			"Orange - Light",
+			"Purple - Light",
+			"Red - Light",
+			"Pink - Light",
+			"Grey - Light",
+			"Pink - Light",
 		};
 
 		private async static Task<PrinterSettings> LoadHttpOemProfile(string make, string model)
@@ -513,7 +508,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Save()
 		{
-			File.WriteAllText(ProfilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+			lock(writeLock)
+			{
+				File.WriteAllText(ProfilesDBPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+			}
 		}
 	}
 }
