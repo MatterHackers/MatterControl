@@ -442,20 +442,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			interfaceOptionsDropList.AddItem("3D".Localize(), "raytraced");
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "orthographic", "raytraced" };
-			string currentThumbnailRenderingMode = UserSettings.Instance.get("ThumbnailRenderingMode");
+			string currentThumbnailRenderingMode = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
 
 			if (acceptableUpdateFeedTypeValues.IndexOf(currentThumbnailRenderingMode) == -1)
 			{
-				UserSettings.Instance.set("ThumbnailRenderingMode", "orthographic");
+#if __ANDROID__
+					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
+#else
+					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "raytraced");
+#endif
 			}
 
-			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get("ThumbnailRenderingMode");
+			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
 			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
 			{
 				string thumbnailRenderingMode = ((DropDownList)sender).SelectedValue;
-				if (thumbnailRenderingMode != UserSettings.Instance.get("ThumbnailRenderingMode"))
+				if (thumbnailRenderingMode != UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode))
 				{
-					UserSettings.Instance.set("ThumbnailRenderingMode", thumbnailRenderingMode);
+					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, thumbnailRenderingMode);
 
 					// Ask if the user would like to rebuild all their thumbnails
 					Action<bool> removeThumbnails = (bool shouldRebuildThumbnails) =>

@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl
 
 		private static RenderType GetRenderType(string fileLocation)
 		{
-			if (UserSettings.Instance.get("ThumbnailRenderingMode") == "raytraced")
+			if (UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode) == "raytraced")
 			{
 				if (Is32Bit())
 				{

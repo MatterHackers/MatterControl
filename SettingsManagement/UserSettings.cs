@@ -12,6 +12,7 @@ namespace MatterHackers.MatterControl
 		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
 		public const string defaultRenderSetting = nameof(defaultRenderSetting);
 		public const string ActiveThemeName = nameof(ActiveThemeName);
+		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
 	}
 
 	public class UserSettings

@@ -279,6 +279,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				this.AddItem(Path.GetFileNameWithoutExtension(file), file);
 			}
 
+			// Finally, make sure that we always add at least one item to the queue.
+			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(tempFilesToImport[0]), tempFilesToImport[0])));
+
 			PreloadingCalibrationFiles = false;
 		}
 
