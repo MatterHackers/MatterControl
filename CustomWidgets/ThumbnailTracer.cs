@@ -54,11 +54,15 @@ namespace MatterHackers.RayTracer
 
 		private List<MeshGroup> loadedMeshGroups;
 
-		//RayTracer rayTracer = new RayTracer(AntiAliasing.None, true, true, true, true, true);
-		//RayTracer rayTracer = new RayTracer(AntiAliasing.Low, true, true, true, true, true);
-		//RayTracer rayTracer = new RayTracer(AntiAliasing.Medium, true, true, true, true, true);
-		//RayTracer rayTracer = new RayTracer(AntiAliasing.High, true, true, true, true, true);
-		private RayTracer rayTracer = new RayTracer(AntiAliasing.VeryHigh, true, true, true, true, true);
+		private RayTracer rayTracer = new RayTracer()
+		{
+			//AntiAliasing = AntiAliasing.None,
+			//AntiAliasing = AntiAliasing.Low,
+			//AntiAliasing = AntiAliasing.Medium,
+			//AntiAliasing = AntiAliasing.High,
+			AntiAliasing = AntiAliasing.VeryHigh,
+			MultiThreaded = false,
+		};
 
 		private List<IPrimitive> renderCollection = new List<IPrimitive>();
 		private Scene scene;
