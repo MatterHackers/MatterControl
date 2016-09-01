@@ -426,17 +426,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			// Set initial theme to current theme
-			try
-			{
-				string name = ThemeIndexNameMapping[ActiveSliceSettings.Instance.GetValue<int>("active_theme_index")];
-				newProfile.SetValue(SettingsKey.active_theme_name, name);
-			}
-			catch
-			{
-
-			}
-
 			Instance.Profiles.Add(new PrinterInfo
 			{
 				Name = printerName,

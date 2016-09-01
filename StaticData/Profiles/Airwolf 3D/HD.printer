@@ -28,6 +28,7 @@
     "extrusion_axis": "E",
     "extrusion_multiplier": "1",
     "extrusion_width": "0",
+    "active_theme_name": "Red - Dark",
     "fan_always_on": "0",
     "fan_below_layer_time": "60",
     "filament_diameter": "2.85",
