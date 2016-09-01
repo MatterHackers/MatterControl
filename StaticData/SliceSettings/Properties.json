@@ -1356,6 +1356,19 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "calibration_files",
+		"PresentationName": "Calibration Files",
+		"HelpText": "Sets the models that will be added to the queue when a new printer is created.",
+		"DataEditType": "STRING",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "Calibration - Box.stl"
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "output_only_first_layer",
 		"PresentationName": "First Layer Only",
 		"HelpText": "Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.",
