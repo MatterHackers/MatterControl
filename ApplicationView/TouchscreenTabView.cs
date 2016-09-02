@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 		private QueueDataView queueDataView;
 		private TabPage QueueTabPage;
 		private bool simpleMode;
-		private SliceSettingsWidget sliceSettingsWidget;
+		private GuiWidget sliceSettingsWidget;
 		private TabPage sliceTabPage;
 		private int TabTextSize;
 		private TabPage TerminalTabPage;
@@ -106,7 +106,14 @@ namespace MatterHackers.MatterControl
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
 			string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
-			sliceSettingsWidget = new SliceSettingsWidget();
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				sliceSettingsWidget = new SliceSettingsWidget();
+			}
+			else
+			{
+				sliceSettingsWidget = new NoSettingsWidget();
+			}
 			sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
 
 			this.AddTab(new SimpleTextTabWidget(sliceTabPage, "Slice Settings Tab", TabTextSize,
