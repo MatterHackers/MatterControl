@@ -431,21 +431,59 @@ public static bool CameraPreviewActive = false;
 
 		public static MatterControlApplication CreateInstance(int overrideWidth = -1, int overrideHeight = -1)
 		{
-			// try and open our window matching the last size that we had for it.
+			int width = 0;
+			int height = 0;
+
+			// check if the app has a size alread set
 			string windowSize = ApplicationSettings.Instance.get(ApplicationSettingsKey.WindowSize);
-			int width = overrideWidth == -1 ? 601 : overrideWidth;
-			int height = overrideHeight == -1 ? 601 : overrideHeight;
 			if (windowSize != null && windowSize != "")
 			{
+				// try and open our window matching the last size that we had for it.
 				string[] sizes = windowSize.Split(',');
 				width = Math.Max(int.Parse(sizes[0]), (int)minSize.x + 1);
 				height = Math.Max(int.Parse(sizes[1]), (int)minSize.y + 1);
 			}
+			else // try to set it to a big size or the min size
+			{
+				Point2D desktopSize = OsInformation.DesktopSize;
 
-            using (new PerformanceTimer("Startup", "Total"))
+				if(overrideWidth != -1)
+				{
+					width = overrideWidth;
+				}
+				else // try to set it to a good size
+				{
+					if(width < desktopSize.x)
+					{
+						width = 1280;
+					}
+				}
+
+				if(overrideHeight != -1)
+				{
+					height = overrideHeight;
+				}
+				else
+				{
+					if (height < desktopSize.y)
+					{
+						height = 720;
+					}
+				}
+			}
+
+			using (new PerformanceTimer("Startup", "Total"))
             {
                 instance = new MatterControlApplication(width, height);
-            }
+
+				if (instance.DesktopPosition == new Point2D())
+				{
+					Point2D desktopSize = OsInformation.DesktopSize;
+
+					// Now try and center the window. If this is saved it will got overridden
+					instance.DesktopPosition = new Point2D((desktopSize.x - instance.Width)/2, (desktopSize.y - instance.Height)/2);
+				}
+			}
 
 			return instance;
 		}
