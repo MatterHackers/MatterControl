@@ -45,7 +45,6 @@ using System.Threading.Tasks;
 namespace MatterHackers.MatterControl.SettingsManagement
 {
 	using Agg.UI;
-	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
 
 	public class OemSettings
 	{
@@ -167,12 +166,16 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 			var oemProfiles = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
 				"oemprofiles.json",
-				"profiles",
+				"public-profiles",
 				ApplicationController.GetPublicProfileList);
 
 			// If we failed to get anything from load cacheable don't override potentially populated fields
 			if (oemProfiles != null)
 			{
+				// TODO: we're rebuilding this data at whatever inteval we poll. It should only happen when we download a new document, 
+				// never when we load from cache. A possible fix would be to move this code into a lamdba above so that it's only executed if GetPublicProfileList 
+				// returns a non-null value.
+				//
 				OemProfiles = oemProfiles;
 
 				var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
@@ -184,36 +187,27 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		private async Task DownloadMissingProfiles(IProgress<SyncReportType> syncReport)
 		{
-			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
 			SyncReportType reportValue = new SyncReportType();
 			int index = 0;
 			foreach (string oem in OemProfiles.Keys)
 			{
-				index++;
-				foreach (string profileKey in OemProfiles[oem].Values)
-				{
-					string cacheKey = profileKey + ProfileManager.ProfileExtension;
-					string cachePath = Path.Combine(cacheDirectory, cacheKey);
+				string cacheScope = Path.Combine("public-profiles", oem);
 
+				index++;
+				foreach (var publicDevice in OemProfiles[oem].Values)
+				{
+					string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
 					if (!File.Exists(cachePath))
 					{
-						var profile = await ApplicationController.DownloadPublicProfileAsync(profileKey);
-						if(profile != null)
+						await ProfileManager.LoadOemProfileAsync(publicDevice, oem);
+
+						if (syncReport != null)
 						{
-							string profileJson = JsonConvert.SerializeObject(profile);
-							if (!String.IsNullOrEmpty(profileJson))
-							{
-								File.WriteAllText(cachePath, profileJson);
-							}
-							if (syncReport != null)
-							{
-								reportValue.actionLabel = String.Format("Downloading public profiles for {0}...", oem);
-								reportValue.percComplete = (double)index / OemProfiles.Count;
-								syncReport.Report(reportValue);
-							}
+							reportValue.actionLabel = String.Format("Downloading public profiles for {0}...", oem);
+							reportValue.percComplete = (double)index / OemProfiles.Count;
+							syncReport.Report(reportValue);
 						}
 					}
-					
 				}
 			}
 		}

@@ -50,7 +50,18 @@ namespace MatterHackers.MatterControl
 {
 	using Agg.Font;
 	using System.Reflection;
-	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
+
+	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
+	{
+	}
+
+	public class PublicDevice
+	{
+		public string DeviceToken { get; set; }
+		public string ProfileToken { get; set; }
+		public string ShortProfileID { get; set; }
+		public string CacheKey => this.ShortProfileID + ProfileManager.ProfileExtension;
+	}
 
 	public abstract class ApplicationView : GuiWidget
 	{
@@ -276,11 +287,7 @@ namespace MatterHackers.MatterControl
 		/// <returns></returns>
 		public async static Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, Func<Task<T>> collector, string staticDataFallbackPath = null) where T : class
 		{
-			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", cacheScope);
-			string cachePath = Path.Combine(cacheDirectory, cacheKey);
-
-			// Ensure directory exists
-			Directory.CreateDirectory(cacheDirectory);
+			string cachePath = CacheablePath(cacheScope, cacheKey);
 
 			try
 			{
@@ -289,13 +296,13 @@ namespace MatterHackers.MatterControl
 				if (item != null)
 				{
 					// update cache on success
-					File.WriteAllText(cachePath, JsonConvert.SerializeObject(item));
+					File.WriteAllText(cachePath, JsonConvert.SerializeObject(item, Formatting.Indented));
 					return item;
 				}
 			}
 			catch
 			{
-				// fall back to preexisting cache if failed
+				// Fall back to preexisting cache if failed
 			}
 
 			try
@@ -308,7 +315,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
-				//Fallback to Static Data
+				// Fall back to StaticData
 			}
 
 			try
@@ -325,6 +332,19 @@ namespace MatterHackers.MatterControl
 			}
 
 			return default(T);
+		}
+
+		private static string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
+
+		internal static string CacheablePath(string cacheScope, string cacheKey)
+		{
+			string scopeDirectory = Path.Combine(cacheDirectory, cacheScope);
+
+			// Ensure directory exists
+			Directory.CreateDirectory(scopeDirectory);
+
+			string cachePath = Path.Combine(scopeDirectory, cacheKey);
+			return cachePath;
 		}
 
 		public void StartSignOut()

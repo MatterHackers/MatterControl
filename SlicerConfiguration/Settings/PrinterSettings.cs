@@ -329,8 +329,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			try
 			{
-				string publicProfileDeviceToken = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
-				string publicProfileToLoad = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", publicProfileDeviceToken + ProfileManager.ProfileExtension);
+				var publicDevice = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
+				string cacheScope = Path.Combine("public-profiles", profile.Make);
+
+				string publicProfileToLoad = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
 
 				oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
 				oemProfile.ID = profile.ID;
