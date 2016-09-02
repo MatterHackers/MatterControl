@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			contentRow.AddChild(new VerticalSpacer());
 
-			CheckBox rememberChoice = new CheckBox("Don't ask me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
+			CheckBox rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(rememberChoice);
 			rememberChoice.CheckedStateChanged += (s, e) =>
 			{

@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string deviceCode;
 
-		private string doNotAskAgainMessage = "Don't ask me again".Localize();
+		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
 		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
 

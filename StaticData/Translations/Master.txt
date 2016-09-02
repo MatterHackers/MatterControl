@@ -5368,3 +5368,6 @@ Translated:Don't ask me again
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Sets the models that will be added to the queue when a new printer is created.
 
+English:Don't remind me again
+Translated:Don't remind me again
+

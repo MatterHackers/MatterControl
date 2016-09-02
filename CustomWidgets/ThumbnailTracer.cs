@@ -40,6 +40,7 @@ using System.Diagnostics;
 
 namespace MatterHackers.RayTracer
 {
+	using MatterControl.PrinterCommunication;
 	using MatterHackers.Agg.RasterizerScanline;
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.RayTracer.Light;
@@ -89,6 +90,8 @@ namespace MatterHackers.RayTracer
 			{
 				destImage = new ImageBuffer(rect.Width, rect.Height, 32, new BlenderBGRA());
 			}
+
+			rayTracer.MultiThreaded = !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
 
 			rayTracer.RayTraceScene(rect, scene);
 			rayTracer.CopyColorBufferToImage(destImage, rect);
