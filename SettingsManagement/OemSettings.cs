@@ -164,25 +164,24 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				return;
 			}
 
-			var oemProfiles = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
+			await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
 				"oemprofiles.json",
 				"public-profiles",
-				ApplicationController.GetPublicProfileList);
+				async () =>
+				{
+					var result = await ApplicationController.GetPublicProfileList();
+					if (result != null)
+					{
+						OemProfiles = result;
 
-			// If we failed to get anything from load cacheable don't override potentially populated fields
-			if (oemProfiles != null)
-			{
-				// TODO: we're rebuilding this data at whatever inteval we poll. It should only happen when we download a new document, 
-				// never when we load from cache. A possible fix would be to move this code into a lamdba above so that it's only executed if GetPublicProfileList 
-				// returns a non-null value.
-				//
-				OemProfiles = oemProfiles;
+						var manufactures = result.Keys.ToDictionary(oem => oem);
+						SetManufacturers(manufactures);
 
-				var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
-				SetManufacturers(manufactures);
+						await DownloadMissingProfiles(syncReport);
+					}
 
-				await DownloadMissingProfiles(syncReport);
-			}
+					return result;
+				});
 		}
 
 		private async Task DownloadMissingProfiles(IProgress<SyncReportType> syncReport)
@@ -203,7 +202,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 						if (syncReport != null)
 						{
-							reportValue.actionLabel = String.Format("Downloading public profiles for {0}...", oem);
+							reportValue.actionLabel = string.Format("Downloading public profiles for {0}...", oem);
 							reportValue.percComplete = (double)index / OemProfiles.Count;
 							syncReport.Report(reportValue);
 						}
