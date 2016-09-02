@@ -118,8 +118,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			if (whiteListedItems == null
 				|| whiteListedItems.Count() == 0)
 			{
-				AllOems = new List<KeyValuePair<string, string>>(manufacturers);
-				return;
+				// No whitelist means all items
+				whiteListedItems = manufacturers;
 			}
 
 			var newItems = new List<KeyValuePair<string, string>>();
