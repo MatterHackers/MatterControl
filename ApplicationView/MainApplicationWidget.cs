@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl
 				bool allowShowingSignOutWarning = true;
 				if (allowShowingSignOutWarning)
 				{
-					// Warn on sign out that no access to user printers and cloud library put a 'Don't ask me again' check box
+					// Warn on sign out that no access to user printers and cloud library put a 'Don't remind me again' check box
 					StyledMessageBox.ShowMessageBox((clickedSignOut) =>
 					{
 						if (clickedSignOut)

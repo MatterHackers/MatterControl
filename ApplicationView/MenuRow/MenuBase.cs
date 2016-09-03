@@ -28,16 +28,14 @@ namespace MatterHackers.MatterControl
 		public MenuBase(string menuName)
 		{
 			MenuDropList = new DropDownMenu(menuName.ToUpper(), Direction.Down, pointSize: 10);
-			MenuDropList.MenuItemsPadding = new BorderDouble(0);
 			MenuDropList.Margin = new BorderDouble(0);
-			MenuDropList.Padding = new BorderDouble(0);
-			MenuDropList.MenuItemsPadding = new BorderDouble(8, 4);// 8, 6, 8, 6);
+			MenuDropList.Padding = new BorderDouble(4, 4, 0, 4);
+			MenuDropList.MenuItemsPadding = new BorderDouble(8, 4);
 
 			MenuDropList.DrawDirectionalArrow = false;
 			MenuDropList.MenuAsWideAsItems = false;
 
 			menuActions = new List<MenuItemAction>(GetMenuActions());
-			BorderDouble padding = MenuDropList.MenuItemsPadding;
 			//Add the menu items to the menu itself
 			foreach (MenuItemAction item in menuActions)
 			{
@@ -54,7 +52,6 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}
-			MenuDropList.Padding = padding;
 
 			AddChild(MenuDropList);
 			this.Width = GetChildrenBoundsIncludingMargins().Width;

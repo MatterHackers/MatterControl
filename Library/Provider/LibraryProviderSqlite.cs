@@ -280,9 +280,32 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			// Finally, make sure that we always add at least one item to the queue.
-			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(tempFilesToImport[0]), tempFilesToImport[0])));
+			PreLoadItemToQueue(tempFilesToImport[0]);
 
 			PreloadingCalibrationFiles = false;
+		}
+
+		private void PreLoadItemToQueue(string fileDest)
+		{
+			if (!string.IsNullOrEmpty(fileDest)
+				&& File.Exists(fileDest))
+			{
+				PrintItemWrapper printItemToAdd = new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileDest), fileDest));
+
+				// check if there is a thumbnail image for this file and load it into the user cache if so
+				string justThumbFile = Path.ChangeExtension(Path.GetFileNameWithoutExtension(fileDest), ".png");
+				string applicationUserDataPath = StaticData.Instance.MapPath(Path.Combine("OEMSettings", "SampleParts"));
+				string thumbnailSourceFile = Path.Combine(applicationUserDataPath, justThumbFile);
+				if (File.Exists(thumbnailSourceFile))
+				{
+					string thumbnailDestFile = PartThumbnailWidget.GetImageFileName(printItemToAdd);
+
+					// copy it to the right place
+					File.Copy(thumbnailSourceFile, thumbnailDestFile);
+				}
+
+				QueueData.Instance.AddItem(printItemToAdd);
+			}
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)

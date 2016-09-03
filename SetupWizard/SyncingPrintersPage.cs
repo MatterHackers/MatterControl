@@ -16,7 +16,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 		public SyncingPrintersPage()
 		{
 			TextWidget syncingText = new TextWidget("Syncing Profiles...".Localize(),textColor: ActiveTheme.Instance.PrimaryTextColor);
-			syncingDetails = new TextWidget("Retreiving sync information...".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
+			syncingDetails = new TextWidget("Retrieving sync information...".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
 			syncingDetails.AutoExpandBoundsToText = true;
 			contentRow.AddChild(syncingText);
 			contentRow.AddChild(syncingDetails);
