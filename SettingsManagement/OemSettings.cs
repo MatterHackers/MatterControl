@@ -45,7 +45,6 @@ using System.Threading.Tasks;
 namespace MatterHackers.MatterControl.SettingsManagement
 {
 	using Agg.UI;
-	using OemProfileDictionary = Dictionary<string, Dictionary<string, string>>;
 
 	public class OemSettings
 	{
@@ -119,8 +118,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			if (whiteListedItems == null
 				|| whiteListedItems.Count() == 0)
 			{
-				AllOems = new List<KeyValuePair<string, string>>(manufacturers);
-				return;
+				// No whitelist means all items
+				whiteListedItems = manufacturers;
 			}
 
 			var newItems = new List<KeyValuePair<string, string>>();
@@ -165,55 +164,49 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				return;
 			}
 
-			var oemProfiles = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
+			await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
 				"oemprofiles.json",
-				"profiles",
-				ApplicationController.GetPublicProfileList);
+				"public-profiles",
+				async () =>
+				{
+					var result = await ApplicationController.GetPublicProfileList();
+					if (result != null)
+					{
+						OemProfiles = result;
 
-			// If we failed to get anything from load cacheable don't override potentially populated fields
-			if (oemProfiles != null)
-			{
-				OemProfiles = oemProfiles;
+						var manufactures = result.Keys.ToDictionary(oem => oem);
+						SetManufacturers(manufactures);
 
-				var manufactures = oemProfiles.Keys.ToDictionary(oem => oem);
-				SetManufacturers(manufactures);
+						await DownloadMissingProfiles(syncReport);
+					}
 
-				await DownloadMissingProfiles(syncReport);
-			}
+					return result;
+				});
 		}
 
 		private async Task DownloadMissingProfiles(IProgress<SyncReportType> syncReport)
 		{
-			string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles");
 			SyncReportType reportValue = new SyncReportType();
 			int index = 0;
 			foreach (string oem in OemProfiles.Keys)
 			{
-				index++;
-				foreach (string profileKey in OemProfiles[oem].Values)
-				{
-					string cacheKey = profileKey + ProfileManager.ProfileExtension;
-					string cachePath = Path.Combine(cacheDirectory, cacheKey);
+				string cacheScope = Path.Combine("public-profiles", oem);
 
+				index++;
+				foreach (var publicDevice in OemProfiles[oem].Values)
+				{
+					string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
 					if (!File.Exists(cachePath))
 					{
-						var profile = await ApplicationController.DownloadPublicProfileAsync(profileKey);
-						if(profile != null)
+						await ProfileManager.LoadOemProfileAsync(publicDevice, oem);
+
+						if (syncReport != null)
 						{
-							string profileJson = JsonConvert.SerializeObject(profile);
-							if (!String.IsNullOrEmpty(profileJson))
-							{
-								File.WriteAllText(cachePath, profileJson);
-							}
-							if (syncReport != null)
-							{
-								reportValue.actionLabel = String.Format("Downloading public profiles for {0}...", oem);
-								reportValue.percComplete = (double)index / OemProfiles.Count;
-								syncReport.Report(reportValue);
-							}
+							reportValue.actionLabel = string.Format("Downloading public profiles for {0}...", oem);
+							reportValue.percComplete = (double)index / OemProfiles.Count;
+							syncReport.Report(reportValue);
 						}
 					}
-					
 				}
 			}
 		}

@@ -192,15 +192,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			activeModel = null;
 
 			// Select the dictionary containing the printerName->printerToken mappings for the current OEM
-			Dictionary<string, string> printers;
+			Dictionary<string, PublicDevice> printers;
 			if (!OemSettings.Instance.OemProfiles.TryGetValue(activeMake, out printers))
 			{
 				// Fall back to an empty dictionary if no match
-				printers = new Dictionary<string, string>();
+				printers = new Dictionary<string, PublicDevice>();
 			}
 
 			// Models - sort dictionary results by key and assign to .ListSource
-			printerModelSelector.ListSource = printers.OrderBy(p => p.Key).ToList();
+			printerModelSelector.ListSource = printers.OrderBy(p => p.Key).Select(p => new KeyValuePair<string, string>(p.Key, p.Value.ProfileToken)).ToList();
 			if (printerModelSelector.MenuItems.Count == 1)
 			{
 				// SelectIfOnlyOneModel

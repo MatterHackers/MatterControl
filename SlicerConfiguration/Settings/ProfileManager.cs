@@ -387,7 +387,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string guid = Guid.NewGuid().ToString();
 
-			var newProfile = await LoadHttpOemProfile(make, model);
+			var publicDevice = OemSettings.Instance.OemProfiles[make][model];
+			
+			// TODO: jlewin - how can we handle lookup failures at this point? Should we throw and check for the exception?
+			//if (publicDevice == null)
+
+			var newProfile = await LoadOemProfileAsync(publicDevice, make);
 			newProfile.ID = guid;
 			newProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
@@ -463,28 +468,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"Pink - Light",
 		};
 
-		private async static Task<PrinterSettings> LoadHttpOemProfile(string make, string model)
+		public async static Task<PrinterSettings> LoadOemProfileAsync(PublicDevice publicDevice, string make)
 		{
-			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
-			string cacheKey = deviceToken + ProfileManager.ProfileExtension;
-			string cachePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache", "profiles", cacheKey);
+			string cacheScope = Path.Combine("public-profiles", make);
+			string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
 
 			return await ApplicationController.LoadCacheableAsync<PrinterSettings>(
-				cacheKey,
-				"profiles",
+				publicDevice.CacheKey,
+				cacheScope,
 				async () =>
 				{
+					// The collector specifically returns null to ensure LoadCacheable skips writing the
+					// result to the cache. After this result is returned, it will attempt to load from
+					// the local cache if the collector yielded no result
 					if(File.Exists(cachePath))
 					{
 						return null;
 					}
 					else
 					{
-						// If the cache file for the current deviceToken does not exist, attempt to download it
-						return await ApplicationController.DownloadPublicProfileAsync(deviceToken);
+						// If the cache file for the current deviceToken does not exist, attempt to download it.
+						// An http 304 results in a null value and LoadCacheable will then load from the cache
+						return await ApplicationController.DownloadPublicProfileAsync(publicDevice.ProfileToken);
 					}
 				},
-				Path.Combine("Profiles",make, model + ProfileManager.ProfileExtension));
+				Path.Combine("Profiles", make, make + ProfileManager.ProfileExtension));
 		}
 
 		public void EnsurePrintersImported()

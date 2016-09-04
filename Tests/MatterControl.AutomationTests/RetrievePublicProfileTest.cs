@@ -57,17 +57,9 @@ namespace MatterControl.Tests.MatterControl
 
 			string make = OemSettings.Instance.OemProfiles.First().Key;
 			string model = OemSettings.Instance.OemProfiles[make].First().Key;
-			string deviceToken = OemSettings.Instance.OemProfiles[make][model];
-			string cacheKey = deviceToken + ProfileManager.ProfileExtension;
+			var publicDevice = OemSettings.Instance.OemProfiles[make][model];
 
-			string expectedProfilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Profiles", cacheKey);
-			if (File.Exists(expectedProfilePath))
-			{
-				File.Delete(expectedProfilePath);
-			}
-
-			// Test will fail until mechanism can be created that exposes MHWebservices to vanilla MatterControl or until these tests are moved to MCCentral
-			var recievedPrinterProfile = await ApplicationController.DownloadPublicProfileAsync(deviceToken);
+			var recievedPrinterProfile = await ApplicationController.DownloadPublicProfileAsync(publicDevice.ProfileToken);
 
 			Assert.IsNotNull(recievedPrinterProfile);
 
