@@ -321,11 +321,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = Path.GetFileNameWithoutExtension(settingsFilePath),
 				ID = Guid.NewGuid().ToString()
 			};
+
 			bool importSuccessful = false;
+
 			string importType = Path.GetExtension(settingsFilePath).ToLower();
 			switch (importType)
 			{
 				case ProfileManager.ProfileExtension:
+					// Add the Settings as a profile before performing any actions on it to ensure file paths resolve
+					Instance.Profiles.Add(printerInfo);
+
 					var profile = PrinterSettings.LoadFile(settingsFilePath);
 					profile.ID = printerInfo.ID;
 					profile.ClearValue(SettingsKey.device_token);
@@ -333,8 +338,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					// TODO: Resolve name conflicts
 					profile.Helpers.SetName(printerInfo.Name);
-
-					Instance.Profiles.Add(printerInfo);
 
 					profile.Save();
 					importSuccessful = true;
