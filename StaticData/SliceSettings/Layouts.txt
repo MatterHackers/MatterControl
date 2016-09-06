@@ -324,11 +324,11 @@ Advanced
       Probe Settings
         manual_probe_paper_width
       Options
-    Resume Failed Print
-      Resume Settings
-        resume_is_enabled
-        resume_first_layer_speed
-        resume_position_before_z_home
+    Print Recovery
+      Recover Settings
+        recover_is_enabled
+        recover_first_layer_speed
+        recover_position_before_z_home
     Custom G-Code
       Start G-Code
         start_gcode

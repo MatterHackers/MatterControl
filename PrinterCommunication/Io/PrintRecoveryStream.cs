@@ -36,29 +36,29 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	internal class ResumePrintingStream : GCodeStream
+	internal class PrintRecoveryStream : GCodeStream
 	{
-		enum ResumeState {  RemoveHeating, Raising, Homing, FindingResumeLayer, SkippingGCode, PrimingAndMovingToStart, PrintingSlow, PrintingToEnd }
+		enum RecoveryState {  RemoveHeating, Raising, Homing, FindingRecoveryLayer, SkippingGCode, PrimingAndMovingToStart, PrintingSlow, PrintingToEnd }
 		private GCodeFileStream internalStream;
 		private double percentDone;
-		double resumeFeedRate;
+		double recoverFeedRate;
 		PrinterMove lastDestination;
         QueuedCommandsStream queuedCommands;
 		RectangleDouble boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
 
-		ResumeState resumeState = ResumeState.RemoveHeating;
+		RecoveryState recoveryState = RecoveryState.RemoveHeating;
 
-		public ResumePrintingStream(GCodeFileStream internalStream, double percentDone)
+		public PrintRecoveryStream(GCodeFileStream internalStream, double percentDone)
 		{
 			this.internalStream = internalStream;
 			this.percentDone = percentDone;
 
-			resumeFeedRate = ActiveSliceSettings.Instance.GetValue<double>("resume_first_layer_speed");
-			if (resumeFeedRate == 0)
+			recoverFeedRate = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.recover_first_layer_speed);
+			if (recoverFeedRate == 0)
 			{
-				resumeFeedRate = 10;
+				recoverFeedRate = 10;
 			}
-			resumeFeedRate *= 60;
+			recoverFeedRate *= 60;
 
 			queuedCommands = new QueuedCommandsStream(null);
 		}
@@ -82,10 +82,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return nextCommand;
 			}
 			
-			switch (resumeState)
+			switch (recoveryState)
 			{
 				// heat the extrude to remove it from the part
-				case ResumeState.RemoveHeating:
+				case RecoveryState.RemoveHeating:
 					// TODO: make sure we heat up all the extruders that we need to (all that are used)
 					queuedCommands.Add("G21; set units to millimeters");
 					queuedCommands.Add("M107; fan off");
@@ -95,20 +95,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("M82; use absolute distance for extrusion");
 					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(0)));
 
-					resumeState = ResumeState.Raising;
+					recoveryState = RecoveryState.Raising;
 					return "";
 
 				// remove it from the part
-				case ResumeState.Raising:
+				case RecoveryState.Raising:
 					queuedCommands.Add("M114 ; get current position");
 					queuedCommands.Add("G91 ; move relative");
 					queuedCommands.Add("G1 Z10 F{0}".FormatWith(MovementControls.ZSpeed));
 					queuedCommands.Add("G90 ; move absolute");
-					resumeState = ResumeState.Homing;
+					recoveryState = RecoveryState.Homing;
 					return "";
 
 				// if top homing, home the extruder
-				case ResumeState.Homing:
+				case RecoveryState.Homing:
 					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
 					{
 						queuedCommands.Add("G28");
@@ -120,17 +120,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home y
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
-						Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.resume_position_before_z_home);
-						queuedCommands.Add("G1 X{0:0.000}Y{1:0.000}F{2}".FormatWith(resumePositionXy.x, resumePositionXy.y, MovementControls.XSpeed));
+						Vector2 recoveryPositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
+						queuedCommands.Add("G1 X{0:0.000}Y{1:0.000}F{2}".FormatWith(recoveryPositionXy.x, recoveryPositionXy.y, MovementControls.XSpeed));
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}
-					resumeState = ResumeState.FindingResumeLayer;
+					recoveryState = RecoveryState.FindingRecoveryLayer;
 					return "";
 					
-				// This is to resume printing if an out a filament occurs. 
+				// This is to recover printing if an out a filament occurs. 
 				// Help the user move the extruder down to just touching the part
-				case ResumeState.FindingResumeLayer:
+				case RecoveryState.FindingRecoveryLayer:
 					if (false) // help the user get the head to the right position
 					{
 						// move to above the completed print
@@ -140,11 +140,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 					else // we are resuming because of disconnect or reset, skip this
 					{
-						resumeState = ResumeState.SkippingGCode;
-						goto case ResumeState.SkippingGCode;
+						recoveryState = RecoveryState.SkippingGCode;
+						goto case RecoveryState.SkippingGCode;
 					}
 
-				case ResumeState.SkippingGCode:
+				case RecoveryState.SkippingGCode:
 					// run through the gcode that the device expected looking for things like temp
 					// and skip everything else until we get to the point we left off last time
 					int commandCount = 0;
@@ -181,20 +181,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 					}
 					
-					resumeState = ResumeState.PrimingAndMovingToStart;
+					recoveryState = RecoveryState.PrimingAndMovingToStart;
 
 					// make sure we always- pick up the last movement
 					boundsOfSkippedLayers.ExpandToInclude(lastDestination.position.Xy);
 					return "";
 
-				case ResumeState.PrimingAndMovingToStart:
+				case RecoveryState.PrimingAndMovingToStart:
 					{
 
 						if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
-							// move to the height we can resume printing from
-							Vector2 resumePositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.resume_position_before_z_home);
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(resumePositionXy.x, resumePositionXy.y, lastDestination.position.z), 0, MovementControls.ZSpeed)));
+							// move to the height we can recover printing from
+							Vector2 recoverPositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(recoverPositionXy.x, recoverPositionXy.y, lastDestination.position.z), 0, MovementControls.ZSpeed)));
 						}
 
 						double extruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
@@ -212,11 +212,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 						/// reset the printer to know where the filament should be
 						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
-						resumeState = ResumeState.PrintingSlow;
+						recoveryState = RecoveryState.PrintingSlow;
 					}
 					return "";
 
-				case ResumeState.PrintingSlow:
+				case RecoveryState.PrintingSlow:
 					{
 						string lineToSend = internalStream.ReadLine();
 						if (lineToSend == null)
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 								PrinterMove moveToSend = currentMove;
 
-								moveToSend.feedRate = resumeFeedRate;
+								moveToSend.feedRate = recoverFeedRate;
 
 								lineToSend = CreateMovementLine(moveToSend, lastDestination);
 								lastDestination = currentMove;
@@ -244,10 +244,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					// we only fall through to here after seeing the next "; Layer:"
-					resumeState = ResumeState.PrintingToEnd;
+					recoveryState = RecoveryState.PrintingToEnd;
 					return "";
 
-				case ResumeState.PrintingToEnd:
+				case RecoveryState.PrintingToEnd:
 					return internalStream.ReadLine();
 			}
 

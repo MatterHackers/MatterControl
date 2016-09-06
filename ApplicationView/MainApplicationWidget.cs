@@ -625,9 +625,13 @@ namespace MatterHackers.MatterControl
 			}, ref unregisterEvent);
 		}
 
+		public void ReloadLibrarySelectorUI()
+		{
+			LibraryProviderSelector.Reload();
+		}
+
 		public void ReloadLibraryUI()
 		{
-			//ApplicationController.Instance.ReloadAll(null, null);
 			PrintLibraryWidget.Reload();
 		}
 	}

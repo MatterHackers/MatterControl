@@ -90,8 +90,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string printer_name = nameof(printer_name);
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string resume_gcode = nameof(resume_gcode);
-		public const string resume_is_enabled = nameof(resume_is_enabled);
-		public const string resume_position_before_z_home = nameof(resume_position_before_z_home);
+		public const string recover_is_enabled = nameof(recover_is_enabled);
+		public const string recover_position_before_z_home = nameof(recover_position_before_z_home);
+		public const string recover_first_layer_speed = nameof(recover_first_layer_speed);
 		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
