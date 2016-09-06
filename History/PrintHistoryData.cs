@@ -40,15 +40,15 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
-	public static class ResumePrinting
+	public static class PrintRecovery
 	{
-		static string resumePrint = "Resume Print".Localize();
-		static string cancelResume = "Cancel".Localize();
-		static string resumeFailedPrintMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?".Localize();
-		static string resumeFailedPrintTitle = "Resume Last Print".Localize();
+		static string recoverPrint = "Print Recovery".Localize();
+		static string cancelRecovery = "Cancel".Localize();
+		static string printRecoveryPrintMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize();
+		static string recoverPrintTitle = "Recover Last Print".Localize();
 		static PrintTask lastPrintTask;
 
-        public static void CheckIfNeedToResumePrint(object sender, EventArgs e)
+        public static void CheckIfNeedToRecoverPrint(object sender, EventArgs e)
 		{
 			foreach (PrintTask lastPrint in PrintHistoryData.Instance.GetHistoryItems(1))
 			{
@@ -59,12 +59,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 				&& ActiveSliceSettings.Instance.GetValue(SettingsKey.has_hardware_leveling) == "0")
                 {
 					lastPrintTask = lastPrint;
-                    StyledMessageBox.ShowMessageBox(ResumeFailedPrintProcessDialogResponse, resumeFailedPrintMessage, resumeFailedPrintTitle, StyledMessageBox.MessageType.YES_NO, resumePrint, cancelResume);
+                    StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryPrintMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
 				}
 			}
 		}
 
-		private static void ResumeFailedPrintProcessDialogResponse(bool messageBoxResponse)
+		private static void RecoverPrintProcessDialogResponse(bool messageBoxResponse)
 		{
 			if (messageBoxResponse)
 			{
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					}
 				});
 			}
-			else // the resume has been canceled
+			else // the recovery has been canceled
 			{
 				lastPrintTask.PrintingGCodeFileName = null;
 				lastPrintTask.Commit();
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				if (instance == null)
 				{
 					instance = new PrintHistoryData();
-					PrinterConnectionAndCommunication.Instance.ConnectionSucceeded.RegisterEvent(ResumePrinting.CheckIfNeedToResumePrint, ref unregisterEvents);
+					PrinterConnectionAndCommunication.Instance.ConnectionSucceeded.RegisterEvent(PrintRecovery.CheckIfNeedToRecoverPrint, ref unregisterEvents);
                 }
 				return instance;
 			}

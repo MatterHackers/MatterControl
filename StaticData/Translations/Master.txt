@@ -5371,3 +5371,39 @@ Translated:Sets the models that will be added to the queue when a new printer is
 English:Don't remind me again
 Translated:Don't remind me again
 
+English:Retrieving sync information...
+Translated:Retrieving sync information...
+
+English:Please sign in to continue.
+Translated:Please sign in to continue.
+
+English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
+Translated:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
+
+English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
+Translated:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
+
+English:Recover Print
+Translated:Recover Print
+
+English:Enable Recovery
+Translated:Enable Recovery
+
+English:Recover Layer Speed
+Translated:Recover Layer Speed
+
+English:XY Recover Position
+Translated:XY Recover Position
+
+English:Recover Settings
+Translated:Recover Settings
+
+English:Print Recovery
+Translated:Print Recovery
+
+English:XY Homing Position
+Translated:XY Homing Position
+
+English:Uh oh! Passwords do not match.
+Translated:Uh oh! Passwords do not match.
+

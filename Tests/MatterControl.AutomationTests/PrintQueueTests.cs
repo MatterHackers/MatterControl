@@ -283,19 +283,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					 * 2. A QueueRowItem is created and added to the queue
 					 */
 
-					bool queueDataCountEqualsZero = false;
-					bool addedPartIncreasesQueueDataCount = false;
 					int queueCountBeforeAdd = QueueData.Instance.Count;
 
-					//Make Sure Queue Count = 0 
-					if(queueCountBeforeAdd  == 0)
-					{
-						queueDataCountEqualsZero = true;
-					}
-
-					resultsHarness.AddTestResult(queueDataCountEqualsZero == true, "Queue count is zero before the test starts");
-
-					testRunner.Wait(3);
 					//Click Add Button and Add Part To Queue
 					testRunner.ClickByName("Queue Add Button", 2);
 					testRunner.Wait(2);
@@ -312,12 +301,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(fennecFoxPartWasAdded == true);
 
 					int queueCountAfterAdd = QueueData.Instance.Count;
-					if (queueCountAfterAdd == queueCountBeforeAdd + 1)
-					{
-						addedPartIncreasesQueueDataCount = true;
-					}
 
-					resultsHarness.AddTestResult(addedPartIncreasesQueueDataCount == true);
+					resultsHarness.AddTestResult(queueCountBeforeAdd +1 == queueCountAfterAdd);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 
@@ -326,7 +311,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
 	}
 
@@ -349,17 +334,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					 * 2. 2 QueueRowItems are created and added to the queue
 					 */
 
-					bool queueDataCountEqualsZero = false;
-					bool addedPartIncreasesQueueDataCount = false;
 					int queueCountBeforeAdd = QueueData.Instance.Count;
-
-					//Make Sure Queue Count = 0 
-					if (queueCountBeforeAdd == 0)
-					{
-						queueDataCountEqualsZero = true;
-					}
-
-					resultsHarness.AddTestResult(queueDataCountEqualsZero == true, "Queue count is zero before the test starts");
 
 					//Click Add Button and Add Part To Queue
 					testRunner.ClickByName("Queue Add Button", 2);
@@ -375,14 +350,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					//Confirm that both items were added and  that the queue count increases by the appropriate number
 					int queueCountAfterAdd = QueueData.Instance.Count;
-					bool queueCountIncreasedByTwo = false;
 
-					if (queueCountAfterAdd == 2)
-					{
-						queueCountIncreasedByTwo = true;
-					}
-
-					resultsHarness.AddTestResult(queueCountIncreasedByTwo == true);
+					resultsHarness.AddTestResult(QueueData.Instance.Count == queueCountBeforeAdd + 2);
 
 					bool firstQueueItemWasAdded = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 2);
 					bool secondQueueItemWasAdded = testRunner.WaitForName("Queue Item " + "Batman", 2);
@@ -397,7 +366,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
 		}
 	}
 
@@ -422,28 +391,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					 */
 
 					int queueItemCount = QueueData.Instance.Count;
-					bool queueItemCountEqualThree = false;
-
-					if (queueItemCount == 3)
-					{
-						queueItemCountEqualThree = true;
-					}
-
-					resultsHarness.AddTestResult(queueItemCountEqualThree == true);
 
 					testRunner.ClickByName("Queue Remove Button", 2);
 
 					testRunner.Wait(1);
 
 					int queueItemCountAfterRemove = QueueData.Instance.Count;
-					bool queueItemCountEqualsTwo = false;
 
-					if (queueItemCountAfterRemove == 2)
-					{
-						queueItemCountEqualsTwo = true;
-					}
-
-					resultsHarness.AddTestResult(queueItemCountEqualsTwo == true);
+					resultsHarness.AddTestResult(queueItemCount -1 == queueItemCountAfterRemove);
 
 					bool queueItemExists = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 2);
 
@@ -610,14 +565,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					 */
 
 					int queueItemCount = QueueData.Instance.Count;
-					bool queueItemCountEqualThree = false;
-
-					if(queueItemCount == 3)
-					{
-						queueItemCountEqualThree = true;
-					}
-
-					resultsHarness.AddTestResult(queueItemCountEqualThree == true);
 
 					testRunner.Wait(2);
 
@@ -630,14 +577,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 
 					int queueItemCountAfterRemove = QueueData.Instance.Count;
-					bool queueItemCountEqualsTwo = false;
 
-					if (queueItemCountAfterRemove == 1)
-					{
-						queueItemCountEqualsTwo = true;
-					}
-
-					resultsHarness.AddTestResult(queueItemCountEqualsTwo == true);
+					resultsHarness.AddTestResult(queueItemCount - 2 == queueItemCountAfterRemove);
 
 					bool queueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 2);
 					bool secondQueueItemExists = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 2);
@@ -652,7 +593,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
 		}
 	}
 

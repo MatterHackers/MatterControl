@@ -222,7 +222,7 @@
     <Compile Include="PrinterCommunication\Io\QueuedCommandsStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrintLevelingStream.cs" />
     <Compile Include="PrinterCommunication\Io\BabyStepsStream.cs" />
-    <Compile Include="PrinterCommunication\Io\ResumePrintingStream.cs" />
+    <Compile Include="PrinterCommunication\Io\PrintRecoveryStream.cs" />
     <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />

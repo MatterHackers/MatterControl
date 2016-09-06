@@ -54,15 +54,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 
+					int queueBeforeCount = QueueData.Instance.Count;
+
 					testRunner.Type(queueItemPath);
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 					testRunner.Wait(2);
 					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 
-					int queueCount = QueueData.Instance.Count;
+					int queueAfterCount = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueCount == 1);
+					resultsHarness.AddTestResult(queueAfterCount == queueBeforeCount + 1);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
@@ -94,6 +96,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
 					string textForBothQueueItems = String.Format("\"{0}\" \"{1}\"", queueItemPath, pathToSecondQueueItem);
 
+					int queueBeforeAddCount = QueueData.Instance.Count;
+
 					testRunner.Type(textForBothQueueItems);
 					testRunner.Wait(2);
 					testRunner.Type("{Enter}");
@@ -101,9 +105,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Batman", 2));
 					
-					int queueCount = QueueData.Instance.Count;
+					int queueAfterAddCount = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueCount == 2);
+					resultsHarness.AddTestResult(queueAfterAddCount == queueBeforeAddCount + 2);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
@@ -130,16 +134,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Add File To Queue Menu Item");
 					testRunner.Wait(2);
 
+					int beforeCount = QueueData.Instance.Count;
+
 					string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
 					testRunner.Type(pathToType);
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 					testRunner.Wait(1);
 
-
 					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Batman", 1));
 					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
-					resultsHarness.AddTestResult(QueueData.Instance.Count == 2);
+					resultsHarness.AddTestResult(QueueData.Instance.Count == beforeCount + 2);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}

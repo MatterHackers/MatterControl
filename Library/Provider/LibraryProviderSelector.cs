@@ -70,9 +70,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public static RootedObjectEventHandler LibraryRootNotice = new RootedObjectEventHandler();
 
+		static LibraryProviderSelector currentInstance;
+
 		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider, bool includeQueueLibraryProvider)
 			: base(null, setCurrentLibraryProvider)
 		{
+			currentInstance = this;
+
 			this.includeQueueLibraryProvider = includeQueueLibraryProvider;
 			this.Name = "Home".Localize();
 
@@ -86,6 +90,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			libraryProviderPlugins = new PluginFinder<LibraryProviderPlugin>();
 
 			ReloadData();
+		}
+
+
+		public static void Reload()
+		{
+			currentInstance.ReloadData();
 		}
 
 		private void ReloadData()
