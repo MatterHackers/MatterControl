@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				return;
 			}
 
-			await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
+			var oemProfilesDict = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
 				"oemprofiles.json",
 				"public-profiles",
 				async () =>
@@ -176,12 +176,13 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 						var manufactures = result.Keys.ToDictionary(oem => oem);
 						SetManufacturers(manufactures);
-
-						await DownloadMissingProfiles(syncReport);
 					}
-
 					return result;
 				});
+			if (oemProfilesDict != null)
+			{
+				await DownloadMissingProfiles(syncReport);
+			}
 		}
 
 		private async Task DownloadMissingProfiles(IProgress<SyncReportType> syncReport)
