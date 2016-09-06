@@ -86,6 +86,9 @@ namespace MatterHackers.MatterControl
 
 		public void SetClientToken(string clientToken)
 		{
+			// Clear credentials anytime we are allocated a new client token
+			ApplicationController.ClearCachedCredentials();
+
 			set(GetClientTokenKeyName(), clientToken);
 		}
 

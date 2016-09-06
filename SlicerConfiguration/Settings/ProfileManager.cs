@@ -57,12 +57,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static object writeLock = new object();
 		private static EventHandler unregisterEvents;
 		private static readonly string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
+
+		/// <summary>
+		/// The user specific path to the Profiles directory
+		/// </summary>
 		private static string ProfilesPath
 		{
 			get
 			{
-				string path = Path.Combine(userDataPath, "Profiles");
-
 				// Determine username
 				string username = ApplicationController.Instance.GetSessionUsernameForFileSystem();
 				if (string.IsNullOrEmpty(username))
@@ -71,7 +73,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// Append userName to ProfilesPath
-				path = Path.Combine(path, username);
+				string path = Path.Combine(userDataPath, "Profiles", username);
 
 				// Ensure directory exists
 				Directory.CreateDirectory(path);
@@ -95,11 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					username = GuestDBPath;
 
 					// If ActiveUserName is empty or invalid and the credentials file exists, delete local credentials, resetting to unauthenticated guest mode
-					string sessionFilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "cache", "session.bin");
-					if(File.Exists(sessionFilePath))
-					{
-						File.Delete(sessionFilePath);
-					}
+					ApplicationController.ClearCachedCredentials();
 				}
 				else
 				{
