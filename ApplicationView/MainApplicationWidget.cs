@@ -634,6 +634,15 @@ namespace MatterHackers.MatterControl
 		{
 			PrintLibraryWidget.Reload();
 		}
+
+		public static void ClearCachedCredentials()
+		{
+			string sessionFilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "cache", "session.bin");
+			if (File.Exists(sessionFilePath))
+			{
+				File.Delete(sessionFilePath);
+			}
+		}
 	}
 
 	public class SyncReportType
