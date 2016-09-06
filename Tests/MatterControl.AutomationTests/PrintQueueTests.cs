@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
 	}
 
@@ -439,15 +439,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					resultsHarness.AddTestResult(checkboxExists == false);
 
-					int queueItemCount = QueueData.Instance.Count;
-					bool queueItemCountEqualThree = false;
-
-					if (queueItemCount == 3)
-					{
-						queueItemCountEqualThree = true;
-					}
-
-					resultsHarness.AddTestResult(queueItemCountEqualThree == true);
+					resultsHarness.AddTestResult(QueueData.Instance.Count == 4);
 
 					testRunner.Wait(2);
 
@@ -473,7 +465,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
 		}
@@ -620,7 +612,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					bool queueEmpty = true;
 					int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
 
-					if (queueItemCountBeforeRemoveAllClicked == 3)
+					if (queueItemCountBeforeRemoveAllClicked > 0)
 					{
 						queueEmpty = false;
 					}
@@ -669,7 +661,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					int queueCountAfterZipIsAdded = QueueData.Instance.Count;
 					bool allItemsInZipWereAddedToTheQueue = false;
 
-					if(queueCountAfterZipIsAdded == 6)
+					if(queueCountAfterZipIsAdded == queueItemCountBeforeRemoveAllClicked * 2)
 					{
 						allItemsInZipWereAddedToTheQueue = true;
 					}
@@ -712,15 +704,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					 *2. Export Queue and make sure file exists on disk
 					 */
 
-					bool queueEmpty = true;
 					int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
 
-					if (queueItemCountBeforeRemoveAllClicked == 3)
-					{
-						queueEmpty = false;
-					}
-
-					resultsHarness.AddTestResult(queueEmpty == false);
+					resultsHarness.AddTestResult(queueItemCountBeforeRemoveAllClicked > 0);
 
 					testRunner.ClickByName("More...  Menu", 2);
 
@@ -905,14 +891,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.Wait(2);
 					int currentQueueItemCount = QueueData.Instance.Count;
-					bool threeItemsInQueue = true;
 
-					if(currentQueueItemCount != 3)
-					{
-						threeItemsInQueue = false;
-					}
-
-					resultsHarness.AddTestResult(threeItemsInQueue == true);
 					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item " + "Batman", 1));
 					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1));
 
@@ -921,18 +900,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(2);
 
 					int queueItemCountAfterRemove = QueueData.Instance.Count;
-					bool correctItemCountAfterRemove;
-					if (queueItemCountAfterRemove == 2)
-					{
-						correctItemCountAfterRemove = true;
-					}
-					else
-					{
-						correctItemCountAfterRemove = false;
-					}
-
 					
-					resultsHarness.AddTestResult(correctItemCountAfterRemove == true);
+					resultsHarness.AddTestResult(currentQueueItemCount - 1 == queueItemCountAfterRemove);
 
 					bool batmanQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
 					resultsHarness.AddTestResult(batmanQueueItemExists == false);
@@ -951,9 +920,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 			
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 7); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 6); // make sure we ran all our tests
 		}
 	}
 
