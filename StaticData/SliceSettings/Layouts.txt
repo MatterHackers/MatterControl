@@ -89,11 +89,10 @@ Advanced
         randomize_start
         external_perimeters_first
         perimeter_start_end_overlap
+        expand_thin_walls
       Outer Surface - Top & Bottom
         top_solid_layers
         bottom_solid_layers
-      Experimental
-        expand_thin_walls
       Quality
         extra_perimeters
         start_perimeters_at_concave_points
@@ -114,7 +113,6 @@ Advanced
         only_retract_when_crossing_perimeters
         infill_first
         infill_overlap_perimeter
-      Experimental
         fill_thin_gaps
     Speed
       Speed for Infill

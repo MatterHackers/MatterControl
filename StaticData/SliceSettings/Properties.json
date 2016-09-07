@@ -484,7 +484,7 @@
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
-		"DefaultValue": "0",
+		"DefaultValue": "1",
 		"RebuildGCodeOnChange": true
 	},
 	{
@@ -665,7 +665,7 @@
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
-		"DefaultValue": "0",
+		"DefaultValue": "1",
 		"RebuildGCodeOnChange": true
 	},
 	{
