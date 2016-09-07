@@ -5407,3 +5407,15 @@ Translated:XY Homing Position
 English:Uh oh! Passwords do not match.
 Translated:Uh oh! Passwords do not match.
 
+English:Layers / Surface
+Translated:Layers / Surface
+
+English:Raft / Priming
+Translated:Raft / Priming
+
+English:Priming
+Translated:Priming
+
+English:First Layer Expansion
+Translated:First Layer Expansion
+
