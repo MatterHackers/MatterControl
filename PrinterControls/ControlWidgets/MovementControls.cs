@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(movementControlsGroupBox);
 		}
 
-		private static void SetMovementSpeeds(object seder, EventArgs e)
+		private static void SetMovementSpeeds(object sender, EventArgs e)
 		{
 			StringEventArgs stringEvent = e as StringEventArgs;
 			if (stringEvent != null && stringEvent.Data != null)
