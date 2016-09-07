@@ -280,7 +280,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			// Finally, make sure that we always add at least one item to the queue.
-			PreLoadItemToQueue(tempFilesToImport[0]);
+			if (tempFilesToImport.Length > 0)
+			{
+				PreLoadItemToQueue(tempFilesToImport[0]);
+			}
 
 			PreloadingCalibrationFiles = false;
 		}

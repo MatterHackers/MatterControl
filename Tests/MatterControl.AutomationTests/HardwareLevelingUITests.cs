@@ -26,6 +26,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Slice Settings Tab", 1);
 					testRunner.ClickByName("User Level Dropdown", 1);
 					testRunner.ClickByName("Advanced Menu Item", 1);
+					testRunner.Wait(.5);
 					testRunner.ClickByName("Printer Tab", 1);
 					testRunner.Wait(1);
 

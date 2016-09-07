@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Save & Continue Button", 2);
 
-			testRunner.Wait(.5);
+			testRunner.Wait(1);
 
 			testRunner.ClickByName("Cancel Wizard Button", 2);
 			testRunner.Wait(1);
