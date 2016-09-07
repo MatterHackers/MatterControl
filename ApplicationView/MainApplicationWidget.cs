@@ -492,12 +492,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void ChangeCloudSyncStatus(bool userAuthenticated)
+		public void ChangeCloudSyncStatus(bool userAuthenticated, string reason = "")
 		{
+			UserSettings.Instance.set(UserSettingsKey.CredentialsInvalid, userAuthenticated ? "false" : "true");
+			UserSettings.Instance.set(UserSettingsKey.CredentialsInvalidReason, userAuthenticated ? "" : reason);
+
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
 
 			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
-
 			string currentUserName = UserSettings.Instance.get("ActiveUserName");
 
 			UserSettings.Instance.set("ActiveUserName", activeUserName);
