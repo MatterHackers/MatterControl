@@ -441,55 +441,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class PrinterInfo
 	{
 		public string ComPort { get; set; }
-
-		private string id;
-		public string ID
-		{
-			get { return id; }
-			set
-			{
-				if (this.id == value)
-				{
-					return;
-				}
-
-				// Ensure the local file with the old ID moves with the new ID change
-				string existingProfilePath = ProfilePath;
-				if (this.id != value
-					&& File.Exists(existingProfilePath))
-				{
-					// Profile ID change must come after existingProfilePath calculation and before ProfilePath getter
-
-					// this will change the profile path
-					this.id = value;
-					// and update the name of the file
-					File.Move(existingProfilePath, ProfilePath);
-				}
-				else
-				{
-					this.id = value;
-				}
-
-				// If we are changing the active profile
-				if (ActiveSliceSettings.Instance.ID == this.ID)
-				{
-					ActiveSliceSettings.Instance.ID = value;
-				}
-
-				if (File.Exists(ProfilePath))
-				{
-					var profile = PrinterSettings.LoadFile(ProfilePath);
-					if (profile.ID != value)
-					{
-						profile.ID = value;
-						profile.Save();
-					}
-				}
-
-				ProfileManager.Instance.Save();
-			}
-		}
-
+		public string ID { get; set; }
 		public string Name { get; set; }
 		public string Make { get; set; }
 		public string Model { get; set; }
@@ -497,6 +449,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool IsDirty { get; set; } = false;
 		public bool MarkedForDelete { get; set; } = false;
 		public string SHA1 { get; set; }
+
+		public void ChangeID(string newID)
+		{
+			// Update in memory state if IDs match
+			if (ActiveSliceSettings.Instance.ID == this.ID)
+			{
+				ActiveSliceSettings.Instance.ID = newID;
+			}
+
+			// Ensure the local file with the old ID moves with the new ID change
+			string existingProfilePath = ProfilePath;
+			if (File.Exists(existingProfilePath))
+			{
+				// Profile ID change must come after existingProfilePath calculation and before ProfilePath getter
+				this.ID = newID;
+				File.Move(existingProfilePath, ProfilePath);
+			}
+			else
+			{
+				this.ID = newID;
+			}
+
+			if (File.Exists(ProfilePath))
+			{
+				var profile = PrinterSettings.LoadFile(ProfilePath);
+				profile.ID = newID;
+				profile.Save();
+			}
+
+			ProfileManager.Instance.Save();
+		}
 
 		[JsonIgnore]
 		public string ProfilePath => ProfileManager.Instance.ProfilePath(this);

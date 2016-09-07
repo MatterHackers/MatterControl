@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			sliceOptionsMenuDropList.AddItem("Export".Localize()).Selected += (s, e) => { WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); };
 
 			MenuItem settingsHistory = sliceOptionsMenuDropList.AddItem("Settings History".Localize());
-			settingsHistory.Selected += (s, e) => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Profile History"); };
+			settingsHistory.Selected += (s, e) => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Settings History"); };
 
 			settingsHistory.Enabled = ApplicationController.Instance.GetSessionUsername() != null;
 
