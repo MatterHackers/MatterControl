@@ -5419,3 +5419,6 @@ Translated:Priming
 English:First Layer Expansion
 Translated:First Layer Expansion
 
+English:Default settings updated: {0} 
+Translated:Default settings updated: {0} 
+
