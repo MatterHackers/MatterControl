@@ -734,6 +734,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				buttonFactory.normalTextColor = RGBA_Bytes.Red;
 				var button = buttonFactory.Generate("Delete Printer".Localize());
+				button.Name = "Delete Printer Button";
 				button.HAnchor = HAnchor.ParentCenter;
 				button.Click += (s, e) =>
 				{

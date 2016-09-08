@@ -149,6 +149,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				printerSelectorAndEditButton.AddChild(printerSelector);
 
 				editPrinterButton = TextImageButtonFactory.GetThemedEditButton();
+				editPrinterButton.Name = "Edit Printer Button";
 				editPrinterButton.VAnchor = VAnchor.ParentCenter;
 				editPrinterButton.Click += UiNavigation.OpenEditPrinterWizard_Click;
 				printerSelectorAndEditButton.AddChild(editPrinterButton);

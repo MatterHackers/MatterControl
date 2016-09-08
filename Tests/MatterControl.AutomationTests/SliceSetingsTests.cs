@@ -3,6 +3,7 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -90,6 +91,45 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 21); // make sure we ran all our tests
+		}
+
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void DeleteProfileWorksForGuest()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
+
+					// assert no profiles
+					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+
+					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+
+					// assert one profile
+					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 1);
+
+					// delete printer
+					testRunner.ClickByName("Edit Printer Button", 5);
+					testRunner.Wait(.5);
+					testRunner.ClickByName("Delete Printer Button", 5);
+					testRunner.Wait(.5);
+					testRunner.ClickByName("Yes Button", 5);
+					testRunner.Wait(2);
+
+					// assert no profiles
+					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
 		}
 
 		private static void CheckAndUncheckSetting(AutomationTesterHarness resultsHarness, AutomationRunner testRunner, string settingToChange, string checkBoxName, bool expected)
