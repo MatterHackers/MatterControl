@@ -76,6 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
+		public const string layer_gcode = nameof(layer_gcode);
 		public const string layer_height = nameof(layer_height);
 		public const string layer_name = nameof(layer_name);
 		public const string layer_to_pause = nameof(layer_to_pause);
