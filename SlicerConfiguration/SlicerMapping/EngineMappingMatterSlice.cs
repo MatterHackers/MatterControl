@@ -78,6 +78,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("infill_overlap_perimeter", "infillExtendIntoPerimeter"),
 				new MappedSetting("infill_speed", "infillSpeed"),
 				new MappedSetting("infill_type", "infillType"),
+				new GCodeForSlicer("layer_gcode", "layerChangeCode"),
 				new MappedSetting("max_fan_speed", "fanSpeedMaxPercent"),
 				new MappedSetting("min_extrusion_before_retract", "minimumExtrusionBeforeRetraction"),
 				new MappedSetting("min_fan_speed", "fanSpeedMinPercent"),
