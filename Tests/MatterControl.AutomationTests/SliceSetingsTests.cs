@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("Library Tab");
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
 					resultsHarness.AddTestResult(testRunner.ClickByName("SettingsAndControls", 1));
@@ -106,18 +106,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// assert no profiles
 					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					// assert one profile
 					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 1);
 
-					// delete printer
-					testRunner.ClickByName("Edit Printer Button", 5);
-					testRunner.Wait(.5);
-					testRunner.ClickByName("Delete Printer Button", 5);
-					testRunner.Wait(.5);
-					testRunner.ClickByName("Yes Button", 5);
-					testRunner.Wait(2);
+					MatterControlUtilities.DeleteSelectedPrinter(testRunner);
 
 					// assert no profiles
 					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
@@ -166,7 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("SettingsAndControls");
@@ -207,7 +201,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 					testRunner.ClickByName("SettingsAndControls");

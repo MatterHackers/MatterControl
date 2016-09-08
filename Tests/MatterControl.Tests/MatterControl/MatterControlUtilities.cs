@@ -167,7 +167,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return false;
 		}
 
-		public static void SelectAndAddPrinter(AutomationRunner testRunner, string make, string model)
+		public static void DeleteSelectedPrinter(AutomationRunner testRunner)
+		{
+			// delete printer
+			testRunner.ClickByName("Edit Printer Button", 5);
+			testRunner.Wait(.5);
+			testRunner.ClickByName("Delete Printer Button", 5);
+			testRunner.Wait(.5);
+			testRunner.ClickByName("Yes Button", 5);
+			testRunner.Wait(2);
+		}
+
+		public static void AddAndSelectPrinter(AutomationRunner testRunner, string make, string model)
 		{
 			string manufacturer = make + " Menu Item";
 			string printer = model + " Menu Item";
