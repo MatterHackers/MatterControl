@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					string firstItemName = "Row Item Batman";
 					//Navigate to Downloads Library Provider
