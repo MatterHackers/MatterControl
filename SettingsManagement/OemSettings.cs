@@ -194,12 +194,13 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				string cacheScope = Path.Combine("public-profiles", oem);
 
 				index++;
-				foreach (var publicDevice in OemProfiles[oem].Values)
+				foreach (var model in OemProfiles[oem].Keys)
 				{
+					var publicDevice = OemProfiles[oem][model];
 					string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
 					if (!File.Exists(cachePath))
 					{
-						await ProfileManager.LoadOemProfileAsync(publicDevice, oem);
+						await ProfileManager.LoadOemProfileAsync(publicDevice, oem, model);
 
 						if (syncReport != null)
 						{
