@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// TODO: jlewin - how can we handle lookup failures at this point? Should we throw and check for the exception?
 			//if (publicDevice == null)
 
-			var newProfile = await LoadOemProfileAsync(publicDevice, make);
+			var newProfile = await LoadOemProfileAsync(publicDevice, make, model);
 			newProfile.ID = guid;
 			newProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"Pink - Light",
 		};
 
-		public async static Task<PrinterSettings> LoadOemProfileAsync(PublicDevice publicDevice, string make)
+		public async static Task<PrinterSettings> LoadOemProfileAsync(PublicDevice publicDevice, string make, string model)
 		{
 			string cacheScope = Path.Combine("public-profiles", make);
 			string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
@@ -493,7 +493,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						return await ApplicationController.DownloadPublicProfileAsync(publicDevice.ProfileToken);
 					}
 				},
-				Path.Combine("Profiles", make, make + ProfileManager.ProfileExtension));
+				Path.Combine("Profiles", make, model + ProfileManager.ProfileExtension));
 		}
 
 		public void EnsurePrintersImported()
