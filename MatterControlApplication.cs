@@ -320,8 +320,6 @@ public static bool CameraPreviewActive = false;
 
 				DesktopPosition = new Point2D(xpos, ypos);
 			}
-
-			IsLoading = false;
 		}
 
         bool dropWasOnChild = true;
@@ -702,6 +700,7 @@ public static bool CameraPreviewActive = false;
 				}, 1);
 			}
 #endif
+			IsLoading = false;
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
