@@ -301,7 +301,7 @@ public static bool CameraPreviewActive = false;
 			}
 			string version = "1.5";
 
-			Title = "MatterControl {0}".FormatWith(version);
+			Title = "MatterHackers: MatterControl {0}".FormatWith(version);
 			if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
 			{
 				Title = Title + " - {1}".FormatWith(version, OemSettings.Instance.WindowTitleExtra);
