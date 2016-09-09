@@ -445,6 +445,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		[JsonProperty(PropertyName = "ID")]
 		private string id;
+
 		[JsonIgnore]
 		public string ID
 		{
@@ -462,12 +463,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (File.Exists(existingProfilePath))
 				{
 					// Profile ID change must come after existingProfilePath calculation and before ProfilePath getter
-					this.ID = value;
+					this.id = value;
 					File.Move(existingProfilePath, ProfilePath);
 				}
 				else
 				{
-					this.ID = value;
+					this.id = value;
 				}
 
 				if (File.Exists(ProfilePath))
