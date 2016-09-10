@@ -5422,3 +5422,12 @@ Translated:First Layer Expansion
 English:Default settings updated: {0} 
 Translated:Default settings updated: {0} 
 
+English:Session Cleared
+Translated:Session Cleared
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
+Translated:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
+
+English:Recover Last Print
+Translated:Recover Last Print
+
