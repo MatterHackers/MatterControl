@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 			double distanceToPlaneAtBedCenter = planeOfPoints.GetDistanceToIntersection(ray, out inFront);
 
 			Matrix4X4 makePointsFlatMatrix = Matrix4X4.CreateTranslation(-bedCenter.x, -bedCenter.y, -distanceToPlaneAtBedCenter);
-			makePointsFlatMatrix *= Matrix4X4.CreateRotation(planeOfPoints.planeNormal, Vector3.UnitZ);
+			makePointsFlatMatrix *= Matrix4X4.CreateRotation(planeOfPoints.PlaneNormal, Vector3.UnitZ);
 			makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.x, bedCenter.y, 0);//distanceToPlaneAtBedCenter);
 
 			bedLevelMatrix = Matrix4X4.Invert(makePointsFlatMatrix);
