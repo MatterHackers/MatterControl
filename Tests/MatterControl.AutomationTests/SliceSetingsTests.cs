@@ -3,6 +3,7 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -19,7 +20,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("Library Tab");
@@ -66,7 +67,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
 					resultsHarness.AddTestResult(testRunner.ClickByName("SettingsAndControls", 1));
@@ -90,6 +91,39 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 21); // make sure we ran all our tests
+		}
+
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void DeleteProfileWorksForGuest()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+					MatterControlUtilities.PrepForTestRun(testRunner);
+
+					// assert no profiles
+					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+
+					// assert one profile
+					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 1);
+
+					MatterControlUtilities.DeleteSelectedPrinter(testRunner);
+
+					// assert no profiles
+					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
 		}
 
 		private static void CheckAndUncheckSetting(AutomationTesterHarness resultsHarness, AutomationRunner testRunner, string settingToChange, string checkBoxName, bool expected)
@@ -126,7 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
 					testRunner.ClickByName("SettingsAndControls");
@@ -167,7 +201,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.SelectAndAddPrinter(testRunner, "Airwolf 3D", "HD");
+					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 					testRunner.ClickByName("SettingsAndControls");

@@ -56,7 +56,9 @@ namespace MatterHackers.MatterControl
 			AddNameSetting(SettingsKey.baud_rate, contentRow, ref tabIndex);
 			AddNameSetting(SettingsKey.com_port, contentRow, ref tabIndex);
 
-			contentRow.AddChild(SliceSettingsWidget.CretaePrinterExtraControls());
+			contentRow.AddChild(new VerticalSpacer());
+
+			contentRow.AddChild(SliceSettingsWidget.CreatePrinterExtraControls());
 
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);

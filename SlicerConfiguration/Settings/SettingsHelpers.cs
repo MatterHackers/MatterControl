@@ -76,6 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
+		public const string layer_gcode = nameof(layer_gcode);
 		public const string layer_height = nameof(layer_height);
 		public const string layer_name = nameof(layer_name);
 		public const string layer_to_pause = nameof(layer_to_pause);
@@ -441,7 +442,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class PrinterInfo
 	{
 		public string ComPort { get; set; }
-		public string ID { get; set; }
+
+		[JsonProperty(PropertyName = "ID")]
+		private string id;
+
+		[JsonIgnore]
+		public string ID
+		{
+			get { return id; }
+			set
+			{
+				// Update in memory state if IDs match
+				if (ActiveSliceSettings.Instance.ID == this.ID)
+				{
+					ActiveSliceSettings.Instance.ID = value;
+				}
+
+				// Ensure the local file with the old ID moves with the new ID change
+				string existingProfilePath = ProfilePath;
+				if (File.Exists(existingProfilePath))
+				{
+					// Profile ID change must come after existingProfilePath calculation and before ProfilePath getter
+					this.id = value;
+					File.Move(existingProfilePath, ProfilePath);
+				}
+				else
+				{
+					this.id = value;
+				}
+
+				if (File.Exists(ProfilePath))
+				{
+					var profile = PrinterSettings.LoadFile(ProfilePath);
+					profile.ID = value;
+					profile.Save();
+				}
+
+				ProfileManager.Instance.Save();
+			}
+		}
+
 		public string Name { get; set; }
 		public string Make { get; set; }
 		public string Model { get; set; }
@@ -449,37 +489,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool IsDirty { get; set; } = false;
 		public bool MarkedForDelete { get; set; } = false;
 		public string SHA1 { get; set; }
-
-		public void ChangeID(string newID)
-		{
-			// Update in memory state if IDs match
-			if (ActiveSliceSettings.Instance.ID == this.ID)
-			{
-				ActiveSliceSettings.Instance.ID = newID;
-			}
-
-			// Ensure the local file with the old ID moves with the new ID change
-			string existingProfilePath = ProfilePath;
-			if (File.Exists(existingProfilePath))
-			{
-				// Profile ID change must come after existingProfilePath calculation and before ProfilePath getter
-				this.ID = newID;
-				File.Move(existingProfilePath, ProfilePath);
-			}
-			else
-			{
-				this.ID = newID;
-			}
-
-			if (File.Exists(ProfilePath))
-			{
-				var profile = PrinterSettings.LoadFile(ProfilePath);
-				profile.ID = newID;
-				profile.Save();
-			}
-
-			ProfileManager.Instance.Save();
-		}
 
 		[JsonIgnore]
 		public string ProfilePath => ProfileManager.Instance.ProfilePath(this);

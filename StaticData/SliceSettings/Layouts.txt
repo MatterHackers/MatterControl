@@ -17,7 +17,7 @@ Simple
         com_port
 Intermediate
   General
-    Layers/Surface
+    Layers / Surface
       Layer Height
         layer_height
         first_layer_height
@@ -28,11 +28,11 @@ Intermediate
         fill_density
         fill_pattern
         infill_type
-    Skirt and Raft
-      Skirt
-        skirt_distance
+    Raft / Priming
       Raft
         create_raft
+      Priming
+        skirt_distance
     Support Material
       Support Material
         support_material
@@ -79,7 +79,7 @@ Intermediate
         com_port
 Advanced
   General
-    Layers/Surface
+    Layers / Surface
       Layer Height
         layer_height
         first_layer_height
@@ -138,14 +138,7 @@ Advanced
         bridge_acceleration
         first_layer_acceleration
         default_acceleration
-    Skirt and Raft
-      Skirt (Priming)
-        skirts
-        skirt_distance
-        skirt_height
-        min_skirt_length
-      Brim (Hold Downs)
-        brims
+    Raft / Priming
       Raft
         create_raft
         raft_extra_distance_around_part
@@ -153,6 +146,13 @@ Advanced
         raft_layers
         raft_fan_speed_percent
         raft_extruder
+      Priming
+        skirts
+        skirt_distance
+        skirt_height
+        min_skirt_length
+      First Layer Expansion
+        brims
       Brim
         brim_width
     Support Material

@@ -450,7 +450,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if(group.Name == "Connection")
 				{
-					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CretaePrinterExtraControls());
+					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreatePrinterExtraControls());
 				}
 			}
 
@@ -685,7 +685,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return ActiveSliceSettings.Instance.GetValue(slicerConfigName, layerCascade);
 		}
 
-		public static GuiWidget CretaePrinterExtraControls()
+		public static GuiWidget CreatePrinterExtraControls()
 		{
 			var dataArea = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -693,7 +693,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			// OEM_LAYER_DATE:
-			string lastUpdateTime = "2016 March 1";
+			string lastUpdateTime = "March 1, 2016";
 			if (ActiveSliceSettings.Instance?.OemLayer != null)
 			{
 				string fromCreatedDate = ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date);
@@ -702,7 +702,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (!string.IsNullOrEmpty(fromCreatedDate))
 					{
 						DateTime time = Convert.ToDateTime(fromCreatedDate).ToLocalTime();
-						lastUpdateTime = time.ToString("yyyy MMMM d, ") + time.ToString("h:mm tt");
+						lastUpdateTime = time.ToString("MMMM d, yyyy ") + time.ToString("h:mm tt");
 					}
 				}
 				catch
@@ -710,9 +710,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			lastUpdateTime = "Defaults Updated On: {0} ".Localize().FormatWith(lastUpdateTime);
+			lastUpdateTime = "Default settings updated: {0} ".Localize().FormatWith(lastUpdateTime);
 
-			dataArea.AddChild(new TextWidget(lastUpdateTime, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			dataArea.AddChild(new TextWidget(lastUpdateTime, textColor: ActiveTheme.Instance.SecondaryTextColor)
 			{
 				HAnchor= HAnchor.ParentCenter,
 				Margin = new BorderDouble(0, 15),
@@ -734,6 +734,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				buttonFactory.normalTextColor = RGBA_Bytes.Red;
 				var button = buttonFactory.Generate("Delete Printer".Localize());
+				button.Name = "Delete Printer Button";
 				button.HAnchor = HAnchor.ParentCenter;
 				button.Click += (s, e) =>
 				{
@@ -785,11 +786,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var dataArea = new FlowLayoutWidget();
 			GuiWidget unitsArea = new GuiWidget(HAnchor.AbsolutePosition, VAnchor.FitToChildren | VAnchor.ParentCenter)
 			{
-				Width = 50 * GuiWidget.DeviceScale,
+				Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
 			};
 			GuiWidget restoreArea = new GuiWidget(HAnchor.AbsolutePosition, VAnchor.FitToChildren | VAnchor.ParentCenter)
 			{
-				Width = 30 * GuiWidget.DeviceScale,
+				Width = settingData.ShowAsOverride ? 30 * GuiWidget.DeviceScale : 0,
 			};
 
 			var settingsRow = new SettingsRow(layerCascade)
@@ -1195,7 +1196,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.STRING:
 						{
-							var stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++)
+							var stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: settingData.ShowAsOverride ? 120 : 200, tabIndex: tabIndexForItem++)
 							{
 								Name = settingData.PresentationName + " Edit",
 							};

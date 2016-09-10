@@ -321,12 +321,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 					string errorMessage;
 					if (responseValues.TryGetValue("ErrorMessage", out errorMessage) && errorMessage.IndexOf("expired session") != -1)
 					{
-						// TODO: Map more error conditions (beyond just session expired) to CredentialsInvalid status
-						UserSettings.Instance.set("CredentialsInvalid", "true");
-						UserSettings.Instance.set("CredentialsInvalidReason", "Session Expired".Localize());
-
 						// Notify connection status changed and now invalid
-						ApplicationController.Instance.ChangeCloudSyncStatus(false);
+						ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Expired".Localize());
 					}
 				}
 				catch

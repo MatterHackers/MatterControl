@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		static ActiveSliceSettings()
 		{
 			// Load last profile or fall back to empty
-			Instance = ProfileManager.Instance.LoadLastProfileWithoutRecovery() ?? ProfileManager.LoadEmptyProfile();
+			Instance = ProfileManager.Instance?.LoadLastProfileWithoutRecovery() ?? ProfileManager.LoadEmptyProfile();
 		}
 
 		internal static async Task SwitchToProfile(string printerID)

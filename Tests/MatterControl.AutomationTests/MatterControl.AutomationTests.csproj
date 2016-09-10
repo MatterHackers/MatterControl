@@ -68,7 +68,6 @@
     <Compile Include="PartPreviewTests.cs" />
     <Compile Include="PrintQueueTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RetrievePublicProfileTest.cs" />
     <Compile Include="SliceSetingsTests.cs" />
     <Compile Include="SqLiteLibraryProvider.cs" />
   </ItemGroup>

@@ -43,7 +43,9 @@ namespace MatterHackers.MatterControl
 	{
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private EventHandler functionToCallOnSave;
-		private List<GuiWidget> listWithValues = new List<GuiWidget>();
+		private List<string> axisLabels = new List<string>();
+		private List<GuiWidget> valueEditors = new List<GuiWidget>();
+
 
 		public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, EventHandler functionToCallOnSave)
 			: base(260, 300)
@@ -106,7 +108,7 @@ namespace MatterHackers.MatterControl
 			tempLabelContainer.Height = 16;
 			tempLabelContainer.Margin = new BorderDouble(3, 0);
 
-			TextWidget tempLabel = new TextWidget("mm / minute".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
+			TextWidget tempLabel = new TextWidget("mm/s".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 			tempLabel.HAnchor = HAnchor.ParentLeft;
 			tempLabel.VAnchor = VAnchor.ParentCenter;
 
@@ -140,16 +142,15 @@ namespace MatterHackers.MatterControl
 
 				leftRightEdit.AddChild(new HorizontalSpacer());
 
-				// we add this to the listWithValues to make sure we build the string correctly on save.
-				TextWidget typeEdit = new TextWidget(settingsArray[i]);
-				listWithValues.Add(typeEdit);
+				axisLabels.Add(settingsArray[i]);
 
 				double movementSpeed = 0;
 				double.TryParse(settingsArray[i + 1], out movementSpeed);
-				MHNumberEdit valueEdit = new MHNumberEdit(movementSpeed, minValue: 0, pixelWidth: 60, tabIndex: tab_index++);
+				movementSpeed = movementSpeed / 60.0;	// Convert from mm/min to mm/s
+				MHNumberEdit valueEdit = new MHNumberEdit(movementSpeed, minValue: 0, pixelWidth: 60, tabIndex: tab_index++, allowDecimals: true);
 				valueEdit.Margin = new BorderDouble(3);
 				leftRightEdit.AddChild(valueEdit);
-				listWithValues.Add(valueEdit);
+				valueEditors.Add(valueEdit);
 
 				//leftRightEdit.AddChild(textImageButtonFactory.Generate("Delete"));
 				presetsFormContainer.AddChild(leftRightEdit);
@@ -195,15 +196,21 @@ namespace MatterHackers.MatterControl
 		{
 			bool first = true;
 			StringBuilder settingString = new StringBuilder();
-			foreach (GuiWidget valueToAdd in listWithValues)
+			for (int i = 0; i < valueEditors.Count(); i++)
 			{
 				if (!first)
 				{
 					settingString.Append(",");
 				}
-
-				settingString.Append(valueToAdd.Text);
 				first = false;
+
+				settingString.Append(axisLabels[i]);
+				settingString.Append(",");
+
+				double movementSpeed = 0;
+				double.TryParse(valueEditors[i].Text, out movementSpeed);
+				movementSpeed = movementSpeed * 60;	// Convert to mm/min
+				settingString.Append(movementSpeed.ToString());
 			}
 			functionToCallOnSave(this, new StringEventArgs(settingString.ToString()));
 			Close();
