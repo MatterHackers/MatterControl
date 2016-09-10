@@ -122,7 +122,6 @@
     <Compile Include="AboutPage\AboutWindow.cs" />
     <Compile Include="AboutPage\CheckForUpdateWindow.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
-    <Compile Include="AboutPage\HTMLParser\ImageWidget_AsyncLoadOnDraw.cs" />
     <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
     <Compile Include="AboutPage\UpdateControlData.cs" />
     <Compile Include="AboutPage\UpdateControlView.cs" />

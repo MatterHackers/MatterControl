@@ -179,7 +179,8 @@ namespace MatterHackers.MatterControl
 				case "img":
 					{
 						ImageBuffer image = new ImageBuffer(elementState.SizeFixed.x, elementState.SizeFixed.y, 32, new BlenderBGRA());
-						ImageWidget_AsyncLoadOnDraw imageWidget = new ImageWidget_AsyncLoadOnDraw(image, elementState.src);
+						ImageWidget imageWidget = new ImageWidget(image);
+						imageWidget.Load += (s, e) => StaticData.DownloadToImageAsync(image, elementState.src);
 						// put the image into the widget when it is done downloading.
 
 						if (elementsUnderConstruction.Peek().Name == "a")
