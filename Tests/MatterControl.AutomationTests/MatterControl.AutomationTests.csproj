@@ -66,6 +66,7 @@
     <Compile Include="LocalLibraryTests.cs" />
     <Compile Include="OptionsTabTests.cs" />
     <Compile Include="PartPreviewTests.cs" />
+    <Compile Include="PrinterDropDownTests.cs" />
     <Compile Include="PrintQueueTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SliceSetingsTests.cs" />

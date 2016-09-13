@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
+					MatterControlUtilities.NavigateToFolder(testRunner, "-Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
 					testRunner.Wait(3);
 
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
+					MatterControlUtilities.NavigateToFolder(testRunner, "-Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
 					testRunner.Wait(2);
 
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
+					MatterControlUtilities.NavigateToFolder(testRunner, "-Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
 					testRunner.Wait(2);
 
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
+					MatterControlUtilities.NavigateToFolder(testRunner, "-Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
 					testRunner.Wait(2);
 
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						//Navigate to Downloads Library Provider
 						testRunner.ClickByName("Library Tab");
 						MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
-						MatterControlUtilities.NavigateToFolder(testRunner, "Temporary Row Item Collection");
+						MatterControlUtilities.NavigateToFolder(testRunner, "-Temporary Row Item Collection");
 						testRunner.ClickByName("Create Folder From Library Button");
 						testRunner.Wait(2);
 						testRunner.Type("New Folder");
