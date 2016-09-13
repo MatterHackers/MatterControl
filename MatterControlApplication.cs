@@ -56,6 +56,7 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.CustomWidgets;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace MatterHackers.MatterControl
 {
@@ -683,24 +684,43 @@ public static bool CameraPreviewActive = false;
 
 			ApplicationController.Instance.OnLoadActions();
 
-#if false
+			//HtmlWindowTest();
+
+			IsLoading = false;
+		}
+
+		private static void HtmlWindowTest()
+		{
+			try
 			{
-				SystemWindow releaseNotes = new SystemWindow(640, 480);
-				string releaseNotesFile = Path.Combine("C:/Users/LarsBrubaker/Downloads", "test1.html");
-				string releaseNotesContent = StaticData.Instance.ReadAllText(releaseNotesFile);
-				HtmlWidget content = new HtmlWidget(releaseNotesContent, RGBA_Bytes.Black);
+				SystemWindow htmlTestWindow = new SystemWindow(640, 480);
+				string htmlContent = "";
+				if (true)
+				{
+					string releaseNotesFile = Path.Combine("C:\\Users\\lbrubaker\\Downloads", "test1.html");
+					htmlContent = File.ReadAllText(releaseNotesFile);
+				}
+				else
+				{
+					WebClient webClient = new WebClient();
+					htmlContent = webClient.DownloadString("http://www.matterhackers.com/s/store?q=pla");
+				}
+
+				HtmlWidget content = new HtmlWidget(htmlContent, RGBA_Bytes.Black);
 				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.ParentBottomTop));
 				content.VAnchor |= VAnchor.ParentTop;
 				content.BackgroundColor = RGBA_Bytes.White;
-				releaseNotes.AddChild(content);
-				releaseNotes.BackgroundColor = RGBA_Bytes.Cyan;
+				htmlTestWindow.AddChild(content);
+				htmlTestWindow.BackgroundColor = RGBA_Bytes.Cyan;
 				UiThread.RunOnIdle((state) =>
 				{
-					releaseNotes.ShowAsSystemWindow();
+					htmlTestWindow.ShowAsSystemWindow();
 				}, 1);
 			}
-#endif
-			IsLoading = false;
+			catch
+			{
+				int stop = 1;
+			}
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
