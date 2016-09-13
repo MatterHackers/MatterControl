@@ -189,6 +189,7 @@ Advanced
       File Settings
         center_part_on_bed
         output_only_first_layer
+        g0
       Sequential Printing
         complete_objects
         extruder_clearance_height
@@ -310,7 +311,6 @@ Advanced
       Firmware
         gcode_flavor
         use_relative_e_distances
-        g0
       Advanced
         use_firmware_retraction
         vibration_limit

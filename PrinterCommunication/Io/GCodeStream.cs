@@ -34,6 +34,7 @@ using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -50,15 +51,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
         public abstract void Dispose();
 
-        public static string CreateMovementLine(PrinterMove currentDestination)
+		bool useG0ForMovement = false;
+
+		public GCodeStream()
+		{
+			useG0ForMovement = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.g0);
+		}
+
+		public string CreateMovementLine(PrinterMove currentDestination)
         {
             return CreateMovementLine(currentDestination, PrinterMove.Nowhere);
         }
 
-        public static string CreateMovementLine(PrinterMove destination, PrinterMove start)
+        public string CreateMovementLine(PrinterMove destination, PrinterMove start)
         {
             string lineBeingSent;
             StringBuilder newLine = new StringBuilder("G1 ");
+
+			bool moveHasExtrusion = destination.extrusion != start.extrusion;
+			if (useG0ForMovement && !moveHasExtrusion)
+			{
+				newLine = new StringBuilder("G0 ");
+			}
 
 			if (destination.position.x != start.position.x)
 			{
@@ -73,7 +87,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				newLine = newLine.Append(String.Format("Z{0:0.###} ", destination.position.z));
 			}
 
-            if (destination.extrusion != start.extrusion)
+            if (moveHasExtrusion)
             {
                 newLine = newLine.Append(String.Format("E{0:0.###} ", destination.extrusion));
             }
