@@ -6,6 +6,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.Queue.OptionsMenu;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -288,10 +289,8 @@ namespace MatterHackers.MatterControl
 					string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
 					if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
 					{
-
 						SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
 						printItemWrapper.SlicingDone += sliceItem_Done;
-
 					}
 					else if (partIsGCode)
 					{
@@ -304,67 +303,34 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void SaveGCodeToNewLocation(string source, string dest)
+		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
 		{
 			try
 			{
 				if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
 				{
-					GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(source);
 					if (applyLeveling.Checked)
 					{
-						PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-						if (levelingData != null)
+						GCodeFile loadedGCode = GCodeFile.Load(gcodeFilename);
+						GCodeFileStream gCodeFileStream0 = new GCodeFileStream(loadedGCode);
+						PrintLevelingStream printLevelingStream4 = new PrintLevelingStream(gCodeFileStream0);
+						// this is added to ensure we are rewriting the G0 G1 commands as needed
+						FeedRateMultiplyerStream extrusionMultiplyerStream = new FeedRateMultiplyerStream(printLevelingStream4);
+
+						using (StreamWriter file = new StreamWriter(dest))
 						{
-							for (int lineIndex = 0; lineIndex < unleveledGCode.LineCount; lineIndex++)
+							string nextLine = extrusionMultiplyerStream.ReadLine();
+							while (nextLine != null)
 							{
-								PrinterMachineInstruction instruction = unleveledGCode.Instruction(lineIndex);
-								Vector3 currentDestination = instruction.Position;
-
-								List<string> linesToWrite = null;
-								switch (levelingData.CurrentPrinterLevelingSystem)
-								{
-									case PrintLevelingData.LevelingSystem.Probe2Points:
-										instruction.Line = LevelWizard2Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-										linesToWrite = LevelWizard2Point.ProcessCommand(instruction.Line);
-										break;
-
-									case PrintLevelingData.LevelingSystem.Probe3Points:
-										instruction.Line = LevelWizard3Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-										linesToWrite = LevelWizard3Point.ProcessCommand(instruction.Line);
-										break;
-
-									case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-										linesToWrite = LevelWizard7PointRadial.ProcessCommand(instruction.Line);
-										break;
-
-									case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-										instruction.Line = LevelWizard13PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-										linesToWrite = LevelWizard13PointRadial.ProcessCommand(instruction.Line);
-										break;
-
-									default:
-										throw new NotImplementedException();
-								}
-
-								instruction.Line = linesToWrite[0];
-								linesToWrite.RemoveAt(0);
-
-								// now insert any new lines
-								foreach (string line in linesToWrite)
-								{
-									PrinterMachineInstruction newInstruction = new PrinterMachineInstruction(line);
-									unleveledGCode.Insert(++lineIndex, newInstruction);
-								}
+								file.WriteLine(nextLine);
+								nextLine = extrusionMultiplyerStream.ReadLine();
 							}
 						}
 					}
-					unleveledGCode.Save(dest);
 				}
 				else
 				{
-					File.Copy(source, dest, true);
+					File.Copy(gcodeFilename, dest, true);
 				}
 				ShowFileIfRequested(dest);
 			}
