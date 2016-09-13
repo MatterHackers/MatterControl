@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class UserCanSuccessfullyCreateAndRenameLibraryFolder
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
-		public void RenameButtonRenameLocalLibraryItem()
+		public void RenameButtonRenameLocalLibraryFolder()
 		{
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>

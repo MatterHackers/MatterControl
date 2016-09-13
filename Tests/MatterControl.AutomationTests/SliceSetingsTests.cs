@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("SettingsAndControls", 1);
 					testRunner.ClickByName("User Level Dropdown", 1);
 					testRunner.ClickByName("Advanced Menu Item", 1);
-					testRunner.ClickByName("Skirt and Raft Tab", 1);
+					testRunner.ClickByName("Raft / Priming Tab", 1);
 
 					testRunner.ClickByName("Create Raft Checkbox", 1);
 					testRunner.Wait(1.5);
