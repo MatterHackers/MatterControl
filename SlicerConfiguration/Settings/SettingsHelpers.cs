@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string fill_thin_gaps = nameof(fill_thin_gaps);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
 		public const string first_layer_height = nameof(first_layer_height);
+		public const string g0 = nameof(g0);
 		public const string has_fan = nameof(has_fan);
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_heated_bed = nameof(has_heated_bed);
