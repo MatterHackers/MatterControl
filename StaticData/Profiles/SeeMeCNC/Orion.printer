@@ -152,7 +152,7 @@
     "created_date": "7/19/2016 7:56:38 PM",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
-    "default_movement_speeds": "x,3000,y,3000,z,3000,e0,150",
+    "manual_movement_speeds": "x,3000,y,3000,z,3000,e0,150",
     "windows_driver": "MHSerial.inf",
     "calibration_files": "Calibration - Box.stl"
   },
