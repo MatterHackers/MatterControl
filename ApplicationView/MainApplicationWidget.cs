@@ -547,7 +547,8 @@ namespace MatterHackers.MatterControl
 		{
 			Load?.Invoke(this, null);
 
-			ApplicationController.Instance.UserChanged();
+			// Pushing this after load fixes that empty printer list
+			UiThread.RunOnIdle(ApplicationController.Instance.UserChanged);
 
 			if (!System.IO.File.Exists(@"/storage/sdcard0/Download/LaunchTestPrint.stl"))
 			{
