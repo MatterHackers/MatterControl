@@ -73,6 +73,10 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
+			MatterControlUtilities.OverrideAppDataLocation();
+
 			MaxLengthStream maxLengthStream = new MaxLengthStream(new TestGCodeStream(lines), 6);
 
 			int expectedIndex = 0;
@@ -154,6 +158,10 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
+			MatterControlUtilities.OverrideAppDataLocation();
+
 			List<GCodeStream> streamList;
 			GCodeStream testStream = CreateTestGCodeStream(inputLines, out streamList);
 
@@ -204,6 +212,10 @@ namespace MatterControl.Tests.MatterControl
 				"G28",
 				null,
 			};
+
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
+			MatterControlUtilities.OverrideAppDataLocation();
 
 			List<GCodeStream> streamList;
 			GCodeStream testStream = CreateTestGCodeStream(inputLines, out streamList);
@@ -274,6 +286,10 @@ namespace MatterControl.Tests.MatterControl
 				"G90",
 				null,
 			};
+
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+
+			MatterControlUtilities.OverrideAppDataLocation();
 
 			List<GCodeStream> streamList;
 			GCodeStream pauseHandlingStream = CreateTestGCodeStream(inputLines, out streamList);
