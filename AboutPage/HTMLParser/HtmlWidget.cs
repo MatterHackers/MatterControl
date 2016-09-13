@@ -176,11 +176,14 @@ namespace MatterHackers.MatterControl
 				case "body":
 					break;
 
+				case "html":
+					break;
+
 				case "img":
 					{
-						ImageBuffer image = new ImageBuffer(elementState.SizeFixed.x, elementState.SizeFixed.y, 32, new BlenderBGRA());
+						ImageBuffer image = new ImageBuffer(Math.Max(elementState.SizeFixed.x, 1), Math.Max(elementState.SizeFixed.y, 1), 32, new BlenderBGRA());
 						ImageWidget imageWidget = new ImageWidget(image);
-						imageWidget.Load += (s, e) => StaticData.DownloadToImageAsync(image, elementState.src);
+						imageWidget.Load += (s, e) => StaticData.DownloadToImageAsync(image, elementState.src, elementState.SizeFixed.x == 0 ? true : false);
 						// put the image into the widget when it is done downloading.
 
 						if (elementsUnderConstruction.Peek().Name == "a")
@@ -303,6 +306,9 @@ namespace MatterHackers.MatterControl
 					break;
 
 				case "body":
+					break;
+
+				case "html":
 					break;
 
 				case "h1":
