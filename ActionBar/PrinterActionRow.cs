@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				string connectString = "Connect".Localize().ToUpper();
 				connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
+				connectPrinterButton.Name = "Connect to printer button";
 				connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
 				if (ApplicationController.Instance.WidescreenMode)
 				{
