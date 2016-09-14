@@ -43,12 +43,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					SystemWindow window;
 					var textWidget = testRunner.GetWidgetByName(widgetName, out window);
 					string newName = "Updated name";
-
 					textWidget.Text = newName;
 					testRunner.ClickByName("Printer Tab", 1);
+					testRunner.Wait(4);
 
-					testRunner.Wait(5);
-					
+					//Check to make sure the Printer dropdown gets the name change 
+					testRunner.ClickByName("Printers... Menu", 2);
+					testRunner.Wait(1);
+					resultsHarness.AddTestResult(testRunner.NameExists(newName + " Menu Item"));
+					//Make sure the Active profile name changes as well
 					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile.Name == newName);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
@@ -58,7 +61,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 5); // make sure we ran all our tests
 		}
 	}
 
