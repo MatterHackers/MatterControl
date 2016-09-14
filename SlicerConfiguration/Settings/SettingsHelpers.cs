@@ -478,8 +478,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					profile.ID = value;
 					profile.Save();
 				}
-
-				ProfileManager.Instance.Save();
 			}
 		}
 
