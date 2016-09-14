@@ -28,6 +28,8 @@ namespace MatterHackers.MatterControl
 		public MenuBase(string menuName)
 		{
 			MenuDropList = new DropDownMenu(menuName.ToUpper(), Direction.Down, pointSize: 10);
+			MenuDropList.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
 			MenuDropList.Margin = new BorderDouble(0);
 			MenuDropList.Padding = new BorderDouble(4, 4, 0, 4);
 			MenuDropList.MenuItemsPadding = new BorderDouble(8, 4);

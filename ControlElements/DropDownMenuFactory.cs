@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
 
 		public DynamicDropDownMenu Generate(string label = "", TupleList<string, Func<bool>> optionList = null, Direction direction = Direction.Down)
 		{
-			DynamicDropDownMenu menu = new DynamicDropDownMenu(label, CreateButtonViewStates(label), direction);
+			DynamicDropDownMenu menu = new DynamicDropDownMenu(CreateButtonViewStates(label), direction);
 			menu.VAnchor = VAnchor.ParentCenter;
 			menu.HAnchor = HAnchor.FitToChildren;
 			menu.MenuAsWideAsItems = false;
