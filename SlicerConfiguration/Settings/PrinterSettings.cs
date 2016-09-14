@@ -200,14 +200,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// SHA1 value is based on UTF8 encoded file contents
 			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
 			{
-				string sha1 = GenerateSha1(memoryStream);
-				this.UserLayer["profile_sha1"] = sha1;
+				string contentSHA1 = GenerateSha1(memoryStream);
+				this.UserLayer["profile_sha1"] = contentSHA1;
 
 				var printerInfo = ProfileManager.Instance[this.ID];
 				if (printerInfo != null)
 				{
-					printerInfo.SHA1 = sha1;
-					printerInfo.IsDirty = true;
+					string beforeSaveSHA1 = printerInfo.SHA1;
+
+					printerInfo.SHA1 = contentSHA1;
+					printerInfo.IsDirty = beforeSaveSHA1 != contentSHA1;
 					ProfileManager.Instance.Save();
 				}
 			}
