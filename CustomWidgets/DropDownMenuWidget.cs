@@ -12,6 +12,8 @@ namespace MatterHackers.Agg.UI
 
 		private TextWidget mainControlText;
 
+		public BorderDouble MenuItemsPadding { get; set; }
+
 		public DropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
 			: base(direction)
 		{
