@@ -16,8 +16,6 @@ namespace MatterHackers.MatterControl
 {
 	public class MenuOptionFile : MenuBase
 	{
-		private static CreateFolderWindow createFolderWindow = null;
-
 		public static MenuOptionFile CurrentMenuOptionFile = null;
 
 		public EventHandler RedeemDesignCode;

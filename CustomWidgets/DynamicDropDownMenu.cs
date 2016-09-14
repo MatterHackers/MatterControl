@@ -36,13 +36,11 @@ namespace MatterHackers.Agg.UI
 	public class DynamicDropDownMenu : DropDownMenu
 	{
 		private TupleList<string, Func<bool>> menuItems;
-		private bool hasText;
 
-		public DynamicDropDownMenu(string topMenuText, GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
-			: base(topMenuText, buttonView, direction, pointSize)
+		public DynamicDropDownMenu(GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
+			: base(buttonView, direction, pointSize)
 		{
 			menuItems = new TupleList<string, Func<bool>>();
-			hasText = topMenuText != "";
 			TextColor = RGBA_Bytes.Black;
 			NormalArrowColor = RGBA_Bytes.Black;
 			HoverArrowColor = RGBA_Bytes.Black;
@@ -72,43 +70,6 @@ namespace MatterHackers.Agg.UI
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			base.OnDraw(graphics2D);
-		}
-
-		protected override void DoDrawDirectionalArrow(Graphics2D graphics2D)
-		{
-			PathStorage littleArrow = new PathStorage();
-			if (this.MenuDirection == Direction.Down)
-			{
-				littleArrow.MoveTo(-4, 0);
-				littleArrow.LineTo(4, 0);
-				littleArrow.LineTo(0, -5);
-			}
-			else if (this.MenuDirection == Direction.Up)
-			{
-				littleArrow.MoveTo(-4, -5);
-				littleArrow.LineTo(4, -5);
-				littleArrow.LineTo(0, 0);
-			}
-			else
-			{
-				throw new NotImplementedException("Pulldown direction has not been implemented");
-			}
-
-			if (!hasText)
-			{
-				if (UnderMouseState != UI.UnderMouseState.NotUnderMouse)
-				{
-					graphics2D.Render(littleArrow, LocalBounds.Right / 2, LocalBounds.Bottom + Height / 2 + 4, NormalArrowColor);
-				}
-				else
-				{
-					graphics2D.Render(littleArrow, LocalBounds.Right / 2, LocalBounds.Bottom + Height / 2 + 4, HoverArrowColor);
-				}
-			}
-			else
-			{
-				base.DoDrawDirectionalArrow(graphics2D);
-			}
 		}
 
 		public void addItem(string name, Func<bool> clickFunction)

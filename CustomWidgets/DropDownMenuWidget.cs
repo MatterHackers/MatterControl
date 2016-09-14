@@ -10,20 +10,26 @@ namespace MatterHackers.Agg.UI
 	{
 		public event EventHandler SelectionChanged;
 
-		private TextWidget mainControlText;
+		private GuiWidget mainControlWidget;
 
 		public BorderDouble MenuItemsPadding { get; set; }
 
 		public DropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
 			: base(direction)
 		{
-			SetStates(topMenuText, pointSize);
+			TextWidget textWidget = new TextWidget(topMenuText, pointSize: pointSize);
+			textWidget.TextColor = this.TextColor;
+			TextColorChanged += (s, e) => textWidget.TextColor = this.TextColor;
+			textWidget.AutoExpandBoundsToText = true;
+			this.Name = topMenuText + " Menu";
+
+			SetStates(textWidget);
 		}
 
-		public DropDownMenu(string topMenuText, GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
-			: base(buttonView, direction)
+		public DropDownMenu(GuiWidget topMenuContent, Direction direction = Direction.Down, double pointSize = 12)
+			: base(direction)
 		{
-			SetStates(topMenuText, pointSize);
+			SetStates(topMenuContent);
 		}
 
 		public bool MenuAsWideAsItems { get; set; } = true;
@@ -42,7 +48,14 @@ namespace MatterHackers.Agg.UI
 
 		public RGBA_Bytes HoverColor { get; set; }
 
-		public RGBA_Bytes TextColor { get; set; } = RGBA_Bytes.Black;
+		RGBA_Bytes textColor = RGBA_Bytes.Black;
+		public RGBA_Bytes TextColor
+		{
+			get { return textColor; }
+			set { if (value != textColor) { textColor = value; TextColorChanged?.Invoke(this, null); } }
+		}
+
+		public event EventHandler TextColorChanged;
 
 		private int selectedIndex = -1;
 
@@ -67,20 +80,17 @@ namespace MatterHackers.Agg.UI
 			return MenuItems[SelectedIndex].Value;
 		}
 
-		private void SetStates(string topMenuText, double pointSize)
+		private void SetStates(GuiWidget topMenuContent)
 		{
 			SetDisplayAttributes();
 
 			MenuItems.CollectionChanged += new NotifyCollectionChangedEventHandler(MenuItems_CollectionChanged);
-			mainControlText = new TextWidget(topMenuText, pointSize: pointSize);
-			mainControlText.TextColor = this.TextColor;
-			mainControlText.AutoExpandBoundsToText = true;
-			mainControlText.VAnchor = UI.VAnchor.ParentCenter;
-			mainControlText.HAnchor = UI.HAnchor.ParentLeft;
-			AddChild(mainControlText);
+			mainControlWidget = topMenuContent;
+			mainControlWidget.VAnchor = UI.VAnchor.ParentCenter;
+			mainControlWidget.HAnchor = UI.HAnchor.ParentLeft;
+			AddChild(mainControlWidget);
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
-			this.Name = topMenuText + " Menu";
 
 			MouseEnter += new EventHandler(DropDownList_MouseEnter);
 			MouseLeave += new EventHandler(DropDownList_MouseLeave);
@@ -125,15 +135,15 @@ namespace MatterHackers.Agg.UI
 				minSize.x = Math.Max(minSize.x, item.Width);
 			}
 
-			string startText = mainControlText.Text;
+			string startText = mainControlWidget.Text;
 			foreach (MenuItem item in MenuItems)
 			{
-				mainControlText.Text = item.Text;
+				mainControlWidget.Text = item.Text;
 
 				minSize.x = Math.Max(minSize.x, LocalBounds.Width);
 				minSize.y = Math.Max(minSize.y, LocalBounds.Height);
 			}
-			mainControlText.Text = startText;
+			mainControlWidget.Text = startText;
 
 			if (MenuAsWideAsItems)
 			{
@@ -239,9 +249,9 @@ namespace MatterHackers.Agg.UI
 			{
 				value = name;
 			}
-			if (mainControlText.Text != "")
+			if (mainControlWidget.Text != "")
 			{
-				mainControlText.Margin = MenuItemsPadding;
+				mainControlWidget.Margin = MenuItemsPadding;
 			}
 
 			//MenuItem menuItem = new MenuItem(new MenuItemStatesView(normalTextWithMargin, hoverTextWithMargin), value);

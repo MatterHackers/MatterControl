@@ -94,11 +94,10 @@ namespace MatterHackers.MatterControl
 
 			// make an object that can hold custom content on the right (like the sign in)
 			rightElement = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			rightElement.Height = 24;
-			rightElement.Margin = new BorderDouble(bottom: 4);
+			rightElement.VAnchor = VAnchor.FitToChildren;
 			this.AddChild(rightElement);
 
-			this.Padding = new BorderDouble(0, 0, 6, 0);
+			this.Padding = new BorderDouble(0);
 
 			AddRightElement?.Invoke(rightElement);
 
