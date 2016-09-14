@@ -297,6 +297,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("3D View Edit", 1);
 					int partCountBeforeCopy = view3D.MeshGroups.Count();
 					resultsHarness.AddTestResult(partCountBeforeCopy == 1);
+					testRunner.Wait(.5);
 
 					for (int i = 0; i <= 4; i++)
 					{
