@@ -477,6 +477,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var profile = PrinterSettings.LoadFile(ProfilePath);
 					profile.ID = value;
 					profile.Save();
+					this.IsDirty = false;
 				}
 			}
 		}

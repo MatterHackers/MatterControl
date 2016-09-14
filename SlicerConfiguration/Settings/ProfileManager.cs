@@ -393,14 +393,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// TODO: jlewin - how can we handle lookup failures at this point? Should we throw and check for the exception?
 			//if (publicDevice == null)
 
-			var newProfile = await LoadOemProfileAsync(publicDevice, make, model);
-			newProfile.ID = guid;
-			newProfile.DocumentVersion = PrinterSettings.LatestVersion;
+			var printerSettings = await LoadOemProfileAsync(publicDevice, make, model);
+			printerSettings.ID = guid;
+			printerSettings.DocumentVersion = PrinterSettings.LatestVersion;
 
-			newProfile.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
+			printerSettings.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
 
 			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
-			var classicDefaultMacros = newProfile.GetValue("default_macros");
+			var classicDefaultMacros = printerSettings.GetValue("default_macros");
 			if (!string.IsNullOrEmpty(classicDefaultMacros))
 			{
 				var namedMacros = new Dictionary<string, string>();
@@ -418,7 +418,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string gcode;
 					if (namedMacros.TryGetValue(namedMacro.Trim(), out gcode))
 					{
-						newProfile.Macros.Add(new GCodeMacro()
+						printerSettings.Macros.Add(new GCodeMacro()
 						{
 							Name = namedMacro.Trim(),
 							GCode = gcode
@@ -427,6 +427,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			// Add to Profiles - fires ProfileManager.Save due to ObservableCollection event listener
 			Instance.Profiles.Add(new PrinterInfo
 			{
 				Name = printerName,
@@ -435,12 +436,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Model = model
 			});
 
-			// Update SHA1
-			newProfile.Save();
+			// Persist changes to PrinterSettings - must come after adding to Profiles above
+			printerSettings.Save();
 
+			// Set as active profile
 			UserSettings.Instance.set("ActiveProfileID", guid);
 
-			ActiveSliceSettings.Instance = newProfile;
+			ActiveSliceSettings.Instance = printerSettings;
 		}
 
 		public static List<string> ThemeIndexNameMapping = new List<string>()
