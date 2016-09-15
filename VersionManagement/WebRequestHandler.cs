@@ -114,6 +114,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 			{
 				RequestFailed(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
 			}
+
+			ApplicationController.OutboundRequest?.Invoke(false);
 		}
 
 		protected void OnRequestSuceeded(ResponseType responseItem)
@@ -123,7 +125,9 @@ namespace MatterHackers.MatterControl.VersionManagement
 			{
 				tempHandler(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
 			}
+			ApplicationController.OutboundRequest?.Invoke(true);
 		}
+
 		protected void SendRequest()
 		{
 			RequestManager requestManager = new RequestManager();
@@ -311,6 +315,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 				responseValues["Status"] = "error";
 				responseValues["ErrorMessage"] = "Unable to connect to server";
 				responseValues["ErrorCode"] = "00";
+
+				ApplicationController.OutboundRequest?.Invoke(false);
 			}
 			else
 			{
@@ -324,6 +330,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 						// Notify connection status changed and now invalid
 						ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Expired".Localize());
 					}
+
+					ApplicationController.OutboundRequest?.Invoke(true);
 				}
 				catch
 				{
