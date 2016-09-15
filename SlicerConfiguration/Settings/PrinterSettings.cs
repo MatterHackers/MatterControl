@@ -206,10 +206,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var printerInfo = ProfileManager.Instance[this.ID];
 				if (printerInfo != null)
 				{
-					string beforeSaveSHA1 = printerInfo.SHA1;
+					string beforeSaveSHA1 = printerInfo.ContentSHA1;
 
-					printerInfo.SHA1 = contentSHA1;
-					printerInfo.IsDirty = beforeSaveSHA1 != contentSHA1;
+					printerInfo.ContentSHA1 = contentSHA1;
 					ProfileManager.Instance.Save();
 				}
 			}
