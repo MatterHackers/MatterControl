@@ -185,6 +185,7 @@ namespace MatterHackers.MatterControl
 		public static Action SignInAction;
 		public static Action SignOutAction;
 		public static Func<string> GetSessionInfo;
+		public static Action<bool> OutboundRequest;
 
 		/// <summary>
 		/// Allows application components to hook initial SystemWindow Load event without an existing Widget instance
