@@ -1259,7 +1259,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							var selectableOptions = new DropDownList("None", maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,
-								Margin = new BorderDouble()
+								Margin = new BorderDouble(),
+								Name = "Com Port Dropdown"
 							};
 
 							selectableOptions.Click += (s, e) =>

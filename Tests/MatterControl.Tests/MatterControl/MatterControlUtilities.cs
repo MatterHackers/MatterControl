@@ -126,6 +126,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
+		public static Process StartPrinterEmulator(string emulatorCom)
+		{
+			var process = new Process();
+			process.StartInfo = new ProcessStartInfo()
+			{
+				FileName = "python",
+				Arguments = string.Format("{0} {1}", StaticData.Instance.MapPath("../PrinterEmulator.py"), emulatorCom)
+			};
+
+			process.Start();
+
+			return process;
+		}
+
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
 		{
 			string tempFolderPath = Path.Combine("..", "..", "..", "..", "Tests", "temp");
@@ -200,7 +214,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Save & Continue Button", 2);
 
-			testRunner.Wait(1);
+			testRunner.Wait(2);
 
 			testRunner.ClickByName("Cancel Wizard Button", 2);
 			testRunner.Wait(1);
