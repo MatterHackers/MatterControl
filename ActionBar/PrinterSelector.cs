@@ -123,6 +123,7 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
+							this.SelectedIndex = lastSelectedIndex; 
 							UiThread.RunOnIdle(() => AddPrinter(this, null));
 						}
 					}
