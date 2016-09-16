@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Instance = new ProfileManager();
 			}
 
-			if (!MatterControlApplication.IsLoading && ActiveSliceSettings.Instance.ID != Instance.LastProfileID)
+			if (ActiveSliceSettings.Instance?.ID != Instance.LastProfileID)
 			{
 				Task.Run(async () =>
 				{
