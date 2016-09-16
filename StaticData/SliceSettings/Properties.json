@@ -755,7 +755,7 @@
 		"HelpText": "When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
-		"ShowAsOverride": false,
+		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "0",

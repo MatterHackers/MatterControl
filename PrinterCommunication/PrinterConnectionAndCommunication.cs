@@ -451,6 +451,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						SendLineToPrinterNow("M115");
 						SendLineToPrinterNow("M114");
 						break;
+
+					case CommunicationStates.ConnectionLost:
+					case CommunicationStates.Disconnected:
+						TurnOffBedAndExtruders();
+						for (int extruderIndex = 0; extruderIndex < MAX_EXTRUDERS; extruderIndex++)
+						{
+
+							actualExtruderTemperature[extruderIndex] = 0;
+							OnExtruderTemperatureRead(new TemperatureEventArgs(extruderIndex, GetActualExtruderTemperature(extruderIndex)));
+						}
+
+						actualBedTemperature = 0;
+						OnBedTemperatureRead(new TemperatureEventArgs(0, ActualBedTemperature));
+						break;
 				}
 
 				if (communicationState != value)
