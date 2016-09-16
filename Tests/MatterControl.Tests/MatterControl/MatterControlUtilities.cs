@@ -132,7 +132,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			process.StartInfo = new ProcessStartInfo()
 			{
 				FileName = "python",
-				Arguments = string.Format("{0} {1}", StaticData.Instance.MapPath("../PrinterEmulator.py"), emulatorCom)
+				Arguments = string.Format("{0} {1}", StaticData.Instance.MapPath("../PrinterEmulator.py"), emulatorCom),
+				WindowStyle = ProcessWindowStyle.Minimized
 			};
 
 			process.Start();
