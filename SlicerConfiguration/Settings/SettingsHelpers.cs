@@ -472,7 +472,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					this.id = value;
 				}
 
-				if (File.Exists(ProfilePath))
+				// If the local file exists and the PrinterInfo has been added to ProfileManager, then it's safe to call profile.Save, otherwise...
+				if (File.Exists(ProfilePath) && ProfileManager.Instance[this.id] != null)
 				{
 					var profile = PrinterSettings.LoadFile(ProfilePath);
 					profile.ID = value;
