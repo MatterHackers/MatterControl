@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 {
 	public class ApplicationMenuRow : FlowLayoutWidget
 	{
-		public delegate void AddRightElementDelegate(GuiWidget iconContainer);
+		public delegate void AddRightElementDelegate(FlowLayoutWidget iconContainer);
 
 		public static event AddRightElementDelegate AddRightElement;
 

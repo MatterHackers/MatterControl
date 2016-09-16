@@ -5431,3 +5431,15 @@ Translated:It appears your last print failed to complete.\n\nWould your like to 
 English:Recover Last Print
 Translated:Recover Last Print
 
+English:Disconnected
+Translated:Disconnected
+
+English:Limited Connectivity
+Translated:Limited Connectivity
+
+English:Connection Status
+Translated:Connection Status
+
+English:Retry Login
+Translated:Retry Login
+
