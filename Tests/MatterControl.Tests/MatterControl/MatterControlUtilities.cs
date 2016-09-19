@@ -37,6 +37,7 @@ using MatterHackers.MatterControl.PrintLibrary.Provider;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -134,17 +135,70 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static Process StartPrinterEmulator(string emulatorCom)
+		public static Process LaunchAndConnectToPrinterEmulator(AutomationRunner testRunner)
 		{
+			// check for the settings file
+			string testConfigDataPath = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MCTestConfig");
+			var emulatorPath = Path.Combine(testConfigDataPath,  "PrinterEmulatorConfig.json");
+
+			// if no file create it 
+			if(!File.Exists(emulatorPath))
+			{
+				Directory.CreateDirectory(testConfigDataPath);
+
+				Dictionary<string, string> userSettings = new Dictionary<string, string>()
+				{
+					["MCPort"] = "",
+					["Printer"] = "",
+				};
+
+				File.WriteAllText(emulatorPath, JsonConvert.SerializeObject(userSettings, Formatting.Indented));
+			}
+
+
+			// open the settings file
+			var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(emulatorPath));
+
+			// if no com port set, issue instructions on how to set it
+			if(!jsonDict.ContainsKey("MCPort")
+				|| !jsonDict.ContainsKey("Printer")
+				|| string.IsNullOrEmpty(jsonDict["MCPort"])
+				|| string.IsNullOrEmpty(jsonDict["Printer"]))
+			{
+				throw new Exception("You must set the port and printer in: " + emulatorPath);
+			}
+
+			// create the printer
+			//Create printer for sync to see
+			MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+
+			string comPort = jsonDict["MCPort"];
+			string printerPort = jsonDict["Printer"];
+
 			var process = new Process();
 			process.StartInfo = new ProcessStartInfo()
 			{
 				FileName = "python",
-				Arguments = string.Format("{0} {1}", StaticData.Instance.MapPath("../PrinterEmulator.py"), emulatorCom),
+				Arguments = string.Format("{0} {1}", StaticData.Instance.MapPath("../PrinterEmulator.py"), printerPort),
 				WindowStyle = ProcessWindowStyle.Minimized
 			};
 
 			process.Start();
+
+			// edit the com port
+			testRunner.ClickByName("Edit Printer Button");
+			testRunner.Wait(2);
+
+			testRunner.ClickByName("Com Port Dropdown");
+
+			testRunner.ClickByName(comPort + " Menu Item", 1);
+
+			testRunner.ClickByName("Cancel Wizard Button");
+
+			// connect to the created printer
+			testRunner.ClickByName("Connect to printer button", 2);
+
+			testRunner.Wait(2);
 
 			return process;
 		}
