@@ -177,8 +177,10 @@ namespace MatterHackers.MatterControl.SettingsManagement
 						var manufactures = result.Keys.ToDictionary(oem => oem);
 						SetManufacturers(manufactures);
 					}
+
 					return result;
 				});
+
 			if (oemProfilesDict != null)
 			{
 				await DownloadMissingProfiles(syncReport);
@@ -200,6 +202,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 					string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
 					if (!File.Exists(cachePath))
 					{
+						await Task.Delay(20000);
 						await ProfileManager.LoadOemProfileAsync(publicDevice, oem, model);
 
 						if (syncReport != null)

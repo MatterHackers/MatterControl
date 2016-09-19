@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl
 
 		private static string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
 
-		internal static string CacheablePath(string cacheScope, string cacheKey)
+		public static string CacheablePath(string cacheScope, string cacheKey)
 		{
 			string scopeDirectory = Path.Combine(cacheDirectory, cacheScope);
 
