@@ -35,11 +35,15 @@ import time
 import random
 
 extruderGoalTemperature = 210
+bedGoalTemperature = 0
 
 """Add response callbacks here"""
 def randomTemp(command):
 	# temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
-	return "ok T:%s\n" % (extruderGoalTemperature + random.randrange(-2,2))
+    if bedGoalTemperature == 0:
+	    return "ok T:%s\n" % (extruderGoalTemperature + random.randrange(-2,2))
+    else:
+        return "ok T:%s B:%s\n" % (extruderGoalTemperature + random.randrange(-2,2), bedGoalTemperature + random.randrange(-2,2))
 
 def getPosition(command):
 	# temp commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
@@ -59,13 +63,22 @@ def parseChecksumLine(command):
 	else:
 		return command
 
+def getCommandKey(command):
+	if command.find(' ') != -1:
+		return command[:command.find(' ')]
+	else:
+		return command
+
 def getCorrectResponse(command):
 	try:
 		#Remove line returns
 		command = ''.join(command.splitlines()) # strip of the trailing cr (\n)
 		command = parseChecksumLine(command)
-		if command in responses:
-			return responses[command](command)
+		commandKey = getCommandKey(command)
+		if commandKey in responses:
+			return responses[commandKey](command)
+		else:
+			print "Command '%s' not found" % command
 	except Exception, e:
 		print e
 		
@@ -73,16 +86,28 @@ def getCorrectResponse(command):
 
 def setExtruderTemperature(command):
 	try:
-		#M104 S210		
+		#M104 S210 or M109 S[temp]
 		sIndex = command.find('S') + 1
+		global extruderGoalTemperature
 		extruderGoalTemperature = int(command[sIndex:])
 	except Exception, e:
 		print e
 		
 	return 'ok\n'
 
+def setBedTemperature(command):
+	try:
+		#M140 S210 or M190 S[temp]
+		sIndex = command.find('S') + 1
+		global bedGoalTemperature
+		bedGoalTemperature = int(command[sIndex:])
+	except Exception, e:
+		print e
+		
+	return 'ok\n'
+
 """Dictionary of command and response callback"""
-responses = { "M105" : randomTemp, "A" : echo, "M114" : getPosition , "N" : parseChecksumLine, "M115" : reportMarlinFirmware, "M104" : setExtruderTemperature }
+responses = { "M105" : randomTemp, "A" : echo, "M114" : getPosition , "N" : parseChecksumLine, "M115" : reportMarlinFirmware, "M104" : setExtruderTemperature, "M109" : setExtruderTemperature, "M140" : setBedTemperature,"M190" : setBedTemperature }
 
 def main(argv):
 	parser = argparse.ArgumentParser(description='Set up a printer emulation.')

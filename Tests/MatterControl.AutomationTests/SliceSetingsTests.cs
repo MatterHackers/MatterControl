@@ -1,8 +1,10 @@
-﻿using MatterHackers.Agg.UI.Tests;
+﻿using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -55,6 +57,32 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+		}
+
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void PauseOnLayerDoesPauseOnPrint()
+		{
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner();
+				{
+					MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
+
+					var emualtorProccess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner);
+
+					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile != null);
+
+					testRunner.Wait(200);
+
+					emualtorProccess.Kill();
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			string staticDataPathOverride = Path.Combine("..", "..", "..", "..", "..", "MatterControl", "StaticData");
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, staticDataPathOverride: staticDataPathOverride, maxTimeToRun: 200);
+			Assert.IsTrue(testHarness.AllTestsPassed);
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
