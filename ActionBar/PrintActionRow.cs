@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			addButton.Margin = new BorderDouble(6, 6, 6, 3);
 
 			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32).InvertLightness());
+			startButton.Name = "startPrintingButton";
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
 			startButton.Click += onStartButton_Click;
@@ -150,6 +151,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			string cancelButtonText = "Cancel".Localize();
 			string cancelButtonMessage = "Stop the current print".Localize();
 			cancelButton = makeButton(cancelButtonText, cancelButtonMessage);
+			cancelButton.Name = "cancelPrintButton";
 
 			string resumeButtonText = "Resume".Localize();
 			string resumeButtonMessage = "Resume the current print".Localize();
