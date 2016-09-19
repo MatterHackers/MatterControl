@@ -86,6 +86,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Directory.Delete(path, true);
 		}
 
+		public static void SignOut(AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("User Options Menu", 2);
+			testRunner.ClickByName("Sign Out Menu Item", 2);
+			testRunner.Wait(.5);
+			testRunner.ClickByName("Yes Button");
+			testRunner.Wait(5);
+		}
 
 		public static string PathToExportGcodeFolder
 		{
