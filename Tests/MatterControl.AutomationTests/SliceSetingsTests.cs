@@ -55,8 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -72,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.Wait(200);
+					testRunner.Wait(2000);
 
 					emualtorProccess.Kill();
 					MatterControlUtilities.CloseMatterControl(testRunner);
@@ -82,7 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			string staticDataPathOverride = Path.Combine("..", "..", "..", "..", "..", "MatterControl", "StaticData");
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, staticDataPathOverride: staticDataPathOverride, maxTimeToRun: 200);
-			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -117,8 +116,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 21); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(21));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -150,8 +148,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
 		private static void CheckAndUncheckSetting(AutomationTesterHarness resultsHarness, AutomationRunner testRunner, string settingToChange, string checkBoxName, bool expected)
@@ -191,21 +188,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
-					testRunner.ClickByName("SettingsAndControls");
+					resultsHarness.AddTestResult(testRunner.ClickByName("SettingsAndControls"));
 					testRunner.Wait(1);
-					testRunner.ClickByName("User Level Dropdown");
+					resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown"));
 					testRunner.Wait(1);
-					testRunner.ClickByName("Advanced Menu Item");
+					resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item"));
 					testRunner.Wait(1);
-					testRunner.ClickByName("Printer Tab");
+					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab"));
 					testRunner.Wait(1);
 
-					testRunner.ClickByName("Features Tab");
+					resultsHarness.AddTestResult(testRunner.ClickByName("Features Tab"));
 					testRunner.Wait(2);
 
 					for (int i = 0; i <= 1000; i++)
 					{
-						testRunner.ClickByName("Has Heated Bed Checkbox");
+						resultsHarness.AddTestResult(testRunner.ClickByName("Has Heated Bed Checkbox"));
 						testRunner.Wait(.5);
 					}
 
@@ -215,8 +212,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 0); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(1008));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -263,8 +259,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
 }

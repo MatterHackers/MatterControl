@@ -67,8 +67,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -131,8 +130,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -190,8 +188,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
@@ -265,8 +262,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 11); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(11));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -333,8 +329,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 10); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(10));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -396,8 +391,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 	}
 }

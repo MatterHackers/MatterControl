@@ -33,8 +33,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -72,8 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -115,8 +113,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
@@ -152,8 +149,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
 }

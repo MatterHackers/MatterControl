@@ -49,8 +49,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 
@@ -75,7 +74,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
 
 					//Make sure both Items do not exist before the test begins
-					bool firstItemExists= testRunner.WaitForName(firstItemName, 1);
+					bool firstItemExists = testRunner.WaitForName(firstItemName, 1);
 					bool secondItemExists = testRunner.WaitForName(secondItemName, 1);
 					resultsHarness.AddTestResult(firstItemExists == false);
 					resultsHarness.AddTestResult(secondItemExists == false);
@@ -106,8 +105,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
 
@@ -154,8 +152,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1024, overrideHeight: 800);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 
@@ -208,8 +205,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
 
@@ -258,8 +254,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 
@@ -309,8 +304,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 
@@ -349,8 +343,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 	}
 
@@ -391,8 +384,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 	}
 
@@ -455,8 +447,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
 
@@ -480,7 +471,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.Wait(1);
-					
+
 					//Select Library Item
 					string rowItemOne = "Row Item " + "Calibration - Box";
 					testRunner.ClickByName(rowItemOne);
@@ -516,8 +507,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 
@@ -591,8 +581,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
 
@@ -637,11 +626,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
-
-
-
 }

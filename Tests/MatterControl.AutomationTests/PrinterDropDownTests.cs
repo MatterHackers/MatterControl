@@ -60,9 +60,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 5); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(5));
 		}
 	}
-
 }
