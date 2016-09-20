@@ -1,4 +1,8 @@
-﻿using MatterHackers.MatterControl;
+﻿using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -98,6 +102,26 @@ namespace MatterControl.Tests
 			Console.WriteLine(referencedItems);
 		}
 
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void MatterControlRuns()
+		{
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner();
+				{
+					MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
+
+					resultsHarness.AddTestResult(testRunner.NameExists("SettingsAndControls"));
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			string staticDataPathOverride = Path.Combine("..", "..", "..", "..", "..", "MatterControl", "StaticData");
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, staticDataPathOverride: staticDataPathOverride, maxTimeToRun: 200);
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
+		}
 
 		[Test, Category("ReleaseQuality")]
 		public void MatterControlDependenciesAreOptimized()

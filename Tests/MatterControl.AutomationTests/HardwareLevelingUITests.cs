@@ -20,13 +20,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Add printer that has hardware leveling
 					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-					testRunner.Wait(1);
-					testRunner.ClickByName("SettingsAndControls", 1);
-					testRunner.Wait(1);
-					testRunner.ClickByName("Slice Settings Tab", 1);
-					testRunner.ClickByName("User Level Dropdown", 1);
-					testRunner.ClickByName("Advanced Menu Item", 1);
-					testRunner.Wait(.5);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
+
 					testRunner.ClickByName("Printer Tab", 1);
 					testRunner.Wait(1);
 
@@ -36,8 +31,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					//Add printer that does not have hardware leveling
 					MatterControlUtilities.AddAndSelectPrinter(testRunner, "3D Factory", "MendelMax 1.5");
-					testRunner.Wait(.2);
+
 					testRunner.ClickByName("Slice Settings Tab",1);
+
 					testRunner.ClickByName("Printer Tab",1);
 
 					//Make sure Print Leveling tab is visible
@@ -50,7 +46,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideHeight: 800);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
 }

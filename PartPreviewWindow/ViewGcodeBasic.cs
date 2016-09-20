@@ -409,6 +409,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonRightPanel.AddChild(modelOptionsContainer);
 
 				expandDisplayOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
+				expandDisplayOptions.Name = "Display Checkbox";
 				expandDisplayOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandDisplayOptions);
 				expandDisplayOptions.Checked = false;
@@ -752,6 +753,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
+				syncToPrint.Name = "Sync To Print Checkbox";
 				syncToPrint.CheckedStateChanged += (sender, e) =>
 				{
 					UserSettings.Instance.set("LayerViewSyncToPrint", syncToPrint.Checked.ToString());
@@ -1235,6 +1237,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editCurrentLayerIndex.VAnchor = VAnchor.ParentCenter;
 			editCurrentLayerIndex.Margin = new BorderDouble(5, 0);
 			editCurrentLayerIndex.EditComplete += new EventHandler(editCurrentLayerIndex_EditComplete);
+			editCurrentLayerIndex.Name = "Current GCode Layer Edit";
 			this.AddChild(editCurrentLayerIndex);
 			gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
 
