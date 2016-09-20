@@ -27,6 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.IO;
+using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -34,9 +37,6 @@ using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
-using System;
-using System.IO;
-using System.Threading;
 
 namespace MatterHackers.MatterControl.Tests
 {
@@ -44,25 +44,20 @@ namespace MatterHackers.MatterControl.Tests
 	public class LibraryProviderSqliteTests
 	{
 		private bool dataReloaded = false;
-		private string meshFileName = "Box20x20x10.stl";
-		private string meshPathAndFileName;
-		private string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "LibraryProviderData");
+		private string meshPathAndFileName = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestMeshes", "LibraryProviderData", "Box20x20x10.stl");
 
-		public LibraryProviderSqliteTests()
+		[SetUp]
+		public void SetupBeforeTest()
 		{
-			#if !__ANDROID__
-			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-			#endif
+			dataReloaded = false;
 		}
-
-		private event EventHandler unregisterEvents;
 
 #if !__ANDROID__
 		[Test, RunInApplicationDomain, Category("FixNeeded" /* Disabled until MCWS production is updated */)]
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
-			MatterControlUtilities.OverrideAppDataLocation();
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
@@ -117,23 +112,6 @@ namespace MatterHackers.MatterControl.Tests
 			//MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 		}
 #endif
-
-		[SetUp]
-		public void SetupBeforeTest()
-		{
-			meshPathAndFileName = Path.Combine(pathToMesh, meshFileName);
-
-			dataReloaded = false;
-		}
-
-		[TearDown]
-		public void TeardownAfterTest()
-		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-		}
 
 		private bool NamedCollectionExists(string nameToLookFor)
 		{

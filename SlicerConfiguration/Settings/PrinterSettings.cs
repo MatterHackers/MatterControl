@@ -27,26 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System;
-using System.IO;
-using Newtonsoft.Json.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SettingsManagement;
-using System.Diagnostics;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.ContactForm;
-using MatterHackers.Localizations;
-using MatterHackers.Agg;
-using MatterHackers.VectorMath;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.Agg.PlatformAbstract;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ContactForm;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -195,22 +194,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+			string json = this.ToJson();
 
-			// SHA1 value is based on UTF8 encoded file contents
-			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+			var printerInfo = ProfileManager.Instance[this.ID];
+			if (printerInfo != null)
 			{
-				string contentSHA1 = GenerateSha1(memoryStream);
-				this.UserLayer["profile_sha1"] = contentSHA1;
-
-				var printerInfo = ProfileManager.Instance[this.ID];
-				if (printerInfo != null)
-				{
-					string beforeSaveSHA1 = printerInfo.ContentSHA1;
-
-					printerInfo.ContentSHA1 = contentSHA1;
-					ProfileManager.Instance.Save();
-				}
+				printerInfo.ContentSHA1 = this.ComputeSha1(json);
+				ProfileManager.Instance.Save();
 			}
 
 			lock (writeLock)
@@ -221,6 +211,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (ActiveSliceSettings.Instance.ID == this.ID)
 			{
 				ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
+			}
+		}
+
+		public string ComputeSha1()
+		{
+			return ComputeSha1(this.ToJson());
+		}
+
+		private string ComputeSha1(string json)
+		{
+			// SHA1 value is based on UTF8 encoded file contents
+			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+			{
+				return GenerateSha1(memoryStream);
 			}
 		}
 
@@ -894,6 +898,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Otherwise, set and save
 			persistenceLayer[settingsKey] = settingsValue;
 			Save();
+		}
+
+		public string ToJson(Formatting formatting = Formatting.Indented)
+		{
+			return JsonConvert.SerializeObject(this, formatting);
 		}
 
 		internal void ClearValue(string sliceSetting, PrinterSettingsLayer layer = null)

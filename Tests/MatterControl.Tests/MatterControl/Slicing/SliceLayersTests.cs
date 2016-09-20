@@ -28,11 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
-using System.IO;
 
 namespace MatterHackers.MatterControl.Slicing.Tests
 {
@@ -48,8 +48,7 @@ namespace MatterHackers.MatterControl.Slicing.Tests
 				return;
 			}
 
-			string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "SliceLayers");
-			string meshFileName = Path.Combine(pathToMesh, "Box20x20x10.stl");
+			string meshFileName = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestMeshes", "SliceLayers", "Box20x20x10.stl");
 			Mesh cubeMesh = StlProcessing.Load(meshFileName);
 
 			AxisAlignedBoundingBox bounds = cubeMesh.GetAxisAlignedBoundingBox();

@@ -209,10 +209,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								layer.Add("manual_movement_speeds", item.Value);
 								break;
 
-							case "MatterControl.SHA1":
-								layer.Add("profile_sha1", item.Value);
-								break;
-
 							case "MatterControl.SlicingEngine":
 								layer.Add("slicing_engine", item.Value);
 								break;
