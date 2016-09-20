@@ -84,8 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// NOTE: In the future we may want to make the "Local Library Row Item Collection" not clickable. 
 			// If that is the case fix this test to click on a child of "Local Library Row Item Collection" instead.
-			Assert.IsTrue(testHarness.AllTestsPassed); 
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed(4)); 
 		}
 	}
 }
