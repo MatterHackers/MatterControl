@@ -27,23 +27,21 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg.UI;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	using Agg;
-	using Localizations;
-	using DataStorage;
-	using SettingsManagement;
 	using System.Collections.ObjectModel;
-	using System.Net;
-	using VersionManagement;
 	using System.Threading.Tasks;
+	using Agg;
+	using DataStorage;
+	using Localizations;
+	using SettingsManagement;
 
 	public class ProfileManager
 	{

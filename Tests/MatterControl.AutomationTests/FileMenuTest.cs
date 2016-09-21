@@ -1,15 +1,16 @@
-﻿using MatterHackers.Agg.UI.Tests;
+﻿using System;
+using System.Threading;
+using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
-using System;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class FileMenuTest
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void FileMenuAddPrinter()
 		{
 			// Run a copy of MatterControl
@@ -36,7 +37,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void AddToQueueMenuItemAddsSingleFile()
 		{
 			// Run a copy of MatterControl
@@ -74,7 +75,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void AddToQueueMenuItemAddsMultipleFiles()
 		{
 			// Run a copy of MatterControl
@@ -116,7 +117,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void AddToQueueMenuItemAddsZipFiles()
 		{
 			// Run a copy of MatterControl

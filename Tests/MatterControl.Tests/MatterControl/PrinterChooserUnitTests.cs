@@ -1,16 +1,11 @@
-﻿using MatterHackers.MatterControl;
-using NUnit.Framework;
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Globalization;
-using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.Tests.Automation;
+using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -19,9 +14,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("FixNeeded" /* Disabled until MCWS production is updated */)]
 		public void PrinterChooserHonorsWhitelist()
 		{
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-
-			MatterControlUtilities.OverrideAppDataLocation();
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var manufacturers = new string[] { "3D Factory", "3D Stuffmaker", "Airwolf 3D", "BCN", "BeeVeryCreative", "Blue Eagle Labs", "Deezmaker", "FlashForge", "gCreate", "IRA3D", "JumpStart", "Leapfrog", "Lulzbot", "MAKEiT", "Maker's Tool Works", "MakerBot", "MakerGear", "Me3D", "OpenBeam", "Organic Thinking System", "Other", "Portabee", "Printrbot", "PrintSpace", "Revolution 3D Printers", "ROBO 3D", "SeeMeCNC", "Solidoodle", "Tosingraf", "Type A Machines", "Ultimaker", "Velleman", "Wanhao" };
 

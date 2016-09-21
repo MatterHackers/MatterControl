@@ -1,17 +1,12 @@
-﻿using MatterHackers.MatterControl;
-using NUnit.Framework;
-using System;
-using System.IO;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Globalization;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using System.Collections.ObjectModel;
+using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
+using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -19,14 +14,12 @@ namespace MatterControl.Tests.MatterControl
 	public class OemProfileTests
 	{
 		private static List<PrinterConfig> allPrinters;
-		private static string matterControlDirectory = Path.GetFullPath(Path.Combine("..", "..", "..", ".."));
-		private static string printerSettingsDirectory = Path.GetFullPath(Path.Combine(matterControlDirectory, "StaticData", "Profiles"));
+		private static string printerSettingsDirectory = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Profiles");
 
 		static OemProfileTests()
 		{
-			MatterControlUtilities.OverrideAppDataLocation();
-
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine(matterControlDirectory, "StaticData"));
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			allPrinters = (from printerFile in new DirectoryInfo(printerSettingsDirectory).GetFiles("*.printer", SearchOption.AllDirectories)
 						   select new PrinterConfig
@@ -92,7 +85,7 @@ namespace MatterControl.Tests.MatterControl
 				string bedSize = settings.GetValue(SettingsKey.bed_size);
 
 				// Must exist in all configs
-				Assert.IsNotNullOrEmpty(bedSize, "[bed_size] must exist: " + printer.RelativeFilePath);
+				Assert.IsTrue(!string.IsNullOrEmpty(bedSize), "[bed_size] must exist: " + printer.RelativeFilePath);
 
 				string[] segments = bedSize.Trim().Split(',');
 
@@ -115,7 +108,7 @@ namespace MatterControl.Tests.MatterControl
 				string printCenter = settings.GetValue(SettingsKey.print_center);
 
 				// Must exist in all configs
-				Assert.IsNotNullOrEmpty(printCenter, "[print_center] must exist: " + printer.RelativeFilePath);
+				Assert.IsTrue(!string.IsNullOrEmpty(printCenter), "[print_center] must exist: " + printer.RelativeFilePath);
 
 				string[] segments = printCenter.Trim().Split(',');
 

@@ -1,18 +1,19 @@
-﻿using MatterHackers.Agg.PlatformAbstract;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
-using System;
-using System.IO;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class SliceSetingsTests
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RaftEnabledPassedToSliceEngine()
 		{
 			// Run a copy of MatterControl
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void PauseOnLayerDoesPauseOnPrint()
 		{
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
@@ -84,7 +85,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ClearingCheckBoxClearsUserOverride()
 		{
 			// Run a copy of MatterControl
@@ -119,7 +120,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(21));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DeleteProfileWorksForGuest()
 		{
 			// Run a copy of MatterControl
@@ -175,7 +176,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		//Stress Test check & uncheck 1000x
-		[Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Ignore("Not Finished")]
 		public void HasHeatedBedCheckUncheck()
 		{
 			// Run a copy of MatterControl
@@ -215,7 +216,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(1008));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
 			// Run a copy of MatterControl

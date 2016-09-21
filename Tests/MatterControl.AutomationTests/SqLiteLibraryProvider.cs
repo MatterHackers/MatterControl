@@ -1,16 +1,17 @@
-﻿using MatterHackers.Agg.UI;
+﻿using System;
+using System.Threading;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using NUnit.Framework;
-using System;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class SqLiteLibraryProviderTests
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void LibraryQueueViewRefreshesOnAddItem()
 		{
 			// Run a copy of MatterControl

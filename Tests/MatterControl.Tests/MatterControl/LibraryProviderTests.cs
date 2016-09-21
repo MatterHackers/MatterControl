@@ -37,6 +37,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.Agg;
 
 namespace MatterControl.Tests
 {
@@ -44,17 +46,14 @@ namespace MatterControl.Tests
 	public class LibraryProviderTests
 	{
 		private bool dataReloaded = false;
-		private string meshFileName = "Box20x20x10.stl";
-		private string meshPathAndFileName;
-		private string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "LibraryProviderData");
-
-		private event EventHandler unregisterEvents;
+		private const string meshFileName = "Box20x20x10.stl";
+		private string meshPathAndFileName = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "Tests", "TestData", "TestMeshes", "LibraryProviderData", meshFileName);
 
 		public LibraryProviderTests()
 		{
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 #endif
 		}
 
@@ -145,18 +144,7 @@ namespace MatterControl.Tests
 		[SetUp]
 		public void SetupBeforeTest()
 		{
-			meshPathAndFileName = Path.Combine(pathToMesh, meshFileName);
-
 			dataReloaded = false;
-		}
-
-		[TearDown]
-		public void TeardownAfterTest()
-		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
 		}
 
 		private bool NamedCollectionExists(string nameToLookFor)

@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Text;
 using System.Linq;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.Tests.Automation;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -111,18 +112,11 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Translations")]
         public void EnglishLinesOnlyContainEnglishCharachters()
         {
+            string fullPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Translations");
 
-            var currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
-            string pathToMatterControlFolder = currentDirectory.Parent.Parent.Parent.Parent.FullName;
-            string translationsPath = @"StaticData\Translations";
-            string fullPath = Path.Combine(pathToMatterControlFolder,translationsPath);
-
-            string[] translationFiles = Directory.GetDirectories(fullPath);
-            string translationsText = @"Translation.txt";
-
-            foreach (string file in translationFiles)
+            foreach (string directory in Directory.GetDirectories(fullPath))
             {
-                string fullPathToEachTranslation = Path.Combine(file, translationsText);
+                string fullPathToEachTranslation = Path.Combine(directory, "Translation.txt");
                 Console.Write(fullPathToEachTranslation);
                 readTranslationFile(fullPathToEachTranslation);
             }

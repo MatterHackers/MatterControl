@@ -1,9 +1,10 @@
-﻿using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
+using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -11,7 +12,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class ExportItemsFromDownloads
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ExportAsGcode()
 		{
 			// Run a copy of MatterControl

@@ -44,13 +44,12 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class GCodeProcessingTests
 	{
-		[Test, Category("GCodeProcessing"), Category("FixNeeded" /* Disabled until MCWS production is updated */)]
+		[Test, Category("GCodeProcessing")]
 		public void ReplaceMacroValuesWorking()
 		{
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-
-			MatterControlUtilities.OverrideAppDataLocation();
-
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			
 			TestMacroReplacement("[temperature]", "200");
 			TestMacroReplacement("[first_layer_speed]", "1080");
 			TestMacroReplacement("[bed_remove_part_temperature]", "0");

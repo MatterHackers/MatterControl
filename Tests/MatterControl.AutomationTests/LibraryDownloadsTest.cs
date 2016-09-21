@@ -1,14 +1,15 @@
-﻿using MatterHackers.Agg.UI.Tests;
+﻿using System;
+using System.Threading;
+using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
-using System;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddMultipleFilesToDownloads
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DownloadsAddButtonAddsMultipleFiles()
 		{
 			// Run a copy of MatterControl
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class AddAMFToDownloads
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DownloadsAddButtonAddsAMFFiles()
 		{
 			// Run a copy of MatterControl
@@ -116,7 +117,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class AddZipFileToDownloads
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DownloadsAddButtonAddsZipFiles()
 		{
 			// Run a copy of MatterControl
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class RenameDownloadsItem
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RenameDownloadsPrintItem()
 		{
 
@@ -225,7 +226,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class CreateSubFolderLibraryDownloads
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void CreateFolder()
 		{
 

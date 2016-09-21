@@ -27,6 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -36,11 +43,6 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -110,8 +112,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void CloseMatterControl(AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
-			Assert.IsTrue(testRunner.ClickByName("File Menu", 2));
-			Assert.IsTrue(testRunner.ClickByName("Exit Menu Item", 2));
+			testRunner.ClickByName("File Menu", 5);
+			testRunner.ClickByName("Exit Menu Item", 5);
+
 			testRunner.Wait(.2);
 			if (mcWindowLocal.Parent != null)
 			{
@@ -137,49 +140,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static Process LaunchAndConnectToPrinterEmulator(AutomationRunner testRunner)
 		{
-			// check for the settings file
-			string testConfigDataPath = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MCTestConfig");
-			var emulatorPath = Path.Combine(testConfigDataPath,  "PrinterEmulatorConfig.json");
+			// Load the TestEnv config
+			var config = TestAutomationConfig.Load();
 
-			// if no file create it 
-			if(!File.Exists(emulatorPath))
-			{
-				Directory.CreateDirectory(testConfigDataPath);
-
-				Dictionary<string, string> userSettings = new Dictionary<string, string>()
-				{
-					["MCPort"] = "",
-					["Printer"] = "",
-				};
-
-				File.WriteAllText(emulatorPath, JsonConvert.SerializeObject(userSettings, Formatting.Indented));
-			}
-
-
-			// open the settings file
-			var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(emulatorPath));
-
-			// if no com port set, issue instructions on how to set it
-			if(!jsonDict.ContainsKey("MCPort")
-				|| !jsonDict.ContainsKey("Printer")
-				|| string.IsNullOrEmpty(jsonDict["MCPort"])
-				|| string.IsNullOrEmpty(jsonDict["Printer"]))
-			{
-				throw new Exception("You must set the port and printer in: " + emulatorPath);
-			}
-
-			// create the printer
-			//Create printer for sync to see
+			// Create the printer
 			MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
-
-			string comPort = jsonDict["MCPort"];
-			string printerPort = jsonDict["Printer"];
 
 			var process = new Process();
 			process.StartInfo = new ProcessStartInfo()
 			{
 				FileName = "python",
-				Arguments = string.Format("{0} {1}", StaticData.Instance.MapPath("../PrinterEmulator.py"), printerPort),
+				Arguments = string.Format("{0} {1}", StaticData.Instance.MapPath("../PrinterEmulator.py"), config.Printer),
 				WindowStyle = ProcessWindowStyle.Minimized
 			};
 
@@ -191,7 +162,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Com Port Dropdown");
 
-			testRunner.ClickByName(comPort + " Menu Item", 1);
+			testRunner.ClickByName(config.MCPort + " Menu Item", 1);
 
 			testRunner.ClickByName("Cancel Wizard Button");
 
@@ -276,7 +247,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(printer, 2);
 
 			testRunner.ClickByName("Save & Continue Button", 2);
-
 			testRunner.Wait(2);
 
 			testRunner.ClickByName("Cancel Wizard Button", 2);
@@ -309,12 +279,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <summary>
 		/// Overrides the AppData location, ensuring each test starts with a fresh MatterControl database.
 		/// </summary>
-		public static void OverrideAppDataLocation()
+		public static void OverrideAppDataLocation(string matterControlDirectory)
 		{
-			string tempFolderPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Tests","temp"));
-
-			ApplicationDataStorage.Instance.OverrideAppDataLocation(
-				Path.Combine(tempFolderPath, runName, $"Test{testID++}"));
+			string tempFolderPath = Path.Combine(matterControlDirectory, "Tests","temp", runName, $"Test{testID++}");
+			ApplicationDataStorage.Instance.OverrideAppDataLocation(tempFolderPath);
 		}
 
 		public static void AddItemsToQueue(string queueItemFolderToLoad)
@@ -391,14 +359,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			if (staticDataPathOverride == null)
 			{
-				staticDataPathOverride = Path.Combine("..", "..", "..", "..", "StaticData");
+				// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
+				staticDataPathOverride = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
 			}
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
+			StaticData.Instance = new FileSystemStaticData(staticDataPathOverride);
 #endif
-			MatterControlUtilities.OverrideAppDataLocation();
+			// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl"));
 
 			if (queueItemFolderToAdd != QueueTemplate.None)
 			{
@@ -433,7 +403,31 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("LibraryActionMenu");
 			testRunner.ClickByName("Remove Menu Item", 1);
 		}
-	}
+
+		public static string ResolveProjectPath(this TestContext context, int stepsToProjectRoot, params string[] relativePathSteps)
+		{
+			string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+			var allPathSteps = new List<string> { assemblyPath };
+			allPathSteps.AddRange(Enumerable.Repeat("..", stepsToProjectRoot));
+
+			if (relativePathSteps.Any())
+			{
+				allPathSteps.AddRange(relativePathSteps);
+			}
+
+			return Path.GetFullPath(Path.Combine(allPathSteps.ToArray()));
+		}
+
+		/// <summary>
+		/// Set the working directory to the location of the executing assembly. This is essentially the Nunit2 behavior
+		/// </summary>
+		/// <param name="context"></param>
+		public static void SetCompatibleWorkingDirectory(this TestContext context)
+		{
+			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		}
+}
 
 	/// <summary>
 	/// Represents a queue template folder on disk (located at Tests/TestData/QueueItems) that should be synced into the default
@@ -443,5 +437,56 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	{
 		None,
 		Three_Queue_Items
+	}
+
+	public class TestAutomationConfig
+	{
+		private static readonly string configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "MHTest.config");
+
+		/// <summary>
+		/// The ClientToken used by tests to emulate an external client
+		/// </summary>
+		public string TestEnvClientToken { get; set; }
+
+		/// <summary>
+		/// The serial port that MatterControl will communicate with for the Com0Com connection
+		/// </summary>
+		public string MCPort { get; set; }
+
+		/// <summary>
+		/// The serial port that Python will communicate with to emulate printer firmware
+		/// </summary>
+		public string Printer { get; set; }
+
+		public static TestAutomationConfig Load()
+		{
+			TestAutomationConfig config = null;
+
+			if (!File.Exists(configPath))
+			{
+				config = new TestAutomationConfig();
+				config.Save();
+			}
+			else
+			{
+				config = JsonConvert.DeserializeObject<TestAutomationConfig>(File.ReadAllText(configPath));
+			}
+
+			// if no com port set, issue instructions on how to set it
+			if (string.IsNullOrEmpty(config.MCPort) || string.IsNullOrEmpty(config.Printer))
+			{
+				throw new Exception("You must set the port and printer in: " + configPath);
+			}
+
+			return config;
+		}
+
+		/// <summary>
+		/// Persist the current settings to the 'MHTest.config' in the user profile - %userprofile%\MHTest.config
+		/// </summary>
+		public void Save()
+		{
+			File.WriteAllText(configPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+		}
 	}
 }

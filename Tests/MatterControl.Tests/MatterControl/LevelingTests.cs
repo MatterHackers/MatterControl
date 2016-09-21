@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.GCodeVisualizer;
@@ -35,25 +36,17 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.IO;
 
 namespace MatterControl.Tests.MatterControl
 {
 	[TestFixture]
 	public class LevelingTests
 	{
-		static LevelingTests()
-		{
-			MatterControlUtilities.OverrideAppDataLocation();
-		}
-
 		[Test, Category("Leveling")]
 		public void Leveling7PointsNeverGetsTooHigh()
 		{
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-
-			MatterControlUtilities.OverrideAppDataLocation();
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
 
@@ -93,9 +86,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Leveling")]
 		public void Leveling7PointsCorectInterpolation()
 		{
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-
-			MatterControlUtilities.OverrideAppDataLocation();
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
 
