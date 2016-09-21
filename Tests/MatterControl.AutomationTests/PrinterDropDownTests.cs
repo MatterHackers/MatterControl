@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using MatterHackers.Agg.UI;
-using NUnit.Framework;
-using MatterHackers.GuiAutomation;
-using System.Text;
-using System.Threading.Tasks;
 using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class PrinterNameChangePersists
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void PrinterNameStaysChanged()
 		{
 			// Run a copy of MatterControl

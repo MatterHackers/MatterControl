@@ -1,15 +1,16 @@
-﻿using MatterHackers.Agg.UI.Tests;
+﻿using System;
+using System.Threading;
+using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
-using System;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddSingleItemToLocalLibrary
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void LocalLibraryAddButtonAddSingleItemToLibrary()
 		{
 			// Run a copy of MatterControl
@@ -56,7 +57,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddMultipleItemsToLocalLibrary
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void LocalLibraryAddButtonAddsMultipleItemsToLibrary()
 		{
 			// Run a copy of MatterControl
@@ -112,7 +113,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddAMFItemToLocalLibrary
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void LocalLibraryAddButtonAddAMFToLibrary()
 		{
 			// Run a copy of MatterControl
@@ -159,7 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddZipFileToLocalLibrary
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void LocalLibraryAddButtonAddZipToLibrary()
 		{
 			// Run a copy of MatterControl
@@ -212,7 +213,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class RenameButtonRenamesLibraryRowItem
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RenameButtonRenameLocalLibraryItem()
 		{
 			// Run a copy of MatterControl
@@ -262,7 +263,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class UserCanSuccessfullyCreateAndRenameLibraryFolder
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RenameButtonRenameLocalLibraryFolder()
 		{
 			// Run a copy of MatterControl
@@ -311,7 +312,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class LibraryEditButtonOpensUpPartPreviewWindow
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ClickLibraryEditButtonOpensPartPreviewWindow()
 		{
 			// Run a copy of MatterControl
@@ -350,7 +351,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class OneLibraryItemSelectedRemoveButtonRemovesItem
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RemoveButtonClickedRemovesSingleItem()
 		{
 			// Run a copy of MatterControl
@@ -392,7 +393,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class MultipleLibraryItemsSelectedRemoveButtonRemovesItem
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RemoveButtonClickedRemovesMultipleItems()
 		{
 			// Run a copy of MatterControl
@@ -454,7 +455,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddToQueueButtonAddsSingleItemToQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void AddToQueueFromLibraryButtonAddsItemToQueue()
 		{
 			// Run a copy of MatterControl
@@ -514,7 +515,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddToQueueButtonAddsMultipleItemsToQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void AddToQueueFromLibraryButtonAddsItemsToQueue()
 		{
 			// Run a copy of MatterControl
@@ -588,7 +589,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ClickLibraryTumbnailWidgetOpensPartPreview
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void LibraryItemThumbnailClickedOpensPartPreview()
 		{
 			// Run a copy of MatterControl

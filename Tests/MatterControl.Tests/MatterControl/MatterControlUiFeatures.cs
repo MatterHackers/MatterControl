@@ -27,9 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.IO;
+using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.UI
@@ -45,6 +49,8 @@ namespace MatterHackers.MatterControl.UI
 		[Test]
 		public void TopToBottomContainerAppliesExpectedMarginToToggleView()
 		{
+			TestContext.CurrentContext.SetCompatibleWorkingDirectory();
+
 			int marginSize = 40;
 			int dimensions = 300;
 

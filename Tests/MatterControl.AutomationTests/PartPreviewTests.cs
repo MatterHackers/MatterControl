@@ -1,18 +1,18 @@
-﻿using MatterHackers.Agg.UI;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using NUnit.Framework;
-using System;
-using System.Linq;
-
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class PartPreviewTests
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void CopyButtonClickedMakesCopyOfPartOnBed()
 		{
 			// Run a copy of MatterControl
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void GroupAndUngroup()
 		{
 			// Run a copy of MatterControl
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RemoveButtonRemovesParts()
 		{
 			// Run a copy of MatterControl
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Ignore("Not Finished")]
 		public void UndoRedoCopy()
 		{
 			// Run a copy of MatterControl
@@ -265,7 +265,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(11));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void UndoRedoDelete()
 		{
 			// Run a copy of MatterControl
@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(10));
 		}
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void SaveAsToQueue()
 		{
 			// Run a copy of MatterControl

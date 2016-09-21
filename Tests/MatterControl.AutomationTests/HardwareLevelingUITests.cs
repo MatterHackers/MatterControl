@@ -1,15 +1,15 @@
-﻿using MatterHackers.Agg.UI.Tests;
+﻿using System;
+using System.Threading;
+using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
-using System;
-
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class HardwareLevelingUITests
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void HasHardwareLevelingHidesLevelingSettings()
 		{
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>

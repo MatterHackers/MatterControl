@@ -27,20 +27,21 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.IO;
+using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
-using System;
-using System.IO;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain]
 	public class BuyButtonTests
 	{
-		[Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Ignore("Not Finished")]
 		public void ClickOnBuyButton()
 		{
 			// Run a copy of MatterControl
@@ -73,7 +74,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ClickingCreateButtonOpensPluginWindow
     {
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		//Test Works
 		public void ClickCreateButton()
 		{
@@ -113,7 +114,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ExportButtonTest
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		//Test Works
 		public void ClickOnExportButton()
 		{
@@ -152,7 +153,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
 	public class ExportButtonDisabledNoQueueItems
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ExportButtonIsDisabledWithNoItemsInQueue()
 		{
 			// Run a copy of MatterControl
@@ -179,7 +180,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueItemThumnailWidget
 	{
-		[Test, RequiresSTA, RunInApplicationDomain] 
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain] 
 		public void QueueThumbnailWidgetOpensPartPreview()
 		{
 			// Run a copy of MatterControl
@@ -214,7 +215,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ClickCopyButtonMakesACopyOfPrintItemInQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void CopyButtonMakesACopyOfPartInTheQueue()
 		{
 			// Run a copy of MatterControl
@@ -259,7 +260,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddSingleItemToQueueAddsItem
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void AddSingleItemToQueue()
 		{
 			// Run a copy of MatterControl
@@ -309,7 +310,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class AddButtonAddsMuiltipleItemsToQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void AddMuiltipleItemsToQueue()
 		{
 			// Run a copy of MatterControl
@@ -364,7 +365,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class RemoveButtonClickedRemovesSingleItem
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RemoveButtonRemovesSingleItem()
 		{
 			//Run a copy of MatterControl
@@ -408,7 +409,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class EditButtonClickedTurnsOnEditMode
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void EditButtonTurnsOnEditMode()
 		{
 			//Run a copy of MatterControl
@@ -463,7 +464,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class DoneButtonClickedTurnsOffEditMode
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DoneButtonTurnsOffEditMode()
 		{
 			//Run a copy of MatterControl
@@ -527,7 +528,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class RemoveButtonClickedRemovesMultipleItems
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RemoveButtonRemovesMultipleItems()
 		{
 			//Run a copy of MatterControl
@@ -578,7 +579,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ExportToZipMenuItemClickedExportsQueueToZip
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ExportToZipMenuItemClicked()
 		{
 			// Run a copy of MatterControl
@@ -673,7 +674,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class SendMenuItemClickedWhileNotLoggedIn
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void SendMenuItemCLickedNoSignIn()
 		{
 			// Run a copy of MatterControl
@@ -717,7 +718,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class RemoveAllMenuItemClicked
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RemoveAllMenuItemClickedRemovesAll()
 		{
 			// Run a copy of MatterControl
@@ -787,7 +788,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class CreatePartSheetMenuItemClickedCreatesPartSheet
 	{
 
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ClickCreatePartSheetButton()
 		{
 			// Run a copy of MatterControl
@@ -851,7 +852,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueRowItemRemoveViewButtons
 	{
-        [Test, RequiresSTA, RunInApplicationDomain]
+        [Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ClickQueueRoWItemViewAndRemove()
 		{
 			// Run a copy of MatterControl
@@ -908,7 +909,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueAddButtonAddsZipToQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void QueueAddButtonAddsZipFile()
 		{
 
@@ -974,7 +975,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueAddButtonAddsAMFFileToQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void QueueAddButtonAddsAMF()
 		{
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
@@ -1038,7 +1039,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueAddButtonAddsSTLFileToQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void QueueAddButtonAddsSTL()
 		{
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
@@ -1099,7 +1100,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueAddButtonAddsGcodeFileToQueue
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void QueueAddButtonAddsGcodeFile()
 		{
 

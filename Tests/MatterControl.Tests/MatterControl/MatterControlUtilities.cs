@@ -418,7 +418,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			return Path.GetFullPath(Path.Combine(allPathSteps.ToArray()));
 		}
-	}
+
+		/// <summary>
+		/// Set the working directory to the location of the executing assembly. This is essentially the Nunit2 behavior
+		/// </summary>
+		/// <param name="context"></param>
+		public static void SetCompatibleWorkingDirectory(this TestContext context)
+		{
+			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		}
+}
 
 	/// <summary>
 	/// Represents a queue template folder on disk (located at Tests/TestData/QueueItems) that should be synced into the default

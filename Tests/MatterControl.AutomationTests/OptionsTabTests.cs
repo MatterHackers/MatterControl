@@ -1,15 +1,16 @@
-﻿using MatterHackers.Agg.UI;
+﻿using System;
+using System.Threading;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
-using System;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ShowTerminalButtonClickedOpensTerminal
 	{
-		[Test, RequiresSTA, RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ClickingShowTerminalButtonOpensTerminal()
 		{
 			// Run a copy of MatterControl
@@ -47,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ConfigureNotificationSettingsButtonClickedOpensNotificationWindow
 	{
-		[Test, RequiresSTA, RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Ignore("Not Finished")]
 		//DOES NOT WORK
 		public void ClickingConfigureNotificationSettingsButtonOpensWindow()
 		{
