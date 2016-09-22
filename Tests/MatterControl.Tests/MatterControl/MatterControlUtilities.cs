@@ -100,13 +100,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static string PathToExportGcodeFolder
 		{
-			get { return Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Tests", "TestData", "ExportedGcode", runName)); }
+			get { return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName); }
 		}
 
 		public static string GetTestItemPath(string queueItemToLoad)
 		{
-			string pathToQueueItemFolder = Path.Combine("..", "..", "..", "..", "Tests", "TestData", "QueueItems");
-			return Path.GetFullPath(Path.Combine(pathToQueueItemFolder, queueItemToLoad));
+			return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "QueueItems", queueItemToLoad);
 		}
 
 		public static void CloseMatterControl(AutomationRunner testRunner)
@@ -308,24 +307,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			//CREATE EMPTY TESTPARTS FOLDER
 			Directory.CreateDirectory(queueData);
 
-			string queueItemTestDataFolder = Path.Combine("..", "..", "..", "TestData", "QueueItems");
+			string queueItemsDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "Tests", "TestData", "QueueItems", queueItemFolderToLoad);
 
-			foreach (string file in Directory.GetFiles(Path.Combine(queueItemTestDataFolder, queueItemFolderToLoad)))
+			foreach (string file in Directory.GetFiles(queueItemsDirectory))
 			{
 				string newFilePath = Path.Combine(queueData, Path.GetFileName(file));
 				File.Copy(file, newFilePath, true);
 				queueItemData.ProjectFiles.Add(new PrintItem()
-					{
-						FileLocation = newFilePath,
-						Name = Path.GetFileNameWithoutExtension(file),
-						DateAdded = DateTime.Now
-					});
+				{
+					FileLocation = newFilePath,
+					Name = Path.GetFileNameWithoutExtension(file),
+					DateAdded = DateTime.Now
+				});
 			}
 
 			File.WriteAllText(mcpPath, JsonConvert.SerializeObject(queueItemData, Formatting.Indented));
 
 			Assert.IsTrue(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
-
 		}
 
 		public static LibraryProvider CurrentProvider()
