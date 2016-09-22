@@ -110,7 +110,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 	}
 
-
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ExportButtonTest
 	{
@@ -523,7 +522,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 	}
 
-
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class RemoveButtonClickedRemovesMultipleItems
 	{
@@ -741,7 +739,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						queueEmpty = false;
 					}
 
-					resultsHarness.AddTestResult(queueEmpty = true);
+					resultsHarness.AddTestResult(queueEmpty == true);
 
 					bool batmanPartExists1 = testRunner.WaitForName("Queue Item " + "Batman", 1);
 					bool foxPartExistst1 = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 1);
@@ -765,7 +763,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						queueEmpty = true; 
 					}
 
-					resultsHarness.AddTestResult(queueEmpty = true);
+					resultsHarness.AddTestResult(queueEmpty == true);
 
 					bool batmanPartExists2 = testRunner.WaitForName("Queue Item " + "Batman", 1);
 					bool foxPartExistst2 = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 1);
@@ -848,11 +846,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 	}
 
-
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class QueueRowItemRemoveViewButtons
 	{
-        [Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ClickQueueRoWItemViewAndRemove()
 		{
 			// Run a copy of MatterControl
@@ -912,10 +909,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void QueueAddButtonAddsZipFile()
 		{
-
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
@@ -933,7 +928,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					//Make sure queue count equals zero before test begins
-					resultsHarness.AddTestResult(queueCountEqualsZero = true);
+					resultsHarness.AddTestResult(queueCountEqualsZero == true);
 
 					//Click Add button 
 					testRunner.ClickByName("Queue Add Button", 2);
@@ -953,7 +948,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						twoItemsAddedToQueue = true;
 					}
 
-					resultsHarness.AddTestResult(twoItemsAddedToQueue = true);
+					resultsHarness.AddTestResult(twoItemsAddedToQueue == true);
 
 					//Mouthpiece & Batman part
 
@@ -999,7 +994,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					//Make sure queue count equals zero before test begins
-					resultsHarness.AddTestResult(queueCountEqualsZero = true);
+					resultsHarness.AddTestResult(queueCountEqualsZero == true);
 
 					//Click Add button 
 					testRunner.ClickByName("Queue Add Button", 2);
@@ -1021,7 +1016,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						oneItemAddedToQueue = true;
 					}
 
-					resultsHarness.AddTestResult(oneItemAddedToQueue = true);
+					resultsHarness.AddTestResult(oneItemAddedToQueue == true);
 
 					//Make sure amf queue item is added 
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Rook", 1);
@@ -1062,7 +1057,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					//Make sure queue count equals zero before test begins
-					resultsHarness.AddTestResult(queueCountEqualsZero = true);
+					resultsHarness.AddTestResult(queueCountEqualsZero == true);
 
 					//Click Add button 
 					testRunner.ClickByName("Queue Add Button", 2);
@@ -1082,7 +1077,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						oneItemAddedToQueue = true;
 					}
 
-					resultsHarness.AddTestResult(oneItemAddedToQueue = true);
+					resultsHarness.AddTestResult(oneItemAddedToQueue == true);
 
 					//stl queue item is added to the queue
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
@@ -1124,7 +1119,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					//Make sure queue count equals zero before test begins
-					resultsHarness.AddTestResult(queueCountEqualsZero = true);
+					resultsHarness.AddTestResult(queueCountEqualsZero == true);
 
 					//Click Add button 
 					testRunner.ClickByName("Queue Add Button", 2);
@@ -1144,7 +1139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						oneItemAddedToQueue = true;
 					}
 
-					resultsHarness.AddTestResult(oneItemAddedToQueue = true);
+					resultsHarness.AddTestResult(oneItemAddedToQueue == true);
 
 					//stl queue item is added to the queue
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "chichen-itza_pyramid", 1);
