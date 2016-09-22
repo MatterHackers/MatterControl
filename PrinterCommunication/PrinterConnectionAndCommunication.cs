@@ -1416,7 +1416,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void PrintActivePart()
+		public void PrintActivePart(bool overrideAllowGCode = false)
 		{
 			try
 			{
@@ -1449,7 +1449,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
-							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
+							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" 
+								&& hideGCodeWarning == null
+								&& !overrideAllowGCode)
 							{
 								CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage);
 								hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -1466,7 +1468,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
 									}
 								};
-								StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO);
+
+								UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO));
 							}
 							else
 							{
@@ -1493,11 +1496,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void PrintActivePartIfPossible()
+		public void PrintActivePartIfPossible(bool overrideAllowGCode = false)
 		{
 			if (CommunicationState == CommunicationStates.Connected || CommunicationState == CommunicationStates.FinishedPrint)
 			{
-				PrintActivePart();
+				PrintActivePart(overrideAllowGCode);
 			}
 		}
 
