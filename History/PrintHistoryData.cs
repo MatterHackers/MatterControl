@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
 	public static class PrintRecovery
 	{
-		static string recoverPrint = "Print Recovery".Localize();
+		static string recoverPrint = "Recover Print".Localize();
 		static string cancelRecovery = "Cancel".Localize();
 		static string printRecoveryPrintMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize();
 		static string recoverPrintTitle = "Recover Last Print".Localize();
