@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerModelSelector.SelectedIndex = 0;
 			}
 
-			printerModelContainer = CreateSelectionContainer("Model".Localize(), "Select the printer model".Localize(), printerModelSelector);
+			printerModelContainer = CreateSelectionContainer("Model".Localize() + ":", "Select the printer model".Localize(), printerModelSelector);
 
 			//Add inputs to main container
 			contentRow.AddChild(printerMakeContainer);
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(0, 0, 0, 1)
+				Margin = new BorderDouble(0, 4, 0, 1)
 			};
 
 			printerNameInput = new MHTextEditWidget("")
