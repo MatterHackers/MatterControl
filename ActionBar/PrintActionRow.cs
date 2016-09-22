@@ -484,7 +484,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onReprintButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible);
+			UiThread.RunOnIdle(() => PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible());
 		}
 
 		private void onSkipButton_Click(object sender, EventArgs mouseEvent)
@@ -497,7 +497,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onStartButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible);
+			UiThread.RunOnIdle(() => PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible());
 		}
 
 		private void onStateChanged(object sender, EventArgs e)
