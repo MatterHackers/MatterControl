@@ -405,11 +405,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	}
 
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class EditButtonClickedTurnsOnEditMode
+	public class EditButtonClickedTurnsOnOffEditMode
 	{
-
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void EditButtonTurnsOnEditMode()
+		public void EditButtonTurnsOnOffEditMode()
 		{
 			//Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
@@ -430,32 +429,36 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					resultsHarness.AddTestResult(QueueData.Instance.Count == 4);
 
-					testRunner.Wait(2);
-
 					SystemWindow systemWindow;
-
 					string itemName = "Queue Item " + "2013-01-25_Mouthpiece_v2";
 
 					GuiWidget queueItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
-
 					SearchRegion queueItemRegion = testRunner.GetRegionByName(itemName, 3);
 
-					testRunner.ClickByName("Queue Edit Button", 2);
+					{
+						testRunner.ClickByName("Queue Edit Button", 2);
 
-					testRunner.Wait(5);
+						SystemWindow containingWindow;
+						GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 3, searchRegion: queueItemRegion);
+						resultsHarness.AddTestResult(foundWidget != null, "We should have an actual checkbox");
+					}
 
-					SystemWindow containingWindow;
-					GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 3, searchRegion: queueItemRegion);
-					CheckBox checkBoxWidget = foundWidget as CheckBox;
-					resultsHarness.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
+					{
+						testRunner.ClickByName("Queue Done Button", 2);
 
+						testRunner.Wait(.5);
+
+						SystemWindow containingWindow;
+						GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 1, searchRegion: queueItemRegion);
+						resultsHarness.AddTestResult(foundWidget == null, "We should not have an actual checkbox");
+					}
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
 
