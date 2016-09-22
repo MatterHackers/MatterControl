@@ -178,11 +178,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			string tempFolderPath = Path.Combine("..", "..", "..", "..", "Tests", "temp");
 			string fullPath = Path.Combine(tempFolderPath, runName, "Test0", "data", "gcode");
 
-			string [] gcodeFiles = Directory.GetFiles(fullPath);
+			string[] gcodeFiles = Directory.GetFiles(fullPath);
 
 			foreach (string file in gcodeFiles)
 			{
-				if(file.Contains(".ini"))
+				if (file.Contains(".ini"))
 				{
 
 					FileInfo f = new FileInfo(file);
@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 								settingValue = settingNameAndValue[1].Trim();
 							}
 
-							if(settingValue == expectedValue)
+							if (settingValue == expectedValue)
 							{
 								return true;
 							}
@@ -252,7 +252,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Wait(1);
 		}
 
-
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)
 		{
 			if (saveImagesForDebug)
@@ -280,7 +279,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		public static void OverrideAppDataLocation(string matterControlDirectory)
 		{
-			string tempFolderPath = Path.Combine(matterControlDirectory, "Tests","temp", runName, $"Test{testID++}");
+			string tempFolderPath = Path.Combine(matterControlDirectory, "Tests", "temp", runName, $"Test{testID++}");
 			ApplicationDataStorage.Instance.OverrideAppDataLocation(tempFolderPath);
 		}
 
@@ -295,9 +294,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (!File.Exists(mcpPath))
 			{
 				File.WriteAllText(mcpPath, JsonConvert.SerializeObject(new ManifestFile()
-					{
-						ProjectFiles = new System.Collections.Generic.List<PrintItem>()
-					}, Formatting.Indented));
+				{
+					ProjectFiles = new System.Collections.Generic.List<PrintItem>()
+				}, Formatting.Indented));
 			}
 
 			var queueItemData = JsonConvert.DeserializeObject<ManifestFile>(File.ReadAllText(mcpPath));
@@ -345,9 +344,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		public static AutomationTesterHarness RunTest(
-			Action<AutomationTesterHarness> testToRun, 
-			string staticDataPathOverride = null, 
-			double maxTimeToRun = 60, 
+			Action<AutomationTesterHarness> testToRun,
+			string staticDataPathOverride = null,
+			double maxTimeToRun = 60,
 			QueueTemplate queueItemFolderToAdd = QueueTemplate.None,
 			int overrideWidth = -1, int overrideHeight = -1)
 		{
@@ -401,7 +400,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("LibraryActionMenu");
 			testRunner.ClickByName("Remove Menu Item", 1);
 		}
-
 		public static string ResolveProjectPath(this TestContext context, int stepsToProjectRoot, params string[] relativePathSteps)
 		{
 			string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -425,7 +423,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		}
-}
+
+		public static void SwitchToAdvancedSettings(AutomationRunner testRunner, AutomationTesterHarness resultsHarness)
+		{
+			if (testRunner.NameExists("SettingsAndControls"))
+			{
+				testRunner.ClickByName("SettingsAndControls", 1);
+				testRunner.Wait(.5);
+			}
+			resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1));
+			resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1));
+			testRunner.Wait(.5);
+		}
+	}
 
 	/// <summary>
 	/// Represents a queue template folder on disk (located at Tests/TestData/QueueItems) that should be synced into the default

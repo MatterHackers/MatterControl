@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -36,9 +37,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer View Tab");
 
 					testRunner.ClickByName("Bread Crumb Button Home", 1);
-					testRunner.ClickByName("SettingsAndControls", 1);
-					testRunner.ClickByName("User Level Dropdown", 1);
-					testRunner.ClickByName("Advanced Menu Item", 1);
+
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
+
 					testRunner.ClickByName("Raft / Priming Tab", 1);
 
 					testRunner.ClickByName("Create Raft Checkbox", 1);
@@ -56,7 +57,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
@@ -72,9 +73,35 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.Wait(2000);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
 
-					emualtorProccess.Kill();
+					resultsHarness.AddTestResult(testRunner.ClickByName("General Tab", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Single Print Tab", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Layer(s) To Pause:" + " Edit"));
+					testRunner.Type("4;2;a;not;6");
+
+					resultsHarness.AddTestResult(testRunner.ClickByName("Layer View Tab"));
+
+					resultsHarness.AddTestResult(testRunner.ClickByName("Generate Gcode Button", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Display Checkbox", 10));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Sync To Print Checkbox", 1));
+
+					resultsHarness.AddTestResult(testRunner.ClickByName("Start Print Button", 1));
+
+					WaitForLayerAndResume(resultsHarness, testRunner, 2);
+					WaitForLayerAndResume(resultsHarness, testRunner, 4);
+					WaitForLayerAndResume(resultsHarness, testRunner, 6);
+
+					resultsHarness.AddTestResult(testRunner.WaitForName("Done Button", 30));
+					resultsHarness.AddTestResult(testRunner.WaitForName("Print Again Button", 1));
+
+
+					try
+					{
+						//emualtorProccess.Kill();
+					}
+					catch {}
+
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
@@ -82,7 +109,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			string staticDataPathOverride = Path.Combine("..", "..", "..", "..", "..", "MatterControl", "StaticData");
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, staticDataPathOverride: staticDataPathOverride, maxTimeToRun: 200);
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			Assert.IsTrue(testHarness.AllTestsPassed(19));
+		}
+
+		private static void WaitForLayerAndResume(AutomationTesterHarness resultsHarness, AutomationRunner testRunner, int indexToWaitFor)
+		{
+			testRunner.WaitForName("Resume Button", 30);
+
+			SystemWindow containingWindow;
+			GuiWidget layerNumber = testRunner.GetWidgetByName("Current GCode Layer Edit", out containingWindow, 20);
+
+			layerNumber.Invalidate();
+			testRunner.WaitUntil(() =>
+			{
+				return layerNumber.Text == indexToWaitFor.ToString();
+			}, 2);
+
+			resultsHarness.AddTestResult(layerNumber.Text == indexToWaitFor.ToString());
+			resultsHarness.AddTestResult(testRunner.ClickByName("Resume Button", 1));
+			testRunner.Wait(.1);
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
@@ -98,11 +143,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
-					resultsHarness.AddTestResult(testRunner.ClickByName("SettingsAndControls", 1));
-					testRunner.Wait(.5);
-					resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1));
-					testRunner.Wait(.5);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
 
 					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1));
 					resultsHarness.AddTestResult(testRunner.ClickByName("Features Tab", 1));
@@ -117,7 +158,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(21));
+			Assert.IsTrue(testHarness.AllTestsPassed(23));
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
@@ -189,12 +230,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Local Library 
-					resultsHarness.AddTestResult(testRunner.ClickByName("SettingsAndControls"));
-					testRunner.Wait(1);
-					resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown"));
-					testRunner.Wait(1);
-					resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item"));
-					testRunner.Wait(1);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
+
 					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab"));
 					testRunner.Wait(1);
 
@@ -213,7 +250,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(1008));
+			Assert.IsTrue(testHarness.AllTestsPassed(1010));
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
@@ -229,10 +266,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 					//Navigate to Settings Tab and make sure Bed Temp Text box is visible 
-					testRunner.ClickByName("SettingsAndControls");
-					testRunner.Wait(.5);
-					testRunner.ClickByName("User Level Dropdown",1);
-					testRunner.ClickByName("Advanced Menu Item", 1);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
+
 					testRunner.ClickByName("Filament Tab", 1);
 					testRunner.ClickByName("Temperatures Tab", 1);
 					resultsHarness.AddTestResult(testRunner.WaitForName("Bed Temperature Textbox", 2));
@@ -260,7 +295,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(5));
 		}
 	}
 }

@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			addButton.Margin = new BorderDouble(6, 6, 6, 3);
 
 			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32).InvertLightness());
-			startButton.Name = "startPrintingButton";
+			startButton.Name = "Start Print Button";
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
 			startButton.Click += onStartButton_Click;
@@ -156,6 +156,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			string resumeButtonText = "Resume".Localize();
 			string resumeButtonMessage = "Resume the current print".Localize();
 			resumeButton = makeButton(resumeButtonText, resumeButtonMessage);
+			resumeButton.Name = "Resume Button";
 			resumeButton.Click += (s, e) =>
 			{
 				if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
@@ -171,10 +172,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			string reprintButtonText = "Print Again".Localize();
 			string reprintButtonMessage = "Print current item again".Localize();
 			reprintButton = makeButton(reprintButtonText, reprintButtonMessage);
+			reprintButton.Name = "Print Again Button";
 
 			string doneCurrentPartButtonText = "Done".Localize();
 			string doenCurrentPartButtonMessage = "Move to next print in queue".Localize();
 			doneWithCurrentPartButton = makeButton(doneCurrentPartButtonText, doenCurrentPartButtonMessage);
+			doneWithCurrentPartButton.Name = "Done Button";
 
 			this.Margin = new BorderDouble(0, 0, 10, 0);
 			this.HAnchor = HAnchor.FitToChildren;

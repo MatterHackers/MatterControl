@@ -405,11 +405,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	}
 
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class EditButtonClickedTurnsOnEditMode
+	public class EditButtonClickedTurnsOnOffEditMode
 	{
-
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void EditButtonTurnsOnEditMode()
+		public void EditButtonTurnsOnOffEditMode()
 		{
 			//Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
@@ -430,39 +429,42 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					resultsHarness.AddTestResult(QueueData.Instance.Count == 4);
 
-					testRunner.Wait(2);
-
 					SystemWindow systemWindow;
-
 					string itemName = "Queue Item " + "2013-01-25_Mouthpiece_v2";
 
 					GuiWidget queueItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
-
 					SearchRegion queueItemRegion = testRunner.GetRegionByName(itemName, 3);
 
-					testRunner.ClickByName("Queue Edit Button", 2);
+					{
+						testRunner.ClickByName("Queue Edit Button", 2);
 
-					testRunner.Wait(5);
+						SystemWindow containingWindow;
+						GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 3, searchRegion: queueItemRegion);
+						resultsHarness.AddTestResult(foundWidget != null, "We should have an actual checkbox");
+					}
 
-					SystemWindow containingWindow;
-					GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 3, searchRegion: queueItemRegion);
-					CheckBox checkBoxWidget = foundWidget as CheckBox;
-					resultsHarness.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
+					{
+						testRunner.ClickByName("Queue Done Button", 2);
 
+						testRunner.Wait(.5);
+
+						SystemWindow containingWindow;
+						GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 1, searchRegion: queueItemRegion);
+						resultsHarness.AddTestResult(foundWidget == null, "We should not have an actual checkbox");
+					}
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class DoneButtonClickedTurnsOffEditMode
 	{
-
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DoneButtonTurnsOffEditMode()
 		{
@@ -480,15 +482,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					 */
 
 					int queueItemCount = QueueData.Instance.Count;
-					bool queueItemCountEqualThree = false;
-
-					if (queueItemCount == 3)
-					{
-						queueItemCountEqualThree = true;
-					}
-
-					resultsHarness.AddTestResult(queueItemCountEqualThree == true);
-					testRunner.Wait(2);
 
 					string itemName = "Queue Item " + "2013-01-25_Mouthpiece_v2";
 					SystemWindow systemWindow;
@@ -496,36 +489,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					SearchRegion queueItemRegion = testRunner.GetRegionByName(itemName, 3);
 
 					testRunner.ClickByName("Queue Edit Button", 2);
-					testRunner.Wait(5);
 
 					GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion: queueItemRegion);
-					foundWidget.DebugShowBounds = true;
-					CheckBox checkBoxWidget = foundWidget as CheckBox;
-					resultsHarness.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
+					resultsHarness.AddTestResult(foundWidget != null, "We should have an actual checkbox");
 
-					testRunner.Wait(2);
+					testRunner.ClickByName("Queue Done Button", 1);
 
-					testRunner.ClickByName("Queue Done Button");
-
-					testRunner.Wait(3);
-
-					foundWidget.DebugShowBounds = true;
-
-					resultsHarness.AddTestResult(foundWidget == null, "We should not have an actual checkbox");
+					foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 1, searchRegion: queueItemRegion);
+					resultsHarness.AddTestResult(foundWidget != null, "Checkbox is gone");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class RemoveButtonClickedRemovesMultipleItems
 	{
-
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RemoveButtonRemovesMultipleItems()
 		{
@@ -701,9 +685,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Ok Button");
 
-
 					MatterControlUtilities.CloseMatterControl(testRunner);
-
 				}
 			};
 

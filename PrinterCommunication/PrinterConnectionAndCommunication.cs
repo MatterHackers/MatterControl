@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private CheckSumLines allCheckSumLinesSent = new CheckSumLines();
 
-		private int backupAmount = 16;
+		private int backupAmount = 0;
 
 		private CommunicationStates communicationState = CommunicationStates.Disconnected;
 

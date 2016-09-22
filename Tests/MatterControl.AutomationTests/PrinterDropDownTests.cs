@@ -24,13 +24,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
-					testRunner.Wait(2);
-					testRunner.ClickByName("SettingsAndControls");
-					testRunner.ClickByName("Settings Tab");
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1));
-					testRunner.Wait(.5);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
+
 					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1));
 
 					string widgetName = "Printer Name Edit";
@@ -56,7 +52,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(5));
+			Assert.IsTrue(testHarness.AllTestsPassed(7));
 		}
 	}
 }
