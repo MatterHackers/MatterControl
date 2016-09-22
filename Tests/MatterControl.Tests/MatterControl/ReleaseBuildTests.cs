@@ -117,9 +117,7 @@ namespace MatterControl.Tests
 				}
 			};
 
-			string staticDataPathOverride = Path.Combine("..", "..", "..", "..", "..", "MatterControl", "StaticData");
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, staticDataPathOverride: staticDataPathOverride, maxTimeToRun: 200);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
