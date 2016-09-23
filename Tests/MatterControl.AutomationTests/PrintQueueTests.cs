@@ -897,16 +897,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					*/
 					int queueCountBeforeTest = QueueData.Instance.Count;
 
-					bool queueCountEqualsZero = false;
-
-					if (queueCountBeforeTest == 0)
-					{
-						queueCountEqualsZero = true;
-					}
-
-					//Make sure queue count equals zero before test begins
-					resultsHarness.AddTestResult(queueCountEqualsZero == true);
-
 					//Click Add button 
 					testRunner.ClickByName("Queue Add Button", 2);
 					testRunner.Wait(1);
@@ -920,14 +910,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					//Make sure Queue Count increases by one 
 					int queueCountAfterAMFIsAdded = QueueData.Instance.Count;
-					bool oneItemAddedToQueue = false;
 
-					if (queueCountAfterAMFIsAdded == 1)
-					{
-						oneItemAddedToQueue = true;
-					}
-
-					resultsHarness.AddTestResult(oneItemAddedToQueue == true);
+					resultsHarness.AddTestResult(queueCountAfterAMFIsAdded == queueCountBeforeTest+1);
 
 					//Make sure amf queue item is added 
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Rook", 1);
@@ -938,7 +922,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 
@@ -960,15 +944,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					* 3. Queue count inceases by one 
 					*/
 					int queueCountBeforeTest = QueueData.Instance.Count;
-					bool queueCountEqualsZero = false;
-
-					if (queueCountBeforeTest == 0)
-					{
-						queueCountEqualsZero = true;
-					}
-
-					//Make sure queue count equals zero before test begins
-					resultsHarness.AddTestResult(queueCountEqualsZero == true);
 
 					//Click Add button 
 					testRunner.ClickByName("Queue Add Button", 2);
@@ -981,14 +956,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{Enter}");
 
 					int queueCountAfterSTLIsAdded = QueueData.Instance.Count;
-					bool oneItemAddedToQueue = false;
 
-					if (queueCountAfterSTLIsAdded == 1)
-					{
-						oneItemAddedToQueue = true;
-					}
-
-					resultsHarness.AddTestResult(oneItemAddedToQueue == true);
+					resultsHarness.AddTestResult(queueCountAfterSTLIsAdded == queueCountBeforeTest+1);
 
 					//stl queue item is added to the queue
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
@@ -999,7 +968,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 
@@ -1016,21 +985,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
-					/* Tests that when the Queue Copy button is clicked:
-					* 1. QueueCount = Zero
-					* 2. Add button can add single .gcode file to the queue 
-					* 3. Queue count inceases by one 
-					*/
 					int queueCountBeforeTest = QueueData.Instance.Count;
-					bool queueCountEqualsZero = false;
-
-					if (queueCountBeforeTest == 0)
-					{
-						queueCountEqualsZero = true;
-					}
-
-					//Make sure queue count equals zero before test begins
-					resultsHarness.AddTestResult(queueCountEqualsZero == true);
 
 					//Click Add button 
 					testRunner.ClickByName("Queue Add Button", 2);
@@ -1043,14 +998,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{Enter}");
 
 					int queueCountAfterGcodeIsAdded = QueueData.Instance.Count;
-					bool oneItemAddedToQueue = false;
 
-					if (queueCountAfterGcodeIsAdded == 1)
-					{
-						oneItemAddedToQueue = true;
-					}
-
-					resultsHarness.AddTestResult(oneItemAddedToQueue == true);
+					resultsHarness.AddTestResult(queueCountAfterGcodeIsAdded == queueCountBeforeTest+1);
 
 					//stl queue item is added to the queue
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "chichen-itza_pyramid", 1);
@@ -1061,7 +1010,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
 }
