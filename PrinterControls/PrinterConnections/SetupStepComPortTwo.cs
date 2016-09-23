@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerErrorMessage.Text = "Connection succeeded".Localize() + "!";
 				nextButton.Visible = true;
 				connectButton.Visible = false;
-				UiThread.RunOnIdle(Parent.Close);
+				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
 			else if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
 			{
