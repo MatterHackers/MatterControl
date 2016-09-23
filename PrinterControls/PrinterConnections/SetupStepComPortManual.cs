@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -119,6 +120,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerComPortError.Text = "Connection succeeded".Localize() + "!";
 				nextButton.Visible = true;
 				connectButton.Visible = false;
+				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
 			else if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
 			{
