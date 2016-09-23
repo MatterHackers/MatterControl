@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static Process LaunchAndConnectToPrinterEmulator(AutomationRunner testRunner)
+		public static Process LaunchAndConnectToPrinterEmulator(AutomationRunner testRunner, bool runSlow = false)
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
@@ -149,7 +149,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			process.StartInfo = new ProcessStartInfo()
 			{
 				FileName = "python",
-				Arguments = string.Format("{0} {1}", StaticData.Instance.MapPath("../PrinterEmulator.py"), config.Printer),
+				Arguments = string.Format("{0} {1}{2}", 
+					StaticData.Instance.MapPath("../PrinterEmulator.py"), 
+					config.Printer, 
+					runSlow ? " slow" : ""),
+
 				WindowStyle = ProcessWindowStyle.Minimized
 			};
 
