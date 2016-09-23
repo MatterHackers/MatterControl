@@ -576,13 +576,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					 *2. Export Queue and make sure file exists on disk
 					 */
 
-					// make sure it is not there when we start
-					string validateExportPath = Path.Combine("..", "..", "..", "TestData", "QueueItems", "TestExportZip.zip");
-					if (File.Exists(validateExportPath))
-					{
-						File.Delete(validateExportPath);
-					}
-
 					bool queueEmpty = true;
 					int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
 
@@ -600,7 +593,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(2);
 
 					//Type in Absolute Path to Save 
-					string exportZipPath = MatterControlUtilities.GetTestItemPath("TestExportZip");
+					string exportZipPath = MatterControlUtilities.GetTestItemPath("TestExportZip.zip");
 
 					// Ensure file does not exist before save
 					if(File.Exists(exportZipPath))
@@ -616,7 +609,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.Wait(1);
 
-					bool queueWasExportedToZip = File.Exists(validateExportPath);
+					bool queueWasExportedToZip = File.Exists(exportZipPath);
 
 					testRunner.Wait(2);
 
@@ -625,23 +618,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Add the exprted zip file to the Queue and confirm that the Queue Count increases by 3 
 					testRunner.ClickByName("Queue Add Button");
 					testRunner.Wait(1);
-					testRunner.Type(exportZipPath + ".zip");
+					testRunner.Type(exportZipPath);
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
 					int queueCountAfterZipIsAdded = QueueData.Instance.Count;
 					bool allItemsInZipWereAddedToTheQueue = false;
 
-					if(queueCountAfterZipIsAdded == queueItemCountBeforeRemoveAllClicked)
+					if(queueCountAfterZipIsAdded == queueItemCountBeforeRemoveAllClicked * 2)
 					{
 						allItemsInZipWereAddedToTheQueue = true;
 					}
 
 					resultsHarness.AddTestResult(allItemsInZipWereAddedToTheQueue == true);
 
-					if (File.Exists(validateExportPath))
+					if (File.Exists(exportZipPath))
 					{
-						File.Delete(validateExportPath);
+						File.Delete(exportZipPath);
 					}
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
@@ -882,70 +875,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
 			Assert.IsTrue(testHarness.AllTestsPassed(6));
-		}
-	}
-
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class QueueAddButtonAddsZipToQueue
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void QueueAddButtonAddsZipFile()
-		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
-			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
-
-					/* Tests that when the Queue Copy button is clicked:
-					* 1. QueueCount = Zero
-					* 2. All files in zip are added to queue
-					*/
-					int queueCountBeforeTest = QueueData.Instance.Count;
-					bool queueCountEqualsZero = false;
-
-					if (queueCountBeforeTest == 0)
-					{
-						queueCountEqualsZero = true;
-					}
-
-					//Make sure queue count equals zero before test begins
-					resultsHarness.AddTestResult(queueCountEqualsZero == true);
-
-					//Click Add button 
-					testRunner.ClickByName("Queue Add Button", 2);
-
-					testRunner.Wait(1);
-					
-					string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
-					testRunner.Type(pathToType);
-					testRunner.Wait(1);
-					testRunner.Type("{Enter}");
-
-					int queueCountAfterZipIsAdded = QueueData.Instance.Count;
-					bool twoItemsAddedToQueue = false;
-
-					if(queueCountAfterZipIsAdded == 2)
-					{
-						twoItemsAddedToQueue = true;
-					}
-
-					resultsHarness.AddTestResult(twoItemsAddedToQueue == true);
-
-					//Mouthpiece & Batman part
-
-					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
-					resultsHarness.AddTestResult(firstQueueItemExists == true);
-
-					bool secondQueueItemExists = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
-					resultsHarness.AddTestResult(secondQueueItemExists == true);
-
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
-			};
-
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
 
