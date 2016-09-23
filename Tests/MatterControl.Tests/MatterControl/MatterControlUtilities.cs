@@ -65,15 +65,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			get
 			{
-				return Path.Combine("..", "..", "..", "TestData", "TestImages");
+				return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestImages");
 			}
 		}
 
 		public static void CreateDownloadsSubFolder()
 		{
-
 			Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary"));
-
 		}
 
 		public static string PathToDownloadsSubFolder
@@ -94,6 +92,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("User Options Menu", 2);
 			testRunner.ClickByName("Sign Out Menu Item", 2);
 			testRunner.Wait(.5);
+
 			testRunner.ClickByName("Yes Button");
 			testRunner.Wait(5);
 		}
@@ -286,8 +285,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddItemsToQueue(string queueItemFolderToLoad)
 		{
-
-			//DEFAULT LOCATION OF MCP FILE (LOCATION IS CORRECT)
+			// Default location of mcp file
 			string mcpPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
 
 			Directory.CreateDirectory(Path.GetDirectoryName(mcpPath));
@@ -304,7 +302,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			string queueData = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "testitems");
 
-			//CREATE EMPTY TESTPARTS FOLDER
+			// Create empty TestParts folder
 			Directory.CreateDirectory(queueData);
 
 			string queueItemsDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "Tests", "TestData", "QueueItems", queueItemFolderToLoad);

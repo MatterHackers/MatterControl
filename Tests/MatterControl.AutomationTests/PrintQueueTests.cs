@@ -690,66 +690,41 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class RemoveAllMenuItemClicked
 	{
-
+		/// <summary>
+		/// Tests that when the Remove All menu item is clicked 
+		///   1. Queue Item count is set to one
+		///   2. All widgets that were previously in the queue are removed
+		/// </summary>
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RemoveAllMenuItemClickedRemovesAll()
 		{
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
-					/*
-					 *Tests that when the Remove All menu item is clicked 
-					 *1. Queue Item count is set to zero
-					 *2. All queue row items that were previously in the queue are removed
-					 */
+				AutomationRunner testRunner = new AutomationRunner();
 
-					bool queueEmpty = true;
-					int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
+				MatterControlUtilities.PrepForTestRun(testRunner);
+				resultsHarness.AddTestResult(QueueData.Instance.Count == 4, "Queue has expected 3 items, including default Coin");
 
-					if(queueItemCountBeforeRemoveAllClicked != 0)
-					{
-						queueEmpty = false;
-					}
+				// Assert that widgets exists
+				resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Batman"), "Batman part exists");
+				resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Fennec_Fox"), "Fox part exists");
+				resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part exists");
 
-					resultsHarness.AddTestResult(queueEmpty == true);
+				// Act - remove all print queue items
+				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.ClickByName(" Remove All Menu Item", 2);
+				testRunner.Wait(2);
 
-					bool batmanPartExists1 = testRunner.WaitForName("Queue Item " + "Batman", 1);
-					bool foxPartExistst1 = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 1);
-					bool mouthpiecePartExists1 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
+				// Assert that object model has been cleared
+				resultsHarness.AddTestResult(QueueData.Instance.Count == 0, "Queue is empty after RemoveAll action");
 
-					resultsHarness.AddTestResult(batmanPartExists1 == true);
-					resultsHarness.AddTestResult(mouthpiecePartExists1 == true);
-					resultsHarness.AddTestResult(foxPartExistst1 == true);
+				// Assert that widgets have been removed
+				resultsHarness.AddTestResult(!testRunner.WaitForName("Queue Item Batman"), "Batman part removed");
+				resultsHarness.AddTestResult(!testRunner.WaitForName("Queue Item Fennec_Fox"), "Fox part removed");
+				resultsHarness.AddTestResult(!testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
 
-				
-					testRunner.ClickByName("Queue... Menu", 2);
-
-					testRunner.ClickByName(" Remove All Menu Item", 2);
-
-					testRunner.Wait(2);
-
-					int queueItemCountAfterRemoveAll = QueueData.Instance.Count; 
-
-					if(queueItemCountAfterRemoveAll == 0)
-					{
-						queueEmpty = true; 
-					}
-
-					resultsHarness.AddTestResult(queueEmpty == true);
-
-					bool batmanPartExists2 = testRunner.WaitForName("Queue Item " + "Batman", 1);
-					bool foxPartExistst2 = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 1);
-					bool mouthpiecePartExists2 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
-
-					resultsHarness.AddTestResult(batmanPartExists2 == false);
-					resultsHarness.AddTestResult(mouthpiecePartExists2 == false);
-					resultsHarness.AddTestResult(foxPartExistst2 == false);
-
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
