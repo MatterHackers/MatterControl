@@ -956,7 +956,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									&& numberEdit.Text != multiValuesAreDiffernt)
 								{
 									{
-										SaveSetting(setting["TargetSetting"], numberEdit.Value.ToString() + "mm", persistenceLayer);
+										ActiveSliceSettings.Instance.SetValue(settingData.SetSettingsOnChange[0]["TargetSetting"], numberEdit.Value.ToString() + "mm", persistenceLayer);
 									}
 								}
 
@@ -1178,13 +1178,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							checkBoxWidget.Click += (sender, e) =>
 							{
 								bool isChecked = ((CheckBox)sender).Checked;
-								SaveSetting(settingData.SlicerConfigName, isChecked ? "1" : "0", persistenceLayer);
+								ActiveSliceSettings.Instance.SetValue(settingData.SlicerConfigName, isChecked ? "1" : "0", persistenceLayer);
 								foreach(var setSettingsData in settingData.SetSettingsOnChange)
 								{
 									string targetValue;
 									if(setSettingsData.TryGetValue(isChecked?"OnValue": "OffValue", out targetValue))
 									{
-										SaveSetting(setSettingsData["TargetSetting"], targetValue, persistenceLayer);
+										ActiveSliceSettings.Instance.SetValue(setSettingsData["TargetSetting"], targetValue, persistenceLayer);
 									}
 								}
 								settingsRow.UpdateStyle();
