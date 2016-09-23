@@ -179,12 +179,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
 		{
-			string tempFolderPath = Path.Combine("..", "..", "..", "..", "Tests", "temp");
-			string fullPath = Path.Combine(tempFolderPath, runName, "Test0", "data", "gcode");
+			string fullPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", runName, "Test0", "data", "gcode");
 
-			string[] gcodeFiles = Directory.GetFiles(fullPath);
-
-			foreach (string file in gcodeFiles)
+			foreach (string file in Directory.GetFiles(fullPath))
 			{
 				if (file.Contains(".ini"))
 				{
