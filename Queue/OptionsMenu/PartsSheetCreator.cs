@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl
 					double sizeOfNameX = typeFacePrinter.GetSize().x + PartMarginPixels * 2;
 					Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
 
-					ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.x)), (int)(sizeOfRender.y), 32, new BlenderBGRA());
+					ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.x)), (int)(sizeOfRender.y));
 					typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelPerMM);
 
 					Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl
 
 		private void CreateOnePage(int plateNumber, ref int nextPartToPrintIndex, PdfPage pdfPage)
 		{
-			ImageBuffer plateInventoryImage = new ImageBuffer((int)(300 * 8.5), 300 * 11, 32, new BlenderBGRA());
+			ImageBuffer plateInventoryImage = new ImageBuffer((int)(300 * 8.5), 300 * 11);
 			Graphics2D plateGraphics = plateInventoryImage.NewGraphics2D();
 			double currentlyPrintingHeightPixels = PrintTopOfPage(plateInventoryImage, plateGraphics);
 
