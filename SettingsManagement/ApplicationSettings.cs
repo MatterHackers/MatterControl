@@ -65,11 +65,6 @@ namespace MatterHackers.MatterControl
 			string keyName = "ClientToken";
 #if DEBUG
 			keyName += "_Test";
-#else
-			if(OemSettings.Instance.ForceTestEnvironment)
-			{
-				keyName += "_Test";
-			}
 #endif
 			if(ApplicationController.ApplicationInstanceCount > 1)
 			{
