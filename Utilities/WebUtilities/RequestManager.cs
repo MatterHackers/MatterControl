@@ -27,11 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
@@ -187,12 +187,7 @@ namespace MatterHackers.MatterControl
 			{
 				response = (HttpWebResponse)request.GetResponse();
 				cookies.Add(response.Cookies);
-				// Print the properties of each cookie.
-				Console.WriteLine("\nCookies: ");
-				foreach (Cookie cook in cookies.GetCookies(request.RequestUri))
-				{
-					Console.WriteLine("Domain: {0}, String: {1}", cook.Domain, cook.ToString());
-				}
+
 				Stream responseStream = response.GetResponseStream();
 				GetResponseContent(response);
 			}
