@@ -111,18 +111,26 @@ responses = { "M105" : randomTemp, "A" : echo, "M114" : getPosition , "N" : pars
 
 def main(argv):
 	parser = argparse.ArgumentParser(description='Set up a printer emulation.')
+
 	if len(argv) > 0:
 		ser = serial.Serial(argv[0], 250000, timeout=1)	
 	else:
 		ser = serial.Serial('COM14', 250000, timeout=1)	
+
+	run_slow = len(argv) > 1 and argv[1] == 'slow'
+
 	waitForKey = True
-	print "Initializing emulator..."
+
+	print '\n Initializing emulator (Speed: %s)' % ('slow' if run_slow else 'fast')
 	while True:
 		line = ser.readline()   # read a '\n' terminated line
 		if len(line) > 0:
 			print(line)
 			response = getCorrectResponse(line)
-			# sleep(0.02)
+
+			if run_slow:
+				sleep(0.02)
+
 			print response
 			ser.write(response)
 	ser.close()
