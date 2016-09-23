@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			Vector2 expectedSize = new Vector2((int)(50 * GuiWidget.DeviceScale), (int)(50 * GuiWidget.DeviceScale));
 			if (imageBuffer.Width != expectedSize.x)
 			{
-				ImageBuffer scaledImageBuffer = new ImageBuffer((int)expectedSize.x, (int)expectedSize.y, 32, new BlenderBGRA());
+				ImageBuffer scaledImageBuffer = new ImageBuffer((int)expectedSize.x, (int)expectedSize.y);
 				scaledImageBuffer.NewGraphics2D().Render(imageBuffer, 0, 0, scaledImageBuffer.Width, scaledImageBuffer.Height);
 				imageBuffer = scaledImageBuffer;
 			}

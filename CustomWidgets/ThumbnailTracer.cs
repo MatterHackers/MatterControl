@@ -88,7 +88,7 @@ namespace MatterHackers.RayTracer
 			RectangleInt rect = new RectangleInt(0, 0, size.x, size.y);
 			if (destImage == null || destImage.Width != rect.Width || destImage.Height != rect.Height)
 			{
-				destImage = new ImageBuffer(rect.Width, rect.Height, 32, new BlenderBGRA());
+				destImage = new ImageBuffer(rect.Width, rect.Height);
 			}
 
 			rayTracer.MultiThreaded = !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
@@ -110,7 +110,7 @@ namespace MatterHackers.RayTracer
 
 		private void AddAFloor()
 		{
-			ImageBuffer testImage = new ImageBuffer(200, 200, 32, new BlenderBGRA());
+			ImageBuffer testImage = new ImageBuffer(200, 200);
 			Graphics2D graphics = testImage.NewGraphics2D();
 			Random rand = new Random(0);
 			for (int i = 0; i < 100; i++)

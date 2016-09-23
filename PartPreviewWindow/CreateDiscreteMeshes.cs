@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl
 			// Create a 2D image the size of the printer bed at some scale with the parts draw on it top down
 
 			double scaleFactor = 5;
-			ImageBuffer partPlate = new ImageBuffer((int)(buildVolume.x * scaleFactor), (int)(buildVolume.y * scaleFactor), 32, new BlenderBGRA());
+			ImageBuffer partPlate = new ImageBuffer((int)(buildVolume.x * scaleFactor), (int)(buildVolume.y * scaleFactor));
 			Vector2 renderOffset = new Vector2(buildVolume.x / 2, buildVolume.y / 2) - new Vector2(partBounds.Center.x, partBounds.Center.y);
 
 			PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);

@@ -1637,7 +1637,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static ImageBuffer ColorCircle(int size, RGBA_Bytes color)
 		{
-			ImageBuffer imageBuffer = new ImageBuffer(size, size, 32, new BlenderBGRA());
+			ImageBuffer imageBuffer = new ImageBuffer(size, size);
 			Graphics2D normalGraphics = imageBuffer.NewGraphics2D();
 			Vector2 center = new Vector2(size / 2.0, size / 2.0);
 			normalGraphics.Circle(center, size / 2.0, color);

@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl
 				&& loadedMeshGroups[0].Meshes != null
 				&& loadedMeshGroups[0].Meshes[0] != null)
 			{
-				ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
+				ImageBuffer tempImage = new ImageBuffer(size.x, size.y);
 				Graphics2D partGraphics2D = tempImage.NewGraphics2D();
 				partGraphics2D.Clear(new RGBA_Bytes());
 
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl
 
 		private static void CreateImage(PartThumbnailWidget thumbnailWidget, double Width, double Height)
 		{
-			thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
+			thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height);
 		}
 
 		private static string GetImageFileName(string stlHashCode)
@@ -390,7 +390,7 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode)
 		{
-			ImageBuffer tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y, 32, new BlenderBGRA());
+			ImageBuffer tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y);
 			string imageFileName = GetImageFileName(stlHashCode);
 
 			if (File.Exists(imageFileName))
@@ -452,7 +452,7 @@ namespace MatterHackers.MatterControl
 						this.thumbnailImage = new ImageBuffer(this.buildingThumbnailImage);
 						this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
 
-						bigRender = new ImageBuffer(BigRenderSize.x, BigRenderSize.y, 32, new BlenderBGRA());
+						bigRender = new ImageBuffer(BigRenderSize.x, BigRenderSize.y);
 
 						foreach (MeshGroup meshGroup in loadedMeshGroups)
 						{
