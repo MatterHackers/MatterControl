@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			string cancelButtonText = "Cancel".Localize();
 			string cancelButtonMessage = "Stop the current print".Localize();
 			cancelButton = makeButton(cancelButtonText, cancelButtonMessage);
-			cancelButton.Name = "cancelPrintButton";
+			cancelButton.Name = "Cancel Print Button";
 
 			string resumeButtonText = "Resume".Localize();
 			string resumeButtonMessage = "Resume the current print".Localize();
