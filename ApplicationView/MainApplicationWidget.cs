@@ -535,7 +535,7 @@ namespace MatterHackers.MatterControl
 				});
 
 				// Show the import printers wizard
-				WizardWindow.Show("/CopyGuestProfiles", "Upload Printers", wizardPage);
+				WizardWindow.Show("/CopyGuestProfiles", "Migrate Printers", wizardPage);
 			}
 		}
 
