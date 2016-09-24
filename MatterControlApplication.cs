@@ -27,9 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using Gaming.Game;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.GuiAutomation;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PluginSystem;
@@ -41,26 +51,10 @@ using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using Mindscape.Raygun4Net;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using MatterHackers.GCodeVisualizer;
-using Gaming.Game;
-using MatterHackers.GuiAutomation;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.CustomWidgets;
-using Newtonsoft.Json;
-using System.Net;
 
 namespace MatterHackers.MatterControl
 {
-    public class MatterControlApplication : SystemWindow
+	public class MatterControlApplication : SystemWindow
 	{
 #if DEBUG
 		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
@@ -123,11 +117,6 @@ public static bool CameraPreviewActive = false;
 			if (StaticData.Instance == null) // it may already be initialized by tests
 			{
 				StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
-			}
-
-			if (OemSettings.Instance.ForceTestEnvironment)
-			{
-				MCWSBaseUri = "https://mattercontrol-test.appspot.com";
 			}
 		}
 
