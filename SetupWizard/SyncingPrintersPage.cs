@@ -14,6 +14,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 	{
 		TextWidget syncingDetails;
 		public SyncingPrintersPage()
+			: base("Close")
 		{
 			TextWidget syncingText = new TextWidget("Syncing Profiles...".Localize(),textColor: ActiveTheme.Instance.PrimaryTextColor);
 			syncingDetails = new TextWidget("Retrieving sync information...".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
