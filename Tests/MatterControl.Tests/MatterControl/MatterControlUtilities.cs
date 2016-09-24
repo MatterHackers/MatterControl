@@ -430,8 +430,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("SettingsAndControls", 1);
 				testRunner.Wait(.5);
 			}
-			resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1));
-			resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1));
+			resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1), "Click Settings Mode dropdown");
+			resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1), "Click 'Advanced' settings");
 			testRunner.Wait(.5);
 		}
 	}
