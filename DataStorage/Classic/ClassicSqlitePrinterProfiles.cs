@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 				printer.PrintLevelingJsonData, 
 				printer.PrintLevelingProbePositions);
 
-			layeredProfile.UserLayer["print_leveling_data"] = JsonConvert.SerializeObject(printLevelingData);
+			layeredProfile.UserLayer[SettingsKey.print_leveling_data] = JsonConvert.SerializeObject(printLevelingData);
 			layeredProfile.UserLayer["print_leveling_enabled"] = printer.DoPrintLeveling ? "true" : "false";
 
 			layeredProfile.UserLayer["manual_movement_speeds"] = printer.ManualMovementSpeeds;

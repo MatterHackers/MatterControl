@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								break;
 
 							case "MatterControl.PrintLevelingData":
-								layer.Add("print_leveling_data", item.Value);
+								layer.Add(SettingsKey.print_leveling_data, item.Value);
 								break;
 
 							case "MatterControl.PrintLevelingEnabled":
