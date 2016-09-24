@@ -5443,3 +5443,9 @@ Translated:Connection Status
 English:Retry Login
 Translated:Retry Login
 
+English:It's time to migrate your existing printer settings to your MatterHackers account. Once added, these printers will be available whenever and wherever you sign in to MatterControl. Printers that are not migrated will only be available in 'guest' mode.
+Translated:It's time to migrate your existing printer settings to your MatterHackers account. Once added, these printers will be available whenever and wherever you sign in to MatterControl. Printers that are not migrated will only be available in 'guest' mode.
+
+English:Migrate Printers to Account
+Translated:Migrate Printers to Account
+
