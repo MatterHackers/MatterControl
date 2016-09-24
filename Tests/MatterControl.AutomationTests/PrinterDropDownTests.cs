@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1), "Click Printer Tab");
 
 					string widgetName = "Printer Name Edit";
 					testRunner.ClickByName(widgetName);
@@ -42,17 +42,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Check to make sure the Printer dropdown gets the name change 
 					testRunner.ClickByName("Printers... Menu", 2);
 					testRunner.Wait(1);
-					resultsHarness.AddTestResult(testRunner.NameExists(newName + " Menu Item"));
+					resultsHarness.AddTestResult(testRunner.NameExists(newName + " Menu Item"), "Widget with updated printer name exists");
+
 					//Make sure the Active profile name changes as well
-					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile.Name == newName);
+					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(7));
+			Assert.IsTrue(testHarness.AllTestsPassed(5));
 		}
 	}
 }
