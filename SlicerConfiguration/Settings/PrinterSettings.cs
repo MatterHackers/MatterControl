@@ -491,6 +491,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
 			var keysToRetain = new HashSet<string>(userOverrides.Except(KnownSettings));
 
+			// Print leveling data has no SliceSettingsWidget editor but should be removed on 'Reset to Defaults'
+			keysToRetain.Remove(SettingsKey.print_leveling_data);
+
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
 			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{

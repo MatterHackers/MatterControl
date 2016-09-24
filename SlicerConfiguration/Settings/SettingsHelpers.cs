@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string start_gcode = nameof(start_gcode);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
+		public const string print_leveling_data = nameof(print_leveling_data);
 	}
 
 	public class SettingsHelpers
@@ -233,7 +234,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				printLevelingData = PrintLevelingData.Create(
 					ActiveSliceSettings.Instance,
-					printerSettings.GetValue("print_leveling_data"),
+					printerSettings.GetValue(SettingsKey.print_leveling_data),
 					printerSettings.GetValue("MatterControl.PrintLevelingProbePositions"));
 
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
@@ -249,7 +250,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetPrintLevelingData(PrintLevelingData data)
 		{
 			printLevelingData = data;
-			printerSettings.SetValue("print_leveling_data", JsonConvert.SerializeObject(data));
+			printerSettings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(data));
 		}
 
 		public void DoPrintLeveling(bool doLeveling)
