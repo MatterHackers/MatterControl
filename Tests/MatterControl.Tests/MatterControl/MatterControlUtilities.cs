@@ -136,13 +136,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static Process LaunchAndConnectToPrinterEmulator(AutomationRunner testRunner, bool runSlow = false)
+		public static Process LaunchAndConnectToPrinterEmulator(AutomationRunner testRunner, bool runSlow = false, string make = "Airwolf 3D", string model = "HD")
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
 
 			// Create the printer
-			MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+			MatterControlUtilities.AddAndSelectPrinter(testRunner, make, model);
 
 			var process = new Process();
 			process.StartInfo = new ProcessStartInfo()
@@ -238,6 +238,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Connection Wizard Skip Sign In Button", 2);
 
 			testRunner.ClickByName("Select Make", 2);
+
+			testRunner.Wait(.2);
+			testRunner.Type(make);
 
 			testRunner.ClickByName(manufacturer, 2);
 

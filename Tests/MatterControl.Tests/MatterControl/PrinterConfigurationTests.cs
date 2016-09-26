@@ -16,7 +16,6 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class PrinterConfigurationTests
 	{
-
 		[Test, Category("PrinterConfigurationFiles"), Ignore("Not Finished")]
 		public void PrinterConfigTests()
 		{
@@ -207,7 +206,6 @@ namespace MatterControl.Tests.MatterControl
 
 			return convertedLayerHeight <= convertedNozzleDiameterValue;
 		}
-
 
 		public bool bedSizeXYSeparatedByComma(Dictionary<string, string> currentFile)
 		{

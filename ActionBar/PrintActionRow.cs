@@ -106,6 +106,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			startButton.Click += onStartButton_Click;
 
 			configureButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
+			configureButton.Name = "Finish Setup Button";
 			configureButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			configureButton.Margin = new BorderDouble(6, 6, 6, 3);
 			configureButton.Click += onStartButton_Click;

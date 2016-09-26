@@ -110,9 +110,11 @@ namespace MatterHackers.MatterControl
 				backButton.Click += new EventHandler(back_Click);
 
 				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Next"), centerText: true);
+				nextButton.Name = "Next Button";
 				nextButton.Click += new EventHandler(next_Click);
 
 				doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"), centerText: true);
+				doneButton.Name = "Done Button";
 				doneButton.Click += done_Click;
 
 				cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
@@ -144,6 +146,7 @@ namespace MatterHackers.MatterControl
 			if (topSystemWindow != null)
 			{
 				topSystemWindow.CloseOnIdle();
+				ApplicationController.Instance.ReloadAll(null, null);
 			}
 		}
 

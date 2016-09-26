@@ -559,6 +559,7 @@ namespace MatterHackers.MatterControl
 				MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
 				moveButtonFactory.normalFillColor = color;
 				zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed, levelingButtons);
+				zPlusControl.Name = "Move Z positive";
 				zPlusControl.ToolTipText = "Move Z positive";
 				zButtons.AddChild(zPlusControl);
 
