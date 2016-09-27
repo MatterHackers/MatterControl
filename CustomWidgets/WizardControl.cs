@@ -146,8 +146,13 @@ namespace MatterHackers.MatterControl
 			if (topSystemWindow != null)
 			{
 				topSystemWindow.CloseOnIdle();
-				ApplicationController.Instance.ReloadAll(null, null);
 			}
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			ApplicationController.Instance.ReloadAll(null, null);
+			base.OnClosed(e);
 		}
 
 		private void next_Click(object sender, EventArgs mouseEvent)

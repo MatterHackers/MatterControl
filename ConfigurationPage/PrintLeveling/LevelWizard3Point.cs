@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
 		{
 			var settings = ActiveSliceSettings.Instance;
-			if (settings?.GetValue<bool>("print_leveling_enabled") == true
+			if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
 				lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent);

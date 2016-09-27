@@ -83,13 +83,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(testRunner.WaitForName("Start Print Button", .5), "Start Print showing");
 					resultsHarness.AddTestResult(!testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup hidden");
 
+					// reset to defaults and make sure print leveling is cleared
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
+
+					resultsHarness.AddTestResult(testRunner.ClickByName("Slice Settings Options Menu", 1), "Click Options" );
+					resultsHarness.AddTestResult(testRunner.ClickByName("Reset to defaults Menu Item", 1), "Select Reset to defaults");
+					resultsHarness.AddTestResult(testRunner.ClickByName("Yes Button", .5), "Click yes to revert");
+					testRunner.Wait(1);
+
+					// make sure it is showing the correct button
+					resultsHarness.AddTestResult(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
+					resultsHarness.AddTestResult(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
+
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, overrideHeight: 800);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(5));
+			Assert.IsTrue(testHarness.AllTestsPassed(7));
 		}
 	}
 }

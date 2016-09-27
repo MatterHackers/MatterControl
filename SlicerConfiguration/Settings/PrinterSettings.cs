@@ -493,6 +493,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Print leveling data has no SliceSettingsWidget editor but should be removed on 'Reset to Defaults'
 			keysToRetain.Remove(SettingsKey.print_leveling_data);
+			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
 			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
@@ -706,7 +707,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
-				if (GetValue<bool>("print_leveling_enabled"))
+				if (GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					string[] startGCode = GetValue("start_gcode").Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)

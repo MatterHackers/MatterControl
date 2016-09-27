@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl
 			middleRowContainer.AddChild(new VerticalSpacer());
 
 			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
-			if (showExportGCodeButton && ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
+			if (showExportGCodeButton && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
 				applyLeveling = new CheckBox(LocalizedString.Get(applyLevelingDuringExportString), ActiveTheme.Instance.PrimaryTextColor, 10);
 				applyLeveling.Checked = true;
@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					if (applyLeveling.Checked)
 					{

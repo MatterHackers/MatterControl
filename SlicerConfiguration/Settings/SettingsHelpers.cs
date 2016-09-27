@@ -89,18 +89,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string pause_gcode = nameof(pause_gcode);
 		public const string perimeter_start_end_overlap = nameof(perimeter_start_end_overlap);
 		public const string print_center = nameof(print_center);
+		public const string print_leveling_data = nameof(print_leveling_data);
+		public const string print_leveling_enabled = nameof(print_leveling_enabled);
+		public const string print_leveling_required_to_print = nameof(print_leveling_required_to_print);
 		public const string printer_name = nameof(printer_name);
 		public const string publish_bed_image = nameof(publish_bed_image);
-		public const string resume_gcode = nameof(resume_gcode);
+		public const string recover_first_layer_speed = nameof(recover_first_layer_speed);
 		public const string recover_is_enabled = nameof(recover_is_enabled);
 		public const string recover_position_before_z_home = nameof(recover_position_before_z_home);
-		public const string recover_first_layer_speed = nameof(recover_first_layer_speed);
+		public const string resume_gcode = nameof(resume_gcode);
 		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
-		public const string print_leveling_data = nameof(print_leveling_data);
 	}
 
 	public class SettingsHelpers
@@ -256,12 +258,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
-			if (doLeveling == printerSettings.GetValue<bool>("print_leveling_enabled"))
+			if (doLeveling == printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
 				return;
 			}
 
-			printerSettings.SetValue("print_leveling_enabled", doLeveling ? "1" : "0");
+			printerSettings.SetValue(SettingsKey.print_leveling_enabled, doLeveling ? "1" : "0");
 
 			PrinterSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
 

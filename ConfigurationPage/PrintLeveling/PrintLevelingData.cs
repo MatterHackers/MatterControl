@@ -161,8 +161,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public bool HasBeenRun()
+		public bool HasBeenRunAndEnabled()
 		{
+			if(!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+			{
+				return false;
+			}
+
 			switch (CurrentPrinterLevelingSystem)
 			{
 				case PrintLevelingData.LevelingSystem.Probe2Points:

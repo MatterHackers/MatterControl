@@ -106,6 +106,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				MenuAsWideAsItems = false,
 				AlignToRightEdge = true,
 			};
+			sliceOptionsMenuDropList.Name = "Slice Settings Options Menu";
 			sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
 
 			sliceOptionsMenuDropList.AddItem("Import".Localize()).Selected += (s, e) => { ImportSettingsMenu_Click(); };
@@ -140,9 +141,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (revertSettings)
 					{
+						bool onlyReloadSliceSettings = true;
+						if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+						&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+						{
+							onlyReloadSliceSettings = false;
+						}
+					
 						ActiveSliceSettings.Instance.ClearUserOverrides();
 						ActiveSliceSettings.Instance.Save();
-						ApplicationController.Instance.ReloadAdvancedControlsPanel();
+
+						if (onlyReloadSliceSettings)
+						{
+							ApplicationController.Instance.ReloadAdvancedControlsPanel();
+						}
+						else
+						{
+							ApplicationController.Instance.ReloadAll(null, null);
+						}
 					}
 				},
 				resetToDefaultsMessage,
