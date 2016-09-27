@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"manual_probe_paper_width",
 			SettingsKey.pause_gcode,
 			"print_leveling_method",
-			"print_leveling_required_to_print",
+			SettingsKey.print_leveling_required_to_print,
 			"print_leveling_solution",
 			SettingsKey.recover_first_layer_speed,
 			SettingsKey.recover_is_enabled,

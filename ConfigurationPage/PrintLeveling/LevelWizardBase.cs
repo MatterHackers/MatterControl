@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
 
-			if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print"))
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 			{
 				// run in the first run state
 				runningState = LevelWizardBase.RuningState.InitialStartupCalibration;

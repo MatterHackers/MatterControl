@@ -578,7 +578,7 @@ namespace MatterHackers.MatterControl
                     }
                 }
 
-				if (OsInformation.OperatingSystem != OSType.Windows)
+				if (OsInformation.OperatingSystem == OSType.Android)
 				{
 					// show this last so it is on top
 					if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")

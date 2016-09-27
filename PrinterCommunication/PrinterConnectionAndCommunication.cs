@@ -1422,11 +1422,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			try
 			{
 				// If leveling is required or is currently on
-				if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
-					|| ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-					if(levelingData?.HasBeenRun() != true)
+					if(levelingData?.HasBeenRunAndEnabled() != true)
 					{
 						LevelWizardBase.ShowPrintLevelWizard();
 						return;
@@ -1723,11 +1723,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											UiThread.RunOnIdle(() => ConnectionSucceeded.CallEvents(this, null));
 
 											// run the print leveling wizard if we need to for this printer
-											if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
-												|| ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
+											if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+												|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 											{
 												PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-												if (levelingData?.HasBeenRun() != true)
+												if (levelingData?.HasBeenRunAndEnabled() != true)
 												{
 													UiThread.RunOnIdle(LevelWizardBase.ShowPrintLevelWizard);
 												}

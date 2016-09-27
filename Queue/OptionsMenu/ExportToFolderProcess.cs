@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						string outputFileName = Path.ChangeExtension(originalFileName, ".gcode");
 						string outputPathAndName = Path.Combine(exportPath, outputFileName);
 
-						if (ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_enabled"))
+						if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 						{
 							GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(savedGcodeFileName);
 

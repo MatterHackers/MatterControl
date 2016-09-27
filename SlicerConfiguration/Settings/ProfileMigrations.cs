@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								break;
 
 							case "MatterControl.PrintLevelingEnabled":
-								layer.Add("print_leveling_enabled", item.Value);
+								layer.Add(SettingsKey.print_leveling_enabled, item.Value);
 								break;
 
 							case "MatterControl.ManualMovementSpeeds":

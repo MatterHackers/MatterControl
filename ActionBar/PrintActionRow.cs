@@ -106,6 +106,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			startButton.Click += onStartButton_Click;
 
 			configureButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
+			configureButton.Name = "Finish Setup Button";
 			configureButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			configureButton.Margin = new BorderDouble(6, 6, 6, 3);
 			configureButton.Click += onStartButton_Click;
@@ -303,8 +304,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
 						PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-						if (levelingData != null && ActiveSliceSettings.Instance.GetValue<bool>("print_leveling_required_to_print")
-							&& !levelingData.HasBeenRun())
+						if (levelingData != null && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+							&& !levelingData.HasBeenRunAndEnabled())
 						{
 							this.activePrintButtons.Add(configureButton);
 						}
