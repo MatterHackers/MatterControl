@@ -276,7 +276,9 @@ namespace MatterHackers.MatterControl.EeProm
 
 			//String l
 			get { return se; }
-			set { if (se.Equals(value))
+			set
+			{
+				if (se.Equals(value))
 					return;
 				se = value;
 				changed = true;
@@ -330,8 +332,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 			}
 			changed = true;
-        }
-
+		}
 
 		void SetSetting(string keyToSet, string valueToSetTo)
 		{
