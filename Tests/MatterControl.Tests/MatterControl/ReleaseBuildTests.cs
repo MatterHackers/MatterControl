@@ -2,7 +2,9 @@
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl;
+#if !__ANDROID__
 using MatterHackers.MatterControl.Tests.Automation;
+#endif
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -102,6 +104,7 @@ namespace MatterControl.Tests
 			Console.WriteLine(referencedItems);
 		}
 
+#if !__ANDROID__
 		[Test, RequiresSTA, RunInApplicationDomain]
 		public void MatterControlRuns()
 		{
@@ -120,6 +123,7 @@ namespace MatterControl.Tests
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
+#endif
 
 		[Test, Category("ReleaseQuality")]
 		public void MatterControlDependenciesAreOptimized()

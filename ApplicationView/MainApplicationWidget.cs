@@ -418,10 +418,10 @@ namespace MatterHackers.MatterControl
 					// give the widget a chance to hear about the close before they are actually closed.
 					PopOutManager.SaveIfClosed = false;
 					WidescreenPanel.PreChangePanels.CallEvents(this, null);
-					MainView.CloseAllChildren();
+					MainView?.CloseAllChildren();
 					using (new PerformanceTimer("ReloadAll", "AddElements"))
 					{
-						MainView.AddElements();
+						MainView?.AddElements();
 					}
 					PopOutManager.SaveIfClosed = true;
 					DoneReloadingAll?.CallEvents(null, null);
