@@ -322,7 +322,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (!PrinterConnectionAndCommunication.Instance.PrinterIsConnected
 				&& PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
 			{
-				if (ProfileManager.Instance.Profiles.Count() == 0)
+				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
 					this.activePrintButtons.Add(addPrinterButton);
 				}
@@ -338,6 +338,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						this.activePrintButtons.Add(selectPrinterButton);
 					}
 				}
+
 				ShowActiveButtons();
 				EnableActiveButtons();
 			}
