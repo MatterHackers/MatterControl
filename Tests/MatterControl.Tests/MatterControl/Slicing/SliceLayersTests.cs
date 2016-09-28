@@ -38,6 +38,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Slicing.Tests
 {
+#if !__ANDROID__
 	[TestFixture, Category("MatterControl.Slicing")]
 	public class SliceLayersTests
 	{
@@ -73,4 +74,5 @@ namespace MatterHackers.MatterControl.Slicing.Tests
 			Assert.IsTrue(layers.AllLayers.Count == 99);
 		}
 	}
+#endif
 }

@@ -5449,3 +5449,9 @@ Translated:It's time to migrate your existing printer settings to your MatterHac
 English:Migrate Printers to Account
 Translated:Migrate Printers to Account
 
+English:Select and add a new printer.
+Translated:Select and add a new printer.
+
+English:Select an existing printer.
+Translated:Select an existing printer.
+
