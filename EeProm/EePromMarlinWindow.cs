@@ -254,9 +254,8 @@ namespace MatterHackers.MatterControl.EeProm
 			PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
 #if __ANDROID__
-			TerminalWidget terminalWidget = new TerminalWidget(true);
 			this.AddChild(new SoftKeyboardContentOffset(mainContainer));
-			//mainContainer.Closed += (sender, e) => { Close(); };
+			mainContainer.Closed += (sender, e) => { Close(); };
 #else
 			AddChild(mainContainer);
 #endif

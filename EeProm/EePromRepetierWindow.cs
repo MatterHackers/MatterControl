@@ -185,9 +185,8 @@ namespace MatterHackers.MatterControl.EeProm
 			topToBottom.AddChild(buttonBar);
 
 #if __ANDROID__
-			TerminalWidget terminalWidget = new TerminalWidget(true);
 			this.AddChild(new SoftKeyboardContentOffset(topToBottom));
-			//topToBottom.Closed += (sender, e) => { Close(); };
+			topToBottom.Closed += (sender, e) => { Close(); };
 #else
 			this.AddChild(topToBottom);
 #endif
