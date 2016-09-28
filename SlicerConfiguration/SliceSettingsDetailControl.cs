@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem settingsHistory = sliceOptionsMenuDropList.AddItem("Settings History".Localize());
 			settingsHistory.Selected += (s, e) => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Settings History"); };
 
-			settingsHistory.Enabled = ApplicationController.Instance.GetSessionUsername() != null;
+			settingsHistory.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
 
 			sliceOptionsMenuDropList.AddItem("Reset to defaults".Localize()).Selected += (s, e) => { UiThread.RunOnIdle(ResetToDefaults); };
 
