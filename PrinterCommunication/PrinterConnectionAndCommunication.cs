@@ -693,7 +693,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return 100.0;
 				}
 				else if (NumberOfLinesInCurrentPrint > 0
-					&& loadedGCode != null)
+					&& loadedGCode != null
+				    && gCodeFileStream0 != null)
 				{
 					return loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 				}
