@@ -28,7 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterSlice.Tests;
+#if !__ANDROID__
 using MatterHackers.MatterControl.Tests.Automation;
+#endif
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
