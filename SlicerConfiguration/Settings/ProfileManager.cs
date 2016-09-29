@@ -70,8 +70,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					username = "guest";
 				}
 
-				// Append userName to ProfilesPath
-				string path = Path.Combine(userDataPath, "Profiles", username);
+				// Append userName to ProfilesPath (directory is Env specific with the addition of EnvironmentName)
+				string path = Path.Combine(userDataPath, "Profiles", ApplicationController.EnvironmentName + username);
 
 				// Ensure directory exists
 				Directory.CreateDirectory(path);
