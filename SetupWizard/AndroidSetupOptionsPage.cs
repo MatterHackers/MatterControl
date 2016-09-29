@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl
 			this.textImageButtonFactory = textImageButtonFactory;
 
 			bool signedIn = true;
-			string username = ApplicationController.Instance.GetSessionUsername();
+			string username = AuthenticationData.Instance.ActiveSessionUsername;
 			if (username == null)
 			{
 				signedIn = false;

@@ -50,7 +50,8 @@ namespace MatterHackers.MatterControl
 {
 	using Agg.Font;
 	using System.Reflection;
-
+	using System.Text.RegularExpressions;
+	
 	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
 	{
 	}
@@ -184,8 +185,14 @@ namespace MatterHackers.MatterControl
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
-		public static Func<string> GetSessionInfo;
 		public static Action<bool> OutboundRequest;
+
+
+#if DEBUG
+		public const string EnvironmentName = "TestEnv_";
+#else
+		public const string EnvironmentName = "";
+#endif
 
 		/// <summary>
 		/// Allows application components to hook initial SystemWindow Load event without an existing Widget instance
@@ -245,8 +252,11 @@ namespace MatterHackers.MatterControl
 
 		public ApplicationController()
 		{
-			//Name = "MainSlidePanel";
+			// Name = "MainSlidePanel";
 			ActiveTheme.ThemeChanged.RegisterEvent(ReloadAll, ref unregisterEvents);
+
+			// Remove consumed ClientToken from running list on shutdown
+			ApplicationClosed += (s, e) => ApplicationSettings.Instance.ReleaseClientToken();
 		}
 
 		public void StartSignIn()
@@ -379,18 +389,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public string GetSessionUsername()
-		{
-			if (GetSessionInfo != null)
-			{
-				return GetSessionInfo();
-			}
-			else
-			{
-				return null;
-			}
-		}
-
 		private static string MakeValidFileName(string name)
 		{
 			if (string.IsNullOrEmpty(name))
@@ -398,15 +396,15 @@ namespace MatterHackers.MatterControl
 				return name;
 			}
 
-			string invalidChars = System.Text.RegularExpressions.Regex.Escape(new string(System.IO.Path.GetInvalidFileNameChars()));
+			string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
 			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
 
-			return System.Text.RegularExpressions.Regex.Replace(name, invalidRegStr, "_");
+			return Regex.Replace(name, invalidRegStr, "_");
 		}
 
 		public string GetSessionUsernameForFileSystem()
 		{
-			return MakeValidFileName(GetSessionUsername());
+			return MakeValidFileName(AuthenticationData.Instance.ActiveSessionUsername);
 		}
 
 		public void ReloadAll(object sender, EventArgs e)
@@ -500,14 +498,10 @@ namespace MatterHackers.MatterControl
 
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
 
-			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
-			string currentUserName = UserSettings.Instance.get("ActiveUserName");
-
-			UserSettings.Instance.set("ActiveUserName", activeUserName);
-
 			// Only fire UserChanged if it actually happened - prevents runaway positive feedback loop
-			if (currentUserName != activeUserName)
+			if (AuthenticationData.Instance.ActiveSessionUsername != AuthenticationData.Instance.LastSessionUsername)
 			{
+				AuthenticationData.Instance.LastSessionUsername = AuthenticationData.Instance.ActiveSessionUsername;
 				UserChanged();
 			}
 		}
@@ -637,15 +631,6 @@ namespace MatterHackers.MatterControl
 		public void ReloadLibraryUI()
 		{
 			PrintLibraryWidget.Reload();
-		}
-
-		public static void ClearCachedCredentials()
-		{
-			string sessionFilePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "cache", "session.bin");
-			if (File.Exists(sessionFilePath))
-			{
-				File.Delete(sessionFilePath);
-			}
 		}
 	}
 
