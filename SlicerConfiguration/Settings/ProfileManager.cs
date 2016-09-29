@@ -89,13 +89,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				string username = UserSettings.Instance.get("ActiveUserName");
+				string username = ApplicationController.Instance.GetSessionUsernameForFileSystem();
 				if (string.IsNullOrEmpty(username))
 				{ 
 					username = GuestDBPath;
 
 					// If ActiveUserName is empty or invalid and the credentials file exists, delete local credentials, resetting to unauthenticated guest mode
-					ApplicationController.ClearCachedCredentials();
+					AuthenticationData.Instance.ClearActiveSession();
 				}
 				else
 				{
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				string activeUserName = UserSettings.Instance.get("ActiveUserName");
+				string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
 				return UserSettings.Instance.get($"ActiveProfileID-{activeUserName}");
 			}
 		}
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetLastProfile(string printerID)
 		{
-			string activeUserName = UserSettings.Instance.get("ActiveUserName");
+			string activeUserName = ApplicationController.Instance.GetSessionUsernameForFileSystem();
 			UserSettings.Instance.set($"ActiveProfileID-{activeUserName}", printerID);
 		}
 
