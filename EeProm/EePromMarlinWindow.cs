@@ -90,22 +90,25 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings = new EePromMarlinSettings();
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
 
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainer.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-			mainContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			GuiWidget mainContainer = new GuiWidget();
+			mainContainer.AnchorAll();
 			mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			mainContainer.Padding = new BorderDouble(3, 0);
 
-			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
-			topToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			topToBottom.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			topToBottom.Padding = new BorderDouble(top: 3);
+			// space filling color
+			GuiWidget spaceFiller = new GuiWidget(0, 500);
+			spaceFiller.VAnchor = VAnchor.ParentBottom;
+			spaceFiller.HAnchor = HAnchor.ParentLeftRight;
+			spaceFiller.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			spaceFiller.Padding = new BorderDouble(top: 3);
+			mainContainer.AddChild(spaceFiller);
 
+			double topBarHeight = 0;
 			// the top button bar
 			{
 				FlowLayoutWidget topButtonBar = new FlowLayoutWidget();
-				topButtonBar.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				topButtonBar.HAnchor = HAnchor.ParentLeftRight;
+				topButtonBar.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
 				topButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 				topButtonBar.Margin = new BorderDouble(0, 3);
@@ -120,50 +123,60 @@ namespace MatterHackers.MatterControl.EeProm
 				};
 
 				mainContainer.AddChild(topButtonBar);
+
+				topBarHeight = topButtonBar.Height;
 			}
 
-			topToBottom.AddChild(Create4FieldSet("Steps per mm:".Localize(),
+			// the center content
+			FlowLayoutWidget conterContent = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			conterContent.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
+			conterContent.HAnchor = HAnchor.ParentLeftRight;
+			conterContent.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			conterContent.Padding = new BorderDouble(top: 3);
+			conterContent.Margin = new BorderDouble(top: topBarHeight);
+
+			conterContent.AddChild(Create4FieldSet("Steps per mm:".Localize(),
 				"X:", ref stepsPerMmX,
 				"Y:", ref stepsPerMmY,
 				"Z:", ref stepsPerMmZ,
 				"E:", ref stepsPerMmE));
 
-			topToBottom.AddChild(Create4FieldSet("Maximum feedrates [mm/s]:".Localize(),
+			conterContent.AddChild(Create4FieldSet("Maximum feedrates [mm/s]:".Localize(),
 				"X:", ref maxFeedrateMmPerSX,
 				"Y:", ref maxFeedrateMmPerSY,
 				"Z:", ref maxFeedrateMmPerSZ,
 				"E:", ref maxFeedrateMmPerSE));
 
-			topToBottom.AddChild(Create4FieldSet("Maximum Acceleration [mm/s²]:".Localize(),
+			conterContent.AddChild(Create4FieldSet("Maximum Acceleration [mm/s²]:".Localize(),
 				"X:", ref maxAccelerationMmPerSSqrdX,
 				"Y:", ref maxAccelerationMmPerSSqrdY,
 				"Z:", ref maxAccelerationMmPerSSqrdZ,
 				"E:", ref maxAccelerationMmPerSSqrdE));
 
-			topToBottom.AddChild(CreateField("Acceleration:".Localize(), ref acceleration));
-			topToBottom.AddChild(CreateField("Retract Acceleration:".Localize(), ref retractAcceleration));
+			conterContent.AddChild(CreateField("Acceleration:".Localize(), ref acceleration));
+			conterContent.AddChild(CreateField("Retract Acceleration:".Localize(), ref retractAcceleration));
 
-			topToBottom.AddChild(Create3FieldSet("PID settings:".Localize(),
+			conterContent.AddChild(Create3FieldSet("PID settings:".Localize(),
 				"P:", ref pidP,
 				"I:", ref pidI,
 				"D:", ref pidD));
 
-			topToBottom.AddChild(Create3FieldSet("Homing Offset:".Localize(),
+			conterContent.AddChild(Create3FieldSet("Homing Offset:".Localize(),
 				"X:", ref homingOffsetX,
 				"Y:", ref homingOffsetY,
 				"Z:", ref homingOffsetZ));
 
-			topToBottom.AddChild(CreateField("Min feedrate [mm/s]:".Localize(), ref minFeedrate));
-			topToBottom.AddChild(CreateField("Min travel feedrate [mm/s]:".Localize(), ref minTravelFeedrate));
-			topToBottom.AddChild(CreateField("Minimum segment time [ms]:".Localize(), ref minSegmentTime));
-			topToBottom.AddChild(CreateField("Maximum X-Y jerk [mm/s]:".Localize(), ref maxXYJerk));
-			topToBottom.AddChild(CreateField("Maximum Z jerk [mm/s]:".Localize(), ref maxZJerk));
+			conterContent.AddChild(CreateField("Min feedrate [mm/s]:".Localize(), ref minFeedrate));
+			conterContent.AddChild(CreateField("Min travel feedrate [mm/s]:".Localize(), ref minTravelFeedrate));
+			conterContent.AddChild(CreateField("Minimum segment time [ms]:".Localize(), ref minSegmentTime));
+			conterContent.AddChild(CreateField("Maximum X-Y jerk [mm/s]:".Localize(), ref maxXYJerk));
+			conterContent.AddChild(CreateField("Maximum Z jerk [mm/s]:".Localize(), ref maxZJerk));
 
 			GuiWidget topBottomSpacer = new GuiWidget(1, 1);
 			topBottomSpacer.VAnchor = VAnchor.ParentBottomTop;
-			topToBottom.AddChild(topBottomSpacer);
+			conterContent.AddChild(topBottomSpacer);
 
-			mainContainer.AddChild(topToBottom);
+			mainContainer.AddChild(conterContent);
 
 			// the bottom button bar
 			{

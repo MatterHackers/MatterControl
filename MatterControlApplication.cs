@@ -566,10 +566,11 @@ public static bool CameraPreviewActive = false;
 				PrinterConnectionAndCommunication.Instance.Disable();
 			}
 			//Close connection to the local datastore
-			Datastore.Instance.Exit();
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 			SlicingQueue.Instance.ShutDownSlicingThread();
 			ApplicationController.Instance.OnApplicationClosed();
+
+			Datastore.Instance.Exit();
 
 			if (RestartOnClose)
 			{
