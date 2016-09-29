@@ -247,8 +247,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static PrinterSettings LoadWithoutRecovery(string profileID)
 		{
-			string profilePath = Instance[profileID]?.ProfilePath;
-			if (profilePath != null && File.Exists(profilePath))
+			var printerInfo = Instance[profileID];
+
+			string profilePath = printerInfo?.ProfilePath;
+			if (profilePath != null 
+				&& File.Exists(profilePath)
+				&& !printerInfo.MarkedForDelete)
 			{
 				try
 				{

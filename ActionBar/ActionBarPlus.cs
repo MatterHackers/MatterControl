@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 			// Add Child Elements
 			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Responsive)
 			{
-				this.AddChild(new ActionBar.PrinterActionRow());
+				this.AddChild(new PrinterConnectAndSelectControl());
 			}
 			this.AddChild(PrintStatusRow.Create(queueDataView));
 			this.Padding = new BorderDouble(bottom: 6);

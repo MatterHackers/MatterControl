@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private int currentTabIndex = 0;
 
 		public EePromMarlinWindow()
-			: base(700, 480)
+			: base(650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
 		{
 			AlwaysOnTopOfMain = true;
 			Title = "Marlin Firmware EEPROM Settings".Localize();
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
 
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainer.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
+			mainContainer.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 			mainContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			mainContainer.Padding = new BorderDouble(3, 0);
@@ -255,7 +255,6 @@ namespace MatterHackers.MatterControl.EeProm
 
 #if __ANDROID__
 			this.AddChild(new SoftKeyboardContentOffset(mainContainer));
-			mainContainer.Closed += (sender, e) => { Close(); };
 #else
 			AddChild(mainContainer);
 #endif

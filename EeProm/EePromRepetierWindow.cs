@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private event EventHandler unregisterEvents;
 
 		public EePromRepetierWindow()
-			: base(540, 480)
+			: base(650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
 		{
 			AlwaysOnTopOfMain = true;
 			BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings = new EePromRepetierStorage();
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
+			topToBottom.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 			topToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			topToBottom.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			topToBottom.Padding = new BorderDouble(3, 0);
@@ -186,7 +186,6 @@ namespace MatterHackers.MatterControl.EeProm
 
 #if __ANDROID__
 			this.AddChild(new SoftKeyboardContentOffset(topToBottom));
-			topToBottom.Closed += (sender, e) => { Close(); };
 #else
 			this.AddChild(topToBottom);
 #endif

@@ -46,10 +46,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	internal class PrintActionRow : ActionRowBase
+	internal class PrintActionRow : FlowLayoutWidget
 	{
 		private List<Button> activePrintButtons = new List<Button>();
 		private Button addButton;
@@ -59,6 +60,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string cancelCurrentPrintMessage = "Cancel the current print?".Localize();
 		private string cancelCurrentPrintTitle = "Cancel Print?".Localize();
 		private Button connectButton;
+		private Button addPrinterButton;
+		private Button selectPrinterButton;
 		private Button resetConnectionButton;
 		private Button doneWithCurrentPartButton;
 		private Button pauseButton;
@@ -74,7 +77,24 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public PrintActionRow(QueueDataView queueDataView)
 		{
+			this.HAnchor = HAnchor.ParentLeftRight;
+
+			textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
+			textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.AllowThemeToAdjustImage = false;
+
+			textImageButtonFactory.borderWidth = 1;
+			textImageButtonFactory.FixedHeight = 52 * GuiWidget.DeviceScale;
+			textImageButtonFactory.fontSize = 14;
+			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
+			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
+
 			this.queueDataView = queueDataView;
+
+			AddChildElements();
+			AddHandlers();
 		}
 
 		private event EventHandler unregisterEvents;
@@ -93,7 +113,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Invalidate();
 		}
 
-		protected override void AddChildElements()
+		protected void AddChildElements()
 		{
 			addButton = textImageButtonFactory.GenerateTooltipButton("Add".Localize(), StaticData.Instance.LoadIcon("icon_circle_plus.png",32,32).InvertLightness());
 			addButton.ToolTipText = "Add a file to be printed".Localize();
@@ -111,12 +131,43 @@ namespace MatterHackers.MatterControl.ActionBar
 			configureButton.Margin = new BorderDouble(6, 6, 6, 3);
 			configureButton.Click += onStartButton_Click;
 
-			string connectButtonText = "Connect".Localize();
-			string connectButtonMessage = "Connect to the printer".Localize();
-			connectButton = textImageButtonFactory.GenerateTooltipButton(connectButtonText, StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32).InvertLightness());
-			connectButton.ToolTipText = connectButtonMessage;
+			connectButton = textImageButtonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32).InvertLightness());
+			connectButton.ToolTipText = "Connect to the printer".Localize();
 			connectButton.Margin = new BorderDouble(6, 6, 6, 3);
-			connectButton.Click += onConnectButton_Click;
+			connectButton.Click += (s, e) =>
+			{
+				if (ActiveSliceSettings.Instance.PrinterSelected)
+				{
+#if __ANDROID__
+				if (!FrostedSerialPort.HasPermissionToDevice())
+				{
+					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
+					FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
+				}
+				else
+#endif
+					{
+						PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+						PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
+					}
+				}
+			};
+
+			addPrinterButton = textImageButtonFactory.GenerateTooltipButton("Add Printer".Localize());
+			addPrinterButton.ToolTipText = "Select and add a new printer.".Localize();
+			addPrinterButton.Margin = new BorderDouble(6, 6, 6, 3);
+			addPrinterButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup(true));
+			};
+
+			selectPrinterButton = textImageButtonFactory.GenerateTooltipButton("Select Printer".Localize());
+			selectPrinterButton.ToolTipText = "Select an existing printer.".Localize();
+			selectPrinterButton.Margin = new BorderDouble(6, 6, 6, 3);
+			selectPrinterButton.Click += (s, e) =>
+			{
+				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
+			};
 
 			string resetConnectionButtontText = "Reset".Localize();
 			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
@@ -186,6 +237,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(connectButton);
 			allPrintButtons.Add(connectButton);
 
+			this.AddChild(addPrinterButton);
+			allPrintButtons.Add(addPrinterButton);
+
+			this.AddChild(selectPrinterButton);
+			allPrintButtons.Add(selectPrinterButton);
+
 			this.AddChild(addButton);
 			allPrintButtons.Add(addButton);
 
@@ -219,7 +276,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			SetButtonStates();
 		}
 
-		protected override void AddHandlers()
+		protected void AddHandlers()
 		{
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
@@ -250,21 +307,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		protected override void Initialize()
-		{
-			textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
-			textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.AllowThemeToAdjustImage = false;
-
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.FixedHeight = 52 * GuiWidget.DeviceScale;
-			textImageButtonFactory.fontSize = 14;
-			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
-			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
-		}
-
 		protected Button makeButton(string buttonText, string buttonToolTip = "")
 		{
 			Button button = textImageButtonFactory.GenerateTooltipButton(buttonText);
@@ -280,10 +322,23 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (!PrinterConnectionAndCommunication.Instance.PrinterIsConnected
 				&& PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
 			{
-				if (UserSettings.Instance.IsTouchScreen)
+				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
-					this.activePrintButtons.Add(connectButton);
+					this.activePrintButtons.Add(addPrinterButton);
 				}
+				else if (UserSettings.Instance.IsTouchScreen)
+				{
+					// only on touch screen because desktop has a printer list and a connect button
+					if (ActiveSliceSettings.Instance.PrinterSelected)
+					{
+						this.activePrintButtons.Add(connectButton);
+					}
+					else // no printer selected
+					{
+						this.activePrintButtons.Add(selectPrinterButton);
+					}
+				}
+
 				ShowActiveButtons();
 				EnableActiveButtons();
 			}
@@ -436,25 +491,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void onAddButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(AddButtonOnIdle);
-		}
-
-		private void onConnectButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-#if __ANDROID__
-				if (!FrostedSerialPort.HasPermissionToDevice())
-				{
-					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
-					FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
-				}
-				else
-#endif
-				{
-					PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
-				}
-			}
 		}
 
 		void RunTroubleShooting()

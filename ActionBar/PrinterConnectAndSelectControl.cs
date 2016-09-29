@@ -41,7 +41,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	public class PrinterActionRow : ActionRowBase
+	public class PrinterConnectAndSelectControl : FlowLayoutWidget
 	{
 		private TextImageButtonFactory actionBarButtonFactory = new TextImageButtonFactory();
 		private Button connectPrinterButton;
@@ -55,13 +55,34 @@ namespace MatterHackers.MatterControl.ActionBar
 		private event EventHandler unregisterEvents;
 		static EventHandler staticUnregisterEvents;
 
+		public PrinterConnectAndSelectControl()
+		{
+			this.HAnchor = HAnchor.ParentLeftRight;
+
+			actionBarButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			actionBarButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			actionBarButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+			actionBarButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
+			actionBarButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			actionBarButtonFactory.hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			actionBarButtonFactory.invertImageLocation = true;
+			actionBarButtonFactory.borderWidth = 0;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			AddChildElements();
+		}
+
 		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
-		protected override void AddChildElements()
+		protected void AddChildElements()
 		{
 			actionBarButtonFactory.invertImageLocation = false;
 			actionBarButtonFactory.borderWidth = 1;
@@ -203,23 +224,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-		}
-
-		protected override void Initialize()
-		{
-			actionBarButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			actionBarButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			actionBarButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			actionBarButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
-			actionBarButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			actionBarButtonFactory.hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			actionBarButtonFactory.invertImageLocation = true;
-			actionBarButtonFactory.borderWidth = 0;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 		}
 
 		static public void UserRequestedConnectToActivePrinter()
