@@ -421,19 +421,20 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		static int reloadCount = 0;
 		private void DoReloadAll(GuiWidget drawingWidget, DrawEventArgs e)
 		{
 			UiThread.RunOnIdle(() =>
 			{
 				if (MainView != null)
 				{
-					using (new PerformanceTimer("ReloadAll", "Total"))
+					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 					{
 						// give the widget a chance to hear about the close before they are actually closed.
 						PopOutManager.SaveIfClosed = false;
 						WidescreenPanel.PreChangePanels.CallEvents(this, null);
 						MainView?.CloseAllChildren();
-						using (new PerformanceTimer("ReloadAll", "AddElements"))
+						using (new QuickTimer("ReloadAll_AddElements"))
 						{
 							MainView?.AddElements();
 						}
