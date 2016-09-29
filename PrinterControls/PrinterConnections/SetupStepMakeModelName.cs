@@ -46,7 +46,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = elementMargin,
 				Name = "Select Make",
-				ListSource = OemSettings.Instance.AllOems
+				ListSource = OemSettings.Instance.AllOems,
+				TabStop = true
 			};
 
 			printerManufacturerSelector.SelectionChanged += ManufacturerDropList_SelectionChanged;
@@ -66,6 +67,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Name = "Select Model",
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = elementMargin,
+				TabStop = true
 			};
 			printerModelSelector.SelectionChanged += ModelDropList_SelectionChanged;
 
