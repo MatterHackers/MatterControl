@@ -79,7 +79,11 @@ namespace MatterHackers.MatterControl.EeProm
 			bool foundFirstM92E = false;
 			foreach (string token in test)
 			{
-				if ((token != " ") && ((token == "M92") || (mode == "M92")))
+				if(string.IsNullOrWhiteSpace(token))
+				{
+					continue;
+				}
+				if (((token == "M92") || (mode == "M92")))
 				{
 					foundSetting = true;
 					if (mode != "M92")
@@ -106,7 +110,7 @@ namespace MatterHackers.MatterControl.EeProm
 						se = token.Substring(1);
 					}
 				}
-				if ((token != " ") && ((token == "M203") || (mode == "M203")))
+				if (((token == "M203") || (mode == "M203")))
 				{
 					foundSetting = true;
 					mode = "M203";
@@ -127,7 +131,7 @@ namespace MatterHackers.MatterControl.EeProm
 						fe = token.Substring(1);
 					}
 				}
-				if ((token != " ") && ((token == "M201") || (mode == "M201")))
+				if (((token == "M201") || (mode == "M201")))
 				{
 					foundSetting = true;
 					mode = "M201";
@@ -148,7 +152,7 @@ namespace MatterHackers.MatterControl.EeProm
 						ae = token.Substring(1);
 					}
 				}
-				if ((token != " ") && ((token == "M204") || (mode == "M204")))
+				if (((token == "M204") || (mode == "M204")))
 				{
 					foundSetting = true;
 					mode = "M204";
@@ -161,7 +165,7 @@ namespace MatterHackers.MatterControl.EeProm
 						racc = token.Substring(1);
 					}
 				}
-				if ((token != " ") && ((token == "M205") || (mode == "M205")))
+				if (((token == "M205") || (mode == "M205")))
 				{
 					foundSetting = true;
 					mode = "M205";
@@ -186,7 +190,7 @@ namespace MatterHackers.MatterControl.EeProm
 						avz = token.Substring(1);
 					}
 				}
-				if ((token != " ") && ((token == "M301") || (mode == "M301")))
+				if (((token == "M301") || (mode == "M301")))
 				{
 					foundSetting = true;
 					mode = "M301";
@@ -204,7 +208,7 @@ namespace MatterHackers.MatterControl.EeProm
 						dpid = token.Substring(1);
 					}
 				}
-				if ((token != " ") && ((token == "M206") || (mode == "M206")))
+				if (((token == "M206") || (mode == "M206")))
 				{
 					foundSetting = true;
 					mode = "M206";

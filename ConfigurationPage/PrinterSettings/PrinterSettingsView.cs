@@ -235,6 +235,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						break;
 
 					default:
+						PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M115");
 						StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
 						break;
 				}
