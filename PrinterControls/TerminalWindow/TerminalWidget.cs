@@ -39,6 +39,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -247,7 +248,7 @@ namespace MatterHackers.MatterControl
 
 		private void CloseWindow()
 		{
-			this.Parent.Close();
+			this.Parents<SystemWindow>().FirstOrDefault()?.Close();
 		}
 
 		private List<string> commandHistory = new List<string>();
