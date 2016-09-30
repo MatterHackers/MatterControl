@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CreateDownloadsSubFolder()
 		{
-			Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary"));
+			Directory.CreateDirectory(PathToDownloadsSubFolder);
 		}
 
 		public static string PathToDownloadsSubFolder
@@ -82,9 +82,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static void CleanupDownloadsDirectory(string path)
+		public static void DeleteDownloadsSubFolder()
 		{
-			Directory.Delete(path, true);
+			Directory.Delete(PathToDownloadsSubFolder, true);
 		}
 
 		public static void SignOut(AutomationRunner testRunner)
@@ -335,10 +335,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static bool NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
 		{
 			bool goodNavigate = true;
+
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			goodNavigate &= testRunner.ClickByName(libraryRowItemName);
 			goodNavigate &= testRunner.MoveToByName(libraryRowItemName);
 			testRunner.Wait(.5);
+
 			goodNavigate &= testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
 			testRunner.Wait(.5);
 
