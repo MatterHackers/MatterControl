@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(printerSelectorAndEditButton);
 
 			var printerSelector = new PrinterSelector();
-			printerSelector.AddPrinter += (s, e) => WizardPage.WizardWindow.ChangeToSetupPrinterForm();
+			printerSelector.AddPrinter += (s, e) => WizardPage.WizardWindow.ChangeToSetupPrinterForm(true);
 			printerSelectorAndEditButton.AddChild(printerSelector);
 
 			var editButton = TextImageButtonFactory.GetThemedEditButton();

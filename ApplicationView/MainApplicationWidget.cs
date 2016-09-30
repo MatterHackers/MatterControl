@@ -407,22 +407,43 @@ namespace MatterHackers.MatterControl
 			return MakeValidFileName(AuthenticationData.Instance.ActiveSessionUsername);
 		}
 
+
+
+		bool pendingReloadRequest = false;
 		public void ReloadAll(object sender, EventArgs e)
+		{
+			if (!pendingReloadRequest 
+				&& MainView != null)
+			{
+				pendingReloadRequest = true;
+				MainView.AfterDraw += DoReloadAll;
+				MainView.Invalidate();
+			}
+		}
+
+		static int reloadCount = 0;
+		private void DoReloadAll(GuiWidget drawingWidget, DrawEventArgs e)
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				using (new PerformanceTimer("ReloadAll", "Total"))
+				if (MainView != null)
 				{
-					// give the widget a chance to hear about the close before they are actually closed.
-					PopOutManager.SaveIfClosed = false;
-					WidescreenPanel.PreChangePanels.CallEvents(this, null);
-					MainView?.CloseAllChildren();
-					using (new PerformanceTimer("ReloadAll", "AddElements"))
+					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 					{
-						MainView?.AddElements();
+						// give the widget a chance to hear about the close before they are actually closed.
+						PopOutManager.SaveIfClosed = false;
+						WidescreenPanel.PreChangePanels.CallEvents(this, null);
+						MainView?.CloseAllChildren();
+						using (new QuickTimer("ReloadAll_AddElements"))
+						{
+							MainView?.AddElements();
+						}
+						PopOutManager.SaveIfClosed = true;
+						DoneReloadingAll?.CallEvents(null, null);
 					}
-					PopOutManager.SaveIfClosed = true;
-					DoneReloadingAll?.CallEvents(null, null);
+
+					MainView.AfterDraw -= DoReloadAll;
+					pendingReloadRequest = false;
 				}
 			});
 		}

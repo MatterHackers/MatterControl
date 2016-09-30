@@ -34,6 +34,8 @@ using System.Collections.Generic;
 using MatterHackers.MatterControl.SettingsManagement;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg;
+using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -70,6 +72,16 @@ namespace MatterHackers.MatterControl
 				}
 
 				Invalidate();
+			}
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
+
+			if (Focused)
+			{
+				graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Orange);
 			}
 		}
 	}
