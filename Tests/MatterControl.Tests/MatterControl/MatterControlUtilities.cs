@@ -354,10 +354,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			QueueTemplate queueItemFolderToAdd = QueueTemplate.None,
 			int overrideWidth = -1, int overrideHeight = -1)
 		{
-			// Walk back a step in the stack and output the callers name
-			StackTrace st = new StackTrace(false);
-			Console.WriteLine("\r\nRunning automation test: " + st.GetFrames().Skip(1).First().GetMethod().Name);
-
 			if (staticDataPathOverride == null)
 			{
 				// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
