@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button connectPrinterButton;
 		private Button editPrinterButton;
 		private string disconnectAndCancelMessage = "Disconnect and cancel the current print?".Localize();
-		private string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print.".Localize();
+		private string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print".Localize();
 		private Button disconnectPrinterButton;
 		private PrinterSelector printerSelector;
 		GuiWidget printerSelectorAndEditOverlay;
