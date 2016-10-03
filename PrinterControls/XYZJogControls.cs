@@ -270,6 +270,7 @@ namespace MatterHackers.MatterControl
 						setMoveDistanceControl.AddChild(moveRadioButtons);
 
 						TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
+						mmLabel.Margin = new BorderDouble(left: 10);
 						mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
 						tooBigFlowLayout.AddChild(mmLabel);
@@ -541,6 +542,7 @@ namespace MatterHackers.MatterControl
 
 			TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
 			mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			mmLabel.Margin = new BorderDouble(left: 10);
 			setMoveDistanceControl.AddChild(mmLabel);
 			setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
 			eButtons.AddChild(setMoveDistanceControl);

@@ -122,26 +122,20 @@ namespace MatterHackers.MatterControl
 			HorizontalLine lineSpacerZero = new HorizontalLine();
 			lineSpacerZero.Margin = new BorderDouble(4, 10);
 			this.TabBar.AddChild(lineSpacerZero);
-
-			GuiWidget manualPrinterControls = new ManualControlsWidget();
-
 #if __ANDROID__
             //Add the tab contents for 'Advanced Controls'
+			GuiWidget manualPrinterControls = new ManualControlsWidget();
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
             manualControlsPage = new TabPage(manualPrinterControls, printerControlsLabel);
             this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 #else
-            ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
-            manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-            manualPrinterControlsScrollArea.AnchorAll();
-            manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
-
 			//Add the tab contents for 'Advanced Controls'
+			ScrollableWidget manualPrinterControlsScrollArea = CreateManualControlsTab();
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            manualControlsPage = new TabPage(manualPrinterControlsScrollArea, printerControlsLabel);           
+			manualControlsPage = new TabPage(manualPrinterControlsScrollArea, printerControlsLabel);
 
-            this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
+			this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 #endif
 
@@ -246,6 +240,18 @@ namespace MatterHackers.MatterControl
 		}
 		private event EventHandler unregisterEvents;
 
+		private ScrollableWidget CreateManualControlsTab()
+		{
+			GuiWidget manualPrinterControls = new ManualControlsWidget();
+
+			ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
+			manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			manualPrinterControlsScrollArea.AnchorAll();
+			manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
+
+			return manualPrinterControlsScrollArea;
+		}
+
 		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
@@ -285,7 +291,8 @@ namespace MatterHackers.MatterControl
 		{
 			// ReloadControlsWidget
 			manualControlsPage.RemoveAllChildren();
-			manualControlsPage.AddChild(new ManualControlsWidget());
+			ScrollableWidget manualScroll = CreateManualControlsTab();
+			manualControlsPage.AddChild(manualScroll);
 
 			// ReloadConfigurationWidget
 			optionsPage.RemoveAllChildren();
