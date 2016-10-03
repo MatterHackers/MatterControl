@@ -41,12 +41,12 @@ namespace MatterHackers.MatterControl
 {
 	public class CopyGuestProfilesToUser : WizardPage
 	{
-		static string importMessage = "It's time to migrate your existing printer settings to your MatterHackers account. Once added, these printers will be available whenever and wherever you sign in to MatterControl. Printers that are not migrated will only be available in 'guest' mode.".Localize();
+		static string importMessage = "It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available in 'guest' mode.".Localize();
 
 		List<CheckBox> checkBoxes = new List<CheckBox>();
 
 		public CopyGuestProfilesToUser(Action afterProfilesImported)
-		: base("Cancel", "Migrate Printers to Account")
+		: base("Cancel", "Copy Printers to Account")
 		{
 			var scrollWindow = new ScrollableWidget()
 			{
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			var guestProfileManager = ProfileManager.LoadGuestDB();
 			if (guestProfileManager?.Profiles.Count > 0)
 			{
-				container.AddChild(new TextWidget("Printers to Migrate:".Localize())
+				container.AddChild(new TextWidget("Printers to Copy:".Localize())
 				{
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					Margin = new BorderDouble(0, 3, 0, 15),

@@ -550,7 +550,7 @@ namespace MatterHackers.MatterControl
 				});
 
 				// Show the import printers wizard
-				WizardWindow.Show("/CopyGuestProfiles", "Migrate Printers", wizardPage);
+				WizardWindow.Show("/CopyGuestProfiles", "Copy Printers", wizardPage);
 			}
 		}
 
