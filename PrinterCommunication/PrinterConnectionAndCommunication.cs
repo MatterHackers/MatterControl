@@ -2219,7 +2219,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void CancelPrint()
+		private void CancelPrint()
 		{
 			lock (locker)
 			{
