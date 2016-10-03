@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CreateDownloadsSubFolder()
 		{
-			Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary"));
+			Directory.CreateDirectory(PathToDownloadsSubFolder);
 		}
 
 		public static string PathToDownloadsSubFolder
@@ -82,9 +82,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static void CleanupDownloadsDirectory(string path)
+		public static void DeleteDownloadsSubFolder()
 		{
-			Directory.Delete(path, true);
+			Directory.Delete(PathToDownloadsSubFolder, true);
 		}
 
 		public static void SignOut(AutomationRunner testRunner)
@@ -335,10 +335,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static bool NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
 		{
 			bool goodNavigate = true;
+
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			goodNavigate &= testRunner.ClickByName(libraryRowItemName);
 			goodNavigate &= testRunner.MoveToByName(libraryRowItemName);
 			testRunner.Wait(.5);
+
 			goodNavigate &= testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
 			testRunner.Wait(.5);
 
@@ -352,10 +354,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			QueueTemplate queueItemFolderToAdd = QueueTemplate.None,
 			int overrideWidth = -1, int overrideHeight = -1)
 		{
-			// Walk back a step in the stack and output the callers name
-			StackTrace st = new StackTrace(false);
-			Console.WriteLine("\r\nRunning automation test: " + st.GetFrames().Skip(1).First().GetMethod().Name);
-
 			if (staticDataPathOverride == null)
 			{
 				// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl

@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// <param name="path">The new AppData path.</param>
 		internal void OverrideAppDataLocation(string path)
 		{
-			Console.WriteLine("    Overriding ApplicationUserDataPath: " + path);
+			Console.WriteLine("   Overriding ApplicationUserDataPath: " + path);
 
 			// Ensure the target directory exists
 			Directory.CreateDirectory(path);
