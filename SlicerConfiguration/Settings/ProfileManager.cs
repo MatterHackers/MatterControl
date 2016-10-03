@@ -69,9 +69,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					username = "guest";
 				}
+				else
+				{
+					username = ApplicationController.EnvironmentName + username;
+				}
 
-				// Append userName to ProfilesPath (directory is Env specific with the addition of EnvironmentName)
-				string path = Path.Combine(userDataPath, "Profiles", ApplicationController.EnvironmentName + username);
+				string path = Path.Combine(userDataPath, "Profiles", username);
 
 				// Ensure directory exists
 				Directory.CreateDirectory(path);
@@ -83,7 +86,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private const string userDBExtension = ".profiles";
 		private const string guestDBFileName = "guest" + userDBExtension;
 
-		private static string GuestDBPath => Path.Combine(ProfilesPath, guestDBFileName);
+		private static string GuestDBPath => Path.Combine(userDataPath, "Profiles", guestDBFileName);
 
 		internal static string ProfilesDBPath
 		{
