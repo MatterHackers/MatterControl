@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				int totalMinutesInPrint = (int)(totalSecondsInPrint / 60 - totalHoursInPrint * 60);
 				totalSecondsInPrint = totalSecondsInPrint % 60;
 
-				string totalTimeLabel = LocalizedString.Get("Estimated Print Time:");
+				string estimatedTimeLabel = LocalizedString.Get("Estimated Print Time");
 				string calculatingLabel = LocalizedString.Get("Calculating...");
 				string totalPrintTimeText;
 
@@ -399,18 +399,11 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					if (totalHoursInPrint > 0)
 					{
-						totalPrintTimeText = string.Format("{3} {0}h {1:00}m {2:00}s",
-							totalHoursInPrint,
-							totalMinutesInPrint,
-							totalSecondsInPrint,
-							totalTimeLabel);
+						totalPrintTimeText = $"{estimatedTimeLabel}: {totalHoursInPrint}h {totalMinutesInPrint:00}m {totalSecondsInPrint:00}s";
 					}
 					else
 					{
-						totalPrintTimeText = string.Format("{2} {0}m {1:00}s",
-							totalMinutesInPrint,
-							totalSecondsInPrint,
-							totalTimeLabel);
+						totalPrintTimeText = $"{estimatedTimeLabel}: {totalMinutesInPrint}m {totalSecondsInPrint:00}s";
 					}
 				}
 				else
@@ -421,7 +414,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					}
 					else
 					{
-						totalPrintTimeText = string.Format("{0}: {1}", totalTimeLabel, calculatingLabel);
+						totalPrintTimeText = $"{estimatedTimeLabel}: {calculatingLabel}";
 					}
 				}
 
@@ -836,7 +829,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				int totalMinutesInPrint = (int)(totalSecondsInPrint / 60 - totalHoursInPrint * 60);
 				totalSecondsInPrint = totalSecondsInPrint % 60;
 
-				string totalTimeLabel = LocalizedString.Get("Est. Print Time");
+				string estimatedTimeLabel = LocalizedString.Get("Est. Print Time");
 				string calculatingLabel = LocalizedString.Get("Calculating...");
 				string totalPrintTimeText;
 
@@ -844,18 +837,11 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					if (totalHoursInPrint > 0)
 					{
-						totalPrintTimeText = string.Format("{3} {0}h {1:00}m {2:00}s",
-							totalHoursInPrint,
-							totalMinutesInPrint,
-							totalSecondsInPrint,
-							totalTimeLabel);
+						totalPrintTimeText = $"{estimatedTimeLabel}: {totalHoursInPrint}h {totalMinutesInPrint:00}m {totalSecondsInPrint:00}s";
 					}
 					else
 					{
-						totalPrintTimeText = string.Format("{2} {0}m {1:00}s",
-							totalMinutesInPrint,
-							totalSecondsInPrint,
-							totalTimeLabel);
+						totalPrintTimeText = $"{estimatedTimeLabel}: {totalMinutesInPrint}m {totalSecondsInPrint:00}s";
 					}
 				}
 				else
@@ -866,7 +852,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					}
 					else
 					{
-						totalPrintTimeText = string.Format("{0}: {1}", totalTimeLabel, calculatingLabel);
+						totalPrintTimeText = $"{estimatedTimeLabel}: {calculatingLabel}";
 					}
 				}
 
