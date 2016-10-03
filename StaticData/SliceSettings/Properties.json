@@ -1931,7 +1931,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "support_air_gap",
 		"PresentationName": "Air Gap",
-		"HelpText": "The distance between the first layer (the bottom) and the top of the support material. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.",
+		"HelpText": "The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
 		"ShowAsOverride": true,
