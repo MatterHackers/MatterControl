@@ -389,16 +389,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return importSuccessful;
 		}
 
-		internal static async Task AcquireNewProfile(string make, string model, string printerName)
+		internal static async Task<bool> CreateProfileAsync(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
 
 			var publicDevice = OemSettings.Instance.OemProfiles[make][model];
-			
-			// TODO: jlewin - how can we handle lookup failures at this point? Should we throw and check for the exception?
-			//if (publicDevice == null)
+			if (publicDevice == null)
+			{
+				return false;
+			}
 
 			var printerSettings = await LoadOemProfileAsync(publicDevice, make, model);
+			if (printerSettings == null)
+			{
+				return false;
+			}
+
 			printerSettings.ID = guid;
 			printerSettings.DocumentVersion = PrinterSettings.LatestVersion;
 
@@ -448,6 +454,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UserSettings.Instance.set("ActiveProfileID", guid);
 
 			ActiveSliceSettings.Instance = printerSettings;
+
+			return true;
 		}
 
 		public static List<string> ThemeIndexNameMapping = new List<string>()
