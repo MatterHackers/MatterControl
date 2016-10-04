@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private DropDownMenu GetSliceOptionsMenuDropList()
 		{
 			DropDownMenu sliceOptionsMenuDropList;
-			sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ")
+			sliceOptionsMenuDropList = new DropDownMenu("Profile".Localize() + "... ")
 			{
 				HoverColor = new RGBA_Bytes(0, 0, 0, 50),
 				NormalColor = new RGBA_Bytes(0, 0, 0, 0),
