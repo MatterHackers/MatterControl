@@ -95,10 +95,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(testRunner.WaitForName("Done Button", 30));
 					resultsHarness.AddTestResult(testRunner.WaitForName("Print Again Button", 1));
 
-
 					try
 					{
-						//emualtorProccess.Kill();
+						emualtorProccess.Kill();
 					}
 					catch {}
 
