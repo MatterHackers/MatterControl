@@ -119,19 +119,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					MatterControlUtilities.CreateDownloadsSubFolder();
 
-					//Navigate to Downloads Library Provider
+					// Navigate to Downloads Library Provider
 					testRunner.ClickByName("Library Tab");
 					MatterControlUtilities.NavigateToFolder(testRunner, "Downloads Row Item Collection");
 					MatterControlUtilities.NavigateToFolder(testRunner, "-Temporary Row Item Collection");
 					testRunner.ClickByName("Library Add Button");
 					testRunner.Wait(2);
 
-					//Add AMF part items to Downloads and then type paths into file dialogues 
+					// Add AMF part items to Downloads and then type paths into file dialogs 
 					testRunner.Wait(2);
 					testRunner.Type(MatterControlUtilities.GetTestItemPath("Test.zip"));
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
-
 
 					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Chinese Dragon", 2), "Chinese Dragon item exists");
 					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item chichen-itza pyramid", 2), "chichen-itza item exists");
@@ -149,10 +148,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testHarness = MatterControlUtilities.RunTest(testToRun);
 			}
 			catch { }
-			finally
+
+			// Give MatterControl a moment to shutdown
+			Thread.Sleep(2000);
+			try
 			{
+				// Then attempt to clean up
 				MatterControlUtilities.DeleteDownloadsSubFolder();
 			}
+			catch { }
 
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
