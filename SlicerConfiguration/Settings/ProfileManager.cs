@@ -520,6 +520,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Instance.Save();
 
 			ProfilesListChanged.CallEvents(null, null);
+
+			// Force sync after any collection change event
+			ApplicationController.SyncPrinterProfiles(null);
 		}
 
 		public void Save()
