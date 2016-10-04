@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					// make a jump start printer
-					MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner, false, "JumStart", "V1");
+					var emualtorProccess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner, false, "JumStart", "V1");
 
 					// make sure it is showing the correct button
 					resultsHarness.AddTestResult(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
@@ -96,6 +96,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
+
+					try
+					{
+						emualtorProccess.Kill();
+					}
+					catch { }
 				}
 			};
 
