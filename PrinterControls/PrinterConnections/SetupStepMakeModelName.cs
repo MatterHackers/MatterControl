@@ -89,9 +89,19 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			nextButton.Name = "Save & Continue Button";
 			nextButton.Click += async (s, e) =>
 			{
-				bool canContinue = await this.OnSave();
-				if (canContinue)
+				bool controlsValid = this.ValidateControls();
+				if (controlsValid)
 				{
+					bool profileCreated = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
+					if(!profileCreated)
+					{
+						this.printerNameError.Text = "Error creating profile".Localize();
+						this.printerNameError.Visible = true;
+						return;
+					}
+
+					LoadCalibrationPrints();
+
 #if __ANDROID__
 					WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
 #else
@@ -290,7 +300,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			libraryProvider.Dispose();
 		}
 
-		private async Task<bool> OnSave()
+		private bool ValidateControls()
 		{
 			if (!string.IsNullOrEmpty(printerNameInput.Text))
 			{
@@ -302,15 +312,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 				else
 				{
-					await ProfileManager.AcquireNewProfile(activeMake, activeModel, activeName);
-					LoadCalibrationPrints();
 					return true;
 				}
 			}
 			else
 			{
 				this.printerNameError.TextColor = RGBA_Bytes.Red;
-				this.printerNameError.Text = "Printer name cannot be blank";
+				this.printerNameError.Text = "Printer name cannot be blank".Localize();
 				this.printerNameError.Visible = true;
 
 				return false;
