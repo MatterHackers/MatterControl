@@ -178,7 +178,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Clear selected printer state
 			UserSettings.Instance.set("ActiveProfileID", "");
 
-			UiThread.RunOnIdle(() => ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile());
+			UiThread.RunOnIdle(() =>
+			{
+				ActiveSliceSettings.Instance = ProfileManager.LoadEmptyProfile();
+
+				// Notify listeners of a ProfileListChange event due to this printers removal
+				ProfileManager.ProfilesListChanged.CallEvents(this, null);
+			});
 		}
 
 		public void SetBaudRate(string baudRate)
