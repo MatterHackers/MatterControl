@@ -237,10 +237,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					// Use ManufacturerDropList.SelectedLabel instead of activeMake to ensure the mapped Unicode values are picked up
 					string mappedMakeText = printerManufacturerSelector.SelectedLabel;
 
-					string printerInputName = string.Format("{0} {1}", mappedMakeText, activeModel);
-
-					var names = ProfileManager.Instance.ActiveProfiles.Where(p => p.Name.StartsWith(printerInputName)).Select(p => p.Name).ToList();
-					printerInputName = agg_basics.GetNonCollidingName(names, printerInputName);
+					var existingPrinterNames = ProfileManager.Instance.ActiveProfiles.Select(p => p.Name);
+					printerNameInput.Text = agg_basics.GetNonCollidingName(existingPrinterNames, $"{mappedMakeText} {activeModel}");
 				}
 			});
 		}
