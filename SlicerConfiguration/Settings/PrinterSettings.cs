@@ -94,6 +94,50 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer OemLayer { get; set; }
 
+		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter)
+		{
+			HashSet<string> skipKeys = new HashSet<string>
+			{
+				SettingsKey.layer_name,
+				"layer_id",
+			};
+
+			var destinationFilter = new List<PrinterSettingsLayer>
+			{
+				OemLayer,
+				BaseLayer,
+				destinationLayer,
+			}.Where(layer => layer != null);
+
+			var sourceFilter = rawSourceFilter.Where(layer => layer != null);
+
+			var baseLayer = settingsToImport.BaseLayer;
+			settingsToImport.BaseLayer = new PrinterSettingsLayer();
+
+			foreach (var keyName in PrinterSettings.KnownSettings)
+			{
+				if (settingsToImport.Contains(keyName))
+				{
+					// Compare the value to import to the layer cascade value and only set if different
+					string currentValue = this.GetValue(keyName, destinationFilter).Trim();
+					string importValue = settingsToImport.GetValue(keyName, sourceFilter).Trim();
+
+					if (!string.IsNullOrEmpty(importValue)
+						&& currentValue != keyName
+						&& !skipKeys.Contains(keyName))
+					{
+						destinationLayer[keyName] = importValue;
+					}
+				}
+			}
+
+			settingsToImport.BaseLayer = baseLayer;
+
+			this.Save();
+
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+		}
+
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
 		{
 			if (string.IsNullOrEmpty(layerID))
@@ -208,7 +252,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				File.WriteAllText(DocumentPath, json);
 			}
 
-			if (ActiveSliceSettings.Instance.ID == this.ID)
+			if (ActiveSliceSettings.Instance?.ID == this.ID)
 			{
 				ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
 			}
