@@ -119,29 +119,20 @@ namespace MatterHackers.MatterControl
 			this.AddTab(new SimpleTextTabWidget(sliceTabPage, "Slice Settings Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			HorizontalLine lineSpacerZero = new HorizontalLine();
-			lineSpacerZero.Margin = new BorderDouble(4, 10);
-			this.TabBar.AddChild(lineSpacerZero);
-#if __ANDROID__
-            //Add the tab contents for 'Advanced Controls'
-			GuiWidget manualPrinterControls = new ManualControlsWidget();
-            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            manualControlsPage = new TabPage(manualPrinterControls, printerControlsLabel);
-            this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-#else
-			//Add the tab contents for 'Advanced Controls'
-			ScrollableWidget manualPrinterControlsScrollArea = CreateManualControlsTab();
-			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-			manualControlsPage = new TabPage(manualPrinterControlsScrollArea, printerControlsLabel);
+			this.TabBar.AddChild(new HorizontalLine() { Margin = new BorderDouble(4, 10) });
 
+			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
+
+#if __ANDROID__
+			manualControlsPage = new TabPage(new ManualControlsWidget(), printerControlsLabel);
+#else
+			manualControlsPage = new TabPage(CreateManualControlsTab(), printerControlsLabel);
+#endif
+			//Add the tab contents for 'Advanced Controls'
 			this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-#endif
 
-			HorizontalLine lineSpacerOne = new HorizontalLine();
-			lineSpacerOne.Margin = new BorderDouble(4, 10);
-			this.TabBar.AddChild(lineSpacerOne);
+			this.TabBar.AddChild(new HorizontalLine() { Margin = new BorderDouble(4, 10) });
 
 			this.AddTab(queueTabWidget);
 
@@ -158,9 +149,7 @@ namespace MatterHackers.MatterControl
 				this.AddTab(historyTabWidget);
 			}
 
-			HorizontalLine lineSpacerTwo = new HorizontalLine();
-			lineSpacerTwo.Margin = new BorderDouble(4, 10);
-			this.TabBar.AddChild(lineSpacerTwo);
+			this.TabBar.AddChild(new HorizontalLine() { Margin = new BorderDouble(4, 10) });
 
 			string configurationLabel = LocalizedString.Get("Options").ToUpper();
 			PrinterConfigurationScrollWidget printerConfigurationWidget = new PrinterConfigurationScrollWidget();
