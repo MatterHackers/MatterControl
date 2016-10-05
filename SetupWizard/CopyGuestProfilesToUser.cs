@@ -104,8 +104,16 @@ namespace MatterHackers.MatterControl
 						// import the printer
 						var printerInfo = byCheckbox[checkBox];
 
+						string existingPath = Path.Combine(ProfileManager.GuestDBDirectory, printerInfo.ID + ProfileManager.ProfileExtension);;
+
 						ProfileManager.Instance.Profiles.Add(printerInfo);
 						guestProfileManager.Profiles.Remove(printerInfo);
+
+						// PrinterSettings files must actually be copied to the users profile directory
+						if (File.Exists(existingPath))
+						{
+							File.Copy(existingPath, printerInfo.ProfilePath);
+						}
 					}
 				}
 
