@@ -16,7 +16,7 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class PrinterConfigurationTests
 	{
-		[Test, Category("PrinterConfigurationFiles"), Ignore("Not Finished")]
+		[Test, Category("PrinterConfigurationFiles"), Category("FixNeeded" /* Not Finished/previously ignored */)]
 		public void PrinterConfigTests()
 		{
 

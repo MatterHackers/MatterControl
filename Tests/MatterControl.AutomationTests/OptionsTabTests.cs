@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ConfigureNotificationSettingsButtonClickedOpensNotificationWindow
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
 		//DOES NOT WORK
 		public void ClickingConfigureNotificationSettingsButtonOpensWindow()
 		{

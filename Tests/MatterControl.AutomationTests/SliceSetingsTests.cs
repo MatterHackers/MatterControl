@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		//Stress Test check & uncheck 1000x
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
 		public void HasHeatedBedCheckUncheck()
 		{
 			// Run a copy of MatterControl

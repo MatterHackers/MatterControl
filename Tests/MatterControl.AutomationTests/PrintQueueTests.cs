@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain]
 	public class BuyButtonTests
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
 		public void ClickOnBuyButton()
 		{
 			// Run a copy of MatterControl
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
 	public class ExportButtonDisabledNoQueueItems
 	{
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
@@ -732,7 +732,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
 	public class CreatePartSheetMenuItemClickedCreatesPartSheet
 	{
 
