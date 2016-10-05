@@ -37,19 +37,7 @@ using System;
 
 namespace MatterHackers.MatterControl
 {
-	public class ManualControlsWidget : GuiWidget
-	{
-		public ManualControlsWidget()
-			: base()
-		{
-			this.AnchorAll();
-            VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
-			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			this.AddChild(new ManualPrinterControls());
-		}
-	}
-
-	public class ManualPrinterControls : GuiWidget
+	public class ManualPrinterControls : ScrollableWidget
 	{
 		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
 
@@ -69,6 +57,10 @@ namespace MatterHackers.MatterControl
 
 		public ManualPrinterControls()
 		{
+			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			AnchorAll();
+			AutoScroll = true;
+
 			SetDisplayAttributes();
 
 			FlowLayoutWidget controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -110,11 +102,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
