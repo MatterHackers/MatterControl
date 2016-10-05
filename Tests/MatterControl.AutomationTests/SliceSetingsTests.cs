@@ -142,8 +142,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Navigate to Local Library 
 					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Features Tab", 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1), "Switch to Printers tab");
+					resultsHarness.AddTestResult(testRunner.ClickByName("Features Tab", 1), "Switch to Features tab");
 
 					CheckAndUncheckSetting(resultsHarness, testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
 
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationTesterHarness  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(23));
+			Assert.IsTrue(testHarness.AllTestsPassed(20));
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
