@@ -123,11 +123,8 @@ namespace MatterHackers.MatterControl
 
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
 
-#if __ANDROID__
-			manualControlsPage = new TabPage(new ManualControlsWidget(), printerControlsLabel);
-#else
-			manualControlsPage = new TabPage(CreateManualControlsTab(), printerControlsLabel);
-#endif
+			manualControlsPage = new TabPage(new ManualPrinterControls(), printerControlsLabel);
+
 			//Add the tab contents for 'Advanced Controls'
 			this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
@@ -229,18 +226,6 @@ namespace MatterHackers.MatterControl
 		}
 		private event EventHandler unregisterEvents;
 
-		private ScrollableWidget CreateManualControlsTab()
-		{
-			GuiWidget manualPrinterControls = new ManualControlsWidget();
-
-			ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
-			manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			manualPrinterControlsScrollArea.AnchorAll();
-			manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
-
-			return manualPrinterControlsScrollArea;
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
@@ -280,8 +265,7 @@ namespace MatterHackers.MatterControl
 		{
 			// ReloadControlsWidget
 			manualControlsPage.RemoveAllChildren();
-			ScrollableWidget manualScroll = CreateManualControlsTab();
-			manualControlsPage.AddChild(manualScroll);
+			manualControlsPage.AddChild(new ManualPrinterControls());
 
 			// ReloadConfigurationWidget
 			optionsPage.RemoveAllChildren();
