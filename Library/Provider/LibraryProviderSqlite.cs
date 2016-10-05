@@ -303,6 +303,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					string thumbnailDestFile = PartThumbnailWidget.GetImageFileName(printItemToAdd);
 
+					Directory.CreateDirectory(Path.GetDirectoryName(thumbnailDestFile));
+
 					// copy it to the right place
 					File.Copy(thumbnailSourceFile, thumbnailDestFile);
 				}

@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 	public class WidescreenPanel : FlowLayoutWidget
 	{
 		private static readonly int ColumnOneFixedWidth = 590;
-		private static int lastNumberOfVisiblePanels;
+		private static int lastNumberOfVisiblePanels = 0;
 
 		private TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
@@ -70,22 +70,16 @@ namespace MatterHackers.MatterControl
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
-			this.BoundsChanged += onBoundsChanges;
 		}
 
-		public override void OnParentChanged(EventArgs e)
+		public override void OnBoundsChanged(EventArgs e)
 		{
-			lastNumberOfVisiblePanels = 0;
-			RecreateAllPanels();
-			base.OnParentChanged(e);
-		}
-
-		private void onBoundsChanges(Object sender, EventArgs e)
-		{
-			if (NumberOfVisiblePanels() != lastNumberOfVisiblePanels)
+			if (this.VisiblePanelCount != lastNumberOfVisiblePanels)
 			{
 				RecreateAllPanels();
 			}
+
+			base.OnBoundsChanged(e);
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -96,7 +90,7 @@ namespace MatterHackers.MatterControl
 
 		private void onActivePrintItemChanged(object sender, EventArgs e)
 		{
-			if (NumberOfVisiblePanels() > 1)
+			if (this.VisiblePanelCount > 1)
 			{
 				UiThread.RunOnIdle(LoadColumnTwo);
 			}
@@ -129,15 +123,7 @@ namespace MatterHackers.MatterControl
 			ColumnTwo.AnchorAll();
 		}
 
-		private int NumberOfVisiblePanels()
-		{
-			if (this.Width < Force1PanelWidth)
-			{
-				return 1;
-			}
-
-			return 2;
-		}
+		private int VisiblePanelCount => (this.Width < Force1PanelWidth) ? 1 : 2;
 
 		public void RecreateAllPanels(object state = null)
 		{
@@ -146,23 +132,17 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
-			int numberOfPanels = NumberOfVisiblePanels();
+			int numberOfPanels = this.VisiblePanelCount;
 
 			PreChangePanels.CallEvents(this, null);
 			RemovePanelsAndCreateEmpties();
 
-			switch (numberOfPanels)
-			{
-				case 1:
-					ApplicationController.Instance.WidescreenMode = false;
-					LoadCompactView();
-					break;
+			LoadCompactView();
 
-				case 2:
-					ApplicationController.Instance.WidescreenMode = false;
-					LoadCompactView();
-					LoadColumnTwo();
-					break;
+			// Load ColumnTwo if applicable - i.e. widescreen view
+			if (numberOfPanels == 2)
+			{
+				LoadColumnTwo();
 			}
 
 			SetColumnVisibility();
@@ -172,7 +152,7 @@ namespace MatterHackers.MatterControl
 
 		private void SetColumnVisibility(object state = null)
 		{
-			int numberOfPanels = NumberOfVisiblePanels();
+			int numberOfPanels = this.VisiblePanelCount;
 
 			switch (numberOfPanels)
 			{

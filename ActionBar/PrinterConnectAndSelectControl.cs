@@ -98,18 +98,11 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// connect and disconnect buttons
 			{
-				string connectString = "Connect".Localize().ToUpper();
-				connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
+				connectPrinterButton = actionBarButtonFactory.Generate("Connect".Localize().ToUpper(), "icon_power_32x32.png");
 				connectPrinterButton.Name = "Connect to printer button";
 				connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
-				if (ApplicationController.Instance.WidescreenMode)
-				{
-					connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
-				}
-				else
-				{
-					connectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
-				}
+				connectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
+
 				connectPrinterButton.VAnchor = VAnchor.ParentTop;
 				connectPrinterButton.Cursor = Cursors.Hand;
 				connectPrinterButton.Click += (s, e) =>
@@ -124,17 +117,10 @@ namespace MatterHackers.MatterControl.ActionBar
 					}
 				};
 
-				string disconnectString = "Disconnect".Localize().ToUpper();
-				disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
+				disconnectPrinterButton = actionBarButtonFactory.Generate("Disconnect".Localize().ToUpper(), "icon_power_32x32.png");
 				disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
-				if (ApplicationController.Instance.WidescreenMode)
-				{
-					disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
-				}
-				else
-				{
-					disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
-				}
+				disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
+
 				disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
 				disconnectPrinterButton.Cursor = Cursors.Hand;
 				disconnectPrinterButton.Click += (s, e) => UiThread.RunOnIdle(OnIdleDisconnect);
@@ -158,12 +144,11 @@ namespace MatterHackers.MatterControl.ActionBar
 					HAnchor = HAnchor.ParentLeftRight,
 				};
 
-				int rightMarginForWideScreenMode = ApplicationController.Instance.WidescreenMode ? 6 : 0;
 				printerSelector = new PrinterSelector()
 				{
 					HAnchor = HAnchor.ParentLeftRight,
 					Cursor = Cursors.Hand,
-					Margin = new BorderDouble(0, 6, rightMarginForWideScreenMode, 3)
+					Margin = new BorderDouble(0, 6, 0, 3)
 				};
 				printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup(true);
 				// make sure the control can get smaller but maintains its height
@@ -192,14 +177,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
 				Button resetConnectionButton = actionBarButtonFactory.Generate(resetConnectionText, "e_stop4.png");
-				if (ApplicationController.Instance.WidescreenMode)
-				{
-					resetConnectionButton.Margin = new BorderDouble(0, 0, 3, 3);
-				}
-				else
-				{
-					resetConnectionButton.Margin = new BorderDouble(6, 0, 3, 3);
-				}
+				resetConnectionButton.Margin = new BorderDouble(6, 0, 3, 3);
 				this.AddChild(resetConnectionButton);
 
 				resetConnectionButton.Click += new EventHandler((s,e) => PrinterConnectionAndCommunication.Instance.RebootBoard());

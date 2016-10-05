@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -49,27 +50,17 @@ namespace MatterHackers.MatterControl
 		private static readonly string CompactTabView_Options_ScrollPosition = "CompactTabView_Options_ScrollPosition";
 		private static int lastAdvanceControlsIndex = 0;
 
-		private TabPage AboutTabPage;
-		private SimpleTextTabWidget aboutTabWidget;
 		private GuiWidget addedUpdateMark = null;
-		private TabPage optionsPage;
-		private TabPage HistoryTabPage;
-		private TabPage LibraryTabPage;
-		private TabPage manualControlsPage;
-		private View3DWidget part3DView;
-		private GuiWidget part3DViewContainer;
-		private ViewGcodeBasic partGcodeView;
-		private GuiWidget partGcodeViewContainer;
+
 		private PartPreviewContent partPreviewContainer;
 		private QueueDataView queueDataView;
 		private TabPage QueueTabPage;
+
 		private bool simpleMode;
 		private GuiWidget sliceSettingsWidget;
-		private TabPage sliceTabPage;
-		private int TabTextSize;
-		private TabPage TerminalTabPage;
-		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
+		private int TabTextSize;
+		
 		public TouchscreenTabView(QueueDataView queueDataView)
 			: base(Orientation.Vertical)
 		{
@@ -78,12 +69,10 @@ namespace MatterHackers.MatterControl
 			this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
 			this.TabBar.Margin = new BorderDouble(4, 0, 0, 0);
 			this.TabBar.Padding = new BorderDouble(0, 8);
-
 			this.Margin = new BorderDouble(top: 0);
 			this.TabTextSize = 18;
 
 			string simpleModeString = UserSettings.Instance.get("IsSimpleMode");
-
 			if (simpleModeString == null)
 			{
 				simpleMode = true;
@@ -94,66 +83,71 @@ namespace MatterHackers.MatterControl
 				simpleMode = Convert.ToBoolean(simpleModeString);
 			}
 
-			QueueTabPage = new TabPage(new QueueDataWidget(queueDataView), LocalizedString.Get("Queue").ToUpper());
-			SimpleTextTabWidget queueTabWidget = new SimpleTextTabWidget(QueueTabPage, "Queue Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
+			this.AddTab(
+				"Part Preview Tab", 
+				"Preview".Localize().ToUpper(),
+				generator: () =>
+				{
+					partPreviewContainer = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled, View3DWidget.OpenMode.Viewing);
+					return partPreviewContainer;
+				});
 
-			partPreviewContainer = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled, View3DWidget.OpenMode.Viewing);
+			this.AddTab(
+				"Slice Settings Tab",
+				"Settings".Localize().ToUpper(),
+				generator: () =>
+				{
+						// sliceSettingsWidget = (ActiveSliceSettings.Instance.PrinterSelected) ? new SliceSettingsWidget() : new NoSettingsWidget();
+						if (ActiveSliceSettings.Instance.PrinterSelected)
+						{
+							sliceSettingsWidget = new SliceSettingsWidget();
+						}
+						else
+						{
+							sliceSettingsWidget = new NoSettingsWidget();
+						}
 
-			string partPreviewLabel = LocalizedString.Get("Preview").ToUpper();
-
-			this.AddTab(new SimpleTextTabWidget(new TabPage(partPreviewContainer, partPreviewLabel), "Part Preview Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-			string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				sliceSettingsWidget = new SliceSettingsWidget();
-			}
-			else
-			{
-				sliceSettingsWidget = new NoSettingsWidget();
-			}
-			sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
-
-			this.AddTab(new SimpleTextTabWidget(sliceTabPage, "Slice Settings Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-			this.TabBar.AddChild(new HorizontalLine() { Margin = new BorderDouble(4, 10) });
-
-			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-
-			manualControlsPage = new TabPage(new ManualPrinterControls(), printerControlsLabel);
-
-			//Add the tab contents for 'Advanced Controls'
-			this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+						return sliceSettingsWidget;
+				});
 
 			this.TabBar.AddChild(new HorizontalLine() { Margin = new BorderDouble(4, 10) });
 
-			this.AddTab(queueTabWidget);
+			this.AddTab(
+				"Controls Tab",
+				"Controls".Localize().ToUpper(),
+				() => new ManualPrinterControls());
 
-			LibraryTabPage = new TabPage(new PrintLibraryWidget(), LocalizedString.Get("Library").ToUpper());
-			this.AddTab(new SimpleTextTabWidget(LibraryTabPage, "Library Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+			// TODO: How to handle reload? Create .Reload on LazyTab? Create accessor for tabs["Controls Tab"].Reload()?
+			//manualControlsPage = new TabPage(, printerControlsLabel);
 
-			HistoryTabPage = new TabPage(new PrintHistoryWidget(), LocalizedString.Get("History").ToUpper());
-			SimpleTextTabWidget historyTabWidget = new SimpleTextTabWidget(HistoryTabPage, "History Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
+			this.TabBar.AddChild(new HorizontalLine() { Margin = new BorderDouble(4, 10) });
+
+			this.AddTab(
+				"Queue Tab",
+				"Queue".Localize().ToUpper(),
+				() => new QueueDataWidget(queueDataView));
+
+			QueueTabPage = this.TabPages["Queue Tab"];
+
+			this.AddTab(
+				"Library Tab",
+				"Library".Localize().ToUpper(),
+				() => new PrintLibraryWidget());
 
 			if (!simpleMode)
 			{
-				this.AddTab(historyTabWidget);
+				this.AddTab(
+				"History Tab",
+				"History".Localize().ToUpper(),
+				() => new PrintHistoryWidget());
 			}
 
 			this.TabBar.AddChild(new HorizontalLine() { Margin = new BorderDouble(4, 10) });
-
-			string configurationLabel = LocalizedString.Get("Options").ToUpper();
-			PrinterConfigurationScrollWidget printerConfigurationWidget = new PrinterConfigurationScrollWidget();
 
 			// Make sure we have the right scroll position when we create this view
 			// This is not working well enough. So, I disabled it until it can be fixed.
 			// Specifically, it has the wronge position on the app restarting.
+			/*
 			if(false) 
 			{
 				UiThread.RunOnIdle(() => 
@@ -169,24 +163,25 @@ namespace MatterHackers.MatterControl
 				{
 					UserSettings.Instance.Fields.SetInt(CompactTabView_Options_ScrollPosition, (int)printerConfigurationWidget.ScrollPosition.y);
 				};
-			}
+			} */
 
-			optionsPage = new TabPage(printerConfigurationWidget, configurationLabel);
-			this.AddTab(new SimpleTextTabWidget(optionsPage, "Options Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+			this.AddTab(
+				"Options Tab",
+				"Options".Localize().ToUpper(),
+				() => new PrinterConfigurationScrollWidget());
 
-			TerminalTabPage = new TabPage(new TerminalWidget(false), LocalizedString.Get("Console").ToUpper());
-			SimpleTextTabWidget terminalTabWidget = new SimpleTextTabWidget(TerminalTabPage, "Terminal Tab", TabTextSize,
-													   ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
 			if (!simpleMode)
 			{
-				this.AddTab(terminalTabWidget);
+				this.AddTab(
+					"Terminal Tab",
+					"Console".Localize().ToUpper(),
+					() => new TerminalWidget(false));
 			}
 
-			AboutTabPage = new TabPage(new AboutWidget(), LocalizedString.Get("About").ToUpper());
-			aboutTabWidget = new SimpleTextTabWidget(AboutTabPage, "About Tab", TabTextSize,
-				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
-			this.AddTab(aboutTabWidget);
+			this.AddTab(
+				"About Tab",
+				"About".Localize().ToUpper(),
+				() => new AboutWidget());
 
 			NumQueueItemsChanged(this, null);
 			SetUpdateNotification(this, null);
@@ -201,7 +196,7 @@ namespace MatterHackers.MatterControl
 				// ReloadPartPreview
 				UiThread.RunOnIdle(() =>
 				{
-					partPreviewContainer.Reload(PrinterConnectionAndCommunication.Instance.ActivePrintItem);
+					partPreviewContainer?.Reload(PrinterConnectionAndCommunication.Instance.ActivePrintItem);
 				}, 1);
 
 			}, ref unregisterEvents);
@@ -242,7 +237,9 @@ namespace MatterHackers.MatterControl
 					if (addedUpdateMark == null)
 					{
 						addedUpdateMark = new UpdateNotificationMark();
-						addedUpdateMark.OriginRelativeParent = new Vector2(aboutTabWidget.tabTitle.Width + 3, 7);
+
+						var aboutTabWidget = TabBar.FindNamedChildRecursive("About Tab") as SimpleTextTabWidget;
+						addedUpdateMark.OriginRelativeParent = new Vector2(aboutTabWidget.tabTitle.Width + 3, 7 * GuiWidget.DeviceScale);
 						aboutTabWidget.AddChild(addedUpdateMark);
 					}
 					addedUpdateMark.Visible = true;
@@ -264,19 +261,16 @@ namespace MatterHackers.MatterControl
 		private void ReloadAdvancedControls()
 		{
 			// ReloadControlsWidget
-			manualControlsPage.RemoveAllChildren();
-			manualControlsPage.AddChild(new ManualPrinterControls());
+			var controlsTabPage = this.TabPages["Controls Tab"] as LazyTabPage;
+			controlsTabPage.Reload();
 
 			// ReloadConfigurationWidget
-			optionsPage.RemoveAllChildren();
-			optionsPage.AddChild(new PrinterConfigurationScrollWidget());
+			var optionsTabPage = this.TabPages["Options Tab"] as LazyTabPage;
+			optionsTabPage.Reload();
 
 			// ReloadSliceSettingsWidget
-			sliceTabPage.RemoveAllChildren();
-			sliceTabPage.AddChild(new SliceSettingsWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight, VAnchor = VAnchor.ParentBottomTop
-			});
+			var sliceSettingsTabPage = this.TabPages["Slice Settings Tab"] as LazyTabPage;
+			sliceSettingsTabPage.Reload();
 
 			this.Invalidate();
 		}
@@ -284,6 +278,21 @@ namespace MatterHackers.MatterControl
 		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
 		{
 			QueueTabPage.Text = string.Format("{0} ({1})", "Queue".Localize().ToUpper(), QueueData.Instance.Count);
+		}
+
+		private void AddTab(string name, string tabTitle, Func<GuiWidget> generator)
+		{
+			TabPage tabpage = new LazyTabPage(tabTitle) { Generator = generator };
+
+			this.AddTab(
+				new SimpleTextTabWidget(
+					tabpage,
+					name,
+					this.TabTextSize,
+					ActiveTheme.Instance.SecondaryAccentColor,
+					RGBA_Bytes.Transparent,
+					ActiveTheme.Instance.TabLabelUnselected,
+					RGBA_Bytes.Transparent));
 		}
 	}
 }
