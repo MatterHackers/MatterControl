@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Ignore("Not Finished")]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
 		public void UndoRedoCopy()
 		{
 			// Run a copy of MatterControl

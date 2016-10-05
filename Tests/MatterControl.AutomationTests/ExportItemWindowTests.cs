@@ -8,10 +8,9 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Ignore("Not Finished")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
 	public class ExportItemsFromDownloads
 	{
-
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ExportAsGcode()
 		{
