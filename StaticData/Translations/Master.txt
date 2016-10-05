@@ -5479,3 +5479,15 @@ Translated:Profile
 English:Oops! Settings file '{0}' did not contain any settings we could import.
 Translated:Oops! Settings file '{0}' did not contain any settings we could import.
 
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
+
+English:Start G-Code cannot contain G29 if Print Recovery is enabled.
+Translated:Start G-Code cannot contain G29 if Print Recovery is enabled.
+
+English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+Translated:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+
+English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+Translated:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+

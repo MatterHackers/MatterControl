@@ -706,9 +706,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
+				// Print recovery can only work with a manually leveled or software leveled bed. Hardware leveling does not work.
+				if (GetValue<bool>(SettingsKey.recover_is_enabled))
+				{
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'".Localize();
+					string[] startGCode = GetValue("start_gcode").Replace("\\n", "\n").Split('\n');
+					foreach (string startGCodeLine in startGCode)
+					{
+						if (startGCodeLine.StartsWith("G29"))
+						{
+							string error = "Start G-Code cannot contain G29 if Print Recovery is enabled.".Localize();
+							string details = "Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery".Localize();
+							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							return false;
+						}
+
+						if (startGCodeLine.StartsWith("G30"))
+						{
+							string error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize();
+							string details = "Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery".Localize();
+							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							return false;
+						}
+					}
+				}
+
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
 				if (GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'".Localize();
 					string[] startGCode = GetValue("start_gcode").Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
 					{
@@ -716,7 +742,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string error = "Start G-Code cannot contain G29 if Print Leveling is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling".Localize();
-							string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'".Localize();
 							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
@@ -725,7 +750,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling".Localize();
-							string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'".Localize();
 							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
