@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Agg;
 using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using System.IO;
 
 namespace MatterHackers.MatterControl
 {
@@ -92,7 +93,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var syncButton = textImageButtonFactory.Generate("Continue".Localize());
+			var syncButton = textImageButtonFactory.Generate("Copy".Localize());
 			syncButton.Click += (s, e) =>
 			{
 				// do the import

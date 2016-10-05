@@ -5455,3 +5455,24 @@ Translated:Select and add a new printer.
 English:Select an existing printer.
 Translated:Select an existing printer.
 
+English:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
+Translated:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
+
+English:WARNING: Disconnecting will cancel the print
+Translated:WARNING: Disconnecting will cancel the print
+
+English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available in 'guest' mode.
+Translated:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available in 'guest' mode.
+
+English:Copy Printers to Account
+Translated:Copy Printers to Account
+
+English:Printers to Copy:
+Translated:Printers to Copy:
+
+English:Profiles
+Translated:Profiles
+
+English:Profile
+Translated:Profile
+
