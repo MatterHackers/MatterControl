@@ -1697,6 +1697,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										}
 
 										FoundStringEventArgs foundResponse = new FoundStringEventArgs(currentEvent.Data);
+
 										ReadLineStartCallBacks.CheckForKeys(foundResponse);
 										ReadLineContainsCallBacks.CheckForKeys(foundResponse);
 
