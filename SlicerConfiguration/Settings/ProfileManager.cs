@@ -86,7 +86,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private const string userDBExtension = ".profiles";
 		private const string guestDBFileName = "guest" + userDBExtension;
 
-		private static string GuestDBPath => Path.Combine(userDataPath, "Profiles", guestDBFileName);
+		internal static string GuestDBDirectory => Path.Combine(userDataPath, "Profiles", "guest");
+		private static string GuestDBPath => Path.Combine(GuestDBDirectory, guestDBFileName);
 
 		internal static string ProfilesDBPath
 		{
@@ -104,6 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					username = Path.Combine(ProfilesPath, $"{username}{userDBExtension}");
 				}
+
 				return username;
 			}
 		}
@@ -319,10 +321,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return false;
 			}
 
+			string fileName = Path.GetFileNameWithoutExtension(settingsFilePath);
+			var existingPrinterNames = Instance.ActiveProfiles.Select(p => p.Name);
+
 			var printerInfo = new PrinterInfo
 			{
-				Name = Path.GetFileNameWithoutExtension(settingsFilePath),
-				ID = Guid.NewGuid().ToString()
+				Name = agg_basics.GetNonCollidingName(existingPrinterNames, fileName),
+				ID = Guid.NewGuid().ToString(),
+				Make = "Other",
+				Model = "Other",
 			};
 
 			bool importSuccessful = false;
@@ -332,55 +339,70 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				case ProfileManager.ProfileExtension:
 					// Add the Settings as a profile before performing any actions on it to ensure file paths resolve
-					Instance.Profiles.Add(printerInfo);
+					{
+						Instance.Profiles.Add(printerInfo);
 
-					var profile = PrinterSettings.LoadFile(settingsFilePath);
-					profile.ID = printerInfo.ID;
-					profile.ClearValue(SettingsKey.device_token);
-					printerInfo.DeviceToken = "";
+						var printerSettings = PrinterSettings.LoadFile(settingsFilePath);
+						printerSettings.ID = printerInfo.ID;
+						printerSettings.ClearValue(SettingsKey.device_token);
+						printerInfo.DeviceToken = "";
 
-					// TODO: Resolve name conflicts
-					profile.Helpers.SetName(printerInfo.Name);
+						// TODO: Resolve name conflicts
+						printerSettings.Helpers.SetName(printerInfo.Name);
 
-					profile.Save();
-					importSuccessful = true;
+						printerInfo.Make = printerSettings.OemLayer[SettingsKey.make] ?? "Other";
+						printerInfo.Model = printerSettings.OemLayer[SettingsKey.model] ?? "Other";
+
+						printerSettings.Save();
+						importSuccessful = true;
+					}
 					break;
 
 				case ".ini":
 					//Scope variables
 					{
 						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-						var layeredProfile = new PrinterSettings()
+						var printerSettings = new PrinterSettings()
 						{
 							ID = printerInfo.ID,
 						};
 
 						bool containsValidSetting = false;
-						var activeSettings = layeredProfile;
+
+						printerSettings.OemLayer = new PrinterSettingsLayer();
+
+						printerSettings.OemLayer[SettingsKey.make] = "Other";
+						printerSettings.OemLayer[SettingsKey.model] = "Other";
 
 						foreach (var item in settingsToImport)
 						{
-							if (activeSettings.Contains(item.Key))
+							if (printerSettings.Contains(item.Key))
 							{
 								containsValidSetting = true;
-								string currentValue = activeSettings.GetValue(item.Key).Trim();
+								string currentValue = printerSettings.GetValue(item.Key).Trim();
 								// Compare the value to import to the layer cascade value and only set if different
 								if (currentValue != item.Value)
 								{
-									activeSettings.OemLayer[item.Key] = item.Value;
+									printerSettings.OemLayer[item.Key] = item.Value;
 								}
 							}
 						}
+
 						if(containsValidSetting)
 						{
-							// TODO: Resolve name conflicts
-							layeredProfile.UserLayer[SettingsKey.printer_name] = printerInfo.Name;
+							printerSettings.UserLayer[SettingsKey.printer_name] = printerInfo.Name;
 
-							layeredProfile.ClearValue(SettingsKey.device_token);
+							printerSettings.ClearValue(SettingsKey.device_token);
 							printerInfo.DeviceToken = "";
+
+							printerInfo.Make = printerSettings.OemLayer[SettingsKey.make] ?? "Other";
+							printerInfo.Model = printerSettings.OemLayer[SettingsKey.model] ?? "Other";
+
 							Instance.Profiles.Add(printerInfo);
 
-							layeredProfile.Save();
+							printerSettings.Helpers.SetName(printerInfo.Name);
+
+							printerSettings.Save();
 							importSuccessful = true;
 						}
 					}

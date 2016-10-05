@@ -238,24 +238,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					string mappedMakeText = printerManufacturerSelector.SelectedLabel;
 
 					string printerInputName = string.Format("{0} {1}", mappedMakeText, activeModel);
+
 					var names = ProfileManager.Instance.ActiveProfiles.Where(p => p.Name.StartsWith(printerInputName)).Select(p => p.Name).ToList();
-					if (!names.Contains(printerInputName))
-					{
-						printerNameInput.Text = printerInputName;
-					}
-					else
-					{
-
-						int printerModelCount = 1; //Used to keep track of how many of the printer models we run into before and empty one
-						string possiblePrinterName;
-
-						do
-						{
-							possiblePrinterName = string.Format("{0} ({1})", printerInputName, printerModelCount++);
-						} while (names.Contains(possiblePrinterName));
-
-						printerNameInput.Text = possiblePrinterName;
-					}
+					printerInputName = agg_basics.GetNonCollidingName(names, printerInputName);
 				}
 			});
 		}

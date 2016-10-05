@@ -76,40 +76,43 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			var printerInfo = new PrinterInfo()
 			{
 				Name = printer.Name,
-				ID = printer.Id.ToString()
+				ID = printer.Id.ToString(),
+				Make = printer.Make ?? "",
+				Model = printer.Model ?? "",
 			};
 			profileData.Profiles.Add(printerInfo);
 
-			var layeredProfile = new PrinterSettings()
+			var printerSettings = new PrinterSettings()
 			{
 				OemLayer = LoadOemLayer(printer)
 			};
 
-			LoadQualitySettings(layeredProfile, printer);
-			LoadMaterialSettings(layeredProfile, printer);
+			printerSettings.OemLayer[SettingsKey.make] = printerInfo.Make;
+			printerSettings.OemLayer[SettingsKey.model] = printer.Model;
 
-			layeredProfile.ID = printer.Id.ToString();
+			LoadQualitySettings(printerSettings, printer);
+			LoadMaterialSettings(printerSettings, printer);
 
-			layeredProfile.UserLayer[SettingsKey.printer_name] = printer.Name ?? "";
-			layeredProfile.UserLayer[SettingsKey.make] = printer.Make ?? "";
-			layeredProfile.UserLayer[SettingsKey.model] = printer.Model ?? "";
-			layeredProfile.UserLayer[SettingsKey.baud_rate] = printer.BaudRate ?? "";
-			layeredProfile.UserLayer[SettingsKey.auto_connect] = printer.AutoConnect ? "1" : "0";
-			layeredProfile.UserLayer[SettingsKey.default_material_presets] = printer.MaterialCollectionIds ?? "";
-			layeredProfile.UserLayer[SettingsKey.windows_driver] = printer.DriverType ?? "";
-			layeredProfile.UserLayer[SettingsKey.device_token] = printer.DeviceToken ?? "";
-			layeredProfile.UserLayer[SettingsKey.device_type] = printer.DeviceType ?? "";
+			printerSettings.ID = printer.Id.ToString();
+
+			printerSettings.UserLayer[SettingsKey.printer_name] = printer.Name ?? "";
+			printerSettings.UserLayer[SettingsKey.baud_rate] = printer.BaudRate ?? "";
+			printerSettings.UserLayer[SettingsKey.auto_connect] = printer.AutoConnect ? "1" : "0";
+			printerSettings.UserLayer[SettingsKey.default_material_presets] = printer.MaterialCollectionIds ?? "";
+			printerSettings.UserLayer[SettingsKey.windows_driver] = printer.DriverType ?? "";
+			printerSettings.UserLayer[SettingsKey.device_token] = printer.DeviceToken ?? "";
+			printerSettings.UserLayer[SettingsKey.device_type] = printer.DeviceType ?? "";
 
 			if (string.IsNullOrEmpty(ProfileManager.Instance.LastProfileID))
 			{
 				ProfileManager.Instance.SetLastProfile(printer.Id.ToString());
 			}
 
-			layeredProfile.UserLayer[SettingsKey.active_theme_name] = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
+			printerSettings.UserLayer[SettingsKey.active_theme_name] = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
 
 			// Import macros from the database
 			var allMacros =  Datastore.Instance.dbSQLite.Query<CustomCommands>("SELECT * FROM CustomCommands WHERE PrinterId = " + printer.Id);
-			layeredProfile.Macros = allMacros.Select(macro => new GCodeMacro()
+			printerSettings.Macros = allMacros.Select(macro => new GCodeMacro()
 			{
 				GCode = macro.Value.Trim(),
 				Name = macro.Name,
@@ -119,34 +122,34 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			string query = string.Format("SELECT * FROM PrinterSetting WHERE Name = 'PublishBedImage' and PrinterId = {0};", printer.Id);
 			var publishBedImage = Datastore.Instance.dbSQLite.Query<PrinterSetting>(query).FirstOrDefault();
 
-			layeredProfile.UserLayer[SettingsKey.publish_bed_image] = publishBedImage?.Value == "true" ? "1" : "0";
+			printerSettings.UserLayer[SettingsKey.publish_bed_image] = publishBedImage?.Value == "true" ? "1" : "0";
 
 			// Print leveling
 			var printLevelingData = PrintLevelingData.Create(
-				layeredProfile, 
+				printerSettings, 
 				printer.PrintLevelingJsonData, 
 				printer.PrintLevelingProbePositions);
 
-			layeredProfile.UserLayer[SettingsKey.print_leveling_data] = JsonConvert.SerializeObject(printLevelingData);
-			layeredProfile.UserLayer[SettingsKey.print_leveling_enabled] = printer.DoPrintLeveling ? "true" : "false";
+			printerSettings.UserLayer[SettingsKey.print_leveling_data] = JsonConvert.SerializeObject(printLevelingData);
+			printerSettings.UserLayer[SettingsKey.print_leveling_enabled] = printer.DoPrintLeveling ? "true" : "false";
 
-			layeredProfile.UserLayer["manual_movement_speeds"] = printer.ManualMovementSpeeds;
+			printerSettings.UserLayer["manual_movement_speeds"] = printer.ManualMovementSpeeds;
 
 			// make sure we clear the one time settings
-			layeredProfile.OemLayer[SettingsKey.spiral_vase] = "";
-			layeredProfile.OemLayer[SettingsKey.bottom_clip_amount] = "";
-			layeredProfile.OemLayer[SettingsKey.layer_to_pause] = "";
+			printerSettings.OemLayer[SettingsKey.spiral_vase] = "";
+			printerSettings.OemLayer[SettingsKey.bottom_clip_amount] = "";
+			printerSettings.OemLayer[SettingsKey.layer_to_pause] = "";
 
 			// TODO: Where can we find CalibrationFiiles in the current model?
 			//layeredProfile.SetActiveValue(""calibration_files"", ???);
 
-			layeredProfile.ID = printer.Id.ToString();
+			printerSettings.ID = printer.Id.ToString();
 
-			layeredProfile.DocumentVersion = PrinterSettings.LatestVersion;
+			printerSettings.DocumentVersion = PrinterSettings.LatestVersion;
 
-			layeredProfile.Helpers.SetComPort(printer.ComPort);
+			printerSettings.Helpers.SetComPort(printer.ComPort);
 
-			layeredProfile.Save();
+			printerSettings.Save();
 		}
 
 		private static void LoadMaterialSettings(PrinterSettings layeredProfile, Printer printer)
