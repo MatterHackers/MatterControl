@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				AddFolderImage("queue_folder.png");
 			}
 
-            /*
+			/*
 			if (false)
 			{
 				// put in the history provider
@@ -118,8 +118,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				AddFolderImage("queue_folder.png");
 			} */
 
-            // put in the sqlite provider
-            libraryCreators.Add(new LibraryProviderSQLiteCreator());
+			// put in the sqlite provider
+			libraryCreators.Add(new LibraryProviderSQLiteCreator());
 			AddFolderImage("library_folder.png");
 
 			// Check for LibraryProvider factories and put them in the list too.
@@ -129,11 +129,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					this.PurchasedLibraryCreator = libraryProviderPlugin;
 				}
-                
-                if (libraryProviderPlugin.ProviderKey == "LibraryProviderSharedKey")
-                {
-                    this.SharedLibraryCreator = libraryProviderPlugin;
-                }
+
+				if (libraryProviderPlugin.ProviderKey == "LibraryProviderSharedKey")
+				{
+					this.SharedLibraryCreator = libraryProviderPlugin;
+				}
 
 				if (libraryProviderPlugin.ShouldBeShown())
 				{
@@ -157,16 +157,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				AddFolderImage("download_folder.png");
 			}
 
-			string userLibraryFoldersPath =  Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "LibraryFolders.conf");
+			string userLibraryFoldersPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "LibraryFolders.conf");
 			if (File.Exists(userLibraryFoldersPath))
 			{
 				foreach (string directory in File.ReadLines(userLibraryFoldersPath))
 				{
-					if(Directory.Exists(directory))
+					if (Directory.Exists(directory))
 					{
 						libraryCreators.Add(
 							new LibraryProviderFileSystemCreator(
-								directory, 
+								directory,
 								(new DirectoryInfo(directory).Name),
 								useIncrementedNameDuringTypeChange: true));
 
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					}
 				}
 			}
-			
+
 			firstAddedDirectoryIndex = libraryCreators.Count;
 			OnDataReloaded(null);
 		}
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			if (collectionIndexToRename >= firstAddedDirectoryIndex)
 			{
 				LibraryProviderFileSystemCreator fileSystemLibraryCreator = libraryCreators[collectionIndexToRename] as LibraryProviderFileSystemCreator;
-				if(fileSystemLibraryCreator != null 
+				if (fileSystemLibraryCreator != null
 					&& fileSystemLibraryCreator.Description != newName)
 				{
 					fileSystemLibraryCreator.Description = newName;
@@ -215,19 +215,19 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-        public override bool CanShare { get { return false; } }
+		public override bool CanShare { get { return false; } }
 
-        public override void ShareItem(int itemIndexToShare)
-        {
+		public override void ShareItem(int itemIndexToShare)
+		{
 
-        }
+		}
 
 		public void CloudSyncStatusChanged(object sender, EventArgs eventArgs)
 		{
 			var e = eventArgs as ApplicationController.CloudSyncEventArgs;
 
 			// If signing out, we need to force selection to this provider
-			if(e != null && !e.IsAuthenticated)
+			if (e != null && !e.IsAuthenticated)
 			{
 				// Switch to the selector
 				SetCurrentLibraryProvider(this);
@@ -240,7 +240,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return this.libraryCreators.Count;
+				if (string.IsNullOrEmpty(KeywordFilter))
+				{
+					return this.libraryCreators.Count;
+				}
+				else
+				{
+					return 0;
+				}
 			}
 		}
 
@@ -248,19 +255,34 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return 0;
+				if (string.IsNullOrEmpty(KeywordFilter))
+				{
+					return 0;
+				}
+				else
+				{
+					return 1;
+				}
 			}
 		}
 
+		string keywordFilter = "";
 		public override string KeywordFilter
 		{
 			get
 			{
-				return "";
+				return keywordFilter;
 			}
 
 			set
 			{
+				// if the filter is changing
+				if (keywordFilter != value)
+				{
+					keywordFilter = value;
+
+					OnDataReloaded(null);
+				}
 			}
 		}
 
@@ -293,6 +315,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override GuiWidget GetItemThumbnail(int printItemIndex)
+		{
+			ImageBuffer warningImage = StaticData.Instance.LoadIcon(Path.Combine("FileDialog", "file.png"), 48, 48).InvertLightness();
+
+			return new ImageWidget(warningImage)
+			{
+				BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor,
+			};
+		}
+
 		public override void Dispose()
 		{
 			foreach (KeyValuePair<int, LibraryProvider> keyValue in libraryProviders)
@@ -318,9 +350,19 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
+		public override string GetPrintItemName(int itemIndex)
+		{
+			return LibraryRowItem.SearchResultsNotAvailableToken;
+		}
+
 		public override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex)
 		{
-			throw new NotImplementedException("Print items are not allowed at the root level");
+			var printItemWrapper = new PrintItemWrapper(new PrintItem(LibraryRowItem.SearchResultsNotAvailableToken, LibraryRowItem.SearchResultsNotAvailableToken), this.GetProviderLocator())
+			{
+				UseIncrementedNameDuringTypeChange = true
+			};
+
+			return Task.FromResult(printItemWrapper);
 		}
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
@@ -369,49 +411,5 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
             LibraryProvider sharedProvider = SharedLibraryCreator.CreateLibraryProvider(this, SetCurrentLibraryProvider);
             return sharedProvider;
         }
-
-#if false
-		public static async Task<LibraryProvider> GetLibraryFromLocator(List<ProviderLocatorNode> libraryProviderLocator)
-		{
-			LibraryProviderSelector selector = new LibraryProviderSelector(null, true);
-
-			LibraryProvider lastProvider = null;
-
-			if (libraryProviderLocator.Count > 1)
-			{
-				ProviderLocatorNode selectorNode = libraryProviderLocator[1];
-				foreach (ILibraryCreator libraryCreator in selector.libraryCreators)
-				{
-					if (libraryCreator.ProviderKey == selectorNode.Key)
-					{
-						// We found the right creatory, make the library and then iterate through it to get to the correct sub library
-						lastProvider = libraryCreator.CreateLibraryProvider(null, null);
-						for (int i = 2; i < libraryProviderLocator.Count; i++)
-						{
-							ProviderLocatorNode currentNode = libraryProviderLocator[i];
-
-							// wait for our current providre to finish loading
-							while (lastProvider.CollectionCount == 0)
-							{
-								Thread.Sleep(100);
-							}
-
-							// now find the next sub provider and go to it
-							for (int collectionIndex = 0; collectionIndex < lastProvider.CollectionCount; collectionIndex++)
-							{
-								PrintItemCollection collection = lastProvider.GetCollectionItem(collectionIndex);
-								if (collection.Key == currentNode.Key)
-								{
-									lastProvider = lastProvider.GetProviderForCollection(collection);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			return lastProvider;
-		}
-#endif
 	}
 }

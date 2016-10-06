@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 			if (stringEvent != null)
 			{
 				nextLine.Text = "";
-				feedback.AddChild(CreateNextLine(string.Format("total filament mm = {0}", stringEvent.Data)));
+				feedback.AddChild(CreateNextLine(string.Format("Filament length = {0} mm", stringEvent.Data)));
 			}
 		}
 

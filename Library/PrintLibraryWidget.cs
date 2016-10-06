@@ -84,8 +84,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private GuiWidget searchPanel;
-
 		static PrintLibraryWidget currentPrintLibraryWidget;
 
 		public static void Reload()
@@ -175,8 +173,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AddLibraryButtonElements();
 
 				//allControls.AddChild(navigationPanel);
-				searchPanel = CreateSearchPannel();
-				allControls.AddChild(searchPanel);
+				allControls.AddChild(CreateSearchPannel());
 
 				libraryDataView = new LibraryDataView();
 				breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
@@ -234,7 +231,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				searchPanel.AddChild(searchButton);
 			}
 
-			searchPanel.Visible = false;
 			return searchPanel;
 		}
 
@@ -278,14 +274,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				addToLibraryButton.Enabled = false;
 				createFolderButton.Enabled = false;
-				searchPanel.Visible = false;
 				DoLeaveEditMode();
 			}
 			else
 			{
 				addToLibraryButton.Enabled = true;
 				createFolderButton.Enabled = true;
-				searchPanel.Visible = true;
 			}
 
 			if (previousLibraryProvider != null)

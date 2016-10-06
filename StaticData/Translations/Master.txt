@@ -5491,3 +5491,12 @@ Translated:Your Start G-Code should not contain a G29 if you are planning on usi
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
 Translated:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
 
+English:Search results no available in this view
+Translated:Search results no available in this view
+
+English:Sorry: Search results not available in this view
+Translated:Sorry: Search results not available in this view
+
+English:Oops! Please select a folder to search
+Translated:Oops! Please select a folder to search
+
