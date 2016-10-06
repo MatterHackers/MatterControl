@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				currentLibraryProvider = currentLibraryProvider.ParentLibraryProvider;
 			}
 
-			bool haveFilterRunning = displayingProvider.KeywordFilter != null && displayingProvider.KeywordFilter != "";
+			bool haveFilterRunning = !string.IsNullOrEmpty(displayingProvider.KeywordFilter);
 
 			bool first = true;
 			for (int i = parentProviderList.Count - 1; i >= 0; i--)

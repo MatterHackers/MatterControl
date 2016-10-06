@@ -71,18 +71,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			this.ItemName = libraryProvider.GetPrintItemName(itemIndex);
-			if(this.ItemName == LibraryRowItem.LoadingPlaceholderToken 
-				|| this.ItemName == LibraryRowItem.LoadFailedPlaceholderToken)
+			if (this.ItemName == LibraryRowItem.LoadingPlaceholderToken)
 			{
-				if(this.ItemName == LibraryRowItem.LoadingPlaceholderToken)
-				{
-					this.ItemName = "Retrieving Contents...".Localize();
-				}
-				else
-				{
-					this.ItemName = "Error Loading Contents".Localize();
-				}
-
+				this.ItemName = "Retrieving Contents...".Localize();
+				this.IsViewHelperItem = true;
+				this.EnableSlideInActions = false;
+			}
+			else if (this.ItemName == LibraryRowItem.LoadFailedPlaceholderToken)
+			{
+				this.ItemName = "Error Loading Contents".Localize();
+				this.IsViewHelperItem = true;
+				this.EnableSlideInActions = false;
+			}
+			else if (this.ItemName == LibraryRowItem.SearchResultsNotAvailableToken)
+			{
+				this.ItemName = "Oops! Please select a folder to search".Localize();
 				this.IsViewHelperItem = true;
 				this.EnableSlideInActions = false;
 			}

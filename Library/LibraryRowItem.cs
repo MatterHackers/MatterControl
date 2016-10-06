@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		public static readonly string LoadingPlaceholderToken = "!Placeholder_ItemToken!";
 		public static readonly string LoadFailedPlaceholderToken = "!Placeholder_LoadFailedToken!";
+		public static readonly string SearchResultsNotAvailableToken = "!Placeholder_SearchResultsNotAvailable!";
 
 		public bool IsSelectedItem
 		{
