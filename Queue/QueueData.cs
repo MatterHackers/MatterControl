@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 								bool sdCardItemInQueue = false;
 								bool validSdCardItem = false;
 
-								foreach (PrintItem item in CreateReadOnlyPartList())
+								foreach (PrintItem item in CreateReadOnlyPartList(false))
 								{
 									if (item.FileLocation == QueueData.SdCardFileName
 										&& item.Name == currentEvent.Data)
@@ -281,12 +281,17 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public List<PrintItem> CreateReadOnlyPartList()
+		public List<PrintItem> CreateReadOnlyPartList(bool includeProtectedItems)
 		{
 			List<PrintItem> listToReturn = new List<PrintItem>();
 			for (int i = 0; i < Count; i++)
 			{
-				listToReturn.Add(GetPrintItemWrapper(i).PrintItem);
+				var printItem = GetPrintItemWrapper(i).PrintItem;
+				if (includeProtectedItems 
+					|| !printItem.Protected)
+				{
+					listToReturn.Add(printItem);
+				}
 			}
 			return listToReturn;
 		}
@@ -411,7 +416,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void SaveDefaultQueue()
 		{
-			List<PrintItem> partList = CreateReadOnlyPartList();
+			List<PrintItem> partList = CreateReadOnlyPartList(true);
 			ManifestFileHandler manifest = new ManifestFileHandler(partList);
 			manifest.ExportToJson();
 		}

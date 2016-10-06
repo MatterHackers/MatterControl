@@ -577,7 +577,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void exportQueueButton_Click(object sender, EventArgs mouseEvent)
 		{
-			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
+			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList(false);
 			ProjectFileHandler project = new ProjectFileHandler(partList);
 			project.SaveAs();
 		}

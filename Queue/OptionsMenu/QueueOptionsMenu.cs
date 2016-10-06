@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void PartSheetClickOnIdle()
 		{
 #if !__ANDROID__
-			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
+			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList(true);
 			if (parts.Count > 0)
 			{
 				FileDialog.SaveFileDialog(
@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			string path = openParams.FolderPath;
 			if (path != null && path != "")
 			{
-				List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
+				List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList(true);
 				if (parts.Count > 0)
 				{
 					if (exportingWindow == null)
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void ExportQueueToZipOnIdle()
 		{
-			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
+			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList(false);
 			ProjectFileHandler project = new ProjectFileHandler(partList);
 			project.SaveAs();
 		}
