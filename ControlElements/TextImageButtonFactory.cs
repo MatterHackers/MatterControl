@@ -265,9 +265,12 @@ namespace MatterHackers.MatterControl
 			return groupLableAndEditControl;
 		}
 
-		public CheckBox GenerateCheckBoxButton(string label, ImageBuffer normalImageName, ImageBuffer normalToPressedImageName = null, ImageBuffer pressedImageName = null, ImageBuffer pressedToNormalImageName = null, string pressedLabel = null)
+		public CheckBox GenerateCheckBoxButton(string label, ImageBuffer normalImage, ImageBuffer normalToPressedImage = null, ImageBuffer pressedImage = null, ImageBuffer pressedToNormalImage = null, string pressedLabel = null)
 		{
-			CheckBoxViewStates checkBoxButtonViewWidget = getCheckBoxButtonView(label, normalImageName, normalToPressedImageName, pressedImageName, pressedToNormalImageName, pressedLabel);
+			if (pressedImage == null) pressedImage = normalImage;
+			if (pressedToNormalImage == null) pressedToNormalImage = normalToPressedImage;
+
+			CheckBoxViewStates checkBoxButtonViewWidget = getCheckBoxButtonView(label, normalImage, normalToPressedImage, pressedImage, pressedToNormalImage, pressedLabel);
 
 			//Override the width if requested
 			if (this.FixedWidth != 0)
