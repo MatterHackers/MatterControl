@@ -55,7 +55,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 			{
-				expandScaleOptions = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("Scale".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
+				expandScaleOptions = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("Scale".Localize().ToUpper(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 				expandScaleOptions.Margin = new BorderDouble(bottom: 2);
 				this.AddChild(expandScaleOptions);
 

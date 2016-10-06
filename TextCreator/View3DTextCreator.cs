@@ -607,7 +607,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				// put in the word editing menu
 				{
-					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
+					CheckBox expandWordOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Word Edit".Localize(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 					expandWordOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandWordOptions);
 
@@ -680,7 +682,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				// put in the letter editing menu
 				{
-					CheckBox expandLetterOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Letter", StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
+					CheckBox expandLetterOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Letter",
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 					expandLetterOptions.Margin = new BorderDouble(bottom: 2);
 					//buttonRightPanel.AddChild(expandLetterOptions);
 

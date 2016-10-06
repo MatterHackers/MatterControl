@@ -132,6 +132,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler SelectedTransformChanged;
 
+		public static ImageBuffer ArrowRight
+		{
+			get
+			{
+				return StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness();
+			}
+		}
+
+		public static ImageBuffer ArrowDown
+		{
+			get
+			{
+				return StaticData.Instance.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32).InvertLightness();
+			}
+		}
+
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
 		{
 			this.openMode = openMode;
@@ -1446,7 +1462,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
+				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton(
+					"Rotate".Localize().ToUpper(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
 				buttonRightPanel.AddChild(expandRotateOptions);
 				expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
@@ -1469,7 +1488,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
-				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
+				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
 				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
 
@@ -1487,7 +1508,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in the view options
 				{
-					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness());
+					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 					expandViewOptions.Margin = new BorderDouble(bottom: 2);
 					buttonRightPanel.AddChild(expandViewOptions);
 					expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;

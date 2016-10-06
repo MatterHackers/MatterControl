@@ -52,7 +52,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the mirror options
 			{
-				expandMirrorOptions = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("Mirror".Localize().ToUpper(), StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32,32).InvertLightness());
+				expandMirrorOptions = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton(
+					"Mirror".Localize().ToUpper(), 
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 				expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
 				this.AddChild(expandMirrorOptions);
 
