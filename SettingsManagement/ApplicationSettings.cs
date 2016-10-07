@@ -81,7 +81,6 @@ namespace MatterHackers.MatterControl
 				&& !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveClientToken))
 			{
 				claimedClientToken = AuthenticationData.Instance.ActiveClientToken;
-				AuthenticationData.Instance.LoadFirstInstance();
 			}
 			else
 			{
