@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 		List<CheckBox> checkBoxes = new List<CheckBox>();
 
 		public CopyGuestProfilesToUser(Action afterProfilesImported)
-		: base("Cancel", "Copy Printers to Account")
+		: base("Close", "Copy Printers to Account")
 		{
 			var scrollWindow = new ScrollableWidget()
 			{
@@ -97,14 +97,14 @@ namespace MatterHackers.MatterControl
 			syncButton.Click += (s, e) =>
 			{
 				// do the import
-				foreach(var checkBox in checkBoxes)
+				foreach (var checkBox in checkBoxes)
 				{
 					if (checkBox.Checked)
 					{
 						// import the printer
 						var printerInfo = byCheckbox[checkBox];
 
-						string existingPath = Path.Combine(ProfileManager.GuestDBDirectory, printerInfo.ID + ProfileManager.ProfileExtension);;
+						string existingPath = Path.Combine(ProfileManager.GuestDBDirectory, printerInfo.ID + ProfileManager.ProfileExtension); ;
 
 						ProfileManager.Instance.Profiles.Add(printerInfo);
 						guestProfileManager.Profiles.Remove(printerInfo);
@@ -125,14 +125,24 @@ namespace MatterHackers.MatterControl
 					WizardWindow.Close();
 
 					// Call back into the original source
-					afterProfilesImported();
+					afterProfilesImported?.Invoke();
 				});
 			};
+
+			CheckBox rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
+			contentRow.AddChild(rememberChoice);
 
 			syncButton.Visible = true;
 			cancelButton.Visible = true;
 
-			cancelButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.Close);
+			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				WizardWindow.Close();
+				if (rememberChoice.Checked)
+				{
+					afterProfilesImported?.Invoke();
+				}
+			});
 
 			//Add buttons to buttonContainer
 			footerRow.AddChild(syncButton);
