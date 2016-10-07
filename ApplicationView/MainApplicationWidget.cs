@@ -215,8 +215,6 @@ namespace MatterHackers.MatterControl
 
 		private event EventHandler unregisterEvents;
 
-		public bool WidescreenMode { get; set; }
-
 		static int applicationInstanceCount = 0;
 		public static int ApplicationInstanceCount
 		{

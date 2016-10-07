@@ -59,7 +59,7 @@ namespace MatterHackers.Agg.UI
 			AddText(tabPageControledByTab.Text, selectedWidget, selectedTextColor, selectedBackgroundColor, pointSize);
 			AddText(tabPageControledByTab.Text, normalWidget, normalTextColor, normalBackgroundColor, pointSize);
 
-			tabPageControledByTab.TextChanged += new EventHandler(tabPageControledByTab_TextChanged);
+			tabPageControledByTab.TextChanged += tabPageControledByTab_TextChanged;
 
 			SetBoundsToEncloseChildren();
 

@@ -150,11 +150,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Load or download on a background thread
 					var lastProfile = await LoadProfileAsync(Instance.LastProfileID);
 
-					UiThread.RunOnIdle(() =>
+					if (MatterControlApplication.IsLoading)
 					{
 						// Assign on the UI thread
 						ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
-					});
+					}
+					else
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							// Assign on the UI thread
+							ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
+						});
+					}
 				});
 			}
 
