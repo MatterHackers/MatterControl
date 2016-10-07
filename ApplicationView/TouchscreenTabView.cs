@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 				"Queue".Localize().ToUpper(),
 				() => new QueueDataWidget(queueDataView));
 
-			QueueTabPage = this.TabPages["Queue Tab"];
+			QueueTabPage = this.GetTabPage("Queue Tab");
 
 			this.AddTab(
 				"Library Tab",
@@ -261,15 +261,15 @@ namespace MatterHackers.MatterControl
 		private void ReloadAdvancedControls()
 		{
 			// ReloadControlsWidget
-			var controlsTabPage = this.TabPages["Controls Tab"] as LazyTabPage;
+			var controlsTabPage = this.GetTabPage("Controls Tab") as LazyTabPage;
 			controlsTabPage.Reload();
 
 			// ReloadConfigurationWidget
-			var optionsTabPage = this.TabPages["Options Tab"] as LazyTabPage;
+			var optionsTabPage = this.GetTabPage("Options Tab") as LazyTabPage;
 			optionsTabPage.Reload();
 
 			// ReloadSliceSettingsWidget
-			var sliceSettingsTabPage = this.TabPages["Slice Settings Tab"] as LazyTabPage;
+			var sliceSettingsTabPage = this.GetTabPage("Slice Settings Tab") as LazyTabPage;
 			sliceSettingsTabPage.Reload();
 
 			this.Invalidate();
