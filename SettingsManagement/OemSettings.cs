@@ -170,7 +170,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 					}
 
 					return result;
-				});
+				},
+				Path.Combine("Profiles", "oemprofiles.json"));
 
 			if (oemProfilesDict != null)
 			{
