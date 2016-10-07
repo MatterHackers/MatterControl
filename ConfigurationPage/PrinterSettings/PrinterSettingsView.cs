@@ -91,24 +91,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(cameraLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
 			buttonRow.AddChild(openCameraButton);
-#if __ANDROID__
 
-			GuiWidget publishImageSwitchContainer = new FlowLayoutWidget();
-			publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
-			publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
-
-			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image));
-			toggleSwitch.CheckedStateChanged += (sender, e) =>
+			if (ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true")
 			{
-				CheckBox thisControl = sender as CheckBox;
-				ActiveSliceSettings.Instance.SetValue("PublishBedImage", thisControl.Checked ? "1" : "0");
-			};
-			publishImageSwitchContainer.AddChild(toggleSwitch);
+				GuiWidget publishImageSwitchContainer = new FlowLayoutWidget();
+				publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
+				publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
 
-			publishImageSwitchContainer.SetBoundsToEncloseChildren();
+				CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image));
+				toggleSwitch.CheckedStateChanged += (sender, e) =>
+				{
+					CheckBox thisControl = sender as CheckBox;
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, thisControl.Checked ? "1" : "0");
+				};
+				publishImageSwitchContainer.AddChild(toggleSwitch);
 
-			buttonRow.AddChild(publishImageSwitchContainer);
-#endif
+				publishImageSwitchContainer.SetBoundsToEncloseChildren();
+
+				buttonRow.AddChild(publishImageSwitchContainer);
+			}
 
 			return buttonRow;
 		}
