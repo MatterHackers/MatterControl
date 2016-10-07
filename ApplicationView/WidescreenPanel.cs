@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 	public class WidescreenPanel : FlowLayoutWidget
 	{
 		private static readonly int ColumnOneFixedWidth = 590;
-		private static int lastNumberOfVisiblePanels = 0;
+		private int lastNumberOfVisiblePanels = 0;
 
 		private TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
