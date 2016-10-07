@@ -104,19 +104,20 @@ namespace MatterControl.Tests
 		[Test, RequiresSTA, RunInApplicationDomain]
 		public void MatterControlRuns()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner();
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
 
-					resultsHarness.AddTestResult(testRunner.NameExists("SettingsAndControls"));
+					testRunner.AddTestResult(testRunner.NameExists("SettingsAndControls"));
+
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 #endif

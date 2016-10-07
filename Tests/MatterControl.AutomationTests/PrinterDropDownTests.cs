@@ -15,19 +15,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void PrinterNameStaysChanged()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1), "Click Printer Tab");
+					testRunner.AddTestResult(testRunner.ClickByName("Printer Tab", 1), "Click Printer Tab");
 
 					string widgetName = "Printer Name Edit";
 					testRunner.ClickByName(widgetName);
@@ -42,16 +40,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Check to make sure the Printer dropdown gets the name change 
 					testRunner.ClickByName("Printers... Menu", 2);
 					testRunner.Wait(1);
-					resultsHarness.AddTestResult(testRunner.NameExists(newName + " Menu Item"), "Widget with updated printer name exists");
+					testRunner.AddTestResult(testRunner.NameExists(newName + " Menu Item"), "Widget with updated printer name exists");
 
 					//Make sure the Active profile name changes as well
-					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
+					testRunner.AddTestResult(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(5));
 		}
 	}

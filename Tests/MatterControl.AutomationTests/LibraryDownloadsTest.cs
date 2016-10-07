@@ -12,9 +12,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DownloadsAddButtonAddsMultipleFiles()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					MatterControlUtilities.CreateDownloadsSubFolder();
@@ -38,19 +37,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec Fox item exists");
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
+					testRunner.AddTestResult(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec Fox item exists");
+					testRunner.AddTestResult(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
 					testRunner.Wait(1);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = null;
+			AutomationRunner testHarness = null;
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			}
 			catch { }
@@ -65,9 +64,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DownloadsAddButtonAddsAMFFiles()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -86,18 +84,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Rook", 2), "Rook item exists");
+					testRunner.AddTestResult(testRunner.WaitForName("Row Item Rook", 2), "Rook item exists");
 					testRunner.Wait(1);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = null;
+			AutomationRunner testHarness = null;
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			}
 			catch { }
@@ -112,9 +110,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DownloadsAddButtonAddsZipFiles()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					MatterControlUtilities.CreateDownloadsSubFolder();
@@ -132,20 +129,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(1);
 					testRunner.Type("{Enter}");
 
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Chinese Dragon", 2), "Chinese Dragon item exists");
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item chichen-itza pyramid", 2), "chichen-itza item exists");
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Circle Calibration", 2), "Circle Calibration item exists");
+					testRunner.AddTestResult(testRunner.WaitForName("Row Item Chinese Dragon", 2), "Chinese Dragon item exists");
+					testRunner.AddTestResult(testRunner.WaitForName("Row Item chichen-itza pyramid", 2), "chichen-itza item exists");
+					testRunner.AddTestResult(testRunner.WaitForName("Row Item Circle Calibration", 2), "Circle Calibration item exists");
 
 					testRunner.Wait(1);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
-			AutomationTesterHarness testHarness = null;
+			AutomationRunner testHarness = null;
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			}
 			catch { }
 
@@ -164,9 +161,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RenameDownloadsPrintItem()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					MatterControlUtilities.CreateDownloadsSubFolder();
@@ -189,16 +185,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(.5);
 					testRunner.Type("Batman Renamed");
 					testRunner.ClickByName("Rename Button");
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item Batman Renamed", 2) == true);
+					testRunner.AddTestResult(testRunner.WaitForName("Row Item Batman Renamed", 2) == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
-			AutomationTesterHarness testHarness = null;
+			AutomationRunner testHarness = null;
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			}
 			catch { }
@@ -213,9 +209,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void CreateFolder()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -234,17 +229,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Create Folder Button");
 
 					testRunner.Wait(2);
-					resultsHarness.AddTestResult(testRunner.WaitForName(newFolderName + " Row Item Collection", 2), $"{newFolderName} exists");
+					testRunner.AddTestResult(testRunner.WaitForName(newFolderName + " Row Item Collection", 2), $"{newFolderName} exists");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = null;
+			AutomationRunner testHarness = null;
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			}
 			catch { }

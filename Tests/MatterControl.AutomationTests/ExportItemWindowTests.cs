@@ -15,9 +15,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ExportAsGcode()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -38,7 +37,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{Enter}");
 
 					//Get test results 
-					resultsHarness.AddTestResult(testRunner.WaitForName(firstItemName, 2) == true);
+					testRunner.AddTestResult(testRunner.WaitForName(firstItemName, 2) == true);
 
 					testRunner.ClickByName("Queue Edit Button");
 					testRunner.ClickByName(firstItemName);
@@ -56,14 +55,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					Console.WriteLine(gcodeExportPath);
 
-					resultsHarness.AddTestResult(File.Exists(gcodeExportPath) == true);
+					testRunner.AddTestResult(File.Exists(gcodeExportPath) == true);
 					Debugger.Break();
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}

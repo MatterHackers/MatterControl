@@ -241,11 +241,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.Wait(.2);
 			testRunner.Type(make);
-
 			testRunner.Type("{Enter}");
 
 			testRunner.ClickByName("Select Model", 2);
-
 			testRunner.ClickByName(printer, 2);
 
 			testRunner.ClickByName("Save & Continue Button", 2);
@@ -347,12 +345,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return goodNavigate;
 		}
 
-		public static AutomationTesterHarness RunTest(
-			Action<AutomationTesterHarness> testToRun,
+		public static AutomationRunner RunTest(
+			Action<AutomationRunner> testMethod,
 			string staticDataPathOverride = null,
 			double maxTimeToRun = 60,
 			QueueTemplate queueItemFolderToAdd = QueueTemplate.None,
-			int overrideWidth = -1, int overrideHeight = -1)
+			int overrideWidth = -1, 
+			int overrideHeight = -1,
+			string defaultTestImages = null)
 		{
 			// Walk back a step in the stack and output the callers name
 			StackTrace st = new StackTrace(false);
@@ -386,7 +386,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
-			return AutomationTesterHarness.ShowWindowAndExecuteTests(matterControlWindow, testToRun, maxTimeToRun);
+			return AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages);
 		}
 
 		public static void LibraryAddSelectionToQueue(AutomationRunner testRunner)
@@ -436,15 +436,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		}
 
-		public static void SwitchToAdvancedSettings(AutomationRunner testRunner, AutomationTesterHarness resultsHarness)
+		public static void SwitchToAdvancedSettings(AutomationRunner testRunner)
 		{
 			if (testRunner.NameExists("SettingsAndControls"))
 			{
 				testRunner.ClickByName("SettingsAndControls", 1);
 				testRunner.Wait(.5);
 			}
-			resultsHarness.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1), "Click Settings Mode dropdown");
-			resultsHarness.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1), "Click 'Advanced' settings");
+			testRunner.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1), "Click Settings Mode dropdown");
+			testRunner.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1), "Click 'Advanced' settings");
 			testRunner.Wait(.5);
 		}
 	}
