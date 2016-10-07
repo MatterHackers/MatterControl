@@ -97,9 +97,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (string.IsNullOrEmpty(username))
 				{ 
 					username = GuestDBPath;
-
-					// If ActiveUserName is empty or invalid and the credentials file exists, delete local credentials, resetting to unauthenticated guest mode
-					AuthenticationData.Instance.ClearActiveSession();
 				}
 				else
 				{

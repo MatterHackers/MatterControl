@@ -42,6 +42,14 @@ namespace MatterHackers.MatterControl
 
 		public static AuthenticationData Instance { get; } = new AuthenticationData();
 
+		public AuthenticationData()
+		{
+			activeSessionKey = ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}ActiveSessionKey");
+			activeSessionUsername = ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}ActiveSessionUsername");
+			activeSessionEmail = ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}ActiveSessionEmail");
+			lastSessionUsername = ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}LastSessionUsername");
+		}
+
 		public void SessionRefresh()
 		{
 			//Called after completing a purchase (for example)
@@ -107,14 +115,6 @@ namespace MatterHackers.MatterControl
 				activeSessionUsername = value;
 				ApplicationSettings.Instance.set($"{ApplicationController.EnvironmentName}ActiveSessionUsername", value);
 			}
-		}
-
-		internal void LoadFirstInstance()
-		{
-			activeSessionKey = ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}ActiveSessionKey");
-			activeSessionUsername = ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}ActiveSessionUsername");
-			activeSessionEmail = ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}ActiveSessionEmail");
-			lastSessionUsername = ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}LastSessionUsername");
 		}
 
 		private string activeSessionEmail;
