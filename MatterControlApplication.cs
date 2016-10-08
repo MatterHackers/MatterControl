@@ -37,6 +37,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gaming.Game;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
@@ -63,7 +64,7 @@ namespace MatterHackers.MatterControl
 		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
 #endif
 
-public static bool CameraPreviewActive = false;
+		public static bool CameraInUseByOtherProcess = false;
 		public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
@@ -123,6 +124,8 @@ public static bool CameraPreviewActive = false;
 		private MatterControlApplication(double width, double height)
 			: base(width, height)
 		{
+			ApplicationSettings.Instance.set("HardwareHasCamera", "false");
+
 			Name = "MatterControl";
 
 			// set this at startup so that we can tell next time if it got set to true in close
@@ -312,68 +315,80 @@ public static bool CameraPreviewActive = false;
 			}
 		}
 
-        bool dropWasOnChild = true;
-        public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
-        {
-            base.OnDragEnter(fileDropEventArgs);
+		public void TakePhoto(string imageFileName)
+		{
+			ImageBuffer noCameraImage = new ImageBuffer(640, 480);
+			Graphics2D graphics = noCameraImage.NewGraphics2D();
+			graphics.Clear(RGBA_Bytes.White);
+			graphics.DrawString("No Camera Detected", 320, 240, pointSize: 24, justification: Agg.Font.Justification.Center);
+			graphics.DrawString(DateTime.Now.ToString(), 320, 200, pointSize: 12, justification: Agg.Font.Justification.Center);
+			ImageIO.SaveImageData(imageFileName, noCameraImage);
 
-            if (!fileDropEventArgs.AcceptDrop)
-            {
-                // no child has accepted the drop
-                foreach (string file in fileDropEventArgs.DroppedFiles)
-                {
-                    string extension = Path.GetExtension(file).ToUpper();
-                    if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-                        || extension == ".GCODE"
-                        || extension == ".ZIP")
-                    {
-                        fileDropEventArgs.AcceptDrop = true;
-                    }
-                }
-                dropWasOnChild = false;
-            }
-            else
-            {
-                dropWasOnChild = true;
-            }
-        }
+			PictureTaken?.Invoke(null, null);
+		}
 
-        public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
-        {
-            base.OnDragOver(fileDropEventArgs);
+		bool dropWasOnChild = true;
+		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+		{
+			base.OnDragEnter(fileDropEventArgs);
 
-            if (!fileDropEventArgs.AcceptDrop)
-            {
-                // no child has accepted the drop
-                foreach (string file in fileDropEventArgs.DroppedFiles)
-                {
-                    string extension = Path.GetExtension(file).ToUpper();
-                    if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-                        || extension == ".GCODE"
-                        || extension == ".ZIP")
-                    {
-                        fileDropEventArgs.AcceptDrop = true;
-                    }
-                }
-                dropWasOnChild = false;
-            }
-            else
-            {
-                dropWasOnChild = true;
-            }
-        }
+			if (!fileDropEventArgs.AcceptDrop)
+			{
+				// no child has accepted the drop
+				foreach (string file in fileDropEventArgs.DroppedFiles)
+				{
+					string extension = Path.GetExtension(file).ToUpper();
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+						|| extension == ".GCODE"
+						|| extension == ".ZIP")
+					{
+						fileDropEventArgs.AcceptDrop = true;
+					}
+				}
+				dropWasOnChild = false;
+			}
+			else
+			{
+				dropWasOnChild = true;
+			}
+		}
 
-        public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
-        {
-            base.OnDragDrop(fileDropEventArgs);
+		public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
+		{
+			base.OnDragOver(fileDropEventArgs);
 
-            if (!dropWasOnChild)
-            {
-                QueueDataWidget.DoAddFiles(fileDropEventArgs.DroppedFiles);
-            }
-        }
+			if (!fileDropEventArgs.AcceptDrop)
+			{
+				// no child has accepted the drop
+				foreach (string file in fileDropEventArgs.DroppedFiles)
+				{
+					string extension = Path.GetExtension(file).ToUpper();
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+						|| extension == ".GCODE"
+						|| extension == ".ZIP")
+					{
+						fileDropEventArgs.AcceptDrop = true;
+					}
+				}
+				dropWasOnChild = false;
+			}
+			else
+			{
+				dropWasOnChild = true;
+			}
+		}
 
-        public enum ReportSeverity2 { Warning, Error }
+		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
+		{
+			base.OnDragDrop(fileDropEventArgs);
+
+			if (!dropWasOnChild)
+			{
+				QueueDataWidget.DoAddFiles(fileDropEventArgs.DroppedFiles);
+			}
+		}
+
+		public enum ReportSeverity2 { Warning, Error }
 
 		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)
 		{
@@ -403,6 +418,8 @@ public static bool CameraPreviewActive = false;
 				return instance;
 			}
 		}
+
+		public event EventHandler PictureTaken;
 
 		public static void LoadUITheme()
 		{
@@ -435,19 +452,19 @@ public static bool CameraPreviewActive = false;
 			{
 				Point2D desktopSize = OsInformation.DesktopSize;
 
-				if(overrideWidth != -1)
+				if (overrideWidth != -1)
 				{
 					width = overrideWidth;
 				}
 				else // try to set it to a good size
 				{
-					if(width < desktopSize.x)
+					if (width < desktopSize.x)
 					{
 						width = 1280;
 					}
 				}
 
-				if(overrideHeight != -1)
+				if (overrideHeight != -1)
 				{
 					height = overrideHeight;
 				}
@@ -461,15 +478,15 @@ public static bool CameraPreviewActive = false;
 			}
 
 			using (new PerformanceTimer("Startup", "Total"))
-            {
-                instance = new MatterControlApplication(width, height);
+			{
+				instance = new MatterControlApplication(width, height);
 
 				if (instance.DesktopPosition == new Point2D())
 				{
 					Point2D desktopSize = OsInformation.DesktopSize;
 
 					// Now try and center the window. If this is saved it will got overridden
-					instance.DesktopPosition = new Point2D((desktopSize.x - instance.Width)/2, (desktopSize.y - instance.Height)/2);
+					instance.DesktopPosition = new Point2D((desktopSize.x - instance.Width) / 2, (desktopSize.y - instance.Height) / 2);
 				}
 			}
 
@@ -479,9 +496,9 @@ public static bool CameraPreviewActive = false;
 		[STAThread]
 		public static void Main()
 		{
-            PerformanceTimer.GetParentWindowFunction = () => { return MatterControlApplication.instance; };
+			PerformanceTimer.GetParentWindowFunction = () => { return MatterControlApplication.instance; };
 
-            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.
@@ -632,7 +649,7 @@ public static bool CameraPreviewActive = false;
 			}
 		}
 
-        public override void OnDraw(Graphics2D graphics2D)
+		public override void OnDraw(Graphics2D graphics2D)
 		{
 			totalDrawTime.Restart();
 			GuiWidget.DrawCount = 0;
@@ -734,7 +751,7 @@ public static bool CameraPreviewActive = false;
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			FindAndInstantiatePlugins();
 
-			if(ApplicationController.Instance.PluginsLoaded != null)
+			if (ApplicationController.Instance.PluginsLoaded != null)
 			{
 				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
 			}
