@@ -136,7 +136,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			get
 			{
-				return StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness();
+				if (ActiveTheme.Instance.IsDarkTheme)
+				{
+					return StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness();
+				}
+				else
+				{
+					return StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32);
+				}
 			}
 		}
 
@@ -144,7 +151,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			get
 			{
-				return StaticData.Instance.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32).InvertLightness();
+				if (ActiveTheme.Instance.IsDarkTheme)
+				{
+					return StaticData.Instance.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32).InvertLightness();
+				}
+				else
+				{
+					return StaticData.Instance.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32);
+				}
 			}
 		}
 
