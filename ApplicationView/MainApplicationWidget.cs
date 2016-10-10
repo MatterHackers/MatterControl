@@ -51,7 +51,8 @@ namespace MatterHackers.MatterControl
 	using Agg.Font;
 	using System.Reflection;
 	using System.Text.RegularExpressions;
-	
+	using SettingsManagement;
+
 	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
 	{
 	}
@@ -405,8 +406,6 @@ namespace MatterHackers.MatterControl
 			return MakeValidFileName(AuthenticationData.Instance.ActiveSessionUsername);
 		}
 
-
-
 		bool pendingReloadRequest = false;
 		public void ReloadAll(object sender, EventArgs e)
 		{
@@ -451,6 +450,28 @@ namespace MatterHackers.MatterControl
 			ApplicationClosed?.Invoke(null, null);
 		}
 
+		static void LoadUITheme()
+		{
+			if (string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.ActiveThemeName)))
+			{
+				string oemColor = OemSettings.Instance.ThemeColor;
+				if (string.IsNullOrEmpty(oemColor))
+				{
+					ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
+				}
+				else
+				{
+					UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
+					ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
+				}
+			}
+			else
+			{
+				string name = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(name);
+			}
+		}
+
 		public static ApplicationController Instance
 		{
 			get
@@ -460,6 +481,12 @@ namespace MatterHackers.MatterControl
 					//using (new PerformanceTimer("Startup", "AppController Instance"))
 					{
 						globalInstance = new ApplicationController();
+
+						// set the colors
+						LoadUITheme();
+						// This will initialize the theme for the first printer to load
+						ProfileManager.Reload();
+
 						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 						{
 							globalInstance.MainView = new TouchscreenView();

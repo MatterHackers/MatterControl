@@ -410,7 +410,6 @@ namespace MatterHackers.MatterControl
 			{
 				if (instance == null)
 				{
-					LoadUITheme();
 					instance = CreateInstance();
 					instance.ShowAsSystemWindow();
 				}
@@ -420,28 +419,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		public event EventHandler PictureTaken;
-
-		public static void LoadUITheme()
-		{
-			if (string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.ActiveThemeName)))
-			{
-				string oemColor = OemSettings.Instance.ThemeColor;
-				if(string.IsNullOrEmpty(oemColor))
-				{
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
-				}
-				else
-				{
-					UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
-				}
-			}
-			else
-			{
-				string name = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors(name);
-			}
-		}
 
 		public static MatterControlApplication CreateInstance(int overrideWidth = -1, int overrideHeight = -1)
 		{
