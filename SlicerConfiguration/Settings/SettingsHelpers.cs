@@ -101,6 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
+		public const string temperature = nameof(temperature);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
 	}
@@ -114,31 +115,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.printerSettings = printerSettings;
 		}
 
-		public string ExtruderTemperature(int extruderIndex)
+		public double ExtruderTemperature(int extruderIndex)
 		{
-			if (extruderIndex >= printerSettings.MaterialSettingsKeys.Count)
+			if(extruderIndex == 0)
 			{
-				// MaterialSettingsKeys is empty or lacks a value for the given extruder index
-				//
-				// If extruder index zero was requested, return the layer cascade temperature value, otherwise null
-				return (extruderIndex == 0) ? printerSettings.GetValue("temperature") : null;
+				return printerSettings.GetValue<double>(SettingsKey.temperature);
 			}
-
-			string materialKey = printerSettings.MaterialSettingsKeys[extruderIndex];
-
-			if (extruderIndex == 0 && (string.IsNullOrEmpty(materialKey) || printerSettings.UserLayer.ContainsKey("temperature")))
+			else
 			{
-				// In the case where a user override exists or MaterialSettingsKeys is populated with multiple extruder 
-				// positions but position 0 is empty and thus unassigned, use layer cascade to resolve temp
-				return printerSettings.GetValue("temperature");
+				// Check if there is a material override for this extruder
+				// Otherwise, use the SettingsLayers that is bound to this extruder
+				if (extruderIndex < printerSettings.MaterialSettingsKeys.Count)
+				{
+					string materialKey = printerSettings.MaterialSettingsKeys[extruderIndex];
+					PrinterSettingsLayer layer = printerSettings.GetMaterialLayer(materialKey);
+
+					if (layer != null)
+					{
+						string result = "0";
+						if (layer.TryGetValue(SettingsKey.temperature, out result))
+						{
+							double value = 0;
+							if(double.TryParse(result, out value))
+							{
+								return value;
+							}
+						}
+					}
+				}
+
+				// else return the normal settings cascade
+				return printerSettings.GetValue<double>(SettingsKey.temperature);
 			}
-
-			// Otherwise, use the SettingsLayers that is bound to this extruder
-			PrinterSettingsLayer layer = printerSettings.GetMaterialLayer(materialKey);
-
-			string result = "0";
-			layer?.TryGetValue("temperature", out result);
-			return result;
 		}
 
 		public int[] LayerToPauseOn()
