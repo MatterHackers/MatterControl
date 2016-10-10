@@ -355,8 +355,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						// TODO: Resolve name conflicts
 						printerSettings.Helpers.SetName(printerInfo.Name);
 
-						printerInfo.Make = printerSettings.OemLayer[SettingsKey.make] ?? "Other";
-						printerInfo.Model = printerSettings.OemLayer[SettingsKey.model] ?? "Other";
+						if (printerSettings.OemLayer.ContainsKey(SettingsKey.make))
+						{
+							printerInfo.Make = printerSettings.OemLayer[SettingsKey.make];
+						}
+
+						if (printerSettings.OemLayer.ContainsKey(SettingsKey.model))
+						{
+							printerInfo.Model = printerSettings.OemLayer[SettingsKey.model] ?? "Other";
+						}
 
 						printerSettings.Save();
 						importSuccessful = true;

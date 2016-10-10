@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.recover_is_enabled,
 			SettingsKey.recover_position_before_z_home,
 			SettingsKey.resume_gcode,
-			"temperature",
+			SettingsKey.temperature,
 			"z_can_be_negative",
 			"z_homes_to_max",
 
