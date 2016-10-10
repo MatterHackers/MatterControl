@@ -123,7 +123,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
-					string activeThemeName = "Blue - Light";
+					//Attempt to load userSetting theme as default
+					string activeThemeName = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
+					if(string.IsNullOrEmpty(activeThemeName))
+					{
+						activeThemeName = "Blue - Light";
+					}
 					if (ActiveSliceSettings.Instance.Contains(SettingsKey.active_theme_name))
 					{
 						activeThemeName = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_name);
@@ -136,7 +141,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							ActiveTheme.SuspendEvents();
 						}
 					}
-
+					else
+					{
+						//If the active printer has no theme we set it to the default so that it does not suddenly change colors later when another printer's color is changed
+						ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_name, activeThemeName);
+					}
 					ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
 					ActiveTheme.ResumeEvents();
 				}

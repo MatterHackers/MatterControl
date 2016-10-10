@@ -425,7 +425,16 @@ namespace MatterHackers.MatterControl
 		{
 			if (string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.ActiveThemeName)))
 			{
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
+				string oemColor = OemSettings.Instance.ThemeColor;
+				if(string.IsNullOrEmpty(oemColor))
+				{
+					ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
+				}
+				else
+				{
+					UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
+					ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
+				}
 			}
 			else
 			{
