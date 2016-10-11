@@ -323,7 +323,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return extruder1StlFileToSlice;
 		}
 
-		public static bool runInProcess = true;
+		public static bool runInProcess = false;
 		private static Process slicerProcess = null;
 
 		private static void CreateSlicedPartsThread()
