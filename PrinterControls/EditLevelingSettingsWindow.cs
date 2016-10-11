@@ -132,12 +132,7 @@ namespace MatterHackers.MatterControl
 
 					int linkCompatibleRow = row;
 					int linkCompatibleAxis = axis;
-					double minValue = double.MinValue;
-					if (axis == 2 && ActiveSliceSettings.Instance.GetValue("z_can_be_negative") == "0")
-					{
-						minValue = 0;
-					}
-					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], allowNegatives: true, allowDecimals: true, minValue: minValue, pixelWidth: 60, tabIndex: tab_index++);
+					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], allowNegatives: true, allowDecimals: true, pixelWidth: 60, tabIndex: tab_index++);
 					valueEdit.ActuallNumberEdit.InternalTextEditWidget.EditComplete += (sender, e) =>
 					{
 						Vector3 position = positions[linkCompatibleRow];

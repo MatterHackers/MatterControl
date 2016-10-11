@@ -182,7 +182,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			pageOneInstructionsTextThree = pageOneInstructionsTextThree.FormatWith(numberOfRadialSamples+1);
 
-            bool allowLessThanZero = ActiveSliceSettings.Instance.GetValue("z_can_be_negative") == "1";
             string printLevelWizardTitle = "MatterControl";
             string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
             Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
@@ -218,9 +217,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             for (int i = 0; i < numberOfRadialSamples + 1; i++)
             {
                 Vector2 probePosition = GetPrintLevelPositionToSample(i, bedRadius);
-                printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, lowPrecisionLabel), probePositions[i], allowLessThanZero));
-                printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, medPrecisionLabel), probePositions[i], allowLessThanZero));
-                printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, highPrecisionLabel), probePositions[i], allowLessThanZero));
+                printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, lowPrecisionLabel), probePositions[i]));
+                printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, medPrecisionLabel), probePositions[i]));
+                printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, highPrecisionLabel), probePositions[i]));
             }
 
             string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}", doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);

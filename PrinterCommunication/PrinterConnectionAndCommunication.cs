@@ -2911,6 +2911,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
 						SendLineToPrinterNow("M114");
+
+						// create a stream processor that does this so it can be applied to exported GCode
+						// check if this is a naked G28 or a G28 Z command
+						// if printer_z_after_home != current z position
+						throw new NotImplementedException("Check and write printer_z_after_home");
+						// if z_offset_after_home > 0 
+						// send a G92 with the printer_z_after_home + z_offset_after_home
 					}
 
 					// write data to communication

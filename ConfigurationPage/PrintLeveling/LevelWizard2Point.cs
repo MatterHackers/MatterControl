@@ -89,16 +89,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionTwoLabel = LocalizedString.Get("Medium Precision");
 			string highPrecisionTwoLabel = LocalizedString.Get("High Precision");
 			printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontLeft, probeStartZHeight), string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, lowPrecisionTwoLabel), probePositions[0], probePositions[1], true));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, medPrecisionTwoLabel), probePositions[0], true));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, highPrecisionTwoLabel), probePositions[0], true));
+			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, medPrecisionTwoLabel), probePositions[0]));
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, highPrecisionTwoLabel), probePositions[0]));
 
 			string positionLabelThree = LocalizedString.Get("Position");
 			string lowPrecisionLabelThree = LocalizedString.Get("Low Precision");
 			string medPrecisionLabelThree = LocalizedString.Get("Medium Precision");
 			string highPrecisionLabelThree = LocalizedString.Get("High Precision");
 			printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontRight, probeStartZHeight), string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, lowPrecisionLabelThree), probePositions[2], probePositions[3], true));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, medPrecisionLabelThree), probePositions[2], true));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, highPrecisionLabelThree), probePositions[2], true));
+			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, medPrecisionLabelThree), probePositions[2]));
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, highPrecisionLabelThree), probePositions[2]));
 
 			string retrievingFinalPosition = "Getting the third point.";
 			printLevelWizard.AddPage(new GettingThirdPointFor2PointCalibration(printLevelWizard, "Collecting Data", new Vector3(probeBackLeft, probeStartZHeight), retrievingFinalPosition, probePositions[4]));

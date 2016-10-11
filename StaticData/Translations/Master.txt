@@ -5503,3 +5503,21 @@ Translated:Oops! Please select a folder to search
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 
+English:This is automatically set by MatterControl. You do not need to adjust it.
+Translated:This is automatically set by MatterControl. You do not need to adjust it.
+
+English:The amount to change the printers home position after a z home has occured. This is used by print leveling and recovery. This should not be manualy edited.
+Translated:The amount to change the printers home position after a z home has occured. This is used by print leveling and recovery. This should not be manualy edited.
+
+English:Z Home Position
+Translated:Z Home Position
+
+English:Offset After Homing
+Translated:Offset After Homing
+
+English:Leveling Calibration
+Translated:Leveling Calibration
+
+English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
+Translated:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
+
