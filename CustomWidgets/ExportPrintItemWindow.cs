@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl
 					{
 						GCodeFile loadedGCode = GCodeFile.Load(gcodeFilename);
 						GCodeFileStream gCodeFileStream0 = new GCodeFileStream(loadedGCode);
-						PrintLevelingStream printLevelingStream4 = new PrintLevelingStream(gCodeFileStream0);
+						PrintLevelingStream printLevelingStream4 = new PrintLevelingStream(gCodeFileStream0, false);
 						// this is added to ensure we are rewriting the G0 G1 commands as needed
 						FeedRateMultiplyerStream extrusionMultiplyerStream = new FeedRateMultiplyerStream(printLevelingStream4);
 

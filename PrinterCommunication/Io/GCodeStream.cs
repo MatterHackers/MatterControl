@@ -38,18 +38,18 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public abstract class GCodeStream : IDisposable
-    {
-        #region Abstract Functions
-        /// <summary>
-        /// returns null when there are no more lines
-        /// </summary>
-        /// <returns></returns>
-        public abstract string ReadLine();
-        public abstract void SetPrinterPosition(PrinterMove position);
-        #endregion
+	public abstract class GCodeStream : IDisposable
+	{
+		#region Abstract Functions
+		/// <summary>
+		/// returns null when there are no more lines
+		/// </summary>
+		/// <returns></returns>
+		public abstract string ReadLine();
+		public abstract void SetPrinterPosition(PrinterMove position);
+		#endregion
 
-        public abstract void Dispose();
+		public abstract void Dispose();
 
 		bool useG0ForMovement = false;
 
@@ -59,14 +59,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		public string CreateMovementLine(PrinterMove currentDestination)
-        {
-            return CreateMovementLine(currentDestination, PrinterMove.Nowhere);
-        }
+		{
+			return CreateMovementLine(currentDestination, PrinterMove.Nowhere);
+		}
 
-        public string CreateMovementLine(PrinterMove destination, PrinterMove start)
-        {
-            string lineBeingSent;
-            StringBuilder newLine = new StringBuilder("G1 ");
+		public string CreateMovementLine(PrinterMove destination, PrinterMove start)
+		{
+			string lineBeingSent;
+			StringBuilder newLine = new StringBuilder("G1 ");
 
 			bool moveHasExtrusion = destination.extrusion != start.extrusion;
 			if (useG0ForMovement && !moveHasExtrusion)
@@ -87,40 +87,55 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				newLine = newLine.Append(String.Format("Z{0:0.###} ", destination.position.z));
 			}
 
-            if (moveHasExtrusion)
-            {
-                newLine = newLine.Append(String.Format("E{0:0.###} ", destination.extrusion));
-            }
+			if (moveHasExtrusion)
+			{
+				newLine = newLine.Append(String.Format("E{0:0.###} ", destination.extrusion));
+			}
 
-            if (destination.feedRate != start.feedRate)
-            {
-                newLine = newLine.Append(String.Format("F{0:0.##}", destination.feedRate));
-            }
+			if (destination.feedRate != start.feedRate)
+			{
+				newLine = newLine.Append(String.Format("F{0:0.##}", destination.feedRate));
+			}
 
-            lineBeingSent = newLine.ToString();
-            return lineBeingSent.Trim();
-        }
+			lineBeingSent = newLine.ToString();
+			return lineBeingSent.Trim();
+		}
 
-        public static PrinterMove GetPosition(string lineBeingSent, PrinterMove startPositionPosition)
-        {
-            PrinterMove currentDestination = startPositionPosition;
-            GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref currentDestination.position.x);
-            GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref currentDestination.position.y);
-            GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref currentDestination.position.z);
-            GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentDestination.extrusion);
-            GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentDestination.feedRate);
-            return currentDestination;
-        }
+		public static PrinterMove GetPosition(string lineBeingSent, PrinterMove startPositionPosition)
+		{
+			PrinterMove currentDestination = startPositionPosition;
+			GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref currentDestination.position.x);
+			GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref currentDestination.position.y);
+			GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref currentDestination.position.z);
+			GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentDestination.extrusion);
+			GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentDestination.feedRate);
+			return currentDestination;
+		}
 
-        public static bool LineIsMovement(string lineBeingSent)
-        {
-            if (lineBeingSent.StartsWith("G0 ")
-                || lineBeingSent.StartsWith("G1 "))
-            {
-                return true;
-            }
+		public static bool LineIsZHoming(string lineBeingSent)
+		{
+			if (!string.IsNullOrEmpty(lineBeingSent))
+			{
+				bool isAZHome = lineBeingSent.StartsWith("G28") && lineBeingSent.Contains("Z");
+				bool isANakedHome = lineBeingSent.Trim() == "G28";
+				if (isAZHome || isANakedHome)
+				{
+					return true;
+				}
+			}
 
-            return false;
-        }
-    }
+			return false;
+		}
+
+		public static bool LineIsMovement(string lineBeingSent)
+		{
+			if (lineBeingSent.StartsWith("G0 ")
+				|| lineBeingSent.StartsWith("G1 "))
+			{
+				return true;
+			}
+
+			return false;
+		}
+	}
 }

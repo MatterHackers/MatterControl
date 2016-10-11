@@ -154,15 +154,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
 		{
+			// turn off print leveling
+			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(false);
+			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+			levelingData.SampledPositions.Clear();
+			ActiveSliceSettings.Instance.SetValue(SettingsKey.z_offset_after_home, 0.ToString());
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 
 			LevelWizardBase printLevelWizardWindow;
 			switch (levelingData.CurrentPrinterLevelingSystem)
 			{
-				case PrintLevelingData.LevelingSystem.Probe2Points:
-					printLevelWizardWindow = new LevelWizard2Point(runningState);
-					break;
-
 				case PrintLevelingData.LevelingSystem.Probe3Points:
 					printLevelWizardWindow = new LevelWizard3Point(runningState);
 					break;

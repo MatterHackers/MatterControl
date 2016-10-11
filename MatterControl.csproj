@@ -148,7 +148,6 @@
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationSettingsView.cs" />
     <Compile Include="ConfigurationPage\PrinterSettings\PrinterSettingsView.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard2Point.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard7PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard13PointRadial.cs" />

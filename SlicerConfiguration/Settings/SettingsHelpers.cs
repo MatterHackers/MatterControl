@@ -104,6 +104,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string temperature = nameof(temperature);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
+		public const string printer_z_after_home = nameof(printer_z_after_home);
+		public const string z_offset_after_home = nameof(z_offset_after_home);
 	}
 
 	public class SettingsHelpers
@@ -256,11 +258,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printerSettings.GetValue(SettingsKey.print_leveling_data),
 					printerSettings.GetValue("MatterControl.PrintLevelingProbePositions"));
 
-				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-					printLevelingData.SampledPosition0,
-					printLevelingData.SampledPosition1,
-					printLevelingData.SampledPosition2,
-					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
+				if (printLevelingData.SampledPositions.Count == 3)
+				{
+					PrintLevelingPlane.Instance.SetPrintLevelingEquation(
+						printLevelingData.SampledPositions[0],
+						printLevelingData.SampledPositions[1],
+						printLevelingData.SampledPositions[2],
+						ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
+				}
 			}
 
 			return printLevelingData;
@@ -288,9 +293,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-					levelingData.SampledPosition0,
-					levelingData.SampledPosition1,
-					levelingData.SampledPosition2,
+					levelingData.SampledPositions[0],
+					levelingData.SampledPositions[1],
+					levelingData.SampledPositions[2],
 					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
 			}
 		}

@@ -202,10 +202,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 								switch (levelingData.CurrentPrinterLevelingSystem)
 								{
-									case PrintLevelingData.LevelingSystem.Probe2Points:
-										instruction.Line = LevelWizard2Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
-										break;
-
 									case PrintLevelingData.LevelingSystem.Probe3Points:
 										instruction.Line = LevelWizard3Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
 										break;
