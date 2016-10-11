@@ -12,20 +12,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private PrinterSettings printerProfile;
 
-		public List<Vector3> SampledPositions = new List<Vector3>();
-
-		private Vector3 probeOffset0Private;
-
-		private Vector3 probeOffset1Private;
-
-		private Vector3 sampledPosition0Private;
-
-		private Vector3 sampledPosition1Private;
-
-		private Vector3 sampledPosition2Private;
+		public List<Vector3> SampledPositions = new List<Vector3>()
+		{
+			new Vector3(),new Vector3(),new Vector3()
+		};
 
 		[JsonConverter(typeof(StringEnumConverter))]
-		public enum LevelingSystem { Probe3Points, Probe2Points, Probe7PointRadial, Probe13PointRadial }
+		public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial }
 
 		public PrintLevelingData(PrinterSettings printerProfile)
 		{
@@ -38,9 +31,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				switch (printerProfile.GetValue("print_leveling_solution"))
 				{
-					case "2 Point Plane":
-						return LevelingSystem.Probe2Points;
-
 					case "7 Point Disk":
 						return LevelingSystem.Probe7PointRadial;
 
@@ -50,66 +40,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					case "3 Point Plane":
 					default:
 						return LevelingSystem.Probe3Points;
-				}
-			}
-		}
-
-		public Vector3 ProbeOffset0
-		{
-			get { return probeOffset0Private; }
-			set
-			{
-				if (probeOffset0Private != value)
-				{
-					probeOffset0Private = value;
-				}
-			}
-		}
-
-		public Vector3 ProbeOffset1
-		{
-			get { return probeOffset1Private; }
-			set
-			{
-				if (probeOffset1Private != value)
-				{
-					probeOffset1Private = value;
-				}
-			}
-		}
-
-		public Vector3 SampledPosition0
-		{
-			get { return sampledPosition0Private; }
-			set
-			{
-				if (sampledPosition0Private != value)
-				{
-					sampledPosition0Private = value;
-				}
-			} 
-		}
-
-		public Vector3 SampledPosition1
-		{
-			get { return sampledPosition1Private; }
-			set
-			{
-				if (sampledPosition1Private != value)
-				{
-					sampledPosition1Private = value;
-				}
-			}
-		}
-
-		public Vector3 SampledPosition2
-		{
-			get { return sampledPosition2Private; }
-			set
-			{
-				if (sampledPosition2Private != value)
-				{
-					sampledPosition2Private = value;
 				}
 			}
 		}
@@ -146,6 +76,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		/// <returns></returns>
 		private void ParseDepricatedPrintLevelingMeasuredPositions(string depricatedPositionsCsv3ByXYZ)
 		{
+			SampledPositions = new List<Vector3>(3);
+
 			if (depricatedPositionsCsv3ByXYZ != null)
 			{
 				string[] lines = depricatedPositionsCsv3ByXYZ.Split(',');
@@ -153,9 +85,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					for (int i = 0; i < 3; i++)
 					{
-						sampledPosition0Private[i] = double.Parse(lines[0 * 3 + i]);
-						sampledPosition1Private[i] = double.Parse(lines[1 * 3 + i]);
-						sampledPosition2Private[i] = double.Parse(lines[2 * 3 + i]);
+						Vector3 position = new Vector3();
+
+						position.x = double.Parse(lines[0 * 3 + i]);
+						position.y = double.Parse(lines[1 * 3 + i]);
+						position.z = double.Parse(lines[2 * 3 + i]);
+
+						SampledPositions.Add(position);
 					}
 				}
 			}
@@ -170,11 +106,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			switch (CurrentPrinterLevelingSystem)
 			{
-				case PrintLevelingData.LevelingSystem.Probe2Points:
 				case PrintLevelingData.LevelingSystem.Probe3Points:
-					if (SampledPosition0.z == 0
-						&& SampledPosition1.z == 0
-						&& SampledPosition2.z == 0)
+					if (SampledPositions.Count != 3) // different criteria for what is not initialized
 					{
 						return false;
 					}

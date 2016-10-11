@@ -40,16 +40,41 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class PrintLevelingStream : GCodeStreamProxy
 	{
+		bool activePrinting;
+		bool hadZHome = false;
 		protected PrinterMove lastDestination = new PrinterMove();
-		public PrintLevelingStream(GCodeStream internalStream)
+		public PrintLevelingStream(GCodeStream internalStream, bool activePrinting)
 			: base(internalStream)
 		{
+			this.activePrinting = activePrinting;
 		}
 
 		public PrinterMove LastDestination { get { return lastDestination; } }
 		public override string ReadLine()
 		{
+			if (hadZHome)
+			{
+				hadZHome = false;
+				// only add this when exporting to gcode
+				if (!activePrinting)
+				{
+					// return the correct G92
+					double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_offset_after_home);
+					if (zOffset != 0)
+					{
+						double newHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home) + zOffset;
+						return $"G92 Z{newHomePosition}";
+					}
+				}
+			}
+
 			string lineFromChild = base.ReadLine();
+
+			if (lineFromChild != null
+				&& LineIsZHoming(lineFromChild))
+			{
+				hadZHome = true;
+			}
 
 			if (lineFromChild != null
 				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.GetValue<bool>(SettingsKey.print_leveling_enabled))
@@ -96,10 +121,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				switch (levelingData.CurrentPrinterLevelingSystem)
 				{
-					case PrintLevelingData.LevelingSystem.Probe2Points:
-						lineBeingSent = LevelWizard2Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
-						break;
-
 					case PrintLevelingData.LevelingSystem.Probe3Points:
 						lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
 						break;

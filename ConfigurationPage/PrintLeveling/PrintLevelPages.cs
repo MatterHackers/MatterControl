@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -43,19 +44,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(pageDescription, instructionsText)
 		{
 		}
-
-		public override void PageIsBecomingActive()
-		{
-			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling (false);
-			base.PageIsBecomingActive();
-		}
 	}
 
 	public class LastPage3PointInstructions : InstructionsPage
 	{
-		private ProbePosition[] probePositions = new ProbePosition[3];
+		private List<ProbePosition> probePositions = new List<ProbePosition>(3)
+		{
+			new ProbePosition(),new ProbePosition(),new ProbePosition()
+		};
 
-		public LastPage3PointInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
+		public LastPage3PointInstructions(string pageDescription, string instructionsText, List<ProbePosition> probePositions)
 			: base(pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;
@@ -66,9 +64,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>("manual_probe_paper_width"));
 
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			levelingData.SampledPosition0 = probePositions[0].position - paperWidth;
-			levelingData.SampledPosition1 = probePositions[1].position - paperWidth;
-			levelingData.SampledPosition2 = probePositions[2].position - paperWidth;
+			levelingData.SampledPositions.Clear();
+			levelingData.SampledPositions.Add(probePositions[0].position - paperWidth);
+			levelingData.SampledPositions.Add(probePositions[1].position - paperWidth);
+			levelingData.SampledPositions.Add(probePositions[2].position - paperWidth);
 
 			// Invoke setter forcing persistence of leveling data
 			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
@@ -81,9 +80,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class LastPageRadialInstructions : InstructionsPage
 	{
-		private ProbePosition[] probePositions;
+		private List<ProbePosition> probePositions;
 
-		public LastPageRadialInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
+		public LastPageRadialInstructions(string pageDescription, string instructionsText, List<ProbePosition> probePositions)
 			: base(pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;
@@ -92,9 +91,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			levelingData.SampledPositions.Clear();
+
 			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>("manual_probe_paper_width"));
-			for (int i = 0; i < probePositions.Length; i++)
+			for (int i = 0; i < probePositions.Count; i++)
 			{
 				levelingData.SampledPositions.Add(probePositions[i].position - paperWidth);
 			}
@@ -168,51 +167,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	public class LastPage2PointInstructions : InstructionsPage
-	{
-		private ProbePosition[] probePositions = new ProbePosition[5];
-
-		public LastPage2PointInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
-			: base(pageDescription, instructionsText)
-		{
-			this.probePositions = probePositions;
-		}
-
-		public override void PageIsBecomingActive()
-		{
-			// This data is currently the offset from the probe to the extruder tip. We need to translate them
-			// into bed offsets and store them.
-
-			// The first point is the user assisted offset to the bed
-			Vector3 userBedSample0 = probePositions[0].position;
-			// The first point sample offset at the limit switch
-			Vector3 probeOffset0 = probePositions[1].position; // this z should be 0
-
-			// right side of printer
-			Vector3 userBedSample1 = probePositions[2].position;
-			Vector3 probeOffset1 = probePositions[3].position;
-
-			// auto back probe
-			Vector3 probeOffset2 = probePositions[4].position;
-
-			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>("manual_probe_paper_width"));
-
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			levelingData.SampledPosition0 = userBedSample0 - paperWidth;
-			levelingData.SampledPosition1 = userBedSample1 - paperWidth;
-			levelingData.SampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0 - paperWidth;
-
-			levelingData.ProbeOffset0 = probeOffset0 - paperWidth;
-			levelingData.ProbeOffset1 = probeOffset1 - paperWidth;
-
-			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
-
-			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
-			base.PageIsBecomingActive();
-		}
-	}
-
 	public class HomePrinterPage : InstructionsPage
 	{
 		public HomePrinterPage(string pageDescription, string instructionsText)
@@ -230,18 +184,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class FindBedHeight : InstructionsPage
 	{
 		private Vector3 lastReportedPosition;
-		private ProbePosition probePosition;
+		private List<ProbePosition> probePositions;
+		int probePositionsBeingEditedIndex;
 		private double moveAmount;
 
 		protected JogControls.MoveButton zPlusControl;
 		protected JogControls.MoveButton zMinusControl;
 
-		public FindBedHeight(string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, ProbePosition whereToWriteProbePosition)
+		public FindBedHeight(string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
 			: base(pageDescription, setZHeightCoarseInstruction1)
 		{
+			this.probePositions = probePositions;
 			this.moveAmount = moveDistance;
 			this.lastReportedPosition = PrinterConnectionAndCommunication.Instance.LastReportedPosition;
-			this.probePosition = whereToWriteProbePosition;
+			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
 			GuiWidget spacer = new GuiWidget(15, 15);
 			topToBottomControls.AddChild(spacer);
@@ -283,7 +239,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingInactive()
 		{
-			probePosition.position = PrinterConnectionAndCommunication.Instance.LastReportedPosition;
+			probePositions[probePositionsBeingEditedIndex].position = PrinterConnectionAndCommunication.Instance.LastReportedPosition;
 			base.PageIsBecomingInactive();
 		}
 
@@ -304,10 +260,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			bool moveBelow0 = newPosition < 0;
 			if (moveBelow0)
 			{
-				throw new NotImplementedException("If we are going to go below 0");
 				// increment the z_offset_after_home 
+				double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_offset_after_home);
+				zOffset += 1;
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.z_offset_after_home, zOffset.ToString());
 				// adjust all previously sampled points
+				for(int i=0; i< probePositions.Count; i++)
+				{
+					probePositions[i].position = probePositions[i].position + new Vector3(0, 0, 1);
+				}
+
 				// send a G92 z position to the printer to adjust the current z height
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow($"G92 Z{PrinterConnectionAndCommunication.Instance.CurrentDestination.z + 1}");
 			}
 
 			PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, -moveAmount, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
@@ -335,8 +299,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected Vector3 probeStartPosition;
 		protected WizardControl container;
 
-		public GetCoarseBedHeight(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition)
-			: base(pageDescription, setZHeightCoarseInstruction1, setZHeightCoarseInstruction2, 1, whereToWriteProbePosition)
+		public GetCoarseBedHeight(WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+			: base(pageDescription, setZHeightCoarseInstruction1, setZHeightCoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
 		{
 			this.container = container;
 			this.probeStartPosition = probeStartPosition;
@@ -371,68 +335,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	public class GetCoarseBedHeightProbeFirst : GetCoarseBedHeight
-	{
-		private event EventHandler unregisterEvents;
-
-		private ProbePosition whereToWriteSamplePosition;
-
-		public GetCoarseBedHeightProbeFirst(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition, ProbePosition whereToWriteSamplePosition, bool allowLessThan0)
-			: base(container, probeStartPosition, pageDescription, whereToWriteProbePosition)
-		{
-			this.whereToWriteSamplePosition = whereToWriteSamplePosition;
-		}
-
-		public override void PageIsBecomingActive()
-		{
-			// first make sure there is no leftover FinishedProbe event
-			PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
-
-			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
-
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30");
-			PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
-
-			base.PageIsBecomingActive();
-
-			container.nextButton.Enabled = false;
-
-			zPlusControl.Click += new EventHandler(zControl_Click);
-			zMinusControl.Click += new EventHandler(zControl_Click);
-		}
-
-		private void FinishedProbe(object sender, EventArgs e)
-		{
-			StringEventArgs currentEvent = e as StringEventArgs;
-			if (currentEvent != null)
-			{
-				if (currentEvent.Data.Contains("endstops hit"))
-				{
-					PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
-					int zStringPos = currentEvent.Data.LastIndexOf("Z:");
-					string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
-					// store the position that the limit swich fires
-					whereToWriteSamplePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
-
-					// now move to the probe start position
-					PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
-					PrinterConnectionAndCommunication.Instance.ReadPosition();
-				}
-			}
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-			base.OnClosed(e);
-		}
-	}
-
 	public class GetFineBedHeight : FindBedHeight
 	{
 		private static string setZHeightFineInstruction1 = LocalizedString.Get("We will now refine our measurement of the extruder height at this position.");
@@ -441,8 +343,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static string setZHeightFineInstructionTextThree = LocalizedString.Get("Finally click 'Next' to continue.");
 		private static string setZHeightFineInstruction2 = string.Format("\t• {0}\n\t• {1}\n\n{2}", setZHeightFineInstructionTextOne, setZHeightFineInstructionTextTwo, setZHeightFineInstructionTextThree);
 
-		public GetFineBedHeight(string pageDescription, ProbePosition whereToWriteProbePosition)
-			: base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .1, whereToWriteProbePosition)
+		public GetFineBedHeight(string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+			: base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .1, probePositions, probePositionsBeingEditedIndex)
 		{
 		}
 	}
@@ -454,8 +356,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static string setHeightFineInstructionTextTwo = LocalizedString.Get("Finally click 'Next' to continue.");
 		private static string setZHeightFineInstruction2 = string.Format("\t• {0}\n\n\n{1}", setHeightFineInstructionTextOne, setHeightFineInstructionTextTwo);
 
-		public GetUltraFineBedHeight(string pageDescription, ProbePosition whereToWriteProbePosition)
-			: base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .02, whereToWriteProbePosition)
+		public GetUltraFineBedHeight(string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+			: base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .02, probePositions, probePositionsBeingEditedIndex)
 		{
 		}
 

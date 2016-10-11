@@ -90,18 +90,9 @@ namespace MatterHackers.MatterControl
 
 			// put in the movement edit controls
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			if (EditSamplePositionList(levelingData))
+			for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 			{
-				for (int i = 0; i < levelingData.SampledPositions.Count; i++)
-				{
-					positions.Add(levelingData.SampledPositions[i]);
-				}
-			}
-			else
-			{
-				positions.Add(levelingData.SampledPosition0);
-				positions.Add(levelingData.SampledPosition1);
-				positions.Add(levelingData.SampledPosition2);
+				positions.Add(levelingData.SampledPositions[i]);
 			}
 
 			int tab_index = 0;
@@ -184,33 +175,13 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(DoSave_Click);
 		}
 
-		bool EditSamplePositionList(PrintLevelingData levelingData)
-		{
-			if (levelingData.CurrentPrinterLevelingSystem == PrintLevelingData.LevelingSystem.Probe7PointRadial
-				|| levelingData.CurrentPrinterLevelingSystem == PrintLevelingData.LevelingSystem.Probe13PointRadial)
-			{
-				return true;
-			}
-
-			return false;
-		}
-
 		private void DoSave_Click()
 		{
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 
-			if (EditSamplePositionList(levelingData))
+			for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 			{
-				for (int i = 0; i < levelingData.SampledPositions.Count; i++)
-				{
-					levelingData.SampledPositions[i] = positions[i];
-				}
-			}
-			else
-			{
-				levelingData.SampledPosition0 = positions[0];
-				levelingData.SampledPosition1 = positions[1];
-				levelingData.SampledPosition2 = positions[2];
+				levelingData.SampledPositions[i] = positions[i];
 			}
 
 			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);

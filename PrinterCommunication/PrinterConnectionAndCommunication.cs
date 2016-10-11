@@ -1836,6 +1836,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			waitingForPosition.Stop();
 			waitingForPosition.Reset();
+
+			if(storePositionToPrinterZAfterHome)
+			{
+				storePositionToPrinterZAfterHome = false;
+				double storedHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home);
+				// if printer_z_after_home != current z position
+				if (storedHomePosition != LastReportedPosition.z)
+				{
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.printer_z_after_home, LastReportedPosition.z.ToString());
+					ApplicationController.Instance.ReloadAdvancedControlsPanel();
+				}
+
+				// now send a G92 to set the position that we want to think is home
+				double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_offset_after_home);
+				if (zOffset != 0)
+				{
+					double newHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home) + zOffset;
+					SendLineToPrinterNow($"G92 Z{newHomePosition}");
+				}
+			}
 		}
 
 		public void ReadTemperatures(object sender, EventArgs e)
@@ -2499,7 +2519,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			queuedCommandStream2 = new QueuedCommandsStream(pauseHandlingStream1);
 			relativeToAbsoluteStream3 = new RelativeToAbsoluteStream(queuedCommandStream2);
-			printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3);
+			printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3, true);
 			waitForTempStream5 = new WaitForTempStream(printLevelingStream4);
 			babyStepsStream6 = new BabyStepsStream(waitForTempStream5);
 			if(activePrintTask != null)
@@ -2912,12 +2932,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						SendLineToPrinterNow("M114");
 
-						// create a stream processor that does this so it can be applied to exported GCode
-						// check if this is a naked G28 or a G28 Z command
-						// if printer_z_after_home != current z position
-						throw new NotImplementedException("Check and write printer_z_after_home");
-						// if z_offset_after_home > 0 
-						// send a G92 with the printer_z_after_home + z_offset_after_home
+						if (GCodeStream.LineIsZHoming(lineWithoutChecksum))
+						{
+							storePositionToPrinterZAfterHome = true;
+						}
 					}
 
 					// write data to communication
@@ -2995,6 +3013,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		bool haveHookedDrawing = false;
+		private bool storePositionToPrinterZAfterHome = false;
 
 		public class ReadThread
 		{
