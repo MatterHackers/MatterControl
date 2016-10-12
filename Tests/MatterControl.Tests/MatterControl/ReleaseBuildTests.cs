@@ -76,7 +76,7 @@ namespace MatterControl.Tests
 				var assemblyPath = TestContext.CurrentContext.ResolveProjectPath(4, "bin", configuration, assemblyName);
 
 				// Missing/renamed assemblies should fail the test and force a correction
-				Assert.IsTrue(File.Exists(assemblyPath));
+				Assert.IsTrue(File.Exists(assemblyPath), "Assembly missing: " + assemblyPath);
 #if (!DEBUG)
 				var assembly = Assembly.LoadFrom(assemblyPath);
 				IsAssemblyOptimized(assembly);
