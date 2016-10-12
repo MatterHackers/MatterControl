@@ -33,7 +33,13 @@ namespace MatterControl.Tests
 		[Test, Category("ReleaseQuality")]
 		public void MatterControlKnownAssembliesAreOptimized()
 		{
-			// Rebuild at any time with rebuildDependencies() below
+#if DEBUG
+			string configuration = "Debug";
+#else
+			string configuration = "Release";
+#endif
+
+			// This list can be refreshed via the rebuildDependencies() helper function below
 			string knownAssemblies = @"MatterHackers.VectorMath.dll
 						AGG.dll
 						PlatfromAbstract.dll
@@ -56,27 +62,23 @@ namespace MatterControl.Tests
 						MatterHackers.Agg.ImageProcessing.dll
 						MatterHackers.MarchingSquares.dll
 						GuiAutomation.dll
-						../../../../bin/Release/MatterControlAuth.dll
-						../../../../bin/Release/PictureCreator.dll
-						../../../../bin/Release/PrintNotifications.dll
-						../../../../bin/Release/CloudServices.dll
-						../../../../bin/Release/X3GDriver.dll
-						../../../../bin/Release/Mono.Nat.dll
-						../../../../bin/Release/BrailBuilder.dll
+						MatterControlAuth.dll
+						PictureCreator.dll
+						PrintNotifications.dll
+						CloudServices.dll
+						X3GDriver.dll
+						Mono.Nat.dll
+						BrailBuilder.dll
 						TextCreator.dll";
 
 			foreach (string assemblyName in knownAssemblies.Split('\n').Select(s => s.Trim()))
 			{
-				var assemblyPath = Path.GetFullPath(assemblyName);
-				if (!File.Exists(assemblyPath))
-				{
-					Console.WriteLine("Skipping missing file: " + assemblyPath);
-					continue;
-				}
+				var assemblyPath = TestContext.CurrentContext.ResolveProjectPath(4, "bin", configuration, assemblyName);
 
-				var assembly = Assembly.LoadFrom(assemblyPath);
-
+				// Missing/renamed assemblies should fail the test and force a correction
+				Assert.IsTrue(File.Exists(assemblyPath));
 #if (!DEBUG)
+				var assembly = Assembly.LoadFrom(assemblyPath);
 				IsAssemblyOptimized(assembly);
 #endif
 			}
