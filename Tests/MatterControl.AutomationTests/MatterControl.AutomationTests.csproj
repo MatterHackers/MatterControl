@@ -77,10 +77,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Plugins\CloudServices\CloudServices\CloudServices.csproj">
-      <Project>{6782bf37-8139-4dc6-885e-98d22d1fb258}</Project>
-      <Name>CloudServices</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\MatterControl.csproj">
       <Project>{0b8d6f56-bd7f-4426-b858-d9292b084656}</Project>
       <Name>MatterControl</Name>

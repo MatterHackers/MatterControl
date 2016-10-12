@@ -62,12 +62,6 @@ namespace MatterControl.Tests
 						MatterHackers.Agg.ImageProcessing.dll
 						MatterHackers.MarchingSquares.dll
 						GuiAutomation.dll
-						MatterControlAuth.dll
-						PictureCreator.dll
-						PrintNotifications.dll
-						CloudServices.dll
-						X3GDriver.dll
-						Mono.Nat.dll
 						BrailBuilder.dll
 						TextCreator.dll";
 
