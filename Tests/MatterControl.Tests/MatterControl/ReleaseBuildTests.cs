@@ -33,7 +33,13 @@ namespace MatterControl.Tests
 		[Test, Category("ReleaseQuality")]
 		public void MatterControlKnownAssembliesAreOptimized()
 		{
-			// Rebuild at any time with rebuildDependencies() below
+#if DEBUG
+			string configuration = "Debug";
+#else
+			string configuration = "Release";
+#endif
+
+			// This list can be refreshed via the rebuildDependencies() helper function below
 			string knownAssemblies = @"MatterHackers.VectorMath.dll
 						AGG.dll
 						PlatfromAbstract.dll
@@ -56,27 +62,17 @@ namespace MatterControl.Tests
 						MatterHackers.Agg.ImageProcessing.dll
 						MatterHackers.MarchingSquares.dll
 						GuiAutomation.dll
-						../../../../bin/Release/MatterControlAuth.dll
-						../../../../bin/Release/PictureCreator.dll
-						../../../../bin/Release/PrintNotifications.dll
-						../../../../bin/Release/CloudServices.dll
-						../../../../bin/Release/X3GDriver.dll
-						../../../../bin/Release/Mono.Nat.dll
-						../../../../bin/Release/BrailBuilder.dll
+						BrailBuilder.dll
 						TextCreator.dll";
 
 			foreach (string assemblyName in knownAssemblies.Split('\n').Select(s => s.Trim()))
 			{
-				var assemblyPath = Path.GetFullPath(assemblyName);
-				if (!File.Exists(assemblyPath))
-				{
-					Console.WriteLine("Skipping missing file: " + assemblyPath);
-					continue;
-				}
+				var assemblyPath = TestContext.CurrentContext.ResolveProjectPath(4, "bin", configuration, assemblyName);
 
-				var assembly = Assembly.LoadFrom(assemblyPath);
-
+				// Missing/renamed assemblies should fail the test and force a correction
+				Assert.IsTrue(File.Exists(assemblyPath), "Assembly missing: " + assemblyPath);
 #if (!DEBUG)
+				var assembly = Assembly.LoadFrom(assemblyPath);
 				IsAssemblyOptimized(assembly);
 #endif
 			}
@@ -84,7 +80,7 @@ namespace MatterControl.Tests
 
 		private void rebuildDependencies()
 		{
-			// Update to point to resent buildagent results file
+			// Modify path to point at a recent BuildAgent results file
 			var elem = XElement.Load(@"C:\Data\Sources\MatterHackers\BuildAndDeployment\MatterControl\build_sln.xml");
 			var items = elem.Descendants().Where(e => e.Name == "target" && "CopyFilesToOutputDirectory" == (string)e.Attribute("name")).SelectMany(e => e.Elements("message").Select(e2 => e2.Value.TrimEnd('.')).Where(s => s.Contains("Copying") && s.Contains(".dll")));
 
