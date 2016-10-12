@@ -80,7 +80,7 @@ namespace MatterControl.Tests
 
 		private void rebuildDependencies()
 		{
-			// Update to point to resent buildagent results file
+			// Modify path to point at a recent BuildAgent results file
 			var elem = XElement.Load(@"C:\Data\Sources\MatterHackers\BuildAndDeployment\MatterControl\build_sln.xml");
 			var items = elem.Descendants().Where(e => e.Name == "target" && "CopyFilesToOutputDirectory" == (string)e.Attribute("name")).SelectMany(e => e.Elements("message").Select(e2 => e2.Value.TrimEnd('.')).Where(s => s.Contains("Copying") && s.Contains(".dll")));
 
