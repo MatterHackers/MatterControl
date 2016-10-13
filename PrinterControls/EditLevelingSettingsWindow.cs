@@ -178,6 +178,7 @@ namespace MatterHackers.MatterControl
 		private void DoSave_Click()
 		{
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+			levelingData.SampledPositions.Clear();
 
 			for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 			{
