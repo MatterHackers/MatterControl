@@ -61,6 +61,7 @@
     "has_heated_bed": "0",
     "has_power_control": "0",
     "has_sd_card_reader": "1",
+    "include_firmware_updater": "Simple Arduino",
     "heat_extruder_before_homing": "0",
     "infill_acceleration": "0",
     "infill_every_layers": "1",

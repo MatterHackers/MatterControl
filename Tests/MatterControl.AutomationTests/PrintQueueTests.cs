@@ -658,11 +658,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
-					/*
-					 *Tests Export to Zip menu item is clicked the queue is compressed and exported to location on disk
-					 *1. Check that there are items in the queue 
-					 *2. Export Queue and make sure file exists on disk
-					 */
 
 					int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
 
