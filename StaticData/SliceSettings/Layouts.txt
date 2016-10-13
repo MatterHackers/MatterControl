@@ -320,9 +320,6 @@ Advanced
         print_leveling_required_to_print
       Probe Settings
         manual_probe_paper_width
-      Leveling Calibration
-        printer_z_after_home
-        z_offset_after_home
       Options
     Print Recovery
       Recover Settings
