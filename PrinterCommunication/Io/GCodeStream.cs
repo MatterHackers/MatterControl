@@ -116,6 +116,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			if (!string.IsNullOrEmpty(lineBeingSent))
 			{
+				if(lineBeingSent.Contains(";"))
+				{
+					lineBeingSent = lineBeingSent.Split(';')[0];
+				}
 				bool isAZHome = lineBeingSent.StartsWith("G28") && lineBeingSent.Contains("Z");
 				bool isANakedHome = lineBeingSent.Trim() == "G28";
 				if (isAZHome || isANakedHome)
