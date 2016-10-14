@@ -35,6 +35,7 @@ using System;
 
 namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
+#if false
 	public class BrailleBuilderPlugin : MatterControlPlugin
 	{
 		public BrailleBuilderPlugin()
@@ -74,4 +75,5 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			BrailleBuilderMainWindow mainWindow = new BrailleBuilderMainWindow();
 		}
 	}
+#endif
 }
