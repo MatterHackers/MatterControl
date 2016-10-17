@@ -2288,7 +2288,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			if (PrinterIsConnected)
 			{
+#if DEBUG
 				throw new Exception(LocalizedString.Get("You can only connect when not currently connected."));
+#else
+				return;
+#endif
 			}
 
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
