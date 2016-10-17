@@ -457,7 +457,9 @@ namespace MatterHackers.MatterControl
 				string oemColor = OemSettings.Instance.ThemeColor;
 				if (string.IsNullOrEmpty(oemColor))
 				{
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
+					string mCDefaultColor = "Blue - Light";
+					ActiveTheme.Instance = ActiveTheme.GetThemeColors(mCDefaultColor);
+					UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, mCDefaultColor);
 				}
 				else
 				{
