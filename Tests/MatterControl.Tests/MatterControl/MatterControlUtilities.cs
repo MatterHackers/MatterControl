@@ -354,11 +354,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			QueueTemplate queueItemFolderToAdd = QueueTemplate.None,
 			int overrideWidth = -1, int overrideHeight = -1)
 		{
+			// Walk back a step in the stack and output the callers name
+			StackTrace st = new StackTrace(false);
+			Debug.WriteLine("\r\n ***** Running automation test: {0} {1} ", st.GetFrames().Skip(1).First().GetMethod().Name, DateTime.Now);
+
 			if (staticDataPathOverride == null)
 			{
 				// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
 				staticDataPathOverride = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
 			}
+
+#if DEBUG
+			string outputDirectory = "Debug";
+#else
+			string outputDirectory = "Release";
+#endif
+
+			Environment.CurrentDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "bin", outputDirectory);
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
