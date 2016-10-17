@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Wait(.2);
 			testRunner.Type(make);
 
-			testRunner.ClickByName(manufacturer, 2);
+			testRunner.Type("{Enter}");
 
 			testRunner.ClickByName("Select Model", 2);
 
