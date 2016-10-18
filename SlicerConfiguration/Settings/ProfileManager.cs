@@ -444,6 +444,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			printerSettings.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
 
+			//If the active printer has no theme we set it to the current theme color
+			printerSettings.UserLayer[SettingsKey.active_theme_name] = ActiveTheme.Instance.Name;
+
 			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
 			var classicDefaultMacros = printerSettings.GetValue("default_macros");
 			if (!string.IsNullOrEmpty(classicDefaultMacros))

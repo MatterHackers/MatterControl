@@ -134,12 +134,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
 						ActiveTheme.ResumeEvents();
 					}
-					else
-					{
-						//If the active printer has no theme we set it to the current theme color
-						ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_name, ActiveTheme.Instance.Name);
-					}
-					
 				}
 			}
 		}
