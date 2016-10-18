@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -63,13 +64,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void PauseOnLayerDoesPauseOnPrint()
 		{
+			Process emulatorProcess = null;
+
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
 				AutomationRunner testRunner = new AutomationRunner();
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
 
-					var emualtorProccess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner);
+					emulatorProcess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner);
 
 					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile != null);
 
@@ -95,18 +98,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					resultsHarness.AddTestResult(testRunner.WaitForName("Done Button", 30));
 					resultsHarness.AddTestResult(testRunner.WaitForName("Print Again Button", 1));
 
-					try
-					{
-						emualtorProccess.Kill();
-					}
-					catch {}
-
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
 			Assert.IsTrue(testHarness.AllTestsPassed(19));
+
+			try
+			{
+				emulatorProcess?.Kill();
+			}
+			catch { }
 		}
 
 		private static void WaitForLayerAndResume(AutomationTesterHarness resultsHarness, AutomationRunner testRunner, int indexToWaitFor)
