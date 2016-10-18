@@ -452,25 +452,15 @@ namespace MatterHackers.MatterControl
 
 		static void LoadUITheme()
 		{
-			if (string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.ActiveThemeName)))
+			string oemColor = OemSettings.Instance.ThemeColor;
+			if (string.IsNullOrEmpty(oemColor))
 			{
-				string oemColor = OemSettings.Instance.ThemeColor;
-				if (string.IsNullOrEmpty(oemColor))
-				{
-					string mCDefaultColor = "Blue - Light";
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors(mCDefaultColor);
-					UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, mCDefaultColor);
-				}
-				else
-				{
-					UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
-				}
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
 			}
 			else
 			{
-				string name = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors(name);
+				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
 			}
 		}
 
