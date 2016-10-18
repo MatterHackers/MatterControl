@@ -1848,12 +1848,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					ApplicationController.Instance.ReloadAdvancedControlsPanel();
 				}
 
-				// now send a G92 to set the position that we want to think is home
-				double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_offset_after_home);
-				if (zOffset != 0)
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
-					double newHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home) + zOffset;
-					SendLineToPrinterNow($"G92 Z{newHomePosition}");
+					// now send a G92 to set the position that we want to think is home
+					double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_offset_after_home);
+					if (zOffset != 0)
+					{
+						double newHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home) + zOffset;
+						SendLineToPrinterNow($"G92 Z{newHomePosition}");
+					}
 				}
 			}
 		}
