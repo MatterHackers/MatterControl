@@ -538,7 +538,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Print leveling data has no SliceSettingsWidget editor but should be removed on 'Reset to Defaults'
 			keysToRetain.Remove(SettingsKey.print_leveling_data);
 			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
-			keysToRetain.Remove(SettingsKey.z_offset_after_home);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
 			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))

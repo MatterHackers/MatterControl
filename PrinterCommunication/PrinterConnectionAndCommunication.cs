@@ -1836,29 +1836,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			waitingForPosition.Stop();
 			waitingForPosition.Reset();
-
-			if(storePositionToPrinterZAfterHome)
-			{
-				storePositionToPrinterZAfterHome = false;
-				double storedHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home);
-				// if printer_z_after_home != current z position
-				if (storedHomePosition != LastReportedPosition.z)
-				{
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.printer_z_after_home, LastReportedPosition.z.ToString());
-					ApplicationController.Instance.ReloadAdvancedControlsPanel();
-				}
-
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
-				{
-					// now send a G92 to set the position that we want to think is home
-					double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_offset_after_home);
-					if (zOffset != 0)
-					{
-						double newHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home) + zOffset;
-						SendLineToPrinterNow($"G92 Z{newHomePosition}");
-					}
-				}
-			}
 		}
 
 		public void ReadTemperatures(object sender, EventArgs e)
@@ -2938,11 +2915,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
 						SendLineToPrinterNow("M114");
-
-						if (GCodeStream.LineIsZHoming(lineWithoutChecksum))
-						{
-							storePositionToPrinterZAfterHome = true;
-						}
 					}
 
 					// write data to communication
@@ -3020,7 +2992,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		bool haveHookedDrawing = false;
-		private bool storePositionToPrinterZAfterHome = false;
 
 		public class ReadThread
 		{
