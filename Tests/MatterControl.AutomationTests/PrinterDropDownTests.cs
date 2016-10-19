@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
-			Assert.IsTrue(testHarness.AllTestsPassed());
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
 }

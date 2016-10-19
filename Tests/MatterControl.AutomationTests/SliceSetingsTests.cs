@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800, defaultTestImages: MatterControlUtilities.DefaultTestImages);
-			Assert.IsTrue(testHarness.AllTestsPassed(1);
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
