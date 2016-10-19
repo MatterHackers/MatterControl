@@ -31,11 +31,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(terminalWindow != null, "Terminal Window exists after Show Terminal button is clicked");
 				containingWindow.CloseOnIdle();
 				testRunner.Wait(.5);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -60,11 +58,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Configure Notification Settings Button", 6);
 				bool printNotificationsWindowExists2 = testRunner.WaitForName("Notification Options Window", 3);
 				testRunner.AddTestResult(printNotificationsWindowExists2 == true, "Print Notifications Window exists after Configure button is clicked");
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items", defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}

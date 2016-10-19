@@ -61,14 +61,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", 2));
 		}
 
-		public static string DefaultTestImages
-		{
-			get
-			{
-				return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestImages");
-			}
-		}
-
 		public static void CreateDownloadsSubFolder()
 		{
 			Directory.CreateDirectory(PathToDownloadsSubFolder);
@@ -107,7 +99,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "QueueItems", queueItemToLoad);
 		}
 
-		public static void CloseMatterControl(AutomationRunner testRunner)
+		private static void CloseMatterControlViaMenu(AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
 			testRunner.ClickByName("File Menu", 5);
@@ -385,8 +377,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.AddItemsToQueue(queueTemplateDirectory);
 			}
 
+			if (defaultTestImages == null)
+			{
+				defaultTestImages = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestImages");
+			}
+
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
-			return AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages);
+			var testRunner = AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages);
+
+			MatterControlUtilities.CloseMatterControlViaMenu(testRunner);
+
+			return testRunner;
 		}
 
 		public static void LibraryAddSelectionToQueue(AutomationRunner testRunner)

@@ -53,11 +53,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(testRunner.WaitForName("Row Item " + "0Test Part", 5), "The part we added should be in the library");
 
 				testRunner.Wait(.5);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 			Assert.IsTrue(testHarness.AllTestsPassed(8));
 		}
 	}

@@ -115,8 +115,6 @@ namespace MatterControl.Tests
 				testRunner.AddTestResult(testRunner.NameExists("SettingsAndControls"));
 
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);

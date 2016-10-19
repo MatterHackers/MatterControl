@@ -61,11 +61,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
 				containingWindow.CloseOnIdle();
 				testRunner.Wait(.5);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}

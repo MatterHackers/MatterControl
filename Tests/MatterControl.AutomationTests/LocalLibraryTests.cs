@@ -38,11 +38,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
 				testRunner.AddTestResult(rowItemWasAdded == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -87,11 +85,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool secondRowItemWasAdded = testRunner.WaitForName(secondItemName, 2);
 				testRunner.AddTestResult(firstRowItemWasAdded == true);
 				testRunner.AddTestResult(secondRowItemWasAdded == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
@@ -128,11 +124,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
 				testRunner.AddTestResult(rowItemWasAdded == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1024, overrideHeight: 800, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1024, overrideHeight: 800);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -175,11 +169,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool secondItemInZipWasAdded = testRunner.WaitForName(secondItemName, 2);
 				testRunner.AddTestResult(firstItemInZipWasAdded == true);
 				testRunner.AddTestResult(secondItemInZipWasAdded == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
@@ -218,11 +210,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddTestResult(libraryItemWasRenamed == true);
 				testRunner.AddTestResult(libraryItemBeforeRenameExists == false);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 600, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -262,11 +252,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure that renamed Library Folder Exists
 				bool renamedLibraryFolderExists = testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2);
 				testRunner.AddTestResult(renamedLibraryFolderExists == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -296,11 +284,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure that Export Item Window exists after Export button is clicked
 				bool exportItemWindowExists = testRunner.WaitForName("Part Preview Window", 2);
 				testRunner.AddTestResult(exportItemWindowExists == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 	}
@@ -332,11 +318,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure that Export Item Window exists after Export button is clicked
 				bool rowItemExists = testRunner.WaitForName(rowItem, 1);
 				testRunner.AddTestResult(rowItemExists == false);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 	}
@@ -388,11 +372,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool rowItemTwoExists = testRunner.WaitForName(rowItemTwo, 2);
 				testRunner.AddTestResult(rowItemOneExists == false);
 				testRunner.AddTestResult(rowItemTwoExists == false);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
@@ -442,11 +424,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string queueItem = "Queue Item " + "Calibration - Box";
 				bool queueItemWasAdded = testRunner.WaitForName(queueItem, 2);
 				testRunner.AddTestResult(queueItemWasAdded == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -509,11 +489,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddTestResult(queueItemOneWasAdded == true);
 				testRunner.AddTestResult(queueItemTwoWasAdded == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
@@ -548,11 +526,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure that Part Preview Window opens after View button is clicked
 				bool partPreviewWindowExists = testRunner.WaitForName("Part Preview Window", 1.5);
 				testRunner.AddTestResult(partPreviewWindowExists == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}

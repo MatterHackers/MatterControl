@@ -47,11 +47,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Call compare slice settings method here
 				testRunner.AddTestResult(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
@@ -89,8 +87,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddTestResult(testRunner.WaitForName("Done Button", 30));
 				testRunner.AddTestResult(testRunner.WaitForName("Print Again Button", 1));
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
@@ -136,11 +132,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 			Assert.IsTrue(testHarness.AllTestsPassed(18));
 		}
 
@@ -163,11 +157,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// assert no profiles
 				testRunner.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
@@ -219,11 +211,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.AddTestResult(testRunner.ClickByName("Has Heated Bed Checkbox"));
 					testRunner.Wait(.5);
 				}
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			Assert.IsTrue(testHarness.AllTestsPassed(1008));
 		}
@@ -260,11 +250,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Controls Tab");
 				bool bedTemperatureControlsWidget = testRunner.WaitForName("Bed Temperature Controls Widget", 2);
 				testRunner.AddTestResult(bedTemperatureTextBoxVisible == false);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 550, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}

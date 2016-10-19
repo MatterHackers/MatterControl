@@ -71,11 +71,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName(itemName, 3);
 				testRunner.ClickByName("Library Tab");
 				testRunner.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			// NOTE: In the future we may want to make the "Local Library Row Item Collection" not clickable. 
 			// If that is the case fix this test to click on a child of "Local Library Row Item Collection" instead.
