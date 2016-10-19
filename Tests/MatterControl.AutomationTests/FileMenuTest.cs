@@ -24,8 +24,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(testRunner.WaitForName("Select Make", 3));
 
 				testRunner.ClickByName("Cancel Wizard Button");
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -57,8 +55,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				int queueAfterCount = QueueData.Instance.Count;
 
 				testRunner.AddTestResult(queueAfterCount == queueBeforeCount + 1);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
@@ -94,8 +90,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				int queueAfterAddCount = QueueData.Instance.Count;
 
 				testRunner.AddTestResult(queueAfterAddCount == queueBeforeAddCount + 2);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
@@ -125,8 +119,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(testRunner.WaitForName("Queue Item Batman", 1));
 				testRunner.AddTestResult(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
 				testRunner.AddTestResult(QueueData.Instance.Count == beforeCount + 2);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);

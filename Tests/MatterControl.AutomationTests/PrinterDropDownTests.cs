@@ -41,8 +41,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure the Active profile name changes as well
 				testRunner.AddTestResult(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);

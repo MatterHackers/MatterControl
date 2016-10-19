@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Console.WriteLine(gcodeExportPath);
 
 				testRunner.AddTestResult(File.Exists(gcodeExportPath) == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);

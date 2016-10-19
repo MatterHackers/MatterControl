@@ -55,8 +55,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(partCountAfterSecondCopy == 3);
 				view3D.CloseOnIdle();
 				testRunner.Wait(.5);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
@@ -113,8 +111,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				System.Threading.Thread.Sleep(2000);
 				int partsOnBedAfterUngroup = view3D.MeshGroups.Count();
 				testRunner.AddTestResult(partsOnBedAfterUngroup == 6);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
@@ -166,8 +162,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				System.Threading.Thread.Sleep(2000);
 				int meshCountAfterRemove = view3D.MeshGroups.Count();
 				testRunner.AddTestResult(meshCountAfterRemove == 5);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
@@ -233,8 +227,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.AddTestResult(meshCountAfterRedo == meshCountBeforeRedo + 1);
 
 				}
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
@@ -295,8 +287,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				partPreview.CloseOnIdle();
 				testRunner.Wait(.1);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
@@ -352,8 +342,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Queue Tab");
 				testRunner.Wait(1);
 				testRunner.AddTestResult(testRunner.WaitForName("Queue Item Save As Print Queue", 5));
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);

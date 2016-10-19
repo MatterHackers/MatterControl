@@ -39,8 +39,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec Fox item exists");
 				testRunner.AddTestResult(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
 				testRunner.Wait(1);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			// TODO: The standard assignment without a try/catch should be used and DeleteDownloadsSubFolder should be called from a TearDown method
@@ -83,8 +81,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddTestResult(testRunner.WaitForName("Row Item Rook", 2), "Rook item exists");
 				testRunner.Wait(1);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = null;
@@ -129,8 +125,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(testRunner.WaitForName("Row Item Circle Calibration", 2), "Circle Calibration item exists");
 
 				testRunner.Wait(1);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = null;
@@ -180,8 +174,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("Batman Renamed");
 				testRunner.ClickByName("Rename Button");
 				testRunner.AddTestResult(testRunner.WaitForName("Row Item Batman Renamed", 2) == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = null;
@@ -222,8 +214,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(2);
 				testRunner.AddTestResult(testRunner.WaitForName(newFolderName + " Row Item Collection", 2), $"{newFolderName} exists");
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = null;

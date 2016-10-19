@@ -38,8 +38,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure Print Leveling tab is visible
 				bool printLevelingVisible = testRunner.WaitForName("Print Leveling Tab", 2);
 				testRunner.AddTestResult(printLevelingVisible == true);
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideHeight: 800);
@@ -91,8 +89,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// make sure it is showing the correct button
 				testRunner.AddTestResult(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
 				testRunner.AddTestResult(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);

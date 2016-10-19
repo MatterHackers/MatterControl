@@ -71,8 +71,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName(itemName, 3);
 				testRunner.ClickByName("Library Tab");
 				testRunner.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
-
-				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
