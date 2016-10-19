@@ -445,8 +445,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 			testRunner.ClickByName("User Level Dropdown", 1);
 			testRunner.ClickByName("Advanced Menu Item", 1);
-			testRunner.AddTestResult(true);
-			testRunner.AddTestResult(true);
 			testRunner.Wait(.5);
 		}
 	}

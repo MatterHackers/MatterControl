@@ -42,35 +42,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void CreateFolderStarsOutWithTextFiledFocusedAndEditable()
 		{
-			// Run a copy of MatterControl
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				// Now do the actions specific to this test. (replace this for new tests)
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				MatterControlUtilities.PrepForTestRun(testRunner);
 
-					testRunner.ClickByName("Library Tab");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
-					testRunner.ClickByName("Create Folder From Library Button");
+				testRunner.ClickByName("Library Tab");
+				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.ClickByName("Create Folder From Library Button");
 
-					testRunner.Wait(.5);
-					testRunner.Type("Test Text");
-					testRunner.Wait(.5);
+				testRunner.Wait(.5);
+				testRunner.Type("Test Text");
+				testRunner.Wait(.5);
 
-					SystemWindow containingWindow;
-					GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
-					MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
-					testRunner.AddTestResult(textWidgetMH != null, "Found Text Widget");
-					testRunner.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
-					containingWindow.CloseOnIdle();
-					testRunner.Wait(.5);
+				SystemWindow containingWindow;
+				GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
+				MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
+				testRunner.AddTestResult(textWidgetMH != null, "Found Text Widget");
+				testRunner.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
+				containingWindow.CloseOnIdle();
+				testRunner.Wait(.5);
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
-
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
