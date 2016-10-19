@@ -363,7 +363,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			string outputDirectory = "Release";
 #endif
 
-			Environment.CurrentDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "bin", outputDirectory);
+			Environment.CurrentDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "bin", outputDirectory); 
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
