@@ -118,7 +118,7 @@ namespace MatterControl.Tests
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 #endif
 
