@@ -18,46 +18,41 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void RaftEnabledPassedToSliceEngine()
 		{
-			// Run a copy of MatterControl
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-					//Navigate to Local Library 
-					testRunner.ClickByName("Library Tab");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Row Item Calibration - Box");
-					testRunner.ClickByName("Row Item Calibration - Box Print Button");
-					testRunner.Wait(1);
+				//Navigate to Local Library 
+				testRunner.ClickByName("Library Tab");
+				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.Wait(1);
+				testRunner.ClickByName("Row Item Calibration - Box");
+				testRunner.ClickByName("Row Item Calibration - Box Print Button");
+				testRunner.Wait(1);
 
-					testRunner.ClickByName("Layer View Tab");
+				testRunner.ClickByName("Layer View Tab");
 
-					testRunner.ClickByName("Bread Crumb Button Home", 1);
+				testRunner.ClickByName("Bread Crumb Button Home", 1);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					testRunner.ClickByName("Raft / Priming Tab", 1);
+				testRunner.ClickByName("Raft / Priming Tab", 1);
 
-					testRunner.ClickByName("Create Raft Checkbox", 1);
-					testRunner.Wait(1.5);
-					testRunner.ClickByName("Generate Gcode Button", 1);
-					testRunner.Wait(5);
+				testRunner.ClickByName("Create Raft Checkbox", 1);
+				testRunner.Wait(1.5);
+				testRunner.ClickByName("Generate Gcode Button", 1);
+				testRunner.Wait(5);
 
-					//Call compare slice settings method here
-					testRunner.AddTestResult(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
+				//Call compare slice settings method here
+				testRunner.AddTestResult(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
 
-
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800, defaultTestImages: MatterControlUtilities.DefaultTestImages);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
@@ -67,41 +62,39 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
+				MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
 
-					emulatorProcess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner);
+				emulatorProcess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner);
 
-					testRunner.AddTestResult(ProfileManager.Instance.ActiveProfile != null);
+				testRunner.AddTestResult(ProfileManager.Instance.ActiveProfile != null);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					testRunner.AddTestResult(testRunner.ClickByName("General Tab", 1));
-					testRunner.AddTestResult(testRunner.ClickByName("Single Print Tab", 1));
-					testRunner.AddTestResult(testRunner.ClickByName("Layer(s) To Pause:" + " Edit"));
-					testRunner.Type("4;2;a;not;6");
+				testRunner.AddTestResult(testRunner.ClickByName("General Tab", 1));
+				testRunner.AddTestResult(testRunner.ClickByName("Single Print Tab", 1));
+				testRunner.AddTestResult(testRunner.ClickByName("Layer(s) To Pause:" + " Edit"));
+				testRunner.Type("4;2;a;not;6");
 
-					testRunner.AddTestResult(testRunner.ClickByName("Layer View Tab"));
+				testRunner.AddTestResult(testRunner.ClickByName("Layer View Tab"));
 
-					testRunner.AddTestResult(testRunner.ClickByName("Generate Gcode Button", 1));
-					testRunner.AddTestResult(testRunner.ClickByName("Display Checkbox", 10));
-					testRunner.AddTestResult(testRunner.ClickByName("Sync To Print Checkbox", 1));
+				testRunner.AddTestResult(testRunner.ClickByName("Generate Gcode Button", 1));
+				testRunner.AddTestResult(testRunner.ClickByName("Display Checkbox", 10));
+				testRunner.AddTestResult(testRunner.ClickByName("Sync To Print Checkbox", 1));
 
-					testRunner.AddTestResult(testRunner.ClickByName("Start Print Button", 1));
+				testRunner.AddTestResult(testRunner.ClickByName("Start Print Button", 1));
 
-					WaitForLayerAndResume(testRunner, 2);
-					WaitForLayerAndResume(testRunner, 4);
-					WaitForLayerAndResume(testRunner, 6);
+				WaitForLayerAndResume(testRunner, 2);
+				WaitForLayerAndResume(testRunner, 4);
+				WaitForLayerAndResume(testRunner, 6);
 
-					testRunner.AddTestResult(testRunner.WaitForName("Done Button", 30));
-					testRunner.AddTestResult(testRunner.WaitForName("Print Again Button", 1));
+				testRunner.AddTestResult(testRunner.WaitForName("Done Button", 30));
+				testRunner.AddTestResult(testRunner.WaitForName("Print Again Button", 1));
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
-			Assert.IsTrue(testHarness.AllTestsPassed(19));
+			Assert.IsTrue(testHarness.AllTestsPassed(17));
 
 			try
 			{
@@ -118,10 +111,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			GuiWidget layerNumber = testRunner.GetWidgetByName("Current GCode Layer Edit", out containingWindow, 20);
 
 			layerNumber.Invalidate();
-			testRunner.WaitUntil(() =>
-			{
-				return layerNumber.Text == indexToWaitFor.ToString();
-			}, 2);
+			testRunner.WaitUntil(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
 
 			testRunner.AddTestResult(layerNumber.Text == indexToWaitFor.ToString());
 			testRunner.AddTestResult(testRunner.ClickByName("Resume Button", 1));
@@ -131,57 +121,50 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void ClearingCheckBoxClearsUserOverride()
 		{
-			// Run a copy of MatterControl
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-					//Navigate to Local Library 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				//Navigate to Local Library 
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					testRunner.AddTestResult(testRunner.ClickByName("Printer Tab", 1), "Switch to Printers tab");
-					testRunner.AddTestResult(testRunner.ClickByName("Features Tab", 1), "Switch to Features tab");
+				testRunner.AddTestResult(testRunner.ClickByName("Printer Tab", 1), "Switch to Printers tab");
+				testRunner.AddTestResult(testRunner.ClickByName("Features Tab", 1), "Switch to Features tab");
 
-					CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
+				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
 
-					CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
+				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900, defaultTestImages: MatterControlUtilities.DefaultTestImages);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(20));
+			Assert.IsTrue(testHarness.AllTestsPassed(18));
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void DeleteProfileWorksForGuest()
 		{
-			// Run a copy of MatterControl
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				MatterControlUtilities.PrepForTestRun(testRunner);
 
-					// assert no profiles
-					testRunner.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+				// assert no profiles
+				testRunner.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
 
-					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-					// assert one profile
-					testRunner.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 1);
+				// assert one profile
+				testRunner.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 1);
 
-					MatterControlUtilities.DeleteSelectedPrinter(testRunner);
+				MatterControlUtilities.DeleteSelectedPrinter(testRunner);
 
-					// assert no profiles
-					testRunner.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+				// assert no profiles
+				testRunner.AddTestResult(ProfileManager.Instance.ActiveProfiles.Count() == 0);
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner  testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900, defaultTestImages: MatterControlUtilities.DefaultTestImages);
@@ -216,80 +199,73 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
 		public void HasHeatedBedCheckUncheck()
 		{
-			// Run a copy of MatterControl
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
+				MatterControlUtilities.PrepForTestRun(testRunner);
+
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+
+				//Navigate to Local Library 
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+				testRunner.AddTestResult(testRunner.ClickByName("Printer Tab"));
+				testRunner.Wait(1);
+
+				testRunner.AddTestResult(testRunner.ClickByName("Features Tab"));
+				testRunner.Wait(2);
+
+				for (int i = 0; i <= 1000; i++)
 				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
-
-					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
-
-					//Navigate to Local Library 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
-
-					testRunner.AddTestResult(testRunner.ClickByName("Printer Tab"));
-					testRunner.Wait(1);
-
-					testRunner.AddTestResult(testRunner.ClickByName("Features Tab"));
-					testRunner.Wait(2);
-
-					for (int i = 0; i <= 1000; i++)
-					{
-						testRunner.AddTestResult(testRunner.ClickByName("Has Heated Bed Checkbox"));
-						testRunner.Wait(.5);
-					}
-
-					MatterControlUtilities.CloseMatterControl(testRunner);
+					testRunner.AddTestResult(testRunner.ClickByName("Has Heated Bed Checkbox"));
+					testRunner.Wait(.5);
 				}
+
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
-			Assert.IsTrue(testHarness.AllTestsPassed(1010));
+			Assert.IsTrue(testHarness.AllTestsPassed(1008));
 		}
 
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
-			// Run a copy of MatterControl
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				MatterControlUtilities.PrepForTestRun(testRunner);
 
-					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-					//Navigate to Settings Tab and make sure Bed Temp Text box is visible 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				//Navigate to Settings Tab and make sure Bed Temp Text box is visible 
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					testRunner.ClickByName("Filament Tab", 1);
-					testRunner.ClickByName("Temperatures Tab", 1);
-					testRunner.AddTestResult(testRunner.WaitForName("Bed Temperature Textbox", 2));
+				testRunner.ClickByName("Filament Tab", 1);
+				testRunner.ClickByName("Temperatures Tab", 1);
+				testRunner.AddTestResult(testRunner.WaitForName("Bed Temperature Textbox", 2));
 
-					//Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
-					testRunner.ClickByName("Printer Tab",1);
-					testRunner.ClickByName("Features Tab", 1);
-					testRunner.DragByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(-40, 0));
-					testRunner.MoveToByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(0, 120));
-					testRunner.Drop();
-					testRunner.ClickByName("Has Heated Bed Checkbox", 1);
-					testRunner.Wait(.5);
-					testRunner.ClickByName("Filament Tab", 1);
-					bool bedTemperatureTextBoxVisible = testRunner.WaitForName("Bed Temperature Textbox", 2);
-					testRunner.AddTestResult(bedTemperatureTextBoxVisible == false);
+				//Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
+				testRunner.ClickByName("Printer Tab", 1);
+				testRunner.ClickByName("Features Tab", 1);
+				testRunner.DragByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(-40, 0));
+				testRunner.MoveToByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(0, 120));
+				testRunner.Drop();
+				testRunner.ClickByName("Has Heated Bed Checkbox", 1);
+				testRunner.Wait(.5);
+				testRunner.ClickByName("Filament Tab", 1);
+				bool bedTemperatureTextBoxVisible = testRunner.WaitForName("Bed Temperature Textbox", 2);
+				testRunner.AddTestResult(bedTemperatureTextBoxVisible == false);
 
-					//Make sure Bed Temperature Options are not visible in printer controls
-					testRunner.ClickByName("Controls Tab");
-					bool bedTemperatureControlsWidget = testRunner.WaitForName("Bed Temperature Controls Widget", 2);
-					testRunner.AddTestResult(bedTemperatureTextBoxVisible == false);
+				//Make sure Bed Temperature Options are not visible in printer controls
+				testRunner.ClickByName("Controls Tab");
+				bool bedTemperatureControlsWidget = testRunner.WaitForName("Bed Temperature Controls Widget", 2);
+				testRunner.AddTestResult(bedTemperatureTextBoxVisible == false);
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 550, defaultTestImages: MatterControlUtilities.DefaultTestImages);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(5));
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
 }
