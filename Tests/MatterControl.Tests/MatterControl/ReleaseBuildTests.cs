@@ -106,19 +106,21 @@ namespace MatterControl.Tests
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
+				// If plugins exist, this will close the sign in window
+				MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
 
-					testRunner.AddTestResult(testRunner.NameExists("SettingsAndControls"));
+				// If plugins do not exist, this will close the Add Printer window
+				testRunner.ClickByName("Cancel Wizard Button", 2);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				testRunner.AddTestResult(testRunner.NameExists("SettingsAndControls"));
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 #endif
 
