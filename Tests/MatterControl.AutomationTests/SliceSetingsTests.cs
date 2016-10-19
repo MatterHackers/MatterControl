@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestResult(testRunner.WaitForName("Print Again Button", 1));
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
 			Assert.IsTrue(testHarness.AllTestsPassed(17));
 
 			try
