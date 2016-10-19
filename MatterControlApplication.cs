@@ -871,6 +871,7 @@ namespace MatterHackers.MatterControl
 			test.DragByName("SkeletonArm_Med_IObject3D", 5);
 			test.DropByName("SkeletonArm_Med_IObject3D", 5, offset: new Point2D(0, -40));
 		}
+
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
 			MatterControlApplication.AssertDebugNotDefined();

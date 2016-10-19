@@ -42,6 +42,7 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -383,7 +384,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
-			var testRunner = AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages);
+
+			var config = TestAutomationConfig.Load();
+
+			var testRunner = AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages, config.AutomationInputType);
 
 			MatterControlUtilities.CloseMatterControlViaMenu(testRunner);
 
@@ -478,6 +482,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// The serial port that Python will communicate with to emulate printer firmware
 		/// </summary>
 		public string Printer { get; set; }
+
+		[JsonConverter(typeof(StringEnumConverter))]
+		public AutomationRunner.InputType AutomationInputType { get; set; } = AutomationRunner.InputType.Native;
 
 		public static TestAutomationConfig Load()
 		{
