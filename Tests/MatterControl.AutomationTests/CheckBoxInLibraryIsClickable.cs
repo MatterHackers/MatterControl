@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			// NOTE: In the future we may want to make the "Local Library Row Item Collection" not clickable. 
 			// If that is the case fix this test to click on a child of "Local Library Row Item Collection" instead.

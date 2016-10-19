@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+				testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			}
 			catch { }
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+				testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			}
 			catch { }
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+				testHarness = MatterControlUtilities.RunTest(testToRun);
 			}
 			catch { }
 
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+				testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			}
 			catch { }
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
+				testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			}
 			catch { }

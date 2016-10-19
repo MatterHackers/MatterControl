@@ -61,14 +61,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", 2));
 		}
 
-		public static string DefaultTestImages
-		{
-			get
-			{
-				return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestImages");
-			}
-		}
-
 		public static void CreateDownloadsSubFolder()
 		{
 			Directory.CreateDirectory(PathToDownloadsSubFolder);
@@ -383,6 +375,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				string queueTemplateDirectory = queueItemFolderToAdd.ToString();
 				MatterControlUtilities.AddItemsToQueue(queueTemplateDirectory);
+			}
+
+			if (defaultTestImages == null)
+			{
+				defaultTestImages = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestImages");
 			}
 
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
