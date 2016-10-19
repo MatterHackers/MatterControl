@@ -43,10 +43,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ClickOnLibraryCheckBoxes()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
@@ -66,22 +64,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
 					CheckBox checkBoxWidget = foundWidget as CheckBox;
-					resultsHarness.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
+					testRunner.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
+					testRunner.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
 
 					testRunner.ClickByName("Row Item Select Checkbox", 3, searchRegion: rowItemRegion);
 					testRunner.ClickByName("Library Tab");
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == true, "currently checked");
+					testRunner.AddTestResult(checkBoxWidget.Checked == true, "currently checked");
 
 					testRunner.ClickByName(itemName, 3);
 					testRunner.ClickByName("Library Tab");
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
+					testRunner.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			// NOTE: In the future we may want to make the "Local Library Row Item Collection" not clickable. 
 			// If that is the case fix this test to click on a child of "Local Library Row Item Collection" instead.

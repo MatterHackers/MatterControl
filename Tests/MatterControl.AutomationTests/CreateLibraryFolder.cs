@@ -43,10 +43,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void CreateFolderStarsOutWithTextFiledFocusedAndEditable()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
@@ -62,8 +60,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					SystemWindow containingWindow;
 					GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
 					MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
-					resultsHarness.AddTestResult(textWidgetMH != null, "Found Text Widget");
-					resultsHarness.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
+					testRunner.AddTestResult(textWidgetMH != null, "Found Text Widget");
+					testRunner.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
 					containingWindow.CloseOnIdle();
 					testRunner.Wait(.5);
 
@@ -71,7 +69,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}

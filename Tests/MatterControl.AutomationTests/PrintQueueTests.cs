@@ -45,27 +45,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ClickOnBuyButton()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//Make sure image does not exist before we click the buy button
 					testRunner.MatchLimit = 500000;
 					bool imageExists = testRunner.ImageExists("MatterHackersStoreImage.png");
-					resultsHarness.AddTestResult(imageExists == false, "Web page is not open");
+					testRunner.AddTestResult(imageExists == false, "Web page is not open");
 
 					//Click Buy button and test that the MatterHackers store web page is open
 					testRunner.ClickByName("Buy Materials Button", 5);
 					bool imageExists2 = testRunner.ImageExists("MatterHackersStoreImage.png", 10);
-					resultsHarness.AddTestResult(imageExists2 == true, "Web page is open");
+					testRunner.AddTestResult(imageExists2 == true, "Web page is open");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
@@ -79,9 +78,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ClickCreateButton()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					// Tests that clicking the create button opens create tools plugin window
@@ -89,14 +87,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					//Make sure that plugin window does not exist
 					bool pluginWindowExists1 = testRunner.WaitForName("Plugin Chooser Window", 0);
-					resultsHarness.AddTestResult(pluginWindowExists1 == false, "Plugin window does not exist");
+					testRunner.AddTestResult(pluginWindowExists1 == false, "Plugin window does not exist");
 
 					testRunner.ClickByName("Design Tool Button", 5);
 
 					//Test that the plugin window does exist after the create button is clicked
 					SystemWindow containingWindow;
 					GuiWidget pluginWindowExists = testRunner.GetWidgetByName("Plugin Chooser Window", out containingWindow, secondsToWait: 3);
-					resultsHarness.AddTestResult(pluginWindowExists != null, "Plugin Chooser Window");
+					testRunner.AddTestResult(pluginWindowExists != null, "Plugin Chooser Window");
 					pluginWindowExists.CloseOnIdle();
 					testRunner.Wait(.5);
 
@@ -104,7 +102,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
@@ -118,21 +116,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ClickOnExportButton()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					// Tests that clicking the queue export button with a single item selected opens export item window
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//Make sure that the export window does not exist
 					bool exportWindowExists1 = testRunner.WaitForName( "Export Item Window", 0);
-					resultsHarness.AddTestResult(exportWindowExists1 == false, "Export window does not exist");
+					testRunner.AddTestResult(exportWindowExists1 == false, "Export window does not exist");
 
 					testRunner.ClickByName("Queue Export Button", 5);
 					SystemWindow containingWindow;
 					GuiWidget exportWindow = testRunner.GetWidgetByName("Export Item Window", out containingWindow, 5);
-					resultsHarness.AddTestResult(exportWindow != null, "Export window does exist");
+					testRunner.AddTestResult(exportWindow != null, "Export window does exist");
 					if (exportWindow != null)
 					{
 						exportWindow.CloseOnIdle();
@@ -144,7 +141,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -156,22 +153,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ExportButtonIsDisabledWithNoItemsInQueue()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					//bool exportButtonExists = testRunner.NameExists("Export Queue Button");
 					bool exportButtonExists = testRunner.WaitForName("Export Queue Button", 10);
 					testRunner.Wait(5);
-					resultsHarness.AddTestResult(exportButtonExists == false, "Export button is disabled");
+					testRunner.AddTestResult(exportButtonExists == false, "Export button is disabled");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 	}
@@ -183,22 +179,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void QueueThumbnailWidgetOpensPartPreview()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					
 					// Tests that clicking a queue item thumbnail opens a Part Preview window
 
 					bool partPreviewWindowExists1 = testRunner.WaitForName("Part Preview Window Thumbnail", 0);
-					resultsHarness.AddTestResult(partPreviewWindowExists1 == false, "Part Preview Window Does Not Exist");
+					testRunner.AddTestResult(partPreviewWindowExists1 == false, "Part Preview Window Does Not Exist");
 
 					testRunner.ClickByName("Queue Item Thumbnail");
 
 					SystemWindow containingWindow;
 					GuiWidget partPreviewWindowExists = testRunner.GetWidgetByName("Part Preview Window", out containingWindow, 3);
-					resultsHarness.AddTestResult(partPreviewWindowExists != null, "Part Preview Window Exists");
+					testRunner.AddTestResult(partPreviewWindowExists != null, "Part Preview Window Exists");
 					partPreviewWindowExists.CloseOnIdle();
 					testRunner.Wait(.5);
 
@@ -206,7 +201,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -218,9 +213,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void CopyButtonMakesACopyOfPartInTheQueue()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					/* Tests that when the Queue Copy button is clicked:
@@ -241,17 +235,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						copyIncreasesQueueDataCount = true;
 					}
 
-					resultsHarness.AddTestResult(copyIncreasesQueueDataCount == true, "Copy button clicked increases queue tab count by one");
+					testRunner.AddTestResult(copyIncreasesQueueDataCount == true, "Copy button clicked increases queue tab count by one");
 
 					bool batmanQueueItemCopyExists = testRunner.WaitForName("Queue Item " + "Batman" + " - copy", 2);
 
-					resultsHarness.AddTestResult(batmanQueueItemCopyExists == true);
-					
+					testRunner.AddTestResult(batmanQueueItemCopyExists == true);
+
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -263,9 +257,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void AddSingleItemToQueue()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -290,18 +283,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					//Make sure single part is added and queue count increases by one
 					bool fennecFoxPartWasAdded = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 2);
-					resultsHarness.AddTestResult(fennecFoxPartWasAdded == true);
+					testRunner.AddTestResult(fennecFoxPartWasAdded == true);
 
 					int queueCountAfterAdd = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueCountBeforeAdd +1 == queueCountAfterAdd);
+					testRunner.AddTestResult(queueCountBeforeAdd + 1 == queueCountAfterAdd);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -313,9 +306,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void AddMuiltipleItemsToQueue()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -332,7 +324,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					string pathToFirstQueueItem = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 					testRunner.Wait(1);
 					string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
-					string textForBothQueueItems = String.Format("\"{0}\" \"{1}\"", pathToFirstQueueItem, pathToSecondQueueItem);
+					string textForBothQueueItems = string.Format("\"{0}\" \"{1}\"", pathToFirstQueueItem, pathToSecondQueueItem);
 
 					testRunner.Type(textForBothQueueItems);
 					testRunner.Wait(2);
@@ -342,20 +334,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Confirm that both items were added and  that the queue count increases by the appropriate number
 					int queueCountAfterAdd = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(QueueData.Instance.Count == queueCountBeforeAdd + 2);
+					testRunner.AddTestResult(QueueData.Instance.Count == queueCountBeforeAdd + 2);
 
 					bool firstQueueItemWasAdded = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 2);
 					bool secondQueueItemWasAdded = testRunner.WaitForName("Queue Item " + "Batman", 2);
 
-					resultsHarness.AddTestResult(firstQueueItemWasAdded == true);
-					resultsHarness.AddTestResult(secondQueueItemWasAdded == true);
+					testRunner.AddTestResult(firstQueueItemWasAdded == true);
+					testRunner.AddTestResult(secondQueueItemWasAdded == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
@@ -368,9 +360,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void RemoveButtonRemovesSingleItem()
 		{
 			//Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
@@ -388,18 +379,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					int queueItemCountAfterRemove = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueItemCount -1 == queueItemCountAfterRemove);
+					testRunner.AddTestResult(queueItemCount - 1 == queueItemCountAfterRemove);
 
 					bool queueItemExists = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 2);
 
-					resultsHarness.AddTestResult(queueItemExists == false);
+					testRunner.AddTestResult(queueItemExists == false);
 
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -411,9 +402,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void EditButtonTurnsOnOffEditMode()
 		{
 			//Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
@@ -425,9 +415,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					bool checkboxExists = testRunner.WaitForName("Queue Item Checkbox", 2);
 
-					resultsHarness.AddTestResult(checkboxExists == false);
+					testRunner.AddTestResult(checkboxExists == false);
 
-					resultsHarness.AddTestResult(QueueData.Instance.Count == 4);
+					testRunner.AddTestResult(QueueData.Instance.Count == 4);
 
 					SystemWindow systemWindow;
 					string itemName = "Queue Item " + "2013-01-25_Mouthpiece_v2";
@@ -440,7 +430,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 						SystemWindow containingWindow;
 						GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 3, searchRegion: queueItemRegion);
-						resultsHarness.AddTestResult(foundWidget != null, "We should have an actual checkbox");
+						testRunner.AddTestResult(foundWidget != null, "We should have an actual checkbox");
 					}
 
 					{
@@ -450,14 +440,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 						SystemWindow containingWindow;
 						GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 1, searchRegion: queueItemRegion);
-						resultsHarness.AddTestResult(foundWidget == null, "We should not have an actual checkbox");
+						testRunner.AddTestResult(foundWidget == null, "We should not have an actual checkbox");
 					}
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
 	}
@@ -469,9 +459,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void DoneButtonTurnsOffEditMode()
 		{
 			//Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
@@ -491,18 +480,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Queue Edit Button", 2);
 
 					GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion: queueItemRegion);
-					resultsHarness.AddTestResult(foundWidget != null, "We should have an actual checkbox");
+					testRunner.AddTestResult(foundWidget != null, "We should have an actual checkbox");
 
 					testRunner.ClickByName("Queue Done Button", 1);
 
 					foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 1, searchRegion: queueItemRegion);
-					resultsHarness.AddTestResult(foundWidget != null, "Checkbox is gone");
+					testRunner.AddTestResult(foundWidget != null, "Checkbox is gone");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -514,9 +503,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void RemoveButtonRemovesMultipleItems()
 		{
 			//Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
@@ -540,20 +528,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					int queueItemCountAfterRemove = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueItemCount - 2 == queueItemCountAfterRemove);
+					testRunner.AddTestResult(queueItemCount - 2 == queueItemCountAfterRemove);
 
 					bool queueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 2);
 					bool secondQueueItemExists = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 2);
 
-					resultsHarness.AddTestResult(queueItemExists == false);
-					resultsHarness.AddTestResult(secondQueueItemExists == false);
+					testRunner.AddTestResult(queueItemExists == false);
+					testRunner.AddTestResult(secondQueueItemExists == false);
 
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
@@ -565,9 +553,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ExportToZipMenuItemClicked()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
@@ -584,7 +571,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						queueEmpty = false;
 					}
 
-					resultsHarness.AddTestResult(queueEmpty == false);
+					testRunner.AddTestResult(queueEmpty == false);
 
 					testRunner.ClickByName("Queue... Menu", 2);
 
@@ -613,7 +600,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.Wait(2);
 
-					resultsHarness.AddTestResult(queueWasExportedToZip == true);
+					testRunner.AddTestResult(queueWasExportedToZip == true);
 
 					//Add the exprted zip file to the Queue and confirm that the Queue Count increases by 3 
 					testRunner.ClickByName("Queue Add Button");
@@ -630,7 +617,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						allItemsInZipWereAddedToTheQueue = true;
 					}
 
-					resultsHarness.AddTestResult(allItemsInZipWereAddedToTheQueue == true);
+					testRunner.AddTestResult(allItemsInZipWereAddedToTheQueue == true);
 
 					if (File.Exists(exportZipPath))
 					{
@@ -641,7 +628,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 	}
@@ -653,15 +640,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void SendMenuItemCLickedNoSignIn()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
 					int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueItemCountBeforeRemoveAllClicked > 0);
+					testRunner.AddTestResult(queueItemCountBeforeRemoveAllClicked > 0);
 
 					testRunner.ClickByName("More...  Menu", 2);
 
@@ -669,7 +655,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					bool signInPromptWindowOpens = testRunner.WaitForName("Ok Button", 2);
 
-					resultsHarness.AddTestResult(signInPromptWindowOpens == true);
+					testRunner.AddTestResult(signInPromptWindowOpens == true);
 
 					testRunner.ClickByName("Ok Button");
 
@@ -677,7 +663,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -694,17 +680,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void RemoveAllMenuItemClickedRemovesAll()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner();
-
 				MatterControlUtilities.PrepForTestRun(testRunner);
-				resultsHarness.AddTestResult(QueueData.Instance.Count == 4, "Queue has expected 3 items, including default Coin");
+				testRunner.AddTestResult(QueueData.Instance.Count == 4, "Queue has expected 3 items, including default Coin");
 
 				// Assert that widgets exists
-				resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Batman"), "Batman part exists");
-				resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Fennec_Fox"), "Fox part exists");
-				resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part exists");
+				testRunner.AddTestResult(testRunner.WaitForName("Queue Item Batman"), "Batman part exists");
+				testRunner.AddTestResult(testRunner.WaitForName("Queue Item Fennec_Fox"), "Fox part exists");
+				testRunner.AddTestResult(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part exists");
 
 				// Act - remove all print queue items
 				testRunner.ClickByName("Queue... Menu", 2);
@@ -712,17 +696,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 
 				// Assert that object model has been cleared
-				resultsHarness.AddTestResult(QueueData.Instance.Count == 0, "Queue is empty after RemoveAll action");
+				testRunner.AddTestResult(QueueData.Instance.Count == 0, "Queue is empty after RemoveAll action");
 
 				// Assert that widgets have been removed
-				resultsHarness.AddTestResult(!testRunner.WaitForName("Queue Item Batman"), "Batman part removed");
-				resultsHarness.AddTestResult(!testRunner.WaitForName("Queue Item Fennec_Fox"), "Fox part removed");
-				resultsHarness.AddTestResult(!testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
+				testRunner.AddTestResult(!testRunner.WaitForName("Queue Item Batman"), "Batman part removed");
+				testRunner.AddTestResult(!testRunner.WaitForName("Queue Item Fennec_Fox"), "Fox part removed");
+				testRunner.AddTestResult(!testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
 
 				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 			Assert.IsTrue(testHarness.AllTestsPassed(8));
 		}
 	}
@@ -735,9 +719,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ClickCreatePartSheetButton()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 					/*
@@ -754,7 +737,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						queueEmpty = false;
 					}
 
-					resultsHarness.AddTestResult(queueEmpty == false);
+					testRunner.AddTestResult(queueEmpty == false);
 					testRunner.ClickByName("Queue... Menu", 2);
 					testRunner.ClickByName(" Create Part Sheet Menu Item", 2);
 					testRunner.Wait(2);
@@ -771,7 +754,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					bool partSheetCreated = File.Exists(validatePartSheetPath);
 
 					testRunner.Wait(2);
-					resultsHarness.AddTestResult(partSheetCreated == true);
+					testRunner.AddTestResult(partSheetCreated == true);
 
 
 					if (File.Exists(validatePartSheetPath))
@@ -786,7 +769,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(5));
 		}
 	}
@@ -798,9 +781,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void ClickQueueRoWItemViewAndRemove()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -815,8 +797,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(2);
 					int currentQueueItemCount = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item " + "Batman", 1));
-					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1));
+					testRunner.AddTestResult(testRunner.WaitForName("Queue Item " + "Batman", 1));
+					testRunner.AddTestResult(testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1));
 
 					testRunner.ClickByName("Queue Item " + "Batman", 1);
 					testRunner.ClickByName("Queue Item " + "Batman" + " Remove");
@@ -824,26 +806,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					int queueItemCountAfterRemove = QueueData.Instance.Count;
 					
-					resultsHarness.AddTestResult(currentQueueItemCount - 1 == queueItemCountAfterRemove);
+					testRunner.AddTestResult(currentQueueItemCount - 1 == queueItemCountAfterRemove);
 
 					bool batmanQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
-					resultsHarness.AddTestResult(batmanQueueItemExists == false);
+					testRunner.AddTestResult(batmanQueueItemExists == false);
 
 					bool partPreviewWindowExists1 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " Part Preview", 1);
-					resultsHarness.AddTestResult(partPreviewWindowExists1 == false);
+					testRunner.AddTestResult(partPreviewWindowExists1 == false);
 					testRunner.ClickByName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
 					testRunner.Wait(2);
 					testRunner.ClickByName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " View", 1);
 
 					bool partPreviewWindowExists2 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " Part Preview", 2);
-					resultsHarness.AddTestResult(partPreviewWindowExists2 == true);
+					testRunner.AddTestResult(partPreviewWindowExists2 == true);
 
-						
+
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
-			
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
+
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(6));
 		}
 	}
@@ -854,9 +836,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void QueueAddButtonAddsAMF()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -881,17 +862,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					//Make sure Queue Count increases by one 
 					int queueCountAfterAMFIsAdded = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueCountAfterAMFIsAdded == queueCountBeforeTest+1);
+					testRunner.AddTestResult(queueCountAfterAMFIsAdded == queueCountBeforeTest+1);
 
 					//Make sure amf queue item is added 
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Rook", 1);
-					resultsHarness.AddTestResult(firstQueueItemExists == true);
+					testRunner.AddTestResult(firstQueueItemExists == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -902,9 +883,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public void QueueAddButtonAddsSTL()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -927,17 +907,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					int queueCountAfterSTLIsAdded = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueCountAfterSTLIsAdded == queueCountBeforeTest+1);
+					testRunner.AddTestResult(queueCountAfterSTLIsAdded == queueCountBeforeTest+1);
 
 					//stl queue item is added to the queue
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
-					resultsHarness.AddTestResult(firstQueueItemExists == true);
+					testRunner.AddTestResult(firstQueueItemExists == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}
@@ -949,9 +929,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void QueueAddButtonAddsGcodeFile()
 		{
 
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -969,17 +948,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					int queueCountAfterGcodeIsAdded = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueCountAfterGcodeIsAdded == queueCountBeforeTest+1);
+					testRunner.AddTestResult(queueCountAfterGcodeIsAdded == queueCountBeforeTest+1);
 
 					//stl queue item is added to the queue
 					bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "chichen-itza_pyramid", 1);
-					resultsHarness.AddTestResult(firstQueueItemExists == true);
+					testRunner.AddTestResult(firstQueueItemExists == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 	}

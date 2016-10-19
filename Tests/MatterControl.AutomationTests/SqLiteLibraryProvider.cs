@@ -15,9 +15,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public void LibraryQueueViewRefreshesOnAddItem()
 		{
 			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -33,27 +32,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 					View3DWidget view3D = partPreview as View3DWidget;
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Edit", 3));
+					testRunner.AddTestResult(testRunner.ClickByName("3D View Edit", 3));
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Copy", 3), "Click Copy");
+					testRunner.AddTestResult(testRunner.ClickByName("3D View Copy", 3), "Click Copy");
 					// wait for the copy to finish
 					testRunner.Wait(.1);
-					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Remove", 3), "Click Delete");
-					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu", 3), "Click Save As Menu");
-					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu Item", 3), "Click Save As");
+					testRunner.AddTestResult(testRunner.ClickByName("3D View Remove", 3), "Click Delete");
+					testRunner.AddTestResult(testRunner.ClickByName("Save As Menu", 3), "Click Save As Menu");
+					testRunner.AddTestResult(testRunner.ClickByName("Save As Menu Item", 3), "Click Save As");
 
 					testRunner.Wait(1);
 
 					testRunner.Type("0Test Part");
-					resultsHarness.AddTestResult(MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection"));
+					testRunner.AddTestResult(MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection"));
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Save Button", 1));
+					testRunner.AddTestResult(testRunner.ClickByName("Save As Save Button", 1));
 
 					view3D.CloseOnIdle();
 					testRunner.Wait(.5);
 
 					// ensure that it is now in the library folder (that the folder updated)
-					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item " + "0Test Part", 5), "The part we added should be in the library");
+					testRunner.AddTestResult(testRunner.WaitForName("Row Item " + "0Test Part", 5), "The part we added should be in the library");
 
 					testRunner.Wait(.5);
 
@@ -61,7 +60,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, defaultTestImages: MatterControlUtilities.DefaultTestImages);
 
 			Assert.IsTrue(testHarness.AllTestsPassed(8));
 		}

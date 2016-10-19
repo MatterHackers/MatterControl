@@ -104,20 +104,23 @@ namespace MatterControl.Tests
 		[Test, RequiresSTA, RunInApplicationDomain]
 		public void MatterControlRuns()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner();
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
+				// If plugins exist, this will close the sign in window
+				MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
 
-					resultsHarness.AddTestResult(testRunner.NameExists("SettingsAndControls"));
+				// If plugins do not exist, this will close the Add Printer window
+				testRunner.ClickByName("Cancel Wizard Button", 2);
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				testRunner.AddTestResult(testRunner.NameExists("SettingsAndControls"));
+
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+				MatterControlUtilities.CloseMatterControl(testRunner);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
+			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 #endif
 
