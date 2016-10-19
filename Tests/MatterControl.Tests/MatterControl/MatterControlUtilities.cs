@@ -443,8 +443,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("SettingsAndControls", 1);
 				testRunner.Wait(.5);
 			}
-			testRunner.AddTestResult(testRunner.ClickByName("User Level Dropdown", 1), "Click Settings Mode dropdown");
-			testRunner.AddTestResult(testRunner.ClickByName("Advanced Menu Item", 1), "Click 'Advanced' settings");
+			testRunner.ClickByName("User Level Dropdown", 1);
+			testRunner.ClickByName("Advanced Menu Item", 1);
+			testRunner.AddTestResult(true);
+			testRunner.AddTestResult(true);
 			testRunner.Wait(.5);
 		}
 	}
