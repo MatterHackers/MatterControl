@@ -103,9 +103,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string start_gcode = nameof(start_gcode);
 		public const string temperature = nameof(temperature);
 		public const string windows_driver = nameof(windows_driver);
+		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
-		public const string printer_z_after_home = nameof(printer_z_after_home);
-		public const string z_offset_after_home = nameof(z_offset_after_home);
 	}
 
 	public class SettingsHelpers

@@ -107,23 +107,6 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
-		public void CorrectLineIsZHomingProcessing()
-		{
-			Assert.IsTrue(GCodeStream.LineIsZHoming("G28 ; home all axes"), "has a comment");
-			Assert.IsTrue(GCodeStream.LineIsZHoming("G28 "), "has a space");
-			Assert.IsTrue(GCodeStream.LineIsZHoming("G28"), "exact");
-			Assert.IsTrue(GCodeStream.LineIsZHoming("G28 Z0"), "exact");
-			Assert.IsTrue(GCodeStream.LineIsZHoming("G28 Z"), "exact");
-
-			Assert.IsFalse(GCodeStream.LineIsZHoming("G29"), "wrong command");
-			Assert.IsFalse(GCodeStream.LineIsZHoming("G28 X"), "is x homing");
-			Assert.IsFalse(GCodeStream.LineIsZHoming("G28 X0"), "is x homing");
-			Assert.IsFalse(GCodeStream.LineIsZHoming("G28 Y"), "is y homing");
-			Assert.IsFalse(GCodeStream.LineIsZHoming("G28 Y0"), "is y homing");
-			Assert.IsFalse(GCodeStream.LineIsZHoming("G28 XY"), "is xy homing");
-		}
-
-		[Test, Category("GCodeStream")]
 		public void CorrectEOutputPositions()
 		{
 			string[] inputLines = new string[]

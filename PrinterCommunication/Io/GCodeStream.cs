@@ -112,25 +112,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return currentDestination;
 		}
 
-		public static bool LineIsZHoming(string lineBeingSent)
-		{
-			if (!string.IsNullOrEmpty(lineBeingSent))
-			{
-				if(lineBeingSent.Contains(";"))
-				{
-					lineBeingSent = lineBeingSent.Split(';')[0];
-				}
-				bool isAZHome = lineBeingSent.StartsWith("G28") && lineBeingSent.Contains("Z");
-				bool isANakedHome = lineBeingSent.Trim() == "G28";
-				if (isAZHome || isANakedHome)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		public static bool LineIsMovement(string lineBeingSent)
 		{
 			if (lineBeingSent.StartsWith("G0 ")

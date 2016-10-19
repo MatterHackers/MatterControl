@@ -614,13 +614,13 @@ namespace MatterHackers.MatterControl
 				{
 					case ImageSizes.Size115x115:
 						{
-							StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_115x115", partExtension), this.thumbnailImage);
+							this.thumbnailImage = StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_115x115", partExtension)).InvertLightness();
 						}
 						break;
 
 					case ImageSizes.Size50x50:
 						{
-							StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_50x50", partExtension), this.thumbnailImage);
+							this.thumbnailImage = StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_50x50", partExtension)).InvertLightness();
 						}
 						break;
 
