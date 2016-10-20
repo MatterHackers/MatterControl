@@ -539,7 +539,11 @@ namespace MatterHackers.MatterControl
 			// Only fire UserChanged if it actually happened - prevents runaway positive feedback loop
 			if (AuthenticationData.Instance.ActiveSessionUsername != AuthenticationData.Instance.LastSessionUsername)
 			{
-				AuthenticationData.Instance.LastSessionUsername = AuthenticationData.Instance.ActiveSessionUsername;
+				// only set it if it is an actual user name
+				if (!string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername))
+				{
+					AuthenticationData.Instance.LastSessionUsername = AuthenticationData.Instance.ActiveSessionUsername;
+				}
 				UserChanged();
 			}
 		}
