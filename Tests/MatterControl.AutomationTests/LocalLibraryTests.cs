@@ -7,9 +7,9 @@ using NUnit.Framework;
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class AddSingleItemToLocalLibrary
+	public class LocalLibraryTests
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void LocalLibraryAddButtonAddSingleItemToLibrary()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -43,12 +43,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class AddMultipleItemsToLocalLibrary
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void LocalLibraryAddButtonAddsMultipleItemsToLibrary()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -90,12 +86,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class AddAMFItemToLocalLibrary
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void LocalLibraryAddButtonAddAMFToLibrary()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -129,12 +121,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1024, overrideHeight: 800);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class AddZipFileToLocalLibrary
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void LocalLibraryAddButtonAddZipToLibrary()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -174,12 +162,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class RenameButtonRenamesLibraryRowItem
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void RenameButtonRenameLocalLibraryItem()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -215,12 +199,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class UserCanSuccessfullyCreateAndRenameLibraryFolder
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void RenameButtonRenameLocalLibraryFolder()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -257,12 +237,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class LibraryEditButtonOpensUpPartPreviewWindow
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void ClickLibraryEditButtonOpensPartPreviewWindow()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -289,12 +265,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class OneLibraryItemSelectedRemoveButtonRemovesItem
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void RemoveButtonClickedRemovesSingleItem()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -323,12 +295,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class MultipleLibraryItemsSelectedRemoveButtonRemovesItem
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void RemoveButtonClickedRemovesMultipleItems()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -377,12 +345,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(4));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class AddToQueueButtonAddsSingleItemToQueue
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void AddToQueueFromLibraryButtonAddsItemToQueue()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -429,12 +393,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class AddToQueueButtonAddsMultipleItemsToQueue
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void AddToQueueFromLibraryButtonAddsItemsToQueue()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
@@ -494,12 +454,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
 			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class ClickLibraryTumbnailWidgetOpensPartPreview
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test, Apartment(ApartmentState.STA)]
 		public void LibraryItemThumbnailClickedOpensPartPreview()
 		{
 			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
