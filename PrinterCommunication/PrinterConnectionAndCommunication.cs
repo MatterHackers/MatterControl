@@ -1278,7 +1278,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0:0.###}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
 		}
 
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
