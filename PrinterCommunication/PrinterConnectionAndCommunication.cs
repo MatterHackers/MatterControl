@@ -1278,13 +1278,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0:0.###}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
 		}
 
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0}Y{1}Z{2} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
 		}
 
 		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
@@ -1301,7 +1301,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
 				}
 
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0:0.###} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
 
 				if (requiresToolChange)
 				{
@@ -1317,7 +1317,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (moveAmountMm != 0)
 			{
 				SetMovementToRelative();
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
 				SetMovementToAbsolute();
 			}
 		}
