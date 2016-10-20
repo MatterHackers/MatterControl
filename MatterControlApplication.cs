@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 
 		static MatterControlApplication()
 		{
-			if (OsInformation.OperatingSystem == OSType.Mac)
+			if (OsInformation.OperatingSystem == OSType.Mac && StaticData.Instance == null)
 			{
 				// Set working directory - this duplicates functionality in Main but is necessary on OSX as Main fires much later (after the constructor in this case)
 				// resulting in invalid paths due to path tests running before the working directory has been overridden. Setting the value before initializing StaticData
