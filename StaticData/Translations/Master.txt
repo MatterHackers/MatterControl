@@ -5527,3 +5527,9 @@ Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom
 English:none
 Translated:none
 
+English:Exit while printing
+Translated:Exit while printing
+
+English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+Translated:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+
