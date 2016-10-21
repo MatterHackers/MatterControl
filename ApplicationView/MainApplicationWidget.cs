@@ -388,24 +388,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static string MakeValidFileName(string name)
-		{
-			if (string.IsNullOrEmpty(name))
-			{
-				return name;
-			}
-
-			string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
-			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-
-			return Regex.Replace(name, invalidRegStr, "_");
-		}
-
-		public string GetSessionUsernameForFileSystem()
-		{
-			return MakeValidFileName(AuthenticationData.Instance.ActiveSessionUsername);
-		}
-
 		bool pendingReloadRequest = false;
 		public void ReloadAll(object sender, EventArgs e)
 		{
@@ -476,8 +458,10 @@ namespace MatterHackers.MatterControl
 
 						// set the colors
 						LoadUITheme();
-						// This will initialize the theme for the first printer to load
-						ProfileManager.Reload();
+
+						// We previously made a call to Reload, which fired the method twice due to it being in the static constructor. Accessing
+						// any property will run the static constructor and perform the Reload behavior without the overhead of duplicate calls
+						bool na = ProfileManager.Instance.IsGuestProfile;
 
 						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 						{
@@ -558,10 +542,10 @@ namespace MatterHackers.MatterControl
 			// Ensure SQLite printers are imported
 			profileManager.EnsurePrintersImported();
 
-			var guestDB = ProfileManager.LoadGuestDB();
+			var guest = ProfileManager.LoadGuestProfiles();
 
 			// If profiles.json was created, run the import wizard to pull in any SQLite printers
-			if (guestDB?.Profiles != null && guestDB.Profiles.Any() && !profileManager.IsGuestProfile && !profileManager.PrintersImported)
+			if (guest?.Profiles != null && guest.Profiles.Any() && !profileManager.IsGuestProfile && !profileManager.PrintersImported)
 			{
 				var wizardPage = new CopyGuestProfilesToUser(() =>
 				{

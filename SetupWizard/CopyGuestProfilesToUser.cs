@@ -68,8 +68,8 @@ namespace MatterHackers.MatterControl
 
 			var byCheckbox = new Dictionary<CheckBox, PrinterInfo>();
 
-			var guestProfileManager = ProfileManager.LoadGuestDB();
-			if (guestProfileManager?.Profiles.Count > 0)
+			var guest = ProfileManager.LoadGuestProfiles();
+			if (guest?.Profiles.Count > 0)
 			{
 				container.AddChild(new TextWidget("Printers to Copy:".Localize())
 				{
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
 					Margin = new BorderDouble(0, 3, 0, 15),
 				});
 
-				foreach (var printerInfo in guestProfileManager.Profiles)
+				foreach (var printerInfo in guest.Profiles)
 				{
 					var checkBox = new CheckBox(printerInfo.Name)
 					{
@@ -104,20 +104,23 @@ namespace MatterHackers.MatterControl
 						// import the printer
 						var printerInfo = byCheckbox[checkBox];
 
-						string existingPath = Path.Combine(ProfileManager.GuestDBDirectory, printerInfo.ID + ProfileManager.ProfileExtension); ;
-
-						ProfileManager.Instance.Profiles.Add(printerInfo);
-						guestProfileManager.Profiles.Remove(printerInfo);
+						string existingPath = guest.ProfilePath(printerInfo);
 
 						// PrinterSettings files must actually be copied to the users profile directory
 						if (File.Exists(existingPath))
 						{
 							File.Copy(existingPath, printerInfo.ProfilePath);
+
+							// Only add if copy succeeds
+							ProfileManager.Instance.Profiles.Add(printerInfo);
+
+							// TODO: Do we copy or migrate. This looks a lot like migrate which is not the current expected behavior
+							// guestProfileManager.Profiles.Remove(printerInfo);
 						}
 					}
 				}
 
-				guestProfileManager.Save();
+				guest.Save();
 
 				// close the window
 				UiThread.RunOnIdle(() =>
