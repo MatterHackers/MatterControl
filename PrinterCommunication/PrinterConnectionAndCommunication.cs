@@ -2810,7 +2810,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								activePrintTask.PrintingOffsetZ = (float)babyStepsStream6.Offset.z;
 								try
 								{
-									activePrintTask.Commit();
+									Task.Run(() => activePrintTask.Commit());
 								}
 								catch
 								{
