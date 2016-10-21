@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		[JsonIgnore]
-		public bool IsGuestProfile { get; private set; } = false;
+		public bool IsGuestProfile => this.UserName == "guest";
 
 		public static void Reload()
 		{
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static ProfileManager LoadGuestProfiles()
 		{
-			return new ProfileManager("guest") { IsGuestProfile = true };
+			return new ProfileManager("guest");
 		}
 
 		internal static void SettingsChanged(object sender, EventArgs e)
