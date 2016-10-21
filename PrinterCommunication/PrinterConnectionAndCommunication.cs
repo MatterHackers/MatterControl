@@ -2800,13 +2800,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							double currentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 							// Only update the amount done if it is greater than what is recorded.
 							// We don't want to mess up the resume before we actually resume it.
-							if (activePrintTask.PercentDone < currentDone)
+							if (activePrintTask != null
+								&& babyStepsStream6 != null
+								&& activePrintTask.PercentDone < currentDone)
 							{
 								activePrintTask.PercentDone = currentDone;
 								activePrintTask.PrintingOffsetX = (float)babyStepsStream6.Offset.x;
 								activePrintTask.PrintingOffsetY = (float)babyStepsStream6.Offset.y;
 								activePrintTask.PrintingOffsetZ = (float)babyStepsStream6.Offset.z;
-								activePrintTask.Commit();
+								try
+								{
+									activePrintTask.Commit();
+								}
+								catch
+								{
+									// Can't write for some reason, continue with the write.
+								}
 							}
 							secondsSinceUpdateHistory = secondsSinceStartedPrint;
 						}
