@@ -64,7 +64,6 @@ namespace MatterHackers.MatterControl
 			this.ActiveSessionUsername = null;
 			this.ActiveSessionEmail = null;
 			this.ActiveClientToken = null;
-			this.LastSessionUsername = null;
 
 			ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Cleared".Localize());
 			SessionUpdateTrigger.CallEvents(null, null);
