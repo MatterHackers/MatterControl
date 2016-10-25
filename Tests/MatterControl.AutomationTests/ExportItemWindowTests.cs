@@ -2,19 +2,20 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ExportItemsFromDownloads
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void ExportAsGcode()
+		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
+		public async Task ExportAsGcode()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -28,14 +29,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Get parts to add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
 
-				//Add STL part items to Downloads and then type paths into file dialogue
+				//Add STL part items to Downloads and then type paths into file dialog
 				testRunner.Wait(1);
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
 				//Get test results 
-				testRunner.AddTestResult(testRunner.WaitForName(firstItemName, 2) == true);
+				Assert.IsTrue(testRunner.WaitForName(firstItemName, 2) == true);
 
 				testRunner.ClickByName("Queue Edit Button");
 				testRunner.ClickByName(firstItemName);
@@ -53,11 +54,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Console.WriteLine(gcodeExportPath);
 
-				testRunner.AddTestResult(File.Exists(gcodeExportPath) == true);
+				Assert.IsTrue(File.Exists(gcodeExportPath) == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

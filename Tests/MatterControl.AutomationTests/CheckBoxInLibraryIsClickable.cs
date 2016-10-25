@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -39,10 +40,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class CheckBoxInLibraryIsClickable
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void ClickOnLibraryCheckBoxes()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task ClickOnLibraryCheckBoxes()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -61,23 +62,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
 				CheckBox checkBoxWidget = foundWidget as CheckBox;
-				testRunner.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
-				testRunner.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
+				Assert.IsTrue(checkBoxWidget != null, "We should have an actual checkbox");
+				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
 				testRunner.ClickByName("Row Item Select Checkbox", 3, searchRegion: rowItemRegion);
 				testRunner.ClickByName("Library Tab");
-				testRunner.AddTestResult(checkBoxWidget.Checked == true, "currently checked");
+				Assert.IsTrue(checkBoxWidget.Checked == true, "currently checked");
 
 				testRunner.ClickByName(itemName, 3);
 				testRunner.ClickByName("Library Tab");
-				testRunner.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
+				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-
-			// NOTE: In the future we may want to make the "Local Library Row Item Collection" not clickable. 
-			// If that is the case fix this test to click on a child of "Local Library Row Item Collection" instead.
-			Assert.IsTrue(testHarness.AllTestsPassed(4)); 
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

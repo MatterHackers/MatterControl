@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
@@ -10,10 +11,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class HardwareLevelingUITests
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void HasHardwareLevelingHidesLevelingSettings()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task HasHardwareLevelingHidesLevelingSettings()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Add printer that has hardware leveling
@@ -26,7 +27,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure Print Leveling tab is not visible 
 				bool testPrintLeveling = testRunner.WaitForName("Print Leveling Tab", 3);
-				testRunner.AddTestResult(testPrintLeveling == false);
+				Assert.IsTrue(testPrintLeveling == false);
 
 				//Add printer that does not have hardware leveling
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "3D Factory", "MendelMax 1.5");
@@ -37,19 +38,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure Print Leveling tab is visible
 				bool printLevelingVisible = testRunner.WaitForName("Print Leveling Tab", 2);
-				testRunner.AddTestResult(printLevelingVisible == true);
+				Assert.IsTrue(printLevelingVisible == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideHeight: 800);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 800);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void SoftwareLevelingRequiredCorrectWorkflow()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task SoftwareLevelingRequiredCorrectWorkflow()
 		{
 			Process emulatorProcess = null;
 
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -57,8 +59,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				emulatorProcess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner, false, "JumStart", "V1");
 
 				// make sure it is showing the correct button
-				testRunner.AddTestResult(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
-				testRunner.AddTestResult(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
+				Assert.IsTrue(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
+				Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
 
 				// do print leveling
 				testRunner.ClickByName("Next Button", .5);
@@ -72,28 +74,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Next Button", .5);
 				}
 
-				testRunner.AddTestResult(testRunner.ClickByName("Done Button", .5), "Found Done button");
+				Assert.IsTrue(testRunner.ClickByName("Done Button", .5), "Found Done button");
 
 				// make sure the button has changed to start print
-				testRunner.AddTestResult(testRunner.WaitForName("Start Print Button", .5), "Start Print showing");
-				testRunner.AddTestResult(!testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup hidden");
+				Assert.IsTrue(testRunner.WaitForName("Start Print Button", .5), "Start Print showing");
+				Assert.IsTrue(!testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup hidden");
 
 				// reset to defaults and make sure print leveling is cleared
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-				testRunner.AddTestResult(testRunner.ClickByName("Slice Settings Options Menu", 1), "Click Options");
-				testRunner.AddTestResult(testRunner.ClickByName("Reset to defaults Menu Item", 1), "Select Reset to defaults");
-				testRunner.AddTestResult(testRunner.ClickByName("Yes Button", .5), "Click yes to revert");
+				Assert.IsTrue(testRunner.ClickByName("Slice Settings Options Menu", 1), "Click Options");
+				Assert.IsTrue(testRunner.ClickByName("Reset to defaults Menu Item", 1), "Select Reset to defaults");
+				Assert.IsTrue(testRunner.ClickByName("Yes Button", .5), "Click yes to revert");
 				testRunner.Wait(1);
 
 				// make sure it is showing the correct button
-				testRunner.AddTestResult(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
-				testRunner.AddTestResult(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
+				Assert.IsTrue(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
+				Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			await MatterControlUtilities.RunTest(testToRun);
 
 			try
 			{

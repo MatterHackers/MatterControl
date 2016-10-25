@@ -14,6 +14,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace MatterControl.Tests
 {
@@ -101,10 +103,10 @@ namespace MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Test, RequiresSTA, RunInApplicationDomain]
-		public void MatterControlRuns()
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		public async Task MatterControlRuns()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				// If plugins exist, this will close the sign in window
 				MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
@@ -112,13 +114,14 @@ namespace MatterControl.Tests
 				// If plugins do not exist, this will close the Add Printer window
 				testRunner.ClickByName("Cancel Wizard Button", 2);
 
-				testRunner.AddTestResult(testRunner.NameExists("SettingsAndControls"));
+				Assert.IsTrue(testRunner.NameExists("SettingsAndControls"));
 
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
 		}
 #endif
 
