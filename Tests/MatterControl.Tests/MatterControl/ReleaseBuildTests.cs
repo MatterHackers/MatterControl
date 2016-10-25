@@ -103,7 +103,7 @@ namespace MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Test, Apartment(ApartmentState.STA)]
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public async Task MatterControlRuns()
 		{
 			AutomationTest testToRun = (testRunner) =>
