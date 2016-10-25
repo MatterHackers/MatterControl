@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -12,10 +13,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class PartPreviewTests
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void CopyButtonClickedMakesCopyOfPartOnBed()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task CopyButtonClickedMakesCopyOfPartOnBed()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -39,32 +40,33 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("3D View Edit");
 				testRunner.Wait(1);
 				int partCountBeforeCopy = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partCountBeforeCopy == 1);
+				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				//Click Copy button and count MeshGroups 
 				testRunner.ClickByName(copyButtonName);
 				System.Threading.Thread.Sleep(500);
 				int partCountAfterCopy = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partCountAfterCopy == 2);
+				Assert.IsTrue(partCountAfterCopy == 2);
 				testRunner.Wait(1);
 
 				//Click Copy button a second time and count MeshGroups again
 				testRunner.ClickByName(copyButtonName);
 				System.Threading.Thread.Sleep(500);
 				int partCountAfterSecondCopy = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partCountAfterSecondCopy == 3);
+				Assert.IsTrue(partCountAfterSecondCopy == 3);
 				view3D.CloseOnIdle();
 				testRunner.Wait(.5);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void GroupAndUngroup()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task GroupAndUngroup()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -88,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("3D View Edit");
 				testRunner.Wait(1);
 				int partCountBeforeCopy = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partCountBeforeCopy == 1);
+				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
 				{
@@ -99,28 +101,29 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Get MeshGroupCount before Group is clicked
 				System.Threading.Thread.Sleep(2000);
 				int partsOnBedBeforeGroup = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partsOnBedBeforeGroup == 6);
+				Assert.IsTrue(partsOnBedBeforeGroup == 6);
 
 				//Click Group Button and get MeshGroup count after Group button is clicked
 				testRunner.ClickByName("3D View Group");
 				System.Threading.Thread.Sleep(2000);
 				int partsOnBedAfterGroup = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partsOnBedAfterGroup == 1);
+				Assert.IsTrue(partsOnBedAfterGroup == 1);
 
 				testRunner.ClickByName("3D View Ungroup");
 				System.Threading.Thread.Sleep(2000);
 				int partsOnBedAfterUngroup = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partsOnBedAfterUngroup == 6);
+				Assert.IsTrue(partsOnBedAfterUngroup == 6);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(4));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void RemoveButtonRemovesParts()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task RemoveButtonRemovesParts()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -144,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("3D View Edit");
 				testRunner.Wait(1);
 				int partCountBeforeCopy = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partCountBeforeCopy == 1);
+				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
 				{
@@ -155,23 +158,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Get MeshGroupCount before Group is clicked
 				System.Threading.Thread.Sleep(2000);
 				int partsOnBedBeforeRemove = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partsOnBedBeforeRemove == 6);
+				Assert.IsTrue(partsOnBedBeforeRemove == 6);
 
 				//Check that MeshCount decreases by 1 
 				testRunner.ClickByName("3D View Remove");
 				System.Threading.Thread.Sleep(2000);
 				int meshCountAfterRemove = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(meshCountAfterRemove == 5);
+				Assert.IsTrue(meshCountAfterRemove == 5);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
-		public void UndoRedoCopy()
+		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
+		public async Task UndoRedoCopy()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -195,7 +199,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("3D View Edit");
 				testRunner.Wait(1);
 				int partCountBeforeCopy = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partCountBeforeCopy == 1);
+				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
 				{
@@ -212,7 +216,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("3D View Undo");
 					System.Threading.Thread.Sleep(2000);
 					int meshCountAfterUndo = view3D.MeshGroups.Count();
-					testRunner.AddTestResult(meshCountAfterUndo == meshCountBeforeUndo - 1);
+					Assert.IsTrue(meshCountAfterUndo == meshCountBeforeUndo - 1);
 
 				}
 
@@ -224,19 +228,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("3D View Redo");
 					System.Threading.Thread.Sleep(2000);
 					int meshCountAfterRedo = view3D.MeshGroups.Count();
-					testRunner.AddTestResult(meshCountAfterRedo == meshCountBeforeRedo + 1);
+					Assert.IsTrue(meshCountAfterRedo == meshCountBeforeRedo + 1);
 
 				}
+
+				return Task.FromResult(0);	
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(11));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void UndoRedoDelete()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task UndoRedoDelete()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -257,7 +262,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Click Edit button to make edit controls visible
 				testRunner.ClickByName("3D View Edit", 1);
 				int partCountBeforeCopy = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(partCountBeforeCopy == 1);
+				Assert.IsTrue(partCountBeforeCopy == 1);
 				testRunner.Wait(.5);
 
 				for (int i = 0; i <= 4; i++)
@@ -265,38 +270,39 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName(copyButtonName, 1);
 					testRunner.Wait(.2);
 					int meshCount = view3D.MeshGroups.Count();
-					testRunner.AddTestResult(meshCount == partCountBeforeCopy + i + 1);
+					Assert.IsTrue(meshCount == partCountBeforeCopy + i + 1);
 				}
 
 				int meshCountAfterCopy = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(meshCountAfterCopy == 6);
+				Assert.IsTrue(meshCountAfterCopy == 6);
 				testRunner.ClickByName("3D View Remove", 1);
 				testRunner.Wait(.1);
 				int meshCountAfterRemove = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(meshCountAfterRemove == 5);
+				Assert.IsTrue(meshCountAfterRemove == 5);
 
 				testRunner.ClickByName("3D View Undo");
 				System.Threading.Thread.Sleep(2000);
 				int meshCountAfterUndo = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(meshCountAfterUndo == 6);
+				Assert.IsTrue(meshCountAfterUndo == 6);
 
 				testRunner.ClickByName("3D View Redo");
 				System.Threading.Thread.Sleep(2000);
 				int meshCountAfterRedo = view3D.MeshGroups.Count();
-				testRunner.AddTestResult(meshCountAfterRedo == 5);
+				Assert.IsTrue(meshCountAfterRedo == 5);
 
 				partPreview.CloseOnIdle();
 				testRunner.Wait(.1);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
-			Assert.IsTrue(testHarness.AllTestsPassed(10));
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void SaveAsToQueue()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task SaveAsToQueue()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -341,11 +347,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Queue Tab");
 				testRunner.Wait(1);
-				testRunner.AddTestResult(testRunner.WaitForName("Queue Item Save As Print Queue", 5));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Save As Print Queue", 5));
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

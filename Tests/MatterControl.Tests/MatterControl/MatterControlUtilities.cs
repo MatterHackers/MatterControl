@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
@@ -338,8 +339,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return goodNavigate;
 		}
 
-		public static AutomationRunner RunTest(
-			Action<AutomationRunner> testMethod,
+		public static async Task RunTest(
+			AutomationTest testMethod,
 			string staticDataPathOverride = null,
 			double maxTimeToRun = 60,
 			QueueTemplate queueItemFolderToAdd = QueueTemplate.None,
@@ -387,11 +388,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var config = TestAutomationConfig.Load();
 
-			var testRunner = AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages, config.AutomationInputType);
-
-			MatterControlUtilities.CloseMatterControlViaMenu(testRunner);
-
-			return testRunner;
+			await AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages, config.AutomationInputType);
 		}
 
 		public static void LibraryAddSelectionToQueue(AutomationRunner testRunner)

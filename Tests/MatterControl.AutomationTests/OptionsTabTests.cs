@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -10,10 +11,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class ShowTerminalButtonClickedOpensTerminal
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void ClickingShowTerminalButtonOpensTerminal()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task ClickingShowTerminalButtonOpensTerminal()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				testRunner.ClickByName("SettingsAndControls", 5);
@@ -21,31 +22,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Options Tab", 6);
 
 				bool terminalWindowExists1 = testRunner.WaitForName("Gcode Terminal", 0);
-				testRunner.AddTestResult(terminalWindowExists1 == false, "Terminal Window does not exist");
+				Assert.IsTrue(terminalWindowExists1 == false, "Terminal Window does not exist");
 
 				testRunner.ClickByName("Show Terminal Button", 6);
 				testRunner.Wait(1);
 
 				SystemWindow containingWindow;
 				GuiWidget terminalWindow = testRunner.GetWidgetByName("Gcode Terminal", out containingWindow, 3);
-				testRunner.AddTestResult(terminalWindow != null, "Terminal Window exists after Show Terminal button is clicked");
+				Assert.IsTrue(terminalWindow != null, "Terminal Window exists after Show Terminal button is clicked");
 				containingWindow.CloseOnIdle();
 				testRunner.Wait(.5);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
-	}
 
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class ConfigureNotificationSettingsButtonClickedOpensNotificationWindow
-	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain, Category("FixNeeded" /* Not Finished */)]
-		//DOES NOT WORK
-		public void ClickingConfigureNotificationSettingsButtonOpensWindow()
+		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
+		public async Task ConfigureNotificationSettingsButtonOpensNotificationWindow()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -53,15 +50,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Options Tab", 6);
 
 				bool printNotificationsWindowExists1 = testRunner.WaitForName("Notification Options Window", 3);
-				testRunner.AddTestResult(printNotificationsWindowExists1 == false, "Print Notification Window does not exist");
+				Assert.IsTrue(printNotificationsWindowExists1 == false, "Print Notification Window does not exist");
 
 				testRunner.ClickByName("Configure Notification Settings Button", 6);
 				bool printNotificationsWindowExists2 = testRunner.WaitForName("Notification Options Window", 3);
-				testRunner.AddTestResult(printNotificationsWindowExists2 == true, "Print Notifications Window exists after Configure button is clicked");
+				Assert.IsTrue(printNotificationsWindowExists2 == true, "Print Notifications Window exists after Configure button is clicked");
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
 		}
 	}
 }

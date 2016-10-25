@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Test, RunInApplicationDomain, Category("FixNeeded" /* Disabled until MCWS production is updated */)]
+		[Test, Category("FixNeeded" /* Disabled until MCWS production is updated */)]
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));

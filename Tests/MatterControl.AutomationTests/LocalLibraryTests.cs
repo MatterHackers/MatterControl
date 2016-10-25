@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
@@ -10,9 +11,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class LocalLibraryTests
 	{
 		[Test, Apartment(ApartmentState.STA)]
-		public void LocalLibraryAddButtonAddSingleItemToLibrary()
+		public async Task LocalLibraryAddButtonAddSingleItemToLibrary()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -24,7 +25,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure that Item does not exist before the test begins
 				bool rowItemExists = testRunner.WaitForName(itemName, 1);
-				testRunner.AddTestResult(rowItemExists == false);
+				Assert.IsTrue(rowItemExists == false);
 
 				//Click Local Library Add Button
 				testRunner.ClickByName("Library Add Button");
@@ -37,17 +38,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 
 				bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
-				testRunner.AddTestResult(rowItemWasAdded == true);
+				Assert.IsTrue(rowItemWasAdded == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void LocalLibraryAddButtonAddsMultipleItemsToLibrary()
+		public async Task LocalLibraryAddButtonAddsMultipleItemsToLibrary()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Names of Items to be added
@@ -61,8 +63,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure both Items do not exist before the test begins
 				bool firstItemExists = testRunner.WaitForName(firstItemName, 1);
 				bool secondItemExists = testRunner.WaitForName(secondItemName, 1);
-				testRunner.AddTestResult(firstItemExists == false);
-				testRunner.AddTestResult(secondItemExists == false);
+				Assert.IsTrue(firstItemExists == false);
+				Assert.IsTrue(secondItemExists == false);
 
 				//Click Local Library Add Button
 				testRunner.ClickByName("Library Add Button");
@@ -79,18 +81,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				bool firstRowItemWasAdded = testRunner.WaitForName(firstItemName, 2);
 				bool secondRowItemWasAdded = testRunner.WaitForName(secondItemName, 2);
-				testRunner.AddTestResult(firstRowItemWasAdded == true);
-				testRunner.AddTestResult(secondRowItemWasAdded == true);
+				Assert.IsTrue(firstRowItemWasAdded == true);
+				Assert.IsTrue(secondRowItemWasAdded == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(4));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void LocalLibraryAddButtonAddAMFToLibrary()
+		public async Task LocalLibraryAddButtonAddAMFToLibrary()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -102,7 +105,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure that Item does not exist before the test begins
 				bool rowItemExists = testRunner.WaitForName(itemName, 1);
-				testRunner.AddTestResult(rowItemExists == false);
+				Assert.IsTrue(rowItemExists == false);
 
 				//Click Local Library Add Button
 				testRunner.ClickByName("Library Add Button");
@@ -115,17 +118,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 
 				bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
-				testRunner.AddTestResult(rowItemWasAdded == true);
+				Assert.IsTrue(rowItemWasAdded == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 1024, overrideHeight: 800);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1024, overrideHeight: 800);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void LocalLibraryAddButtonAddZipToLibrary()
+		public async Task LocalLibraryAddButtonAddZipToLibrary()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -140,8 +144,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure that Item does not exist before the test begins
 				bool firstItemInZipExists = testRunner.WaitForName(firstItemName, 1);
 				bool secondItemInZipExists = testRunner.WaitForName(secondItemName, 1);
-				testRunner.AddTestResult(firstItemInZipExists == false);
-				testRunner.AddTestResult(firstItemInZipExists == false);
+				Assert.IsTrue(firstItemInZipExists == false);
+				Assert.IsTrue(firstItemInZipExists == false);
 
 				//Click Local Library Add Button
 				testRunner.ClickByName("Library Add Button");
@@ -155,18 +159,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				bool firstItemInZipWasAdded = testRunner.WaitForName(firstItemName, 2);
 				bool secondItemInZipWasAdded = testRunner.WaitForName(secondItemName, 2);
-				testRunner.AddTestResult(firstItemInZipWasAdded == true);
-				testRunner.AddTestResult(secondItemInZipWasAdded == true);
+				Assert.IsTrue(firstItemInZipWasAdded == true);
+				Assert.IsTrue(secondItemInZipWasAdded == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(4));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
-
+	
 		[Test, Apartment(ApartmentState.STA)]
-		public void RenameButtonRenameLocalLibraryItem()
+		public async Task RenameButtonRenameLocalLibraryItem()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -192,18 +197,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool libraryItemWasRenamed = testRunner.WaitForName(renamedRowItem, 2);
 				bool libraryItemBeforeRenameExists = testRunner.WaitForName(rowItemToRename, 2);
 
-				testRunner.AddTestResult(libraryItemWasRenamed == true);
-				testRunner.AddTestResult(libraryItemBeforeRenameExists == false);
+				Assert.IsTrue(libraryItemWasRenamed == true);
+				Assert.IsTrue(libraryItemBeforeRenameExists == false);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void RenameButtonRenameLocalLibraryFolder()
+		public async Task RenameButtonRenameLocalLibraryFolder()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Navigate to Local Library
@@ -220,7 +226,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Check for Created Folder
 				string newLibraryFolder = "New Folder Row Item Collection";
 				bool newFolderWasCreated = testRunner.WaitForName(newLibraryFolder, 1);
-				testRunner.AddTestResult(newFolderWasCreated == true);
+				Assert.IsTrue(newFolderWasCreated == true);
 
 				testRunner.ClickByName("Library Edit Button");
 				testRunner.ClickByName("New Folder Row Item Collection");
@@ -231,17 +237,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure that renamed Library Folder Exists
 				bool renamedLibraryFolderExists = testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2);
-				testRunner.AddTestResult(renamedLibraryFolderExists == true);
+				Assert.IsTrue(renamedLibraryFolderExists == true);
+
+				return Task.FromResult(0);	
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void ClickLibraryEditButtonOpensPartPreviewWindow()
+		public async Task ClickLibraryEditButtonOpensPartPreviewWindow()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Navigate to Local Library
@@ -259,17 +266,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure that Export Item Window exists after Export button is clicked
 				bool exportItemWindowExists = testRunner.WaitForName("Part Preview Window", 2);
-				testRunner.AddTestResult(exportItemWindowExists == true);
+				Assert.IsTrue(exportItemWindowExists == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void RemoveButtonClickedRemovesSingleItem()
+		public async Task RemoveButtonClickedRemovesSingleItem()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Navigate to Local Library
@@ -289,17 +297,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure that Export Item Window exists after Export button is clicked
 				bool rowItemExists = testRunner.WaitForName(rowItem, 1);
-				testRunner.AddTestResult(rowItemExists == false);
+				Assert.IsTrue(rowItemExists == false);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void RemoveButtonClickedRemovesMultipleItems()
+		public async Task RemoveButtonClickedRemovesMultipleItems()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Navigate to Local Library
@@ -329,8 +338,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure row items exist before remove
 				bool rowItemOneExistsBeforeRemove = testRunner.WaitForName(rowItemOne, 2);
 				bool rowItemTwoExistsBeforeRemove = testRunner.WaitForName(rowItemTwo, 2);
-				testRunner.AddTestResult(rowItemOneExistsBeforeRemove == true);
-				testRunner.AddTestResult(rowItemTwoExistsBeforeRemove == true);
+				Assert.IsTrue(rowItemOneExistsBeforeRemove == true);
+				Assert.IsTrue(rowItemTwoExistsBeforeRemove == true);
 
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 				testRunner.Wait(1);
@@ -338,18 +347,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure both selected items are removed
 				bool rowItemOneExists = testRunner.WaitForName(rowItemOne, 2);
 				bool rowItemTwoExists = testRunner.WaitForName(rowItemTwo, 2);
-				testRunner.AddTestResult(rowItemOneExists == false);
-				testRunner.AddTestResult(rowItemTwoExists == false);
+				Assert.IsTrue(rowItemOneExists == false);
+				Assert.IsTrue(rowItemTwoExists == false);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(4));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void AddToQueueFromLibraryButtonAddsItemToQueue()
+		public async Task AddToQueueFromLibraryButtonAddsItemToQueue()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -377,7 +387,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure that the Queue Count increases by one
 				int queueCountAfterAdd = QueueData.Instance.Count;
 
-				testRunner.AddTestResult(queueCountAfterAdd == queueCountBeforeAdd + 1);
+				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 1);
 
 				//Navigate to Queue
 				testRunner.ClickByName("Queue Tab");
@@ -387,17 +397,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure that the Print Item was added
 				string queueItem = "Queue Item " + "Calibration - Box";
 				bool queueItemWasAdded = testRunner.WaitForName(queueItem, 2);
-				testRunner.AddTestResult(queueItemWasAdded == true);
+				Assert.IsTrue(queueItemWasAdded == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void AddToQueueFromLibraryButtonAddsItemsToQueue()
+		public async Task AddToQueueFromLibraryButtonAddsItemsToQueue()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -435,7 +446,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure Queue Count increases by the correct amount
 				int queueCountAfterAdd = QueueData.Instance.Count;
 
-				testRunner.AddTestResult(queueCountAfterAdd == queueCountBeforeAdd + 2);
+				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 2);
 
 				//Navigate to the Print Queue
 				testRunner.ClickByName("Queue Tab");
@@ -447,18 +458,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool queueItemOneWasAdded = testRunner.WaitForName(queueItemOne, 2);
 				bool queueItemTwoWasAdded = testRunner.WaitForName(queueItemTwo, 2);
 
-				testRunner.AddTestResult(queueItemOneWasAdded == true);
-				testRunner.AddTestResult(queueItemTwoWasAdded == true);
+				Assert.IsTrue(queueItemOneWasAdded == true);
+				Assert.IsTrue(queueItemTwoWasAdded == true);
+
+				return Task.FromResult(0);	
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public void LibraryItemThumbnailClickedOpensPartPreview()
+		public async Task LibraryItemThumbnailClickedOpensPartPreview()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -468,7 +480,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure Part Preview Window does not exists before we click the view button
 				bool partPreviewExistsOne = testRunner.WaitForName("Part Preview Window", 1);
-				testRunner.AddTestResult(partPreviewExistsOne == false);
+				Assert.IsTrue(partPreviewExistsOne == false);
 
 				string libraryRowItemName = "Row Item " + "Calibration - Box";
 				testRunner.ClickByName(libraryRowItemName);
@@ -481,11 +493,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure that Part Preview Window opens after View button is clicked
 				bool partPreviewWindowExists = testRunner.WaitForName("Part Preview Window", 1.5);
-				testRunner.AddTestResult(partPreviewWindowExists == true);
+				Assert.IsTrue(partPreviewWindowExists == true);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

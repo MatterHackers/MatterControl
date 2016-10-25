@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -11,10 +12,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class SqLiteLibraryProviderTests
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void LibraryQueueViewRefreshesOnAddItem()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task LibraryQueueViewRefreshesOnAddItem()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -30,33 +31,34 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 
-				testRunner.AddTestResult(testRunner.ClickByName("3D View Edit", 3));
+				Assert.IsTrue(testRunner.ClickByName("3D View Edit", 3));
 
-				testRunner.AddTestResult(testRunner.ClickByName("3D View Copy", 3), "Click Copy");
+				Assert.IsTrue(testRunner.ClickByName("3D View Copy", 3), "Click Copy");
 				// wait for the copy to finish
 				testRunner.Wait(.1);
-				testRunner.AddTestResult(testRunner.ClickByName("3D View Remove", 3), "Click Delete");
-				testRunner.AddTestResult(testRunner.ClickByName("Save As Menu", 3), "Click Save As Menu");
-				testRunner.AddTestResult(testRunner.ClickByName("Save As Menu Item", 3), "Click Save As");
+				Assert.IsTrue(testRunner.ClickByName("3D View Remove", 3), "Click Delete");
+				Assert.IsTrue(testRunner.ClickByName("Save As Menu", 3), "Click Save As Menu");
+				Assert.IsTrue(testRunner.ClickByName("Save As Menu Item", 3), "Click Save As");
 
 				testRunner.Wait(1);
 
 				testRunner.Type("0Test Part");
-				testRunner.AddTestResult(MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection"));
+				Assert.IsTrue(MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection"));
 
-				testRunner.AddTestResult(testRunner.ClickByName("Save As Save Button", 1));
+				Assert.IsTrue(testRunner.ClickByName("Save As Save Button", 1));
 
 				view3D.CloseOnIdle();
 				testRunner.Wait(.5);
 
 				// ensure that it is now in the library folder (that the folder updated)
-				testRunner.AddTestResult(testRunner.WaitForName("Row Item " + "0Test Part", 5), "The part we added should be in the library");
+				Assert.IsTrue(testRunner.WaitForName("Row Item " + "0Test Part", 5), "The part we added should be in the library");
 
 				testRunner.Wait(.5);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
-			Assert.IsTrue(testHarness.AllTestsPassed(8));
+			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 	}
 }

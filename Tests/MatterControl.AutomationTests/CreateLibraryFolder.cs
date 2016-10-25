@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -39,10 +40,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class CreateLibraryFolder
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void CreateFolderStarsOutWithTextFiledFocusedAndEditable()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task CreateFolderStarsOutWithTextFiledFocusedAndEditable()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -57,14 +58,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				SystemWindow containingWindow;
 				GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
 				MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
-				testRunner.AddTestResult(textWidgetMH != null, "Found Text Widget");
-				testRunner.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
+				Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
+				Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
 				containingWindow.CloseOnIdle();
 				testRunner.Wait(.5);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

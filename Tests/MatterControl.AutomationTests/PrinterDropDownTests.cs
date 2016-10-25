@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -11,10 +12,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class PrinterNameChangePersists
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void PrinterNameStaysChanged()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task PrinterNameStaysChanged()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
@@ -22,7 +23,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-				testRunner.AddTestResult(testRunner.ClickByName("Printer Tab", 1), "Click Printer Tab");
+				Assert.IsTrue(testRunner.ClickByName("Printer Tab", 1), "Click Printer Tab");
 
 				string widgetName = "Printer Name Edit";
 				testRunner.ClickByName(widgetName);
@@ -37,14 +38,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Check to make sure the Printer dropdown gets the name change 
 				testRunner.ClickByName("Printers... Menu", 2);
 				testRunner.Wait(1);
-				testRunner.AddTestResult(testRunner.NameExists(newName + " Menu Item"), "Widget with updated printer name exists");
+				Assert.IsTrue(testRunner.NameExists(newName + " Menu Item"), "Widget with updated printer name exists");
 
 				//Make sure the Active profile name changes as well
-				testRunner.AddTestResult(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
+				Assert.IsTrue(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
+
+				return Task.FromResult(0);
 			};
 
-			AutomationRunner testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

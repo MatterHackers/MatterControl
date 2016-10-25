@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation")]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class LibraryDownloadsTests
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void DownloadsAddButtonAddsMultipleFiles()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task DownloadsAddButtonAddsMultipleFiles()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				MatterControlUtilities.CreateDownloadsSubFolder();
@@ -36,17 +37,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.AddTestResult(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec Fox item exists");
-				testRunner.AddTestResult(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec Fox item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
 				testRunner.Wait(1);
+
+				return Task.FromResult(0);
 			};
 
 			// TODO: The standard assignment without a try/catch should be used and DeleteDownloadsSubFolder should be called from a TearDown method
-			AutomationRunner testHarness = null;
-
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				await MatterControlUtilities.RunTest(testToRun);
 
 			}
 			catch { }
@@ -54,14 +55,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				MatterControlUtilities.DeleteDownloadsSubFolder();
 			}
-
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void DownloadsAddButtonAddsAMFFiles()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task DownloadsAddButtonAddsAMFFiles()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				MatterControlUtilities.CreateDownloadsSubFolder();
@@ -73,21 +72,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Add Button");
 				testRunner.Wait(2);
 
-				//Add AMF part items to Downloads and then type paths into file dialogues 
+				//Add AMF part items to Downloads and then type paths into file dialog 
 				testRunner.Wait(2);
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.AddTestResult(testRunner.WaitForName("Row Item Rook", 2), "Rook item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 2), "Rook item exists");
 				testRunner.Wait(1);
-			};
 
-			AutomationRunner testHarness = null;
+				return Task.FromResult(0);
+			};
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				await MatterControlUtilities.RunTest(testToRun);
 
 			}
 			catch { }
@@ -95,14 +94,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				MatterControlUtilities.DeleteDownloadsSubFolder();
 			}
-
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void DownloadsAddButtonAddsZipFiles()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task DownloadsAddButtonAddsZipFiles()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				MatterControlUtilities.CreateDownloadsSubFolder();
@@ -120,18 +117,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.AddTestResult(testRunner.WaitForName("Row Item Chinese Dragon", 2), "Chinese Dragon item exists");
-				testRunner.AddTestResult(testRunner.WaitForName("Row Item chichen-itza pyramid", 2), "chichen-itza item exists");
-				testRunner.AddTestResult(testRunner.WaitForName("Row Item Circle Calibration", 2), "Circle Calibration item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Chinese Dragon", 2), "Chinese Dragon item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza pyramid", 2), "chichen-itza item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Circle Calibration", 2), "Circle Calibration item exists");
 
 				testRunner.Wait(1);
-			};
 
-			AutomationRunner testHarness = null;
+				return Task.FromResult(0);
+			};
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				MatterControlUtilities.RunTest(testToRun);
 			}
 			catch { }
 
@@ -143,14 +140,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.DeleteDownloadsSubFolder();
 			}
 			catch { }
-
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void RenameDownloadsPrintItem()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task RenameDownloadsPrintItem()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				MatterControlUtilities.CreateDownloadsSubFolder();
@@ -173,14 +168,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(.5);
 				testRunner.Type("Batman Renamed");
 				testRunner.ClickByName("Rename Button");
-				testRunner.AddTestResult(testRunner.WaitForName("Row Item Batman Renamed", 2) == true);
-			};
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman Renamed", 2));
 
-			AutomationRunner testHarness = null;
+				return Task.FromResult(0);
+			};
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				await MatterControlUtilities.RunTest(testToRun);
 
 			}
 			catch { }
@@ -188,14 +183,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				MatterControlUtilities.DeleteDownloadsSubFolder();
 			}
-
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void CreateFolder()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task CreateFolder()
 		{
-			Action<AutomationRunner> testToRun = (AutomationRunner testRunner) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				MatterControlUtilities.CreateDownloadsSubFolder();
@@ -213,14 +206,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Create Folder Button");
 
 				testRunner.Wait(2);
-				testRunner.AddTestResult(testRunner.WaitForName(newFolderName + " Row Item Collection", 2), $"{newFolderName} exists");
-			};
+				Assert.IsTrue(testRunner.WaitForName(newFolderName + " Row Item Collection", 2), $"{newFolderName} exists");
 
-			AutomationRunner testHarness = null;
+				return Task.FromResult(0);
+			};
 
 			try
 			{
-				testHarness = MatterControlUtilities.RunTest(testToRun);
+				await MatterControlUtilities.RunTest(testToRun);
 
 			}
 			catch { }
@@ -228,8 +221,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				MatterControlUtilities.DeleteDownloadsSubFolder();
 			}
-
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
 		}
 	}
 }
