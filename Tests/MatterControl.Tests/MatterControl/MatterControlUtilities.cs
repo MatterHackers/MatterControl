@@ -124,7 +124,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			switch (preAction)
 			{
 				case PrepAction.CloseSignInAndPrinterSelect:
-					testRunner.ClickByName("Connection Wizard Skip Sign In Button", 5);
+
+					// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
+					if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 0.5))
+					{
+						testRunner.ClickByName("Connection Wizard Skip Sign In Button");
+					}
+
 					testRunner.ClickByName("Cancel Wizard Button", 5);
 					break;
 			}
