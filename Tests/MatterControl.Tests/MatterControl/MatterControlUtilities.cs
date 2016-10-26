@@ -130,7 +130,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static Process LaunchAndConnectToPrinterEmulator(AutomationRunner testRunner, bool runSlow = false, string make = "Airwolf 3D", string model = "HD")
+		public class PrintEmulatorProcess: Process
+		{
+			protected override void Dispose(bool disposing)
+			{
+				this.Kill();
+				base.Dispose(disposing);
+			}
+		}
+
+		public static Process LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
@@ -138,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			MatterControlUtilities.AddAndSelectPrinter(testRunner, make, model);
 
-			var process = new Process();
+			var process = new PrintEmulatorProcess();
 			process.StartInfo = new ProcessStartInfo()
 			{
 				FileName = "python",

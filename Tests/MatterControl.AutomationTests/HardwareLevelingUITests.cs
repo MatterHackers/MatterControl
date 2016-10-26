@@ -49,59 +49,52 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task SoftwareLevelingRequiredCorrectWorkflow()
 		{
-			Process emulatorProcess = null;
-
 			AutomationTest testToRun = (testRunner) =>
 			{
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
 				// make a jump start printer
-				emulatorProcess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner, false, "JumStart", "V1");
-
-				// make sure it is showing the correct button
-				Assert.IsTrue(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
-				Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
-
-				// do print leveling
-				testRunner.ClickByName("Next Button", .5);
-				testRunner.ClickByName("Next Button", .5);
-				testRunner.ClickByName("Next Button", .5);
-				for (int i = 0; i < 3; i++)
+				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator("JumpStart", "V1", runSlow: false))
 				{
-					testRunner.ClickByName("Move Z positive", .5);
+					// make sure it is showing the correct button
+					Assert.IsTrue(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
+					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
+
+					// do print leveling
 					testRunner.ClickByName("Next Button", .5);
 					testRunner.ClickByName("Next Button", .5);
 					testRunner.ClickByName("Next Button", .5);
+					for (int i = 0; i < 3; i++)
+					{
+						testRunner.ClickByName("Move Z positive", .5);
+						testRunner.ClickByName("Next Button", .5);
+						testRunner.ClickByName("Next Button", .5);
+						testRunner.ClickByName("Next Button", .5);
+					}
+
+					Assert.IsTrue(testRunner.ClickByName("Done Button", 1), "Found Done button");
+
+					// make sure the button has changed to start print
+					Assert.IsTrue(testRunner.WaitForName("Start Print Button", 5), "Start Print showing");
+					Assert.IsTrue(!testRunner.WaitForName("Finish Setup Button", 1), "Finish Setup hidden");
+
+					// reset to defaults and make sure print leveling is cleared
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+					Assert.IsTrue(testRunner.ClickByName("Slice Settings Options Menu", 1), "Click Options");
+					Assert.IsTrue(testRunner.ClickByName("Reset to defaults Menu Item", 1), "Select Reset to defaults");
+					Assert.IsTrue(testRunner.ClickByName("Yes Button", .5), "Click yes to revert");
+					testRunner.Wait(1);
+
+					// make sure it is showing the correct button
+					Assert.IsTrue(!testRunner.WaitForName("Start Print Button", 1), "Start Print hidden");
+					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", 1), "Finish Setup showing");
+
+					return Task.FromResult(0);
 				}
-
-				Assert.IsTrue(testRunner.ClickByName("Done Button", .5), "Found Done button");
-
-				// make sure the button has changed to start print
-				Assert.IsTrue(testRunner.WaitForName("Start Print Button", .5), "Start Print showing");
-				Assert.IsTrue(!testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup hidden");
-
-				// reset to defaults and make sure print leveling is cleared
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
-
-				Assert.IsTrue(testRunner.ClickByName("Slice Settings Options Menu", 1), "Click Options");
-				Assert.IsTrue(testRunner.ClickByName("Reset to defaults Menu Item", 1), "Select Reset to defaults");
-				Assert.IsTrue(testRunner.ClickByName("Yes Button", .5), "Click yes to revert");
-				testRunner.Wait(1);
-
-				// make sure it is showing the correct button
-				Assert.IsTrue(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");
-				Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup showing");
-
-				return Task.FromResult(0);
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);
-
-			try
-			{
-				emulatorProcess?.Kill();
-			}
-			catch { }
 		}
 	}
 }
