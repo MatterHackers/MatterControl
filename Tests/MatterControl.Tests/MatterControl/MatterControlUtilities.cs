@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return ApplicationController.Instance.CurrentLibraryDataView.CurrentLibraryProvider;
 		}
 
-		public static bool NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
+		public static bool NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
 			bool goodNavigate = true;
 

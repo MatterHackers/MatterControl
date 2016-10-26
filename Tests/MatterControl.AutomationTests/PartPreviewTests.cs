@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				testRunner.ClickByName("Row Item Calibration - Box View Button");
