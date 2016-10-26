@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.PrepForTestRun(testRunner);
 
 				testRunner.ClickByName("Library Tab", 3);
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				SystemWindow systemWindow;
 				string itemName = "Row Item " + "Calibration - Box";

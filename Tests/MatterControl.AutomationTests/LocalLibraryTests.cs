@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				//Make sure that Item does not exist before the test begins
 				bool rowItemExists = testRunner.WaitForName(itemName, 1);
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				//Make sure both Items do not exist before the test begins
 				bool firstItemExists = testRunner.WaitForName(firstItemName, 1);
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				//Make sure that Item does not exist before the test begins
 				bool rowItemExists = testRunner.WaitForName(itemName, 1);
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				//Make sure that Item does not exist before the test begins
 				bool firstItemInZipExists = testRunner.WaitForName(firstItemName, 1);
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate To Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				testRunner.Wait(1);
 
@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				//Create New Folder
 				testRunner.ClickByName("Create Folder From Library Button");
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				testRunner.Wait(1);
 
@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				testRunner.Wait(1);
 
@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.PrepForTestRun(testRunner);
 				//Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				testRunner.Wait(1);
 				testRunner.ClickByName("Library Edit Button");
@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				testRunner.Wait(1);
 				testRunner.ClickByName("Library Edit Button");
@@ -414,7 +414,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				//Add an item to the library
 				string libraryItemToAdd = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
@@ -476,7 +476,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				//Make sure Part Preview Window does not exists before we click the view button
 				bool partPreviewExistsOne = testRunner.WaitForName("Part Preview Window", 1);

@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Library Tab", 5);
 
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				testRunner.ClickByName("Row Item Calibration - Box View Button");
@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				testRunner.Type("0Test Part");
-				Assert.IsTrue(MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection"));
+				Assert.IsTrue(testRunner.NavigateToFolder("Local Library Row Item Collection"));
 
 				Assert.IsTrue(testRunner.ClickByName("Save As Save Button", 1));
 

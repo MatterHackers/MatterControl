@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				testRunner.ClickByName("Row Item Calibration - Box View Button");
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.ClickByName("Row Item Calibration - Box", 1);
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Type in name of new part and then save to Print Queue
 				testRunner.Type("Save As Print Queue");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Print Queue Row Item Collection");
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Save As Save Button");
 
