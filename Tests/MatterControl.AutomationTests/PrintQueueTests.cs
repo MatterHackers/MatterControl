@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				//Make sure image does not exist before we click the buy button
 				testRunner.MatchLimit = 500000;
@@ -70,9 +70,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				// Tests that clicking the create button opens create tools plugin window
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				//Make sure that plugin window does not exist
 				bool pluginWindowExists1 = testRunner.WaitForName("Plugin Chooser Window", 0);
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTest testToRun = (testRunner) =>
 			{
 				// Tests that clicking the queue export button with a single item selected opens export item window
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				//Make sure that the export window does not exist
 				bool exportWindowExists1 = testRunner.WaitForName("Export Item Window", 0);
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				//bool exportButtonExists = testRunner.NameExists("Export Queue Button");
 				bool exportButtonExists = testRunner.WaitForName("Export Queue Button", 10);
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				// Tests that clicking a queue item thumbnail opens a Part Preview window
 
@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				/* Tests that when the Queue Copy button is clicked:
 				 * 1. The Queue Tab Count is increased by one
 				 * 2. A Queue Row item is created and added to the queue with the correct name
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				/*
 				 * Tests that Queue Add button adds a single part to queue:
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				/*
 				 * Tests that Add button can add multiple files to the print queue:
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				/*
 				 *Tests that when one item is selected  
 				 *1. Queue Item count equals three before the test starts 
@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				/*
 				 *Tests that when the edit button is clicked we go into editmode (print queue items have checkboxes on them)  
 				 *1. After Edit button is clicked print queue items have check boxes
@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				/*
 				 *Tests that when one item is selected  
 				 *1. Queue Item count equals three before the test starts 
@@ -402,7 +402,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				/*
 				 *Tests that when one item is selected  
 				 *1. Queue Item count equals three before the test starts 
@@ -443,7 +443,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				/*
 				 *Tests Export to Zip menu item is clicked the queue is compressed and exported to location on disk
 				 *1. Check that there are items in the queue 
@@ -522,7 +522,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
 
@@ -554,7 +554,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				Assert.IsTrue(QueueData.Instance.Count == 4, "Queue has expected 3 items, including default Coin");
 
 				// Assert that widgets exists
@@ -586,7 +586,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				/*
 				 *Tests that when the Remove All menu item is clicked 
 				 *1. Queue Item count is set to zero
@@ -636,7 +636,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				/*
 				 *Tests:
@@ -682,7 +682,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				/* Tests that when the Queue Copy button is clicked:
 				* 1. QueueCount = Zero
@@ -721,7 +721,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				/* Tests that when the Queue Copy button is clicked:
 				* 1. QueueCount = Zero
@@ -759,7 +759,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				int queueCountBeforeTest = QueueData.Instance.Count;
 

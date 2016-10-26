@@ -119,21 +119,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			CloseSignInAndPrinterSelect,
 		};
 
-		public static void PrepForTestRun(AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
+		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
 		{
-			switch (preAction)
+			// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
+			if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 0.5))
 			{
-				case PrepAction.CloseSignInAndPrinterSelect:
-
-					// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
-					if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 0.5))
-					{
-						testRunner.ClickByName("Connection Wizard Skip Sign In Button");
-					}
-
-					testRunner.ClickByName("Cancel Wizard Button", 5);
-					break;
+				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 			}
+
+			testRunner.ClickByName("Cancel Wizard Button", 5);
 		}
 
 		public class PrintEmulatorProcess: Process
