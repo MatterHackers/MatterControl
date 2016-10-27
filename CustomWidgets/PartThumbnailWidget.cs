@@ -390,25 +390,32 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode)
 		{
-			ImageBuffer tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y);
-			string imageFileName = GetImageFileName(stlHashCode);
-
-			if (File.Exists(imageFileName))
+			try
 			{
-				if (partExtension == ".png")
+				ImageBuffer tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y);
+				string imageFileName = GetImageFileName(stlHashCode);
+
+				if (File.Exists(imageFileName))
 				{
-					if (ImageIO.LoadImageData(imageFileName, tempImage))
+					if (partExtension == ".png")
 					{
-						return tempImage;
+						if (ImageIO.LoadImageData(imageFileName, tempImage))
+						{
+							return tempImage;
+						}
+					}
+					else
+					{
+						if (ImageTgaIO.LoadImageData(imageFileName, tempImage))
+						{
+							return tempImage;
+						}
 					}
 				}
-				else
-				{
-					if (ImageTgaIO.LoadImageData(imageFileName, tempImage))
-					{
-						return tempImage;
-					}
-				}
+			}
+			catch
+			{
+
 			}
 
 			return null;
