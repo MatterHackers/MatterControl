@@ -181,6 +181,7 @@ namespace MatterHackers.MatterControl
 		private static ApplicationController globalInstance;
 		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+		public RootedObjectEventHandler ReloadAllRequested = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
@@ -398,6 +399,8 @@ namespace MatterHackers.MatterControl
 				MainView.AfterDraw += DoReloadAll;
 				MainView.Invalidate();
 			}
+
+			ReloadAllRequested?.CallEvents(null, null);
 		}
 
 		static int reloadCount = 0;
