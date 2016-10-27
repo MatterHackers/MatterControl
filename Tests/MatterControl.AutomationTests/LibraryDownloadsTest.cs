@@ -15,7 +15,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				// Navigate to Downloads Library Provider
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider

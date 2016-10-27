@@ -108,11 +108,7 @@ namespace MatterControl.Tests
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				// If plugins exist, this will close the sign in window
-				MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
-
-				// If plugins do not exist, this will close the Add Printer window
-				testRunner.ClickByName("Cancel Wizard Button", 2);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				Assert.IsTrue(testRunner.NameExists("SettingsAndControls"));
 
