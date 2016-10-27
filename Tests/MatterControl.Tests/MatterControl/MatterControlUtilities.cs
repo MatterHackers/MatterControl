@@ -119,18 +119,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			CloseSignInAndPrinterSelect,
 		};
 
-		public static void PrepForTestRun(AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
+		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
 		{
-			switch (preAction)
+			// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
+			if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 0.5))
 			{
-				case PrepAction.CloseSignInAndPrinterSelect:
-					testRunner.ClickByName("Connection Wizard Skip Sign In Button", 5);
-					testRunner.ClickByName("Cancel Wizard Button", 5);
-					break;
+				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
+			}
+
+			testRunner.ClickByName("Cancel Wizard Button", 5);
+		}
+
+		public class PrintEmulatorProcess: Process
+		{
+			protected override void Dispose(bool disposing)
+			{
+				this.Kill();
+				base.Dispose(disposing);
 			}
 		}
 
-		public static Process LaunchAndConnectToPrinterEmulator(AutomationRunner testRunner, bool runSlow = false, string make = "Airwolf 3D", string model = "HD")
+		public static Process LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
@@ -138,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			MatterControlUtilities.AddAndSelectPrinter(testRunner, make, model);
 
-			var process = new Process();
+			var process = new PrintEmulatorProcess();
 			process.StartInfo = new ProcessStartInfo()
 			{
 				FileName = "python",

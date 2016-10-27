@@ -21,13 +21,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
-				MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				testRunner.ClickByName("Row Item Calibration - Box Print Button");
@@ -58,48 +58,41 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task PauseOnLayerDoesPauseOnPrint()
 		{
-			Process emulatorProcess = null;
-
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
+				testRunner.CloseSignInAndPrinterSelect();
 
-				emulatorProcess = MatterControlUtilities.LaunchAndConnectToPrinterEmulator(testRunner);
+				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					Assert.IsTrue(testRunner.ClickByName("General Tab", 1));
+					Assert.IsTrue(testRunner.ClickByName("Single Print Tab", 1));
+					Assert.IsTrue(testRunner.ClickByName("Layer(s) To Pause:" + " Edit"));
+					testRunner.Type("4;2;a;not;6");
 
-				Assert.IsTrue(testRunner.ClickByName("General Tab", 1));
-				Assert.IsTrue(testRunner.ClickByName("Single Print Tab", 1));
-				Assert.IsTrue(testRunner.ClickByName("Layer(s) To Pause:" + " Edit"));
-				testRunner.Type("4;2;a;not;6");
+					Assert.IsTrue(testRunner.ClickByName("Layer View Tab"));
 
-				Assert.IsTrue(testRunner.ClickByName("Layer View Tab"));
+					Assert.IsTrue(testRunner.ClickByName("Generate Gcode Button", 1));
+					Assert.IsTrue(testRunner.ClickByName("Display Checkbox", 10));
+					Assert.IsTrue(testRunner.ClickByName("Sync To Print Checkbox", 1));
 
-				Assert.IsTrue(testRunner.ClickByName("Generate Gcode Button", 1));
-				Assert.IsTrue(testRunner.ClickByName("Display Checkbox", 10));
-				Assert.IsTrue(testRunner.ClickByName("Sync To Print Checkbox", 1));
+					Assert.IsTrue(testRunner.ClickByName("Start Print Button", 1));
 
-				Assert.IsTrue(testRunner.ClickByName("Start Print Button", 1));
+					WaitForLayerAndResume(testRunner, 2);
+					WaitForLayerAndResume(testRunner, 4);
+					WaitForLayerAndResume(testRunner, 6);
 
-				WaitForLayerAndResume(testRunner, 2);
-				WaitForLayerAndResume(testRunner, 4);
-				WaitForLayerAndResume(testRunner, 6);
+					Assert.IsTrue(testRunner.WaitForName("Done Button", 30));
+					Assert.IsTrue(testRunner.WaitForName("Print Again Button", 1));
 
-				Assert.IsTrue(testRunner.WaitForName("Done Button", 30));
-				Assert.IsTrue(testRunner.WaitForName("Print Again Button", 1));
-
-				return Task.FromResult(0);
+					return Task.FromResult(0);
+				}
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
-
-			try
-			{
-				emulatorProcess?.Kill();
-			}
-			catch { }
 		}
 
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
@@ -122,7 +115,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
@@ -147,7 +140,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				// assert no profiles
 				Assert.IsTrue(ProfileManager.Instance.ActiveProfiles.Count() == 0);
@@ -197,7 +190,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
@@ -227,7 +220,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 

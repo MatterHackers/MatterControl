@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.ClickByName("Library Tab", 3);
 				testRunner.NavigateToFolder("Local Library Row Item Collection");

@@ -18,14 +18,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				SystemWindow systemWindow;
+				string copyButtonName = "3D View Copy";
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
+
 				testRunner.ClickByName("Row Item Calibration - Box");
 				testRunner.ClickByName("Row Item Calibration - Box View Button");
 				testRunner.Wait(1);
@@ -34,33 +36,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 
-				string copyButtonName = "3D View Copy";
-
 				//Click Edit button to make edit controls visible
 				testRunner.ClickByName("3D View Edit");
 				testRunner.Wait(1);
-				int partCountBeforeCopy = view3D.MeshGroups.Count();
-				Assert.IsTrue(partCountBeforeCopy == 1);
+				Assert.AreEqual(view3D.MeshGroups.Count(), 1, "Should have 1 part before copy");
 
 				//Click Copy button and count MeshGroups 
 				testRunner.ClickByName(copyButtonName);
-				System.Threading.Thread.Sleep(500);
-				int partCountAfterCopy = view3D.MeshGroups.Count();
-				Assert.IsTrue(partCountAfterCopy == 2);
-				testRunner.Wait(1);
+				testRunner.Wait(.5);
+				Assert.AreEqual(view3D.MeshGroups.Count(), 2, "Should have 2 parts after copy");
 
 				//Click Copy button a second time and count MeshGroups again
 				testRunner.ClickByName(copyButtonName);
-				System.Threading.Thread.Sleep(500);
-				int partCountAfterSecondCopy = view3D.MeshGroups.Count();
-				Assert.IsTrue(partCountAfterSecondCopy == 3);
-				view3D.CloseOnIdle();
 				testRunner.Wait(.5);
+				Assert.AreEqual(view3D.MeshGroups.Count(), 3, "Should have 3 parts after 2nd copy");
 
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
@@ -68,7 +62,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				SystemWindow systemWindow;
 
@@ -125,7 +119,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				SystemWindow systemWindow;
 
@@ -177,7 +171,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				SystemWindow systemWindow;
 
@@ -243,7 +237,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				SystemWindow systemWindow;
 
@@ -304,7 +298,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
