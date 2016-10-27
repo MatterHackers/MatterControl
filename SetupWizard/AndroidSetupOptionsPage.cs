@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl
 
 			mainContainer.AddChild(buttonContainer);
 
-			ApplicationController.Instance.DoneReloadingAll.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAllRequested.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
 		}
 
 		private void RemoveAndNewControl(object sender, EventArgs e)
