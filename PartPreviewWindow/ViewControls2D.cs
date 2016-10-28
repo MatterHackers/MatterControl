@@ -79,8 +79,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			iconTextImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
 
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-			iconTextImageButtonFactory.FixedHeight = buttonHeight;
-			iconTextImageButtonFactory.FixedWidth = buttonHeight;
+			iconTextImageButtonFactory.FixedHeight = buttonHeight * GuiWidget.DeviceScale;
+			iconTextImageButtonFactory.FixedWidth = buttonHeight * GuiWidget.DeviceScale;
 
 			string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
 			resetViewButton = iconTextImageButtonFactory.Generate("", StaticData.Instance.LoadIcon(resetViewIconPath,32,32).InvertLightness());
@@ -125,8 +125,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 
-			iconTextImageButtonFactory.FixedHeight = buttonHeight;
-			iconTextImageButtonFactory.FixedWidth = buttonHeight;
+			iconTextImageButtonFactory.FixedHeight = buttonHeight * GuiWidget.DeviceScale;
+			iconTextImageButtonFactory.FixedWidth = buttonHeight * GuiWidget.DeviceScale;
 
 			string select2dIconPath = Path.Combine("ViewTransformControls", "2d.png");
 			twoDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", select2dIconPath);
