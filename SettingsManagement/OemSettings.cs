@@ -140,22 +140,32 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		[OnDeserialized]
 		private void Deserialized(StreamingContext context)
 		{
-			// Load from StaticData to prepopulate oemProfiles for when user create a printer before load cacheable is done
-			OemProfiles = JsonConvert.DeserializeObject<OemProfileDictionary>(StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json")));
+			// Load local OemProfile content during initial startup
+			OemProfiles = this.LoadOemProfiles();
 
-			var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem).ToList();
+			var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem);
 			SetManufacturers(manufacturesList);
+		}
+
+		private OemProfileDictionary LoadOemProfiles()
+		{
+			string cachePath = ApplicationController.CacheablePath("public-profiles", "oemprofiles.json");
+
+			// Load data from cache or fall back to stale StaticData content
+			string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+
+			return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
 		}
 
 		public async Task ReloadOemProfiles(IProgress<SyncReportType> syncReport = null)
 		{
-			// In public builds this won't be assigned to and we should abort and exit early
+			// In public builds this won't be assigned to and we should exit
 			if (ApplicationController.GetPublicProfileList == null)
 			{
 				return;
 			}
 
-			var oemProfilesDict = await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
+			await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
 				"oemprofiles.json",
 				"public-profiles",
 				async () =>
@@ -163,20 +173,16 @@ namespace MatterHackers.MatterControl.SettingsManagement
 					var result = await ApplicationController.GetPublicProfileList();
 					if (result != null)
 					{
+						// Refresh the in memory instance any time the server responds with updated content - caller will serialize
 						OemProfiles = result;
 
-						var manufactures = result.Keys.ToDictionary(oem => oem);
-						SetManufacturers(manufactures);
+						SetManufacturers(result.Keys.ToDictionary(oem => oem));
 					}
 
 					return result;
-				},
-				Path.Combine("Profiles", "oemprofiles.json"));
+				});
 
-			if (oemProfilesDict != null)
-			{
-				await DownloadMissingProfiles(syncReport);
-			}
+			await DownloadMissingProfiles(syncReport);
 		}
 
 		private async Task DownloadMissingProfiles(IProgress<SyncReportType> syncReport)
