@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string device_token = nameof(device_token);
 		public const string device_type = nameof(device_type);
 		public const string expand_thin_walls = nameof(expand_thin_walls);
+		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
 		public const string filament_cost = nameof(filament_cost);

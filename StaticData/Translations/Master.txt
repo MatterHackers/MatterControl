@@ -5536,3 +5536,9 @@ Translated:Are you sure you want exit while a print is running from SD Card?\n\n
 English:Connect printer and power on
 Translated:Connect printer and power on
 
+English:Detect perimeters that cross over themselves and combine them.
+Translated:Detect perimeters that cross over themselves and combine them.
+
+English:Merge Overlapping Lines
+Translated:Merge Overlapping Lines
+

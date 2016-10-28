@@ -118,6 +118,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedToBoolString("wipe", "wipeAfterRetraction"),
 				new MappedToBoolString(SettingsKey.center_part_on_bed, "centerObjectInXy"),
 				new MappedToBoolString(SettingsKey.expand_thin_walls, "expandThinWalls"),
+				new MappedToBoolString(SettingsKey.merge_overlapping_lines, "MergeOverlappingLines"),
 				new MappedToBoolString(SettingsKey.fill_thin_gaps, "fillThinGaps"),
 				new MappedToBoolString(SettingsKey.spiral_vase, "continuousSpiralOuterPerimeter"),
 				new MapPositionToPlaceObjectCenter(SettingsKey.print_center, "positionToPlaceObjectCenter"),

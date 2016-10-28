@@ -89,6 +89,7 @@ Advanced
         randomize_start
         external_perimeters_first
         perimeter_start_end_overlap
+        merge_overlapping_lines
         expand_thin_walls
       Outer Surface - Top & Bottom
         top_solid_layers
