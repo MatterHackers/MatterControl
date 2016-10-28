@@ -460,25 +460,25 @@
 		"DefaultValue": "0",
 		"ReloadUiWhenChanged": true
 	},
+  {
+    "QuickMenuSettings": [ ],
+    "SetSettingsOnChange": [ ],
+    "SlicerConfigName": "heat_extruder_before_homing",
+    "PresentationName": "Heat Before Homing",
+    "HelpText": "Forces the printer to heat the nozzle before homing.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": "",
+    "ShowAsOverride": true,
+    "ShowIfSet": null,
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "0"
+  },
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
-		"SlicerConfigName": "heat_extruder_before_homing",
-		"PresentationName": "Heat Before Homing",
-		"HelpText": "Forces the printer to heat the nozzle before homing.",
-		"DataEditType": "CHECK_BOX",
-		"ExtraSettings": "",
-		"ShowAsOverride": true,
-		"ShowIfSet": null,
-		"ResetAtEndOfPrint": false,
-		"DefaultValue": "0"
-	},
-	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
-		"SlicerConfigName": "expand_thin_walls",
-		"PresentationName": "Expand Thin Walls",
-		"HelpText": "Detect sections of the model that would be too thin to print, expand them, and print them.",
+		"SlicerConfigName": "merge_overlapping_lines",
+		"PresentationName": "Merge Overlapping Lines",
+		"HelpText": "Detect perimeters that cross over themselves and combine them.",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -486,6 +486,20 @@
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "1",
 		"RebuildGCodeOnChange": true
+	},
+  {
+    "QuickMenuSettings": [ ],
+    "SetSettingsOnChange": [ ],
+    "SlicerConfigName": "expand_thin_walls",
+    "PresentationName": "Expand Thin Walls",
+    "HelpText": "Detect sections of the model that would be too thin to print, expand them, and print them.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": "",
+    "ShowAsOverride": true,
+    "ShowIfSet": null,
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "1",
+    "RebuildGCodeOnChange": true
 	},
 	{
 		"QuickMenuSettings": [ ],
