@@ -398,7 +398,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static async Task<PrinterSettings> GetFirstValidHistoryItem(PrinterInfo printerInfo)
 		{
-			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory(printerInfo.DeviceToken);
+			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory?.Invoke(printerInfo.DeviceToken);
 			if (recentProfileHistoryItems != null)
 			{
 				// Iterate history, skipping the first item, limiting to the next five, attempt to load and return the first success

@@ -5542,3 +5542,6 @@ Translated:Detect perimeters that cross over themselves and combine them.
 English:Merge Overlapping Lines
 Translated:Merge Overlapping Lines
 
+English:Restore Settings
+Translated:Restore Settings
+
