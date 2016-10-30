@@ -545,7 +545,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ProfilesListChanged.CallEvents(null, null);
 
 			// Force sync after any collection change event
-			ApplicationController.SyncPrinterProfiles?.Invoke(null);
+			ApplicationController.SyncPrinterProfiles?.Invoke("ProfileManager.Profiles_CollectionChanged()", null);
 		}
 
 		public void Save()
