@@ -546,6 +546,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UserSettings.Instance.Fields.IsSimpleMode = false;
 			}
+			ApplicationController.Instance.ReloadAll(null, null);
 		}
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
