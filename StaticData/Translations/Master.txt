@@ -5545,3 +5545,6 @@ Translated:Merge Overlapping Lines
 English:Restore Settings
 Translated:Restore Settings
 
+English:Streaming GCode...
+Translated:Streaming GCode...
+
