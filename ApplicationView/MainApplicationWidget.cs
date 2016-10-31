@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 		public static Func<PrinterInfo,string, Task<PrinterSettings>> GetPrinterProfileAsync;
-		public static Func<IProgress<SyncReportType>,Task> SyncPrinterProfiles;
+		public static Func<string, IProgress<SyncReportType>,Task> SyncPrinterProfiles;
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
 		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
 
@@ -593,7 +593,7 @@ namespace MatterHackers.MatterControl
                     }
                     else
                     {
-                        ApplicationController.SyncPrinterProfiles.Invoke(null).ContinueWith((task) =>
+                        ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
                         {
                             RunSetupIfRequired();
                         });

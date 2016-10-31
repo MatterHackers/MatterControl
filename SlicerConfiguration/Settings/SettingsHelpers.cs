@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ProfileManager.ProfilesListChanged.CallEvents(this, null);
 
 				// Force sync after marking for delete
-				ApplicationController.SyncPrinterProfiles(null);
+				ApplicationController.SyncPrinterProfiles("SettingsHelpers.SetMarkedForDelete()", null);
 			});
 		}
 
