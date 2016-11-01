@@ -238,17 +238,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			string json = this.ToJson();
-
-			var printerInfo = ProfileManager.Instance[this.ID];
-			if (printerInfo != null)
-			{
-				printerInfo.ContentSHA1 = this.ComputeSha1(json);
-				ProfileManager.Instance.Save();
-			}
-
 			lock (writeLock)
 			{
+				string json = this.ToJson();
+
+				var printerInfo = ProfileManager.Instance[this.ID];
+				if (printerInfo != null)
+				{
+					printerInfo.ContentSHA1 = this.ComputeSha1(json);
+					ProfileManager.Instance.Save();
+				}
+
 				File.WriteAllText(DocumentPath, json);
 			}
 
