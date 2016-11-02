@@ -18,9 +18,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				SystemWindow systemWindow;
+
+				testRunner.CloseSignInAndPrinterSelect();
 
 				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
@@ -31,23 +31,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Row Item Calibration - Box View Button");
 				testRunner.Wait(1);
 
-				// Get View3DWidget and count MeshGroups before Copy button is clicked
+				// Get View3DWidget
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
 
 				// Click Edit button to make edit controls visible
 				testRunner.ClickByName("3D View Edit");
 				testRunner.WaitForName("3D View Copy", 3);
-				Assert.AreEqual(1, view3D.MeshGroups.Count(), "Should have 1 part before copy");
+				Assert.AreEqual(1, view3D.MeshGroups.Count, "Should have 1 part before copy");
 
 
 				// Click Copy button and count MeshGroups 
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 2, 13);
+				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 2, 3);
 				Assert.AreEqual(2, view3D.MeshGroups.Count, "Should have 2 parts after copy");
 
 				// Click Copy button a second time and count MeshGroups
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 3, 13);
+				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 3, 3);
 				Assert.AreEqual(3, view3D.MeshGroups.Count, "Should have 3 parts after 2nd copy");
 
 				return Task.FromResult(0);
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
 				Assert.AreEqual(5, view3D.MeshGroups.Count, "Should have 5 parts after Redo");
 
-				partPreview.CloseOnIdle();
+				view3D.CloseOnIdle();
 				testRunner.Wait(.1);
 
 				return Task.FromResult(0);
