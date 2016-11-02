@@ -160,35 +160,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
+		/// <summary>
+		/// Tests that Queue Copy button increases the queue count by one and that a new queue item appears with the expected name
+		/// </summary>
+		/// <returns></returns>
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task CopyButtonMakesACopyOfPartInTheQueue()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
+				int expectedQueueCount = QueueData.Instance.Count + 1;
+
 				testRunner.CloseSignInAndPrinterSelect();
-				/* Tests that when the Queue Copy button is clicked:
-				 * 1. The Queue Tab Count is increased by one
-				 * 2. A Queue Row item is created and added to the queue with the correct name
-				 */
 
-				int queueCountBeforeCopyButtonIsClicked = QueueData.Instance.Count;
-				bool copyIncreasesQueueDataCount = false;
-				testRunner.ClickByName("Queue Item " + "Batman", 3);
+				testRunner.ClickByName("Queue Item Batman", 3);
+				testRunner.Wait(.2);
+
 				testRunner.ClickByName("Queue Copy Button", 3);
+				testRunner.WaitUntil(() => QueueData.Instance.Count == expectedQueueCount, 3);
 
-				testRunner.Wait(1);
-
-				int currentQueueCount = QueueData.Instance.Count;
-				if (currentQueueCount == queueCountBeforeCopyButtonIsClicked + 1)
-				{
-					copyIncreasesQueueDataCount = true;
-				}
-
-				Assert.IsTrue(copyIncreasesQueueDataCount == true, "Copy button clicked increases queue tab count by one");
-
-				bool batmanQueueItemCopyExists = testRunner.WaitForName("Queue Item " + "Batman" + " - copy", 2);
-
-				Assert.IsTrue(batmanQueueItemCopyExists == true);
+				Assert.AreEqual(expectedQueueCount, QueueData.Instance.Count, "Copy button increases queue count by one");
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman - copy", 2), "Copied Batman item exists with expected name");
+				testRunner.Wait(.3);
 
 				return Task.FromResult(0);
 			};
