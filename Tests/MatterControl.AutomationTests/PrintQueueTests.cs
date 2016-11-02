@@ -498,24 +498,31 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task SendMenuItemClickedNoSignIn()
+		public async Task SendMenuClickedWithoutCloudPlugins()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
+				SystemWindow parentWindow;
+
 				testRunner.CloseSignInAndPrinterSelect();
 
-				int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
-
-				Assert.IsTrue(queueItemCountBeforeRemoveAllClicked > 0);
+				Assert.IsTrue(QueueData.Instance.Count > 0, "Queue is not empty at test startup");
 
 				testRunner.ClickByName("More...  Menu", 2);
+				testRunner.Wait(.2);
 
 				testRunner.ClickByName("Send Menu Item", 2);
+				testRunner.Wait(.2);
 
-				bool signInPromptWindowOpens = testRunner.WaitForName("Ok Button", 2);
+				// WaitFor Ok button and ensure parent window has expected title and named button
+				testRunner.WaitForName("Ok Button", 2);
+				var widget = testRunner.GetWidgetByName("Ok Button", out parentWindow);
+				Assert.IsTrue(widget != null 
+					&& parentWindow.Title == "MatterControl - Alert", "Send Disabled warning appears when no plugins exists to satisfy behavior");
 
-				Assert.IsTrue(signInPromptWindowOpens == true);
+				testRunner.Wait(.2);
 
+				// Close dialog before exiting
 				testRunner.ClickByName("Ok Button");
 
 				return Task.FromResult(0);
