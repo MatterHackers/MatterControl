@@ -311,7 +311,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				//Navigate to Local Library
+
+				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
@@ -325,8 +326,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 				testRunner.Type(rowItemPath);
 				testRunner.Type("{Enter}");
-
 				testRunner.Wait(1);
+
 				string rowItemOne = "Row Item " + "Calibration - Box";
 				testRunner.ClickByName(rowItemOne, 1);
 
@@ -335,20 +336,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(1);
 
-				//Make sure row items exist before remove
-				bool rowItemOneExistsBeforeRemove = testRunner.WaitForName(rowItemOne, 2);
-				bool rowItemTwoExistsBeforeRemove = testRunner.WaitForName(rowItemTwo, 2);
-				Assert.IsTrue(rowItemOneExistsBeforeRemove == true);
-				Assert.IsTrue(rowItemTwoExistsBeforeRemove == true);
+				// Make sure row items exist before remove
+				Assert.IsTrue(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should exists before remove");
+				Assert.IsTrue(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should exists before remove");
 
+				// Remove items
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 				testRunner.Wait(1);
 
-				//Make sure both selected items are removed
-				bool rowItemOneExists = testRunner.WaitForName(rowItemOne, 2);
-				bool rowItemTwoExists = testRunner.WaitForName(rowItemTwo, 2);
-				Assert.IsTrue(rowItemOneExists == false);
-				Assert.IsTrue(rowItemTwoExists == false);
+				// Make sure both selected items are removed
+				Assert.IsFalse(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should *not* exist after remove");
 
 				return Task.FromResult(0);
 			};
