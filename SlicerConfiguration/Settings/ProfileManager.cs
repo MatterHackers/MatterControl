@@ -89,7 +89,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string GetProfilesDirectoryForUser(string userName)
 		{
-			string userProfilesDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Profiles", userName);
+			string userAndEnvName = (userName == "guest") ? userName : ApplicationController.EnvironmentName + userName;
+			string userProfilesDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Profiles", userAndEnvName);
 
 			// Ensure directory exists
 			Directory.CreateDirectory(userProfilesDirectory);
