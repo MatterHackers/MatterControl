@@ -1,12 +1,12 @@
 Simple
   General
     Single
-      Layers
+      Layers & Infill
         layer_height
         fill_density
-      Support Material
-        support_material
+      Raft & Support
         create_raft
+        support_material
   Printer
     Connection
       Description

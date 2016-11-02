@@ -16,8 +16,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SetupStepComPortManual : ConnectionWizardPage
 	{
-		private static Regex linuxDefaultUIFilter = new Regex("/dev/ttyS*\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
-
 		private Button nextButton;
 		private Button connectButton;
 		private Button refreshButton;
@@ -165,20 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			int portIndex = 0;
 			string[] allPorts = FrostedSerialPort.GetPortNames();
-			IEnumerable<string> filteredPorts;
-
-			if (OsInformation.OperatingSystem == OSType.X11)
-			{
-				// A default and naive filter that works well on Ubuntu 14
-				filteredPorts = allPorts.Where(portName => portName != "/dev/tty" && !linuxDefaultUIFilter.Match(portName).Success);
-			}
-			else
-			{
-				// looks_like_mac -- serialPort.StartsWith("/dev/tty."); looks_like_pc -- serialPort.StartsWith("COM")
-				filteredPorts = allPorts.Where(portName => portName.StartsWith("/dev/tty.") || portName.StartsWith("COM"));
-			}
-
-			IEnumerable<string> portsToCreate = filteredPorts.Any() ? filteredPorts : allPorts;
+			IEnumerable<string> portsToCreate = FrostedSerialPort.FilterPortsForMac(allPorts);
 
 			// Add a radio button for each filtered port
 			foreach (string portName in portsToCreate)
