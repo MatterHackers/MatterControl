@@ -438,78 +438,58 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
+		/// <summary>
+		/// Confirms the Export to Zip feature compresses and exports to a zip file and that file imports without issue
+		/// </summary>
+		/// <returns></returns>
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task ExportToZipMenuItemClicked()
+		public async Task ExportToZipImportFromZip()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-				/*
-				 *Tests Export to Zip menu item is clicked the queue is compressed and exported to location on disk
-				 *1. Check that there are items in the queue 
-				 *2. Export Queue and make sure file exists on disk
-				 */
-
-				bool queueEmpty = true;
-				int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
-
-				if (queueItemCountBeforeRemoveAllClicked > 0)
-				{
-					queueEmpty = false;
-				}
-
-				Assert.IsTrue(queueEmpty == false);
-
-				testRunner.ClickByName("Queue... Menu", 2);
-
-				testRunner.ClickByName(" Export to Zip Menu Item", 2);
-
-				testRunner.Wait(2);
-
-				//Type in Absolute Path to Save 
+				// Ensure output file does not exist
 				string exportZipPath = MatterControlUtilities.GetTestItemPath("TestExportZip.zip");
-
-				// Ensure file does not exist before save
 				if (File.Exists(exportZipPath))
 				{
 					File.Delete(exportZipPath);
 				}
 
-				testRunner.Type(exportZipPath);
+				testRunner.CloseSignInAndPrinterSelect();
 
+				Assert.AreEqual(4, QueueData.Instance.Count, "Queue should initially have 4 items");
+
+				// Invoke Queue -> Export to Zip dialog
+				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.Wait(.2);
+				testRunner.ClickByName(" Export to Zip Menu Item", 2);
 				testRunner.Wait(2);
-
+				testRunner.Type(exportZipPath);
+				testRunner.Wait(2);
 				testRunner.Type("{Enter}");
 
-				testRunner.Wait(1);
+				testRunner.WaitUntil(() => File.Exists(exportZipPath), 3);
+				Assert.IsTrue(File.Exists(exportZipPath), "Queue was exported to zip file, file exists on disk at expected path");
 
-				bool queueWasExportedToZip = File.Exists(exportZipPath);
-
-				testRunner.Wait(2);
-
-				Assert.IsTrue(queueWasExportedToZip == true);
-
-				//Add the exprted zip file to the Queue and confirm that the Queue Count increases by 3 
+				// Import the exported zip file and confirm the Queue Count increases by 3 
 				testRunner.ClickByName("Queue Add Button");
 				testRunner.Wait(1);
 				testRunner.Type(exportZipPath);
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				int queueCountAfterZipIsAdded = QueueData.Instance.Count;
-				bool allItemsInZipWereAddedToTheQueue = false;
+				testRunner.WaitUntil(() => QueueData.Instance.Count == 8, 5);
+				Assert.AreEqual(8, QueueData.Instance.Count, "All parts imported successfully from exported zip");
 
-				if (queueCountAfterZipIsAdded == queueItemCountBeforeRemoveAllClicked * 2)
+				testRunner.Wait(.3);
+
+				try
 				{
-					allItemsInZipWereAddedToTheQueue = true;
+					if (File.Exists(exportZipPath))
+					{
+						File.Delete(exportZipPath);
+					}
 				}
-
-				Assert.IsTrue(allItemsInZipWereAddedToTheQueue == true);
-
-				if (File.Exists(exportZipPath))
-				{
-					File.Delete(exportZipPath);
-				}
+				catch { }
 
 				return Task.FromResult(0);
 			};
