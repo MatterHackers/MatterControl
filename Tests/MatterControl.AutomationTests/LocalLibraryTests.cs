@@ -474,26 +474,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//Navigate to Local Library
+				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				//Make sure Part Preview Window does not exists before we click the view button
-				bool partPreviewExistsOne = testRunner.WaitForName("Part Preview Window", 1);
-				Assert.IsTrue(partPreviewExistsOne == false);
+				Assert.IsFalse(testRunner.WaitForName("Part Preview Window", 1), "Preview Window should not exist before we click the view button");
 
-				string libraryRowItemName = "Row Item " + "Calibration - Box";
-				testRunner.ClickByName(libraryRowItemName);
-
+				testRunner.ClickByName("Row Item Calibration - Box");
 				testRunner.Wait(1);
 
-				//Click Library Item View Button
-				string libraryItemViewButton = "Row Item " + "Calibration - Box" + " View Button";
-				testRunner.ClickByName(libraryItemViewButton);
+				// Click Library Item View Button
+				testRunner.ClickByName("Row Item " + "Calibration - Box" + " View Button");
 
-				//Make sure that Part Preview Window opens after View button is clicked
-				bool partPreviewWindowExists = testRunner.WaitForName("Part Preview Window", 1.5);
-				Assert.IsTrue(partPreviewWindowExists == true);
+				Assert.IsTrue(testRunner.WaitForName("Part Preview Window", 2), "Part Preview Window should be open after View button is clicked");
+				testRunner.Wait(.2);
 
 				return Task.FromResult(0);
 			};
