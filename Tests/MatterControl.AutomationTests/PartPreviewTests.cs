@@ -14,16 +14,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class PartPreviewTests
 	{
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task CopyButtonClickedMakesCopyOfPartOnBed()
+		public async Task CopyButtonMakesCopyOfPart()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
 				SystemWindow systemWindow;
-				string copyButtonName = "3D View Copy";
 
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
@@ -32,24 +31,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Row Item Calibration - Box View Button");
 				testRunner.Wait(1);
 
-				//Get View3DWidget and count MeshGroups before Copy button is clicked
-				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
-				View3DWidget view3D = partPreview as View3DWidget;
+				// Get View3DWidget and count MeshGroups before Copy button is clicked
+				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
 
-				//Click Edit button to make edit controls visible
+				// Click Edit button to make edit controls visible
 				testRunner.ClickByName("3D View Edit");
-				testRunner.Wait(1);
-				Assert.AreEqual(view3D.MeshGroups.Count(), 1, "Should have 1 part before copy");
+				testRunner.WaitForName("3D View Copy", 3);
+				Assert.AreEqual(1, view3D.MeshGroups.Count(), "Should have 1 part before copy");
 
-				//Click Copy button and count MeshGroups 
-				testRunner.ClickByName(copyButtonName);
-				testRunner.Wait(.5);
-				Assert.AreEqual(view3D.MeshGroups.Count(), 2, "Should have 2 parts after copy");
 
-				//Click Copy button a second time and count MeshGroups again
-				testRunner.ClickByName(copyButtonName);
-				testRunner.Wait(.5);
-				Assert.AreEqual(view3D.MeshGroups.Count(), 3, "Should have 3 parts after 2nd copy");
+				// Click Copy button and count MeshGroups 
+				testRunner.ClickByName("3D View Copy");
+				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 2, 13);
+				Assert.AreEqual(2, view3D.MeshGroups.Count, "Should have 2 parts after copy");
+
+				// Click Copy button a second time and count MeshGroups
+				testRunner.ClickByName("3D View Copy");
+				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 3, 13);
+				Assert.AreEqual(3, view3D.MeshGroups.Count, "Should have 3 parts after 2nd copy");
 
 				return Task.FromResult(0);
 			};
