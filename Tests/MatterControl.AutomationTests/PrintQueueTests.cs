@@ -518,7 +518,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task SendMenuItemCLickedNoSignIn()
+		public async Task SendMenuItemClickedNoSignIn()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
