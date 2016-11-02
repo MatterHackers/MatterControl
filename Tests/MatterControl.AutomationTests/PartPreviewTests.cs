@@ -232,56 +232,47 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task UndoRedoDelete()
+		public async Task CopyRemoveUndoRedo()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				SystemWindow systemWindow;
 
-				//Navigate to Local Library 
+				testRunner.CloseSignInAndPrinterSelect();
+
+				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.ClickByName("Row Item Calibration - Box", 1);
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
-				//Get View3DWidget and count MeshGroups before Copy button is clicked
-				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
-				View3DWidget view3D = partPreview as View3DWidget;
+				// Get View3DWidget
+				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
 
-				string copyButtonName = "3D View Copy";
-
-				//Click Edit button to make edit controls visible
+				// Click Edit button to make edit controls visible
 				testRunner.ClickByName("3D View Edit", 1);
-				int partCountBeforeCopy = view3D.MeshGroups.Count();
-				Assert.IsTrue(partCountBeforeCopy == 1);
-				testRunner.Wait(.5);
+				testRunner.WaitForName("3D View Copy", 3);
+				Assert.AreEqual(1, view3D.MeshGroups.Count, "Should have 1 part before copy");
 
 				for (int i = 0; i <= 4; i++)
 				{
-					testRunner.ClickByName(copyButtonName, 1);
+					testRunner.ClickByName("3D View Copy", 1);
 					testRunner.Wait(.2);
-					int meshCount = view3D.MeshGroups.Count();
-					Assert.IsTrue(meshCount == partCountBeforeCopy + i + 1);
 				}
 
-				int meshCountAfterCopy = view3D.MeshGroups.Count();
-				Assert.IsTrue(meshCountAfterCopy == 6);
+				Assert.AreEqual(6, view3D.MeshGroups.Count, "Should have 6 parts after batch copy");
+
 				testRunner.ClickByName("3D View Remove", 1);
-				testRunner.Wait(.1);
-				int meshCountAfterRemove = view3D.MeshGroups.Count();
-				Assert.IsTrue(meshCountAfterRemove == 5);
+				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
+				Assert.AreEqual(5, view3D.MeshGroups.Count, "Should have 5 parts after Remove");
 
 				testRunner.ClickByName("3D View Undo");
-				System.Threading.Thread.Sleep(2000);
-				int meshCountAfterUndo = view3D.MeshGroups.Count();
-				Assert.IsTrue(meshCountAfterUndo == 6);
+				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 6, 3);
+				Assert.AreEqual(6, view3D.MeshGroups.Count, "Should have 6 parts after Undo");
 
 				testRunner.ClickByName("3D View Redo");
-				System.Threading.Thread.Sleep(2000);
-				int meshCountAfterRedo = view3D.MeshGroups.Count();
-				Assert.IsTrue(meshCountAfterRedo == 5);
+				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
+				Assert.AreEqual(5, view3D.MeshGroups.Count, "Should have 5 parts after Redo");
 
 				partPreview.CloseOnIdle();
 				testRunner.Wait(.1);
