@@ -5548,3 +5548,9 @@ Translated:Restore Settings
 English:Streaming GCode...
 Translated:Streaming GCode...
 
+English:Layers & Infill
+Translated:Layers & Infill
+
+English:Raft & Support
+Translated:Raft & Support
+
