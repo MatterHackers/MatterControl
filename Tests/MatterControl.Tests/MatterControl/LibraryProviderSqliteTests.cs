@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Test, Category("FixNeeded" /* Disabled until MCWS production is updated */)]
+		[Test]
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -63,8 +63,8 @@ namespace MatterHackers.MatterControl.Tests
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 			Thread.Sleep(3000); // wait for the library to finish initializing
 			UiThread.InvokePendingActions();
-			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
-			Assert.IsTrue(testProvider.ItemCount == 3, "Start with a new database for these tests.");
+			Assert.AreEqual(0, testProvider.CollectionCount, "Start with a new database for these tests.");
+			Assert.AreEqual(3, testProvider.ItemCount, "Start with a new database for these tests.");
 
 			// create a collection and make sure it is on disk
 			dataReloaded = false; // it has been loaded for the default set of parts
