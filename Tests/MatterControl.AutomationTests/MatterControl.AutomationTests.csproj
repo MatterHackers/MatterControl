@@ -109,10 +109,6 @@
       <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
       <Name>Agg.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
-      <Project>{a526dc5d-65f3-461b-805f-d3ac9665f5c9}</Project>
-      <Name>WindowsFileDialogs</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
