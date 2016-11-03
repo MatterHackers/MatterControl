@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 
 				//Make sure single part is added and queue count increases by one
-				bool fennecFoxPartWasAdded = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 2);
+				bool fennecFoxPartWasAdded = testRunner.WaitForName("Queue Item Fennec_Fox", 2);
 				Assert.IsTrue(fennecFoxPartWasAdded == true);
 
 				int queueCountAfterAdd = QueueData.Instance.Count;
@@ -260,8 +260,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(QueueData.Instance.Count == queueCountBeforeAdd + 2);
 
-				bool firstQueueItemWasAdded = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 2);
-				bool secondQueueItemWasAdded = testRunner.WaitForName("Queue Item " + "Batman", 2);
+				bool firstQueueItemWasAdded = testRunner.WaitForName("Queue Item Fennec_Fox", 2);
+				bool secondQueueItemWasAdded = testRunner.WaitForName("Queue Item Batman", 2);
 
 				Assert.IsTrue(firstQueueItemWasAdded == true);
 				Assert.IsTrue(secondQueueItemWasAdded == true);
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(queueItemCount - 1 == queueItemCountAfterRemove);
 
-				bool queueItemExists = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 2);
+				bool queueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
 
 				Assert.IsTrue(queueItemExists == false);
 
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(QueueData.Instance.Count == 4);
 
 				SystemWindow systemWindow;
-				string itemName = "Queue Item " + "2013-01-25_Mouthpiece_v2";
+				string itemName = "Queue Item 2013-01-25_Mouthpiece_v2";
 
 				GuiWidget queueItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
 				SearchRegion queueItemRegion = testRunner.GetRegionByName(itemName, 3);
@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				int queueItemCount = QueueData.Instance.Count;
 
-				string itemName = "Queue Item " + "2013-01-25_Mouthpiece_v2";
+				string itemName = "Queue Item 2013-01-25_Mouthpiece_v2";
 				SystemWindow systemWindow;
 				GuiWidget queueItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
 				SearchRegion queueItemRegion = testRunner.GetRegionByName(itemName, 3);
@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Queue Edit Button", 2);
 
-				testRunner.ClickByName("Queue Item " + "Batman", 2);
+				testRunner.ClickByName("Queue Item Batman", 2);
 
 				testRunner.ClickByName("Queue Remove Button", 2);
 
@@ -419,8 +419,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(queueItemCount - 2 == queueItemCountAfterRemove);
 
-				bool queueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 2);
-				bool secondQueueItemExists = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 2);
+				bool queueItemExists = testRunner.WaitForName("Queue Item Batman", 2);
+				bool secondQueueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
 
 				Assert.IsTrue(queueItemExists == false);
 				Assert.IsTrue(secondQueueItemExists == false);
@@ -535,7 +535,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				Assert.IsTrue(QueueData.Instance.Count == 4, "Queue has expected 3 items, including default Coin");
+				Assert.IsTrue(QueueData.Instance.Count == 4, "Queue has expected 4 items, including default Coin");
 
 				// Assert that widgets exists
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman"), "Batman part exists");
@@ -544,6 +544,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Act - remove all print queue items
 				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.Wait(.2);
+
 				testRunner.ClickByName(" Remove All Menu Item", 2);
 				testRunner.Wait(2);
 
@@ -567,11 +569,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				/*
-				 *Tests that when the Remove All menu item is clicked 
-				 *1. Queue Item count is set to zero
-				 *2. All queue row items that were previously in the queue are removed
-				 */
 
 				bool queueEmpty = true;
 				int queueItemCount = QueueData.Instance.Count;
@@ -583,6 +580,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(queueEmpty == false);
 				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.Wait(.2);
 				testRunner.ClickByName(" Create Part Sheet Menu Item", 2);
 				testRunner.Wait(2);
 
@@ -628,27 +626,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 				int currentQueueItemCount = QueueData.Instance.Count;
 
-				Assert.IsTrue(testRunner.WaitForName("Queue Item " + "Batman", 1));
-				Assert.IsTrue(testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
 
-				testRunner.ClickByName("Queue Item " + "Batman", 1);
-				testRunner.ClickByName("Queue Item " + "Batman" + " Remove");
+				testRunner.ClickByName("Queue Item Batman", 1);
+				testRunner.ClickByName("Queue Item Batman Remove");
 				testRunner.Wait(2);
 
 				int queueItemCountAfterRemove = QueueData.Instance.Count;
 
 				Assert.IsTrue(currentQueueItemCount - 1 == queueItemCountAfterRemove);
 
-				bool batmanQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
+				bool batmanQueueItemExists = testRunner.WaitForName("Queue Item Batman", 1);
 				Assert.IsTrue(batmanQueueItemExists == false);
 
-				bool partPreviewWindowExists1 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " Part Preview", 1);
+				bool partPreviewWindowExists1 = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 1);
 				Assert.IsTrue(partPreviewWindowExists1 == false);
-				testRunner.ClickByName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
+				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2", 1);
 				testRunner.Wait(2);
-				testRunner.ClickByName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " View", 1);
+				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View", 1);
 
-				bool partPreviewWindowExists2 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " Part Preview", 2);
+				bool partPreviewWindowExists2 = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2);
 				Assert.IsTrue(partPreviewWindowExists2 == true);
 
 				return Task.FromResult(0);
@@ -687,7 +685,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(queueCountAfterAMFIsAdded == queueCountBeforeTest + 1);
 
 				//Make sure amf queue item is added 
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Rook", 1);
+				bool firstQueueItemExists = testRunner.WaitForName("Queue Item Rook", 1);
 				Assert.IsTrue(firstQueueItemExists == true);
 
 				return Task.FromResult(0);
@@ -725,7 +723,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(queueCountAfterSTLIsAdded == queueCountBeforeTest + 1);
 
 				//stl queue item is added to the queue
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
+				bool firstQueueItemExists = testRunner.WaitForName("Queue Item Batman", 1);
 				Assert.IsTrue(firstQueueItemExists == true);
 
 				return Task.FromResult(0);
@@ -758,7 +756,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(queueCountAfterGcodeIsAdded == queueCountBeforeTest + 1);
 
 				//stl queue item is added to the queue
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item " + "chichen-itza_pyramid", 1);
+				bool firstQueueItemExists = testRunner.WaitForName("Queue Item chichen-itza_pyramid", 1);
 				Assert.IsTrue(firstQueueItemExists == true);
 
 				return Task.FromResult(0);

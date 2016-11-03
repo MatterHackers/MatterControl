@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					Assert.IsTrue(testRunner.ClickByName("General Tab", 1));
 					Assert.IsTrue(testRunner.ClickByName("Single Print Tab", 1));
-					Assert.IsTrue(testRunner.ClickByName("Layer(s) To Pause:" + " Edit"));
+					Assert.IsTrue(testRunner.ClickByName("Layer(s) To Pause: Edit"));
 					testRunner.Type("4;2;a;not;6");
 
 					Assert.IsTrue(testRunner.ClickByName("Layer View Tab"));
