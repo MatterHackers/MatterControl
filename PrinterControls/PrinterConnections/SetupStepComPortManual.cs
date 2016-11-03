@@ -162,8 +162,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		protected void CreateSerialPortControls(FlowLayoutWidget comPortContainer, string activePrinterSerialPort)
 		{
 			int portIndex = 0;
-			string[] allPorts = FrostedSerialPort.GetPortNames();
-			IEnumerable<string> portsToCreate = FrostedSerialPort.FilterPortsForMac(allPorts);
+			string[] portsToCreate = FrostedSerialPort.GetPortNames();
 
 			// Add a radio button for each filtered port
 			foreach (string portName in portsToCreate)
