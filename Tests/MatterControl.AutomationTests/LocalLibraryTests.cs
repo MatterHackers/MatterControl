@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				string itemName = "Row Item " + "Fennec Fox";
+				string itemName = "Row Item Fennec Fox";
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 				//Names of Items to be added
-				string firstItemName = "Row Item " + "Fennec Fox";
-				string secondItemName = "Row Item " + "Batman";
+				string firstItemName = "Row Item Fennec Fox";
+				string secondItemName = "Row Item Batman";
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				string itemName = "Row Item " + "Rook";
+				string itemName = "Row Item Rook";
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
@@ -134,8 +134,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				//Items in Batman.zip
-				string firstItemName = "Row Item " + "Batman";
-				string secondItemName = "Row Item " + "2013-01-25 Mouthpiece v2";
+				string firstItemName = "Row Item Batman";
+				string secondItemName = "Row Item 2013-01-25 Mouthpiece v2";
 
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(1);
 
-				string rowItemToRename = "Row Item " + "Calibration - Box";
+				string rowItemToRename = "Row Item Calibration - Box";
 				testRunner.ClickByName("Library Edit Button");
 				testRunner.Wait(1);
 				testRunner.ClickByName(rowItemToRename);
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Rename Button");
 
-				string renamedRowItem = "Row Item " + "Library Item Renamed";
+				string renamedRowItem = "Row Item Library Item Renamed";
 				bool libraryItemWasRenamed = testRunner.WaitForName(renamedRowItem, 2);
 				bool libraryItemBeforeRenameExists = testRunner.WaitForName(rowItemToRename, 2);
 
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(1);
 
-				string rowItem = "Row Item " + "Calibration - Box";
+				string rowItem = "Row Item Calibration - Box";
 				testRunner.ClickByName("Library Edit Button");
 				testRunner.Wait(1);
 				testRunner.ClickByName(rowItem);
@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(1);
 
-				string rowItem = "Row Item " + "Calibration - Box";
+				string rowItem = "Row Item Calibration - Box";
 				testRunner.ClickByName("Library Edit Button");
 				testRunner.Wait(1);
 				testRunner.ClickByName(rowItem);
@@ -328,10 +328,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 				testRunner.Wait(1);
 
-				string rowItemOne = "Row Item " + "Calibration - Box";
+				string rowItemOne = "Row Item Calibration - Box";
 				testRunner.ClickByName(rowItemOne, 1);
 
-				string rowItemTwo = "Row Item " + "Fennec Fox";
+				string rowItemTwo = "Row Item Fennec Fox";
 				testRunner.ClickByName(rowItemTwo, 1);
 
 				testRunner.Wait(1);
@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				//Select Library Item
-				string rowItemOne = "Row Item " + "Calibration - Box";
+				string rowItemOne = "Row Item Calibration - Box";
 				testRunner.ClickByName(rowItemOne);
 
 				testRunner.Wait(1);
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				//Make sure that the Print Item was added
-				string queueItem = "Queue Item " + "Calibration - Box";
+				string queueItem = "Queue Item Calibration - Box";
 				bool queueItemWasAdded = testRunner.WaitForName(queueItem, 2);
 				Assert.IsTrue(queueItemWasAdded == true);
 
@@ -430,10 +430,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				int queueCountBeforeAdd = QueueData.Instance.Count;
 
 				//Select both Library Items
-				string rowItemOne = "Row Item " + "Calibration - Box";
+				string rowItemOne = "Row Item Calibration - Box";
 				testRunner.ClickByName(rowItemOne);
 
-				string rowItemTwo = "Row Item " + "Fennec Fox";
+				string rowItemTwo = "Row Item Fennec Fox";
 				testRunner.ClickByName(rowItemTwo);
 
 				//Click the Add To Queue button
@@ -451,8 +451,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				//Test that both added print items exist
-				string queueItemOne = "Queue Item " + "Calibration - Box";
-				string queueItemTwo = "Queue Item " + "Fennec_Fox";
+				string queueItemOne = "Queue Item Calibration - Box";
+				string queueItemTwo = "Queue Item Fennec_Fox";
 				bool queueItemOneWasAdded = testRunner.WaitForName(queueItemOne, 2);
 				bool queueItemTwoWasAdded = testRunner.WaitForName(queueItemTwo, 2);
 
@@ -482,7 +482,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				// Click Library Item View Button
-				testRunner.ClickByName("Row Item " + "Calibration - Box" + " View Button");
+				testRunner.ClickByName("Row Item Calibration - Box View Button");
 
 				Assert.IsTrue(testRunner.WaitForName("Part Preview Window", 2), "Part Preview Window should be open after View button is clicked");
 				testRunner.Wait(.2);

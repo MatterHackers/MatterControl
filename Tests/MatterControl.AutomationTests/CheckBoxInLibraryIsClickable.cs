@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				SystemWindow systemWindow;
-				string itemName = "Row Item " + "Calibration - Box";
+				string itemName = "Row Item Calibration - Box";
 
 				GuiWidget rowItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
 
