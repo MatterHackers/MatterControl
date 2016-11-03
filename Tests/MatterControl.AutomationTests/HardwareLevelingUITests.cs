@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 800);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* See https://github.com/MatterHackers/MatterControl/issues/1565 for details */)]
 		public async Task SoftwareLevelingRequiredCorrectWorkflow()
 		{
 			AutomationTest testToRun = (testRunner) =>

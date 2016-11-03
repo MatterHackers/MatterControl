@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task AddMuiltipleItemsToQueue()
+		public async Task AddMultipleItemsToQueue()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
