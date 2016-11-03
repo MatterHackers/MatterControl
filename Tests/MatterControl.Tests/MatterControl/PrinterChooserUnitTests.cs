@@ -11,7 +11,7 @@ namespace MatterControl.Tests.MatterControl
 {
 	class PrinterChooserUnitTests
 	{
-		[Test, Category("FixNeeded" /* Disabled until MCWS production is updated */)]
+		[Test]
 		public void PrinterChooserHonorsWhitelist()
 		{
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -63,6 +63,5 @@ namespace MatterControl.Tests.MatterControl
 			Assert.IsTrue(!string.IsNullOrEmpty(expectedItem) && expectedItem == "Esagonò");
 			*/
 		}
-
 	}
 }
