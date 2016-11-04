@@ -355,35 +355,35 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
 		}
 
+		/// <summary>
+		/// Tests that:
+		/// 1. When in Edit mode, checkboxes appear
+		/// 2. When not in Edit mode, no checkboxes appear
+		/// </summary>
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task DoneButtonTurnsOffEditMode()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-				/*
-				 *Tests that when one item is selected  
-				 *1. Queue Item count equals three before the test starts 
-				 *2. Selecting multiple queue itema and then clicking the Remove button removes the item 
-				 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
-				 */
-
-				int queueItemCount = QueueData.Instance.Count;
-
-				string itemName = "Queue Item 2013-01-25_Mouthpiece_v2";
 				SystemWindow systemWindow;
-				GuiWidget queueItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
-				SearchRegion queueItemRegion = testRunner.GetRegionByName(itemName, 3);
 
+				testRunner.CloseSignInAndPrinterSelect();
+
+				SearchRegion searchRegion = testRunner.GetRegionByName("Queue Item 2013-01-25_Mouthpiece_v2", 3);
+
+				// Enter Edit mode and confirm checkboxes exist
 				testRunner.ClickByName("Queue Edit Button", 2);
+				testRunner.Wait(.3);
+				Assert.IsNotNull(
+					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion), 
+					"While in Edit mode, checkboxes should exist on queue items");
 
-				GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion: queueItemRegion);
-				Assert.IsTrue(foundWidget != null, "We should have an actual checkbox");
-
+				// Exit Edit mode and confirm checkboxes are missing
 				testRunner.ClickByName("Queue Done Button", 1);
-
-				foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 1, searchRegion: queueItemRegion);
-				Assert.IsTrue(foundWidget != null, "Checkbox is gone");
+				testRunner.Wait(.3);
+				Assert.IsNull(
+					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 1, searchRegion), 
+					"After exiting Edit mode, checkboxes should not exist on queue items");
 
 				return Task.FromResult(0);
 			};
@@ -400,7 +400,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				/*
 				 *Tests that when one item is selected  
 				 *1. Queue Item count equals three before the test starts 
-				 *2. Selecting multiple queue itema and then clicking the Remove button removes the item 
+				 *2. Selecting multiple queue items and then clicking the Remove button removes the item 
 				 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
 				 */
 
