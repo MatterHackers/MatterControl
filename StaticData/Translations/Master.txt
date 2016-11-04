@@ -5554,3 +5554,9 @@ Translated:Layers & Infill
 English:Raft & Support
 Translated:Raft & Support
 
+English:OK
+Translated:OK
+
+English:Macro Feedback
+Translated:Macro Feedback
+

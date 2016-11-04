@@ -688,7 +688,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				else if (NumberOfLinesInCurrentPrint > 0
 					&& loadedGCode != null
-				    && gCodeFileStream0 != null)
+					&& gCodeFileStream0 != null)
 				{
 					return loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 				}
@@ -1371,7 +1371,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 
-			if(oneOrMoreValuesReset)
+			if (oneOrMoreValuesReset)
 			{
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
@@ -1386,7 +1386,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-					if(levelingData?.HasBeenRunAndEnabled() != true)
+					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
 						LevelWizardBase.ShowPrintLevelWizard();
 						return;
@@ -1410,7 +1410,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
-							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" 
+							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE"
 								&& hideGCodeWarning == null
 								&& !overrideAllowGCode)
 							{
@@ -1585,7 +1585,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-        public void ReadFromPrinter(ReadThread readThreadHolder)
+		public void ReadFromPrinter(ReadThread readThreadHolder)
 		{
 			string dataLastRead = string.Empty;
 
@@ -1634,7 +1634,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 								if (dataLastRead.Length > 0)
 								{
-									if(lastLineRead.StartsWith("ok"))
+									if (lastLineRead.StartsWith("ok"))
 									{
 										timeSinceRecievedOk.Restart();
 									}
@@ -1785,7 +1785,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				currentDestination = lastReportedPosition;
 				DestinationChanged.CallEvents(this, null);
-                if (totalGCodeStream != null)
+				if (totalGCodeStream != null)
 				{
 					totalGCodeStream.SetPrinterPosition(currentDestination);
 				}
@@ -1992,16 +1992,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return;
 				}
 
-				lineToWrite = lineToWrite.Split(';')[0].Trim();
-				if (lineToWrite.Trim().Length > 0)
+				if (CommunicationState == CommunicationStates.PrintingFromSd
+					|| ForceImmediateWrites)
 				{
-					if (CommunicationState == CommunicationStates.PrintingFromSd
-						|| ForceImmediateWrites)
+					lineToWrite = lineToWrite.Split(';')[0].Trim();
+					if (lineToWrite.Trim().Length > 0)
 					{
 						// sometimes we need to send code without buffering (like when we are closing the program).
 						WriteRawToPrinter(lineToWrite + "\r\n", lineToWrite);
 					}
-					else 
+				}
+				else
+				{
+					if (lineToWrite.Trim().Length > 0)
 					{
 						// insert the command into the printing queue at the head
 						InjectGCode(lineToWrite);
@@ -2389,12 +2392,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			for (int i = 0; i < lines.Length; i++)
 			{
-				string[] splitOnSemicolon = lines[i].Split(';');
-				string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
-				if (trimedLine != "")
-				{
-					queuedCommandStream2.Add(trimedLine);
-				}
+				queuedCommandStream2.Add(lines[i]);
 			}
 		}
 
@@ -2948,6 +2946,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					OnConnectionFailed(null);
 				}
 			}
+		}
+
+		public void MacroContinue()
+		{
+			queuedCommandStream2.Continue();
+		}
+
+		internal void MacroCancel()
+		{
+			queuedCommandStream2.Continue();
+			queuedCommandStream2.Clear();
 		}
 
 		bool haveHookedDrawing = false;

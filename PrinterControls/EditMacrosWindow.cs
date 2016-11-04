@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl
 		public GCodeMacro ActiveMacro;
 
 		public EditMacrosWindow(EventHandler functionToCallOnSave)
-			: base(360, 420)
+			: base(560, 420)
 		{
 			AlwaysOnTopOfMain = true;
 			Title = LocalizedString.Get("Macro Editor");

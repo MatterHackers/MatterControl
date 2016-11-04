@@ -251,6 +251,7 @@
     <Compile Include="SetupWizard\ExportSettingsPage.cs" />
     <Compile Include="SetupWizard\LicenseAgreementPage.cs" />
     <Compile Include="SetupWizard\PrinterProfileHistoryPage.cs" />
+    <Compile Include="ConfigurationPage\RunningMacroPage.cs" />
     <Compile Include="SetupWizard\SyncingPrintersPage.cs" />
     <Compile Include="SetupWizard\WizardPage.cs" />
     <Compile Include="SetupWizard\AndroidSetupOptionsPage.cs" />
