@@ -42,6 +42,7 @@ using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
@@ -183,34 +184,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			string fullPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", runName, "Test0", "data", "gcode");
 
-			foreach (string file in Directory.GetFiles(fullPath))
+			foreach (string iniPath in Directory.GetFiles(fullPath, "*.ini"))
 			{
-				if (file.Contains(".ini"))
+				var settings = PrinterSettingsLayer.LoadFromIni(iniPath);
+
+				string currentValue;
+
+				if (settings.TryGetValue(sliceSetting, out currentValue))
 				{
-
-					FileInfo f = new FileInfo(file);
-					string fullName = f.FullName;
-					string[] lines = File.ReadAllLines(fullName);
-					foreach (string line in lines)
-					{
-
-						if (line.Contains(sliceSetting))
-						{
-							line.Trim(' ');
-							string[] settingNameAndValue = line.Split('=');
-							string settingName = settingNameAndValue[0].Trim();
-							string settingValue = string.Empty;
-							if (settingNameAndValue.Length == 2)
-							{
-								settingValue = settingNameAndValue[1].Trim();
-							}
-
-							if (settingValue == expectedValue)
-							{
-								return true;
-							}
-						}
-					}
+					return currentValue.Trim() == expectedValue;
 				}
 			}
 
@@ -230,24 +212,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(AutomationRunner testRunner, string make, string model)
 		{
-			string manufacturer = make + " Menu Item";
-			string printer = model + " Menu Item";
-			string printerProfile = String.Format("{0} {1} Profile", make, model);
-
 			testRunner.ClickByName("Printers... Menu", 2);
+			testRunner.Wait(.2);
 
 			testRunner.ClickByName("Add New Printer... Menu Item", 2);
+			testRunner.Wait(.2);
 
 			testRunner.ClickByName("Connection Wizard Skip Sign In Button", 2);
+			testRunner.Wait(.2);
 
 			testRunner.ClickByName("Select Make", 2);
-
 			testRunner.Wait(.2);
+
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
 
 			testRunner.ClickByName("Select Model", 2);
-			testRunner.ClickByName(printer, 2);
+			testRunner.Wait(.2);
+
+			testRunner.ClickByName(model + " Menu Item", 2);
+			testRunner.Wait(.2);
 
 			testRunner.ClickByName("Save & Continue Button", 2);
 			testRunner.Wait(2);
