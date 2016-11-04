@@ -25,26 +25,37 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.Wait(1);
+
 				testRunner.ClickByName("Row Item Calibration - Box");
+				testRunner.Wait(.2);
+
+				// Add the Calibration box to the queue and selects it
 				testRunner.ClickByName("Row Item Calibration - Box Print Button");
 				testRunner.Wait(1);
 
 				testRunner.ClickByName("Layer View Tab");
+				testRunner.Wait(.2);
 
 				testRunner.ClickByName("Bread Crumb Button Home", 1);
+				testRunner.Wait(.2);
 
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				testRunner.Wait(.2);
 
 				testRunner.ClickByName("Raft / Priming Tab", 1);
+				testRunner.Wait(.2);
 
 				testRunner.ClickByName("Create Raft Checkbox", 1);
 				testRunner.Wait(1.5);
+
 				testRunner.ClickByName("Generate Gcode Button", 1);
-				testRunner.Wait(5);
+				testRunner.Wait(2);
+
+				testRunner.WaitUntil(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
 				//Call compare slice settings method here
 				Assert.IsTrue(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
