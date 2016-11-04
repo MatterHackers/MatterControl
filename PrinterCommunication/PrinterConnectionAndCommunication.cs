@@ -1677,6 +1677,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											CommunicationState = CommunicationStates.Connected;
 											haveReportedError = false;
 											// now send any command that initialize this printer
+											ClearQueuedGCode();
 											string connectGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.connect_gcode);
 											SendLineToPrinterNow(connectGCode);
 
