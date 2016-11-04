@@ -272,32 +272,33 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
+		/// <summary>
+		/// Tests that
+		/// 1. Target item exists
+		/// 2. QueueData.Instance.Count is correctly decremented after remove
+		/// 3. Target item does not exist after remove
+		/// </summary>
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task RemoveButtonRemovesSingleItem()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				/*
-				 *Tests that when one item is selected  
-				 *1. Queue Item count equals three before the test starts 
-				 *2. Selecting single queue item and then clicking the Remove button removes the item 
-				 *3. Selecting single queue items and then clicking the Remove button decreases the queue tab count by one
-				 */
-
-				int queueItemCount = QueueData.Instance.Count;
-
-				testRunner.ClickByName("Queue Remove Button", 2);
 
 				testRunner.Wait(1);
 
-				int queueItemCountAfterRemove = QueueData.Instance.Count;
+				int expectedQueueCount = QueueData.Instance.Count - 1;
 
-				Assert.IsTrue(queueItemCount - 1 == queueItemCountAfterRemove);
+				// Assert exists
+				Assert.IsTrue(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2"), "Target item should exist before Remove");
 
-				bool queueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
+				// Remove target item
+				testRunner.ClickByName("Queue Remove Button", 2);
+				testRunner.Wait(1);
 
-				Assert.IsTrue(queueItemExists == false);
+				// Assert removed
+				Assert.AreEqual(expectedQueueCount, QueueData.Instance.Count, "After Remove button click, Queue count should be 1 less");
+				Assert.IsFalse(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1), "Target item should not exist after Remove");
 
 				return Task.FromResult(0);
 			};
