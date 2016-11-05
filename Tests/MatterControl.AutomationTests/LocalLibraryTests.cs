@@ -207,37 +207,45 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task RenameButtonRenameLocalLibraryFolder()
+		public async Task RenameButtonRenamesLocalLibraryFolder()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				//Navigate to Local Library
+				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
+				testRunner.Wait(.2);
+
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				//Create New Folder
+				// Create New Folder
 				testRunner.ClickByName("Create Folder From Library Button");
 				testRunner.Wait(.5);
+
 				testRunner.Type("New Folder");
 				testRunner.Wait(.5);
-				testRunner.ClickByName("Create Folder Button");
 
-				//Check for Created Folder
-				string newLibraryFolder = "New Folder Row Item Collection";
-				bool newFolderWasCreated = testRunner.WaitForName(newLibraryFolder, 1);
-				Assert.IsTrue(newFolderWasCreated == true);
+				testRunner.ClickByName("Create Folder Button");
+				testRunner.Wait(.2);
+
+				// Confirm newly created folder exists
+				Assert.IsTrue(testRunner.WaitForName("New Folder Row Item Collection", 1), "New folder should appear as GuiWidget");
 
 				testRunner.ClickByName("Library Edit Button");
+				testRunner.Wait(.2);
+
 				testRunner.ClickByName("New Folder Row Item Collection");
+				testRunner.Wait(.2);
+
 				MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
 				testRunner.Wait(.5);
 				testRunner.Type("Renamed Library Folder");
-				testRunner.ClickByName("Rename Button");
 
-				//Make sure that renamed Library Folder Exists
-				bool renamedLibraryFolderExists = testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2);
-				Assert.IsTrue(renamedLibraryFolderExists == true);
+				testRunner.ClickByName("Rename Button");
+				testRunner.Wait(.2);
+
+				// Make sure the renamed Library Folder exists
+				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2), "Renamed folder should exist");
 
 				return Task.FromResult(0);	
 			};
@@ -337,8 +345,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				// Make sure row items exist before remove
-				Assert.IsTrue(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should exists before remove");
-				Assert.IsTrue(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should exists before remove");
+				Assert.IsTrue(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should exist before remove");
+				Assert.IsTrue(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should exist before remove");
 
 				// Remove items
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
