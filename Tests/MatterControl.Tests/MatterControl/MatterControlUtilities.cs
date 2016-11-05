@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -53,6 +54,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public static class MatterControlUtilities
 	{
 		private static bool saveImagesForDebug = true;
+
+		private static event EventHandler unregisterEvents;
 
 		private static int testID = 0;
 
@@ -88,8 +91,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Sign Out Menu Item", 2);
 			testRunner.Wait(.5);
 
-			testRunner.ClickByName("Yes Button");
-			testRunner.Wait(5);
+			// Rather than waiting a fixed amount of time, we wait for the ReloadAll to complete before returning
+			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
+		}
+
+		public static void WaitForReloadAll(this AutomationRunner testRunner, Action reloadAllAction)
+		{
+			// Wire up a block and release mechanism to wait until the sign in process has completed
+			AutoResetEvent resetEvent = new AutoResetEvent(false);
+			ApplicationController.Instance.DoneReloadingAll.RegisterEvent((s, e) => resetEvent.Set(), ref unregisterEvents);
+
+			// Start the procedure that begins a ReloadAll event in MatterControl
+			reloadAllAction();
+
+			// Wait until DoneReloadingAll completes
+			resetEvent.WaitOne();
+
+			// Remove our DoneReloadingAll listener
+			unregisterEvents(null, null);
+
+			// Wait for any post DoneReloadingAll code to finish up and return
+			testRunner.Wait(.2);
 		}
 
 		public static string PathToExportGcodeFolder
@@ -218,8 +240,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Add New Printer... Menu Item", 2);
 			testRunner.Wait(.2);
 
+			/* This prompt is no longer shown and causes a 2 second delay. Remove this block once confirmed
 			testRunner.ClickByName("Connection Wizard Skip Sign In Button", 2);
-			testRunner.Wait(.2);
+			testRunner.Wait(.2); */
 
 			testRunner.ClickByName("Select Make", 2);
 			testRunner.Wait(.2);
@@ -234,8 +257,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Wait(.2);
 
 			testRunner.ClickByName("Save & Continue Button", 2);
-			testRunner.Wait(2);
 
+			testRunner.WaitForName("Cancel Wizard Button", 3);
 			testRunner.ClickByName("Cancel Wizard Button", 2);
 			testRunner.Wait(1);
 		}
