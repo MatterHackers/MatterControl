@@ -226,10 +226,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// delete printer
 			testRunner.ClickByName("Edit Printer Button", 5);
 			testRunner.Wait(.5);
+
 			testRunner.ClickByName("Delete Printer Button", 5);
 			testRunner.Wait(.5);
-			testRunner.ClickByName("Yes Button", 5);
-			testRunner.Wait(2);
+
+			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button", 5));
 		}
 
 		public static void AddAndSelectPrinter(AutomationRunner testRunner, string make, string model)

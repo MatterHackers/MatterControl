@@ -337,8 +337,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				// Make sure row items exist before remove
-				Assert.IsTrue(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should exists before remove");
-				Assert.IsTrue(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should exists before remove");
+				Assert.IsTrue(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should exist before remove");
+				Assert.IsTrue(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should exist before remove");
 
 				// Remove items
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
