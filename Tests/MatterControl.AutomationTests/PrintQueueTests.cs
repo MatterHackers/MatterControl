@@ -536,7 +536,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				Assert.IsTrue(QueueData.Instance.Count == 4, "Queue has expected 4 items, including default Coin");
+				Assert.AreEqual(4, QueueData.Instance.Count, "Queue has expected 4 items, including default Coin");
 
 				// Assert that widgets exists
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman"), "Batman part exists");
@@ -551,7 +551,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 
 				// Assert that object model has been cleared
-				Assert.IsTrue(QueueData.Instance.Count == 0, "Queue is empty after RemoveAll action");
+				Assert.AreEqual(0, QueueData.Instance.Count, "Queue is empty after RemoveAll action");
 
 				// Assert that widgets have been removed
 				Assert.IsTrue(!testRunner.WaitForName("Queue Item Batman"), "Batman part removed");
