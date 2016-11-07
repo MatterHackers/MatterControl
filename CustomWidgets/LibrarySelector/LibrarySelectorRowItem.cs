@@ -71,6 +71,9 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			this.Name = this.ItemName + " Row Item Collection";
 
 			CreateGuiElements(openButtonText);
+
+			MouseEnterBounds += (s, e) => EnteredBounds();
+			MouseLeaveBounds += (s, e) => EnteredBounds();
 		}
 
 		public PrintItemCollection PrintItemCollection { get { return printItemCollection; } }
@@ -266,7 +269,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			AddHandlers();
 		}
 
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		void EnteredBounds()
 		{
 			switch (UnderMouseState)
 			{
@@ -289,8 +292,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					}
 					break;
 			}
-
-			base.OnMouseMove(mouseEvent);
 		}
 
 		private void AddHandlers()
