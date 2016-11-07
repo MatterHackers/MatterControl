@@ -73,6 +73,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		internal PrinterSettingsLayer MaterialLayer { get; private set; }
 
+		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
+
 		public PrinterSettings()
 		{
 			this.Helpers = new SettingsHelpers(this);
@@ -965,6 +967,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (persistenceLayer.TryGetValue(settingsKey, out existingValue) && existingValue == settingsValue)
 			{
 				return;
+			}
+
+			// Remove any staged/conflicting user override, making this the new and active user override
+			if (StagedUserSettings.ContainsKey(settingsKey))
+			{
+				StagedUserSettings.Remove(settingsKey);
 			}
 
 			// Otherwise, set and save
