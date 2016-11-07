@@ -46,7 +46,7 @@ namespace MatterControl.Tests.MatterControl
 				toImport.UserLayer
 			};
 
-			printerSettings.Merge(printerSettings.UserLayer, toImport, sourceFilter);
+			printerSettings.Merge(printerSettings.UserLayer, toImport, sourceFilter, false);
 
 			Assert.AreEqual(printerSettings.GetValue(SettingsKey.cancel_gcode), newValue, "Imported setting applied");
 			Assert.IsEmpty(printerSettings.GetValue(notAnExistingKey), "Invalid settings keys should be skipped");

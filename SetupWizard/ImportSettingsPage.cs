@@ -180,14 +180,17 @@ namespace MatterHackers.MatterControl
 			mergeButton.Name = "Merge Profile";
 			mergeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
+				bool copyName = false;
 				PrinterSettingsLayer sourceLayer = null;
 				if (selectedMaterial > -1)
 				{
 					sourceLayer = settingsToImport.MaterialLayers[selectedMaterial];
+					copyName = true;
 				}
 				else if (selectedQuality > -1)
 				{
 					sourceLayer = settingsToImport.QualityLayers[selectedQuality];
+					copyName = true;
 				}
 
 				List<PrinterSettingsLayer> sourceFilter;
@@ -208,7 +211,7 @@ namespace MatterHackers.MatterControl
 					};
 				}
 
-				ActiveSliceSettings.Instance.Merge(destinationLayer, settingsToImport, sourceFilter);
+				ActiveSliceSettings.Instance.Merge(destinationLayer, settingsToImport, sourceFilter, copyName);
 
 				this.Parents<SystemWindow>().FirstOrDefault()?.CloseOnIdle();
 			});
@@ -229,7 +232,7 @@ namespace MatterHackers.MatterControl
 						settingsToImport.UserLayer ?? new PrinterSettingsLayer()
 					};
 
-					ActiveSliceSettings.Instance.Merge(destinationLayer, settingsToImport, sourceFilter);
+					ActiveSliceSettings.Instance.Merge(destinationLayer, settingsToImport, sourceFilter, false);
 					UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 
 					string successMessage = importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath));

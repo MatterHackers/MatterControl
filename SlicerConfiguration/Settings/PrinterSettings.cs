@@ -96,13 +96,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer OemLayer { get; set; }
 
-		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter)
+		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter, bool setLayerName)
 		{
 			HashSet<string> skipKeys = new HashSet<string>
 			{
-				SettingsKey.layer_name,
 				"layer_id",
 			};
+
+			if(!setLayerName)
+			{
+				skipKeys.Add(SettingsKey.layer_name);
+			}
 
 			var destinationFilter = new List<PrinterSettingsLayer>
 			{
@@ -131,6 +135,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						destinationLayer[keyName] = importValue;
 					}
 				}
+			}
+
+			if (setLayerName)
+			{
+				destinationLayer[SettingsKey.layer_name] = settingsToImport.GetValue(SettingsKey.layer_name, sourceFilter);
 			}
 
 			settingsToImport.BaseLayer = baseLayer;
