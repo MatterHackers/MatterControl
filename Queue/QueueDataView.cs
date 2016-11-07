@@ -526,7 +526,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			get
 			{
-				if (SelectedIndex != -1)
+				if (SelectedIndex != -1
+					&& topToBottomItemList.Children?.Count > SelectedIndex
+					&& topToBottomItemList.Children[SelectedIndex].Children?.Count > 0)
 				{
 					return topToBottomItemList.Children[SelectedIndex].Children[0];
 				}
