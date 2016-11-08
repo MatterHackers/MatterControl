@@ -181,27 +181,11 @@ namespace MatterHackers.MatterControl
 		private TextWidget statusMessage;
 		TextWidget connectionStatus;
 
-		static string authenticanionString = "";
-		public static string AuthenticanionString
-		{
-			private get
-			{
-				return authenticanionString;
-			}
-
-			set
-			{
-				if(value != authenticanionString)
-				{
-					authenticanionString = value;
-				}
-			}
-
-		}
+		public static string AuthenticationString { private get; set; } = "";
 
 		internal void RefreshStatus()
 		{
-			connectionStatus.Text = authenticanionString;
+			connectionStatus.Text = AuthenticationString;
 			if (!HasBeenClosed)
 			{
 				UiThread.RunOnIdle(RefreshStatus, 1);
@@ -224,7 +208,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget nameAndStatus = new FlowLayoutWidget();
 			nameAndStatus.AddChild(new TextWidget(username, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
-			connectionStatus = new TextWidget(authenticanionString, pointSize: 8, textColor: ActiveTheme.Instance.SecondaryTextColor)
+			connectionStatus = new TextWidget(AuthenticationString, pointSize: 8, textColor: ActiveTheme.Instance.SecondaryTextColor)
 			{
 				Margin = new BorderDouble(5,0,0,0),
 				AutoExpandBoundsToText = true,
