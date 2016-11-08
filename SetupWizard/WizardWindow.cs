@@ -162,19 +162,18 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() =>
 			{
 				this.RemoveAllChildren();
+#if __ANDROID__
+				this.AddChild(new SoftKeyboardContentOffset(pageToChangeTo));
+#else
 				this.AddChild(pageToChangeTo);
+#endif
 				this.Invalidate();
 			});
 		}
 
 		internal void ChangeToPage<PanelType>() where PanelType : WizardPage, new()
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				this.RemoveAllChildren();
-				this.AddChild(new PanelType() { WizardWindow = this });
-				this.Invalidate();
-			});
+			ChangeToPage(new PanelType());
 		}
 	}
 }
