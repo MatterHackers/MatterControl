@@ -179,6 +179,34 @@ namespace MatterHackers.MatterControl
 		private Button signInButton;
 		private Button signOutButton;
 		private TextWidget statusMessage;
+		TextWidget connectionStatus;
+
+		static string authenticanionString = "";
+		public static string AuthenticanionString
+		{
+			private get
+			{
+				return authenticanionString;
+			}
+
+			set
+			{
+				if(value != authenticanionString)
+				{
+					authenticanionString = value;
+				}
+			}
+
+		}
+
+		internal void RefreshStatus()
+		{
+			connectionStatus.Text = authenticanionString;
+			if (!HasBeenClosed)
+			{
+				UiThread.RunOnIdle(RefreshStatus, 1);
+			}
+		}
 
 		public SetupAccountView(TextImageButtonFactory textImageButtonFactory)
 			: base("My Account")
@@ -193,7 +221,23 @@ namespace MatterHackers.MatterControl
 				username = "Not Signed In";
 			}
 
-			mainContainer.AddChild(new TextWidget(username, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			FlowLayoutWidget nameAndStatus = new FlowLayoutWidget();
+			nameAndStatus.AddChild(new TextWidget(username, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor));
+
+			connectionStatus = new TextWidget(authenticanionString, pointSize: 8, textColor: ActiveTheme.Instance.SecondaryTextColor)
+			{
+				Margin = new BorderDouble(5,0,0,0),
+				AutoExpandBoundsToText = true,
+			};
+
+			if (signedIn)
+			{
+				nameAndStatus.AddChild(connectionStatus);
+			}
+
+			mainContainer.AddChild(nameAndStatus);
+
+			RefreshStatus();
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget();
 			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
