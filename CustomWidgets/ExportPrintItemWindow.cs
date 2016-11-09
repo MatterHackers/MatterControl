@@ -327,6 +327,10 @@ namespace MatterHackers.MatterControl
 							}
 						}
 					}
+					else
+					{
+						File.Copy(gcodeFilename, dest, true);
+					}
 				}
 				else
 				{
