@@ -178,6 +178,7 @@ namespace MatterHackers.MatterControl
 				nameAndStatus.AddChild(connectionStatus);
 			}
 
+
 			mainContainer.AddChild(nameAndStatus);
 
 			RefreshStatus();
@@ -191,12 +192,12 @@ namespace MatterHackers.MatterControl
 			signInButton.VAnchor = VAnchor.ParentCenter;
 			signInButton.Visible = !signedIn;
 			signInButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-		   {
-			   signInButton.Visible = false;
-			   signOutButton.Visible = false;
-			   statusMessage.Visible = true;
-			   ApplicationController.Instance.StartSignIn();
-		   });
+			{
+				signInButton.Visible = false;
+				signOutButton.Visible = false;
+				statusMessage.Visible = true;
+				ApplicationController.Instance.StartSignIn();
+			});
 			buttonContainer.AddChild(signInButton);
 
 			signOutButton = textImageButtonFactory.Generate("Sign Out");
