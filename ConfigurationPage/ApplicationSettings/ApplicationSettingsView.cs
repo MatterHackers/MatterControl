@@ -223,8 +223,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(interfaceOptionsDropList);
 			optionsContainer.Width = 200;
 
-			MenuItem responsizeOptionsDropDownItem = interfaceOptionsDropList.AddItem("Normal".Localize(), "responsive");
-			MenuItem touchscreenOptionsDropDownItem = interfaceOptionsDropList.AddItem("Touchscreen".Localize(), "touchscreen");
+			interfaceOptionsDropList.AddItem("Normal".Localize(), "responsive");
+			interfaceOptionsDropList.AddItem("Touchscreen".Localize(), "touchscreen");
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
 			string currentDisplayModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
@@ -237,10 +237,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
 			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
 			{
-				string releaseCode = ((DropDownList)sender).SelectedValue;
-				if (releaseCode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
+				string displayMode = ((DropDownList)sender).SelectedValue;
+				if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
 				{
-					UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, releaseCode);
+					UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
 					displayControlRestartButton.Visible = true;
 				}
 			};

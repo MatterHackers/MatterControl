@@ -468,6 +468,9 @@ namespace MatterHackers.MatterControl
 
 						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 						{
+							// make sure that on touchscreen (due to lazy tabs) we initialize our stating parts and queue
+							var temp = new LibraryProviderSQLite(null, null, null, null);
+							// now bulid the ui
 							globalInstance.MainView = new TouchscreenView();
 						}
 						else
