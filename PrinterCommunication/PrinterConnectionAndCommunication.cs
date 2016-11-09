@@ -1523,12 +1523,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		bool reportedError = false;
+		bool haveReportedError = false;
 		public void PrinterReportsError(object sender, EventArgs e)
 		{
-			if (!reportedError)
+			if (!haveReportedError)
 			{
-				reportedError = true;
+				haveReportedError = true;
 				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 				if (foundStringEventArgs != null)
 				{
@@ -1718,6 +1718,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
 										{
 											CommunicationState = CommunicationStates.Connected;
+											haveReportedError = false;
 											// now send any command that initialize this printer
 											string connectGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.connect_gcode);
 											SendLineToPrinterNow(connectGCode);
@@ -2115,6 +2116,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				return;
 			}
 
+			haveReportedError = false;
 			printWasCanceled = false;
 			ExtrusionRatio = 1;
 			FeedRateRatio = 1;
