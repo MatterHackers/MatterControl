@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl
 	using System.Reflection;
 	using System.Text.RegularExpressions;
 	using SettingsManagement;
+	using PrintHistory;
 
 	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
 	{
@@ -470,6 +471,8 @@ namespace MatterHackers.MatterControl
 						{
 							// make sure that on touchscreen (due to lazy tabs) we initialize our stating parts and queue
 							var temp = new LibraryProviderSQLite(null, null, null, null);
+							// and make sure we have the check for print recovery wired up needed for lazy tabs.
+							var temp2 = PrintHistoryData.Instance;
 							// now bulid the ui
 							globalInstance.MainView = new TouchscreenView();
 						}
