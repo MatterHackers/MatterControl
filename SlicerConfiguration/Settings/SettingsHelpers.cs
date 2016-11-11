@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using MatterHackers.Agg.PlatformAbstract;
+using System.Runtime.Serialization;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -515,6 +516,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool MarkedForDelete { get; set; } = false;
 		public string ContentSHA1 { get; set; }
 		public string ServerSHA1 { get; set; }
+
+		[OnDeserialized]
+		public void OnDeserialized(StreamingContext context)
+		{
+			if (string.IsNullOrEmpty(this.Make))
+			{
+				this.Make = "Other";
+			}
+
+			if (string.IsNullOrEmpty(this.Model))
+			{
+				this.Model = "Other";
+			}
+		}
 
 		[JsonIgnore]
 		public string ProfilePath => ProfileManager.Instance.ProfilePath(this);
