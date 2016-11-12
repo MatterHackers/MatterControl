@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
 #endif
 
-		public static bool CameraInUse = false;
+		public static bool CameraInUseByExternalProcess { get; set; } = false;
 		public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
