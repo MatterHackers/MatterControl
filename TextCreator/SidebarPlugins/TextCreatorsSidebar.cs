@@ -48,7 +48,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var tabButton = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("TEXT".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+			var tabButton = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("TEXT".Localize().ToUpper(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 			tabButton.Margin = new BorderDouble(bottom: 2);
 			mainContainer.AddChild(tabButton);
 

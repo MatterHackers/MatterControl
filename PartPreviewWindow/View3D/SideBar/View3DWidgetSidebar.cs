@@ -126,7 +126,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
 				expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
 
@@ -162,7 +164,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in the view options
 				{
-					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 					expandViewOptions.Margin = new BorderDouble(bottom: 2);
 					buttonPanel.AddChild(expandViewOptions);
 					expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
