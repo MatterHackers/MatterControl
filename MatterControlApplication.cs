@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -719,6 +720,14 @@ namespace MatterHackers.MatterControl
 			};
 #endif
 			base.OnLoad(args);
+
+			// HACK: Short term hack to clear bed and enter "Create" mode on startup
+			UiThread.RunOnIdle(() =>
+			{
+				//var view3D = this.Children<View3DWidget>().FirstOrDefault();
+				var view3D = this.FindNamedChildRecursive("View3DWidget") as View3DWidget;
+				view3D?.ClearBedAndLoadPrintItemWrapper(null, true);
+			}, 2);
 		}
 
 		private static void HtmlWindowTest()
