@@ -146,7 +146,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// put in the material options
 				int numberOfExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
-				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Materials".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton(
+					"Materials".Localize().ToUpper(),
+					View3DWidget.ArrowRight,
+					View3DWidget.ArrowDown);
 				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
 				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
 

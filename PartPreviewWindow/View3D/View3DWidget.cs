@@ -549,7 +549,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectPanel = new SelectedObjectPanel()
 			{
-				Width = 215,
 				Margin = new BorderDouble(0, 0, Sidebar.Width + 5, 5),
 			};
 
@@ -1735,7 +1734,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
-			if(!Scene.HasSelection)
+			if (!Scene.HasSelection)
 			{
 				selectedObjectPanel.RemoveAllChildren();
 				return;
