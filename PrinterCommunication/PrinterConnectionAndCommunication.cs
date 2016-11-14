@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures);
 
-			ReadLineContainsCallBacks.AddCallbackToKey("rs:", PrinterRequestsResend);
+			ReadLineContainsCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
 			ReadLineContainsCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
 			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
 
