@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F49EC1DD-D645-4709-8667-B57318AF67B0}</ProjectGuid>
+    <ProjectGuid>{70FBB82C-558D-4B5F-BE75-A922D392E650}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MatterHackers.Plugins.TextCreator</RootNamespace>
-    <AssemblyName>TextCreator</AssemblyName>
+    <RootNamespace>MatterHackers.Plugins.BrailBuilder</RootNamespace>
+    <AssemblyName>BrailBuilder</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -51,7 +51,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\MatterControl\bin\Release\TextCreator.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>..\..\MatterControl\bin\Release\BrailBuilder.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -105,7 +105,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\MatterControl\bin\Release\TextCreator.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>..\..\MatterControl\bin\Release\BrailBuilder.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -136,13 +136,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Braille\BrailleGenerator.cs" />
-    <Compile Include="Braille\BrailleEditor.cs" />
-    <Compile Include="Braille\BrailleGrade2.cs" />
-    <Compile Include="Braille\BrailleGrade2Mapping.cs" />
-    <Compile Include="SidebarPlugins\TextCreatorsSidebar.cs" />
-    <Compile Include="Text\TextGenerator.cs" />
-    <Compile Include="Text\TextEditor.cs" />
+    <Compile Include="BrailleGrade2Mapping.cs" />
+    <Compile Include="BrailleGrade2.cs" />
+    <Compile Include="BrailleBuilderMainWindow.cs" />
+    <Compile Include="BrailleBuilder.cs" />
+    <Compile Include="View3DBrailleBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
@@ -209,12 +207,13 @@
       <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
       <Name>MatterControlPluginSystem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Submodules\MatterSlice\MatterSlice.csproj">
+      <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
+      <Name>MatterSlice</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
