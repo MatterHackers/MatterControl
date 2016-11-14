@@ -131,9 +131,6 @@ namespace MatterHackers.MatterControl
 
 	public class SetupAccountView : SetupViewBase
 	{
-		public static EventHandler RedeemDesignCode;
-		public static EventHandler EnterShareCode;
-
 		private event EventHandler unregisterEvents;
 		private Button signInButton;
 		private Button signOutButton;
@@ -222,7 +219,7 @@ namespace MatterHackers.MatterControl
 			redeemPurchaseButton.Margin = new BorderDouble(0, 0, 10, 0);
 			redeemPurchaseButton.Click += (sender, e) =>
 			{
-				RedeemDesignCode?.Invoke(this, null);
+				MatterControlApplication.Instance.RedeemDesignCode?.Invoke();
 			};
 			buttonContainer.AddChild(redeemPurchaseButton);
 
@@ -233,7 +230,7 @@ namespace MatterHackers.MatterControl
 			redeemShareButton.Margin = new BorderDouble(0, 0, 10, 0);
 			redeemShareButton.Click += (sender, e) =>
 			{
-				EnterShareCode?.Invoke(this, null);
+				MatterControlApplication.Instance.EnterShareCode?.Invoke();
 			};
 
 			if (!signedIn)
