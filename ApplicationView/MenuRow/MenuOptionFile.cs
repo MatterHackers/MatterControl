@@ -18,9 +18,6 @@ namespace MatterHackers.MatterControl
 	{
 		public static MenuOptionFile CurrentMenuOptionFile = null;
 
-		public EventHandler RedeemDesignCode;
-		public EventHandler EnterShareCode;
-
 		public MenuOptionFile()
 			: base("File".Localize())
 		{
@@ -36,8 +33,8 @@ namespace MatterHackers.MatterControl
 				new MenuItemAction("Add Printer".Localize(), AddPrinter_Click),
 				new MenuItemAction("Import Printer".Localize(), ImportPrinter),
 				new MenuItemAction("Add File To Queue".Localize(), importFile_Click),
-				new MenuItemAction("Redeem Design Code".Localize(), () => RedeemDesignCode?.Invoke(this, null)),
-				new MenuItemAction("Enter Share Code".Localize(), () => EnterShareCode?.Invoke(this, null)),
+				new MenuItemAction("Redeem Design Code".Localize(), () => MatterControlApplication.Instance.RedeemDesignCode?.Invoke()),
+				new MenuItemAction("Enter Share Code".Localize(), () => MatterControlApplication.Instance.EnterShareCode?.Invoke()),
 				new MenuItemAction("------------------------", null),
 				new MenuItemAction("Exit".Localize(), () =>
 				{
