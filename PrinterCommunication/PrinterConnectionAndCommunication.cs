@@ -1654,7 +1654,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						{
 							string allDataRead = serialPort.ReadExisting();
 							//Debug.Write("r: " + allDataRead);
-							dataLastRead += allDataRead.Replace('\r', '\n');
+							allDataRead = allDataRead.Replace("\r\n", "\n");
+							allDataRead = allDataRead.Replace('\r', '\n');
+							dataLastRead += allDataRead;
 							do
 							{
 								int returnPosition = dataLastRead.IndexOf('\n');
@@ -2911,7 +2913,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
 
 				LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
-				WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
+				WriteToPrinter(lineToWrite + "\n", lineToWrite);
 			}
 			System.Threading.Thread.Sleep(1);
 		}
