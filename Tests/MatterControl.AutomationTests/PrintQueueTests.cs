@@ -554,9 +554,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(0, QueueData.Instance.Count, "Queue is empty after RemoveAll action");
 
 				// Assert that widgets have been removed
-				Assert.IsTrue(!testRunner.WaitForName("Queue Item Batman"), "Batman part removed");
-				Assert.IsTrue(!testRunner.WaitForName("Queue Item Fennec_Fox"), "Fox part removed");
-				Assert.IsTrue(!testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
+				testRunner.Wait(.5);
+
+				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Fennec_Fox"), "Fox part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
 
 				return Task.FromResult(0);
 			};
@@ -610,23 +612,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
+		/// <summary>
+		/// *Tests:
+		/// *1. When the remove button on a queue item is clicked the queue tab count decreases by one 
+		/// *2. When the remove button on a queue item is clicked the item is removed
+		/// *3. When the View button on a queue item is clicked the part preview window is opened
+		/// </summary>
+		/// <returns></returns>
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task ClickQueueRoWItemViewAndRemove()
+		public async Task ClickQueueRowItemViewAndRemove()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				/*
-				 *Tests:
-				 *1. When the remove button on a queue item is clicked the queue tab count decreases by one 
-				 *2. When the remove button on a queue item is clicked the item is removed
-				 *3. When the View button on a queue item is clicked the part preview window is opened
-				 */
-
 				testRunner.Wait(2);
-				int currentQueueItemCount = QueueData.Instance.Count;
 
+				Assert.AreEqual(4, QueueData.Instance.Count, "Queue should initially have four items");
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
 
@@ -634,21 +636,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Queue Item Batman Remove");
 				testRunner.Wait(2);
 
-				int queueItemCountAfterRemove = QueueData.Instance.Count;
+				Assert.AreEqual(3, QueueData.Instance.Count, "Batman item removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman item removed");
 
-				Assert.IsTrue(currentQueueItemCount - 1 == queueItemCountAfterRemove);
-
-				bool batmanQueueItemExists = testRunner.WaitForName("Queue Item Batman", 1);
-				Assert.IsTrue(batmanQueueItemExists == false);
-
-				bool partPreviewWindowExists1 = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 1);
-				Assert.IsTrue(partPreviewWindowExists1 == false);
+				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview"), "Mouthpiece Part Preview should not initially be visible");
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2", 1);
 				testRunner.Wait(2);
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View", 1);
 
-				bool partPreviewWindowExists2 = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2);
-				Assert.IsTrue(partPreviewWindowExists2 == true);
+				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2), "The Mouthpiece Part Preview should appear after the view button is clicked");
 
 				return Task.FromResult(0);
 			};
