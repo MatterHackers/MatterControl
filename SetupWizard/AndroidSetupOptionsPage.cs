@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl
 			redeemPurchaseButton.Margin = new BorderDouble(0, 0, 10, 0);
 			redeemPurchaseButton.Click += (sender, e) =>
 			{
-				MatterControlApplication.Instance.RedeemDesignCode?.Invoke();
+				ApplicationController.Instance.RedeemDesignCode?.Invoke();
 			};
 			buttonContainer.AddChild(redeemPurchaseButton);
 
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl
 			redeemShareButton.Margin = new BorderDouble(0, 0, 10, 0);
 			redeemShareButton.Click += (sender, e) =>
 			{
-				MatterControlApplication.Instance.EnterShareCode?.Invoke();
+				ApplicationController.Instance.EnterShareCode?.Invoke();
 			};
 
 			if (!signedIn)

@@ -179,6 +179,9 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
+		public Action RedeemDesignCode;
+		public Action EnterShareCode;
+
 		private static ApplicationController globalInstance;
 		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
