@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl.ContactForm
 		private void AddHandlers()
 		{
 			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-			contactFormWidget.Closed += (sender, e) => { throw new Exception ("HockeyApp test exception"); Close(); };
+			contactFormWidget.Closed += (sender, e) => { Close(); };
 		}
 
 		public override void OnClosed(EventArgs e)
