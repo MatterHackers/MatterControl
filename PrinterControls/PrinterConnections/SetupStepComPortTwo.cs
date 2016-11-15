@@ -69,28 +69,20 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerMessageTwo.HAnchor = HAnchor.ParentLeftRight;
 			printerMessageTwo.Margin = elementMargin;
 
-			string printerMessageThreeTxtBeg = "Press".Localize();
-			string printerMessageThreeTxtEnd = "Continue".Localize();
-			string printerMessageThreeTxtFull = string.Format("2.) {0} '{1}'.", printerMessageThreeTxtBeg, printerMessageThreeTxtEnd);
-			TextWidget printerMessageThree = new TextWidget(printerMessageThreeTxtFull, 0, 0, 12);
-			printerMessageThree.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageThree.HAnchor = HAnchor.ParentLeftRight;
-			printerMessageThree.Margin = elementMargin;
+			string printerMessageThreeBeg = "Power on and connect printer".Localize();
+			string printerMessageThreeFull = string.Format("2.) {0}.", printerMessageThreeBeg);
+			TextWidget printerMessageThree = new TextWidget(printerMessageThreeFull, 0, 0, 12);
+            printerMessageThree.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            printerMessageThree.HAnchor = HAnchor.ParentLeftRight;
+            printerMessageThree.Margin = elementMargin;
 
-			string printerMessageFourBeg = "Power on and connect printer".Localize();
-			string printerMessageFourFull = string.Format("3.) {0}.", printerMessageFourBeg);
-			TextWidget printerMessageFour = new TextWidget(printerMessageFourFull, 0, 0, 12);
-			printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageFour.HAnchor = HAnchor.ParentLeftRight;
-			printerMessageFour.Margin = elementMargin;
-
-			string printerMessageFiveTxtBeg = "Press".Localize();
-			string printerMessageFiveTxtEnd = "Connect".Localize();
-			string printerMessageFiveTxtFull = string.Format("4.) {0} '{1}'.", printerMessageFiveTxtBeg, printerMessageFiveTxtEnd);
-			TextWidget printerMessageFive = new TextWidget(printerMessageFiveTxtFull, 0, 0, 12);
-			printerMessageFive.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageFive.HAnchor = HAnchor.ParentLeftRight;
-			printerMessageFive.Margin = elementMargin;
+			string printerMessageFourTxtBeg = "Press".Localize();
+			string printerMessageFourTxtEnd = "Connect".Localize();
+			string printerMessageFourTxtFull = string.Format("3.) {0} '{1}'.", printerMessageFourTxtBeg, printerMessageFourTxtEnd);
+			TextWidget printerMessageFour = new TextWidget(printerMessageFourTxtFull, 0, 0, 12);
+            printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            printerMessageFour.HAnchor = HAnchor.ParentLeftRight;
+            printerMessageFour.Margin = elementMargin;
 
 			GuiWidget vSpacer = new GuiWidget();
 			vSpacer.VAnchor = VAnchor.ParentBottomTop;
@@ -109,7 +101,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(printerMessageTwo);
 			container.AddChild(printerMessageThree);
 			container.AddChild(printerMessageFour);
-			container.AddChild(printerMessageFive);
 			container.AddChild(printerErrorMessage);
 			container.AddChild(vSpacer);
 			container.AddChild(manualLink);
