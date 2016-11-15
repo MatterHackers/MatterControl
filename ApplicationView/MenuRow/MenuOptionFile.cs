@@ -33,8 +33,8 @@ namespace MatterHackers.MatterControl
 				new MenuItemAction("Add Printer".Localize(), AddPrinter_Click),
 				new MenuItemAction("Import Printer".Localize(), ImportPrinter),
 				new MenuItemAction("Add File To Queue".Localize(), importFile_Click),
-				new MenuItemAction("Redeem Design Code".Localize(), () => MatterControlApplication.Instance.RedeemDesignCode?.Invoke()),
-				new MenuItemAction("Enter Share Code".Localize(), () => MatterControlApplication.Instance.EnterShareCode?.Invoke()),
+				new MenuItemAction("Redeem Design Code".Localize(), () => ApplicationController.Instance.RedeemDesignCode?.Invoke()),
+				new MenuItemAction("Enter Share Code".Localize(), () => ApplicationController.Instance.EnterShareCode?.Invoke()),
 				new MenuItemAction("------------------------", null),
 				new MenuItemAction("Exit".Localize(), () =>
 				{
