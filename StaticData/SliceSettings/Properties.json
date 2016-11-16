@@ -484,6 +484,19 @@
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0"
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "expand_thin_walls",
+		"PresentationName": "Expand Thin Walls",
+		"HelpText": "Detects sections of the model that would be too thin to print and expands them to make them printable.",
+		"DataEditType": "CHECK_BOX",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
 		"DefaultValue": "1",
 		"RebuildGCodeOnChange": true
 	},
@@ -1487,7 +1500,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "perimeter_start_end_overlap",
 		"PresentationName": "Start End Overlap",
-		"HelpText": "The distance that the perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.",
+		"HelpText": "The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "%",
 		"ShowAsOverride": true,
