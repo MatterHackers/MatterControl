@@ -90,8 +90,7 @@ namespace MatterHackers.MatterControl
 
 				// save it for this printer
 				ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_name, themeName);
-
-				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeName);
+				//Set new user selected Default
 				ActiveTheme.Instance = ActiveTheme.GetThemeColors(themeName);
 			};
 

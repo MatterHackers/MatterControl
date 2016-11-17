@@ -269,19 +269,48 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
-			// don't set the extruders to heating if we already waited for them to reach temp
+			// don't set extruder 0 to heating if we already waited for it to reach temp
 			if (ActiveSliceSettings.Instance.GetValue(SettingsKey.heat_extruder_before_homing) != "1")
 			{
-				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
+				if (extrudersUsed[0])
 				{
-					if (extrudersUsed.Count > extruderIndex0Based
+					double materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(0);
+					if (materialTemperature != 0)
+					{
+						string setTempString = $"M109 T0 S{materialTemperature}";
+						AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", 1));
+					}
+				}
+			}
+
+			if (extrudersUsed.Count > 1)
+			{
+				// start all the extruders heating
+				for (int extruderIndex0Based = 1; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
+				{
+					if (extruderIndex0Based < extrudersUsed.Count
 						&& extrudersUsed[extruderIndex0Based])
 					{
 						double materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
 						if (materialTemperature != 0)
 						{
-							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
-							AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", extruderIndex0Based + 1));
+							// always heat the extruders that are used beyond extruder 0
+							postStartGCode.Add($"M104 T{extruderIndex0Based} S{materialTemperature} ; Start heating extruder{extruderIndex0Based+1}");
+						}
+					}
+				}
+
+				// wait for them to finish
+				for (int extruderIndex0Based = 1; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
+				{
+					if (extruderIndex0Based < extrudersUsed.Count
+						&& extrudersUsed[extruderIndex0Based])
+					{
+						double materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
+						if (materialTemperature != 0)
+						{
+							// always heat the extruders that are used beyond extruder 0
+							postStartGCode.Add($"M109 T{extruderIndex0Based} S{materialTemperature} ; Finish heating extruder{extruderIndex0Based + 1}");
 						}
 					}
 				}

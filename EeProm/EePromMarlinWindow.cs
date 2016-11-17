@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.EeProm
 						UiThread.RunOnIdle(() =>
 						{
 							FileDialog.OpenFileDialog(
-								new OpenFileDialogParams("EEPROM Settings" + "|*.ini")
+								new OpenFileDialogParams("EEPROM Settings|*.ini")
 								{
 									ActionButtonLabel = "Import EEPROM Settings".Localize(),
 									Title = "Import EEPROM".Localize(),
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.EeProm
 						{
 							string defaultFileNameNoPath = "eeprom_settings.ini";
                             FileDialog.SaveFileDialog(
-								new SaveFileDialogParams("EEPROM Settings" + "|*.ini")
+								new SaveFileDialogParams("EEPROM Settings|*.ini")
 								{
 									ActionButtonLabel = "Export EEPROM Settings".Localize(),
 									Title = "Export EEPROM".Localize(),

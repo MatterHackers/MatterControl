@@ -53,8 +53,8 @@
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NUnit.ApplicationDomain, Version=9.0.0.0, Culture=neutral, PublicKeyToken=afbd8211e0c40e2c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.ApplicationDomain.9.0.0.0\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
+    <Reference Include="NUnit.ApplicationDomain, Version=10.0.0.0, Culture=neutral, PublicKeyToken=afbd8211e0c40e2c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.ApplicationDomain.10.0.00\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.engine, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
@@ -78,6 +78,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatterControl\BrailleGrade2Tests.cs" />
     <Compile Include="MatterControl\PerformanceTests.cs" />
     <Compile Include="MatterControl\ImportSettingsTests.cs" />
     <Compile Include="MatterControl\SettingsParseTests.cs" />
@@ -106,6 +107,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\BrailleBuilder\BrailleBuilder.csproj">
+      <Project>{70FBB82C-558D-4B5F-BE75-A922D392E650}</Project>
+      <Name>BrailleBuilder</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\MatterControl.csproj">
       <Project>{0B8D6F56-BD7F-4426-B858-D9292B084656}</Project>
       <Name>MatterControl</Name>
@@ -145,10 +150,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
-      <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
-      <Name>WindowsFileDialogs</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

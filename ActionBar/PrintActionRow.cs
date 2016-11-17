@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button resumeButton;
 		private Button skipButton;
 		private Button startButton;
-		private Button configureButton;
+		private Button finishSetupButton;
 		private MatterHackers.MatterControl.TextImageButtonFactory textImageButtonFactory = new MatterHackers.MatterControl.TextImageButtonFactory();
 		private Stopwatch timeSincePrintStarted = new Stopwatch();
 
@@ -125,11 +125,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
 			startButton.Click += onStartButton_Click;
 
-			configureButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
-			configureButton.Name = "Finish Setup Button";
-			configureButton.ToolTipText = "Run setup configuration for printer.".Localize();
-			configureButton.Margin = new BorderDouble(6, 6, 6, 3);
-			configureButton.Click += onStartButton_Click;
+			finishSetupButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
+			finishSetupButton.Name = "Finish Setup Button";
+			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
+			finishSetupButton.Margin = new BorderDouble(6, 6, 6, 3);
+			finishSetupButton.Click += onStartButton_Click;
 
 			connectButton = textImageButtonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32).InvertLightness());
 			connectButton.ToolTipText = "Connect to the printer".Localize();
@@ -249,8 +249,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(startButton);
 			allPrintButtons.Add(startButton);
 
-			this.AddChild(configureButton);
-			allPrintButtons.Add(configureButton);
+			this.AddChild(finishSetupButton);
+			allPrintButtons.Add(finishSetupButton);
 
 			this.AddChild(doneWithCurrentPartButton);
 			allPrintButtons.Add(doneWithCurrentPartButton);
@@ -280,6 +280,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
+			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			addButton.Click += onAddButton_Click;
             skipButton.Click += onSkipButton_Click;
 			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
@@ -362,7 +363,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						if (levelingData != null && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
 							&& !levelingData.HasBeenRunAndEnabled())
 						{
-							this.activePrintButtons.Add(configureButton);
+							this.activePrintButtons.Add(finishSetupButton);
 						}
 						else
 						{

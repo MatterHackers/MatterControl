@@ -80,6 +80,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.libraryDataView = libraryDataView;
 			this.IsViewHelperItem = false;
 			this.EnableSlideInActions = true;
+
+			MouseEnterBounds += (s, e) => EnteredBounds();
+			MouseLeaveBounds += (s, e) => EnteredBounds();
 		}
 
 		public string ItemName { get; protected set; }
@@ -305,7 +308,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		#endregion Abstract Functions
 
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		void EnteredBounds()
 		{
 			switch (UnderMouseState)
 			{
@@ -328,8 +331,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 					break;
 			}
-
-			base.OnMouseMove(mouseEvent);
 		}
 
 		private void AddHandlers()
@@ -374,14 +375,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
-			{
-				this.Height = 65;
-			}
-			else
-			{
-				this.Height = 50;
-			}
+			this.Height = 50 * GuiWidget.DeviceScale;
 
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);

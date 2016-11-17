@@ -390,25 +390,32 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode)
 		{
-			ImageBuffer tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y);
-			string imageFileName = GetImageFileName(stlHashCode);
-
-			if (File.Exists(imageFileName))
+			try
 			{
-				if (partExtension == ".png")
+				ImageBuffer tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y);
+				string imageFileName = GetImageFileName(stlHashCode);
+
+				if (File.Exists(imageFileName))
 				{
-					if (ImageIO.LoadImageData(imageFileName, tempImage))
+					if (partExtension == ".png")
 					{
-						return tempImage;
+						if (ImageIO.LoadImageData(imageFileName, tempImage))
+						{
+							return tempImage;
+						}
+					}
+					else
+					{
+						if (ImageTgaIO.LoadImageData(imageFileName, tempImage))
+						{
+							return tempImage;
+						}
 					}
 				}
-				else
-				{
-					if (ImageTgaIO.LoadImageData(imageFileName, tempImage))
-					{
-						return tempImage;
-					}
-				}
+			}
+			catch
+			{
+
 			}
 
 			return null;
@@ -614,13 +621,13 @@ namespace MatterHackers.MatterControl
 				{
 					case ImageSizes.Size115x115:
 						{
-							StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_115x115", partExtension), this.thumbnailImage);
+							this.thumbnailImage = StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_115x115", partExtension)).InvertLightness();
 						}
 						break;
 
 					case ImageSizes.Size50x50:
 						{
-							StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_50x50", partExtension), this.thumbnailImage);
+							this.thumbnailImage = StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_50x50", partExtension)).InvertLightness();
 						}
 						break;
 

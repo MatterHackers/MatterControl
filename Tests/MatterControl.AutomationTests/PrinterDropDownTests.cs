@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -11,48 +12,41 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class PrinterNameChangePersists
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void PrinterNameStaysChanged()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task PrinterNameStaysChanged()
 		{
-			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				testRunner.CloseSignInAndPrinterSelect();
 
-				// Now do the actions specific to this test. (replace this for new tests)
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-					MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner, resultsHarness);
+				Assert.IsTrue(testRunner.ClickByName("Printer Tab", 1), "Click Printer Tab");
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("Printer Tab", 1), "Click Printer Tab");
+				string widgetName = "Printer Name Edit";
+				testRunner.ClickByName(widgetName);
 
-					string widgetName = "Printer Name Edit";
-					testRunner.ClickByName(widgetName);
+				SystemWindow window;
+				var textWidget = testRunner.GetWidgetByName(widgetName, out window);
+				string newName = "Updated name";
+				textWidget.Text = newName;
+				testRunner.ClickByName("Printer Tab", 1);
+				testRunner.Wait(4);
 
-					SystemWindow window;
-					var textWidget = testRunner.GetWidgetByName(widgetName, out window);
-					string newName = "Updated name";
-					textWidget.Text = newName;
-					testRunner.ClickByName("Printer Tab", 1);
-					testRunner.Wait(4);
+				//Check to make sure the Printer dropdown gets the name change 
+				testRunner.ClickByName("Printers... Menu", 2);
+				testRunner.Wait(1);
+				Assert.IsTrue(testRunner.NameExists(newName + " Menu Item"), "Widget with updated printer name exists");
 
-					//Check to make sure the Printer dropdown gets the name change 
-					testRunner.ClickByName("Printers... Menu", 2);
-					testRunner.Wait(1);
-					resultsHarness.AddTestResult(testRunner.NameExists(newName + " Menu Item"), "Widget with updated printer name exists");
+				//Make sure the Active profile name changes as well
+				Assert.IsTrue(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
 
-					//Make sure the Active profile name changes as well
-					resultsHarness.AddTestResult(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
-
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				return Task.FromResult(0);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-			Assert.IsTrue(testHarness.AllTestsPassed(5));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

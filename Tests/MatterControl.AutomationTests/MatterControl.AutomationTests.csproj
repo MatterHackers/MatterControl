@@ -36,8 +36,8 @@
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NUnit.ApplicationDomain, Version=9.0.0.0, Culture=neutral, PublicKeyToken=afbd8211e0c40e2c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.ApplicationDomain.9.0.0.0\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
+    <Reference Include="NUnit.ApplicationDomain, Version=10.0.0.0, Culture=neutral, PublicKeyToken=afbd8211e0c40e2c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.ApplicationDomain.10.0.00\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
@@ -108,10 +108,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
       <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
       <Name>Agg.Tests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
-      <Project>{a526dc5d-65f3-461b-805f-d3ac9665f5c9}</Project>
-      <Name>WindowsFileDialogs</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

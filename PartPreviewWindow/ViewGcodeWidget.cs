@@ -356,7 +356,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					//using (new PerformanceTimer("GCode Timer", "Render"))
 					{
-						gCodeRenderer.Render(graphics2D, renderInfo);
+						gCodeRenderer?.Render(graphics2D, renderInfo);
 					}
 				}
 			}

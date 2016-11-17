@@ -30,9 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.PluginSystem;
-#if !__ANDROID__
-using NUnit.Framework;
-#endif
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -45,68 +42,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
 	public static class BrailleGrade2
 	{
-#if !__ANDROID__
-		static bool ranTests = false;
-		[Test]
-		public static void BrailGrade2Tests()
-		{
-			if (!ranTests)
-			{
-				Assert.IsTrue(ConvertWord("taylor") == "taylor");
-				Assert.IsTrue(ConvertWord("Taylor") == ",taylor");
-				Assert.IsTrue(ConvertWord("TayLor") == ",tay,lor");
-				Assert.IsTrue(ConvertWord("energy") == "5}gy");
-				Assert.IsTrue(ConvertWord("men") == "m5");
-				Assert.IsTrue(ConvertWord("runabout") == "runab");
-				Assert.IsTrue(ConvertWord("afternoon") == "afn");
-				Assert.IsTrue(ConvertWord("really") == "re,y");
-				Assert.IsTrue(ConvertWord("glance") == "gl.e");
-				Assert.IsTrue(ConvertWord("station") == "/,n");
-				Assert.IsTrue(ConvertWord("as") == "z");
-				Assert.IsTrue(ConvertWord("abby") == "a2y");				
-				Assert.IsTrue(ConvertWord("commitment") == "-mit;t");
-				Assert.IsTrue(ConvertWord("mother") == "\"m");
-				Assert.IsTrue(ConvertWord("myself") == "myf");
-				Assert.IsTrue(ConvertWord("lochness") == "lo*;s");
-				Assert.IsTrue(ConvertWord("Seven o'clock") == ",sev5 o'c");
-
-				Assert.IsTrue(ConvertWord("test") == "te/");
-				Assert.IsTrue(ConvertWord("that") == "t");
-				Assert.IsTrue(ConvertWord("will") == "w");
-				Assert.IsTrue(ConvertWord("show") == "%{");
-				Assert.IsTrue(ConvertWord("our") == "|r");
-				Assert.IsTrue(ConvertWord("with") == ")");
-				Assert.IsTrue(ConvertWord("braille") == "brl");
-				Assert.IsTrue(ConvertWord("conformance") == "3=m.e");
-
-				Assert.IsTrue(ConvertString("go to sleep") == "g 6sleep");
-				Assert.IsTrue(ConvertString("go to") == "g to");
-				Assert.IsTrue(ConvertString("here it is") == "\"h x is");
-				Assert.IsTrue(ConvertString("test that will show our conformance with braille") == "te/ t w %{ |r 3=m.e ) brl");
-				Assert.IsTrue(ConvertString("so we can create some strings and then this gives us the output that is expected") == "s we c cr1te \"s /r+s & !n ? gives u ! |tput t is expect$");
-
-				Assert.IsTrue(ConvertString("Waltz, bad nymph, for quick jigs vex.") == ",waltz1 bad nymph1 = qk jigs vex4");
-				Assert.IsTrue(ConvertString("Quick zephyrs blow, vexing daft Jim.") == ",qk zephyrs bl{1 vex+ daft ,jim4");
-				Assert.IsTrue(ConvertString("Sphinx of black quartz, judge my vow.") == ",sph9x ( black qu>tz1 judge my v{4");
-				Assert.IsTrue(ConvertString("Two driven jocks help fax my big quiz.") == ",two driv5 jocks help fax my big quiz4");
-//				Assert.IsTrue(ConvertString("Five quacking zephyrs jolt my wax bed.") == ",five quack+ zephyrs jolt my wax b$4");
-				Assert.IsTrue(ConvertString("The five boxing wizards jump quickly.") == ",! five box+ wiz>ds jump qkly4");
-				Assert.IsTrue(ConvertString("Pack my box with five dozen liquor jugs.") == ",pack my box ) five doz5 liquor jugs4");
-				Assert.IsTrue(ConvertString("The quick brown fox jumps over the lazy dog.") == ",! qk br{n fox jumps ov} ! lazy dog4");
-				Assert.IsTrue(ConvertString("Jinxed wizards pluck ivy from the big quilt.") == ",j9x$ wiz>ds pluck ivy f ! big quilt4");
-				Assert.IsTrue(ConvertString("Crazy Fredrick bought many very exquisite opal jewels.") == ",crazy ,fr$rick b\"| _m v exquisite opal jewels4");
-				Assert.IsTrue(ConvertString("We promptly judged antique ivory buckles for the next prize.") == ",we promptly judg$ antique ivory buckles =! next prize4");
-				Assert.IsTrue(ConvertString("A mad boxer shot a quick, gloved jab to the jaw of his dizzy opponent.") == ",a mad box} %ot a qk1 glov$ jab 6! jaw ( 8 dizzy opp\"ont4");
-				Assert.IsTrue(ConvertString("Jaded zombies acted quaintly but kept driving their oxen forward.") == ",jad$ zombies act$ qua9tly b kept driv+ _! ox5 =w>d4");
-				Assert.IsTrue(ConvertString("14. The job requires extra pluck and zeal from every young wage earner.") == "#ad4 ,! job requires extra pluck & z1l f e \"y wage e>n}4");
-
-				Assert.IsTrue(ConvertString("Just wanting to put together some more tests to show the effectiveness of our converter.") == ",j want+ 6put tgr \"s m te/s 6%{ ! e6ective;s ( |r 3v}t}4");
-
-				ranTests = true;
-			}
-		}
-#endif
-
 		internal class TextMapping
 		{
 			internal string Key;

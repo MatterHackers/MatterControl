@@ -14,6 +14,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace MatterControl.Tests
 {
@@ -101,23 +103,21 @@ namespace MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Test, RequiresSTA, RunInApplicationDomain]
-		public void MatterControlRuns()
+		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		public async Task MatterControlRuns()
 		{
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner();
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner, MatterControlUtilities.PrepAction.CloseSignInAndPrinterSelect);
+				testRunner.CloseSignInAndPrinterSelect();
 
-					resultsHarness.AddTestResult(testRunner.NameExists("SettingsAndControls"));
+				Assert.IsTrue(testRunner.NameExists("SettingsAndControls"));
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
 		}
 #endif
 

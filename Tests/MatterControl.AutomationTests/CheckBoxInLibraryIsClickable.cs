@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -39,53 +40,43 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class CheckBoxInLibraryIsClickable
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void ClickOnLibraryCheckBoxes()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task ClickOnLibraryCheckBoxes()
 		{
-			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				testRunner.CloseSignInAndPrinterSelect();
 
-				// Now do the actions specific to this test. (replace this for new tests)
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.ClickByName("Library Tab", 3);
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-					testRunner.ClickByName("Library Tab", 3);
-					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+				SystemWindow systemWindow;
+				string itemName = "Row Item Calibration - Box";
 
-					SystemWindow systemWindow;
-					string itemName = "Row Item " + "Calibration - Box";
+				GuiWidget rowItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
 
-					GuiWidget rowItem = testRunner.GetWidgetByName(itemName, out systemWindow, 3);
+				SearchRegion rowItemRegion = testRunner.GetRegionByName(itemName, 3);
 
-					SearchRegion rowItemRegion = testRunner.GetRegionByName(itemName, 3);
+				testRunner.ClickByName("Library Edit Button", 3);
+				testRunner.Wait(.5);
 
-					testRunner.ClickByName("Library Edit Button", 3);
-					testRunner.Wait(.5);
+				GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
+				CheckBox checkBoxWidget = foundWidget as CheckBox;
+				Assert.IsTrue(checkBoxWidget != null, "We should have an actual checkbox");
+				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
-					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
-					CheckBox checkBoxWidget = foundWidget as CheckBox;
-					resultsHarness.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
+				testRunner.ClickByName("Row Item Select Checkbox", 3, searchRegion: rowItemRegion);
+				testRunner.ClickByName("Library Tab");
+				Assert.IsTrue(checkBoxWidget.Checked == true, "currently checked");
 
-					testRunner.ClickByName("Row Item Select Checkbox", 3, searchRegion: rowItemRegion);
-					testRunner.ClickByName("Library Tab");
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == true, "currently checked");
+				testRunner.ClickByName(itemName, 3);
+				testRunner.ClickByName("Library Tab");
+				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
-					testRunner.ClickByName(itemName, 3);
-					testRunner.ClickByName("Library Tab");
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
-
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				return Task.FromResult(0);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-
-			// NOTE: In the future we may want to make the "Local Library Row Item Collection" not clickable. 
-			// If that is the case fix this test to click on a child of "Local Library Row Item Collection" instead.
-			Assert.IsTrue(testHarness.AllTestsPassed(4)); 
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

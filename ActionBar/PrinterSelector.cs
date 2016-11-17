@@ -87,6 +87,7 @@ namespace MatterHackers.MatterControl
 
 			// Rebuild the droplist any time the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) => Rebuild(), ref unregisterEvents);
+			ApplicationController.Instance.ReloadAllRequested.RegisterEvent((s, e) => Rebuild(), ref unregisterEvents);
 		}
 
 		public void Rebuild()

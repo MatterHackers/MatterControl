@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
@@ -39,41 +40,33 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class CreateLibraryFolder
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void CreateFolderStarsOutWithTextFiledFocusedAndEditable()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task CreateFolderStarsOutWithTextFiledFocusedAndEditable()
 		{
-			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				testRunner.CloseSignInAndPrinterSelect();
 
-				// Now do the actions specific to this test. (replace this for new tests)
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.ClickByName("Library Tab");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
+				testRunner.ClickByName("Create Folder From Library Button");
 
-					testRunner.ClickByName("Library Tab");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
-					testRunner.ClickByName("Create Folder From Library Button");
+				testRunner.Wait(.5);
+				testRunner.Type("Test Text");
+				testRunner.Wait(.5);
 
-					testRunner.Wait(.5);
-					testRunner.Type("Test Text");
-					testRunner.Wait(.5);
+				SystemWindow containingWindow;
+				GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
+				MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
+				Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
+				Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
+				containingWindow.CloseOnIdle();
+				testRunner.Wait(.5);
 
-					SystemWindow containingWindow;
-					GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
-					MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
-					resultsHarness.AddTestResult(textWidgetMH != null, "Found Text Widget");
-					resultsHarness.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
-					containingWindow.CloseOnIdle();
-					testRunner.Wait(.5);
-
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				return Task.FromResult(0);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }
