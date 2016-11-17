@@ -160,6 +160,10 @@
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\TextCreator\TextCreator.csproj">
+      <Project>{F49EC1DD-D645-4709-8667-B57318AF67B0}</Project>
+      <Name>TextCreator</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
