@@ -678,10 +678,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void sendButton_Click(object sender, EventArgs mouseEvent)
 		{
-			//Open export options
-			List<PrintItemWrapper> itemList = this.queueDataView.SelectedItems.Select(item => item.PrintItemWrapper).ToList();
 			if (sendButtonFunction != null)
 			{
+				List<PrintItemWrapper> itemList = this.queueDataView.SelectedItems.Select(item => item.PrintItemWrapper).ToList();
 				UiThread.RunOnIdle(() => sendButtonFunction(null, itemList));
 			}
 			else

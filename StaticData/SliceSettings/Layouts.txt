@@ -1,12 +1,12 @@
 Simple
   General
     Single
-      Layers
+      Layers & Infill
         layer_height
         fill_density
-      Support Material
-        support_material
+      Raft & Support
         create_raft
+        support_material
   Printer
     Connection
       Description
@@ -89,6 +89,7 @@ Advanced
         randomize_start
         external_perimeters_first
         perimeter_start_end_overlap
+        merge_overlapping_lines
         expand_thin_walls
       Outer Surface - Top & Bottom
         top_solid_layers
@@ -305,6 +306,7 @@ Advanced
         has_power_control
       Behavior
         z_homes_to_max
+        z_can_be_negative
         heat_extruder_before_homing
         extruders_share_temperature
       Firmware
@@ -320,9 +322,6 @@ Advanced
         print_leveling_required_to_print
       Probe Settings
         manual_probe_paper_width
-      Leveling Calibration
-        printer_z_after_home
-        z_offset_after_home
       Options
     Print Recovery
       Recover Settings

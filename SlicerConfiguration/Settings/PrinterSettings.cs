@@ -73,6 +73,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		internal PrinterSettingsLayer MaterialLayer { get; private set; }
 
+		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
+
 		public PrinterSettings()
 		{
 			this.Helpers = new SettingsHelpers(this);
@@ -94,13 +96,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer OemLayer { get; set; }
 
-		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter)
+		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter, bool setLayerName)
 		{
 			HashSet<string> skipKeys = new HashSet<string>
 			{
-				SettingsKey.layer_name,
 				"layer_id",
 			};
+
+			if(!setLayerName)
+			{
+				skipKeys.Add(SettingsKey.layer_name);
+			}
 
 			var destinationFilter = new List<PrinterSettingsLayer>
 			{
@@ -129,6 +135,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						destinationLayer[keyName] = importValue;
 					}
 				}
+			}
+
+			if (setLayerName)
+			{
+				destinationLayer[SettingsKey.layer_name] = settingsToImport.GetValue(SettingsKey.layer_name, sourceFilter);
 			}
 
 			settingsToImport.BaseLayer = baseLayer;
@@ -238,17 +249,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			string json = this.ToJson();
-
-			var printerInfo = ProfileManager.Instance[this.ID];
-			if (printerInfo != null)
-			{
-				printerInfo.ContentSHA1 = this.ComputeSha1(json);
-				ProfileManager.Instance.Save();
-			}
-
 			lock (writeLock)
 			{
+				string json = this.ToJson();
+
+				var printerInfo = ProfileManager.Instance[this.ID];
+				if (printerInfo != null)
+				{
+					printerInfo.ContentSHA1 = this.ComputeSha1(json);
+					ProfileManager.Instance.Save();
+				}
+
 				File.WriteAllText(DocumentPath, json);
 			}
 
@@ -398,7 +409,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static async Task<PrinterSettings> GetFirstValidHistoryItem(PrinterInfo printerInfo)
 		{
-			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory(printerInfo.DeviceToken);
+			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory?.Invoke(printerInfo.DeviceToken);
 			if (recentProfileHistoryItems != null)
 			{
 				// Iterate history, skipping the first item, limiting to the next five, attempt to load and return the first success
@@ -965,6 +976,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (persistenceLayer.TryGetValue(settingsKey, out existingValue) && existingValue == settingsValue)
 			{
 				return;
+			}
+
+			// Remove any staged/conflicting user override, making this the new and active user override
+			if (StagedUserSettings.ContainsKey(settingsKey))
+			{
+				StagedUserSettings.Remove(settingsKey);
 			}
 
 			// Otherwise, set and save

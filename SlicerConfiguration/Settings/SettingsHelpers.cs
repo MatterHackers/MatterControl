@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using MatterHackers.Agg.PlatformAbstract;
+using System.Runtime.Serialization;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -61,6 +62,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string device_token = nameof(device_token);
 		public const string device_type = nameof(device_type);
 		public const string expand_thin_walls = nameof(expand_thin_walls);
+		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
 		public const string filament_cost = nameof(filament_cost);
@@ -103,9 +105,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string start_gcode = nameof(start_gcode);
 		public const string temperature = nameof(temperature);
 		public const string windows_driver = nameof(windows_driver);
+		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
-		public const string printer_z_after_home = nameof(printer_z_after_home);
-		public const string z_offset_after_home = nameof(z_offset_after_home);
 	}
 
 	public class SettingsHelpers
@@ -196,7 +197,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ProfileManager.ProfilesListChanged.CallEvents(this, null);
 
 				// Force sync after marking for delete
-				ApplicationController.SyncPrinterProfiles(null);
+				ApplicationController.SyncPrinterProfiles("SettingsHelpers.SetMarkedForDelete()", null);
 			});
 		}
 
@@ -515,6 +516,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool MarkedForDelete { get; set; } = false;
 		public string ContentSHA1 { get; set; }
 		public string ServerSHA1 { get; set; }
+
+		[OnDeserialized]
+		public void OnDeserialized(StreamingContext context)
+		{
+			if (string.IsNullOrEmpty(this.Make))
+			{
+				this.Make = "Other";
+			}
+
+			if (string.IsNullOrEmpty(this.Model))
+			{
+				this.Model = "Other";
+			}
+		}
 
 		[JsonIgnore]
 		public string ProfilePath => ProfileManager.Instance.ProfilePath(this);

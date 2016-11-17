@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
 
-		internal WizardWindow WizardWindow;
+		public WizardWindow WizardWindow;
 
 		protected GuiWidget mainContainer;
 

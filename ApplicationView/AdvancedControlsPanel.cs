@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
+			PopOutManager.SaveIfClosed = false;
 			// remove the advance control and replace it with new ones built for the selected printer
 			int advancedControlsIndex = GetChildIndex(advancedTab);
 			RemoveChild(advancedControlsIndex);
@@ -79,6 +80,7 @@ namespace MatterHackers.MatterControl
 
 			advancedTab = CreateAdvancedControlsTab();
 			AddChild(advancedTab, advancedControlsIndex);
+			PopOutManager.SaveIfClosed = true;
 		}
 
 		public override void OnClosed(EventArgs e)

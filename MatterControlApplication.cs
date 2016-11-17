@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
 #endif
 
-		public static bool CameraInUseByOtherProcess = false;
+		public static bool CameraInUseByExternalProcess { get; set; } = false;
 		public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 
 		static MatterControlApplication()
 		{
-			if (OsInformation.OperatingSystem == OSType.Mac)
+			if (OsInformation.OperatingSystem == OSType.Mac && StaticData.Instance == null)
 			{
 				// Set working directory - this duplicates functionality in Main but is necessary on OSX as Main fires much later (after the constructor in this case)
 				// resulting in invalid paths due to path tests running before the working directory has been overridden. Setting the value before initializing StaticData
@@ -602,27 +602,53 @@ namespace MatterHackers.MatterControl
 
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
-				// Needed as we can't assign to CancelClose inside of the lambda below
-				bool continueWithShutdown = false;
-
-				StyledMessageBox.ShowMessageBox(
-					(shutdownConfirmed) => continueWithShutdown = shutdownConfirmed,
-					"Are you sure you want to abort the current print and close MatterControl?".Localize(),
-					"Abort Print".Localize(),
-					StyledMessageBox.MessageType.YES_NO);
-
-				if (continueWithShutdown)
+				if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
 				{
-					if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
+					// Needed as we can't assign to CancelClose inside of the lambda below
+					bool continueWithShutdown = false;
+
+					StyledMessageBox.ShowMessageBox(
+						(shutdownConfirmed) => continueWithShutdown = shutdownConfirmed,
+						"Are you sure you want to abort the current print and close MatterControl?".Localize(),
+						"Abort Print".Localize(),
+						StyledMessageBox.MessageType.YES_NO);
+
+					if (continueWithShutdown)
 					{
 						PrinterConnectionAndCommunication.Instance.Disable();
+						this.Close();
+						CancelClose = false;
 					}
-					this.Close();
+					else
+					{
+						// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called 
+						// when MatterControlApplication.OnClosed is invoked
+						CancelClose = true;
+					}
 				}
+				else
+				{
+					bool continueWithShutdown = false;
 
-				// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called 
-				// when MatterControlApplication.OnClosed is invoked
-				CancelClose = true;
+					StyledMessageBox.ShowMessageBox(
+						(shutdownConfirmed) => continueWithShutdown = shutdownConfirmed,
+						"Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize(),
+						"Exit while printing".Localize(),
+						StyledMessageBox.MessageType.YES_NO);
+
+					if (continueWithShutdown)
+					{
+						PrinterConnectionAndCommunication.Instance.Disable();
+						this.Close();
+						CancelClose = false;
+					}
+					else
+					{
+						// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called 
+						// when MatterControlApplication.OnClosed is invoked
+						CancelClose = true;
+					}
+				}
 			}
 			else if (PartsSheet.IsSaving())
 			{
@@ -848,29 +874,14 @@ namespace MatterHackers.MatterControl
 		bool showNamesUnderMouse = false;
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
-			if (keyEvent.KeyCode == Keys.F2)
-			{
-				Task.Run((Action)AutomationTest);
-			}
-			else if (keyEvent.KeyCode == Keys.F1)
+			if (keyEvent.KeyCode == Keys.F1)
 			{
 				showNamesUnderMouse = !showNamesUnderMouse;
 			}
-
 			base.OnKeyDown(keyEvent);
 		}
 
-		private void AutomationTest()
-		{
-			AutomationRunner test = new AutomationRunner();
-			test.ClickByName("Library Tab", 5);
-			test.ClickByName("Queue Tab", 5);
-			test.ClickByName("Queue Item SkeletonArm_Med", 5);
-			test.ClickByName("3D View Edit", 5);
-			test.Wait(.2);
-			test.DragByName("SkeletonArm_Med_IObject3D", 5);
-			test.DropByName("SkeletonArm_Med_IObject3D", 5, offset: new Point2D(0, -40));
-		}
+
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
 			MatterControlApplication.AssertDebugNotDefined();

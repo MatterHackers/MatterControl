@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl
 	using System.Reflection;
 	using System.Text.RegularExpressions;
 	using SettingsManagement;
+	using PrintHistory;
 
 	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
 	{
@@ -178,9 +179,13 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
+		public Action RedeemDesignCode;
+		public Action EnterShareCode;
+
 		private static ApplicationController globalInstance;
 		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+		public RootedObjectEventHandler ReloadAllRequested = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
@@ -202,7 +207,7 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 		public static Func<PrinterInfo,string, Task<PrinterSettings>> GetPrinterProfileAsync;
-		public static Func<IProgress<SyncReportType>,Task> SyncPrinterProfiles;
+		public static Func<string, IProgress<SyncReportType>,Task> SyncPrinterProfiles;
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
 		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
 
@@ -388,24 +393,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static string MakeValidFileName(string name)
-		{
-			if (string.IsNullOrEmpty(name))
-			{
-				return name;
-			}
-
-			string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
-			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-
-			return Regex.Replace(name, invalidRegStr, "_");
-		}
-
-		public string GetSessionUsernameForFileSystem()
-		{
-			return MakeValidFileName(AuthenticationData.Instance.ActiveSessionUsername);
-		}
-
 		bool pendingReloadRequest = false;
 		public void ReloadAll(object sender, EventArgs e)
 		{
@@ -416,6 +403,8 @@ namespace MatterHackers.MatterControl
 				MainView.AfterDraw += DoReloadAll;
 				MainView.Invalidate();
 			}
+
+			ReloadAllRequested?.CallEvents(null, null);
 		}
 
 		static int reloadCount = 0;
@@ -452,23 +441,15 @@ namespace MatterHackers.MatterControl
 
 		static void LoadUITheme()
 		{
-			if (string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.ActiveThemeName)))
+			string oemColor = OemSettings.Instance.ThemeColor;
+			if (string.IsNullOrEmpty(oemColor))
 			{
-				string oemColor = OemSettings.Instance.ThemeColor;
-				if (string.IsNullOrEmpty(oemColor))
-				{
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
-				}
-				else
-				{
-					UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
-				}
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
 			}
 			else
 			{
-				string name = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors(name);
+				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
 			}
 		}
 
@@ -484,11 +465,18 @@ namespace MatterHackers.MatterControl
 
 						// set the colors
 						LoadUITheme();
-						// This will initialize the theme for the first printer to load
-						ProfileManager.Reload();
+
+						// We previously made a call to Reload, which fired the method twice due to it being in the static constructor. Accessing
+						// any property will run the static constructor and perform the Reload behavior without the overhead of duplicate calls
+						bool na = ProfileManager.Instance.IsGuestProfile;
 
 						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 						{
+							// make sure that on touchscreen (due to lazy tabs) we initialize our stating parts and queue
+							var temp = new LibraryProviderSQLite(null, null, null, null);
+							// and make sure we have the check for print recovery wired up needed for lazy tabs.
+							var temp2 = PrintHistoryData.Instance;
+							// now bulid the ui
 							globalInstance.MainView = new TouchscreenView();
 						}
 						else
@@ -511,29 +499,35 @@ namespace MatterHackers.MatterControl
 		public LibraryDataView CurrentLibraryDataView = null;
 		public void SwitchToPurchasedLibrary()
 		{
-			// Switch to the purchased library
-			LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
-			if (libraryProviderSelector != null)
+			if (CurrentLibraryDataView?.CurrentLibraryProvider?.GetRootProvider() != null)
 			{
-				LibraryProvider purchaseProvider = libraryProviderSelector.GetPurchasedLibrary();
-				UiThread.RunOnIdle(() =>
+				// Switch to the purchased library
+				LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
+				if (libraryProviderSelector != null)
 				{
-					CurrentLibraryDataView.CurrentLibraryProvider = purchaseProvider;
-				});
+					LibraryProvider purchaseProvider = libraryProviderSelector.GetPurchasedLibrary();
+					UiThread.RunOnIdle(() =>
+					{
+						CurrentLibraryDataView.CurrentLibraryProvider = purchaseProvider;
+					});
+				}
 			}
 		}
 
 		public void SwitchToSharedLibrary()
 		{
 			// Switch to the shared library
-			LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
-			if (libraryProviderSelector != null)
+			if (CurrentLibraryDataView?.CurrentLibraryProvider?.GetRootProvider() != null)
 			{
-				LibraryProvider sharedProvider = libraryProviderSelector.GetSharedLibrary();
-				UiThread.RunOnIdle(() =>
+				LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
+				if (libraryProviderSelector != null)
 				{
-					CurrentLibraryDataView.CurrentLibraryProvider = sharedProvider;
-				});
+					LibraryProvider sharedProvider = libraryProviderSelector.GetSharedLibrary();
+					UiThread.RunOnIdle(() =>
+					{
+						CurrentLibraryDataView.CurrentLibraryProvider = sharedProvider;
+					});
+				}
 			}
 		}
 
@@ -545,11 +539,14 @@ namespace MatterHackers.MatterControl
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
 
 			// Only fire UserChanged if it actually happened - prevents runaway positive feedback loop
-			if (AuthenticationData.Instance.ActiveSessionUsername != AuthenticationData.Instance.LastSessionUsername)
+			if (!string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername)
+				&& AuthenticationData.Instance.ActiveSessionUsername != AuthenticationData.Instance.LastSessionUsername)
 			{
+				// only set it if it is an actual user name
 				AuthenticationData.Instance.LastSessionUsername = AuthenticationData.Instance.ActiveSessionUsername;
-				UserChanged();
 			}
+
+			UserChanged();
 		}
 
 		// Called after every startup and at the completion of every authentication change
@@ -562,10 +559,10 @@ namespace MatterHackers.MatterControl
 			// Ensure SQLite printers are imported
 			profileManager.EnsurePrintersImported();
 
-			var guestDB = ProfileManager.LoadGuestDB();
+			var guest = ProfileManager.LoadGuestProfiles();
 
 			// If profiles.json was created, run the import wizard to pull in any SQLite printers
-			if (guestDB?.Profiles != null && guestDB.Profiles.Any() && !profileManager.IsGuestProfile && !profileManager.PrintersImported)
+			if (guest?.Profiles != null && guest.Profiles.Any() && !profileManager.IsGuestProfile && !profileManager.PrintersImported)
 			{
 				var wizardPage = new CopyGuestProfilesToUser(() =>
 				{
@@ -611,7 +608,7 @@ namespace MatterHackers.MatterControl
                     }
                     else
                     {
-                        ApplicationController.SyncPrinterProfiles.Invoke(null).ContinueWith((task) =>
+                        ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
                         {
                             RunSetupIfRequired();
                         });

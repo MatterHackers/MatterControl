@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
 						Vector2 recoveryPositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-						queuedCommands.Add("G1 X{0:0.000}Y{1:0.000}F{2}".FormatWith(recoveryPositionXy.x, recoveryPositionXy.y, MovementControls.XSpeed));
+						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.x, recoveryPositionXy.y, MovementControls.XSpeed));
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}

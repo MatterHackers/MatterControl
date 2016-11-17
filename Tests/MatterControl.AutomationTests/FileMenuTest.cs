@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrintQueue;
@@ -10,147 +11,123 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class FileMenuTest
 	{
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void FileMenuAddPrinter()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task FileMenuAddPrinter()
 		{
-			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
-					testRunner.ClickByName("File Menu");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Add Printer Menu Item");
-					testRunner.Wait(1);
-					resultsHarness.AddTestResult(testRunner.WaitForName("Select Make", 3));
+				testRunner.ClickByName("File Menu");
+				testRunner.Wait(1);
+				testRunner.ClickByName("Add Printer Menu Item");
+				testRunner.Wait(1);
+				Assert.IsTrue(testRunner.WaitForName("Select Make", 3));
 
-					testRunner.ClickByName("Cancel Wizard Button");
+				testRunner.ClickByName("Cancel Wizard Button");
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				return Task.FromResult(0);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(1));
+			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void AddToQueueMenuItemAddsSingleFile()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task AddToQueueMenuItemAddsSingleFile()
 		{
-			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
-					testRunner.ClickByName("File Menu");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Add File To Queue Menu Item");
-					testRunner.Wait(2);
+				testRunner.ClickByName("File Menu");
+				testRunner.Wait(1);
+				testRunner.ClickByName("Add File To Queue Menu Item");
+				testRunner.Wait(2);
 
-					string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 
-					int queueBeforeCount = QueueData.Instance.Count;
+				int queueBeforeCount = QueueData.Instance.Count;
 
-					testRunner.Type(queueItemPath);
-					testRunner.Wait(1);
-					testRunner.Type("{Enter}");
-					testRunner.Wait(2);
-					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
+				testRunner.Type(queueItemPath);
+				testRunner.Wait(1);
+				testRunner.Type("{Enter}");
+				testRunner.Wait(2);
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 
-					int queueAfterCount = QueueData.Instance.Count;
+				int queueAfterCount = QueueData.Instance.Count;
 
-					resultsHarness.AddTestResult(queueAfterCount == queueBeforeCount + 1);
+				Assert.IsTrue(queueAfterCount == queueBeforeCount + 1);
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				return Task.FromResult(0);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(2));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void AddToQueueMenuItemAddsMultipleFiles()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task AddToQueueMenuItemAddsMultipleFiles()
 		{
-			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
-					testRunner.ClickByName("File Menu");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Add File To Queue Menu Item");
-					testRunner.Wait(2);
+				testRunner.ClickByName("File Menu");
+				testRunner.Wait(1);
+				testRunner.ClickByName("Add File To Queue Menu Item");
+				testRunner.Wait(2);
 
-					string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 
-					string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
-					string textForBothQueueItems = String.Format("\"{0}\" \"{1}\"", queueItemPath, pathToSecondQueueItem);
+				string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
+				string textForBothQueueItems = string.Format("\"{0}\" \"{1}\"", queueItemPath, pathToSecondQueueItem);
 
-					int queueBeforeAddCount = QueueData.Instance.Count;
+				int queueBeforeAddCount = QueueData.Instance.Count;
 
-					testRunner.Type(textForBothQueueItems);
-					testRunner.Wait(2);
-					testRunner.Type("{Enter}");
-					testRunner.Wait(2);
-					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
-					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Batman", 2));
-					
-					int queueAfterAddCount = QueueData.Instance.Count;
+				testRunner.Type(textForBothQueueItems);
+				testRunner.Wait(2);
+				testRunner.Type("{Enter}");
+				testRunner.Wait(2);
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 2));
 
-					resultsHarness.AddTestResult(queueAfterAddCount == queueBeforeAddCount + 2);
+				int queueAfterAddCount = QueueData.Instance.Count;
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				Assert.IsTrue(queueAfterAddCount == queueBeforeAddCount + 2);
+
+				return Task.FromResult(0);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
-		public void AddToQueueMenuItemAddsZipFiles()
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task AddToQueueMenuItemAddsZipFiles()
 		{
-			// Run a copy of MatterControl
-			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			AutomationTest testToRun = (testRunner) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
-				{
-					MatterControlUtilities.PrepForTestRun(testRunner);
+				testRunner.CloseSignInAndPrinterSelect();
 
-					testRunner.ClickByName("File Menu");
-					testRunner.Wait(1);
-					testRunner.ClickByName("Add File To Queue Menu Item");
-					testRunner.Wait(2);
+				testRunner.ClickByName("File Menu");
+				testRunner.Wait(1);
+				testRunner.ClickByName("Add File To Queue Menu Item");
+				testRunner.Wait(2);
 
-					int beforeCount = QueueData.Instance.Count;
+				int beforeCount = QueueData.Instance.Count;
 
-					string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
-					testRunner.Type(pathToType);
-					testRunner.Wait(1);
-					testRunner.Type("{Enter}");
-					testRunner.Wait(1);
+				string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
+				testRunner.Type(pathToType);
+				testRunner.Wait(1);
+				testRunner.Type("{Enter}");
+				testRunner.Wait(1);
 
-					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item Batman", 1));
-					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
-					resultsHarness.AddTestResult(QueueData.Instance.Count == beforeCount + 2);
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
+				Assert.IsTrue(QueueData.Instance.Count == beforeCount + 2);
 
-					MatterControlUtilities.CloseMatterControl(testRunner);
-				}
+				return Task.FromResult(0);
 			};
 
-			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
-
-			Assert.IsTrue(testHarness.AllTestsPassed(3));
+			await MatterControlUtilities.RunTest(testToRun);
 		}
 	}
 }

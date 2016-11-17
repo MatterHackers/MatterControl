@@ -271,6 +271,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures);
 
+			ReadLineContainsCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
 			ReadLineContainsCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
 			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
 
@@ -1278,13 +1279,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
 		}
 
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0}Y{1}Z{2} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
 		}
 
 		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
@@ -1301,7 +1302,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
 				}
 
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0:0.###} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
 
 				if (requiresToolChange)
 				{
@@ -1317,7 +1318,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (moveAmountMm != 0)
 			{
 				SetMovementToRelative();
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
 				SetMovementToAbsolute();
 			}
 		}
@@ -1523,12 +1524,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		bool reportedError = false;
+		bool haveReportedError = false;
 		public void PrinterReportsError(object sender, EventArgs e)
 		{
-			if (!reportedError)
+			if (!haveReportedError)
 			{
-				reportedError = true;
+				haveReportedError = true;
 				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 				if (foundStringEventArgs != null)
 				{
@@ -1720,6 +1721,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
 										{
 											CommunicationState = CommunicationStates.Connected;
+											haveReportedError = false;
 											// now send any command that initialize this printer
 											string connectGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.connect_gcode);
 											SendLineToPrinterNow(connectGCode);
@@ -1838,26 +1840,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			waitingForPosition.Stop();
 			waitingForPosition.Reset();
-
-			if(storePositionToPrinterZAfterHome)
-			{
-				storePositionToPrinterZAfterHome = false;
-				double storedHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home);
-				// if printer_z_after_home != current z position
-				if (storedHomePosition != LastReportedPosition.z)
-				{
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.printer_z_after_home, LastReportedPosition.z.ToString());
-					ApplicationController.Instance.ReloadAdvancedControlsPanel();
-				}
-
-				// now send a G92 to set the position that we want to think is home
-				double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_offset_after_home);
-				if (zOffset != 0)
-				{
-					double newHomePosition = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.printer_z_after_home) + zOffset;
-					SendLineToPrinterNow($"G92 Z{newHomePosition}");
-				}
-			}
 		}
 
 		public void ReadTemperatures(object sender, EventArgs e)
@@ -2137,6 +2119,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				return;
 			}
 
+			haveReportedError = false;
 			printWasCanceled = false;
 			ExtrusionRatio = 1;
 			FeedRateRatio = 1;
@@ -2290,7 +2273,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			if (PrinterIsConnected)
 			{
+#if DEBUG
 				throw new Exception(LocalizedString.Get("You can only connect when not currently connected."));
+#else
+				return;
+#endif
 			}
 
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
@@ -2818,13 +2805,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							double currentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 							// Only update the amount done if it is greater than what is recorded.
 							// We don't want to mess up the resume before we actually resume it.
-							if (activePrintTask.PercentDone < currentDone)
+							if (activePrintTask != null
+								&& babyStepsStream6 != null
+								&& activePrintTask.PercentDone < currentDone)
 							{
 								activePrintTask.PercentDone = currentDone;
 								activePrintTask.PrintingOffsetX = (float)babyStepsStream6.Offset.x;
 								activePrintTask.PrintingOffsetY = (float)babyStepsStream6.Offset.y;
 								activePrintTask.PrintingOffsetZ = (float)babyStepsStream6.Offset.z;
-								activePrintTask.Commit();
+								try
+								{
+									Task.Run(() => activePrintTask.Commit());
+								}
+								catch
+								{
+									// Can't write for some reason, continue with the write.
+								}
 							}
 							secondsSinceUpdateHistory = secondsSinceStartedPrint;
 						}
@@ -2933,11 +2929,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
 						SendLineToPrinterNow("M114");
-
-						if (GCodeStream.LineIsZHoming(lineWithoutChecksum))
-						{
-							storePositionToPrinterZAfterHome = true;
-						}
 					}
 
 					// write data to communication
@@ -3015,7 +3006,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		bool haveHookedDrawing = false;
-		private bool storePositionToPrinterZAfterHome = false;
 
 		public class ReadThread
 		{

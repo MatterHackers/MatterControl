@@ -5524,3 +5524,39 @@ Translated:It's time to copy your existing printer settings to your MatterHacker
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
 
+English:none
+Translated:none
+
+English:Exit while printing
+Translated:Exit while printing
+
+English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+Translated:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+
+English:Connect printer and power on
+Translated:Connect printer and power on
+
+English:Detect perimeters that cross over themselves and combine them.
+Translated:Detect perimeters that cross over themselves and combine them.
+
+English:Merge Overlapping Lines
+Translated:Merge Overlapping Lines
+
+English:Restore Settings
+Translated:Restore Settings
+
+English:Streaming GCode...
+Translated:Streaming GCode...
+
+English:Layers & Infill
+Translated:Layers & Infill
+
+English:Raft & Support
+Translated:Raft & Support
+
+English:Redeem Code
+Translated:Redeem Code
+
+English:Library - Enter Share Code
+Translated:Library - Enter Share Code
+

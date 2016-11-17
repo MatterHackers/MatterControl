@@ -112,8 +112,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			sliceOptionsMenuDropList.AddItem("Import".Localize()).Selected += (s, e) => { ImportSettingsMenu_Click(); };
 			sliceOptionsMenuDropList.AddItem("Export".Localize()).Selected += (s, e) => { WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); };
 
-			MenuItem settingsHistory = sliceOptionsMenuDropList.AddItem("Settings History".Localize());
-			settingsHistory.Selected += (s, e) => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Settings History"); };
+			MenuItem settingsHistory = sliceOptionsMenuDropList.AddItem("Restore Settings".Localize());
+			settingsHistory.Selected += (s, e) => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Restore Settings"); };
 
 			settingsHistory.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
 

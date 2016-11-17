@@ -7,6 +7,8 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using MatterHackers.Localizations;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
@@ -62,7 +64,6 @@ namespace MatterHackers.MatterControl
 			this.ActiveSessionUsername = null;
 			this.ActiveSessionEmail = null;
 			this.ActiveClientToken = null;
-			// this.LastSessionUsername = null;
 
 			ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Cleared".Localize());
 			SessionUpdateTrigger.CallEvents(null, null);
@@ -155,6 +156,22 @@ namespace MatterHackers.MatterControl
 				lastSessionUsername = value;
 				ApplicationSettings.Instance.set($"{ApplicationController.EnvironmentName}LastSessionUsername", value);
 			}
+		}
+
+		[JsonIgnore]
+		public string FileSystemSafeUserName => MakeValidFileName(this.ActiveSessionUsername);
+
+		private static string MakeValidFileName(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+			{
+				return name;
+			}
+
+			string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
+			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
+
+			return Regex.Replace(name, invalidRegStr, "_");
 		}
 	}
 }

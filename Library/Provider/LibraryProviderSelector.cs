@@ -219,7 +219,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void ShareItem(int itemIndexToShare)
 		{
-
 		}
 
 		public void CloudSyncStatusChanged(object sender, EventArgs eventArgs)
@@ -227,7 +226,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			var e = eventArgs as ApplicationController.CloudSyncEventArgs;
 
 			// If signing out, we need to force selection to this provider
-			if (e != null && !e.IsAuthenticated)
+			if (e?.IsAuthenticated == false
+				&& SetCurrentLibraryProvider != null)
 			{
 				// Switch to the selector
 				SetCurrentLibraryProvider(this);

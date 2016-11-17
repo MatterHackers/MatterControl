@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -103,6 +104,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				return false;
 			}
+
+			var positionCounts = from x in SampledPositions
+				group x by x into g
+				let count = g.Count()
+				orderby count descending
+				select new { Value = g.Key, Count = count };
+			
+			foreach (var x in positionCounts)
+			{
+				if(x.Count > 1)
+				{
+					return false;
+				}
+			}
+
 
 			switch (CurrentPrinterLevelingSystem)
 			{

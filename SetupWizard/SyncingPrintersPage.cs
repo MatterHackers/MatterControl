@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 			contentRow.AddChild(syncingDetails);
 			Progress<SyncReportType> progress = new Progress<SyncReportType>(ReportProgress);
 
-			ApplicationController.SyncPrinterProfiles(progress).ContinueWith((task) =>
+			ApplicationController.SyncPrinterProfiles("SyncingPrintersPage.ctor()", progress).ContinueWith((task) =>
 			{
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
