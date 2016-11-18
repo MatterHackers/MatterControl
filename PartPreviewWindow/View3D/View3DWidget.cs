@@ -399,7 +399,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ungroupButton.Click += (sender, e) =>
 					{
 						UngroupSelectedMeshGroup();
-						UndoBuffer.ClearHistory();
 					};
 
 					Button groupButton = textImageButtonFactory.Generate("Group".Localize());
@@ -408,7 +407,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					groupButton.Click += (sender, e) =>
 					{
 						GroupSelectedMeshs();
-						UndoBuffer.ClearHistory();
 					};
 
 					Button alignButton = textImageButtonFactory.Generate("Align".Localize());
@@ -416,7 +414,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					alignButton.Click += (sender, e) =>
 					{
 						AlignToSelectedMeshGroup();
-						UndoBuffer.ClearHistory();
 					};
 
 					Button arrangeButton = textImageButtonFactory.Generate("Arrange".Localize());
@@ -549,7 +546,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectPanel = new SelectedObjectPanel()
 			{
-				Width = 215,
 				Margin = new BorderDouble(0, 0, Sidebar.Width + 5, 5),
 			};
 
@@ -1510,10 +1506,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private bool AllowDragDrop()
-		{
+		{ 
 			if ((!enterEditButtonsContainer.Visible
 				&& !doEdittingButtonsContainer.Visible)
-				|| printItemWrapper == null || printItemWrapper.PrintItem.ReadOnly)
+				|| printItemWrapper != null && printItemWrapper.PrintItem.ReadOnly)
 			{
 				return false;
 			}
@@ -1735,7 +1731,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
-			if(!Scene.HasSelection)
+			if (!Scene.HasSelection)
 			{
 				selectedObjectPanel.RemoveAllChildren();
 				return;

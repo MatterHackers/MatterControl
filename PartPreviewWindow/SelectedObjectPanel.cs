@@ -58,7 +58,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 
-			Margin = new BorderDouble(5);
 			HAnchor |= HAnchor.ParentRight;
 			VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren;
 		}
