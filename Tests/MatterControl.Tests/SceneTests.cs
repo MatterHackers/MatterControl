@@ -39,6 +39,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.Agg;
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
@@ -87,23 +90,23 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			IObject3D loadedItem = Object3D.Load(filePath);
 			Assert.IsTrue(loadedItem.Children.Count == 1);
 
-			IObject3D amfItem = loadedItem.Children.First();
+			IObject3D meshItem = loadedItem.Children.First();
 
-			string meshPath = amfItem.MeshPath;
-			Assert.IsTrue(!string.IsNullOrEmpty(meshPath));
-			Assert.IsTrue(File.Exists(meshPath));
-
-			Assert.IsTrue(amfItem.Children.Count == 1);
+			Assert.IsTrue(!string.IsNullOrEmpty(meshItem.MeshPath));
+			Assert.IsTrue(File.Exists(meshItem.MeshPath));
+			Assert.IsNotNull(meshItem.Mesh);
+			Assert.IsTrue(meshItem.Mesh.Faces.Count > 0);
 		}
 
 		[Test]
-		public async void ResavedSceneRemainsConsistent()
+		public async Task ResavedSceneRemainsConsistent()
 		{
 #if !__ANDROID__
 			string staticDataPathOverride = Path.Combine(matterControlPath, "StaticData");
 
 			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 #endif
 			var view3DWidget = new View3DWidget(
 				null,
@@ -131,7 +134,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			}
 
 			scene.Save(filePath, tempPath);
-			Assert.IsTrue(Directory.GetFiles(tempPath).Count() == 2);
+			Assert.AreEqual(1, Directory.GetFiles(tempPath).Length, "Only .mcx file should exists");
+			Assert.AreEqual(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length, "Only 1 asset should exist");
 
 			var originalFiles = Directory.GetFiles(tempPath).ToArray(); ;
 			
@@ -154,7 +158,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.IsTrue(inMemoryData == onDiskData);
 
 			// Verify that no additional files get created on second save
-			Assert.IsTrue(Directory.GetFiles(tempPath).Count() == 2);
+			Assert.AreEqual(1, Directory.GetFiles(tempPath).Length, "Only .mcx file should exists");
+			Assert.AreEqual(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length, "Only 1 asset should exist");
 		}
 
 		public static string GetSceneTempPath()
