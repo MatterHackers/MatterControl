@@ -1512,7 +1512,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if ((!enterEditButtonsContainer.Visible
 				&& !doEdittingButtonsContainer.Visible)
-				|| printItemWrapper == null || printItemWrapper.PrintItem.ReadOnly)
+				|| printItemWrapper != null && printItemWrapper.PrintItem.ReadOnly)
 			{
 				return false;
 			}
