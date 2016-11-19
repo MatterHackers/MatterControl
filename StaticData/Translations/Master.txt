@@ -5590,3 +5590,6 @@ Translated:Color
 English:Depth
 Translated:Depth
 
+English:XOffset
+Translated:XOffset
+

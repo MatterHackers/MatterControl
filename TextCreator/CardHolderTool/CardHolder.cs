@@ -15,6 +15,7 @@ using MatterHackers.MatterControl;
 using MatterHackers.Localizations;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.CustomWidgets;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.SimplePartScripting
 {
@@ -22,6 +23,8 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 	{
 		public override string ActiveEditor { get; set; } = "MatterCadEditor";
 		public string TypeName { get; } = nameof(MatterCadObject3D);
+
+		public Dictionary<string, string> Settings { get; set; } = new Dictionary<string, string>();
 
 		public virtual MatterHackers.PolygonMesh.Mesh Create()
 		{
@@ -63,18 +66,37 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			return mainContainer;
 		}
 
-		private FlowLayoutWidget ModifyCadObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer)
+		private void ModifyCadObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer)
 		{
-			FlowLayoutWidget rowContainer;
+			var stringPropertyNamesAndValues = this.item.GetType()
+				.GetProperties()
+				.Where(pi => pi.PropertyType == typeof(Double) && pi.GetGetMethod() != null)
+				.Select(pi => new
+				{
+					Name = pi.Name,
+					Value = pi
+				});
 
-			rowContainer = CreateSettingsRow("Height".Localize());
-			tabContainer.AddChild(rowContainer);
-
-			rowContainer = CreateSettingsRow("Width".Localize());
-			tabContainer.AddChild(rowContainer);
-
-			rowContainer = CreateSettingsRow("Depth".Localize());
-			tabContainer.AddChild(rowContainer);
+			foreach (var nameValue in stringPropertyNamesAndValues)
+			{
+				FlowLayoutWidget rowContainer = CreateSettingsRow(nameValue.Name.Localize());
+				var doubleEditWidget = new MHNumberEdit((double)nameValue.Value.GetGetMethod().Invoke(this.item, null), pixelWidth: 50 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true, increment: .05)
+				{
+					SelectAllOnFocus = true,
+					VAnchor = VAnchor.ParentCenter
+				};
+				doubleEditWidget.ActuallNumberEdit.EditComplete += (s, e) =>
+				{
+					double editValue;
+					if (double.TryParse(doubleEditWidget.Text, out editValue))
+					{
+						nameValue.Value.GetSetMethod().Invoke(this.item, new Object[] { editValue });
+					}
+					this.item.SetAndInvalidateMesh(((MatterCadObject3D)item).Create());
+				};
+				rowContainer.AddChild(doubleEditWidget);
+				tabContainer.AddChild(rowContainer);
+			}
 
 			var updateButton = view3DWidget.textImageButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
@@ -84,7 +106,6 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				this.item.SetAndInvalidateMesh(((MatterCadObject3D)item).Create());
 			};
 			tabContainer.AddChild(updateButton);
-			return rowContainer;
 		}
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)
@@ -110,6 +131,8 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 	public class TestPart : MatterCadObject3D
 	{
+		public double XOffset { get; set; } = -5;
+
 		public TestPart()
 		{
 			Mesh = Create();
@@ -118,7 +141,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		public override MatterHackers.PolygonMesh.Mesh Create()
 		{
 			CsgObject boxCombine = new Box(10, 10, 10);
-			boxCombine -= new Translate(new Box(10, 10, 10), - 5, -3, 2);
+			boxCombine -= new Translate(new Box(10, 10, 10), XOffset, -3, 2);
 			return CsgToMesh.Convert(boxCombine);
 		}
 	}
