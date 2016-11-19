@@ -179,6 +179,9 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
+		public Action RedeemDesignCode;
+		public Action EnterShareCode;
+
 		private static ApplicationController globalInstance;
 		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
@@ -496,29 +499,35 @@ namespace MatterHackers.MatterControl
 		public LibraryDataView CurrentLibraryDataView = null;
 		public void SwitchToPurchasedLibrary()
 		{
-			// Switch to the purchased library
-			LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
-			if (libraryProviderSelector != null)
+			if (CurrentLibraryDataView?.CurrentLibraryProvider?.GetRootProvider() != null)
 			{
-				LibraryProvider purchaseProvider = libraryProviderSelector.GetPurchasedLibrary();
-				UiThread.RunOnIdle(() =>
+				// Switch to the purchased library
+				LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
+				if (libraryProviderSelector != null)
 				{
-					CurrentLibraryDataView.CurrentLibraryProvider = purchaseProvider;
-				});
+					LibraryProvider purchaseProvider = libraryProviderSelector.GetPurchasedLibrary();
+					UiThread.RunOnIdle(() =>
+					{
+						CurrentLibraryDataView.CurrentLibraryProvider = purchaseProvider;
+					});
+				}
 			}
 		}
 
 		public void SwitchToSharedLibrary()
 		{
 			// Switch to the shared library
-			LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
-			if (libraryProviderSelector != null)
+			if (CurrentLibraryDataView?.CurrentLibraryProvider?.GetRootProvider() != null)
 			{
-				LibraryProvider sharedProvider = libraryProviderSelector.GetSharedLibrary();
-				UiThread.RunOnIdle(() =>
+				LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
+				if (libraryProviderSelector != null)
 				{
-					CurrentLibraryDataView.CurrentLibraryProvider = sharedProvider;
-				});
+					LibraryProvider sharedProvider = libraryProviderSelector.GetSharedLibrary();
+					UiThread.RunOnIdle(() =>
+					{
+						CurrentLibraryDataView.CurrentLibraryProvider = sharedProvider;
+					});
+				}
 			}
 		}
 

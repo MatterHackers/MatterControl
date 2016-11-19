@@ -131,9 +131,6 @@ namespace MatterHackers.MatterControl
 
 	public class SetupAccountView : SetupViewBase
 	{
-		public static EventHandler RedeemDesignCode;
-		public static EventHandler EnterShareCode;
-
 		private event EventHandler unregisterEvents;
 		private Button signInButton;
 		private Button signOutButton;
@@ -216,13 +213,14 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(new HorizontalSpacer());
 
 			// the redeem design code button
+			textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
 			Button redeemPurchaseButton = textImageButtonFactory.Generate("Redeem Purchase".Localize());
 			redeemPurchaseButton.Enabled = true; // The library selector (the first library selected) is protected so we can't add to it.
 			redeemPurchaseButton.Name = "Redeem Code Button";
 			redeemPurchaseButton.Margin = new BorderDouble(0, 0, 10, 0);
 			redeemPurchaseButton.Click += (sender, e) =>
 			{
-				RedeemDesignCode?.Invoke(this, null);
+				ApplicationController.Instance.RedeemDesignCode?.Invoke();
 			};
 			buttonContainer.AddChild(redeemPurchaseButton);
 
@@ -233,7 +231,7 @@ namespace MatterHackers.MatterControl
 			redeemShareButton.Margin = new BorderDouble(0, 0, 10, 0);
 			redeemShareButton.Click += (sender, e) =>
 			{
-				EnterShareCode?.Invoke(this, null);
+				ApplicationController.Instance.EnterShareCode?.Invoke();
 			};
 
 			if (!signedIn)

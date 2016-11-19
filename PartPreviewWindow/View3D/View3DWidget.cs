@@ -1742,6 +1742,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType.TryGetValue(selectedItem.GetType(), out mappedEditors);
 
+			if(mappedEditors == null)
+			{
+				foreach(var editor in objectEditorsByType)
+				{
+					if (selectedItem.GetType().IsSubclassOf(editor.Key))
+					{
+						mappedEditors = editor.Value;
+						break;
+					}
+				}
+			}
+
 			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: VAnchor.FitToChildren);
 
 			if (mappedEditors != null)

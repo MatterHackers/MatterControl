@@ -5554,3 +5554,42 @@ Translated:Layers & Infill
 English:Raft & Support
 Translated:Raft & Support
 
+English:Redeem Code
+Translated:Redeem Code
+
+English:Library - Enter Share Code
+Translated:Library - Enter Share Code
+
+English:Overhang
+Translated:Overhang
+
+English:TEXT
+Translated:TEXT
+
+English:Text
+Translated:Text
+
+English:Braille
+Translated:Braille
+
+English:Rotation Count:
+Translated:Rotation Count:
+
+English:Height
+Translated:Height
+
+English:Radius
+Translated:Radius
+
+English:Update
+Translated:Update
+
+English:Color
+Translated:Color
+
+English:Depth
+Translated:Depth
+
+English:XOffset
+Translated:XOffset
+

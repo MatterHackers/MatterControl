@@ -78,6 +78,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatterControl\BrailleGrade2Tests.cs" />
     <Compile Include="MatterControl\PerformanceTests.cs" />
     <Compile Include="MatterControl\ImportSettingsTests.cs" />
     <Compile Include="MatterControl\SettingsParseTests.cs" />
@@ -107,6 +108,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\BrailleBuilder\BrailleBuilder.csproj">
+      <Project>{70FBB82C-558D-4B5F-BE75-A922D392E650}</Project>
+      <Name>BrailleBuilder</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\MatterControl.csproj">
       <Project>{0B8D6F56-BD7F-4426-B858-D9292B084656}</Project>
       <Name>MatterControl</Name>
@@ -154,6 +159,10 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TextCreator\TextCreator.csproj">
+      <Project>{F49EC1DD-D645-4709-8667-B57318AF67B0}</Project>
+      <Name>TextCreator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
