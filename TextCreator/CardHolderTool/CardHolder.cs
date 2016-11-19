@@ -19,12 +19,9 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.SimplePartScripting
 {
-	public class MatterCadObject3D : Object3D
+	public abstract class MatterCadObject3D : Object3D
 	{
 		public override string ActiveEditor { get; set; } = "MatterCadEditor";
-		public string TypeName { get; } = nameof(MatterCadObject3D);
-
-		public Dictionary<string, string> Settings { get; set; } = new Dictionary<string, string>();
 
 		public virtual MatterHackers.PolygonMesh.Mesh Create()
 		{
@@ -129,8 +126,11 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 
-	public class TestPart : MatterCadObject3D
+	public class TestPart : MatterCadObject3D, IMappingType
 	{
+		public string TypeName { get; } = nameof(TestPart);
+		public string FullTypeName { get; } = "MatterHackers.MatterControl.SimplePartScripting.TestPart,TextCreator";
+
 		public double XOffset { get; set; } = -5;
 
 		public TestPart()
@@ -146,8 +146,11 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 	
-	public class CardHolder : MatterCadObject3D
+	public class CardHolder : MatterCadObject3D, IMappingType
 	{
+		public string TypeName { get; } = nameof(CardHolder);
+		public string FullTypeName { get; } = "MatterHackers.MatterControl.SimplePartScripting.CardHolder,TextCreator";
+
 		// these are the public variables that would be edited
 		public string Name { get; set; } = "Name";
 
@@ -182,40 +185,51 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 
-	public class ChairFoot : MatterCadObject3D
+	public class ChairFoot : MatterCadObject3D, IMappingType
 	{
+		public string TypeName { get; } = nameof(ChairFoot);
+		public string FullTypeName { get; } = "MatterHackers.MatterControl.SimplePartScripting.ChairFoot,TextCreator";
+
 		// these are the public variables that would be edited
-		double heightFromFloorToBottomOfLeg = 10;
+		public bool FinalPart { get; set; } = true;
 
-		double outerSize = 22;
+		public double HeightFromFloorToBottomOfLeg { get; set; } = 10;
 
-		double innerSize = 20;
-		double insideReach = 10;
+		public double OuterSize { get; set; } = 22;
 
-		double angleDegrees = 3;
+		public double InnerSize { get; set; } = 20;
+		public double InsideReach { get; set; } = 10;
 
-		public MatterHackers.PolygonMesh.Mesh Create()
+		public double AngleDegrees { get; set; } = 3;
+
+		public ChairFoot()
+		{
+			Mesh = Create();
+		}
+
+		public override MatterHackers.PolygonMesh.Mesh Create()
 		{
 			// This would be better expressed as the desired offset height (height from ground to bottom of chair leg).
-			double angleRadians = MathHelper.DegreesToRadians(angleDegrees);
-			double extraHeightForRotation = Math.Sinh(angleRadians) * outerSize; // get the distance to clip off the extra bottom
-			double unclippedFootHeight = heightFromFloorToBottomOfLeg + extraHeightForRotation;
+			double angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
+			double extraHeightForRotation = Math.Sinh(angleRadians) * OuterSize; // get the distance to clip off the extra bottom
+			double unclippedFootHeight = HeightFromFloorToBottomOfLeg + extraHeightForRotation;
 
+			if(FinalPart)
 			{
-				Box chairFootBox = new Box(outerSize, outerSize, unclippedFootHeight);
-				chairFootBox.BevelEdge(Edge.LeftBack, 2);
-				chairFootBox.BevelEdge(Edge.LeftFront, 2);
-				chairFootBox.BevelEdge(Edge.RightBack, 2);
-				chairFootBox.BevelEdge(Edge.RightFront, 2);
+				Box chairFootBox = new Box(OuterSize, OuterSize, unclippedFootHeight);
+				//chairFootBox.BevelEdge(Edge.LeftBack, 2);
+				//chairFootBox.BevelEdge(Edge.LeftFront, 2);
+				//chairFootBox.BevelEdge(Edge.RightBack, 2);
+				//chairFootBox.BevelEdge(Edge.RightFront, 2);
 				CsgObject chairFoot = chairFootBox;
 
-				CsgObject ring = new Cylinder(innerSize / 2 - 1, insideReach);
-				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
+				CsgObject ring = new Cylinder(InnerSize / 2 - 1, InsideReach);
+				//ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
 
 				CsgObject fins = new Box(3, 1, ring.ZSize);
 				fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
-				fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
-				fins = new Translate(fins, innerSize / 2 - .1);
+				//fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
+				fins = new Translate(fins, InnerSize / 2 - .1);
 
 				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
 				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 90));
@@ -225,30 +239,28 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
 
 				chairFoot = new Rotate(chairFoot, 0, angleRadians, 0);
-				chairFoot -= new Align(new Box(outerSize * 2, outerSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
-				OpenSCadOutput.Save(chairFoot, "Chair Foot.scad");
+				//chairFoot -= new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
 
-				MatterHackers.PolygonMesh.Mesh mesh = CsgToMesh.Convert(chairFoot);
-				MatterHackers.PolygonMesh.Processors.StlProcessing.Save(mesh, "Chair Foot.stl");
+				return CsgToMesh.Convert(chairFoot);
 			}
-
+			else // fit part
 			{
 				double baseHeight = 3;
 				double insideHeight = 4;
-				Box chairFootBox = new Box(outerSize, outerSize, baseHeight);
+				Box chairFootBox = new Box(OuterSize, OuterSize, baseHeight);
 				chairFootBox.BevelEdge(Edge.LeftBack, 2);
 				chairFootBox.BevelEdge(Edge.LeftFront, 2);
 				chairFootBox.BevelEdge(Edge.RightBack, 2);
 				chairFootBox.BevelEdge(Edge.RightFront, 2);
 				CsgObject chairFoot = chairFootBox;
 
-				CsgObject ring = new Cylinder(innerSize / 2 - 1, insideHeight);
-				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
+				CsgObject ring = new Cylinder(InnerSize / 2 - 1, insideHeight);
+				//ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
 
 				CsgObject fins = new Box(3, 1, ring.ZSize);
 				fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
-				fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
-				fins = new Translate(fins, innerSize / 2 - .1);
+				//fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
+				fins = new Translate(fins, InnerSize / 2 - .1);
 
 				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
 				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 90));

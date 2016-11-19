@@ -382,22 +382,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							};
 						}
 
-						item.Mesh?.Triangulate();
-
-						ThumbnailTracer tracer = new ThumbnailTracer(item, 64, 64);
-						tracer.DoTrace();
-
-						buttonImage.SetRecieveBlender(new BlenderPreMultBGRA());
-						//buttonImage = ImageBuffer.CreateScaledImage(tracer.destImage, 64, 64);
-						buttonImage.CopyFrom(tracer.destImage);
-						UiThread.RunOnIdle(() =>
+						if (item.Mesh != null)
 						{
-							if (!Directory.Exists(createdIconPath))
+							item.Mesh.Triangulate();
+
+							ThumbnailTracer tracer = new ThumbnailTracer(item, 64, 64);
+							tracer.DoTrace();
+
+							buttonImage.SetRecieveBlender(new BlenderPreMultBGRA());
+							//buttonImage = ImageBuffer.CreateScaledImage(tracer.destImage, 64, 64);
+							buttonImage.CopyFrom(tracer.destImage);
+							UiThread.RunOnIdle(() =>
 							{
-								Directory.CreateDirectory(createdIconPath);
-							}
-							ImageIO.SaveImageData(iconPathAndFileName, buttonImage);
-						});
+								if (!Directory.Exists(createdIconPath))
+								{
+									Directory.CreateDirectory(createdIconPath);
+								}
+								ImageIO.SaveImageData(iconPathAndFileName, buttonImage);
+							});
+						}
 					});
 				}
 			}
