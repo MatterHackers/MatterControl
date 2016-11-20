@@ -239,7 +239,9 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
 
 				chairFoot = new Rotate(chairFoot, 0, angleRadians, 0);
-				//chairFoot -= new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
+				CsgObject clipBox = new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
+				chairFoot -= clipBox;
+				chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.z);
 
 				return CsgToMesh.Convert(chairFoot);
 			}
