@@ -75,11 +75,12 @@ namespace MatterHackers.MatterControl
 					topBarControls.HAnchor |= HAnchor.ParentLeft;
 
 					{
-						string filterOutputChkTxt = LocalizedString.Get("Filter Output");
-
-						filterOutput = new CheckBox(filterOutputChkTxt);
-						filterOutput.Margin = new BorderDouble(5, 5, 5, 2);
-						filterOutput.TextColor = this.textColor;
+						filterOutput = new CheckBox("Filter Output".Localize())
+						{
+							Margin = new BorderDouble(5, 5, 5, 2),
+							TextColor = this.textColor,
+							VAnchor = Agg.UI.VAnchor.ParentBottom,
+						};
 						filterOutput.CheckedStateChanged += (object sender, EventArgs e) =>
 						{
 							if (filterOutput.Checked)
@@ -94,14 +95,11 @@ namespace MatterHackers.MatterControl
 							UserSettings.Instance.Fields.SetBool(TerminalFilterOutputKey, filterOutput.Checked);
 						};
 
-						filterOutput.VAnchor = Agg.UI.VAnchor.ParentBottom;
 						topBarControls.AddChild(filterOutput);
 					}
 
 					{
-						string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
-
-						autoUppercase = new CheckBox(autoUpperCaseChkTxt);
+						autoUppercase = new CheckBox("Auto Uppercase".Localize());
 						autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
 						autoUppercase.Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true);
 						autoUppercase.TextColor = this.textColor;
@@ -153,7 +151,7 @@ namespace MatterHackers.MatterControl
 
 				manualEntryTopToBottomLayout.AddChild(manualEntryLayout);
 
-				Button clearConsoleButton = controlButtonFactory.Generate(LocalizedString.Get("Clear"));
+				Button clearConsoleButton = controlButtonFactory.Generate("Clear".Localize());
 				clearConsoleButton.Margin = new BorderDouble(0);
 				clearConsoleButton.Click += (sender, e) =>
 				{
@@ -161,19 +159,19 @@ namespace MatterHackers.MatterControl
 				};
 
 				//Output Console text to screen
-				Button exportConsoleTextButton = controlButtonFactory.Generate(LocalizedString.Get("Export..."));
+				Button exportConsoleTextButton = controlButtonFactory.Generate("Export...".Localize());
 				exportConsoleTextButton.Click += (sender, mouseEvent) =>
 				{
 					UiThread.RunOnIdle(DoExportExportLog_Click);
 				};
 
-				Button closeButton = controlButtonFactory.Generate(LocalizedString.Get("Close"));
+				Button closeButton = controlButtonFactory.Generate("Close".Localize());
 				closeButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(CloseWindow);
 				};
 
-				sendCommand = controlButtonFactory.Generate(LocalizedString.Get("Send"));
+				sendCommand = controlButtonFactory.Generate("Send".Localize());
 				sendCommand.Click += new EventHandler(sendManualCommandToPrinter_Click);
 
 				FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();

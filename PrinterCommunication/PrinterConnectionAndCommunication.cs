@@ -175,8 +175,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMove lastReportedPosition;
 
-		private List<string> LinesToWriteQueue = new List<string>();
-
 		DataViewGraph sendTimeAfterOkGraph;
 
 		private GCodeFile loadedGCode = new GCodeFileLoaded();
@@ -219,8 +217,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double[] targetExtruderTemperature = new double[MAX_EXTRUDERS];
 
-		private System.Diagnostics.Stopwatch temperatureRequestTimer = new System.Diagnostics.Stopwatch();
-
 		private Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
 
 		private Stopwatch timeSinceLastReadAnything = new Stopwatch();
@@ -232,8 +228,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private Stopwatch timeSinceStartedPrint = new Stopwatch();
 
 		private Stopwatch timeWaitingForSdProgress = new Stopwatch();
-
-		private Stopwatch timeWaitingForTemperature = new Stopwatch();
 
 		private double totalSdBytes = 0;
 
@@ -450,7 +444,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						break;
 
 					case CommunicationStates.Connected:
-						timeWaitingForTemperature.Stop(); // make sure we try again to send temps
 						SendLineToPrinterNow("M115");
 						SendLineToPrinterNow("M114");
 						break;
@@ -696,7 +689,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				else if (NumberOfLinesInCurrentPrint > 0
 					&& loadedGCode != null
-				    && gCodeFileStream0 != null)
+					&& gCodeFileStream0 != null)
 				{
 					return loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 				}
@@ -1072,7 +1065,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 
 				PrinterOutputCache.Instance.Clear();
-				LinesToWriteQueue.Clear();
 				//Attempt connecting to a specific printer
 				this.stopTryingToConnect = false;
 				firmwareType = FirmwareTypes.Unknown;
@@ -1155,7 +1147,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				serialPort = null;
 				CommunicationState = CommunicationStates.Disconnected;
-				LinesToWriteQueue.Clear();
 			}
 			else
 			{
@@ -1360,39 +1351,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				ReadThread.Start();
 			}
-
-			if (!temperatureRequestTimer.IsRunning)
-			{
-				temperatureRequestTimer.Start();
-			}
-
-			if (temperatureRequestTimer.ElapsedMilliseconds > 2000)
-			{
-				if (!PrinterIsPrinting
-					&& MonitorPrinterTemperature
-					&& (!timeWaitingForTemperature.IsRunning || timeWaitingForTemperature.Elapsed.TotalSeconds > 60))
-				{
-					timeWaitingForTemperature.Restart();
-					SendLineToPrinterNow("M105");
-				}
-
-				if (CommunicationState == CommunicationStates.PrintingFromSd
-					&& (!timeWaitingForSdProgress.IsRunning || timeWaitingForSdProgress.Elapsed.TotalSeconds > 10))
-				{
-					timeWaitingForSdProgress.Restart();
-					SendLineToPrinterNow("M27"); // : Report SD print status
-				}
-
-				temperatureRequestTimer.Restart();
-			}
-
-			bool waited30SecondsForOk = timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > 30; // waited for more than 30 seconds
-			bool noResponseFor5Seconds = timeSinceLastReadAnything.Elapsed.TotalSeconds > 5;
-			while (LinesToWriteQueue.Count > 0 &&
-				(waited30SecondsForOk || !timeHaveBeenWaitingForOK.IsRunning || noResponseFor5Seconds))
-			{
-				WriteNextLineFromQueue();
-			}
 		}
 
 		public void OnPrintFinished(EventArgs e)
@@ -1414,7 +1372,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 
-			if(oneOrMoreValuesReset)
+			if (oneOrMoreValuesReset)
 			{
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
@@ -1429,7 +1387,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-					if(levelingData?.HasBeenRunAndEnabled() != true)
+					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
 						LevelWizardBase.ShowPrintLevelWizard();
 						return;
@@ -1453,7 +1411,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
-							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" 
+							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE"
 								&& hideGCodeWarning == null
 								&& !overrideAllowGCode)
 							{
@@ -1628,7 +1586,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-        public void ReadFromPrinter(ReadThread readThreadHolder)
+		public void ReadFromPrinter(ReadThread readThreadHolder)
 		{
 			string dataLastRead = string.Empty;
 
@@ -1638,8 +1596,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			while (CommunicationState == CommunicationStates.AttemptingToConnect
 				|| (PrinterIsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
-				if (PrinterIsPrinting
-					&& PrinterIsConnected
+				if (PrinterIsConnected
 					&& CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					TryWriteNextLineFromGCodeFile();
@@ -1680,7 +1637,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 								if (dataLastRead.Length > 0)
 								{
-									if(lastLineRead.StartsWith("ok"))
+									if (lastLineRead.StartsWith("ok"))
 									{
 										timeSinceRecievedOk.Restart();
 									}
@@ -1723,6 +1680,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											CommunicationState = CommunicationStates.Connected;
 											haveReportedError = false;
 											// now send any command that initialize this printer
+											ClearQueuedGCode();
 											string connectGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.connect_gcode);
 											SendLineToPrinterNow(connectGCode);
 
@@ -1830,7 +1788,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				currentDestination = lastReportedPosition;
 				DestinationChanged.CallEvents(this, null);
-                if (totalGCodeStream != null)
+				if (totalGCodeStream != null)
 				{
 					totalGCodeStream.SetPrinterPosition(currentDestination);
 				}
@@ -1886,9 +1844,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 			}
-
-			// We read them so we are no longer waiting
-			timeWaitingForTemperature.Stop();
 		}
 
 		public void RebootBoard()
@@ -1991,7 +1946,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				else
 				{
-					LinesToWriteQueue.Clear();
 					pauseHandlingStream1.Resume();
 					CommunicationState = CommunicationStates.Printing;
 				}
@@ -2041,30 +1995,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return;
 				}
 
-				lineToWrite = lineToWrite.Split(';')[0].Trim();
-				if (lineToWrite.Trim().Length > 0)
+				if (CommunicationState == CommunicationStates.PrintingFromSd
+					|| ForceImmediateWrites)
 				{
-					if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd
-						&& !ForceImmediateWrites)
+					lineToWrite = lineToWrite.Split(';')[0].Trim();
+					if (lineToWrite.Trim().Length > 0)
+					{
+						// sometimes we need to send code without buffering (like when we are closing the program).
+						WriteRawToPrinter(lineToWrite + "\r\n", lineToWrite);
+					}
+				}
+				else
+				{
+					if (lineToWrite.Trim().Length > 0)
 					{
 						// insert the command into the printing queue at the head
 						InjectGCode(lineToWrite);
-					}
-					else
-					{
-						// sometimes we need to send code without buffering (like when we are closing the program).
-						if (ForceImmediateWrites)
-						{
-							WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
-						}
-						else
-						{
-							// try not to write the exact same command twice (like M105)
-							if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
-							{
-								LinesToWriteQueue.Add(lineToWrite);
-							}
-						}
 					}
 				}
 			}
@@ -2126,7 +2072,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			waitingForPosition.Stop();
 			waitingForPosition.Reset();
 
-			LinesToWriteQueue.Clear();
 			ClearQueuedGCode();
 			activePrintTask = printTaskToUse;
 
@@ -2302,6 +2247,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						Console.WriteLine("ReadFromPrinter thread created.");
 						ReadThread.Start();
 
+						CreateStreamProcessors(null, false);
+
 						// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
 						SendLineToPrinterNow("M105");
 						// We do not need to wait for the M105
@@ -2448,12 +2395,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			for (int i = 0; i < lines.Length; i++)
 			{
-				string[] splitOnSemicolon = lines[i].Split(';');
-				string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
-				if (trimedLine != "")
-				{
-					queuedCommandStream2.Add(trimedLine);
-				}
+				queuedCommandStream2.Add(lines[i]);
 			}
 		}
 
@@ -2490,28 +2432,39 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private void LoadGCodeToPrint(string gcodeFilename)
+		void CreateStreamProcessors(string gcodeFilename, bool recoveryEnabled)
 		{
 			totalGCodeStream?.Dispose();
 
-			loadedGCode = GCodeFile.Load(gcodeFilename);
-
-			gCodeFileStream0 = new GCodeFileStream(loadedGCode);
-			if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled)
-				&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
+			GCodeStream firstStream = null;
+			if (gcodeFilename != null)
 			{
-				pauseHandlingStream1 = new PauseHandlingStream(new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
+				loadedGCode = GCodeFile.Load(gcodeFilename);
+				gCodeFileStream0 = new GCodeFileStream(loadedGCode);
+
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled)
+					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
+				{
+					pauseHandlingStream1 = new PauseHandlingStream(new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
+				}
+				else
+				{
+					pauseHandlingStream1 = new PauseHandlingStream(gCodeFileStream0);
+				}
+
+				firstStream = pauseHandlingStream1;
 			}
 			else
 			{
-				pauseHandlingStream1 = new PauseHandlingStream(gCodeFileStream0);
+				firstStream = new NotPrintingStream();
 			}
-			queuedCommandStream2 = new QueuedCommandsStream(pauseHandlingStream1);
+
+			queuedCommandStream2 = new QueuedCommandsStream(firstStream);
 			relativeToAbsoluteStream3 = new RelativeToAbsoluteStream(queuedCommandStream2);
 			printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3, true);
 			waitForTempStream5 = new WaitForTempStream(printLevelingStream4);
 			babyStepsStream6 = new BabyStepsStream(waitForTempStream5);
-			if(activePrintTask != null)
+			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing
 				babyStepsStream6.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
@@ -2520,6 +2473,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
 			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);
 			totalGCodeStream = requestTemperaturesStream9;
+		}
+
+		private void LoadGCodeToPrint(string gcodeFilename)
+		{
+			CreateStreamProcessors(gcodeFilename, ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled));
 		}
 
 		private void DoneLoadingGCodeToPrint()
@@ -2774,7 +2732,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (firstLineToResendIndex < allCheckSumLinesSent.Count)
 				{
-					WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\r\n", "resend");
+					WriteRawToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\r\n", "resend");
 				}
 				else
 				{
@@ -2840,7 +2798,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						TurnOffBedAndExtruders();
 						printWasCanceled = false;
 					}
-					else // we finished printing normally
+					else if(communicationState == CommunicationStates.Printing)// we finished printing normally
 					{
 						CommunicationState = CommunicationStates.FinishedPrint;
 
@@ -2849,6 +2807,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
 						TurnOffBedAndExtruders();
+
+						// get us back to the no printing setting
+						CreateStreamProcessors(null, false);
 					}
 				}
 			}
@@ -2884,7 +2845,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			//else
 			{
-				WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
+				WriteRawToPrinter(lineWithChecksum + "\r\n", lineToWrite);
 			}
 		}
 
@@ -2899,22 +2860,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			return lineToWrite;
 		}
 
-		private void WriteNextLineFromQueue()
-		{
-			string lineToWrite = LinesToWriteQueue[0];
-
-			lock (locker)
-			{
-				lineToWrite = RemoveCommentIfAny(lineToWrite);
-				KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
-
-				LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
-				WriteToPrinter(lineToWrite + "\n", lineToWrite);
-			}
-			System.Threading.Thread.Sleep(1);
-		}
-
-		private void WriteToPrinter(string lineToWrite, string lineWithoutChecksum)
+		private void WriteRawToPrinter(string lineToWrite, string lineWithoutChecksum)
 		{
 			if (PrinterIsConnected || CommunicationState == CommunicationStates.AttemptingToConnect)
 			{
@@ -3003,6 +2949,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					OnConnectionFailed(null);
 				}
 			}
+		}
+
+		public void MacroContinue()
+		{
+			queuedCommandStream2.Continue();
+		}
+
+		internal void MacroCancel()
+		{
+			queuedCommandStream2.Continue();
+			queuedCommandStream2.Clear();
 		}
 
 		bool haveHookedDrawing = false;
