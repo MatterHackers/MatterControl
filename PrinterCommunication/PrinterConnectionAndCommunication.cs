@@ -2019,6 +2019,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public bool SerialPortIsAvailable(string portName)
 		//Check is serial port is in the list of available serial ports
 		{
+			if(IsNetworkPrinting())
+			{
+				return true;
+			}
 			try
 			{
 				string[] portNames = FrostedSerialPort.GetPortNames();
@@ -2297,7 +2301,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// Allow the user to set the appropriate properties.
 			var portNames = FrostedSerialPort.GetPortNames();
 			//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
-			if (portNames.Length > 0)
+			if (portNames.Length > 0 || IsNetworkPrinting())
 			{
 				AttemptToConnect(this.ComPort, this.BaudRate);
 				if (CommunicationState == CommunicationStates.FailedToConnect)
@@ -2598,6 +2602,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
 			}
+		}
+
+		private bool IsNetworkPrinting()
+		{
+			return ActiveSliceSettings.Instance.GetValue(SettingsKey.enable_network_printing) == "1";
 		}
 
 		private void OnAtxPowerStateChanged(bool enableAtxPower)

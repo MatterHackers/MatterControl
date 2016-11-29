@@ -107,6 +107,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
+		public const string enable_sailfish_communication = nameof(enable_sailfish_communication);
+		public const string enable_network_printing = nameof(enable_network_printing);
+		public const string ip_address = nameof(ip_address);
+		public const string ip_port = nameof(ip_port);
 	}
 
 	public class SettingsHelpers
