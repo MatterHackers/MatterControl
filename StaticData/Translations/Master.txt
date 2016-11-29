@@ -5263,23 +5263,32 @@ Translated:Sorry! Looks like an account already exists for that email address.
 English:Settings History
 Translated:Settings History
 
-English:The amount that the perimeter will overlap itself when it completes its loop, as a percent of the Nozzle Diameter.
-Translated:The amount that the perimeter will overlap itself when it completes its loop, as a percent of the Nozzle Diameter.
+English:Allows the printer to attempt to connect to a printer over the network.
+Translated:Allows the printer to attempt to connect to a printer over the network.
 
-English:Start end Overlap
-Translated:Start end Overlap
+English:IP Address of printer/printer controller
+Translated:IP Address of printer/printer controller
 
-English:Select a printer.
-Translated:Select a printer.
+English:Port number to be used with IP Adress to connect to printer over the network
+Translated:Port number to be used with IP Adress to connect to printer over the network
 
-English:Unable to Connect
-Translated:Unable to Connect
+English:IP Address
+Translated:IP Address
 
-English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
+English:Port
+Translated:Port
+
+English:Enable Network Printing
+Translated:Enable Network Printing
+
+English:Determines the method of communication used to talk to your printer.
+Translated:Determines the method of communication used to talk to your printer.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 Translated:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+
+English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
+Translated:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
 
 English:The distance that the perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
 Translated:The distance that the perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
@@ -5290,14 +5299,26 @@ Translated:Start End Overlap
 English:Layer(s) To Pause:
 Translated:Layer(s) To Pause:
 
-English:Select Printers to Sync
-Translated:Select Printers to Sync
+English:Allows the printer to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+Translated:Allows the printer to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 
-English:Printers to Sync:
-Translated:Printers to Sync:
+English:Allows the printer to use the s3g communication method. (You must disconnect and reconnect for this to take effect)
+Translated:Allows the printer to use the s3g communication method. (You must disconnect and reconnect for this to take effect)
 
-English:Sync
-Translated:Sync
+English:Enable Sailfish Communication
+Translated:Enable Sailfish Communication
+
+English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+Translated:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+
+English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
+Translated:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
+
+English:Networked Printing
+Translated:Networked Printing
+
+English:Sailfish Communication
+Translated:Sailfish Communication
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
 Translated:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
