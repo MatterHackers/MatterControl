@@ -64,15 +64,15 @@ public class LicenseAgreementPage : WizardPage
 		};
 
 		acceptButton.Visible = true;
-		cancelButton.Visible = true;
+		closeButton.Visible = true;
 
 		// Exit if EULA is not accepted
-		cancelButton.Click += (s, e) => UiThread.RunOnIdle(MatterControlApplication.Instance.Close);
+		closeButton.Click += (s, e) => UiThread.RunOnIdle(MatterControlApplication.Instance.Close);
 
 		//Add buttons to buttonContainer
 		footerRow.AddChild(acceptButton);
 		footerRow.AddChild(new HorizontalSpacer());
-		footerRow.AddChild(cancelButton);
+		footerRow.AddChild(closeButton);
 
 		footerRow.Visible = true;
 

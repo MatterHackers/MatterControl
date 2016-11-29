@@ -61,9 +61,9 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(SliceSettingsWidget.CreatePrinterExtraControls());
 
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			footerRow.AddChild(closeButton);
 
-			cancelButton.Text = "Back".Localize();
+			closeButton.Text = "Back".Localize();
 
 			// Close this form if the active printer changes
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => 

@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				footerRow.AddChild(nextButton);
 				footerRow.AddChild(connectButton);
 				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(cancelButton);
+				footerRow.AddChild(closeButton);
 			}
 		}
 

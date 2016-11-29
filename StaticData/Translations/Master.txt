@@ -5560,3 +5560,9 @@ Translated:Redeem Code
 English:Library - Enter Share Code
 Translated:Library - Enter Share Code
 
+English:Macro Feedback
+Translated:Macro Feedback
+
+English:OK
+Translated:OK
+
