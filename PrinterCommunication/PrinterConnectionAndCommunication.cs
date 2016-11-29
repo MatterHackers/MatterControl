@@ -2393,8 +2393,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void InjectGCode(string codeToInject)
 		{
-			codeToInject = GCodeProcessing.ReplaceMacroValues(codeToInject);
-
 			codeToInject = codeToInject.Replace("\\n", "\n");
 			string[] lines = codeToInject.Split('\n');
 
