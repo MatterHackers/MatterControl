@@ -1596,7 +1596,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			while (CommunicationState == CommunicationStates.AttemptingToConnect
 				|| (PrinterIsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
-				if (PrinterIsConnected
+				if ((PrinterIsConnected
+					|| this.communicationState == CommunicationStates.AttemptingToConnect)
 					&& CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					TryWriteNextLineFromGCodeFile();
@@ -2392,8 +2393,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void InjectGCode(string codeToInject)
 		{
-			codeToInject = GCodeProcessing.ReplaceMacroValues(codeToInject);
-
 			codeToInject = codeToInject.Replace("\\n", "\n");
 			string[] lines = codeToInject.Split('\n');
 

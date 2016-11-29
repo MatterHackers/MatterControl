@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.PrinterControls;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg.UI;
 using System;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -77,6 +78,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					if (commandQueue.Count > 0)
 					{
 						lineToSend = commandQueue[0];
+						lineToSend = GCodeProcessing.ReplaceMacroValues(lineToSend);
 						commandQueue.RemoveAt(0);
 					}
 				}

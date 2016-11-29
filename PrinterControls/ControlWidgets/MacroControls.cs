@@ -176,7 +176,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		protected void SendCommandToPrinter(string command)
 		{
-			command = GCodeProcessing.ReplaceMacroValues(command);
 			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(command);
 		}
 	}
