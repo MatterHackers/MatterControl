@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		public string TypeName { get; } = nameof(TestPart);
 		public string FullTypeName { get; } = "MatterHackers.MatterControl.SimplePartScripting.TestPart,TextCreator";
 
-		public double XOffset { get; set; } = -5;
+		public double XOffset { get; set; } = -.4;
 
 		public TestPart()
 		{
@@ -224,11 +224,11 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				CsgObject chairFoot = chairFootBox;
 
 				CsgObject ring = new Cylinder(InnerSize / 2 - 1, InsideReach);
-				//ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
+				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
 
 				CsgObject fins = new Box(3, 1, ring.ZSize);
 				fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
-				//fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
+				fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
 				fins = new Translate(fins, InnerSize / 2 - .1);
 
 				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
@@ -257,11 +257,11 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				CsgObject chairFoot = chairFootBox;
 
 				CsgObject ring = new Cylinder(InnerSize / 2 - 1, insideHeight);
-				//ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
+				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
 
 				CsgObject fins = new Box(3, 1, ring.ZSize);
 				fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
-				//fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
+				fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
 				fins = new Translate(fins, InnerSize / 2 - .1);
 
 				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
