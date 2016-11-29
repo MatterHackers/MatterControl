@@ -55,10 +55,10 @@ namespace MatterHackers.MatterControl
 			AddNameSetting(SettingsKey.auto_connect, contentRow, ref tabIndex);
 			AddNameSetting(SettingsKey.baud_rate, contentRow, ref tabIndex);
 			//Check if networked printing is on before displaying comport or ip/port
-			if(ActiveSliceSettings.Instance.GetValue("enable_network_printing")=="1")
+			if(ActiveSliceSettings.Instance.GetValue(SettingsKey.enable_network_printing)=="1")
 			{
-				AddNameSetting("ip_address", contentRow, ref tabIndex);
-				AddNameSetting("ip_port", contentRow, ref tabIndex);
+				AddNameSetting(SettingsKey.ip_address, contentRow, ref tabIndex);
+				AddNameSetting(SettingsKey.ip_port, contentRow, ref tabIndex);
 			}
 			else
 			{

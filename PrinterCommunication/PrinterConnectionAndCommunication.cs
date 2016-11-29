@@ -2606,7 +2606,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool IsNetworkPrinting()
 		{
-			return ActiveSliceSettings.Instance.GetValue("enable_network_printing") == "1";
+			return ActiveSliceSettings.Instance.GetValue(SettingsKey.enable_network_printing) == "1";
 		}
 
 		private void OnAtxPowerStateChanged(bool enableAtxPower)

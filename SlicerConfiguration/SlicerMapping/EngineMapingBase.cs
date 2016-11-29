@@ -81,10 +81,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.show_reset_connection,
 			SettingsKey.make,
 			SettingsKey.model,
-			"enable_network_printing",
-			"enable_sailfish_communication",
-			"ip_address",
-			"ip_port",
+			SettingsKey.enable_network_printing,
+			SettingsKey.enable_sailfish_communication,
+			SettingsKey.ip_address,
+			SettingsKey.ip_port,
 
 		};
 
