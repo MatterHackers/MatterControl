@@ -443,13 +443,14 @@
     <Content Include="application.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="StaticData\OEMSettings\AboutPage.html" />
     <Content Include="StaticData\SliceSettings\Layouts.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="SlicerConfiguration\Settings\SettingsDiagram.cd" />
     <None Include="packages.config" />
-    <None Include="StaticData\PrinterSettings\config.ini" />
+    <None Include="StaticData\OEMSettings\Settings.json" />
     <None Include="StaticData\SliceSettings\Properties.json" />
   </ItemGroup>
   <ItemGroup>
