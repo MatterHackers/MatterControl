@@ -2960,15 +2960,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public void MacroStart()
+		{
+			queuedCommandStream2.Reset();
+		}
+
 		public void MacroContinue()
 		{
 			queuedCommandStream2.Continue();
-		}
-
-		internal void MacroCancel()
-		{
-			queuedCommandStream2.Continue();
-			queuedCommandStream2.Clear();
 		}
 
 		bool haveHookedDrawing = false;
