@@ -1596,7 +1596,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			while (CommunicationState == CommunicationStates.AttemptingToConnect
 				|| (PrinterIsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
-				if (PrinterIsConnected
+				if ((PrinterIsConnected
+					|| this.communicationState == CommunicationStates.AttemptingToConnect)
 					&& CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					TryWriteNextLineFromGCodeFile();
