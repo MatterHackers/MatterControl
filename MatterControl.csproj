@@ -172,6 +172,7 @@
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
     <Compile Include="DataStorage\Models.cs" />
+    <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
     <Compile Include="Library\RenameItemWindow.cs" />
     <Compile Include="Library\Provider\LibraryProviderHistory.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="SetupWizard\ExportSettingsPage.cs" />
     <Compile Include="SetupWizard\LicenseAgreementPage.cs" />
     <Compile Include="SetupWizard\PrinterProfileHistoryPage.cs" />
+    <Compile Include="ConfigurationPage\RunningMacroPage.cs" />
     <Compile Include="SetupWizard\SyncingPrintersPage.cs" />
     <Compile Include="SetupWizard\WizardPage.cs" />
     <Compile Include="SetupWizard\AndroidSetupOptionsPage.cs" />
@@ -448,13 +450,14 @@
     <Content Include="application.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="StaticData\OEMSettings\AboutPage.html" />
     <Content Include="StaticData\SliceSettings\Layouts.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="SlicerConfiguration\Settings\SettingsDiagram.cd" />
     <None Include="packages.config" />
-    <None Include="StaticData\PrinterSettings\config.ini" />
+    <None Include="StaticData\OEMSettings\Settings.json" />
     <None Include="StaticData\SliceSettings\Properties.json" />
   </ItemGroup>
   <ItemGroup>
