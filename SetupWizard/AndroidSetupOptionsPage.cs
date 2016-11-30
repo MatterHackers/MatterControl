@@ -51,9 +51,9 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(new SetupAccountView(this.textImageButtonFactory));
 
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 
-			closeButton.Text = "Back".Localize();
+			cancelButton.Text = "Back".Localize();
 		}
 	}
 

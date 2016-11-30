@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			footerRow.AddChild(connectButton);
 			footerRow.AddChild(refreshButton);
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 		}

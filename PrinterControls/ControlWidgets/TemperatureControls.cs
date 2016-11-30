@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public List<DisableableWidget> ExtruderWidgetContainers = new List<DisableableWidget>();
 		public DisableableWidget BedTemperatureControlWidget;
 
-		protected override void AddChildElements()
+		public TemperatureControls()
 		{
 			AltGroupBox temperatureGroupBox = new AltGroupBox(new TextWidget("Temperature".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			temperatureGroupBox.Margin = new BorderDouble(0);

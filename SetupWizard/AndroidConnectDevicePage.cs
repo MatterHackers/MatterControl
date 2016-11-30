@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
 			//Add buttons to buttonContainer
 			footerRow.AddChild(nextButton);
 			footerRow.AddChild(hSpacer);
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 
 			updateControls(true);
 		}

@@ -44,27 +44,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public PowerControls()
 		{
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.AtxPowerStateChanged.RegisterEvent(this.UpdatePowerSwitch, ref unregisterEvents);
-
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = VAnchor.ParentBottomTop;
-		}
-
-		private void UpdateControlVisibility(object sender, EventArgs args)
-		{
-			this.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_power_control);
-			this.SetEnableLevel(PrinterConnectionAndCommunication.Instance.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
-		}
-
-		private void UpdatePowerSwitch(object sender, EventArgs args)
-		{
-			this.atxPowertoggleSwitch.Checked = PrinterConnectionAndCommunication.Instance.AtxPowerEnabled;
-		}
-
-		protected override void AddChildElements()
-		{
 			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("ATX Power Control".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			fanControlsGroupBox.Margin = new BorderDouble(0);
 			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -86,6 +65,24 @@ namespace MatterHackers.MatterControl.PrinterControls
 			fanControlsGroupBox.AddChild(paddingContainer);
 
 			UpdateControlVisibility(null, null);
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.AtxPowerStateChanged.RegisterEvent(this.UpdatePowerSwitch, ref unregisterEvents);
+
+			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.VAnchor = VAnchor.ParentBottomTop;
+		}
+
+		private void UpdateControlVisibility(object sender, EventArgs args)
+		{
+			this.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_power_control);
+			this.SetEnableLevel(PrinterConnectionAndCommunication.Instance.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
+		}
+
+		private void UpdatePowerSwitch(object sender, EventArgs args)
+		{
+			this.atxPowertoggleSwitch.Checked = PrinterConnectionAndCommunication.Instance.AtxPowerEnabled;
 		}
 
 		private void SetDisplayAttributes()

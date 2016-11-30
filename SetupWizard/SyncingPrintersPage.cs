@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 				UiThread.RunOnIdle(WizardWindow.Close);
 			});
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 		}
 
 		private void ReportProgress(SyncReportType report)

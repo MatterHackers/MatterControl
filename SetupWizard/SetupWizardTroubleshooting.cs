@@ -43,8 +43,8 @@ namespace MatterHackers.MatterControl
 			RefreshStatus();
 
 			//Construct buttons
-			closeButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
-			closeButton.Click += (s, e) => this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
+			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
+			cancelButton.Click += (s, e) => this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
 			
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Continue".Localize());
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 			//Add buttons to buttonContainer
 			footerRow.AddChild(nextButton);
 			footerRow.AddChild(new GuiWidget() { HAnchor = HAnchor.ParentLeftRight });
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 
 			// Register for connection notifications
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);

@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
 				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(closeButton);
+				footerRow.AddChild(cancelButton);
 			}
 			BindBaudRateHandlers();
 		}

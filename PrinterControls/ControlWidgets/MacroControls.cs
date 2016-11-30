@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		}
 
 
-		protected override void AddChildElements()
+		public MacroControls()
 		{
 			this.AddChild(new MacroControlsWidget());
 		}
