@@ -60,12 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		static ProfileManager()
 		{
 			SliceSettingsWidget.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
-			Reload();
-		}
-
-		public ProfileManager(string userName)
-		{
-			this.UserName = userName;
+			ReloadActiveUser();
 		}
 
 		public string UserName { get; set; }
@@ -101,16 +96,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public bool IsGuestProfile => this.UserName == "guest";
 
-		public static void Reload()
+		/// <summary>
+		/// Updates ProfileManager.Instance to reflect the current authenticated/guest user
+		/// </summary>
+		public static void ReloadActiveUser()
 		{
 			string userName = AuthenticationData.Instance.FileSystemSafeUserName;
-			if (string.IsNullOrEmpty(userName))
+			if (!string.IsNullOrEmpty(userName) && Instance?.UserName == userName)
 			{
-				userName = "guest";
-			}
-
-			if (Instance?.UserName == userName)
-			{
+				// No work needed if user hasn't changed
 				return;
 			}
 
@@ -120,21 +114,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Instance.Profiles.CollectionChanged -= Profiles_CollectionChanged;
 			}
 
+			Instance = Load(userName);
+
+			// Wire up the CollectionChanged event
+			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
+		}
+
+		/// <summary>
+		/// Loads a ProfileManager for the given user
+		/// </summary>
+		/// <param name="userName">The user name to load</param>
+		public static ProfileManager Load(string userName)
+		{
+			if (string.IsNullOrEmpty(userName))
+			{
+				userName = "guest";
+			}
+
 			string profilesDocPath = GetProfilesDocPathForUser(userName);
 
-			// Reassign the active instance based on the logged in user
+			ProfileManager loadedInstance;
+
+			// Deserialize from disk or if missing, initialize a new instance
 			if (File.Exists(profilesDocPath))
 			{
 				string json = File.ReadAllText(profilesDocPath);
-				Instance = JsonConvert.DeserializeObject<ProfileManager>(json);
-				Instance.UserName = userName;
+				loadedInstance = JsonConvert.DeserializeObject<ProfileManager>(json);
+				loadedInstance.UserName = userName;
 			}
 			else
 			{
-				Instance = new ProfileManager(userName);
+				loadedInstance = new ProfileManager() { UserName = userName };
 			}
 
-			if (ActiveSliceSettings.Instance?.ID != Instance.LastProfileID)
+			// If the loaded slice settings do not match the last active settings for this profile, change to the last active
+			if (ActiveSliceSettings.Instance?.ID != loadedInstance.LastProfileID)
 			{
 				// async so we can safely wait for LoadProfileAsync to complete
 				Task.Run(async () =>
@@ -159,13 +173,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				});
 			}
 
-			// In either case, wire up the CollectionChanged event
-			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
-		}
-
-		internal static ProfileManager LoadGuestProfiles()
-		{
-			return new ProfileManager("guest");
+			return loadedInstance;
 		}
 
 		internal static void SettingsChanged(object sender, EventArgs e)
@@ -222,6 +230,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		/// <summary>
+		/// Indicates if given import has been run for the current user. For the guest profile, this means the
+		/// Sqlite import has been run and all db printers are now in the guest profile. For normal users
+		/// this means the CopyGuestProfilesToUser wizard has been completed and one or more printers were 
+		/// imported or the "Don't ask me again" option was selected
+		/// </summary>
 		public bool PrintersImported { get; set; } = false;
 
 		public string ProfilePath(string printerID)
