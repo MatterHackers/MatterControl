@@ -153,10 +153,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 				macroButton.Margin = new BorderDouble(right: 5);
 				macroButton.Click += (s, e) =>
 				{
+					PrinterConnectionAndCommunication.Instance.MacroStart();
 					SendCommandToPrinter(macroButton.Text);
-					if (macroButton.Text.Contains(QueuedCommandsStream.macroStart))
+					if (macroButton.Text.Contains(QueuedCommandsStream.MacroPrefix))
 					{
-						SendCommandToPrinter("\n" + QueuedCommandsStream.macroStart + "Close");
+						SendCommandToPrinter("\n" + QueuedCommandsStream.MacroPrefix + "Close");
 					}
 				};
 
@@ -175,7 +176,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		protected void SendCommandToPrinter(string command)
 		{
-			command = GCodeProcessing.ReplaceMacroValues(command);
 			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(command);
 		}
 	}

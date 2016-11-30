@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 			var revertButton = textImageButtonFactory.Generate("Restore");
 			footerRow.AddChild(revertButton);
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			footerRow.AddChild(closeButton);
 			revertButton.Click += async (s, e) =>
 			{
 				int index = radioButtonList.IndexOf(radioButtonList.Where(r => r.Checked).FirstOrDefault());

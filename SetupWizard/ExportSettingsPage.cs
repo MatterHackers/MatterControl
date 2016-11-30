@@ -100,12 +100,12 @@ namespace MatterHackers.MatterControl
 			exportButton.Click += (s, e) => UiThread.RunOnIdle(exportButton_Click);
 
 			exportButton.Visible = true;
-			cancelButton.Visible = true;
+			closeButton.Visible = true;
 
 			//Add buttons to buttonContainer
 			footerRow.AddChild(exportButton);
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			footerRow.AddChild(closeButton);
 		}
 
 		private GuiWidget CreateDetailInfo(string detailText)

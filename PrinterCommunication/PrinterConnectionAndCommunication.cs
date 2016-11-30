@@ -1596,7 +1596,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			while (CommunicationState == CommunicationStates.AttemptingToConnect
 				|| (PrinterIsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
-				if (PrinterIsConnected
+				if ((PrinterIsConnected
+					|| this.communicationState == CommunicationStates.AttemptingToConnect)
 					&& CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					TryWriteNextLineFromGCodeFile();
@@ -2254,7 +2255,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						CreateStreamProcessors(null, false);
 
 						// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-						SendLineToPrinterNow("M105");
+						WriteRawToPrinter("M110 S1", "M110 S1");
+						ClearQueuedGCode();
 						// We do not need to wait for the M105
 						PrintingCanContinue(null, null);
 					}
@@ -2392,8 +2394,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void InjectGCode(string codeToInject)
 		{
-			codeToInject = GCodeProcessing.ReplaceMacroValues(codeToInject);
-
 			codeToInject = codeToInject.Replace("\\n", "\n");
 			string[] lines = codeToInject.Split('\n');
 
@@ -2960,15 +2960,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public void MacroStart()
+		{
+			queuedCommandStream2.Reset();
+		}
+
 		public void MacroContinue()
 		{
 			queuedCommandStream2.Continue();
-		}
-
-		internal void MacroCancel()
-		{
-			queuedCommandStream2.Continue();
-			queuedCommandStream2.Clear();
 		}
 
 		bool haveHookedDrawing = false;
