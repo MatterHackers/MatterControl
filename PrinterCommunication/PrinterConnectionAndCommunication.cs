@@ -2255,7 +2255,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						CreateStreamProcessors(null, false);
 
 						// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-						SendLineToPrinterNow("M105");
+						WriteRawToPrinter("M110 S1", "M110 S1");
+						ClearQueuedGCode();
 						// We do not need to wait for the M105
 						PrintingCanContinue(null, null);
 					}

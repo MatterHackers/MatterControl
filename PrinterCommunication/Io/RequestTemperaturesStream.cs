@@ -44,7 +44,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
         public override string ReadLine()
         {
-            if (nextReadTimeMs < UiThread.CurrentTimerMs)
+            if (nextReadTimeMs < UiThread.CurrentTimerMs
+				&& PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
             {
                 nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
                 return "M105";
