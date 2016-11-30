@@ -2003,7 +2003,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					if (lineToWrite.Trim().Length > 0)
 					{
 						// sometimes we need to send code without buffering (like when we are closing the program).
-						WriteRawToPrinter(lineToWrite + "\r\n", lineToWrite);
+						WriteRawToPrinter(lineToWrite + "\n", lineToWrite);
 					}
 				}
 				else
@@ -2741,7 +2741,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (firstLineToResendIndex < allCheckSumLinesSent.Count)
 				{
-					WriteRawToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\r\n", "resend");
+					WriteRawToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\n", "resend");
 				}
 				else
 				{
@@ -2850,11 +2850,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			//if ((checkSumCount++ % 71) == 0)
 			{
 				//lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
-				//WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
+				//WriteToPrinter(lineWithChecksum + "\n", lineToWrite);
 			}
 			//else
 			{
-				WriteRawToPrinter(lineWithChecksum + "\r\n", lineToWrite);
+				WriteRawToPrinter(lineWithChecksum + "\n", lineToWrite);
 			}
 		}
 
