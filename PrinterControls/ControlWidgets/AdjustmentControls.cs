@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private event EventHandler unregisterEvents;
 
-		protected override void AddChildElements()
+		public AdjustmentControls()
 		{
 			AltGroupBox adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			adjustmentControlsGroupBox.Margin = new BorderDouble(0);

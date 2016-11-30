@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl
 		protected FlowLayoutWidget footerRow;
 
 		protected TextWidget headerLabel;
-		protected Button closeButton;
+		protected Button cancelButton;
 
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory() { fontSize = 16 };
 		protected TextImageButtonFactory whiteImageButtonFactory;
@@ -64,9 +64,9 @@ namespace MatterHackers.MatterControl
 
 			this.AnchorAll();
 
-			closeButton = textImageButtonFactory.Generate(unlocalizedTextForCancelButton.Localize());
-			closeButton.Name = "Cancel Wizard Button";
-			closeButton.Click += (s, e) =>
+			cancelButton = textImageButtonFactory.Generate(unlocalizedTextForCancelButton.Localize());
+			cancelButton.Name = "Cancel Wizard Button";
+			cancelButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => WizardWindow?.Close());
 			};

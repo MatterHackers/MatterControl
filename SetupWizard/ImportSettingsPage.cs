@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(mergeButton);
 
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 
 			if (settingsToImport.QualityLayers.Count == 0 && settingsToImport.MaterialLayers.Count == 0)
 			{
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl
 			container.AddChild(successMessageWidget);
 
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 		}
 	}
 
@@ -372,12 +372,12 @@ namespace MatterHackers.MatterControl
 			});
 
 			importButton.Visible = true;
-			closeButton.Visible = true;
+			cancelButton.Visible = true;
 
 			//Add buttons to buttonContainer
 			footerRow.AddChild(importButton);
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 		}
 
 		private GuiWidget CreateDetailInfo(string detailText)

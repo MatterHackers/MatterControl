@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			contentRow.AddChild(syncingText);
 
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 
 			if(showMaterialSelector)
 			{

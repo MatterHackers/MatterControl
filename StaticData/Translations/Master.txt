@@ -5587,3 +5587,9 @@ Translated:Macro Feedback
 English:OK
 Translated:OK
 
+English:Load Filament
+Translated:Load Filament
+
+English:UnloadFilament
+Translated:UnloadFilament
+

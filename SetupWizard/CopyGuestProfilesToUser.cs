@@ -136,9 +136,9 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(rememberChoice);
 
 			syncButton.Visible = true;
-			closeButton.Visible = true;
+			cancelButton.Visible = true;
 
-			closeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				WizardWindow.Close();
 				if (rememberChoice.Checked)
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 			//Add buttons to buttonContainer
 			footerRow.AddChild(syncButton);
 			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(closeButton);
+			footerRow.AddChild(cancelButton);
 
 			footerRow.Visible = true;
 		}

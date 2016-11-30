@@ -62,15 +62,15 @@ namespace MatterHackers.MatterControl
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			// put in the file menu
-			MenuOptionFile menuOptionFile = new MenuOptionFile();
-			this.AddChild(menuOptionFile);
+			this.AddChild(new MenuOptionFile());
 
-			MenuOptionSettings menuOptionSettings = new MenuOptionSettings();
-			this.AddChild(menuOptionSettings);
+			this.AddChild(new MenuOptionSettings());
 
 			// put in the help menu
-			MenuOptionHelp menuOptionHelp = new MenuOptionHelp();
-			this.AddChild(menuOptionHelp);
+			this.AddChild(new MenuOptionMacros());
+
+			// put in the help menu
+			this.AddChild(new MenuOptionHelp());
 
 			//linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
 			linkButtonFactory.fontSize = 10;
