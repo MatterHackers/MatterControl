@@ -37,6 +37,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
@@ -74,12 +75,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public MacroControlsWidget()
 			: base(FlowDirection.TopToBottom)
 		{
-			SetDisplayAttributes();
-			AddChildElements();
-		}
-
-		private void SetDisplayAttributes()
-		{
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
 			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
 			this.textImageButtonFactory.fontSize = 12;
@@ -93,18 +88,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			this.HAnchor = HAnchor.ParentLeftRight;
-		}
 
-		protected void ReloadMacros(object sender, EventArgs e)
-		{
-			ActiveSliceSettings.Instance.Save();
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-		}
-
-		private EditMacrosWindow editSettingsWindow;
-
-		private void AddChildElements()
-		{
+			// add the widgets to this window
 			Button editButton;
 			AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
 			editButton.Click += (sender, e) =>
@@ -139,6 +124,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(groupBox);
 		}
 
+		protected void ReloadMacros(object sender, EventArgs e)
+		{
+			ActiveSliceSettings.Instance.Save();
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+		}
+
+		private EditMacrosWindow editSettingsWindow = null;
+
 		private FlowLayoutWidget GetMacroButtonContainer()
 		{
 			FlowLayoutWidget macroButtonContainer = new FlowLayoutWidget();
@@ -158,7 +151,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 				Button macroButton = textImageButtonFactory.Generate(MacroControls.FixMacroName(macro.Name)); 
 				macroButton.Text = macro.GCode;
 				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (s, e) => SendCommandToPrinter(macroButton.Text);
+				macroButton.Click += (s, e) =>
+				{
+					SendCommandToPrinter(macroButton.Text);
+					if (macroButton.Text.Contains(QueuedCommandsStream.macroStart))
+					{
+						SendCommandToPrinter("\n" + QueuedCommandsStream.macroStart + "Close");
+					}
+				};
 
 				macroButtonContainer.AddChild(macroButton);
 			}

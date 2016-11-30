@@ -703,7 +703,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 #region DoBooleanTest
-        Object3D booleanObject;
+        Object3D booleanGroup;
 		Vector3 offset = new Vector3();
 		Vector3 direction = new Vector3(.11, .12, .13);
 		Vector3 rotCurrent = new Vector3();
@@ -714,8 +714,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			try
 			{
-				IObject3D booleanGroup = new Object3D { ItemType = Object3DTypes.Group };
-
+				booleanGroup = new Object3D { ItemType = Object3DTypes.Group };
 
 				booleanGroup.Children.Add(new Object3D()
 				{
@@ -818,9 +817,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RemoveBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
         {
-			if (meshViewerWidget.Scene.Children.Contains(booleanObject))
+			if (meshViewerWidget.Scene.Children.Contains(booleanGroup))
 			{
-				meshViewerWidget.Scene.Children.Remove(booleanObject);
+				meshViewerWidget.Scene.Children.Remove(booleanGroup);
 				UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
 			}
         }

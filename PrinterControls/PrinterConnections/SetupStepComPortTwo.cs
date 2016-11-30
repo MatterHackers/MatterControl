@@ -93,7 +93,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			container.AddChild(printerMessageOne);
 			container.AddChild(printerMessageFour);
-			container.AddChild(printerMessageFive);
 			container.AddChild(printerErrorMessage);
 			container.AddChild(vSpacer);
 			container.AddChild(manualLink);
