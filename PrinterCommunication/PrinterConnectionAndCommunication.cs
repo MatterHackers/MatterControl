@@ -1855,7 +1855,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					&& serialPort != null)
 				{
 					// first make sure we are not printing if possible (cancel slicing)
-					Stop();
+					Stop(false);
 					if (serialPort != null) // we still have a serial port
 					{
 						ClearQueuedGCode();
@@ -2109,7 +2109,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			return true;
 		}
 
-		public void Stop()
+		public void Stop(bool markPrintCanceled = true)
 		{
 			switch (CommunicationState)
 			{
@@ -2119,8 +2119,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.Printing:
 					{
-						MarkActivePrintCanceled();
-						CancelPrint();
+						CancelPrint(markPrintCanceled);
 					}
 
 					break;
@@ -2134,8 +2133,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 						else
 						{
-							CancelPrint();
-							MarkActivePrintCanceled();
+							CancelPrint(markPrintCanceled);
 							// We have to continue printing the end gcode, so we set this to Printing.
 							CommunicationState = CommunicationStates.Printing;
 						}
@@ -2163,20 +2161,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private void MarkActivePrintCanceled()
-		{
-			if (activePrintTask != null)
-			{
-				TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
-
-				activePrintTask.PrintEnd = DateTime.Now;
-				activePrintTask.PrintComplete = false;
-				activePrintTask.PrintingGCodeFileName = "";
-				activePrintTask.Commit();
-			}
-		}
-
-		private void CancelPrint()
+		private void CancelPrint(bool markPrintCanceled)
 		{
 			lock (locker)
 			{
@@ -2190,6 +2175,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				// let the process know we canceled not ended normally.
 				printWasCanceled = true;
+				if (markPrintCanceled
+					&& activePrintTask != null)
+				{
+					TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+
+					activePrintTask.PrintEnd = DateTime.Now;
+					activePrintTask.PrintComplete = false;
+					activePrintTask.PrintingGCodeFileName = "";
+					activePrintTask.Commit();
+				}
+
+				// no matter what we no longer have a print task
+				activePrintTask = null;
 			}
 		}
 
