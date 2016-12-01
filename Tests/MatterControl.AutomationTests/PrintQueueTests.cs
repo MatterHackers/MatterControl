@@ -142,17 +142,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				// Tests that clicking a queue item thumbnail opens a Part Preview window
-
-				bool partPreviewWindowExists1 = testRunner.WaitForName("Part Preview Window Thumbnail", 0);
-				Assert.IsTrue(partPreviewWindowExists1 == false, "Part Preview Window Does Not Exist");
+				Assert.IsFalse(testRunner.NameExists("Part Preview Window"), "Part Preview Window should not exist");
 
 				testRunner.ClickByName("Queue Item Thumbnail");
 
 				SystemWindow containingWindow;
-				GuiWidget partPreviewWindowExists = testRunner.GetWidgetByName("Part Preview Window", out containingWindow, 3);
-				Assert.IsTrue(partPreviewWindowExists != null, "Part Preview Window Exists");
-				partPreviewWindowExists.CloseOnIdle();
-				testRunner.Wait(.5);
+				Assert.IsNotNull(testRunner.GetWidgetByName("Part Preview Window", out containingWindow, 3), "Part Preview Window Exists");
 
 				return Task.FromResult(0);
 			};
