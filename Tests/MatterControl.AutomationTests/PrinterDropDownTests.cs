@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-				Assert.IsTrue(testRunner.ClickByName("Printer Tab", 1), "Click Printer Tab");
+				testRunner.ClickByName("Printer Tab", 1);
 
 				string widgetName = "Printer Name Edit";
 				testRunner.ClickByName(widgetName);

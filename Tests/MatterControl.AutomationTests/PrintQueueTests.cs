@@ -544,11 +544,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part exists");
 
 				// Act - remove all print queue items
-				testRunner.ClickByName("Queue... Menu", 2);
-				testRunner.Wait(.2);
+				testRunner.RemoveAllFromQueue();
 
-				testRunner.ClickByName(" Remove All Menu Item", 2);
-				testRunner.Wait(2);
+				testRunner.WaitUntil(() => QueueData.Instance.Count == 0, 5);
 
 				// Assert that object model has been cleared
 				Assert.AreEqual(0, QueueData.Instance.Count, "Queue is empty after RemoveAll action");

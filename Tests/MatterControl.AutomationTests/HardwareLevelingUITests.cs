@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						testRunner.ClickByName("Next Button", .5);
 					}
 
-					Assert.IsTrue(testRunner.ClickByName("Done Button", 1), "Found Done button");
+					testRunner.ClickByName("Done Button", 1);
 
 					// make sure the button has changed to start print
 					Assert.IsTrue(testRunner.WaitForName("Start Print Button", 5), "Start Print showing");
@@ -82,9 +82,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// reset to defaults and make sure print leveling is cleared
 					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					Assert.IsTrue(testRunner.ClickByName("Slice Settings Options Menu", 1), "Click Options");
-					Assert.IsTrue(testRunner.ClickByName("Reset to defaults Menu Item", 1), "Select Reset to defaults");
-					Assert.IsTrue(testRunner.ClickByName("Yes Button", .5), "Click yes to revert");
+					testRunner.ClickByName("Slice Settings Options Menu", 1);
+					testRunner.ClickByName("Reset to defaults Menu Item", 1);
+					testRunner.ClickByName("Yes Button", .5);
 					testRunner.Wait(1);
 
 					// make sure it is showing the correct button
