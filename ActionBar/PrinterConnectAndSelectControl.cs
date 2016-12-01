@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (messageBoxResponse)
 			{
-				PrinterConnectionAndCommunication.Instance.Stop();
+				PrinterConnectionAndCommunication.Instance.Stop(false);
 				PrinterConnectionAndCommunication.Instance.Disable();
 				printerSelector.Invalidate();
 			}
