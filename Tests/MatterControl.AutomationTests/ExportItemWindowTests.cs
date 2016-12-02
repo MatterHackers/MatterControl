@@ -10,9 +10,9 @@ using NUnit.Framework;
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class ExportItemsFromDownloads
+	public class ExportGcodeFromExportWindow
 	{
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
+		[Test, Apartment(ApartmentState.STA)]
 		public async Task ExportAsGcode()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-				string firstItemName = "Row Item Batman";
+				string firstItemName = "Queue Item Batman";
 				//Navigate to Downloads Library Provider
 				testRunner.ClickByName("Queue Tab");
 				testRunner.ClickByName("Queue Add Button", 2);
@@ -38,8 +38,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Get test results 
 				Assert.IsTrue(testRunner.WaitForName(firstItemName, 2) == true);
 
-				testRunner.ClickByName("Queue Edit Button");
-				testRunner.ClickByName(firstItemName);
 				testRunner.ClickByName("Queue Export Button");
 				testRunner.Wait(2);
 
@@ -47,14 +45,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Export as GCode Button", 2);
 				testRunner.Wait(2);
 
-				string gcodeExportPath = MatterControlUtilities.PathToExportGcodeFolder;
-				testRunner.Type(gcodeExportPath);
+				string gcodeOutputPath = MatterControlUtilities.PathToExportGcodeFolder;
+
+				Directory.CreateDirectory(gcodeOutputPath);
+
+				string fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Batman");
+				testRunner.Type(fullPathToGcodeFile);
 				testRunner.Type("{Enter}");
 				testRunner.Wait(2);
 
-				Console.WriteLine(gcodeExportPath);
+				Console.WriteLine(gcodeOutputPath);
 
-				Assert.IsTrue(File.Exists(gcodeExportPath) == true);
+				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode") == true);
 
 				return Task.FromResult(0);
 			};
