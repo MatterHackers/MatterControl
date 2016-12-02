@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
 			}
 
 #if DEBUG
-			WindowsFormsAbstract.InspectorCreator = (systemWindow) =>
+			WinformsSystemWindow.InspectorCreator = (systemWindow) =>
 			{
 				if (systemWindow == Instance)
 				{
@@ -557,6 +557,20 @@ namespace MatterHackers.MatterControl
 
 		public override void OnLoad(EventArgs args)
 		{
+			// Moved from OnParentChanged
+			if (File.Exists("RunUnitTests.txt"))
+			{
+				//DiagnosticWidget diagnosticView = new DiagnosticWidget(this);
+			}
+
+			// now that we are all set up lets load our plugins and allow them their chance to set things up
+			FindAndInstantiatePlugins();
+
+			if (ApplicationController.Instance.PluginsLoaded != null)
+			{
+				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
+			}
+
 			foreach (string arg in commandLineArgs)
 			{
 				string argExtension = Path.GetExtension(arg).ToUpper();
@@ -642,24 +656,6 @@ namespace MatterHackers.MatterControl
 			if (GuiWidget.DebugBoundsUnderMouse)
 			{
 				Invalidate();
-			}
-		}
-
-		public override void OnParentChanged(EventArgs e)
-		{
-			if (File.Exists("RunUnitTests.txt"))
-			{
-				//DiagnosticWidget diagnosticView = new DiagnosticWidget(this);
-			}
-
-			base.OnParentChanged(e);
-
-			// now that we are all set up lets load our plugins and allow them their chance to set things up
-			FindAndInstantiatePlugins();
-
-			if (ApplicationController.Instance.PluginsLoaded != null)
-			{
-				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
 			}
 		}
 

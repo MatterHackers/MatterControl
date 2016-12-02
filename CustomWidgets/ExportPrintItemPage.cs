@@ -245,9 +245,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (showInFolderAfterSave.Checked)
 				{
-#if IS_WINDOWS_FORMS
-					WindowsFormsAbstract.ShowFileInFolder(filename);
-#endif
+					AggContext.FileDialogs.ShowFileInFolder(filename);
 				}
 			}
 		}

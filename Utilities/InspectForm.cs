@@ -11,7 +11,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public partial class InspectForm : WindowsFormsAbstract.FormInspector
+	public partial class InspectForm : WinformsSystemWindow.FormInspector
 	{
 		private TreeNode activeTreeNode;
 		private GuiWidget inspectedSystemWindow;
