@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				defaultTestImages = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestImages");
 			}
 
-			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(new string[] { "ORTHOGRAPHIC_THUMBNAILS" }, overrideWidth, overrideHeight);
 
 			var config = TestAutomationConfig.Load();
 
