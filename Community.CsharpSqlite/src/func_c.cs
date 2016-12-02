@@ -1199,7 +1199,7 @@ break;
 							}
 							z.Append('\'');
 							j++;
-							//z[j] = '\0'; ;
+							//z[j] = '\0';
 							sqlite3_result_text(context, z, j, null);//sqlite3_free );
 						}
 						break;
