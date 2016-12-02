@@ -5593,3 +5593,36 @@ Translated:Load Filament
 English:UnloadFilament
 Translated:UnloadFilament
 
+English:This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.
+Translated:This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.
+
+English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
+Translated:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
+
+English:Moves the nozzle up and off the part to allow cooling.
+Translated:Moves the nozzle up and off the part to allow cooling.
+
+English:Detects sections of the model that would be too thin to print and expands them to make them printable.
+Translated:Detects sections of the model that would be too thin to print and expands them to make them printable.
+
+English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
+Translated:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
+
+English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
+Translated:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
+
+English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
+Translated:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
+
+English:This will lower the temperature of the non-printing nozzle to help prevent oozing.
+Translated:This will lower the temperature of the non-printing nozzle to help prevent oozing.
+
+English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
+Translated:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
+
+English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
+Translated:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
+
+English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
+Translated:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
+
