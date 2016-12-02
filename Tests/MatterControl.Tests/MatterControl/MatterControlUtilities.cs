@@ -61,10 +61,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
 
-		private static void RemoveAllFromQueue(AutomationRunner testRunner)
+		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
-			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", 2));
-			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", 2));
+			testRunner.ClickByName("Queue... Menu", 2);
+			testRunner.Wait(1);
+			testRunner.ClickByName(" Remove All Menu Item", 2);
 		}
 
 		public static void CreateDownloadsSubFolder()
@@ -150,7 +151,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 			}
 
-			testRunner.ClickByName("Cancel Wizard Button", 5);
+			if (testRunner.WaitForName("Cancel Wizard Button", 1))
+			{
+				testRunner.ClickByName("Cancel Wizard Button");
+			}
 		}
 
 		public class PrintEmulatorProcess: Process
@@ -341,19 +345,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return ApplicationController.Instance.CurrentLibraryDataView.CurrentLibraryProvider;
 		}
 
-		public static bool NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
+		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
-			bool goodNavigate = true;
-
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
-			goodNavigate &= testRunner.ClickByName(libraryRowItemName);
-			goodNavigate &= testRunner.MoveToByName(libraryRowItemName);
+			testRunner.ClickByName(libraryRowItemName);
+			testRunner.MoveToByName(libraryRowItemName);
 			testRunner.Wait(.5);
 
-			goodNavigate &= testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
+			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
 			testRunner.Wait(.5);
-
-			return goodNavigate;
 		}
 
 		public static async Task RunTest(

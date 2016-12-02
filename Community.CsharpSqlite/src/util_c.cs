@@ -1516,7 +1516,7 @@ return n;
 				{
 					zBlob.Append(Convert.ToChar((sqlite3HexToInt(z[i]) << 4) | sqlite3HexToInt(z[i + 1])));
 				}
-				//zBlob[i / 2] = '\0'; ;
+				//zBlob[i / 2] = '\0';
 			}
 			return Encoding.UTF8.GetBytes(zBlob.ToString());
 		}

@@ -79,25 +79,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					Assert.IsTrue(testRunner.ClickByName("General Tab", 1));
-					Assert.IsTrue(testRunner.ClickByName("Single Print Tab", 1));
-					Assert.IsTrue(testRunner.ClickByName("Layer(s) To Pause: Edit"));
+					testRunner.ClickByName("General Tab", 1);
+					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("4;2;a;not;6");
 
-					Assert.IsTrue(testRunner.ClickByName("Layer View Tab"));
+					testRunner.ClickByName("Layer View Tab");
 
-					Assert.IsTrue(testRunner.ClickByName("Generate Gcode Button", 1));
-					Assert.IsTrue(testRunner.ClickByName("Display Checkbox", 10));
-					Assert.IsTrue(testRunner.ClickByName("Sync To Print Checkbox", 1));
+					testRunner.ClickByName("Generate Gcode Button", 1);
+					testRunner.ClickByName("Display Checkbox", 10);
+					testRunner.ClickByName("Sync To Print Checkbox", 1);
 
-					Assert.IsTrue(testRunner.ClickByName("Start Print Button", 1));
+					testRunner.ClickByName("Start Print Button", 1);
 
 					WaitForLayerAndResume(testRunner, 2);
 					WaitForLayerAndResume(testRunner, 4);
 					WaitForLayerAndResume(testRunner, 6);
 
-					Assert.IsTrue(testRunner.WaitForName("Done Button", 30));
-					Assert.IsTrue(testRunner.WaitForName("Print Again Button", 1));
+					testRunner.WaitForName("Done Button", 30);
+					testRunner.WaitForName("Print Again Button", 1);
 
 					return Task.FromResult(0);
 				}
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitUntil(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
 
 			Assert.IsTrue(layerNumber.Text == indexToWaitFor.ToString());
-			Assert.IsTrue(testRunner.ClickByName("Resume Button", 1));
+			testRunner.ClickByName("Resume Button", 1);
 			testRunner.Wait(.1);
 		}
 
@@ -133,8 +133,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Navigate to Local Library 
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-				Assert.IsTrue(testRunner.ClickByName("Printer Tab", 1), "Switch to Printers tab");
-				Assert.IsTrue(testRunner.ClickByName("Features Tab", 1), "Switch to Features tab");
+				testRunner.ClickByName("Printer Tab", 1);
+				testRunner.ClickByName("Features Tab", 1);
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
 
@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 
 			// Click the checkbox
-			Assert.IsTrue(testRunner.ClickByName(checkBoxName, 1));
+			testRunner.ClickByName(checkBoxName, 1);
 			testRunner.Wait(2);
 
 			// Assert the checkbox is checked and the user override is set
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == true);
 
 			// Click the cancel user override button
-			Assert.IsTrue(testRunner.ClickByName("Restore " + settingToChange, 1));
+			testRunner.ClickByName("Restore " + settingToChange, 1);
 			testRunner.Wait(2);
 
 			// Assert the checkbox is unchecked and there is no user override
@@ -208,15 +208,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Navigate to Local Library 
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-				Assert.IsTrue(testRunner.ClickByName("Printer Tab"));
+				testRunner.ClickByName("Printer Tab");
 				testRunner.Wait(1);
 
-				Assert.IsTrue(testRunner.ClickByName("Features Tab"));
+				testRunner.ClickByName("Features Tab");
 				testRunner.Wait(2);
 
 				for (int i = 0; i <= 1000; i++)
 				{
-					Assert.IsTrue(testRunner.ClickByName("Has Heated Bed Checkbox"));
+					testRunner.ClickByName("Has Heated Bed Checkbox");
 					testRunner.Wait(.5);
 				}
 

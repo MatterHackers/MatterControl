@@ -142,17 +142,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				// Tests that clicking a queue item thumbnail opens a Part Preview window
-
-				bool partPreviewWindowExists1 = testRunner.WaitForName("Part Preview Window Thumbnail", 0);
-				Assert.IsTrue(partPreviewWindowExists1 == false, "Part Preview Window Does Not Exist");
+				Assert.IsFalse(testRunner.NameExists("Part Preview Window"), "Part Preview Window should not exist");
 
 				testRunner.ClickByName("Queue Item Thumbnail");
 
 				SystemWindow containingWindow;
-				GuiWidget partPreviewWindowExists = testRunner.GetWidgetByName("Part Preview Window", out containingWindow, 3);
-				Assert.IsTrue(partPreviewWindowExists != null, "Part Preview Window Exists");
-				partPreviewWindowExists.CloseOnIdle();
-				testRunner.Wait(.5);
+				Assert.IsNotNull(testRunner.GetWidgetByName("Part Preview Window", out containingWindow, 3), "Part Preview Window Exists");
 
 				return Task.FromResult(0);
 			};
@@ -544,11 +539,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part exists");
 
 				// Act - remove all print queue items
-				testRunner.ClickByName("Queue... Menu", 2);
-				testRunner.Wait(.2);
+				testRunner.RemoveAllFromQueue();
 
-				testRunner.ClickByName(" Remove All Menu Item", 2);
-				testRunner.Wait(2);
+				testRunner.WaitUntil(() => QueueData.Instance.Count == 0, 5);
 
 				// Assert that object model has been cleared
 				Assert.AreEqual(0, QueueData.Instance.Count, "Queue is empty after RemoveAll action");
