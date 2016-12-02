@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string firmwareVersion;
 
-		private int firstLineToResendIndex = 0;
+		private int currentLineIndexToSend = 0;
 
 		private bool ForceImmediateWrites = false;
 
@@ -1477,7 +1477,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				int result = 0;
 				if (int.TryParse(splitOnColon[1], out result))
 				{
-					firstLineToResendIndex = result - 1;
+					currentLineIndexToSend = result;
+				}
+
+				if(currentLineIndexToSend >= allCheckSumLinesSent.Count)
+				{
+					SendLineToPrinterNow("M110 N1");
 				}
 			}
 		}
@@ -2253,7 +2258,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						CreateStreamProcessors(null, false);
 
 						// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-						WriteRawToPrinter("M110 S1", "M110 S1");
+						SendLineToPrinterNow("M110 N1");
 						ClearQueuedGCode();
 						// We do not need to wait for the M105
 						PrintingCanContinue(null, null);
@@ -2289,10 +2294,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void ClearQueuedGCode()
 		{
 			loadedGCode.Clear();
-
-			allCheckSumLinesSent.Clear();
-			WriteChecksumLineToPrinter("M110 S1");
-			firstLineToResendIndex = 1;
+			WriteChecksumLineToPrinter("M110 N1");
 		}
 
 		private void Connect_Thread()
@@ -2697,6 +2699,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void TryWriteNextLineFromGCodeFile()
 		{
+			if(totalGCodeStream == null)
+			{
+				// don't try to write until we are initialized
+				return;
+			}
+
 			// wait until the printer responds from the last command with an OK OR we waited too long
 			if (timeHaveBeenWaitingForOK.IsRunning)
 			{
@@ -2724,7 +2732,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							// Basically we got some response but it did not contain an OK.
 							// The theory is that we may have received a transmission error (like 'OP' rather than 'OK')
 							// and in that event we don't want the print to just stop and wait forever.
-							firstLineToResendIndex--; // we are going to resend the last command
+							currentLineIndexToSend--; // we are going to resend the last command
 						}
 						else
 						{
@@ -2737,9 +2745,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			lock (locker)
 			{
-				if (firstLineToResendIndex < allCheckSumLinesSent.Count)
+				if (currentLineIndexToSend < allCheckSumLinesSent.Count)
 				{
-					WriteRawToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\n", "resend");
+					WriteRawToPrinter(allCheckSumLinesSent[currentLineIndexToSend++] + "\n", "resend");
 				}
 				else
 				{
@@ -2794,7 +2802,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						{
 							WriteChecksumLineToPrinter(currentSentLine);
 
-							firstLineToResendIndex++;
+							currentLineIndexToSend++;
 						}
 					}
 					else if (printWasCanceled)
@@ -2831,7 +2839,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			TargetBedTemperature = 0;
 		}
 
-		// this is to make it misbehave
+		// this is to make it misbehave, chaos monkey, bad checksum
 		//int checkSumCount = 1;
 		private void WriteChecksumLineToPrinter(string lineToWrite)
 		{
@@ -2842,18 +2850,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
 
-			string lineWithCount = "N" + (allCheckSumLinesSent.Count + 1).ToString() + " " + lineToWrite;
+			// always send the reset line number without a checksum so that it is accepted
+			string lineWithCount;
+			if (lineToWrite.StartsWith("M110"))
+			{
+				lineWithCount = $"N{0} {lineToWrite}";
+				GCodeFile.GetFirstNumberAfter("N", lineToWrite, ref currentLineIndexToSend);
+				allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend-1);
+			}
+			else
+			{
+				lineWithCount = $"N{allCheckSumLinesSent.Count} {lineToWrite}";
+			}
+
 			string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
+			
 			allCheckSumLinesSent.Add(lineWithChecksum);
-			//if ((checkSumCount++ % 71) == 0)
-			{
+
+			//if ((checkSumCount++ % 11) == 0)
 				//lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
-				//WriteToPrinter(lineWithChecksum + "\n", lineToWrite);
-			}
-			//else
-			{
-				WriteRawToPrinter(lineWithChecksum + "\n", lineToWrite);
-			}
+
+			WriteRawToPrinter(lineWithChecksum + "\n", lineToWrite);
 		}
 
 		private static string RemoveCommentIfAny(string lineToWrite)
@@ -3048,9 +3065,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				this[addedCount++] = lineWithChecksum;
 			}
 
-			internal void Clear()
+			internal void SetStartingIndex(int startingIndex)
 			{
-				addedCount = 0;
+				addedCount = startingIndex;
 			}
 		}
 	}

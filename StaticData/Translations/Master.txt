@@ -5626,3 +5626,12 @@ Translated:Forces the print to have only one extrusion and gradually increase th
 English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
 Translated:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
 
+English:Disconnect and stop the current print?
+Translated:Disconnect and stop the current print?
+
+English:WARNING: Disconnecting will stop the current print
+Translated:WARNING: Disconnecting will stop the current print
+
+English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
+Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
+
