@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl
 		public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
+		private string[] commandLineArgs = null;
 		private string confirmExit = "Confirm Exit".Localize();
 		private bool DoCGCollectEveryDraw = false;
 		private int drawCount = 0;
@@ -99,7 +100,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		public static bool IsLoading { get; private set; } = true;
-		static bool forceSofwareRendering = false;
 
 		static MatterControlApplication()
 		{
@@ -121,11 +121,21 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		string[] commandLineArgs;
-
-		void ProcessCommandLine(string[] commandLineArgs)
+		private MatterControlApplication(double width, double height)
+			: base(width, height)
 		{
-			this.commandLineArgs = commandLineArgs;
+			ApplicationSettings.Instance.set("HardwareHasCamera", "false");
+
+			Name = "MatterControl";
+
+			// set this at startup so that we can tell next time if it got set to true in close
+			UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
+
+			this.commandLineArgs = Environment.GetCommandLineArgs();
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+			bool forceSofwareRendering = false;
+
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
 			{
 				string command = commandLineArgs[currentCommandIndex];
@@ -148,10 +158,6 @@ namespace MatterHackers.MatterControl
 					case "DO_GC_COLLECT_EVERY_DRAW":
 						ShowMemoryUsed = true;
 						DoCGCollectEveryDraw = true;
-						break;
-
-					case "ORTHOGRAPHIC_THUMBNAILS":
-						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
 						break;
 
 					//case "CREATE_AND_SELECT_PRINTER":
@@ -237,21 +243,6 @@ namespace MatterHackers.MatterControl
 					// Else send these to the running instance so it can load them.
 				}
 			}
-		}
-
-		private MatterControlApplication(string[] commandLine, double width, double height)
-			: base(width, height)
-		{
-			ApplicationSettings.Instance.set("HardwareHasCamera", "false");
-
-			Name = "MatterControl";
-
-			// set this at startup so that we can tell next time if it got set to true in close
-			UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
-
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			ProcessCommandLine(commandLine);
 
 			//WriteTestGCodeFile();
 #if !DEBUG
@@ -419,7 +410,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (instance == null)
 				{
-					instance = CreateInstance(Environment.GetCommandLineArgs());
+					instance = CreateInstance();
 					instance.ShowAsSystemWindow();
 				}
 
@@ -429,7 +420,7 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler PictureTaken;
 
-		public static MatterControlApplication CreateInstance(string[] commandLine, int overrideWidth = -1, int overrideHeight = -1)
+		public static MatterControlApplication CreateInstance(int overrideWidth = -1, int overrideHeight = -1)
 		{
 			int width = 0;
 			int height = 0;
@@ -474,7 +465,7 @@ namespace MatterHackers.MatterControl
 
 			using (new PerformanceTimer("Startup", "Total"))
 			{
-				instance = new MatterControlApplication(commandLine, width, height);
+				instance = new MatterControlApplication(width, height);
 
 				if (instance.DesktopPosition == new Point2D())
 				{
