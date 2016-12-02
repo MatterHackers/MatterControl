@@ -284,6 +284,8 @@ Advanced
         printer_name
       Details
         auto_connect
+        enable_network_printing
+        enable_sailfish_communication
         baud_rate
         com_port
         ip_address
@@ -311,8 +313,6 @@ Advanced
         z_can_be_negative
         heat_extruder_before_homing
         extruders_share_temperature
-        enable_network_printing
-        enable_sailfish_communication
       Firmware
         gcode_flavor
         use_relative_e_distances
