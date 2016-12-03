@@ -409,6 +409,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.ClickByName("LibraryActionMenu");
 			testRunner.ClickByName("Edit Menu Item", 1);
+			testRunner.Wait(1); // wait for the new window to open
 		}
 
 		public static void LibraryRenameSelectedItem(AutomationRunner testRunner)

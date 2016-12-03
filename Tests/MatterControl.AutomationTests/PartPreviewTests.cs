@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-				testRunner.Wait(1);
 
 				//Get View3DWidget and count MeshGroups before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
@@ -128,7 +127,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-				testRunner.Wait(1);
 
 				//Get View3DWidget and count MeshGroups before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
@@ -180,7 +178,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-				testRunner.Wait(1);
 
 				//Get View3DWidget and count MeshGroups before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
@@ -250,8 +247,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
 
 				// Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit", 1);
 				testRunner.WaitForName("3D View Copy", 3);
+				testRunner.Wait(1); // wait for window to finish opening
 				Assert.AreEqual(1, view3D.MeshGroups.Count, "Should have 1 part before copy");
 
 				for (int i = 0; i <= 4; i++)
@@ -296,7 +293,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-				testRunner.Wait(1);
 
 				//Click Edit button to make edit controls visible
 				testRunner.ClickByName("3D View Edit");
