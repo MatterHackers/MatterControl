@@ -2977,12 +2977,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void MacroStart()
 		{
-			queuedCommandStream2.Reset();
+			queuedCommandStream2?.Reset();
 		}
 
 		public void MacroContinue()
 		{
-			queuedCommandStream2.Continue();
+			queuedCommandStream2?.Continue();
 		}
 
 		bool haveHookedDrawing = false;
