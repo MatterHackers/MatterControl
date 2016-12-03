@@ -239,32 +239,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(AutomationRunner testRunner, string make, string model)
 		{
-			testRunner.ClickByName("Printers... Menu", 2);
-			testRunner.Wait(.2);
+			testRunner.ClickByName("Printers... Menu", 2, delayBeforeReturn: .5);
+			
+			testRunner.ClickByName("Add New Printer... Menu Item", 5, delayBeforeReturn: .5);
 
-			testRunner.ClickByName("Add New Printer... Menu Item", 2);
-			testRunner.Wait(.2);
-
-			/* This prompt is no longer shown and causes a 2 second delay. Remove this block once confirmed
-			testRunner.ClickByName("Connection Wizard Skip Sign In Button", 2);
-			testRunner.Wait(.2); */
-
-			testRunner.ClickByName("Select Make", 2);
-			testRunner.Wait(.2);
+			testRunner.ClickByName("Select Make", 5, delayBeforeReturn: .5);
 
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
 
-			testRunner.ClickByName("Select Model", 2);
-			testRunner.Wait(.2);
+			testRunner.ClickByName("Select Model", 5, delayBeforeReturn: .5);
 
-			testRunner.ClickByName(model + " Menu Item", 2);
-			testRunner.Wait(.2);
+			testRunner.ClickByName(model + " Menu Item", 5, delayBeforeReturn: .5);
+			testRunner.ClickByName("Save & Continue Button", 5, delayBeforeReturn: 1); // wait for this window to close
 
-			testRunner.ClickByName("Save & Continue Button", 2);
-
-			testRunner.WaitForName("Cancel Wizard Button", 3);
-			testRunner.ClickByName("Cancel Wizard Button", 2);
+			testRunner.ClickByName("Cancel Wizard Button", 5, delayBeforeReturn: .5);
 			testRunner.Wait(1);
 		}
 

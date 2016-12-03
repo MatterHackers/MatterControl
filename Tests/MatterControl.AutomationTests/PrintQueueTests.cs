@@ -604,7 +604,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task ClickQueueRoWItemViewAndRemove()
+		public async Task ClickQueueRowItemViewAndRemove()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
