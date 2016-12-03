@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return container;
 		}
 
-		protected override void AddChildElements()
+		public MovementControls()
 		{
 			Button editButton;
 			movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));

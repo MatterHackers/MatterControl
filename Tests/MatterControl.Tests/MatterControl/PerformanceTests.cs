@@ -223,17 +223,14 @@ namespace MatterHackers.MatterControl
 		}
 
 		//This is Temporary and will probably be moved once we get a functional test harness!!!
-		public static bool NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
+		public static void NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
 		{
-			bool goodNavigate = true;
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
-			goodNavigate &= testRunner.ClickByName(libraryRowItemName);
-			goodNavigate &= testRunner.MoveToByName(libraryRowItemName);
+			testRunner.ClickByName(libraryRowItemName);
+			testRunner.MoveToByName(libraryRowItemName);
 			testRunner.Wait(.5);
-			goodNavigate &= testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
+			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
 			testRunner.Wait(.5);
-
-			return goodNavigate;
 		}
 	}
 }

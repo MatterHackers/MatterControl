@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsDetailSelector.SelectedValue = "Advanced";
 			}
 
-			settingsDetailSelector.SelectionChanged += (s, e) => RebuildSlicerSettings(null, null); ;
+			settingsDetailSelector.SelectionChanged += (s, e) => RebuildSlicerSettings(null, null);
 			settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
 			settingsDetailSelector.Margin = new BorderDouble(5, 3);
 			settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);

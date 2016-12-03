@@ -62,8 +62,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 {
                     PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
                     PrinterMove deltaToDestination = currentDestination - lastDestination;
-                    deltaToDestination.feedRate = 0; // remove the changing of the federate (we'll set it initialy)
-                    double lengthSquared = deltaToDestination.LengthSquared;
+                    deltaToDestination.feedRate = 0; // remove the changing of the federate (we'll set it initially)
+                    double lengthSquared = Math.Max(deltaToDestination.LengthSquared, deltaToDestination.extrusion * deltaToDestination.extrusion);
                     if (lengthSquared > MaxSegmentLength * MaxSegmentLength)
                     {
                         // create the line segments to send

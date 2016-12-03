@@ -111,7 +111,7 @@ namespace MatterControl.Tests
 
 				Assert.IsTrue(testRunner.NameExists("SettingsAndControls"));
 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				testRunner.ClickByName("Library Tab");
 
 				return Task.FromResult(0);
 			};

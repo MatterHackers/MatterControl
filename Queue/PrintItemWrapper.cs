@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public string GetFileNameWithoutExtension()
 		{
-			return Path.GetFileNameWithoutExtension(this.PrintItem.FileLocation); ;
+			return Path.GetFileNameWithoutExtension(this.PrintItem.FileLocation);
 		}
 
 		public string Name

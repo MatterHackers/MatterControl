@@ -39,27 +39,5 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
-		public async Task ConfigureNotificationSettingsButtonOpensNotificationWindow()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				testRunner.ClickByName("SettingsAndControls", 5);
-				testRunner.ClickByName("Options Tab", 6);
-
-				bool printNotificationsWindowExists1 = testRunner.WaitForName("Notification Options Window", 3);
-				Assert.IsTrue(printNotificationsWindowExists1 == false, "Print Notification Window does not exist");
-
-				testRunner.ClickByName("Configure Notification Settings Button", 6);
-				bool printNotificationsWindowExists2 = testRunner.WaitForName("Notification Options Window", 3);
-				Assert.IsTrue(printNotificationsWindowExists2 == true, "Print Notifications Window exists after Configure button is clicked");
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
-		}
 	}
 }

@@ -1579,6 +1579,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (newPrintItem != null)
 			{
 				// remove it first to make sure we don't double add it
+				PrintItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
 				PrintItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
 
 				// don't load the mesh until we get all the rest of the interface built

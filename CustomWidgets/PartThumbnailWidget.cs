@@ -604,8 +604,7 @@ namespace MatterHackers.MatterControl
 			if (partPreviewWindow == null)
 			{
 				partPreviewWindow = new PartPreviewMainWindow(this.ItemWrapper, autoRotate);
-				partPreviewWindow.Name = "Part Preview Window Thumbnail";
-				partPreviewWindow.Closed += (object sender, EventArgs e) =>
+				partPreviewWindow.Closed += (s, e) =>
 				{
 					this.partPreviewWindow = null;
 				};

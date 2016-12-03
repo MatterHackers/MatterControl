@@ -69,6 +69,8 @@ namespace MatterHackers.MatterControl
 			controlsTopToBottomLayout.Name = "ManualPrinterControls.ControlsContainer";
 			controlsTopToBottomLayout.Margin = new BorderDouble(0);
 
+			AddMacroControls(controlsTopToBottomLayout);
+
 			AddTemperatureControls(controlsTopToBottomLayout);
 			AddMovementControls(controlsTopToBottomLayout);
 
@@ -79,7 +81,6 @@ namespace MatterHackers.MatterControl
 			AddFanControls(linearPanel);
 			AddAtxPowerControls(linearPanel);
 
-			AddMacroControls(controlsTopToBottomLayout);
 			AddAdjustmentControls(controlsTopToBottomLayout);
 
 			AddChild(controlsTopToBottomLayout);

@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private CheckBox toggleSwitch;
 
-		protected override void AddChildElements()
+		public FanControls()
 		{
 			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 

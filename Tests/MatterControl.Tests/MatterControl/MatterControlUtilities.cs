@@ -39,11 +39,11 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.RenderOpenGl.OpenGl;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
@@ -61,10 +61,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
 
-		private static void RemoveAllFromQueue(AutomationRunner testRunner)
+		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
-			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", 2));
-			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", 2));
+			testRunner.ClickByName("Queue... Menu", 2);
+			testRunner.Wait(1);
+			testRunner.ClickByName(" Remove All Menu Item", 2);
 		}
 
 		public static void CreateDownloadsSubFolder()
@@ -150,7 +151,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 			}
 
-			testRunner.ClickByName("Cancel Wizard Button", 5);
+			if (testRunner.WaitForName("Cancel Wizard Button", 1))
+			{
+				testRunner.ClickByName("Cancel Wizard Button");
+			}
 		}
 
 		public class PrintEmulatorProcess: Process
@@ -235,32 +239,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(AutomationRunner testRunner, string make, string model)
 		{
-			testRunner.ClickByName("Printers... Menu", 2);
-			testRunner.Wait(.2);
+			testRunner.ClickByName("Printers... Menu", 2, delayBeforeReturn: .5);
+			
+			testRunner.ClickByName("Add New Printer... Menu Item", 5, delayBeforeReturn: .5);
 
-			testRunner.ClickByName("Add New Printer... Menu Item", 2);
-			testRunner.Wait(.2);
-
-			/* This prompt is no longer shown and causes a 2 second delay. Remove this block once confirmed
-			testRunner.ClickByName("Connection Wizard Skip Sign In Button", 2);
-			testRunner.Wait(.2); */
-
-			testRunner.ClickByName("Select Make", 2);
-			testRunner.Wait(.2);
+			testRunner.ClickByName("Select Make", 5, delayBeforeReturn: .5);
 
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
 
-			testRunner.ClickByName("Select Model", 2);
-			testRunner.Wait(.2);
+			testRunner.ClickByName("Select Model", 5, delayBeforeReturn: .5);
 
-			testRunner.ClickByName(model + " Menu Item", 2);
-			testRunner.Wait(.2);
+			testRunner.ClickByName(model + " Menu Item", 5, delayBeforeReturn: .5);
+			testRunner.ClickByName("Save & Continue Button", 5, delayBeforeReturn: 1); // wait for this window to close
 
-			testRunner.ClickByName("Save & Continue Button", 2);
-
-			testRunner.WaitForName("Cancel Wizard Button", 3);
-			testRunner.ClickByName("Cancel Wizard Button", 2);
+			testRunner.ClickByName("Cancel Wizard Button", 5, delayBeforeReturn: .5);
 			testRunner.Wait(1);
 		}
 
@@ -341,19 +334,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return ApplicationController.Instance.CurrentLibraryDataView.CurrentLibraryProvider;
 		}
 
-		public static bool NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
+		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
-			bool goodNavigate = true;
-
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
-			goodNavigate &= testRunner.ClickByName(libraryRowItemName);
-			goodNavigate &= testRunner.MoveToByName(libraryRowItemName);
+			testRunner.ClickByName(libraryRowItemName);
+			testRunner.MoveToByName(libraryRowItemName);
 			testRunner.Wait(.5);
 
-			goodNavigate &= testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
+			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
 			testRunner.Wait(.5);
-
-			return goodNavigate;
 		}
 
 		public static async Task RunTest(
@@ -401,6 +390,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				defaultTestImages = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestImages");
 			}
 
+			UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
+			GL.HardwareAvailable = false;
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 
 			var config = TestAutomationConfig.Load();
@@ -418,6 +409,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.ClickByName("LibraryActionMenu");
 			testRunner.ClickByName("Edit Menu Item", 1);
+			testRunner.Wait(1); // wait for the new window to open
 		}
 
 		public static void LibraryRenameSelectedItem(AutomationRunner testRunner)

@@ -152,6 +152,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					while (internalStream.FileStreaming.PercentComplete(internalStream.LineIndex) < percentDone)
 					{
 						string line = internalStream.ReadLine();
+						if(line == null)
+						{
+							break;
+						}
 						commandCount++;
 
 						// make sure we don't parse comments
