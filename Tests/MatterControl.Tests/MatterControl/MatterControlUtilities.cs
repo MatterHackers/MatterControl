@@ -39,11 +39,11 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.RenderOpenGl.OpenGl;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
@@ -391,6 +391,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
+			GL.HardwareAvailable = false;
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 
 			var config = TestAutomationConfig.Load();

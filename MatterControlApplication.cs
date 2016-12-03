@@ -134,8 +134,6 @@ namespace MatterHackers.MatterControl
 			this.commandLineArgs = Environment.GetCommandLineArgs();
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			bool forceSofwareRendering = false;
-
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
 			{
 				string command = commandLineArgs[currentCommandIndex];
@@ -143,8 +141,7 @@ namespace MatterHackers.MatterControl
 				switch (commandUpper)
 				{
 					case "FORCE_SOFTWARE_RENDERING":
-						forceSofwareRendering = true;
-						GL.ForceSoftwareRendering();
+						GL.HardwareAvailable = false;
 						break;
 
 					case "CLEAR_CACHE":
@@ -288,7 +285,7 @@ namespace MatterHackers.MatterControl
 #endif
 			this.AnchorAll();
 
-			if (!forceSofwareRendering)
+			if (GL.HardwareAvailable)
 			{
 				UseOpenGL = true;
 			}
