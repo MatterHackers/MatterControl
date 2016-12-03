@@ -94,15 +94,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
 			editButton.Click += (sender, e) =>
 			{
-				if (editSettingsWindow == null)
-				{
-					editSettingsWindow = new EditMacrosWindow(ReloadMacros);
-					editSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editSettingsWindow = null; };
-				}
-				else
-				{
-					editSettingsWindow.BringToFront();
-				}
+				EditMacrosWindow.Show();
 			};
 
 			groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -114,23 +106,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			controlRow.Margin = new BorderDouble(top: 5);
 			controlRow.HAnchor |= HAnchor.ParentLeftRight;
 			{
-				{
-					this.presetButtonsContainer = GetMacroButtonContainer();
-					controlRow.AddChild(this.presetButtonsContainer);
-				}
+				this.presetButtonsContainer = GetMacroButtonContainer();
+				controlRow.AddChild(this.presetButtonsContainer);
 			}
 
 			groupBox.AddChild(controlRow);
 			this.AddChild(groupBox);
 		}
-
-		protected void ReloadMacros(object sender, EventArgs e)
-		{
-			ActiveSliceSettings.Instance.Save();
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-		}
-
-		private EditMacrosWindow editSettingsWindow = null;
 
 		private FlowLayoutWidget GetMacroButtonContainer()
 		{
@@ -149,17 +131,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 				buttonCount++;
 
 				Button macroButton = textImageButtonFactory.Generate(MacroControls.FixMacroName(macro.Name)); 
-				macroButton.Text = macro.GCode;
 				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (s, e) =>
-				{
-					PrinterConnectionAndCommunication.Instance.MacroStart();
-					SendCommandToPrinter(macroButton.Text);
-					if (macroButton.Text.Contains(QueuedCommandsStream.MacroPrefix))
-					{
-						SendCommandToPrinter("\n" + QueuedCommandsStream.MacroPrefix + "Close");
-					}
-				};
+				macroButton.Click += (s, e) => macro.Run();
 
 				macroButtonContainer.AddChild(macroButton);
 			}
@@ -172,11 +145,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 
 			return macroButtonContainer;
-		}
-
-		protected void SendCommandToPrinter(string command)
-		{
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(command);
 		}
 	}
 }
