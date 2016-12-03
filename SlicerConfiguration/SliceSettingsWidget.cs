@@ -1234,6 +1234,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								HAnchor = HAnchor.ParentLeftRight,
 							};
 
+							stringEdit.DrawFromHintedCache();
+
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								ActiveSliceSettings.Instance.SetValue(settingData.SlicerConfigName, ((TextEditWidget)sender).Text.Replace("\n", "\\n"), persistenceLayer);

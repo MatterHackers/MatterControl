@@ -84,6 +84,12 @@ namespace MatterHackers.MatterControl
 			get { return actuallTextEditWidget.InternalTextEditWidget.SelectAllOnFocus; }
 			set { actuallTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value; }
 		}
+
+		public void DrawFromHintedCache()
+		{
+			ActualTextEditWidget.Printer.DrawFromHintedCache = true;
+			ActualTextEditWidget.DoubleBuffer = false;
+		}
 	}
 
 	public class MHPasswordTextEditWidget : MHTextEditWidget
