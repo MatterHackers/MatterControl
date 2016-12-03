@@ -195,37 +195,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 		}
 
-		//Stress Test check & uncheck 1000x
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
-		public async Task HasHeatedBedCheckUncheck()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
-
-				//Navigate to Local Library 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
-
-				testRunner.ClickByName("Printer Tab");
-				testRunner.Wait(1);
-
-				testRunner.ClickByName("Features Tab");
-				testRunner.Wait(2);
-
-				for (int i = 0; i <= 1000; i++)
-				{
-					testRunner.ClickByName("Has Heated Bed Checkbox");
-					testRunner.Wait(.5);
-				}
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
