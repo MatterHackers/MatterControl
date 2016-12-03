@@ -108,10 +108,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BrailleBuilder\BrailleBuilder.csproj">
-      <Project>{70FBB82C-558D-4B5F-BE75-A922D392E650}</Project>
-      <Name>BrailleBuilder</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\MatterControl.csproj">
       <Project>{0B8D6F56-BD7F-4426-B858-D9292B084656}</Project>
       <Name>MatterControl</Name>
@@ -151,6 +147,10 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
       <Name>PolygonMesh</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
+      <Project>{545b6912-77ff-4b34-ba76-6c3d6a32be6a}</Project>
+      <Name>RenderOpenGl</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
       <Project>{195CBE56-E654-437B-AB05-3BE1B9452497}</Project>

@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public string[] GetItemNames()
 		{
-			List<string> itemNames = new List<string>(); ;
+			List<string> itemNames = new List<string>();
 			for (int i = 0; i < PrintItems.Count; i++)
 			{
 				itemNames.Add(PrintItems[i].Name);

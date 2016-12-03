@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
@@ -79,7 +80,7 @@ namespace MatterControl.Tests.MatterControl
 			string actualLine = maxLengthStream.ReadLine();
 			string expectedLine = expected[expectedIndex++];
 
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream"); 
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream");
 
 			while (actualLine != null)
 			{
@@ -135,23 +136,43 @@ namespace MatterControl.Tests.MatterControl
 			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
 			string[] expected = new string[]
 			{
-				"G1 E11 F300",
-				// before
-				"G92 E0",
-				"",
-				"G1 E-5 F302",
-				"G90",
-				// after
-				"", // G91 is removed
-				"G1 E3 F150", // altered to be absolute
-				"G90",
-				"G4 P0",
-				"G92 E0",
-				"G4 P0",
-				"", // G91 is removed
-				"G1 E-2 F301",
-				"G90",
-				null,
+			"G1 E1 F300",
+			"G1 E2",
+			"G1 E3",
+			"G1 E4",
+			"G1 E5",
+			"G1 E6",
+			"G1 E7",
+			"G1 E8",
+			"G1 E9",
+			"G1 E10",
+			"G1 E11",
+			"G92 E0",
+			"",
+			"G1 E-1 F302",
+			"G1 E-2",
+			"G1 E-3",
+			"G1 E-4",
+			"G1 E-5",
+			"G90",
+			"",
+			"G1 E-4 F150",
+			"G1 E-3",
+			"G1 E-2",
+			"G1 E-1",
+			"G1 E0",
+			"G1 E1",
+			"G1 E2",
+			"G1 E3",
+			"G90",
+			"G4 P0",
+			"G92 E0",
+			"G4 P0",
+			"",
+			"G1 E-1 F301",
+			"G1 E-2",
+			"G90",
+			 null,
 			};
 
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -165,6 +186,7 @@ namespace MatterControl.Tests.MatterControl
 			string expectedLine = expected[expectedIndex++];
 
 			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			Debug.WriteLine(actualLine);
 
 			while (actualLine != null)
 			{
@@ -176,6 +198,7 @@ namespace MatterControl.Tests.MatterControl
 
 				expectedLine = expected[expectedIndex++];
 
+				Debug.WriteLine(actualLine);
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
 			}
 		}

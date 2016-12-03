@@ -43,13 +43,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class RunningMacroPage : WizardPage
 	{
-		public static void Show(string message, bool showOkButton = false)
+		public static void Show(string message, bool showOkButton = false, bool showMaterialSelector = false)
 		{
-			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(message, showOkButton));
+			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(message, showOkButton, showMaterialSelector));
 		}
 
-		public RunningMacroPage(string message, bool showOkButton)
-			: base("Cancel", "Macro Feedback")
+		public RunningMacroPage(string message, bool showOkButton, bool showMaterialSelector)
+			: base("Close", "Macro Feedback")
 		{
 			TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(syncingText);
@@ -57,21 +57,26 @@ namespace MatterHackers.MatterControl.PrinterControls
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
 
+			if(showMaterialSelector)
+			{
+				int extruderIndex = 0;
+				contentRow.AddChild(new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Orange, NamedSettingsLayers.Material, extruderIndex));
+			}
+
 			if(showOkButton)
 			{
-				Button okButton = textImageButtonFactory.Generate("OK".Localize());
-				okButton.Margin = new BorderDouble(5);
+				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
+				okButton.Margin = new BorderDouble(0,0,0,25);
 				okButton.HAnchor = HAnchor.ParentCenter;
-				
-				okButton.Click += (s, e) => PrinterConnectionAndCommunication.Instance.MacroContinue();
+
+				okButton.Click += (s, e) =>
+				{
+					PrinterConnectionAndCommunication.Instance.MacroContinue();
+					UiThread.RunOnIdle(() => WizardWindow?.Close());
+				};
 
 				contentRow.AddChild(okButton);
 			}
-
-			cancelButton.Click += (s, e) =>
-			{
-				PrinterConnectionAndCommunication.Instance.MacroCancel();
-			};
 		}
 
 		public override void OnClosed(EventArgs e)

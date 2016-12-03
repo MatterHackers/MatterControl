@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(new HorizontalSpacer());
 
 			// the redeem design code button
-			textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
+			textImageButtonFactory.disabledTextColor = new RGBA_Bytes(textImageButtonFactory.normalTextColor, 100);
 			Button redeemPurchaseButton = textImageButtonFactory.Generate("Redeem Purchase".Localize());
 			redeemPurchaseButton.Enabled = true; // The library selector (the first library selected) is protected so we can't add to it.
 			redeemPurchaseButton.Name = "Redeem Code Button";

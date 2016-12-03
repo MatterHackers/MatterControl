@@ -99,9 +99,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.PrintItemWrapper.UseIncrementedNameDuringTypeChange = true;
 
 			ConstructPrintQueueItem();
-
-			MouseEnterBounds += (s, e) => EnteredBounds();
-			MouseLeaveBounds += (s, e) => EnteredBounds();
 		}
 
 		private event EventHandler unregisterEvents;
@@ -126,7 +123,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		void EnteredBounds()
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			UpdateHoverState();
+			base.OnMouseEnterBounds(mouseEvent);
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			UpdateHoverState();
+			base.OnMouseLeaveBounds(mouseEvent);
+		}
+
+		void UpdateHoverState()
 		{
 			switch (UnderMouseState)
 			{

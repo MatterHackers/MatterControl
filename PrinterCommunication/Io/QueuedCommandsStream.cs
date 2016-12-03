@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.PrinterControls;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg.UI;
 using System;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -44,7 +45,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private List<string> commandQueue = new List<string>();
 		bool waitingForUserInput = false;
 
-		public const string macroStart = "; Command:";
+		public const string MacroPrefix = "; Command:";
 
 		public QueuedCommandsStream(GCodeStream internalStream)
 			: base(internalStream)
@@ -77,23 +78,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					if (commandQueue.Count > 0)
 					{
 						lineToSend = commandQueue[0];
+						lineToSend = GCodeProcessing.ReplaceMacroValues(lineToSend);
 						commandQueue.RemoveAt(0);
 					}
 				}
 
 				if (lineToSend != null)
 				{
-					if (lineToSend.StartsWith(macroStart))
+					if (lineToSend.StartsWith(MacroPrefix))
 					{
-						int spaceAfterCommand = lineToSend.IndexOf(' ', macroStart.Length);
+						int spaceAfterCommand = lineToSend.IndexOf(' ', MacroPrefix.Length);
 						string command;
 						if (spaceAfterCommand > 0)
 						{
-							command = lineToSend.Substring(macroStart.Length, spaceAfterCommand - macroStart.Length);
+							command = lineToSend.Substring(MacroPrefix.Length, spaceAfterCommand - MacroPrefix.Length);
 						}
 						else
 						{
-							command = lineToSend.Substring(macroStart.Length);
+							command = lineToSend.Substring(MacroPrefix.Length);
 						}
 
 						List<string> messages = new List<string>();
@@ -112,12 +114,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								}
 								break;
 
+							case "ChooseMaterial":
+								waitingForUserInput = true;
+								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true, true));
+								break;
+
 							case "WaitOK":
 								waitingForUserInput = true;
-								if (messages.Count > 0)
-								{
-									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0], true));
-								}
+								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true));
 								break;
 
 							case "Close":
@@ -140,17 +144,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lineToSend;
 		}
 
-		public void Continue()
-		{
-			waitingForUserInput = false;
-		}
-
-		internal void Clear()
+		public void Reset()
 		{
 			lock (locker)
 			{
 				commandQueue.Clear();
 			}
+
+			waitingForUserInput = false;
+		}
+
+		public void Continue()
+		{
+			waitingForUserInput = false;
 		}
 	}
 }
