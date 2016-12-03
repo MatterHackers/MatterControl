@@ -195,6 +195,7 @@ namespace MatterHackers.MatterControl
 			macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
 
 			macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.GCode, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.MonoSpacedTypeFace);
+			macroCommandInput.DrawFromHintedCache();
 			macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
 			macroCommandInput.VAnchor = VAnchor.ParentBottomTop;
 			macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.ParentBottomTop;
