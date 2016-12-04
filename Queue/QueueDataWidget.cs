@@ -243,10 +243,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			allControls.AnchorAll();
 
 			this.AddChild(allControls);
-			AddHandlers();
-			SetEditButtonsStates(); 
 
-			//enterEditModeButtonClick(null, null);
+			queueDataView.SelectedItems.OnAdd += (s, e) => SetEditButtonsStates();
+			queueDataView.SelectedItems.OnRemove += (s, e) => SetEditButtonsStates();
+			QueueData.Instance.SelectedIndexChanged.RegisterEvent((s,e) => SetEditButtonsStates(), ref unregisterEvents);
+
+			SetEditButtonsStates(); 
 		}
 
 		private void CreateEditBarButtons()
@@ -433,31 +435,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnDragOver(fileDropEventArgs);
 		}
 
-		private void AddHandlers()
-		{
-			queueDataView.SelectedItems.OnAdd += onLibraryItemsSelectChanged;
-			queueDataView.SelectedItems.OnRemove += onLibraryItemsSelectChanged;
-			QueueData.Instance.SelectedIndexChanged.RegisterEvent(PrintItemSelectionChanged, ref unregisterEvents);
-		}
-
-		void PrintItemSelectionChanged(object sender, EventArgs e)
-		{
-			if (!queueDataView.EditMode)
-			{
-				// Set the selection to the selected print item.
-				QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
-				if (selectedItem != null)
-				{
-					if (this.queueDataView.SelectedItems.Count > 0
-						|| !this.queueDataView.SelectedItems.Contains(selectedItem))
-					{
-						this.queueDataView.ClearSelectedItems();
-						this.queueDataView.SelectedItems.Add(selectedItem);
-					}
-				}
-			}
-		}
-
 		private void AddItemsToQueue()
 		{
 			FileDialog.OpenFileDialog(
@@ -612,19 +589,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 				enterEditModeButton.Visible = true;
 				leaveEditModeButton.Visible = false;
 				queueDataView.EditMode = false;
-
-				PrintItemSelectionChanged(null, null);
 			}
 		}
 
 		private void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
 		{
 			LeaveEditMode();
-		}
-
-		private void onLibraryItemsSelectChanged(object sender, EventArgs e)
-		{
-			SetEditButtonsStates();
 		}
 
 		private void OpenExportWindow(PrintItemWrapper printItem)

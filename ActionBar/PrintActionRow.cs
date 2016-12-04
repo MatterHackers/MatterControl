@@ -510,14 +510,14 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
 		{
 			PrinterConnectionAndCommunication.Instance.ResetToReadyState();
-			QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
+			QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
 			// We don't have to change the selected index because we should be on the next one as we deleted the one
 			// we were on.
 		}
 
 		private void onRemoveButton_Click(object sender, EventArgs mouseEvent)
 		{
-			QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
+			QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
 		}
 
 		private void onReprintButton_Click(object sender, EventArgs mouseEvent)
@@ -529,7 +529,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (QueueData.Instance.Count > 1)
 			{
-				queueDataView.MoveToNext();
+				QueueData.Instance.MoveToNext();
 			}
 		}
 

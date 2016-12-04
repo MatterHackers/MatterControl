@@ -108,6 +108,75 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		public void MoveToNext()
+		{
+			if (SelectedIndex >= 0 && SelectedIndex < Count)
+			{
+				if (this.SelectedIndex == Count - 1)
+				{
+					this.SelectedIndex = 0;
+				}
+				else
+				{
+					this.SelectedIndex++;
+				}
+			}
+		}
+
+		public PrintItemWrapper SelectedPrintItem
+		{
+			get
+			{
+				if (SelectedIndex >= 0)
+				{
+					return QueueData.Instance.GetPrintItemWrapper(SelectedIndex);
+				}
+				else
+				{
+					return null;
+				}
+			}
+
+			set
+			{
+				if (SelectedPrintItem != value)
+				{
+					for (int index = 0; index < QueueData.Instance.PrintItems.Count; index++)
+					{
+						if (PrintItems[index] == value)
+						{
+							SelectedIndex = index;
+							return;
+						}
+					}
+
+					throw new Exception("Item not in queue.");
+				}
+			}
+		}
+
+		public void EnsureSelection()
+		{
+			if (Count > 0)
+			{
+				if (SelectedIndex < 0)
+				{
+					SelectedIndex = 0;
+				}
+				else if (SelectedIndex > Count - 1)
+				{
+					SelectedIndex = Count - 1;
+				}
+
+				// force a refresh of the ui in the case where we are still on the same index but have changed items.
+				SelectedIndex = SelectedIndex;
+			}
+			else
+			{
+				SelectedIndex = -1;
+			}
+		}
+
 		public void SwapItemsOnIdle(int indexA, int indexB)
 		{
 			UiThread.RunOnIdle(SwapItems, new SwapIndexArgs(indexA, indexB));
