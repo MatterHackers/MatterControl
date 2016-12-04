@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						{
 							this.activePrintButtons.Add(startButton);
 							//Show 'skip' button if there are more items in queue
-							if (QueueData.Instance.Count > 1)
+							if (QueueData.Instance.ItemCount > 1)
 							{
 								this.activePrintButtons.Add(skipButton);
 							}
@@ -527,7 +527,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onSkipButton_Click(object sender, EventArgs mouseEvent)
 		{
-			if (QueueData.Instance.Count > 1)
+			if (QueueData.Instance.ItemCount > 1)
 			{
 				QueueData.Instance.MoveToNext();
 			}

@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl
 
 		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
 		{
-			QueueTabPage.Text = string.Format("{0} ({1})", "Queue".Localize().ToUpper(), QueueData.Instance.Count);
+			QueueTabPage.Text = string.Format("{0} ({1})", "Queue".Localize().ToUpper(), QueueData.Instance.ItemCount);
 		}
 
 		private void AddTab(string name, string tabTitle, Func<GuiWidget> generator)

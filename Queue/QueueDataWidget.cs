@@ -244,8 +244,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			this.AddChild(allControls);
 
-			queueDataView.SelectedItems.OnAdd += (s, e) => SetEditButtonsStates();
-			queueDataView.SelectedItems.OnRemove += (s, e) => SetEditButtonsStates();
 			QueueData.Instance.SelectedIndexChanged.RegisterEvent((s,e) => SetEditButtonsStates(), ref unregisterEvents);
 
 			SetEditButtonsStates(); 
@@ -288,9 +286,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public void CreateCopyInQueue()
 		{
 			// Guard for single item selection
-			if (this.queueDataView.SelectedItems.Count != 1) return;
+			if (QueueData.Instance.ItemCount != 1) return;
 
-			var queueRowItem = this.queueDataView.SelectedItems[0];
+			var queueRowItem = this.queueDataView.GetQueueRowItem(0);
+			if(queueRowItem == null)
+			{
+				return;
+			}
 
 			var printItemWrapper = queueRowItem.PrintItemWrapper;
 
@@ -375,7 +377,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public static void DoAddFiles(List<string> files)
         {
-            int preAddCount = QueueData.Instance.Count;
+            int preAddCount = QueueData.Instance.ItemCount;
 
             foreach (string fileToAdd in files)
             {
@@ -399,9 +401,9 @@ namespace MatterHackers.MatterControl.PrintQueue
                 }
             }
 
-            if (QueueData.Instance.Count != preAddCount)
+            if (QueueData.Instance.ItemCount != preAddCount)
             {
-                QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
+                QueueData.Instance.SelectedIndex = QueueData.Instance.ItemCount - 1;
             }
         }
 
@@ -448,7 +450,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					if (openParams.FileNames != null)
 					{
-						int preAddCount = QueueData.Instance.Count;
+						int preAddCount = QueueData.Instance.ItemCount;
 
 						foreach (string fileNameToLoad in openParams.FileNames)
 						{
@@ -472,9 +474,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 							}
 						}
 
-						if (QueueData.Instance.Count != preAddCount)
+						if (QueueData.Instance.ItemCount != preAddCount)
 						{
-							QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
+							QueueData.Instance.SelectedIndex = QueueData.Instance.ItemCount - 1;
 						}
 					}
 				});
@@ -490,16 +492,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			if (returnInfo != null)
 			{
-				List<QueueRowItem> selectedItems = new List<QueueRowItem>(queueDataView.SelectedItems);
 				LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
 				if (libraryToSaveTo != null)
 				{
-					foreach (QueueRowItem queueItem in selectedItems)
+					foreach (var queueItemIndex in QueueData.Instance.SelectedIndexes)
 					{
-						if (File.Exists(queueItem.PrintItemWrapper.FileLocation))
+						var queueItem = queueDataView.GetQueueRowItem(queueItemIndex);
+						if (queueItem != null)
 						{
-							PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
-							libraryToSaveTo.AddItem(printItemWrapper);
+							if (File.Exists(queueItem.PrintItemWrapper.FileLocation))
+							{
+								PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
+								libraryToSaveTo.AddItem(printItemWrapper);
+							}
 						}
 					}
 					libraryToSaveTo.Dispose();
@@ -545,10 +550,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void exportButton_Click(object sender, EventArgs mouseEvent)
 		{
 			//Open export options
-			if (queueDataView.SelectedItems.Count == 1)
+			if (QueueData.Instance.SelectedCount == 1)
 			{
-				QueueRowItem libraryItem = queueDataView.SelectedItems[0];
-				OpenExportWindow(libraryItem.PrintItemWrapper);
+				QueueRowItem libraryItem = queueDataView.GetQueueRowItem(QueueData.Instance.SelectedIndex);
+				if (libraryItem != null)
+				{
+					OpenExportWindow(libraryItem.PrintItemWrapper);
+				}
 			}
 		}
 
@@ -577,7 +585,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (menuItem.Title == menuSelection)
 				{
-					menuItem.Action?.Invoke(queueDataView.SelectedItems, this);
+					menuItem.Action?.Invoke(queueDataView.GetSelectedItems(), this);
 				}
 			}
 		}
@@ -634,23 +642,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void removeButton_Click(object sender, EventArgs mouseEvent)
 		{
-			// Sort by index in the QueueData list to prevent positions shifting due to removes
-			var sortedByIndexPos = this.queueDataView.SelectedItems.OrderByDescending(rowItem => QueueData.Instance.GetIndex(rowItem.PrintItemWrapper));
-
-			// Once sorted, remove each selected item
-			foreach (var item in sortedByIndexPos)
-			{
-				item.DeletePartFromQueue();
-			}
-
-			this.queueDataView.ClearSelectedItems();
+			QueueData.Instance.RemoveSelected();
 		}
 
 		private void sendButton_Click(object sender, EventArgs mouseEvent)
 		{
 			if (sendButtonFunction != null)
 			{
-				List<PrintItemWrapper> itemList = this.queueDataView.SelectedItems.Select(item => item.PrintItemWrapper).ToList();
+				List<PrintItemWrapper> itemList = this.queueDataView.GetSelectedItems().Select(item => item.PrintItemWrapper).ToList();
 				UiThread.RunOnIdle(() => sendButtonFunction(null, itemList));
 			}
 			else
@@ -718,7 +717,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void SetEditButtonsStates()
 		{
-			int selectedCount = queueDataView.SelectedItems.Count;
+			int selectedCount = QueueData.Instance.SelectedCount;
 
 			// Disable menu items which are singleSelection only
 			foreach(MenuItem menuItem in moreMenu.MenuItems)
@@ -746,9 +745,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 						if (!editButtonsEnableData[buttonIndex].protectedItems)
 						{
 							// so we can show for multi items lets check for protected items
-							for (int itemIndex = 0; itemIndex < queueDataView.SelectedItems.Count; itemIndex++)
+							for (int itemIndex = 0; itemIndex < QueueData.Instance.ItemCount; itemIndex++)
 							{
-								if (queueDataView.SelectedItems[itemIndex].PrintItemWrapper.PrintItem.Protected)
+								if (queueDataView.GetQueueRowItem(itemIndex)?.PrintItemWrapper.PrintItem.Protected == true)
 								{
 									enabled = false;
 								}

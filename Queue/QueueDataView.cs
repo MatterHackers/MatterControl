@@ -37,6 +37,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -59,6 +60,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public bool EditMode
 		{
 			get { return editMode; }
+			
 			set
 			{
 				if (this.editMode != value)
@@ -66,34 +68,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 					this.editMode = value;
 					if (this.editMode == false)
 					{
-						this.ClearSelectedItems();
-						SetMultiSelectToMatchSingleSelect();
-					}
-					else
-					{
-						foreach (var item in SelectedItems)
-						{
-							item.isSelectedItem = true;
-							item.selectionCheckBox.Checked = true;
-						}
+						QueueData.Instance.MakeSingleSelection();
 					}
 				}
 			}
-		}
-
-		private void SetMultiSelectToMatchSingleSelect()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void ClearSelectedItems()
-		{
-			foreach (var item in SelectedItems)
-			{
-				item.isSelectedItem = false;
-				item.selectionCheckBox.Checked = false;
-			}
-			this.SelectedItems.Clear();
 		}
 
 		private void AddWatermark()
@@ -111,9 +89,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public SelectedListItems<QueueRowItem> SelectedItems = new SelectedListItems<QueueRowItem>();
-
-		public QueueRowItem GetPrintQueueItem(int index)
+		public QueueRowItem GetQueueRowItem(int index)
 		{
 			if (index >= 0 && index < topToBottomItemList.Children.Count)
 			{
@@ -127,8 +103,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		}
 
 		public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
-
-		public event SelectedValueChangedEventHandler SelectedValueChanged;
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
 
@@ -171,7 +145,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			topToBottomItemList.HAnchor = HAnchor.ParentLeftRight;
 			base.AddChild(topToBottomItemList);
 
-			for (int i = 0; i < QueueData.Instance.Count; i++)
+			for (int i = 0; i < QueueData.Instance.ItemCount; i++)
 			{
 				PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(i);
 				QueueRowItem queueItem = new QueueRowItem(item, this);
@@ -185,16 +159,38 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
 
-			QueueData.Instance.EnsureSelection();
+			SelectedIndexChanged(null, null);
 		}
 
-		private void PrintItemChange(object sender, EventArgs e)
+	private void PrintItemChange(object sender, EventArgs e)
 		{
 			QueueData.Instance.SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 		}
 
 		private void SelectedIndexChanged(object sender, EventArgs e)
 		{
+			if (this.editMode == false)
+			{
+				QueueData.Instance.MakeSingleSelection();
+			}
+
+			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
+			{
+				GuiWidget child = topToBottomItemList.Children[index];
+				var queueRowItem = (QueueRowItem)child.Children[0];
+
+				if (QueueData.Instance.SelectedIndexes.Contains(index))
+				{
+					queueRowItem.isSelectedItem = true;
+					queueRowItem.selectionCheckBox.Checked = true;
+				}
+				else
+				{
+					queueRowItem.isSelectedItem = false;
+					queueRowItem.selectionCheckBox.Checked = false;
+				}
+			}
+
 			// Skip this processing while in EditMode
 			if (this.editMode) return;
 
@@ -234,11 +230,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 				}
-				//child.Invalidate();
-				//Invalidate();
 			}
 
-			if (QueueData.Instance.Count == 0)
+			if (QueueData.Instance.ItemCount == 0)
 			{
 				PrinterConnectionAndCommunication.Instance.ActivePrintItem = null;
 			}
@@ -341,7 +335,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 				GuiWidget child = topToBottomItemList.Children[index];
 				if (child == widgetClicked)
 				{
-					QueueData.Instance.SelectedIndex = index;
+					if (EditMode)
+					{
+						QueueData.Instance.ToggleSelect(index);
+					}
+					else
+					{
+						QueueData.Instance.SelectedIndex = index;
+					}
 				}
 			}
 		}
@@ -388,6 +389,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				HoverValueChanged(this, null);
 			}
+		}
+
+		internal List<QueueRowItem> GetSelectedItems()
+		{
+			List<QueueRowItem> list = new List<QueueRowItem>();
+
+			foreach(var index in QueueData.Instance.SelectedIndexes)
+			{
+				var queueItem = GetQueueRowItem(index);
+				if(queueItem != null)
+				{
+					list.Add(queueItem);
+				}
+			}
+
+			return list;
 		}
 	}
 

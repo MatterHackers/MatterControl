@@ -5635,3 +5635,6 @@ Translated:WARNING: Disconnecting will stop the current print
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 
+English:Select a printer.
+Translated:Select a printer.
+
