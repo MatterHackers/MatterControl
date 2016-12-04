@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 
-				int queueBeforeCount = QueueData.Instance.Count;
+				int queueBeforeCount = QueueData.Instance.ItemCount;
 
 				testRunner.Type(queueItemPath);
 				testRunner.Wait(1);
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 
-				int queueAfterCount = QueueData.Instance.Count;
+				int queueAfterCount = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueAfterCount == queueBeforeCount + 1);
 
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
 				string textForBothQueueItems = string.Format("\"{0}\" \"{1}\"", queueItemPath, pathToSecondQueueItem);
 
-				int queueBeforeAddCount = QueueData.Instance.Count;
+				int queueBeforeAddCount = QueueData.Instance.ItemCount;
 
 				testRunner.Type(textForBothQueueItems);
 				testRunner.Wait(2);
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 2));
 
-				int queueAfterAddCount = QueueData.Instance.Count;
+				int queueAfterAddCount = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueAfterAddCount == queueBeforeAddCount + 2);
 
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Add File To Queue Menu Item");
 				testRunner.Wait(2);
 
-				int beforeCount = QueueData.Instance.Count;
+				int beforeCount = QueueData.Instance.ItemCount;
 
 				string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
 				testRunner.Type(pathToType);
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
-				Assert.IsTrue(QueueData.Instance.Count == beforeCount + 2);
+				Assert.IsTrue(QueueData.Instance.ItemCount == beforeCount + 2);
 
 				return Task.FromResult(0);
 			};

@@ -256,7 +256,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			conditionalClickContainer = new ConditionalClickWidget(() => queueDataView.EditMode);
 			conditionalClickContainer.HAnchor = HAnchor.ParentLeftRight;
 			conditionalClickContainer.VAnchor = VAnchor.ParentBottomTop;
-			conditionalClickContainer.Click += onQueueItemClick;
 
 			topToBottomLayout.AddChild(topContentsFlowLayout);
 			this.AddChild(topToBottomLayout);
@@ -459,25 +458,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				// The firmware only understands the names when lowercase.
 				PrinterConnectionAndCommunication.Instance.DeleteFileFromSdCard(PrintItemWrapper.PrintItem.Name);
-			}
-		}
-
-		private void onQueueItemClick(object sender, EventArgs e)
-		{
-			if (queueDataView.EditMode)
-			{
-				if (this.isSelectedItem)
-				{
-					this.isSelectedItem = false;
-					this.selectionCheckBox.Checked = false;
-					queueDataView.SelectedItems.Remove(this);
-				}
-				else
-				{
-					this.isSelectedItem = true;
-					this.selectionCheckBox.Checked = true;
-					queueDataView.SelectedItems.Add(this);
-				}
 			}
 		}
 

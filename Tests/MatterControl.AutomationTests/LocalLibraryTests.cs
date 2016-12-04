@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(1);
 
-				int queueCountBeforeAdd = QueueData.Instance.Count;
+				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
 				//Add Library Item to the Print Queue
 				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 
 				//Make sure that the Queue Count increases by one
-				int queueCountAfterAdd = QueueData.Instance.Count;
+				int queueCountAfterAdd = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 1);
 
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Edit Button");
 				testRunner.Wait(1);
 
-				int queueCountBeforeAdd = QueueData.Instance.Count;
+				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
 				//Select both Library Items
 				string rowItemOne = "Row Item Calibration - Box";
@@ -450,7 +450,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 
 				//Make sure Queue Count increases by the correct amount
-				int queueCountAfterAdd = QueueData.Instance.Count;
+				int queueCountAfterAdd = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 2);
 
