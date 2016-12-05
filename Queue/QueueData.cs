@@ -80,7 +80,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private List<int> selectedIndices = new List<int>();
 
-		public IEnumerable<int> SelectedIndexes { get { return selectedIndices.ToArray(); } }
+		public IEnumerable<int> SelectedIndexes
+		{
+			get
+			{
+				return selectedIndices.ToArray();
+			}
+		}
 
 		public int SelectedIndex
 		{
@@ -88,7 +94,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (ItemCount > 0)
 				{
-					return selectedIndices.Count > 0 ? selectedIndices[0] : 0;
+					if (selectedIndices.Count == 0)
+					{
+						// always have a selection if we have items
+						selectedIndices.Add(0);
+					}
+					return selectedIndices[0];
 				}
 
 				return -1;

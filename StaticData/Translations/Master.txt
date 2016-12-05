@@ -5638,3 +5638,6 @@ Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure y
 English:Select a printer.
 Translated:Select a printer.
 
+English:Note: Be sure the tip of the extruder is clean.
+Translated:Note: Be sure the tip of the extruder is clean.
+

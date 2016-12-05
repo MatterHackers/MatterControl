@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					{
 						QueueData.Instance.MakeSingleSelection();
 					}
+					SelectedIndexChanged(null, null);
 				}
 			}
 		}

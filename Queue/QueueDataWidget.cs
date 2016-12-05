@@ -78,7 +78,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private bool exportingWindowIsOpen = false;
 		private Button leaveEditModeButton;
 		private List<PrintItemAction> menuItems;
-		private HashSet<string> singleSelectionMenuItems;
+		private HashSet<string> singleSelectionMenuItems = new HashSet<string>();
+		private HashSet<string> multiSelectionMenuItems = new HashSet<string>();
 		private PluginChooserWindow pluginChooserWindow;
 		private QueueDataView queueDataView;
 		private QueueOptionsMenu queueMenu;
@@ -130,7 +131,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
-				singleSelectionMenuItems = new HashSet<string>();
+				multiSelectionMenuItems.Add("Merge...");
 
 				CreateEditBarButtons();
 				leaveEditModeButton.Visible = false;
@@ -286,9 +287,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public void CreateCopyInQueue()
 		{
 			// Guard for single item selection
-			if (QueueData.Instance.ItemCount != 1) return;
+			if (QueueData.Instance.SelectedCount != 1) return;
 
-			var queueRowItem = this.queueDataView.GetQueueRowItem(0);
+			var queueRowItem = this.queueDataView.GetQueueRowItem(QueueData.Instance.SelectedIndex);
 			if(queueRowItem == null)
 			{
 				return;
@@ -720,14 +721,21 @@ namespace MatterHackers.MatterControl.PrintQueue
 			int selectedCount = QueueData.Instance.SelectedCount;
 
 			// Disable menu items which are singleSelection only
-			foreach(MenuItem menuItem in moreMenu.MenuItems)
+			foreach (MenuItem menuItem in moreMenu.MenuItems)
 			{
 				// TODO: Ideally this would set .Enabled but at the moment, disabled controls don't have enough 
 				// functionality to convey the disabled aspect or suppress click events
-				menuItem.Visible = selectedCount == 1 || !singleSelectionMenuItems.Contains(menuItem.Text);
+				if (selectedCount == 1)
+				{
+					menuItem.Enabled = !multiSelectionMenuItems.Contains(menuItem.Text);
+				}
+				else
+				{
+					menuItem.Enabled = !singleSelectionMenuItems.Contains(menuItem.Text);
+				}
 			}
 
-			for(int buttonIndex=0; buttonIndex<itemOperationButtons.Children.Count; buttonIndex++)
+			for (int buttonIndex = 0; buttonIndex < itemOperationButtons.Children.Count; buttonIndex++)
 			{
 				bool enabled = selectedCount > 0;
 				var child = itemOperationButtons.Children[buttonIndex];
