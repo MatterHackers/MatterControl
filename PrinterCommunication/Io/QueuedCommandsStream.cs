@@ -36,6 +36,7 @@ using System.Text.RegularExpressions;
 using MatterHackers.Agg.UI;
 using System;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -110,7 +111,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							case "Message":
 								if (messages.Count > 0)
 								{
-									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0]));
+									double seconds = 0;
+									GCodeFile.GetFirstNumberAfter("ExpectedSeconds:", lineToSend, ref seconds);
+									double temperature = 0;
+									GCodeFile.GetFirstNumberAfter("ExpectedTemperature:", lineToSend, ref temperature);
+									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0], expectedSeconds: seconds, ExpectedTemperature: temperature));
 								}
 								break;
 

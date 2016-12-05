@@ -43,12 +43,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class RunningMacroPage : WizardPage
 	{
-		public static void Show(string message, bool showOkButton = false, bool showMaterialSelector = false)
+		public static void Show(string message, bool showOkButton = false, bool showMaterialSelector = false, double expectedSeconds = 0, double expectedTemperature = 0)
 		{
-			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(message, showOkButton, showMaterialSelector));
+			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(message, showOkButton, showMaterialSelector, expectedSeconds, expectedTemperature));
 		}
 
-		public RunningMacroPage(string message, bool showOkButton, bool showMaterialSelector)
+		public RunningMacroPage(string message, bool showOkButton, bool showMaterialSelector, double expectedSeconds, double expectedTemperature)
 			: base("Close", "Macro Feedback")
 		{
 			TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
@@ -63,7 +63,36 @@ namespace MatterHackers.MatterControl.PrinterControls
 				contentRow.AddChild(new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Orange, NamedSettingsLayers.Material, extruderIndex));
 			}
 
-			if(showOkButton)
+			if (expectedSeconds > 0)
+			{
+				long timeToWaitMs = (long)(expectedSeconds * 1000);
+				long endTimeMs = UiThread.CurrentTimerMs + timeToWaitMs;
+				ProgressBar progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
+				{
+					FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+					//HAnchor = HAnchor.ParentCenter,
+					Margin = new BorderDouble(5, 0, 0, 10),
+				};
+				contentRow.AddChild(progressBar);
+				Action test = null;
+				test = () =>
+				{
+					long timeWaitedMs = endTimeMs - UiThread.CurrentTimerMs;
+					double ratioDone = 1 - ((double)timeWaitedMs / (double)timeToWaitMs);
+					progressBar.RatioComplete = Math.Min(ratioDone, 1);
+					if (!HasBeenClosed && ratioDone <= 1)
+					{
+						UiThread.RunOnIdle(test, 1);
+					}
+				};
+				UiThread.RunOnIdle(test, 1);
+			}
+
+			if (expectedTemperature > 0)
+			{
+			}
+
+			if (showOkButton)
 			{
 				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
 				okButton.Margin = new BorderDouble(0,0,0,25);
