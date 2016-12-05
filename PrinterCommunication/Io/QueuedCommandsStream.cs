@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									GCodeFile.GetFirstNumberAfter("ExpectedSeconds:", lineToSend, ref seconds);
 									double temperature = 0;
 									GCodeFile.GetFirstNumberAfter("ExpectedTemperature:", lineToSend, ref temperature);
-									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0], expectedSeconds: seconds, ExpectedTemperature: temperature));
+									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0], expectedSeconds: seconds, expectedTemperature: temperature));
 								}
 								break;
 
