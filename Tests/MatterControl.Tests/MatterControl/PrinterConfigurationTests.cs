@@ -27,8 +27,10 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var printerSettings = PrinterSettings.LoadFile(file.FullName);
 
+				// Assert that no UserLayer values exist in production .printer files
+				Assert.IsTrue(printerSettings.UserLayer.Keys.Count == 0);
+
 				var layersToInspect = new List<PrinterSettingsLayer>();
-				layersToInspect.Add(printerSettings.UserLayer);
 				layersToInspect.Add(printerSettings.OemLayer);
 				layersToInspect.AddRange(printerSettings.MaterialLayers);
 				layersToInspect.AddRange(printerSettings.QualityLayers);
