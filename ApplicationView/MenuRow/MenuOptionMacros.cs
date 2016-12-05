@@ -19,7 +19,8 @@ namespace MatterHackers.MatterControl
 		{
 			Name = "Macro Menu";
 
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s,e) => SetEnabledState(), ref unregisterEvents);
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => SetEnabledState(), ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s,e) => SetEnabledState(), ref unregisterEvents);
 		}
 
 		public override void OnLoad(EventArgs args)
