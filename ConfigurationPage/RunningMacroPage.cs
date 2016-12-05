@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
 				//HAnchor = HAnchor.ParentCenter,
-				Margin = new BorderDouble(5, 0, 0, 10),
+				Margin = new BorderDouble(3, 0, 0, 10),
 			};
 			progressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
