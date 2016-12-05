@@ -18,11 +18,10 @@ namespace MatterControl.Tests.MatterControl
 		public void PrinterConfigTests()
 		{
 			string staticDataPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
-			string profilesDirectory2 = Path.Combine(staticDataPath, "Profiles");
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.Instance = new FileSystemStaticData(staticDataPath);
 
-			var profilesDirectory = new DirectoryInfo(profilesDirectory2);
+			var profilesDirectory = new DirectoryInfo(Path.Combine(staticDataPath, "Profiles"));
 
 			foreach (FileInfo file in profilesDirectory.GetFiles("*.printer", SearchOption.AllDirectories))
 			{
