@@ -201,6 +201,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				PrintItems[indexB] = hold;
 
 				OnOrderChanged(null);
+				OnSelectedIndexChanged(null);
 
 				SaveDefaultQueue();
 			}
@@ -236,6 +237,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					PrintItems.RemoveAt(index);
 
 					OnItemRemoved(new IndexArgs(index));
+					OnSelectedIndexChanged(null);
 
 					SaveDefaultQueue();
 				}
@@ -249,7 +251,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void OnSelectedIndexChanged(EventArgs e)
 		{
-			UiThread.RunOnIdle(() => SelectedIndexChanged.CallEvents(this, e));
+			SelectedIndexChanged.CallEvents(this, e);
 		}
 
 		public PrintItemWrapper GetPrintItemWrapper(int index)
@@ -453,6 +455,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 			PrintItems.Insert(indexToInsert, item);
 			OnItemAdded(new IndexArgs(indexToInsert));
+			OnSelectedIndexChanged(null);
 			SaveDefaultQueue();
 		}
 

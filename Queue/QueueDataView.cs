@@ -27,17 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -60,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public bool EditMode
 		{
 			get { return editMode; }
-			
+
 			set
 			{
 				if (this.editMode != value)
@@ -163,7 +162,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			SelectedIndexChanged(null, null);
 		}
 
-	private void PrintItemChange(object sender, EventArgs e)
+		private void PrintItemChange(object sender, EventArgs e)
 		{
 			QueueData.Instance.SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 		}
@@ -362,7 +361,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		static bool WidgetOrChildIsFirstUnderMouse(GuiWidget startWidget)
+		private static bool WidgetOrChildIsFirstUnderMouse(GuiWidget startWidget)
 		{
 			if (startWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
 			{
@@ -396,10 +395,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			List<QueueRowItem> list = new List<QueueRowItem>();
 
-			foreach(var index in QueueData.Instance.SelectedIndexes)
+			foreach (var index in QueueData.Instance.SelectedIndexes)
 			{
 				var queueItem = GetQueueRowItem(index);
-				if(queueItem != null)
+				if (queueItem != null)
 				{
 					list.Add(queueItem);
 				}
