@@ -111,6 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string enable_network_printing = nameof(enable_network_printing);
 		public const string ip_address = nameof(ip_address);
 		public const string ip_port = nameof(ip_port);
+		public const string first_layer_speed = nameof(first_layer_speed);
 	}
 
 	public class SettingsHelpers

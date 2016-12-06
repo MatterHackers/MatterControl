@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("infill_speed", "printSpeed"),
 				new MappedSetting("infill_speed", "infillSpeed"),
 				new MappedSetting("travel_speed", "moveSpeed"),
-				new AsPercentOfReferenceOrDirect("first_layer_speed", "initialLayerSpeed", "infill_speed"),
+				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_speed, "initialLayerSpeed", "infill_speed"),
 
 				new MappedSetting("perimeter_speed", "insetXSpeed"),
 				new AsPercentOfReferenceOrDirect("external_perimeter_speed", "inset0Speed", "perimeter_speed"),

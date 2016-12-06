@@ -1,125 +1,88 @@
-﻿using MatterHackers.MatterControl;
-using NUnit.Framework;
-using System;
-using System.IO;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Tests.Automation;
+using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
-
 	[TestFixture]
 	public class PrinterConfigurationTests
 	{
 		[Test, Category("PrinterConfigurationFiles"), Category("FixNeeded" /* Not Finished/previously ignored */)]
 		public void PrinterConfigTests()
 		{
+			string staticDataPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
 
-			DirectoryInfo currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
-			var allConfigFile = currentDirectory.Parent.Parent.Parent.Parent.FullName;
-			string pathToPrinterSettings = @"StaticData\PrinterSettings";
-			var fullPathToPrinterSettings = Path.Combine(allConfigFile, pathToPrinterSettings);
-			Dictionary<string, string> currentProfile = new Dictionary<string, string>();
-			DirectoryInfo test = new DirectoryInfo(fullPathToPrinterSettings);
-			IEnumerable<FileInfo> fileList = test.GetFiles(".", System.IO.SearchOption.AllDirectories);
-			var allPrinterConfigs = fileList.Where(file => file.Name == "config.ini");
+			StaticData.Instance = new FileSystemStaticData(staticDataPath);
 
-			foreach (FileInfo file in allPrinterConfigs)
+			var profilesDirectory = new DirectoryInfo(Path.Combine(staticDataPath, "Profiles"));
+
+			foreach (FileInfo file in profilesDirectory.GetFiles("*.printer", SearchOption.AllDirectories))
 			{
-				//Iterate over each line in the config file, and load the setting and value into a dictionary
-				foreach (string line in File.ReadLines(file.FullName))
+				var printerSettings = PrinterSettings.LoadFile(file.FullName);
+
+				var layersToInspect = new List<PrinterSettingsLayer>();
+				layersToInspect.Add(printerSettings.UserLayer);
+				layersToInspect.Add(printerSettings.OemLayer);
+				layersToInspect.AddRange(printerSettings.MaterialLayers);
+				layersToInspect.AddRange(printerSettings.QualityLayers);
+
+				// Validate each PrinterSettingLayer in the .printer file
+				foreach (var layer in layersToInspect.Where(l => l.Keys.Any()))
 				{
-					string[] settingNameAndValue = line.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-					string settingName = settingNameAndValue[0].Trim();
-					string settingValue = string.Empty;
+					firstLayerSpeedEqualsAcceptableValue(printerSettings, layer, file.FullName);
 
-					if (settingNameAndValue.Length == 2)
-					{
-						settingValue = settingNameAndValue[1].Trim();
-					}
-					currentProfile[settingName] = settingValue;
+					firstLayerHeightLessThanNozzleDiameter(printerSettings, layer, file.FullName);
+
+					layerHeightLessThanNozzleDiameter(printerSettings, layer, file.FullName);
+
+					firstLayerExtrusionWidthAcceptableValue(printerSettings, layer, file.FullName);
+
+					firstLayerExtrusionWidthNotZero(layer, file.FullName);
+
+					bedSizeXYSeparatedByComma(layer, file.FullName);
+
+					printCenterFormatSeparatedByComma(layer, file.FullName);
+
+					testRetractLengthLessThanTwenty(layer, file.FullName);
+
+					testExtruderCountGreaterThanZero(layer, file.FullName);
+
+					minimumFanSpeedLessThanOrEqualToOneHundred(layer, file.FullName);
+
+					maxFanSpeedNotGreaterThanOneHundred(layer, file.FullName);
+
+					noCurlyBracketsInStartGcode(layer, file.FullName);
+
+					noCurlyBracketsInEndGcode(layer, file.FullName);
+
+					testBottomSolidLayersOneMM(layer, file.FullName);
+
+					testFirstLayerTempNotInStartGcode(layer, file.FullName);
+
+					testFirstLayerBedTemperatureNotInStartGcode(layer, file.FullName);
 				}
-
-				Assert.True(
-					firstLayerSpeedEqualsAcceptableValue(currentProfile),
-					"Unexpected firstLayerSpeedEqualsAcceptableValue value: " + file.FullName);
-
-
-				Assert.True(
-					firstLayerHeightLessThanNozzleDiameter(currentProfile),
-					"Unexpected firstLayerHeightLessThanNozzleDiameter value: " + file.FullName);
-
-				Assert.True(
-					layerHeightLessThanNozzleDiameter(currentProfile),
-					"Unexpected layerHeightLessThanNozzleDiameter value: " + file.FullName);
-
-				Assert.True(
-					firstLayerExtrusionWidthAcceptableValue(currentProfile),
-					"Unexpected firstLayerExtrusionWidthAcceptableValue value: " + file.FullName
-					);
-
-				Assert.True(firstLayerExtrusionWidthNotZero(currentProfile),
-					"Unexpected firstLayerExtrusionWidthNotZero value: " + file.FullName);
-
-				Assert.True(
-					bedSizeXYSeparatedByComma(currentProfile), 
-					"Unexpected bedSizeXYSeparatedByComma value: " + file.FullName);
-
-				Assert.True(
-					printCenterFormatSeparatedByComma(currentProfile),
-					"Unexpected printCenterFormatSeparatedByComma value: " + file.FullName);
-
-				Assert.True(
-					testRetractLengthLessThanTwenty(currentProfile),
-					"Unexpected testRetractLengthLessThanTwenty value: " + file.FullName);
-
-				Assert.True(
-					testExtruderCountGreaterThanZero(currentProfile),
-					"Unexpected testExtruderCountGreaterThanZero value: " + file.FullName);
-
-				Assert.True(
-					minimumFanSpeedLessThanOneHundred(currentProfile),
-					"Unexpected minimumFanSpeedLessThanOneHundred value: " + file.FullName);
-
-				Assert.True(
-					maxFanSpeedNotGreaterThanOneHundred(currentProfile),
-					"Unexpected maxFanSpeedNotGreaterThanOneHundred value: " + file.FullName);
-
-				Assert.True(
-					noCurlyBracketsInStartGcode(currentProfile),
-					"Unexpected noCurlyBracketsInStartGcode value: " + file.FullName);
-
-				Assert.True(
-					noCurlyBracketsInEndGcode(currentProfile),
-					"Unexpected noCurlyBracketsInEndGcode value: " + file.FullName);
-
-				Assert.True(
-					testBottomSolidLayersOneMM(currentProfile),
-					"Unexpected testBottomSolidLayersOneMM value: " + file.FullName);
-
-				Assert.True(
-					testFirstLayerTempNotInStartGcode(currentProfile),
-					"Unexpected testFirstLayerTempNotInStartGcode value: " + file.FullName);
-
-				Assert.True(
-					testFirstLayerBedTemperatureNotInStartGcode(currentProfile),
-					"Unexpected testFirstLayerBedTemperatureNotInStartGcode value: " + file.FullName);
 			}
 		}
 
-		public bool firstLayerSpeedEqualsAcceptableValue(Dictionary<string, string> currentFile)
+		public void firstLayerSpeedEqualsAcceptableValue(PrinterSettings settings, PrinterSettingsLayer layer, string sourceFile)
 		{
-			string firstLayerSpeedString = currentFile["first_layer_speed"];
-			double firstLayerSpeed;
+			string firstLayerSpeedString;
+			if (!layer.TryGetValue(SettingsKey.first_layer_speed, out firstLayerSpeedString))
+			{
+				return;
+			}
 
+			double firstLayerSpeed;
 			if (firstLayerSpeedString.Contains("%"))
 			{
-				string infillSpeedString = currentFile["infill_speed"];
+				string infillSpeedString = settings.GetValue("infill_speed");
 				double infillSpeed = double.Parse(infillSpeedString);
 
 				firstLayerSpeedString = firstLayerSpeedString.Replace("%", "");
@@ -133,12 +96,18 @@ namespace MatterControl.Tests.MatterControl
 				firstLayerSpeed = double.Parse(firstLayerSpeedString);
 			}
 
-			return firstLayerSpeed > 5;
+			Assert.Greater(firstLayerSpeed, 5, "Unexpected firstLayerSpeedEqualsAcceptableValue value: " + sourceFile);
 		}
 
-		public bool firstLayerHeightLessThanNozzleDiameter(Dictionary<string, string> currentFile)
+		public void firstLayerHeightLessThanNozzleDiameter(PrinterSettings printerSettings, PrinterSettingsLayer layer, string sourceFile)
 		{
-			string firstLayerHeight = currentFile[SettingsKey.first_layer_height];
+			string firstLayerHeight;
+			
+			if (!layer.TryGetValue(SettingsKey.first_layer_height, out firstLayerHeight))
+			{
+				return;
+			}
+
 			float convertedFirstLayerHeightValue;
 
 			if (firstLayerHeight.Contains("%"))
@@ -151,18 +120,22 @@ namespace MatterControl.Tests.MatterControl
 				convertedFirstLayerHeightValue = float.Parse(firstLayerHeight);
 			}
 
-			string nozzleDiameter = currentFile[SettingsKey.nozzle_diameter];
-			float convertedNozzleDiameterValue = float.Parse(nozzleDiameter);
+			string nozzleDiameter = printerSettings.GetValue(SettingsKey.nozzle_diameter);
 
-			return convertedFirstLayerHeightValue <= convertedNozzleDiameterValue;
+			Assert.LessOrEqual(convertedFirstLayerHeightValue, float.Parse(nozzleDiameter), "Unexpected firstLayerHeightLessThanNozzleDiameter value: " + sourceFile);
 		}
 
-		public bool firstLayerExtrusionWidthAcceptableValue(Dictionary<string, string> currentFile)
+		public void firstLayerExtrusionWidthAcceptableValue(PrinterSettings printerSettings, PrinterSettingsLayer layer, string sourceFile)
 		{
-			string firstLayerExtrusionWidth = currentFile[SettingsKey.first_layer_extrusion_width];
+			string firstLayerExtrusionWidth;
+			if (!layer.TryGetValue(SettingsKey.first_layer_extrusion_width, out firstLayerExtrusionWidth))
+			{
+				return;
+			}
+
 			float convertedFirstLayerExtrusionWidth;
 
-			string nozzleDiameter = currentFile[SettingsKey.nozzle_diameter];
+			string nozzleDiameter = printerSettings.GetValue(SettingsKey.nozzle_diameter);
 			float acceptableValue = float.Parse(nozzleDiameter) * 4;
 
 			if (firstLayerExtrusionWidth.Contains("%"))
@@ -175,12 +148,17 @@ namespace MatterControl.Tests.MatterControl
 				convertedFirstLayerExtrusionWidth = float.Parse(firstLayerExtrusionWidth);
 			}
 
-			return convertedFirstLayerExtrusionWidth <= acceptableValue;
+			Assert.LessOrEqual(convertedFirstLayerExtrusionWidth, acceptableValue, "Unexpected firstLayerExtrusionWidthAcceptableValue value: " + sourceFile);
 		}
 
-		public bool firstLayerExtrusionWidthNotZero(Dictionary<string,string> currentFile)
+		public void firstLayerExtrusionWidthNotZero(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string firstLayerExtrusionWidth = currentFile[SettingsKey.first_layer_extrusion_width];
+			string firstLayerExtrusionWidth;
+			if (!layer.TryGetValue(SettingsKey.first_layer_extrusion_width, out firstLayerExtrusionWidth))
+			{
+				return;
+			}
+
 			float convertedFirstLayerExtrusionWidth;
 
 			if(firstLayerExtrusionWidth.Contains("%"))
@@ -193,102 +171,149 @@ namespace MatterControl.Tests.MatterControl
 				convertedFirstLayerExtrusionWidth = float.Parse(firstLayerExtrusionWidth);
 			}
 
-			return convertedFirstLayerExtrusionWidth != 0;
+			Assert.AreNotEqual(0, convertedFirstLayerExtrusionWidth, "Unexpected firstLayerExtrusionWidthNotZero value: " + sourceFile);
 		}
 
-		public bool layerHeightLessThanNozzleDiameter(Dictionary<string,string> currentFile)
+		public void layerHeightLessThanNozzleDiameter(PrinterSettings printerSettings, PrinterSettingsLayer layer, string sourceFile)
 		{
-			string layerHeight = currentFile[SettingsKey.layer_height];
+			string layerHeight;
+			if (!layer.TryGetValue(SettingsKey.layer_height, out layerHeight))
+			{
+				return;
+			}
+
 			float convertedLayerHeight = float.Parse(layerHeight);
 
-			string nozzleDiameter = currentFile[SettingsKey.nozzle_diameter];
+			string nozzleDiameter = printerSettings.GetValue(SettingsKey.nozzle_diameter);
 			float convertedNozzleDiameterValue = float.Parse(nozzleDiameter);
 
-			return convertedLayerHeight <= convertedNozzleDiameterValue;
+			Assert.LessOrEqual(convertedLayerHeight, convertedNozzleDiameterValue, "Unexpected layerHeightLessThanNozzleDiameter value: " + sourceFile);
 		}
 
-		public bool bedSizeXYSeparatedByComma(Dictionary<string, string> currentFile)
+		public void bedSizeXYSeparatedByComma(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile[SettingsKey.bed_size];
+			string settingValue;
+			if(!layer.TryGetValue(SettingsKey.bed_size, out settingValue))
+			{
+				return;
+			}
+
 			string[] settingValueToTest = settingValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-			return settingValueToTest.Length == 2;
+			Assert.AreEqual(2, settingValueToTest.Length, "bed_size should have two values separated by a comma: " + sourceFile);
 		}
 
-		public bool printCenterFormatSeparatedByComma(Dictionary<string, string> currentFile)
+		public void printCenterFormatSeparatedByComma(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile[SettingsKey.print_center];
+			string settingValue;
+			
+			if (!layer.TryGetValue(SettingsKey.print_center, out settingValue))
+			{
+				return;
+			}
+
 			string[] settingValueToTest = settingValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-			return settingValueToTest.Length == 2;
+			Assert.AreEqual(2, settingValueToTest.Length, "print_center should have two values separated by a comma: " + sourceFile);
 		}
 
-		public bool testRetractLengthLessThanTwenty(Dictionary<string, string> currentFile)
+		public void testRetractLengthLessThanTwenty(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile["retract_length"];
-			float convertedSettingValue = float.Parse(settingValue, CultureInfo.InvariantCulture.NumberFormat);
+			string settingValue;
+			if (!layer.TryGetValue("retract_length", out settingValue))
+			{
+				return;
+			}
 
-			return convertedSettingValue < 20;
+			Assert.Less(float.Parse(settingValue, CultureInfo.InvariantCulture.NumberFormat), 20, "retract_length should be less than 20: " + sourceFile);
 		}
 
-        public bool testExtruderCountGreaterThanZero(Dictionary<string,string> currentFile)
-        {
-			string settingValue = currentFile["extruder_count"];
-			int convertedExtruderCount =    Int32.Parse(settingValue);
-
-			return convertedExtruderCount > 0;
-		}
-
-		public bool minimumFanSpeedLessThanOneHundred(Dictionary<string, string> currentFile)
+		public void testExtruderCountGreaterThanZero(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile["min_fan_speed"];
-			int convertedFanSpeed = Int32.Parse(settingValue);
+			string settingValue;
+			if (!layer.TryGetValue("extruder_count", out settingValue))
+			{
+				return;
+			}
 
-			return convertedFanSpeed < 100;
+			Assert.Greater(int.Parse(settingValue), 0, "extruder_count should be greater than zero: " + sourceFile);
 		}
 
-		public bool maxFanSpeedNotGreaterThanOneHundred(Dictionary<string, string> currentFile)
+		public void minimumFanSpeedLessThanOrEqualToOneHundred(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile["max_fan_speed"];
-			int convertedFanSpeed = Int32.Parse(settingValue);
+			string settingValue;
+			if (!layer.TryGetValue("min_fan_speed", out settingValue))
+			{
+				return;
+			}
 
-			return convertedFanSpeed <= 100;
+			Assert.LessOrEqual(int.Parse(settingValue), 100, "min_fan_speed should be less than or equal to 100: " + sourceFile);
 		}
 
-
-		public bool noCurlyBracketsInStartGcode(Dictionary<string, string> currentFile)
+		public void maxFanSpeedNotGreaterThanOneHundred(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile["start_gcode"];
+			string settingValue;
+			if (!layer.TryGetValue("max_fan_speed", out settingValue))
+			{
+				return;
+			}
 
-			return !settingValue.Contains("{");
+			Assert.LessOrEqual(int.Parse(settingValue), 100, "max_fan_speed should be less than or equal to 100: " + sourceFile);
 		}
 
-		public bool noCurlyBracketsInEndGcode(Dictionary<string, string> currentFile)
+		public void noCurlyBracketsInStartGcode(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile["end_gcode"];
+			string settingValue;
+			if (!layer.TryGetValue("start_gcode", out settingValue))
+			{
+				return;
+			}
 
-			return !settingValue.Contains("{");
+			Assert.IsFalse(settingValue.Contains("{"), "start_gcode should not contain braces: " + sourceFile);
 		}
 
-
-		public bool testBottomSolidLayersOneMM(Dictionary<string,string> currentFile)
+		public void noCurlyBracketsInEndGcode(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile["bottom_solid_layers"];
+			string settingValue;
+			if (!layer.TryGetValue("end_gcode", out settingValue))
+			{
+				return;
+			}
 
-			return settingValue == "1mm";
+			Assert.False(settingValue.Contains("{"), "end_gcode should not contain braces: " + sourceFile);
 		}
 
-		public bool testFirstLayerTempNotInStartGcode(Dictionary<string,string> currentFile)
+		public void testBottomSolidLayersOneMM(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile["start_gcode"];
+			string settingValue;
+			if (!layer.TryGetValue("bottom_solid_layers", out settingValue))
+			{
+				return;
+			}
 
-			return !settingValue.Contains("first_layer_temperature");
+			Assert.AreEqual("1mm", settingValue, "bottom_solid_layers should be 1mm: " + sourceFile);
 		}
 
-		public bool  testFirstLayerBedTemperatureNotInStartGcode(Dictionary<string,string> currentFile)
+		public void testFirstLayerTempNotInStartGcode(PrinterSettingsLayer layer, string sourceFile)
 		{
-			string settingValue = currentFile["start_gcode"];
-			return !settingValue.Contains("first_layer_bed_temperature");
+			string settingValue;
+			if (!layer.TryGetValue("start_gcode", out settingValue))
+			{
+				return;
+			}
+
+			Assert.False(settingValue.Contains("first_layer_temperature"), "start_gcode should not contain first_layer_temperature: " + sourceFile);
+		}
+
+		public void testFirstLayerBedTemperatureNotInStartGcode(PrinterSettingsLayer layer, string sourceFile)
+		{
+			string settingValue;
+			if (!layer.TryGetValue("start_gcode", out settingValue))
+			{
+				return;
+			}
+
+			Assert.False(settingValue.Contains("first_layer_bed_temperature"), "start_gcode should not contain first_layer_bed_temperature: " + sourceFile);
 		}
 	}
 }
