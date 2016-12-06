@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void CountDownTime()
 		{
 			long timeWaitedMs = endTimeMs - UiThread.CurrentTimerMs;
-			double ratioDone = 1 - ((double)timeWaitedMs / (double)timeToWaitMs);
+			double ratioDone = 1 - timeToWaitMs != 0 ? ((double)timeWaitedMs / (double)timeToWaitMs) : 1;
 			progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
 			int seconds = (int)((timeToWaitMs * (1 - ratioDone)) / 1000);
 			progressBarText.Text = $"Time Remaining: {seconds / 60:#0}:{seconds % 60:00}";
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			double totalDelta = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(0) - startingTemp;
 			double currentDelta = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0) - startingTemp;
-			double ratioDone = (currentDelta / totalDelta);
+			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;
 			progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
 			//progressBarText.Text = $"Time Remaining: {seconds / 60:#0}:{seconds % 60:00}";
 			if (!HasBeenClosed && ratioDone < 1)
