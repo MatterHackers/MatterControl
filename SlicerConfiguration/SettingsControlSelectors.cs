@@ -58,7 +58,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			: base(FlowDirection.TopToBottom)
 		{
 			Name = label;
-
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				StringEventArgs stringEvent = e as StringEventArgs;
