@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PresetSelectorWidget(string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex)
 			: base(FlowDirection.TopToBottom)
 		{
+			Name = label;
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				StringEventArgs stringEvent = e as StringEventArgs;
@@ -323,6 +325,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				MenuItemsPadding = new BorderDouble(10, 4, 10, 6),
 			};
 
+			dropDownList.Name = layerType.ToString();
 			dropDownList.Margin = new BorderDouble(0, 3);
 			dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
 
@@ -333,6 +336,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (var layer in listSource)
 			{
 				MenuItem menuItem = dropDownList.AddItem(layer.Name, layer.LayerID);
+				menuItem.Name = layer.Name + " Menu";
 				menuItem.Selected += MenuItem_Selected;
 			}
 
