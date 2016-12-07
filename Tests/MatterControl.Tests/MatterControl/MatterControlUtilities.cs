@@ -161,7 +161,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			protected override void Dispose(bool disposing)
 			{
-				this.Kill();
+				try
+				{
+					this.Kill();
+				}
+				catch { }
+
 				base.Dispose(disposing);
 			}
 		}
