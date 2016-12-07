@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PartPreview3DWidget()
 		{
-			SliceSettingsWidget.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 #if false
             "extruder_offset",
@@ -88,6 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public virtual bool InEditMode { get { return false; } }
+
 		private void RecreateBed()
 		{
 			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
@@ -99,6 +101,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
 					ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
 				PutOemImageOnBed();
+
+				Vector2 bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+				if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.center_part_on_bed)
+					&& !InEditMode)
+				{
+					var bounds = meshViewerWidget.MeshGroups[0].GetAxisAlignedBoundingBox();
+					Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+					for (int i = 0; i < meshViewerWidget.MeshGroups.Count; i++)
+					{
+						meshViewerWidget.MeshGroupTransforms[i] = Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2) + new Vector3(bedCenter));
+					}
+				}
 			}));
 		}
 

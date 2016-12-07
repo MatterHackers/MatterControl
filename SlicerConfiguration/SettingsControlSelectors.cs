@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PresetSelectorWidget(string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex)
 			: base(FlowDirection.TopToBottom)
 		{
-			SliceSettingsWidget.SettingChanged.RegisterEvent((s, e) =>
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				StringEventArgs stringEvent = e as StringEventArgs;
 				if (stringEvent != null
@@ -218,6 +218,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void MenuItem_Selected(object sender, EventArgs e)
 		{
+			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();
+			foreach (var keyName in PrinterSettings.KnownSettings)
+			{
+				settingBeforeChange.Add(keyName, ActiveSliceSettings.Instance.GetValue(keyName));
+			}
+
 			var activeSettings = ActiveSliceSettings.Instance;
 			MenuItem item = (MenuItem)sender;
 
@@ -251,6 +257,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+				foreach (var keyName in PrinterSettings.KnownSettings)
+				{
+					if(settingBeforeChange[keyName] != ActiveSliceSettings.Instance.GetValue(keyName))
+					{
+						ActiveSliceSettings.OnSettingsChanged(SliceSettingsOrganizer.Instance.GetSettingsData(keyName));
+					}
+				}
 			});
 
 			editButton.Enabled = item.Text != defaultMenuItemText;

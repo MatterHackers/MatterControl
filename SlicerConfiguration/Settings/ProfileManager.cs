@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ProfileManager()
 		{
-			SliceSettingsWidget.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
+			ActiveSliceSettings.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
 			Reload();
 		}
 

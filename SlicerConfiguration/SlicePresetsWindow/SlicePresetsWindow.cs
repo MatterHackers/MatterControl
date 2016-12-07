@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			presetNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
 			{
 				ActiveSliceSettings.Instance.SetValue(SettingsKey.layer_name, presetNameInput.Text, presetsContext.PersistenceLayer);
-				SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.layer_name));
+				ActiveSliceSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.layer_name));
 			};
 
 			topRow.AddChild(presetNameInput);
