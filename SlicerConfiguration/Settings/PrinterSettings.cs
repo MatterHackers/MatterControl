@@ -581,7 +581,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		static Dictionary<string, Type> expectedMappingTypes = new Dictionary<string, Type>()
 		{
 			[SettingsKey.extruders_share_temperature] = typeof(int),
-			[SettingsKey.extruder_count] = typeof(int),
 			[SettingsKey.extruders_share_temperature] = typeof(bool),
 			[SettingsKey.has_heated_bed] = typeof(bool),
 			[SettingsKey.nozzle_diameter] = typeof(double),
@@ -621,12 +620,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(int))
 			{
-				if (settingsKey == SettingsKey.extruder_count
-					&& this.GetValue<bool>(SettingsKey.extruders_share_temperature))
-				{
-					return (T)(object)1;
-				}
-
 				int result;
 				int.TryParse(this.GetValue(settingsKey), out result);
 				return (T)(object)(result);

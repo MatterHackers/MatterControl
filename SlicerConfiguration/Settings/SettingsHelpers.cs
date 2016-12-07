@@ -469,6 +469,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return presets;
 		}
 
+		public int NumberOfExtruderHeaters()
+		{
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.extruders_share_temperature))
+			{
+				return 1;
+			}
+
+			return ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+		}
 	}
 
 	public class PrinterInfo
