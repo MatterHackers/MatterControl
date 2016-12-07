@@ -902,7 +902,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Name = settingData.PresentationName + " Textbox",
 								SelectAllOnFocus = true
 							};
-							doubleEditWidget.Name = settingData.SlicerConfigName + " edit";
 
 							double currentValue;
 							bool ChangesMultipleOtherSettings = settingData.SetSettingsOnChange.Count > 0;
