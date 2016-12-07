@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 
@@ -527,6 +528,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
 					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
 					Assert.AreEqual("Calibration - Box", QueueData.Instance.SelectedPrintItem.Name, "Library item should be the selected item");
+					Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
 
 					testRunner.ClickByName("Cancel Print Button");
 				}
