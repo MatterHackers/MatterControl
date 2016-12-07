@@ -37,6 +37,10 @@ namespace MatterHackers.MatterControl.SetupWizard
 					// only close the window if we are not switching to the setup printer form
 					UiThread.RunOnIdle(WizardWindow.Close);
 				}
+				else // multiple printers - close the window
+				{
+					UiThread.RunOnIdle(WizardWindow.Close);
+				}
 			});
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
