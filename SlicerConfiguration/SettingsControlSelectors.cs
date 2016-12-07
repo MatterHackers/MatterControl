@@ -248,6 +248,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			// Ensure that activated or deactivated user overrides are always persisted to disk
+			activeSettings.Save();
+
 			UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
