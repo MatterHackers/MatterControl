@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
-			GL.HardwareAvailable = false;
+			//GL.HardwareAvailable = false;
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 
 			var config = TestAutomationConfig.Load();
