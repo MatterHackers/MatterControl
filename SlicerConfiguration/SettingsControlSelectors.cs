@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetSelectorWidget : FlowLayoutWidget
 	{
-		private string defaultMenuItemText = "- default -".Localize();
+		private string defaultMenuItemText = "- none -".Localize();
 		private Button editButton;
 		private NamedSettingsLayers layerType;
 		GuiWidget pullDownContainer;

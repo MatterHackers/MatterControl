@@ -272,6 +272,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
 
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+
 				return Task.FromResult(0);
 			};
 
