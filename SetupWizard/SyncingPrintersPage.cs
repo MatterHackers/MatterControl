@@ -34,8 +34,9 @@ namespace MatterHackers.MatterControl.SetupWizard
 				{
 					//Set as active printer
 					ActiveSliceSettings.SwitchToProfile(ProfileManager.Instance.ActiveProfiles.First().ID);
+					// only close the window if we are not switching to the setup printer form
+					UiThread.RunOnIdle(WizardWindow.Close);
 				}
-				UiThread.RunOnIdle(WizardWindow.Close);
 			});
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
