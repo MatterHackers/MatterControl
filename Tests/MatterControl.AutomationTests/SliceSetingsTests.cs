@@ -209,6 +209,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Filament Tab", 1);
 				testRunner.ClickByName("Temperatures Tab", 1);
+				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox", 2)); 
 				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox", 2));
 
 				//Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
@@ -250,7 +251,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
 
-				testRunner.ClickByName(SettingsKey.layer_height + " edit", 2);
+				testRunner.ClickByName("Layer Height Textbox", 2);
 				testRunner.Type(".5\n");
 				testRunner.Wait(.5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
