@@ -105,8 +105,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Start the procedure that begins a ReloadAll event in MatterControl
 			reloadAllAction();
 
-			// Wait until DoneReloadingAll completes
-			resetEvent.WaitOne();
+			// Wait up to 10 seconds for the DoneReloadingAll event
+			resetEvent.WaitOne(10 * 1000);
 
 			// Remove our DoneReloadingAll listener
 			unregisterEvents(null, null);
