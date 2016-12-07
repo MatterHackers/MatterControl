@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetSelectorWidget : FlowLayoutWidget
 	{
-		private string defaultMenuItemText = "- default -".Localize();
+		private string defaultMenuItemText = "- none -".Localize();
 		private Button editButton;
 		private NamedSettingsLayers layerType;
 		GuiWidget pullDownContainer;
@@ -57,7 +57,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PresetSelectorWidget(string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex)
 			: base(FlowDirection.TopToBottom)
 		{
-			SliceSettingsWidget.SettingChanged.RegisterEvent((s, e) =>
+			Name = label;
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				StringEventArgs stringEvent = e as StringEventArgs;
 				if (stringEvent != null
@@ -218,6 +219,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void MenuItem_Selected(object sender, EventArgs e)
 		{
+			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();
+			foreach (var keyName in PrinterSettings.KnownSettings)
+			{
+				settingBeforeChange.Add(keyName, ActiveSliceSettings.Instance.GetValue(keyName));
+			}
+
 			var activeSettings = ActiveSliceSettings.Instance;
 			MenuItem item = (MenuItem)sender;
 
@@ -254,6 +261,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+				foreach (var keyName in PrinterSettings.KnownSettings)
+				{
+					if(settingBeforeChange[keyName] != ActiveSliceSettings.Instance.GetValue(keyName))
+					{
+						ActiveSliceSettings.OnSettingsChanged(SliceSettingsOrganizer.Instance.GetSettingsData(keyName));
+					}
+				}
 			});
 
 			editButton.Enabled = item.Text != defaultMenuItemText;
@@ -310,6 +324,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				MenuItemsPadding = new BorderDouble(10, 4, 10, 6),
 			};
 
+			dropDownList.Name = layerType.ToString();
 			dropDownList.Margin = new BorderDouble(0, 3);
 			dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
 
@@ -320,6 +335,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (var layer in listSource)
 			{
 				MenuItem menuItem = dropDownList.AddItem(layer.Name, layer.LayerID);
+				menuItem.Name = layer.Name + " Menu";
 				menuItem.Selected += MenuItem_Selected;
 			}
 

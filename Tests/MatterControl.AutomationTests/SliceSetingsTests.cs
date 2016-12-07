@@ -234,4 +234,52 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
 		}
 	}
+
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	public class QualitySettingsStayAsOverrides
+	{
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task SettingsStayAsOverrides()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				// Add Guest printers
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+
+				testRunner.ClickByName(SettingsKey.layer_height + " edit", 2);
+				testRunner.Type(".5\n");
+				testRunner.Wait(.5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("Fine Menu", 2);
+
+				testRunner.Wait(.5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
+
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "BCN", "Sigma");
+
+				// Check Guest printer count 
+				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
+
+				// Check if Guest printer names exists in dropdown
+				testRunner.ClickByName("Printers... Menu", 2);
+				testRunner.ClickByName("Airwolf 3D HD Menu Item", 5);
+
+				testRunner.Wait(1);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
+
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 120);
+		}
+	}
 }

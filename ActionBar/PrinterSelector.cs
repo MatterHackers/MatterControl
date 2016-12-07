@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-			SliceSettingsWidget.SettingChanged.RegisterEvent(SettingChanged, ref unregisterEvents);
+			ActiveSliceSettings.SettingChanged.RegisterEvent(SettingChanged, ref unregisterEvents);
 
 			// Rebuild the droplist any time the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) => Rebuild(), ref unregisterEvents);
