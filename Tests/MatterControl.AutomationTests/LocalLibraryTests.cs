@@ -500,5 +500,44 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			await MatterControlUtilities.RunTest(testToRun);
 		}
+
+
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task PrintLibraryItem()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					// Navigate to Local Library
+					testRunner.ClickByName("Library Tab");
+					testRunner.NavigateToFolder("Local Library Row Item Collection");
+
+					testRunner.ClickByName("Row Item Calibration - Box");
+					testRunner.Wait(1);
+
+					int initialQueueCount = QueueData.Instance.ItemCount;
+
+					// Click Library Item Print Button
+					testRunner.ClickByName("Row Item Calibration - Box Print Button");
+					testRunner.Wait(2);
+
+					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
+					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
+					Assert.AreEqual("Calibration - Box", QueueData.Instance.SelectedPrintItem.Name, "Library item should be the selected item");
+
+					testRunner.ClickByName("Cancel Print Button");
+				}
+
+				testRunner.Wait(1);
+
+				return Task.FromResult(0);
+
+			};
+
+			await MatterControlUtilities.RunTest(testToRun);
+		}
 	}
 }
