@@ -258,6 +258,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(model + " Menu Item", 5, delayBeforeReturn: .5);
 			testRunner.ClickByName("Save & Continue Button", 5, delayBeforeReturn: 1); // wait for this window to close
 
+			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
+			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
+			WaitForReloadAll(testRunner, () => testRunner.ClickByName("Save & Continue Button", 2));
+
 			testRunner.ClickByName("Cancel Wizard Button", 5, delayBeforeReturn: .5);
 			testRunner.Wait(1);
 		}
