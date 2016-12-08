@@ -39,6 +39,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -63,16 +65,42 @@ namespace MatterHackers.MatterControl.PrintQueue
 			get { return printItems; }
 		}
 
-		private int selectedIndex = -1;
+		private List<int> selectedIndices = new List<int>();
+
+		public IEnumerable<int> SelectedIndexes
+		{
+			get
+			{
+				return selectedIndices.ToArray();
+			}
+		}
 
 		public int SelectedIndex
 		{
-			get { return selectedIndex; }
+			get
+			{
+				if (ItemCount > 0)
+				{
+					if (selectedIndices.Count == 0)
+					{
+						// always have a selection if we have items
+						selectedIndices.Add(0);
+					}
+					return selectedIndices[0];
+				}
+
+				return -1;
+			}
 			set
 			{
-				selectedIndex = value;
-				OnSelectedIndexChanged(new ItemChangedArgs(value));
+				if (!selectedIndices.Contains(value)
+					|| selectedIndices.Count > 1)
+				{
+					selectedIndices.Clear();
+					selectedIndices.Add(value);
+					OnSelectedIndexChanged(null);
 			}
+		}
 		}
 
 		public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
@@ -80,7 +108,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public RootedObjectEventHandler SelectedIndexChanged = new RootedObjectEventHandler();
 
 		private static QueueData instance;
-
 		public static QueueData Instance
 		{
 			get
@@ -94,9 +121,56 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		public void MoveToNext()
+		{
+			if (SelectedIndex >= 0 && SelectedIndex < ItemCount)
+			{
+				if (this.SelectedIndex == ItemCount - 1)
+				{
+					this.SelectedIndex = 0;
+				}
+				else
+				{
+					this.SelectedIndex++;
+				}
+			}
+		}
+
+		public PrintItemWrapper SelectedPrintItem
+		{
+			get
+			{
+				if (SelectedIndex >= 0)
+				{
+					return GetPrintItemWrapper(SelectedIndex);
+				}
+				else
+				{
+					return null;
+				}
+			}
+
+			set
+			{
+				if (SelectedPrintItem != value)
+				{
+					for (int index = 0; index < PrintItems.Count; index++)
+					{
+						if (PrintItems[index] == value)
+						{
+							SelectedIndex = index;
+							return;
+						}
+					}
+
+					throw new Exception("Item not in queue.");
+				}
+			}
+		}
+
 		public void RemoveAt(int index)
 		{
-			if (index >= 0 && index < Count)
+			if (index >= 0 && index < ItemCount)
 			{
 				bool ActiveItemMustStayInQueue = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
 				bool PartMustStayInQueue = ActiveItemMustStayInQueue && PrintItems[index] == PrinterConnectionAndCommunication.Instance.ActivePrintItem;
@@ -105,6 +179,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					PrintItems.RemoveAt(index);
 
 					OnItemRemoved(new ItemChangedArgs(index));
+					OnSelectedIndexChanged(null);
 
 					SaveDefaultQueue();
 				}
@@ -227,7 +302,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public List<PrintItem> CreateReadOnlyPartList(bool includeProtectedItems)
 		{
 			List<PrintItem> listToReturn = new List<PrintItem>();
-			for (int i = 0; i < Count; i++)
+			for (int i = 0; i < ItemCount; i++)
 			{
 				var printItem = GetPrintItemWrapper(i).PrintItem;
 				if (includeProtectedItems 
@@ -323,6 +398,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			PrintItems.Insert(insertAt, item);
 			OnItemAdded(new ItemChangedArgs(insertAt));
+			OnSelectedIndexChanged(null);
 			SaveDefaultQueue();
 		}
 
@@ -343,7 +419,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void RemoveAllSdCardFiles()
 		{
-			for (int i = Count - 1; i >= 0; i--)
+			for (int i = ItemCount - 1; i >= 0; i--)
 			{
 				PrintItem printItem = PrintItems[i].PrintItem;
 				if (printItem.FileLocation == QueueData.SdCardFileName)
@@ -365,11 +441,29 @@ namespace MatterHackers.MatterControl.PrintQueue
 			manifest.ExportToJson();
 		}
 
-		public int Count
+		public int ItemCount
 		{
 			get
 			{
 				return PrintItems.Count;
+			}
+		}
+
+		public int SelectedCount
+		{
+			get
+			{
+				if (ItemCount > 0)
+				{
+					if (selectedIndices.Count > 0)
+					{
+						return selectedIndices.Count;
+					}
+
+					return 1;
+				}
+
+				return 0;
 			}
 		}
 
@@ -378,6 +472,68 @@ namespace MatterHackers.MatterControl.PrintQueue
 			for (int i = PrintItems.Count - 1; i >= 0; i--)
 			{
 				RemoveAt(i);
+			}
+		}
+
+		public void RemoveSelected()
+		{
+			if (ItemCount > 0 && SelectedCount > 0)
+			{
+				// Sort by index in the QueueData list to prevent positions shifting due to removes
+				var sortedByValue = SelectedIndexes.OrderByDescending(rowItem => rowItem);
+
+				// Once sorted, remove each selected item
+				foreach (var index in sortedByValue)
+				{
+					RemoveAt(index);
+	}
+
+				selectedIndices.Clear();
+				OnSelectedIndexChanged(null);
+			}
+		}
+
+		public void ToggleSelect(int index)
+		{
+			if (selectedIndices.Contains(index))
+			{
+				Unselect(index);
+			}
+			else
+			{
+				Select(index);
+			}
+		}
+
+		public void MakeSingleSelection()
+		{
+			if (ItemCount > 0
+				&& SelectedCount > 1)
+			{
+				SelectedIndex = selectedIndices[selectedIndices.Count - 1];
+			}
+		}
+
+		public void Select(int index)
+		{
+			if (!selectedIndices.Contains(index)
+				&& index >= 0
+				&& index < ItemCount)
+			{
+				selectedIndices.Add(index);
+				OnSelectedIndexChanged(null);
+			}
+		}
+	
+
+		public void Unselect(int index)
+		{
+			if (selectedIndices.Contains(index)
+				&& index >= 0
+				&& index < ItemCount)
+			{
+				selectedIndices.Remove(index);
+				OnSelectedIndexChanged(null);
 			}
 		}
 	}

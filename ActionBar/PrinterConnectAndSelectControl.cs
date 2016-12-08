@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				resetConnectionButton.Click += new EventHandler((s,e) => PrinterConnectionAndCommunication.Instance.RebootBoard());
 				resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
 
-				SliceSettingsWidget.SettingChanged.RegisterEvent((sender, e) => 
+				ActiveSliceSettings.SettingChanged.RegisterEvent((sender, e) => 
 				{
 					StringEventArgs stringEvent = e as StringEventArgs;
 					if (stringEvent != null)

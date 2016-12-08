@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 		List<CheckBox> checkBoxes = new List<CheckBox>();
 
-		public CopyGuestProfilesToUser(Action afterProfilesImported)
+		public CopyGuestProfilesToUser()
 		: base("Close", "Copy Printers to Account")
 		{
 			var scrollWindow = new ScrollableWidget()
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 
 			var byCheckbox = new Dictionary<CheckBox, PrinterInfo>();
 
-			var guest = ProfileManager.LoadGuestProfiles();
+			var guest = ProfileManager.Load("guest");
 			if (guest?.Profiles.Count > 0)
 			{
 				container.AddChild(new TextWidget("Printers to Copy:".Localize())
@@ -122,13 +122,13 @@ namespace MatterHackers.MatterControl
 
 				guest.Save();
 
-				// close the window
+				// Close the window and update the PrintersImported flag
 				UiThread.RunOnIdle(() =>
 				{
 					WizardWindow.Close();
 
-					// Call back into the original source
-					afterProfilesImported?.Invoke();
+					ProfileManager.Instance.PrintersImported = true;
+					ProfileManager.Instance.Save();
 				});
 			};
 
@@ -138,12 +138,14 @@ namespace MatterHackers.MatterControl
 			syncButton.Visible = true;
 			cancelButton.Visible = true;
 
+			// Close the window and update the PrintersImported flag
 			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				WizardWindow.Close();
 				if (rememberChoice.Checked)
 				{
-					afterProfilesImported?.Invoke();
+					ProfileManager.Instance.PrintersImported = true;
+					ProfileManager.Instance.Save();
 				}
 			});
 

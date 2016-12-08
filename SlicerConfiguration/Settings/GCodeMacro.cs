@@ -35,6 +35,8 @@ using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -43,5 +45,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string Name { get; set; }
 		public string GCode { get; set; }
 		public DateTime LastModified { get; set; }
+
+		public void Run()
+		{
+			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+			{
+				PrinterConnectionAndCommunication.Instance.MacroStart();
+				SendCommandToPrinter(GCode);
+				if (GCode.Contains(QueuedCommandsStream.MacroPrefix))
+				{
+					SendCommandToPrinter("\n" + QueuedCommandsStream.MacroPrefix + "Close");
+				}
+			}
+		}
+
+		protected void SendCommandToPrinter(string command)
+		{
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(command);
+		}
 	}
 }

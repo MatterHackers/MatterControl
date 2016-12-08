@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
+		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
 
 		private static PrinterSettings activeInstance = null;
 		public static PrinterSettings Instance
@@ -94,13 +95,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		static public void OnSettingsChanged(SliceSettingData settingData)
+		{
+			SettingChanged.CallEvents(null, new StringEventArgs(settingData.SlicerConfigName));
+
+			if (settingData.ReloadUiWhenChanged)
+			{
+				UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll(null, null));
+			}
+		}
+
 		public static void RefreshActiveInstance(PrinterSettings updatedProfile)
 		{
 			bool themeChanged = activeInstance.GetValue(SettingsKey.active_theme_name) != updatedProfile.GetValue(SettingsKey.active_theme_name);
 
 			activeInstance = updatedProfile;
 
-			SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
+			ActiveSliceSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
 
 			if (themeChanged)
 			{
