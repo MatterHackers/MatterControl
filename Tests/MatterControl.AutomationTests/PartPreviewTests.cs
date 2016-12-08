@@ -35,20 +35,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
 
 				// Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
 				testRunner.WaitForName("3D View Copy", 3);
-				Assert.AreEqual(1, view3D.MeshGroups.Count, "Should have 1 part before copy");
+				Assert.AreEqual(1, view3D.Scene.Children.Count, "Should have 1 part before copy");
 
 
-				// Click Copy button and count MeshGroups 
+				// Click Copy button and count Scene.Children 
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 2, 3);
-				Assert.AreEqual(2, view3D.MeshGroups.Count, "Should have 2 parts after copy");
+				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 2, 3);
+				Assert.AreEqual(2, view3D.Scene.Children.Count, "Should have 2 parts after copy");
 
-				// Click Copy button a second time and count MeshGroups
+				// Click Copy button a second time and count Scene.Children
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 3, 3);
-				Assert.AreEqual(3, view3D.MeshGroups.Count, "Should have 3 parts after 2nd copy");
+				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 3, 3);
+				Assert.AreEqual(3, view3D.Scene.Children.Count, "Should have 3 parts after 2nd copy");
 
 				return Task.FromResult(0);
 			};
@@ -72,16 +71,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
-				//Get View3DWidget and count MeshGroups before Copy button is clicked
+				//Get View3DWidget and count Scene.Children before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 
 				string copyButtonName = "3D View Copy";
 
-				//Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
-				testRunner.Wait(1);
-				int partCountBeforeCopy = view3D.MeshGroups.Count();
+				int partCountBeforeCopy = view3D.Scene.Children.Count();
 				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
@@ -92,24 +88,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Get MeshGroupCount before Group is clicked
 				System.Threading.Thread.Sleep(2000);
-				int partsOnBedBeforeGroup = view3D.MeshGroups.Count();
+				int partsOnBedBeforeGroup = view3D.Scene.Children.Count();
 				Assert.IsTrue(partsOnBedBeforeGroup == 6);
 
 				//Click Group Button and get MeshGroup count after Group button is clicked
 				testRunner.ClickByName("3D View Group");
 				System.Threading.Thread.Sleep(2000);
-				int partsOnBedAfterGroup = view3D.MeshGroups.Count();
+				int partsOnBedAfterGroup = view3D.Scene.Children.Count();
 				Assert.IsTrue(partsOnBedAfterGroup == 1);
 
 				testRunner.ClickByName("3D View Ungroup");
 				System.Threading.Thread.Sleep(2000);
-				int partsOnBedAfterUngroup = view3D.MeshGroups.Count();
+				int partsOnBedAfterUngroup = view3D.Scene.Children.Count();
 				Assert.IsTrue(partsOnBedAfterUngroup == 6);
 
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
@@ -128,39 +124,36 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
-				//Get View3DWidget and count MeshGroups before Copy button is clicked
+				//Get View3DWidget and count Scene.Children before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 
 				string copyButtonName = "3D View Copy";
 
-				//Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
-				testRunner.Wait(1);
-				int partCountBeforeCopy = view3D.MeshGroups.Count();
+				int partCountBeforeCopy = view3D.Scene.Children.Count();
 				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName(copyButtonName);
-					testRunner.Wait(1);
+					testRunner.Wait(.5);
 				}
 
 				//Get MeshGroupCount before Group is clicked
 				System.Threading.Thread.Sleep(2000);
-				int partsOnBedBeforeRemove = view3D.MeshGroups.Count();
+				int partsOnBedBeforeRemove = view3D.Scene.Children.Count();
 				Assert.IsTrue(partsOnBedBeforeRemove == 6);
 
 				//Check that MeshCount decreases by 1 
 				testRunner.ClickByName("3D View Remove");
 				System.Threading.Thread.Sleep(2000);
-				int meshCountAfterRemove = view3D.MeshGroups.Count();
+				int meshCountAfterRemove = view3D.Scene.Children.Count();
 				Assert.IsTrue(meshCountAfterRemove == 5);
 
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth:600);
 		}
 
 		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
@@ -179,7 +172,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
-				//Get View3DWidget and count MeshGroups before Copy button is clicked
+				//Get View3DWidget and count Scene.Children before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 
@@ -188,7 +181,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Click Edit button to make edit controls visible
 				testRunner.ClickByName("3D View Edit");
 				testRunner.Wait(1);
-				int partCountBeforeCopy = view3D.MeshGroups.Count();
+				int partCountBeforeCopy = view3D.Scene.Children.Count();
 				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
@@ -202,10 +195,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int x = 0; x <= 4; x++)
 				{
 
-					int meshCountBeforeUndo = view3D.MeshGroups.Count();
+					int meshCountBeforeUndo = view3D.Scene.Children.Count();
 					testRunner.ClickByName("3D View Undo");
 					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterUndo = view3D.MeshGroups.Count();
+					int meshCountAfterUndo = view3D.Scene.Children.Count();
 					Assert.IsTrue(meshCountAfterUndo == meshCountBeforeUndo - 1);
 
 				}
@@ -214,10 +207,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				for (int z = 0; z <= 4; z++)
 				{
-					int meshCountBeforeRedo = view3D.MeshGroups.Count();
+					int meshCountBeforeRedo = view3D.Scene.Children.Count();
 					testRunner.ClickByName("3D View Redo");
 					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterRedo = view3D.MeshGroups.Count();
+					int meshCountAfterRedo = view3D.Scene.Children.Count();
 					Assert.IsTrue(meshCountAfterRedo == meshCountBeforeRedo + 1);
 
 				}
@@ -249,7 +242,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Click Edit button to make edit controls visible
 				testRunner.WaitForName("3D View Copy", 3);
 				testRunner.Wait(1); // wait for window to finish opening
-				Assert.AreEqual(1, view3D.MeshGroups.Count, "Should have 1 part before copy");
+				Assert.AreEqual(1, view3D.Scene.Children.Count, "Should have 1 part before copy");
 
 				for (int i = 0; i <= 4; i++)
 				{
@@ -257,19 +250,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Wait(.2);
 				}
 
-				Assert.AreEqual(6, view3D.MeshGroups.Count, "Should have 6 parts after batch copy");
+				Assert.AreEqual(6, view3D.Scene.Children.Count, "Should have 6 parts after batch copy");
 
 				testRunner.ClickByName("3D View Remove", 1);
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
-				Assert.AreEqual(5, view3D.MeshGroups.Count, "Should have 5 parts after Remove");
+				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 5, 3);
+				Assert.AreEqual(5, view3D.Scene.Children.Count, "Should have 5 parts after Remove");
 
 				testRunner.ClickByName("3D View Undo");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 6, 3);
-				Assert.AreEqual(6, view3D.MeshGroups.Count, "Should have 6 parts after Undo");
+				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 6, 3);
+				Assert.AreEqual(6, view3D.Scene.Children.Count, "Should have 6 parts after Undo");
 
 				testRunner.ClickByName("3D View Redo");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
-				Assert.AreEqual(5, view3D.MeshGroups.Count, "Should have 5 parts after Redo");
+				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 5, 3);
+				Assert.AreEqual(5, view3D.Scene.Children.Count, "Should have 5 parts after Redo");
 
 				view3D.CloseOnIdle();
 				testRunner.Wait(.1);
@@ -294,10 +287,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
-				//Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
-				testRunner.Wait(1);
-
 				SystemWindow systemWindow;
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
@@ -305,7 +294,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 0; i <= 2; i++)
 				{
 					testRunner.ClickByName("3D View Copy");
-					testRunner.Wait(1);
+					testRunner.Wait(.5);
 				}
 
 				//Click Save As button to save changes to the part
@@ -332,7 +321,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 		}
 	}
 }

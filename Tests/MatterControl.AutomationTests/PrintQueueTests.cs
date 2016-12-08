@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				int expectedQueueCount = QueueData.Instance.Count + 1;
+				int expectedQueueCount = QueueData.Instance.ItemCount + 1;
 
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -172,9 +172,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(.2);
 
 				testRunner.ClickByName("Queue Copy Button", 3);
-				testRunner.WaitUntil(() => QueueData.Instance.Count == expectedQueueCount, 3);
+				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
 
-				Assert.AreEqual(expectedQueueCount, QueueData.Instance.Count, "Copy button increases queue count by one");
+				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "Copy button increases queue count by one");
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman - copy", 2), "Copied Batman item exists with expected name");
 				testRunner.Wait(.3);
 
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				 * 2. A QueueRowItem is created and added to the queue
 				 */
 
-				int queueCountBeforeAdd = QueueData.Instance.Count;
+				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
 				//Click Add Button and Add Part To Queue
 				testRunner.ClickByName("Queue Add Button", 2);
@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool fennecFoxPartWasAdded = testRunner.WaitForName("Queue Item Fennec_Fox", 2);
 				Assert.IsTrue(fennecFoxPartWasAdded == true);
 
-				int queueCountAfterAdd = QueueData.Instance.Count;
+				int queueCountAfterAdd = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueCountBeforeAdd + 1 == queueCountAfterAdd);
 
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				 * 2. 2 QueueRowItems are created and added to the queue
 				 */
 
-				int queueCountBeforeAdd = QueueData.Instance.Count;
+				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
 				//Click Add Button and Add Part To Queue
 				testRunner.ClickByName("Queue Add Button", 2);
@@ -251,9 +251,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 
 				//Confirm that both items were added and  that the queue count increases by the appropriate number
-				int queueCountAfterAdd = QueueData.Instance.Count;
+				int queueCountAfterAdd = QueueData.Instance.ItemCount;
 
-				Assert.IsTrue(QueueData.Instance.Count == queueCountBeforeAdd + 2);
+				Assert.IsTrue(QueueData.Instance.ItemCount == queueCountBeforeAdd + 2);
 
 				bool firstQueueItemWasAdded = testRunner.WaitForName("Queue Item Fennec_Fox", 2);
 				bool secondQueueItemWasAdded = testRunner.WaitForName("Queue Item Batman", 2);
@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(1);
 
-				int expectedQueueCount = QueueData.Instance.Count - 1;
+				int expectedQueueCount = QueueData.Instance.ItemCount - 1;
 
 				// Assert exists
 				Assert.IsTrue(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2"), "Target item should exist before Remove");
@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				// Assert removed
-				Assert.AreEqual(expectedQueueCount, QueueData.Instance.Count, "After Remove button click, Queue count should be 1 less");
+				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "After Remove button click, Queue count should be 1 less");
 				Assert.IsFalse(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1), "Target item should not exist after Remove");
 
 				return Task.FromResult(0);
@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(checkboxExists == false);
 
-				Assert.IsTrue(QueueData.Instance.Count == 4);
+				Assert.IsTrue(QueueData.Instance.ItemCount == 4);
 
 				SystemWindow systemWindow;
 				string itemName = "Queue Item 2013-01-25_Mouthpiece_v2";
@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
 				 */
 
-				int queueItemCount = QueueData.Instance.Count;
+				int queueItemCount = QueueData.Instance.ItemCount;
 
 				testRunner.Wait(2);
 
@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(1);
 
-				int queueItemCountAfterRemove = QueueData.Instance.Count;
+				int queueItemCountAfterRemove = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueItemCount - 2 == queueItemCountAfterRemove);
 
@@ -445,7 +445,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.CloseSignInAndPrinterSelect();
 
-				Assert.AreEqual(4, QueueData.Instance.Count, "Queue should initially have 4 items");
+				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have 4 items");
 
 				// Invoke Queue -> Export to Zip dialog
 				testRunner.ClickByName("Queue... Menu", 2);
@@ -466,8 +466,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.WaitUntil(() => QueueData.Instance.Count == 8, 5);
-				Assert.AreEqual(8, QueueData.Instance.Count, "All parts imported successfully from exported zip");
+				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == 8, 5);
+				Assert.AreEqual(8, QueueData.Instance.ItemCount, "All parts imported successfully from exported zip");
 
 				testRunner.Wait(.3);
 
@@ -495,7 +495,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.CloseSignInAndPrinterSelect();
 
-				Assert.IsTrue(QueueData.Instance.Count > 0, "Queue is not empty at test startup");
+				Assert.IsTrue(QueueData.Instance.ItemCount > 0, "Queue is not empty at test startup");
 
 				testRunner.ClickByName("More...  Menu", 2);
 				testRunner.Wait(.2);
@@ -531,7 +531,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				Assert.AreEqual(4, QueueData.Instance.Count, "Queue has expected 4 items, including default Coin");
+				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue has expected 4 items, including default Coin");
 
 				// Assert that widgets exists
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman"), "Batman part exists");
@@ -541,15 +541,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Act - remove all print queue items
 				testRunner.RemoveAllFromQueue();
 
-				testRunner.WaitUntil(() => QueueData.Instance.Count == 0, 5);
+				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == 0, 5);
 
 				// Assert that object model has been cleared
-				Assert.AreEqual(0, QueueData.Instance.Count, "Queue is empty after RemoveAll action");
+				Assert.AreEqual(0, QueueData.Instance.ItemCount, "Queue is empty after RemoveAll action");
 
 				// Assert that widgets have been removed
-				Assert.IsTrue(!testRunner.WaitForName("Queue Item Batman"), "Batman part removed");
-				Assert.IsTrue(!testRunner.WaitForName("Queue Item Fennec_Fox"), "Fox part removed");
-				Assert.IsTrue(!testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
+				testRunner.Wait(.5);
+
+				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Fennec_Fox"), "Fox part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
 
 				return Task.FromResult(0);
 			};
@@ -565,7 +567,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				bool queueEmpty = true;
-				int queueItemCount = QueueData.Instance.Count;
+				int queueItemCount = QueueData.Instance.ItemCount;
 
 				if (queueItemCount == 3)
 				{
@@ -603,6 +605,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
+		/// <summary>
+		/// *Tests:
+		/// *1. When the remove button on a queue item is clicked the queue tab count decreases by one 
+		/// *2. When the remove button on a queue item is clicked the item is removed
+		/// *3. When the View button on a queue item is clicked the part preview window is opened
+		/// </summary>
+		/// <returns></returns>
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task ClickQueueRowItemViewAndRemove()
 		{
@@ -610,16 +619,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				/*
-				 *Tests:
-				 *1. When the remove button on a queue item is clicked the queue tab count decreases by one 
-				 *2. When the remove button on a queue item is clicked the item is removed
-				 *3. When the View button on a queue item is clicked the part preview window is opened
-				 */
-
 				testRunner.Wait(2);
-				int currentQueueItemCount = QueueData.Instance.Count;
 
+				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have four items");
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
 
@@ -627,21 +629,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Queue Item Batman Remove");
 				testRunner.Wait(2);
 
-				int queueItemCountAfterRemove = QueueData.Instance.Count;
+				Assert.AreEqual(3, QueueData.Instance.ItemCount, "Batman item removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman item removed");
 
-				Assert.IsTrue(currentQueueItemCount - 1 == queueItemCountAfterRemove);
-
-				bool batmanQueueItemExists = testRunner.WaitForName("Queue Item Batman", 1);
-				Assert.IsTrue(batmanQueueItemExists == false);
-
-				bool partPreviewWindowExists1 = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 1);
-				Assert.IsTrue(partPreviewWindowExists1 == false);
+				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview"), "Mouthpiece Part Preview should not initially be visible");
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2", 1);
 				testRunner.Wait(2);
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View", 1);
 
-				bool partPreviewWindowExists2 = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2);
-				Assert.IsTrue(partPreviewWindowExists2 == true);
+				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2), "The Mouthpiece Part Preview should appear after the view button is clicked");
 
 				return Task.FromResult(0);
 			};
@@ -661,7 +657,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				* 2. Add button can add single .amf file to the queue 
 				* 3. Queue count inceases by one 
 				*/
-				int queueCountBeforeTest = QueueData.Instance.Count;
+				int queueCountBeforeTest = QueueData.Instance.ItemCount;
 
 				//Click Add button 
 				testRunner.ClickByName("Queue Add Button", 2);
@@ -674,7 +670,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 
 				//Make sure Queue Count increases by one 
-				int queueCountAfterAMFIsAdded = QueueData.Instance.Count;
+				int queueCountAfterAMFIsAdded = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueCountAfterAMFIsAdded == queueCountBeforeTest + 1);
 
@@ -700,7 +696,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				* 2. Add button can add single .stl file to the queue 
 				* 3. Queue count inceases by one 
 				*/
-				int queueCountBeforeTest = QueueData.Instance.Count;
+				int queueCountBeforeTest = QueueData.Instance.ItemCount;
 
 				//Click Add button 
 				testRunner.ClickByName("Queue Add Button", 2);
@@ -712,7 +708,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				int queueCountAfterSTLIsAdded = QueueData.Instance.Count;
+				int queueCountAfterSTLIsAdded = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueCountAfterSTLIsAdded == queueCountBeforeTest + 1);
 
@@ -733,7 +729,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				int queueCountBeforeTest = QueueData.Instance.Count;
+				int queueCountBeforeTest = QueueData.Instance.ItemCount;
 
 				//Click Add button 
 				testRunner.ClickByName("Queue Add Button", 2);
@@ -745,7 +741,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				int queueCountAfterGcodeIsAdded = QueueData.Instance.Count;
+				int queueCountAfterGcodeIsAdded = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueCountAfterGcodeIsAdded == queueCountBeforeTest + 1);
 

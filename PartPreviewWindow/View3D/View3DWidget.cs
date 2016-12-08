@@ -2287,6 +2287,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public override bool InEditMode
+		{
+			get { return buttonRightPanel.Visible; }
+		}
+
 		private void SwitchStateToNotEditing()
 		{
 			IsEditing = false;

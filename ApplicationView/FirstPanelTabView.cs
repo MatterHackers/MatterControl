@@ -85,8 +85,8 @@ namespace MatterHackers.MatterControl
 		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
 		{
 			string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
-			string queueString = string.Format("{1} ({0})", QueueData.Instance.Count, queueStringBeg);
-			QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
+			string queueString = string.Format("{1} ({0})", QueueData.Instance.ItemCount, queueStringBeg);
+			QueueTabPage.Text = string.Format(queueString, QueueData.Instance.ItemCount);
 		}
 
 		private void SaveCurrentTab(object sender, EventArgs e)

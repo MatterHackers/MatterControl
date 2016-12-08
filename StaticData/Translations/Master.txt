@@ -5635,6 +5635,15 @@ Translated:WARNING: Disconnecting will stop the current print
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 
+English:Select a printer.
+Translated:Select a printer.
+
+English:Note: Be sure the tip of the extruder is clean.
+Translated:Note: Be sure the tip of the extruder is clean.
+
+English:- none -
+Translated:- none -
+
 English:Overhang
 Translated:Overhang
 
@@ -5649,6 +5658,12 @@ Translated:Text
 
 English:Braille
 Translated:Braille
+
+English:XOffset
+Translated:XOffset
+
+English:Update
+Translated:Update
 
 English:Color
 Translated:Color

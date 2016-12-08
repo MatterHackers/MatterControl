@@ -27,30 +27,91 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
+	public class EditMacrosWindow : SystemWindow
+	{
+		public GCodeMacro ActiveMacro;
+		public EventHandler FunctionToCallOnSave;
+		private static EditMacrosWindow editMacrosWindow = null;
+
+		public EditMacrosWindow(EventHandler functionToCallOnSave)
+			: base(560, 420)
+		{
+			AlwaysOnTopOfMain = true;
+			Title = LocalizedString.Get("Macro Editor");
+			this.FunctionToCallOnSave = functionToCallOnSave;
+			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			ChangeToMacroList();
+			ShowAsSystemWindow();
+			MinimumSize = new Vector2(360, 420);
+		}
+
+		public static void Show()
+		{
+			if (editMacrosWindow == null)
+			{
+				editMacrosWindow = new EditMacrosWindow(ReloadMacros);
+				editMacrosWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editMacrosWindow = null; };
+			}
+			else
+			{
+				editMacrosWindow.BringToFront();
+			}
+		}
+
+		public void ChangeToMacroDetail(GCodeMacro macro)
+		{
+			this.ActiveMacro = macro;
+			UiThread.RunOnIdle(() =>
+			{
+				this.RemoveAllChildren();
+				this.AddChild(new MacroDetailWidget(this));
+				this.Invalidate();
+			});
+		}
+
+		public void ChangeToMacroList()
+		{
+			this.ActiveMacro = null;
+			UiThread.RunOnIdle(DoChangeToMacroList);
+		}
+
+		protected static void ReloadMacros(object sender, EventArgs e)
+		{
+			ActiveSliceSettings.Instance.Save();
+			ApplicationController.Instance.ReloadAll(null, null);
+		}
+
+		private void DoChangeToMacroList()
+		{
+			GuiWidget macroListWidget = new MacroListWidget(this);
+			this.RemoveAllChildren();
+			this.AddChild(macroListWidget);
+			this.Invalidate();
+		}
+	}
+
 	public class MacroDetailWidget : GuiWidget
 	{
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		private EditMacrosWindow windowController;
-		private MHTextEditWidget macroNameInput;
-		private TextWidget macroNameError;
-		private MHTextEditWidget macroCommandInput;
 		private TextWidget macroCommandError;
+		private MHTextEditWidget macroCommandInput;
+		private TextWidget macroNameError;
+		private MHTextEditWidget macroNameInput;
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private EditMacrosWindow windowController;
 
 		public MacroDetailWidget(EditMacrosWindow windowController)
 		{
@@ -120,6 +181,40 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 		}
 
+		private FlowLayoutWidget CreateMacroCommandContainer()
+		{
+			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			container.Margin = new BorderDouble(0, 5);
+			BorderDouble elementMargin = new BorderDouble(top: 3);
+
+			string macroCommandLabelTxt = LocalizedString.Get("Macro Commands");
+			string macroCommandLabelTxtFull = string.Format("{0}:", macroCommandLabelTxt);
+			TextWidget macroCommandLabel = new TextWidget(macroCommandLabelTxtFull, 0, 0, 12);
+			macroCommandLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			macroCommandLabel.HAnchor = HAnchor.ParentLeftRight;
+			macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
+
+			macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.GCode, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.MonoSpacedTypeFace);
+			macroCommandInput.DrawFromHintedCache();
+			macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
+			macroCommandInput.VAnchor = VAnchor.ParentBottomTop;
+			macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.ParentBottomTop;
+
+			string shouldBeGCodeLabel = LocalizedString.Get("This should be in 'G-Code'");
+			string shouldBeGCodeLabelFull = string.Format("{0}.", shouldBeGCodeLabel);
+			macroCommandError = new TextWidget(shouldBeGCodeLabelFull, 0, 0, 10);
+			macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			macroCommandError.HAnchor = HAnchor.ParentLeftRight;
+			macroCommandError.Margin = elementMargin;
+
+			container.AddChild(macroCommandLabel);
+			container.AddChild(macroCommandInput);
+			container.AddChild(macroCommandError);
+			container.HAnchor = HAnchor.ParentLeftRight;
+			container.VAnchor = VAnchor.ParentBottomTop;
+			return container;
+		}
+
 		private FlowLayoutWidget createMacroNameContainer()
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -150,37 +245,28 @@ namespace MatterHackers.MatterControl
 			return container;
 		}
 
-		private FlowLayoutWidget CreateMacroCommandContainer()
+		private void SaveActiveMacro()
 		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(0, 5);
-			BorderDouble elementMargin = new BorderDouble(top: 3);
+			windowController.ActiveMacro.Name = macroNameInput.Text;
+			windowController.ActiveMacro.GCode = macroCommandInput.Text;
 
-			string macroCommandLabelTxt = LocalizedString.Get("Macro Commands");
-			string macroCommandLabelTxtFull = string.Format("{0}:", macroCommandLabelTxt);
-			TextWidget macroCommandLabel = new TextWidget(macroCommandLabelTxtFull, 0, 0, 12);
-			macroCommandLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroCommandLabel.HAnchor = HAnchor.ParentLeftRight;
-			macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
+			if (!ActiveSliceSettings.Instance.Macros.Contains(windowController.ActiveMacro))
+			{
+				ActiveSliceSettings.Instance.Macros.Add(windowController.ActiveMacro);
+			}
+		}
 
-			macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.GCode, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.MonoSpacedTypeFace);
-			macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
-            macroCommandInput.VAnchor = VAnchor.ParentBottomTop;
-            macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.ParentBottomTop;
-
-            string shouldBeGCodeLabel = LocalizedString.Get("This should be in 'G-Code'");
-			string shouldBeGCodeLabelFull = string.Format("{0}.", shouldBeGCodeLabel);
-			macroCommandError = new TextWidget(shouldBeGCodeLabelFull, 0, 0, 10);
-			macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroCommandError.HAnchor = HAnchor.ParentLeftRight;
-			macroCommandError.Margin = elementMargin;
-
-			container.AddChild(macroCommandLabel);
-			container.AddChild(macroCommandInput);
-			container.AddChild(macroCommandError);
-			container.HAnchor = HAnchor.ParentLeftRight;
-            container.VAnchor = VAnchor.ParentBottomTop;
-            return container;
+		private void SaveMacro_Click(object sender, EventArgs mouseEvent)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				if (ValidateMacroForm())
+				{
+					SaveActiveMacro();
+					windowController.FunctionToCallOnSave(this, null);
+					windowController.ChangeToMacroList();
+				}
+			});
 		}
 
 		private bool ValidateMacroForm()
@@ -206,36 +292,12 @@ namespace MatterHackers.MatterControl
 			}
 			return formIsValid;
 		}
-
-		private void SaveMacro_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				if (ValidateMacroForm())
-				{
-					SaveActiveMacro();
-					windowController.FunctionToCallOnSave(this, null);
-					windowController.ChangeToMacroList();
-				}
-			});
-		}
-
-		private void SaveActiveMacro()
-		{
-			windowController.ActiveMacro.Name = macroNameInput.Text;
-			windowController.ActiveMacro.GCode = macroCommandInput.Text;
-
-			if (!ActiveSliceSettings.Instance.Macros.Contains(windowController.ActiveMacro))
-			{
-				ActiveSliceSettings.Instance.Macros.Add(windowController.ActiveMacro);
-			}
-		}
 	}
 
 	public class MacroListWidget : GuiWidget
 	{
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private EditMacrosWindow windowController;
 
 		public MacroListWidget(EditMacrosWindow windowController)
@@ -345,50 +407,6 @@ namespace MatterHackers.MatterControl
 			topToBottom.AddChild(buttonRow);
 			AddChild(topToBottom);
 			this.AnchorAll();
-		}
-	}
-
-	public class EditMacrosWindow : SystemWindow
-	{
-		public EventHandler FunctionToCallOnSave;
-
-		public GCodeMacro ActiveMacro;
-
-		public EditMacrosWindow(EventHandler functionToCallOnSave)
-			: base(560, 420)
-		{
-			AlwaysOnTopOfMain = true;
-			Title = LocalizedString.Get("Macro Editor");
-			this.FunctionToCallOnSave = functionToCallOnSave;
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			ChangeToMacroList();
-			ShowAsSystemWindow();
-			MinimumSize = new Vector2(360, 420);
-		}
-
-		public void ChangeToMacroList()
-		{
-			this.ActiveMacro = null;
-			UiThread.RunOnIdle(DoChangeToMacroList);
-		}
-
-		private void DoChangeToMacroList()
-		{
-			GuiWidget macroListWidget = new MacroListWidget(this);
-			this.RemoveAllChildren();
-			this.AddChild(macroListWidget);
-			this.Invalidate();
-		}
-
-		public void ChangeToMacroDetail(GCodeMacro macro)
-		{
-			this.ActiveMacro = macro;
-			UiThread.RunOnIdle(() =>
-			{
-				this.RemoveAllChildren();
-				this.AddChild(new MacroDetailWidget(this));
-				this.Invalidate();
-			});
 		}
 	}
 }

@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return QueueData.Instance.Count;
+				return QueueData.Instance.ItemCount;
 			}
 		}
 

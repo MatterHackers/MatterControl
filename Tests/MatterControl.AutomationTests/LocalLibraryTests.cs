@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 
@@ -383,7 +384,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Wait(1);
 
-				int queueCountBeforeAdd = QueueData.Instance.Count;
+				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
 				//Add Library Item to the Print Queue
 				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
@@ -391,7 +392,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 
 				//Make sure that the Queue Count increases by one
-				int queueCountAfterAdd = QueueData.Instance.Count;
+				int queueCountAfterAdd = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 1);
 
@@ -435,7 +436,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Edit Button");
 				testRunner.Wait(1);
 
-				int queueCountBeforeAdd = QueueData.Instance.Count;
+				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
 				//Select both Library Items
 				string rowItemOne = "Row Item Calibration - Box";
@@ -450,7 +451,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 
 				//Make sure Queue Count increases by the correct amount
-				int queueCountAfterAdd = QueueData.Instance.Count;
+				int queueCountAfterAdd = QueueData.Instance.ItemCount;
 
 				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 2);
 
@@ -496,6 +497,46 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(.2);
 
 				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun);
+		}
+
+
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task PrintLibraryItem()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					// Navigate to Local Library
+					testRunner.ClickByName("Library Tab");
+					testRunner.NavigateToFolder("Local Library Row Item Collection");
+
+					testRunner.ClickByName("Row Item Calibration - Box");
+					testRunner.Wait(1);
+
+					int initialQueueCount = QueueData.Instance.ItemCount;
+
+					// Click Library Item Print Button
+					testRunner.ClickByName("Row Item Calibration - Box Print Button");
+					testRunner.Wait(2);
+
+					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
+					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
+					Assert.AreEqual("Calibration - Box", QueueData.Instance.SelectedPrintItem.Name, "Library item should be the selected item");
+					Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
+
+					testRunner.ClickByName("Cancel Print Button");
+				}
+
+				testRunner.Wait(1);
+
+				return Task.FromResult(0);
+
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);

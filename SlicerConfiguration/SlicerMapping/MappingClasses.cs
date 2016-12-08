@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static MappedSetting[] replaceWithSettingsStrings = new MappedSetting[]
         {
 			// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
-			new AsPercentOfReferenceOrDirect("first_layer_speed", "first_layer_speed", "infill_speed", 60),
+			new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_speed, "first_layer_speed", "infill_speed", 60),
 			new AsPercentOfReferenceOrDirect("external_perimeter_speed","external_perimeter_speed", "perimeter_speed", 60),
 			new AsPercentOfReferenceOrDirect("raft_print_speed", "raft_print_speed", "infill_speed", 60),
 			new MappedSetting(SettingsKey.bed_remove_part_temperature,SettingsKey.bed_remove_part_temperature),
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
 			}
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotEnds();
 
 			// Start heating all the extruder that we are going to use.
 			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)

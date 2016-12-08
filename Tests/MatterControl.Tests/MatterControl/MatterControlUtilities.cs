@@ -105,8 +105,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Start the procedure that begins a ReloadAll event in MatterControl
 			reloadAllAction();
 
-			// Wait until DoneReloadingAll completes
-			resetEvent.WaitOne();
+			// Wait up to 10 seconds for the DoneReloadingAll event
+			resetEvent.WaitOne(10 * 1000);
 
 			// Remove our DoneReloadingAll listener
 			unregisterEvents(null, null);
@@ -161,7 +161,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			protected override void Dispose(bool disposing)
 			{
-				this.Kill();
+				try
+				{
+					this.Kill();
+				}
+				catch { }
+
 				base.Dispose(disposing);
 			}
 		}
@@ -251,7 +256,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Select Model", 5, delayBeforeReturn: .5);
 
 			testRunner.ClickByName(model + " Menu Item", 5, delayBeforeReturn: .5);
-			testRunner.ClickByName("Save & Continue Button", 5, delayBeforeReturn: 1); // wait for this window to close
+
+			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
+			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
+			WaitForReloadAll(testRunner, () => testRunner.ClickByName("Save & Continue Button", 2));
 
 			testRunner.ClickByName("Cancel Wizard Button", 5, delayBeforeReturn: .5);
 			testRunner.Wait(1);
@@ -391,7 +399,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
-			GL.HardwareAvailable = false;
+			//GL.HardwareAvailable = false;
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 
 			var config = TestAutomationConfig.Load();

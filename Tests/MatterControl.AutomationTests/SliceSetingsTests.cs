@@ -195,37 +195,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 		}
 
-		//Stress Test check & uncheck 1000x
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
-		public async Task HasHeatedBedCheckUncheck()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
-
-				//Navigate to Local Library 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
-
-				testRunner.ClickByName("Printer Tab");
-				testRunner.Wait(1);
-
-				testRunner.ClickByName("Features Tab");
-				testRunner.Wait(2);
-
-				for (int i = 0; i <= 1000; i++)
-				{
-					testRunner.ClickByName("Has Heated Bed Checkbox");
-					testRunner.Wait(.5);
-				}
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
@@ -240,6 +209,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Filament Tab", 1);
 				testRunner.ClickByName("Temperatures Tab", 1);
+				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox", 2)); 
 				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox", 2));
 
 				//Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
@@ -263,6 +233,54 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	public class QualitySettingsStayAsOverrides
+	{
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task SettingsStayAsOverrides()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				// Add Guest printers
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+
+				testRunner.ClickByName("Layer Height Textbox", 2);
+				testRunner.Type(".5\n");
+				testRunner.Wait(.5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("Fine Menu", 2);
+
+				testRunner.Wait(.5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
+
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "BCN", "Sigma");
+
+				// Check Guest printer count 
+				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
+
+				// Check if Guest printer names exists in dropdown
+				testRunner.ClickByName("Printers... Menu", 2);
+				testRunner.ClickByName("Airwolf 3D HD Menu Item", 5);
+
+				testRunner.Wait(1);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
+
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 120);
 		}
 	}
 }

@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CreateAndAddChildren();
 
-			SliceSettingsWidget.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);

@@ -132,10 +132,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
 			}
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+
+			unregisterEvents?.Invoke(this, null);
+		
 			base.OnClosed(e);
 		}
 

@@ -62,7 +62,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			queueRowItem.IsHoverItem = true;
-			queueDataView.HoverItem = queueRowItem;
 
 			base.OnMouseEnterBounds(mouseEvent);
 		}
@@ -92,20 +91,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 
 			base.OnMouseMove(mouseEvent);
-		}
-
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
-		{
-			// If a valid click event occurs then set the selected index in our parent
-			if (mouseDownInBounds &&
-				mouseEvent.X > 56 && // Disregard clicks within the thumbnail region (x < 56)
-				PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
-			{
-				queueDataView.SelectedItem = queueRowItem;
-			}
-
-			mouseDownInBounds = false;
-			base.OnMouseUp(mouseEvent);
 		}
 	}
 }
