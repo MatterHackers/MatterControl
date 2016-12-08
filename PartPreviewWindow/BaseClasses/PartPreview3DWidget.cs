@@ -106,11 +106,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.center_part_on_bed)
 					&& !InEditMode)
 				{
-					var bounds = meshViewerWidget.MeshGroups[0].GetAxisAlignedBoundingBox();
-					Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-					for (int i = 0; i < meshViewerWidget.MeshGroups.Count; i++)
+					if (meshViewerWidget.MeshGroups.Count > 0)
 					{
-						meshViewerWidget.MeshGroupTransforms[i] = Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2) + new Vector3(bedCenter));
+						var bounds = meshViewerWidget.MeshGroups[0].GetAxisAlignedBoundingBox();
+						Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+						for (int i = 0; i < meshViewerWidget.MeshGroups.Count; i++)
+						{
+							meshViewerWidget.MeshGroupTransforms[i] = Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2) + new Vector3(bedCenter));
+						}
 					}
 				}
 			}));
