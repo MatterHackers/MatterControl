@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Text;
 using System.Globalization;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg;
+using MatterHackers.MatterControl.Tests.Automation;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -78,6 +81,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+
 			// first_layer_extrusion_width
 			{
 				// percent first layer extrusion width
@@ -116,7 +121,7 @@ namespace MatterControl.Tests.MatterControl
 				// shared temp
 				{
 					string[] settings = new string[] { SettingsKey.extruder_count, "2", SettingsKey.extruders_share_temperature, "1" };
-					Assert.AreEqual(GetProfile(settings).GetValue<int>(SettingsKey.extruder_count), 1);
+					Assert.AreEqual(GetProfile(settings).Helpers.NumberOfHotEnds(), 1);
 				}
 			}
 		}

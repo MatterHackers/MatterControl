@@ -552,27 +552,20 @@ namespace MatterHackers.MatterControl
 		// Called after every startup and at the completion of every authentication change
 		public void UserChanged()
 		{
-			ProfileManager.Reload();
-
-			var profileManager = ProfileManager.Instance;
+			ProfileManager.ReloadActiveUser();
 
 			// Ensure SQLite printers are imported
-			profileManager.EnsurePrintersImported();
+			ProfileManager.Instance.EnsurePrintersImported();
 
-			var guest = ProfileManager.LoadGuestProfiles();
+			var guest = ProfileManager.Load("guest");
 
 			// If profiles.json was created, run the import wizard to pull in any SQLite printers
-			if (guest?.Profiles != null && guest.Profiles.Any() && !profileManager.IsGuestProfile && !profileManager.PrintersImported)
+			if (guest?.Profiles?.Any() == true
+				&& !ProfileManager.Instance.IsGuestProfile 
+				&& !ProfileManager.Instance.PrintersImported)
 			{
-				var wizardPage = new CopyGuestProfilesToUser(() =>
-				{
-					// On success, set state indicating import has been run and update ProfileManager state
-					profileManager.PrintersImported = true;
-					profileManager.Save();
-				});
-
 				// Show the import printers wizard
-				WizardWindow.Show("/CopyGuestProfiles", "Copy Printers", wizardPage);
+				WizardWindow.Show<CopyGuestProfilesToUser>("/CopyGuestProfiles", "Copy Printers");
 			}
 		}
 
