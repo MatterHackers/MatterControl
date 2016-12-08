@@ -81,7 +81,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
-
+		public IEnumerable<GCodeMacro> UserMacros()
+		{
+			foreach (var macro in Macros)
+			{
+				if (!macro.ActionGroup)
+				{
+					yield return macro;
+				}
+			}
+		}
+		public IEnumerable<GCodeMacro> ActionMacros()
+		{
+			foreach (var macro in Macros)
+			{
+				if (macro.ActionGroup)
+				{
+					yield return macro;
+				}
+			}
+		}
+		
 		[OnDeserialized]
 		internal void OnDeserializedMethod(StreamingContext context)
 		{

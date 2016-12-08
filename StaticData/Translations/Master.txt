@@ -5644,3 +5644,9 @@ Translated:Note: Be sure the tip of the extruder is clean.
 English:- none -
 Translated:- none -
 
+English:Actions
+Translated:Actions
+
+English:Show In Action Menu
+Translated:Show In Action Menu
+
