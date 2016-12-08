@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			temperatureGroupBox.AddChild(mainContainer);
 			RGBA_Bytes separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfExtruderHeaters();
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotEnds();
 			if (numberOfHeatedExtruders > 1)
 			{
 				for (int i = 0; i < numberOfHeatedExtruders; i++)

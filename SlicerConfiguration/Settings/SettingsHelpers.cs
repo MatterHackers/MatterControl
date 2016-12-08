@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return presets;
 		}
 
-		public int NumberOfExtruderHeaters()
+		public int NumberOfHotEnds()
 		{
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.extruders_share_temperature))
 			{
