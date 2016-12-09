@@ -94,6 +94,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			var syncButton = textImageButtonFactory.Generate("Copy".Localize());
+			syncButton.Name = "CopyProfilesButton";
 			syncButton.Click += (s, e) =>
 			{
 				// do the import
