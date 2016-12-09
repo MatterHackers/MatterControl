@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl
 		private MHTextEditWidget macroCommandInput;
 		private TextWidget macroNameError;
 		private MHTextEditWidget macroNameInput;
+		private CheckBox showInActionMenu;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private EditMacrosWindow windowController;
 
@@ -150,8 +151,9 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(presetsFormContainer);
 
-			presetsFormContainer.AddChild(createMacroNameContainer());
+			presetsFormContainer.AddChild(CreateMacroNameContainer());
 			presetsFormContainer.AddChild(CreateMacroCommandContainer());
+			presetsFormContainer.AddChild(CreateMacroActionEdit());
 
 			Button addMacroButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
 			addMacroButton.Click += new EventHandler(SaveMacro_Click);
@@ -215,20 +217,19 @@ namespace MatterHackers.MatterControl
 			return container;
 		}
 
-		private FlowLayoutWidget createMacroNameContainer()
+		private FlowLayoutWidget CreateMacroNameContainer()
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.Margin = new BorderDouble(0, 5);
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string macroNameLabelTxt = LocalizedString.Get("Macro Name");
-			string macroNameLabelTxtFull = string.Format("{0}:", macroNameLabelTxt);
+			string macroNameLabelTxtFull = string.Format("{0}:", "Macro Name".Localize());
 			TextWidget macroNameLabel = new TextWidget(macroNameLabelTxtFull, 0, 0, 12);
 			macroNameLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			macroNameLabel.HAnchor = HAnchor.ParentLeftRight;
 			macroNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
 
-			macroNameInput = new MHTextEditWidget(MacroControls.FixMacroName(windowController.ActiveMacro.Name));
+			macroNameInput = new MHTextEditWidget(GCodeMacro.FixMacroName(windowController.ActiveMacro.Name));
 			macroNameInput.HAnchor = HAnchor.ParentLeftRight;
 
 			string giveMacroANameLabel = LocalizedString.Get("Give the macro a name");
@@ -245,10 +246,30 @@ namespace MatterHackers.MatterControl
 			return container;
 		}
 
+		FlowLayoutWidget CreateMacroActionEdit()
+		{
+			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			container.Margin = new BorderDouble(0, 5);
+			BorderDouble elementMargin = new BorderDouble(top: 3);
+
+			showInActionMenu = new CheckBox("Show In Action Menu".Localize())
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(0, 0, 0, 1),
+				Checked = windowController.ActiveMacro.ActionGroup,
+			};
+
+			container.AddChild(showInActionMenu);
+			container.HAnchor = HAnchor.ParentLeftRight;
+			return container;
+		}
+
 		private void SaveActiveMacro()
 		{
 			windowController.ActiveMacro.Name = macroNameInput.Text;
 			windowController.ActiveMacro.GCode = macroCommandInput.Text;
+			windowController.ActiveMacro.ActionGroup = showInActionMenu.Checked;
 
 			if (!ActiveSliceSettings.Instance.Macros.Contains(windowController.ActiveMacro))
 			{
@@ -346,7 +367,7 @@ namespace MatterHackers.MatterControl
 					macroRow.Padding = new BorderDouble(3);
 					macroRow.BackgroundColor = RGBA_Bytes.White;
 
-					TextWidget buttonLabel = new TextWidget(MacroControls.FixMacroName(macro.Name));
+					TextWidget buttonLabel = new TextWidget(GCodeMacro.FixMacroName(macro.Name));
 					macroRow.AddChild(buttonLabel);
 
 					macroRow.AddChild(new HorizontalSpacer());

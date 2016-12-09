@@ -9,15 +9,16 @@ using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.PrinterCommunication;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
-	public class MenuOptionMacros : MenuBase
+	public class MenuOptionAction : MenuBase
 	{
 		private event EventHandler unregisterEvents;
-		public MenuOptionMacros() : base("Macros".Localize())
+		public MenuOptionAction() : base("Actions".Localize())
 		{
-			Name = "Macro Menu";
+			Name = "Actions Menu";
 
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => SetEnabledState(), ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s,e) => SetEnabledState(), ref unregisterEvents);
@@ -37,47 +38,25 @@ namespace MatterHackers.MatterControl
 
 		private void SetEnabledState()
 		{
-			for(int i=0; i<MenuDropList.MenuItems.Count-1; i++)
+			for(int i=0; i<MenuDropList.MenuItems.Count; i++)
 			{
 				MenuDropList.MenuItems[i].Enabled = ActiveSliceSettings.Instance.PrinterSelected 
 					&& PrinterConnectionAndCommunication.Instance.PrinterIsConnected
 					&& !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
 			}
-
-			// and set the edit menu item
-			MenuDropList.MenuItems[MenuDropList.MenuItems.Count-1].Enabled = ActiveSliceSettings.Instance.PrinterSelected;
 		}
 
 		protected override IEnumerable<MenuItemAction> GetMenuActions()
 		{
 			var list = new List<MenuItemAction>();
 
-			if (ActiveSliceSettings.Instance.Macros.Count > 0)
+			if (ActiveSliceSettings.Instance.ActionMacros().Any())
 			{
-				foreach (GCodeMacro macro in ActiveSliceSettings.Instance.Macros)
+				foreach (GCodeMacro macro in ActiveSliceSettings.Instance.ActionMacros())
 				{
-					list.Add(new MenuItemAction(MacroControls.FixMacroName(macro.Name), macro.Run));
+					list.Add(new MenuItemAction(GCodeMacro.FixMacroName(macro.Name), macro.Run));
 				}
 			}
-
-			list.Add(new MenuItemAction(
-				//StaticData.Instance.LoadIcon("icon_plus.png", 32, 32),
-				"Edit Macros...",
-				() =>
-				{
-					if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-					{
-						UiThread.RunOnIdle(() =>
-							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't edit macros while printing".Localize())
-							);
-					}
-					else
-					{
-						UiThread.RunOnIdle(() => EditMacrosWindow.Show());
-					}
-
-				}));
-
 
 			return list;
 		}

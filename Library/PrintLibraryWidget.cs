@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private GuiWidget CreateActionsMenu()
 		{
-			var actionMenu = new DropDownMenu("Action".Localize() + "... ");
+			var actionMenu = new DropDownMenu("Actions".Localize() + "... ");
 			actionMenu.AlignToRightEdge = true;
 			actionMenu.NormalColor = new RGBA_Bytes();
 			actionMenu.BorderWidth = 1;
