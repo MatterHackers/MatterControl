@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl
 {
 	public class SetupOptionsPage : WizardPage
 	{
+		private event EventHandler unregisterEvents;
+
 		public SetupOptionsPage()
 			: base("Done")
 		{
@@ -126,6 +128,12 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.Invalidate();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 
@@ -248,7 +256,7 @@ namespace MatterHackers.MatterControl
 
 			mainContainer.AddChild(buttonContainer);
 
-			ApplicationController.Instance.ReloadAllRequested.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
+			ApplicationController.Instance.DoneReloadingAll.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
 		}
 
 		private void RemoveAndNewControl(object sender, EventArgs e)
