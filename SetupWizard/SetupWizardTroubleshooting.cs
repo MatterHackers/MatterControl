@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
-			cancelButton.Click += (s, e) => this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
+			cancelButton.Click += (s, e) => UiThread.RunOnIdle(this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
 			
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Continue".Localize());

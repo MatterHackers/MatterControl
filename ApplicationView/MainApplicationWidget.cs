@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 
 	public abstract class ApplicationView : GuiWidget
 	{
-		public abstract void AddElements();
+		public abstract void CreateAndAddChildren();
 	}
 
 	public class TouchscreenView : ApplicationView
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 
 		public TouchscreenView()
 		{
-			AddElements();
+			CreateAndAddChildren();
 			this.AnchorAll();
 		}
 
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 			this.TopContainer.Visible = !this.TopContainer.Visible;
 		}
 
-		public override void AddElements()
+		public override void CreateAndAddChildren()
 		{
 			topIsHidden = false;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -141,11 +141,11 @@ namespace MatterHackers.MatterControl
 
 		public DesktopView()
 		{
-			AddElements();
+			CreateAndAddChildren();
 			this.AnchorAll();
 		}
 
-		public override void AddElements()
+		public override void CreateAndAddChildren()
 		{
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -185,7 +185,6 @@ namespace MatterHackers.MatterControl
 		private static ApplicationController globalInstance;
 		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
-		public RootedObjectEventHandler ReloadAllRequested = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
@@ -400,17 +399,14 @@ namespace MatterHackers.MatterControl
 				&& MainView != null)
 			{
 				pendingReloadRequest = true;
-				MainView.AfterDraw += DoReloadAll;
-				MainView.Invalidate();
+				DoReloadAll();
 			}
-
-			ReloadAllRequested?.CallEvents(null, null);
 		}
 
 		static int reloadCount = 0;
-		private void DoReloadAll(GuiWidget drawingWidget, DrawEventArgs e)
+		private void DoReloadAll()
 		{
-			UiThread.RunOnIdle(() =>
+			UiThread.RunOnIdle((Action)(() =>
 			{
 				if (MainView != null)
 				{
@@ -422,16 +418,15 @@ namespace MatterHackers.MatterControl
 						MainView?.CloseAllChildren();
 						using (new QuickTimer("ReloadAll_AddElements"))
 						{
-							MainView?.AddElements();
+							MainView?.CreateAndAddChildren();
 						}
 						PopOutManager.SaveIfClosed = true;
-						DoneReloadingAll?.CallEvents(null, null);
+						this.DoneReloadingAll?.CallEvents((object)null, (EventArgs)null);
 					}
 
-					MainView.AfterDraw -= DoReloadAll;
 					pendingReloadRequest = false;
 				}
-			});
+			}));
 		}
 
 		public void OnApplicationClosed()
@@ -441,6 +436,19 @@ namespace MatterHackers.MatterControl
 
 		static void LoadUITheme()
 		{
+			// if the user setting has a theme color assume it is correct and use it right away
+			if (UserSettings.Instance != null)
+			{
+				var themeName = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
+				if (!string.IsNullOrEmpty(themeName))
+				{
+					ActiveTheme.Instance = ActiveTheme.GetThemeColors(themeName);
+					return;
+				}
+			}
+
+			// if not check for the oem color and use it if set
+			// else default to "Blue - Light"
 			string oemColor = OemSettings.Instance.ThemeColor;
 			if (string.IsNullOrEmpty(oemColor))
 			{

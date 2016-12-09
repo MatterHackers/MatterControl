@@ -5650,3 +5650,6 @@ Translated:Actions
 English:Show In Action Menu
 Translated:Show In Action Menu
 
+English:Unable to Connect
+Translated:Unable to Connect
+

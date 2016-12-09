@@ -143,6 +143,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							ActiveTheme.SuspendEvents();
 						}
 						ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
+
+						// Save the theme so we can load it first thing on startup before a profile is loaded.
+						UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, ActiveTheme.Instance.Name);
+
 						ActiveTheme.ResumeEvents();
 					}
 				}

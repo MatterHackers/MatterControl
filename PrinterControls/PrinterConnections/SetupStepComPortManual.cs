@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			connectButton.Click += ConnectButton_Click;
 
 			refreshButton = textImageButtonFactory.Generate("Refresh".Localize());
-			refreshButton.Click += (s, e) => WizardWindow.ChangeToPage<SetupStepComPortManual>();
+			refreshButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortManual>);
 
 			//Add buttons to buttonContainer
 			footerRow.AddChild(nextButton);
