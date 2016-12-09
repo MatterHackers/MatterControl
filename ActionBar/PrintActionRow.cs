@@ -289,7 +289,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelPrinting); };
 			reprintButton.Click += onReprintButton_Click;
 			doneWithCurrentPartButton.Click += onDoneWithCurrentPartButton_Click;
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		protected void DisableActiveButtons()

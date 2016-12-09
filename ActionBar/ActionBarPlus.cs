@@ -61,9 +61,6 @@ namespace MatterHackers.MatterControl
 			}
 			this.AddChild(PrintStatusRow.Create(queueDataView));
 			this.Padding = new BorderDouble(bottom: 6);
-
-			// Add Handlers
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		public void ThemeChanged(object sender, EventArgs e)

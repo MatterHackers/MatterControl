@@ -230,14 +230,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 					queueMenu = new QueueOptionsMenu();
 					queueMenuContainer.AddChild(queueMenu.MenuDropList);
 					buttonPanel1.AddChild(queueMenuContainer);
-
-					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((object sender, EventArgs e) =>
-					{
-						queueMenuContainer.RemoveAllChildren();
-						// the printer changed reload the queueMenue
-						queueMenu = new QueueOptionsMenu();
-						queueMenuContainer.AddChild(queueMenu.MenuDropList);
-					}, ref unregisterEvents);
 				}
 				allControls.AddChild(buttonPanel1);
 			}

@@ -20,7 +20,6 @@ namespace MatterHackers.MatterControl
 		{
 			Name = "Actions Menu";
 
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => SetEnabledState(), ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s,e) => SetEnabledState(), ref unregisterEvents);
 		}
 
