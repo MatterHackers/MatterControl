@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl
 					else
 					{
 						lastSelectedIndex = this.SelectedIndex;
-						ActiveSliceSettings.SwitchToProfile(printerID);
+						UiThread.RunOnIdle(() => ActiveSliceSettings.SwitchToProfile(printerID));
 					}
 				}
 			};

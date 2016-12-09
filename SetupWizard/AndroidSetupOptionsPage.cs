@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>();
+				UiThread.RunOnIdle(WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>);
 			};
 			buttonContainer.AddChild(disconnectButton);
 

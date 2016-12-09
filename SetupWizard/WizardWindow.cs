@@ -161,16 +161,13 @@ namespace MatterHackers.MatterControl
 		internal void ChangeToPage(WizardPage pageToChangeTo)
 		{
 			pageToChangeTo.WizardWindow = this;
-			UiThread.RunOnIdle(() =>
-			{
-				this.RemoveAllChildren();
+			this.CloseAllChildren();
 #if __ANDROID__
-				this.AddChild(new SoftKeyboardContentOffset(pageToChangeTo));
+			this.AddChild(new SoftKeyboardContentOffset(pageToChangeTo));
 #else
-				this.AddChild(pageToChangeTo);
+			this.AddChild(pageToChangeTo);
 #endif
-				this.Invalidate();
-			});
+			this.Invalidate();
 		}
 
 		internal void ChangeToPage<PanelType>() where PanelType : WizardPage, new()
@@ -186,9 +183,10 @@ namespace MatterHackers.MatterControl
 
 				// find out where the contents we put in last time are
 				int thisIndex = GetChildIndex(panel);
-				RemoveChild(panel);
+				RemoveAllChildren();
 				// make new content with the possibly changed theme
 				PanelType newPanel = new PanelType();
+				newPanel.WizardWindow = this;
 				AddChild(newPanel, thisIndex);
 				panel.CloseOnIdle();
 				// remember the new content
