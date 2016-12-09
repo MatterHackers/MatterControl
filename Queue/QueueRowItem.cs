@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			this.AddChild(actionButtonContainer);
 
-			AddHandlers();
+			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -394,12 +394,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(itemToRemove));
 			}
-		}
-
-		private void AddHandlers()
-		{
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 		}
 
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)

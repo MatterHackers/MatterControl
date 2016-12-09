@@ -205,7 +205,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			pageTopToBottomLayout.AddChild(topCategoryTabs);
-			AddHandlers();
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+
 			SetVisibleControls();
 
 			// Make sure we are on the right tab when we create this view
@@ -280,13 +283,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private event EventHandler unregisterEvents;
-
-		private void AddHandlers()
-		{
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(APP_onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-		}
 
 		public override void OnClosed(EventArgs e)
 		{

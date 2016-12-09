@@ -304,7 +304,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		private void AddHandlers()
 		{
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 			MouseEnterBounds += new EventHandler(HistoryItem_MouseEnterBounds);
 			MouseLeaveBounds += new EventHandler(HistoryItem_MouseLeaveBounds);
 		}

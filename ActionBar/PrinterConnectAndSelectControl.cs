@@ -199,7 +199,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			// Bind connect button states to active printer state
 			this.SetConnectionButtonVisibleState();
 
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 		}
@@ -213,12 +212,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
-		}
-
-		private void onActivePrinterChanged(object sender, EventArgs e)
-		{
-			connectPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected;
-			editPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected;
 		}
 
 		private void onConfirmStopPrint(bool messageBoxResponse)
