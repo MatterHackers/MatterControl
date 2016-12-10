@@ -453,7 +453,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.Save();
 
 			// Set as active profile
-			UserSettings.Instance.set("ActiveProfileID", guid);
+			ProfileManager.Instance.LastProfileID = guid;
 
 			ActiveSliceSettings.Instance = printerSettings;
 

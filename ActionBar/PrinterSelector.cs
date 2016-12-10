@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 			this.SelectionChanged += (s, e) =>
 			{
 				string printerID = this.SelectedValue;
-				if (printerID == "new")
+				if (printerID == "new" || string.IsNullOrEmpty(printerID))
 				{
 					// do nothing
 				}
