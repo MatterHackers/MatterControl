@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Clear selected printer state
-			UserSettings.Instance.set("ActiveProfileID", "");
+			ProfileManager.Instance.LastProfileID = "";
 
 			UiThread.RunOnIdle(() =>
 			{
