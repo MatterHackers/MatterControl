@@ -60,7 +60,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			set
 			{
-				if (activeInstance != value)
+				// EmptyProfile instances may differ but IDs are always be the same. Only process if instance and IDs differ
+				if (activeInstance != value 
+					&& activeInstance?.ID != value.ID)
 				{
 					// If we have an active printer, run Disable otherwise skip to prevent empty ActiveSliceSettings due to null ActivePrinter
 					if (activeInstance != null)
