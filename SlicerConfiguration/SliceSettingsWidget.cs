@@ -1253,7 +1253,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble(),
-								Name = "Com Port Dropdown"
+								Name = "Serial Port Dropdown"
 							};
 
 							selectableOptions.Click += (s, e) =>
