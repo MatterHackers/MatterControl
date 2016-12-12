@@ -5653,3 +5653,6 @@ Translated:Show In Action Menu
 English:Unable to Connect
 Translated:Unable to Connect
 
+English:Port number to be used with IP Address to connect to printer over the network
+Translated:Port number to be used with IP Address to connect to printer over the network
+

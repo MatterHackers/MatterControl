@@ -15,6 +15,8 @@ Simple
         auto_connect
         baud_rate
         com_port
+        ip_address
+        ip_port
 Intermediate
   General
     Layers / Surface
@@ -77,6 +79,8 @@ Intermediate
         auto_connect
         baud_rate
         com_port
+        ip_address
+        ip_port
 Advanced
   General
     Layers / Surface
@@ -284,8 +288,6 @@ Advanced
         printer_name
       Details
         auto_connect
-        enable_network_printing
-        enable_sailfish_communication
         baud_rate
         com_port
         ip_address
@@ -308,6 +310,8 @@ Advanced
         has_heated_bed
         has_sd_card_reader
         has_power_control
+        enable_network_printing
+        enable_sailfish_communication
       Behavior
         z_homes_to_max
         z_can_be_negative
