@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			var menuItem = this.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Printer...", "new");
-			menuItem.Selectable = false;
+			menuItem.CanHeldSelection = false;
 			menuItem.Click += (s, e) =>
 			{
 				if (AddPrinter != null)

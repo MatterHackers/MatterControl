@@ -524,7 +524,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 LocalizedString.ResetTranslationMap();
                 ApplicationController.Instance.MainView = new TouchscreenView();
                 app.RemoveAllChildren();
-                app.AddChild(new SoftKeyboardContentOffset(ApplicationController.Instance.MainView));
                 app.AnchorAll();
 #endif
 			});

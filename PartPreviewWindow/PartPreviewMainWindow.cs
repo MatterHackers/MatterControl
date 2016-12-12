@@ -57,11 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Close();
 			};
 
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(partPreviewWidget));
-#else
 			this.AddChild(partPreviewWidget);
-#endif
 
 			AddHandlers();
 
