@@ -184,11 +184,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 			topToBottom.AddChild(buttonBar);
 
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(topToBottom));
-#else
 			this.AddChild(topToBottom);
-#endif
 
 			Title = LocalizedString.Get("Firmware EEPROM Settings");
 

@@ -52,11 +52,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
 				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
 
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(part3DView));
-#else
 			this.AddChild(part3DView);
-#endif
 
 			this.AnchorAll();
 

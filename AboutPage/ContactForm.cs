@@ -326,11 +326,7 @@ namespace MatterHackers.MatterControl.ContactForm
 
 			contactFormWidget = new ContactFormWidget(subject, bodyText);
 
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(contactFormWidget));
-#else
 			AddChild(contactFormWidget);
-#endif
 			AddHandlers();
 
 			ShowAsSystemWindow();

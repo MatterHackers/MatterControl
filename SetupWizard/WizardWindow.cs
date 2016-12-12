@@ -162,11 +162,7 @@ namespace MatterHackers.MatterControl
 		{
 			pageToChangeTo.WizardWindow = this;
 			this.CloseAllChildren();
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(pageToChangeTo));
-#else
 			this.AddChild(pageToChangeTo);
-#endif
 			this.Invalidate();
 		}
 
