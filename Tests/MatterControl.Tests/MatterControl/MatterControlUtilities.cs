@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Edit Printer Button");
 			testRunner.Wait(2);
 
-			testRunner.ClickByName("Com Port Dropdown");
+			testRunner.ClickByName("Serial Port Dropdown");
 
 			testRunner.ClickByName(config.MCPort + " Menu Item", 1);
 

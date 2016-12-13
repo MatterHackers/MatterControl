@@ -114,9 +114,6 @@ namespace MatterHackers.MatterControl
 
 							// Only add if copy succeeds
 							ProfileManager.Instance.Profiles.Add(printerInfo);
-
-							// TODO: Do we copy or migrate. This looks a lot like migrate which is not the current expected behavior
-							// guestProfileManager.Profiles.Remove(printerInfo);
 						}
 					}
 				}
