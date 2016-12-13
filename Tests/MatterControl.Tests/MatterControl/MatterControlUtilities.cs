@@ -404,6 +404,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var config = TestAutomationConfig.Load();
 
+			// Extract mouse speed from config
+			AutomationRunner.TimeToMoveMouse = config.TimeToMoveMouse;
+
 			await AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages, config.AutomationInputType);
 		}
 
@@ -499,6 +502,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		[JsonConverter(typeof(StringEnumConverter))]
 		public AutomationRunner.InputType AutomationInputType { get; set; } = AutomationRunner.InputType.Native;
+
+		/// <summary>
+		/// The number of seconds to move the mouse when going to a new position.
+		/// </summary>
+		public double TimeToMoveMouse { get; set; } = .5;
 
 		public static TestAutomationConfig Load()
 		{
