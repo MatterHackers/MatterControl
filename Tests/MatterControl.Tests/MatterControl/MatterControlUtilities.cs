@@ -194,10 +194,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			process.Start();
 
 			// edit the com port
-			testRunner.ClickByName("Edit Printer Button");
-			testRunner.Wait(2);
+			testRunner.ClickByName("Edit Printer Button", 3);
 
-			testRunner.ClickByName("Serial Port Dropdown");
+			testRunner.ClickByName("Serial Port Dropdown", 3);
 
 			testRunner.ClickByName(config.MCPort + " Menu Item", 1);
 
@@ -206,7 +205,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// connect to the created printer
 			testRunner.ClickByName("Connect to printer button", 2);
 
-			testRunner.Wait(2);
+			testRunner.WaitForName("Disconnect from printer button", 5);
 
 			return process;
 		}
@@ -244,24 +243,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(AutomationRunner testRunner, string make, string model)
 		{
-			testRunner.ClickByName("Printers... Menu", 2, delayBeforeReturn: .5);
-			
-			testRunner.ClickByName("Add New Printer... Menu Item", 5, delayBeforeReturn: .5);
+			if (!testRunner.NameExists("Select Make"))
+			{
+				testRunner.ClickByName("Printers... Menu", 2, delayBeforeReturn: .5);
+				testRunner.ClickByName("Add New Printer... Menu Item", 5, delayBeforeReturn: .5);
+			}
 
-			testRunner.ClickByName("Select Make", 5, delayBeforeReturn: .5);
-
+			testRunner.ClickByName("Select Make", 5);
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
 
-			testRunner.ClickByName("Select Model", 5, delayBeforeReturn: .5);
-
-			testRunner.ClickByName(model + " Menu Item", 5, delayBeforeReturn: .5);
+			testRunner.ClickByName("Select Model", 5);
+			testRunner.Type(model);
+			testRunner.Type("{Enter}");
 
 			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
 			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
 			WaitForReloadAll(testRunner, () => testRunner.ClickByName("Save & Continue Button", 2));
 
-			testRunner.ClickByName("Cancel Wizard Button", 5, delayBeforeReturn: .5);
+			testRunner.ClickByName("Cancel Wizard Button", 5);
 			testRunner.Wait(1);
 		}
 
@@ -346,11 +346,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			testRunner.ClickByName(libraryRowItemName);
-			testRunner.MoveToByName(libraryRowItemName);
-			testRunner.Wait(.5);
+			//testRunner.MoveToByName(libraryRowItemName);
+			//testRunner.Wait(.5);
 
 			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
-			testRunner.Wait(.5);
+			//testRunner.Wait(.5);
 		}
 
 		public static async Task RunTest(
