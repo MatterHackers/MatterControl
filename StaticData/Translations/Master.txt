@@ -5659,3 +5659,15 @@ Translated:Port number to be used with IP Address to connect to printer over the
 English:Reset to Defaults
 Translated:Reset to Defaults
 
+English:The serial port to use while connecting to this printer.
+Translated:The serial port to use while connecting to this printer.
+
+English:Save Changed
+Translated:Save Changed
+
+English:Discard Changes
+Translated:Discard Changes
+
+English:Stay Connected
+Translated:Stay Connected
+

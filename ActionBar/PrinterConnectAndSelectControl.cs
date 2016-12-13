@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
-				StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO, "Disconnect".Localize(), "Stay Connected".Localize());
 			}
 			else
 			{

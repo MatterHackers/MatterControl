@@ -1444,7 +1444,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						else
 						{
 							string message = String.Format(removeFromQueueMessage, pathAndFile);
-							StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO);
+							StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO, "Remove".Localize(), "Cancel".Localize());
 						}
 					}
 				}
