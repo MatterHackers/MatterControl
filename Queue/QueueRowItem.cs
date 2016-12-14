@@ -99,9 +99,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.PrintItemWrapper.UseIncrementedNameDuringTypeChange = true;
 
 			ConstructPrintQueueItem();
-
-			MouseEnterBounds += (s, e) => EnteredBounds();
-			MouseLeaveBounds += (s, e) => EnteredBounds();
 		}
 
 		private event EventHandler unregisterEvents;
@@ -126,7 +123,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		void EnteredBounds()
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			UpdateHoverState();
+			base.OnMouseEnterBounds(mouseEvent);
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			UpdateHoverState();
+			base.OnMouseLeaveBounds(mouseEvent);
+		}
+
+		void UpdateHoverState()
 		{
 			switch (UnderMouseState)
 			{
@@ -171,7 +180,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
 				string message = "{0}:\n'{1}'\n\n{2}?".FormatWith(notFoundMessage, maxLengthName, notFoundMessageEnd);
 				string titleLabel = LocalizedString.Get("Item not Found");
-				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO, "Remove".Localize(), "Cancel".Localize());
 			});
 		}
 
@@ -247,7 +256,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			conditionalClickContainer = new ConditionalClickWidget(() => queueDataView.EditMode);
 			conditionalClickContainer.HAnchor = HAnchor.ParentLeftRight;
 			conditionalClickContainer.VAnchor = VAnchor.ParentBottomTop;
-			conditionalClickContainer.Click += onQueueItemClick;
 
 			topToBottomLayout.AddChild(topContentsFlowLayout);
 			this.AddChild(topToBottomLayout);
@@ -258,7 +266,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			this.AddChild(actionButtonContainer);
 
-			AddHandlers();
+			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -388,12 +396,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void AddHandlers()
-		{
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
-		}
-
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)
 		{
 			this.exportingWindowIsOpen = false;
@@ -450,25 +452,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				// The firmware only understands the names when lowercase.
 				PrinterConnectionAndCommunication.Instance.DeleteFileFromSdCard(PrintItemWrapper.PrintItem.Name);
-			}
-		}
-
-		private void onQueueItemClick(object sender, EventArgs e)
-		{
-			if (queueDataView.EditMode)
-			{
-				if (this.isSelectedItem)
-				{
-					this.isSelectedItem = false;
-					this.selectionCheckBox.Checked = false;
-					queueDataView.SelectedItems.Remove(this);
-				}
-				else
-				{
-					this.isSelectedItem = true;
-					this.selectionCheckBox.Checked = true;
-					queueDataView.SelectedItems.Add(this);
-				}
 			}
 		}
 

@@ -36,10 +36,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class ControlWidgetBase : DisableableWidget
 	{
-		protected virtual void AddChildElements()
-		{
-		}
-
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		private readonly double TallButtonHeight = 25 * GuiWidget.DeviceScale;
@@ -57,8 +53,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
 			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			AddChildElements();
 		}
 
 		protected static GuiWidget CreateSeparatorLine()

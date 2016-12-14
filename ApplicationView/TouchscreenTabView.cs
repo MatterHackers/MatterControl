@@ -202,8 +202,6 @@ namespace MatterHackers.MatterControl
 			QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAdvancedControlsPanel(), ref unregisterEvents);
-
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
 			{
 				// ReloadPartPreview
@@ -307,7 +305,7 @@ namespace MatterHackers.MatterControl
 
 		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
 		{
-			QueueTabPage.Text = string.Format("{0} ({1})", "Queue".Localize().ToUpper(), QueueData.Instance.Count);
+			QueueTabPage.Text = string.Format("{0} ({1})", "Queue".Localize().ToUpper(), QueueData.Instance.ItemCount);
 		}
 
 		private void AddTab(string name, string tabTitle, Func<GuiWidget> generator)

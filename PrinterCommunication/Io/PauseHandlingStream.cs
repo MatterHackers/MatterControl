@@ -138,10 +138,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (lineToSend == null)
 			{
-				lineToSend = base.ReadLine();
-				if(lineToSend == null)
+				if (!PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 				{
-					return lineToSend;
+					lineToSend = base.ReadLine();
+					if (lineToSend == null)
+					{
+						return lineToSend;
+					}
+				}
+				else
+				{
+					lineToSend = "";
 				}
 			}
 

@@ -81,7 +81,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.show_reset_connection,
 			SettingsKey.make,
 			SettingsKey.model,
-			
+			SettingsKey.enable_network_printing,
+			SettingsKey.enable_sailfish_communication,
+			SettingsKey.ip_address,
+			SettingsKey.ip_port,
+
 		};
 
 		public SliceEngineMapping(string engineName)

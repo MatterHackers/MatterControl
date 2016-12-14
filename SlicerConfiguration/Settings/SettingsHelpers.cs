@@ -107,6 +107,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
+		public const string enable_sailfish_communication = nameof(enable_sailfish_communication);
+		public const string enable_network_printing = nameof(enable_network_printing);
+		public const string ip_address = nameof(ip_address);
+		public const string ip_port = nameof(ip_port);
+		public const string first_layer_speed = nameof(first_layer_speed);
 	}
 
 	public class SettingsHelpers
@@ -187,7 +192,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Clear selected printer state
-			UserSettings.Instance.set("ActiveProfileID", "");
+			ProfileManager.Instance.LastProfileID = "";
 
 			UiThread.RunOnIdle(() =>
 			{
@@ -464,6 +469,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return presets;
 		}
 
+		public int NumberOfHotEnds()
+		{
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.extruders_share_temperature))
+			{
+				return 1;
+			}
+
+			return ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+		}
 	}
 
 	public class PrinterInfo

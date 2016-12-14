@@ -143,6 +143,10 @@
       <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
       <Name>PolygonMesh</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
+      <Project>{545b6912-77ff-4b34-ba76-6c3d6a32be6a}</Project>
+      <Name>RenderOpenGl</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
       <Project>{195CBE56-E654-437B-AB05-3BE1B9452497}</Project>
       <Name>Agg.Tests</Name>

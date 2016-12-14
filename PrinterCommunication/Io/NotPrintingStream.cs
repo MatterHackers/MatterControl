@@ -27,64 +27,34 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.VectorMath;
 using System;
-using System.IO;
+using MatterHackers.Agg;
+using MatterHackers.GCodeVisualizer;
+using MatterHackers.VectorMath;
+using System.Text;
+using System.Collections.Generic;
+using System.Threading;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class PartPreviewMainWindow : SystemWindow
+	public class NotPrintingStream : GCodeStream
 	{
-		private event EventHandler unregisterEvents;
-
-		private PartPreviewContent partPreviewWidget;
-
-		public PartPreviewMainWindow(PrintItemWrapper printItem, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
-			: base(750, 550)
+		public NotPrintingStream()
 		{
-			UseOpenGL = true;
-			string partPreviewTitle = LocalizedString.Get("MatterControl");
-			Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
-
-			this.Name = "Part Preview Window";
-
-			partPreviewWidget = new PartPreviewContent(printItem, View3DWidget.WindowMode.StandAlone, autoRotate3DView, openMode);
-			partPreviewWidget.Closed += (sender, e) =>
-			{
-				Close();
-			};
-
-			this.AddChild(partPreviewWidget);
-
-			AddHandlers();
-
-			Width = 750;
-			Height = 550;
-
-			MinimumSize = new Vector2(400, 300);
-			ShowAsSystemWindow();
 		}
 
-		private void AddHandlers()
+		public override void Dispose()
 		{
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
-		public void ThemeChanged(object sender, EventArgs e)
+		public override string ReadLine()
 		{
-			this.Invalidate();
+			Thread.Sleep(100);
+			return "";
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void SetPrinterPosition(PrinterMove position)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-			base.OnClosed(e);
 		}
 	}
 }

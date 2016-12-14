@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         protected string pageOneInstructionsTextThree = "Sample the bed at {0} points".Localize();
         protected string pageOneInstructionsTextFour = "Turn auto leveling on".Localize();
         protected string pageOneInstructionsText5 = "You should be done in about 5 minutes.".Localize();
-        protected string pageOneInstructionsText6 = "Note: Be sure the tip of the extrude is clean.".Localize();
+        protected string pageOneInstructionsText6 = "Note: Be sure the tip of the extruder is clean.".Localize();
 		protected string pageOneInstructionsText7 = "Click 'Next' to continue.".Localize();
 
         public LevelWizardRadialBase(LevelWizardBase.RuningState runningState, int width, int height, int totalSteps, int numberOfRadialSamples)

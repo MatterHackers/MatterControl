@@ -30,62 +30,138 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.VectorMath;
 using System.Collections.Generic;
+using System.Threading;
+using MatterHackers.MatterControl.PrinterControls;
+using System.Text.RegularExpressions;
+using MatterHackers.Agg.UI;
+using System;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class QueuedCommandsStream : GCodeStreamProxy
-    {
+	public class QueuedCommandsStream : GCodeStreamProxy
+	{
 		object locker = new object();
 		private List<string> commandQueue = new List<string>();
-		protected PrinterMove lastDestination = new PrinterMove();
-		public PrinterMove LastDestination { get { return lastDestination; } }
+		bool waitingForUserInput = false;
+
+		public const string MacroPrefix = "; Command:";
 
 		public QueuedCommandsStream(GCodeStream internalStream)
-            : base(internalStream)
-        {
-        }
-
-		public override void SetPrinterPosition(PrinterMove position)
+			: base(internalStream)
 		{
-			lastDestination = position;
-			internalStream.SetPrinterPosition(lastDestination);
 		}
 
 		public void Add(string line)
-        {
-            // lock queue
-            lock(locker)
-            {
-                commandQueue.Add(line);
-            }
-        }
-
-        public override string ReadLine()
-        {
-			string lineToSend = null;
-            // lock queue
-            lock(locker)
-            {
-                if (commandQueue.Count > 0)
-                {
-					lineToSend = commandQueue[0];
-                    commandQueue.RemoveAt(0);
-                }
-            }
-
-			if (lineToSend == null)
+		{
+			// lock queue
+			lock (locker)
 			{
-				lineToSend = base.ReadLine();
+				commandQueue.Add(line);
 			}
+		}
 
-			// keep track of the position
-			if (lineToSend != null
-				&& LineIsMovement(lineToSend))
+		public override string ReadLine()
+		{
+			string lineToSend = null;
+
+			if (waitingForUserInput)
 			{
-				lastDestination = GetPosition(lineToSend, lastDestination);
+				Thread.Sleep(100);
+				lineToSend = "";
+			}
+			else
+			{
+				// lock queue
+				lock (locker)
+				{
+					if (commandQueue.Count > 0)
+					{
+						lineToSend = commandQueue[0];
+						lineToSend = GCodeProcessing.ReplaceMacroValues(lineToSend);
+						commandQueue.RemoveAt(0);
+					}
+				}
+
+				if (lineToSend != null)
+				{
+					if (lineToSend.StartsWith(MacroPrefix))
+					{
+						int spaceAfterCommand = lineToSend.IndexOf(' ', MacroPrefix.Length);
+						string command;
+						if (spaceAfterCommand > 0)
+						{
+							command = lineToSend.Substring(MacroPrefix.Length, spaceAfterCommand - MacroPrefix.Length);
+						}
+						else
+						{
+							command = lineToSend.Substring(MacroPrefix.Length);
+						}
+
+						List<string> messages = new List<string>();
+						foreach (Match match in Regex.Matches(lineToSend, "\"([^\"]*)\""))
+						{
+							string matchString = match.ToString();
+							messages.Add(matchString.Substring(1, matchString.Length - 2));
+						}
+
+						switch (command)
+						{
+							case "Message":
+								if (messages.Count > 0)
+								{
+									double seconds = 0;
+									GCodeFile.GetFirstNumberAfter("ExpectedSeconds:", lineToSend, ref seconds);
+									double temperature = 0;
+									GCodeFile.GetFirstNumberAfter("ExpectedTemperature:", lineToSend, ref temperature);
+									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0], expectedSeconds: seconds, expectedTemperature: temperature));
+								}
+								break;
+
+							case "ChooseMaterial":
+								waitingForUserInput = true;
+								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true, true));
+								break;
+
+							case "WaitOK":
+								waitingForUserInput = true;
+								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true));
+								break;
+
+							case "Close":
+								UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
+								break;
+
+							default:
+								// Don't know the command. Print to terminal log?
+								break;
+						}
+
+					}
+				}
+				else
+				{
+					lineToSend = base.ReadLine();
+				}
 			}
 
 			return lineToSend;
-        }
-    }
+		}
+
+		public void Reset()
+		{
+			lock (locker)
+			{
+				commandQueue.Clear();
+			}
+
+			waitingForUserInput = false;
+		}
+
+		public void Continue()
+		{
+			waitingForUserInput = false;
+		}
+	}
 }

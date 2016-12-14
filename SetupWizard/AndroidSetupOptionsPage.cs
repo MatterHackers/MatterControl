@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl
 {
 	public class SetupOptionsPage : WizardPage
 	{
+		private event EventHandler unregisterEvents;
+
 		public SetupOptionsPage()
 			: base("Done")
 		{
@@ -99,7 +101,7 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>();
+				UiThread.RunOnIdle(WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>);
 			};
 			buttonContainer.AddChild(disconnectButton);
 
@@ -126,6 +128,12 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.Invalidate();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 
@@ -213,7 +221,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(new HorizontalSpacer());
 
 			// the redeem design code button
-			textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
+			textImageButtonFactory.disabledTextColor = new RGBA_Bytes(textImageButtonFactory.normalTextColor, 100);
 			Button redeemPurchaseButton = textImageButtonFactory.Generate("Redeem Purchase".Localize());
 			redeemPurchaseButton.Enabled = true; // The library selector (the first library selected) is protected so we can't add to it.
 			redeemPurchaseButton.Name = "Redeem Code Button";
@@ -248,7 +256,7 @@ namespace MatterHackers.MatterControl
 
 			mainContainer.AddChild(buttonContainer);
 
-			ApplicationController.Instance.ReloadAllRequested.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
+			ApplicationController.Instance.DoneReloadingAll.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
 		}
 
 		private void RemoveAndNewControl(object sender, EventArgs e)

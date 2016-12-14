@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
 using System.Diagnostics;
+using System.Threading;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -89,7 +90,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								}
 								else
 								{
-									return "G4 P1000"; // 1 second
+									Thread.Sleep(100); // sleep .1 second while waiting for temp
+									return ""; // return nothing until we reach temp
 								}
 							}
 							else if (lineToSend.StartsWith("M190")) // bed set and wait temp
@@ -108,12 +110,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									}
 									else
 									{
-										return "G4 P1000"; // 1 second
+										Thread.Sleep(100); // sleep .1 second while waiting for temp
+										return ""; // return nothing until we reach temp
 									}
 								}
 								else
 								{
-									return "G4 P1000";
+									Thread.Sleep(100); // sleep .1 second while waiting for temp
+									return ""; // return nothing until we reach temp
 								}
 							}
 						}
@@ -140,7 +144,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						else
 						{
 							// send a wait command
-							return "G4 P1000"; // 1 second
+							Thread.Sleep(100); // sleep .1 second while waiting for temp
+							return ""; // return nothing until we reach temp
 						}
 					}
 
@@ -173,7 +178,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						else
 						{
 							// send a wait command
-							return "G4 P1000"; // 1 second
+							Thread.Sleep(100); // sleep .1 second while waiting for temp
+							return ""; // return nothing until we reach temp
 						}
 					}
 			}

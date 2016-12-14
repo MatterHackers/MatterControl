@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							if (saveButtons.Visible)
 							{
-								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?".Localize(), "Save Changes".Localize(), StyledMessageBox.MessageType.YES_NO);
+								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?".Localize(), "Save Changes".Localize(), StyledMessageBox.MessageType.YES_NO, "Save Changed".Localize(), "Discard Changes".Localize());
 							}
 							else
 							{
@@ -1349,7 +1349,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// remove it first to make sure we don't double add it
 				PrintItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-				PrintItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents); ;
+				PrintItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
 
 				// don't load the mesh until we get all the rest of the interface built
 				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
@@ -2315,6 +2315,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 				}
 			}
+		}
+
+		public override bool InEditMode
+		{
+			get { return buttonRightPanel.Visible; }
 		}
 
 		private void SwitchStateToNotEditing()

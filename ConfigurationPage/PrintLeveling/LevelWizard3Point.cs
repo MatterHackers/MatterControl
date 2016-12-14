@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string pageOneInstructionsTextThree = LocalizedString.Get("Sample the bed at three points");
 		private string pageOneInstructionsTextFour = LocalizedString.Get("Turn auto leveling on");
 		private string pageOneInstructionsText5 = LocalizedString.Get("You should be done in about 3 minutes.");
-		private string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extrude is clean.");
+		private string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extruder is clean.");
 		private string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
 
 		public LevelWizard3Point(LevelWizardBase.RuningState runningState)

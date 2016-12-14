@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.WaitForName("Cancel Wizard Button", 1);
 
 				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -79,25 +79,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					Assert.IsTrue(testRunner.ClickByName("General Tab", 1));
-					Assert.IsTrue(testRunner.ClickByName("Single Print Tab", 1));
-					Assert.IsTrue(testRunner.ClickByName("Layer(s) To Pause: Edit"));
+					testRunner.ClickByName("General Tab", 1);
+					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("4;2;a;not;6");
 
-					Assert.IsTrue(testRunner.ClickByName("Layer View Tab"));
+					testRunner.ClickByName("Layer View Tab");
 
-					Assert.IsTrue(testRunner.ClickByName("Generate Gcode Button", 1));
-					Assert.IsTrue(testRunner.ClickByName("Display Checkbox", 10));
-					Assert.IsTrue(testRunner.ClickByName("Sync To Print Checkbox", 1));
+					testRunner.ClickByName("Generate Gcode Button", 1);
+					testRunner.ClickByName("Display Checkbox", 10);
+					testRunner.ClickByName("Sync To Print Checkbox", 1);
 
-					Assert.IsTrue(testRunner.ClickByName("Start Print Button", 1));
+					testRunner.ClickByName("Start Print Button", 1);
 
 					WaitForLayerAndResume(testRunner, 2);
 					WaitForLayerAndResume(testRunner, 4);
 					WaitForLayerAndResume(testRunner, 6);
 
-					Assert.IsTrue(testRunner.WaitForName("Done Button", 30));
-					Assert.IsTrue(testRunner.WaitForName("Print Again Button", 1));
+					testRunner.WaitForName("Done Button", 30);
+					testRunner.WaitForName("Print Again Button", 1);
 
 					return Task.FromResult(0);
 				}
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitUntil(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
 
 			Assert.IsTrue(layerNumber.Text == indexToWaitFor.ToString());
-			Assert.IsTrue(testRunner.ClickByName("Resume Button", 1));
+			testRunner.ClickByName("Resume Button", 1);
 			testRunner.Wait(.1);
 		}
 
@@ -133,8 +133,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Navigate to Local Library 
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-				Assert.IsTrue(testRunner.ClickByName("Printer Tab", 1), "Switch to Printers tab");
-				Assert.IsTrue(testRunner.ClickByName("Features Tab", 1), "Switch to Features tab");
+				testRunner.ClickByName("Printer Tab", 1);
+				testRunner.ClickByName("Features Tab", 1);
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
 
@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 
 			// Click the checkbox
-			Assert.IsTrue(testRunner.ClickByName(checkBoxName, 1));
+			testRunner.ClickByName(checkBoxName, 1);
 			testRunner.Wait(2);
 
 			// Assert the checkbox is checked and the user override is set
@@ -187,43 +187,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == true);
 
 			// Click the cancel user override button
-			Assert.IsTrue(testRunner.ClickByName("Restore " + settingToChange, 1));
+			testRunner.ClickByName("Restore " + settingToChange, 1);
 			testRunner.Wait(2);
 
 			// Assert the checkbox is unchecked and there is no user override
 			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) == expected);
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
-		}
-
-		//Stress Test check & uncheck 1000x
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
-		public async Task HasHeatedBedCheckUncheck()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
-
-				//Navigate to Local Library 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
-
-				Assert.IsTrue(testRunner.ClickByName("Printer Tab"));
-				testRunner.Wait(1);
-
-				Assert.IsTrue(testRunner.ClickByName("Features Tab"));
-				testRunner.Wait(2);
-
-				for (int i = 0; i <= 1000; i++)
-				{
-					Assert.IsTrue(testRunner.ClickByName("Has Heated Bed Checkbox"));
-					testRunner.Wait(.5);
-				}
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
@@ -240,6 +209,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Filament Tab", 1);
 				testRunner.ClickByName("Temperatures Tab", 1);
+				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox", 2)); 
 				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox", 2));
 
 				//Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
@@ -263,6 +233,54 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	public class QualitySettingsStayAsOverrides
+	{
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task SettingsStayAsOverrides()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				// Add Guest printers
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+
+				testRunner.ClickByName("Layer Height Textbox", 2);
+				testRunner.Type(".5\n");
+				testRunner.Wait(.5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("Fine Menu", 2);
+
+				testRunner.Wait(.5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
+
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "BCN", "Sigma");
+
+				// Check Guest printer count 
+				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
+
+				// Check if Guest printer names exists in dropdown
+				testRunner.ClickByName("Printers... Menu", 2);
+				testRunner.ClickByName("Airwolf 3D HD Menu Item", 5);
+
+				testRunner.Wait(1);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
+
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 120);
 		}
 	}
 }

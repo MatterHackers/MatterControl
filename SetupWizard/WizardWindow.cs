@@ -14,6 +14,7 @@ namespace MatterHackers.MatterControl
 {
 	public class WizardWindow : SystemWindow
 	{
+		private event EventHandler unregisterEvents;
 		public static Func<bool> ShouldShowAuthPanel { get; set; }
 		public static Action ShowAuthDialog;
 		public static Action ChangeToAccountCreate;
@@ -114,6 +115,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -159,21 +161,33 @@ namespace MatterHackers.MatterControl
 		internal void ChangeToPage(WizardPage pageToChangeTo)
 		{
 			pageToChangeTo.WizardWindow = this;
-			UiThread.RunOnIdle(() =>
-			{
-				this.RemoveAllChildren();
-#if __ANDROID__
-				this.AddChild(new SoftKeyboardContentOffset(pageToChangeTo));
-#else
-				this.AddChild(pageToChangeTo);
-#endif
-				this.Invalidate();
-			});
+			this.CloseAllChildren();
+			this.AddChild(pageToChangeTo);
+			this.Invalidate();
 		}
 
 		internal void ChangeToPage<PanelType>() where PanelType : WizardPage, new()
 		{
-			ChangeToPage(new PanelType());
+			PanelType panel = new PanelType();
+			ChangeToPage(panel);
+
+			// in the event of a reload all make sure we rebuild the contents correctly
+			ApplicationController.Instance.DoneReloadingAll.RegisterEvent((s,e) =>
+			{
+				// fix the main window background color if needed
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+				// find out where the contents we put in last time are
+				int thisIndex = GetChildIndex(panel);
+				RemoveAllChildren();
+				// make new content with the possibly changed theme
+				PanelType newPanel = new PanelType();
+				newPanel.WizardWindow = this;
+				AddChild(newPanel, thisIndex);
+				panel.CloseOnIdle();
+				// remember the new content
+				panel = newPanel;
+			}, ref unregisterEvents);
 		}
 	}
 }

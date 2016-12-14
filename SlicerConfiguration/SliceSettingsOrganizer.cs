@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
 
-		public List<string> SetSettingsOnChange = new List<string>();
+		public List<Dictionary<string, string>> SetSettingsOnChange = new List<Dictionary<string,string>>();
 
 		public string ShowIfSet { get; set; }
 		

@@ -96,11 +96,7 @@ namespace MatterHackers.MatterControl
 			: base(width, height)
 		{
 			AlwaysOnTopOfMain = true;
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(new TerminalWidget(true)));
-#else
 			this.AddChild(new TerminalWidget(true));
-#endif
 			Title = LocalizedString.Get("MatterControl - Terminal");
 			this.ShowAsSystemWindow();
 			MinimumSize = minSize;

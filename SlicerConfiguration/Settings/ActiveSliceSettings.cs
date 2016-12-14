@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
+		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
 
 		private static PrinterSettings activeInstance = null;
 		public static PrinterSettings Instance
@@ -59,7 +60,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			set
 			{
-				if (activeInstance != value)
+				// EmptyProfile instances may differ but IDs are always be the same. Only process if instance and IDs differ
+				if (activeInstance != value 
+					&& activeInstance?.ID != value.ID)
 				{
 					// If we have an active printer, run Disable otherwise skip to prevent empty ActiveSliceSettings due to null ActivePrinter
 					if (activeInstance != null)
@@ -94,13 +97,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		static public void OnSettingsChanged(SliceSettingData settingData)
+		{
+			SettingChanged.CallEvents(null, new StringEventArgs(settingData.SlicerConfigName));
+
+			if (settingData.ReloadUiWhenChanged)
+			{
+				UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll(null, null));
+			}
+		}
+
 		public static void RefreshActiveInstance(PrinterSettings updatedProfile)
 		{
 			bool themeChanged = activeInstance.GetValue(SettingsKey.active_theme_name) != updatedProfile.GetValue(SettingsKey.active_theme_name);
 
 			activeInstance = updatedProfile;
 
-			SliceSettingsWidget.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
+			ActiveSliceSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
 
 			if (themeChanged)
 			{
@@ -132,6 +145,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							ActiveTheme.SuspendEvents();
 						}
 						ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
+
+						// Save the theme so we can load it first thing on startup before a profile is loaded.
+						UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, ActiveTheme.Instance.Name);
+
 						ActiveTheme.ResumeEvents();
 					}
 				}

@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-				testRunner.Wait(1);
 
 				//Get View3DWidget and count MeshGroups before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
@@ -79,9 +78,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				string copyButtonName = "3D View Copy";
 
-				//Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
-				testRunner.Wait(1);
 				int partCountBeforeCopy = view3D.MeshGroups.Count();
 				Assert.IsTrue(partCountBeforeCopy == 1);
 
@@ -110,7 +106,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
@@ -128,7 +124,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-				testRunner.Wait(1);
 
 				//Get View3DWidget and count MeshGroups before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
@@ -136,16 +131,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				string copyButtonName = "3D View Copy";
 
-				//Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
-				testRunner.Wait(1);
 				int partCountBeforeCopy = view3D.MeshGroups.Count();
 				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName(copyButtonName);
-					testRunner.Wait(1);
+					testRunner.Wait(.5);
 				}
 
 				//Get MeshGroupCount before Group is clicked
@@ -162,7 +154,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth:600);
 		}
 
 		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
@@ -180,7 +172,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-				testRunner.Wait(1);
 
 				//Get View3DWidget and count MeshGroups before Copy button is clicked
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
@@ -250,8 +241,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
 
 				// Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit", 1);
 				testRunner.WaitForName("3D View Copy", 3);
+				testRunner.Wait(1); // wait for window to finish opening
 				Assert.AreEqual(1, view3D.MeshGroups.Count, "Should have 1 part before copy");
 
 				for (int i = 0; i <= 4; i++)
@@ -296,11 +287,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-				testRunner.Wait(1);
-
-				//Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
-				testRunner.Wait(1);
 
 				SystemWindow systemWindow;
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
@@ -309,7 +295,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 0; i <= 2; i++)
 				{
 					testRunner.ClickByName("3D View Copy");
-					testRunner.Wait(1);
+					testRunner.Wait(.5);
 				}
 
 				//Click Save As button to save changes to the part
@@ -336,7 +322,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 		}
 	}
 }

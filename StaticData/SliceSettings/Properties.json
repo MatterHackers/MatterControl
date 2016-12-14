@@ -122,7 +122,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "bridge_flow_ratio",
 		"PresentationName": "Bridge Flow Ratio",
-		"HelpText": "This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.",
+		"HelpText": "This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -203,7 +203,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "complete_objects",
 		"PresentationName": "Complete Individual Objects",
-		"HelpText": "Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.",
+		"HelpText": "Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -229,7 +229,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "cool_extruder_lift",
 		"PresentationName": "Enable Extruder Lift",
-		"HelpText": "Moves the extruder up off the part to allow cooling.",
+		"HelpText": "Moves the nozzle up and off the part to allow cooling.",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -479,6 +479,19 @@
 		"SlicerConfigName": "merge_overlapping_lines",
 		"PresentationName": "Merge Overlapping Lines",
 		"HelpText": "Detect perimeters that cross over themselves and combine them.",
+		"DataEditType": "CHECK_BOX",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0"
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "expand_thin_walls",
+		"PresentationName": "Expand Thin Walls",
+		"HelpText": "Detects sections of the model that would be too thin to print and expands them to make them printable.",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -780,7 +793,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "z_homes_to_max",
 		"PresentationName": "Home Z Max",
-		"HelpText": "Set if the z homing moves the extruder away from the bed (z-max homing)",
+		"HelpText": "Indicates that the Z axis homes the hot end away from the bed (z-max homing)",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -795,7 +808,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "recover_position_before_z_home",
 		"PresentationName": "XY Homing Position",
-		"HelpText": "The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.",
+		"HelpText": "The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.",
 		"DataEditType": "VECTOR2",
 		"ExtraSettings": "mm",
 		"ShowAsOverride": true,
@@ -809,7 +822,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "first_layer_temperature",
 		"PresentationName": "Extrude First Layer",
-		"HelpText": "The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",
+		"HelpText": "The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "°C",
 		"ShowAsOverride": true,
@@ -1211,9 +1224,18 @@
 			}
 		],
 		"SetSettingsOnChange": [
-			"bottom_solid_layers",
-			"top_solid_layers",
-			"perimeters"
+			{
+				"TargetSetting": "bottum_solid_layers",
+				"Value": "[current_value]"
+			},
+			{
+				"TargetSetting": "top_solid_layers",
+				"Value": "[current_value]"
+			},
+			{
+				"TargetSetting": "perimeters",
+				"Value": "[current_value]"
+			}
 		],
 		"SlicerConfigName": "solid_shell",
 		"PresentationName": "Width",
@@ -1334,7 +1356,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "ooze_prevention",
 		"PresentationName": "Enable",
-		"HelpText": "This will lower the temperature of the non-printing extruder to help prevent oozing.",
+		"HelpText": "This will lower the temperature of the non-printing nozzle to help prevent oozing.",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -1478,7 +1500,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "perimeter_start_end_overlap",
 		"PresentationName": "Start End Overlap",
-		"HelpText": "The distance that the perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.",
+		"HelpText": "The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "%",
 		"ShowAsOverride": true,
@@ -1881,7 +1903,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "spiral_vase",
 		"PresentationName": "Spiral Vase",
-		"HelpText": "Forces the print to have only one extrusion and gradually increase the extruder height during the print. Only one part will print at a time with this feature.",
+		"HelpText": "Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
@@ -1894,7 +1916,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "standby_temperature_delta",
 		"PresentationName": "Temp Lower Amount",
-		"HelpText": "This is the amount to lower the temperature of an extruder that is not currently printing.",
+		"HelpText": "The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.",
 		"DataEditType": "DOUBLE",
 		"ExtraSettings": "°C",
 		"ShowAsOverride": true,
@@ -2441,7 +2463,7 @@
 		"DataEditType": "INT",
 		"ExtraSettings": "",
 		"ShowAsOverride": false,
-		"ShowIfSet": null,
+		"ShowIfSet": "!enable_network_printing",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "250000",
 		"RebuildGCodeOnChange": false
@@ -2478,12 +2500,12 @@
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "com_port",
-		"PresentationName": "COM Port",
-		"HelpText": "The COM port to use while connecting to this printer.",
+		"PresentationName": "Serial Port",
+		"HelpText": "The serial port to use while connecting to this printer.",
 		"DataEditType": "COM_PORT",
 		"ExtraSettings": "",
 		"ShowAsOverride": false,
-		"ShowIfSet": null,
+		"ShowIfSet": "!enable_network_printing",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "",
 		"RebuildGCodeOnChange": false
@@ -2552,6 +2574,76 @@
 		"ShowIfSet": "!has_hardware_leveling",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "0",
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SlicerConfigName": "enable_network_printing",
+		"PresentationName": "Networked Printing",
+		"HelpText": "Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)",
+		"DataEditType": "CHECK_BOX",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"SetSettingsOnChange": [
+			{
+				"TargetSetting": "driver_type",
+				"OnValue": "TCPIP",
+				"OffValue": "RepRap"
+			}
+		],
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0",
+		"RebuildGCodeOnChange": false,
+		"ReloadUiWhenChanged": true
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SlicerConfigName": "enable_sailfish_communication",
+		"PresentationName": "Sailfish Communication",
+		"HelpText": "Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)",
+		"DataEditType": "CHECK_BOX",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"SetSettingsOnChange": [
+			{
+				"TargetSetting": "driver_type",
+				"OnValue": "X3G",
+				"OffValue": "RepRap"
+			}
+		],
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0",
+		"RebuildGCodeOnChange": false,
+		"ReloadUiWhenChanged": true
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "ip_address",
+		"PresentationName": "IP Address",
+		"HelpText": "IP Address of printer/printer controller",
+		"DataEditType": "STRING",
+		"ExtraSettings": "",
+		"ShowAsOverride": false,
+		"ShowIfSet": "enable_network_printing",
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "127.0.0.1",
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "ip_port",
+		"PresentationName": "Port",
+		"HelpText": "Port number to be used with IP Address to connect to printer over the network",
+		"DataEditType": "INT",
+		"ExtraSettings": "",
+		"ShowAsOverride": false,
+		"ShowIfSet": "enable_network_printing",
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "23",
 		"RebuildGCodeOnChange": false
 	},
 	{

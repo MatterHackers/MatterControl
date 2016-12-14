@@ -132,10 +132,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
 			}
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+
+			unregisterEvents?.Invoke(this, null);
+		
 			base.OnClosed(e);
 		}
 
@@ -253,11 +252,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled);
-
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((sender, e) =>
-			{
-				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled);
-			}, ref unregisterEvents);
 
 			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{
@@ -692,11 +686,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
 			autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled);
-
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((sender, e) =>
-			{
-				autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled);
-			}, ref unregisterEvents);
 
 			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{

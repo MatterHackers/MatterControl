@@ -31,21 +31,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 
-				Assert.IsTrue(testRunner.ClickByName("3D View Edit", 3));
+				testRunner.ClickByName("3D View Edit", 3);
 
-				Assert.IsTrue(testRunner.ClickByName("3D View Copy", 3), "Click Copy");
+				testRunner.ClickByName("3D View Copy", 3);
 				// wait for the copy to finish
 				testRunner.Wait(.1);
-				Assert.IsTrue(testRunner.ClickByName("3D View Remove", 3), "Click Delete");
-				Assert.IsTrue(testRunner.ClickByName("Save As Menu", 3), "Click Save As Menu");
-				Assert.IsTrue(testRunner.ClickByName("Save As Menu Item", 3), "Click Save As");
+				testRunner.ClickByName("3D View Remove", 3);
+				testRunner.ClickByName("Save As Menu", 3);
+				testRunner.ClickByName("Save As Menu Item", 3);
 
 				testRunner.Wait(1);
 
 				testRunner.Type("0Test Part");
-				Assert.IsTrue(testRunner.NavigateToFolder("Local Library Row Item Collection"));
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				Assert.IsTrue(testRunner.ClickByName("Save As Save Button", 1));
+				testRunner.ClickByName("Save As Save Button", 1);
 
 				view3D.CloseOnIdle();
 				testRunner.Wait(.5);
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
 		}
 	}
 }

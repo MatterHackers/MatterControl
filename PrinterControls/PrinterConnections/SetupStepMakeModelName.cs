@@ -57,11 +57,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				"Select the printer manufacturer".Localize(), 
 				printerManufacturerSelector);
 
-			if (printerManufacturerSelector.MenuItems.Count == 1)
-			{
-				activeMake = printerManufacturerSelector.SelectedValue;
-			}
-
 			printerModelSelector = new BoundDropList(string.Format("- {0} -", "Select Model".Localize()), maxHeight: 200)
 			{
 				Name = "Select Model",
@@ -70,12 +65,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				TabStop = true
 			};
 			printerModelSelector.SelectionChanged += ModelDropList_SelectionChanged;
-
-			if (printerModelSelector.MenuItems.Count == 1)
-			{
-				// SelectIfOnlyOneModel
-				printerModelSelector.SelectedIndex = 0;
-			}
 
 			printerModelContainer = CreateSelectionContainer("Model".Localize() + ":", "Select the printer model".Localize(), printerModelSelector);
 
@@ -103,15 +92,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					LoadCalibrationPrints();
 
 #if __ANDROID__
-					WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
+					UiThread.RunOnIdle(WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
 #else
 					if (OsInformation.OperatingSystem == OSType.Windows)
 					{
-						WizardWindow.ChangeToPage<SetupStepInstallDriver>();
+						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepInstallDriver>);
 					}
 					else
 					{
-						WizardWindow.ChangeToPage<SetupStepComPortOne>();
+						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortOne>);
 					}
 #endif
 				}
@@ -123,6 +112,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			footerRow.AddChild(cancelButton);
 
 			usingDefaultName = true;
+
+			if (printerManufacturerSelector.MenuItems.Count == 1)
+			{
+				printerManufacturerSelector.SelectedIndex = 0;
+			}
 
 			SetElementVisibility();
 		}
@@ -215,7 +209,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerModelSelector.ListSource = printers.OrderBy(p => p.Key).Select(p => new KeyValuePair<string, string>(p.Key, p.Value.ProfileToken)).ToList();
 			if (printerModelSelector.MenuItems.Count == 1)
 			{
-				// SelectIfOnlyOneModel
 				printerModelSelector.SelectedIndex = 0;
 			}
 

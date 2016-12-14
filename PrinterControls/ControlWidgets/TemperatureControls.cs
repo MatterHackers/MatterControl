@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public List<DisableableWidget> ExtruderWidgetContainers = new List<DisableableWidget>();
 		public DisableableWidget BedTemperatureControlWidget;
 
-		protected override void AddChildElements()
+		public TemperatureControls()
 		{
 			AltGroupBox temperatureGroupBox = new AltGroupBox(new TextWidget("Temperature".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			temperatureGroupBox.Margin = new BorderDouble(0);
@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			temperatureGroupBox.AddChild(mainContainer);
 			RGBA_Bytes separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotEnds();
 			if (numberOfHeatedExtruders > 1)
 			{
 				for (int i = 0; i < numberOfHeatedExtruders; i++)

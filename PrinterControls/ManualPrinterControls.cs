@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl
 		private DisableableWidget fanControlsContainer;
 
 		private DisableableWidget macroControlsContainer;
+		private DisableableWidget actionControlsContainer;
 
 		private MovementControls movementControlsContainer;
 
@@ -69,8 +71,12 @@ namespace MatterHackers.MatterControl
 			controlsTopToBottomLayout.Name = "ManualPrinterControls.ControlsContainer";
 			controlsTopToBottomLayout.Margin = new BorderDouble(0);
 
+			AddActionControls(controlsTopToBottomLayout);
+
 			AddTemperatureControls(controlsTopToBottomLayout);
 			AddMovementControls(controlsTopToBottomLayout);
+
+			AddMacroControls(controlsTopToBottomLayout);
 
 			FlowLayoutWidget linearPanel = new FlowLayoutWidget();
 			linearPanel.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -79,7 +85,6 @@ namespace MatterHackers.MatterControl
 			AddFanControls(linearPanel);
 			AddAtxPowerControls(linearPanel);
 
-			AddMacroControls(controlsTopToBottomLayout);
 			AddAdjustmentControls(controlsTopToBottomLayout);
 
 			AddChild(controlsTopToBottomLayout);
@@ -132,6 +137,12 @@ namespace MatterHackers.MatterControl
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 		}
 
+		private void AddActionControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			actionControlsContainer = new ActionControls();
+			controlsTopToBottomLayout.AddChild(actionControlsContainer);
+		}
+
 		private void AddMacroControls(FlowLayoutWidget controlsTopToBottomLayout)
 		{
 			macroControlsContainer = new MacroControls();
@@ -179,6 +190,7 @@ namespace MatterHackers.MatterControl
 				movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
 			else // we at least have a printer selected
@@ -198,6 +210,7 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
@@ -219,6 +232,7 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
@@ -238,6 +252,7 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
@@ -257,6 +272,7 @@ namespace MatterHackers.MatterControl
 								//movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 								fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 								macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+								actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 								foreach(var widget in movementControlsContainer.DisableableWidgets)
@@ -282,6 +298,7 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)

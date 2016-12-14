@@ -126,7 +126,6 @@ namespace MatterHackers.MatterControl
 			this.Click += DoOnMouseClick;
 			this.MouseEnterBounds += onEnter;
 			this.MouseLeaveBounds += onExit;
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		private void DoOnMouseClick(object sender, EventArgs e)
@@ -257,19 +256,6 @@ namespace MatterHackers.MatterControl
 				Stroke strokeRect = new Stroke(borderRect, BorderWidth);
 				graphics2D.Render(strokeRect, HoverBorderColor);
 			}
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			//Set background color to new theme
-			this.normalBackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-
-			//Regenerate thumbnails
-			// The thumbnail color is currently white and does not change with this change.
-			// If we eventually change the thumbnail color with the theme we will need to change this.
-			//this.thumbNailHasBeenRequested = false;
-			this.Invalidate();
 		}
 
 		private static ImageBuffer BuildImageFromMeshGroups(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
@@ -594,8 +580,7 @@ namespace MatterHackers.MatterControl
 			if (partPreviewWindow == null)
 			{
 				partPreviewWindow = new PartPreviewMainWindow(this.ItemWrapper, autoRotate);
-				partPreviewWindow.Name = "Part Preview Window Thumbnail";
-				partPreviewWindow.Closed += (object sender, EventArgs e) =>
+				partPreviewWindow.Closed += (s, e) =>
 				{
 					this.partPreviewWindow = null;
 				};

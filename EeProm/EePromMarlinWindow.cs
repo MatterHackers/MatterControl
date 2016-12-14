@@ -266,11 +266,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 			PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(mainContainer));
-#else
 			AddChild(mainContainer);
-#endif
 
 			ShowAsSystemWindow();
 
