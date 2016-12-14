@@ -434,18 +434,9 @@ namespace MatterHackers.MatterControl
 			ApplicationClosed?.Invoke(null, null);
 		}
 
-		static void LoadUITheme()
+		static void LoadOemOrDefaultTheme()
 		{
-			// if the user setting has a theme color assume it is correct and use it right away
-			if (UserSettings.Instance != null)
-			{
-				var themeName = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
-				if (!string.IsNullOrEmpty(themeName))
-				{
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors(themeName);
-					return;
-				}
-			}
+			ActiveTheme.SuspendEvents();
 
 			// if not check for the oem color and use it if set
 			// else default to "Blue - Light"
@@ -456,9 +447,10 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
 				ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
 			}
+
+			ActiveTheme.ResumeEvents();
 		}
 
 		public static ApplicationController Instance
@@ -471,11 +463,10 @@ namespace MatterHackers.MatterControl
 					{
 						globalInstance = new ApplicationController();
 
-						// set the colors
-						LoadUITheme();
+						// Set the default theme colors
+						LoadOemOrDefaultTheme();
 
-						// We previously made a call to Reload, which fired the method twice due to it being in the static constructor. Accessing
-						// any property will run the static constructor and perform the Reload behavior without the overhead of duplicate calls
+						// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 						bool na = ProfileManager.Instance.IsGuestProfile;
 
 						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)

@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						BedSettings.SetMakeAndModel(activeInstance.GetValue(SettingsKey.make), activeInstance.GetValue(SettingsKey.model));
 					}
 
-					SwitchToPrinterTheme(MatterControlApplication.IsLoading);
+					SwitchToPrinterTheme(!MatterControlApplication.IsLoading);
 					if (!MatterControlApplication.IsLoading)
 					{
 						OnActivePrinterChanged(null);
@@ -132,39 +132,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public static void SwitchToPrinterTheme(bool doReloadEvent)
 		{
-			if (ActiveSliceSettings.Instance != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				if (ActiveSliceSettings.Instance.PrinterSelected)
+				//Attempt to load userSetting theme as default
+				string activeThemeName = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_name);
+				if (!string.IsNullOrEmpty(activeThemeName))
 				{
-					//Attempt to load userSetting theme as default
-					if (ActiveSliceSettings.Instance.Contains(SettingsKey.active_theme_name))
+					if (!doReloadEvent)
 					{
-						string activeThemeName = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_name);
-						if (!doReloadEvent)
-						{
-							ActiveTheme.SuspendEvents();
-						}
-						ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
-
-						// Save the theme so we can load it first thing on startup before a profile is loaded.
-						UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, ActiveTheme.Instance.Name);
-
-						ActiveTheme.ResumeEvents();
+						ActiveTheme.SuspendEvents();
 					}
+
+					ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
+
+					ActiveTheme.ResumeEvents();
 				}
 			}
-		}
-
-		static ActiveSliceSettings()
-		{
-			// Load last profile or fall back to empty
-			Instance = ProfileManager.Instance?.LoadWithoutRecovery(ProfileManager.Instance.LastProfileID) ?? ProfileManager.LoadEmptyProfile();
 		}
 
 		internal static async Task SwitchToProfile(string printerID)
 		{
 			ProfileManager.Instance.LastProfileID = printerID;
-			Instance = (await ProfileManager.LoadProfileAsync(printerID)) ?? ProfileManager.LoadEmptyProfile();
+			Instance = (await ProfileManager.LoadProfileAsync(printerID)) ?? ProfileManager.EmptyProfile;
 		}
 
 		private static void OnActivePrinterChanged(EventArgs e)

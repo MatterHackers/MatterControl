@@ -47,7 +47,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
-		public static ProfileManager Instance { get; private set; }
+		private static ProfileManager activeInstance = null;
+		public static ProfileManager Instance
+		{
+			get
+			{
+				return activeInstance;
+			}
+			private set
+			{
+				activeInstance = value;
+
+				// If the loaded slice settings do not match the last active settings for this profile, change to the last active
+				if (ActiveSliceSettings.Instance?.ID != activeInstance.LastProfileID)
+				{
+					// Load or download on a background thread
+					var lastProfile = LoadProfileAsync(activeInstance.LastProfileID).Result;
+
+					if (MatterControlApplication.IsLoading)
+					{
+						ActiveSliceSettings.Instance = lastProfile ?? EmptyProfile;
+					}
+					else
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							// Assign on the UI thread
+							ActiveSliceSettings.Instance = lastProfile ?? EmptyProfile;
+						});
+					}
+				}
+			}
+		}
 
 		private static EventHandler unregisterEvents;
 
@@ -59,6 +90,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ProfileManager()
 		{
+			EmptyProfile = new PrinterSettings() { ID = "EmptyProfile" };
+			EmptyProfile.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
 			ReloadActiveUser();
 		}
@@ -147,32 +181,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				loadedInstance = new ProfileManager() { UserName = userName };
 			}
 
-			// If the loaded slice settings do not match the last active settings for this profile, change to the last active
-			if (ActiveSliceSettings.Instance?.ID != loadedInstance.LastProfileID)
-			{
-				// async so we can safely wait for LoadProfileAsync to complete
-				Task.Run(async () =>
-				{
-					// Load or download on a background thread
-					var lastProfile = await LoadProfileAsync(Instance.LastProfileID);
-
-					if (MatterControlApplication.IsLoading)
-					{
-						// TODO: Not true - we're on a background thread in an async lambda... what is the intent of this?
-						// Assign on the UI thread
-						ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
-					}
-					else
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							// Assign on the UI thread
-							ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
-						});
-					}
-				});
-			}
-
 			return loadedInstance;
 		}
 
@@ -209,13 +217,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static PrinterSettings LoadEmptyProfile()
-		{
-			var emptyProfile = new PrinterSettings() { ID = "EmptyProfile" };
-			emptyProfile.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
-
-			return emptyProfile;
-		}
+		public static PrinterSettings EmptyProfile { get; }
 
 		[JsonIgnore]
 		public string LastProfileID

@@ -357,7 +357,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					// If we still have failed to recover a profile, create an empty profile with
 					// just enough data to delete the printer
-					printerSettings = ProfileManager.LoadEmptyProfile();
+					printerSettings = ProfileManager.EmptyProfile;
 					printerSettings.ID = printerInfo.ID;
 					printerSettings.UserLayer[SettingsKey.device_token] = printerInfo.DeviceToken;
 					printerSettings.Helpers.SetComPort(printerInfo.ComPort);
@@ -548,6 +548,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 		[JsonIgnore]
 		public SettingsHelpers Helpers { get; set; }
+
 		[JsonIgnore]
 		public bool PrinterSelected => OemLayer?.Keys.Count > 0;
 
@@ -977,12 +978,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
 		{
 			var persistenceLayer = layer ?? UserLayer;
-
-			if(settingsKey == SettingsKey.active_theme_name)
-			{
-				// also save it to the user settings so we can load it first thing on startup before a profile is loaded.
-				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, settingsValue);
-			}
 
 			// If the setting exists and is set the requested value, exit without setting or saving
 			string existingValue;
