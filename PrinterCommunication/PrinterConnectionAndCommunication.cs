@@ -2222,6 +2222,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void AttemptToConnect(string serialPortName, int baudRate)
 		{
+			// make sure we don't have a left over print task
+			activePrintTask = null;
+
 			connectionFailureMessage = LocalizedString.Get("Unknown Reason");
 
 			if (PrinterIsConnected)
@@ -2450,6 +2453,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
 					pauseHandlingStream1 = new PauseHandlingStream(new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
+					// And increment the recovery count
+					activePrintTask.RecoveryCount++;
+					activePrintTask.Commit();
 				}
 				else
 				{
