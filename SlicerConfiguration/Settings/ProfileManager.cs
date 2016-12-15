@@ -29,20 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	using System.Collections.ObjectModel;
-	using System.Threading.Tasks;
-	using Agg;
-	using DataStorage;
-	using Localizations;
-	using SettingsManagement;
-
 	public class ProfileManager
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
@@ -66,14 +64,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					if (MatterControlApplication.IsLoading)
 					{
-						ActiveSliceSettings.Instance = lastProfile ?? EmptyProfile;
+						ActiveSliceSettings.Instance = lastProfile ?? PrinterSettings.Empty;
 					}
 					else
 					{
 						UiThread.RunOnIdle(() =>
 						{
 							// Assign on the UI thread
-							ActiveSliceSettings.Instance = lastProfile ?? EmptyProfile;
+							ActiveSliceSettings.Instance = lastProfile ?? PrinterSettings.Empty;
 						});
 					}
 				}
@@ -90,9 +88,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ProfileManager()
 		{
-			EmptyProfile = new PrinterSettings() { ID = "EmptyProfile" };
-			EmptyProfile.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
-
 			ActiveSliceSettings.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
 			ReloadActiveUser();
 		}
@@ -216,8 +211,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return Profiles.Where(p => p.ID == profileID).FirstOrDefault();
 			}
 		}
-
-		public static PrinterSettings EmptyProfile { get; }
 
 		[JsonIgnore]
 		public string LastProfileID

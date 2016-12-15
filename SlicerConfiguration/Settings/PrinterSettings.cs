@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static PrinterSettingsLayer baseLayerCache;
 
+		public static PrinterSettings Empty { get; }
+
 		public int DocumentVersion { get; set; } = LatestVersion;
 
 		public string ID { get; set; }
@@ -74,6 +76,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal PrinterSettingsLayer MaterialLayer { get; private set; }
 
 		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
+
+		static PrinterSettings()
+		{
+			Empty = new PrinterSettings() { ID = "EmptyProfile" };
+			Empty.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
+		}
 
 		public PrinterSettings()
 		{
@@ -91,6 +99,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 		}
+
 		public IEnumerable<GCodeMacro> ActionMacros()
 		{
 			foreach (var macro in Macros)
@@ -357,7 +366,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					// If we still have failed to recover a profile, create an empty profile with
 					// just enough data to delete the printer
-					printerSettings = ProfileManager.EmptyProfile;
+					printerSettings = PrinterSettings.Empty;
 					printerSettings.ID = printerInfo.ID;
 					printerSettings.UserLayer[SettingsKey.device_token] = printerInfo.DeviceToken;
 					printerSettings.Helpers.SetComPort(printerInfo.ComPort);
