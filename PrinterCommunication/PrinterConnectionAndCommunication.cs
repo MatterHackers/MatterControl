@@ -288,8 +288,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			// repetier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("accelerometer send i2c error", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("accelerometer i2c recv error", PrinterReportsError);
+			ReadLineStartCallBacks.AddCallbackToKey("accelerometer send i2c error", PrinterReportsError);
+			ReadLineStartCallBacks.AddCallbackToKey("accelerometer i2c recv error", PrinterReportsError);
 
 			// s3g temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("Bot is Shutdown due to Overheat", PrinterReportsError);
