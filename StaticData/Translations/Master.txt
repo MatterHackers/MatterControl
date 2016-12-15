@@ -5671,3 +5671,18 @@ Translated:Discard Changes
 English:Stay Connected
 Translated:Stay Connected
 
+English:Cancel Print
+Translated:Cancel Print
+
+English:Continue Printing
+Translated:Continue Printing
+
+English:Recovered Once
+Translated:Recovered Once
+
+English:Recovered once
+Translated:Recovered once
+
+English:recovered once
+Translated:recovered once
+

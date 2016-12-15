@@ -334,6 +334,8 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string PrintingGCodeFileName { get; set; }
 
+		public double RecoveryCount { get; set; }
+
 		public double PercentDone { get; set; }
 
 		public bool PrintComplete { get; set; }
