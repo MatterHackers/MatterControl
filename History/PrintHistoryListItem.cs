@@ -146,7 +146,19 @@ namespace MatterHackers.MatterControl.PrintHistory
 					if (printTask.PercentDone > 0)
 					{
 						timeIndicator.AutoExpandBoundsToText = true;
-						timeIndicator.Text += " ({0:0.0}%)".FormatWith(printTask.PercentDone);
+						timeIndicator.Text += $" ({printTask.PercentDone:0.0}%)";
+						
+						if(printTask.RecoveryCount > 0)
+						{
+							if (printTask.RecoveryCount == 1)
+							{
+								timeIndicator.Text += " - " + "recovered once".Localize();
+							}
+							else
+							{
+								timeIndicator.Text += " - " + "recovered {0} times".FormatWith(printTask.RecoveryCount);
+							}
+						}
 					}
 
 					timeIndicator.Margin = new BorderDouble(right: 6);
