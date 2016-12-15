@@ -118,9 +118,9 @@ namespace MatterHackers.MatterControl.ActionBar
 				};
 
 				disconnectPrinterButton = actionBarButtonFactory.Generate("Disconnect".Localize().ToUpper(), "icon_power_32x32.png");
+				disconnectPrinterButton.Name = "Disconnect from printer button";
 				disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
 				disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
-
 				disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
 				disconnectPrinterButton.Cursor = Cursors.Hand;
 				disconnectPrinterButton.Click += (s, e) => UiThread.RunOnIdle(OnIdleDisconnect);
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
-				StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO, "Disconnect".Localize(), "Stay Connected".Localize());
 			}
 			else
 			{

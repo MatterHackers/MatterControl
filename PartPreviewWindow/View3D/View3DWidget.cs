@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							if (saveButtons.Visible)
 							{
-								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?".Localize(), "Save Changes".Localize(), StyledMessageBox.MessageType.YES_NO);
+								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?".Localize(), "Save Changes".Localize(), StyledMessageBox.MessageType.YES_NO, "Save Changed".Localize(), "Discard Changes".Localize());
 							}
 							else
 							{

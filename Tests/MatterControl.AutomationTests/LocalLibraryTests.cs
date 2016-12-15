@@ -508,7 +508,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.WaitForName("Cancel Wizard Button", 1);
 
 				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -517,13 +517,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 					testRunner.ClickByName("Row Item Calibration - Box");
-					testRunner.Wait(1);
 
 					int initialQueueCount = QueueData.Instance.ItemCount;
 
 					// Click Library Item Print Button
 					testRunner.ClickByName("Row Item Calibration - Box Print Button");
-					testRunner.Wait(2);
+					testRunner.Wait(.5);
 
 					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
 					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
@@ -533,7 +532,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Cancel Print Button");
 				}
 
-				testRunner.Wait(1);
+				testRunner.WaitForName("Start Print Button", 5);
 
 				return Task.FromResult(0);
 

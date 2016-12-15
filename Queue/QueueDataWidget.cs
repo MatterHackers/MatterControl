@@ -670,7 +670,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			menuItems.Add(new PrintItemAction()
 			{
-				Title = "Add To Library".Localize(),
+				Title = "Add to Library".Localize(),
 				Action = (items, queueDataView) => addToLibraryButton_Click(null, null)
 			});
 

@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
 				string message = "{0}:\n'{1}'\n\n{2}?".FormatWith(notFoundMessage, maxLengthName, notFoundMessageEnd);
 				string titleLabel = LocalizedString.Get("Item not Found");
-				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO, "Remove".Localize(), "Cancel".Localize());
 			});
 		}
 

@@ -468,7 +468,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
 			{
-				StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO, "Cancel Print".Localize(), "Continue Printing".Localize());
 			}
 			else
 			{
