@@ -5686,3 +5686,15 @@ Translated:Recovered once
 English:recovered once
 Translated:recovered once
 
+English:Add New Printer
+Translated:Add New Printer
+
+English:Add New Setting
+Translated:Add New Setting
+
+English:Sync Dashboard
+Translated:Sync Dashboard
+
+English:SD Card
+Translated:SD Card
+
