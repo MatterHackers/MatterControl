@@ -577,6 +577,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 			else if(ItemCount > 0
 				&& SelectedIndex >= ItemCount)
+			{
+				SelectedIndex = ItemCount - 1;
+			}
 		}
 
 		public void Select(int index)
