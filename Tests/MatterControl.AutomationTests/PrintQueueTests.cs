@@ -302,6 +302,40 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
+		public async Task RemoveLastItemInListChangesSelection()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				testRunner.Wait(1);
+
+				int expectedQueueCount = QueueData.Instance.ItemCount - 1;
+
+				Assert.AreEqual(QueueData.Instance.SelectedIndex, 0);
+
+				testRunner.ClickByName("Queue Item MatterControl - Coin", 2);
+
+				Assert.AreEqual(QueueData.Instance.SelectedIndex, 3);
+
+				// Remove target item
+				testRunner.ClickByName("Queue Remove Button", 2);
+				testRunner.Wait(.5);
+
+				// after remove we select the next up the list
+				Assert.AreEqual(QueueData.Instance.SelectedIndex, 0);
+
+				// Assert removed
+				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "After Remove button click, Queue count should be 1 less");
+				Assert.IsFalse(testRunner.WaitForName("Queue Item MatterControl - Coin", .5), "Target item should not exist after Remove");
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+		}
+
+		[Test, Apartment(ApartmentState.STA)]
 		public async Task EditButtonTurnsOnOffEditMode()
 		{
 			AutomationTest testToRun = (testRunner) =>
