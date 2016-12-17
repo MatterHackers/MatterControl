@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 			languageDict["Deutsch"] = "DE";
 			languageDict["Español"] = "ES";
 			languageDict["Français"] = "FR";
-			languageDict["Greek"] = "EL";
+			languageDict["ελληνικά"] = "EL";
 			languageDict["Polski"] = "PL";
 			languageDict["Türkçe"] = "TR";
 #if DEBUG
