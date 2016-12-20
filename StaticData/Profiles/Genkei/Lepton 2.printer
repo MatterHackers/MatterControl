@@ -190,6 +190,7 @@
     {
       "layer_name": "PLA",
       "layer_id": "10231c24-a442-42b7-a676-f81eb6f63370",
+      "filament_density": "1.24",
       "temperature": "210",
       "bed_temperature": "55",
       "retract_length": "2",

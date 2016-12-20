@@ -244,31 +244,21 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
-		public void BottomSolidLayersEqualsOneMM()
+		public void BottomSolidLayersNotZero()
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
 				string bottomSolidLayers = settings.GetValue("bottom_solid_layers");
 				if (!string.IsNullOrEmpty(bottomSolidLayers))
 				{
-					if (bottomSolidLayers != "1mm")
+					if (bottomSolidLayers == "0")
 					{
 						printer.RuleViolated = true;
 						return;
 					}
 
-					Assert.AreEqual("1mm", bottomSolidLayers, "[bottom_solid_layers] must be 1mm: " + printer.RelativeFilePath);
+					//Assert.AreEqual("1mm", bottomSolidLayers, "[bottom_solid_layers] must be 1mm: " + printer.RelativeFilePath);
 				}
-			});
-		}
-
-		[Test]
-		public void NoFirstLayerTempInStartGcode()
-		{
-			ValidateOnAllPrinters((printer, settings) =>
-			{
-				string startGcode = settings.GetValue("start_gcode");
-				Assert.False(startGcode.Contains("first_layer_temperature"), "[start_gcode] should not contain [first_layer_temperature]" + printer.RelativeFilePath);
 			});
 		}
 
