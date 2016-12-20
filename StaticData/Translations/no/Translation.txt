@@ -1,0 +1,5703 @@
+English:Connect
+Translated:Koble
+
+English:Disconnect
+Translated:Frakople
+
+English:Status
+Translated:Status
+
+English:Connected
+Translated:Tilkoblet
+
+English:Not Connected
+Translated:Ikke tilkoblet
+
+English:Select Printer
+Translated:Velg skriver
+
+English:Options
+Translated:alternativer
+
+English:Next Print
+Translated:Neste Skriv ut
+
+English:Add
+Translated:Legg til
+
+English:Add a file to be printed
+Translated:Legg til en fil som skal skrives ut
+
+English:Start
+Translated:Begynne
+
+English:Begin printing the selected item.
+Translated:Begynn å skrive det valgte elementet.
+
+English:Skip
+Translated:Hopp
+
+English:Skip the current item and move to the next in queue
+Translated:Hopp gjeldende element og flytte til den neste i køen
+
+English:Remove
+Translated:Fjerne
+
+English:Remove current item from queue
+Translated:Fjern gjeldende element fra køen
+
+English:Pause
+Translated:Pause
+
+English:Pause the current print
+Translated:Pause gjeldende utskrifts
+
+English:Cancel Connect
+Translated:Avbryt Connect
+
+English:Stop trying to connect to the printer.
+Translated:Stopp prøver å koble til skriveren.
+
+English:Cancel
+Translated:Kansellere
+
+English:Stop the current print
+Translated:Stoppe gjeldende utskrifts
+
+English:Resume
+Translated:Gjenoppta
+
+English:Resume the current print
+Translated:Gjenoppta den aktuelle utskrifts
+
+English:Reprint
+Translated:opptrykk
+
+English:Print current item again
+Translated:Skriv ut gjeldende element igjen
+
+English:Done
+Translated:Ferdig
+
+English:Move to next print in queue
+Translated:Flytt til neste utskriftskøen
+
+English:No printer selected.  Press 'Connect' to choose a printer.
+Translated:Ingen skriver er valgt. Trykk på 'Connect "for å velge en skriver.
+
+English:Press 'Add' to choose an item to print
+Translated:Trykk "Legg til" for å velge et element for å skrive ut
+
+English:No items in the print queue
+Translated:Ingenting i utskriftskøen
+
+English:Queued to Print
+Translated:I kø for å Skriv ut
+
+English:View
+Translated:Utsikt
+
+English:Copy
+Translated:Kopiere
+
+English:Add to Queue
+Translated:Legg til i kø
+
+English:Export
+Translated:Eksport
+
+English:Est. Print Time
+Translated:Est. Print Tid
+
+English:Calculating...
+Translated:Beregner ...
+
+English:complete
+Translated:fullstendig
+
+English:Remove All
+Translated:Fjern alle
+
+English:Queue Options
+Translated:køen alternativer
+
+English: Import from Zip
+Translated: Import fra Zip
+
+English: Export to Zip
+Translated: Eksport til Zip
+
+English: Export to Folder
+Translated: Eksport til mappe
+
+English:Extra
+Translated:Ekstra
+
+English: Create Part Sheet
+Translated: Opprett Part Sheet
+
+English:Search
+Translated:Søke
+
+English:Import
+Translated:Import
+
+English:Create
+Translated:Skape
+
+English:Check for Update
+Translated:Se etter oppdatering
+
+English:Download Update
+Translated:Last ned oppdatering
+
+English:Install Update
+Translated:Installer oppdatering
+
+English:There are updates available.
+Translated:Det finnes oppdateringer tilgjengelig.
+
+English:Checking for updates...
+Translated:Ser etter oppdateringer ...
+
+English:MatterControl
+Translated:MatterControl
+
+English:Version {0}
+Translated:Versjon {0}
+
+English:Developed by MatterHackers
+Translated:Utviklet av MatterHackers
+
+English:Please consider 
+Translated:Vær så snill å vurder
+
+English:donating
+Translated:donere
+
+English: to help support and improve MatterControl.
+Translated: å bidra til å støtte og forbedre MatterControl.
+
+English:Special thanks to Alessandro Ranellucci for his incredible work on 
+Translated:Spesiell takk til Alessandro Ranellucci for hans utrolige arbeid
+
+English:Slic3r
+Translated:Slic3r
+
+English:and to David Braam and Ultimaker BV, for the amazing 
+Translated:og til David Braam og Ultimaker BV, for den fantastiske
+
+English:CuraEngine
+Translated:CuraEngine
+
+English:Send Feedback
+Translated:Send tilbakemelding
+
+English:www.matterhackers.com
+Translated:www.matterhackers.com
+
+English:Copyright © 2014 MatterHackers, Inc.
+Translated:Copyright © 2014 MatterHackers, Inc.
+
+English:Build: {0} | 
+Translated:Bygg: {0} |
+
+English:Clear Cache
+Translated:Tøm cache
+
+English:Queue
+Translated:Kø
+
+English:Rotate
+Translated:Rotere
+
+English:Scale
+Translated:Scale
+
+English:Mirror
+Translated:Speil
+
+English:Display
+Translated:Vise
+
+English:Show Print Bed
+Translated:Show Print Bed
+
+English:Show Print Area
+Translated:Vis utskriftsområde
+
+English:Show Wireframe
+Translated:Vis Rammeverk
+
+English:Auto-Arrange
+Translated:Auto-Ordne
+
+English:Save
+Translated:Lagre
+
+English:Degrees
+Translated:grader
+
+English:Align to Bed
+Translated:Rett til Bed
+
+English:Ratio
+Translated:Forhold
+
+English:Conversions
+Translated:Konverteringer
+
+English:reset
+Translated:reset
+
+English:Apply Scale
+Translated:Påfør Scale
+
+English:Finding Parts
+Translated:finne deler
+
+English:Edit
+Translated:Redigere
+
+English:Delete
+Translated:Slett
+
+English:Close
+Translated:Lukke
+
+English:Generate
+Translated:Generere
+
+English:No GCode Available...
+Translated:Ingen GCode Tilgjengelig ...
+
+English:Loading GCode...
+Translated:Laster GCode ...
+
+English:Press 'generate' to view layers
+Translated:Trykk på 'generere' for å se lagene
+
+English:Model
+Translated:Modell
+
+English:Layer
+Translated:Lag
+
+English:Library
+Translated:Bibliotek
+
+English:About
+Translated:Handle om
+
+English:Advanced\nControls
+Translated:Avansert\nControls
+
+English:Print\nQueue
+Translated:Skriv ut\nQueue
+
+English:Actual
+Translated:Faktiske
+
+English:Target
+Translated:Mål
+
+English:Presets
+Translated:Presets
+
+English:Movement Controls
+Translated:Movement Controls
+
+English:ALL
+Translated:ALLE
+
+English:UNLOCK
+Translated:LÅSE OPP
+
+English:Retract
+Translated:Trekke tilbake
+
+English:Extrude
+Translated:Extrude
+
+English:Communications
+Translated:kommunikasjon
+
+English:SHOW TERMINAL
+Translated:SHOW TERMINAL
+
+English:Fan Controls
+Translated:fan Controls
+
+English:Fan Speed:
+Translated:Fan Speed:
+
+English:Macros
+Translated:makroer
+
+English:No macros are currently setup for this printer.
+Translated:Ingen makroer er nå satt opp for denne skriveren.
+
+English:Tuning Adjustment (while printing)
+Translated:Tuning Adjustment (under utskrift)
+
+English:Speed Multiplier
+Translated:Speed ​​Multiplier
+
+English:Set
+Translated:Sett
+
+English:Extrusion Multiplier
+Translated:Extrusion Multiplier
+
+English:Controls
+Translated:Controls
+
+English:Slice Settings
+Translated:Slice Innstillinger
+
+English:Show Help
+Translated:Show Hjelp
+
+English:Show All Settings
+Translated:Vis Alle innstillinger
+
+English:Active Settings
+Translated:aktive innstillinger
+
+English:unsaved changes
+Translated:ulagrede endringer
+
+English:Revert
+Translated:Tilbakestill
+
+English:Options   
+Translated:alternativer
+
+English:Slice Engine
+Translated:Slice Engine
+
+English:No Printer Selected
+Translated:Ingen skriver er valgt
+
+English:No printer is currently selected. Select printer to edit slice settings.
+Translated:Ingen skriver er valgt. Velg skriver for å redigere slice innstillinger.
+
+English:Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
+Translated:Forsøk på å minimere antall omkretsen krysset. Dette kan hjelpe med oser eller strenger.
+
+English:The shape of the physical print bed.
+Translated:Formen av den fysiske trykk sengen.
+
+English:The size of the print bed.
+Translated:Størrelsen på print sengen.
+
+English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
+Translated:Temperaturen å sette sengen til etter det første laget er skrevet ut. Sett til 0 for å eliminere bed temperatur kommandoer.
+
+English:How many layers will be solid filled on the bottom surfaces of the object.
+Translated:Hvor mange lag vil være solid fylt på de nedre overflater av gjenstanden.
+
+English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
+Translated:Akselerasjon til under bygge bro. Sett til 0 for å deaktivere endre skriverens akselerasjon.
+
+English:The fan speed to use during bridging.
+Translated:Viftehastigheten å bruke under bro.
+
+English:This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
+Translated:Dette kontrollerer forholdet av materialet ekstruder under bridging. Reduksjon av dette svakt kan bidra til å bygge bro ved strekking av filamentet mer, ved hjelp av en vifte kan også bidra sterkt.
+
+English:The speed to move when bridging between walls.
+Translated:Hastigheten til å bevege seg ved å bygge bro mellom veggene.
+
+English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
+Translated:Mengden rand som vil bli trukket rundt hver gjenstand. Dette er nyttig for å sikre at delene bli festet til sengen.
+
+English:The height of the printable area. If set to 0 the parts height will not be validated.
+Translated:Høyden på utskriftsområdet. Hvis satt til 0 i deler høyde ikke vil bli godkjent.
+
+English:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
+Translated:Hver enkelt del er skrevet ut til ferdigstillelse da ekstruderen senkes tilbake til sengen og den neste delen er skrevet ut.
+
+English:Moves the extruder up off the part to allow cooling.
+Translated:Flytter ekstruder opp av en del for å tillate kjøling.
+
+English:Turns on and off all cooling settings (all settings below this one).
+Translated:Slår på og av hele kjøleinnstillinger (alle innstillingene nedenfor denne).
+
+English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
+Translated:Akselerasjon å bruke på alle trekk som ikke er definert ovenfor. Sett til 0 for å deaktivere endre skriverens akselerasjon.
+
+English:The number of layers for which the fan will be forced to remain off.
+Translated:Det antall lag som viften vil bli tvunget til å forbli av.
+
+English:This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
+Translated:Dette gcode vil bli satt inn på slutten av alle automatisk utgang (helt på slutten av gcode kommandoer).
+
+English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Perimeters speed.
+Translated:Hastigheten til å skrive ut de synlige ytterkantene. Denne kan settes eksplisitt eller som en prosentandel av den Perimetere hastighet.
+
+English:Normally external perimeters are printed last, this makes them go first.
+Translated:Normalt eksterne utkant skrives siste, dette gjør dem gå først.
+
+English:Allow slicer to generate extra perimeters when needed for sloping walls.
+Translated:Tillat høvelen for å generere ekstra utkant når det er behov for skråvegger.
+
+English:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
+Translated:Dette brukes til å finne ut hvor langt fra hverandre de enkelte delene skal trykkes for å tillate dem å være ferdig før du skriver neste del.
+
+English:This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+Translated:Dette er forskyvningen av hver ekstruder i forhold til den første ekstruder. Bare nyttig for flere extruder maskiner.
+
+English:This is the identifier used in the gcode to specify the extruder.
+Translated:Dette er identifikatoren brukes i gcode å angi ekstruder.
+
+English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good min value) will decrease the amount being extruded.
+Translated:Alle profiler multipliseres med denne verdien. Øke den ovenfor 1 (1.1 er en god maksimal verdi) vil øke mengden av filamentet som ekstruderes; redusere det (0,9 er en god min verdi) vil redusere beløpet som blir ekstrudert.
+
+English:Leave this as 0 to allow automatic calculation of extrusion width.
+Translated:La dette som 0 for å tillate automatisk beregning av ekstrudering bredde.
+
+English:This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.
+Translated:Dette vil tvinge viften til å forbli på gjennom hele print. Generelt bør du ha dette av og bare aktivere automatisk kjøling.
+
+English:If a layer is estimated to take less than this to print, the fan will be turned on.
+Translated:Hvis et lag er beregnet å ta mindre enn dette for å skrive, vil viften slås på.
+
+English:This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
+Translated:Dette bør settes til den faktiske diameteren på filament du bruker på skriveren. Mål 5 ganger med calipers, kaste ut toppen og bunnen, og gjennomsnittlig gjenværende tre.
+
+English:Sets the starting angle of the infill. Not used when bridging.
+Translated:Setter start vinkelen på infill. Ikke brukes når bygge bro.
+
+English:The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
+Translated:Forholdet av materiale for å tomrom varierte 0 til 1. null ville ikke være noe fortetting; 1 er solid fylling.
+
+English:The pattern used on the inside portions of the print.
+Translated:Mønsteret som brukes på innsiden deler av print.
+
+English:Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.
+Translated:Akselerasjon å bruke mens du skriver ut det første laget. Sett til 0 til standard første laget akselerasjon.
+
+English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
+Translated:Temperaturen å sette sengen før du skriver det første laget. Skriveren vil vente til denne temperaturen er nådd før utskrift. Sett til 0 for å eliminere bed temperatur kommandoer.
+
+English:Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.
+Translated:Å sette det til mer enn 100% kan ofte hjelpe det første lag har bedre adhesjon til trykk sengen.
+
+English:Sets the height of the first layer. It is often desirable to print a taller first layer to ensure a good solid adhesion to the build plate.
+Translated:Angir høyden av det første lag. Det er ofte ønskelig å skrive ut en høyere første lag for å sikre en god, fast stoff adhesjon til byggeplaten.
+
+English:The speed to move while printing the first layer.  If expressed as a percentage it will modify the corresponding speed set above.
+Translated:Hastigheten å bevege seg mens du skriver det første laget. Hvis uttrykt som en prosentandel vil det endre den tilsvarende hastigheten satt over.
+
+English:The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
+Translated:Temperaturen for å angi at ekstruderen for å skrive ut før det første laget med en del. Skriveren vil vente til denne temperaturen er nådd før utskrift.
+
+English:Use G0 for moves rather than G1.
+Translated:Bruk G0 for trekk heller enn G1.
+
+English:Speed to fill small gaps. Keep low to avoid vibration. Set to 0 to skip filling small gaps.
+Translated:Speed ​​å fylle små hull. Hold lavt for å unngå vibrasjoner. Sett til 0 for å hoppe fylle små hull.
+
+English:Use firmware arcs rather than multiple segments for curves.
+Translated:Bruk firmware buer i stedet for flere segmenter for kurver.
+
+English:Include detailed comments in the gcode.
+Translated:Ta med detaljerte kommentarer i gcode.
+
+English:Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.
+Translated:Noen firmware bruker ulike g og m koder. Sette dette sikrer at produksjonen gcode vil bruke de riktige kommandoene.
+
+English:Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.
+Translated:Akselerasjon å bruke mens gjenfylling. Sett til 0 for å deaktivere endre skriverens akselerasjon.
+
+English:Sets which layers will receive infill. This should normally stay set to 1 to make strong parts.
+Translated:Stiller hvilke lag vil motta infill. Dette skal normalt holde satt til 1 for å gjøre sterke deler.
+
+English:The index of the extruder to use for infill.
+Translated:Indeksen av ekstruderen å bruke for fortetting.
+
+English:Sets infill to happen before perimeters are created.
+Translated:Sett infill til å skje før utkant er opprettet.
+
+English:Creates infill only where it will be used as internal support.
+Translated:Oppretter infill kun der det vil bli brukt som intern støtte.
+
+English:The speed to print infill.
+Translated:Hastigheten å skrive ut infill.
+
+English:This gcode will be inserted right after the change in z height for the next layer.
+Translated:Dette gcode vil bli satt inn rett etter endringen i z høyde for det neste lag.
+
+English:Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.
+Translated:Angir høyden på hvert lag i print. Et mindre antall vil skape flere lag og mer vertikal nøyaktighet, men også et lavere trykk.
+
+English:This is the maximum speed that your fan can run at.
+Translated:Dette er den maksimale hastigheten som fan kan kjøre på.
+
+English:This is the minimum amount of filament that must be extruded before a rectarction can occure.
+Translated:Dette er det minimum av filament som må ekstrudert før en rectarction kan forekomme.
+
+English:This is the minimum fan speed that your fan can run at.
+Translated:Dette er minimum viftehastighet at viften kan kjøre på.
+
+English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the min layer time.
+Translated:Dette er den laveste hastigheten som skriveren vil redusere til å gjøre laget ta lang nok til å tilfredsstille min lag tid.
+
+English:Sets the minimum amount of filament to use drawing the skirt loops. This will cause at least enough skirt loops to be drawn to use this amount of filament.
+Translated:Angir minimum av filament å bruke tegning skjørt sløyfer. Dette vil føre til i det minste nok til skjørtet løkker til å bli trukket for å bruke denne mengde filament.
+
+English:These notes will be added as comments in the header of the output gcode.
+Translated:Disse notatene vil bli lagt til som kommentarer i header av produksjonen gcode.
+
+English:This is the diameter of your extruder nozle.
+Translated:Dette er diameteren på extruder nozle.
+
+English:Prevents retraction while within a printing perimeter.
+Translated:Hindrer tilbaketrekking mens innenfor en utskrift omkretsen.
+
+English:This will lower the temperature of the non-printing extruder to help prevent oozing.
+Translated:Dette vil senke temperaturen av den ikke-trykkende ekstruder for å hindre oser.
+
+English:Experimental feature that attempts to improve overhangs using the fan and bridge settings.
+Translated:Eksperimentell funksjon som forsøker å forbedre overheng ved hjelp av viften og bro innstillinger.
+
+English:Sets the way that slicer creates file names (this is not used by MatterControl).
+Translated:Setter den måten at høvelen skaper filnavn (denne er ikke brukt av MatterControl).
+
+English:Acceleration to use on perimeters. Set to 0 to disable changing the printer's acceleration.
+Translated:Akselerasjon å bruke på utkant. Sett til 0 for å deaktivere endre skriverens akselerasjon.
+
+English:The index of the extruder to use for perimeters.
+Translated:Indeksen av ekstruderen å bruke for utkant.
+
+English:Sets the default movement speed while printing perimeters.
+Translated:Angir standard bevegelseshastighet under utskrift utkant.
+
+English:The number of external layers or shells to create.
+Translated:Antallet ytre lag eller skall til å lage.
+
+English:You can include additional programs to process the gcode after slicer is finished. The complete path of the program to run should be included here.
+Translated:Du kan ta med flere programmer for å behandle den gcode etter høvelen er ferdig. Den fullstendige banen til programmet til å kjøre bør inkluderes her.
+
+English:The position (coordinates) of the center of the print bed.
+Translated:Den posisjon (koordinater) for sentrum av trykk sengen.
+
+English:Number of layers to print before printing any parts.
+Translated:Antall lag som skal skrives ut før du skriver ut noen deler.
+
+English:Start each new layer from a different vertex to reduce seams.
+Translated:Start hver nye laget fra en annen topp-punkt for å redusere sømmer.
+
+English:The minimum distance of a non-printing move that will result in a retraction.
+Translated:Minste avstand fra en ikke-utskrift trekk som vil resultere i en tilbaketrekking.
+
+English:If set, a retraction will occur prior to changing the layer height.
+Translated:Hvis satt, vil en tilbaketrekking skje før du bytter lag høyde.
+
+English:The amount that the filament will be reversed after each qualifying non-printing move.
+Translated:Beløpet som filamentet vil bli reversert etter hvert kvalifiserer ikke-utskrift trekk.
+
+English:The amount that the filament will be reversed before changing to a new tool.
+Translated:Beløpet som filamentet vil bli reversert før du skifter til et nytt verktøy.
+
+English:The amount the extruder head will be lifted after each retraction.
+Translated:Beløpet ekstruderhodet vil bli løftet etter hvert dementi.
+
+English:The amount the filament will be retracted when changing to a different extruder.
+Translated:Beløpet filamentet vil bli trukket tilbake når du bytter til en annen ekstruder.
+
+English:No updates are currently available.
+Translated:Ingen oppdateringer er tilgjengelig for øyeblikket.
+
+English:Additional amount of filament that will be extruded after a retraction.
+Translated:Ytterligere mengde av filamentet som skal ekstruderes etter en tilbaketrekking.
+
+English:The amount of extra extrusion that will occur when an extruder is selected.
+Translated:Mengden av ekstra ekstrudering som vil skje når en ekstruder er valgt.
+
+English:The speed that the filament will be retracted (and re-extruded).
+Translated:Hastigheten at filamentet vil bli trukket tilbake (og re-ekstrudert).
+
+English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
+Translated:Minste funksjonen størrelse for å vurdere fra modellen. La ved 0 ° C for å bruke hele modellen detalj.
+
+English:The distance to start drawing the first skirt loop.
+Translated:Avstanden å begynne å tegne den første skjørtet loop.
+
+English:The number of layers to draw the skirt.
+Translated:Antall lag for å trekke skjørtet.
+
+English:The number of loops to draw around all the parts on the bed.
+Translated:Antall løkker å tegne rundt alle delene på sengen.
+
+English:If a layer is estimated to take less than this to print, the movement speed will be reduced to try and make the layer take this long to print.
+Translated:Hvis et lag er beregnet å ta mindre enn dette for å skrive ut, vil bevegelsen hastigheten reduseres for å prøve og få laget ta så lang tid å skrive ut.
+
+English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
+Translated:Brukes for små utkant (vanligvis hull). Denne kan settes eksplisitt eller som en prosentandel av de Perimetere 'hastighet.
+
+English:The pattern used on the bottom and top layers of the print.
+Translated:Mønsteret som brukes på de nederste og øverste lagene av print.
+
+English:Forces solid infill for any area less than this amount.
+Translated:Tvinger solid infill for ethvert område mindre enn dette beløpet.
+
+English:Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.
+Translated:Angir hvor ofte et lag vil bli tvunget til å være solid infilled. Null vil resultere i normal fylling i hele.
+
+English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
+Translated:Hastigheten å skrive ut infill når helt fast. Denne kan settes eksplisitt eller som en prosentandel av den Fylling hastighet.
+
+English:Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.
+Translated:Tvinge utskrifts å ha bare ett lag og gradvis øke ekstruder høyde under utskrift. Bare en del kan skrives ut om gangen med denne funksjonen.
+
+English:This is the amount to lower the temperature of an extruder that is not currently printing.
+Translated:Dette er beløpet for å senke temperaturen i en ekstruder som ikke skrives ut.
+
+English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].
+Translated:Dette gcode vil bli innført i utgangs rett etter temperaturinnstillingen. Hvis du har kommandoer for å sette temperaturen i denne delen vil de ikke bli generert utenfor denne delen. Du kan også inkludere verdier fra andre innstillinger som [first_layer_temperature].
+
+English:Make sure the first point on a perimeter is a concave point.
+Translated:Sørg for at det første punktet på en omkrets er en konkav punkt.
+
+English:Make sure the first point on a perimeter is not an overhang.
+Translated:Sørg for at det første punktet på en omkrets er ikke et overheng.
+
+English:The starting angle of the supports.
+Translated:Utgangs vinkel av bærerne.
+
+English:Create support where needed on internal features.
+Translated:Opprett støtte der det trengs på interne funksjoner.
+
+English:Generate support material everywhere not touching the bed for n layers, regardless of angle.
+Translated:Generere støttemateriell overalt ikke berøre seng for n lag, uavhengig av vinkel.
+
+English:The index of the extruder to use for support material.
+Translated:Indeksen av ekstruderen som skal brukes for bærermaterialet.
+
+English:The index of the extruder to use for support material interface layers.
+Translated:Indeksen av ekstruderen som skal brukes til støttemateriale grensesnitt lag.
+
+English:The number of layers to print between the supports and the part.
+Translated:Antall lag som skal skrives ut mellom støttene og den del.
+
+English:The space between lines of the interface layers (0 is solid).
+Translated:Avstanden mellom linjene av grensesnittet lagene (0 er solid).
+
+English:The pattern used while generating support material.
+Translated:Mønsteret som brukes under generering støttemateriale.
+
+English:The space between the lines of he support material.
+Translated:Mellomrommet mellom linjene i han bærermateriale.
+
+English:The speed to print support material structures.
+Translated:Hastigheten for å skrive støtte materielle strukturer.
+
+English:The last angle at which support material will be generated. Larger numbers will result in more support. Set to 0 to enable automatic settings.
+Translated:Den siste vinkel som støtter materiale vil bli generert. Større tall vil resultere i mer støtte. Sett til 0 for å aktivere automatiske innstillinger.
+
+English:The distance the support material will be from the object in the x and y direction.
+Translated:Avstanden bærermaterialet vil være fra objektet i x- og y-retningen.
+
+English:The distance the support material will be from the object in the z direction.
+Translated:Avstanden bærermaterialet vil være fra objektet i z-retningen.
+
+English:This turns on and off the generation of support material.
+Translated:Dette slår av og på generering av støttemateriale.
+
+English:The temperature to set the extruder to after the first layer has been printed.
+Translated:Temperaturen for å angi at ekstruderen til etter at det første lag er blitt skrevet ut.
+
+English:Detect when walls are too close together and need to be extruded as just one wall.
+Translated:Detektere når veggene er for nær hverandre, og trenger å bli ekstrudert som bare en vegg.
+
+English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
+Translated:Antallet CPU-kjerner til å bruke mens du gjør slicing. Økende dette kan bremse ned maskinen.
+
+English:This gcode will be inserted after every tool change.
+Translated:Dette gcode vil bli satt inn etter hvert skifte av verktøy.
+
+English:The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
+Translated:Hastigheten for å skrive toppen infill. Denne kan settes eksplisitt eller som en prosentandel av den Fylling hastighet.
+
+English:How many layers will be solid filled on the top surfaces of the object.
+Translated:Hvor mange lag vil bli faststoff fylles på toppflatene av objektet.
+
+English:Speed to move when not extruding material.
+Translated:Hastighet for å bevege seg når ikke ekstruderingsmaterialet.
+
+English:Request the firmware to do retractions rather than specify the extruder movements directly.
+Translated:Be fastvaren til å gjøre retractions snarere enn angi extruder bevegelser direkte.
+
+English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
+Translated:Normalt vil du ønsker å bruke absolutte e avstander. Bare sjekk dette hvis du vet at skriveren må relative e avstander.
+
+English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
+Translated:Dette er for å bidra til å redusere vibrasjoner under utskrift. Hvis skriveren har en resonansfrekvens som forårsaker problemer du kan stille inn dette for å prøve og redusere utskrift på denne frekvensen.
+
+English:This will cause the extruder to move while retracting to minimize blobs.
+Translated:Dette vil føre til ekstruderen for å bevege seg mens inntrekking å minimalisere klumper.
+
+English:This value will be added to all of the z positions of the created gcode.
+Translated:Denne verdien vil bli lagt til alle z stillingene opprettet gcode.
+
+English:Print
+Translated:Skrive ut
+
+English:Layers/Perimeters
+Translated:Layers / Perimetere
+
+English:Layer Height
+Translated:Layer Høyde
+
+English:Perimeters (minimum)
+Translated:Utkant (minimum)
+
+English:Vertical Shells
+Translated:vertikale Shells
+
+English:Infill
+Translated:infill
+
+English:Fill Density
+Translated:Fyll Tetthet
+
+English:Fill Pattern
+Translated:Fyll Pattern
+
+English:Support Material
+Translated:Support Material
+
+English:Generate Support Material
+Translated:Generer Support Material
+
+English:Filament
+Translated:Filament
+
+English:Diameter
+Translated:Diameter
+
+English:Extrude First Layer
+Translated:Extrude First Layer
+
+English:Extruder Other Layers
+Translated:Extruder Andre Layers
+
+English:Bed First Layer
+Translated:Bed First Layer
+
+English:Bed Other Layers
+Translated:Seng Layers
+
+English:Temperature (�C)
+Translated:Temperatur (C)
+
+English:Cooling
+Translated:kjøling
+
+English:Enable Auto Cooling
+Translated:Aktiver Auto Kjøling
+
+English:Enable
+Translated:aktiver
+
+English:Printer
+Translated:Skriver
+
+English:General
+Translated:Generell
+
+English:Bed Size
+Translated:Bed Size
+
+English:Print Center
+Translated:Print Center
+
+English:Build Height
+Translated:Bygg Høyde
+
+English:Size and Coordinates
+Translated:Størrelse og koordinater
+
+English:Extruder 1
+Translated:extruder 1
+
+English:Nozzle Diameter
+Translated:Nozzle Diameter
+
+English:Size
+Translated:Størrelse
+
+English:Configuration
+Translated:konfigurasjon
+
+English:EEProm Settings
+Translated:EEPROM Innstillinger
+
+English:CONFIGURE
+Translated:KONFIGURER
+
+English:Automatic Calibration
+Translated:automatisk kalibrering
+
+English:ENABLE
+Translated:AKTIV
+
+English:DISABLE
+Translated:SKRU
+
+English:Enable Automatic Print Leveling
+Translated:Aktiver automatisk ut Ling
+
+English:Automatic Print Leveling (disabled)
+Translated:Automatisk Print Ling (deaktivert)
+
+English:Extruder Temperature
+Translated:extruder Temperatur
+
+English:View Manual Printer Controls and Slicing Settings
+Translated:Vis Manuelle Skriverkontroll og kutting Innstillinger
+
+English:View Queue and Library
+Translated:Vis kø og Bibliotek
+
+English:Bed Temperature
+Translated:Bed Temperatur
+
+English:This gcode will be inserted when the print is canceled.
+Translated:Dette gcode vil bli satt når utskriften er avbrutt.
+
+English:This gcode will be inserted when the printer is paused.
+Translated:Dette gcode vil bli satt når skriveren er satt på pause.
+
+English:This gcode will be inserted when the printer is resumed.
+Translated:Dette gcode vil bli satt når skriveren er gjenopptatt.
+
+English:Print Time
+Translated:Print Tid
+
+English:Filament Length
+Translated:Filament Lengde
+
+English:Filament Volume
+Translated:Filament Volume
+
+English:Weight
+Translated:Vekt
+
+English:Show Grid
+Translated:Vis rutenett
+
+English:Show Moves
+Translated:Vis Moves
+
+English:Show Retractions
+Translated:Vis Tilbakekall
+
+English:Go
+Translated:Gå
+
+English:start:
+Translated:begynne:
+
+English:end:
+Translated:slutt:
+
+English:There is a recommended update available.
+Translated:Det er en anbefalt oppdatering er tilgjengelig.
+
+English:Layer View
+Translated:Layer Vis
+
+English:Connect to Printer
+Translated:Koble til Printer
+
+English:Choose a 3D Printer Configuration
+Translated:Velg en 3D Printer Configuration
+
+English:Unavailable
+Translated:utilgjengelig
+
+English:Refresh
+Translated:Forfriske
+
+English:Automatic Print Leveling (enabled)
+Translated:Automatisk Print Ling (aktivert)
+
+English:Connecting
+Translated:Kobler til
+
+English:Status: {0} - {1}
+Translated:Status: {0} - {1}
+
+English:edit
+Translated:redigere
+
+English:remove
+Translated:fjerne
+
+English:Printer Name
+Translated:skriver~~POS=TRUNC
+
+English:(refresh)
+Translated:(forfriske)
+
+English:Serial Port
+Translated:Serial Port
+
+English:Baud Rate
+Translated:overføringshastighet
+
+English:Other
+Translated:Annen
+
+English:Printer Make
+Translated:Printer Make
+
+English:Printer Model
+Translated:Printer Model
+
+English:Auto Connect
+Translated:Auto Connect
+
+English:Preparing To Print
+Translated:Klargjøre for utskrift
+
+English:Preparing to slice model
+Translated:Forberedelse til å skjære modell
+
+English:Printing
+Translated:Printing
+
+English:Filter Output
+Translated:filter Output
+
+English:Auto Uppercase
+Translated:Auto Store bokstaver
+
+English:Send
+Translated:Sende
+
+English:MatterControl - Terminal
+Translated:MatterControl - Terminal
+
+English:First Layer Height
+Translated:First Layer Høyde
+
+English:Spiral Vase
+Translated:spiral Vase
+
+English:Number of Solid Layers\non the Top:
+Translated:Antall Solid Layers\npå toppen:
+
+English:Number of Solid Layers\non the Bottom:
+Translated:Antall Solid Layers\npå Bottom:
+
+English:Horizontal Shells
+Translated:horisontale Shells
+
+English:Speed
+Translated:Hastighet
+
+English:Perimeters
+Translated:utkant
+
+English:Speed for Print Moves
+Translated:Speed ​​for trykkerier Moves
+
+English:Travel
+Translated:Reise
+
+English:Speed for non Print Moves
+Translated:Speed ​​for ikke utskrifts Moves
+
+English:First Layer Speed
+Translated:First Layer Speed
+
+English:Modifiers
+Translated:modifikatorer
+
+English:Skirt and Brim
+Translated:Skjørt og Brim
+
+English:Loops
+Translated:Loops
+
+English:Distance from Object
+Translated:Avstand fra Object
+
+English:Minimum Extrusion Length
+Translated:Minimum Extrusion Lengde
+
+English:Skirt
+Translated:Skjørt
+
+English:Overhang Threshold
+Translated:overheng Threshold
+
+English:Pattern Spacing
+Translated:mønster Spacing
+
+English:X and Y Distance
+Translated:X og Y Avstand
+
+English:Z Distance
+Translated:Z Avstand
+
+English:Internal Support
+Translated:intern Støtte
+
+English:Notes
+Translated:Merknader
+
+English:Output Options
+Translated:Leveringsvalg
+
+English:Multiple Extruders
+Translated:flere ekstruderingsvirksomheten
+
+English:Advanced
+Translated:Avansert
+
+English:Enable Extruder Lift
+Translated:Aktiver Extruder Lift
+
+English:Min Fan Speed
+Translated:Min Fan Speed
+
+English:Max Fan Speed
+Translated:Max Fan Speed
+
+English:Disable Fan For The First
+Translated:Deaktiver Fan for første
+
+English:Fan Speed
+Translated:fan Speed
+
+English:Slow Down If Layer Print\nTime Is Below
+Translated:Slow Down Hvis Layer Print\nTid er under
+
+English:Cooling Thresholds
+Translated:kjøle~~POS=TRUNC Terskler
+
+English:Bed Shape
+Translated:Bed Shape
+
+English:Custom G-Code
+Translated:Custom G-kode
+
+English:Start G-Code
+Translated:Begynn G-kode
+
+English:End G-Code
+Translated:Avslutt G-kode
+
+English:Length
+Translated:Lengde
+
+English:Minimum Travel After\nRetraction
+Translated:Minimum Reise Etter\nRetraction
+
+English:Min Extrusion
+Translated:min Extrusion
+
+English:Retraction
+Translated:Tilbaketrekking
+
+English:Generate Extra Perimeters\nWhen Needed:
+Translated:Generere ekstra Perimetere\nved behov:
+
+English:Avoid Crossing Perimeters
+Translated:Unngå Crossing Perimetere
+
+English:Start At Concave Points
+Translated:Start med Konkave Points
+
+English:Start At Non Overhang
+Translated:Start med Non Overheng
+
+English:Thin Walls
+Translated:tynne vegger
+
+English:Quality (slower slicing)
+Translated:Kvalitet (saktere slicing)
+
+English:Randomize Starting Points
+Translated:Tilfeldig utgangspunkter
+
+English:External Perimeters First
+Translated:Ekstern Perimetere Først
+
+English:Top/Bottom Fill Pattern
+Translated:Topp / bunn Fyll Pattern
+
+English:Infill Every
+Translated:infill Hver
+
+English:Only Infill Where Needed
+Translated:Bare Infill der det trengs
+
+English:Solid Infill Every
+Translated:Solid Infill Hver
+
+English:Fill Angle
+Translated:Fyll Angle
+
+English:Solid Infill Threshold Area
+Translated:Solid Infill Threshold-området
+
+English:Only Retract When\nCrossing Perimeters
+Translated:Bare trekke når\nCrossing Perimetere
+
+English:Do Infill Before Perimeters
+Translated:Gjør Infill Før Perimetere
+
+English:Small Perimeters
+Translated:små Perimetere
+
+English:External Perimeters
+Translated:eksterne Perimetere
+
+English:Solid Infill
+Translated:solid Infill
+
+English:Top Solid Infill
+Translated:Top Solid Infill
+
+English:Bridges
+Translated:Bridges
+
+English:Gap Fill
+Translated:gapfylling
+
+English:Min Print Speed
+Translated:Min Utskriftshastighet
+
+English:Bridge
+Translated:Bro
+
+English:First Layer
+Translated:First Layer
+
+English:Default
+Translated:Misligholde
+
+English:Acceleration Control
+Translated:Acceleration Control
+
+English:Skirt Height
+Translated:skjørt Høyde
+
+English:Brim Width
+Translated:Brim Bredde
+
+English:Brim
+Translated:Brem
+
+English:Enforce Support For First
+Translated:Håndheve Support For første
+
+English:Raft Layers
+Translated:Raft Layers
+
+English:Raft
+Translated:Flåte
+
+English:Pattern
+Translated:Mønster
+
+English:Pattern Angle
+Translated:mønster Angle
+
+English:Interface Layers
+Translated:grensesnitt Layers
+
+English:Interface Pattern Spacing
+Translated:Interface Pattern Spacing
+
+English:Complete Individual Objects
+Translated:Komplett enkeltobjekter
+
+English:Extruder Clearance Height
+Translated:Extruder Lagersalg Høyde
+
+English:Extruder Clearance Radius
+Translated:Extruder Lagersalg Radius
+
+English:Sequential Printing
+Translated:sekvensiell Utskrift
+
+English:Verbose G-Code
+Translated:Utførlig G-kode
+
+English:Output File Name Format
+Translated:Output File Name Format
+
+English:Output File
+Translated:Output-fil
+
+English:Post-Processing Scripts
+Translated:Post-Processing Scripts
+
+English:Perimeter Extruder
+Translated:Perimeter extruder
+
+English:Infill Extruder
+Translated:infill extruder
+
+English:Support Material Extruder
+Translated:Support Material Extruder
+
+English:Support Interface Extruder
+Translated:Support Interface Extruder
+
+English:Extruders
+Translated:ekstrudere
+
+English:Temp Lower Amount
+Translated:Temp lavere beløp
+
+English:Ooze Prevention
+Translated:sive Forebygging
+
+English:Default Extrusion Width
+Translated:Standard Extrusion Bredde
+
+English:Extrusion Width
+Translated:Extrusion Bredde
+
+English:Bridge Flow Ratio
+Translated:Bridge Flow Ratio
+
+English:Flow
+Translated:Strømme
+
+English:Threads
+Translated:tråder
+
+English:Resolution
+Translated:oppløsning
+
+English:Extrusion Axis
+Translated:Extrusion Axis
+
+English:Optimize Overhangs
+Translated:Optimal Overheng
+
+English:Keep Fan Always On
+Translated:Hold Fan Always On
+
+English:Bridging Fan Speed
+Translated:Bridging Fan Speed
+
+English:Enable Fan If Layer\nPrint Time Is Below
+Translated:Aktiver Fan Hvis Layer\nPrint Time Is Nedenfor
+
+English:Z Offset
+Translated:Z Offset
+
+English:G-Code Flavor
+Translated:G-kode Flavor
+
+English:Use Relative E Distances
+Translated:Bruk Relativ E Avstander
+
+English:Use Arcs
+Translated:bruk Arcs
+
+English:Use G0
+Translated:Bruk G0
+
+English:Firmware
+Translated:firmware
+
+English:Use Firmware Retraction
+Translated:Bruk Firmware Retraction
+
+English:Vibration Limit
+Translated:vibrasjons~~POS=TRUNC Limit
+
+English:Layer Change G-Code
+Translated:Lag Change g-koden
+
+English:Tool Change G-Code
+Translated:Tool Change g-koden
+
+English:Pause G-Code
+Translated:Pause G-kode
+
+English:Resume G-Code
+Translated:Resume G-kode
+
+English:Cancel G-Code
+Translated:Avbryt G-kode
+
+English:Extruder Offset
+Translated:extruder Offset
+
+English:Position (for multi-extrude printers)
+Translated:Posisjon (for multi-ekstrudere skrivere)
+
+English:Change Tool
+Translated:Endre Tool
+
+English:Z Lift
+Translated:Z Lift
+
+English:Extra Length On Restart
+Translated:Ekstra lengde ved omstart
+
+English:Retract on Layer Change
+Translated:Kjør på Layer Change
+
+English:Wipe Before Retract
+Translated:Tørk Før Retur
+
+English:Retraction When Tool is Disabled (for multi-extruders)
+Translated:Tilbaketrekking Når verktøyet er deaktivert (for multi-ekstrudere)
+
+English:Paused
+Translated:pauset
+
+English:Printing Paused
+Translated:utskriften er stoppet midlertidig
+
+English:Ok
+Translated:ok
+
+English:Finished Print
+Translated:ferdig Skriv ut
+
+English:Done Printing
+Translated:Ferdig Utskrift
+
+English:Save As
+Translated:Lagre som
+
+English:Installed Plugins
+Translated:installerte Plugins
+
+English:Select a Design Tool
+Translated:Velg et Design Tool
+
+English:Temperature (C)
+Translated:Temperatur (C)
+
+English:Language Settings
+Translated:Språkinnstillinger
+
+English:Select Model
+Translated:Velg modell
+
+English:Theme Settings
+Translated:tema Innstillinger
+
+English:New updates are ready to install.
+Translated:Nye oppdateringer er klare for installasjon.
+
+English:Select Language
+Translated:Velg språk
+
+English:File not found on disk.
+Translated:Finner ikke filen på disken.
+
+English:Not connected. Press 'Connect' to enable printing.
+Translated:Ikke tilkoblet. Trykk på 'Connect "for å aktivere utskrift.
+
+English:Loading Parts
+Translated:Legge Deler
+
+English:CONNECT
+Translated:KOBLE
+
+English:DISCONNECT
+Translated:FRAKOPLE
+
+English:OPTIONS
+Translated:ALTERNATIVER
+
+English:QUEUE
+Translated:KØ
+
+English:STATUS
+Translated:STATUS
+
+English:CONTROLS
+Translated:KONTROLL
+
+English:SLICE SETTINGS
+Translated:Slice INNSTILLINGER
+
+English:CONFIGURATION
+Translated:KONFIGURASJON
+
+English:MODEL
+Translated:MODELL
+
+English:LAYER
+Translated:LAG
+
+English:DISPLAY
+Translated:VISE
+
+English:PRINT TIME
+Translated:PRINT TIME
+
+English:FILAMENT LENGTH
+Translated:filament LENGDE
+
+English:FILAMENT VOLUME
+Translated:filament VOLUME
+
+English:WEIGHT
+Translated:VEKT
+
+English:EST. WEIGHT
+Translated:EST. VEKT
+
+English:Saving
+Translated:Lagrer
+
+English:Export File
+Translated:Export File
+
+English:File export options
+Translated:File eksportalternativer
+
+English:Export as
+Translated:Eksporter som
+
+English:Show file in folder after save
+Translated:Vis fil i mappen etter lagre
+
+English:HISTORY
+Translated:HISTORIE
+
+English:LIBRARY
+Translated:BIBLIOTEK
+
+English:Developed By: 
+Translated:Utviklet av:
+
+English: to help support MatterControl.
+Translated: å bidra til å støtte MatterControl.
+
+English:ABOUT
+Translated:HANDLE OM
+
+English:Oops! Could not find this file
+Translated:Oops! Kunne ikke finne denne filen
+
+English:Would you like to remove it from the queue
+Translated:Vil du fjerne det fra køen
+
+English:Item not Found
+Translated:Varen er ikke funnet
+
+English:Yes
+Translated:Ja
+
+English:No
+Translated:Nei
+
+English:History
+Translated:Historie
+
+English:Slicing Error. Please review your slice settings.
+Translated:Slicing feil. Gå gjennom din del innstillinger.
+
+English:Quality
+Translated:Kvalitet
+
+English:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:Først laghøyde 'må være mindre enn eller lik den "dysediameteren'.
+
+English:This will cause the print to be centered on the bed. Disable this if you know your models have been created where you want them to print.
+Translated:Dette vil føre til at utskrifts å være sentrert på sengen. Deaktiver dette hvis du kjenner har blitt opprettet modellene der du vil ha dem til å skrive ut.
+
+English:Center On Bed
+Translated:Senter On Bed
+
+English:Center Print
+Translated:Senter Skriv ut
+
+English:Note
+Translated:Notat
+
+English:To enable GCode export, select a printer profile.
+Translated:For å aktivere GCode eksport, velger du en skriverprofil.
+
+English:The amount to remove from the bottom of the model
+Translated:Mengden som fjernes fra bunnen av modellen
+
+English:The amount the infill edge will push into the preimiter. Helps ensure the infill is connected to the edge.
+Translated:Beløpet infill kanten vil presse inn i preimiter. Bidrar til å sikre at infill er koblet til kanten.
+
+English:The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
+Translated:Avstanden å begynne å tegne den første skjørtet loop. Gjør dette 0 for å skape et anker for den delen av sengen.
+
+English:Bottom Clip
+Translated:Bottom Clip
+
+English:Infill Overlap
+Translated:infill Overlapping
+
+English:Inside Perimeters
+Translated:Inside Perimetere
+
+English:Outside Perimeter
+Translated:utenfor Perimeter
+
+English:Sets the default movement speed while printing inside perimeters.
+Translated:Angir standard bevegelseshastighet under utskrift inne utkant.
+
+English:The type of support to create for surfaces that need it.
+Translated:Den type støtte for å lage for overflater som trenger det.
+
+English:Support Type
+Translated:støtte Type
+
+English:Top & Bottom Layers
+Translated:Topp og bunn Layers
+
+English:
+Translated:
+
+English:gcode_output_type
+Translated:gcode_output_type
+
+English:Starting Angle
+Translated:starter Angle
+
+English:The space between the lines of the support material.
+Translated:Mellomrommet mellom linjene i bærermaterialet.
+
+English:The last angle at which support material will be generated. Larger numbers will result in more support.
+Translated:Den siste vinkel som støtter materiale vil bli generert. Større tall vil resultere i mer støtte.
+
+English:Add Printer
+Translated:Legg til skriver
+
+English:If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+Translated:Hvis større enn 0, er dette stykke unna deler for å skape en parimeter til å tørke når du taster inn.
+
+English:Wipe Shield Dist
+Translated:Tørk Shield Dist
+
+English:Wipe Shield
+Translated:Tørk Shield
+
+English:  Remove All
+Translated:  Fjern alle
+
+English:The number of layers to skip in z. The gap between the support and the model.
+Translated:Antall lag for å hoppe over i z. Gapet mellom støtte og modell.
+
+English:Z Gap
+Translated:Z Gap
+
+English:Print Again
+Translated:Print Again
+
+English:Turns on and off the creation of a raft which can help parts adhear to the bed.
+Translated:Slår av og på etablering av en flåte som kan hjelpe deler adhear til sengen.
+
+English:Enable Raft
+Translated:aktiver Raft
+
+English:Create Raft
+Translated:Opprett Raft
+
+English:The amount of overhangs to support. 0 is no support 100 is support every overhang regardless of angle.
+Translated:Mengden av overheng for å støtte. 0 er ingen støtte 100 er støtte alle overheng uansett vinkel.
+
+English:Overhang Percent
+Translated:overheng Prosent
+
+English:support_material_overhang_percent
+Translated:support_material_overhang_percent
+
+English:Device
+Translated:Enhet
+
+English:Material
+Translated:Materiale
+
+English:Item
+Translated:Punkt
+
+English:Wipe Shield Distance
+Translated:Tørk Shield Avstand
+
+English: Remove All
+Translated: Fjern alle
+
+English:Slice Presets Editor
+Translated:Slice Presets Editor
+
+English:Attempting to Connect
+Translated:Forsøk på å koble
+
+English:Making Copy
+Translated:Making Copy
+
+English:Arranging Parts
+Translated:ordne Deler
+
+English:Only Show Completed
+Translated:Bare Show Fullført
+
+English:Show Timestamp
+Translated:Vis Stempel
+
+English:Render Type
+Translated:Render Type
+
+English:Shaded
+Translated:Shaded
+
+English:Outlines
+Translated:Outlines
+
+English:Polygons
+Translated:polygoner
+
+English:New updates may be available.
+Translated:Nye oppdateringer kan være tilgjengelige.
+
+English:Unable to communicate with printer.
+Translated:Kan ikke kommunisere med skriveren.
+
+English:Item selected. Press 'Start' to begin your print.
+Translated:Sak valgt. Trykk Start for å starte utskriften.
+
+English:Disconnecting
+Translated:frakobling
+
+English:Leveling Settings
+Translated:Leveling Innstillinger
+
+English:Movement Speeds Presets
+Translated:Movement Hastigheter Presets
+
+English:Axis
+Translated:Akser
+
+English:Sampled Positions
+Translated:samplet Posisjoner
+
+English:Position
+Translated:Stilling
+
+English:Do not show this again
+Translated:Ikke vis dette igjen
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:Filen du prøver å skrive ut en GCode fil.\n\nGCode filer fortelle din skriver nøyaktig hva de skal gjøre. De er ikke endret av SliceSettings og min ikke være passende for din skriverkonfigurasjon.\n\nskrive ut kun fra GCode filer hvis du vet at de Mach din nåværende skriveren og konfigurasjonen.\n\nEr du sikker på at du vil skrive ut denne GCode fil?
+
+English:Cannot find\n'{0}'.\nWould you like to remove it from the queue?
+Translated:Kan ikke finne\n'{0}'. \ N Vil du fjerne det fra køen?
+
+English:Item not found
+Translated:Varen er ikke funnet
+
+English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
+Translated:Velkommen til utskrifts utjevning veiviseren. Her er en rask oversikt over hva vi skal gjøre.
+
+English:'Home' the printer
+Translated:"Hjem" til skriveren
+
+English:Sample the bed at three points
+Translated:Smak sengen i tre punkter
+
+English:Turn auto leveling on
+Translated:Slå automatisk nivellering på
+
+English:You should be done in about 3 minutes.
+Translated:Du bør gjøres i ca 3 minutter.
+
+English:Click 'Next' to continue.
+Translated:Klikk "Next" for å fortsette.
+
+English:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
+Translated:Skriveren skal nå være "homing". Når den er ferdig homing vil vi flytte den til det første punktet for å smake.\n\nFor å fullføre de neste trinnene du trenger
+
+English:A standard sheet of paper
+Translated:En vanlig papirark
+
+English:We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.
+Translated:Vi vil bruke dette papiret for å måle avstanden mellom ekstruderen og sengen.\n\nKlikk Neste for å fortsette.
+
+English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
+Translated:Gratulerer!\n\nAuto Print Ling er nå konfigurert og aktivert.
+
+English:Remove the paper
+Translated:Fjern papiret
+
+English:If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.
+Translated:Hvis du i fremtiden ønsker å slå Auto Print utflating, kan du fjerner den "Enabled" -knappen funnet i Avanserte innstillinger '->' Skriver Controls '.\n\nKlikk på Ferdig for å lukke dette vinduet.
+
+English:Step
+Translated:Skritt
+
+English:of
+Translated:av
+
+English:Print Leveling Wizard
+Translated:Skriv ut Ling Wizard
+
+English:Back
+Translated:Tilbake
+
+English:Next
+Translated:neste
+
+English:Low Precision
+Translated:lav Precision
+
+English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
+Translated:Bruke [Z] kontrollene på denne skjermen, vil vi nå ta en grov måling av ekstruderen høyden på denne posisjonen.
+
+English:Place the paper under the extruder
+Translated:Plasser papiret under ekstruder
+
+English:Using the above contols
+Translated:Med de ovennevnte contols
+
+English:Press [Z-] until there is resistance to moving the paper
+Translated:Trykk [Z-] til det er motstand mot å flytte papir
+
+English:Press [Z+] once to release the paper
+Translated:Trykk [Z +] én gang for å frigjøre papiret
+
+English:Finally click 'Next' to continue.
+Translated:Til slutt klikker du Neste for å fortsette.
+
+English:This part of your bed is too low for the extruder to reach it. You need to raise your bed, or lower your limit, for print leveling to work.
+Translated:Denne delen av sengen er for lavt for ekstruder for å nå den. Du trenger å heve sengen din, eller senke grensen, for print utjevning skal fungere.
+
+English:Waring Moving Too Low
+Translated:Waring Moving Too Low
+
+English:Medium Precision
+Translated:medium Precision
+
+English:We will now refine our measurement of the extruder height at this position.
+Translated:Vi vil nå raffinere vår måling av ekstruderen høyde i denne posisjon.
+
+English:High Precision
+Translated:High Precision
+
+English:We will now finalize our measurement of the extruder height at this position.
+Translated:Vi skal nå sluttføre vår måling av ekstruderen høyde i denne posisjon.
+
+English:Press [Z-] one click PAST the first hint of resistance
+Translated:Trykk [Z-] ett klikk forbi den første snev av motstand
+
+English:Save Parts Sheet
+Translated:Lagre Deler Sheet
+
+English:MatterContol
+Translated:MatterContol
+
+English:Saving to Parts Sheet
+Translated:Lagrer til deler Sheet
+
+English:Stop trying to connect to the printer
+Translated:Stopp prøver å koble til skriveren
+
+English:No printer selected.  Press 'Connect' to choose a printer
+Translated:Ingen skriver er valgt. Trykk på 'Connect "for å velge en skriver
+
+English:About                                             
+Translated:Handle om
+
+English:This controls the ratio of material extruder during bridging.Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
+Translated:Dette kontrollerer forholdet av materialet ekstruder under bridging.Reducing dette litt kan bidra til å bygge bro ved strekking av filamentet mer, ved hjelp av en vifte kan også bidra sterkt.
+
+English:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:Standard temperatur for å sette sengen til. Kan noen ganger overstyres på det første laget. Sett til 0 for å eliminere bed temperatur kommandoer.
+
+English:The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
+Translated:Standard temperatur for å angi at ekstruderen til. Kan noen ganger overstyres på det første laget.
+
+English:Macro Editor
+Translated:Macro Editor
+
+English:Macro Presets
+Translated:makro~~POS=TRUNC Presets
+
+English:Edit Macro
+Translated:Rediger Macro
+
+English:Macro Name
+Translated:makro~~POS=TRUNC
+
+English:Give your macro a name
+Translated:Gi makroen et navn
+
+English:Macro Commands
+Translated:makro Kommandoer
+
+English:This should be in 'Gcode'
+Translated:Dette bør være i "Gcode '
+
+English:3D Printer Setup
+Translated:3D Printer Setup
+
+English:Give your printer a name.
+Translated:Gi skriveren et navn.
+
+English:Select Make
+Translated:Velg Make
+
+English:Select the printer manufacturer
+Translated:Velg skriverprodusenten
+
+English:Select the printer model
+Translated:Velg skrivermodell
+
+English:Save & Continue
+Translated:Lagre og fortsett
+
+English:MatterControl will now attempt to auto-detect printer.
+Translated:MatterControl vil nå forsøke å automatisk oppdage skriveren.
+
+English:Disconnect printer
+Translated:Koble skriveren
+
+English:if currently connected
+Translated:hvis tilkoblet
+
+English:Press
+Translated:trykk
+
+English:Continue
+Translated:Fortsette
+
+English:Manual Configuration
+Translated:manuell konfigurasjon
+
+English:Setup Manual Configuration
+Translated:Setup Manuell konfigurering
+
+English:or
+Translated:eller
+
+English:Skip Printer Connection
+Translated:Hopp Printer Connection
+
+English:You can either
+Translated:Du kan enten
+
+English:You can also
+Translated:Du kan også
+
+English:Extruder Temperature Settings
+Translated:Extruder temperaturinnstillinger
+
+English:Temperature Shortcut Presets
+Translated:Temperatur Snarvei Presets
+
+English:Label
+Translated:Merkelapp
+
+English:Preset
+Translated:Preset
+
+English:Max Temp.
+Translated:Max Temp.
+
+English:Bed Temperature Settings
+Translated:Bed temperaturinnstillinger
+
+English:Movement Speeds
+Translated:Movement Hastigheter
+
+English:Extruder
+Translated:extruder
+
+English:Power on and connect printer
+Translated:Slå på og koble skriveren
+
+English:Attempting to connect
+Translated:Forsøk på å koble
+
+English:Connection succeeded
+Translated:tilkobling lyktes
+
+English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
+Translated:Du kan ikke flytte noe lavere. Denne posisjonen på sengen er for lavt for ekstruder å nå. Du trenger å heve sengen din, eller justere grensene slik at ekstruderen å gå lavere.
+
+English:Edit Preset
+Translated:Rediger Preset
+
+English:Slice-Engine
+Translated:Slice-Engine
+
+English:Status: Completed
+Translated:Status: Fullført
+
+English:Unlock
+Translated:Låse opp
+
+English:Show Terminal
+Translated:Vis Terminal
+
+English:Configure
+Translated:Konfigurer
+
+English:Disable
+Translated:Deaktiver
+
+English:Est. Weight
+Translated:Est. Vekt
+
+English:Downloading updates...
+Translated:Nedlasting av oppdateringer ...
+
+English:Duplicate
+Translated:Duplisere
+
+English:End
+Translated:Slutt
+
+English:The type of support to create inside of parts.
+Translated:Den type støtte for å skape inne i delene.
+
+English:Infill Type
+Translated:infill Type
+
+English:Release Options
+Translated:Slipp alternativer
+
+English:No items to select. Press 'Add' to select a file to print.
+Translated:Ingenting å velge. Trykk "Legg til" for å velge en fil som skal skrives ut.
+
+English:Unknown
+Translated:Ukjent
+
+English:Press 'Add' to select an item.
+Translated:Trykk "Legg til" for å velge et element.
+
+English:Shop
+Translated:Butikk
+
+English:Slicing Error
+Translated:kutting Feil
+
+English:Ready to Print
+Translated:Klar til utskrift
+
+English:File Not Found\n'{0}'
+Translated:Finner ikke filen\n'{0}
+
+English:Slicing Error.\nPlease review your slice settings.
+Translated:Slicing feil. \ N Gå gjennom din del innstillinger.
+
+English:Special thanks to:
+Translated:En spesiell takk til:
+
+English:Alessandro Ranellucci for 
+Translated:Alessandro Ranellucci for
+
+English:David Braam and Ultimaker BV for 
+Translated:David Braam og Ultimaker BV for
+
+English:To enable GCode export, select a printer profile
+Translated:For å aktivere GCode eksport, velger du en skriverprofil
+
+English:MatterControl: Submit an Issue
+Translated:MatterControl: Send inn et problem
+
+English:Submit
+Translated:Sende inn
+
+English:How can we help?
+Translated:Hvordan kan vi hjelpe?
+
+English:Submitting your information...
+Translated:Sende inn informasjon ...
+
+English:Question*
+Translated:Spørsmål*
+
+English:Briefly describe your question
+Translated:Beskriv kort spørsmålet ditt
+
+English:Details*
+Translated:detaljer *
+
+English:Fill in the details here
+Translated:Fyll ut detaljene her
+
+English:Your Email Address*
+Translated:Din epostadresse*
+
+English:Your Name*
+Translated:Navnet ditt*
+
+English:Version 
+Translated:Versjon
+
+English:Developed by:
+Translated:Utviklet av:
+
+English:Send FeedBack
+Translated:Send tilbakemelding
+
+English:Build: 
+Translated:Bygge:
+
+English:Update Feed
+Translated:Oppdater feed
+
+English:File
+Translated:Fil
+
+English:Import File
+Translated:import File
+
+English:Exit
+Translated:Exit
+
+English:Help
+Translated:Hjelp
+
+English:Getting Started
+Translated:Starter
+
+English:View Help
+Translated:Vis hjelp
+
+English:Manually Configure Connection
+Translated:Manuelt konfigurere Connection
+
+English:Skip Connection Setup
+Translated:Hopp Tilkoblingsoppsett
+
+English:Currently available serial ports.
+Translated:For tiden tilgjengelige serielle porter.
+
+English:What's this?
+Translated:Hva er dette?
+
+English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+Translated:The 'Serial Port "identifiserer hvilke tilkoblede enheten er\nskriveren. Endring av hvilke USB-pluggen du bruker kan\nendre forbundet seriell port.\n\nTips: Hvis du er usikker, plug-in i skriveren og trykk\noppdatere. Den nye porten som vises bør være din\nskriver.
+
+English:Connection succeeded!
+Translated:Tilkobling lyktes!
+
+English:Oops! Unable to install update.
+Translated:Oops! Kan ikke installere oppdateringen.
+
+English:Motor de Capas
+Translated:Motor de Capas
+
+English:Your application is up-to-date.
+Translated:Søknaden din er up-to-date.
+
+English:Install Communication Driver
+Translated:Installer Communication Driver
+
+English:This printer requires a driver for communication.
+Translated:Denne skriveren krever en driver for kommunikasjon.
+
+English:Driver located. Would you like to install?
+Translated:Driver plassert. Har du lyst til å installere?
+
+English:Install Driver
+Translated:Installer driver
+
+English:Apply
+Translated:Søke om
+
+English:Buy Materials
+Translated:Kjøp Materials
+
+English:Select an STL file
+Translated:Velg en STL-fil
+
+English:Add File
+Translated:Legg til fil
+
+English:Time
+Translated:Tid
+
+English:Press 'Connect' to select a printer.
+Translated:Trykk på 'Connect' for å velge en skriver.
+
+English:Marlin Firmware EEPROM Settings
+Translated:Marlin Firmware EEPROM Innstillinger
+
+English:Re-Load Default Settings
+Translated:Re-Load Default Settings
+
+English:Set Default To Factory Settings
+Translated:Still Standard til fabrikkinnstillingene
+
+English:Steps per mm:
+Translated:Skritt per mm:
+
+English:Maximum feedrates [mm/s]:
+Translated:Maksimum feedrates [mm / s]:
+
+English:Maximum Acceleration [mm/s²]:
+Translated:Maksimal akselerasjon [mm / s²]:
+
+English:Acceleration:
+Translated:Akselerasjon:
+
+English:Retract Acceleration:
+Translated:Trekk Akselerasjon:
+
+English:PID settings:
+Translated:PID innstillinger:
+
+English:Homing Offset:
+Translated:Homing Offset:
+
+English:Min feedrate [mm/s]:
+Translated:Min matehastighet [mm / s]:
+
+English:Min travel feedrate [mm/s]:
+Translated:Min reise matehastighet [mm / s]:
+
+English:Minimum segment time [ms]:
+Translated:Minimum segment tid [ms]:
+
+English:Maximum X-Y jerk [mm/s]:
+Translated:Maksimal X-Y jerk [mm / s]:
+
+English:Maximum Z jerk [mm/s]:
+Translated:Maksimal Z jerk [mm / s]:
+
+English:Make Settings Active
+Translated:Gjør innstillinger Aktiv
+
+English:Make Settings Active\nAnd Save To Default
+Translated:Gjør innstillinger Aktiv\nog lagre til Standard
+
+English:Design Add-ons
+Translated:Design Add-ons
+
+English:Lock Ratio
+Translated:lås Ratio
+
+English:Retrieving download info...
+Translated:Henter nedlasting info ...
+
+English:G-Code Output
+Translated:G-kode Output
+
+English:The extra distance the raft will extend around the part.
+Translated:Den ekstra avstanden flåten vil forlenge rundt den delen.
+
+English:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
+Translated:Prosentandelen av den "dysediameteren" som er gapet mellom flåten og det første laget. En mindre prosent vil gjøre den delen feste mer. En større prosent vil gjøre det pinne mindre.
+
+English:Distance
+Translated:Avstand
+
+English:Gap Percent
+Translated:Gap Prosent
+
+English:Try to connect mesh edges when the actual mesh data is not all the way connected.
+Translated:Prøv å koble mesh kanter når selve mesh data er ikke helt tilkoblet.
+
+English:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
+Translated:En gang en maske vil ikke ha stengt en utkant. Når dette er krysset av disse ikke-lukket utkant mens lukkes.
+
+English:Reverse the orientation of overlaps. This can make some unintended holes go away.
+Translated:Omvendt retningen på overlappinger. Dette kan gjøre noen utilsiktede hull gå bort.
+
+English:Make all overlap areas into one big area. This can make some unintended holes go away..
+Translated:Gjør alle overlappingsområdene i ett stort område. Dette kan gjøre noen utilsiktede hull gå bort ..
+
+English:Repair
+Translated:Reparere
+
+English:Connect Bad Edges
+Translated:Koble Bad Edges
+
+English:Close Polygons
+Translated:Lukk polygoner
+
+English:Reverse Orientation
+Translated:omvendt Orientering
+
+English:Merge All
+Translated:Flett Alle
+
+English:Overlaps
+Translated:overlapp
+
+English:The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:Avstanden mellom det første lag og toppen av flåten. En god verdi er vanligvis ca 1/2 din ekstrudering diameter. Så, mellom 0,0 og 0,2 for en 0,4 dyse.
+
+English:Air Gap
+Translated:Luft mellomrom
+
+English:Outline Distance
+Translated:Outline Avstand
+
+English:Distance Around Object
+Translated:Avstand Rundt Object
+
+English:Minimum Travel\nRequiring Retraction
+Translated:Minimum Reise\nKrever tilbaketrekking
+
+English:Show Printing
+Translated:Vis Printing
+
+English:Show Current
+Translated:Vis gjeldende
+
+English:Printer Sync
+Translated:Printer Sync
+
+English:Sync To Print
+Translated:Sync til å skrive ut
+
+English:Layers
+Translated:Layers
+
+English:Show 3D
+Translated:Vis 3D
+
+English:Uh-oh! Could not connect to printer.
+Translated:UH oh! Kunne ikke koble til skriveren.
+
+English:Installing
+Translated:Installere
+
+English:Initial Printer Setup
+Translated:Initial Skriveroppsett
+
+English:Homing The Printer
+Translated:Homing Skriver
+
+English:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
+Translated:Hvis du i fremtiden trenger å re-kalibrere skriveren, eller du ønsker å slå Auto Print Ling av, kan du finne print utjevning kontrollene i Avanserte innstillinger -> 'Konfigurasjon'.\n\nKlikk på Ferdig for å lukke dette vinduet.
+
+English:Print Leveling Overview
+Translated:Skriv ut Ling Oversikt
+
+English:Note: Be sure the tip of the extrude is clean.
+Translated:Merk: Pass på at tuppen av Extrude er ren.
+
+English:Title Stuff
+Translated:Tittel Stuff
+
+English:Oops! You cannot exit while a print is active.
+Translated:Oops! Du kan ikke gå ut mens en utskrifts er aktiv.
+
+English:Unable to Exit
+Translated:Kan ikke Exit
+
+English:You are currently saving a parts sheet, are you sure you want to exit?
+Translated:Du er for øyeblikket sparer en deler ark, er du sikker på at du vil avslutte?
+
+English:Confirm Exit
+Translated:bekreft Exit
+
+English:Disconnect and cancel the current print?
+Translated:Koble fra og avbryte den aktuelle utskrifts?
+
+English:WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?
+Translated:ADVARSEL: Koble vil avbryte den aktuelle utskrifts.\n\nVil du koble fra?
+
+English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+Translated:Merk: Slice Innstillinger brukes før utskriften faktisk starter. Endringer under utskrift vil ikke påvirke aktive print.
+
+English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:Ekstruderen er for tiden oppvarming og sitt mål temperaturen kan ikke endres før den når {0} ° C.\n\nDu kan angi start ekstrudertemperatur i "Slice Innstillinger" -> "Filament '.\n\n{1}
+
+English:Waiting For Extruder To Heat
+Translated:Waiting For Extruder å varme
+
+English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:Sengen er for tiden oppvarming og sitt mål temperaturen kan ikke endres før den når {0} ° C.\n\nDu kan angi start seng temperatur i 'Slice Innstillinger "->" Filament'.\n\n{1}
+
+English:Waiting For Bed To Heat
+Translated:Waiting For Bed Til Heat
+
+English:Cancel the current print?
+Translated:Avbryt den aktuelle utskrifts?
+
+English:Cancel Print?
+Translated:Avbryt utskrift?
+
+English:There is a recommended update avalible for MatterControl. Would you like to download it now?
+Translated:Det er en anbefalt oppdatering avalible for MatterControl. Vil du laste den ned nå?
+
+English:Recommended Update Available
+Translated:Anbefalt Oppdatering tilgjengelig
+
+English:Download Now
+Translated:Last ned nå
+
+English:Remind Me Later
+Translated:Minn meg på det senere
+
+English:Oops! There is no eeprom mapping for your printer's firmware.
+Translated:Oops! Det er ingen EEPROM kartlegging for skriverfastvare.
+
+English:Warning no eeprom mapping
+Translated:Advarsel ingen EEPROM kartlegging
+
+English:Sample the bed at two points
+Translated:Smak sengen ved to punkter
+
+English:You should be done in about 2 minutes.
+Translated:Du bør gjøres i ca 2 minutter.
+
+English:Alert
+Translated:Varsling
+
+English:Input Required
+Translated:Input Påkrevd
+
+English:Apply leveling to gcode during export
+Translated:Påfør planering til gcode under eksport
+
+English:File export options:
+Translated:File eksport alternativer:
+
+English:Report a Bug
+Translated:Rapporter en feil
+
+English:About MatterControl
+Translated:om MatterControl
+
+English:Oops! Printer could not be detected 
+Translated:Oops! Printer kunne ikke påvises
+
+English: Load Files
+Translated: Load Files
+
+English: Eject SD Card
+Translated: Løs ut SD-kort
+
+English:Show Voxels
+Translated:Vis lydelementer
+
+English:Show Mesh
+Translated:Vis Mesh
+
+English:Do Subtract
+Translated:Har Trekk
+
+English:Specify if your printer has a fan.
+Translated:Angi om skriveren har en fan.
+
+English:Specify if your printer has a heated bed.
+Translated:Angi om skriveren har en oppvarmet seng.
+
+English:Specify if your printer has the ability to plug in an SD card.
+Translated:Angi om skriveren har muligheten til å plugge inn et SD-kort.
+
+English:Has Fan
+Translated:har Fan
+
+English:Has Heated Bed
+Translated:Har Oppvarmet Bed
+
+English:Has SD Card Reader
+Translated:Har SD-kortleser
+
+English:Cloud Services
+Translated:Cloud Services
+
+English:Cloud Monitoring (disabled)
+Translated:Cloud Monitoring (deaktivert)
+
+English:Cloud Monitoring (enabled)
+Translated:Cloud Monitoring (aktivert)
+
+English:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:Først Layer Extrusion Bredde "må være mindre enn eller lik 'Nozzle Diameter' * 4.
+
+English:Export to SD Card
+Translated:Eksporter til SD-kort
+
+English:Notification Settings
+Translated:varslings~~POS=TRUNC innstillinger~~POS=HEADCOMP
+
+English:After a Print is Finished:
+Translated:Etter en Utskriften er ferdig:
+
+English:Saving your settings...
+Translated:Lagre innstillingene ...
+
+English:Send an SMS notification
+Translated:Send en SMS-varsling
+
+English:Experimental
+Translated:eksperimentell
+
+English:Have MatterControl send you a text message after your print is finished
+Translated:Har MatterControl sende deg en tekstmelding etter at utskriften er ferdig
+
+English:Your Phone Number*
+Translated:Telefonnummeret ditt*
+
+English:A U.S. or Canadian mobile phone number
+Translated:En USA eller Canada mobilnummer
+
+English:Send an email notification
+Translated:Send en e-postvarsling
+
+English:Have MatterControl send you an email message after your print is finished
+Translated:Har MatterControl sende deg en e-postmelding etter at utskriften er ferdig
+
+English:A valid email address
+Translated:En gyldig e-postadresse
+
+English:Play a Sound
+Translated:Spill en lyd
+
+English:Play a sound after your print is finished
+Translated:Spill av en lyd etter at utskriften er ferdig
+
+English:Printing From SD Card
+Translated:Utskrift fra SD-kort
+
+English:Would you also like to remove this file from the Printer's SD Card?
+Translated:Vil du også å fjerne denne filen fra skriverens SD-kort?
+
+English:Export to Printer SD Card
+Translated:Eksport til Printer SD-kort
+
+English:Preparing To Send To SD Card
+Translated:På å sende til SD-kort
+
+English:Sending To SD Card
+Translated:Sende til SD-kort
+
+English:Exporting to Folder
+Translated:Eksportere til mappe
+
+English:Warning GCode file
+Translated:Advarsel GCode fil
+
+English:Release Notes
+Translated:Release Notes
+
+English:More Info
+Translated:Mer informasjon
+
+English:Go To Status
+Translated:Gå til Status
+
+English:View Status
+Translated:Vis status
+
+English:Description
+Translated:Beskrivelse
+
+English:Value
+Translated:Verdi
+
+English:Save To EEPROM
+Translated:Lagre til EEPROM
+
+English:Firmware EEPROM Settings
+Translated:Firmware EEPROM Innstillinger
+
+English:Save to EEPROM
+Translated:Lagre til EEPROM
+
+English:Select the baud rate.
+Translated:Velg overføringshastighet.
+
+English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+Translated:Begrepet "overføringshastighet" betyr omtrent hastigheten som\ndata overføres. Baud priser kan variere fra skriver til\nskriver. Se i skriverhåndboken for mer info.\n\nTips: Hvis du er usikker - prøv 250000.
+
+English:This is the minimum amount of filament that must be extruded before a retraction can occur.
+Translated:Dette er den minimale mengden av filamentet som skal ekstruderes før en tilbaketrekkings kan forekomme.
+
+English:Support Options
+Translated:alternativer for støtte
+
+English:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
+Translated:Hvis dette er sjekket støtte vil være tillatt å starte på toppen av innvendige overflater. Hvis det ikke er krysset av støtte vil bare bli opprettet som starter på sengen.
+
+English:Support Everywhere
+Translated:støtte Overalt
+
+English:The angle the support infill will be drawn.
+Translated:Vinkelen støtten infill vil bli trukket.
+
+English:Infill Angle
+Translated:infill Angle
+
+English:Grid
+Translated:Grid
+
+English:Moves
+Translated:Beveger seg
+
+English:Retractions
+Translated:tilbakekall~~POS=TRUNC
+
+English:Speeds
+Translated:hastigheter
+
+English:Extrusion
+Translated:Extrusion
+
+English:Special thanks to Alessandro Ranellucci for his incredible work on
+Translated:Spesiell takk til Alessandro Ranellucci for hans utrolige arbeid
+
+English:Dilimleme Motoru
+Translated:Dilimleme Motoru
+
+English:Clear
+Translated:Klar
+
+English:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+Translated:Lar sengen utjevning kode vite om skriveren kan støtte z-aksen som går under 0. En skriver med min z endestopper eller programvare endestopp kan ikke være i stand til.
+
+English:Z Can Be Negative
+Translated:Z kan være negativ
+
+English:Export as X3G
+Translated:Eksporter som X3G
+
+English:Select an Image
+Translated:Velg et bilde
+
+English:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+Translated:Hvis større enn 0, er dette X ved Y størrelse med et tårn som skal brukes til når du endrer ekstrudere
+
+English:Extruder Change
+Translated:extruder Endre
+
+English:Wipe Tower Size
+Translated:Tørk Tower Størrelse
+
+English:Sorry, we were unable to install the driver.
+Translated:Beklager, vi klarte ikke å installere driveren.
+
+English:Tuning Adjustment
+Translated:Tuning Adjustment
+
+English:Release
+Translated:Utgivelse
+
+English:No printer is currently selected. Select a printer to edit slice settings.
+Translated:Ingen skriver er valgt. Velg en skriver for å redigere slice innstillinger.
+
+English:Part Preview
+Translated:del Preview
+
+English:Layer Preview
+Translated:Forhåndsvisning Layer
+
+English:Enable Cloud Monitoring (disabled)
+Translated:Aktiver Cloud Monitoring (deaktivert)
+
+English:Warning - Moving Too Low
+Translated:Advarsel - Flytting for lav
+
+English:Oops! Could not find this file:
+Translated:Oops! Kunne ikke finne denne filen:
+
+English:The number of extruders this machine has.
+Translated:Antallet ekstrudere denne maskinen har.
+
+English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
+Translated:Alle profiler multipliseres med denne verdien. Øke den ovenfor 1 (1.1 er en god maksimal verdi) vil øke mengden av filamentet som ekstruderes; redusere det (0,9 er en god minimumsverdi) vil redusere beløpet som blir ekstrudert.
+
+English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
+Translated:Dette er den laveste hastigheten som skriveren vil redusere til å gjøre laget ta lang nok til å tilfredsstille minimums lag tid.
+
+English:Minimum Print Speed
+Translated:Minimum Utskriftshastighet
+
+English:Skirt and Raft
+Translated:Skjørt og Raft
+
+English:Length on Move
+Translated:Lengde på Move
+
+English:Length on Tool Change
+Translated:Lengde på Tool Change
+
+English:Minimum Extrusion\nRequiring Retraction
+Translated:Minimum Extrusion\nKrever tilbaketrekking
+
+English:Minimum Fan Speed
+Translated:Minimum Fan Speed
+
+English:Extruder Count
+Translated:extruder Count
+
+English:Hardware
+Translated:maskinvare
+
+English:Search Library
+Translated:Søk Bibliotek
+
+English:My Library
+Translated:mitt bibliotek
+
+English:Add to Library
+Translated:Legg til i bibliotek
+
+English:Group
+Translated:Gruppe
+
+English:Ungroup
+Translated:Del opp gruppe
+
+English:Align...
+Translated:Rett ...
+
+English:Selection
+Translated:utvalg
+
+English:Entering Editor
+Translated:Legge inn Editor
+
+English:Creating Edit Data
+Translated:Opprette Rediger data
+
+English:Finding Meshes
+Translated:finne Meshes
+
+English:Preheat
+Translated:Forvarm
+
+English:Extruder Temperature Override
+Translated:Extruder Temperatur Ride
+
+English:Bed Temperature Override
+Translated:Bed Temperatur Ride
+
+English:Hardware Settings
+Translated:maskinvare~~POS=TRUNC innstillinger~~POS=HEADCOMP
+
+English:Cloud Settings
+Translated:Cloud Innstillinger
+
+English:Application Settings
+Translated:applikasjons~~POS=TRUNC innstillinger~~POS=HEADCOMP
+
+English:Update Notification Feed
+Translated:Update Notification-feed
+
+English:Pre-Release
+Translated:Pre-Release
+
+English:Development
+Translated:Utvikling
+
+English:Language Options
+Translated:språk
+
+English:Change Display Mode
+Translated:Endre visningsmodus
+
+English:Theme/Display Options
+Translated:Tema / Visningsmuligheter
+
+English:Design
+Translated:Design
+
+English:Normal
+Translated:Normal
+
+English:Touchscreen
+Translated:Touch-skjerm
+
+English:Theme
+Translated:Tema
+
+English:Display Options
+Translated:visnings~~POS=TRUNC
+
+English:Set this if the extruders run off the same heater, if there is only one heater.
+Translated:Sett dette hvis ekstrudere kjøre av samme varmeren, hvis det er bare en varmeovn.
+
+English:Share Temperature
+Translated:Del Temperatur
+
+English:Export...
+Translated:Eksport...
+
+English:Temperature
+Translated:Temperatur
+
+English:Align
+Translated:Juster
+
+English:Material 1
+Translated:Materiale en
+
+English:Material 2
+Translated:Materiale 2
+
+English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:'Laghøyde' må være mindre enn eller lik den "dysediameteren '.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+Translated:Sted: "Avanserte kontroller" -> "Slice Innstillinger" -> "Print" -> "Layers / Perimetere '
+
+English:Color {0}
+Translated:Color {0}
+
+English:Extruder {0}
+Translated:Extruder {0}
+
+English:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
+Translated:Du kan angi ekstrudering med eller sette denne til en% av hoved ekstrudering widthe. La dette som 0 for å tillate automatisk beregning.
+
+English:Material 3
+Translated:Materiale 3
+
+English:Material 4
+Translated:Materiale 4
+
+English:Material 5
+Translated:Materiale 5
+
+English:Unknown Reason
+Translated:ukjent årsak
+
+English:Port already in use
+Translated:Port som allerede er i bruk
+
+English:Unsupported Baud Rate
+Translated:Uegnet overføringshastighet
+
+English:Port not found
+Translated:Port ikke funnet
+
+English:Cancelled
+Translated:avbrutt
+
+English:You can only connect when not currently connected.
+Translated:Du kan bare koble når den ikke er koblet til.
+
+English:Warning - No EEProm Mapping
+Translated:Advarsel - Ingen EEProm Mapping
+
+English:The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+Translated:Hastigheten å kjøre viften under utskrift av flåten, 0 vil forlate fan av.
+
+English:The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
+Translated:Hastigheten for å skrive lagene av flåten (andre enn det første lag). Denne kan settes eksplisitt eller som en prosentandel av den Fylling hastighet.
+
+English:Preparing Meshes
+Translated:forbereder Meshes
+
+English:Grouping Meshes
+Translated:gruppering Meshes
+
+English:No COM ports available
+Translated:Ingen COM-porter tilgjengelig
+
+English:Stable
+Translated:Stabil
+
+English:Beta
+Translated:Beta
+
+English:Alpha
+Translated:Alpha
+
+English:Ungrouping
+Translated:løse opp
+
+English:Grouping
+Translated:gruppering
+
+English:WARNING: Disconnecting will cancel the print.
+Translated:ADVARSEL: Koble vil avbryte utskriften.
+
+English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
+Translated:Beløpet infill kanten vil presse inn omkretsen. Bidrar til å sikre at infill er koblet til kanten.
+
+English:This is the diameter of your extruder nozzle.
+Translated:Dette er diameteren på ekstruderdysen.
+
+English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
+Translated:En gang en maske vil ikke ha stengt en omkrets. Når dette er krysset av disse ikke-lukket utkant mens lukkes.
+
+English:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
+Translated:Du kan angi ekstrudering med eller sette denne til en% av hoved ekstrudering bredde. La dette som 0 for å tillate automatisk beregning.
+
+English:The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
+Translated:Standard temperatur for å angi at ekstruderen til. Kan noen ganger bli overstyrt på det første laget.
+
+English:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
+Translated:Hvis større enn 0, er dette stykke unna deler for å skape en omkrets til å tørke når du taster inn.
+
+English:Please Confirm
+Translated:Vennligst bekreft
+
+English:Reset to Factory Defaults
+Translated:Tilbakestill til fabrikkinnstillinger
+
+English:Save to EEProm
+Translated:Lagre til EEPROM
+
+English:{0} is not available
+Translated:{0} er ikke tilgjengelig
+
+English:Invalid printer response
+Translated:Ugyldig skriver svar
+
+English:Could not find a selected button.
+Translated:Kunne ikke finne en valgt knapp.
+
+English:Aligning
+Translated:Justere
+
+English:Single
+Translated:Enkelt
+
+English:Warning - GCode file
+Translated:Advarsel - GCode fil
+
+English:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+Translated:Indeksen av ekstruderen å bruke for flåten. Sette denne til 0 vil bruke støtten ekstruder indeksen.
+
+English:Raft Extruder
+Translated:Raft extruder
+
+English:None
+Translated:Ingen
+
+English:Rectangle
+Translated:Rektangel
+
+English:Outline
+Translated:Outline
+
+English:Circle
+Translated:Sirkel
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and may not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:Filen du prøver å skrive ut en GCode fil.\n\nGCode filer fortelle din skriver nøyaktig hva de skal gjøre. De er ikke endret av SliceSettings og kan ikke være passende for din skriverkonfigurasjon.\n\nskrive ut kun fra GCode filer hvis du vet at de Mach din nåværende skriveren og konfigurasjonen.\n\nEr du sikker på at du vil skrive ut denne GCode fil?
+
+English:Do not show this message again
+Translated:Ikke vis denne meldingen igjen
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:Filen du prøver å skrive ut en GCode fil.\n\nDet recommendended at du bare skrive ut Gcode filer kjent for å matche skriverens konfigurasjon.\n\nEr du sikker på at du vil skrive ut denne GCode fil?
+
+English:Cannot find this file\nWould you like to remove it from the queue?
+Translated:Kan ikke finne denne filen\nVil du fjerne det fra køen?
+
+English:Supported Angles
+Translated:støttede Angles
+
+English:Amount
+Translated:Beløp
+
+English:Settings
+Translated:innstillinger
+
+English:Unsaved Changes
+Translated:ulagrede endringer
+
+English:No printer is currently selected. Please select a printer to edit slice settings.
+Translated:Ingen skriver er valgt. Velg en skriver for å redigere slice innstillinger.
+
+English:NOTE: You need to select a printer, but do not need to connect to it.
+Translated:MERK: Du må velge en skriver, men trenger ikke å koble til den.
+
+English:Simple
+Translated:Enkel
+
+English:Intermediate
+Translated:Mellom
+
+English:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:Standard temperatur for å sette sengen til. Kan noen ganger bli overstyrt på det første laget. Sett til 0 for å eliminere bed temperatur kommandoer.
+
+English:Turns on and off the creation of a raft which can help parts adhere to the bed.
+Translated:Slår av og på etablering av en flåte som kan hjelpe delene holder seg til sengs.
+
+English:Options  
+Translated:alternativer
+
+English:Expand Distance
+Translated:Utvid Avstand
+
+English:Insert
+Translated:Sett inn
+
+English:Restore
+Translated:Restaurere
+
+English:WINDOWED MODE: This tab has been moved to a separate window.
+Translated:Vindusmodus: Denne kategorien har blitt flyttet til et eget vindu.
+
+English:Sending File(s)...
+Translated:Sende fil (er) ...
+
+English:Slicing File(s)...
+Translated:Kutting File (s) ...
+
+English:Edit Outline
+Translated:Rediger Outline
+
+English:Use Alpha
+Translated:bruk Alpha
+
+English:Start Threshold:
+Translated:Begynn Threshold:
+
+English:End Threshold:
+Translated:Slutt Threshold:
+
+English:Edit Model
+Translated:Rediger Model
+
+English:Invert
+Translated:Inverter
+
+English:Size:
+Translated:Størrelse:
+
+English:Height:
+Translated:Høyde:
+
+English:Edit Base
+Translated:Rediger Base
+
+English:Infill:
+Translated:infill:
+
+English:Unlock to Save
+Translated:Lås opp å spare
+
+English:Save & Exit
+Translated:Lagre og lukk
+
+English:Finding Parts:
+Translated:Finne deler:
+
+English:Add Image
+Translated:Legg bilde
+
+English:Search Google
+Translated:Søk på Google
+
+English:Word Edit
+Translated:Word Rediger
+
+English:Spacing:
+Translated:Spacing:
+
+English:Underline
+Translated:Understrek
+
+English:Rotation:
+Translated:rotasjon:
+
+English:Enter Text Here
+Translated:Skriv inn tekst her
+
+English:Inserting image...
+Translated:Sette inn bilde ...
+
+English:Completed Prints:
+Translated:Fullførte trykk:
+
+English:Total Print Time:
+Translated:Total Print Tid:
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+Translated:Sted: "Avanserte kontroller '->' Slice Innstillinger" -> "Print" -> "Speed"
+
+English:The '{0}' must be greater than 0.
+Translated:The '{0} må være større enn 0.
+
+English:It is currently set to {0}.
+Translated:Det er for tiden satt til {0}.
+
+English:Slice Error
+Translated:Slice Feil
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Sted: "Avanserte kontroller '->' Slice Innstillinger" -> "Filament" -> "Filament" -> "Retraction '
+
+English:Save Slice Configuration
+Translated:Lagre Slice Configuration
+
+English:Printing: {0}
+Translated:Utskrift: {0}
+
+English:Finished Print: {0}
+Translated:Ferdig Trykk: {0}
+
+English:Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.
+Translated:Mindre tall skape mindre støtte. Større tall skape mer støtte. Starter på 0, vinkler fra sengen som krever støtte.
+
+English:Preview
+Translated:Forhåndsvisning
+
+English:Send Test
+Translated:Send Test
+
+English:NOTE: Standard messaging rates may apply.
+Translated:MERK: Standardmeldinger priser kan gjelde.
+
+English:Include a picture of my finished print
+Translated:Ta et bilde av min ferdig print
+
+English:Send to Remote Device
+Translated:Send til ekstern enhet
+
+English:Slice Files Prior to Send
+Translated:Slice filer Før Send
+
+English:Please wait. Retrieving available devices...
+Translated:Vennligst vent. Henter tilgjengelige enheter ...
+
+English:Token request failed...
+Translated:Token forespørsel mislyktes ...
+
+English:Oops! Your session has expired.  Please sign-in again to continue.
+Translated:Oops! Økten din har utløpt. Du må logge på igjen for å fortsette.
+
+English:Sorry! Unable to connect to server. Please try again later.
+Translated:Beklager! Kan ikke koble til server. Prøv igjen senere.
+
+English:All done! Files have been sent.
+Translated:Ferdig! Filer har blitt sendt.
+
+English:Retry
+Translated:Prøv på nytt
+
+English:Please wait. Preparing to send...
+Translated:Vennligst vent. Forbereder å sende ...
+
+English:Token received...
+Translated:Token fikk ...
+
+English:Please wait. Sending files...
+Translated:Vennligst vent. Sende filer ...
+
+English:File too big to load.
+Translated:Fil for stor til å laste.
+
+English:Specify if your printer has the ability to do print leveling directly (support for G29).
+Translated:Angi om skriveren har muligheten til å gjøre utskrifts utjevning direkte (støtte for G29).
+
+English:Has Hardware Leveling
+Translated:Har Hardware Ling
+
+English:The Fill Density must be between 0 and 1 inclusive.
+Translated:Fill Tetthet må være mellom 0 og 1 inkluderende.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
+Translated:Sted: "Avanserte kontroller" -> "Slice Innstillinger" -> "Print" -> "Infill '
+
+English:Inserting Text
+Translated:Sette inn tekst
+
+English:Saving Parts:
+Translated:Spare Parts:
+
+English:Reset Connection
+Translated:reset Connection
+
+English:Reboots the firmware on the controller
+Translated:Startes firmware på kontrolleren
+
+English:Please wait. Slicing files {0} of {1}
+Translated:Vennligst vent. Slicing filene {0} av {1}
+
+English:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
+Translated:Normalt under utskrift Skriveren vil hjem før oppvarming av ekstruder (e). Sett denne til å forårsake oppvarming å skje før homing. Dette kan hjelpe med skrivere som berører sengen mens homing.
+
+English:Heat Before Homing
+Translated:Heat Før Homing
+
+English:Clear Print History
+Translated:Clear Print History
+
+English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [temperature].
+Translated:Dette gcode vil bli innført i utgangs rett etter temperaturinnstillingen. Hvis du har kommandoer for å sette temperaturen i denne delen vil de ikke bli generert utenfor denne delen. Du kan også inkludere verdier fra andre innstillinger som [temperatur].
+
+English:GCode file too big to load for '{0}'.
+Translated:GCode filen for stor til å laste for {0}.
+
+English:Reset\nConnection
+Translated:Reset\nConnection
+
+English:Show Reset Connection
+Translated:Vis Reset Connection
+
+English:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
+Translated:Synliggjør en knapp som vil tilbakestille tilkoblingen når den trykkes. Dette kan brukes på skrivere som støtter det som en nødstopp.
+
+English:You may need to wait a minute for your printer to finish initializing.
+Translated:Du må kanskje vente noen minutter før skriveren er ferdig med initialisering.
+
+English: Export to Folder or SD Card
+Translated: Eksport til mappe eller SD-kort
+
+English:Converting image...
+Translated:Konvertering bilde ...
+
+English:Add To Library
+Translated:Legg til i bibliotek
+
+English:Print Queue
+Translated:Print Queue
+
+English:Interface Mode
+Translated:Interface Mode
+
+English:Standard
+Translated:Standard
+
+English:Connect to the printer
+Translated:Koble til skriveren
+
+English:Reset
+Translated:Tilbakestill
+
+English:Console
+Translated:Console
+
+English:On
+Translated:På
+
+English:Off
+Translated:Av
+
+English:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:Hvor mange lag, eller på avstand, vil det være faste fylt på de nedre overflater av gjenstanden. Legg mm til enden av nummeret for å angi avstanden.
+
+English:The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.
+Translated:Antall lag, eller på avstand, for å skrive ut mellom støttene og den del. Legg mm til enden av nummeret for å angi avstanden.
+
+English:The number of layers, or the distance, to skip between the support and the model. Add mm to the end of the number to specify distance.
+Translated:Antall lag, eller på avstand, for å hoppe mellom bæreren og modellen. Legg mm til enden av nummeret for å angi avstanden.
+
+English:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:Hvor mange lag, eller på avstand, vil det være faste fylt på toppflatene av objektet. Legg mm til enden av nummeret for å angi avstanden.
+
+English:Top Solid Layers:
+Translated:Mest Solid lag:
+
+English:Bottom Solid Layers:
+Translated:Bottom Solid lag:
+
+English:This will cause the extruder to try to wipe itself after retracting to minimize strings.
+Translated:Dette vil føre til ekstruderen for å forsøke å tørke seg etter tilbaketrekning for å minimalisere strenger.
+
+English:Calculating Positions...
+Translated:Beregning av posisjoner ...
+
+English:ATX Power Control
+Translated:ATX Power Control
+
+English:Specify if your printer can control the power supply
+Translated:Angi om skriveren kan kontrollere strømforsyningen
+
+English:Has Power Control
+Translated:Har Power Control
+
+English:The temperature the bed temperature will be set to when part is to be removed.
+Translated:Temperaturen sjikttemperaturen blir satt til når delen som skal fjernes.
+
+English:Extruder Wipe Temperature
+Translated:Extruder Tørk Temperatur
+
+English:Bed Remove Part Temperature
+Translated:Bed fjerne en del Temperatur
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:Temperaturen i ekstruderen vil være når ekstruder våtservietter.
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:Temperaturen i ekstruderen vil være når ekstruder våtservietter.
+
+English:Basic
+Translated:grunn~~POS=TRUNC
+
+English:Sets the size of the outer solid surface for the entire print.
+Translated:Angir størrelsen på den ytre fast overflate for hele print.
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+Translated:Antallet, eller total bredde, av ytre skall for å skape. Legg mm til enden av nummeret for å angi bredden.
+
+English:Layers/Surface
+Translated:Layers / Surface
+
+English:Width
+Translated:Bredde
+
+English:Arrange
+Translated:ordne
+
+English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+Translated:Hastigheten å bevege seg mens du skriver det første laget. Hvis uttrykt som en prosentandel vil det endre den tilsvarende hastigheten satt over.
+
+English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+Translated:Dette gcode vil sendes til skriveren umiddelbart etter tilkobling. Den kan brukes til å angi innstillinger som er spesifikke for en gitt skriver.
+
+English:Features
+Translated:Egenskaper
+
+English:Update Available
+Translated:Oppdatering tilgjengelig
+
+English:Check For Update
+Translated:Se etter oppdatering
+
+English:solid_shell
+Translated:solid_shell
+
+English:GCode file too big to preview ({0}).
+Translated:GCode filen for stor til forhåndsvisning ({0}).
+
+English:Up to Date
+Translated:Oppdatert
+
+English:Checking For Update
+Translated:Kontroll For Update
+
+English:Loading Parts...
+Translated:Laster deler ...
+
+English:More
+Translated:Mer
+
+English:Share
+Translated:Dele
+
+English:WARNING: Write Failed!
+Translated:ADVARSEL: Skriv Failed!
+
+English:Can't access '{0}'.
+Translated:Får ikke tilgang til {0}.
+
+English:Oops! Unable to save changes.
+Translated:Oops! Kan ikke lagre endringene.
+
+English:Unable to save
+Translated:Kan ikke lagre
+
+English:Terminal
+Translated:Terminal
+
+English:Settings\n& Controls
+Translated:Settings\nog kontroller
+
+English:Print Area
+Translated:utskriftsområde
+
+English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Først Layer Extrusion Bredde = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+Translated:Sted: "Avanserte kontroller" -> "Slice Innstillinger" -> "Print" -> "Avansert" -> "Frist Layer '
+
+English:First Layer Extrusion Width' must be greater than 0.
+Translated:Først Layer Extrusion Bredde "må være større enn 0.
+
+English:First Layer Extrusion Width = {0}
+Translated:Først Layer Extrusion Bredde = {0}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+Translated:Sted: Innstillinger og kontroller "->" Innstillinger "->" Generelt "->" Speed ​​"
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Sted: Innstillinger og kontroller "->" Innstillinger "->" Filament "->" Filament "->" Retraction '
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+Translated:Sted: Innstillinger og kontroller "->" Innstillinger "->" Filament '->' Ekstrudering '->' Frist Layer '
+
+English:Open
+Translated:Åpen
+
+English:Checking For Update...
+Translated:Sjekker For oppdatering ...
+
+English:Create Folder
+Translated:Lag mappe
+
+English:Redeem
+Translated:Løs inn
+
+English:First Layer Height = {0}\nNozzle Diameter = {1}
+Translated:Først Layer Høyde = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+Translated:Sted: Innstillinger og kontroller "->" Innstillinger "->" Generelt "->" Layers / Surface '
+
+English:Create New Folder:
+Translated:Opprett ny mappe:
+
+English:Folder Name
+Translated:Mappenavn
+
+English:Enter a Folder Name Here
+Translated:Skriv inn et mappenavn her
+
+English:Save New Design to Queue
+Translated:Lagre New designet i kø
+
+English:Design Name
+Translated:design Name
+
+English:Enter the name of your design.
+Translated:Skriv inn navnet på din design.
+
+English:Enter a Design Name Here
+Translated:Skriv inn et forslag navn her
+
+English:Also save to Library
+Translated:Også lagre i bibliotek
+
+English:Home
+Translated:Hjem
+
+English:The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:Samlingen du prøver å slette {0} er ikke tom. Vil du slette den likevel?
+
+English:Collection not Empty
+Translated:Innsamling ikke Empty
+
+English:Do NOT Delete
+Translated:Ikke slett
+
+English:Library (cloud)
+Translated:Library (cloud)
+
+English:Purchased
+Translated:kjøpt
+
+English:Session Expired
+Translated:Sesjon utløpt
+
+English:Thumbnail Rendering
+Translated:thumbnail Rende
+
+English:Flat
+Translated:Flat
+
+English:3D
+Translated:3D
+
+English:Update Status
+Translated:Oppdater status
+
+English:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:Mappen du prøver å slette {0} er ikke tom. Vil du slette den likevel?
+
+English:Folder not Empty
+Translated:Folder ikke Empty
+
+English:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+Translated:Mappen {0} er ikke tom. \ N Vil du slette den likevel?
+
+English:Delete folder?
+Translated:Slett mappe?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:Mappen {0} er ikke tom.\n\nVil du slette den likevel?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:Mappen {0} er ikke tom.\n\nVil du slette den likevel?
+
+English:Delete folder?
+Translated:Slett mappe?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:Mappen {0} er ikke tom.\n\nVil du slette den likevel?
+
+English:Delete folder?
+Translated:Slett mappe?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:Mappen {0} er ikke tom.\n\nVil du slette den likevel?
+
+English:Delete folder?
+Translated:Slett mappe?
+
+English:Cloud Library
+Translated:Cloud Library
+
+English:Rename
+Translated:Gi nytt navn
+
+English:Rename Item:
+Translated:Rename element:
+
+English:New Name
+Translated:nytt navn
+
+English:Enter New Name Here
+Translated:Skriv inn nytt navn her
+
+English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
+Translated:Hastigheten til å skrive ut de synlige ytterkantene. Denne kan settes eksplisitt eller som en prosentandel av innsiden Perimetere hastighet.
+
+English:Save New Design
+Translated:Lagre ny design
+
+English:Save Location
+Translated:Lagre posisjon
+
+English:Choose the location to save to.
+Translated:Velg hvor du vil lagre til.
+
+English:Sample the bed at seven points
+Translated:Smak sengen på syv poeng
+
+English:You should be done in about 5 minutes.
+Translated:Du bør gjøres i ca 5 minutter.
+
+English:The print leveling alogrithm to use.
+Translated:Utskriften utjevning alogrithm å bruke.
+
+English:The print leveling sampling mothod to use.
+Translated:Utskriften utjevning prøvetaking mothod å bruke.
+
+English:This gcode will be run prior to starting bed probing.
+Translated:Dette gcode vil bli kjørt før du starter seng sondering.
+
+English:This gcode will be run after finishing bed probing.
+Translated:Dette gcode vil bli kjørt etter endt seng sondering.
+
+English:The width of the paper (or other calibration device) used when doing manual bed probing.
+Translated:Bredden på papiret (eller annet kalibreringsenhet) brukes når du skal ha manuell seng sondering.
+
+English:The offset of the probe relative to the extruder.
+Translated:Forskyvningen av sonden i forhold til ekstruderen.
+
+English:The z offset of the probe relative to the extruder.
+Translated:Z-forskyvning av sonden i forhold til ekstruderen.
+
+English:Print Leveling
+Translated:Skriv ut Ling
+
+English:Leveling Solution
+Translated:Leveling Solution
+
+English:Leveling Method
+Translated:Leveling Method
+
+English:Manual Probe Paper Width
+Translated:Manuell Probe Paper Width
+
+English:Probe Offset
+Translated:probe Offset
+
+English:Probe Z Offset
+Translated:Probe Z Offset
+
+English:There is a recommended update available for MatterControl. Would you like to download it now?
+Translated:Det er en anbefalt oppdatering er tilgjengelig for MatterControl. Vil du laste den ned nå?
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:Filen du prøver å skrive ut en GCode fil.\n\nDet anbefales at du bare skrive ut Gcode filer kjent for å matche skriverens konfigurasjon.\n\nEr du sikker på at du vil skrive ut denne GCode fil?
+
+English:This printer requires print leveling to run correctly.
+Translated:Denne skriveren krever print utjevning for å fungere.
+
+English:Require Leveling To Print
+Translated:Krev Leveling Skrive ut
+
+English:Oops! You cannot restart while a print is active.
+Translated:Oops! Du kan ikke starte mens en utskrifts er aktiv.
+
+English:Unable to restart
+Translated:Kan ikke starte
+
+English:Add File To Queue
+Translated:Legg til fil i kø
+
+English:Add Folder To Library
+Translated:Legg til mappe i bibliotek
+
+English:Using the above controls
+Translated:Med de ovennevnte kontroller
+
+English:Add Local Folder To Library
+Translated:Legg Lokal mappe i bibliotek
+
+English:Redeem Design Code
+Translated:Løs Design kode
+
+English:You should be done in about 6 minutes.
+Translated:Du bør gjøres i ca 6 minutter.
+
+English:Enter Share Code
+Translated:Skriv Del kode
+
+English:Downloading...
+Translated:Laster ned ...
+
+English:Uploading...
+Translated:Laster opp ...
+
+English:Click to show in 3D View
+Translated:Klikk for å vise i 3D-visning
+
+English:Enter Mulit Select mode
+Translated:Skriv Body Velg modus
+
+English:Add a .stl, .amf, .gcode or .zip File To The Queue
+Translated:Legg en STL, .amf, .gcode eller .zip filen til Queue
+
+English:Choose a Create Tool to generate custom parts
+Translated:Velg et Opprett Tool til å generere tilpassede deler
+
+English:Switch to Setings and Manual Controls pannel
+Translated:Bytt til setings og manuelle kontroller pannel
+
+English:Pop This Tab out into its own Window
+Translated:Pop Dette Tab ut i et eget vindu
+
+English:Preview layer Tool Paths
+Translated:Forhåndsvisning lag Verktøy Paths
+
+English:Add a .stl, .amf, .gcode or .zip File to the Queue
+Translated:Legg en STL, .amf, .gcode eller .zip-fil til i køen
+
+English:Add a .stl, .amf, .gcode or .zip File to the Bed
+Translated:Legg en STL, .amf, .gcode eller .zip-fil til seng
+
+English:Add an .stl, .amf, .gcode or .zip file to the Queue
+Translated:Legg en STL, .amf, .gcode eller .zip filen til Queue
+
+English:Insert an .stl, .amf, .gcode or .zip file
+Translated:Sett inn en STL, .amf, .gcode eller .zip-fil
+
+English:Bring the Window back into this Tab
+Translated:Bring Window tilbake i denne Tab
+
+English:Insert an .stl, .amf or .zip file
+Translated:Sett inn en STL, .amf eller .zip-fil
+
+English:Update Channel
+Translated:Oppdater Channel
+
+English:Current Build : Test Build
+Translated:Nåværende Bygg: Test Build
+
+English:Stable: The current release version of MatterControl (recommended).
+Translated:Stabil: Den gjeldende versjonen av MatterControl (anbefales).
+
+English:Beta: The release candidate version of MatterControl.
+Translated:Beta: Release Candidate-versjonen av MatterControl.
+
+English:Alpha: The in development version of MatterControl.
+Translated:Alpha: Den i utviklerversjon av MatterControl.
+
+English:Choose a Create Tool to generate custom designs
+Translated:Velg et Opprett Tool til å generere egendefinerte design
+
+English:Switch to Settings, Controls and Options
+Translated:Bytt til Innstillinger, kontroller og alternativer
+
+English:Switch to Queue, Library and History
+Translated:Bytt til køen, Bibliotek og historie
+
+English:Sign in to your MatterControl account
+Translated:Logg deg på MatterControl konto
+
+English:Connect to the currently selected printer
+Translated:Koble til valgte skriveren
+
+English:Disconnect from current printer
+Translated:Koble fra gjeldende skriver
+
+English:Select a printer
+Translated:Velg en skriver
+
+English:Current extruder temperature
+Translated:Nåværende ekstrudertemperatur
+
+English:Preheat the Extruder
+Translated:Forvarm Extruder
+
+English:Current bed temperature
+Translated:Nåværende seng temperatur
+
+English:Preheat the Bed
+Translated:Forvarm Bed
+
+English:Shop online for printing materials
+Translated:Handle på nettet for utskrift materialer
+
+English:Add an .stl, .amf, .gcode or .zip file to the Library
+Translated:Legg en STL, .amf, .gcode eller .zip-fil til biblioteket
+
+English:Open your dashboard in a web browser
+Translated:Åpne dashbordet i en nettleser
+
+English:Sign out of your MatterControl account
+Translated:Logg av MatterControl konto
+
+English:Add a new Printer Profile
+Translated:Legg til en ny skriver Profile
+
+English:Rotate (Ctrl + L. Mouse)
+Translated:Roter (Ctrl + L. Mouse)
+
+English:Move (Shift + L. Mouse)
+Translated:Move (Shift + L. Mouse)
+
+English:Zoom (Alt + L. Mouse)
+Translated:Zoom (Alt + L. Mouse)
+
+English:Select Part
+Translated:Velg del
+
+English:Move
+Translated:Bevege seg
+
+English:Zoom
+Translated:Zoom
+
+English:Preview 3D Design
+Translated:Forhåndsvisning 3D Design
+
+English:Rotate (Alt + L. Mouse)
+Translated:Roter (Alt + L. Mouse)
+
+English:Zoom (Ctrl + L. Mouse)
+Translated:Zoom (Ctrl + L. Mouse)
+
+English:Enter Multi Select mode
+Translated:Skriv Multi Velg modus
+
+English:Print leveling is enabled.
+Translated:Skriv ut utjevning er aktivert.
+
+English:Edit notification settings
+Translated:Rediger varslingsinnstillinger
+
+English:Rotate (Alt + Left Mouse)
+Translated:Roter (Alt + Venstre Mouse)
+
+English:Move (Shift + Left Mouse)
+Translated:Move (Shift + Venstre Mouse)
+
+English:Zoom (Ctrl + Left Mouse)
+Translated:Zoom (Ctrl + Venstre Mouse)
+
+English:Search Results
+Translated:Søkeresultater
+
+English:Slice files prior to send
+Translated:Slice filene før sende
+
+English:Oops! Please sign in to continue.
+Translated:Oops! Logg på for å fortsette.
+
+English:Login Required
+Translated:innlogging kreves
+
+English:Rebuild Thumbnails Now
+Translated:Gjenoppbygge miniatyr nå
+
+English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
+Translated:Du bytter til et annet miniatyrgjengivelsesmodus. Hvis du vil, kan de gjeldende miniatyr fjernes og gjenskapt i den nye stilen. Du kan bytte frem og tilbake når som helst. Det vil være noen behandling overhead mens de nye miniatyr er opprettet.\n\nØnsker du å gjenoppbygge eksisterende miniatyr nå?
+
+English:Loading...
+Translated:Laster inn ...
+
+English:Wrapping:
+Translated:Wrapping:
+
+English:Use Braille
+Translated:bruk Braille
+
+English:Only Braille
+Translated:bare Braille
+
+English:Retrieving Contents...
+Translated:Henter Innhold ...
+
+English:Cloud Sync
+Translated:Cloud Sync
+
+English:Include Text
+Translated:Inkluder tekst
+
+English:Show normal text under the braille
+Translated:Vis normal tekst under blindeskrift
+
+English:Use Grade 2
+Translated:Bruk Grad 2
+
+English:Experimental support for Braille grade 2 (contractions)
+Translated:Eksperimentell støtte for lese klasse 2 (sammentrekninger)
+
+English:About Braille
+Translated:om Braille
+
+English:Add a new Material Preset
+Translated:Legg til en ny Material Preset
+
+English:Import an existing Material Preset
+Translated:Importere en eksisterende Material Preset
+
+English:Share Library Item
+Translated:Del Library Element
+
+English:Share Options
+Translated:aksje~~POS=TRUNC
+
+English:Your Share Code:
+Translated:Din Del Kode:
+
+English:Anyone with this code will have access
+Translated:Alle med denne koden vil ha tilgang
+
+English:Share with someone
+Translated:Del med noen
+
+English:read-only
+Translated:skrivebeskyttet
+
+English:Generate Share Code
+Translated:Generer Del Kode
+
+English:Please wait. Retrieving share code...
+Translated:Vennligst vent. Henter dele kode ...
+
+English:Provide this code to grant someone read-only access.
+Translated:Gi denne koden for å gi noen lesetilgang.
+
+English:Please wait. Sending invite...
+Translated:Vennligst vent. Sende invitere ...
+
+English:Invite sent!
+Translated:Inviter sendt!
+
+English:Your invite has been sent!
+Translated:Din invitere har blitt sendt!
+
+English:Enter Share Code:
+Translated:Skriv Del Kode:
+
+English:This code to will provide read-only access.
+Translated:Denne koden til vil gi kun lesetilgang.
+
+English:Please wait. Redeeming code...
+Translated:Vennligst vent. Forløsende kode ...
+
+English:Oops! Invalid code.
+Translated:Oops! Ugyldig kode.
+
+English:Your code has been redeemed.  Please check the Library.
+Translated:Koden er innløst. Vennligst sjekk biblioteket.
+
+English:Shared with Me
+Translated:Delt med meg
+
+English:Share designs from your Cloud Library
+Translated:Del motiver i din Cloud Library
+
+English:Exporting to Folder or SD Card
+Translated:Eksportere til mappe eller SD-kort
+
+English:Materials
+Translated:materialer
+
+English:Material {0}
+Translated:Materiale {0}
+
+English:Redeem Purchase
+Translated:Løs Purchase
+
+English:Oops! Please sign in to enable this feature.
+Translated:Oops! Logg på for å aktivere denne funksjonen.
+
+English:Rebuild
+Translated:Gjenoppbygge
+
+English:Outside Perimeters
+Translated:utenfor Perimetere
+
+English:Sample the bed at {0} points
+Translated:Smak sengen om {0} poeng
+
+English:Software Print Leveling (disabled)
+Translated:Programvare Print Ling (deaktivert)
+
+English:Calibration Settings
+Translated:kalibrerings~~POS=TRUNC Innstillinger
+
+English:Software Print Leveling (enabled)
+Translated:Programvare Print Ling (aktivert)
+
+English:Layer Height = {0}\nNozzle Diameter = {1}
+Translated:Layer Høyde = {0}\nNozzle Diameter = {1}
+
+English:Solid Infill works best when set tu LINES.
+Translated:Solid Infill fungerer best når den er satt tu LINES.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
+Translated:Sted: Innstillinger og kontroller '-> Innstillinger -> Generelt ->' Fylling Type '
+
+English:Show normal text above the braille
+Translated:Vis normal tekst over blindeskrift
+
+English:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
+Translated:Bildefilen du har forsøkt å laste inn er ugyldig eller ikke har data. Vennligst sjekk filen eller prøve et annet bilde.
+
+English:Could Not Load Image File
+Translated:Kunne ikke laste Image File
+
+English:Reset View
+Translated:Tilbake Vis
+
+English:If you want to select a layer to pause your print on do so here (for changing filament)
+Translated:Hvis du ønsker å velge et lag til pause utskrifts på gjøre det her (for å endre filament)
+
+English:Select Layer To Pause:
+Translated:Velg lag til Pause:
+
+English:Offset:
+Translated:Offset:
+
+English:The speed to move while printing the first layer. If expressed as a percentage the above Infill speed is modified.
+Translated:Hastigheten å bevege seg mens du skriver det første laget. Hvis uttrykt som en prosentandel den ovenfor Distansehastigheten modifiseres.
+
+English:The distance between the interface of support and the part. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:Avstanden mellom grensesnittet støtte og delen. En god verdi er vanligvis ca 1/2 din ekstrudering diameter. Så, mellom 0,0 og 0,2 for en 0,4 dyse.
+
+English:Distance From Object
+Translated:Avstand fra Object
+
+English:Maximum Fan Speed
+Translated:Maksimal Fan Speed
+
+English:The amount that the filament will be reversed before each qualifying non-printing move.
+Translated:Beløpet som filamentet vil bli reversert før hver kvalifiserende ikke-utskrift trekk.
+
+English:Wipe After Retract
+Translated:Tørk Etter Retur
+
+English:Print Bed
+Translated:Print Bed
+
+English:Transparent
+Translated:Gjennomsiktig
+
+English:Canceled
+Translated:avbrutt
+
+English:Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.
+Translated:Skriveren rapporterer en maskinvarefeil. Dette kan føre til at skriveren fungerer som den skal.
+
+English:Error Reported
+Translated:feil Rapportert
+
+English:Printer Hardware Error
+Translated:Printer Hardware Error
+
+English:Error Loading Contents
+Translated:Feil Laster Innhold
+
+English:Temporarily override target temperature
+Translated:Midlertidig overstyre ønsket temperatur
+
+English:CHANGE
+Translated:ENDRING
+
+English:REVERT
+Translated:revert
+
+English:UPDATE
+Translated:OPPDATERING
+
+English:Oops! Could not complete update.
+Translated:Oops! Kunne ikke fullføre oppdateringen.
+
+English:Connect your printer to check for firmware updates.
+Translated:Koble skriveren for å se etter fastvareoppdateringer.
+
+English:Fine
+Translated:Fint
+
+English:Coarse
+Translated:Grov
+
+English:Outer Surface - Perimeters
+Translated:Ytre Surface - Perimetere
+
+English:Outer Surface - Top & Bottom
+Translated:Ytre Surface - Topp og bunn
+
+English:Light
+Translated:Lett
+
+English:Heavy
+Translated:Tung
+
+English:Speed for Infill
+Translated:Speed ​​for Infill
+
+English:Speed for Perimeters
+Translated:Speed ​​for Perimetere
+
+English:Speeds for Other Printing
+Translated:Hastigheter for Andre utskrifts
+
+English:Speed for Non-Print Moves
+Translated:Speed ​​for Non-Print Moves
+
+English:Touching
+Translated:Rørende
+
+English:Far
+Translated:Langt
+
+English:Machine Settings
+Translated:maskin~~POS=TRUNC innstillinger~~POS=HEADCOMP
+
+English:Probe Settings
+Translated:probe Settings
+
+English:On Connect G-Code
+Translated:På Connect G-kode
+
+English:sign in
+Translated:Logg inn
+
+English:Log into my account
+Translated:Logg inn på min konto
+
+English:Login
+Translated:Logg inn
+
+English:Username or Email
+Translated:Brukernavn eller e-post
+
+English:Enter your username or email address
+Translated:Skriv inn brukernavn eller e-postadresse
+
+English:Password
+Translated:Passord
+
+English:Forgot Password
+Translated:Glemt passord
+
+English:Enter your password
+Translated:Skriv inn passordet ditt
+
+English:New User? 
+Translated:Ny bruker?
+
+English:Create An Account
+Translated:Opprett en konto
+
+English:Please wait. Signing in...
+Translated:Vennligst vent. Logger inn...
+
+English:Extruder Temperatures
+Translated:extruder Temperaturer
+
+English:Bed Temperatures
+Translated:Bed Temperaturer
+
+English:Waiting for device to connect...
+Translated:Venter på at enhet for å koble ...
+
+English:Detecting device firmware...
+Translated:Oppdager enhet firmware ...
+
+English:Detecting target firmware...
+Translated:Oppdager mål firmware ...
+
+English:The amount of support to generate.
+Translated:Mengden av støtten for å generere.
+
+English:Support Percent
+Translated:Support Prosent
+
+English:Allow Negative Z
+Translated:Tillat Negativ Z
+
+English:Offset: 
+Translated:Offset:
+
+English:Are you sure you want to abort the current print and close MatterControl?
+Translated:Er du sikker på at du vil avbryte gjeldende utskrifts og nær MatterControl?
+
+English:Abort Print
+Translated:Abort Skriv ut
+
+English:mm / minute
+Translated:mm / minutt
+
+English:Attempts to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+Translated:Forsøk på å unngå at omkretsen linjen krysser over eksisterende perimeter linjer. Dette kan hjelpe med oser eller strenger.
+
+English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
+Translated:X- og y-verdier av størrelsen på utskrifts seng, i millimeter. For skrivere med en rund seng, disse verdiene er diameteren på X- og Y-akser.
+
+English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
+Translated:Temperaturen til hvilken seng vil bli innstilt for varigheten av trykket. Sett til 0 for å deaktivere.
+
+English:The amount to remove from the bottom of the model, in millimeters.
+Translated:Mengden som fjernes fra bunnen av modellen, i millimeter.
+
+English:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
+Translated:Antall lag eller avstanden i millimeter til fyllingsgraden på bunnflaten (e) av objektet. Legg mm til enden av nummeret for å angi avstanden i millimeter.
+
+English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
+Translated:Hastigheten ved hvilken sjiktet Kjøleviften kjører da bygge bro, uttrykt som en prosent av full effekt.
+
+English:The speed at which bridging between walls will print.
+Translated:Hastigheten som å bygge bro mellom vegger vil skrive ut.
+
+English:The amount of brim that will be drawn around each object, in millimeters. This can be useful to ensure that parts stay affixed to the bed.
+Translated:Mengden rand som vil bli trukket rundt hver gjenstand, i millimeter. Dette kan være nyttig for å sikre at delene bli festet til sengen.
+
+English:The height of the printer's printable volume, in millimeters. Primarily controls the height of the visual print area displayed in 3D View.
+Translated:Høyden på skriverens utskriftsvolum, i millimeter. Primært styrer høyden på den visuelle utskriftsområde vises i 3D-visning.
+
+English:G-Code to run when a print is canceled.
+Translated:G-kode for å kjøre når en utskrifts er kansellert.
+
+English:Centers the print on the bed, regardless of where it is moved in Edit Mode. Disable to allow printing a model anywhere on the bed.
+Translated:Sentrerer print på sengen, uansett hvor den flyttes i redigeringsmodus. Deaktiver å tillate å skrive ut en modell hvor som helst på sengen.
+
+English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
+Translated:G-kode for å kjøre etter vellykket tilkobling til en skriver. Dette kan være nyttig for å angi innstillinger som er spesifikke for en gitt skriver.
+
+English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
+Translated:Oppretter en flåte under trykte delen. Nyttig å hindre fordreining ved utskrift ABS (og andre fordreining utsatt plast) som det bidrar deler holder seg til sengs.
+
+English:The extra distance the raft will extend around the edge of the part.
+Translated:Den ekstra avstanden flåten vil forlenge rundt kanten av delen.
+
+English:The distance between the first layer and the top of the raft. A good value is typically about half the extrusion diameter. For a 0.4 mm nozzle, a value between 0.0 and 0.2 would be best.
+Translated:Avstanden mellom det første lag og toppen av flåten. En god verdi er typisk omtrent halvparten av ekstrudering diameter. For en 0,4 mm dyse, vil en verdi mellom 0,0 og 0,2 være best.
+
+English:The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.
+Translated:Hastigheten ved hvilken kjøleviften (e) vil løpe under trykke av flåten, uttrykt som en prosent av full effekt.
+
+English:The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.
+Translated:Hastigheten som lagene i flåten (annet enn det første laget) vil skrive ut. Denne kan settes eksplisitt eller som en prosentandel av den Fylling hastighet.
+
+English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
+Translated:Det antall lag som laget kjøleviften vil bli tvunget ut ved starten av trykket.
+
+English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
+Translated:G-kode som skal kjøres på slutten av alle automatisk utgang (helt på slutten av G-koden kommandoer).
+
+English:The speed at which outside, (visible) perimeters will print.
+Translated:Hastigheten som utenfor, (synlige) utkant vil skrive ut.
+
+English:Forces external perimeters to be printed first. By default, they will print last.
+Translated:Tvinger eksterne utkant som skal skrives ut først. Som standard, vil de skrive ut sist.
+
+English:The number of extruders the printer has.
+Translated:Antallet ekstrudere skriveren har.
+
+English:Indicate that the extruders share a common heater cartridge.
+Translated:Indikerer at ekstrudere deler en felles varmeapparat patron.
+
+English:Forces the printer to heat the nozzle before homing.
+Translated:Tvinger skriveren til å varme opp munnstykket før homing.
+
+English:This is the identifier used in the G-Code to specify the extruder.
+Translated:Dette er identifikatoren brukes i G-kode for å angi ekstruder.
+
+English:All extrusions are multiplied by this value. Increasing it above 1  will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
+Translated:Alle profiler multipliseres med denne verdien. Øke den ovenfor en vil øke mengden av filamentet som ekstruderes (1.1 er en god verdi maks); redusere det vil redusere mengden blir ekstrudert (0,9 er en god minimumsverdi).
+
+English:The actual diameter of the filament used for printing.
+Translated:Selve diameter av filamentet brukes til utskrift.
+
+English:The angle of the infill, measured from the X axis. Not used when bridging.
+Translated:Vinkelen på fylling, målt fra X-aksen. Ikke brukes når bygge bro.
+
+English:The amount of infill material to generate, expressed as a ratio or a percentage.
+Translated:Mengden av fyllingsmaterialet for å generere, uttrykt som et forhold eller en prosentandel.
+
+English:The geometric shape of the support structure for the inside of parts.
+Translated:Den geometriske form av den bærekonstruksjon for innsiden av delene.
+
+English:Acceleration to use while printing the first layer. Set to 0 to use the default first layer acceleration.
+Translated:Akselerasjon å bruke mens du skriver ut det første laget. Sett til 0 for å bruke standard første laget akselerasjon.
+
+English:The height of the first layer. A first layer taller than the default layer height can sometimes be used to improve adhesion to the build plate.
+Translated:Høyden av det første lag. Et første lag høyere enn standard laghøyde kan noen ganger bli anvendt for å forbedre adhesjon til oppbygging plate.
+
+English:The speed at which the nozzle will move when printing the first layer. If expressed as a percentage the Infill speed is modified.
+Translated:Hastigheten som munnstykket vil bevege seg når du skriver ut det første laget. Hvis uttrykt som en prosentandel av Distansehastigheten modifiseres.
+
+English:Include detailed comments in the G-Code.
+Translated:Ta med detaljerte kommentarer i G-Code.
+
+English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
+Translated:Den versjonen av G-kode skriverens fastvare kommuniserer med. Noen firmware bruker ulike G og M koder. Sette dette sikrer at utgangs G-kode vil bruke de riktige kommandoene.
+
+English:The printer has a layer-cooling fan.
+Translated:Skriveren har et lag-kjølevifte.
+
+English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
+Translated:Skriveren har sin egen auto seng utjevning sonde og prosedyre som kan kalles ved hjelp av et G29-kommandoen under Start-G-Code.
+
+English:The printer has a heated bed.
+Translated:Skriveren har en oppvarmet seng.
+
+English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Control pane.
+Translated:Skriveren har evnen til å kontrollere strømforsyningen. Aktiver denne funksjonen for å vise ATX Power Control-seksjonen på kontroll panelet.
+
+English:The printer has a SD card reader.
+Translated:Skriveren har en SD-kortleser.
+
+English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
+Translated:Viser en knapp på høyre side av skriveren Connection Bar brukes til å tilbakestille USB-tilkobling til skriveren. Dette kan brukes på skrivere som støtter det som en nødstopp.
+
+English:Acceleration to use when printing infill. Set to 0 to disable changing the printer's acceleration.
+Translated:Akselerasjon å bruke ved utskrift infill. Sett til 0 for å deaktivere endre skriverens akselerasjon.
+
+English:The speed at which infill will print.
+Translated:Hastigheten som infill vil skrive ut.
+
+English:The print leveling algorithm to use.
+Translated:Utskriften planering algoritme for å bruke.
+
+English:The printer requires print leveling to run correctly.
+Translated:Skriveren krever print utjevning for å fungere.
+
+English:The print leveling sampling method to use.
+Translated:Utskriften utjevning prøvetaking metoden å bruke.
+
+English:The thickness of the paper (or other calibration device) used to perform manual bed probe.
+Translated:Tykkelsen av papiret (eller annen kalibreringsinnretning) som brukes til å utføre manuell seng probe.
+
+English:G-Code to be run after the change in Z height for the next layer.
+Translated:G-kode som skal kjøres etter at endringen i Z høyde for neste lag.
+
+English:The height of each layer of the print, except the first. A smaller number will create more layers and more vertical accuracy but also a slower print.
+Translated:Høyden på hvert lag i print, bortsett fra den første. Et mindre antall vil skape flere lag og mer vertikal nøyaktighet, men også et lavere trykk.
+
+English:Sets the size of the outer solid surface (perimeter) for the entire print.
+Translated:Angir størrelsen på ytre fast underlag (omkrets) for hele print.
+
+English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
+Translated:Den maksimale hastighet ved hvilken sjiktet Kjøleviften kjører, uttrykt som en prosent av full effekt.
+
+English:The minimum length of filament that must be extruded before a retraction can occur.
+Translated:Minimum lengde på filament som må ekstrudert før et dementi kan forekomme.
+
+English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
+Translated:Den minimale hastighet som laget Kjøleviften kjører, uttrykt som en prosent av full effekt.
+
+English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
+Translated:Minimum hastighet som skriveren vil redusere til for å forsøke å gjøre laget utskriftstiden er lang nok til å tilfredsstille minimum lag tid.
+
+English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
+Translated:Minimum lengde på filament å bruke utskrift av skjørt sløyfer. Nok skjørt sløyfer vil bli trukket til å bruke denne mengden av filament, overstyrer verdien satt i Loops hvis verdien i Loops vil produsere et skjørt kortere enn denne verdien.
+
+English:These notes will be added as comments in the header of the output G-Code.
+Translated:Disse notatene vil bli lagt til som kommentarer i overskriften på utgangs G-Code.
+
+English:The diameter of the extruder's nozzle.
+Translated:Diameteren av ekstruderens munnstykke.
+
+English:G-Code to run when the printer is paused.
+Translated:G-kode for å kjøre når skriveren er satt på pause.
+
+English:A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.
+Translated:En ombygging av bredden på ekstrudering ved utskrift utenfor utkant. Kan være nyttig å finjustere selve trykkstørrelsen når gjenstander skrive ut større eller mindre enn angitt i den digitale modellen.
+
+English:The speed at which inside perimeters will print.
+Translated:Hastigheten som inne utkant vil skrive ut.
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
+Translated:Antallet, eller total bredde, av ytre skall for å skape. Legg mm til enden av nummeret for å spesifisere bredde i millimeter.
+
+English:You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.
+Translated:Du kan ta med flere programmer for å behandle G-kode etter høvelen er ferdig. Den fullstendige banen til programmet til å kjøre bør inkluderes her.
+
+English:The position (X and Y coordinates) of the center of the print bed, in millimeters.
+Translated:Stillingen (X og Y-koordinater) i sentrum av utskrifts seng, i millimeter.
+
+English:G-Code to be run when the print resumes after a pause.
+Translated:G-kode som skal kjøres når utskrifts fortsetter etter en pause.
+
+English:The minimum distance of a non-print move which will trigger a retraction.
+Translated:Minste avstand fra et ikke-print trekk som vil utløse et dementi.
+
+English:The distance filament will reverse before each qualifying non-print move
+Translated:Avstanden filament vil reversere før hver kvalifiserende non-print farten
+
+English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
+Translated:Når du bruker flere ekstrudere, vil avstanden filament revers før du skifter til en annen ekstruder.
+
+English:Force a retraction when moving between islands (distinct parts on the layer).
+Translated:Tving et dementi når du flytter mellom øyene (adskilte deler på laget).
+
+English:The distance the nozzle will lift after each retraction.
+Translated:Avstanden dysen vil løfte etter hvert dementi.
+
+English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
+Translated:Lengde av filament for å ekstrudere etter en fullstendig tilbaketrekking (i tillegg til den re-ekstrudering av lengden på Move avstand).
+
+English:The speed at which filament will retract and re-extrude.
+Translated:Hastigheten som filament vil trekkes og re-extrude.
+
+English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
+Translated:Antall løkker å tegne rundt alle delene på senga før du starter på delene. Brukes mest for å prime munnstykket slik at flyten er, selv når den faktiske utskriften begynner.
+
+English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
+Translated:Det minimum av tid et lag må ta for å skrive ut. Hvis et lag vil ta mindre enn dette beløpet av tid, bevegelseshastigheten reduseres slik laget utskriftstiden vil matche denne verdien, ned til den minste utskriftshastighet på den tregeste.
+
+English:Forces the print to have only one extrusion and gradually increase the extruder height during the print. Only one part will print at a time with this feature.
+Translated:Tvinger print å ha bare én ekstrudering og gradvis øke ekstruder høyde under utskrift. Bare en del vil skrive ut i en tid med denne funksjonen.
+
+English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
+Translated:G-kode som skal kjøres umiddelbart etter temperaturinnstillingen kommandoer. Inkludert kommandoer for å sette temperaturen i denne delen vil føre dem ikke bli generert utenfor denne delen. Vil akseptere tilpasset G-kode variabler.
+
+English:The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
+Translated:Avstanden mellom det første lag (nederst) og toppen av flåten. En god verdi avhenger av typen av materiale. For PLA og ABS-en verdi mellom 0,1 og 0,3 generelt fungerer godt.
+
+English:The percent of the extrusion width that can be overlapped and still generate.
+Translated:Den prosent av ekstrudering bredde som kan overlappes og fremdeles generere.
+
+English:The angle at which the support material lines will be drawn.
+Translated:Vinkelen ved hvilken bærermaterialet linjene vil bli trukket.
+
+English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
+Translated:Genererer støttemateriell som starter på toppen av innvendige overflater. Hvis ukontrollert støtte vil bare generere utgangs på sengen.
+
+English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
+Translated:Indeksen av ekstruderen som skal brukes for å skrive ut bærermaterialet. Gjelder bare når Extruder Count er satt til en verdi mer enn en.
+
+English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
+Translated:Indeksen av ekstruderen å bruke til å skrive ut flåten. Sett til 0 for å bruke støtte ekstruder indeksen.
+
+English:A modifier of the width of the extrusion when printing support material. Set to 0 for automatic calculation.
+Translated:En ombygging av bredden på ekstrudering ved utskrift støtte materiale. Sett til 0 for automatisk beregning.
+
+English:The index of the extruder to use for support material interface layer(s).
+Translated:Indeksen av ekstruderen som skal brukes for bærermateriale grensesnittlaget (-lagene).
+
+English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
+Translated:Antall lag eller avstanden for å skrive ut fast materiale mellom støttene og den del. Legg mm til enden av nummeret for å angi avstanden.
+
+English:The pattern to draw for the generation of support material.
+Translated:Mønsteret for å trekke for generering av bærermaterialet.
+
+English:The distance between support material lines.
+Translated:Avstanden mellom støttemateriallinjer.
+
+English:The speed at which support material structures will print.
+Translated:Hastigheten som støtter materielle strukturer vil skrive ut.
+
+English:The minimum angle of overhang for which support material will be created. The angle perpendicular to the bed = 0; parallel with the bed = 90.
+Translated:Den minste vinkelen overheng som støttemateriell vil bli opprettet. Vinkelen vinkelrett på sengen = 0; parallelt med sengen = 90.
+
+English:The distance the support material will be from the object in the X and Y directions.
+Translated:Avstanden bærermaterialet vil være fra objektet i X-og Y-retninger.
+
+English:The number of layers, or the distance, to skip between the support (including interface layers) and the model. Add mm to the end of the number to specify distance.
+Translated:Antall lag, eller på avstand, for å hoppe mellom bæreren (inkludert grensesnitt lag) og modellen. Legg mm til enden av nummeret for å angi avstanden.
+
+English:Generates support material under areas of the part which may be too steep to support themselves.
+Translated:Genererer bærermateriale i henhold områder av delen som kan være for bratt for å støtte seg selv.
+
+English:The target temperature the extruder will attempt to reach during the print.
+Translated:Målet temperatur ekstruderen vil forsøke å komme under utskrift.
+
+English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
+Translated:Temperaturen der ekstruderen vil tørke munnstykket, som angitt av Custom G-Code.
+
+English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
+Translated:Temperaturen til hvilken sengen vil varme (eller kul) for å fjerne den del, som angitt i Custom g-koden.
+
+English:G-Code to be run after every tool change.
+Translated:G-kode som skal kjøres etter hvert skifte av verktøy.
+
+English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
+Translated:Antall lag, eller avstanden i millimeter, til fyllingsgraden på den øvre overflate (r) av objektet. Legg mm til enden av nummeret for å angi avstanden i millimeter.
+
+English:The speed at which the nozzle will move when not extruding material.
+Translated:Hastigheten ved hvilken munnstykket vil bevege seg når den ikke er ekstruderingsmaterialet.
+
+English:The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.
+Translated:Ekstruderen skal tørke munnstykket over det siste opp til 10 mm av verktøyet banen etter trekke.
+
+English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
+Translated:Oppretter en omkrets rundt den delen som å tørke den annen dyse når du skriver ut ved hjelp av dual ekstrudering. Sett til 0 for å deaktivere.
+
+English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
+Translated:Lengden og bredden av et tårn laget på baksiden igjen av utskrifts brukes for å tørke neste munnstykket når du skifter mellom flere ekstrudere. Sett til 0 for å deaktivere.
+
+English:Allows the printer to attempt going below 0 along the Z axis during the Software Print Leveling wizard, and disables related warnings. Does not override actual endstops, physical or software.
+Translated:Lar skriveren til å forsøke å gå under 0 langs Z-aksen i programvaren Print Ling veiviseren, og deaktiverer relaterte advarsler. Overstyrer ikke selve endestopper, fysisk eller programvare.
+
+English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
+Translated:Avstanden for å bevege munnstykket langs Z-aksen for å sikre at den er i riktig avstand fra trykk sengen. Et positivt tall vil heve munnstykket, og et negativt tall vil senke den.
+
+English:Retract When \nChanging Islands
+Translated:Trekk Når\nEndre Øyene
+
+English:Movement
+Translated:Bevegelse
+
+English:Fan
+Translated:Fan
+
+English:Firmware Version: {0}
+Translated:Firmware Version: {0}
+
+English:Offset
+Translated:Offset
+
+English:Downloads
+Translated:Nedlastinger
+
+English:Local Library
+Translated:lokal Library
+
+English:G-Code Terminal
+Translated:G-kode Terminal
+
+English:Go to Dashboard
+Translated:Gå til Dashboard
+
+English:Sign Up for an Account
+Translated:Registrer deg for en konto
+
+English:Create Account
+Translated:Opprett konto
+
+English:Username
+Translated:Brukernavn
+
+English:Enter a username
+Translated:Skriv inn et brukernavn
+
+English:Email
+Translated:E-post
+
+English:Enter your email address
+Translated:Skriv inn din epostadresse
+
+English:Re-enter Password
+Translated:Skriv inn passord på nytt
+
+English:Confirm your Password
+Translated:Bekreft ditt passord
+
+English:Oops! Field cannot be left blank
+Translated:Oops! Feltet kan ikke stå tomt
+
+English:Sorry!  Must be a valid email address.
+Translated:Beklager! Må være en gyldig e-postadresse.
+
+English:Please wait while we create your account...
+Translated:Vennligst vent mens vi oppretter kontoen din ...
+
+English:Account created
+Translated:konto opprettet
+
+English:Success! Your account has been created.
+Translated:Suksess! Din konto har blitt laget.
+
+English:Please log in to continue.
+Translated:Vennligst Logg inn for å fortsette.
+
+English:Oops! Invalid username, email or password.
+Translated:Oops! Ugyldig brukernavn, e-post eller passord.
+
+English:Generates an outline around the support material to improve strength and hold up interface layers.
+Translated:Genererer et omriss rundt bærermaterialet for å forbedre styrke og holde opp grensesnitt lag.
+
+English:Create Perimeter
+Translated:Opprett Perimeter
+
+English:Braille Builder
+Translated:Braille Builder
+
+English:Image Converter
+Translated:image Converter
+
+English:Text Creator
+Translated:tekst Creator
+
+English:sign out
+Translated:Logg ut
+
+English:No macros are currently set up for this printer.
+Translated:Ingen makroer er konfigurert for denne skriveren.
+
+English:The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+Translated:Forskyvningen av hver ekstruder i forhold til den første ekstruder. Bare nyttig for flere extruder maskiner.
+
+English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
+Translated:En ombygging av bredden på ekstrudering for det første laget av trykket. En verdi større enn 100% kan hjelpe med vedheft til utskrifts seng.
+
+English:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
+Translated:Avstanden fra modellen ved hvilken den første sløyfen skjørtet er trukket. Gjør dette 0 for å skape et anker for den delen av sengen, også kjent som en brem.
+
+English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
+Translated:Hastigheten som de beste solide lagene vil skrive ut. Kan settes eksplisitt eller som en prosentandel av den Fylling hastighet.
+
+English:Calibration
+Translated:kalibrering
+
+English:EEProm
+Translated:EEProm
+
+English:Cloud
+Translated:Sky
+
+English:Notifications
+Translated:Varsler
+
+English:Application
+Translated:Søknad
+
+English:Language
+Translated:Språk
+
+English:Display Mode
+Translated:Visningsmodus
+
+English:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
+Translated:Deler er ikke på sengen eller utenfor utskriftsområdet.\n\nHar du lyst til å sentrere dem på sengen?
+
+English:Parts not in print area
+Translated:Deler ikke i utskriftsområdet
+
+English:Loading G-Code...
+Translated:Laster G-kode ...
+
+English:demo
+Translated:demo
+
+English:Extruder 2
+Translated:extruder 2
+
+English:To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.
+Translated:For å re-kalibrere skriveren, eller for å slå av Auto Print Ling, kan utskrifts utjevning kontroller finnes under "Alternativer" -> "Kalibrering".\n\nKlikk på Ferdig for å lukke dette vinduet.
+
+English:Start G-Code cannot contain G29 if Print Leveling is enabled.
+Translated:Start-G-kode kan ikke inneholde G29 hvis Print Ling er aktivert.
+
+English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+Translated:Start-G-kode skal ikke inneholde en G29 hvis du planlegger å bruke print utjevning. Endre start G-kode eller slå av print utjevning
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
+Translated:Sted: Innstillinger og kontroller "->" Innstillinger "->" Filament "->" Extrusion "->" First Layer '
+
+English:Start G-Code cannot contain G30 if Print Leveling is enabled.
+Translated:Start-G-kode kan ikke inneholde G30 hvis Print Ling er aktivert.
+
+English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+Translated:Start-G-kode skal ikke inneholde en G30 hvis du planlegger å bruke print utjevning. Endre start G-kode eller slå av print utjevning
+
+English:Loading G-Code
+Translated:Laster G-kode
+
+English:Estimated Mass
+Translated:estimert Mass
+
+English:Export EEPROM Settings
+Translated:Export EEPROM Innstillinger
+
+English:MatterControl - 
+Translated:MatterControl -
+
+English:Export EEPROM
+Translated:Export EEPROM
+
+English:Import EEPROM Settings
+Translated:Import EEPROM Innstillinger
+
+English:Import EEPROM
+Translated:import EEPROM
+
+English:Center on Bed
+Translated:Center på Bed
+
+English:Would you like to save your changes before exiting the editor?
+Translated:Vil du lagre endringene før du avslutter editoren?
+
+English:Save Changes
+Translated:Lagre endringer
+
+English:Snap Grid
+Translated:Snap rutenett
+
+English:Retraction On Tool Change
+Translated:Tilbaketrekking På Tool Change
+
+English:randomize_start
+Translated:randomize_start
+
+English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+Translated:Tvinger høvelen for å forsøke å unngå at omkretsen linjen krysser over eksisterende perimeter linjer. Dette kan hjelpe med oser eller strenger.
+
+English:The height of the printer's printable volume, in millimeters. Serves no purpose for slicing, but controls the height of the visual print area displayed in 3D View.
+Translated:Høyden på skriverens utskriftsvolum, i millimeter. Tjener ingen hensikt for kutting, men styrer høyden på den visuelle utskriftsområde vises i 3D-visning.
+
+English:The speed at which outside, external, or the otherwise visible perimeters will print.
+Translated:Hastigheten som utenfor, eksterne, eller på annen måte synlige utkant vil skrive ut.
+
+English:Used to specify if more than one extruder share a common heater cartridge.
+Translated:Brukes til å angi om mer enn en ekstruder deler en felles varmeapparat patron.
+
+English:The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
+Translated:Selve diameter av filamentet brukes til utskrift. Mål 5 ganger med calipers, kaste ut toppen og bunnen, og gjennomsnittlig gjenværende tre.
+
+English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
+Translated:Høyden av det første lag. Et første lag høyere enn standard laghøyde kan sikre god adhesjon til byggeplaten.
+
+English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
+Translated:Skriveren har evnen til å kontrollere strømforsyningen. Aktiver denne funksjonen for å vise ATX Power Control-seksjonen på Controls ruten.
+
+English:The number of loops to draw around parts. Used to provide additional bed adhesion
+Translated:Antall løkker å tegne rundt deler. Brukes for å gi ekstra seng vedheft
+
+English:Skirt (Priming)
+Translated:Skjørt (Priming)
+
+English:Brim (Hold Downs)
+Translated:Brim (Hold Downs)
+
+English:Finish Setup...
+Translated:Finish Setup ...
+
+English:Run setup configuration for printer.
+Translated:Kjør setup konfigurasjon for skriveren.
+
+English:Name
+Translated:Navn
+
+English:Make
+Translated:Lage
+
+English:User Manual
+Translated:Brukermanual
+
+English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
+Translated:Høyden på skriverens utskriftsvolum, i millimeter. Styrer høyden på den visuelle utskriftsområde vises i 3D-visning.
+
+English:Extruder 3
+Translated:extruder 3
+
+English:Extruder 4
+Translated:extruder 4
+
+English:Undo
+Translated:angre
+
+English:Redo
+Translated:Gjøre om
+
+English:Set Name
+Translated:Sett navn
+
+English:MatterHackers - Set Name
+Translated:MatterHackers - Sett navn
+
+English:Shapes
+Translated:figurer
+
+English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
+Translated:Dette vil bare fungere på spesifikk maskinvare. Ikke bruk mindre du er sikker på at din skriverkontrolleren støtter denne funksjonen
+
+English:Show Firmware Updater
+Translated:Vis Firmware Updater
+
+English:Cube
+Translated:Cube
+
+English:Cylinder
+Translated:Sylinder
+
+English:Sphere
+Translated:Sphere
+
+English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
+Translated:Utgang bare det første laget av trykket. Spesielt nyttig for utmating gcode data for programmer som gravering eller skjæring.
+
+English:First Layer Only
+Translated:Bare første Layer
+
+English:File Settings
+Translated:Filinnstillinger
+
+English:Solid Infill works best when set to LINES.
+Translated:Solid Infill fungerer best når den er satt til LINJER.
+
+English:'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:Første laghøyde 'må være mindre enn eller lik den "dysediameteren'.
+
+English:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:Første lag Extrusion Bredde "må være mindre enn eller lik 'Nozzle Diameter' * 4.
+
+English:Pyramid
+Translated:Pyramide
+
+English:Half Sphere
+Translated:Half Sphere
+
+English:Cone
+Translated:Cone
+
+English:Wedge
+Translated:Kile
+
+English:Roof
+Translated:Tak
+
+English:Round Roof
+Translated:round Roof
+
+English:Honey Comb
+Translated:Honey Comb
+
+English:Apply leveling to G-Code during export
+Translated:Påfør planering til G-kode ved eksport
+
+English:Material 0
+Translated:Materiale 0
+
+English:Printers
+Translated:skrivere
+
+English:The speed at which the nozzle will move when resuming a failed print, for 1 layer.
+Translated:Hastigheten som munnstykket vil bevege seg når du gjenopptar en mislykket utskrift, for en lag.
+
+English:Set if the z homing moves the extruder away from the bed (z-max homing)
+Translated:Innstilles dersom z homing flytter extruder bort fra sengen (z-max homing)
+
+English:The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.
+Translated:X- og Y-posisjons av ekstruderen som minimerer muligheten for å kollidere med delene på sengen.
+
+English:Restore All
+Translated:Gjenopprett alle
+
+English:Restore Default
+Translated:Gjenopprette standard
+
+English:Outer Surface
+Translated:ytre Surface
+
+English:Minimum Travel equiring Retraction
+Translated:Minimum Reise equiring Retraction
+
+English:Retract When Changing Islands
+Translated:Kjør når Endre Øyene
+
+English:Minimum Extrusion Requiring Retraction
+Translated:Minimum Extrusion Kreve Retraction
+
+English:Slow Down If Layer Print Time Is Below
+Translated:Slow Down Hvis Layer Print Time Is Nedenfor
+
+English:Resume Failed Print
+Translated:Gjenoppta Kunne Skriv ut
+
+English:Homing
+Translated:Homing
+
+English:G-Code to be run before every tool change.
+Translated:G-kode som skal kjøres før alle verktøy endring.
+
+English:Before Tool Change G-Code
+Translated:Før Tool Change g-koden
+
+English:After Tool Change G-Code
+Translated:Etter Tool Change g-koden
+
+English:One Time
+Translated:En gang
+
+English:Single Print Settings
+Translated:Enkeltutskriftsinnstillinger
+
+English:Single Print
+Translated:enkelt~~POS=TRUNC Skriv ut
+
+English:Reset at End of Print
+Translated:Tilbake på End of Print
+
+English:Will Clear at End of Print
+Translated:Vil klare på End of Print
+
+English:Settings Will Clear at End of Print
+Translated:Innstillinger vil klare på End of Print
+
+English:Max Temp
+Translated:Max Temp
+
+English:Add a new Macro
+Translated:Legg til en ny makro
+
+English:Add a new Settings Preset
+Translated:Legg til en ny innstillings Preset
+
+English:Import an existing Settings Preset
+Translated:Importere en eksisterende innstillinger Preset
+
+English:The serial port communication speed of the printers firmware.
+Translated:Serieporten kommunikasjonshastigheten til skrivere firmware.
+
+English:Home Z Max
+Translated:Hjem Z Max
+
+English:Resume Layer Speed
+Translated:Fortsett Layer Speed
+
+English:XY Resume Position
+Translated:XY Resume plassering
+
+English:Resume Print
+Translated:Fortsett Skriv ut
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
+Translated:Det vises din siste utskrifts ikke klarte å fullføre.\n\nVil du gjerne prøve å fortsette fra siste know posisjon?
+
+English:Resume Last Print
+Translated:Gjenoppta Siste Print
+
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm eller%
+
+English:count or mm
+Translated:telle eller mm
+
+English:°
+Translated:°
+
+English:mm/s
+Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s eller%
+
+English:%
+Translated:%
+
+English:layers or mm
+Translated:lag eller mm
+
+English:°C
+Translated:° C
+
+English:seconds
+Translated:sekunder
+
+English:layers
+Translated:lag
+
+English:Action
+Translated:Handling
+
+English:ComPort
+Translated:overenstemmelse
+
+English:Set the com port to use while connecting to this printer.
+Translated:Sett com porten som skal brukes ved tilkobling til denne skriveren.
+
+English:If set, the printer will automatically attempt to connect when selected.
+Translated:Hvis satt, vil skriveren automatisk forsøke å koble til når det velges.
+
+English:Give the macro a name
+Translated:Gi makroen et navn
+
+English:This should be in 'G-Code'
+Translated:Dette bør være i "G-kode '
+
+English:Software Print Leveling
+Translated:Programvare Print Ling
+
+English:Edit Preset:
+Translated:Edit Preset:
+
+English:Preset Name:
+Translated:Preset Navn:
+
+English:This is the name of your printer that will be displayed in the choose printer menu.
+Translated:Dette er navnet på skriveren som skal vises i velge skrivermenyen.
+
+English:Local Computer
+Translated:lokal datamaskin
+
+English:Connection
+Translated:Forbindelse
+
+English:Interface
+Translated:Interface
+
+English:Behavior
+Translated:Oppførsel
+
+English:Connection Info
+Translated:Connection info
+
+English:Camera Monitoring
+Translated:kamera~~POS=TRUNC
+
+English:Details
+Translated:detaljer
+
+English:Edit Printer Settings
+Translated:Rediger skriverinnstillinger
+
+English:Edit Selected Setting
+Translated:Rediger valgte innstillingen
+
+English:Edit Current Printer Settings
+Translated:Rediger gjeldende skriverinnstillinger
+
+English:Printer Settings
+Translated:skriver~~POS=TRUNC innstillinger~~POS=HEADCOMP
+
+English:Delete the currently selected printer profile.
+Translated:Slette det valgte skriverprofilen.
+
+English:Delete Printer
+Translated:Slett skriver
+
+English:Estimated Print Time
+Translated:Beregnet ut Tid
+
+English:The COM port to use while connecting to this printer.
+Translated:COM-port til å bruke mens du kobler til denne skriveren.
+
+English:COM Port
+Translated:COM Port
+
+English:Setup Wizard
+Translated:veiviseren
+
+English:Setup Options
+Translated:Setup-alternativer
+
+English:Please wait. Generating printer profile
+Translated:Vennligst vent. Generering skriverprofil
+
+English:Connect Your Device
+Translated:Koble til enheten
+
+English:Instructions:
+Translated:Bruksanvisning:
+
+English:1. Power on your 3D Printer.
+Translated:1. Slå på 3D-skriver.
+
+English:2. Attach your 3D Printer via USB.
+Translated:2. Fest 3D-skriver via USB.
+
+English:3. Press 'Connect'.
+Translated:3. Trykk "Connect".
+
+English:(Press 'Skip' to setup connection later)
+Translated:(Trykk 'Skip' for å sette opp tilkoblingen senere)
+
+English:Troubleshoot
+Translated:Feilsøk
+
+English:Estimated Print Time:
+Translated:Beregnet ut Tidspunkt:
+
+English:Are you sure you want to delete your currently selected printer?
+Translated:Er du sikker på at du vil slette valgte skriveren?
+
+English:Delete Printer?
+Translated:Slett skriver?
+
+English:The Fill Density must be between 0 and 1.
+Translated:Fill Tetthet må være mellom 0 og 1.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
+Translated:Sted: Innstillinger og kontroller '-> Innstillinger -> Generelt ->' Infill '
+
+English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
+Translated:Lengden av ekstra filament for å ekstrudere etter et komplett verktøy endring (i tillegg til den re-ekstrudering av verktøyet endringen tilbaketrekkings avstand).
+
+English:Extra Length After Tool Change
+Translated:Ekstra lengde Etter skifte av verktøy
+
+English:mm zero to disable
+Translated:mm null for å deaktivere
+
+English:Connection Troubleshooting
+Translated:tilkobling Feilsøking
+
+English:Generate Extra Perimeters When Needed:
+Translated:Generere ekstra Perimetere ved behov:
+
+English:mm2
+Translated:mm2
+
+English:Only Retract When  Crossing Perimeters
+Translated:Bare trekke når Crossing Perimetere
+
+English:mm/s�
+Translated:mm / s
+
+English:mm or % leave 0 for auto
+Translated:mm eller% permisjon 0 for auto
+
+English:Enable Fan If Layer Print Time Is Below
+Translated:Aktiver Fan Hvis Layer Print Time Is Nedenfor
+
+English:Hz
+Translated:Hz
+
+English:Current Settings
+Translated:nåværende innstillinger
+
+English:Reset to defaults
+Translated:Tilbakestill til standard
+
+English:Bake Overrides
+Translated:bake Styrer
+
+English:Export MatterControl settings (*.printer)
+Translated:Export MatterControl innstillinger (* .printer)
+
+English:Export Slic3r settings (*.ini)
+Translated:Eksporter Slic3r innstillinger (* .ini)
+
+English:Export Cura settings (*.ini)
+Translated:Eksporter Cura innstillinger (* .ini)
+
+English:Export Settings
+Translated:eksport~~POS=TRUNC innstillinger~~POS=HEADCOMP
+
+English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
+Translated:Nullstilling til standardverdier vil fjerne dine nåværende styringer og gjenopprette de opprinnelige skriverinnstillingene. \ N Er du sikker på at du vil fortsette?
+
+English:Revert Settings
+Translated:Tilbakestill innstillinger
+
+English:Import as new printer profile
+Translated:Importer som ny skriverprofil
+
+English:Merge into current printer profile
+Translated:Flett inn i gjeldende skriverprofil
+
+English:Replace current printer profile
+Translated:Erstatt gjeldende skriverprofil
+
+English:Import Settings
+Translated:import~~POS=TRUNC innstillinger~~POS=HEADCOMP
+
+English:Oops! Please select a serial port.
+Translated:Oops! Velg en seriell port.
+
+English:The layers at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:Lagene der print vil ta en pause, slik at for en endring i filament. La stå tomt for å deaktivere. Til pause på flere lag, skille lag numrene med semikolon. For eksempel: "16; 37".
+
+English:Layers To Pause:
+Translated:Lag Til Pause:
+
+English:Import Wizard
+Translated:import Wizard
+
+English:Import settings as new QUALITY preset
+Translated:Importer innstillinger som ny KVALITET forhåndsinnstilling
+
+English:Import settings as new MATERIAL preset
+Translated:Importer innstillinger som nytt materiale forhåndsinnstilling
+
+English:Choose File
+Translated:Velg Fil
+
+English:Export Wizard
+Translated:Export Wizard
+
+English:Oops! Unable to recognize settings file '{0}'.
+Translated:Oops! Kan ikke gjenkjenne innstillingsfilen {0}.
+
+English:Unable to Import
+Translated:Kan ikke importere
+
+English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
+Translated:Du har importert en ny skriver profil. Du kan finne '{0} i listen over tilgjengelige skrivere.
+
+English:Import Successful
+Translated:import vellykket
+
+English:The distance between the first layer (the bottom) and the top of the support material. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
+Translated:Avstanden mellom det første lag (nederst) og toppen av bærermaterialet. En god verdi avhenger av typen av materiale. For PLA og ABS-en verdi mellom 0,1 og 0,3 generelt fungerer godt.
+
+English:Printers...
+Translated:Skrivere ...
+
+English:Current
+Translated:Nåværende
+
+English:Quality preset
+Translated:forhåndsinnstilt kvalitet
+
+English:Material preset
+Translated:Materiale forhånds
+
+English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.
+Translated:Du har importert en ny {0} setting. Du kan finne '{1}' i listen over {2} innstillinger.
+
+English:Select the parts of the printer file that you would like to merge into your current profile.
+Translated:Velg de delene av skriveren filen du ønsker å flette inn i din nåværende profil.
+
+English:Select Parts to Import
+Translated:Velg deler som skal importeres
+
+English:Merge
+Translated:Slå sammen
+
+English:Export As
+Translated:Eksporter som
+
+English:Cura
+Translated:Cura
+
+English:You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.
+Translated:Du har importert en ny {1} setting. Du kan finne '{0} i listen over {1} innstillinger.
+
+English:Select what you would like to merge into your current profile.
+Translated:Velg hva du ønsker å flette inn den gjeldende profilen.
+
+English:Settings have been merged into your current printer.
+Translated:Innstillingene er fusjonert inn i din nåværende skriver.
+
+English:Select What to Import
+Translated:Velg hva du vil importere
+
+English:Select section to import to preset.
+Translated:Velg del å importere til forhåndsinnstilt.
+
+English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
+Translated:Logg inn for å få tilgang til sky skriver profiler.\n\nNår du er logget inn vil du kunne få tilgang:
+
+English:Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.
+Translated:Lagre dine design til skyen og få tilgang til dem fra hvor som helst i verden. Du kan også dele dem når som helst med med hvem du vil.
+
+English:Cloud Profiles
+Translated:Cloud Profiler
+
+English:Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.
+Translated:Lag maskininnstillingene en gang, og ha dem tilgjengelig hvor som helst du ønsker å skrive ut. Alle endringene vises på alle enhetene dine.
+
+English:Remote Monitoring
+Translated:Remote Monitoring
+
+English:Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.
+Translated:Sjekk på utskrifter fra hvor som helst. Med cloud overvåking, har du tilgang til skriveren, uansett hvor du går.
+
+English:Sign In
+Translated:Logg inn
+
+English:Unable to connect to server
+Translated:Kan ikke koble til server
+
+English:What was my password again?
+Translated:Hva var passordet mitt igjen?
+
+English:Reset Password
+Translated:Tilbakestill passord
+
+English:Email Address
+Translated:Epostadresse
+
+English:A password reset code will be sent to your email.
+Translated:En tilbakestilling av passord kode vil bli sendt til din e-post.
+
+English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
+Translated:Prisen på ett kilo filament. Brukes for å anslå kostnadene ved en print i Layer View.
+
+English:Material density. Only used for estimating mass in the Layer View.
+Translated:Materialtetthet. Kun brukt for å estimere masse i lag View.
+
+English:Estimated Cost
+Translated:Estimert kostnad
+
+English:Density
+Translated:tetthet
+
+English:g/cm³
+Translated:g / cm³
+
+English:Cost
+Translated:Koste
+
+English:$/kg
+Translated:$ / Kg
+
+English:OEM Date Modified
+Translated:OEM Dato endret
+
+English:Accept
+Translated:Aksepterer
+
+English:Please wait until the print has finished and try again.
+Translated:Vent til utskriften er ferdig og prøv igjen.
+
+English:Can't switch printers while printing
+Translated:Kan ikke bytte skriver under utskrift
+
+English:Can't log out while printing
+Translated:Kan ikke logge ut under utskrift
+
+English:Are you sure you want to logout? You will not have access to your printer profiles or cloud library.
+Translated:Er du sikker på at du vil logge ut? Du vil ikke ha tilgang til skriver profiler eller sky bibliotek.
+
+English:Logout?
+Translated:Logg ut?
+
+English:Logout
+Translated:Logg ut
+
+English:Can't login while printing
+Translated:Kan ikke logge inn under utskrift
+
+English:Cloud Printer Profiles
+Translated:Cloud skriver profiler
+
+English:Copy Guest Printers
+Translated:Kopier Gjeste Skrivere
+
+English:'First Layer Extrusion Width' must be greater than 0.
+Translated:Første lag Extrusion Bredde "må være større enn 0.
+
+English:It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.
+Translated:Det er på tide å laste opp dine eksisterende skrivere på MatterHackers konto. Når lastet opp, vil disse skriverne være tilgjengelig hver gang du logger inn MatterControl.
+
+English:Select Printers to Upload
+Translated:Velg Skrivere laste opp
+
+English:Printers to Upload:
+Translated:Skrivere laste opp:
+
+English:Upload
+Translated:Laste opp
+
+English:Printer History
+Translated:Printer History
+
+English:Subject*
+Translated:Emne*
+
+English:Message*
+Translated:Beskjed*
+
+English:Email Address*
+Translated:Epostadresse*
+
+English:Name*
+Translated:Navn*
+
+English:MatterControl: Submit Feedback
+Translated:MatterControl: Send tilbakemelding
+
+English:How can we improve?
+Translated:Hvordan kan vi forbedre?
+
+English:Forums
+Translated:Forums
+
+English:Wiki
+Translated:Wiki
+
+English:Guides and Arcticles
+Translated:Guider og Arcticles
+
+English:Guides and Articles
+Translated:Guider og artikler
+
+English:Syncing Profiles...
+Translated:Synkronisere Profiler ...
+
+English:G-Code
+Translated:G-kode
+
+English:Defaults Updated On: {0}
+Translated:Defaults oppdatert: {0}
+
+English:Defaults Updated On: { 0} 
+Translated:Defaults oppdatert: {0}
+
+English:Defaults Updated On: {0} 
+Translated:Defaults oppdatert: {0}
+
+English:Properties
+Translated:Egenskaper
+
+English:Qualities
+Translated:Kvaliteter
+
+English:Temperatures
+Translated:temperaturer
+
+English:While Printing
+Translated:mens Utskrift
+
+English:On Tool Change
+Translated:På Tool Endre
+
+English:Select a Printer.
+Translated:Velg en skriver.
+
+English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
+Translated:Profilen du prøver å laste inn er ødelagt. Vi har lastet den siste bruk {0} {1} profil fra siste profilen historie i stedet.
+
+English:Recovered printer profile
+Translated:Gjenvunnet skriverprofil
+
+English:Sorry! Looks like an account already exists for that email address.
+Translated:Beklager! Ser ut som en konto allerede finnes for den e-postadressen.
+
+English:Settings History
+Translated:innstillinger History
+
+English:Allows the printer to attempt to connect to a printer over the network.
+Translated:Gjør at skriveren kan forsøke å koble til en skriver via nettverket.
+
+English:IP Address of printer/printer controller
+Translated:IP-adressen til skriveren / skriverkontrolleren
+
+English:Port number to be used with IP Adress to connect to printer over the network
+Translated:Portnummer som skal brukes sammen med IP-adresse for å koble til skriveren via nettverket
+
+English:IP Address
+Translated:IP adresse
+
+English:Port
+Translated:Havn
+
+English:Enable Network Printing
+Translated:Aktiver nettverksutskrift
+
+English:Determines the method of communication used to talk to your printer.
+Translated:Bestemmer metoden for kommunikasjon som brukes til å snakke med skriveren.
+
+English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:Laget (s) som utskrifts vil ta en pause, slik at for en endring i filament. La stå tomt for å deaktivere. Til pause på flere lag, skille lag numrene med semikolon. For eksempel: "16; 37".
+
+English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
+Translated:Alle profiler multipliseres med denne verdien. Øke den ovenfor en vil øke mengden av filamentet som ekstruderes (1.1 er en god verdi maks); redusere det vil redusere mengden blir ekstrudert (0,9 er en god minimumsverdi).
+
+English:The distance that the perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
+Translated:Avstanden at omkretsen vil overlappe seg selv når den fullfører sin løkke, uttrykt som en prosentandel av dysediameteren.
+
+English:Start End Overlap
+Translated:Start Slutt Overlapping
+
+English:Layer(s) To Pause:
+Translated:Layer (r) Pause:
+
+English:Allows the printer to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+Translated:Gjør at skriveren kan forsøke å koble til en skriver via nettverket. (Du må koble fra og for at dette skal tre i kraft)
+
+English:Allows the printer to use the s3g communication method. (You must disconnect and reconnect for this to take effect)
+Translated:Gjør at skriveren bruker S3G kommunikasjonsmetode. (Du må koble fra og for at dette skal tre i kraft)
+
+English:Enable Sailfish Communication
+Translated:Aktiver Sailfish Communication
+
+English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+Translated:Sett MatterControl å forsøke å koble til en skriver via nettverket. (Du må koble fra og for at dette skal tre i kraft)
+
+English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
+Translated:Sett MatterControl å bruke S3G kommunikasjonsmetode. (Du må koble fra og for at dette skal tre i kraft)
+
+English:Networked Printing
+Translated:Networked Utskrift
+
+English:Sailfish Communication
+Translated:Sailfish Communication
+
+English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
+Translated:Stillingen (X og Y-koordinater) i sentrum av utskrifts seng, i millimeter. Normalt er dette 1/2 sengestørrelsen for kartesiske skrivere og 0, 0 for Delta skrivere.
+
+English:Update Required
+Translated:Oppdater Nødvendig
+
+English:There is a required update available.
+Translated:Det er en nødvendig oppdatering er tilgjengelig.
+
+English:Import Printer
+Translated:import Printer
+
+English:Resume Settings
+Translated:Resume Innstillinger
+
+English:Enable Resuming
+Translated:aktiver gjenoppta
+
+English:When this is checked MatterControl will attempt to resume a print in the event of a failure, such as lost connection or lost power.
+Translated:Når dette er krysset MatterControl vil forsøke å fortsette en utskrifts i tilfelle av en svikt, for eksempel tapt tilkobling eller mistet strømmen.
+
+English:Minimum Travel Requiring Retraction
+Translated:Minimum Reise Kreve Retraction
+
+English:Retreiving sync information...
+Translated:Retreiving sync informasjon ...
+
+English:- default -
+Translated:- Standard -
+
+English:Profile History
+Translated:Profil Historie
+
+English:Detect sections of the model that would be too thin to print, expand them, and print them.
+Translated:Oppdage deler av modellen som ville være for tynn til å skrive ut, utvide dem, og skrive dem ut.
+
+English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
+Translated:Oppdage hull mellom utkant som er for tynne til å fylle med normal infill og forsøke å fylle dem.
+
+English:Expand Thin Walls
+Translated:Utvid tynne vegger
+
+English:Fill Thin Gaps
+Translated:Fyll Tynne Gaps
+
+English:Sign in Required
+Translated:Logg inn Påkrevd
+
+English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
+Translated:Er du sikker på at du vil logge ut? Du vil ikke ha tilgang til skriver profiler eller sky bibliotek.
+
+English:Sign Out?
+Translated:Logg ut?
+
+English:Sign Out
+Translated:Logg ut
+
+English:Sign in
+Translated:Logg inn
+
+English:Sign in to my account
+Translated:Logg inn på min konto
+
+English:Don't ask me again
+Translated:Ikke spør meg igjen
+
+English:Sets the models that will be added to the queue when a new printer is created.
+Translated:Setter modellene som vil bli lagt til i køen når en ny skriver er opprettet.
+
+English:Don't remind me again
+Translated:Ikke minn meg igjen
+
+English:Retrieving sync information...
+Translated:Henter sync informasjon ...
+
+English:Please sign in to continue.
+Translated:Logg på for å fortsette.
+
+English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
+Translated:Hastigheten som munnstykket vil bevege seg når du gjenoppretter en mislykket utskrift, for en lag.
+
+English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
+Translated:Når dette er krysset MatterControl vil forsøke å gjenopprette en print i tilfelle av en svikt, for eksempel tapt tilkobling eller mistet strømmen.
+
+English:Recover Print
+Translated:gjenopprette Skriv ut
+
+English:Enable Recovery
+Translated:aktiver Recovery
+
+English:Recover Layer Speed
+Translated:Gjenopprette Layer Speed
+
+English:XY Recover Position
+Translated:XY Recover plassering
+
+English:Recover Settings
+Translated:gjenopprette innstillinger
+
+English:Print Recovery
+Translated:utskrifts~~POS=TRUNC gjenoppretting~~POS=HEADCOMP
+
+English:XY Homing Position
+Translated:XY Homing plassering
+
+English:Uh oh! Passwords do not match.
+Translated:UH oh! Passordene er ikke like.
+
+English:Layers / Surface
+Translated:Layers / Surface
+
+English:Raft / Priming
+Translated:Raft / Priming
+
+English:Priming
+Translated:grunning
+
+English:First Layer Expansion
+Translated:First Layer Expansion
+
+English:Default settings updated: {0} 
+Translated:Standardinnstillinger oppdatert: {0}
+
+English:Session Cleared
+Translated:Session Slettet
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
+Translated:Det vises din siste utskrifts ikke klarte å fullføre.\n\nVil du gjerne forsøke å gjenopprette fra siste kjente posisjon?
+
+English:Recover Last Print
+Translated:Gjenopprette Siste Print
+
+English:Disconnected
+Translated:koblet
+
+English:Limited Connectivity
+Translated:begrenset Tilkobling
+
+English:Connection Status
+Translated:Tilkoblingsstatus
+
+English:Retry Login
+Translated:Prøv på nytt Pålogging
+
+English:It's time to migrate your existing printer settings to your MatterHackers account. Once added, these printers will be available whenever and wherever you sign in to MatterControl. Printers that are not migrated will only be available in 'guest' mode.
+Translated:Det er på tide å migrere eksisterende skriverinnstillingene til din MatterHackers konto. Når lagt, vil disse skriverne være tilgjengelig når og hvor du logger deg på MatterControl. Skrivere som ikke er overført vil kun være tilgjengelig i "gjest" modus.
+
+English:Migrate Printers to Account
+Translated:Overføre Skrivere til Konto
+
+English:Select and add a new printer.
+Translated:Velg og legg til en ny skriver.
+
+English:Select an existing printer.
+Translated:Velg en eksisterende skriver.
+
+English:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
+Translated:Avstanden mellom toppen av bæreren og bunnen av modellen. En god verdi avhenger av typen av materiale. For ABS og PLA en verdi mellom 0,4 og 0,6 fungerer godt hhv.
+
+English:WARNING: Disconnecting will cancel the print
+Translated:ADVARSEL: Koble vil avbryte utskrifts
+
+English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available in 'guest' mode.
+Translated:Det er på tide å kopiere dine eksisterende skriverinnstillingene til din MatterHackers konto. Når kopiert, vil disse skriverne være tilgjengelig når du logger på MatterControl. Skrivere som ikke er kopiert vil kun være tilgjengelig i "gjest" modus.
+
+English:Copy Printers to Account
+Translated:Kopier Skrivere til Konto
+
+English:Printers to Copy:
+Translated:Skrivere kopierer:
+
+English:Profiles
+Translated:profiler
+
+English:Profile
+Translated:Profil
+
+English:Oops! Settings file '{0}' did not contain any settings we could import.
+Translated:Oops! Innstillinger filen '{0} inneholder ikke noen innstillinger vi kunne importere.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
+Translated:Sted: Innstillinger og kontroller '-> Innstillinger ->' skriver '->' Print Recovery "->" Aktiver Recovery '
+
+English:Start G-Code cannot contain G29 if Print Recovery is enabled.
+Translated:Start-G-kode kan ikke inneholde G29 hvis Utskriftsgjenoppretting er aktivert.
+
+English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+Translated:Start-G-kode skal ikke inneholde en G29 hvis du planlegger å bruke Print Recovery. Endre start G-kode eller slå av Utskriftsgjenoppretting
+
+English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+Translated:Start-G-kode skal ikke inneholde en G30 hvis du planlegger å bruke Print Recovery. Endre start G-kode eller slå av Utskriftsgjenoppretting
+
+English:Search results no available in this view
+Translated:Søkeresultater ingen tilgjengelige i denne visningen
+
+English:Sorry: Search results not available in this view
+Translated:Beklager: Søkeresultater ikke tilgjengelig i denne visningen
+
+English:Oops! Please select a folder to search
+Translated:Oops! Velg en mappe å søke
+
+English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
+Translated:Sengen er for tiden oppvarming og sitt mål temperaturen kan ikke endres før den når {0} ° C.\n\nDu kan angi start sengen temperaturen i INNSTILLINGER -> Filament -> temperaturer.\n\n{1}
+
+English:This is automatically set by MatterControl. You do not need to adjust it.
+Translated:Dette blir automatisk satt av MatterControl. Du trenger ikke å justere den.
+
+English:The amount to change the printers home position after a z home has occured. This is used by print leveling and recovery. This should not be manualy edited.
+Translated:Beløpet å endre skrivere posisjon etter en z hjem har oppstått. Dette brukes av print utjevning og bedring. Dette bør ikke bli manualy redigeres.
+
+English:Z Home Position
+Translated:Z Utgangsposisjon
+
+English:Offset After Homing
+Translated:Offset Etter Homing
+
+English:Leveling Calibration
+Translated:Leveling Kalibrering
+
+English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
+Translated:Det er på tide å kopiere dine eksisterende skriverinnstillingene til din MatterHackers konto. Når kopiert, vil disse skriverne være tilgjengelig når du logger på MatterControl. Skrivere som ikke er kopiert vil kun være tilgjengelig når den ikke er pålogget.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
+Translated:Sted: Innstillinger og kontroller '-> Innstillinger ->' skriver '->' Custom G-kode '->' Start G-kode '
+
+English:none
+Translated:none
+
+English:Exit while printing
+Translated:Exit mens utskrift
+
+English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+Translated:Er du sikker på at du vil avkjørselen mens en utskrifts kjører fra SD-kort?\n\nMerk: Hvis du går ut, anbefales det at du vente til utskriften er ferdig før du kjører MatterControl igjen.
+
+English:Connect printer and power on
+Translated:Koble skriveren og slå på
+
+English:Detect perimeters that cross over themselves and combine them.
+Translated:Oppdage utkant som krysser over seg selv og kombinere dem.
+
+English:Merge Overlapping Lines
+Translated:Flett Overlapp Lines
+
+English:Restore Settings
+Translated:Gjenopprett innstillinger
+
+English:Streaming GCode...
+Translated:Streaming GCode ...
+
+English:Layers & Infill
+Translated:Lag og Infill
+
+English:Raft & Support
+Translated:Raft og støtte
+
+English:Redeem Code
+Translated:Innløse kode
+
+English:Library - Enter Share Code
+Translated:Bibliotek - Skriv Del kode
+
+English:Macro Feedback
+Translated:Makro Tilbakemelding
+
+English:OK
+Translated:OK
+
+English:Load Filament
+Translated:Load Filament
+
+English:UnloadFilament
+Translated:UnloadFilament
+
+English:This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.
+Translated:Dette kontrollerer forholdet av materialet ekstrudert i løpet av brodannende. Reduksjon av dette svakt kan bidra til å bygge bro ved strekking av filamentet mer, og ved hjelp av en vifte kan også bidra sterkt.
+
+English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
+Translated:Hver enkelt del er skrevet ut til ferdigstillelse deretter dysen senkes tilbake til sengen og den neste delen er skrevet ut.
+
+English:Moves the nozzle up and off the part to allow cooling.
+Translated:Flytter munnstykket opp og av den delen for å tillate kjøling.
+
+English:Detects sections of the model that would be too thin to print and expands them to make them printable.
+Translated:Oppdager deler av modellen som ville være for tynn til å skrive ut og utvider dem til å gjøre dem utskrivbare.
+
+English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
+Translated:Viser at Z-aksen hjem den varme enden bort fra sengen (z-max homing)
+
+English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
+Translated:X- og Y-posisjon av den varme ende som minimerer muligheten for å kollidere med delene på sengen.
+
+English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
+Translated:Temperaturen til hvilken munnstykket vil bli oppvarmet før utskrift av det første laget med en del. Skriveren vil vente til denne temperaturen er nådd før utskrift.
+
+English:This will lower the temperature of the non-printing nozzle to help prevent oozing.
+Translated:Dette vil senke temperaturen av den ikke-trykkende munnstykket for å bidra til å forhindre oser.
+
+English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
+Translated:Den avstand som en omkrets vil overlappe seg selv når den fullfører sin løkke, uttrykt som en prosentandel av dysediameteren.
+
+English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
+Translated:Tvinger print å ha bare én ekstrudering og gradvis øke Z høyde under utskrift. Bare en del vil skrive ut i en tid med denne funksjonen.
+
+English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
+Translated:Det antall grader Celsius for å senke temperaturen av en dyse mens den ikke er aktiv.
+
+English:Disconnect and stop the current print?
+Translated:Koble fra og stopper du gjeldende utskrifts?
+
+English:WARNING: Disconnecting will stop the current print
+Translated:ADVARSEL: Koble vil stoppe gjeldende utskrifts
+
+English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
+Translated:ADVARSEL: Koble vil stoppe gjeldende utskrifts.\n\nEr du sikker på at du vil koble fra?
+
+English:Select a printer.
+Translated:Velg en skriver.
+
+English:Note: Be sure the tip of the extruder is clean.
+Translated:Merk: Pass på at tuppen av ekstruder er ren.
+
+English:- none -
+Translated:- Ingen -
+
+English:Actions
+Translated:handlinger
+
+English:Show In Action Menu
+Translated:Vis i aksjon Meny
+
+English:Unable to Connect
+Translated:Kan ikke koble
+
+English:Port number to be used with IP Address to connect to printer over the network
+Translated:Portnummer som skal brukes sammen med IP-adresse for å koble til skriveren via nettverket
+
+English:Reset to Defaults
+Translated:Tilbakestill til standard
+
+English:The serial port to use while connecting to this printer.
+Translated:Den serielle porten til å bruke mens du kobler til denne skriveren.
+
+English:Save Changed
+Translated:lagre Endret
+
+English:Discard Changes
+Translated:Forkaste endringer
+
+English:Stay Connected
+Translated:Hold kontakten
+
+English:Cancel Print
+Translated:Avbryt Skriv ut
+
+English:Continue Printing
+Translated:Fortsett utskrift
+
+English:Recovered Once
+Translated:gjenvunnet gang
+
+English:Recovered once
+Translated:gjenvunnet gang
+
+English:recovered once
+Translated:gjenvunnet gang
+
+English:Add New Printer
+Translated:Legg til ny skriver
+
+English:Add New Setting
+Translated:Legg til ny innstilling
+
+English:Sync Dashboard
+Translated:Sync Dashboard
+
+English:SD Card
+Translated:SD kort
+
