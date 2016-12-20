@@ -179,7 +179,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							|| line.StartsWith("M104")
 							|| line.StartsWith("T")
 							|| line.StartsWith("M106")
-							|| line.StartsWith("M107"))
+							|| line.StartsWith("M107")
+							|| line.StartsWith("G92"))
 						{
 							return line;
 						}
