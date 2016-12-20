@@ -167,11 +167,11 @@
     "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgKDq5P_ACAwLEgZEZXZpY2UYgICAgICAgAoMCxINRGV2aWNlUHJvZmlsZRiAgICAgOSRCgw",
     "active_theme_name": "Orange - Dark",
     "bottom_solid_layers": "4",
-    "first_layer_extrusion_width": "150%",
-    "layer_gcode": ""
+    "first_layer_extrusion_width": "150%"
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
+  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "ABS",
