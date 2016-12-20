@@ -57,8 +57,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
 
-		private static PrinterSettingsLayer baseLayerCache;
-
 		public static PrinterSettings Empty { get; }
 
 		public int DocumentVersion { get; set; } = LatestVersion;
@@ -110,7 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 		}
-		
+
 		[OnDeserialized]
 		internal void OnDeserializedMethod(StreamingContext context)
 		{
@@ -132,7 +130,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"layer_id",
 			};
 
-			if(!setLayerName)
+			if (!setLayerName)
 			{
 				skipKeys.Add(SettingsKey.layer_name);
 			}
@@ -145,9 +143,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}.Where(layer => layer != null);
 
 			var sourceFilter = rawSourceFilter.Where(layer => layer != null);
-
-			var baseLayer = settingsToImport.BaseLayer;
-			settingsToImport.BaseLayer = new PrinterSettingsLayer();
 
 			foreach (var keyName in PrinterSettings.KnownSettings)
 			{
@@ -170,8 +165,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				destinationLayer[SettingsKey.layer_name] = settingsToImport.GetValue(SettingsKey.layer_name, sourceFilter);
 			}
-
-			settingsToImport.BaseLayer = baseLayer;
 
 			this.Save();
 
@@ -197,11 +190,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return GetValue("active_quality_key");
+				return GetValue(SettingsKey.active_quality_key);
 			}
 			internal set
 			{
-				SetValue("active_quality_key", value);
+				SetValue(SettingsKey.active_quality_key, value);
 				QualityLayer = GetQualityLayer(value);
 				Save();
 			}
@@ -267,17 +260,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return SHA1;
 			}
 		}
-		
+
 		private string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
+
+		[JsonIgnore]
+		public bool AutoSave { get; set; } = true;
 
 		public void Save()
 		{
 			// Skip save operation if on the EmptyProfile
-			if (!this.PrinterSelected)
+			if (!this.PrinterSelected || !this.AutoSave)
 			{
 				return;
 			}
 
+			Save(DocumentPath);
+		}
+
+		public void Save(string filePath)
+		{
 			lock (writeLock)
 			{
 				string json = this.ToJson();
@@ -289,7 +290,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ProfileManager.Instance.Save();
 				}
 
-				File.WriteAllText(DocumentPath, json);
+				File.WriteAllText(filePath, json);
 			}
 
 			if (ActiveSliceSettings.Instance?.ID == this.ID)
@@ -510,23 +511,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		[JsonIgnore]
-		public PrinterSettingsLayer BaseLayer
-		{
-			get
-			{
-				if (baseLayerCache == null)
-				{
-					baseLayerCache = SliceSettingsOrganizer.Instance.GetDefaultSettings();
-				}
-
-				return baseLayerCache;
-			}
-
-			internal set
-			{
-				baseLayerCache = value;
-			}
-		}
+		public PrinterSettingsLayer BaseLayer { get; set; } = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 
 		private IEnumerable<PrinterSettingsLayer> defaultLayerCascade
 		{
