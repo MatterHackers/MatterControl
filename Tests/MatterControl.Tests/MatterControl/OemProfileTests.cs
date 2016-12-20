@@ -32,6 +32,43 @@ namespace MatterControl.Tests.MatterControl
 						   }).ToList();
 		}
 
+		[Test, RunInApplicationDomain]
+		public void LayerGCodeHasExpectedValue()
+		{
+			// Verifies "layer_gcode" is expected value: "; LAYER:[layer_num]"
+			ValidateOnAllPrinters((printer, settings) =>
+			{
+				if (settings.GetValue(SettingsKey.layer_gcode) != "; LAYER:[layer_num]")
+				{
+					printer.RuleViolated = true;
+
+					/* Fix existing invalid items...
+					string layerValue;
+					if (settings.OemLayer.TryGetValue(SettingsKey.layer_gcode, out layerValue) && layerValue == "")
+					{
+						settings.OemLayer.Remove(SettingsKey.layer_gcode);
+					}
+
+					if (settings.QualityLayer?.TryGetValue(SettingsKey.layer_gcode, out layerValue) == true && layerValue == "")
+					{
+						settings.QualityLayer.Remove(SettingsKey.layer_gcode);
+					}
+
+					if (settings.MaterialLayer?.TryGetValue(SettingsKey.layer_gcode, out layerValue) == true && layerValue == "")
+					{
+						settings.MaterialLayer.Remove(SettingsKey.layer_gcode);
+					}
+
+					// Reset to default values
+					settings.UserLayer.Remove(SettingsKey.active_quality_key);
+					settings.MaterialSettingsKeys = new List<string>();
+					settings.StagedUserSettings = new PrinterSettingsLayer();
+
+					settings.Save(printer.ConfigPath); */
+				}
+			});
+		}
+
 		[Test]
 		public void StartGCodeWithExtrudesMustFollowM109Heatup()
 		{
@@ -412,7 +449,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		/// <summary>
-		/// Calls the given delegate for each known printer, passing in a PrinterConfig object that has 
+		/// Calls the given delegate for each printer as well as each quality/material layer, passing in a PrinterConfig object that has 
 		/// printer settings loaded into a SettingsLayer as well as state about the printer
 		/// </summary>
 		/// <param name="action">The action to invoke for each printer</param>
@@ -424,20 +461,30 @@ namespace MatterControl.Tests.MatterControl
 			{
 				printer.RuleViolated = false;
 
-				PrinterSettingsLayer oemLayer = printer.PrinterSettings.OemLayer;
+				var printerSettings = printer.PrinterSettings;
+				printerSettings.AutoSave = false;
 
-				action(printer, new PrinterSettings() { OemLayer = oemLayer });
+				// Disable active material/quality overrides
+				printerSettings.SetMaterialPreset(0, "");
+				printerSettings.ActiveQualityKey = "";
+
+				// Validate just the OemLayer
+				action(printer, printerSettings);
 
 				if (printer.RuleViolated)
 				{
 					ruleViolations.Add(printer.RelativeFilePath);
 				}
 
+				// Validate material layers
 				foreach (var layer in printer.PrinterSettings.MaterialLayers)
 				{
 					printer.RuleViolated = false;
 
-					action(printer, new PrinterSettings() { BaseLayer = oemLayer, OemLayer = layer });
+					printerSettings.SetMaterialPreset(0, layer.LayerID);
+
+					// Validate the settings with this material layer active
+					action(printer, printerSettings);
 
 					if (printer.RuleViolated)
 					{
@@ -445,11 +492,17 @@ namespace MatterControl.Tests.MatterControl
 					}
 				}
 
+				printerSettings.SetMaterialPreset(0, "");
+
+				// Validate quality layers
 				foreach (var layer in printer.PrinterSettings.QualityLayers)
 				{
 					printer.RuleViolated = false;
 
-					action(printer, new PrinterSettings() { BaseLayer = oemLayer, OemLayer = layer });
+					printerSettings.ActiveQualityKey = layer.LayerID;
+
+					// Validate the settings with this quality layer active
+					action(printer, printerSettings);
 
 					if (printer.RuleViolated)
 					{

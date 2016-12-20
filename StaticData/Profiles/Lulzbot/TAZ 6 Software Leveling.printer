@@ -1,6 +1,7 @@
 {
   "DocumentVersion": 201606271,
   "ID": null,
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
@@ -72,7 +73,6 @@
     "infill_overlap_perimeter": "0.2",
     "infill_speed": "50",
     "infill_type": "TRIANGLES",
-    "layer_gcode": "",
     "layer_height": "0.2",
     "layer_to_pause": "",
     "manual_probe_paper_width": "0",
@@ -236,7 +236,7 @@
     },
     {
       "layer_name": "ABS",
-      "filament_density":  "1.04",
+      "filament_density": "1.04",
       "layer_id": "7ba56ea2-9990-4457-bb21-0cd7d146e0b9",
       "bed_temperature": "110",
       "external_perimeter_speed": "45",
@@ -567,7 +567,7 @@
     },
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "f4377ac4-a11c-4bae-b5e6-e4f58c2e222b",
       "bed_temperature": "60",
       "extruder_wipe_temperature": "150",

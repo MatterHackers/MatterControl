@@ -164,7 +164,6 @@
     "include_firmware_updater": "Simple Arduino",
     "show_reset_connection": "1",
     "infill_overlap_perimeter": "0.25",
-    "layer_gcode": "",
     "support_air_gap": "1",
     "support_material_create_internal_support": "0",
     "support_material_create_perimeter": "0",
@@ -172,6 +171,7 @@
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
+  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "Ninja-Flex",

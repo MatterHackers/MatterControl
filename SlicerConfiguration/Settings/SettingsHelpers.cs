@@ -112,6 +112,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string ip_address = nameof(ip_address);
 		public const string ip_port = nameof(ip_port);
 		public const string first_layer_speed = nameof(first_layer_speed);
+		public const string active_quality_key = nameof(active_quality_key);
 	}
 
 	public class SettingsHelpers

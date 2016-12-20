@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								break;
 
 							case "MatterControl.ActiveQualityKey":
-								layer.Add("active_quality_key", item.Value);
+								layer.Add(SettingsKey.active_quality_key, item.Value);
 								break;
 
 							case "MatterControl.ActiveMaterialKey":
