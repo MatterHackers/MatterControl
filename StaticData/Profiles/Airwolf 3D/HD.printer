@@ -1,7 +1,20 @@
 {
   "DocumentVersion": 201606271,
-  "ID": null,
-  "Macros": [],
+  "ID": "HD-5167296245399552",
+  "StagedUserSettings": {},
+  "Macros": [
+    {
+      "Name": "Lights On",
+      "GCode": "M42 P6 S255",
+      "OemPreset": false,
+      "LastModified": "0001-01-01T00:00:00"
+    },
+    {
+      "Name": "Lights Off",
+      "GCode": "M42 P6 S0",
+      "LastModified": "0001-01-01T00:00:00"
+    }
+  ],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
     "bed_shape": "rectangular",
@@ -28,7 +41,7 @@
     "extrusion_axis": "E",
     "extrusion_multiplier": "1",
     "extrusion_width": "0",
-    "active_theme_name": "Red - Dark",
+    "active_theme_name": "Green - Dark",
     "fan_always_on": "0",
     "fan_below_layer_time": "60",
     "filament_diameter": "2.85",
@@ -130,21 +143,20 @@
     "z_offset": "0",
     "make": "Airwolf 3D",
     "model": "HD",
-    "created_date": "7/19/2016 7:54:21 PM",
+    "created_date": "2016-12-08T20:29:03.785Z",
     "baud_rate": "250000",
-    "default_macros": "Lights On, Lights Off",
     "default_material_presets": "ABS",
     "default_quality_preset": "Balanced",
     "windows_driver": "MHSerial.inf",
-    "calibration_files": "Calibration - Circle.stl"
+    "calibration_files": "Calibration - Circle.stl",
+    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgICAwJSOCQwLEgZEZXZpY2UYgICAgKD9iQkMCxINRGV2aWNlUHJvZmlsZRiAgICA4KyUCgw"
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "ABS",
-      "filament_density":  "1.04",
+      "filament_density": "1.04",
       "layer_id": "09e4e6e7-d550-4bf0-8317-e052296202ec",
       "bed_temperature": "115",
       "bridge_fan_speed": "0",
@@ -238,7 +250,7 @@
     },
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "527888b8-4df9-4ee4-99c3-104ef566f4c3",
       "bed_temperature": "60",
       "bridge_fan_speed": "100",

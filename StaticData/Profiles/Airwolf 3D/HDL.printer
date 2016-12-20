@@ -1,7 +1,20 @@
 {
   "DocumentVersion": 201606271,
-  "ID": null,
-  "Macros": [],
+  "ID": "HDL-5436786250088448",
+  "StagedUserSettings": {},
+  "Macros": [
+    {
+      "Name": "Lights On",
+      "GCode": "M42 P6 S255",
+      "OemPreset": false,
+      "LastModified": "0001-01-01T00:00:00"
+    },
+    {
+      "Name": "Lights Off",
+      "GCode": "M42 P6 S0",
+      "LastModified": "0001-01-01T00:00:00"
+    }
+  ],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
     "bed_shape": "rectangular",
@@ -131,17 +144,17 @@
     "z_offset": "0",
     "make": "Airwolf 3D",
     "model": "HDL",
-    "created_date": "7/19/2016 7:54:27 PM",
+    "created_date": "2016-12-08T20:29:20.311Z",
     "baud_rate": "250000",
-    "default_macros": "Lights On, Lights Off",
     "default_material_presets": "PLA",
     "default_quality_preset": "Balanced",
     "windows_driver": "MHSerial.inf",
-    "calibration_files": "Calibration - Circle.stl"
+    "calibration_files": "Calibration - Circle.stl",
+    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgICAwJSOCQwLEgZEZXZpY2UYgICAgODBnAoMCxINRGV2aWNlUHJvZmlsZRiAgICAoJmQCQw",
+    "active_theme_name": "Green - Dark"
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "BENDLAY",
@@ -188,7 +201,7 @@
     },
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "a57b811a-5424-4812-8bcf-d48752055824",
       "bridge_fan_speed": "100",
       "disable_fan_first_layers": "0",

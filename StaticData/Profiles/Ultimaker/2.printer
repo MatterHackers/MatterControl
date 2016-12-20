@@ -1,6 +1,7 @@
 {
   "DocumentVersion": 201606271,
-  "ID": "baf9a0fe-b6b2-4952-9b66-ddb5b43cb76f",
+  "ID": "2-5340869614370816",
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
@@ -35,7 +36,7 @@
     "extruder_wipe_temperature": "0",
     "extruders_share_temperature": "0",
     "extrusion_axis": "E",
-    "extrusion_multiplier": "1.38",
+    "extrusion_multiplier": "1",
     "extrusion_width": "0",
     "fan_always_on": "0",
     "fan_below_layer_time": "60",
@@ -91,7 +92,7 @@
     "post_process": "",
     "print_center": "111,111",
     "print_leveling_method": "Manual",
-    "print_leveling_required_to_print": "1",
+    "print_leveling_required_to_print": "0",
     "print_leveling_solution": "3 Point Plane",
     "raft_air_gap": "0.22",
     "raft_extra_distance_around_part": "5",
@@ -142,7 +143,7 @@
     "support_material_spacing": "2.5",
     "support_material_speed": "30",
     "support_material_threshold": "45",
-    "support_material_xy_distance": "1",
+    "support_material_xy_distance": "2",
     "support_material_z_distance": "0.15",
     "support_material_z_gap_layers": "1",
     "support_type": "LINES",
@@ -164,22 +165,22 @@
     "z_offset": "0",
     "make": "Ultimaker",
     "model": "2",
-    "created_date": "2016-09-26T17:49:04.649Z",
+    "created_date": "2016-12-01T19:12:17.984Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "default_quality_presets": "Normal",
     "windows_driver": "MHSerial.inf",
     "calibration_files": "Calibration - Circle.stl",
-    "oem_profile_token": "ahRzfm1hdHRlcmNvbnRyb2wtdGVzdHJDCxIJQWZmaWxpYXRlGICAgIC6qI4LDAsSBkRldmljZRiAgICA0P6ECQwLEg1EZXZpY2VQcm9maWxlGICAgIDQ_oQLDA",
+    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgKDq-q6FCwwLEgZEZXZpY2UYgICAgICAgAkMCxINRGV2aWNlUHJvZmlsZRiAgICAwN-XCgw",
     "recover_is_enabled": "1",
     "z_homes_to_max": "1",
     "manual_movement_speeds": "x,3000,y,3000,z,1800,e0,150",
     "print_leveling_enabled": "1",
-    "active_theme_name": "Blue - Light",
+    "active_theme_name": "Green - Dark",
     "support_air_gap": "0.28",
-    "active_quality_key": ""
+    "active_quality_key": "79690c0d-b913-4d78-9f82-9bb01ed9fc32"
   },
-  "ActiveQualityKey": "",
+  "ActiveQualityKey": "79690c0d-b913-4d78-9f82-9bb01ed9fc32",
   "MaterialSettingsKeys": [
     "5be41a73-dc83-4d57-86e2-7846ee13af04"
   ],
@@ -193,7 +194,9 @@
       "max_fan_speed": "50",
       "min_fan_speed": "50",
       "temperature": "260",
-      "support_air_gap": "0.25"
+      "support_air_gap": "0.25",
+      "filament_cost": "42",
+      "slowdown_below_layer_time": "15"
     },
     {
       "layer_name": "PET",
@@ -203,7 +206,10 @@
       "max_fan_speed": "50",
       "min_fan_speed": "50",
       "temperature": "250",
-      "support_air_gap": "0.3"
+      "support_air_gap": "0.3",
+      "filament_cost": "83.7",
+      "filament_density": "1.27",
+      "slowdown_below_layer_time": "30"
     },
     {
       "layer_name": "PLA",
@@ -211,7 +217,9 @@
       "layer_id": "5be41a73-dc83-4d57-86e2-7846ee13af04",
       "bed_temperature": "60",
       "temperature": "210",
-      "support_air_gap": "0.28"
+      "support_air_gap": "0.28",
+      "filament_cost": "42",
+      "slowdown_below_layer_time": "30"
     }
   ],
   "QualityLayers": [
