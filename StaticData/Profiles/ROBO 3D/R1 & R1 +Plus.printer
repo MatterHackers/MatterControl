@@ -1,7 +1,35 @@
 {
   "DocumentVersion": 201606271,
-  "ID": null,
-  "Macros": [],
+  "ID": "R1 & R1 +Plus-5945210922598400",
+  "StagedUserSettings": {},
+  "Macros": [
+    {
+      "Name": "Offset 0.8",
+      "GCode": "M565 Z0.8;\nM500",
+      "OemPreset": false,
+      "LastModified": "0001-01-01T00:00:00"
+    },
+    {
+      "Name": "Offset 0.9",
+      "GCode": "M565 Z0.9;\nM500",
+      "LastModified": "0001-01-01T00:00:00"
+    },
+    {
+      "Name": "Offset 1",
+      "GCode": "M565 Z1;\nM500",
+      "LastModified": "0001-01-01T00:00:00"
+    },
+    {
+      "Name": "Offset 1.1",
+      "GCode": "M565 Z1.1;\nM500",
+      "LastModified": "0001-01-01T00:00:00"
+    },
+    {
+      "Name": "Offset 1.2",
+      "GCode": "M565 Z1.2;\nM500",
+      "LastModified": "0001-01-01T00:00:00"
+    }
+  ],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
     "bed_shape": "rectangular",
@@ -147,21 +175,21 @@
     "z_offset": "0",
     "make": "ROBO 3D",
     "model": "R1 & R1 +Plus",
-    "created_date": "7/19/2016 7:56:33 PM",
+    "created_date": "2016-12-08T20:30:57.342Z",
     "baud_rate": "250000",
-    "default_macros": "Offset 0.8, Offset 0.9,Offset 1,Offset 1.1,Offset 1.2",
     "default_material_presets": "PLA",
     "default_quality_preset": "Medium",
     "windows_driver": "MHSerial.inf",
-    "calibration_files": "Calibration - Circle.stl"
+    "calibration_files": "Calibration - Circle.stl",
+    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgKCqjv2aCAwLEgZEZXZpY2UYgICAgICAgAoMCxINRGV2aWNlUHJvZmlsZRiAgICAgOSRCgw",
+    "active_theme_name": "Green - Dark"
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "ABS",
-      "filament_density":  "1.04",
+      "filament_density": "1.04",
       "layer_id": "59f19fb6-22bb-4a97-a306-be7738790e32",
       "bed_temperature": "80",
       "disable_fan_first_layers": "0",
@@ -209,7 +237,7 @@
     },
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "4f092441-2e32-491c-87a1-df4b27a178c9",
       "bed_temperature": "50",
       "disable_fan_first_layers": "2",
