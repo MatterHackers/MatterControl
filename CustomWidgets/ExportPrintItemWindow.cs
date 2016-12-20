@@ -165,7 +165,16 @@ namespace MatterHackers.MatterControl
 
 									if (partIsGCode)
 									{
-										plugin.Generate(printItemWrapper.FileLocation, saveParam.FileName);
+										try
+										{
+											plugin.Generate(printItemWrapper.FileLocation, saveParam.FileName);
+										}
+										catch (Exception exception)
+										{
+											UiThread.RunOnIdle (() => {
+												StyledMessageBox.ShowMessageBox(null, exception.Message, "Couldn't save file".Localize());
+											});
+										}
 									}
 									else
 									{
@@ -176,7 +185,16 @@ namespace MatterHackers.MatterControl
 											PrintItemWrapper sliceItem = (PrintItemWrapper)printItem;
 											if (File.Exists(sliceItem.GetGCodePathAndFileName()))
 											{
-												plugin.Generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+												try
+												{
+													plugin.Generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+												}
+												catch (Exception exception)
+												{
+													UiThread.RunOnIdle (() => {
+														StyledMessageBox.ShowMessageBox(null, exception.Message, "Couldn't save file".Localize());
+													});
+												}
 											}
 										};
 									}
@@ -337,8 +355,11 @@ namespace MatterHackers.MatterControl
 				}
 				ShowFileIfRequested(dest);
 			}
-			catch
+			catch (Exception e)
 			{
+				UiThread.RunOnIdle (() => {
+					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+				});
 			}
 		}
 
@@ -413,14 +434,22 @@ namespace MatterHackers.MatterControl
 						else
 						{
 							List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
-							MeshFileIo.Save(meshGroups, filePathToSave);
+							if (!MeshFileIo.Save(meshGroups, filePathToSave))
+							{
+								UiThread.RunOnIdle (() => {
+									StyledMessageBox.ShowMessageBox(null, "STL to AMF conversion failed", "Couldn't save file".Localize());
+								});
+							}
 						}
 						ShowFileIfRequested(filePathToSave);
 					}
 				}
 			}
-			catch
+			catch (Exception e)
 			{
+				UiThread.RunOnIdle (() => {
+					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+				});
 			}
 		}
 
@@ -465,14 +494,23 @@ namespace MatterHackers.MatterControl
 						else
 						{
 							List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
-							MeshFileIo.Save(meshGroups, filePathToSave);
+							if (!MeshFileIo.Save(meshGroups, filePathToSave))
+							{
+								UiThread.RunOnIdle (() => {
+									StyledMessageBox.ShowMessageBox(null, "AMF to STL conversion failed", "Couldn't save file".Localize());
+								});
+							}
 						}
 						ShowFileIfRequested(filePathToSave);
 					}
 				}
 			}
-			catch
+			catch (Exception e)
 			{
+				UiThread.RunOnIdle (() => {
+					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+				});
+
 			}
 		}
 
