@@ -135,29 +135,38 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			UpdateHoverState();
+			base.OnMouseMove(mouseEvent);
+		}
+
 		void UpdateHoverState()
 		{
-			switch (UnderMouseState)
+			UiThread.RunOnIdle(() =>
 			{
-				case UnderMouseState.NotUnderMouse:
-					IsHoverItem = false;
-					break;
-
-				case UnderMouseState.FirstUnderMouse:
-					IsHoverItem = true;
-					break;
-
-				case UnderMouseState.UnderMouseNotFirst:
-					if (ContainsFirstUnderMouseRecursive())
-					{
-						IsHoverItem = true;
-					}
-					else
-					{
+				switch (UnderMouseState)
+				{
+					case UnderMouseState.NotUnderMouse:
 						IsHoverItem = false;
-					}
-					break;
-			}
+						break;
+
+					case UnderMouseState.FirstUnderMouse:
+						IsHoverItem = true;
+						break;
+
+					case UnderMouseState.UnderMouseNotFirst:
+						if (ContainsFirstUnderMouseRecursive())
+						{
+							IsHoverItem = true;
+						}
+						else
+						{
+							IsHoverItem = false;
+						}
+						break;
+				}
+			});
 		}
 
 		public PrintItemWrapper PrintItemWrapper { get; set; }
