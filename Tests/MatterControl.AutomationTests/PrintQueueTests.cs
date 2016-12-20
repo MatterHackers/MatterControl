@@ -686,31 +686,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				/* Tests that when the Queue Copy button is clicked:
-				* 1. QueueCount = Zero
-				* 2. Add button can add single .amf file to the queue 
-				* 3. Queue count inceases by one 
-				*/
-				int queueCountBeforeTest = QueueData.Instance.ItemCount;
+				int initialQueueCount = QueueData.Instance.ItemCount;
 
-				//Click Add button 
-				testRunner.ClickByName("Queue Add Button", 2);
+				// Click Add button 
+				testRunner.ClickByName("Queue Add Button");
 				testRunner.Wait(1);
 
-				string pathToType = MatterControlUtilities.GetTestItemPath("Rook.amf");
-
-				testRunner.Type(pathToType);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				//Make sure Queue Count increases by one 
-				int queueCountAfterAMFIsAdded = QueueData.Instance.ItemCount;
+				// Widget should exist
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Rook", 5), "Widget for added item should exist in control tree");
 
-				Assert.IsTrue(queueCountAfterAMFIsAdded == queueCountBeforeTest + 1);
-
-				//Make sure amf queue item is added 
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item Rook", 1);
-				Assert.IsTrue(firstQueueItemExists == true);
+				// Queue count should increases by one 
+				Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "After adding item, queue count should increase by one");
 
 				return Task.FromResult(0);
 			};
@@ -725,30 +715,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				/* Tests that when the Queue Copy button is clicked:
-				* 1. QueueCount = Zero
-				* 2. Add button can add single .stl file to the queue 
-				* 3. Queue count inceases by one 
-				*/
-				int queueCountBeforeTest = QueueData.Instance.ItemCount;
+				int initialQueueCount = QueueData.Instance.ItemCount;
 
-				//Click Add button 
-				testRunner.ClickByName("Queue Add Button", 2);
+				// Click Add button 
+				testRunner.ClickByName("Queue Add Button");
 				testRunner.Wait(1);
 
-				string pathToType = MatterControlUtilities.GetTestItemPath("Batman.stl");
-
-				testRunner.Type(pathToType);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				int queueCountAfterSTLIsAdded = QueueData.Instance.ItemCount;
+				// Widget should exist
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 5), "Widget for added item should exist in control tree");
 
-				Assert.IsTrue(queueCountAfterSTLIsAdded == queueCountBeforeTest + 1);
-
-				//stl queue item is added to the queue
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item Batman", 1);
-				Assert.IsTrue(firstQueueItemExists == true);
+				// Queue count should increases by one 
+				Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "After adding item, queue count should increase by one");
 
 				return Task.FromResult(0);
 			};
@@ -763,25 +744,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				int queueCountBeforeTest = QueueData.Instance.ItemCount;
+				int initialQueueCount = QueueData.Instance.ItemCount;
 
-				//Click Add button 
-				testRunner.ClickByName("Queue Add Button", 2);
+				// Click Add button 
+				testRunner.ClickByName("Queue Add Button");
 				testRunner.Wait(1);
 
-				string pathToType = MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode");
-
-				testRunner.Type(pathToType);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				int queueCountAfterGcodeIsAdded = QueueData.Instance.ItemCount;
+				// Widget should exist
+				Assert.IsTrue(testRunner.WaitForName("Queue Item chichen-itza_pyramid", 5), "Widget for added item should exist in control tree");
 
-				Assert.IsTrue(queueCountAfterGcodeIsAdded == queueCountBeforeTest + 1);
-
-				//stl queue item is added to the queue
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item chichen-itza_pyramid", 1);
-				Assert.IsTrue(firstQueueItemExists == true);
+				// Queue count should increases by one 
+				Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "After adding item, queue count should increase by one");
 
 				return Task.FromResult(0);
 			};
