@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Serial Port Dropdown", 3);
 
-			testRunner.ClickByName(config.MCPort + " Menu Item", 1);
+			testRunner.ClickByName(config.MCPort + " Menu Item", 5);
 
 			testRunner.ClickByName("Cancel Wizard Button");
 
@@ -346,11 +346,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			testRunner.ClickByName(libraryRowItemName);
-			//testRunner.MoveToByName(libraryRowItemName);
-			//testRunner.Wait(.5);
+			testRunner.Wait(.5);
 
 			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
-			//testRunner.Wait(.5);
+			testRunner.Wait(.5);
 		}
 
 		public static async Task RunTest(
