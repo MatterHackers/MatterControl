@@ -1,9 +1,7 @@
 {
   "DocumentVersion": 201606271,
   "ID": "LAB-4509197549436928",
-  "StagedUserSettings": {
-    "first_layer_extrusion_width": "100%"
-  },
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
@@ -79,7 +77,6 @@
     "infill_overlap_perimeter": ".06",
     "infill_speed": "70",
     "infill_type": "LINES",
-    "layer_gcode": "",
     "layer_height": "0.2",
     "layer_to_pause": "",
     "max_fan_speed": "100",
@@ -190,9 +187,8 @@
     "created_date": "2016-12-20T17:56:43.250Z"
   },
   "ActiveQualityKey": "e13c5d1b-4957-44a7-90db-2ae18aeea0c3",
-  "MaterialSettingsKeys": [
-    "365c904a-1909-4e6e-b33c-e5d7638703e3"
-  ],
+  "MaterialSettingsKeys": [],
+  "UserLayer": {},
   "MaterialLayers": [
     {
       "temperature": "260",
