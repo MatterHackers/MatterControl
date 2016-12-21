@@ -6,7 +6,6 @@
     {
       "Name": "Autocalibration",
       "GCode": ";  Rostock Max v2/v3 Delta Autocalibration Script\nG69 S2 ;Endstop Calibration\nM117 ENDSTOPS CALIBRATED\nG68 ;Horizontal Radius Calibration\nM117 HORIZONTAL RADIUS CALIBRATED\nG30 S2 ;Z height calibration\nM117 Z Height Calibrated\nG4 S2\nM500\nM117 CALIBRATION SAVED",
-      "ActionGroup": false,
       "LastModified": "0001-01-01T00:00:00"
     }
   ],
@@ -176,13 +175,15 @@
     "has_hardware_leveling": "1",
     "include_firmware_updater": "Simple Arduino",
     "show_reset_connection": "1",
+    "layer_gcode": "",
     "support_material_create_internal_support": "0",
     "support_material_create_perimeter": "0",
     "auto_connect": "0"
   },
   "ActiveQualityKey": "",
-  "MaterialSettingsKeys": [],
-  "UserLayer": {},
+  "MaterialSettingsKeys": [
+    ""
+  ],
   "MaterialLayers": [
     {
       "layer_name": "ABS",
