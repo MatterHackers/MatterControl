@@ -380,9 +380,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			},
 			(saveParams) =>
 			{
-				if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+				try
 				{
-					File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printerSettings, Formatting.Indented));
+					if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+					{
+						File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printerSettings, Formatting.Indented));
+					}
+				}
+				catch (Exception e)
+				{
+					UiThread.RunOnIdle (() => {
+						StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+					});
 				}
 			});
 		}
@@ -396,9 +405,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				(saveParams) =>
 				{
-					if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+					try
 					{
-						GenerateConfigFile(saveParams.FileName, false);
+						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+						{
+							GenerateConfigFile(saveParams.FileName, false);
+						}
+					}
+					catch (Exception e)
+					{
+						UiThread.RunOnIdle (() => {
+							StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+						});
 					}
 				});
 		}
