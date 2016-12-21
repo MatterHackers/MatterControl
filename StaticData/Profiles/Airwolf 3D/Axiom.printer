@@ -6,13 +6,13 @@
     {
       "Name": "Lights On",
       "GCode": "M42 P6 S255",
-      "ActionGroup": false,
+      "OemPreset": false,
       "LastModified": "0001-01-01T00:00:00"
     },
     {
       "Name": "Lights Off",
       "GCode": "M42 P6 S0",
-      "ActionGroup": false,
+      "OemPreset": false,
       "LastModified": "0001-01-01T00:00:00"
     }
   ],
@@ -87,6 +87,7 @@
     "infill_overlap_perimeter": "0.2",
     "infill_speed": "80",
     "infill_type": "TRIANGLES",
+    "layer_gcode": "",
     "layer_height": "0.35",
     "layer_to_pause": "",
     "manual_probe_paper_width": ".1",
@@ -199,7 +200,6 @@
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "ABS",

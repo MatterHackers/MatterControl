@@ -165,6 +165,7 @@
     "has_hardware_leveling": "0",
     "include_firmware_updater": "Simple Arduino",
     "show_reset_connection": "1",
+    "layer_gcode": "",
     "support_air_gap": "1",
     "support_material_create_internal_support": "0",
     "support_material_create_perimeter": "0",
@@ -173,8 +174,9 @@
     "recover_is_enabled": "1"
   },
   "ActiveQualityKey": "5cd7cd15-76df-4a21-9e06-e28b189dd184",
-  "MaterialSettingsKeys": [],
-  "UserLayer": {},
+  "MaterialSettingsKeys": [
+    "dd2feff8-0a86-439d-8274-07d1e724241d"
+  ],
   "MaterialLayers": [
     {
       "layer_name": "ABS",
