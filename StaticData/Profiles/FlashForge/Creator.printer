@@ -1,6 +1,7 @@
 {
   "DocumentVersion": 201606271,
-  "ID": null,
+  "ID": "Creator-5346226998870016",
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
@@ -160,33 +161,40 @@
     "z_offset": "0",
     "make": "FlashForge",
     "model": "Creator",
-    "created_date": "7/19/2016 7:54:45 PM",
+    "created_date": "2016-12-09T01:39:30.771Z",
     "baud_rate": "115200",
     "driver_type": "X3G",
     "windows_driver": "MHSerial.inf",
-    "calibration_files": "Calibration - Circle.stl"
+    "calibration_files": "Calibration - Circle.stl",
+    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgKDqgJT4CgwLEgZEZXZpY2UYgICAgIDXjAoMCxINRGV2aWNlUHJvZmlsZRiAgICAwIidCgw",
+    "active_theme_name": "Blue - Dark",
+    "enable_sailfish_communication": "1",
+    "enable_network_printing": "0"
   },
   "ActiveQualityKey": "",
-  "MaterialSettingsKeys": [],
-  "UserLayer": {},
+  "MaterialSettingsKeys": [
+    "2474cad4-a54c-47ac-8975-0345545d3a56"
+  ],
   "MaterialLayers": [
     {
       "layer_name": "ABS",
-      "filament_density":  "1.04",
+      "filament_density": "1.04",
       "layer_id": "36aaf1e9-5bd9-4c25-8632-0b9e6d7fa381",
       "bed_temperature": "70",
       "first_layer_bed_temperature": "70",
       "first_layer_temperature": "230",
-      "temperature": "230"
+      "temperature": "230",
+      "filament_cost": "29"
     },
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "2474cad4-a54c-47ac-8975-0345545d3a56",
       "bed_temperature": "60",
       "first_layer_bed_temperature": "60",
       "first_layer_temperature": "205",
-      "temperature": "205"
+      "temperature": "205",
+      "filament_cost": "29"
     }
   ],
   "QualityLayers": []

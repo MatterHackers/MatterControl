@@ -265,8 +265,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures);
 
-			ReadLineContainsCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
-			ReadLineContainsCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
+			ReadLineStartCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
+			ReadLineStartCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
 			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
 
 			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
@@ -1474,17 +1474,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 
-			string[] splitOnColon = foundStringEventArgs.LineToCheck.Split(':');
-
-			if (splitOnColon.Length > 1)
+			if (foundStringEventArgs != null
+				&& !string.IsNullOrEmpty(foundStringEventArgs.LineToCheck))
 			{
-				int result = 0;
-				if (int.TryParse(splitOnColon[1], out result))
+				string line = foundStringEventArgs.LineToCheck;
+				// marlin and repetier send a : before the number and then and ok
+				if (!GCodeFile.GetFirstNumberAfter(":", line, ref currentLineIndexToSend))
 				{
-					currentLineIndexToSend = result;
+					// smoothie sends an N before the number and no ok
+					if (GCodeFile.GetFirstNumberAfter("N", line, ref currentLineIndexToSend))
+					{
+						// clear waiting for ok because smoothie will not send it
+						PrintingCanContinue(null, null);
+					}
 				}
 
-				if(currentLineIndexToSend >= allCheckSumLinesSent.Count)
+				if (currentLineIndexToSend >= allCheckSumLinesSent.Count)
 				{
 					SendLineToPrinterNow("M110 N1");
 				}
@@ -2226,6 +2231,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void AttemptToConnect(string serialPortName, int baudRate)
 		{
+			// make sure we don't have a left over print task
+			activePrintTask = null;
+
 			connectionFailureMessage = LocalizedString.Get("Unknown Reason");
 
 			if (PrinterIsConnected)
@@ -2454,6 +2462,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
 					pauseHandlingStream1 = new PauseHandlingStream(new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
+					// And increment the recovery count
+					activePrintTask.RecoveryCount++;
+					activePrintTask.Commit();
 				}
 				else
 				{

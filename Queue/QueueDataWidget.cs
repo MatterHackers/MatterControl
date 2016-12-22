@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
-				multiSelectionMenuItems.Add("Merge...");
+				multiSelectionMenuItems.Add("Merge".Localize() + "...");
 
 				CreateEditBarButtons();
 				leaveEditModeButton.Visible = false;

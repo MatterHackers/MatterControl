@@ -180,28 +180,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string copyButtonName = "3D View Copy";
 
 				//Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
-				testRunner.Wait(1);
-				int partCountBeforeCopy = view3D.MeshGroups.Count();
-				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName(copyButtonName);
-					testRunner.Wait(1);
+					testRunner.WaitUntil(() => view3D.MeshGroups.Count() == i + 2, 2);
+					Assert.AreEqual(view3D.MeshGroups.Count(), i + 2);
 				}
 
 				testRunner.Wait(1);
 
 				for (int x = 0; x <= 4; x++)
 				{
-
 					int meshCountBeforeUndo = view3D.MeshGroups.Count();
 					testRunner.ClickByName("3D View Undo");
-					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterUndo = view3D.MeshGroups.Count();
-					Assert.IsTrue(meshCountAfterUndo == meshCountBeforeUndo - 1);
-
+					testRunner.WaitUntil(() => view3D.MeshGroups.Count() == meshCountBeforeUndo - 1, 2);
+					Assert.AreEqual(view3D.MeshGroups.Count(), meshCountBeforeUndo - 1);
 				}
 
 				testRunner.Wait(1);
@@ -210,16 +204,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					int meshCountBeforeRedo = view3D.MeshGroups.Count();
 					testRunner.ClickByName("3D View Redo");
-					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterRedo = view3D.MeshGroups.Count();
-					Assert.IsTrue(meshCountAfterRedo == meshCountBeforeRedo + 1);
-
+					testRunner.WaitUntil(() => view3D.MeshGroups.Count() == meshCountBeforeRedo + 1, 2);
+					Assert.IsTrue(view3D.MeshGroups.Count() == meshCountBeforeRedo + 1);
 				}
 
 				return Task.FromResult(0);	
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 640);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]

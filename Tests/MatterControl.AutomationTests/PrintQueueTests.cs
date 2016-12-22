@@ -302,6 +302,40 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
+		public async Task RemoveLastItemInListChangesSelection()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				testRunner.Wait(1);
+
+				int expectedQueueCount = QueueData.Instance.ItemCount - 1;
+
+				Assert.AreEqual(QueueData.Instance.SelectedIndex, 0);
+
+				testRunner.ClickByName("Queue Item MatterControl - Coin", 2);
+
+				Assert.AreEqual(QueueData.Instance.SelectedIndex, 3);
+
+				// Remove target item
+				testRunner.ClickByName("Queue Remove Button", 2);
+				testRunner.Wait(.5);
+
+				// after remove we select the next up the list
+				Assert.AreEqual(QueueData.Instance.SelectedIndex, 0);
+
+				// Assert removed
+				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "After Remove button click, Queue count should be 1 less");
+				Assert.IsFalse(testRunner.WaitForName("Queue Item MatterControl - Coin", .5), "Target item should not exist after Remove");
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+		}
+
+		[Test, Apartment(ApartmentState.STA)]
 		public async Task EditButtonTurnsOnOffEditMode()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -420,6 +454,49 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(queueItemExists == false);
 				Assert.IsTrue(secondQueueItemExists == false);
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+		}
+
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task QueueSelectCheckBoxWorks()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+				/*
+				 *Tests that when one item is selected  
+				 *1. Queue Item count equals three before the test starts 
+				 *2. Selecting multiple queue items and then clicking the Remove button removes the item 
+				 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
+				 */
+
+				int queueItemCount = QueueData.Instance.ItemCount;
+
+				bool queueItemExists = testRunner.WaitForName("Queue Item Batman", 2);
+				bool secondQueueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
+
+				SystemWindow systemWindow;
+				GuiWidget rowItem = testRunner.GetWidgetByName("Queue Item Batman", out systemWindow, 3);
+
+				SearchRegion rowItemRegion = testRunner.GetRegionByName("Queue Item Batman", 3);
+
+				testRunner.ClickByName("Queue Edit Button", 3);
+
+				GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
+				CheckBox checkBoxWidget = foundWidget as CheckBox;
+				Assert.IsTrue(checkBoxWidget != null, "We should have an actual checkbox");
+				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
+
+				testRunner.ClickByName("Queue Item Batman", 3);
+				Assert.IsTrue(checkBoxWidget.Checked == true, "currently checked");
+
+				testRunner.ClickByName("Queue Item Checkbox", 3, searchRegion: rowItemRegion);
+				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
+
 
 				return Task.FromResult(0);
 			};
@@ -652,31 +729,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				/* Tests that when the Queue Copy button is clicked:
-				* 1. QueueCount = Zero
-				* 2. Add button can add single .amf file to the queue 
-				* 3. Queue count inceases by one 
-				*/
-				int queueCountBeforeTest = QueueData.Instance.ItemCount;
+				int initialQueueCount = QueueData.Instance.ItemCount;
 
-				//Click Add button 
-				testRunner.ClickByName("Queue Add Button", 2);
+				// Click Add button 
+				testRunner.ClickByName("Queue Add Button");
 				testRunner.Wait(1);
 
-				string pathToType = MatterControlUtilities.GetTestItemPath("Rook.amf");
-
-				testRunner.Type(pathToType);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				//Make sure Queue Count increases by one 
-				int queueCountAfterAMFIsAdded = QueueData.Instance.ItemCount;
+				// Widget should exist
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Rook", 5), "Widget for added item should exist in control tree");
 
-				Assert.IsTrue(queueCountAfterAMFIsAdded == queueCountBeforeTest + 1);
-
-				//Make sure amf queue item is added 
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item Rook", 1);
-				Assert.IsTrue(firstQueueItemExists == true);
+				// Queue count should increases by one 
+				Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "After adding item, queue count should increase by one");
 
 				return Task.FromResult(0);
 			};
@@ -691,30 +758,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				/* Tests that when the Queue Copy button is clicked:
-				* 1. QueueCount = Zero
-				* 2. Add button can add single .stl file to the queue 
-				* 3. Queue count inceases by one 
-				*/
-				int queueCountBeforeTest = QueueData.Instance.ItemCount;
+				int initialQueueCount = QueueData.Instance.ItemCount;
 
-				//Click Add button 
-				testRunner.ClickByName("Queue Add Button", 2);
+				// Click Add button 
+				testRunner.ClickByName("Queue Add Button");
 				testRunner.Wait(1);
 
-				string pathToType = MatterControlUtilities.GetTestItemPath("Batman.stl");
-
-				testRunner.Type(pathToType);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				int queueCountAfterSTLIsAdded = QueueData.Instance.ItemCount;
+				// Widget should exist
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 5), "Widget for added item should exist in control tree");
 
-				Assert.IsTrue(queueCountAfterSTLIsAdded == queueCountBeforeTest + 1);
-
-				//stl queue item is added to the queue
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item Batman", 1);
-				Assert.IsTrue(firstQueueItemExists == true);
+				// Queue count should increases by one 
+				Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "After adding item, queue count should increase by one");
 
 				return Task.FromResult(0);
 			};
@@ -729,25 +787,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				int queueCountBeforeTest = QueueData.Instance.ItemCount;
+				int initialQueueCount = QueueData.Instance.ItemCount;
 
-				//Click Add button 
-				testRunner.ClickByName("Queue Add Button", 2);
+				// Click Add button 
+				testRunner.ClickByName("Queue Add Button");
 				testRunner.Wait(1);
 
-				string pathToType = MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode");
-
-				testRunner.Type(pathToType);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				int queueCountAfterGcodeIsAdded = QueueData.Instance.ItemCount;
+				// Widget should exist
+				Assert.IsTrue(testRunner.WaitForName("Queue Item chichen-itza_pyramid", 5), "Widget for added item should exist in control tree");
 
-				Assert.IsTrue(queueCountAfterGcodeIsAdded == queueCountBeforeTest + 1);
-
-				//stl queue item is added to the queue
-				bool firstQueueItemExists = testRunner.WaitForName("Queue Item chichen-itza_pyramid", 1);
-				Assert.IsTrue(firstQueueItemExists == true);
+				// Queue count should increases by one 
+				Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "After adding item, queue count should increase by one");
 
 				return Task.FromResult(0);
 			};
