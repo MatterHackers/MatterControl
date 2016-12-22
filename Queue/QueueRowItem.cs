@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private SlideWidget actionButtonContainer;
 
-		private Button addToLibraryLink;
-
 		private string alsoRemoveFromSdCardMessage = "Would you also like to remove this file from the Printer's SD Card?".Localize();
 
 		private string alsoRemoveFromSdCardTitle = "Remove From Printer's SD Card?";
@@ -220,6 +218,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					selectionCheckBoxContainer.Visible = false;
 					selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
 					selectionCheckBox = new CheckBox("");
+
 					selectionCheckBox.Name = "Queue Item Checkbox";
 					selectionCheckBox.VAnchor = VAnchor.ParentCenter;
 					selectionCheckBox.HAnchor = HAnchor.ParentCenter;
