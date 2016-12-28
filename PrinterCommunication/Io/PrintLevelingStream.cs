@@ -49,11 +49,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		public PrinterMove LastDestination { get { return lastDestination; } }
+
+		public static bool Enabled { get; set; }
+
 		public override string ReadLine()
 		{
 			string lineFromChild = base.ReadLine();
 
 			if (lineFromChild != null
+				&& PrintLevelingStream.Enabled
 				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
 				if (LineIsMovement(lineFromChild))

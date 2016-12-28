@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private SlideWidget actionButtonContainer;
 
-		private Button addToLibraryLink;
-
 		private string alsoRemoveFromSdCardMessage = "Would you also like to remove this file from the Printer's SD Card?".Localize();
 
 		private string alsoRemoveFromSdCardTitle = "Remove From Printer's SD Card?";
@@ -135,29 +133,38 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			UpdateHoverState();
+			base.OnMouseMove(mouseEvent);
+		}
+
 		void UpdateHoverState()
 		{
-			switch (UnderMouseState)
+			UiThread.RunOnIdle(() =>
 			{
-				case UnderMouseState.NotUnderMouse:
-					IsHoverItem = false;
-					break;
-
-				case UnderMouseState.FirstUnderMouse:
-					IsHoverItem = true;
-					break;
-
-				case UnderMouseState.UnderMouseNotFirst:
-					if (ContainsFirstUnderMouseRecursive())
-					{
-						IsHoverItem = true;
-					}
-					else
-					{
+				switch (UnderMouseState)
+				{
+					case UnderMouseState.NotUnderMouse:
 						IsHoverItem = false;
-					}
-					break;
-			}
+						break;
+
+					case UnderMouseState.FirstUnderMouse:
+						IsHoverItem = true;
+						break;
+
+					case UnderMouseState.UnderMouseNotFirst:
+						if (ContainsFirstUnderMouseRecursive())
+						{
+							IsHoverItem = true;
+						}
+						else
+						{
+							IsHoverItem = false;
+						}
+						break;
+				}
+			});
 		}
 
 		public PrintItemWrapper PrintItemWrapper { get; set; }
@@ -211,6 +218,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					selectionCheckBoxContainer.Visible = false;
 					selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
 					selectionCheckBox = new CheckBox("");
+
 					selectionCheckBox.Name = "Queue Item Checkbox";
 					selectionCheckBox.VAnchor = VAnchor.ParentCenter;
 					selectionCheckBox.HAnchor = HAnchor.ParentCenter;

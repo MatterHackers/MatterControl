@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.Queue.OptionsMenu
 				new PrintItemAction()
 				{
 					SingleItemOnly = false,
-					Title = "Merge...",
+					Title = "Merge".Localize() + "...",
 					Action = (items, queueDataWidget) =>
 					{
 						List<QueueRowItem> allRowItems = new List<QueueRowItem>(items);

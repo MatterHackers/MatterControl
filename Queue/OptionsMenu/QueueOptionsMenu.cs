@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader))
 			{
-				menuItems.Add(new Tuple<string, Func<bool>>("SD Card", null));
+				menuItems.Add(new Tuple<string, Func<bool>>("SD Card".Localize(), null));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Load Files".Localize(), loadFilesFromSDButton_Click));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Eject SD Card".Localize(), ejectSDCardButton_Click));
 			}

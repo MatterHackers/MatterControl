@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
 
-			var menuItem = this.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Printer...", "new");
+			var menuItem = this.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Printer".Localize() + "...", "new");
 			menuItem.CanHeldSelection = false;
 			menuItem.Click += (s, e) =>
 			{

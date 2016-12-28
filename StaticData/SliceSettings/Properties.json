@@ -1142,6 +1142,7 @@
 		"ShowIfSet": "!has_hardware_leveling",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "3 Point Plane",
+		"ReloadUiWhenChanged": true,
 		"RebuildGCodeOnChange": false
 	},
 	{
