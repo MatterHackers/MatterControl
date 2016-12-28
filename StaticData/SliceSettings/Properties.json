@@ -600,6 +600,10 @@
 				"Value": "1.24"
 			},
 			{
+				"MenuName": "PET",
+				"Value": "1.27"
+			},
+			{
 				"MenuName": "ABS",
 				"Value": "1.04"
 			}
