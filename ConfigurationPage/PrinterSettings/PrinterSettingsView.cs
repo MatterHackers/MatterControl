@@ -49,10 +49,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			AddChild(mainContainer);
 			AddHandlers();
-			SetVisibleControls();
+			SetEnabledStates();
 		}
-
-		private TextWidget printLevelingStatusLabel;
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -187,8 +185,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void AddHandlers()
 		{
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((e, s) => SetEnabledStates(), ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent((e,s) => SetEnabledStates(), ref unregisterEvents);
 		}
 
 		private void openCameraPreview_Click(object sender, EventArgs e)
@@ -249,13 +247,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			UiThread.RunOnIdle(TerminalWindow.Show);
 		}
 
-		private void onPrinterStatusChanged(object sender, EventArgs e)
-		{
-			SetVisibleControls();
-			this.Invalidate();
-		}
-
-		private void SetVisibleControls()
+		private void SetEnabledStates()
 		{
 			if (!ActiveSliceSettings.Instance.PrinterSelected)
 			{
@@ -315,6 +307,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						throw new NotImplementedException();
 				}
 			}
+
+			this.Invalidate();
 		}
 	}
 }
