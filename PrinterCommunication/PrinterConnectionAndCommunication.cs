@@ -161,8 +161,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool firmwareUriGcodeSend = false;
 
-		private string firmwareVersion;
-
 		private int currentLineIndexToSend = 0;
 
 		private bool ForceImmediateWrites = false;
@@ -659,10 +657,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get { return firmwareType; }
 		}
 
-		public string FirmwareVersion
-		{
-			get { return firmwareVersion; }
-		}
+		public string FirmwareVersion { get; private set; }
 
 		public Vector3 LastReportedPosition { get { return lastReportedPosition.position; } }
 
@@ -1072,7 +1067,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				//Attempt connecting to a specific printer
 				this.stopTryingToConnect = false;
 				firmwareType = FirmwareTypes.Unknown;
-				firmwareVersion = null;
 				firmwareUriGcodeSend = false;
 
 				// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
@@ -1565,9 +1559,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 
 				//Firmware version was detected and is different
-				if (firmwareVersionReported != "" && firmwareVersion != firmwareVersionReported)
+				if (firmwareVersionReported != "" && FirmwareVersion != firmwareVersionReported)
 				{
-					firmwareVersion = firmwareVersionReported;
+					FirmwareVersion = firmwareVersionReported;
 					OnFirmwareVersionRead(null);
 				}
 			}
