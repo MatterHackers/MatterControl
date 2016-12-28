@@ -100,6 +100,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				// remove it from the part
 				case RecoveryState.Raising:
+					// We don't know where the printer is for sure (it make have been turned off). Disable leveling until we know where it is.
+					PrintLevelingStream.Enabled = false;
 					queuedCommands.Add("M114 ; get current position");
 					queuedCommands.Add("G91 ; move relative");
 					queuedCommands.Add("G1 Z10 F{0}".FormatWith(MovementControls.ZSpeed));
@@ -125,6 +127,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}
+					// We now know where the printer is re-enable print leveling
+					PrintLevelingStream.Enabled = true;
 					recoveryState = RecoveryState.FindingRecoveryLayer;
 					return "";
 					
@@ -179,7 +183,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							|| line.StartsWith("M104")
 							|| line.StartsWith("T")
 							|| line.StartsWith("M106")
-							|| line.StartsWith("M107"))
+							|| line.StartsWith("M107")
+							|| line.StartsWith("G92"))
 						{
 							return line;
 						}

@@ -1,6 +1,7 @@
 {
   "DocumentVersion": 201606271,
   "ID": null,
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "0",
@@ -72,7 +73,6 @@
     "infill_overlap_perimeter": "0.08",
     "infill_speed": "50",
     "infill_type": "LINES",
-    "layer_gcode": "",
     "layer_height": "0.15",
     "layer_to_pause": "",
     "manual_probe_paper_width": ".1",
