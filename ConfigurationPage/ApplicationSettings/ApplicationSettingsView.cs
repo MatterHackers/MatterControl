@@ -406,7 +406,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				&& settings.Helpers.ActiveSliceEngineType() != SlicingEngineTypes.MatterSlice)
 			{
 				settings.Helpers.ActiveSliceEngineType(SlicingEngineTypes.MatterSlice);
-				ApplicationController.Instance.ReloadAll(null, null);
+				ApplicationController.Instance.ReloadAll();
 			} 
 
 			optionsContainer.AddChild(new SliceEngineSelector("Slice Engine".Localize()));
@@ -480,7 +480,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 							}
 						}
 
-						ApplicationController.Instance.ReloadAll(null, null);
+						ApplicationController.Instance.ReloadAll();
 					};
 
 					UiThread.RunOnIdle(() =>
@@ -545,7 +545,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UserSettings.Instance.Fields.IsSimpleMode = false;
 			}
-			ApplicationController.Instance.ReloadAll(null, null);
+			ApplicationController.Instance.ReloadAll();
 		}
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)

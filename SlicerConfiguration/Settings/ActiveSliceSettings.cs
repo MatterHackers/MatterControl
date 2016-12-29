@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (settingData.ReloadUiWhenChanged)
 			{
-				UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll(null, null));
+				UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll());
 			}
 		}
 
