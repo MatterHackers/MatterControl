@@ -149,8 +149,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private string deviceCode;
-
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
 		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
@@ -417,8 +415,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch
 					{
-						Console.WriteLine("Unable to convert BaudRate to integer");
-						GuiWidget.BreakInDebugger();
 					}
 				}
 				return baudRate;
@@ -581,10 +577,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string DeviceCode
-		{
-			get { return deviceCode; }
-		}
+		public string DeviceCode { get; private set; }
 
 		public bool Disconnecting
 		{
@@ -943,10 +936,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					int layerCount = loadedGCode.NumChangesInZ;
 					return layerCount;
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
-					Debug.Print(e.Message);
-					GuiWidget.BreakInDebugger();
 					return -1;
 				}
 			}
@@ -1043,11 +1034,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					}
 				}
-				catch (Exception e2)
+				catch (Exception)
 				{
-					Debug.Print(e2.Message);
-					GuiWidget.BreakInDebugger();
-					Debug.WriteLine("Unable to Parse Bed Temperature: {0}".FormatWith(temp));
 				}
 			}
 		}
@@ -1207,11 +1195,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						OnFanSpeedSet(null);
 					}
 				}
-				catch (Exception e2)
+				catch (Exception)
 				{
-					Debug.Print(e2.Message);
-					GuiWidget.BreakInDebugger();
-					Debug.WriteLine("Unable to Parse Fan Speed: {0}".FormatWith(fanSpeed));
 				}
 			}
 		}
@@ -1447,12 +1432,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-				// Let's track this issue if possible.
-				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
 		}
 
@@ -1553,7 +1534,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					string[] split = firmwareVersionReported.Split(splitChar);
 					if (split.Count() == 2)
 					{
-						deviceCode = split[0];
+						DeviceCode = split[0];
 						firmwareVersionReported = split[1];
 					}
 				}
@@ -1728,36 +1709,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						Thread.Sleep(1);
 					}
 				}
-				catch (TimeoutException e)
+				catch (TimeoutException)
 				{
-					Debug.Print(e.Message);
-					GuiWidget.BreakInDebugger();
 				}
 				catch (IOException e2)
 				{
-					Debug.Print(e2.Message);
-					GuiWidget.BreakInDebugger();
+					PrinterOutputCache.Instance.WriteLine("Exception:" + e2.Message);
 					OnConnectionFailed(null);
 				}
 				catch (InvalidOperationException ex)
 				{
-					Debug.Print(ex.Message);
-					GuiWidget.BreakInDebugger();
-					Debug.WriteLine(ex.Message);
+					PrinterOutputCache.Instance.WriteLine("Exception:" + ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
+					OnConnectionFailed(null);
 				}
 				catch (UnauthorizedAccessException e3)
 				{
-					Debug.Print(e3.Message);
-					GuiWidget.BreakInDebugger();
+					PrinterOutputCache.Instance.WriteLine("Exception:" + e3.Message);
 					OnConnectionFailed(null);
 				}
-				catch (Exception e4)
+				catch (Exception)
 				{
-					Debug.Print(e4.Message);
-					GuiWidget.BreakInDebugger();
-					// Let's track this issue if possible.
-					MatterControlApplication.Instance.ReportException(e4, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 				}
 			}
 		}
@@ -1891,11 +1863,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
 		}
 
@@ -2037,10 +2006,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				string[] portNames = FrostedSerialPort.GetPortNames();
 				return portNames.Any(x => string.Compare(x, portName, true) == 0);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
 				return false;
 			}
 		}
@@ -2271,16 +2238,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (System.ArgumentOutOfRangeException e)
 					{
-						Debug.Print(e.Message);
-						GuiWidget.BreakInDebugger();
+						PrinterOutputCache.Instance.WriteLine("Exception:" + e.Message);
 						connectionFailureMessage = LocalizedString.Get("Unsupported Baud Rate");
 						OnConnectionFailed(null);
 					}
 					catch (Exception ex)
 					{
-						Debug.Print(ex.Message);
-						GuiWidget.BreakInDebugger();
-						Debug.WriteLine("An unexpected exception occurred: " + ex.Message);
+						PrinterOutputCache.Instance.WriteLine("Exception:" + ex.Message);
 						OnConnectionFailed(null);
 					}
 				}
@@ -2958,23 +2922,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (IOException ex)
 					{
-						GuiWidget.BreakInDebugger(ex.Message);
-						Trace.WriteLine("Error writing to printer: " + ex.Message);
+						PrinterOutputCache.Instance.WriteLine("Exception:" + ex.Message);
 
-						// Handle hardware disconnects by relaying the failure reason and shutting down open resources
-						AbortConnectionAttempt("Connection Lost - " + ex.Message);
+						if (CommunicationState == CommunicationStates.AttemptingToConnect)
+						{
+							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
+							AbortConnectionAttempt("Connection Lost - " + ex.Message);
+						}
 					}
-					catch (TimeoutException e2)
+					catch (TimeoutException) // known ok
 					{
-						GuiWidget.BreakInDebugger(e2.Message);
 					}
 					catch (UnauthorizedAccessException e3)
 					{
+						PrinterOutputCache.Instance.WriteLine("Exception:" + e3.Message);
 						AbortConnectionAttempt(e3.Message);
 					}
-					catch (Exception e)
+					catch (Exception)
 					{
-						GuiWidget.BreakInDebugger(e.Message);
 					}
 				}
 				else
