@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		public event Action<object, EventArgs> SelectedIndexChanged;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public LibraryProvider CurrentLibraryProvider
 		{

@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl
 {
 	public class WizardWindow : SystemWindow
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		public static Func<bool> ShouldShowAuthPanel { get; set; }
 		public static Action ShowAuthDialog;
 		public static Action ChangeToAccountCreate;

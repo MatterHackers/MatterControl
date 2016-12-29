@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private DisableableWidget eePromControlsContainer;
 		private DisableableWidget terminalCommunicationsContainer;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public HardwareSettingsWidget()
 			: base("Hardware".Localize())

@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private MHNumberEdit maxXYJerk;
 		private MHNumberEdit maxZJerk;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private double maxWidthOfLeftStuff = 0;

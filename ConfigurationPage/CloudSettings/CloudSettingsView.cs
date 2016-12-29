@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             }
         }
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{

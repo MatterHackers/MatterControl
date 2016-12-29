@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public delegate void SendButtonAction(object state, List<PrintItemWrapper> sendItems);
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public void CreateCopyInQueue()
 		{

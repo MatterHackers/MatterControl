@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 			AddHandlers();
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		protected void AddHandlers()
 		{

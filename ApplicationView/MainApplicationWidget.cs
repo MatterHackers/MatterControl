@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler ApplicationClosed;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		static int applicationInstanceCount = 0;
 		public static int ApplicationInstanceCount
@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl
 		public ApplicationController()
 		{
 			// Name = "MainSlidePanel";
-			ActiveTheme.ThemeChanged.RegisterEvent(ReloadAll, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => ReloadAll(), ref unregisterEvents);
 
 			// Remove consumed ClientToken from running list on shutdown
 			ApplicationClosed += (s, e) => ApplicationSettings.Instance.ReleaseClientToken();
@@ -393,41 +393,37 @@ namespace MatterHackers.MatterControl
 		}
 
 		bool pendingReloadRequest = false;
-		public void ReloadAll(object sender, EventArgs e)
+		public void ReloadAll()
 		{
-			if (!pendingReloadRequest 
-				&& MainView != null)
+			if (pendingReloadRequest || MainView == null)
 			{
-				pendingReloadRequest = true;
-				DoReloadAll();
+				return;
 			}
+
+			pendingReloadRequest = true;
+
+			UiThread.RunOnIdle(() =>
+			{
+				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
+				{
+					// give the widget a chance to hear about the close before they are actually closed.
+					PopOutManager.SaveIfClosed = false;
+
+					WidescreenPanel.PreChangePanels.CallEvents(this, null);
+					MainView?.CloseAllChildren();
+					using (new QuickTimer("ReloadAll_AddElements"))
+					{
+						MainView?.CreateAndAddChildren();
+					}
+					PopOutManager.SaveIfClosed = true;
+					this.DoneReloadingAll?.CallEvents(null, null);
+				}
+
+				pendingReloadRequest = false;
+			});
 		}
 
 		static int reloadCount = 0;
-		private void DoReloadAll()
-		{
-			UiThread.RunOnIdle((Action)(() =>
-			{
-				if (MainView != null)
-				{
-					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
-					{
-						// give the widget a chance to hear about the close before they are actually closed.
-						PopOutManager.SaveIfClosed = false;
-						WidescreenPanel.PreChangePanels.CallEvents(this, null);
-						MainView?.CloseAllChildren();
-						using (new QuickTimer("ReloadAll_AddElements"))
-						{
-							MainView?.CreateAndAddChildren();
-						}
-						PopOutManager.SaveIfClosed = true;
-						this.DoneReloadingAll?.CallEvents((object)null, (EventArgs)null);
-					}
-
-					pendingReloadRequest = false;
-				}
-			}));
-		}
 
 		public void OnApplicationClosed()
 		{
@@ -483,7 +479,7 @@ namespace MatterHackers.MatterControl
 							globalInstance.MainView = new DesktopView();
 						}
 
-						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(null, null), ref globalInstance.unregisterEvents);
+						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(), ref globalInstance.unregisterEvents);
 					}
 				}
 				return globalInstance;

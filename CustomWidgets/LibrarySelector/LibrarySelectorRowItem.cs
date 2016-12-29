@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private GuiWidget thumbnailWidget;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public LibrarySelectorWidget libraryDataView { get; private set; }
 

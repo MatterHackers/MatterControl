@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public class AndroidConnectDevicePage : WizardPage
 	{  
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private TextWidget generalError;
 

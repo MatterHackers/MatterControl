@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private readonly double minFeedRateRatio = .5;
 		private readonly double maxFeedRateRatio = 2;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public AdjustmentControls()
 		{

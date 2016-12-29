@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class QueueDataView : ScrollableWidget
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		// make this private so it can only be built from the Instance
 		private void SetDisplayAttributes()

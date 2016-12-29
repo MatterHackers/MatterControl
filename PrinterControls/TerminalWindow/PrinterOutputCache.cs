@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler HasChanged = new RootedObjectEventHandler();
 		private int maxLinesToBuffer = int.MaxValue - 1;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private PrinterOutputCache()
 		{

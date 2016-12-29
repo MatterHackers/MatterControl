@@ -443,7 +443,7 @@ namespace MatterHackers.MatterControl
 			get { return "Override the current extruder temperature. While printing, the extruder temperature is normally determined by the 'Slice Settings'."; }
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{
@@ -544,7 +544,7 @@ namespace MatterHackers.MatterControl
 			get { return "Override the current bed temperature. While printing, the bed temperature is normally determined by the 'Slice Settings'."; }
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{

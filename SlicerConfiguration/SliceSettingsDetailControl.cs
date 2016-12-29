@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						else
 						{
-							ApplicationController.Instance.ReloadAll(null, null);
+							ApplicationController.Instance.ReloadAll();
 						}
 					}
 				},
