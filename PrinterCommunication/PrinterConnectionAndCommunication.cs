@@ -149,8 +149,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private string deviceCode;
-
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
 		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
@@ -581,10 +579,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string DeviceCode
-		{
-			get { return deviceCode; }
-		}
+		public string DeviceCode { get; private set; }
 
 		public bool Disconnecting
 		{
@@ -1553,7 +1548,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					string[] split = firmwareVersionReported.Split(splitChar);
 					if (split.Count() == 2)
 					{
-						deviceCode = split[0];
+						DeviceCode = split[0];
 						firmwareVersionReported = split[1];
 					}
 				}
@@ -1745,6 +1740,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					GuiWidget.BreakInDebugger();
 					Debug.WriteLine(ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
+					OnConnectionFailed(null);
 				}
 				catch (UnauthorizedAccessException e3)
 				{
@@ -2961,8 +2957,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						GuiWidget.BreakInDebugger(ex.Message);
 						Trace.WriteLine("Error writing to printer: " + ex.Message);
 
-						// Handle hardware disconnects by relaying the failure reason and shutting down open resources
-						AbortConnectionAttempt("Connection Lost - " + ex.Message);
+						if (CommunicationState == CommunicationStates.AttemptingToConnect)
+						{
+							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
+							AbortConnectionAttempt("Connection Lost - " + ex.Message);
+						}
 					}
 					catch (TimeoutException e2)
 					{
