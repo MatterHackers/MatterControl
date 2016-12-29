@@ -406,7 +406,7 @@ namespace MatterHackers.MatterControl
 		static int reloadCount = 0;
 		private void DoReloadAll()
 		{
-			UiThread.RunOnIdle((Action)(() =>
+			UiThread.RunOnIdle(() =>
 			{
 				if (MainView != null)
 				{
@@ -421,12 +421,12 @@ namespace MatterHackers.MatterControl
 							MainView?.CreateAndAddChildren();
 						}
 						PopOutManager.SaveIfClosed = true;
-						this.DoneReloadingAll?.CallEvents((object)null, (EventArgs)null);
+						this.DoneReloadingAll?.CallEvents(null, null);
 					}
 
 					pendingReloadRequest = false;
 				}
-			}));
+			});
 		}
 
 		public void OnApplicationClosed()
