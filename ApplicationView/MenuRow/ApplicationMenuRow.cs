@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 		LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		GuiWidget popUpAboutPage;
 

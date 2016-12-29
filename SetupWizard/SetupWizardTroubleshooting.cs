@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl
 	{
 		private Button nextButton;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private CriteriaRow connectToPrinterRow;
 

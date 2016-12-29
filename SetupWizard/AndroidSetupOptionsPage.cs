@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public class SetupOptionsPage : WizardPage
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public SetupOptionsPage()
 			: base("Done")
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 
 		private Button disconnectButton;
 		private TextWidget connectionStatus;
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public SetupPrinterView(TextImageButtonFactory textImageButtonFactory)
 			: base("Printer Profile")
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 
 	public class SetupAccountView : SetupViewBase
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		private Button signInButton;
 		private Button signOutButton;
 		private TextWidget statusMessage;

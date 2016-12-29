@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 			this.linkButtonFactory.fontSize = 11;
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{

@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 			this.Create();
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public void Create()
 		{

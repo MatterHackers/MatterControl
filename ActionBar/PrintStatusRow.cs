@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			DoAddIconToPrintStatusRow();
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private string ActivePrintStatusText
 		{
@@ -501,7 +501,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public delegate void AddIconToPrintStatusRowDelegate(GuiWidget iconContainer);
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		private string ActivePrintStatusText
 		{
 			set

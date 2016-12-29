@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -611,7 +611,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			public string SettingsKey { get; set; }
 			public string SettingsValue { get; set; }
-			private event EventHandler unregisterEvents;
+			private EventHandler unregisterEvents;
 
 			/// <summary>
 			/// Gets or sets the delegate to be invoked when the settings values need to be refreshed. The implementation should 

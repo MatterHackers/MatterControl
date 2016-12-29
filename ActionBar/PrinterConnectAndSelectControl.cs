@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private PrinterSelector printerSelector;
 		GuiWidget printerSelectorAndEditOverlay;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		static EventHandler staticUnregisterEvents;
 
 		public PrinterConnectAndSelectControl()

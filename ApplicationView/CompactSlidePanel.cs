@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public class CompactSlidePanel : SlidePanel
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private TabControl mainControlsTabControl;
 		public TabPage QueueTabPage;

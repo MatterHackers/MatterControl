@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button connectButton;
 		private TextWidget printerErrorMessage;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public SetupStepComPortTwo()
 		{

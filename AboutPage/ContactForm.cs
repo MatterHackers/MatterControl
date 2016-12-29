@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			MinimumSize = new Vector2(500, 550);
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{

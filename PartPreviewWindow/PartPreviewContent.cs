@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PartPreviewContent : GuiWidget
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private View3DWidget partPreviewView;
 		private ViewGcodeBasic viewGcodeBasic;

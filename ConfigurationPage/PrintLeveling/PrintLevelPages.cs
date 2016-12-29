@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.container = container;
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			AddTextField(setZHeightCoarseInstruction2, 10);
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{

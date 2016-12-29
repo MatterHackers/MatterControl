@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 
 		private MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public JogControls(XYZColors colors)
 		{

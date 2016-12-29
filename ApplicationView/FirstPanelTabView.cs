@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 		private QueueDataView queueDataView;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public FirstPanelTabView(QueueDataView queueDataView)
 		{

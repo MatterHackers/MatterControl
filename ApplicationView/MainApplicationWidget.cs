@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler ApplicationClosed;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		static int applicationInstanceCount = 0;
 		public static int ApplicationInstanceCount

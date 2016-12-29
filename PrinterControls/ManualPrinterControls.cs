@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		public void AddPlugins()
 		{
 			AddPluginControls.CallEvents(this, null);

@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private EePromRepetierStorage currentEePromSettings;
 		private FlowLayoutWidget settingsColmun;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public EePromRepetierWindow()
 			: base(650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)

@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			ConstructPrintQueueItem();
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public bool IsHoverItem
 		{

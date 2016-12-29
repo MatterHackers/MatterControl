@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dropDownList;
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{
