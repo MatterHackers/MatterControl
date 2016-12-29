@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{

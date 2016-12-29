@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	public class CalibrationSettingsWidget : SettingsViewBase
 	{
 		private DisableableWidget printLevelingContainer;
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		private EditLevelingSettingsWindow editLevelingSettingsWindow;
 		private TextWidget printLevelingStatusLabel;
 		Button runPrintLevelingButton;

@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private event EventHandler unregisterEvent;
+		private EventHandler unregisterEvent;
 
 		public static MatterControlApplication Instance
 		{

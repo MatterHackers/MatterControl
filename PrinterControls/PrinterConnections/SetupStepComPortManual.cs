@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private TextWidget printerComPortHelpMessage;
 		private TextWidget printerComPortError;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
 
 		public SetupStepComPortManual()

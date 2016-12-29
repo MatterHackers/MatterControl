@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			ApplicationController.Instance.ReloadAll(null, null);
+			ApplicationController.Instance.ReloadAll();
 			base.OnClosed(e);
 		}
 

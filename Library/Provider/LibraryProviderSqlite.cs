@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			ItemAdded.RegisterEvent(DatabaseFileChange, ref unregisterEvents);
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void Dispose()
 		{

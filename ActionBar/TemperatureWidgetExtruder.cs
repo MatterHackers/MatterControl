@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.ActionBar
 	internal class TemperatureWidgetExtruder : TemperatureWidgetBase
 	{
 		private int extruderNumber = 1;
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();

@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 	{
 		private static readonly string ThirdPanelTabView_AdvancedControls_CurrentTab = "ThirdPanelTabView_AdvancedControls_CurrentTab";
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private Button backButton;
 		private GuiWidget sliceSettingsWidget;

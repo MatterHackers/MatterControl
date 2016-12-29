@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{

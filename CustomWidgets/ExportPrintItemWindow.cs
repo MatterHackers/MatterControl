@@ -386,7 +386,7 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void ReloadAfterPrinterProfileChanged(object sender, EventArgs e)
 		{

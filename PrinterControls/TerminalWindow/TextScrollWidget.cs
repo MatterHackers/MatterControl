@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 
 		private string[] StartLineStringFilters = null;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private List<string> allSourceLines;
 		private List<string> visibleLines;

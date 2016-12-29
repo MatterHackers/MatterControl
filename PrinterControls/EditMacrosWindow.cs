@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 		protected static void ReloadMacros(object sender, EventArgs e)
 		{
 			ActiveSliceSettings.Instance.Save();
-			ApplicationController.Instance.ReloadAll(null, null);
+			ApplicationController.Instance.ReloadAll();
 		}
 
 		private void DoChangeToMacroList()

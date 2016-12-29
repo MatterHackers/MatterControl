@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 		private RGBA_Bytes completeColor = new RGBA_Bytes(255, 255, 255);
 		private TextWidget printTimeRemaining;
 		private TextWidget printTimeElapsed;
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		private bool widgetIsExtended;
 		private Agg.Image.ImageBuffer upImageBuffer;
 		private Agg.Image.ImageBuffer downImageBuffer;

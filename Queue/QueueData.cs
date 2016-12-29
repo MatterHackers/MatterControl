@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private bool gotBeginFileList = false;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public void LoadFilesFromSD()
 		{

@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PartPreviewMainWindow : SystemWindow
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private PartPreviewContent partPreviewWidget;
 

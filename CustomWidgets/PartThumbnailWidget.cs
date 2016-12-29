@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 		
 		public event EventHandler<StringEventArgs> DoneRendering;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public enum ImageSizes { Size50x50, Size115x115 };
 

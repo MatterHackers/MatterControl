@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private LimitCallingFrequency reportDestinationChanged = null;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public static double XSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["x"];
 

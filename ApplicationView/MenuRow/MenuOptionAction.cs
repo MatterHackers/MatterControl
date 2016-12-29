@@ -15,7 +15,7 @@ namespace MatterHackers.MatterControl
 {
 	public class MenuOptionAction : MenuBase
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		public MenuOptionAction() : base("Actions".Localize())
 		{
 			Name = "Actions Menu";

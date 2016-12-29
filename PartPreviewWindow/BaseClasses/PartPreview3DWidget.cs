@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected bool allowAutoRotate = false;
 		public MeshViewerWidget meshViewerWidget;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		protected ViewControls3D viewControls3D;
 
