@@ -64,52 +64,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Member Methods
 
-		private static ImageBuffer normalFolderImage = null;
+		public static ImageBuffer NormalFolderImage { get; } = StaticData.Instance.LoadImage(Path.Combine("Icons", "FileDialog", "folder.png")).InvertLightness();
 
-		private static ImageBuffer upFolderImage = null;
+		public static ImageBuffer UpFolderImage { get; } = StaticData.Instance.LoadImage(Path.Combine("Icons", "FileDialog", "up_folder.png")).InvertLightness();
 
-		public static ImageBuffer NormalFolderImage
-		{
-			get
-			{
-				if (normalFolderImage == null)
-				{
-					string path = Path.Combine("FileDialog", "folder.png");
-
-					normalFolderImage = StaticData.Instance.LoadIcon(path).InvertLightness();
-				}
-
-				return normalFolderImage;
-			}
-		}
-
-		public static ImageBuffer UpFolderImage
-		{
-			get
-			{
-				if (upFolderImage == null)
-				{
-					string path = Path.Combine("FileDialog", "up_folder.png");
-
-					upFolderImage = StaticData.Instance.LoadIcon(path).InvertLightness();
-				}
-
-				return upFolderImage;
-			}
-		}
-
-		public bool HasParent
-		{
-			get
-			{
-				if (this.ParentLibraryProvider != null)
-				{
-					return true;
-				}
-
-				return false;
-			}
-		}
+		public bool HasParent => this.ParentLibraryProvider != null;
 
 		public void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null)
 		{
@@ -215,10 +174,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public virtual string KeywordFilter { get; set; }
 
-		public virtual string StatusMessage
-		{
-			get { return ""; }
-		}
+		public virtual string StatusMessage { get; } = "";
 
 		public virtual void Dispose()
 		{
