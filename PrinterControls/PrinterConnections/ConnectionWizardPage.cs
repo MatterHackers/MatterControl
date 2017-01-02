@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class ConnectionWizardPage : WizardPage
 	{
-		public ConnectionWizardPage() : base("Cancel")
+		public ConnectionWizardPage()
 		{
 			cancelButton.Click += (s, e) => PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 		}

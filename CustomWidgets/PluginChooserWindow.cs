@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 			topToBottom.AddChild(presetsFormContainer);
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelPresetsButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(CloseOnIdle);

@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			Button cancelButton = textImageButtonFactory.Generate("Cancel");
+			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelButton.Name = "Export Item Window Cancel Button";
 			cancelButton.Cursor = Cursors.Hand;
 			cancelButton.Click += (sender, e) =>
