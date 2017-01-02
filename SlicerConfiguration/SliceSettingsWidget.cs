@@ -1249,7 +1249,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
 							// ensuring that a single printer can be shared across different devices and we'll select the correct com port in each case
-							var selectableOptions = new DropDownList("None", maxHeight: 200)
+							var selectableOptions = new DropDownList("None".Localize(), maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble(),
@@ -1275,7 +1275,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.LIST:
 						{
-							var selectableOptions = new DropDownList("None", maxHeight: 200)
+							var selectableOptions = new DropDownList("None".Localize(), maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble()

@@ -155,10 +155,10 @@ namespace MatterHackers.MatterControl
 			presetsFormContainer.AddChild(CreateMacroCommandContainer());
 			presetsFormContainer.AddChild(CreateMacroActionEdit());
 
-			Button addMacroButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
+			Button addMacroButton = textImageButtonFactory.Generate("Save".Localize());
 			addMacroButton.Click += new EventHandler(SaveMacro_Click);
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelPresetsButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(() =>
