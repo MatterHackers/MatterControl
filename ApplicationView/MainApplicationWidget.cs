@@ -670,7 +670,7 @@ namespace MatterHackers.MatterControl
 		/// Download an image from the web into the specified ImageBuffer
 		/// </summary>
 		/// <param name="uri"></param>
-		public static void DownloadToImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleImage, IRecieveBlenderByte scalingBlender = null)
+		public void DownloadToImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleImage, IRecieveBlenderByte scalingBlender = null)
 		{
 			if (scalingBlender == null)
 			{
