@@ -190,7 +190,9 @@ namespace MatterHackers.MatterControl
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
-		public static Action<bool> OutboundRequest;
+		
+		public static Action WebRequestFailed;
+		public static Action WebRequestSucceeded;
 
 
 #if DEBUG
