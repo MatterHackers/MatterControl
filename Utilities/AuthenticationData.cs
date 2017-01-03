@@ -30,16 +30,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void OutboundRequest(bool success)
+		public void WebRequestFailed()
 		{
-			if (success)
-			{
-				failedRequestCount = 0;
-			}
-			else
-			{
-				failedRequestCount++;
-			}
+			failedRequestCount++;
+		}
+
+		public void WebRequestSucceeded()
+		{
+			failedRequestCount = 0;
 		}
 
 		public static AuthenticationData Instance { get; } = new AuthenticationData();
