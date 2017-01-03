@@ -2834,12 +2834,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						printJobDisplayName = null;
 
+						// get us back to the no printing setting (this will clear the queued commands)
+						CreateStreamProcessors(null, false);
+
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
 						TurnOffBedAndExtruders();
-
-						// get us back to the no printing setting
-						CreateStreamProcessors(null, false);
 					}
 				}
 			}
