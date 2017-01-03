@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 				RequestFailed(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
 			}
 
-			ApplicationController.WebRequestFailed.Invoke();
+			ApplicationController.WebRequestFailed?.Invoke();
 		}
 
 		protected void OnRequestSuceeded(ResponseType responseItem)
