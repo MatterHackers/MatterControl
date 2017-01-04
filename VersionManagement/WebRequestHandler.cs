@@ -328,7 +328,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 					responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
 
 					string errorMessage;
-					if (responseValues.TryGetValue("ErrorMessage", out errorMessage) && errorMessage.IndexOf("expired session") != -1)
+					if (responseValues.TryGetValue("ErrorMessage", out errorMessage) 
+					    && errorMessage.IndexOf("expired session",  StringComparison.OrdinalIgnoreCase) != -1)
 					{
 						// Notify connection status changed and now invalid
 						ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Expired".Localize());
