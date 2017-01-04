@@ -28,64 +28,60 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public struct PrinterMove
-    {
-        public static readonly PrinterMove Nowhere = new PrinterMove()
-        {
-            position = new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity),
-            extrusion = double.PositiveInfinity,
-            feedRate = double.PositiveInfinity,
-        };
+	public struct PrinterMove
+	{
+		public static readonly PrinterMove Nowhere = new PrinterMove()
+		{
+			position = new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity),
+			extrusion = double.PositiveInfinity,
+			feedRate = double.PositiveInfinity,
+		};
 
-        public static readonly PrinterMove Zero;
-        public double extrusion;
-        public double feedRate;
-        public Vector3 position;
-        public PrinterMove(Vector3 absoluteDestination, double currentExtruderDestination, double currentFeedRate) : this()
-        {
-            this.position = absoluteDestination;
-            this.extrusion = currentExtruderDestination;
-            this.feedRate = currentFeedRate;
-        }
+		public static readonly PrinterMove Zero;
+		public double extrusion;
+		public double feedRate;
+		public Vector3 position;
 
-        public double LengthSquared
-        {
-            get
-            {
-                return position.LengthSquared;
-            }
-        }
+		public PrinterMove(Vector3 absoluteDestination, double currentExtruderDestination, double currentFeedRate) : this()
+		{
+			this.position = absoluteDestination;
+			this.extrusion = currentExtruderDestination;
+			this.feedRate = currentFeedRate;
+		}
 
-        public static PrinterMove operator -(PrinterMove left, PrinterMove right)
-        {
-            left.position -= right.position;
-            left.extrusion -= right.extrusion;
-            left.feedRate -= right.feedRate;
-            return left;
-        }
+		public double LengthSquared
+		{
+			get
+			{
+				return position.LengthSquared;
+			}
+		}
 
-        public static PrinterMove operator /(PrinterMove left, double scale)
-        {
-            left.position /= scale;
-            left.extrusion /= scale;
-            left.feedRate /= scale;
-            return left;
-        }
+		public static PrinterMove operator -(PrinterMove left, PrinterMove right)
+		{
+			left.position -= right.position;
+			left.extrusion -= right.extrusion;
+			left.feedRate -= right.feedRate;
+			return left;
+		}
 
-        public static PrinterMove operator +(PrinterMove left, PrinterMove right)
-        {
-            left.position += right.position;
-            left.extrusion += right.extrusion;
-            left.feedRate += right.feedRate;
-            return left;
-        }
-    }
+		public static PrinterMove operator /(PrinterMove left, double scale)
+		{
+			left.position /= scale;
+			left.extrusion /= scale;
+			left.feedRate /= scale;
+			return left;
+		}
+
+		public static PrinterMove operator +(PrinterMove left, PrinterMove right)
+		{
+			left.position += right.position;
+			left.extrusion += right.extrusion;
+			left.feedRate += right.feedRate;
+			return left;
+		}
+	}
 }

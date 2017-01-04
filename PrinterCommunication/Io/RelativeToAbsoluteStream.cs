@@ -41,7 +41,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         protected PrinterMove lastDestination = new PrinterMove();
         public PrinterMove LastDestination { get { return lastDestination; } }
 
-        bool absoluteMode = true;
+		bool xyzAbsoluteMode = true;
+		bool eAbsoluteMode = true;
 
         public RelativeToAbsoluteStream(GCodeStream internalStream)
             : base(internalStream)
@@ -61,12 +62,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (lineToProcess.StartsWith("G91"))
 				{
-					absoluteMode = false;
+					xyzAbsoluteMode = false;
+					eAbsoluteMode = false;
 					return "";
 				}
 				else if (lineToProcess.StartsWith("G90"))
 				{
-					absoluteMode = true;
+					xyzAbsoluteMode = true;
+					eAbsoluteMode = true;
+				}
+
+				if (lineToProcess.StartsWith("M83"))
+				{
+					// extruder to relative mode
+					eAbsoluteMode = false;
+				}
+				else if(lineToProcess.StartsWith("82"))
+				{
+					// extruder to absolute mode
+					eAbsoluteMode = true;
 				}
 			}
 
@@ -74,16 +88,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& LineIsMovement(lineToProcess))
 			{
 				PrinterMove currentDestination;
-				if (absoluteMode)
+				if (xyzAbsoluteMode && eAbsoluteMode)
 				{
 					currentDestination = GetPosition(lineToProcess, lastDestination);
 				}
 				else
 				{
-					currentDestination = GetPosition(lineToProcess, PrinterMove.Zero);
-					double feedRate = currentDestination.feedRate;
-					currentDestination += lastDestination;
+					PrinterMove xyzDestination = GetPosition(lineToProcess, lastDestination);
+					double feedRate = xyzDestination.feedRate;
+					if (xyzAbsoluteMode)
+					{
+						xyzDestination = GetPosition(lineToProcess, PrinterMove.Zero);
+						xyzDestination += lastDestination;
+					}
+
+					PrinterMove eDestination = GetPosition(lineToProcess, lastDestination);
+					if (eAbsoluteMode)
+					{
+						eDestination = GetPosition(lineToProcess, PrinterMove.Zero);
+						eDestination += lastDestination;
+					}
+
+					currentDestination.extrusion = eDestination.extrusion;
 					currentDestination.feedRate = feedRate;
+					currentDestination.position = xyzDestination.position;
 
 					lineToProcess = CreateMovementLine(currentDestination, lastDestination);
 				}
