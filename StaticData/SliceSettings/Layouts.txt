@@ -87,7 +87,6 @@ Advanced
       Layer Height
         layer_height
         first_layer_height
-        baby_step_z_offset
       Outer Surface - Perimeters
         perimeters
         avoid_crossing_perimeters
