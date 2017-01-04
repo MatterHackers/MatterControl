@@ -27,19 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System;
-using System.Collections.Generic;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.MatterControl.CustomWidgets;
-using System.Collections.ObjectModel;
-using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl
 {
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 		private MoveButton zPlusControl;
 		private MoveButton zMinusControl;
 		public bool hotKeysEnabled = false;
-		TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
+		private TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
 
 		private MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
 
@@ -92,7 +92,6 @@ namespace MatterHackers.MatterControl
 
 					this.KeyDown += (sender, e) =>
 				{
-
 					double moveAmountPositive = AxisMoveAmount;
 					double moveAmountNegative = -AxisMoveAmount;
 					int eMoveAmountPositive = EAxisMoveAmount;
@@ -143,7 +142,6 @@ namespace MatterHackers.MatterControl
 						else if (e.KeyCode == Keys.E && hotKeysEnabled)
 						{
 							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
-
 						}
 						else if (e.KeyCode == Keys.R && hotKeysEnabled)
 						{
@@ -195,14 +193,12 @@ namespace MatterHackers.MatterControl
 						else if (e.KeyCode == Keys.E && hotKeysEnabled)
 						{
 							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
-
 						}
 						else if (e.KeyCode == Keys.R && hotKeysEnabled)
 						{
 							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
 						}
 					}
-
 				};
 
 					// add in some movement radio buttons
@@ -223,11 +219,11 @@ namespace MatterHackers.MatterControl
 
 						var radioList = new ObservableCollection<GuiWidget>();
 
-						movePpointZeroTwoMmButton = buttonFactory.GenerateRadioButton("0.02");
-						movePpointZeroTwoMmButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-						movePpointZeroTwoMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.02); };
-						movePpointZeroTwoMmButton.SiblingRadioButtonList = radioList;
-						moveRadioButtons.AddChild(movePpointZeroTwoMmButton);
+						movePointZeroTwoMmButton = buttonFactory.GenerateRadioButton("0.02");
+						movePointZeroTwoMmButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+						movePointZeroTwoMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.02); };
+						movePointZeroTwoMmButton.SiblingRadioButtonList = radioList;
+						moveRadioButtons.AddChild(movePointZeroTwoMmButton);
 
 						RadioButton pointOneButton = buttonFactory.GenerateRadioButton("0.1");
 						pointOneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -255,7 +251,7 @@ namespace MatterHackers.MatterControl
 						tenButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(10); };
 						tenButton.SiblingRadioButtonList = radioList;
 						tooBigFlowLayout.AddChild(tenButton);
-						
+
 						oneHundredButton = buttonFactory.GenerateRadioButton("100");
 						oneHundredButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 						oneHundredButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(100); };
@@ -304,7 +300,7 @@ namespace MatterHackers.MatterControl
 				allControlsLeftToRight.AddChild(disableableEButtons);
 				allControlsTopToBottom.AddChild(allControlsLeftToRight);
 			}
-			
+
 			this.AddChild(allControlsTopToBottom);
 			this.HAnchor = HAnchor.FitToChildren;
 			this.VAnchor = VAnchor.FitToChildren;
@@ -312,7 +308,6 @@ namespace MatterHackers.MatterControl
 			Margin = new BorderDouble(3);
 
 			// this.HAnchor |= HAnchor.ParentLeftRight;
-
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -327,7 +322,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (zPlusControl.MoveAmount >= 1)
 				{
-					movePpointZeroTwoMmButton.Checked = true;
+					movePointZeroTwoMmButton.Checked = true;
 				}
 			}
 			else
@@ -380,7 +375,7 @@ namespace MatterHackers.MatterControl
 		private RadioButton tenButton;
 		private DisableableWidget disableableEButtons;
 		private DisableableWidget tooBigForBabyStepping;
-		private RadioButton movePpointZeroTwoMmButton;
+		private RadioButton movePointZeroTwoMmButton;
 		private RadioButton moveOneMmButton;
 
 		private FlowLayoutWidget GetHotkeyControlContainer()
@@ -398,10 +393,10 @@ namespace MatterHackers.MatterControl
 			hotkeyControlContainer.ToolTipText = "Enable cursor keys for movement".Localize();
 			hotkeyControlContainer.Margin = new BorderDouble(left: 10);
 
-            RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).InvertLightness());
+			RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).InvertLightness());
 			hotKeyButton.Margin = new BorderDouble(5);
-            hotKeyButton.FocusChanged += (sender, e) =>
-            {
+			hotKeyButton.FocusChanged += (sender, e) =>
+			{
 				if ((sender as GuiWidget).Focused)
 				{
 					hotKeyButton.Checked = false;
@@ -419,7 +414,6 @@ namespace MatterHackers.MatterControl
 			hotkeyControlContainer.AddChild(hotKeyButton);
 
 			return hotkeyControlContainer;
-
 		}
 
 		private FlowLayoutWidget CreateEButtons(double buttonSeparationDistance)
@@ -644,21 +638,19 @@ namespace MatterHackers.MatterControl
 				this.moveAxis = axis;
 				this.movementFeedRate = movementFeedRate;
 
-				this.Click += new EventHandler(moveAxis_Click);
-			}
-
-			private void moveAxis_Click(object sender, EventArgs mouseEvent)
-			{
-				MoveButton moveButton = (MoveButton)sender;
-
-				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
+				this.Click += (s, e) =>
 				{
-					PrinterConnectionAndCommunication.Instance.AddToBabyStepOffset(this.moveAxis, this.MoveAmount);
-				}
-				else
-				{
-					PrinterConnectionAndCommunication.Instance.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
-				}
+					MoveButton moveButton = (MoveButton)s;
+
+					if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
+					{
+						PrinterConnectionAndCommunication.Instance.AddToBabyStepOffset(this.moveAxis, this.MoveAmount);
+					}
+					else
+					{
+						PrinterConnectionAndCommunication.Instance.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
+					}
+				};
 			}
 		}
 
