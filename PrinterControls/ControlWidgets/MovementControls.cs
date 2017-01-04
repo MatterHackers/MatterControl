@@ -253,7 +253,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if ((PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 				&& offset.Length > .01)
 			{
-
 				offsetStreamLabel.Text = ("{0} ({1:0.##}, {2:0.##}, {3:0.##})").FormatWith(
 					"Offset".Localize() + ": ",
 					offset.x,

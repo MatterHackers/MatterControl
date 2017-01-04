@@ -132,6 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new ValuePlusConstant("support_material_interface_extruder", "supportInterfaceExtruder", -1),
 				new VisibleButNotMappedToEngine("extruder_count"),
 				new VisibleButNotMappedToEngine("extruders_share_temperature"),
+				new VisibleButNotMappedToEngine(SettingsKey.baby_step_z_offset),
 				new VisibleButNotMappedToEngine("g0"),
 				new VisibleButNotMappedToEngine("solid_shell"),
 			};

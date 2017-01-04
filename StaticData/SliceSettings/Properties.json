@@ -449,6 +449,20 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "baby_step_z_offset",
+		"PresentationName": "Baby Step Offset",
+		"HelpText": "The z offset to apply to improve the first layer adhesion.",
+		"DataEditType": "DOUBLE",
+		"ExtraSettings": "mm",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0",
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "extruders_share_temperature",
 		"PresentationName": "Share Temperature",
 		"HelpText": "Used to specify if more than one extruder share a common heater cartridge.",
