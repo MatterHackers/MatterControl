@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void QueuePartForSlicing(PrintItemWrapper itemToQueue)
 		{
 			itemToQueue.DoneSlicing = false;
-			string preparingToSliceModelTxt = LocalizedString.Get("Preparing to slice model");
+			string preparingToSliceModelTxt = "Preparing to slice model".Localize();
 			string peparingToSliceModelFull = string.Format("{0}...", preparingToSliceModelTxt);
 			itemToQueue.OnSlicingOutputMessage(new StringEventArgs(peparingToSliceModelFull));
 			lock(listOfSlicingItems)

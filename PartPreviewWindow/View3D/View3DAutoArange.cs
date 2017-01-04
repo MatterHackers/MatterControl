@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (MeshGroups.Count > 0)
 			{
-				string progressArrangeParts = LocalizedString.Get("Arranging Parts");
+				string progressArrangeParts = "Arranging Parts".Localize();
 				string progressArrangePartsFull = string.Format("{0}:", progressArrangeParts);
 				processingProgressControl.ProcessType = progressArrangePartsFull;
 				processingProgressControl.Visible = true;

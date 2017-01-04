@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.presetsContext = presetsContext;
 			this.AlwaysOnTopOfMain = true;
-			this.Title = LocalizedString.Get("Slice Presets Editor");
+			this.Title = "Slice Presets Editor".Localize();
 			this.MinimumSize = new Vector2(640, 480);
 			this.AnchorAll();
 

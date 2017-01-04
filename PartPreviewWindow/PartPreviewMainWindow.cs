@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(750, 550)
 		{
 			UseOpenGL = true;
-			string partPreviewTitle = LocalizedString.Get("MatterControl");
+			string partPreviewTitle = "MatterControl".Localize();
 			Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
 			this.Name = "Part Preview Window";

@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
 		{
 			AlwaysOnTopOfMain = true;
 			this.AddChild(new TerminalWidget(true));
-			Title = LocalizedString.Get("MatterControl - Terminal");
+			Title = "MatterControl - Terminal".Localize();
 			this.ShowAsSystemWindow();
 			MinimumSize = minSize;
 			this.Name = "Gcode Terminal";

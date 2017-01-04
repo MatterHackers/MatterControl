@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private void GroupSelected()
 		{
-			string makingCopyLabel = LocalizedString.Get("Grouping");
+			string makingCopyLabel = "Grouping".Localize();
 			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
 			processingProgressControl.ProcessType = makingCopyLabelFull;
 

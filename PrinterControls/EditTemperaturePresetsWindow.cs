@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 			{
-				string tempShortcutPresetLabel = LocalizedString.Get("Temperature Shortcut Presets");
+				string tempShortcutPresetLabel = "Temperature Shortcut Presets".Localize();
 				string tempShortcutPresetLabelFull = string.Format("{0}:", tempShortcutPresetLabel);
 				TextWidget elementHeader = new TextWidget(tempShortcutPresetLabelFull, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
 			labelLabelContainer.Height = 16;
 			labelLabelContainer.Margin = new BorderDouble(3, 0);
 
-			string labelLabelTxt = LocalizedString.Get("Label");
+			string labelLabelTxt = "Label".Localize();
 			TextWidget labelLabel = new TextWidget(string.Format(labelLabelTxt), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 			labelLabel.HAnchor = HAnchor.ParentLeft;
 			labelLabel.VAnchor = VAnchor.ParentCenter;
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl
 				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
 				leftRightEdit.Padding = new BorderDouble(3);
 				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-				string presetLabelTxt = LocalizedString.Get("Preset");
+				string presetLabelTxt = "Preset".Localize();
 				TextWidget label = new TextWidget(string.Format("{1} {0}", preset_count, presetLabelTxt), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				label.VAnchor = VAnchor.ParentCenter;
 				leftRightEdit.AddChild(label);
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl
 				leftRightEdit.Padding = new BorderDouble(3);
 				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 
-				TextWidget maxWidgetLabel = new TextWidget(LocalizedString.Get("Max Temp"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				TextWidget maxWidgetLabel = new TextWidget("Max Temp".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				maxWidgetLabel.VAnchor = VAnchor.ParentCenter;
 				leftRightEdit.AddChild(maxWidgetLabel);
 				leftRightEdit.AddChild(new HorizontalSpacer());

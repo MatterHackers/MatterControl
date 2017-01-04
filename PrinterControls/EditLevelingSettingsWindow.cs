@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 				TextWidget positionLabel;
 
-				string whichPositionText = LocalizedString.Get("Position");
+				string whichPositionText = "Position".Localize();
 				positionLabel = new TextWidget("{0} {1,-5}".FormatWith(whichPositionText, row + 1), textColor: ActiveTheme.Instance.PrimaryTextColor);
 
 				positionLabel.VAnchor = VAnchor.ParentCenter;

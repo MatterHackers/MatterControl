@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 			: base(560, 420)
 		{
 			AlwaysOnTopOfMain = true;
-			Title = LocalizedString.Get("Macro Editor");
+			Title = "Macro Editor".Localize();
 			this.FunctionToCallOnSave = functionToCallOnSave;
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			ChangeToMacroList();
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 			{
-				string editMacroLabel = LocalizedString.Get("Edit Macro");
+				string editMacroLabel = "Edit Macro".Localize();
 				string editMacroLabelFull = string.Format("{0}:", editMacroLabel);
 				TextWidget elementHeader = new TextWidget(editMacroLabelFull, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl
 			container.Margin = new BorderDouble(0, 5);
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string macroCommandLabelTxt = LocalizedString.Get("Macro Commands");
+			string macroCommandLabelTxt = "Macro Commands".Localize();
 			string macroCommandLabelTxtFull = string.Format("{0}:", macroCommandLabelTxt);
 			TextWidget macroCommandLabel = new TextWidget(macroCommandLabelTxtFull, 0, 0, 12);
 			macroCommandLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl
 			macroCommandInput.VAnchor = VAnchor.ParentBottomTop;
 			macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.ParentBottomTop;
 
-			string shouldBeGCodeLabel = LocalizedString.Get("This should be in 'G-Code'");
+			string shouldBeGCodeLabel = "This should be in 'G-Code'".Localize();
 			string shouldBeGCodeLabelFull = string.Format("{0}.", shouldBeGCodeLabel);
 			macroCommandError = new TextWidget(shouldBeGCodeLabelFull, 0, 0, 10);
 			macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl
 			macroNameInput = new MHTextEditWidget(GCodeMacro.FixMacroName(windowController.ActiveMacro.Name));
 			macroNameInput.HAnchor = HAnchor.ParentLeftRight;
 
-			string giveMacroANameLabel = LocalizedString.Get("Give the macro a name");
+			string giveMacroANameLabel = "Give the macro a name".Localize();
 			string giveMacroANameLabelFull = string.Format("{0}.", giveMacroANameLabel);
 			macroNameError = new TextWidget(giveMacroANameLabelFull, 0, 0, 10);
 			macroNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 			{
-				string macroPresetsLabel = LocalizedString.Get("Macro Presets");
+				string macroPresetsLabel = "Macro Presets".Localize();
 				string macroPresetsLabelFull = string.Format("{0}:", macroPresetsLabel);
 				TextWidget elementHeader = new TextWidget(macroPresetsLabelFull, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;

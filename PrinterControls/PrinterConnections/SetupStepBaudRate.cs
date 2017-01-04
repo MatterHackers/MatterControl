@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerBaudRateContainer = createPrinterBaudRateContainer();
 			contentRow.AddChild(printerBaudRateContainer);
 			{
-				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
+				nextButton = textImageButtonFactory.Generate("Continue".Localize());
 				nextButton.Click += new EventHandler(NextButton_Click);
 
 				//Add buttons to buttonContainer
@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.VAnchor = VAnchor.ParentBottomTop;
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string baudRateLabelText = LocalizedString.Get("Baud Rate");
+			string baudRateLabelText = "Baud Rate".Localize();
 			string baudRateLabelTextFull = string.Format("{0}:", baudRateLabelText);
 
 			TextWidget baudRateLabel = new TextWidget(baudRateLabelTextFull, 0, 0, 12);
@@ -58,16 +58,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			baudRateMessageContainer.Margin = elementMargin;
 			baudRateMessageContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			printerBaudRateError = new TextWidget(LocalizedString.Get("Select the baud rate."), 0, 0, 10);
+			printerBaudRateError = new TextWidget("Select the baud rate.".Localize(), 0, 0, 10);
 			printerBaudRateError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printerBaudRateError.AutoExpandBoundsToText = true;
 
-			printerBaudRateHelpLink = linkButtonFactory.Generate(LocalizedString.Get("What's this?"));
+			printerBaudRateHelpLink = linkButtonFactory.Generate("What's this?".Localize());
 			printerBaudRateHelpLink.Margin = new BorderDouble(left: 5);
 			printerBaudRateHelpLink.VAnchor = VAnchor.ParentBottom;
 			printerBaudRateHelpLink.Click += new EventHandler(printerBaudRateHelp_Click);
 
-			printerBaudRateHelpMessage = new TextWidget(LocalizedString.Get("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000."), 0, 0, 10);
+			printerBaudRateHelpMessage = new TextWidget("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.".Localize(), 0, 0, 10);
 			printerBaudRateHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printerBaudRateHelpMessage.Margin = new BorderDouble(top: 10);
 			printerBaudRateHelpMessage.Visible = false;
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				baudRateContainer.AddChild(baudOption);
 			}
 
-			otherBaudRateRadioButton = new RadioButton(LocalizedString.Get("Other"));
+			otherBaudRateRadioButton = new RadioButton("Other".Localize());
 			otherBaudRateRadioButton.Margin = baudRateMargin;
 			otherBaudRateRadioButton.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				printerBaudRateHelpLink.Visible = false;
 				printerBaudRateError.TextColor = RGBA_Bytes.Red;
-				printerBaudRateError.Text = LocalizedString.Get("Oops! Please select a baud rate.");
+				printerBaudRateError.Text = "Oops! Please select a baud rate.".Localize();
 			}
 
 			if (baudRate != null)
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				{
 					printerBaudRateHelpLink.Visible = false;
 					printerBaudRateError.TextColor = RGBA_Bytes.Red;
-					printerBaudRateError.Text = LocalizedString.Get("Oops! Baud Rate must be an integer.");
+					printerBaudRateError.Text = "Oops! Baud Rate must be an integer.".Localize();
 					return false;
 				}
 			}
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				return otherBaudRateInput.Text;
 			}
 
-			throw new Exception(LocalizedString.Get("Could not find a selected button."));
+			throw new Exception("Could not find a selected button.".Localize());
 		}
 	}
 }

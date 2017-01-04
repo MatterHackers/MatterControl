@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 					invertImageLocation = true
 				};
 
-				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Settings\n& Controls"), 
+				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate("Settings\n& Controls".Localize(), 
 					StaticData.Instance.LoadIcon("icon_arrow_right_32x32.png", 32,32));
 				advancedControlsLinkButton.Name = "SettingsAndControls";
 				advancedControlsLinkButton.ToolTipText = "Switch to Settings, Controls and Options".Localize();

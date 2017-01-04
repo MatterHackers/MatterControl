@@ -51,15 +51,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected static readonly string requiredPageInstructions2 = "The next few screens will walk your through the print leveling wizard.";
 
 		protected static readonly string homingPageStepText = "Homing The Printer".Localize();
-		protected static readonly string homingPageInstructionsTextOne = LocalizedString.Get("The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need");
-		protected static readonly string homingPageInstructionsTextTwo = LocalizedString.Get("A standard sheet of paper");
-		protected static readonly string homingPageInstructionsTextThree = LocalizedString.Get("We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.");
+		protected static readonly string homingPageInstructionsTextOne = "The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need".Localize();
+		protected static readonly string homingPageInstructionsTextTwo = "A standard sheet of paper".Localize();
+		protected static readonly string homingPageInstructionsTextThree = "We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.".Localize();
 
-		protected static readonly string doneInstructionsText = LocalizedString.Get("Congratulations!\n\nAuto Print Leveling is now configured and enabled.");
-		protected static readonly string doneInstructionsTextTwo = LocalizedString.Get("Remove the paper");
-		protected static readonly string doneInstructionsTextThree = LocalizedString.Get("To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.");
-		protected static readonly string stepTextBeg = LocalizedString.Get("Step");
-		protected static readonly string stepTextEnd = LocalizedString.Get("of");
+		protected static readonly string doneInstructionsText = "Congratulations!\n\nAuto Print Leveling is now configured and enabled.".Localize();
+		protected static readonly string doneInstructionsTextTwo = "Remove the paper".Localize();
+		protected static readonly string doneInstructionsTextThree = "To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.".Localize();
+		protected static readonly string stepTextBeg = "Step".Localize();
+		protected static readonly string stepTextEnd = "of".Localize();
 
 		protected WizardControl printLevelWizard;
 

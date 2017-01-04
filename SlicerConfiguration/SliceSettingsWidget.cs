@@ -51,14 +51,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AnchorAll();
 			this.Padding = new BorderDouble(3, 0);
 
-			var noConnectionMessageContainer = new AltGroupBox(new TextWidget(LocalizedString.Get("No Printer Selected"), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+			var noConnectionMessageContainer = new AltGroupBox(new TextWidget("No Printer Selected".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
 			noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			noConnectionMessageContainer.Height = 90;
 
-			string noConnectionString = LocalizedString.Get("No printer is currently selected. Please select a printer to edit slice settings.");
-			noConnectionString += "\n\n" + LocalizedString.Get("NOTE: You need to select a printer, but do not need to connect to it.");
+			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
+			noConnectionString += "\n\n" + "NOTE: You need to select a printer, but do not need to connect to it.".Localize();
 			TextWidget noConnectionMessage = new TextWidget(noConnectionString, pointSize: 10);
 			noConnectionMessage.Margin = new BorderDouble(5);
 			noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
