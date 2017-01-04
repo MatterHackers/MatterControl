@@ -5701,3 +5701,132 @@ Translated:समन्वयन डैशबोर्ड
 English:SD Card
 Translated:एसडी कार्ड
 
+English:MatterControl: Select Firmware File
+Translated:MatterControl: चयन फर्मवेयर फ़ाइल
+
+English:Starting firmware update...
+Translated:फर्मवेयर अद्यतन शुरू ...
+
+English:Disconnecting from printer...
+Translated:प्रिंटर से डिस्कनेक्ट ...
+
+English:Initializing hardware...
+Translated:हार्डवेयर आरंभ हो रहा है ...
+
+English:Creating firmware backup...
+Translated:फर्मवेयर बैकअप बना रहा है ...
+
+English:Update In Progress: {0}
+Translated:प्रगति में अद्यतन: {0}
+
+English:Updating firmware...
+Translated:फर्मवेयर अद्यतन करने ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:फर्मवेयर सफलतापूर्वक अद्यतन। फिर से कनेक्ट करें।
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:'सीरियल पोर्ट' अनुभाग अपने डिवाइस पर सभी उपलब्ध सीरियल \ N बंदरगाहों सूचीबद्ध करता है। बदल रहा है जो यूएसबी पोर्ट प्रिंटर \ N संबद्ध सीरियल पोर्ट के लिए बदल सकता है conneted है। \ एनएन \ युक्ति: यदि आप अनिश्चित हैं, तो अपने प्रिंटर\nमें प्लग हाल चलाना / और ताज़ा मारा। नए बंदरगाह लगता है कि होना चाहिए\nअपने प्रिंटर।
+
+English:Reverting firmware to previous version...
+Translated:पिछले संस्करण के लिए फर्मवेयर लौट रहा है ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:फर्मवेयर सफलतापूर्वक बहाल। फिर से कनेक्ट करें।
+
+English:SET
+Translated:सेट
+
+English:Move X negative
+Translated:एक्स नकारात्मक ले जाएँ
+
+English:Move X positive
+Translated:एक्स सकारात्मक कदम
+
+English:Move Y positive
+Translated:Y सकारात्मक कदम
+
+English:Move Y negative
+Translated:Y नकारात्मक ले जाएँ
+
+English:Move Z positive
+Translated:जेड सकारात्मक कदम
+
+English:Move Z negative
+Translated:जेड नकारात्मक ले जाएँ
+
+English:Enable cursor keys for movement
+Translated:आंदोलन के लिए कर्सर कुंजी सक्षम करें
+
+English:Retract filament
+Translated:रेशा वापस लेना
+
+English:Extrude filament
+Translated:हटा रेशा
+
+English:Home X, Y and Z
+Translated:होम एक्स, वाई और जेड
+
+English:Home X
+Translated:होम एक्स
+
+English:Home Y
+Translated:होम Y
+
+English:Home Z
+Translated:होम Z
+
+English:Open cloud sync dashboard in web browser
+Translated:वेब ब्राउज़र में ओपन बादल सिंक डैशबोर्ड
+
+English:Restart
+Translated:पुनः आरंभ करें
+
+English:Please Review Your Order
+Translated:अपने आदेश की समीक्षा करें
+
+English:Loading product information. Pleast wait...
+Translated:उत्पाद जानकारी लोड हो रहा है। Pleast प्रतीक्षा करें ...
+
+English:Enter Code: 
+Translated:कोड दर्ज करें:
+
+English:Use Promo Code
+Translated:प्रोमो कोड का उपयोग
+
+English:Applying...
+Translated:आवेदन ...
+
+English:Enter your Billing Address
+Translated:अपना बिलिंग एड्रेस दर्ज करें
+
+English:Full Name
+Translated:पूरा नाम
+
+English:Enter your Payment Info
+Translated:अपनी भुगतान जानकारी दर्ज करें
+
+English:Place Order
+Translated:आदेश देना
+
+English:Additional payment options coming soon!
+Translated:अतिरिक्त भुगतान विकल्प जल्द ही आ रहा है!
+
+English:- Please Select -
+Translated:- कृपया चुने -
+
+English:Credit Card Number
+Translated:क्रेडिट कार्ड नंबर
+
+English:Expiration Date
+Translated:समाप्ति तिथि
+
+English:Card Verification Number
+Translated:कार्ड सत्यापन संख्या
+
+English:Saving...
+Translated:सहेजा जा रहा है ...
+
+English:Oops! Payment has been declined.
+Translated:उफ़! भुगतान रोक दिया गया है।
+

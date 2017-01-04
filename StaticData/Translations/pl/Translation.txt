@@ -5701,3 +5701,132 @@ Translated:Sync Dashboard
 English:SD Card
 Translated:Karta SD
 
+English:MatterControl: Select Firmware File
+Translated:Plik wybierz Firmware: MatterControl
+
+English:Starting firmware update...
+Translated:Uruchamianie aktualizacji firmware ...
+
+English:Disconnecting from printer...
+Translated:Odłączanie od drukarki ...
+
+English:Initializing hardware...
+Translated:Inicjowanie sprzętu ...
+
+English:Creating firmware backup...
+Translated:Tworzenie kopii zapasowej firmware ...
+
+English:Update In Progress: {0}
+Translated:Update in progress: {0}
+
+English:Updating firmware...
+Translated:Aktualizacja firmware ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware zaktualizowane pomyślnie. Proszę ponownie.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:sekcji "Serial Port" zawiera listę wszystkich dostępnych portów\nseryjny na urządzeniu. Zmiana, która port USB drukarka\nconneted się może zmienić skojarzony port szeregowy.\n\nWskazówka: Jeśli nie jesteś pewien, odłączyć / podłączyć drukarki\ni uderzył odświeżenia. Nowy port, który powinien być wyświetlany\ndrukarka.
+
+English:Reverting firmware to previous version...
+Translated:Przywracanie firmware do wersji poprzedniej ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware przywrócone pomyślnie. Proszę ponownie.
+
+English:SET
+Translated:ZESTAW
+
+English:Move X negative
+Translated:Move X negatyw
+
+English:Move X positive
+Translated:Move X pozytywna
+
+English:Move Y positive
+Translated:Przenieś Y pozytywna
+
+English:Move Y negative
+Translated:Przenieś Y negatyw
+
+English:Move Z positive
+Translated:Przenieś Z pozytywnym
+
+English:Move Z negative
+Translated:Przenieś Z negatywu
+
+English:Enable cursor keys for movement
+Translated:Włącz kursorów dla ruchu
+
+English:Retract filament
+Translated:Wycofać żarnik
+
+English:Extrude filament
+Translated:Wyciągnięcie żarnik
+
+English:Home X, Y and Z
+Translated:Home X, Y i Z
+
+English:Home X
+Translated:Home X
+
+English:Home Y
+Translated:Home Y
+
+English:Home Z
+Translated:Home Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Otwarty dashboard chmura synchronizacji w przeglądarce internetowej
+
+English:Restart
+Translated:restart
+
+English:Please Review Your Order
+Translated:Proszę sprawdzić Order
+
+English:Loading product information. Pleast wait...
+Translated:Ładowanie informacji o produkcie. Pleast czekać ...
+
+English:Enter Code: 
+Translated:Wprowadź kod:
+
+English:Use Promo Code
+Translated:Użyj kod promocyjny
+
+English:Applying...
+Translated:Stosowanie ...
+
+English:Enter your Billing Address
+Translated:Wpisz swój adres rozliczeniowy
+
+English:Full Name
+Translated:Pełne imię i nazwisko
+
+English:Enter your Payment Info
+Translated:Podaj swoje dane płatności
+
+English:Place Order
+Translated:Złożyć zamówienie
+
+English:Additional payment options coming soon!
+Translated:Dodatkowe opcje płatności już wkrótce!
+
+English:- Please Select -
+Translated:- Proszę wybrać -
+
+English:Credit Card Number
+Translated:Numer karty kredytowej
+
+English:Expiration Date
+Translated:Termin ważności
+
+English:Card Verification Number
+Translated:Numer weryfikacyjny karty
+
+English:Saving...
+Translated:Oszczędność...
+
+English:Oops! Payment has been declined.
+Translated:Ups! Płatność została odrzucona.
+

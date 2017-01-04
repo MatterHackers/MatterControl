@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl
 				double buttonOffset = -10 * GuiWidget.DeviceScale;
 				var offPosition = buttonOffset;
 
-				tempOffButton = textImageButtonFactory.Generate("Off");
+				tempOffButton = textImageButtonFactory.Generate("Off".Localize());
 				tempOffButton.OriginRelativeParent = new Vector2(offPosition, 0);
 
 				//sliderLabels.AddChild(tempOffButton);

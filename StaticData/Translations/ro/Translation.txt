@@ -464,7 +464,7 @@ English:If a layer is estimated to take less than this to print, the fan will be
 Translated:În cazul în care un strat este estimat să dureze mai puțin pentru a imprima, ventilatorul va fi pornit.
 
 English:This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
-Translated:Acest lucru ar trebui să fie setat la diametrul efectiv al filamentului pe care îl utilizați pe imprimantă. Măsura 5 ori cu șublerul, arunca sus și de jos, iar restul de medie 3.
+Translated:Acest lucru ar trebui să fie setat la diametrul efectiv al filamentului pe care îl utilizați pe imprimantă. Măsura 5 ori cu șublerul, arunca partea de sus și de jos, iar media restul 3.
 
 English:Sets the starting angle of the infill. Not used when bridging.
 Translated:Setează unghiul de pornire al umpluturii. Nu este folosit atunci când punte.
@@ -4556,7 +4556,7 @@ English:Used to specify if more than one extruder share a common heater cartridg
 Translated:Folosit pentru a specifica dacă există mai mult de un extruder au un cartuș încălzitor comun.
 
 English:The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
-Translated:Diametrul efectiv al filamentului utilizat pentru imprimare. Măsura 5 ori cu șublerul, arunca sus și de jos, iar restul de medie 3.
+Translated:Diametrul efectiv al filamentului utilizat pentru imprimare. Măsura 5 ori cu șublerul, arunca partea de sus și de jos, iar media restul 3.
 
 English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
 Translated:Inaltimea primului strat. Un prim strat mai înalt decât înălțimea stratului implicit poate asigura o bună aderență la placa construi.
@@ -5700,4 +5700,133 @@ Translated:Tabloul de bord sincronizare
 
 English:SD Card
 Translated:Card SD
+
+English:MatterControl: Select Firmware File
+Translated:Fișier Selectați Firmware: MatterControl
+
+English:Starting firmware update...
+Translated:Actualizarea firmware-ului de pornire ...
+
+English:Disconnecting from printer...
+Translated:Deconectarea de la imprimantă ...
+
+English:Initializing hardware...
+Translated:Hardware-ul ... Se inițializează
+
+English:Creating firmware backup...
+Translated:Crearea de backup de firmware ...
+
+English:Update In Progress: {0}
+Translated:Actualizare în progres: {0}
+
+English:Updating firmware...
+Translated:Se actualizează firmware-ului ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware-ul actualizat cu succes. Vă rugăm să reconectați.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:secțiunea "Serial Port" listează toate porturile seriale disponibile\npe dispozitiv. Modificarea persoanelor port USB imprimantă\neste conneted pentru a putea schimba portul serial asociat.\n\nSfat: Dacă nu sunteți sigur, deconectați / conectați imprimanta\nși a lovit de reîmprospătare. Noul port care pare să fie\nimprimantă.
+
+English:Reverting firmware to previous version...
+Translated:Reverting firmware-ul la versiunea anterioară ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware restaurat cu succes. Vă rugăm să reconectați.
+
+English:SET
+Translated:A STABILIT
+
+English:Move X negative
+Translated:Muta X negativ
+
+English:Move X positive
+Translated:Mutați X pozitiv
+
+English:Move Y positive
+Translated:Mutați Y pozitiv
+
+English:Move Y negative
+Translated:Muta Y negativ
+
+English:Move Z positive
+Translated:Z muta pozitiv
+
+English:Move Z negative
+Translated:Muta Z negativa
+
+English:Enable cursor keys for movement
+Translated:Activați tastele cursor pentru mișcare
+
+English:Retract filament
+Translated:retracteze cu filament
+
+English:Extrude filament
+Translated:filament extrude
+
+English:Home X, Y and Z
+Translated:Casa X, Y și Z
+
+English:Home X
+Translated:X acasă
+
+English:Home Y
+Translated:Y home
+
+English:Home Z
+Translated:Z home
+
+English:Open cloud sync dashboard in web browser
+Translated:Deschideți tabloul de bord nor de sincronizare în browser-ul web
+
+English:Restart
+Translated:Repornire
+
+English:Please Review Your Order
+Translated:Vă rugăm să Examinați comanda
+
+English:Loading product information. Pleast wait...
+Translated:Se încarcă informații despre produs. Pleast așteptați ...
+
+English:Enter Code: 
+Translated:Introdu codul:
+
+English:Use Promo Code
+Translated:Utilizați Cod promoțional
+
+English:Applying...
+Translated:Aplicarea...
+
+English:Enter your Billing Address
+Translated:Introduceți adresa dvs. de facturare Adresa
+
+English:Full Name
+Translated:Numele complet
+
+English:Enter your Payment Info
+Translated:Introdu informatiile tale de plată
+
+English:Place Order
+Translated:Plasați comanda
+
+English:Additional payment options coming soon!
+Translated:Opțiuni de plată suplimentare vor apărea în curând!
+
+English:- Please Select -
+Translated:- Te rog selecteaza -
+
+English:Credit Card Number
+Translated:Numărul cărții de credit
+
+English:Expiration Date
+Translated:Data expirării
+
+English:Card Verification Number
+Translated:numarul de verificare al cardului
+
+English:Saving...
+Translated:Economisire...
+
+English:Oops! Payment has been declined.
+Translated:Oops! Plata a fost refuzată.
 

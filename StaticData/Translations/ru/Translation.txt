@@ -5701,3 +5701,132 @@ Translated:Синхронизация Приборная панель
 English:SD Card
 Translated:SD Card
 
+English:MatterControl: Select Firmware File
+Translated:Файл Выберите Firmware: MatterControl
+
+English:Starting firmware update...
+Translated:Запуск обновления встроенного программного обеспечения ...
+
+English:Disconnecting from printer...
+Translated:Отсоединение от принтера ...
+
+English:Initializing hardware...
+Translated:Инициализация аппаратных средств ...
+
+English:Creating firmware backup...
+Translated:Создание резервной копии прошивки ...
+
+English:Update In Progress: {0}
+Translated:Обновление In Progress: {0}
+
+English:Updating firmware...
+Translated:Обновление встроенного программного обеспечения ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Прошивка успешно обновлена. Пожалуйста, подключите.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:В разделе «Последовательный порт» перечислены все доступные последовательные \ N портов на устройстве. Изменение типов USB-порт принтера \ п может, чтобы соединенными изменить связанный с ним последовательный порт.\n\nСовет: Если вы не уверены, отключите / вилку в принтер \ N и нажать кнопку Обновить. Новый порт, который появляется должен быть \ п принтер.
+
+English:Reverting firmware to previous version...
+Translated:Откат прошивку предыдущей версии ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware успешно восстановлен. Пожалуйста, подключите.
+
+English:SET
+Translated:ЗАДАВАТЬ
+
+English:Move X negative
+Translated:Перемещение X негатив
+
+English:Move X positive
+Translated:Переместить X положительный
+
+English:Move Y positive
+Translated:Переместить Y положительный
+
+English:Move Y negative
+Translated:Переместить Y отрицательный
+
+English:Move Z positive
+Translated:Переместить Z положительный
+
+English:Move Z negative
+Translated:Переместить Z отрицательные
+
+English:Enable cursor keys for movement
+Translated:Включить клавиши управления курсором для перемещения
+
+English:Retract filament
+Translated:Отвести нить
+
+English:Extrude filament
+Translated:Выдавливание нить накала
+
+English:Home X, Y and Z
+Translated:Главная X, Y и Z
+
+English:Home X
+Translated:Главная X
+
+English:Home Y
+Translated:Главная Y
+
+English:Home Z
+Translated:Главная Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Открыть панель приборов облако синхронизации в веб-браузере
+
+English:Restart
+Translated:Перезапуск
+
+English:Please Review Your Order
+Translated:Пожалуйста, проверьте заказ
+
+English:Loading product information. Pleast wait...
+Translated:Загрузка информации о продукте. Pleast подождите ...
+
+English:Enter Code: 
+Translated:Введите код:
+
+English:Use Promo Code
+Translated:Используйте промо-код
+
+English:Applying...
+Translated:Применение ...
+
+English:Enter your Billing Address
+Translated:Введите свой платежный адрес
+
+English:Full Name
+Translated:Полное имя
+
+English:Enter your Payment Info
+Translated:Введите свой Информация об оплате
+
+English:Place Order
+Translated:Разместить заказ
+
+English:Additional payment options coming soon!
+Translated:Дополнительные варианты оплаты в ближайшее время!
+
+English:- Please Select -
+Translated:- Пожалуйста выберите -
+
+English:Credit Card Number
+Translated:Номер кредитной карты
+
+English:Expiration Date
+Translated:Срок годности
+
+English:Card Verification Number
+Translated:идентификационный номер карты
+
+English:Saving...
+Translated:Сохранение ...
+
+English:Oops! Payment has been declined.
+Translated:К сожалению! Оплата была отклонена.
+

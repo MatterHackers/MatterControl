@@ -4415,7 +4415,7 @@ English:Please log in to continue.
 Translated:Devam etmek için lütfen giriş yapınız.
 
 English:Oops! Invalid username, email or password.
-Translated:Oops! Geçersiz kullanıcı adı, e-posta veya şifre.
+Translated:Oops! Geçersiz kullanıcı adı, e-posta veya parola.
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:gücünü artırmak ve arayüz katmanları tutmak için destek malzeme etrafında bir taslak oluşturur.
@@ -5700,4 +5700,133 @@ Translated:Senkronizasyon Kontrol Paneli
 
 English:SD Card
 Translated:Hafıza kartı
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl seç: Firmware Dosya
+
+English:Starting firmware update...
+Translated:firmware güncellemesi başlatılıyor ...
+
+English:Disconnecting from printer...
+Translated:yazıcıdan bağlantısını kesme ...
+
+English:Initializing hardware...
+Translated:donanım başlatılıyor ...
+
+English:Creating firmware backup...
+Translated:firmware yedeğini oluşturma ...
+
+English:Update In Progress: {0}
+Translated:Devam güncelleyin: {0}
+
+English:Updating firmware...
+Translated:firmware güncellemesi ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware başarıyla güncellendi. yeniden edin.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:'Seri Port' bölümünde cihazınızdaki tüm mevcut seri\nbağlantı noktalarını listeler. Değişen hangi USB bağlantı noktası yazıcı\nilgili seri port değişebilir için conneted edilir.\n\nİpucu: emin değilseniz, yazıcı\n/ fişini çekin ve yenileme çarptı. Yeni olmalıdır görünen liman\nyazıcı.
+
+English:Reverting firmware to previous version...
+Translated:Bir önceki sürüme firmware döndürülüyor ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware başarıyla geri yüklendi. yeniden edin.
+
+English:SET
+Translated:SET
+
+English:Move X negative
+Translated:X olumsuz Taşı
+
+English:Move X positive
+Translated:X pozitif Taşı
+
+English:Move Y positive
+Translated:Y pozitif Taşı
+
+English:Move Y negative
+Translated:Y negatif Taşı
+
+English:Move Z positive
+Translated:Z pozitif Taşı
+
+English:Move Z negative
+Translated:Z negatif Taşı
+
+English:Enable cursor keys for movement
+Translated:hareket için imleç tuşlarını etkinleştir
+
+English:Retract filament
+Translated:filament geri çekin
+
+English:Extrude filament
+Translated:extrude filaman
+
+English:Home X, Y and Z
+Translated:Ev, X, Y ve Z'nin
+
+English:Home X
+Translated:Ev X
+
+English:Home Y
+Translated:Ev Y
+
+English:Home Z
+Translated:Ev Z
+
+English:Open cloud sync dashboard in web browser
+Translated:web tarayıcısında açın bulut senkronizasyonu pano
+
+English:Restart
+Translated:Tekrar başlat
+
+English:Please Review Your Order
+Translated:Siparişinizi inceleyin lütfen
+
+English:Loading product information. Pleast wait...
+Translated:Ürün bilgileri yükleniyor. Pleast bekleyin ...
+
+English:Enter Code: 
+Translated:Kodu girin:
+
+English:Use Promo Code
+Translated:Promosyon Kodu kullanın
+
+English:Applying...
+Translated:Uygulanması ...
+
+English:Enter your Billing Address
+Translated:Fatura Adresini girin
+
+English:Full Name
+Translated:Ad Soyad
+
+English:Enter your Payment Info
+Translated:Ödeme Bilgisi girin
+
+English:Place Order
+Translated:Sipariş Vermek
+
+English:Additional payment options coming soon!
+Translated:Ek ödeme seçenekleri çok yakında!
+
+English:- Please Select -
+Translated:- Lütfen seçin -
+
+English:Credit Card Number
+Translated:Kredi Kartı Numarası
+
+English:Expiration Date
+Translated:Son kullanma tarihi
+
+English:Card Verification Number
+Translated:Kart Onay Numarası
+
+English:Saving...
+Translated:Tasarruf ...
+
+English:Oops! Payment has been declined.
+Translated:Oops! Ödeme reddedildi edilmiştir.
 

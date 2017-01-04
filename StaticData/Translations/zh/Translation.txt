@@ -2555,7 +2555,7 @@ English:Dilimleme Motoru
 Translated:Dilimleme Motoru
 
 English:Clear
-Translated:清
+Translated:明确
 
 English:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
 Translated:让床整平码知道，如果打印机可以支持z轴下方会用0分ž终点挡块或软件最终停止可能无法到打印机。
@@ -5700,4 +5700,133 @@ Translated:同步信息中心
 
 English:SD Card
 Translated:SD卡
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl：选择固件文件
+
+English:Starting firmware update...
+Translated:开始固件更新...
+
+English:Disconnecting from printer...
+Translated:从断开打印机...
+
+English:Initializing hardware...
+Translated:初始化硬件...
+
+English:Creating firmware backup...
+Translated:创建固件备份...
+
+English:Update In Progress: {0}
+Translated:正在更新：{0}
+
+English:Updating firmware...
+Translated:更新固件...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:固件更新成功。请重新连接。
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:在“串行端口”部分列出设备上所有可用的串口\ n端口。变更与USB端口的打印机\ n为西藏羊八井至可能改变相关的串行端口。 \ NN \提示：如果您不确定，拔掉/插上打印机\ n和命中刷新。出现应该是新的端口\ n您的打印机。
+
+English:Reverting firmware to previous version...
+Translated:恢复固件以前的版本...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:固件成功恢复。请重新连接。
+
+English:SET
+Translated:组
+
+English:Move X negative
+Translated:移动X轴负
+
+English:Move X positive
+Translated:移动X轴正
+
+English:Move Y positive
+Translated:移Y阳性
+
+English:Move Y negative
+Translated:移Y负
+
+English:Move Z positive
+Translated:移动Z轴正
+
+English:Move Z negative
+Translated:移动Z轴负
+
+English:Enable cursor keys for movement
+Translated:启用移动光标键
+
+English:Retract filament
+Translated:退丝
+
+English:Extrude filament
+Translated:拉伸丝
+
+English:Home X, Y and Z
+Translated:家的X，Y和Z
+
+English:Home X
+Translated:首页点¯x
+
+English:Home Y
+Translated:首页ÿ
+
+English:Home Z
+Translated:首页ž
+
+English:Open cloud sync dashboard in web browser
+Translated:在Web浏览器中打开云同步仪表板
+
+English:Restart
+Translated:重新开始
+
+English:Please Review Your Order
+Translated:请查看您的订单
+
+English:Loading product information. Pleast wait...
+Translated:加载产品信息。 Pleast稍候...
+
+English:Enter Code: 
+Translated:输入代码：
+
+English:Use Promo Code
+Translated:使用优惠码
+
+English:Applying...
+Translated:应用...
+
+English:Enter your Billing Address
+Translated:输入您的帐单地址
+
+English:Full Name
+Translated:全名
+
+English:Enter your Payment Info
+Translated:输入您的付款信息
+
+English:Place Order
+Translated:下订单
+
+English:Additional payment options coming soon!
+Translated:其他的付款方式即将推出！
+
+English:- Please Select -
+Translated:- 请选择 -
+
+English:Credit Card Number
+Translated:信用卡号码
+
+English:Expiration Date
+Translated:截止日期
+
+English:Card Verification Number
+Translated:卡片识别号
+
+English:Saving...
+Translated:保存...
+
+English:Oops! Payment has been declined.
+Translated:哎呀！付款遭到拒绝。
 

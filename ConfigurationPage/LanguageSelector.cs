@@ -34,15 +34,25 @@ namespace MatterHackers.MatterControl
 
 		private void CreateLanguageDict()
 		{
-			languageDict = new Dictionary<string, string>();
-			languageDict["Default"] = "EN";
-			languageDict["English"] = "EN";
-			languageDict["Deutsch"] = "DE";
-			languageDict["Español"] = "ES";
-			languageDict["Français"] = "FR";
-			languageDict["ελληνικά"] = "EL";
-			languageDict["Polski"] = "PL";
-			languageDict["Türkçe"] = "TR";
+			languageDict = new Dictionary<string, string>
+			{
+				["Default"] = "EN",
+				["English"] = "EN",
+				["Čeština"] = "CS",
+				["Deutsch"] = "DE",
+				["Dansk"] = "DA",
+				["Español"] = "ES",
+				["Français"] = "FR",
+				["Italiano"] = "IT",
+				["ελληνικά"] = "EL",
+				["Norsk"] = "NO",
+				["Polski"] = "PL",
+				["Русский"] = "RU",
+				["Română"] = "RO",
+				["Türkçe"] = "TR",
+				["Vlaams"] = "NL",
+			};
+
 #if DEBUG
 			languageDict["L10N"] = "L10N";
 #endif

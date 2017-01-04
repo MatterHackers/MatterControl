@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 			aboutPage.AnchorAll();
 			this.AddChild(aboutPage);
 
-			Button cancelButton = textImageButtonFactory.Generate("Close");
+			Button cancelButton = textImageButtonFactory.Generate("Close".Localize());
 			cancelButton.Click += (s, e) => CancelButton_Click();
 			cancelButton.HAnchor = HAnchor.ParentRight;
 			this.AddChild(cancelButton);

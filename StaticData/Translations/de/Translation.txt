@@ -4289,7 +4289,7 @@ English:The index of the extruder to use for support material interface layer(s)
 Translated:Der Index des Extruders zum Trägermaterial-Zwischenschicht (en) zu verwenden.
 
 English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
-Translated:Die Anzahl der Schichten oder der Abstand festem Material zwischen den Stützen zu drucken und dem Teil. Hinzufügen mm bis zum Ende der Reihe Abstand zu spezifizieren.
+Translated:Die Anzahl der Schichten oder der Abstand feste Material zwischen den Trägern zu drucken und dem Teil. Hinzufügen mm bis zum Ende der Reihe Abstand zu spezifizieren.
 
 English:The pattern to draw for the generation of support material.
 Translated:Das Muster für die Erzeugung von Trägermaterial zu ziehen.
@@ -5700,4 +5700,133 @@ Translated:Sync-Dashboard
 
 English:SD Card
 Translated:SD-Karte
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl: Firmware-Datei auswählen
+
+English:Starting firmware update...
+Translated:Ab Firmware-Update ...
+
+English:Disconnecting from printer...
+Translated:Trennen von Drucker ...
+
+English:Initializing hardware...
+Translated:Initialisieren von Hardware ...
+
+English:Creating firmware backup...
+Translated:Erstellen von Firmware-Backup ...
+
+English:Update In Progress: {0}
+Translated:Derzeit aktualisiert: {0}
+
+English:Updating firmware...
+Translated:Aktualisieren der Firmware ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware erfolgreich aktualisiert. Bitte wieder an.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:Die "Serial Port" Abschnitt listet alle verfügbaren seriellen\nPorts auf Ihrem Gerät. Ändern der USB-Anschluss des Druckers\nconneted möglicherweise die zugehörigen seriellen Port ändern.\n\nTipp: Wenn Sie unsicher sind, ziehen / Stecker in Ihrem Drucker\nund drücken Sie Refresh. Der neue Hafen, die\nDrucker angezeigt werden soll.
+
+English:Reverting firmware to previous version...
+Translated:Zurückkehren Firmware zur vorherigen Version ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware erfolgreich wiederhergestellt. Bitte wieder an.
+
+English:SET
+Translated:SET
+
+English:Move X negative
+Translated:Bewegen X negativ
+
+English:Move X positive
+Translated:Bewegen X positiv
+
+English:Move Y positive
+Translated:Bewegen Y positiv
+
+English:Move Y negative
+Translated:Bewegen Y negativ
+
+English:Move Z positive
+Translated:Bewegen Z positiv
+
+English:Move Z negative
+Translated:Bewegen Z negativ
+
+English:Enable cursor keys for movement
+Translated:Aktivieren Cursortasten für die Bewegung
+
+English:Retract filament
+Translated:einfahren Filament
+
+English:Extrude filament
+Translated:Extrude Glühfaden
+
+English:Home X, Y and Z
+Translated:Home X, Y und Z
+
+English:Home X
+Translated:Startseite X
+
+English:Home Y
+Translated:Startseite Y
+
+English:Home Z
+Translated:Startseite Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Open Cloud Sync Dashboard in Web-Browser
+
+English:Restart
+Translated:Neustart
+
+English:Please Review Your Order
+Translated:Bitte überprüfen Sie Ihre Bestellung
+
+English:Loading product information. Pleast wait...
+Translated:Laden Produktinformationen. Pleast warten ...
+
+English:Enter Code: 
+Translated:Code eingeben:
+
+English:Use Promo Code
+Translated:Verwenden Sie Promo-Code
+
+English:Applying...
+Translated:Bewirbt sich...
+
+English:Enter your Billing Address
+Translated:Rechnungsadresse angeben
+
+English:Full Name
+Translated:Vollständiger Name
+
+English:Enter your Payment Info
+Translated:Geben Sie Ihre Zahlungsinformationen
+
+English:Place Order
+Translated:Bestellung aufgeben
+
+English:Additional payment options coming soon!
+Translated:Weitere Zahlungsmöglichkeiten folgen in Kürze!
+
+English:- Please Select -
+Translated:- Bitte auswählen -
+
+English:Credit Card Number
+Translated:Kreditkartennummer
+
+English:Expiration Date
+Translated:Haltbarkeitsdatum
+
+English:Card Verification Number
+Translated:Kartenprüfnummer
+
+English:Saving...
+Translated:Speichern ...
+
+English:Oops! Payment has been declined.
+Translated:Hoppla! Die Zahlung wurde abgelehnt.
 

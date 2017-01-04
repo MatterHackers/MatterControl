@@ -5701,3 +5701,132 @@ Translated:סנכרון לוח מחוונים
 English:SD Card
 Translated:כרטיס זיכרון
 
+English:MatterControl: Select Firmware File
+Translated:MatterControl: בחר קובץ קושחה
+
+English:Starting firmware update...
+Translated:החל עדכון קושחה ...
+
+English:Disconnecting from printer...
+Translated:ניתוק מהמדפסת ...
+
+English:Initializing hardware...
+Translated:מאתחל חומרה ...
+
+English:Creating firmware backup...
+Translated:יצירת גיבוי הקושחה ...
+
+English:Update In Progress: {0}
+Translated:עדכון מתקדם: {0}
+
+English:Updating firmware...
+Translated:עדכון קושחה ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:קושחה מעודכנת בהצלחה. יש להתחבר מחדש.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:הסעיף 'היציאה טורית' מפרט את כל יציאות n \ סדרה הזמינות במכשיר שלך. כשאתה משנה את יציאת USB למדפסת\nהוא conneted כדי עשוי לשנות את היציאה טורית הכלולה. \ עצה NN \: אם אינך בטוח, נתק / תקע n \ המדפסת שלך היכה רענון. היציאה החדשה שמופיעה צריכה להיות\nהמדפסת.
+
+English:Reverting firmware to previous version...
+Translated:חזרה לגירסה קודמת הקושחה לגרסה הקודמת ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:קושחה שוחזר בהצלחה. יש להתחבר מחדש.
+
+English:SET
+Translated:מַעֲרֶכֶת
+
+English:Move X negative
+Translated:העבר שלילי X
+
+English:Move X positive
+Translated:זז X חיובי
+
+English:Move Y positive
+Translated:זז Y חיובי
+
+English:Move Y negative
+Translated:העבר שלילי Y
+
+English:Move Z positive
+Translated:זז Z חיובי
+
+English:Move Z negative
+Translated:העבר שלילי Z
+
+English:Enable cursor keys for movement
+Translated:אפשר מקשי חיצים לתנועה
+
+English:Retract filament
+Translated:לחזור בו נימה
+
+English:Extrude filament
+Translated:נימת extrude
+
+English:Home X, Y and Z
+Translated:X הבית, Y ו- Z
+
+English:Home X
+Translated:בית X
+
+English:Home Y
+Translated:בית Y
+
+English:Home Z
+Translated:בית Z
+
+English:Open cloud sync dashboard in web browser
+Translated:מרכז השליטה של ​​סנכרון ענן פתח בדפדפן אינטרנט
+
+English:Restart
+Translated:איתחול
+
+English:Please Review Your Order
+Translated:בדוק את הזמנתך
+
+English:Loading product information. Pleast wait...
+Translated:טוען מידע המוצר. Pleast מתן ...
+
+English:Enter Code: 
+Translated:להזין את הקוד:
+
+English:Use Promo Code
+Translated:השתמש בקוד פרומו
+
+English:Applying...
+Translated:מיישם ...
+
+English:Enter your Billing Address
+Translated:להזין את הכתובת לחיוב
+
+English:Full Name
+Translated:שם מלא
+
+English:Enter your Payment Info
+Translated:הזן את פרטי התשלום שלך
+
+English:Place Order
+Translated:להזמין מקום
+
+English:Additional payment options coming soon!
+Translated:אפשרויות תשלום נוספות יהיה זמינות בקרוב!
+
+English:- Please Select -
+Translated:- בבקשה תבחר -
+
+English:Credit Card Number
+Translated:מספר כרטיס אשראי
+
+English:Expiration Date
+Translated:תאריך תפוגה
+
+English:Card Verification Number
+Translated:מספר אימות כרטיס
+
+English:Saving...
+Translated:חִסָכוֹן...
+
+English:Oops! Payment has been declined.
+Translated:אופס! תשלום נדחה.
+

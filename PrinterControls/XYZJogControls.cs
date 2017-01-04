@@ -395,7 +395,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget hotkeyControlContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			hotkeyControlContainer.HAnchor = HAnchor.FitToChildren;
 			hotkeyControlContainer.VAnchor = VAnchor.ParentBottomTop;
-			hotkeyControlContainer.ToolTipText = "Enable cursor keys for movement";
+			hotkeyControlContainer.ToolTipText = "Enable cursor keys for movement".Localize();
 			hotkeyControlContainer.Margin = new BorderDouble(left: 10);
 
             RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).InvertLightness());
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl
 				{
 					ExtrudeButton eMinusControl = moveButtonFactory.Generate("E-", MovementControls.EFeedRate(0), 0);
 					eMinusControl.Margin = extrusionMargin;
-					eMinusControl.ToolTipText = "Retract filament";
+					eMinusControl.ToolTipText = "Retract filament".Localize();
 					eMinusButtonAndText.AddChild(eMinusControl);
 					eMinusButtons.Add(eMinusControl);
 				}
@@ -444,7 +444,7 @@ namespace MatterHackers.MatterControl
 					for (int i = 0; i < extruderCount; i++)
 					{
 						ExtrudeButton eMinusControl = moveButtonFactory.Generate(string.Format("E{0}-", i + 1), MovementControls.EFeedRate(0), i);
-						eMinusControl.ToolTipText = "Retract filament";
+						eMinusControl.ToolTipText = "Retract filament".Localize();
 						eMinusControl.Margin = extrusionMargin;
 						eMinusButtonAndText.AddChild(eMinusControl);
 						eMinusButtons.Add(eMinusControl);
@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl
 				{
 					ExtrudeButton ePlusControl = moveButtonFactory.Generate("E+", MovementControls.EFeedRate(0), 0);
 					ePlusControl.Margin = extrusionMargin;
-					ePlusControl.ToolTipText = "Extrude filament";
+					ePlusControl.ToolTipText = "Extrude filament".Localize();
 					ePlusButtonAndText.AddChild(ePlusControl);
 					ePlusButtons.Add(ePlusControl);
 				}
@@ -491,7 +491,7 @@ namespace MatterHackers.MatterControl
 					{
 						ExtrudeButton ePlusControl = moveButtonFactory.Generate(string.Format("E{0}+", i + 1), MovementControls.EFeedRate(0), i);
 						ePlusControl.Margin = extrusionMargin;
-						ePlusControl.ToolTipText = "Extrude filament";
+						ePlusControl.ToolTipText = "Extrude filament".Localize();
 						ePlusButtonAndText.AddChild(ePlusControl);
 						ePlusButtons.Add(ePlusControl);
 					}
@@ -561,8 +561,8 @@ namespace MatterHackers.MatterControl
 				MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
 				moveButtonFactory.normalFillColor = color;
 				zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed, levelingButtons);
-				zPlusControl.Name = "Move Z positive";
-				zPlusControl.ToolTipText = "Move Z positive";
+				zPlusControl.Name = "Move Z positive".Localize();
+				zPlusControl.ToolTipText = "Move Z positive".Localize();
 				zButtons.AddChild(zPlusControl);
 
 				GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
@@ -571,7 +571,7 @@ namespace MatterHackers.MatterControl
 				zButtons.AddChild(spacer);
 
 				zMinusControl = moveButtonFactory.Generate("Z-", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed, levelingButtons);
-				zMinusControl.ToolTipText = "Move Z negative";
+				zMinusControl.ToolTipText = "Move Z negative".Localize();
 				zButtons.AddChild(zMinusControl);
 			}
 			zButtons.Margin = new BorderDouble(0, 5);
@@ -588,7 +588,7 @@ namespace MatterHackers.MatterControl
 					xButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
 					xButtons.VAnchor |= Agg.UI.VAnchor.ParentCenter;
 					xMinusControl = moveButtonFactory.Generate("X-", PrinterConnectionAndCommunication.Axis.X, MovementControls.XSpeed);
-					xMinusControl.ToolTipText = "Move X negative";
+					xMinusControl.ToolTipText = "Move X negative".Localize();
 					xButtons.AddChild(xMinusControl);
 
 					GuiWidget spacer = new GuiWidget(xMinusControl.Width + buttonSeparationDistance * 2, 2);
@@ -597,7 +597,7 @@ namespace MatterHackers.MatterControl
 					xButtons.AddChild(spacer);
 
 					xPlusControl = moveButtonFactory.Generate("X+", PrinterConnectionAndCommunication.Axis.X, MovementControls.XSpeed);
-					xPlusControl.ToolTipText = "Move X positive";
+					xPlusControl.ToolTipText = "Move X positive".Localize();
 					xButtons.AddChild(xPlusControl);
 				}
 				xyGrid.AddChild(xButtons);
@@ -608,7 +608,7 @@ namespace MatterHackers.MatterControl
 					yButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
 					yButtons.VAnchor |= Agg.UI.VAnchor.ParentCenter;
 					yPlusControl = moveButtonFactory.Generate("Y+", PrinterConnectionAndCommunication.Axis.Y, MovementControls.YSpeed);
-					yPlusControl.ToolTipText = "Move Y positive";
+					yPlusControl.ToolTipText = "Move Y positive".Localize();
 					yButtons.AddChild(yPlusControl);
 
 					GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
@@ -617,7 +617,7 @@ namespace MatterHackers.MatterControl
 					yButtons.AddChild(spacer);
 
 					yMinusControl = moveButtonFactory.Generate("Y-", PrinterConnectionAndCommunication.Axis.Y, MovementControls.YSpeed);
-					yMinusControl.ToolTipText = "Move Y negative";
+					yMinusControl.ToolTipText = "Move Y negative".Localize();
 					yButtons.AddChild(yMinusControl);
 				}
 				xyGrid.AddChild(yButtons);

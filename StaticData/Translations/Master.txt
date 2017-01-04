@@ -5731,3 +5731,102 @@ Translated:Reverting firmware to previous version...
 English:Firmware restored successfully. Please reconnect.
 Translated:Firmware restored successfully. Please reconnect.
 
+English:SET
+Translated:SET
+
+English:Move X negative
+Translated:Move X negative
+
+English:Move X positive
+Translated:Move X positive
+
+English:Move Y positive
+Translated:Move Y positive
+
+English:Move Y negative
+Translated:Move Y negative
+
+English:Move Z positive
+Translated:Move Z positive
+
+English:Move Z negative
+Translated:Move Z negative
+
+English:Enable cursor keys for movement
+Translated:Enable cursor keys for movement
+
+English:Retract filament
+Translated:Retract filament
+
+English:Extrude filament
+Translated:Extrude filament
+
+English:Home X, Y and Z
+Translated:Home X, Y and Z
+
+English:Home X
+Translated:Home X
+
+English:Home Y
+Translated:Home Y
+
+English:Home Z
+Translated:Home Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Open cloud sync dashboard in web browser
+
+English:Restart
+Translated:Restart
+
+English:Please Review Your Order
+Translated:Please Review Your Order
+
+English:Loading product information. Pleast wait...
+Translated:Loading product information. Pleast wait...
+
+English:Enter Code: 
+Translated:Enter Code: 
+
+English:Use Promo Code
+Translated:Use Promo Code
+
+English:Applying...
+Translated:Applying...
+
+English:Enter your Billing Address
+Translated:Enter your Billing Address
+
+English:Full Name
+Translated:Full Name
+
+English:Enter your Payment Info
+Translated:Enter your Payment Info
+
+English:Place Order
+Translated:Place Order
+
+English:Additional payment options coming soon!
+Translated:Additional payment options coming soon!
+
+English:- Please Select -
+Translated:- Please Select -
+
+English:Credit Card Number
+Translated:Credit Card Number
+
+English:Expiration Date
+Translated:Expiration Date
+
+English:Card Verification Number
+Translated:Card Verification Number
+
+English:Saving...
+Translated:Saving...
+
+English:Oops! Payment has been declined.
+Translated:Oops! Payment has been declined.
+
+English:Distance or Loops
+Translated:Distance or Loops
+
