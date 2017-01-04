@@ -96,14 +96,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					PrinterMove xyzDestination = GetPosition(lineToProcess, lastDestination);
 					double feedRate = xyzDestination.feedRate;
-					if (xyzAbsoluteMode)
+					if (!xyzAbsoluteMode)
 					{
 						xyzDestination = GetPosition(lineToProcess, PrinterMove.Zero);
 						xyzDestination += lastDestination;
 					}
 
 					PrinterMove eDestination = GetPosition(lineToProcess, lastDestination);
-					if (eAbsoluteMode)
+					if (!eAbsoluteMode)
 					{
 						eDestination = GetPosition(lineToProcess, PrinterMove.Zero);
 						eDestination += lastDestination;
