@@ -201,6 +201,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 			requestValues = new Dictionary<string, string>();
 		}
 
+		public int Timeout { get; set; } = 100000;
+		
 		public event EventHandler RequestComplete;
 
 		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
@@ -303,7 +305,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 		{
 			JsonResponseDictionary responseValues;
 
-			RequestManager requestManager = new RequestManager();
+			RequestManager requestManager = new RequestManager() { Timeout = this.Timeout };
+
 			string jsonToSend = getJsonToSend();
 
 			System.Diagnostics.Trace.Write(string.Format("ServiceRequest: {0}\r\n  {1}\r\n", uri, string.Join("\r\n\t", jsonToSend.Split(','))));
