@@ -4115,7 +4115,7 @@ English:This is the identifier used in the G-Code to specify the extruder.
 Translated:Jedná se o identifikátor použit v G-Code určit extruder.
 
 English:All extrusions are multiplied by this value. Increasing it above 1  will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:Všechny výlisky se násobí tímto hodnotou. Zvyšující se to vyšší než 1 se bude zvyšovat množství vlákna je vytlačován (1,1 je dobrá max hodnoty); snižující se to sníží množství je vytlačován (0,9 je dobrá minimální hodnota).
+Translated:Všechny výlisky se násobí tímto hodnotou. Zvyšující se to vyšší než 1 se bude zvyšovat množství vlákna je vytlačován (1,1 je dobrá max hodnoty); snižující se to bude snížit množství je vytlačován (0,9 dobrá je minimální hodnota).
 
 English:The actual diameter of the filament used for printing.
 Translated:Skutečný průměr vlákna používaného pro tisk.
@@ -5291,7 +5291,7 @@ English:The layer(s) at which the print will pause, allowing for a change in fil
 Translated:Vrstva (y), při které se tiskový pauzy, což umožňuje změnu vlákna. Ponechejte prázdné zakázat. Chcete-li pozastavit na více vrstvách, oddělte čísla středníkem vrstev. Například: "16, 37".
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:Všechny výlisky se násobí tímto hodnotou. Zvyšující se to vyšší než 1 se bude zvyšovat množství vlákna je vytlačován (1,1 je dobrá max hodnoty); snižující se to sníží množství je vytlačován (0,9 je dobrá minimální hodnota).
+Translated:Všechny výlisky se násobí tímto hodnotou. Zvyšující se to vyšší než 1 se bude zvyšovat množství vlákna je vytlačován (1,1 je dobrá max hodnoty); snižující se to bude snížit množství je vytlačován (0,9 dobrá je minimální hodnota).
 
 English:The distance that the perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
 Translated:Vzdálenost, že obvod se překrývají se, když se dokončí smyčka, vyjádřené jako procento z trysky průměr.
@@ -5700,4 +5700,133 @@ Translated:Sync Dashboard
 
 English:SD Card
 Translated:SD karta
+
+English:MatterControl: Select Firmware File
+Translated:File Select Firmware: MatterControl
+
+English:Starting firmware update...
+Translated:Spuštění aktualizace firmwaru ...
+
+English:Disconnecting from printer...
+Translated:Odpojení od tiskárny ...
+
+English:Initializing hardware...
+Translated:Inicializace hardware ...
+
+English:Creating firmware backup...
+Translated:Vytváření zálohy firmware ...
+
+English:Update In Progress: {0}
+Translated:Probíhá aktualizace: {0}
+
+English:Updating firmware...
+Translated:Aktualizace firmwaru ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware byl úspěšně aktualizován. Prosím znovu.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:V sekci "sériový port" obsahuje seznam všech dostupných sériových\nporty na vašem zařízení. Změna který USB port je tiskárna\npřipojeny na může změnit přiřazený sériový port.\n\nTip: Pokud si nejste jisti, odpojte / zapojte tiskárnu\na stiskněte tlačítko Obnovit. Nový port, který se objeví by měla být\ntiskárna.
+
+English:Reverting firmware to previous version...
+Translated:Návrat k předchozí verzi firmware ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware úspěšně obnovena. Prosím znovu.
+
+English:SET
+Translated:SOUBOR
+
+English:Move X negative
+Translated:Přesunutí X negativu
+
+English:Move X positive
+Translated:Přesunutí X pozitivní
+
+English:Move Y positive
+Translated:Přesunutí Y pozitivní
+
+English:Move Y negative
+Translated:Přesunutí Y negativu
+
+English:Move Z positive
+Translated:Přesunutí Z pozitivní
+
+English:Move Z negative
+Translated:Přesunutí Z negativu
+
+English:Enable cursor keys for movement
+Translated:Aktivovat kurzorových kláves pro pohyb
+
+English:Retract filament
+Translated:zatáhnout vlákno
+
+English:Extrude filament
+Translated:vysunutí vlákno
+
+English:Home X, Y and Z
+Translated:Home X, Y a Z
+
+English:Home X
+Translated:Home X
+
+English:Home Y
+Translated:Home Y
+
+English:Home Z
+Translated:Home Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Otevřená cloud synchronizace Přístrojová deska webovém prohlížeči
+
+English:Restart
+Translated:restart
+
+English:Please Review Your Order
+Translated:Prosím Prohlédněte si Vaši objednávku
+
+English:Loading product information. Pleast wait...
+Translated:Načítání informací o produktu. Pleast čekat ...
+
+English:Enter Code: 
+Translated:Zadejte kód:
+
+English:Use Promo Code
+Translated:Použít Promo kód
+
+English:Applying...
+Translated:Uplatnění ...
+
+English:Enter your Billing Address
+Translated:Zadejte vaše fakturační adresa
+
+English:Full Name
+Translated:Celé jméno
+
+English:Enter your Payment Info
+Translated:Zadejte své platební informace
+
+English:Place Order
+Translated:Objednat
+
+English:Additional payment options coming soon!
+Translated:Mezi další možnosti platby již brzy!
+
+English:- Please Select -
+Translated:- Prosím vyberte -
+
+English:Credit Card Number
+Translated:Číslo kreditní karty
+
+English:Expiration Date
+Translated:Datum spotřeby
+
+English:Card Verification Number
+Translated:Ověřovací číslo karty
+
+English:Saving...
+Translated:Ukládání ...
+
+English:Oops! Payment has been declined.
+Translated:Jejda! Platba byla odmítnuta.
 

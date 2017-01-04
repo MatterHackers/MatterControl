@@ -5701,3 +5701,132 @@ Translated:동기화 대시 보드
 English:SD Card
 Translated:SD 카드
 
+English:MatterControl: Select Firmware File
+Translated:MatterControl : 선택 펌웨어 파일
+
+English:Starting firmware update...
+Translated:펌웨어 업데이트를 시작 ...
+
+English:Disconnecting from printer...
+Translated:프린터에서 분리 ...
+
+English:Initializing hardware...
+Translated:하드웨어 초기화 ...
+
+English:Creating firmware backup...
+Translated:펌웨어 백업을 만들기 ...
+
+English:Update In Progress: {0}
+Translated:진행 중 업데이트 : {0}
+
+English:Updating firmware...
+Translated:펌웨어 업데이트 중 ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:펌웨어가 업데이트되었습니다. 다시 연결하십시오.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:'시리얼 포트'섹션 기기에 사용 가능한 모든 직렬\n개의 포트를 보여줍니다. 변화하는 USB 포트에 프린터 \ n을가 연결된 시리얼 포트를 변경할 수 있습니다 할 conneted된다.\n\n팁 : 당신이 모르는 경우, 프린터 \ n에서 / 플러그를 뽑고 새로 고침을 누르십시오. 새로운해야 나타납니다 포트\n프린터.
+
+English:Reverting firmware to previous version...
+Translated:이전 버전으로 펌웨어를 되돌리기 ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:펌웨어가 성공적으로 복원. 다시 연결하십시오.
+
+English:SET
+Translated:세트
+
+English:Move X negative
+Translated:X 마이너스 이동
+
+English:Move X positive
+Translated:X 긍정적 이동
+
+English:Move Y positive
+Translated:Y는 긍정적 이동
+
+English:Move Y negative
+Translated:Y 마이너스 이동
+
+English:Move Z positive
+Translated:Z는 긍정적 이동
+
+English:Move Z negative
+Translated:Z 부정적인 이동
+
+English:Enable cursor keys for movement
+Translated:이동을 위해 커서 키를 사용
+
+English:Retract filament
+Translated:필라멘트를 후퇴
+
+English:Extrude filament
+Translated:돌출 필라멘트
+
+English:Home X, Y and Z
+Translated:홈 X, Y 및 Z
+
+English:Home X
+Translated:홈 X
+
+English:Home Y
+Translated:홈 Y
+
+English:Home Z
+Translated:홈 Z
+
+English:Open cloud sync dashboard in web browser
+Translated:웹 브라우저에서 열기 클라우드 동기화 대시 보드
+
+English:Restart
+Translated:재시작
+
+English:Please Review Your Order
+Translated:귀하의 주문을 검토하시기 바랍니다
+
+English:Loading product information. Pleast wait...
+Translated:제품 정보를로드. Pleast 기다립니다 ...
+
+English:Enter Code: 
+Translated:코드를 입력:
+
+English:Use Promo Code
+Translated:프로모션 코드를 사용하여
+
+English:Applying...
+Translated:적용 ...
+
+English:Enter your Billing Address
+Translated:결제 주소를 입력
+
+English:Full Name
+Translated:전체 이름
+
+English:Enter your Payment Info
+Translated:귀하의 결제 정보를 입력
+
+English:Place Order
+Translated:장소 주문
+
+English:Additional payment options coming soon!
+Translated:추가 지불 옵션 곧!
+
+English:- Please Select -
+Translated:- 선택 해주세요 -
+
+English:Credit Card Number
+Translated:신용 카드 번호
+
+English:Expiration Date
+Translated:유통 기간
+
+English:Card Verification Number
+Translated:카드 인증 번호
+
+English:Saving...
+Translated:절약...
+
+English:Oops! Payment has been declined.
+Translated:아차! 결제가 거부되었습니다.
+

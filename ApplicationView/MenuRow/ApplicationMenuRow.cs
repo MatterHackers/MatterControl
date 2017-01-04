@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 			//linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
 			linkButtonFactory.fontSize = 10;
 
-			Button updateStatusMessage = linkButtonFactory.Generate("Update Available");
+			Button updateStatusMessage = linkButtonFactory.Generate("Update Available".Localize());
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 			popUpAboutPage = new FlowLayoutWidget();
 			popUpAboutPage.Margin = new BorderDouble(30, 0, 0, 0);

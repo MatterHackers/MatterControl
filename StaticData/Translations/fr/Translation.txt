@@ -4913,7 +4913,7 @@ English:Troubleshoot
 Translated:Dépanner
 
 English:Estimated Print Time:
-Translated:Durée estimée d'impression:
+Translated:Temps estimé d'impression:
 
 English:Are you sure you want to delete your currently selected printer?
 Translated:Êtes-vous sûr de vouloir supprimer l'imprimante sélectionnée?
@@ -5024,7 +5024,7 @@ English:Export Wizard
 Translated:Assistant Export
 
 English:Oops! Unable to recognize settings file '{0}'.
-Translated:Oops! Impossible de reconnaître le fichier de configuration '{0}'.
+Translated:Oops! Impossible à reconnaître fichier de paramètres '{0}'.
 
 English:Unable to Import
 Translated:Impossible d'importer
@@ -5700,4 +5700,133 @@ Translated:Sync Dashboard
 
 English:SD Card
 Translated:Carte SD
+
+English:MatterControl: Select Firmware File
+Translated:Sélectionner un fichier Firmware: MatterControl
+
+English:Starting firmware update...
+Translated:Démarrage mise à jour du firmware ...
+
+English:Disconnecting from printer...
+Translated:Déconnexion d'imprimante ...
+
+English:Initializing hardware...
+Translated:Initialisation matériel ...
+
+English:Creating firmware backup...
+Translated:Création de sauvegarde du firmware ...
+
+English:Update In Progress: {0}
+Translated:Mise à jour en cours: {0}
+
+English:Updating firmware...
+Translated:Mise à jour de firmware ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware mis à jour avec succès. S'il vous plaît se reconnecter.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:La section «Port série» répertorie tous les\nports série disponibles sur votre appareil. Changement des ports USB de l'imprimante\nest conneted à peut changer le port série associé.\n\nAstuce: Si vous êtes incertain, débranchez / branchez votre imprimante\net appuyez sur refresh. Le nouveau port qui apparaît devrait être\nvotre imprimante.
+
+English:Reverting firmware to previous version...
+Translated:Revenant firmware à la version précédente ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware restauré avec succès. S'il vous plaît se reconnecter.
+
+English:SET
+Translated:ENSEMBLE
+
+English:Move X negative
+Translated:Déplacer X négative
+
+English:Move X positive
+Translated:Déplacer X positif
+
+English:Move Y positive
+Translated:Déplacer Y positif
+
+English:Move Y negative
+Translated:Déplacer Y négatif
+
+English:Move Z positive
+Translated:Déplacer Z positif
+
+English:Move Z negative
+Translated:Déplacez négative Z
+
+English:Enable cursor keys for movement
+Translated:Activer les touches de curseur pour le mouvement
+
+English:Retract filament
+Translated:Rentrez filament
+
+English:Extrude filament
+Translated:filament Extrusion
+
+English:Home X, Y and Z
+Translated:Début X, Y et Z
+
+English:Home X
+Translated:Accueil X
+
+English:Home Y
+Translated:Accueil Y
+
+English:Home Z
+Translated:Accueil Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Ouvrez le tableau de bord nuage de synchronisation dans le navigateur Web
+
+English:Restart
+Translated:Redémarrer
+
+English:Please Review Your Order
+Translated:S'il vous plaît Vérifier la commande
+
+English:Loading product information. Pleast wait...
+Translated:Chargement des informations sur le produit. Pleast patienter ...
+
+English:Enter Code: 
+Translated:Entrez le code:
+
+English:Use Promo Code
+Translated:Utilisez le code promo
+
+English:Applying...
+Translated:Application ...
+
+English:Enter your Billing Address
+Translated:Entrez votre adresse de facturation
+
+English:Full Name
+Translated:Nom complet
+
+English:Enter your Payment Info
+Translated:Entrez vos informations de paiement
+
+English:Place Order
+Translated:Passer la commande
+
+English:Additional payment options coming soon!
+Translated:options de paiement supplémentaires à venir bientôt!
+
+English:- Please Select -
+Translated:- S'il vous plaît Choisir -
+
+English:Credit Card Number
+Translated:Numéro de carte de crédit
+
+English:Expiration Date
+Translated:Date d'expiration
+
+English:Card Verification Number
+Translated:Numéro de vérification de carte
+
+English:Saving...
+Translated:Économie...
+
+English:Oops! Payment has been declined.
+Translated:Oops! Le paiement a été refusé.
 

@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl
 				leftRightEdit.AddChild(valueEdit);
 				listWithValues.Add(valueEdit);
 
-				//leftRightEdit.AddChild(textImageButtonFactory.Generate("Delete"));
+				//leftRightEdit.AddChild(textImageButtonFactory.Generate("Delete".Localize()));
 				presetsFormContainer.AddChild(leftRightEdit);
 				preset_count += 1;
 			}

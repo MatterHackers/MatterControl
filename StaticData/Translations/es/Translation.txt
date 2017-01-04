@@ -806,7 +806,7 @@ English:Printer
 Translated:Impresora
 
 English:General
-Translated:General
+Translated:general
 
 English:Bed Size
 Translated:Tamaño de la cama
@@ -5700,4 +5700,133 @@ Translated:sincronización del tablero de instrumentos
 
 English:SD Card
 Translated:Tarjeta SD
+
+English:MatterControl: Select Firmware File
+Translated:Seleccionar archivo de firmware: MatterControl
+
+English:Starting firmware update...
+Translated:A partir de la actualización del firmware ...
+
+English:Disconnecting from printer...
+Translated:Desconexión de la impresora ...
+
+English:Initializing hardware...
+Translated:La inicialización del hardware ...
+
+English:Creating firmware backup...
+Translated:La creación de la copia de seguridad del firmware ...
+
+English:Update In Progress: {0}
+Translated:Actualización en curso: {0}
+
+English:Updating firmware...
+Translated:La actualización de firmware ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware actualizado correctamente. Por favor, vuelva a conectar.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:La sección de "Puerto Serie" enumera todos los puertos de serie\ndisponibles en su dispositivo. Cambiar qué puerto USB de la impresora\nse conneted que puede cambiar el puerto serie asociado.\n\nConsejo: Si no está seguro, desenchufe / enchufe en su impresora\ny pulse Actualizar. El nuevo puerto que aparece debe ser\nde la impresora.
+
+English:Reverting firmware to previous version...
+Translated:Volviendo firmware a la versión anterior ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware restaurado correctamente. Por favor, vuelva a conectar.
+
+English:SET
+Translated:CONJUNTO
+
+English:Move X negative
+Translated:Mover X negativo
+
+English:Move X positive
+Translated:Mover X positivo
+
+English:Move Y positive
+Translated:Mueva Y positivo
+
+English:Move Y negative
+Translated:Y mover negativo
+
+English:Move Z positive
+Translated:Mover Z positivo
+
+English:Move Z negative
+Translated:Mover Z negativo
+
+English:Enable cursor keys for movement
+Translated:Habilitar teclas de cursor para el movimiento
+
+English:Retract filament
+Translated:retraer filamento
+
+English:Extrude filament
+Translated:filamento de Extrusión
+
+English:Home X, Y and Z
+Translated:Inicio X, Y y Z
+
+English:Home X
+Translated:Inicio X
+
+English:Home Y
+Translated:Inicio Y
+
+English:Home Z
+Translated:Inicio Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Abrir panel de control de sincronización nube en el navegador web
+
+English:Restart
+Translated:Reiniciar
+
+English:Please Review Your Order
+Translated:Por favor revise su orden
+
+English:Loading product information. Pleast wait...
+Translated:Cargando información del producto. Pleast espere ...
+
+English:Enter Code: 
+Translated:Introduzca el código:
+
+English:Use Promo Code
+Translated:Usa Código de promoción
+
+English:Applying...
+Translated:La aplicación de ...
+
+English:Enter your Billing Address
+Translated:Introduzca su dirección de facturación
+
+English:Full Name
+Translated:Nombre completo
+
+English:Enter your Payment Info
+Translated:Introduzca su información de pago
+
+English:Place Order
+Translated:Realizar pedido
+
+English:Additional payment options coming soon!
+Translated:opciones de pago adicionales muy pronto!
+
+English:- Please Select -
+Translated:- Seleccione -
+
+English:Credit Card Number
+Translated:Número de tarjeta de crédito
+
+English:Expiration Date
+Translated:Fecha de caducidad
+
+English:Card Verification Number
+Translated:Número de verificación de tarjeta
+
+English:Saving...
+Translated:Ahorro...
+
+English:Oops! Payment has been declined.
+Translated:Ups! El pago se ha rechazado.
 

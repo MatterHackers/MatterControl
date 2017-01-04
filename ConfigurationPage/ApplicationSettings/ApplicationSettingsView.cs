@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
-			Button displayControlRestartButton = textImageButtonFactory.Generate("Restart");
+			Button displayControlRestartButton = textImageButtonFactory.Generate("Restart".Localize());
 			displayControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			displayControlRestartButton.Visible = false;
 			displayControlRestartButton.Margin = new BorderDouble(right: 6);
@@ -358,7 +358,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(languageSelector);
 			optionsContainer.Width = 200;
 
-			languageRestartButton = textImageButtonFactory.Generate("Restart");
+			languageRestartButton = textImageButtonFactory.Generate("Restart".Localize());
 			languageRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			languageRestartButton.Visible = false;
 			languageRestartButton.Margin = new BorderDouble(right: 6);

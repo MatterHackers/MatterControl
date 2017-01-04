@@ -5,7 +5,7 @@ English:Disconnect
 Translated:切断
 
 English:Status
-Translated:ステータス
+Translated:状態
 
 English:Connected
 Translated:接続
@@ -278,7 +278,7 @@ English:Press 'generate' to view layers
 Translated:押してレイヤを表示する 'を生成」
 
 English:Model
-Translated:モデル
+Translated:Model
 
 English:Layer
 Translated:層
@@ -2513,7 +2513,7 @@ English:Select the baud rate.
 Translated:ボーレートを選択します。
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:用語「通信速度」はおおよそ\ n個のデータが送信される速度を意味します。ボーレートは、n個のプリンタを\にプリンタから異なる場合があります。詳細は、プリンタのマニュアルを参照してください。 \ NN \ヒント：あなたが不明な場合 -  250000を試してみてください。
+Translated:用語「通信速度」はおおよその\ n個のデータが送信される速度を意味します。ボーレートは、n個のプリンタを\にプリンタから異なる場合があります。詳細は、プリンタのマニュアルを参照してください。 \ NN \ヒント：あなたが不明な場合 -  250000を試してみてください。
 
 English:This is the minimum amount of filament that must be extruded before a retraction can occur.
 Translated:これは、後退が発生する前に押し出されなければならないフィラメントの最小量です。
@@ -4265,7 +4265,7 @@ English:G-Code to be run immediately following the temperature setting commands.
 Translated:Gコードは温度設定コマンドの直後に実行されます。含むが、このセクションで温度を設定するコマンド彼らは、このセクションの外で生成されない原因になります。カスタムGコード変数を受け入れます。
 
 English:The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
-Translated:第一層（底部）及びラフトの上部との間の距離。良い値は、材料の種類によって異なります。およびPLAに適していますgeneraly 0.1と0.3の間の値をABS。
+Translated:第一層（底部）とラフトの上部との間の距離。良い値は、材料の種類によって異なります。およびPLAに適していますgeneraly 0.1と0.3の間の値をABS。
 
 English:The percent of the extrusion width that can be overlapped and still generate.
 Translated:重ねて、まだ生成することができ、押出幅のパーセント。
@@ -5700,4 +5700,133 @@ Translated:同期ダッシュボード
 
 English:SD Card
 Translated:SDカード
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl：選択ファームウェアファイル
+
+English:Starting firmware update...
+Translated:ファームウェアのアップデートを開始しています...
+
+English:Disconnecting from printer...
+Translated:プリンタからの切断...
+
+English:Initializing hardware...
+Translated:ハードウェアを初期化しています...
+
+English:Creating firmware backup...
+Translated:ファームウェアのバックアップを作成しています...
+
+English:Update In Progress: {0}
+Translated:進行中の更新：{0}
+
+English:Updating firmware...
+Translated:ファームウェアの更新...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:ファームウェアが正常に更新します。再接続してください。
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:「シリアルポート」セクションには、お使いのデバイス上のすべての利用可能なシリアル\ nはポートを示します。 USBポートプリンタ\ nは、関連するシリアルポートを変更することができるためにconnetedされる変更。 \ NN \ヒント：あなたが不明な場合は、お使いのプリンタを\ nに/プラグを抜いて、リフレッシュを打ちます。お使いのプリンタを\ Nする必要があります表示された新しいポート。
+
+English:Reverting firmware to previous version...
+Translated:以前のバージョンにファームウェアを元に戻します...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:ファームウェアが正常に復元します。再接続してください。
+
+English:SET
+Translated:セット
+
+English:Move X negative
+Translated:Xの負を移動
+
+English:Move X positive
+Translated:Xは正の移動
+
+English:Move Y positive
+Translated:Yは正の移動
+
+English:Move Y negative
+Translated:Yの負を移動
+
+English:Move Z positive
+Translated:Zは正の移動
+
+English:Move Z negative
+Translated:Z負を移動
+
+English:Enable cursor keys for movement
+Translated:運動のためのカーソルキーを有効にします
+
+English:Retract filament
+Translated:フィラメントを撤回
+
+English:Extrude filament
+Translated:押し出しフィラメント
+
+English:Home X, Y and Z
+Translated:ホームX、Y及びZ
+
+English:Home X
+Translated:ホームX
+
+English:Home Y
+Translated:ホームY
+
+English:Home Z
+Translated:ホームZ
+
+English:Open cloud sync dashboard in web browser
+Translated:Webブラウザで開くクラウド同期ダッシュボード
+
+English:Restart
+Translated:再起動
+
+English:Please Review Your Order
+Translated:ご注文を確認してください。
+
+English:Loading product information. Pleast wait...
+Translated:製品情報をロードします。 Pleast待ちます...
+
+English:Enter Code: 
+Translated:コードを入力する：
+
+English:Use Promo Code
+Translated:プロモーションコードを使用します
+
+English:Applying...
+Translated:申請中...
+
+English:Enter your Billing Address
+Translated:ご請求先住所を入力してください
+
+English:Full Name
+Translated:フルネーム
+
+English:Enter your Payment Info
+Translated:お支払い情報を入力します。
+
+English:Place Order
+Translated:ここで注文
+
+English:Additional payment options coming soon!
+Translated:追加の支払いオプション近日公開予定！
+
+English:- Please Select -
+Translated:- 選んでください -
+
+English:Credit Card Number
+Translated:クレジットカード番号
+
+English:Expiration Date
+Translated:有効期限
+
+English:Card Verification Number
+Translated:カード確認番号
+
+English:Saving...
+Translated:保存しています...
+
+English:Oops! Payment has been declined.
+Translated:おっとっと！お支払いは承認されませんでした。
 

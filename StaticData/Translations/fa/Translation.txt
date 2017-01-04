@@ -5701,3 +5701,132 @@ Translated:همگام سازی داشبورد
 English:SD Card
 Translated:کارت حافظه اس دی
 
+English:MatterControl: Select Firmware File
+Translated:MatterControl: انتخاب کنید نرم افزار فایل
+
+English:Starting firmware update...
+Translated:شروع روز رسانی سیستم عامل ...
+
+English:Disconnecting from printer...
+Translated:قطع از چاپگر ...
+
+English:Initializing hardware...
+Translated:مقدار دهی اولیه سخت افزار ...
+
+English:Creating firmware backup...
+Translated:ایجاد پشتیبان از سیستم عامل ...
+
+English:Update In Progress: {0}
+Translated:روز در حال پیشرفت: {0}
+
+English:Updating firmware...
+Translated:روز رسانی سیستم عامل ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:سیستم عامل موفقیت به روز شد. لطفا دوباره وصل کنید.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:بخش 'پورت سریال، لیست تمام سریال موجود پورت \ N بر روی دستگاه شما. تغییر که پورت USB چاپگر \ N conneted به ممکن است پورت سریال مرتبط را تغییر دهید.\n\nنکته: اگر شما نامشخص است، جدا / پلاگین در خود چاپگر\nو تازه کردن ضربه. پورت جدید به نظر می رسد که باید باشد\nچاپگر خود را.
+
+English:Reverting firmware to previous version...
+Translated:رجوع به ورژن قبلی ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:سیستم عامل موفقیت بازیابی شد. لطفا دوباره وصل کنید.
+
+English:SET
+Translated:تنظیم
+
+English:Move X negative
+Translated:حرکت X منفی
+
+English:Move X positive
+Translated:حرکت X مثبت
+
+English:Move Y positive
+Translated:حرکت Y مثبت
+
+English:Move Y negative
+Translated:حرکت Y منفی
+
+English:Move Z positive
+Translated:حرکت Z مثبت
+
+English:Move Z negative
+Translated:حرکت Z منفی
+
+English:Enable cursor keys for movement
+Translated:فعال کردن کلید های مکان نما برای حرکت
+
+English:Retract filament
+Translated:جمع رشته
+
+English:Extrude filament
+Translated:رشته اکسترود
+
+English:Home X, Y and Z
+Translated:صفحه اصلی X، Y و Z
+
+English:Home X
+Translated:صفحه اصلی X
+
+English:Home Y
+Translated:صفحه اصلی Y
+
+English:Home Z
+Translated:صفحه اصلی Z
+
+English:Open cloud sync dashboard in web browser
+Translated:گسترش داشبورد همگام سازی ابری در مرورگر وب
+
+English:Restart
+Translated:شروع دوباره
+
+English:Please Review Your Order
+Translated:لطفا سفارش خود را بررسی
+
+English:Loading product information. Pleast wait...
+Translated:در حال بارگیری اطلاعات محصول می باشد. Pleast صبر کنید ...
+
+English:Enter Code: 
+Translated:کد را وارد کنید:
+
+English:Use Promo Code
+Translated:استفاده از کد های تبلیغاتی
+
+English:Applying...
+Translated:اعمال...
+
+English:Enter your Billing Address
+Translated:را وارد کنید آدرس صورتحساب خود را
+
+English:Full Name
+Translated:نام و نام خانوادگی
+
+English:Enter your Payment Info
+Translated:اطلاعات پرداخت خود را وارد کنید
+
+English:Place Order
+Translated:بصورت مستقیم سفارش
+
+English:Additional payment options coming soon!
+Translated:گزینه های پرداخت اضافی به زودی!
+
+English:- Please Select -
+Translated:- لطفا انتخاب کنید -
+
+English:Credit Card Number
+Translated:شماره کارت اعتباری
+
+English:Expiration Date
+Translated:تاریخ انقضا
+
+English:Card Verification Number
+Translated:شماره رمز کارت
+
+English:Saving...
+Translated:صرفه جویی در...
+
+English:Oops! Payment has been declined.
+Translated:اوه! پرداخت رد شده است.
+

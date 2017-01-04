@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
             linkButtonFactory.fontSize = 10;
             Button cloudSyncGoLink = linkButtonFactory.Generate("Go to Dashboard".Localize().ToUpper());
-            cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser";
+            cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser".Localize();
             cloudSyncGoLink.Click += new EventHandler(cloudSyncGoButton_Click);
 			cloudSyncGoLink.VAnchor = VAnchor.ParentCenter;
 

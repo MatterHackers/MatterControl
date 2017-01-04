@@ -86,7 +86,7 @@ English:No printer selected.  Press 'Connect' to choose a printer.
 Translated:لا الطابعة المحددة. اضغط على "اتصال" لاختيار الطابعة.
 
 English:Press 'Add' to choose an item to print
-Translated:اضغط على "أضف 'لاختيار عنصر إلى طباعة
+Translated:اضغط على "أضف 'لاختيار عنصر لطباعة
 
 English:No items in the print queue
 Translated:أي سلع في قائمة انتظار الطباعة
@@ -392,7 +392,7 @@ English:The size of the print bed.
 Translated:حجم السرير الطباعة.
 
 English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
-Translated:درجة الحرارة لضبط السرير لبعد طباعة الطبقة الأولى. تعيين إلى 0 للقضاء على الأوامر درجة حرارة السرير.
+Translated:كانت درجة الحرارة لضبط السرير لبعد طباعة الطبقة الأولى. تعيين إلى 0 للقضاء على الأوامر درجة حرارة السرير.
 
 English:How many layers will be solid filled on the bottom surfaces of the object.
 Translated:كم عدد الطبقات سوف تكون صلبة وليس صحيحا على الأسطح السفلية للجسم.
@@ -488,7 +488,7 @@ English:Sets the height of the first layer. It is often desirable to print a tal
 Translated:يحدد ارتفاع من الطبقة الأولى. غالبا ما يكون من المرغوب فيه لطباعة الطبقة الأولى اطول لضمان التصاق جيدة الصلبة إلى لوحة البناء.
 
 English:The speed to move while printing the first layer.  If expressed as a percentage it will modify the corresponding speed set above.
-Translated:سرعة التحرك أثناء الطباعة في الطبقة الأولى. إذا كنسبة مئوية فإنه سيتم تعديل سرعة المقابلة المبينة أعلاه.
+Translated:سرعة التحرك أثناء الطباعة في الطبقة الأولى. إذا كنسبة مئوية أنه سيتم تعديل سرعة المقابلة المبينة أعلاه.
 
 English:The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
 Translated:درجة الحرارة لضبط الطارد قبل الطباعة الطبقة الأولى من جزء. سوف ننتظر الطابعة حتى تم التوصل إلى هذه الدرجة قبل الطباعة.
@@ -506,7 +506,7 @@ English:Include detailed comments in the gcode.
 Translated:تضمين تعليقات مفصلة في gcode.
 
 English:Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.
-Translated:بعض البرامج الثابتة استخدام مختلف ز وم الرموز. وضع هذا يضمن أن gcode انتاج واستخدام الأوامر الصحيحة.
+Translated:بعض البرامج الثابتة استخدام مختلف ز وم الرموز. ضبط هذا يضمن أن gcode انتاج واستخدام الأوامر الصحيحة.
 
 English:Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.
 Translated:تسارع إلى استخدام في حين infilling. تعيين إلى 0 لتعطيل تغيير تسريع الطابعة.
@@ -518,13 +518,13 @@ English:The index of the extruder to use for infill.
 Translated:مؤشر الطارد لاستخدامها في الردم.
 
 English:Sets infill to happen before perimeters are created.
-Translated:مجموعات بدأت أعمال الحفر في أن يحدث ذلك قبل أن يتم إنشاء محيط.
+Translated:مجموعات الردم أن يحدث قبل أن يتم إنشاء محيطها.
 
 English:Creates infill only where it will be used as internal support.
 Translated:يخلق الردم فقط حيث سيتم استخدامها كدعم الداخلي.
 
 English:The speed to print infill.
-Translated:سرعة الطباعة بدأت أعمال الحفر.
+Translated:سرعة الطباعة الردم.
 
 English:This gcode will be inserted right after the change in z height for the next layer.
 Translated:سيتم إدراج هذا gcode الحق بعد التغيير في ض الارتفاع عن الطبقة التالية.
@@ -572,10 +572,10 @@ English:The index of the extruder to use for perimeters.
 Translated:مؤشر الطارد لاستخدامها لمحيط.
 
 English:Sets the default movement speed while printing perimeters.
-Translated:يحدد سرعة الحركة الافتراضية أثناء الطباعة محيط.
+Translated:يضبط سرعة الحركة الافتراضية أثناء الطباعة محيط.
 
 English:The number of external layers or shells to create.
-Translated:عدد الطبقات الخارجية أو قذائف لخلق.
+Translated:عدد الطبقات الخارجية أو قذائف خلق.
 
 English:You can include additional programs to process the gcode after slicer is finished. The complete path of the program to run should be included here.
 Translated:يمكنك تضمين برامج إضافية لمعالجة gcode بعد الانتهاء من تقطيع اللحم. المسار الكامل للبرنامج لتشغيل ينبغي أن تدرج هنا.
@@ -662,13 +662,13 @@ English:Make sure the first point on a perimeter is a concave point.
 Translated:تأكد من أن النقطة الأولى على محيط هي نقطة مقعرة.
 
 English:Make sure the first point on a perimeter is not an overhang.
-Translated:تأكد من أن النقطة الأولى على محيط ليست المتراكمة.
+Translated:تأكد من أن النقطة الأولى في محيط ليست المتراكمة.
 
 English:The starting angle of the supports.
 Translated:زاوية بدءا من الدعم.
 
 English:Create support where needed on internal features.
-Translated:إنشاء الدعم عند الحاجة على ميزات الداخلية.
+Translated:إنشاء الدعم عند الحاجة على ميزات داخلية.
 
 English:Generate support material everywhere not touching the bed for n layers, regardless of angle.
 Translated:توليد الدعم المادي في كل مكان عدم لمس السرير لن طبقات، بغض النظر عن زاوية.
@@ -713,22 +713,22 @@ English:Detect when walls are too close together and need to be extruded as just
 Translated:كشف عند الجدران متقاربة جدا وتحتاج إلى مقذوف كما جدار واحد فقط.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
-Translated:عدد النوى وحدة المعالجة المركزية لاستخدام أثناء القيام تشريح. ويمكن زيادة هذه تبطئ جهازك.
+Translated:عدد النوى وحدة المعالجة المركزية لاستخدام أثناء القيام التقطيع. ويمكن زيادة هذه تبطئ جهازك.
 
 English:This gcode will be inserted after every tool change.
-Translated:سيتم إدراج هذا gcode بعد كل تغيير الأداة.
+Translated:سيتم إدراجها هذا gcode بعد كل تغيير الأداة.
 
 English:The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
 Translated:سرعة الطباعة وبدأت أعمال الحفر في الأعلى. هذا يمكن تعيين صراحة أو كنسبة مئوية من سرعة بدأت أعمال الحفر.
 
 English:How many layers will be solid filled on the top surfaces of the object.
-Translated:كم عدد طبقات وسيتم ملء صلبة على السطح العلوي للجسم.
+Translated:وكم طبقات وسيتم ملء صلبة على السطح العلوي للجسم.
 
 English:Speed to move when not extruding material.
 Translated:سرعة التحرك عندما لا البثق المواد.
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:طلب البرامج الثابتة للقيام التراجع بدلا من تحديد تحركات الطارد مباشرة.
+Translated:طلب البرامج الثابتة للقيام التراجع بدلا من تحديد تحركات الطارد مباشرة،
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:عادة سوف تحتاج إلى استخدام المسافات البريد المطلقة. تحقق هذا فقط إذا كنت تعرف الطابعة تحتاج مسافات ه النسبية.
@@ -989,7 +989,7 @@ English:Spiral Vase
 Translated:دوامة زهرية
 
 English:Number of Solid Layers\non the Top:
-Translated:عدد من الطبقات الصلبة \ ن على أعلى:
+Translated:عدد من الطبقات الصلبة \ ن في الأعلى:
 
 English:Number of Solid Layers\non the Bottom:
 Translated:عدد من الطبقات الصلبة \ ن على أسفل:
@@ -1076,7 +1076,7 @@ English:Fan Speed
 Translated:سرعة المروحة
 
 English:Slow Down If Layer Print\nTime Is Below
-Translated:تبطئ إذا طبقة طباعة \ ن الوقت أقل
+Translated:تبطئ إذا طبقة الطباعة \ ن الوقت أقل
 
 English:Cooling Thresholds
 Translated:عتبات التبريد
@@ -1226,7 +1226,7 @@ English:Extruder Clearance Radius
 Translated:الشعاع الطارد للتخليص
 
 English:Sequential Printing
-Translated:الطباعة متتابعة
+Translated:الطباعة متسلسلة
 
 English:Verbose G-Code
 Translated:مطول G-كود
@@ -1841,7 +1841,7 @@ English:Macro Commands
 Translated:أوامر ماكرو
 
 English:This should be in 'Gcode'
-Translated:هذا ينبغي أن يكون في "Gcode"
+Translated:هذا ينبغي أن يكون "Gcode"
 
 English:3D Printer Setup
 Translated:إعداد طابعة 3D
@@ -2963,7 +2963,7 @@ English:Invert
 Translated:عكس
 
 English:Size:
-Translated:الحجم:
+Translated:حجم:
 
 English:Height:
 Translated:ارتفاع:
@@ -3242,7 +3242,7 @@ English:Arrange
 Translated:رتب
 
 English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
-Translated:سرعة التحرك أثناء الطباعة في الطبقة الأولى. إذا كنسبة مئوية فإنه سيتم تعديل سرعة المقابلة المبينة أعلاه.
+Translated:سرعة التحرك أثناء الطباعة في الطبقة الأولى. إذا كنسبة مئوية أنه سيتم تعديل سرعة المقابلة المبينة أعلاه.
 
 English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
 Translated:سوف ترسل هذه gcode إلى الطابعة مباشرة بعد الاتصال. ويمكن استخدامه لتحديد إعدادات معينة إلى طابعة معينة.
@@ -5516,7 +5516,7 @@ English:Your Start G-Code should not contain a G30 if you are planning on using 
 Translated:يجب أن لا تحتوي بك بدء G-كود لG30 إذا كنت تخطط لاستخدام استعادة طباعة. تغيير البدء G-الرمز أو إيقاف استعادة طباعة
 
 English:Search results no available in this view
-Translated:نتائج البحث لا المتاحة في طريقة العرض هذه
+Translated:نتائج البحث لا توجد في هذا الرأي
 
 English:Sorry: Search results not available in this view
 Translated:عذرا: نتائج البحث غير متوفرة في هذا الرأي
@@ -5700,4 +5700,133 @@ Translated:لوحة تحكم مزامنة
 
 English:SD Card
 Translated:بطاقة الذاكرة
+
+English:MatterControl: Select Firmware File
+Translated:الملف اختر البرامج الثابتة: MatterControl
+
+English:Starting firmware update...
+Translated:بدء تحديث البرامج الثابتة ...
+
+English:Disconnecting from printer...
+Translated:فصل من طابعة ...
+
+English:Initializing hardware...
+Translated:تهيئة الأجهزة ...
+
+English:Creating firmware backup...
+Translated:إنشاء نسخة احتياطية الثابتة ...
+
+English:Update In Progress: {0}
+Translated:تحديث في التقدم: {0}
+
+English:Updating firmware...
+Translated:تحديث البرامج الثابتة ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:تحديث البرامج الثابتة بنجاح. يرجى إعادة الاتصال.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:يسرد قسم "المنفذ التسلسلي" كل مسلسل الموانئ \ ن المتاحة على جهازك. تغيير الذي منفذ USB وconneted الطابعة \ ن قد تتغير المنفذ التسلسلي المرتبطة بها. \ ن ن \ نصيحة: إذا كنت غير متأكد، افصل / المكونات في الطابعة \ ن وضرب التحديث. الميناء الجديد الذي يظهر ينبغي أن يكون \ ن الطابعة.
+
+English:Reverting firmware to previous version...
+Translated:الرجوع البرامج الثابتة إلى الإصدار السابق ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:البرامج الثابتة استعادة بنجاح. يرجى إعادة الاتصال.
+
+English:SET
+Translated:مجموعة
+
+English:Move X negative
+Translated:نقل X سلبية
+
+English:Move X positive
+Translated:نقل X إيجابية
+
+English:Move Y positive
+Translated:نقل Y إيجابية
+
+English:Move Y negative
+Translated:نقل Y سلبية
+
+English:Move Z positive
+Translated:نقل Z إيجابية
+
+English:Move Z negative
+Translated:نقل Z سلبية
+
+English:Enable cursor keys for movement
+Translated:تمكين مفاتيح المؤشر للحركة
+
+English:Retract filament
+Translated:التراجع عن خيوط
+
+English:Extrude filament
+Translated:خيوط الكابسة
+
+English:Home X, Y and Z
+Translated:الصفحة الرئيسية X و Y و Z
+
+English:Home X
+Translated:الصفحة الرئيسية X
+
+English:Home Y
+Translated:الصفحة الرئيسية Y
+
+English:Home Z
+Translated:الصفحة الرئيسية Z
+
+English:Open cloud sync dashboard in web browser
+Translated:فتح لوحة أجهزة القياس سحابة المزامنة في متصفح الويب
+
+English:Restart
+Translated:إعادة بدء
+
+English:Please Review Your Order
+Translated:يرجى مراجعة أمرك
+
+English:Loading product information. Pleast wait...
+Translated:تحميل معلومات المنتج. Pleast الانتظار ...
+
+English:Enter Code: 
+Translated:ادخل الرمز:
+
+English:Use Promo Code
+Translated:استخدام الرمز الترويجي
+
+English:Applying...
+Translated:تطبيق ...
+
+English:Enter your Billing Address
+Translated:أدخل عنوان الفوترة
+
+English:Full Name
+Translated:الاسم الكامل
+
+English:Enter your Payment Info
+Translated:أدخل معلومات الدفع
+
+English:Place Order
+Translated:ترتيب مكان
+
+English:Additional payment options coming soon!
+Translated:خيارات الدفع إضافية قريبا!
+
+English:- Please Select -
+Translated:- اختر من فضلك -
+
+English:Credit Card Number
+Translated:رقم بطاقة الائتمان
+
+English:Expiration Date
+Translated:تاريخ إنتهاء الصلاحية
+
+English:Card Verification Number
+Translated:رقم التحقق من البطاقة
+
+English:Saving...
+Translated:إنقاذ...
+
+English:Oops! Payment has been declined.
+Translated:عفوا! تم رفض الدفع.
 

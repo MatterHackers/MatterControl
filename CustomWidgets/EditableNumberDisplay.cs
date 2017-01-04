@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using System;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl
 			// TODO: This hack needs a unit test and then pass and then remove this line.
 			this.MinimumSize = new VectorMath.Vector2(0, numberInputField.Height);
 
-			setButton = textImageButtonFactory.Generate("SET");
+			setButton = textImageButtonFactory.Generate("SET".Localize());
 			setButton.VAnchor = VAnchor.ParentCenter;
 			setButton.Margin = new BorderDouble(left: 6);
 			setButton.Visible = false;

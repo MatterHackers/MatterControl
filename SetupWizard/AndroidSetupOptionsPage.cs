@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
 			buttonContainer.Margin = new BorderDouble(0, 14);
 
-			signInButton = textImageButtonFactory.Generate("Sign In");
+			signInButton = textImageButtonFactory.Generate("Sign In".Localize());
 			signInButton.Margin = new BorderDouble(left: 0);
 			signInButton.VAnchor = VAnchor.ParentCenter;
 			signInButton.Visible = !signedIn;
@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl
 			});
 			buttonContainer.AddChild(signInButton);
 
-			signOutButton = textImageButtonFactory.Generate("Sign Out");
+			signOutButton = textImageButtonFactory.Generate("Sign Out".Localize());
 			signOutButton.Margin = new BorderDouble(left: 0);
 			signOutButton.VAnchor = VAnchor.ParentCenter;
 			signOutButton.Visible = signedIn;

@@ -3476,7 +3476,7 @@ English:The width of the paper (or other calibration device) used when doing man
 Translated:De breedte van het papier (of ander kalibreerinrichting) gebruikt bij handenarbeid bed sonderen.
 
 English:The offset of the probe relative to the extruder.
-Translated:De verschuiving van de sonde ten opzichte van de extruder.
+Translated:De verschuiving van de sonde verhouding tot de extruder.
 
 English:The z offset of the probe relative to the extruder.
 Translated:De z offset van de sonde ten opzichte van de extruder.
@@ -3524,7 +3524,7 @@ English:Add Folder To Library
 Translated:Map toevoegen in bibliotheek
 
 English:Using the above controls
-Translated:Met de bovengenoemde controles
+Translated:Onder toepassing van bovenstaande controles
 
 English:Add Local Folder To Library
 Translated:Voeg Lokale map in bibliotheek
@@ -3551,7 +3551,7 @@ English:Enter Mulit Select mode
 Translated:Voer Mulit Select mode
 
 English:Add a .stl, .amf, .gcode or .zip File To The Queue
-Translated:Voeg een .stl, .amf, .gcode of .zip bestand naar de wachtrij
+Translated:Toevoegen .stl, .amf, .gcode of .zip bestand naar de wachtrij
 
 English:Choose a Create Tool to generate custom parts
 Translated:Kies a Maak Tool om aangepaste onderdelen te genereren
@@ -5700,4 +5700,133 @@ Translated:Sync Dashboard
 
 English:SD Card
 Translated:SD-kaart
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl: Select Firmware File
+
+English:Starting firmware update...
+Translated:Vanaf firmware-update ...
+
+English:Disconnecting from printer...
+Translated:Loskoppelen van de printer ...
+
+English:Initializing hardware...
+Translated:Initialiseren van hardware ...
+
+English:Creating firmware backup...
+Translated:Het creëren van firmware back-up ...
+
+English:Update In Progress: {0}
+Translated:Werk in uitvoering: {0}
+
+English:Updating firmware...
+Translated:firmware updaten van ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware met succes bijgewerkt. Gelieve opnieuw te verbinden.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:het gedeelte 'Serial Port' een overzicht van alle beschikbare seriële\npoorten op uw apparaat. Wijzigen welke USB-poort van de printer\nconneted om kan de bijbehorende seriële poort te wijzigen.\n\nTip: Als u niet zeker bent, trek / plug in uw printer\nen druk op refresh. De nieuwe haven die verschijnt moet worden\nuw printer.
+
+English:Reverting firmware to previous version...
+Translated:Terugdraaien firmware naar de vorige versie ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware met succes hersteld. Gelieve opnieuw te verbinden.
+
+English:SET
+Translated:SET
+
+English:Move X negative
+Translated:Move X negatief
+
+English:Move X positive
+Translated:Move X positief
+
+English:Move Y positive
+Translated:Move Y positieve
+
+English:Move Y negative
+Translated:Move Y negatief
+
+English:Move Z positive
+Translated:Verplaats Z positief
+
+English:Move Z negative
+Translated:Verplaats Z negatief
+
+English:Enable cursor keys for movement
+Translated:Inschakelen cursortoetsen voor beweging
+
+English:Retract filament
+Translated:intrekken filament
+
+English:Extrude filament
+Translated:Extrude filament
+
+English:Home X, Y and Z
+Translated:Huis X, Y en Z
+
+English:Home X
+Translated:thuis X
+
+English:Home Y
+Translated:thuis Y
+
+English:Home Z
+Translated:thuis Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Open cloud synchroniseren dashboard in webbrowser
+
+English:Restart
+Translated:Herstarten
+
+English:Please Review Your Order
+Translated:Controleer uw bestelling
+
+English:Loading product information. Pleast wait...
+Translated:Laden productinformatie. Pleast wachten ...
+
+English:Enter Code: 
+Translated:Voer code in:
+
+English:Use Promo Code
+Translated:Gebruik Promo Code
+
+English:Applying...
+Translated:Het toepassen ...
+
+English:Enter your Billing Address
+Translated:Voer uw factuuradres
+
+English:Full Name
+Translated:Voor-en achternaam
+
+English:Enter your Payment Info
+Translated:Voer uw Betaling Info
+
+English:Place Order
+Translated:Plaats bestelling
+
+English:Additional payment options coming soon!
+Translated:Extra betaalmogelijkheden coming soon!
+
+English:- Please Select -
+Translated:- Selecteer aub -
+
+English:Credit Card Number
+Translated:creditcardnummer
+
+English:Expiration Date
+Translated:uiterste houdbaarheidsdatum
+
+English:Card Verification Number
+Translated:Kaart Verificatie Nummer
+
+English:Saving...
+Translated:Besparing...
+
+English:Oops! Payment has been declined.
+Translated:Oeps! De betaling is geweigerd.
 

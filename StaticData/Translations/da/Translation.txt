@@ -5701,3 +5701,132 @@ Translated:Sync Dashboard
 English:SD Card
 Translated:SD kort
 
+English:MatterControl: Select Firmware File
+Translated:MatterControl: Vælg Firmware fil
+
+English:Starting firmware update...
+Translated:Starter firmwareopdatering ...
+
+English:Disconnecting from printer...
+Translated:Afbrydelse fra printer ...
+
+English:Initializing hardware...
+Translated:Initialiserer hardware ...
+
+English:Creating firmware backup...
+Translated:Oprettelse firmware backup ...
+
+English:Update In Progress: {0}
+Translated:Opdater I Progress: {0}
+
+English:Updating firmware...
+Translated:Opdatering af firmware ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware opdateret. Venligst tilslut.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:Den "Serial Port 'afsnit viser alle tilgængelige serielle\nporte på enheden. Ændring som USB-port på printeren\nconneted til kan ændre den tilhørende serielle port.\n\nTip: Hvis du er i tvivl, skal du trække / stik i din printer\nog ramte refresh. Den nye havn, der vises skal være\nprinteren.
+
+English:Reverting firmware to previous version...
+Translated:Gendanner firmware til tidligere version ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware gendannet med succes. Venligst tilslut.
+
+English:SET
+Translated:SÆT
+
+English:Move X negative
+Translated:Flyt X negativ
+
+English:Move X positive
+Translated:Flyt X positiv
+
+English:Move Y positive
+Translated:Flyt Y positiv
+
+English:Move Y negative
+Translated:Flyt Y negativ
+
+English:Move Z positive
+Translated:Flyt Z positiv
+
+English:Move Z negative
+Translated:Flyt Z negativ
+
+English:Enable cursor keys for movement
+Translated:Aktiver markørtasterne til bevægelse
+
+English:Retract filament
+Translated:Træk glødetråd
+
+English:Extrude filament
+Translated:Extrude glødetråd
+
+English:Home X, Y and Z
+Translated:Hjem X, Y og Z
+
+English:Home X
+Translated:Hjem X
+
+English:Home Y
+Translated:Hjem Y
+
+English:Home Z
+Translated:Hjem Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Åbent dashboard sky sync webbrowser
+
+English:Restart
+Translated:Genstart
+
+English:Please Review Your Order
+Translated:Gennemgå dine ordre
+
+English:Loading product information. Pleast wait...
+Translated:Henter produktoplysninger. Pleast vente ...
+
+English:Enter Code: 
+Translated:Indtast kode:
+
+English:Use Promo Code
+Translated:Brug Kampagnekode
+
+English:Applying...
+Translated:Anvendelse ...
+
+English:Enter your Billing Address
+Translated:Indtast din faktureringsadresse
+
+English:Full Name
+Translated:Fulde navn
+
+English:Enter your Payment Info
+Translated:Indtast din betaling Info
+
+English:Place Order
+Translated:Angiv bestilling
+
+English:Additional payment options coming soon!
+Translated:Yderligere betalingsmuligheder kommer snart!
+
+English:- Please Select -
+Translated:- Vælg venligst -
+
+English:Credit Card Number
+Translated:kreditkortnummer
+
+English:Expiration Date
+Translated:Udløbsdato
+
+English:Card Verification Number
+Translated:Card Verification Number
+
+English:Saving...
+Translated:Gemmer ...
+
+English:Oops! Payment has been declined.
+Translated:Ups! Betaling er blevet afvist.
+
