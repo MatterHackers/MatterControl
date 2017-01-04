@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (MeshGroups.Count > 0
 				&& SelectedMeshGroupIndex != -1)
 			{
-				string makingCopyLabel = LocalizedString.Get("Making Copy");
+				string makingCopyLabel = "Making Copy".Localize();
 				string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
 				processingProgressControl.ProcessType = makingCopyLabelFull;
 				processingProgressControl.Visible = true;

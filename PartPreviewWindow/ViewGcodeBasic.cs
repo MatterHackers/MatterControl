@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			generateGCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Generate"));
+			generateGCodeButton = textImageButtonFactory.Generate("Generate".Localize());
 			generateGCodeButton.Name = "Generate Gcode Button";
 			generateGCodeButton.Click += new EventHandler(generateButton_Click);
 			buttonBottomPanel.AddChild(generateGCodeButton);
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (windowMode == WindowMode.StandAlone)
 			{
-				Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+				Button closeButton = textImageButtonFactory.Generate("Close".Localize());
 				layerSelectionButtonsPanel.AddChild(closeButton);
 				closeButton.Click += (sender, e) =>
 				{
@@ -641,7 +641,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show grid check box
 			{
-				CheckBox showGrid = new CheckBox(LocalizedString.Get("Print Bed"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				CheckBox showGrid = new CheckBox("Print Bed".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showGrid.Checked = gcodeViewWidget.RenderGrid;
 				meshViewerWidget.RenderBed = showGrid.Checked;
 				showGrid.CheckedStateChanged += (sender, e) =>
@@ -654,7 +654,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show moves checkbox
 			{
-				CheckBox showMoves = new CheckBox(LocalizedString.Get("Moves"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				CheckBox showMoves = new CheckBox("Moves".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showMoves.Checked = gcodeViewWidget.RenderMoves;
 				showMoves.CheckedStateChanged += (sender, e) =>
 				{
@@ -665,7 +665,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show Retractions checkbox
 			{
-				CheckBox showRetractions = new CheckBox(LocalizedString.Get("Retractions"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				CheckBox showRetractions = new CheckBox("Retractions".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showRetractions.Checked = gcodeViewWidget.RenderRetractions;
 				showRetractions.CheckedStateChanged += (sender, e) =>
 				{
@@ -676,7 +676,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show speed checkbox
 			{
-				showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				showSpeeds = new CheckBox("Speeds".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showSpeeds.Checked = gcodeViewWidget.RenderSpeeds;
 				//showSpeeds.Checked = gradient.Visible;
 				showSpeeds.CheckedStateChanged += (sender, e) =>
@@ -700,7 +700,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a simulate extrusion checkbox
 			{
-				CheckBox simulateExtrusion = new CheckBox(LocalizedString.Get("Extrusion"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				CheckBox simulateExtrusion = new CheckBox("Extrusion".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				simulateExtrusion.Checked = gcodeViewWidget.SimulateExtrusion;
 				simulateExtrusion.CheckedStateChanged += (sender, e) =>
 				{
@@ -711,7 +711,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // put in a render extrusion transparent checkbox
             {
-                CheckBox transparentExtrusion = new CheckBox(LocalizedString.Get("Transparent"), textColor: ActiveTheme.Instance.PrimaryTextColor)
+                CheckBox transparentExtrusion = new CheckBox("Transparent".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
                 {
                     Checked = gcodeViewWidget.TransparentExtrusion,
                     Margin = new BorderDouble(5, 0, 0, 0),
@@ -1243,7 +1243,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(editCurrentLayerIndex);
 			gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
 
-			setLayerButton = textImageButtonFactory.Generate(LocalizedString.Get("Go"));
+			setLayerButton = textImageButtonFactory.Generate("Go".Localize());
 			setLayerButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			setLayerButton.Click += new EventHandler(layerCountTextWidget_EditComplete);
 			this.AddChild(setLayerButton);

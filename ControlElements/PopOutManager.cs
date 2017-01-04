@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl
 			bringBackButtonFactory.normalFillColor = RGBA_Bytes.Gray;
 			bringBackButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			Button bringBackToTabButton = bringBackButtonFactory.Generate(LocalizedString.Get("Restore"));
+			Button bringBackToTabButton = bringBackButtonFactory.Generate("Restore".Localize());
 			bringBackToTabButton.ToolTipText = "Bring the Window back into this Tab".Localize();
 			bringBackToTabButton.VAnchor = VAnchor.ParentCenter;
 			bringBackToTabButton.Cursor = Cursors.Hand;
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			TextWidget windowedModeMessage = new TextWidget(LocalizedString.Get("WINDOWED MODE: This tab has been moved to a separate window."),
+			TextWidget windowedModeMessage = new TextWidget("WINDOWED MODE: This tab has been moved to a separate window.".Localize(),
 				pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			windowedModeMessage.VAnchor = VAnchor.ParentCenter;
 

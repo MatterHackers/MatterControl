@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
 			RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
 			textImageButtonFactory.normalFillColor = new RGBA_Bytes(180, 180, 180);
-			homeAllButton = textImageButtonFactory.Generate(LocalizedString.Get("ALL"));
+			homeAllButton = textImageButtonFactory.Generate("ALL".Localize());
 			this.textImageButtonFactory.normalFillColor = oldColor;
 			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
 			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);

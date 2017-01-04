@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
 						FlowLayoutWidget extruderActualIndicator = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
 
 						extruderActualIndicator.Margin = new BorderDouble(3, 0);
-						string extruderActualLabelTxt = LocalizedString.Get("Actual");
+						string extruderActualLabelTxt = "Actual".Localize();
 						string extruderActualLabelTxtFull = string.Format("{0}: ", extruderActualLabelTxt);
 						TextWidget extruderActualLabel = new TextWidget(extruderActualLabelTxtFull, pointSize: 10);
 						extruderActualLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 						extruderActualIndicator.AddChild(extruderActualLabel);
 						extruderActualIndicator.AddChild(actualTempIndicator);
 
-						string extruderAboutLabelTxt = LocalizedString.Get("Target");
+						string extruderAboutLabelTxt = "Target".Localize();
 						string extruderAboutLabelTxtFull = string.Format("{0}: ", extruderAboutLabelTxt);
 
 						TextWidget extruderTargetLabel = new TextWidget(extruderAboutLabelTxtFull, pointSize: 10);
@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget presetsContainer = new FlowLayoutWidget();
 			presetsContainer.Margin = new BorderDouble(3, 0);
 
-			string presetsLabelTxt = LocalizedString.Get("Presets");
+			string presetsLabelTxt = "Presets".Localize();
 			string presetsLabelTxtFull = string.Format("{0}: ", presetsLabelTxt);
 
 			TextWidget presetsLabel = new TextWidget(presetsLabelTxtFull, pointSize: 10);
@@ -425,14 +425,14 @@ namespace MatterHackers.MatterControl
 	public class ExtruderTemperatureControlWidget : TemperatureControlBase
 	{
 		public ExtruderTemperatureControlWidget()
-			: base(0, LocalizedString.Get("Extruder Temperature"), LocalizedString.Get("Extruder Temperature Settings"))
+			: base(0, "Extruder Temperature".Localize(), "Extruder Temperature Settings".Localize())
 		{
 			AddChildElements();
 			AddHandlers();
 		}
 
 		public ExtruderTemperatureControlWidget(int extruderIndex0Based)
-			: base(extruderIndex0Based, string.Format("{0} {1}", "Extruder Temperature".Localize(), extruderIndex0Based + 1), LocalizedString.Get("Extruder Temperature Settings"))
+			: base(extruderIndex0Based, string.Format("{0} {1}", "Extruder Temperature".Localize(), extruderIndex0Based + 1), "Extruder Temperature Settings".Localize())
 		{
 			AddChildElements();
 			AddHandlers();
@@ -532,7 +532,7 @@ namespace MatterHackers.MatterControl
 	public class BedTemperatureControlWidget : TemperatureControlBase
 	{
 		public BedTemperatureControlWidget()
-			: base(0, LocalizedString.Get("Bed Temperature"), LocalizedString.Get("Bed Temperature Settings"))
+			: base(0, "Bed Temperature".Localize(), "Bed Temperature Settings".Localize())
 		{
 			AddChildElements();
 			AddHandlers();

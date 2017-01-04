@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				TextWidget eMinusControlLabel = new TextWidget(LocalizedString.Get("Retract"), pointSize: 11);
+				TextWidget eMinusControlLabel = new TextWidget("Retract".Localize(), pointSize: 11);
 				eMinusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				eMinusControlLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
 				eMinusButtonAndText.AddChild(eMinusControlLabel);
@@ -497,7 +497,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				TextWidget ePlusControlLabel = new TextWidget(LocalizedString.Get("Extrude"), pointSize: 11);
+				TextWidget ePlusControlLabel = new TextWidget("Extrude".Localize(), pointSize: 11);
 				ePlusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				ePlusControlLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
 				ePlusButtonAndText.AddChild(ePlusControlLabel);

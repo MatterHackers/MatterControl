@@ -183,10 +183,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 					string end = maxLengthName.Substring(maxLengthName.Length - amountRemaining, amountRemaining);
 					maxLengthName = start + end;
 				}
-				string notFoundMessage = LocalizedString.Get("Oops! Could not find this file");
-				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
+				string notFoundMessage = "Oops! Could not find this file".Localize();
+				string notFoundMessageEnd = "Would you like to remove it from the queue".Localize();
 				string message = "{0}:\n'{1}'\n\n{2}?".FormatWith(notFoundMessage, maxLengthName, notFoundMessageEnd);
-				string titleLabel = LocalizedString.Get("Item not Found");
+				string titleLabel = "Item not Found".Localize();
 				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO, "Remove".Localize(), "Cancel".Localize());
 			});
 		}
@@ -243,8 +243,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 16);
 
-					string partStatusLabelTxt = LocalizedString.Get("Status").ToUpper();
-					string partStatusLabelTxtTest = LocalizedString.Get("Queued to Print");
+					string partStatusLabelTxt = "Status".Localize().ToUpper();
+					string partStatusLabelTxtTest = "Queued to Print".Localize();
 					string partStatusLabelTxtFull = "{0}: {1}".FormatWith(partStatusLabelTxt, partStatusLabelTxtTest);
 
 					partStatus = new TextWidget(partStatusLabelTxtFull, pointSize: 10);

@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (buttonCount == 0)
 			{
-				TextWidget noMacrosFound = new TextWidget(LocalizedString.Get("No macros are currently set up for this printer."), pointSize: 10);
+				TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
 				noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				macroButtonContainer.AddChild(noMacrosFound);
 			}
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (buttonCount == 0)
 			{
-				TextWidget noMacrosFound = new TextWidget(LocalizedString.Get("No macros are currently set up for this printer."), pointSize: 10);
+				TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
 				noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				macroButtonContainer.AddChild(noMacrosFound);
 			}

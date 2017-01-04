@@ -362,9 +362,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 					string end = maxLengthName.Substring(maxLengthName.Length - amountRemaining, amountRemaining);
 					maxLengthName = start + end;
 				}
-				string notFoundMessage = LocalizedString.Get("Oops! Could not find this file:");
+				string notFoundMessage = "Oops! Could not find this file:".Localize();
 				string message = "{0}:\n'{1}'".FormatWith(notFoundMessage, maxLengthName);
-				string titleLabel = LocalizedString.Get("Item not Found");
+				string titleLabel = "Item not Found".Localize();
 				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.OK);
 			});
 		}

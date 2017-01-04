@@ -2195,12 +2195,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// make sure we don't have a left over print task
 			activePrintTask = null;
 
-			connectionFailureMessage = LocalizedString.Get("Unknown Reason");
+			connectionFailureMessage = "Unknown Reason".Localize();
 
 			if (PrinterIsConnected)
 			{
 #if DEBUG
-				throw new Exception(LocalizedString.Get("You can only connect when not currently connected."));
+				throw new Exception("You can only connect when not currently connected.".Localize());
 #else
 				return;
 #endif
@@ -2239,7 +2239,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch (System.ArgumentOutOfRangeException e)
 					{
 						PrinterOutputCache.Instance.WriteLine("Exception:" + e.Message);
-						connectionFailureMessage = LocalizedString.Get("Unsupported Baud Rate");
+						connectionFailureMessage = "Unsupported Baud Rate".Localize();
 						OnConnectionFailed(null);
 					}
 					catch (Exception ex)
@@ -2255,7 +2255,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// port is already opened in another instance or process, then report the connection problem back to the user
 				connectionFailureMessage = (serialPortIsAlreadyOpen ?
 					string.Format("{0} in use", this.ComPort) :
-					LocalizedString.Get("Port not found"));
+					"Port not found".Localize());
 
 				OnConnectionFailed(null);
 			}
@@ -2308,7 +2308,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
 					Disable();
-					connectionFailureMessage = LocalizedString.Get("Canceled");
+					connectionFailureMessage = "Canceled".Localize();
 					OnConnectionFailed(null);
 					return false;
 				}

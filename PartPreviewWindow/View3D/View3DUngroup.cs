@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SelectedMeshGroupIndex = 0;
 			}
-			string makingCopyLabel = LocalizedString.Get("Ungrouping");
+			string makingCopyLabel = "Ungrouping".Localize();
 			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
 			processingProgressControl.ProcessType = makingCopyLabelFull;
 

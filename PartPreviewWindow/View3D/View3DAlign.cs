@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// set the progress label text
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;
-				string makingCopyLabel = LocalizedString.Get("Aligning");
+				string makingCopyLabel = "Aligning".Localize();
 				string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
 				processingProgressControl.ProcessType = makingCopyLabelFull;
 

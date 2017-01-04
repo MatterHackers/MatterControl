@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.VAnchor = VAnchor.ParentBottomTop;
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string serialPortLabel = LocalizedString.Get("Serial Port");
+			string serialPortLabel = "Serial Port".Localize();
 			string serialPortLabelFull = string.Format("{0}:", serialPortLabel);
 
 			TextWidget comPortLabel = new TextWidget(serialPortLabelFull, 0, 0, 12);
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			//If there are still no com ports show a message to that effect
 			if (portIndex == 0)
 			{
-				TextWidget comPortOption = new TextWidget(LocalizedString.Get("No COM ports available"));
+				TextWidget comPortOption = new TextWidget("No COM ports available".Localize());
 				comPortOption.Margin = new BorderDouble(3, 6, 5, 6);
 				comPortOption.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				comPortContainer.AddChild(comPortOption);
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 			}
 
-			throw new Exception(LocalizedString.Get("Could not find a selected button."));
+			throw new Exception("Could not find a selected button.".Localize());
 		}
 
 	}
