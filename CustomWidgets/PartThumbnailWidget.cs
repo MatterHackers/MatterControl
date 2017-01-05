@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						if (ImageTgaIO.LoadImageData(imageFileName, tempImage))
+						if (ImageTgaIO.LoadImageData(tempImage, imageFileName))
 						{
 							return tempImage;
 						}
