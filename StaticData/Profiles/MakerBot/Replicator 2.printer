@@ -1,6 +1,7 @@
 {
   "DocumentVersion": 201606271,
-  "ID": null,
+  "ID": "Replicator 2-4745686954803200",
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
@@ -160,23 +161,29 @@
     "z_offset": "0",
     "make": "MakerBot",
     "model": "Replicator 2",
-    "created_date": "7/19/2016 7:55:34 PM",
+    "created_date": "2016-12-09T01:46:02.456Z",
     "baud_rate": "115200",
     "default_material_presets": "PLA",
     "driver_type": "X3G",
     "windows_driver": "MHSerial.inf",
-    "calibration_files": "Calibration - Circle.stl"
+    "calibration_files": "Calibration - Circle.stl",
+    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgKDq5OueCgwLEgZEZXZpY2UYgICAgICAgAoMCxINRGV2aWNlUHJvZmlsZRiAgICAwJyCCgw",
+    "active_theme_name": "Blue - Dark",
+    "enable_sailfish_communication": "1",
+    "enable_network_printing": "0"
   },
   "ActiveQualityKey": "",
-  "MaterialSettingsKeys": [],
-  "UserLayer": {},
+  "MaterialSettingsKeys": [
+    "6868885c-cf0f-4c6e-9d59-349274c50f97"
+  ],
   "MaterialLayers": [
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "6868885c-cf0f-4c6e-9d59-349274c50f97",
       "first_layer_temperature": "205",
-      "temperature": "205"
+      "temperature": "205",
+      "filament_cost": "29"
     }
   ],
   "QualityLayers": []

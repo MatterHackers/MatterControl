@@ -29,25 +29,54 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	using System.Collections.ObjectModel;
-	using System.Threading.Tasks;
-	using Agg;
-	using DataStorage;
-	using Localizations;
-	using SettingsManagement;
-
 	public class ProfileManager
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
-		public static ProfileManager Instance { get; private set; }
+		private static ProfileManager activeInstance = null;
+		public static ProfileManager Instance
+		{
+			get
+			{
+				return activeInstance;
+			}
+			private set
+			{
+				activeInstance = value;
+
+				// If the loaded slice settings do not match the last active settings for this profile, change to the last active
+				if (ActiveSliceSettings.Instance?.ID != activeInstance.LastProfileID)
+				{
+					// Load or download on a background thread
+					var lastProfile = LoadProfileAsync(activeInstance.LastProfileID).Result;
+
+					if (MatterControlApplication.IsLoading)
+					{
+						ActiveSliceSettings.Instance = lastProfile ?? PrinterSettings.Empty;
+					}
+					else
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							// Assign on the UI thread
+							ActiveSliceSettings.Instance = lastProfile ?? PrinterSettings.Empty;
+						});
+					}
+				}
+			}
+		}
 
 		private static EventHandler unregisterEvents;
 
@@ -147,32 +176,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				loadedInstance = new ProfileManager() { UserName = userName };
 			}
 
-			// If the loaded slice settings do not match the last active settings for this profile, change to the last active
-			if (ActiveSliceSettings.Instance?.ID != loadedInstance.LastProfileID)
-			{
-				// async so we can safely wait for LoadProfileAsync to complete
-				Task.Run(async () =>
-				{
-					// Load or download on a background thread
-					var lastProfile = await LoadProfileAsync(Instance.LastProfileID);
-
-					if (MatterControlApplication.IsLoading)
-					{
-						// TODO: Not true - we're on a background thread in an async lambda... what is the intent of this?
-						// Assign on the UI thread
-						ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
-					}
-					else
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							// Assign on the UI thread
-							ActiveSliceSettings.Instance = lastProfile ?? LoadEmptyProfile();
-						});
-					}
-				});
-			}
-
 			return loadedInstance;
 		}
 
@@ -207,14 +210,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				return Profiles.Where(p => p.ID == profileID).FirstOrDefault();
 			}
-		}
-
-		public static PrinterSettings LoadEmptyProfile()
-		{
-			var emptyProfile = new PrinterSettings() { ID = "EmptyProfile" };
-			emptyProfile.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
-
-			return emptyProfile;
 		}
 
 		[JsonIgnore]
@@ -440,34 +435,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//If the active printer has no theme we set it to the current theme color
 			printerSettings.UserLayer[SettingsKey.active_theme_name] = ActiveTheme.Instance.Name;
 
-			// Import named macros as defined in the following printers: (Airwolf Axiom, HD, HD-R, HD2x, HDL, HDx, Me3D Me2, Robo R1[+])
-			var classicDefaultMacros = printerSettings.GetValue("default_macros");
-			if (!string.IsNullOrEmpty(classicDefaultMacros))
-			{
-				var namedMacros = new Dictionary<string, string>();
-				namedMacros["Lights On"] = "M42 P6 S255";
-				namedMacros["Lights Off"] = "M42 P6 S0";
-				namedMacros["Offset 0.8"] = "M565 Z0.8;\nM500";
-				namedMacros["Offset 0.9"] = "M565 Z0.9;\nM500";
-				namedMacros["Offset 1"] = "M565 Z1;\nM500";
-				namedMacros["Offset 1.1"] = "M565 Z1.1;\nM500";
-				namedMacros["Offset 1.2"] = "M565 Z1.2;\nM500";
-				namedMacros["Z Offset"] = "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;";
-
-				foreach (string namedMacro in classicDefaultMacros.Split(','))
-				{
-					string gcode;
-					if (namedMacros.TryGetValue(namedMacro.Trim(), out gcode))
-					{
-						printerSettings.Macros.Add(new GCodeMacro()
-						{
-							Name = namedMacro.Trim(),
-							GCode = gcode
-						});
-					}
-				}
-			}
-
 			// Add to Profiles - fires ProfileManager.Save due to ObservableCollection event listener
 			Instance.Profiles.Add(new PrinterInfo
 			{
@@ -481,7 +448,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.Save();
 
 			// Set as active profile
-			UserSettings.Instance.set("ActiveProfileID", guid);
+			ProfileManager.Instance.LastProfileID = guid;
 
 			ActiveSliceSettings.Instance = printerSettings;
 

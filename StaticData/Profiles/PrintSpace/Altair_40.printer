@@ -1,6 +1,7 @@
 {
   "DocumentVersion": 201606271,
   "ID": null,
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
@@ -72,7 +73,6 @@
     "infill_overlap_perimeter": ".06",
     "infill_speed": "40",
     "infill_type": "TRIANGLES",
-    "layer_gcode": "",
     "layer_height": "0.2",
     "layer_to_pause": "",
     "manual_probe_paper_width": ".1",
@@ -199,7 +199,7 @@
     },
     {
       "layer_name": "ABS",
-      "filament_density":  "1.04",
+      "filament_density": "1.04",
       "layer_id": "0bc64fd2-8c00-43a9-94da-762f6bac50ab",
       "bed_temperature": "100",
       "bridge_fan_speed": "0",
@@ -454,7 +454,7 @@
       "layer_name": "Coarse",
       "layer_id": "88a7d208-efbe-44ae-bbb0-74ee2adeb2f4",
       "layer_height": "0.3",
-	  "first_layer_height": "125%",
+      "first_layer_height": "125%"
     },
     {
       "layer_name": "Fine",

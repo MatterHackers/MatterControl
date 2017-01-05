@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private PrinterSelector printerSelector;
 		GuiWidget printerSelectorAndEditOverlay;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		static EventHandler staticUnregisterEvents;
 
 		public PrinterConnectAndSelectControl()
@@ -118,9 +118,9 @@ namespace MatterHackers.MatterControl.ActionBar
 				};
 
 				disconnectPrinterButton = actionBarButtonFactory.Generate("Disconnect".Localize().ToUpper(), "icon_power_32x32.png");
+				disconnectPrinterButton.Name = "Disconnect from printer button";
 				disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
 				disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
-
 				disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
 				disconnectPrinterButton.Cursor = Cursors.Hand;
 				disconnectPrinterButton.Click += (s, e) => UiThread.RunOnIdle(OnIdleDisconnect);
@@ -199,7 +199,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			// Bind connect button states to active printer state
 			this.SetConnectionButtonVisibleState();
 
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 		}
@@ -213,12 +212,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
-		}
-
-		private void onActivePrinterChanged(object sender, EventArgs e)
-		{
-			connectPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected;
-			editPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected;
 		}
 
 		private void onConfirmStopPrint(bool messageBoxResponse)
@@ -235,7 +228,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
-				StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO, "Disconnect".Localize(), "Stay Connected".Localize());
 			}
 			else
 			{

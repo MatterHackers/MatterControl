@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			AddHandlers();
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -289,7 +289,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelPrinting); };
 			reprintButton.Click += onReprintButton_Click;
 			doneWithCurrentPartButton.Click += onDoneWithCurrentPartButton_Click;
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
 		protected void DisableActiveButtons()
@@ -469,7 +468,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
 			{
-				StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO, "Cancel Print".Localize(), "Continue Printing".Localize());
 			}
 			else
 			{

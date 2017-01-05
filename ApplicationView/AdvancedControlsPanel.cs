@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 	{
 		private static readonly string ThirdPanelTabView_AdvancedControls_CurrentTab = "ThirdPanelTabView_AdvancedControls_CurrentTab";
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private Button backButton;
 		private GuiWidget sliceSettingsWidget;
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 			TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 			advancedControlsButtonFactory.fontSize = 14;
 			advancedControlsButtonFactory.invertImageLocation = false;
-			backButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Back"), StaticData.Instance.LoadIcon("icon_arrow_left_32x32.png", 32,32));
+			backButton = advancedControlsButtonFactory.Generate("Back".Localize(), StaticData.Instance.LoadIcon("icon_arrow_left_32x32.png", 32,32));
 			backButton.ToolTipText = "Switch to Queue, Library and History".Localize();
 			backButton.Margin = new BorderDouble(right: 3);
 			backButton.VAnchor = VAnchor.ParentBottom;

@@ -1,6 +1,7 @@
 {
   "DocumentVersion": 201606271,
-  "ID": null,
+  "ID": "Prusa i3-5718108738682880",
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
@@ -36,7 +37,7 @@
     "extrusion_width": "0",
     "fan_always_on": "0",
     "fan_below_layer_time": "60",
-    "filament_diameter": "3",
+    "filament_diameter": "1.75",
     "fill_angle": "45",
     "fill_density": "0.4",
     "fill_pattern": "honeycomb",
@@ -152,19 +153,20 @@
     "z_offset": "0",
     "make": "Other",
     "model": "Prusa i3",
-    "created_date": "7/19/2016 7:56:02 PM",
-    "baud_rate": "250000",
+    "created_date": "2016-11-25T19:36:43.290Z",
+    "baud_rate": "115200",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
-    "calibration_files": "Calibration - Box.stl"
+    "calibration_files": "Calibration - Box.stl",
+    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgKCq19StCgwLEgZEZXZpY2UYgICAgMCInQoMCxINRGV2aWNlUHJvZmlsZRiAgICAwJyCCgw",
+    "active_theme_name": "Red - Dark"
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "ABS",
-      "filament_density":  "1.04",
+      "filament_density": "1.04",
       "layer_id": "056e1420-aafd-40df-8c48-4e2eb0b4f46a",
       "bed_temperature": "95",
       "first_layer_bed_temperature": "95",
@@ -173,7 +175,7 @@
     },
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "09e848d1-7f40-4344-aae0-b449f60caee7",
       "bed_temperature": "0",
       "first_layer_bed_temperature": "0",

@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += MenuItem_Selected;
 			}
 
-			MenuItem addNewPreset = dropDownList.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Setting...", "new");
+			MenuItem addNewPreset = dropDownList.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Setting".Localize() + "...", "new");
 			addNewPreset.Selected += (s, e) =>
 			{
 				var newLayer = new PrinterSettingsLayer();
@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dropDownList;
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{

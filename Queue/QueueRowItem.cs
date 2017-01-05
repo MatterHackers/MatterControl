@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private SlideWidget actionButtonContainer;
 
-		private Button addToLibraryLink;
-
 		private string alsoRemoveFromSdCardMessage = "Would you also like to remove this file from the Printer's SD Card?".Localize();
 
 		private string alsoRemoveFromSdCardTitle = "Remove From Printer's SD Card?";
@@ -101,7 +99,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			ConstructPrintQueueItem();
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public bool IsHoverItem
 		{
@@ -135,29 +133,38 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			UpdateHoverState();
+			base.OnMouseMove(mouseEvent);
+		}
+
 		void UpdateHoverState()
 		{
-			switch (UnderMouseState)
+			UiThread.RunOnIdle(() =>
 			{
-				case UnderMouseState.NotUnderMouse:
-					IsHoverItem = false;
-					break;
-
-				case UnderMouseState.FirstUnderMouse:
-					IsHoverItem = true;
-					break;
-
-				case UnderMouseState.UnderMouseNotFirst:
-					if (ContainsFirstUnderMouseRecursive())
-					{
-						IsHoverItem = true;
-					}
-					else
-					{
+				switch (UnderMouseState)
+				{
+					case UnderMouseState.NotUnderMouse:
 						IsHoverItem = false;
-					}
-					break;
-			}
+						break;
+
+					case UnderMouseState.FirstUnderMouse:
+						IsHoverItem = true;
+						break;
+
+					case UnderMouseState.UnderMouseNotFirst:
+						if (ContainsFirstUnderMouseRecursive())
+						{
+							IsHoverItem = true;
+						}
+						else
+						{
+							IsHoverItem = false;
+						}
+						break;
+				}
+			});
 		}
 
 		public PrintItemWrapper PrintItemWrapper { get; set; }
@@ -176,11 +183,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 					string end = maxLengthName.Substring(maxLengthName.Length - amountRemaining, amountRemaining);
 					maxLengthName = start + end;
 				}
-				string notFoundMessage = LocalizedString.Get("Oops! Could not find this file");
-				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
+				string notFoundMessage = "Oops! Could not find this file".Localize();
+				string notFoundMessageEnd = "Would you like to remove it from the queue".Localize();
 				string message = "{0}:\n'{1}'\n\n{2}?".FormatWith(notFoundMessage, maxLengthName, notFoundMessageEnd);
-				string titleLabel = LocalizedString.Get("Item not Found");
-				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO);
+				string titleLabel = "Item not Found".Localize();
+				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO, "Remove".Localize(), "Cancel".Localize());
 			});
 		}
 
@@ -211,6 +218,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					selectionCheckBoxContainer.Visible = false;
 					selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
 					selectionCheckBox = new CheckBox("");
+
 					selectionCheckBox.Name = "Queue Item Checkbox";
 					selectionCheckBox.VAnchor = VAnchor.ParentCenter;
 					selectionCheckBox.HAnchor = HAnchor.ParentCenter;
@@ -235,8 +243,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 16);
 
-					string partStatusLabelTxt = LocalizedString.Get("Status").ToUpper();
-					string partStatusLabelTxtTest = LocalizedString.Get("Queued to Print");
+					string partStatusLabelTxt = "Status".Localize().ToUpper();
+					string partStatusLabelTxtTest = "Queued to Print".Localize();
 					string partStatusLabelTxtFull = "{0}: {1}".FormatWith(partStatusLabelTxt, partStatusLabelTxtTest);
 
 					partStatus = new TextWidget(partStatusLabelTxtFull, pointSize: 10);
@@ -266,7 +274,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			this.AddChild(actionButtonContainer);
 
-			AddHandlers();
+			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -395,12 +403,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 				int index = QueueData.Instance.GetIndex(itemToRemove);
 				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 			}
-		}
-
-		private void AddHandlers()
-		{
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 		}
 
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)

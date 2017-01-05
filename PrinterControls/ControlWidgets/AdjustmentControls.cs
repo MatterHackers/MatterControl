@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private readonly double minFeedRateRatio = .5;
 		private readonly double maxFeedRateRatio = 2;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public AdjustmentControls()
 		{
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						feedRateLeftToRight = new FlowLayoutWidget();
 						feedRateLeftToRight.HAnchor = HAnchor.ParentLeftRight;
 
-						feedRateDescription = new TextWidget(LocalizedString.Get("Speed Multiplier"));
+						feedRateDescription = new TextWidget("Speed Multiplier".Localize());
 						feedRateDescription.MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale;
 						feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 						feedRateDescription.VAnchor = VAnchor.ParentCenter;
@@ -98,6 +98,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio);
 						feedRateRatioSlider.Margin = new BorderDouble(5, 0);
 						feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
+						feedRateRatioSlider.HAnchor = HAnchor.ParentLeftRight;
 						feedRateRatioSlider.TotalWidthInPixels = sliderWidth;
 						feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
 						feedRateRatioSlider.ValueChanged += (sender, e) =>
@@ -120,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 						textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-						Button setFeedRateButton = textImageButtonFactory.Generate(LocalizedString.Get("Set"));
+						Button setFeedRateButton = textImageButtonFactory.Generate("Set".Localize());
 						setFeedRateButton.VAnchor = VAnchor.ParentCenter;
 
 						feedRateLeftToRight.AddChild(setFeedRateButton);
@@ -135,13 +136,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 						leftToRight.HAnchor = HAnchor.ParentLeftRight;
 						leftToRight.Margin = new BorderDouble(top: 10);
 
-						extrusionDescription = new TextWidget(LocalizedString.Get("Extrusion Multiplier"));
+						extrusionDescription = new TextWidget("Extrusion Multiplier".Localize());
 						extrusionDescription.MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale;
 						extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 						extrusionDescription.VAnchor = VAnchor.ParentCenter;
 						leftToRight.AddChild(extrusionDescription);
 						extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal);
 						extrusionRatioSlider.TotalWidthInPixels = sliderWidth;
+						extrusionRatioSlider.HAnchor = HAnchor.ParentLeftRight;
 						extrusionRatioSlider.Margin = new BorderDouble(5, 0);
 						extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
 						extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
@@ -160,7 +162,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						extrusionValue.Margin = new BorderDouble(0, 0, 5, 0);
 						extrusionValue.VAnchor = VAnchor.ParentCenter;
 						textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
-						Button setExtrusionButton = textImageButtonFactory.Generate(LocalizedString.Get("Set"));
+						Button setExtrusionButton = textImageButtonFactory.Generate("Set".Localize());
 						setExtrusionButton.VAnchor = VAnchor.ParentCenter;
 						leftToRight.AddChild(setExtrusionButton);
 					}

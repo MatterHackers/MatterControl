@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
-					WizardWindow.ChangeToPage<SetupStepMakeModelName>();
+					UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepMakeModelName>);
 				}
 				else
 				{

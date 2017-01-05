@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 				RequestFailed(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
 			}
 
-			ApplicationController.OutboundRequest?.Invoke(false);
+			ApplicationController.WebRequestFailed?.Invoke();
 		}
 
 		protected void OnRequestSuceeded(ResponseType responseItem)
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			{
 				tempHandler(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
 			}
-			ApplicationController.OutboundRequest?.Invoke(true);
+			ApplicationController.WebRequestSucceeded?.Invoke();
 		}
 
 		protected void SendRequest()
@@ -201,6 +201,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 			requestValues = new Dictionary<string, string>();
 		}
 
+		public int Timeout { get; set; } = 100000;
+		
 		public event EventHandler RequestComplete;
 
 		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
@@ -303,7 +305,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 		{
 			JsonResponseDictionary responseValues;
 
-			RequestManager requestManager = new RequestManager();
+			RequestManager requestManager = new RequestManager() { Timeout = this.Timeout };
+
 			string jsonToSend = getJsonToSend();
 
 			System.Diagnostics.Trace.Write(string.Format("ServiceRequest: {0}\r\n  {1}\r\n", uri, string.Join("\r\n\t", jsonToSend.Split(','))));
@@ -316,7 +319,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 				responseValues["ErrorMessage"] = "Unable to connect to server";
 				responseValues["ErrorCode"] = "00";
 
-				ApplicationController.OutboundRequest?.Invoke(false);
+				ApplicationController.WebRequestFailed?.Invoke();
 			}
 			else
 			{
@@ -325,13 +328,14 @@ namespace MatterHackers.MatterControl.VersionManagement
 					responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
 
 					string errorMessage;
-					if (responseValues.TryGetValue("ErrorMessage", out errorMessage) && errorMessage.IndexOf("expired session") != -1)
+					if (responseValues.TryGetValue("ErrorMessage", out errorMessage) 
+					    && errorMessage.IndexOf("expired session",  StringComparison.OrdinalIgnoreCase) != -1)
 					{
 						// Notify connection status changed and now invalid
 						ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Expired".Localize());
 					}
 
-					ApplicationController.OutboundRequest?.Invoke(true);
+					ApplicationController.WebRequestSucceeded?.Invoke();
 				}
 				catch
 				{

@@ -35,12 +35,12 @@ import time
 import random
 
 extruderGoalTemperature = 210
-bedGoalTemperature = 0
+bedGoalTemperature = -1 # no bed present
 
 """Add response callbacks here"""
 def randomTemp(command):
 	# temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
-    if bedGoalTemperature == 0:
+    if bedGoalTemperature == -1:
 	    return "ok T:%s\n" % (extruderGoalTemperature + random.randrange(-2,2))
     else:
         return "ok T:%s B:%s\n" % (extruderGoalTemperature + random.randrange(-2,2), bedGoalTemperature + random.randrange(-2,2))

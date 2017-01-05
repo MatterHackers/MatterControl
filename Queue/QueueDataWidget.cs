@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
-				multiSelectionMenuItems.Add("Merge...");
+				multiSelectionMenuItems.Add("Merge".Localize() + "...");
 
 				CreateEditBarButtons();
 				leaveEditModeButton.Visible = false;
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				buttonPanel1.Padding = new BorderDouble(0, 3);
 				buttonPanel1.MinimumSize = new Vector2(0, 46);
 				{
-					addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), StaticData.Instance.LoadIcon("icon_plus.png", 32, 32));
+					addToQueueButton = textImageButtonFactory.Generate("Add".Localize(), StaticData.Instance.LoadIcon("icon_plus.png", 32, 32));
 					addToQueueButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Queue".Localize();
 					buttonPanel1.AddChild(addToQueueButton);
 					addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 					// put in the creator button
 					{
-						createButton = textImageButtonFactory.Generate(LocalizedString.Get("Create"), StaticData.Instance.LoadIcon("icon_creator.png", 32, 32));
+						createButton = textImageButtonFactory.Generate("Create".Localize(), StaticData.Instance.LoadIcon("icon_creator.png", 32, 32));
 						createButton.ToolTipText = "Choose a Create Tool to generate custom designs".Localize();
 						createButton.Name = "Design Tool Button";
 						buttonPanel1.AddChild(createButton);
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 					if (OemSettings.Instance.ShowShopButton)
 					{
-						shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 32,32));
+						shopButton = textImageButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 32,32));
 						shopButton.ToolTipText = "Shop online for printing materials".Localize();
 						shopButton.Name = "Buy Materials Button";
 						buttonPanel1.AddChild(shopButton);
@@ -240,14 +240,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 					queueMenu = new QueueOptionsMenu();
 					queueMenuContainer.AddChild(queueMenu.MenuDropList);
 					buttonPanel1.AddChild(queueMenuContainer);
-
-					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((object sender, EventArgs e) =>
-					{
-						queueMenuContainer.RemoveAllChildren();
-						// the printer changed reload the queueMenue
-						queueMenu = new QueueOptionsMenu();
-						queueMenuContainer.AddChild(queueMenu.MenuDropList);
-					}, ref unregisterEvents);
 				}
 				allControls.AddChild(buttonPanel1);
 			}
@@ -292,7 +284,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public delegate void SendButtonAction(object state, List<PrintItemWrapper> sendItems);
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public void CreateCopyInQueue()
 		{
@@ -766,7 +758,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			menuItems.Add(new PrintItemAction()
 			{
-				Title = "Add To Library".Localize(),
+				Title = "Add to Library".Localize(),
 				Action = (items, queueDataView) => addToLibraryButton_Click(null, null)
 			});
 

@@ -39,7 +39,6 @@ using System.Threading.Tasks;
 public class LicenseAgreementPage : WizardPage
 {
 	public LicenseAgreementPage()
-		: base("Cancel")
 	{
 		string eulaText = StaticData.Instance.ReadAllText("MatterControl EULA.txt").Replace("\r\n", "\n");
 

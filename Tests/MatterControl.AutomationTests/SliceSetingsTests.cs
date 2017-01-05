@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.WaitForName("Cancel Wizard Button", 1);
 
 				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
 				{

@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public ILibraryCreator SharedLibraryCreator { get; private set; }
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private List<ImageBuffer> folderImagesForChildren = new List<ImageBuffer>();
 

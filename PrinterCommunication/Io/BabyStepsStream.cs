@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
 using System.Text;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -55,13 +56,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				(moveAxis == PrinterConnectionAndCommunication.Axis.X) ? moveAmount : 0,
 				(moveAxis == PrinterConnectionAndCommunication.Axis.Y) ? moveAmount : 0,
 				(moveAxis == PrinterConnectionAndCommunication.Axis.Z) ? moveAmount : 0);
+
+			if(PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer == 1)
+			{
+				// store the offset
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, offsetStream.Offset.z.ToString());
+			}
 		}
 
 		public BabyStepsStream(GCodeStream internalStream)
 			: base(null)
 		{
 			maxLengthStream = new MaxLengthStream(internalStream, 1);
-			offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, 0));
+			double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+			var layerZOffset = new Vector3(0, 0, zOffset);
+			offsetStream = new OffsetStream(maxLengthStream, layerZOffset);
 			base.internalStream = offsetStream;
 		}
 

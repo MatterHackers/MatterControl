@@ -117,7 +117,7 @@
     "z_offset": "0",
     "make": "Airwolf 3D",
     "model": "v5.5",
-    "created_date": "7/19/2016 7:54:30 PM",
+    "created_date": "2016-10-07T16:47:39.237Z",
     "baud_rate": "250000",
     "default_material_presets": "ABS",
     "windows_driver": "MHSerial.inf",
@@ -125,18 +125,17 @@
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "ABS",
-      "filament_density":  "1.04",
+      "filament_density": "1.04",
       "layer_id": "4f60ea6e-6f6b-4c82-826c-fdff1fda1441",
       "first_layer_temperature": "240",
       "temperature": "240"
     },
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "f81c4cd1-dd5c-479d-94a3-bc1480d606ad",
       "first_layer_temperature": "205",
       "temperature": "205"

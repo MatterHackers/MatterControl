@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioButton scaleButton;
 		private RadioButton partSelectButton;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private int buttonHeight;
 

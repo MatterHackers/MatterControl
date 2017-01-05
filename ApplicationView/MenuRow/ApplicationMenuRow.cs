@@ -33,6 +33,8 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.AboutPage;
 using System;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -48,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 		LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		GuiWidget popUpAboutPage;
 
@@ -67,7 +69,10 @@ namespace MatterHackers.MatterControl
 			this.AddChild(new MenuOptionSettings());
 
 			// put in the help menu
-			this.AddChild(new MenuOptionMacros());
+			if (ActiveSliceSettings.Instance.ActionMacros().Any())
+			{
+				this.AddChild(new MenuOptionAction());
+			}
 
 			// put in the help menu
 			this.AddChild(new MenuOptionHelp());
@@ -75,7 +80,7 @@ namespace MatterHackers.MatterControl
 			//linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
 			linkButtonFactory.fontSize = 10;
 
-			Button updateStatusMessage = linkButtonFactory.Generate("Update Available");
+			Button updateStatusMessage = linkButtonFactory.Generate("Update Available".Localize());
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 			popUpAboutPage = new FlowLayoutWidget();
 			popUpAboutPage.Margin = new BorderDouble(30, 0, 0, 0);

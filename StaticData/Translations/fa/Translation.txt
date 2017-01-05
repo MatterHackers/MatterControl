@@ -1,0 +1,5832 @@
+English:Connect
+Translated:اتصال
+
+English:Disconnect
+Translated:قطع شدن
+
+English:Status
+Translated:وضعیت
+
+English:Connected
+Translated:متصل
+
+English:Not Connected
+Translated:متصل نیست
+
+English:Select Printer
+Translated:پرینتر را انتخاب کنید
+
+English:Options
+Translated:گزینه ها
+
+English:Next Print
+Translated:بعدی چاپ
+
+English:Add
+Translated:اضافه کردن
+
+English:Add a file to be printed
+Translated:اضافه کردن یک فایل برای چاپ
+
+English:Start
+Translated:شروع
+
+English:Begin printing the selected item.
+Translated:آغاز چاپ آیتم انتخاب شده است.
+
+English:Skip
+Translated:رفتن
+
+English:Skip the current item and move to the next in queue
+Translated:پرش آیتم فعلی و حرکت به بعدی در صف
+
+English:Remove
+Translated:برداشتن
+
+English:Remove current item from queue
+Translated:حذف آیتم در حال حاضر از صف
+
+English:Pause
+Translated:توقف
+
+English:Pause the current print
+Translated:توقف چاپ فعلی
+
+English:Cancel Connect
+Translated:لغو اتصال
+
+English:Stop trying to connect to the printer.
+Translated:توقف تلاش برای اتصال به چاپگر.
+
+English:Cancel
+Translated:لغو کردن
+
+English:Stop the current print
+Translated:توقف چاپ فعلی
+
+English:Resume
+Translated:ادامه
+
+English:Resume the current print
+Translated:رزومه چاپ فعلی
+
+English:Reprint
+Translated:چاپ جدید
+
+English:Print current item again
+Translated:چاپ آیتم در حال حاضر دوباره
+
+English:Done
+Translated:انجام شده
+
+English:Move to next print in queue
+Translated:انتقال به چاپ بعدی در صف
+
+English:No printer selected.  Press 'Connect' to choose a printer.
+Translated:هیچ چاپگر انتخاب شده است. "اتصال" را فشار دهید تا انتخاب پرینتر.
+
+English:Press 'Add' to choose an item to print
+Translated:مطبوعات "اضافه کردن" را انتخاب کنید یک آیتم به چاپ
+
+English:No items in the print queue
+Translated:هیچ آیتمی در صف چاپ
+
+English:Queued to Print
+Translated:در صف به چاپ
+
+English:View
+Translated:چشم انداز
+
+English:Copy
+Translated:نسخه
+
+English:Add to Queue
+Translated:افزودن به صف
+
+English:Export
+Translated:صادرات
+
+English:Est. Print Time
+Translated:EST. چاپ زمان
+
+English:Calculating...
+Translated:محاسبه ...
+
+English:complete
+Translated:تکمیل
+
+English:Remove All
+Translated:حذف همه
+
+English:Queue Options
+Translated:گزینه های صف
+
+English: Import from Zip
+Translated: واردات از فایل های فشرده
+
+English: Export to Zip
+Translated: صادرات به فایل های فشرده
+
+English: Export to Folder
+Translated: صادرات به پوشه
+
+English:Extra
+Translated:اضافی
+
+English: Create Part Sheet
+Translated: درست قسمت ورق
+
+English:Search
+Translated:جستجو کردن
+
+English:Import
+Translated:وارد كردن
+
+English:Create
+Translated:ايجاد كردن
+
+English:Check for Update
+Translated:برای چک کردن به روز رسانی
+
+English:Download Update
+Translated:دانلود به روز رسانی
+
+English:Install Update
+Translated:نصب به روز رسانی
+
+English:There are updates available.
+Translated:به روز رسانی در دسترس وجود دارد.
+
+English:Checking for updates...
+Translated:چک کردن برای به روز رسانی ...
+
+English:MatterControl
+Translated:MatterControl
+
+English:Version {0}
+Translated:نسخه {0}
+
+English:Developed by MatterHackers
+Translated:طراحی و توسعه توسط MatterHackers
+
+English:Please consider 
+Translated:لطفا در نظر داشته باشید
+
+English:donating
+Translated:اهدای
+
+English: to help support and improve MatterControl.
+Translated: برای کمک به پشتیبانی و بهبود MatterControl.
+
+English:Special thanks to Alessandro Ranellucci for his incredible work on 
+Translated:با تشکر ویژه از الساندرو Ranellucci برای کار باور نکردنی خود را در
+
+English:Slic3r
+Translated:Slic3r
+
+English:and to David Braam and Ultimaker BV, for the amazing 
+Translated:و به دیوید Braam و Ultimaker BV، برای شگفت انگیز
+
+English:CuraEngine
+Translated:CuraEngine
+
+English:Send Feedback
+Translated:ارسال فیدبک
+
+English:www.matterhackers.com
+Translated:www.matterhackers.com
+
+English:Copyright © 2014 MatterHackers, Inc.
+Translated:کپی رایت © 2014 MatterHackers، شرکت
+
+English:Build: {0} | 
+Translated:ساخت: {0} |
+
+English:Clear Cache
+Translated:پاک کردن حافظه پنهان
+
+English:Queue
+Translated:صف
+
+English:Rotate
+Translated:چرخش
+
+English:Scale
+Translated:مقیاس
+
+English:Mirror
+Translated:اینه
+
+English:Display
+Translated:نمایش دادن
+
+English:Show Print Bed
+Translated:نمایش صفحه چاپ
+
+English:Show Print Area
+Translated:نمایش منطقه چاپ
+
+English:Show Wireframe
+Translated:نمایش ورفرم
+
+English:Auto-Arrange
+Translated:خودکار ترتیب
+
+English:Save
+Translated:صرفه جویی
+
+English:Degrees
+Translated:درجه
+
+English:Align to Bed
+Translated:تراز به تختخواب
+
+English:Ratio
+Translated:نسبت
+
+English:Conversions
+Translated:تبدیل
+
+English:reset
+Translated:تنظیم مجدد
+
+English:Apply Scale
+Translated:درخواست مقیاس
+
+English:Finding Parts
+Translated:پیدا کردن قطعات
+
+English:Edit
+Translated:ویرایش
+
+English:Delete
+Translated:حذف
+
+English:Close
+Translated:نزدیک
+
+English:Generate
+Translated:تولید
+
+English:No GCode Available...
+Translated:بدون جی کد موجود ...
+
+English:Loading GCode...
+Translated:در حال بارگذاری ... جی کد
+
+English:Press 'generate' to view layers
+Translated:مطبوعات 'تولید' به مشاهده لایه های
+
+English:Model
+Translated:مدل
+
+English:Layer
+Translated:لایه
+
+English:Library
+Translated:کتابخانه
+
+English:About
+Translated:در باره
+
+English:Advanced\nControls
+Translated:پیشرفته\nکنترل
+
+English:Print\nQueue
+Translated:چاپ \ N صف
+
+English:Actual
+Translated:واقعی
+
+English:Target
+Translated:هدف
+
+English:Presets
+Translated:ایستگاه از پیش تنظیم
+
+English:Movement Controls
+Translated:کنترل حرکت
+
+English:ALL
+Translated:همه
+
+English:UNLOCK
+Translated:باز کردن قفل
+
+English:Retract
+Translated:جمع شدن
+
+English:Extrude
+Translated:بیرون آمدن
+
+English:Communications
+Translated:ارتباطات
+
+English:SHOW TERMINAL
+Translated:TERMINAL SHOW
+
+English:Fan Controls
+Translated:کنترل فن
+
+English:Fan Speed:
+Translated:سرعت فن:
+
+English:Macros
+Translated:ماکروها
+
+English:No macros are currently setup for this printer.
+Translated:بدون ماکروها در حال حاضر راه اندازی برای این چاپگر.
+
+English:Tuning Adjustment (while printing)
+Translated:تنظیم تنظیم (در حالی که چاپ)
+
+English:Speed Multiplier
+Translated:سرعت ضرب
+
+English:Set
+Translated:تنظیم
+
+English:Extrusion Multiplier
+Translated:اکستروژن ضرب
+
+English:Controls
+Translated:کنترل
+
+English:Slice Settings
+Translated:تنظیمات برش
+
+English:Show Help
+Translated:نمایش راهنما
+
+English:Show All Settings
+Translated:نمایش تمام تنظیمات
+
+English:Active Settings
+Translated:تنظیمات فعال
+
+English:unsaved changes
+Translated:تغییرات ذخیره نشده
+
+English:Revert
+Translated:برگشتن
+
+English:Options   
+Translated:گزینه ها
+
+English:Slice Engine
+Translated:تکه موتور
+
+English:No Printer Selected
+Translated:هیچ چاپگر انتخاب شده
+
+English:No printer is currently selected. Select printer to edit slice settings.
+Translated:چاپگری است در حال حاضر انتخاب شده است. انتخاب چاپگر برای ویرایش تنظیمات برش.
+
+English:Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
+Translated:تلاش برای به حداقل رساندن تعداد عبور از اقیانوس آرام. این می تواند با تراوش یا رشته کمک کند.
+
+English:The shape of the physical print bed.
+Translated:شکل بستر چاپ فیزیکی است.
+
+English:The size of the print bed.
+Translated:اندازه تخت قابل چاپ.
+
+English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
+Translated:درجه حرارت به مجموعه ای از تخت به پس از اولین لایه چاپ شده است. مجموعه را به 0 برای از بین بردن دستورات دمای بستر.
+
+English:How many layers will be solid filled on the bottom surfaces of the object.
+Translated:چگونه بسیاری از لایه های جامد را پر خواهد شد بر روی سطوح پایین از جسم.
+
+English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
+Translated:شتاب به طول پل زدن. مجموعه را به 0 برای غیر فعال کردن تغییر شتاب چاپگر.
+
+English:The fan speed to use during bridging.
+Translated:سرعت فن به طول پل زدن استفاده کنید.
+
+English:This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
+Translated:این نسبت اکسترودر مواد کنترل در طول پل زدن. کاهش این کمی می تواند کمک به پل زدن با کشش رشته بیشتر، با استفاده از فن همچنین می توانید تا حد زیادی کمک کند.
+
+English:The speed to move when bridging between walls.
+Translated:سرعت به حرکت زمانی که پل زدن بین دیوار.
+
+English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
+Translated:مقدار لبه خواهد شد که در اطراف هر جسم کشیده شده است. این بسیار مفید است به اطمینان حاصل شود که قطعات ضمیمه ماندن به تخت.
+
+English:The height of the printable area. If set to 0 the parts height will not be validated.
+Translated:ارتفاع منطقه قابل چاپ. اگر به 0 تنظیم ارتفاع قطعات خواهد اعتبار.
+
+English:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
+Translated:هر بخش فردی به اتمام چاپ سپس اکسترودر به تخت را کاهش داده و قسمت بعدی چاپ شده است.
+
+English:Moves the extruder up off the part to allow cooling.
+Translated:حرکت اکسترودر تا به خارج از بخش اجازه می دهد تا خنک کننده.
+
+English:Turns on and off all cooling settings (all settings below this one).
+Translated:روشن و خاموش تمام تنظیمات خنک کننده (تمام تنظیمات زیر این یکی).
+
+English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
+Translated:شتاب برای استفاده در تمام حرکت تعریف نشده بالا. مجموعه را به 0 برای غیر فعال کردن تغییر شتاب چاپگر.
+
+English:The number of layers for which the fan will be forced to remain off.
+Translated:تعداد لایه که فن مجبور خواهد شد به باقی مانده خارج.
+
+English:This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
+Translated:این جی کد خواهد شد در پایان از همه خروجی های اتوماتیک (پایان بسیار از دستورات جی کد) و وارد می شود.
+
+English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Perimeters speed.
+Translated:سرعت به چاپ لبه خارج قابل مشاهده است. این را می توان به صراحت و یا به عنوان یک درصد از سرعت محیطی تنظیم شده است.
+
+English:Normally external perimeters are printed last, this makes them go first.
+Translated:به طور معمول محیطی خارجی آخرین چاپ شده، این باعث می شود آنها را به اول است.
+
+English:Allow slicer to generate extra perimeters when needed for sloping walls.
+Translated:اجازه می دهد دستگاه برش برای تولید محیطی اضافی هنگامی که برای دیواره های شیب دار مورد نیاز است.
+
+English:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
+Translated:این استفاده می شود به شکل از چگونه دور قطعات از هم جدا فردی باید چاپ شود به آنها اجازه می دهد که قبل از چاپ بخش آینده تکمیل شود.
+
+English:This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+Translated:این است که به جبران هر اکسترودر نسبت به اکسترودر برای اولین بار. تنها مفید برای ماشین آلات اکسترودر های متعدد.
+
+English:This is the identifier used in the gcode to specify the extruder.
+Translated:این شناسه های مورد استفاده در جی کد برای مشخص کردن اکسترودر است.
+
+English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good min value) will decrease the amount being extruded.
+Translated:همه اکستروژن توسط این ارزش ضرب شده است. افزایش آن بالا 1 (1.1 یک مقدار حداکثر است) را افزایش می دهد مقدار رشته بودن اکسترود؛ کاهش آن (0.9 یک مقدار دقیقه خوب است) کاهش خواهد یافت مقدار بودن اکسترود.
+
+English:Leave this as 0 to allow automatic calculation of extrusion width.
+Translated:ترک این عنوان 0 تا اجازه محاسبه خودکار از عرض اکستروژن.
+
+English:This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.
+Translated:این فن را مجبور به در سراسر چاپ باقی مانده است. به طور کلی شما باید این را دارند و فقط فعال خنک کننده خودکار.
+
+English:If a layer is estimated to take less than this to print, the fan will be turned on.
+Translated:اگر یک لایه برآورد شده است را به کمتر از این به چاپ، فن روشن خواهد شد.
+
+English:This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
+Translated:این کار را باید به قطر واقعی از رشته شما با استفاده از در چاپگر خود را تنظیم کنید. اندازه گیری 5 بار با کالیپر، پرتاب از بالا و پایین و متوسط ​​3 باقی مانده است.
+
+English:Sets the starting angle of the infill. Not used when bridging.
+Translated:زاویه شروع از پر تنظیم می کند. استفاده می شود هنگام پوشش کف.
+
+English:The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
+Translated:نسبت مواد به فضای خالی محدوده 0 تا 1. صفر خواهد بود بدون پر. 1 پر جامد است.
+
+English:The pattern used on the inside portions of the print.
+Translated:الگوی مورد استفاده در بخش های داخل از چاپ.
+
+English:Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.
+Translated:شتاب به استفاده از در حالی که چاپ اولین لایه. مجموعه را به 0 به شتاب به طور پیش فرض اولین لایه.
+
+English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
+Translated:درجه حرارت به مجموعه ای از تخت به قبل از چاپ اولین لایه. چاپگر صبر کنید تا این درجه حرارت شده است قبل از چاپ رسیده است. مجموعه را به 0 برای از بین بردن دستورات دمای بستر.
+
+English:Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.
+Translated:تنظیم این گزینه به بیشتر از 100٪ اغلب می تواند کمک به اولین لایه چسبندگی بهتر به رختخواب چاپ.
+
+English:Sets the height of the first layer. It is often desirable to print a taller first layer to ensure a good solid adhesion to the build plate.
+Translated:ارتفاع لایه اول تنظیم می کند. این است که اغلب مطلوب برای چاپ یک لایه اول بلندتر برای اطمینان از چسبندگی جامد خوب به صفحه ساخت.
+
+English:The speed to move while printing the first layer.  If expressed as a percentage it will modify the corresponding speed set above.
+Translated:سرعت به حرکت در حالی که چاپ اولین لایه. اگر به صورت درصد بیان آن را به سرعت مربوطه در بالا تغییر دهید.
+
+English:The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
+Translated:درجه حرارت به مجموعه ای از اکسترودر که قبل از چاپ اولین لایه از یک بخش. چاپگر صبر کنید تا این درجه حرارت شده است قبل از چاپ رسیده است.
+
+English:Use G0 for moves rather than G1.
+Translated:استفاده از G0 برای حرکت به جای G1.
+
+English:Speed to fill small gaps. Keep low to avoid vibration. Set to 0 to skip filling small gaps.
+Translated:سرعت برای پر کردن شکاف کوچک است. پایین نگه می دارد برای جلوگیری از لرزش. مجموعه را به 0 به جست و خیز پر کردن شکاف کوچک است.
+
+English:Use firmware arcs rather than multiple segments for curves.
+Translated:استفاده از کمان سیستم عامل به جای بخش های مختلف برای منحنی.
+
+English:Include detailed comments in the gcode.
+Translated:شامل نظرات دقیق در جی کد.
+
+English:Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.
+Translated:برخی از سیستم عامل استفاده G و M کدهای مختلف. تنظیم این تضمین می کند که جی کد خروجی دستورات صحیح استفاده کنید.
+
+English:Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.
+Translated:شتاب برای استفاده در حالی infilling. مجموعه را به 0 برای غیر فعال کردن تغییر شتاب چاپگر.
+
+English:Sets which layers will receive infill. This should normally stay set to 1 to make strong parts.
+Translated:مجموعه ای که لایه های پر دریافت خواهید کرد. این به طور معمول باید باقی بماند تا 1، مجموعه را به قطعات قوی.
+
+English:The index of the extruder to use for infill.
+Translated:شاخص از اکسترودر برای استفاده از پنل.
+
+English:Sets infill to happen before perimeters are created.
+Translated:مجموعه ای پر اتفاق می افتد قبل محیطی ایجاد می کند.
+
+English:Creates infill only where it will be used as internal support.
+Translated:ایجاد پنل تنها جایی که آن را به عنوان پشتیبانی داخلی استفاده می شود.
+
+English:The speed to print infill.
+Translated:سرعت به چاپ پر.
+
+English:This gcode will be inserted right after the change in z height for the next layer.
+Translated:این جی کد خواهد شد درست بعد از تغییر در ارتفاع z برای لایه بعدی وارد می شود.
+
+English:Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.
+Translated:ارتفاع هر لایه از چاپ را تنظیم میکند. تعداد کمتری به لایه های بیشتر و دقت عمودی تر است، بلکه چاپ آهسته تر ایجاد کنید.
+
+English:This is the maximum speed that your fan can run at.
+Translated:این حداکثر سرعت که طرفداران خود را می توانید در اجرا می باشد.
+
+English:This is the minimum amount of filament that must be extruded before a rectarction can occure.
+Translated:این حداقل مقدار رشته است که باید خارج شود قبل از rectarction می توانید بروز است.
+
+English:This is the minimum fan speed that your fan can run at.
+Translated:این حداقل سرعت فن که طرفداران خود را می توانید در اجرا می باشد.
+
+English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the min layer time.
+Translated:این حداقل سرعت که چاپگر را کاهش می دهد به به لایه را به اندازه کافی بلند برای برآوردن زمان دقیقه لایه است.
+
+English:Sets the minimum amount of filament to use drawing the skirt loops. This will cause at least enough skirt loops to be drawn to use this amount of filament.
+Translated:مجموعه حداقل مقدار رشته به استفاده از رسم حلقه دامن. این دامن باعث می شود حداقل به اندازه کافی حلقه کشیده می شود برای استفاده از این مقدار رشته.
+
+English:These notes will be added as comments in the header of the output gcode.
+Translated:این یادداشت ها به عنوان نظر در هدر از جی کد خروجی اضافه شده است.
+
+English:This is the diameter of your extruder nozle.
+Translated:این قطر nozle اکسترودر شما است.
+
+English:Prevents retraction while within a printing perimeter.
+Translated:جلوگیری از جمع شدن در حالی که در یک محیط چاپ.
+
+English:This will lower the temperature of the non-printing extruder to help prevent oozing.
+Translated:این درجه حرارت از اکسترودر غیر چاپ پایین تر به کمک به جلوگیری از تراوش.
+
+English:Experimental feature that attempts to improve overhangs using the fan and bridge settings.
+Translated:از ویژگی های تجربی است که تلاش برای بهبود برآمدگی با استفاده از فن و پل تنظیمات.
+
+English:Sets the way that slicer creates file names (this is not used by MatterControl).
+Translated:راه که برش نام فایل ایجاد (این امر با MatterControl استفاده نمی شود) تنظیم می کند.
+
+English:Acceleration to use on perimeters. Set to 0 to disable changing the printer's acceleration.
+Translated:شتاب به استفاده از در محیطی. مجموعه را به 0 برای غیر فعال کردن تغییر شتاب چاپگر.
+
+English:The index of the extruder to use for perimeters.
+Translated:شاخص از اکسترودر برای استفاده از محیطی.
+
+English:Sets the default movement speed while printing perimeters.
+Translated:مجموعه سرعت حرکت به طور پیش فرض در حالی که چاپ محیطی.
+
+English:The number of external layers or shells to create.
+Translated:تعداد لایه های خارجی و یا پوسته برای ایجاد.
+
+English:You can include additional programs to process the gcode after slicer is finished. The complete path of the program to run should be included here.
+Translated:شما می توانید برنامه های اضافی برای پردازش جی کد پس از برش به پایان رسید شامل. مسیر کامل از برنامه به اجرا در اینجا باید گنجانده شده است.
+
+English:The position (coordinates) of the center of the print bed.
+Translated:موقعیت (مختصات) از مرکز بستر قابل چاپ.
+
+English:Number of layers to print before printing any parts.
+Translated:تعداد لایه به چاپ قبل از چاپ هر قسمت.
+
+English:Start each new layer from a different vertex to reduce seams.
+Translated:شروع هر لایه جدید از یک راس مختلف به منظور کاهش درزهای.
+
+English:The minimum distance of a non-printing move that will result in a retraction.
+Translated:حداقل فاصله از یک حرکت غیر چاپ که در یک جمع خواهد شد.
+
+English:If set, a retraction will occur prior to changing the layer height.
+Translated:اگر تعیین شود، یک بازپس قبل از تغییر ارتفاع لایه رخ خواهد داد.
+
+English:The amount that the filament will be reversed after each qualifying non-printing move.
+Translated:مقدار که رشته خواهد شد بعد از هر مقدماتی حرکت غیر چاپ معکوس شود.
+
+English:The amount that the filament will be reversed before changing to a new tool.
+Translated:مقدار که رشته خواهد شد قبل از تغییر به یک ابزار جدید معکوس شود.
+
+English:The amount the extruder head will be lifted after each retraction.
+Translated:مقدار سر اکسترودر خواهد شد بعد از هر انقباض برداشته شده است.
+
+English:The amount the filament will be retracted when changing to a different extruder.
+Translated:مقدار رشته در هنگام تغییر به یک اکسترودر مختلف جمع خواهد شد.
+
+English:No updates are currently available.
+Translated:بدون به روز رسانی در حال حاضر در دسترس است.
+
+English:Additional amount of filament that will be extruded after a retraction.
+Translated:مقدار اضافی از رشته خواهد شد که پس از یک جمع اکسترود.
+
+English:The amount of extra extrusion that will occur when an extruder is selected.
+Translated:مقدار اکستروژن اضافی که رخ خواهد داد که یک اکسترودر انتخاب شده است.
+
+English:The speed that the filament will be retracted (and re-extruded).
+Translated:سرعت که رشته جمع خواهد شد (و دوباره اکسترود شده).
+
+English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
+Translated:حداقل اندازه از ویژگی های به در نظر گرفتن از مدل. ترک در 0 به استفاده از تمام جزئیات مدل.
+
+English:The distance to start drawing the first skirt loop.
+Translated:فاصله برای شروع به کشیدن اولین حلقه دامن.
+
+English:The number of layers to draw the skirt.
+Translated:تعداد لایه را به منظور جلب دامن.
+
+English:The number of loops to draw around all the parts on the bed.
+Translated:تعداد حلقه ها به منظور جلب اطراف تمام قطعات روی تخت.
+
+English:If a layer is estimated to take less than this to print, the movement speed will be reduced to try and make the layer take this long to print.
+Translated:اگر یک لایه برآورد شده است را به کمتر از این به چاپ، سرعت حرکت کاهش خواهد یافت که سعی کنید و لایه این طولانی برای چاپ.
+
+English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
+Translated:مورد استفاده برای محیط های کوچک (معمولا سوراخ). این را می توان به صراحت یا به عنوان یک درصد از سرعت محیطی، تنظیم شده است.
+
+English:The pattern used on the bottom and top layers of the print.
+Translated:الگوی مورد استفاده در لایه های پایین و بالای چاپ.
+
+English:Forces solid infill for any area less than this amount.
+Translated:نیروهای پر جامد برای هر منطقه کمتر از این مقدار است.
+
+English:Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.
+Translated:مجموعه چگونه اغلب یک لایه مجبور خواهد شد به جامد از رسوب پر. صفر در پنل عادی در سراسر منجر خواهد شد.
+
+English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
+Translated:سرعت به چاپ پر که به طور کامل جامد است. این را می توان به صراحت یا به عنوان یک درصد از سرعت میانقاب تنظیم شده است.
+
+English:Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.
+Translated:نیروی چاپ به تنها یک لایه و به تدریج ارتفاع اکسترودر در طول چاپ را افزایش دهد. تنها یک بخش می توان در یک زمان با این ویژگی چاپ شده است.
+
+English:This is the amount to lower the temperature of an extruder that is not currently printing.
+Translated:این مقدار برای کاهش درجه حرارت از یک اکسترودر که در حال حاضر چاپ شده است.
+
+English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].
+Translated:این جی کد خواهد شد را به خروجی سمت راست پس از تنظیم درجه حرارت را قرار داده است. اگر شما دستورات را به مجموعه ای دما در این بخش آنها را در خارج از این بخش تولید نخواهد شد. شما همچنین می توانید مقادیر را از تنظیمات دیگر مانند [first_layer_temperature].
+
+English:Make sure the first point on a perimeter is a concave point.
+Translated:اطمینان حاصل کنید که اولین نقطه در محیط یک نقطه مقعر است.
+
+English:Make sure the first point on a perimeter is not an overhang.
+Translated:اطمینان حاصل کنید که نقطه برای اولین بار در یک محیط است برآمدگی است.
+
+English:The starting angle of the supports.
+Translated:زاویه شروع حمایت.
+
+English:Create support where needed on internal features.
+Translated:درست پشتیبانی که در آن در مورد ویژگی های داخلی مورد نیاز است.
+
+English:Generate support material everywhere not touching the bed for n layers, regardless of angle.
+Translated:تولید مواد پشتیبانی در همه جا دست زدن را از تخت برای n لایه ها، بدون در نظر گرفتن زاویه.
+
+English:The index of the extruder to use for support material.
+Translated:شاخص از اکسترودر برای استفاده از مواد پشتیبانی می کند.
+
+English:The index of the extruder to use for support material interface layers.
+Translated:شاخص از اکسترودر برای استفاده از پشتیبانی لایه رابط مواد.
+
+English:The number of layers to print between the supports and the part.
+Translated:تعداد لایه به چاپ بین حمایت و بخشی.
+
+English:The space between lines of the interface layers (0 is solid).
+Translated:فضای بین خطوط از لایه های رابط (0 جامد است).
+
+English:The pattern used while generating support material.
+Translated:الگوی استفاده در حالی که تولید مواد پشتیبانی می کند.
+
+English:The space between the lines of he support material.
+Translated:فضای بین خطوط او مواد پشتیبانی می کند.
+
+English:The speed to print support material structures.
+Translated:سرعت به چاپ پشتیبانی ساختارهای مادی.
+
+English:The last angle at which support material will be generated. Larger numbers will result in more support. Set to 0 to enable automatic settings.
+Translated:زاویه گذشته در که حمایت مادی ایجاد خواهد شد. اعداد بزرگتر در حمایت بیشتر منجر خواهد شد. مجموعه را به 0 به فعال کردن تنظیمات به صورت خودکار.
+
+English:The distance the support material will be from the object in the x and y direction.
+Translated:فاصله مواد پشتیبانی از شی در x و y جهت باشد.
+
+English:The distance the support material will be from the object in the z direction.
+Translated:فاصله مواد پشتیبانی خواهد از جسم در جهت z باشد.
+
+English:This turns on and off the generation of support material.
+Translated:این روشن و خاموش نسل از مواد پشتیبانی می کند.
+
+English:The temperature to set the extruder to after the first layer has been printed.
+Translated:درجه حرارت به مجموعه ای از اکسترودر پس از لایه اول چاپ شده است.
+
+English:Detect when walls are too close together and need to be extruded as just one wall.
+Translated:تشخیص زمانی که دیوار بیش از حد به هم نزدیک هستند و نیاز به فقط به عنوان یک دیوار اکسترود شود.
+
+English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
+Translated:تعداد هسته های پردازنده به استفاده از در حالی که انجام برش. افزایش این می تواند کاهش سرعت ماشین خود را.
+
+English:This gcode will be inserted after every tool change.
+Translated:این جی کد خواهد شد پس از هر تغییر ابزار وارد می شود.
+
+English:The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
+Translated:سرعت به چاپ پر بالا. این را می توان به صراحت یا به عنوان یک درصد از سرعت میانقاب تنظیم شده است.
+
+English:How many layers will be solid filled on the top surfaces of the object.
+Translated:چگونه بسیاری از لایه خواهد شد جامد بر روی سطوح بالای جسم پر شده است.
+
+English:Speed to move when not extruding material.
+Translated:سرعت به حرکت زمانی که مواد اکسترودر نیست.
+
+English:Request the firmware to do retractions rather than specify the extruder movements directly.
+Translated:درخواست پاسخ به سیستم عامل به انجام تکذیب جای مشخص جنبش اکسترودر به طور مستقیم.
+
+English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
+Translated:به طور معمول شما می خواهید به استفاده و فاصله مطلق است. فقط این را بررسی کنید اگر شما می دانید چاپگر شما نیاز فواصل E نسبی.
+
+English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
+Translated:این است برای کمک به کاهش ارتعاشات در طول چاپ. اگر چاپگر شما دارای یک فرکانس رزونانس است که باعث دردسر شما می توانید این مجموعه را امتحان کنید و کاهش چاپ که در آن فرکانس.
+
+English:This will cause the extruder to move while retracting to minimize blobs.
+Translated:این باعث می شود اکسترودر به حرکت در حالی که برای به حداقل رساندن جمع حباب.
+
+English:This value will be added to all of the z positions of the created gcode.
+Translated:این مقدار را به همه از موقعیت Z از جی کد ایجاد اضافه شده است.
+
+English:Print
+Translated:چاپ
+
+English:Layers/Perimeters
+Translated:لایه / محیطی
+
+English:Layer Height
+Translated:لایه قد
+
+English:Perimeters (minimum)
+Translated:محیطی (حداقل)
+
+English:Vertical Shells
+Translated:غرق عمودی
+
+English:Infill
+Translated:میانقاب
+
+English:Fill Density
+Translated:پر تراکم
+
+English:Fill Pattern
+Translated:الگوی پر
+
+English:Support Material
+Translated:حمایت مادی
+
+English:Generate Support Material
+Translated:تولید مواد پشتیبانی
+
+English:Filament
+Translated:رشته
+
+English:Diameter
+Translated:قطر
+
+English:Extrude First Layer
+Translated:اولین لایه اکسترود
+
+English:Extruder Other Layers
+Translated:اکسترودر لایه های دیگر
+
+English:Bed First Layer
+Translated:اولین لایه تخت
+
+English:Bed Other Layers
+Translated:تخت لایه های دیگر
+
+English:Temperature (�C)
+Translated:دما (C)
+
+English:Cooling
+Translated:خنک سازی
+
+English:Enable Auto Cooling
+Translated:فعال کردن خنک کننده خودرو
+
+English:Enable
+Translated:قادر ساختن
+
+English:Printer
+Translated:چاپگر
+
+English:General
+Translated:عمومی
+
+English:Bed Size
+Translated:اندازه تخت خواب
+
+English:Print Center
+Translated:مرکز چاپ
+
+English:Build Height
+Translated:ساخت قد
+
+English:Size and Coordinates
+Translated:اندازه و مختصات
+
+English:Extruder 1
+Translated:اکسترودر 1
+
+English:Nozzle Diameter
+Translated:قطر نازل
+
+English:Size
+Translated:اندازه
+
+English:Configuration
+Translated:پیکر بندی
+
+English:EEProm Settings
+Translated:تنظیمات EEPROM
+
+English:CONFIGURE
+Translated:پیکربندی
+
+English:Automatic Calibration
+Translated:کالیبراسیون اتوماتیک
+
+English:ENABLE
+Translated:فعال کردن
+
+English:DISABLE
+Translated:غیر فعال کردن
+
+English:Enable Automatic Print Leveling
+Translated:فعال کردن تسطیح چاپ خودکار
+
+English:Automatic Print Leveling (disabled)
+Translated:چاپ خودکار تسطیح (غیر فعال)
+
+English:Extruder Temperature
+Translated:دما اکسترودر
+
+English:View Manual Printer Controls and Slicing Settings
+Translated:نمایش کنترل پرینتر و تنظیمات برش
+
+English:View Queue and Library
+Translated:مشاهده صف و کتابخانه
+
+English:Bed Temperature
+Translated:دمای بستر
+
+English:This gcode will be inserted when the print is canceled.
+Translated:این جی کد خواهد شد قرار داده زمانی که چاپ لغو می شود.
+
+English:This gcode will be inserted when the printer is paused.
+Translated:این جی کد خواهد شد قرار داده وقتی که چاپگر متوقف شده است.
+
+English:This gcode will be inserted when the printer is resumed.
+Translated:این جی کد خواهد شد قرار داده وقتی که چاپگر سر گرفته است.
+
+English:Print Time
+Translated:چاپ زمان
+
+English:Filament Length
+Translated:طول رشته
+
+English:Filament Volume
+Translated:رشته دوره
+
+English:Weight
+Translated:وزن
+
+English:Show Grid
+Translated:نمایش شبکه
+
+English:Show Moves
+Translated:نمایش حرکت
+
+English:Show Retractions
+Translated:نمایش بازپسگیریها
+
+English:Go
+Translated:رفتن
+
+English:start:
+Translated:شروع:
+
+English:end:
+Translated:پایان:
+
+English:There is a recommended update available.
+Translated:یک به روز رسانی توصیه می شود در دسترس است.
+
+English:Layer View
+Translated:لایه نمایش
+
+English:Connect to Printer
+Translated:اتصال به پرینتر
+
+English:Choose a 3D Printer Configuration
+Translated:انتخاب پیکربندی چاپگر 3D
+
+English:Unavailable
+Translated:در دسترس نیست
+
+English:Refresh
+Translated:تازه کردن
+
+English:Automatic Print Leveling (enabled)
+Translated:چاپ خودکار تسطیح (فعال)
+
+English:Connecting
+Translated:برقراری ارتباط
+
+English:Status: {0} - {1}
+Translated:وضعیت: {0} - {1}
+
+English:edit
+Translated:ویرایش
+
+English:remove
+Translated:برداشتن
+
+English:Printer Name
+Translated:نام چاپگر
+
+English:(refresh)
+Translated:(تازه کردن)
+
+English:Serial Port
+Translated:درگاه سریال
+
+English:Baud Rate
+Translated:علامت در ثانیه نرخ
+
+English:Other
+Translated:دیگر
+
+English:Printer Make
+Translated:چاپ این مطلب
+
+English:Printer Model
+Translated:مدل چاپگر
+
+English:Auto Connect
+Translated:اتصال خودکار
+
+English:Preparing To Print
+Translated:آمادهسازی برای چاپ
+
+English:Preparing to slice model
+Translated:آماده سازی برای بریدن مدل
+
+English:Printing
+Translated:چاپ
+
+English:Filter Output
+Translated:خروجی فیلتر
+
+English:Auto Uppercase
+Translated:خودرو حروف بزرگ
+
+English:Send
+Translated:ارسال
+
+English:MatterControl - Terminal
+Translated:MatterControl - ترمینال
+
+English:First Layer Height
+Translated:نخست ارتفاع لایه
+
+English:Spiral Vase
+Translated:اسپیرال گلدان
+
+English:Number of Solid Layers\non the Top:
+Translated:تعداد لایه جامد را\nدر بالا:
+
+English:Number of Solid Layers\non the Bottom:
+Translated:تعداد لایه جامد را\nدر پایین:
+
+English:Horizontal Shells
+Translated:غرق افقی
+
+English:Speed
+Translated:سرعت
+
+English:Perimeters
+Translated:محیطی
+
+English:Speed for Print Moves
+Translated:سرعت برای حرکت چاپ
+
+English:Travel
+Translated:مسافرت رفتن
+
+English:Speed for non Print Moves
+Translated:سرعت برای حرکت غیر چاپ
+
+English:First Layer Speed
+Translated:اول سرعت لایه
+
+English:Modifiers
+Translated:اصلاح
+
+English:Skirt and Brim
+Translated:دامن و لبش
+
+English:Loops
+Translated:حلقه
+
+English:Distance from Object
+Translated:فاصله از شی
+
+English:Minimum Extrusion Length
+Translated:حداقل طول اکستروژن
+
+English:Skirt
+Translated:دامن
+
+English:Overhang Threshold
+Translated:آستانه برآمدگی
+
+English:Pattern Spacing
+Translated:فاصله الگوی
+
+English:X and Y Distance
+Translated:X و Y فاصله
+
+English:Z Distance
+Translated:Z فاصله
+
+English:Internal Support
+Translated:پشتیبانی داخلی
+
+English:Notes
+Translated:یادداشت
+
+English:Output Options
+Translated:گزینه های خروجی
+
+English:Multiple Extruders
+Translated:اکسترودر چند
+
+English:Advanced
+Translated:پیشرفته
+
+English:Enable Extruder Lift
+Translated:فعال کردن اکسترودر آسانسور
+
+English:Min Fan Speed
+Translated:حداقل سرعت فن
+
+English:Max Fan Speed
+Translated:حداکثر سرعت فن
+
+English:Disable Fan For The First
+Translated:غیر فعال کردن فن برای اولین
+
+English:Fan Speed
+Translated:سرعت فن
+
+English:Slow Down If Layer Print\nTime Is Below
+Translated:کم کردن سرعت اگر لایه چاپ\nزمان در زیر
+
+English:Cooling Thresholds
+Translated:آستانه خنک کننده
+
+English:Bed Shape
+Translated:تختخواب شکل
+
+English:Custom G-Code
+Translated:سفارشی G-کد
+
+English:Start G-Code
+Translated:شروع G-کد
+
+English:End G-Code
+Translated:پایان G-کد
+
+English:Length
+Translated:طول
+
+English:Minimum Travel After\nRetraction
+Translated:حداقل سفر پس از \ N جمع
+
+English:Min Extrusion
+Translated:حداقل اکستروژن
+
+English:Retraction
+Translated:انقباض
+
+English:Generate Extra Perimeters\nWhen Needed:
+Translated:تولید محیطی فوق العاده است\nزمانی که مورد نیاز:
+
+English:Avoid Crossing Perimeters
+Translated:اجتناب از عبور از محیطی
+
+English:Start At Concave Points
+Translated:شروع در نقاط مقعر
+
+English:Start At Non Overhang
+Translated:شروع در غیر اورهنگ
+
+English:Thin Walls
+Translated:دیواره های نازک
+
+English:Quality (slower slicing)
+Translated:کیفیت (برش کندتر)
+
+English:Randomize Starting Points
+Translated:نقطه شروع تصادفی
+
+English:External Perimeters First
+Translated:خارجی محیطی نخست
+
+English:Top/Bottom Fill Pattern
+Translated:بالا / پایین الگوی پر
+
+English:Infill Every
+Translated:میانقاب هر
+
+English:Only Infill Where Needed
+Translated:فقط میانقاب در آن مورد نیاز
+
+English:Solid Infill Every
+Translated:جامد میانقاب هر
+
+English:Fill Angle
+Translated:پر زاویه
+
+English:Solid Infill Threshold Area
+Translated:میانقاب جامد ناحیه آستانه
+
+English:Only Retract When\nCrossing Perimeters
+Translated:فقط پسگرفتن را\nعبور محیطی
+
+English:Do Infill Before Perimeters
+Translated:آیا میانقاب قبل محیطی
+
+English:Small Perimeters
+Translated:محیطی کوچک
+
+English:External Perimeters
+Translated:محیطی خارجی
+
+English:Solid Infill
+Translated:میانقاب جامد
+
+English:Top Solid Infill
+Translated:میانقاب جامد بالا
+
+English:Bridges
+Translated:پل ها
+
+English:Gap Fill
+Translated:پر کردن شکاف
+
+English:Min Print Speed
+Translated:حداقل سرعت چاپ
+
+English:Bridge
+Translated:پل
+
+English:First Layer
+Translated:اولین لایه
+
+English:Default
+Translated:به طور پیش فرض
+
+English:Acceleration Control
+Translated:کنترل شتاب
+
+English:Skirt Height
+Translated:دامن قد
+
+English:Brim Width
+Translated:لبه عرض
+
+English:Brim
+Translated:لبه
+
+English:Enforce Support For First
+Translated:اجرای پشتیبانی برای اولین
+
+English:Raft Layers
+Translated:لایه قایق
+
+English:Raft
+Translated:قایق
+
+English:Pattern
+Translated:الگو
+
+English:Pattern Angle
+Translated:زاویه الگوی
+
+English:Interface Layers
+Translated:لایه رابط
+
+English:Interface Pattern Spacing
+Translated:رابط فاصله الگو
+
+English:Complete Individual Objects
+Translated:اشیاء فردی کامل
+
+English:Extruder Clearance Height
+Translated:اکسترودر ترخیص کالا از ارتفاع
+
+English:Extruder Clearance Radius
+Translated:شعاع اکسترودر ترخیص کالا
+
+English:Sequential Printing
+Translated:چاپ متوالی
+
+English:Verbose G-Code
+Translated:طولانی G-کد
+
+English:Output File Name Format
+Translated:خروجی نام فایل فرمت
+
+English:Output File
+Translated:فایل خروجی
+
+English:Post-Processing Scripts
+Translated:اسکریپت پس از پردازش
+
+English:Perimeter Extruder
+Translated:محیط اکسترودر
+
+English:Infill Extruder
+Translated:پر اکسترودر
+
+English:Support Material Extruder
+Translated:حمایت مادی اکسترودر
+
+English:Support Interface Extruder
+Translated:پشتیبانی رابط اکسترودر
+
+English:Extruders
+Translated:اکسترودر
+
+English:Temp Lower Amount
+Translated:دما مقدار پایین تر
+
+English:Ooze Prevention
+Translated:پیشگیری تراوش
+
+English:Default Extrusion Width
+Translated:به طور پیش فرض اکستروژن عرض
+
+English:Extrusion Width
+Translated:اکستروژن عرض
+
+English:Bridge Flow Ratio
+Translated:نسبت پل جریان
+
+English:Flow
+Translated:جریان
+
+English:Threads
+Translated:موضوعات
+
+English:Resolution
+Translated:وضوح
+
+English:Extrusion Axis
+Translated:اکستروژن محور
+
+English:Optimize Overhangs
+Translated:بهینه سازی برآمدگی
+
+English:Keep Fan Always On
+Translated:حفظ فن همیشه در
+
+English:Bridging Fan Speed
+Translated:پل زدن سرعت فن
+
+English:Enable Fan If Layer\nPrint Time Is Below
+Translated:فعال کردن فن اگر لایه است\nچاپ زمان در زیر
+
+English:Z Offset
+Translated:Z افست
+
+English:G-Code Flavor
+Translated:G-کد طعم
+
+English:Use Relative E Distances
+Translated:استفاده از نسبی E فاصله
+
+English:Use Arcs
+Translated:استفاده از کمان
+
+English:Use G0
+Translated:استفاده از G0
+
+English:Firmware
+Translated:سیستم عامل
+
+English:Use Firmware Retraction
+Translated:استفاده از نرم افزار جمع
+
+English:Vibration Limit
+Translated:حد لرزش
+
+English:Layer Change G-Code
+Translated:لایه را تغییر دهید G-کد
+
+English:Tool Change G-Code
+Translated:ابزار تغییر G-کد
+
+English:Pause G-Code
+Translated:مکث G-کد
+
+English:Resume G-Code
+Translated:رزومه G-کد
+
+English:Cancel G-Code
+Translated:لغو G-کد
+
+English:Extruder Offset
+Translated:اکسترودر افست
+
+English:Position (for multi-extrude printers)
+Translated:(برای پرینتر های چند اکسترود)
+
+English:Change Tool
+Translated:تغییر ابزار
+
+English:Z Lift
+Translated:Z آسانسور
+
+English:Extra Length On Restart
+Translated:طول اضافی در راه اندازی مجدد
+
+English:Retract on Layer Change
+Translated:جمع در لایه تغییر
+
+English:Wipe Before Retract
+Translated:پاک کردن قبل از جمع
+
+English:Retraction When Tool is Disabled (for multi-extruders)
+Translated:جمع زمانی که ابزار غیر فعال است (برای چند اکسترودر)
+
+English:Paused
+Translated:مکث
+
+English:Printing Paused
+Translated:چاپ متوقف
+
+English:Ok
+Translated:خوب
+
+English:Finished Print
+Translated:در دست اجرا چاپ
+
+English:Done Printing
+Translated:چاپ انجام
+
+English:Save As
+Translated:ذخیره به عنوان
+
+English:Installed Plugins
+Translated:پلاگین های نصب شده
+
+English:Select a Design Tool
+Translated:یک ابزار طراحی را انتخاب کنید
+
+English:Temperature (C)
+Translated:دما (C)
+
+English:Language Settings
+Translated:تنظیمات زبان
+
+English:Select Model
+Translated:انتخاب مدل
+
+English:Theme Settings
+Translated:تنظیمات پوسته
+
+English:New updates are ready to install.
+Translated:به روز رسانی جدید آماده نصب می باشد.
+
+English:Select Language
+Translated:زبان را انتخاب کنید
+
+English:File not found on disk.
+Translated:فایل بر روی دیسک یافت نشد.
+
+English:Not connected. Press 'Connect' to enable printing.
+Translated:متصل نیست. "اتصال" را فشار دهید تا امکان چاپ کردن.
+
+English:Loading Parts
+Translated:در حال بارگذاری قطعات
+
+English:CONNECT
+Translated:CONNECT
+
+English:DISCONNECT
+Translated:قطع شدن
+
+English:OPTIONS
+Translated:گزینه ها
+
+English:QUEUE
+Translated:صف
+
+English:STATUS
+Translated:وضعیت
+
+English:CONTROLS
+Translated:کنترل
+
+English:SLICE SETTINGS
+Translated:تنظیمات SLICE
+
+English:CONFIGURATION
+Translated:CONFIGURATION
+
+English:MODEL
+Translated:مدل
+
+English:LAYER
+Translated:LAYER
+
+English:DISPLAY
+Translated:نمایش دادن
+
+English:PRINT TIME
+Translated:زمان چاپ
+
+English:FILAMENT LENGTH
+Translated:طول رشته
+
+English:FILAMENT VOLUME
+Translated:VOLUME رشته
+
+English:WEIGHT
+Translated:وزن
+
+English:EST. WEIGHT
+Translated:EST. وزن
+
+English:Saving
+Translated:صرفه جویی در
+
+English:Export File
+Translated:صادرات فایل
+
+English:File export options
+Translated:فایل گزینه های صادرات
+
+English:Export as
+Translated:صادرات به عنوان
+
+English:Show file in folder after save
+Translated:نمایش فایل در پوشه پس از صرفه جویی
+
+English:HISTORY
+Translated:تاریخ
+
+English:LIBRARY
+Translated:کتابخانه
+
+English:Developed By: 
+Translated:توسعه یافته توسط:
+
+English: to help support MatterControl.
+Translated: برای کمک به پشتیبانی MatterControl.
+
+English:ABOUT
+Translated:در باره
+
+English:Oops! Could not find this file
+Translated:اوه! آیا این فایل را پیدا کند
+
+English:Would you like to remove it from the queue
+Translated:دوست دارید به آن را حذف از صف
+
+English:Item not Found
+Translated:موردی یافت نشد
+
+English:Yes
+Translated:بله
+
+English:No
+Translated:خیر
+
+English:History
+Translated:تاریخ
+
+English:Slicing Error. Please review your slice settings.
+Translated:خطا برش. لطفا تنظیمات قطعه خود را بررسی می کند.
+
+English:Quality
+Translated:کیفیت
+
+English:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:نخست ارتفاع لایه قطر نازل '' باید کمتر از یا برابر با باشد.
+
+English:This will cause the print to be centered on the bed. Disable this if you know your models have been created where you want them to print.
+Translated:این باعث می شود چاپ به روی تخت متمرکز شده است. غیر فعال کردن این اگر شما می دانید مدل های خود را ساخته شده است که در آن شما می خواهید آنها را چاپ کنید.
+
+English:Center On Bed
+Translated:مرکز در بستر
+
+English:Center Print
+Translated:مرکز چاپ
+
+English:Note
+Translated:توجه داشته باشید
+
+English:To enable GCode export, select a printer profile.
+Translated:برای فعال کردن صادرات جی کد، یک پروفایل چاپگر را انتخاب کنید.
+
+English:The amount to remove from the bottom of the model
+Translated:مقدار به حذف از پایین مدل
+
+English:The amount the infill edge will push into the preimiter. Helps ensure the infill is connected to the edge.
+Translated:مقدار لبه پر را به preimiter فشار. کمک می کند تا اطمینان از پر به لبه متصل می شود.
+
+English:The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
+Translated:فاصله برای شروع به کشیدن اولین حلقه دامن. این 0 تا ایجاد یک لنگر برای بخش به تخت.
+
+English:Bottom Clip
+Translated:پایین ویدیوئی
+
+English:Infill Overlap
+Translated:همپوشانی میانقاب
+
+English:Inside Perimeters
+Translated:در داخل محیطی
+
+English:Outside Perimeter
+Translated:محیط خارج
+
+English:Sets the default movement speed while printing inside perimeters.
+Translated:مجموعه سرعت حرکت به طور پیش فرض در حالی که چاپ در داخل محیطی.
+
+English:The type of support to create for surfaces that need it.
+Translated:نوع پشتیبانی برای ایجاد سطوحی که به آن نیاز دارید.
+
+English:Support Type
+Translated:نوع پشتیبانی
+
+English:Top & Bottom Layers
+Translated:بالا و پایین لایه
+
+English:
+Translated:
+
+English:gcode_output_type
+Translated:gcode_output_type
+
+English:Starting Angle
+Translated:زاویه شروع
+
+English:The space between the lines of the support material.
+Translated:فضای بین خطوط از مواد پشتیبانی.
+
+English:The last angle at which support material will be generated. Larger numbers will result in more support.
+Translated:زاویه گذشته در که حمایت مادی ایجاد خواهد شد. اعداد بزرگتر در حمایت بیشتر منجر خواهد شد.
+
+English:Add Printer
+Translated:اضافه کردن پرینتر
+
+English:If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+Translated:اگر بزرگتر از 0، این فاصله دور از قطعات برای ایجاد یک parimeter برای پاک کردن هنگام ورود است.
+
+English:Wipe Shield Dist
+Translated:پاک کردن سپر ناحیه
+
+English:Wipe Shield
+Translated:پاک کردن سپر
+
+English:  Remove All
+Translated:  حذف همه
+
+English:The number of layers to skip in z. The gap between the support and the model.
+Translated:تعداد لایه به جست و خیز در Z. شکاف بین حمایت و مدل.
+
+English:Z Gap
+Translated:Z شکاف
+
+English:Print Again
+Translated:چاپ دوباره
+
+English:Turns on and off the creation of a raft which can help parts adhear to the bed.
+Translated:روشن و خاموش ایجاد یک قایق که می تواند کمک قطعات adhear به تخت.
+
+English:Enable Raft
+Translated:فعال کردن قایق
+
+English:Create Raft
+Translated:درست قایق
+
+English:The amount of overhangs to support. 0 is no support 100 is support every overhang regardless of angle.
+Translated:مقدار برآمدگی برای حمایت از. 0 هیچ پشتیبانی 100 حمایت هر برآمدگی بدون در نظر گرفتن زاویه.
+
+English:Overhang Percent
+Translated:درصد برآمدگی
+
+English:support_material_overhang_percent
+Translated:support_material_overhang_percent
+
+English:Device
+Translated:دستگاه
+
+English:Material
+Translated:ماده
+
+English:Item
+Translated:مورد
+
+English:Wipe Shield Distance
+Translated:پاک کردن سپر فاصله
+
+English: Remove All
+Translated: حذف همه
+
+English:Slice Presets Editor
+Translated:برش ایستگاه از پیش تنظیم ویرایشگر
+
+English:Attempting to Connect
+Translated:تلاش برای اتصال
+
+English:Making Copy
+Translated:ساخت کپی
+
+English:Arranging Parts
+Translated:قطعات تنظیم
+
+English:Only Show Completed
+Translated:تنها نشان می دهد تکمیل
+
+English:Show Timestamp
+Translated:نمایش برچسب زمان
+
+English:Render Type
+Translated:بارگزاری نوع
+
+English:Shaded
+Translated:سایه بان دار
+
+English:Outlines
+Translated:خطوط
+
+English:Polygons
+Translated:چند ضلعی
+
+English:New updates may be available.
+Translated:به روز رسانی جدید ممکن است در دسترس باشد.
+
+English:Unable to communicate with printer.
+Translated:قادر به برقراری ارتباط با چاپگر.
+
+English:Item selected. Press 'Start' to begin your print.
+Translated:مورد انتخاب شد. "شروع" را فشار دهید برای شروع چاپ خود را.
+
+English:Disconnecting
+Translated:قطع
+
+English:Leveling Settings
+Translated:تنظیمات تسطیح
+
+English:Movement Speeds Presets
+Translated:جنبش سرعت ایستگاه از پیش تنظیم
+
+English:Axis
+Translated:محور
+
+English:Sampled Positions
+Translated:موقعیت نمونه
+
+English:Position
+Translated:موقعیت
+
+English:Do not show this again
+Translated:این را دوباره نشان داده نشود
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:فایل شما در حال تلاش برای چاپ یک فایل جی کد است. \ فایل NN \ جی کد چاپگر خود را دقیقا چه کاری انجام دهید. آنها توسط SliceSettings تغییر نیست و من نمی شود برای پیکربندی چاپگر خاص خود را مناسب است.\n\nفقط از فایل های جی کد چاپ اگر شما می دانید آنها ماخ چاپگر و تنظیم فعلی خود را.\n\nمطمئنید که می خواهید برای چاپ این فایل جی کد؟
+
+English:Cannot find\n'{0}'.\nWould you like to remove it from the queue?
+Translated:می توانید \ N پیدا کنید: '{0}.\nآیا می خواهید به آن را از صف حذف؟
+
+English:Item not found
+Translated:موردی یافت نشد
+
+English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
+Translated:به جادوگر تسطیح چاپ خوش آمدید. اینجا مروری سریع بر آنچه که ما می رویم به انجام است.
+
+English:'Home' the printer
+Translated:'صفحه اصلی' چاپگر
+
+English:Sample the bed at three points
+Translated:نمونه تخت در سه نقطه
+
+English:Turn auto leveling on
+Translated:روشن تسطیح خودکار در
+
+English:You should be done in about 3 minutes.
+Translated:شما باید در حدود 3 دقیقه انجام می شود.
+
+English:Click 'Next' to continue.
+Translated:برای ادامه کلیک کنید "بعدی".
+
+English:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
+Translated:چاپگر در حال حاضر باید، خانگی »باشد. پس از آن به پایان رسید خانگی ما آن را به نقطه اول حرکت به نمونه.\n\nبرای تکمیل چند قدم بعدی شما نیاز
+
+English:A standard sheet of paper
+Translated:ورق استاندارد کاغذ
+
+English:We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.
+Translated:این مقاله را برای اندازه گیری فاصله بین اکسترودر و تخت استفاده خواهد کرد.\n\nبه ادامه Next کلیک کنید.
+
+English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
+Translated:مبارك باشد!\n\nخودرو چاپ تسطیح در حال حاضر پیکربندی و فعال کنید.
+
+English:Remove the paper
+Translated:حذف کاغذ
+
+English:If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.
+Translated:اگر در آینده می خواهید به نوبه خود خودرو چاپ تسطیح کردن، شما می توانید "فعال" کلیک یافت شده در "تنظیمات پیشرفته" تیک -> "کنترل پرینتر.\n\n"انجام شد" برای بستن این پنجره کلیک کنید.
+
+English:Step
+Translated:گام
+
+English:of
+Translated:از
+
+English:Print Leveling Wizard
+Translated:چاپ تسطیح جادوگر
+
+English:Back
+Translated:بازگشت
+
+English:Next
+Translated:بعد
+
+English:Low Precision
+Translated:دقت کم
+
+English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
+Translated:با استفاده از [Z] کنترل بر روی این صفحه، ما در حال حاضر یک اندازه گیری درشت از ارتفاع اکسترودر در این موقعیت است.
+
+English:Place the paper under the extruder
+Translated:محل این مقاله تحت اکسترودر
+
+English:Using the above contols
+Translated:با استفاده از contols بالا
+
+English:Press [Z-] until there is resistance to moving the paper
+Translated:[را فشار دهید Z-] تا زمانی که مقاومت در برابر حرکت کاغذ وجود دارد
+
+English:Press [Z+] once to release the paper
+Translated:[را فشار دهید Z +] یک بار به انتشار مقاله
+
+English:Finally click 'Next' to continue.
+Translated:در نهایت بر روی "بعدی" را ادامه دهد.
+
+English:This part of your bed is too low for the extruder to reach it. You need to raise your bed, or lower your limit, for print leveling to work.
+Translated:این بخش از تخت خود را بیش از حد کم برای اکسترودر برای رسیدن به آن. شما نیاز به افزایش تخت خود را، و یا پایین تر از حد خود را، برای درست به کار نسخه قابل چاپ.
+
+English:Waring Moving Too Low
+Translated:وارینگ حرکت بیش از حد پایین
+
+English:Medium Precision
+Translated:دقت متوسط
+
+English:We will now refine our measurement of the extruder height at this position.
+Translated:ما در حال حاضر اندازه گیری ما از ارتفاع اکسترودر در این موقعیت را اصلاح کرد.
+
+English:High Precision
+Translated:دقت بالا
+
+English:We will now finalize our measurement of the extruder height at this position.
+Translated:ما در حال حاضر اندازه گیری ما از ارتفاع اکسترودر در این موقعیت نهایی.
+
+English:Press [Z-] one click PAST the first hint of resistance
+Translated:[را فشار دهید Z-] یک کلیک گذشته اشاره اول مقاومت
+
+English:Save Parts Sheet
+Translated:جویی در هزینه قطعات ورق
+
+English:MatterContol
+Translated:MatterContol
+
+English:Saving to Parts Sheet
+Translated:صرفه جویی به قطعات ورق
+
+English:Stop trying to connect to the printer
+Translated:توقف تلاش برای اتصال به چاپگر
+
+English:No printer selected.  Press 'Connect' to choose a printer
+Translated:هیچ چاپگر انتخاب شده است. "اتصال" را فشار دهید تا انتخاب پرینتر
+
+English:About                                             
+Translated:در باره
+
+English:This controls the ratio of material extruder during bridging.Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
+Translated:این نسبت اکسترودر مواد در طول bridging.Reducing این کمی می تواند کمک به پل زدن با کشش رشته بیشتر، با استفاده از فن همچنین می توانید تا حد زیادی کمک کنترل می کند.
+
+English:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:درجه حرارت به طور پیش فرض برای تنظیم تخت به. گاهی اوقات می تواند در لایه اول لغو شود. مجموعه را به 0 برای از بین بردن دستورات دمای بستر.
+
+English:The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
+Translated:درجه حرارت به طور پیش فرض برای تنظیم اکسترودر به. گاهی اوقات می تواند در لایه اول لغو شود.
+
+English:Macro Editor
+Translated:ویرایشگر ماکرو
+
+English:Macro Presets
+Translated:ایستگاه از پیش تنظیم ماکرو
+
+English:Edit Macro
+Translated:ویرایش ماکرو
+
+English:Macro Name
+Translated:نام ماکرو
+
+English:Give your macro a name
+Translated:را کلان یک نام خود را
+
+English:Macro Commands
+Translated:دستورات ماکرو
+
+English:This should be in 'Gcode'
+Translated:این باید در جی کد 'باشد
+
+English:3D Printer Setup
+Translated:3D پرینتر راه اندازی
+
+English:Give your printer a name.
+Translated:را چاپگر خود را یک نام است.
+
+English:Select Make
+Translated:انتخاب میک
+
+English:Select the printer manufacturer
+Translated:انتخاب کنید با سازنده چاپگر
+
+English:Select the printer model
+Translated:انتخاب مدل چاپگر
+
+English:Save & Continue
+Translated:ذخیره کنید و ادامه
+
+English:MatterControl will now attempt to auto-detect printer.
+Translated:MatterControl در حال حاضر تلاش برای شناسایی خودکار چاپگر.
+
+English:Disconnect printer
+Translated:چاپگر قطع
+
+English:if currently connected
+Translated:اگر در حال حاضر متصل
+
+English:Press
+Translated:مطبوعات
+
+English:Continue
+Translated:ادامه دهید
+
+English:Manual Configuration
+Translated:پیکربندی دستی
+
+English:Setup Manual Configuration
+Translated:راه اندازی پیکربندی دستی
+
+English:or
+Translated:یا
+
+English:Skip Printer Connection
+Translated:پرش اتصال چاپگر
+
+English:You can either
+Translated:شما هم می توانید
+
+English:You can also
+Translated:شما همچنین می توانید
+
+English:Extruder Temperature Settings
+Translated:تنظیمات اکسترودر دما
+
+English:Temperature Shortcut Presets
+Translated:ایستگاه از پیش تنظیم میانبر دما
+
+English:Label
+Translated:برچسب
+
+English:Preset
+Translated:از پیش تعیین شده
+
+English:Max Temp.
+Translated:حداکثر دما.
+
+English:Bed Temperature Settings
+Translated:تنظیمات دما تختخواب
+
+English:Movement Speeds
+Translated:سرعت حرکت
+
+English:Extruder
+Translated:اکسترودر
+
+English:Power on and connect printer
+Translated:قدرت و اتصال چاپگر
+
+English:Attempting to connect
+Translated:تلاش برای اتصال
+
+English:Connection succeeded
+Translated:اتصال موفق
+
+English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
+Translated:شما می توانید هر پایین حرکت می کند. این موقعیت در بستر شما بسیار کم برای اکسترودر برای رسیدن به است. شما نیاز به افزایش تخت خود را، و یا تنظیم محدودیت های خود را اجازه می دهد تا اکسترودر به پایین تر است.
+
+English:Edit Preset
+Translated:ویرایش از پیش تعیین شده
+
+English:Slice-Engine
+Translated:تکه موتور
+
+English:Status: Completed
+Translated:وضعیت: پایان
+
+English:Unlock
+Translated:باز کردن قفل
+
+English:Show Terminal
+Translated:نمایش ترمینال
+
+English:Configure
+Translated:پیکربندی
+
+English:Disable
+Translated:از کار انداختن
+
+English:Est. Weight
+Translated:EST. وزن
+
+English:Downloading updates...
+Translated:دانلود به روز رسانی ...
+
+English:Duplicate
+Translated:تکراری
+
+English:End
+Translated:پایان
+
+English:The type of support to create inside of parts.
+Translated:نوع پشتیبانی ایجاد در داخل از قطعات.
+
+English:Infill Type
+Translated:میانقاب نوع
+
+English:Release Options
+Translated:گزینه های انتشار
+
+English:No items to select. Press 'Add' to select a file to print.
+Translated:هیچ آیتمی را انتخاب کنید. "اضافه کردن" را فشار دهید برای انتخاب یک فایل برای چاپ.
+
+English:Unknown
+Translated:ناشناخته
+
+English:Press 'Add' to select an item.
+Translated:"اضافه کردن" را فشار دهید برای انتخاب یک آیتم.
+
+English:Shop
+Translated:فروشگاه
+
+English:Slicing Error
+Translated:خطا برش
+
+English:Ready to Print
+Translated:آماده برای چاپ
+
+English:File Not Found\n'{0}'
+Translated:فایل یافت نشد \ N '{0}
+
+English:Slicing Error.\nPlease review your slice settings.
+Translated:خطا برش.\nلطفا تنظیمات قطعه خود را بررسی می کند.
+
+English:Special thanks to:
+Translated:با تشکر ویژه از:
+
+English:Alessandro Ranellucci for 
+Translated:الساندرو Ranellucci برای
+
+English:David Braam and Ultimaker BV for 
+Translated:دیوید Braam و Ultimaker BV برای
+
+English:To enable GCode export, select a printer profile
+Translated:برای فعال کردن صادرات جی کد، یک پروفایل چاپگر را انتخاب کنید
+
+English:MatterControl: Submit an Issue
+Translated:MatterControl: ارسال یک موضوع
+
+English:Submit
+Translated:ارسال
+
+English:How can we help?
+Translated:چگونه می توانیم کمک کند؟
+
+English:Submitting your information...
+Translated:ارسال اطلاعات ...
+
+English:Question*
+Translated:درخواست *
+
+English:Briefly describe your question
+Translated:خلاصه درخواست خود را توصیف
+
+English:Details*
+Translated:جزئیات*
+
+English:Fill in the details here
+Translated:پر کردن در جزئیات اینجا
+
+English:Your Email Address*
+Translated:آدرس ایمیل شما*
+
+English:Your Name*
+Translated:اسم شما*
+
+English:Version 
+Translated:نسخه
+
+English:Developed by:
+Translated:توسعه یافته توسط:
+
+English:Send FeedBack
+Translated:ارسال بازخورد
+
+English:Build: 
+Translated:ساختن:
+
+English:Update Feed
+Translated:به روز رسانی خوراک
+
+English:File
+Translated:پرونده
+
+English:Import File
+Translated:واردات فایل
+
+English:Exit
+Translated:خروج
+
+English:Help
+Translated:کمک
+
+English:Getting Started
+Translated:شروع شدن
+
+English:View Help
+Translated:نمایش راهنما
+
+English:Manually Configure Connection
+Translated:اتصال صورت دستی پیکربندی
+
+English:Skip Connection Setup
+Translated:پرش اتصال راه اندازی
+
+English:Currently available serial ports.
+Translated:پورت های سریال در حال حاضر در دسترس است.
+
+English:What's this?
+Translated:این چیه؟
+
+English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+Translated:شناسایی، پورت سریال که دستگاه متصل است \ N چاپگر خود را. تغییر که پلاگین USB استفاده می کنید ممکن است \ N پورت سریال ارتباط را تغییر دهید.\n\nنکته: اگر شما نامشخص است، پلاگین در در چاپگر خود و ضربه زدن است\nتازه کردن. پورت جدید به نظر می رسد که باید شما\nچاپگر باشد.
+
+English:Connection succeeded!
+Translated:اتصال موفق!
+
+English:Oops! Unable to install update.
+Translated:اوه! قادر به نصب به روز رسانی.
+
+English:Motor de Capas
+Translated:موتور د کلاه
+
+English:Your application is up-to-date.
+Translated:نرم افزار خود را تا به امروز است.
+
+English:Install Communication Driver
+Translated:نصب درایور ارتباطات
+
+English:This printer requires a driver for communication.
+Translated:این چاپگر نیاز به درایور برای برقراری ارتباط.
+
+English:Driver located. Would you like to install?
+Translated:درایور واقع شده است. دوست دارید نصب کنید؟
+
+English:Install Driver
+Translated:نصب درایور
+
+English:Apply
+Translated:درخواست
+
+English:Buy Materials
+Translated:فروش مواد
+
+English:Select an STL file
+Translated:انتخاب یک فایل STL
+
+English:Add File
+Translated:اضافه کردن فایل
+
+English:Time
+Translated:زمان
+
+English:Press 'Connect' to select a printer.
+Translated:"اتصال" را فشار دهید تا انتخاب یک چاپگر.
+
+English:Marlin Firmware EEPROM Settings
+Translated:تنظیمات EEPROM مارلین افزار
+
+English:Re-Load Default Settings
+Translated:تنظیمات پیش فرض دوباره بار
+
+English:Set Default To Factory Settings
+Translated:تنظیم پیش فرض به تنظیمات کارخانه
+
+English:Steps per mm:
+Translated:مراحل در هر میلی متر:
+
+English:Maximum feedrates [mm/s]:
+Translated:حداکثر feedrates [MM / S]:
+
+English:Maximum Acceleration [mm/s²]:
+Translated:حداکثر شتاب [میلی متر / s²]:
+
+English:Acceleration:
+Translated:شتاب:
+
+English:Retract Acceleration:
+Translated:جمع شتاب:
+
+English:PID settings:
+Translated:تنظیمات PID:
+
+English:Homing Offset:
+Translated:خانگی افست:
+
+English:Min feedrate [mm/s]:
+Translated:حداقل feedrate [MM / S]:
+
+English:Min travel feedrate [mm/s]:
+Translated:حداقل سفر feedrate [MM / S]:
+
+English:Minimum segment time [ms]:
+Translated:حداقل زمان بخش (MS):
+
+English:Maximum X-Y jerk [mm/s]:
+Translated:حداکثر حرکت تند و سریع X-Y [MM / S]:
+
+English:Maximum Z jerk [mm/s]:
+Translated:حداکثر Z حرکت تند و سریع [MM / S]:
+
+English:Make Settings Active
+Translated:تنظیمات فعال
+
+English:Make Settings Active\nAnd Save To Default
+Translated:تنظیمات فعال \ N و ذخیره به پیش فرض
+
+English:Design Add-ons
+Translated:طراحی افزودنیهای فایرفاکس
+
+English:Lock Ratio
+Translated:نسبت قفل
+
+English:Retrieving download info...
+Translated:بازیابی اطلاعات دانلود ...
+
+English:G-Code Output
+Translated:G-کد خروجی
+
+English:The extra distance the raft will extend around the part.
+Translated:فاصله اضافی قایق در اطراف بخش را گسترش دهد.
+
+English:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
+Translated:درصد از "قطر نازل است که فاصله بین قایق و لایه اول. و درصد کوچکتر باعث می شود که بخشی چوب تر است. و درصد بزرگتر خواهد آن را چوب کمتر است.
+
+English:Distance
+Translated:فاصله
+
+English:Gap Percent
+Translated:درصد شکاف
+
+English:Try to connect mesh edges when the actual mesh data is not all the way connected.
+Translated:سعی کنید برای اتصال لبه مش زمانی که داده مش واقعی است تمام راه را متصل نیست.
+
+English:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
+Translated:گاهی اوقات یک مش یک محیطی بسته اند. هنگامی که این بررسی این محیط غیر بسته در حالی که بسته شود.
+
+English:Reverse the orientation of overlaps. This can make some unintended holes go away.
+Translated:معکوس جهت همپوشانی. این باعث می شود که برخی از چاله ها ناخواسته از بین برود.
+
+English:Make all overlap areas into one big area. This can make some unintended holes go away..
+Translated:و همه مناطق همپوشانی را به یک منطقه بزرگ است. این باعث می شود که برخی از چاله ها ناخواسته به دور ..
+
+English:Repair
+Translated:تعمیر
+
+English:Connect Bad Edges
+Translated:اتصال لبه بد
+
+English:Close Polygons
+Translated:نزدیک چند ضلعی
+
+English:Reverse Orientation
+Translated:جهت معکوس
+
+English:Merge All
+Translated:ادغام همه
+
+English:Overlaps
+Translated:همپوشانی
+
+English:The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:فاصله بین لایه اول و بالای قایق. ارزش زیادی است به طور معمول حدود 1/2 قطر اکستروژن خود را. بنابراین، بین 0.0 و 0.2 برای یک نازل 0.4.
+
+English:Air Gap
+Translated:شکاف هوا
+
+English:Outline Distance
+Translated:نمای کلی فاصله
+
+English:Distance Around Object
+Translated:مسافت دور شی
+
+English:Minimum Travel\nRequiring Retraction
+Translated:حداقل سفر \ N نیاز جمع
+
+English:Show Printing
+Translated:نمایش چاپ
+
+English:Show Current
+Translated:نمایش فعلی
+
+English:Printer Sync
+Translated:همگام سازی چاپگر
+
+English:Sync To Print
+Translated:همگام سازی برای چاپ
+
+English:Layers
+Translated:لایه های
+
+English:Show 3D
+Translated:نمایش 3D
+
+English:Uh-oh! Could not connect to printer.
+Translated:آه، آه! نمی تواند به چاپگر وصل کنید.
+
+English:Installing
+Translated:نصب و راه اندازی
+
+English:Initial Printer Setup
+Translated:اولیه پرینتر راه اندازی
+
+English:Homing The Printer
+Translated:خانگی پرینتر
+
+English:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
+Translated:اگر در آینده نیاز به دوباره کالیبره چاپگر خود، و یا می خواهید به نوبه خود خودرو چاپ تسطیح کردن، شما می توانید کنترل تسطیح چاپ در "تنظیمات پیشرفته" پیدا -> "تنظیمات.\n\n"انجام شد" برای بستن این پنجره کلیک کنید.
+
+English:Print Leveling Overview
+Translated:چاپ تسطیح بررسی اجمالی
+
+English:Note: Be sure the tip of the extrude is clean.
+Translated:توجه داشته باشید: مطمئن باشید که نوک خروج تمیز است.
+
+English:Title Stuff
+Translated:عنوان ها
+
+English:Oops! You cannot exit while a print is active.
+Translated:اوه! شما نمی توانید خارج شوید در حالی که یک چاپ فعال است.
+
+English:Unable to Exit
+Translated:قادر به خروج
+
+English:You are currently saving a parts sheet, are you sure you want to exit?
+Translated:شما در حال حاضر صرفه جویی در یک ورق قطعات، شما مطمئن هستید که میخواهید خارج شوید؟
+
+English:Confirm Exit
+Translated:اعلام خروج
+
+English:Disconnect and cancel the current print?
+Translated:قطع و لغو چاپ فعلی؟
+
+English:WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?
+Translated:هشدار: لوازم یدکی را به چاپ فعلی را لغو نمایید.\n\nآیا شما می خواهید به قطع؟
+
+English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+Translated:توجه: تنظیمات برش استفاده می شود قبل از چاپ در واقع شروع می شود. تغییرات در حالی که چاپ خواهد شد چاپ فعال نداشت.
+
+English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:اکسترودر در حال حاضر گرم و درجه حرارت هدف خود را نمی تواند تغییر کند تا زمانی که {0} رسد ° C. > 'رشته' -\n\nشما می توانید شروع دمای اکسترودر در خلال تنظیمات "تنظیم شده است.\n\n{1}
+
+English:Waiting For Extruder To Heat
+Translated:در حال انتظار برای اکسترودر برای گرم
+
+English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:این بستر در حال حاضر گرم و درجه حرارت هدف خود را نمی تواند تغییر کند تا زمانی که {0} رسد ° C. > 'رشته' -\n\nشما می توانید شروع دمای بستر در "تنظیمات تکه" تنظیم شده است.\n\n{1}
+
+English:Waiting For Bed To Heat
+Translated:در حال انتظار برای تخت به حرارت
+
+English:Cancel the current print?
+Translated:لغو چاپ فعلی؟
+
+English:Cancel Print?
+Translated:لغو چاپ؟
+
+English:There is a recommended update avalible for MatterControl. Would you like to download it now?
+Translated:یک به روز رسانی توصیه می شود بود avalible برای MatterControl وجود دارد. دوست دارید آن را دانلود کنید در حال حاضر؟
+
+English:Recommended Update Available
+Translated:به روز رسانی توصیه می شود موجود
+
+English:Download Now
+Translated:الان دانلود کن
+
+English:Remind Me Later
+Translated:بعدا به من یادآوری کن
+
+English:Oops! There is no eeprom mapping for your printer's firmware.
+Translated:اوه! هیچ نقشه برداری EEPROM برای سیستم عامل چاپگر خود را وجود دارد.
+
+English:Warning no eeprom mapping
+Translated:هشدار نقشه برداری EEPROM
+
+English:Sample the bed at two points
+Translated:نمونه تخت در دو نقطه
+
+English:You should be done in about 2 minutes.
+Translated:شما باید در حدود 2 دقیقه انجام می شود.
+
+English:Alert
+Translated:هوشیار
+
+English:Input Required
+Translated:ورودی مورد نیاز
+
+English:Apply leveling to gcode during export
+Translated:درخواست تسطیح در طول صادرات به جی کد
+
+English:File export options:
+Translated:فایل گزینه های صادرات:
+
+English:Report a Bug
+Translated:گزارش یک اشکال
+
+English:About MatterControl
+Translated:درباره MatterControl
+
+English:Oops! Printer could not be detected 
+Translated:اوه! پرینتر نمی توان کشف کرد
+
+English: Load Files
+Translated: بارگذاری فایل های
+
+English: Eject SD Card
+Translated: خارج کردن کارت SD
+
+English:Show Voxels
+Translated:نمایش وکسل
+
+English:Show Mesh
+Translated:نمایش مش
+
+English:Do Subtract
+Translated:هنوز تفریق
+
+English:Specify if your printer has a fan.
+Translated:مشخص کنید اگر چاپگر شما دارای یک فن.
+
+English:Specify if your printer has a heated bed.
+Translated:مشخص کنید اگر چاپگر شما دارای یک تخت گرم می شود.
+
+English:Specify if your printer has the ability to plug in an SD card.
+Translated:مشخص کنید اگر چاپگر شما است که توانایی به برق وصل یک کارت SD.
+
+English:Has Fan
+Translated:است فن
+
+English:Has Heated Bed
+Translated:است تختخواب گرم
+
+English:Has SD Card Reader
+Translated:است کارت خوان SD
+
+English:Cloud Services
+Translated:خدمات ابر
+
+English:Cloud Monitoring (disabled)
+Translated:ابر مانیتورینگ (غیر فعال)
+
+English:Cloud Monitoring (enabled)
+Translated:ابر مانیتورینگ (فعال)
+
+English:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:اولین لایه اکستروژن عرض قطر نازل '* 4 باید کمتر یا مساوی به باشد.
+
+English:Export to SD Card
+Translated:صادرات به کارت SD
+
+English:Notification Settings
+Translated:تنظیمات اطلاع رسانی
+
+English:After a Print is Finished:
+Translated:پس از یک چاپ به پایان رسید:
+
+English:Saving your settings...
+Translated:ذخیره تنظیمات شما ...
+
+English:Send an SMS notification
+Translated:ارسال یک SMS اطلاع رسانی
+
+English:Experimental
+Translated:تجربی
+
+English:Have MatterControl send you a text message after your print is finished
+Translated:آیا MatterControl شما یک پیام متنی ارسال و پس از چاپ خود را به پایان رسید
+
+English:Your Phone Number*
+Translated:شماره تلفن شما*
+
+English:A U.S. or Canadian mobile phone number
+Translated:ایالات متحده یا کانادا شماره تلفن همراه
+
+English:Send an email notification
+Translated:ارسال یک ایمیل اطلاع رسانی
+
+English:Have MatterControl send you an email message after your print is finished
+Translated:آیا MatterControl شما یک پیام ایمیل ارسال پس از چاپ خود را به پایان رسید
+
+English:A valid email address
+Translated:یک آدرس ایمیل معتبر
+
+English:Play a Sound
+Translated:پخش صدا
+
+English:Play a sound after your print is finished
+Translated:پخش صدا پس از چاپ خود را به پایان رسید
+
+English:Printing From SD Card
+Translated:چاپ از کارت SD
+
+English:Would you also like to remove this file from the Printer's SD Card?
+Translated:شما هم دوست دارید برای حذف این فایل از کارت SD چاپگر؟
+
+English:Export to Printer SD Card
+Translated:صادرات به پرینتر کارت SD
+
+English:Preparing To Send To SD Card
+Translated:آماده سازی برای ارسال به کارت SD
+
+English:Sending To SD Card
+Translated:ارسال به کارت SD
+
+English:Exporting to Folder
+Translated:صادرات به پوشه
+
+English:Warning GCode file
+Translated:هشدار فایل جی کد
+
+English:Release Notes
+Translated:یادداشتهای انتشار
+
+English:More Info
+Translated:اطلاعات بیشتر
+
+English:Go To Status
+Translated:برو به وضعیت
+
+English:View Status
+Translated:نمایش وضعیت
+
+English:Description
+Translated:شرح
+
+English:Value
+Translated:ارزش
+
+English:Save To EEPROM
+Translated:ذخیره به EEPROM
+
+English:Firmware EEPROM Settings
+Translated:تنظیمات سیستم عامل EEPROM
+
+English:Save to EEPROM
+Translated:ذخیره به EEPROM
+
+English:Select the baud rate.
+Translated:نرخ علامت در ثانیه را انتخاب کنید.
+
+English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+Translated:اصطلاح «نرخ علامت در ثانیه، تقریبا به معنی سرعت که در آن است\nداده های منتقل شده است. نرخ علامت در ثانیه ممکن است از چاپگر به\nچاپگر متفاوت است. برای اطلاعات بیشتر به کتابچه راهنمای چاپگر خود مراجعه کنید.\n\nنکته: اگر شما نامشخص است - سعی کنید 250.000.
+
+English:This is the minimum amount of filament that must be extruded before a retraction can occur.
+Translated:این حداقل مقدار رشته است که باید خارج شود قبل از انقباض می تواند رخ دهد است.
+
+English:Support Options
+Translated:گزینه های پشتیبانی
+
+English:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
+Translated:اگر این حمایت بررسی است اجازه داده می شود با شروع در بالای سطوح داخلی. اگر آن را چک نمی کند پشتیبانی تنها ایجاد خواهد شد با شروع در رختخواب.
+
+English:Support Everywhere
+Translated:پشتیبانی از همه جا
+
+English:The angle the support infill will be drawn.
+Translated:زاویه پر پشتیبانی کشیده خواهد شد.
+
+English:Infill Angle
+Translated:میانقاب زاویه
+
+English:Grid
+Translated:توری
+
+English:Moves
+Translated:حرکت می کند
+
+English:Retractions
+Translated:بازپسگیریها
+
+English:Speeds
+Translated:سرعت
+
+English:Extrusion
+Translated:اکستروژن
+
+English:Special thanks to Alessandro Ranellucci for his incredible work on
+Translated:با تشکر ویژه از الساندرو Ranellucci برای کار باور نکردنی خود را در
+
+English:Dilimleme Motoru
+Translated:Dilimleme Motoru
+
+English:Clear
+Translated:واضح
+
+English:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+Translated:اجازه می دهد تا کد تسطیح بستر می دانم که اگر چاپگر می تواند محور Z رفتن زیر 0. یک چاپگر با endstops Z دقیقه یا پایان نرم افزار متوقف می شود ممکن است قادر به پشتیبانی از.
+
+English:Z Can Be Negative
+Translated:Z می تواند منفی باشد
+
+English:Export as X3G
+Translated:صادرات به عنوان X3G
+
+English:Select an Image
+Translated:انتخاب یک تصویر
+
+English:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+Translated:اگر بزرگتر از 0، این است که X با اندازه Y یک برج به استفاده از زمانی که تغییر اکسترودر
+
+English:Extruder Change
+Translated:تغییر اکسترودر
+
+English:Wipe Tower Size
+Translated:پاک کردن برج حجم
+
+English:Sorry, we were unable to install the driver.
+Translated:با عرض پوزش، ما قادر به نصب درایور بودند.
+
+English:Tuning Adjustment
+Translated:تنظیم تنظیم
+
+English:Release
+Translated:رهایی
+
+English:No printer is currently selected. Select a printer to edit slice settings.
+Translated:چاپگری است در حال حاضر انتخاب شده است. انتخاب یک چاپگر به ویرایش تنظیمات برش.
+
+English:Part Preview
+Translated:قسمت پیش نمایش
+
+English:Layer Preview
+Translated:پیش نمایش لایه
+
+English:Enable Cloud Monitoring (disabled)
+Translated:فعال کردن ابر مانیتورینگ (غیر فعال)
+
+English:Warning - Moving Too Low
+Translated:اخطار - حرکت بیش از حد پایین
+
+English:Oops! Could not find this file:
+Translated:اوه! آیا این فایل را پیدا کند:
+
+English:The number of extruders this machine has.
+Translated:تعداد اکسترودر این دستگاه دارای.
+
+English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
+Translated:همه اکستروژن توسط این ارزش ضرب شده است. افزایش آن بالا 1 (1.1 یک مقدار حداکثر است) را افزایش می دهد مقدار رشته بودن اکسترود؛ کاهش آن (0.9 حداقل ارزش زیادی است) کاهش خواهد یافت مقدار بودن اکسترود.
+
+English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
+Translated:این حداقل سرعت که چاپگر را کاهش می دهد به به لایه را به اندازه کافی بلند برای برآوردن حداقل زمان لایه است.
+
+English:Minimum Print Speed
+Translated:حداقل سرعت چاپ
+
+English:Skirt and Raft
+Translated:دامن و قایق
+
+English:Length on Move
+Translated:طول در حرکت
+
+English:Length on Tool Change
+Translated:طول در تغییر ابزار
+
+English:Minimum Extrusion\nRequiring Retraction
+Translated:حداقل اکستروژن \ N نیاز جمع
+
+English:Minimum Fan Speed
+Translated:حداقل سرعت فن
+
+English:Extruder Count
+Translated:تعداد اکسترودر
+
+English:Hardware
+Translated:سخت افزار
+
+English:Search Library
+Translated:جستجو کتابخانه
+
+English:My Library
+Translated:کتابخانه من
+
+English:Add to Library
+Translated:اضافه کردن به کتابخانه
+
+English:Group
+Translated:گروه
+
+English:Ungroup
+Translated:حالت گروه خارج
+
+English:Align...
+Translated:تراز ...
+
+English:Selection
+Translated:انتخاب
+
+English:Entering Editor
+Translated:ورود به ویرایشگر
+
+English:Creating Edit Data
+Translated:ایجاد ویرایش داده ها
+
+English:Finding Meshes
+Translated:پیدا کردن مشهای
+
+English:Preheat
+Translated:قبلا گرم کردن
+
+English:Extruder Temperature Override
+Translated:اکسترودر نادیده گرفتن دما
+
+English:Bed Temperature Override
+Translated:تختخواب نادیده گرفتن دما
+
+English:Hardware Settings
+Translated:تنظیمات سخت افزار
+
+English:Cloud Settings
+Translated:تنظیمات Cloud
+
+English:Application Settings
+Translated:تنظیمات برنامه
+
+English:Update Notification Feed
+Translated:به روز رسانی خوراک هشدار از طریق
+
+English:Pre-Release
+Translated:قبل از انتشار
+
+English:Development
+Translated:توسعه
+
+English:Language Options
+Translated:گزینه های زبان
+
+English:Change Display Mode
+Translated:تغییر دادن حالت نمایش
+
+English:Theme/Display Options
+Translated:موضوع / نمایش ها:
+
+English:Design
+Translated:طرح
+
+English:Normal
+Translated:طبیعی
+
+English:Touchscreen
+Translated:صفحه لمسی
+
+English:Theme
+Translated:موضوع
+
+English:Display Options
+Translated:تنظیم های نمایش
+
+English:Set this if the extruders run off the same heater, if there is only one heater.
+Translated:تنظیم این اگر اکسترودر اجرا کردن همان بخاری، اگر تنها یک بخاری وجود دارد.
+
+English:Share Temperature
+Translated:به اشتراک دما
+
+English:Export...
+Translated:صادرات ...
+
+English:Temperature
+Translated:درجه حرارت
+
+English:Align
+Translated:تراز
+
+English:Material 1
+Translated:مواد 1
+
+English:Material 2
+Translated:مواد 2
+
+English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:لایه قد باید کمتر یا مساوی به "قطر نازل» باشد.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+Translated:محل سکونت: کنترل های پیشرفته "->" تنظیمات برش "->" چاپ "->" لایه / محیطی،
+
+English:Color {0}
+Translated:رنگ {0}
+
+English:Extruder {0}
+Translated:اکسترودر {0}
+
+English:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
+Translated:شما می توانید اکستروژن با مشخص و یا مجموعه ای از این به٪ از widthe اکستروژن اصلی. ترک این عنوان 0 تا اجازه محاسبه خودکار.
+
+English:Material 3
+Translated:مواد 3
+
+English:Material 4
+Translated:مواد 4
+
+English:Material 5
+Translated:مواد 5
+
+English:Unknown Reason
+Translated:دلیل نامعلوم
+
+English:Port already in use
+Translated:بندر در حال حاضر در استفاده
+
+English:Unsupported Baud Rate
+Translated:پشتیبانی نشده علامت در ثانیه نرخ
+
+English:Port not found
+Translated:بندر یافت نشد
+
+English:Cancelled
+Translated:لغو شد
+
+English:You can only connect when not currently connected.
+Translated:شما فقط می توانید هنگام اتصال در حال حاضر متصل نیست.
+
+English:Warning - No EEProm Mapping
+Translated:هشدار - بدون نقشه برداری EEPROM
+
+English:The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+Translated:سرعت برای اجرای فن در حین چاپ از قایق، 0 را به فن خاموش رها کنید.
+
+English:The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
+Translated:سرعت به چاپ لایه از قایق (به غیر از لایه اول). این را می توان به صراحت یا به عنوان یک درصد از سرعت میانقاب تنظیم شده است.
+
+English:Preparing Meshes
+Translated:آماده سازی مشهای
+
+English:Grouping Meshes
+Translated:گروه بندی مشهای
+
+English:No COM ports available
+Translated:بدون پورت COM در دسترس
+
+English:Stable
+Translated:پایدار
+
+English:Beta
+Translated:بتا
+
+English:Alpha
+Translated:آلفا
+
+English:Ungrouping
+Translated:از ungrouping
+
+English:Grouping
+Translated:گروه بندی
+
+English:WARNING: Disconnecting will cancel the print.
+Translated:هشدار: لوازم یدکی را به چاپ را لغو نمایید.
+
+English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
+Translated:مقدار لبه پر را به محیط فشار. کمک می کند تا اطمینان از پر به لبه متصل می شود.
+
+English:This is the diameter of your extruder nozzle.
+Translated:این قطر نازل اکسترودر شما است.
+
+English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
+Translated:گاهی اوقات یک مش یک محیط بسته است. هنگامی که این بررسی این محیط غیر بسته در حالی که بسته شود.
+
+English:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
+Translated:شما می توانید اکستروژن با مشخص و یا مجموعه ای از این به٪ از عرض اکستروژن اصلی. ترک این عنوان 0 تا اجازه محاسبه خودکار.
+
+English:The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
+Translated:درجه حرارت به طور پیش فرض برای تنظیم اکسترودر به. گاهی اوقات می تواند در لایه اول را نقض کرد.
+
+English:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
+Translated:اگر بزرگتر از 0، این فاصله دور از قطعات برای ایجاد یک محیط برای پاک کردن هنگام ورود است.
+
+English:Please Confirm
+Translated:لطفا تأیید کنید
+
+English:Reset to Factory Defaults
+Translated:بازنشانی به پیش فرض کارخانه
+
+English:Save to EEProm
+Translated:ذخیره به EEPROM
+
+English:{0} is not available
+Translated:{0} در دسترس نیست
+
+English:Invalid printer response
+Translated:پاسخ چاپگر نامعتبر
+
+English:Could not find a selected button.
+Translated:می تواند یک دکمه انتخاب را پیدا کند.
+
+English:Aligning
+Translated:سنگ فرش
+
+English:Single
+Translated:تنها
+
+English:Warning - GCode file
+Translated:اخطار - فایل جی کد
+
+English:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+Translated:شاخص از اکسترودر برای استفاده از قایق. تنظیم این گزینه به 0 خواهد شد شاخص پشتیبانی اکسترودر استفاده کنید.
+
+English:Raft Extruder
+Translated:قایق اکسترودر
+
+English:None
+Translated:هیچ
+
+English:Rectangle
+Translated:مربع مستطیل
+
+English:Outline
+Translated:طرح کلی
+
+English:Circle
+Translated:دایره
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and may not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:فایل شما در حال تلاش برای چاپ یک فایل جی کد است. \ فایل NN \ جی کد چاپگر خود را دقیقا چه کاری انجام دهید. آنها توسط SliceSettings تغییر نیست و ممکن است برای پیکربندی چاپگر خاص خود را مناسب است.\n\nفقط از فایل های جی کد چاپ اگر شما می دانید آنها ماخ چاپگر و تنظیم فعلی خود را.\n\nمطمئنید که می خواهید برای چاپ این فایل جی کد؟
+
+English:Do not show this message again
+Translated:این پیغام را مجددا نشان نده
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:فایل شما در حال تلاش برای چاپ یک فایل جی کد است.\n\nاین recommendended است که شما فقط چاپ فایل های جی کد شناخته شده برای مطابقت با پیکربندی چاپگر خود را.\n\nمطمئنید که می خواهید برای چاپ این فایل جی کد؟
+
+English:Cannot find this file\nWould you like to remove it from the queue?
+Translated:می توانید این فایل \ پیدا کنید N دوست دارید به آن را حذف از صف؟
+
+English:Supported Angles
+Translated:زاویه های پشتیبانی شده
+
+English:Amount
+Translated:میزان
+
+English:Settings
+Translated:تنظیمات
+
+English:Unsaved Changes
+Translated:تغییرات ذخیره نشده
+
+English:No printer is currently selected. Please select a printer to edit slice settings.
+Translated:چاپگری است در حال حاضر انتخاب شده است. لطفا یک چاپگر برای ویرایش تنظیمات تکه را انتخاب کنید.
+
+English:NOTE: You need to select a printer, but do not need to connect to it.
+Translated:توجه: شما نیاز به انتخاب یک چاپگر، اما لازم نیست برای اتصال به آن.
+
+English:Simple
+Translated:ساده
+
+English:Intermediate
+Translated:حد واسط
+
+English:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:درجه حرارت به طور پیش فرض برای تنظیم تخت به. گاهی اوقات می تواند در لایه اول را نقض کرد. مجموعه را به 0 برای از بین بردن دستورات دمای بستر.
+
+English:Turns on and off the creation of a raft which can help parts adhere to the bed.
+Translated:روشن و خاموش ایجاد یک قایق که می تواند کمک قطعات پایبند به تخت.
+
+English:Options  
+Translated:گزینه ها
+
+English:Expand Distance
+Translated:گسترش فاصله
+
+English:Insert
+Translated:درج
+
+English:Restore
+Translated:بازگرداندن
+
+English:WINDOWED MODE: This tab has been moved to a separate window.
+Translated:پنجره MODE: این تب شده است به یک پنجره جداگانه نقل مکان کرد.
+
+English:Sending File(s)...
+Translated:ارسال فایل (بازدید کنندگان) ...
+
+English:Slicing File(s)...
+Translated:برش فایل (های) ...
+
+English:Edit Outline
+Translated:ویرایش طرح کلی
+
+English:Use Alpha
+Translated:استفاده از آلفا
+
+English:Start Threshold:
+Translated:شروع آستانه:
+
+English:End Threshold:
+Translated:آستانه پایان:
+
+English:Edit Model
+Translated:ویرایش مدل
+
+English:Invert
+Translated:معکوس کردن
+
+English:Size:
+Translated:اندازه:
+
+English:Height:
+Translated:قد:
+
+English:Edit Base
+Translated:ویرایش پایه
+
+English:Infill:
+Translated:میانقاب:
+
+English:Unlock to Save
+Translated:باز کردن قفل برای نجات
+
+English:Save & Exit
+Translated:ذخیره و خروج
+
+English:Finding Parts:
+Translated:پیدا کردن قطعات:
+
+English:Add Image
+Translated:تصویر اضافه کن
+
+English:Search Google
+Translated:جستجو در گوگل
+
+English:Word Edit
+Translated:کلمه ویرایش
+
+English:Spacing:
+Translated:فاصله:
+
+English:Underline
+Translated:زیر خط دار خط
+
+English:Rotation:
+Translated:چرخش:
+
+English:Enter Text Here
+Translated:متن را وارد کنید در اینجا
+
+English:Inserting image...
+Translated:قرار دادن تصویر ...
+
+English:Completed Prints:
+Translated:چاپ کامل
+
+English:Total Print Time:
+Translated:مجموع چاپ زمان:
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+Translated:محل سکونت: کنترل های پیشرفته "->" تنظیمات برش "->" چاپ "-> 'سرعت'
+
+English:The '{0}' must be greater than 0.
+Translated:از '{0} باید بزرگتر از 0 باشد.
+
+English:It is currently set to {0}.
+Translated:در حال حاضر به {0} تنظیم شده است.
+
+English:Slice Error
+Translated:خطا برش
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:محل سکونت: کنترل های پیشرفته "->" تنظیمات خلال '->' رشته '->' رشته '->' جمع '
+
+English:Save Slice Configuration
+Translated:ذخیره تنظیمات برش
+
+English:Printing: {0}
+Translated:چاپ: {0}
+
+English:Finished Print: {0}
+Translated:چاپ به پایان رسید: {0}
+
+English:Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.
+Translated:اعداد کوچکتر ایجاد پشتیبانی کمتر است. اعداد بزرگتر ایجاد حمایت بیشتر. شروع در 0، زاویه از بستر است که نیاز به پشتیبانی می کند.
+
+English:Preview
+Translated:پیش نمایش
+
+English:Send Test
+Translated:ارسال تست
+
+English:NOTE: Standard messaging rates may apply.
+Translated:توجه: نرخ پیام های استاندارد ممکن است اعمال شوند.
+
+English:Include a picture of my finished print
+Translated:شامل یک عکس از چاپ به پایان رسید من
+
+English:Send to Remote Device
+Translated:ارسال به دستگاه کنترل از راه دور
+
+English:Slice Files Prior to Send
+Translated:برش فایل ها قبل از ارسال
+
+English:Please wait. Retrieving available devices...
+Translated:لطفا صبر کنید. بازیابی دستگاه های موجود ...
+
+English:Token request failed...
+Translated:درخواست رمز شکست خورده ...
+
+English:Oops! Your session has expired.  Please sign-in again to continue.
+Translated:اوه! جلسه شما منقضی شده است. لطفا دوباره وارد سیستم شوید به ادامه.
+
+English:Sorry! Unable to connect to server. Please try again later.
+Translated:متاسف! قادر به اتصال به سرور. لطفا بعدا دوباره امتحان کنید.
+
+English:All done! Files have been sent.
+Translated:تمام شد! فایل های فرستاده شده است.
+
+English:Retry
+Translated:دوباره سعی کنید
+
+English:Please wait. Preparing to send...
+Translated:لطفا صبر کنید. آمادهسازی برای ارسال ...
+
+English:Token received...
+Translated:رمز دریافت ...
+
+English:Please wait. Sending files...
+Translated:لطفا صبر کنید. ارسال فایل ...
+
+English:File too big to load.
+Translated:فایل خیلی بزرگ برای بارگذاری.
+
+English:Specify if your printer has the ability to do print leveling directly (support for G29).
+Translated:مشخص کنید اگر چاپگر شما دارای توانایی انجام چاپ بدون درز مستقیم (پشتیبانی از G29).
+
+English:Has Hardware Leveling
+Translated:است درست سخت افزار
+
+English:The Fill Density must be between 0 and 1 inclusive.
+Translated:چگالی پر باید بین 0 و 1 را شامل می شود.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
+Translated:محل سکونت: کنترل های پیشرفته "->" تنظیمات برش "->" چاپ "->" میانقاب،
+
+English:Inserting Text
+Translated:وارد کردن متن
+
+English:Saving Parts:
+Translated:صرفه جویی در قطعات:
+
+English:Reset Connection
+Translated:اتصال مجددا
+
+English:Reboots the firmware on the controller
+Translated:ری بوت سیستم عامل بر روی کنترل
+
+English:Please wait. Slicing files {0} of {1}
+Translated:لطفا صبر کنید. فایل های برش {0} از {1}
+
+English:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
+Translated:به طور معمول در حالی که چاپ چاپگر خانه قبل از حرارت دادن اکسترودر (بازدید کنندگان). تنظیم این به علت گرمایش قبل از خانگی اتفاق می افتد. این می تواند با استفاده از پرینتر که تخت لمس در حالی که موشک کمک کند.
+
+English:Heat Before Homing
+Translated:گرما قبل خانگی
+
+English:Clear Print History
+Translated:پاک کردن تاریخچه چاپ
+
+English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [temperature].
+Translated:این جی کد خواهد شد را به خروجی سمت راست پس از تنظیم درجه حرارت را قرار داده است. اگر شما دستورات را به مجموعه ای دما در این بخش آنها را در خارج از این بخش تولید نخواهد شد. شما همچنین می توانید مقادیر را از تنظیمات دیگر مانند [دمای].
+
+English:GCode file too big to load for '{0}'.
+Translated:فایل جی کد بیش از حد بزرگ برای بارگذاری برای {0}.
+
+English:Reset\nConnection
+Translated:تنظیم مجدد \ N اتصال
+
+English:Show Reset Connection
+Translated:نمایش اتصال مجددا
+
+English:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
+Translated:قابل مشاهده می سازد یک دکمه است که اتصال در هنگام فشرده بازنشانی کنید. این را می توان بر روی پرینتر های که از آن به عنوان توقف اضطراری استفاده می شود.
+
+English:You may need to wait a minute for your printer to finish initializing.
+Translated:شما ممکن است نیاز به یک دقیقه برای چاپگر خود را به پایان برساند مقدار دهی اولیه صبر کنید.
+
+English: Export to Folder or SD Card
+Translated: صادرات به پوشه و یا کارت SD
+
+English:Converting image...
+Translated:تبدیل تصویر ...
+
+English:Add To Library
+Translated:اضافه کردن به کتابخانه
+
+English:Print Queue
+Translated:صف چاپ
+
+English:Interface Mode
+Translated:حالت رابط
+
+English:Standard
+Translated:استاندارد
+
+English:Connect to the printer
+Translated:اتصال به چاپگر
+
+English:Reset
+Translated:تنظیم مجدد
+
+English:Console
+Translated:کنسول
+
+English:On
+Translated:بر
+
+English:Off
+Translated:خاموش
+
+English:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:چگونه بسیاری از لایه ها، و یا از راه دور، که جامد پر شده در سطوح پایینی شیء باشد. اضافه کردن میلی متر به پایان تعداد را مشخص فاصله.
+
+English:The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.
+Translated:تعداد لایه ها، و یا از راه دور، به چاپ بین حمایت و بخشی. اضافه کردن میلی متر به پایان تعداد را مشخص فاصله.
+
+English:The number of layers, or the distance, to skip between the support and the model. Add mm to the end of the number to specify distance.
+Translated:تعداد لایه ها، و یا از راه دور، به جست و خیز بین حمایت و مدل. اضافه کردن میلی متر به پایان تعداد را مشخص فاصله.
+
+English:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:چگونه بسیاری از لایه ها، و یا از راه دور، که جامد پر شده در سطوح بالای جسم باشد. اضافه کردن میلی متر به پایان تعداد را مشخص فاصله.
+
+English:Top Solid Layers:
+Translated:لایه جامد بالا:
+
+English:Bottom Solid Layers:
+Translated:لایه جامد پایین:
+
+English:This will cause the extruder to try to wipe itself after retracting to minimize strings.
+Translated:این باعث می شود اکسترودر به تلاش برای خود را پس از جمع برای به حداقل رساندن رشته پاک کردن.
+
+English:Calculating Positions...
+Translated:محاسبه موقعیت ...
+
+English:ATX Power Control
+Translated:کنترل قدرت ATX
+
+English:Specify if your printer can control the power supply
+Translated:مشخص کنید اگر چاپگر شما می توانید منبع تغذیه کنترل
+
+English:Has Power Control
+Translated:کنترل قدرت
+
+English:The temperature the bed temperature will be set to when part is to be removed.
+Translated:درجه حرارت درجه حرارت بستر خواهد شد به زمانی که بخشی از آن است به حذف تنظیم شود.
+
+English:Extruder Wipe Temperature
+Translated:اکسترودر پاک دما
+
+English:Bed Remove Part Temperature
+Translated:تختخواب حذف قسمت دما
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:دمای اکسترودر خواهد بود که اکسترودر دستمال مرطوب.
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:دمای اکسترودر خواهد بود که اکسترودر دستمال مرطوب.
+
+English:Basic
+Translated:پایه ای
+
+English:Sets the size of the outer solid surface for the entire print.
+Translated:اندازه سطح جامد بیرونی برای کل چاپ را تنظیم میکند.
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+Translated:تعداد و یا عرض، از پوسته خارجی برای ایجاد. اضافه کردن میلی متر به پایان تعداد برای تعیین عرض.
+
+English:Layers/Surface
+Translated:لایه / سطح
+
+English:Width
+Translated:عرض
+
+English:Arrange
+Translated:ترتیب دادن
+
+English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+Translated:سرعت به حرکت در حالی که چاپ اولین لایه. اگر به صورت درصد بیان آن را به سرعت مربوطه در بالا تغییر دهید.
+
+English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+Translated:این جی کد خواهد به چاپگر بلافاصله پس از اتصال ارسال می شود. می توان آن را مورد استفاده برای تنظیم تنظیمات خاص به یک چاپگر داده می شود.
+
+English:Features
+Translated:امکانات
+
+English:Update Available
+Translated:روز رسانی در دسترس
+
+English:Check For Update
+Translated:بررسی برای بهروزرسانی
+
+English:solid_shell
+Translated:solid_shell
+
+English:GCode file too big to preview ({0}).
+Translated:فایل جی کد بیش از حد بزرگ به پیش نمایش ({0}).
+
+English:Up to Date
+Translated:به روز
+
+English:Checking For Update
+Translated:چک کردن برای به روز رسانی
+
+English:Loading Parts...
+Translated:در حال بارگذاری ... قطعات
+
+English:More
+Translated:بیش
+
+English:Share
+Translated:اشتراک گذاری
+
+English:WARNING: Write Failed!
+Translated:هشدار: ارسال نشد!
+
+English:Can't access '{0}'.
+Translated:نمی تواند دسترسی '{0}.
+
+English:Oops! Unable to save changes.
+Translated:اوه! امکان ذخیره تغییرات.
+
+English:Unable to save
+Translated:قادر به ذخیره نیست
+
+English:Terminal
+Translated:پایانه
+
+English:Settings\n& Controls
+Translated:تنظیمات\nو کنترل
+
+English:Print Area
+Translated:منطقه چاپ
+
+English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:اولین لایه اکستروژن عرض = {0} \ N نازل قطر = {1}
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+Translated:محل سکونت: کنترل های پیشرفته "->" تنظیمات برش "->" چاپ "->" پیشرفته "->" فرست لایه
+
+English:First Layer Extrusion Width' must be greater than 0.
+Translated:اولین لایه اکستروژن عرض باید بزرگتر از 0 باشد.
+
+English:First Layer Extrusion Width = {0}
+Translated:اولین لایه اکستروژن عرض = {0}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "-> 'عمومی' -> 'سرعت'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "->" رشته "->" رشته "->" جمع "
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "->" رشته "->" اکستروژن "->" فرست لایه
+
+English:Open
+Translated:باز کن
+
+English:Checking For Update...
+Translated:چک کردن برای به روز رسانی ...
+
+English:Create Folder
+Translated:پرونده بساز
+
+English:Redeem
+Translated:از گرو در اوردن
+
+English:First Layer Height = {0}\nNozzle Diameter = {1}
+Translated:اولین لایه ارتفاع = {0} \ N قطر نازل = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "->" عمومی "->" لایه / سطح:
+
+English:Create New Folder:
+Translated:ایجاد پوشه جدید:
+
+English:Folder Name
+Translated:نام پوشه
+
+English:Enter a Folder Name Here
+Translated:نام پوشه را وارد کنید در اینجا
+
+English:Save New Design to Queue
+Translated:صرفه جویی در طراحی جدید به صف
+
+English:Design Name
+Translated:نام طراحی
+
+English:Enter the name of your design.
+Translated:نام طراحی خود را وارد کنید.
+
+English:Enter a Design Name Here
+Translated:نام را وارد کنید طراحی در اینجا
+
+English:Also save to Library
+Translated:همچنین به کتابخانه را نجات دهد
+
+English:Home
+Translated:خانه
+
+English:The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:این مجموعه به شما در حال تلاش برای حذف '{0} خالی نیست. دوست دارید آن را حذف کنید به هر حال؟
+
+English:Collection not Empty
+Translated:مجموعه خالی نیست
+
+English:Do NOT Delete
+Translated:را حذف کنید
+
+English:Library (cloud)
+Translated:کتابخانه (ابر)
+
+English:Purchased
+Translated:خریداری
+
+English:Session Expired
+Translated:جلسه تمام شده
+
+English:Thumbnail Rendering
+Translated:تصویر بند انگشتی از ارائه
+
+English:Flat
+Translated:تخت
+
+English:3D
+Translated:3D
+
+English:Update Status
+Translated:وضعیت به روز رسانی
+
+English:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:پوشه شما در حال تلاش برای حذف '{0} خالی نیست. دوست دارید آن را حذف کنید به هر حال؟
+
+English:Folder not Empty
+Translated:پوشه خالی نیست
+
+English:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+Translated:پوشه '{0} خالی نیست. \ N دوست دارید آن را حذف کنید به هر حال؟
+
+English:Delete folder?
+Translated:حذف پوشه؟
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:پوشه '{0} خالی نیست.\n\nدوست دارید آن را حذف کنید به هر حال؟
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:پوشه '{0} خالی نیست.\n\nدوست دارید آن را حذف کنید به هر حال؟
+
+English:Delete folder?
+Translated:حذف پوشه؟
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:پوشه '{0} خالی نیست.\n\nدوست دارید آن را حذف کنید به هر حال؟
+
+English:Delete folder?
+Translated:حذف پوشه؟
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:پوشه '{0} خالی نیست.\n\nدوست دارید آن را حذف کنید به هر حال؟
+
+English:Delete folder?
+Translated:حذف پوشه؟
+
+English:Cloud Library
+Translated:ابر کتابخانه
+
+English:Rename
+Translated:تغییر نام
+
+English:Rename Item:
+Translated:تغییر نام آیتم:
+
+English:New Name
+Translated:نام جدید
+
+English:Enter New Name Here
+Translated:را وارد کنید نام جدید در اینجا
+
+English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
+Translated:سرعت به چاپ لبه خارج قابل مشاهده است. این را می توان به صراحت و یا به عنوان یک درصد از سرعت در داخل محیطی تنظیم شده است.
+
+English:Save New Design
+Translated:صرفه جویی در طراحی جدید
+
+English:Save Location
+Translated:محل ذخیره
+
+English:Choose the location to save to.
+Translated:محلی را برای ذخیره را انتخاب کنید.
+
+English:Sample the bed at seven points
+Translated:نمونه تخت در هفت امتیاز
+
+English:You should be done in about 5 minutes.
+Translated:شما باید در حدود 5 دقیقه انجام می شود.
+
+English:The print leveling alogrithm to use.
+Translated:alogrithm تسطیح چاپ استفاده کنید.
+
+English:The print leveling sampling mothod to use.
+Translated:چاپ mothod نمونه تسطیح استفاده کنید.
+
+English:This gcode will be run prior to starting bed probing.
+Translated:این جی کد قبل از شروع تخت کاوش اجرا خواهد شد.
+
+English:This gcode will be run after finishing bed probing.
+Translated:این جی کد خواهد شد پس از اتمام تخت کاوش را اجرا کنید.
+
+English:The width of the paper (or other calibration device) used when doing manual bed probing.
+Translated:عرض کاغذ (و یا دستگاه های کالیبراسیون دیگر) مورد استفاده هنگام انجام تخت کتابچه راهنمای کاربر کاوش.
+
+English:The offset of the probe relative to the extruder.
+Translated:از پروب نسبت به اکسترودر افست.
+
+English:The z offset of the probe relative to the extruder.
+Translated:z به جبران پروب نسبت به اکسترودر.
+
+English:Print Leveling
+Translated:چاپ تسطیح
+
+English:Leveling Solution
+Translated:راه حل تسطیح
+
+English:Leveling Method
+Translated:روش تسطیح
+
+English:Manual Probe Paper Width
+Translated:دستی پروب کاغذ عرض
+
+English:Probe Offset
+Translated:پروب افست
+
+English:Probe Z Offset
+Translated:پروب Z افست
+
+English:There is a recommended update available for MatterControl. Would you like to download it now?
+Translated:یک به روز رسانی توصیه می شود در دسترس برای MatterControl وجود دارد. دوست دارید آن را دانلود کنید در حال حاضر؟
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:فایل شما در حال تلاش برای چاپ یک فایل جی کد است.\n\nتوصیه می شود که شما تنها چاپ فایل های جی کد شناخته شده برای مطابقت با پیکربندی چاپگر خود را.\n\nمطمئنید که می خواهید برای چاپ این فایل جی کد؟
+
+English:This printer requires print leveling to run correctly.
+Translated:این چاپگر نیاز به چاپ تسطیح به درستی اجرا شود.
+
+English:Require Leveling To Print
+Translated:نیاز به تسطیح برای چاپ
+
+English:Oops! You cannot restart while a print is active.
+Translated:اوه! شما نمی توانید راه اندازی مجدد در حالی که یک چاپ فعال است.
+
+English:Unable to restart
+Translated:قادر به راه اندازی مجدد
+
+English:Add File To Queue
+Translated:اضافه کردن فایل به صف
+
+English:Add Folder To Library
+Translated:اضافه کردن پوشه در کتابخانه
+
+English:Using the above controls
+Translated:با استفاده از کنترل بالا
+
+English:Add Local Folder To Library
+Translated:اضافه کردن پوشه های محلی به کتابخانه
+
+English:Redeem Design Code
+Translated:از گرو در اوردن کد طراحی
+
+English:You should be done in about 6 minutes.
+Translated:شما باید در حدود 6 دقیقه انجام می شود.
+
+English:Enter Share Code
+Translated:به اشتراک کد را وارد کنید
+
+English:Downloading...
+Translated:دانلود ...
+
+English:Uploading...
+Translated:آپلود ...
+
+English:Click to show in 3D View
+Translated:برای نشان دادن در 3D نمایش کلیک کنید
+
+English:Enter Mulit Select mode
+Translated:حالت Mulit انتخاب را وارد کنید
+
+English:Add a .stl, .amf, .gcode or .zip File To The Queue
+Translated:اضافه کردن .STL، .amf، .gcode یا فایل زیپ به صف
+
+English:Choose a Create Tool to generate custom parts
+Translated:انتخاب درست ابزار برای تولید قطعات سفارشی
+
+English:Switch to Setings and Manual Controls pannel
+Translated:تغییر به Setings و کنترل های دستی آرا
+
+English:Pop This Tab out into its own Window
+Translated:پاپ این برگه را به داخل پنجره خود را
+
+English:Preview layer Tool Paths
+Translated:لایه پیش نمایش ابزار راه
+
+English:Add a .stl, .amf, .gcode or .zip File to the Queue
+Translated:اضافه کردن .STL، .amf، .gcode یا فایل زیپ به صف
+
+English:Add a .stl, .amf, .gcode or .zip File to the Bed
+Translated:اضافه کردن .STL، .amf، .gcode یا فایل زیپ به تخت
+
+English:Add an .stl, .amf, .gcode or .zip file to the Queue
+Translated:اضافه کردن یک .STL، .amf، .gcode یا فایل zip به صف
+
+English:Insert an .stl, .amf, .gcode or .zip file
+Translated:قرار دادن یک .STL، .amf، .gcode یا فایل zip
+
+English:Bring the Window back into this Tab
+Translated:را پنجره به این برگه
+
+English:Insert an .stl, .amf or .zip file
+Translated:قرار دادن یک .STL، .amf یا فایل zip
+
+English:Update Channel
+Translated:به روز رسانی کانال
+
+English:Current Build : Test Build
+Translated:ساخت در حال حاضر: ساخت آزمون
+
+English:Stable: The current release version of MatterControl (recommended).
+Translated:پایدار: نسخه نسخه فعلی از MatterControl (توصیه می شود).
+
+English:Beta: The release candidate version of MatterControl.
+Translated:بتا: نسخه کاندیدای انتشار از MatterControl.
+
+English:Alpha: The in development version of MatterControl.
+Translated:آلفا: در توسعه نسخه از MatterControl.
+
+English:Choose a Create Tool to generate custom designs
+Translated:انتخاب درست ابزار برای تولید طرح های سفارشی
+
+English:Switch to Settings, Controls and Options
+Translated:تغییر به تنظیمات، کنترل ها و گزینه
+
+English:Switch to Queue, Library and History
+Translated:تغییر به صف، کتابخانه و تاریخچه
+
+English:Sign in to your MatterControl account
+Translated:ورود به حساب کاربری خود را MatterControl
+
+English:Connect to the currently selected printer
+Translated:اتصال به چاپگر در حال حاضر انتخاب
+
+English:Disconnect from current printer
+Translated:قطع اتصال از چاپگر فعلی
+
+English:Select a printer
+Translated:انتخاب یک چاپگر
+
+English:Current extruder temperature
+Translated:دمای اکسترودر کنونی
+
+English:Preheat the Extruder
+Translated:پیش گرم کردن اکسترودر
+
+English:Current bed temperature
+Translated:دمای بستر کنونی
+
+English:Preheat the Bed
+Translated:پیش گرم کردن تختخواب
+
+English:Shop online for printing materials
+Translated:فروشگاه آنلاین برای مواد برای چاپ
+
+English:Add an .stl, .amf, .gcode or .zip file to the Library
+Translated:اضافه کردن یک .STL، .amf، .gcode یا فایل zip به کتابخانه
+
+English:Open your dashboard in a web browser
+Translated:باز داشبورد خود را در یک مرورگر وب
+
+English:Sign out of your MatterControl account
+Translated:خروج از حساب MatterControl خود را
+
+English:Add a new Printer Profile
+Translated:افزودن یک چاپگر مشخصات جدید
+
+English:Rotate (Ctrl + L. Mouse)
+Translated:چرخش دهید (Ctrl + L. ماوس)
+
+English:Move (Shift + L. Mouse)
+Translated:حرکت (شیفت + L. ماوس)
+
+English:Zoom (Alt + L. Mouse)
+Translated:زوم (ALT + L. ماوس)
+
+English:Select Part
+Translated:انتخاب بخش
+
+English:Move
+Translated:حرکت
+
+English:Zoom
+Translated:بزرگنمایی
+
+English:Preview 3D Design
+Translated:پیش نمایش طراحی 3D
+
+English:Rotate (Alt + L. Mouse)
+Translated:چرخش (ALT + L. ماوس)
+
+English:Zoom (Ctrl + L. Mouse)
+Translated:زوم کنید (Ctrl + L. ماوس)
+
+English:Enter Multi Select mode
+Translated:حالت چند انتخاب را وارد کنید
+
+English:Print leveling is enabled.
+Translated:تسطیح چاپ را فعال کنید.
+
+English:Edit notification settings
+Translated:ویرایش تنظیمات اعلان
+
+English:Rotate (Alt + Left Mouse)
+Translated:چرخش (ALT + سمت چپ ماوس)
+
+English:Move (Shift + Left Mouse)
+Translated:حرکت (شیفت + سمت چپ ماوس)
+
+English:Zoom (Ctrl + Left Mouse)
+Translated:زوم کنید (Ctrl + سمت چپ ماوس)
+
+English:Search Results
+Translated:نتایج جستجو
+
+English:Slice files prior to send
+Translated:برش فایل ها قبل از ارسال
+
+English:Oops! Please sign in to continue.
+Translated:اوه! لطفا به سیستم وارد شوید به ادامه.
+
+English:Login Required
+Translated:ورود مورد نیاز
+
+English:Rebuild Thumbnails Now
+Translated:بازسازی ریز عکسها در حال حاضر
+
+English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
+Translated:شما تعویض به حالت های مختلف ارائه تصویر بند انگشتی. اگر شما می خواهید، ریز عکسها فعلی خود را می تواند برداشته شود و دوباره در به سبک جدید. شما می توانید به جلو و عقب در هر زمان تغییر دهید. وجود خواهد داشت برخی از سربار پردازش در حالی که ریز عکسها جدید ایجاد می کند.\n\nآیا شما می خواهید برای بازسازی ریز عکسها موجود خود را در حال حاضر؟
+
+English:Loading...
+Translated:در حال بارگذاری ...
+
+English:Wrapping:
+Translated:کاغذ بسته بندی:
+
+English:Use Braille
+Translated:استفاده از خط بریل
+
+English:Only Braille
+Translated:فقط به خط بریل
+
+English:Retrieving Contents...
+Translated:بازیابی مطالب ...
+
+English:Cloud Sync
+Translated:ابر همگام سازی
+
+English:Include Text
+Translated:شامل متن
+
+English:Show normal text under the braille
+Translated:نمایش متن عادی تحت بریل
+
+English:Use Grade 2
+Translated:استفاده از درجه 2
+
+English:Experimental support for Braille grade 2 (contractions)
+Translated:پشتیبانی تجربی برای بریل درجه 2 (انقباض)
+
+English:About Braille
+Translated:درباره خط بریل
+
+English:Add a new Material Preset
+Translated:اضافه کردن مواد از پیش تعیین شده جدید
+
+English:Import an existing Material Preset
+Translated:وارد کردن یک ماده از پیش تعیین شده موجود
+
+English:Share Library Item
+Translated:مورد به اشتراک گذاشتن کتابخانه
+
+English:Share Options
+Translated:گزینه ها را به اشتراک بگذار
+
+English:Your Share Code:
+Translated:شما کد اشتراک:
+
+English:Anyone with this code will have access
+Translated:هر کسی که با این کد دسترسی دارند
+
+English:Share with someone
+Translated:به اشتراک گذاشتن با کسی
+
+English:read-only
+Translated:فقط خواندنی
+
+English:Generate Share Code
+Translated:تولید اشتراک کد
+
+English:Please wait. Retrieving share code...
+Translated:لطفا صبر کنید. بازیابی کد اشتراک ...
+
+English:Provide this code to grant someone read-only access.
+Translated:ارائه این کد جهت اعطای فقط خواندنی دسترسی داشته باشید.
+
+English:Please wait. Sending invite...
+Translated:لطفا صبر کنید. در حال ارسال دعوت ...
+
+English:Invite sent!
+Translated:دعوت ارسال شد!
+
+English:Your invite has been sent!
+Translated:دعوت شما فرستاده شده است!
+
+English:Enter Share Code:
+Translated:کد اشتراک را وارد کنید:
+
+English:This code to will provide read-only access.
+Translated:این کد را به دسترسی فقط خواندنی فراهم می کند.
+
+English:Please wait. Redeeming code...
+Translated:لطفا صبر کنید. استفاده از کد ...
+
+English:Oops! Invalid code.
+Translated:اوه! کد نامعتبر.
+
+English:Your code has been redeemed.  Please check the Library.
+Translated:کد شما استفاده شده است. لطفا کتابخانه تیک بزنید.
+
+English:Shared with Me
+Translated:به اشتراک گذاشته شده با من
+
+English:Share designs from your Cloud Library
+Translated:طرح ها به اشتراک از کتابخانه ابر خود را
+
+English:Exporting to Folder or SD Card
+Translated:صادرات به پوشه و یا کارت SD
+
+English:Materials
+Translated:مواد
+
+English:Material {0}
+Translated:مواد {0}
+
+English:Redeem Purchase
+Translated:از گرو در اوردن خرید
+
+English:Oops! Please sign in to enable this feature.
+Translated:اوه! لطفا وارد سیستم شوید برای فعال کردن این ویژگی.
+
+English:Rebuild
+Translated:بازسازی
+
+English:Outside Perimeters
+Translated:محیطی خارج
+
+English:Sample the bed at {0} points
+Translated:نمونه تخت در {0} نقطه
+
+English:Software Print Leveling (disabled)
+Translated:نرم افزار چاپ تسطیح (غیر فعال)
+
+English:Calibration Settings
+Translated:تنظیمات کالیبراسیون
+
+English:Software Print Leveling (enabled)
+Translated:نرم افزار چاپ تسطیح (فعال)
+
+English:Layer Height = {0}\nNozzle Diameter = {1}
+Translated:لایه ارتفاع = {0} \ N نازل قطر = {1}
+
+English:Solid Infill works best when set tu LINES.
+Translated:میانقاب جامد بهترین آثار زمانی که مجموعه خطوط توو.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "->" عمومی "->" میانقاب نوع '
+
+English:Show normal text above the braille
+Translated:نمایش متن عادی بالاتر از خط بریل
+
+English:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
+Translated:فایل تصویری که تلاش کرده اند تا بار نامعتبر است و یا داده ای ندارد. لطفا فایل را بررسی کنید و یا سعی کنید تصویر دیگر.
+
+English:Could Not Load Image File
+Translated:بارگیری نشد فایل تصویر
+
+English:Reset View
+Translated:نمایش تنظیم مجدد
+
+English:If you want to select a layer to pause your print on do so here (for changing filament)
+Translated:اگر می خواهید را انتخاب کنید یک لایه به توقف چاپ خود را در انجام این کار در اینجا (برای تغییر رشته)
+
+English:Select Layer To Pause:
+Translated:انتخاب لایه را به مکث:
+
+English:Offset:
+Translated:انحراف:
+
+English:The speed to move while printing the first layer. If expressed as a percentage the above Infill speed is modified.
+Translated:سرعت به حرکت در حالی که چاپ اولین لایه. اگر به صورت درصد بیان سرعت میانقاب بالا اصلاح شده است.
+
+English:The distance between the interface of support and the part. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:فاصله بین رابط پشتیبانی و بخشی. ارزش زیادی است به طور معمول حدود 1/2 قطر اکستروژن خود را. بنابراین، بین 0.0 و 0.2 برای یک نازل 0.4.
+
+English:Distance From Object
+Translated:فاصله از شی
+
+English:Maximum Fan Speed
+Translated:حداکثر سرعت فن
+
+English:The amount that the filament will be reversed before each qualifying non-printing move.
+Translated:مقدار که رشته خواهد شد قبل از هر مقدماتی حرکت غیر چاپ معکوس شود.
+
+English:Wipe After Retract
+Translated:پاک کردن پس از جمع
+
+English:Print Bed
+Translated:صفحه چاپ
+
+English:Transparent
+Translated:شفاف
+
+English:Canceled
+Translated:لغو شد
+
+English:Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.
+Translated:چاپگر شما گزارش خطا سخت افزار. این ممکن است یک چاپگر خود را از عملکرد صحیح جلوگیری می کند.
+
+English:Error Reported
+Translated:خطای گزارش
+
+English:Printer Hardware Error
+Translated:خطای چاپگر سخت افزار
+
+English:Error Loading Contents
+Translated:خطا هنگام بارگیری مطالب
+
+English:Temporarily override target temperature
+Translated:به طور موقت نادیده گرفتن دمای هدف
+
+English:CHANGE
+Translated:تغییر دادن
+
+English:REVERT
+Translated:برگرداندن
+
+English:UPDATE
+Translated:به روز رسانی
+
+English:Oops! Could not complete update.
+Translated:اوه! می تواند به روز رسانی کامل نیست.
+
+English:Connect your printer to check for firmware updates.
+Translated:اتصال چاپگر خود برای به روز رسانی سیستم عامل را بررسی کنید.
+
+English:Fine
+Translated:خوب
+
+English:Coarse
+Translated:درشت
+
+English:Outer Surface - Perimeters
+Translated:کاپشن، پالتو و سطحی - محیطی
+
+English:Outer Surface - Top & Bottom
+Translated:کاپشن، پالتو و سطحی - بالا و پایین
+
+English:Light
+Translated:سبک
+
+English:Heavy
+Translated:سنگین
+
+English:Speed for Infill
+Translated:سرعت برای میانقاب
+
+English:Speed for Perimeters
+Translated:سرعت برای محیطی
+
+English:Speeds for Other Printing
+Translated:سرعت برای دیگر چاپ
+
+English:Speed for Non-Print Moves
+Translated:سرعت برای حرکت غیر چاپ
+
+English:Touching
+Translated:لمس کردن
+
+English:Far
+Translated:بسیار
+
+English:Machine Settings
+Translated:تنظیمات ماشین
+
+English:Probe Settings
+Translated:تنظیمات کاوشگر
+
+English:On Connect G-Code
+Translated:در اتصال G-کد
+
+English:sign in
+Translated:ورود
+
+English:Log into my account
+Translated:ورود به حساب کاربری من
+
+English:Login
+Translated:ورود
+
+English:Username or Email
+Translated:نام کاربری یا پست الکترونیک
+
+English:Enter your username or email address
+Translated:نام کاربری یا آدرس ایمیل خود را وارد کنید
+
+English:Password
+Translated:کلمه عبور
+
+English:Forgot Password
+Translated:رمز عبور را فراموش کرده اید
+
+English:Enter your password
+Translated:رمز عبور خود را وارد کنید
+
+English:New User? 
+Translated:کاربر جدید؟
+
+English:Create An Account
+Translated:ایجاد یک حساب کاربری
+
+English:Please wait. Signing in...
+Translated:لطفا صبر کنید. وارد شدن...
+
+English:Extruder Temperatures
+Translated:درجه حرارت اکسترودر
+
+English:Bed Temperatures
+Translated:درجه حرارت بستر
+
+English:Waiting for device to connect...
+Translated:در حال انتظار برای دستگاه برای اتصال ...
+
+English:Detecting device firmware...
+Translated:تشخیص سیستم عامل دستگاه ...
+
+English:Detecting target firmware...
+Translated:تشخیص سیستم عامل هدف ...
+
+English:The amount of support to generate.
+Translated:میزان حمایت برای تولید.
+
+English:Support Percent
+Translated:درصد پشتیبانی
+
+English:Allow Negative Z
+Translated:اجازه Z منفی
+
+English:Offset: 
+Translated:انحراف:
+
+English:Are you sure you want to abort the current print and close MatterControl?
+Translated:آیا مطمئن هستید که می خواهید به سقط جنین چاپ فعلی و MatterControl نزدیک؟
+
+English:Abort Print
+Translated:سقط چاپ
+
+English:mm / minute
+Translated:میلی متر / دقیقه
+
+English:Attempts to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+Translated:تلاش برای جلوگیری از داشتن خط محیط عبور بیش از خطوط محیط موجود است. این می تواند با تراوش یا رشته کمک کند.
+
+English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
+Translated:X و Y مقادیر اندازه تخت چاپ، در میلی متر. برای پرینتر با یک تخت دایره ای، این مقادیر قطر در محور X و Y هستند.
+
+English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
+Translated:درجه حرارت که تخت خواهد شد برای مدت زمان از چاپ تنظیم شده است. مجموعه را به 0 برای غیر فعال کردن.
+
+English:The amount to remove from the bottom of the model, in millimeters.
+Translated:مقدار به حذف از پایین از مدل، در میلی متر.
+
+English:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
+Translated:تعداد لایه و یا از راه دور در میلی متر تا پر جامد در سطح پایین (بازدید کنندگان) از جسم. اضافه کردن میلی متر به پایان تعداد را مشخص فاصله در میلی متر.
+
+English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
+Translated:سرعت که در آن لایه فن خنک کننده اجرا خواهد کرد که پل زدن، به عنوان درصدی از قدرت کامل بیان شده است.
+
+English:The speed at which bridging between walls will print.
+Translated:سرعت که در آن پل زدن بین دیوار چاپ خواهد شد.
+
+English:The amount of brim that will be drawn around each object, in millimeters. This can be useful to ensure that parts stay affixed to the bed.
+Translated:مقدار لبه خواهد شد که در اطراف هر جسم کشیده شده، در میلی متر. این می تواند مفید به اطمینان حاصل شود که قطعات ضمیمه ماندن به تخت.
+
+English:The height of the printer's printable volume, in millimeters. Primarily controls the height of the visual print area displayed in 3D View.
+Translated:ارتفاع حجم قابل چاپ چاپگر در میلی متر. در درجه اول به ارتفاع منطقه چاپ بصری نمایش داده شده در 3D نمایش کنترل می کند.
+
+English:G-Code to run when a print is canceled.
+Translated:G-کد برای اجرا وقتی یک چاپ لغو می شود.
+
+English:Centers the print on the bed, regardless of where it is moved in Edit Mode. Disable to allow printing a model anywhere on the bed.
+Translated:مراکز چاپ روی تخت، بدون در نظر گرفتن که در آن است در حالت ویرایش نقل مکان کرد. غیر فعال کردن اجازه می دهد تا چاپ یک مدل در هر نقطه روی تخت.
+
+English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
+Translated:G-کد برای اجرا بر اتصال موفقیت آمیز به چاپگر. این می تواند مفید برای تنظیم تنظیمات خاص به یک چاپگر داده می شود.
+
+English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
+Translated:ایجاد یک قایق زیر بخش چاپ شده است. مفید برای جلوگیری از تاب برداشتن به هنگام چاپ ABS (و دیگر پلاستیک تاب مستعد) آن را به عنوان کمک می کند تا قطعات پایبند به تخت.
+
+English:The extra distance the raft will extend around the edge of the part.
+Translated:فاصله اضافی قایق را در اطراف لبه قسمت را گسترش دهد.
+
+English:The distance between the first layer and the top of the raft. A good value is typically about half the extrusion diameter. For a 0.4 mm nozzle, a value between 0.0 and 0.2 would be best.
+Translated:فاصله بین لایه اول و بالای قایق. ارزش زیادی است به طور معمول حدود نصف قطر اکستروژن. برای یک نازل 0.4 میلی متر، یک مقدار بین 0.0 و 0.2 می خواهم بهترین باشد.
+
+English:The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.
+Translated:سرعت که در آن فن خنک کننده (بازدید کنندگان) در طول چاپ قایق اجرا خواهد شد، به عنوان درصدی از قدرت کامل بیان شده است.
+
+English:The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.
+Translated:سرعت که در آن لایه های قایق (به غیر از لایه اول) چاپ خواهد شد. این را می توان به صراحت یا به عنوان یک درصد از سرعت میانقاب تنظیم شده است.
+
+English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
+Translated:تعداد لایه که لایه فن خنک کننده خاموش خواهد شد در آغاز چاپ مجبور.
+
+English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
+Translated:G-کد در پایان از همه خروجی های اتوماتیک (پایان بسیار از دستورات G-کد) اجرا می شود.
+
+English:The speed at which outside, (visible) perimeters will print.
+Translated:سرعت که در آن خارج، (قابل مشاهده) محیطی چاپ خواهد شد.
+
+English:Forces external perimeters to be printed first. By default, they will print last.
+Translated:نیروهای محیطی خارجی به اولین چاپ شده است. به طور پیش فرض، آنها آخرین چاپ می کند.
+
+English:The number of extruders the printer has.
+Translated:تعداد اکسترودر چاپگر است.
+
+English:Indicate that the extruders share a common heater cartridge.
+Translated:نشان می دهد که اکسترودر به اشتراک گذاشتن یک کارتریج بخاری رایج است.
+
+English:Forces the printer to heat the nozzle before homing.
+Translated:نیروهای چاپگر برای گرم کردن قبل از نازل های خانگی.
+
+English:This is the identifier used in the G-Code to specify the extruder.
+Translated:این شناسه های مورد استفاده در G-کد برای مشخص کردن اکسترودر است.
+
+English:All extrusions are multiplied by this value. Increasing it above 1  will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
+Translated:همه اکستروژن توسط این ارزش ضرب شده است. افزایش آن بالا 1 مقدار رشته بودن اکسترود افزایش (1.1 حداکثر ارزش زیادی است)؛ کاهش آن را به مقدار بودن اکسترود کاهش (0.9 یک مقدار حداقل خوب است).
+
+English:The actual diameter of the filament used for printing.
+Translated:قطر واقعی از رشته مورد استفاده برای چاپ.
+
+English:The angle of the infill, measured from the X axis. Not used when bridging.
+Translated:زاویه پر، اندازه گیری از محور X. استفاده می شود هنگام پوشش کف.
+
+English:The amount of infill material to generate, expressed as a ratio or a percentage.
+Translated:میزان مواد پر به تولید، به عنوان یک نسبت و یا یک درصد بیان می شود.
+
+English:The geometric shape of the support structure for the inside of parts.
+Translated:شکل هندسی از ساختار پشتیبانی از داخل قطعات.
+
+English:Acceleration to use while printing the first layer. Set to 0 to use the default first layer acceleration.
+Translated:شتاب به استفاده از در حالی که چاپ اولین لایه. تنظیم کنید تا 0 تا استفاده از پیش فرض اولین شتاب لایه.
+
+English:The height of the first layer. A first layer taller than the default layer height can sometimes be used to improve adhesion to the build plate.
+Translated:ارتفاع لایه اول. اولین لایه بلندتر از ارتفاع لایه به طور پیش فرض می تواند گاهی اوقات برای بهبود چسبندگی به صفحه ساخت استفاده می شود.
+
+English:The speed at which the nozzle will move when printing the first layer. If expressed as a percentage the Infill speed is modified.
+Translated:سرعت که در آن نازل حرکت خواهد کرد به هنگام چاپ اولین لایه. اگر به صورت درصد بیان سرعت میانقاب تغییر یافتهاست.
+
+English:Include detailed comments in the G-Code.
+Translated:شامل نظرات دقیق در G-کد.
+
+English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
+Translated:نسخه ای از G-کد سیستم عامل چاپگر ارتباط با. برخی از سیستم عامل استفاده از کدهای مختلف G و M. تنظیم این تضمین می کند که خروجی G-کد را به دستورات صحیح استفاده کنید.
+
+English:The printer has a layer-cooling fan.
+Translated:چاپ این مطلب تا فن لایه خنک کننده دارد.
+
+English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
+Translated:چاپگر خود را دارد پروب تسطیح بستر لوازم خودرو و روش آن است که می تواند با استفاده از فرمان G29 در طول شروع G-کد نامیده می شود.
+
+English:The printer has a heated bed.
+Translated:چاپگر دارای یک تخت گرم می شود.
+
+English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Control pane.
+Translated:چاپگر است که توانایی به کنترل منبع تغذیه. فعال کردن این عملکرد برای نشان دادن بخش ATX قدرت کنترل در سمت کنترل.
+
+English:The printer has a SD card reader.
+Translated:چاپ این مطلب تا کارت خوان SD
+
+English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
+Translated:یک دکمه در سمت راست نوار اتصال چاپگر استفاده برای تنظیم مجدد اتصال USB به چاپگر را نشان می دهد. این را می توان بر روی پرینتر های که از آن به عنوان توقف اضطراری استفاده می شود.
+
+English:Acceleration to use when printing infill. Set to 0 to disable changing the printer's acceleration.
+Translated:شتاب به استفاده از به هنگام چاپ پر. مجموعه را به 0 برای غیر فعال کردن تغییر شتاب چاپگر.
+
+English:The speed at which infill will print.
+Translated:سرعت که در آن پر چاپ خواهد شد.
+
+English:The print leveling algorithm to use.
+Translated:الگوریتم تسطیح چاپ استفاده کنید.
+
+English:The printer requires print leveling to run correctly.
+Translated:چاپگر نیاز به چاپ تسطیح به درستی اجرا شود.
+
+English:The print leveling sampling method to use.
+Translated:روش نمونه تسطیح چاپ استفاده کنید.
+
+English:The thickness of the paper (or other calibration device) used to perform manual bed probe.
+Translated:ضخامت کاغذ (و یا دستگاه های کالیبراسیون دیگر) استفاده می شود به صورت دستی تخت پروب.
+
+English:G-Code to be run after the change in Z height for the next layer.
+Translated:G-کد به بعد از تغییر در ارتفاع Z برای لایه بعدی اجرا می شود.
+
+English:The height of each layer of the print, except the first. A smaller number will create more layers and more vertical accuracy but also a slower print.
+Translated:ارتفاع هر لایه از چاپ، به جز اولین. تعداد کمتری به لایه های بیشتر و دقت عمودی تر است، بلکه چاپ آهسته تر ایجاد کنید.
+
+English:Sets the size of the outer solid surface (perimeter) for the entire print.
+Translated:اندازه سطح جامد بیرونی (محیط) برای کل چاپ را تنظیم میکند.
+
+English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
+Translated:حداکثر سرعت که در آن لایه فن خنک کننده اجرا خواهد شد، به عنوان درصدی از قدرت کامل بیان شده است.
+
+English:The minimum length of filament that must be extruded before a retraction can occur.
+Translated:حداقل طول رشته است که باید خارج شود قبل از انقباض می تواند رخ دهد.
+
+English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
+Translated:حداقل سرعت که در آن لایه فن خنک کننده اجرا خواهد شد، به عنوان درصدی از قدرت کامل بیان شده است.
+
+English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
+Translated:حداقل سرعت که چاپگر به منظور کاهش خواهد به تلاش برای ایجاد لایه زمان چاپ به اندازه کافی بلند برای برآوردن حداقل زمان لایه.
+
+English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
+Translated:حداقل طول رشته به استفاده از چاپ حلقه دامن. حلقه دامن به اندازه کافی خواهد کشیده می شود برای استفاده از این مقدار رشته، فارغ از ارزش را در حلقه در صورتی که ارزش ها در حلقه های یک دامن کوتاه تر از این مقدار تولید کند.
+
+English:These notes will be added as comments in the header of the output G-Code.
+Translated:این یادداشت ها به عنوان نظر در هدر خروجی G-کد اضافه شده است.
+
+English:The diameter of the extruder's nozzle.
+Translated:قطر نازل اکسترودر است.
+
+English:G-Code to run when the printer is paused.
+Translated:G-کد اجرای چاپگر متوقف شده است.
+
+English:A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.
+Translated:تعدیل کننده عرض اکستروژن هنگام چاپ محیطی خارج. می تواند مفید به ریز تنظیم اندازه چاپ واقعی هنگامی که اشیاء چاپ بزرگتر و یا کوچکتر در مدل های دیجیتال مشخص شده است.
+
+English:The speed at which inside perimeters will print.
+Translated:سرعت که در آن در داخل محیطی چاپ خواهد شد.
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
+Translated:تعداد و یا عرض، از پوسته خارجی برای ایجاد. اضافه کردن میلی متر به پایان تعداد برای تعیین عرض بر حسب میلی متر.
+
+English:You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.
+Translated:شما می توانید برنامه های اضافی برای پردازش G-کد پس از برش به پایان رسید شامل. مسیر کامل از برنامه به اجرا در اینجا باید گنجانده شده است.
+
+English:The position (X and Y coordinates) of the center of the print bed, in millimeters.
+Translated:موقعیت (مختصات x و y) از مرکز بستر چاپ، در میلی متر.
+
+English:G-Code to be run when the print resumes after a pause.
+Translated:G-کد اجرا می شود زمانی که چاپ پس از یک مکث از سر گرفته.
+
+English:The minimum distance of a non-print move which will trigger a retraction.
+Translated:حداقل فاصله از یک حرکت غیر چاپی که جمع را آغاز کند.
+
+English:The distance filament will reverse before each qualifying non-print move
+Translated:رشته فاصله خواهد قبل از هر مقدماتی حرکت غیر چاپی معکوس
+
+English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
+Translated:هنگام استفاده از اکسترودر متعدد، رشته فاصله خواهد قبل از تغییر به یک اکسترودر مختلف معکوس می باشد.
+
+English:Force a retraction when moving between islands (distinct parts on the layer).
+Translated:زور جمع که در حال حرکت بین جزایر (بخش مجزا بر روی لایه).
+
+English:The distance the nozzle will lift after each retraction.
+Translated:فاصله نازل خواهد بعد از هر انقباض بلند.
+
+English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
+Translated:طول رشته اکسترود پس از یک جمع کامل (در علاوه بر این به دوباره اکستروژن از طول در فاصله حرکت کند).
+
+English:The speed at which filament will retract and re-extrude.
+Translated:سرعت که در آن رشته جمع خواهد شد و دوباره خروج.
+
+English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
+Translated:تعداد حلقه ها به منظور جلب اطراف تمام قطعات روی تخت قبل از شروع بر روی قطعات. عمدتا به نخست نازل استفاده می شود تا جریان است حتی زمانی که چاپ واقعی آغاز می شود.
+
+English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
+Translated:حداقل مقدار از زمان یک لایه باید برای چاپ. اگر یک لایه کمتر از این مقدار زمان را، سرعت حرکت کاهش می یابد به طوری که زمان لایه چاپ این مقدار در کمترین مطابقت، به حداقل سرعت چاپ.
+
+English:Forces the print to have only one extrusion and gradually increase the extruder height during the print. Only one part will print at a time with this feature.
+Translated:نیروهای چاپ به تنها یک اکستروژن و به تدریج ارتفاع اکسترودر در طول چاپ را افزایش دهد. تنها یک بخش در یک زمان با این ویژگی را چاپ کنید.
+
+English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
+Translated:G-کد به بلافاصله پس از دستورات تنظیم درجه حرارت اجرا می شود. از جمله دستورات را به مجموعه ای دما در این بخش باعث می شود آنها را در خارج از این بخش نمی تولید می شود. متغیرهای سفارشی G-کد را بپذیرید.
+
+English:The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
+Translated:فاصله بین لایه اول (پایین) و بالای قایق. ارزش زیادی بستگی به نوع ماده است. برای پارک بازی و ABS یک مقدار بین 0.1 و 0.3 بطو کلی خوبی کار می کند.
+
+English:The percent of the extrusion width that can be overlapped and still generate.
+Translated:درصد عرض اکستروژن است که می تواند همپوشانی و هنوز هم تولید کند.
+
+English:The angle at which the support material lines will be drawn.
+Translated:زاویه ای که خطوط مواد پشتیبانی کشیده خواهد شد.
+
+English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
+Translated:تولید مواد پشتیبانی شروع در بالای سطوح داخلی. اگر بدون کنترل پشتیبانی تنها تولید خواهد شد شروع روی تخت.
+
+English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
+Translated:شاخص از اکسترودر برای چاپ استفاده مواد پشتیبانی می کند. قابل اجرا تنها زمانی که تعداد اکسترودر به یک مقدار بیش از 1 تنظیم شده است.
+
+English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
+Translated:شاخص از اکسترودر به استفاده از به چاپ قایق. مجموعه را به 0 به استفاده از شاخص حمایت اکسترودر.
+
+English:A modifier of the width of the extrusion when printing support material. Set to 0 for automatic calculation.
+Translated:تعدیل کننده عرض اکستروژن هنگام چاپ مواد پشتیبانی می کند. برای محاسبه خودکار تنظیم کنید تا 0.
+
+English:The index of the extruder to use for support material interface layer(s).
+Translated:شاخص از اکسترودر برای استفاده برای لایه رابط حمایت مادی (بازدید کنندگان).
+
+English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
+Translated:تعداد لایه و یا فاصله برای چاپ مواد جامد بین حمایت و بخشی. اضافه کردن میلی متر به پایان تعداد را مشخص فاصله.
+
+English:The pattern to draw for the generation of support material.
+Translated:الگوی به منظور جلب برای تولید مواد پشتیبانی می کند.
+
+English:The distance between support material lines.
+Translated:فاصله بین خطوط حمایت مادی.
+
+English:The speed at which support material structures will print.
+Translated:سرعت که در آن حمایت ساختارهای مادی چاپ خواهد شد.
+
+English:The minimum angle of overhang for which support material will be created. The angle perpendicular to the bed = 0; parallel with the bed = 90.
+Translated:حداقل زاویه برآمدگی که حمایت مادی ایجاد خواهد شد. زاویه عمود بر تخت = 0؛ موازی با تخت = 90.
+
+English:The distance the support material will be from the object in the X and Y directions.
+Translated:فاصله مواد پشتیبانی خواهد از جسم در جهت X و Y باشد.
+
+English:The number of layers, or the distance, to skip between the support (including interface layers) and the model. Add mm to the end of the number to specify distance.
+Translated:تعداد لایه ها، و یا از راه دور، به جست و خیز بین پشتیبانی (از جمله لایه رابط) و مدل. اضافه کردن میلی متر به پایان تعداد را مشخص فاصله.
+
+English:Generates support material under areas of the part which may be too steep to support themselves.
+Translated:تولید مواد پشتیبانی تحت مناطق از بخش که ممکن است بیش از حد تند برای حمایت از خود.
+
+English:The target temperature the extruder will attempt to reach during the print.
+Translated:دمای هدف اکسترودر تلاش خواهد کرد در طول چاپ برای رسیدن به.
+
+English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
+Translated:درجه حرارت که در اکسترودر خواهد نازل پاک کردن، به عنوان سفارشی G-کد مشخص شده است.
+
+English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
+Translated:درجه حرارت که تخت گرم خواهد (و یا سرد) به منظور حذف قسمت، به عنوان در سفارشی G-کد مشخص شده است.
+
+English:G-Code to be run after every tool change.
+Translated:G-کد به بعد از هر تغییر ابزار اجرا شود.
+
+English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
+Translated:تعداد لایه، یا فاصله در میلی متر، برای پر کردن جامد بر روی سطح (بازدید کنندگان) از جسم. اضافه کردن میلی متر به پایان تعداد را مشخص فاصله در میلی متر.
+
+English:The speed at which the nozzle will move when not extruding material.
+Translated:سرعت که در آن نازل حرکت خواهد کرد که مواد اکسترودر نیست.
+
+English:The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.
+Translated:اکسترودر خواهد نازل بیش از گذشته تا 10 میلی متر مسیر ابزار پس از جمع پاک کردن.
+
+English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
+Translated:ایجاد یک محیط اطراف قسمت که در آن به پاک کردن نازل دیگر به هنگام چاپ با استفاده از اکستروژن دوگانه است. مجموعه را به 0 برای غیر فعال کردن.
+
+English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
+Translated:طول و عرض یک برج ایجاد شده در پشت چاپ مورد استفاده برای پاک کردن نازل بعد زمانی که در حال تغییر بین اکسترودر چند باقی مانده است. مجموعه را به 0 برای غیر فعال کردن.
+
+English:Allows the printer to attempt going below 0 along the Z axis during the Software Print Leveling wizard, and disables related warnings. Does not override actual endstops, physical or software.
+Translated:اجازه می دهد تا چاپگر را به تلاش رفتن زیر 0 در طول محور Z در طول نرم افزار چاپ جادوگر بدون درز، و غیر فعال هشدارهای مرتبط. آیا endstops واقعی، فیزیکی و یا نرم افزار باطل نیست.
+
+English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
+Translated:فاصله به حرکت نازل در امتداد محور Z به اطمینان حاصل شود که آن را با فاصله مناسب از تخت چاپ است. تعداد مثبت خواهد نازل بالا بردن، و یک عدد منفی آن را کاهش خواهد داد.
+
+English:Retract When \nChanging Islands
+Translated:جمع وقتی \ جزایر N تغییر
+
+English:Movement
+Translated:جنبش
+
+English:Fan
+Translated:پنکه
+
+English:Firmware Version: {0}
+Translated:نسخه سیستم عامل: {0}
+
+English:Offset
+Translated:انحراف
+
+English:Downloads
+Translated:دانلود
+
+English:Local Library
+Translated:کتابخانه محلی
+
+English:G-Code Terminal
+Translated:G-کد ترمینال
+
+English:Go to Dashboard
+Translated:برو به صفحه
+
+English:Sign Up for an Account
+Translated:ثبت نام برای یک حساب
+
+English:Create Account
+Translated:ایجاد حساب کاربری
+
+English:Username
+Translated:نام کاربری
+
+English:Enter a username
+Translated:نام کاربری را وارد کنید
+
+English:Email
+Translated:پست الکترونیک
+
+English:Enter your email address
+Translated:آدرس ایمیل خود را وارد کنید
+
+English:Re-enter Password
+Translated:رمز عبور را دوباره وارد
+
+English:Confirm your Password
+Translated:تکرار رمز عبور خود را
+
+English:Oops! Field cannot be left blank
+Translated:اوه! درست است نه خالی گذاشته شود.
+
+English:Sorry!  Must be a valid email address.
+Translated:متاسف! می بایست یک ایمیل ادرس معتبر باشد.
+
+English:Please wait while we create your account...
+Translated:لطفا صبر کنید در حالی که ما حساب کاربری خود را ایجاد ...
+
+English:Account created
+Translated:حساب کاربری ایجاد شد
+
+English:Success! Your account has been created.
+Translated:موفقیت! حساب شما ایجاد شده است.
+
+English:Please log in to continue.
+Translated:لطفا برای ادامه وارد شوید.
+
+English:Oops! Invalid username, email or password.
+Translated:اوه! نام کاربری نامعتبر، ایمیل و یا رمز عبور.
+
+English:Generates an outline around the support material to improve strength and hold up interface layers.
+Translated:تولید یک طرح کلی در اطراف مواد پشتیبانی برای بهبود قدرت و نگه دارید تا لایه های رابط.
+
+English:Create Perimeter
+Translated:درست محیط
+
+English:Braille Builder
+Translated:خط بریل ساز
+
+English:Image Converter
+Translated:تبدیل تصویر
+
+English:Text Creator
+Translated:خالق متن
+
+English:sign out
+Translated:خروج
+
+English:No macros are currently set up for this printer.
+Translated:بدون ماکروها در حال حاضر برای این چاپگر راه اندازی.
+
+English:The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+Translated:از هر اکسترودر نسبت به اکسترودر اول را جبران کند. تنها مفید برای ماشین آلات اکسترودر های متعدد.
+
+English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
+Translated:تعدیل کننده عرض اکستروژن برای اولین لایه از چاپ. یک مقدار بزرگتر از 100٪ می توانید با چسبندگی به رختخواب چاپ کمک کند.
+
+English:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
+Translated:فاصله از مدل که در آن برای اولین بار حلقه دامن کشیده شده است. این 0 تا ایجاد یک لنگر برای بخش به تخت، همچنین به عنوان لبه شناخته شده است.
+
+English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
+Translated:سرعت که در آن لایه های جامد بالا چاپ خواهد شد. می توان به صراحت یا به عنوان یک درصد از سرعت میانقاب تنظیم شده است.
+
+English:Calibration
+Translated:کالیبراسیون
+
+English:EEProm
+Translated:EEPROM
+
+English:Cloud
+Translated:ابر
+
+English:Notifications
+Translated:اطلاعیه
+
+English:Application
+Translated:کاربرد
+
+English:Language
+Translated:زبان
+
+English:Display Mode
+Translated:حالت نمایش
+
+English:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
+Translated:قطعات روی تخت و یا خارج از منطقه چاپ است.\n\nدوست دارید مرکز آنها روی تخت؟
+
+English:Parts not in print area
+Translated:قطعات در منطقه چاپ نمی
+
+English:Loading G-Code...
+Translated:در حال بارگذاری ... G-کد
+
+English:demo
+Translated:نسخه ی نمایشی
+
+English:Extruder 2
+Translated:اکسترودر 2
+
+English:To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.
+Translated:> 'کالیبراسیون - به دوباره کالیبره کردن چاپگر و یا برای خاموش کردن خودکار چاپ تسطیح، کنترل تسطیح چاپ را می توان تحت "گزینه ها" پیدا شده است.\n\n"انجام شد" برای بستن این پنجره کلیک کنید.
+
+English:Start G-Code cannot contain G29 if Print Leveling is enabled.
+Translated:شروع G-کد نمی تواند G29 اگر چاپ تسطیح فعال است.
+
+English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+Translated:خود را شروع G-کد باید شامل یک G29 اگر شما در حال برنامه ریزی در مورد استفاده از چاپ بدون درز. تغییر شروع خود G-کد یا خاموش کردن چاپ تسطیح
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "->" رشته "->" اکستروژن "->" اولین لایه،
+
+English:Start G-Code cannot contain G30 if Print Leveling is enabled.
+Translated:شروع G-کد نمی تواند G30 اگر چاپ تسطیح فعال است.
+
+English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+Translated:خود را شروع G-کد باید شامل یک G30 اگر شما در حال برنامه ریزی در مورد استفاده از چاپ بدون درز. تغییر شروع خود G-کد یا خاموش کردن چاپ تسطیح
+
+English:Loading G-Code
+Translated:در حال بارگذاری G-کد
+
+English:Estimated Mass
+Translated:جرم تخمینی
+
+English:Export EEPROM Settings
+Translated:تنظیمات EEPROM صادرات
+
+English:MatterControl - 
+Translated:MatterControl -
+
+English:Export EEPROM
+Translated:صادرات EEPROM
+
+English:Import EEPROM Settings
+Translated:تنظیمات واردات EEPROM
+
+English:Import EEPROM
+Translated:EEPROM واردات
+
+English:Center on Bed
+Translated:مرکز در تختخواب
+
+English:Would you like to save your changes before exiting the editor?
+Translated:دوست دارید تغییرات را ذخیره کنید قبل از خروج از ویرایشگر؟
+
+English:Save Changes
+Translated:ذخیره تغییرات
+
+English:Snap Grid
+Translated:ضربه محکم و ناگهانی شبکه
+
+English:Retraction On Tool Change
+Translated:جمع در تغییر ابزار
+
+English:randomize_start
+Translated:randomize_start
+
+English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+Translated:نیروهای برش را به تلاش برای جلوگیری از داشتن خط محیط عبور بیش از خطوط محیط موجود است. این می تواند با تراوش یا رشته کمک کند.
+
+English:The height of the printer's printable volume, in millimeters. Serves no purpose for slicing, but controls the height of the visual print area displayed in 3D View.
+Translated:ارتفاع حجم قابل چاپ چاپگر در میلی متر. در خدمت هیچ هدف برای برش، اما ارتفاع منطقه چاپ بصری نمایش داده شده در 3D نمایش کنترل می کند.
+
+English:The speed at which outside, external, or the otherwise visible perimeters will print.
+Translated:سرعت که در آن محیطی خارج، خارجی، و یا در غیر این صورت قابل مشاهده نسخه قابل چاپ خواهد شد.
+
+English:Used to specify if more than one extruder share a common heater cartridge.
+Translated:مورد استفاده برای تعیین اگر بیش از یک اکسترودر به اشتراک گذاشتن یک کارتریج بخاری رایج است.
+
+English:The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
+Translated:قطر واقعی از رشته مورد استفاده برای چاپ. اندازه گیری 5 بار با کالیپر، پرتاب از بالا و پایین و متوسط ​​3 باقی مانده است.
+
+English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
+Translated:ارتفاع لایه اول. اولین لایه بلندتر از ارتفاع لایه به طور پیش فرض می توانید چسبندگی خوب به صفحه ساخت اطمینان حاصل شود.
+
+English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
+Translated:چاپگر است که توانایی به کنترل منبع تغذیه. فعال کردن این عملکرد برای نشان دادن بخش ATX قدرت کنترل در سمت کنترل.
+
+English:The number of loops to draw around parts. Used to provide additional bed adhesion
+Translated:تعداد حلقه ها به منظور جلب اطراف قطعات. مورد استفاده برای ارائه چسبندگی تخت اضافی
+
+English:Skirt (Priming)
+Translated:دامن (بتونه کاری)
+
+English:Brim (Hold Downs)
+Translated:لبه (فراز HOLD)
+
+English:Finish Setup...
+Translated:پایان راه اندازی ...
+
+English:Run setup configuration for printer.
+Translated:پیکربندی اجرای راه اندازی برای چاپگر.
+
+English:Name
+Translated:نام
+
+English:Make
+Translated:ساخت
+
+English:User Manual
+Translated:راهنمای کاربری
+
+English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
+Translated:ارتفاع حجم قابل چاپ چاپگر در میلی متر. کنترل ارتفاع منطقه چاپ بصری نمایش داده شده در 3D ببینید.
+
+English:Extruder 3
+Translated:اکسترودر 3
+
+English:Extruder 4
+Translated:اکسترودر 4
+
+English:Undo
+Translated:باطل کردن
+
+English:Redo
+Translated:ازنو
+
+English:Set Name
+Translated:تنظیم نام
+
+English:MatterHackers - Set Name
+Translated:MatterHackers - تنظیم نام
+
+English:Shapes
+Translated:شکل ها
+
+English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
+Translated:این تنها بر روی سخت افزار خاص کار می کنند. استفاده نکنید مگر اینکه مطمئن شوید هستند کنترل کننده پرینتر شما از این ویژگی
+
+English:Show Firmware Updater
+Translated:نمایش به روزرسان نرم افزار
+
+English:Cube
+Translated:مکعب
+
+English:Cylinder
+Translated:سیلندر
+
+English:Sphere
+Translated:کره
+
+English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
+Translated:تنها خروجی اولین لایه از چاپ. به خصوص مفید برای خروجی داده ها جی کد برای برنامه های کاربردی مانند حکاکی یا برش.
+
+English:First Layer Only
+Translated:اولین لایه فقط
+
+English:File Settings
+Translated:تنظیمات فایل
+
+English:Solid Infill works best when set to LINES.
+Translated:میانقاب جامد کار می کند بهترین زمانی که به خطوط تنظیم.
+
+English:'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:'اول قد لایه باید کمتر یا مساوی به "قطر نازل» باشد.
+
+English:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:"اولین لایه اکستروژن عرض باید کمتر یا مساوی به" قطر نازل '* 4 باشد.
+
+English:Pyramid
+Translated:هرم
+
+English:Half Sphere
+Translated:نیم کره
+
+English:Cone
+Translated:مخروط
+
+English:Wedge
+Translated:گوه
+
+English:Roof
+Translated:سقف
+
+English:Round Roof
+Translated:سقف گرد
+
+English:Honey Comb
+Translated:شانه عسل
+
+English:Apply leveling to G-Code during export
+Translated:درخواست تسطیح به G-کد در صادرات
+
+English:Material 0
+Translated:مواد 0
+
+English:Printers
+Translated:چاپگر
+
+English:The speed at which the nozzle will move when resuming a failed print, for 1 layer.
+Translated:سرعت که در آن نازل حرکت خواهد کرد زمانی که از سرگیری چاپ شکست خورده، برای 1 لایه.
+
+English:Set if the z homing moves the extruder away from the bed (z-max homing)
+Translated:تنظیم اگر خانگی Z حرکت می کند اکسترودر دور از تخت (خانگی Z-حداکثر)
+
+English:The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.
+Translated:X و Y موقعیت اکسترودر که احتمال برخورد با قطعات روی تخت به حداقل می رساند.
+
+English:Restore All
+Translated:بازیابی همه
+
+English:Restore Default
+Translated:بازیابی پیش فرض
+
+English:Outer Surface
+Translated:سطح خارجی
+
+English:Minimum Travel equiring Retraction
+Translated:حداقل سفر جمع equiring
+
+English:Retract When Changing Islands
+Translated:جمع در هنگام تغییر جزایر
+
+English:Minimum Extrusion Requiring Retraction
+Translated:حداقل اکستروژن نیاز جمع
+
+English:Slow Down If Layer Print Time Is Below
+Translated:کم کردن سرعت اگر لایه چاپ زمان در زیر
+
+English:Resume Failed Print
+Translated:رزومه شکست چاپ
+
+English:Homing
+Translated:خانگی
+
+English:G-Code to be run before every tool change.
+Translated:G-کد قبل از هر تغییر ابزار اجرا شود.
+
+English:Before Tool Change G-Code
+Translated:قبل از ابزار تغییر G-کد
+
+English:After Tool Change G-Code
+Translated:پس از ابزار تغییر G-کد
+
+English:One Time
+Translated:سر وقت
+
+English:Single Print Settings
+Translated:تنظیمات چاپ تنها
+
+English:Single Print
+Translated:تنها چاپ
+
+English:Reset at End of Print
+Translated:تنظیم مجدد در پایان چاپ
+
+English:Will Clear at End of Print
+Translated:در پایان چاپ پاک
+
+English:Settings Will Clear at End of Print
+Translated:تنظیمات در پایان چاپ پاک
+
+English:Max Temp
+Translated:حداکثر دما
+
+English:Add a new Macro
+Translated:اضافه کردن یک ماکرو جدید
+
+English:Add a new Settings Preset
+Translated:اضافه کردن تنظیمات از پیش تعیین شده جدید
+
+English:Import an existing Settings Preset
+Translated:وارد کردن یک تنظیمات از پیش تعیین شده موجود
+
+English:The serial port communication speed of the printers firmware.
+Translated:سریال سرعت ارتباط پورت از سیستم عامل پرینتر.
+
+English:Home Z Max
+Translated:صفحه اصلی Z حداکثر
+
+English:Resume Layer Speed
+Translated:رزومه سرعت لایه
+
+English:XY Resume Position
+Translated:XY رزومه مکان
+
+English:Resume Print
+Translated:رزومه چاپ
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
+Translated:به نظر می رسد آخرین چاپ خود را شکست خورده برای تکمیل.\n\nدوست خود را به تلاش برای از سرگیری از آخرین موقعیت دانش؟
+
+English:Resume Last Print
+Translated:رزومه آخرین چاپ
+
+English:mm
+Translated:میلی متر
+
+English:mm or %
+Translated:میلی متر و یا٪
+
+English:count or mm
+Translated:حساب و یا میلی متر
+
+English:°
+Translated:درجه
+
+English:mm/s
+Translated:میلی متر / S
+
+English:mm/s or %
+Translated:میلی متر / s یا٪
+
+English:%
+Translated:٪
+
+English:layers or mm
+Translated:لایه و یا میلی متر
+
+English:°C
+Translated:° C
+
+English:seconds
+Translated:ثانیه
+
+English:layers
+Translated:لایه های
+
+English:Action
+Translated:عمل
+
+English:ComPort
+Translated:جور بودن
+
+English:Set the com port to use while connecting to this printer.
+Translated:تنظیم پورت کام به استفاده از در حالی که اتصال به این چاپگر.
+
+English:If set, the printer will automatically attempt to connect when selected.
+Translated:اگر تعیین شود، چاپگر به طور خودکار اقدام به اتصال انتخاب شده است.
+
+English:Give the macro a name
+Translated:به کلان نام
+
+English:This should be in 'G-Code'
+Translated:این باید در 'G-کد' باشد
+
+English:Software Print Leveling
+Translated:نرم افزار تسطیح چاپ
+
+English:Edit Preset:
+Translated:ویرایش از پیش تعیین شده:
+
+English:Preset Name:
+Translated:نام پیش تعیین شده:
+
+English:This is the name of your printer that will be displayed in the choose printer menu.
+Translated:این نام چاپگر خود را که در منو را انتخاب کنید چاپگر داده خواهد شد.
+
+English:Local Computer
+Translated:کامپیوتر محلی
+
+English:Connection
+Translated:ارتباط
+
+English:Interface
+Translated:رابط
+
+English:Behavior
+Translated:رفتار
+
+English:Connection Info
+Translated:اطلاعات اتصال
+
+English:Camera Monitoring
+Translated:دوربین مانیتورینگ
+
+English:Details
+Translated:جزئیات
+
+English:Edit Printer Settings
+Translated:ویرایش تنظیمات پرینتر
+
+English:Edit Selected Setting
+Translated:ویرایش تنظیمات انتخاب شده
+
+English:Edit Current Printer Settings
+Translated:ویرایش تنظیمات پرینتر کنونی
+
+English:Printer Settings
+Translated:تنظیمات چاپگر
+
+English:Delete the currently selected printer profile.
+Translated:حذف مشخصات چاپگر در حال حاضر انتخاب شده است.
+
+English:Delete Printer
+Translated:حذف چاپگر
+
+English:Estimated Print Time
+Translated:برآورد چاپ زمان
+
+English:The COM port to use while connecting to this printer.
+Translated:پورت COM به استفاده از در حالی که اتصال به این چاپگر.
+
+English:COM Port
+Translated:COM پورت
+
+English:Setup Wizard
+Translated:راه اندازی جادوگر
+
+English:Setup Options
+Translated:گزینه های راه اندازی
+
+English:Please wait. Generating printer profile
+Translated:لطفا صبر کنید. تولید مشخصات چاپگر
+
+English:Connect Your Device
+Translated:اتصال دستگاه خود را
+
+English:Instructions:
+Translated:دستورالعمل ها:
+
+English:1. Power on your 3D Printer.
+Translated:1. قدرت در پرینتر های 3D خود را.
+
+English:2. Attach your 3D Printer via USB.
+Translated:2. ضمیمه پرینتر های 3D خود را از طریق USB.
+
+English:3. Press 'Connect'.
+Translated:3. "اتصال" را فشار دهید.
+
+English:(Press 'Skip' to setup connection later)
+Translated:( 'پرش' را فشار دهید تا اتصال راه اندازی بعد از آن)
+
+English:Troubleshoot
+Translated:عیب یابی
+
+English:Estimated Print Time:
+Translated:برآورد چاپ زمان:
+
+English:Are you sure you want to delete your currently selected printer?
+Translated:آیا شما مطمئن هستید که میخواهید حذف چاپگر در حال حاضر انتخاب شده خود را؟
+
+English:Delete Printer?
+Translated:حذف پرینتر؟
+
+English:The Fill Density must be between 0 and 1.
+Translated:چگالی پر باید بین 0 و 1 باشد.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "->" عمومی "->" میانقاب،
+
+English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
+Translated:طول رشته اضافی برای اکسترود بعد از یک تغییر ابزار کامل (علاوه بر مجدد اکستروژن از تغییر ابزار فاصله انقباض).
+
+English:Extra Length After Tool Change
+Translated:طول اضافی پس از تغییر ابزار
+
+English:mm zero to disable
+Translated:میلی متر صفر برای غیر فعال کردن
+
+English:Connection Troubleshooting
+Translated:عیب یابی اتصال
+
+English:Generate Extra Perimeters When Needed:
+Translated:تولید محیطی فوق العاده زمانی که مورد نیاز:
+
+English:mm2
+Translated:MM2
+
+English:Only Retract When  Crossing Perimeters
+Translated:فقط پسگرفتن هنگام عبور محیطی
+
+English:mm/s�
+Translated:میلی متر / S
+
+English:mm or % leave 0 for auto
+Translated:میلی متر و یا٪ مرخصی 0 برای خودرو
+
+English:Enable Fan If Layer Print Time Is Below
+Translated:فعال کردن فن اگر لایه چاپ زمان در زیر
+
+English:Hz
+Translated:هرتز
+
+English:Current Settings
+Translated:تنظیمات فعلی
+
+English:Reset to defaults
+Translated:تنظیم مجدد به حالت پیش فرض
+
+English:Bake Overrides
+Translated:پخت تنظیمات تحتالشعاع
+
+English:Export MatterControl settings (*.printer)
+Translated:صادرات MatterControl تنظیمات (* .printer)
+
+English:Export Slic3r settings (*.ini)
+Translated:تنظیمات صادرات Slic3r (* .INI)
+
+English:Export Cura settings (*.ini)
+Translated:تنظیمات صادرات Cura (* .INI)
+
+English:Export Settings
+Translated:صادرات تنظیمات
+
+English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
+Translated:بازنشانی به مقادیر پیش فرض خواهد باطل فعلی خود را حذف و بازیابی تنظیمات چاپگر اصلی خود را.\nآیا مطمئن هستید که میخواهید ادامه دهید؟
+
+English:Revert Settings
+Translated:بازگرداندن تنظیمات
+
+English:Import as new printer profile
+Translated:واردات به عنوان مشخصات چاپگر جدید
+
+English:Merge into current printer profile
+Translated:ادغام را به مشخصات چاپگر فعلی
+
+English:Replace current printer profile
+Translated:جایگزین نمایه چاپگر فعلی
+
+English:Import Settings
+Translated:تنظیمات واردات
+
+English:Oops! Please select a serial port.
+Translated:اوه! لطفا یک پورت سریال را انتخاب کنید.
+
+English:The layers at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:لایه های که در آن چاپ مکث، اجازه می دهد برای تغییر در رشته. خالی بگذارید به غیر فعال کنید. برای مکث در لایه های چندگانه، با سمی کالن جدا کردن شماره لایه. به عنوان مثال: "16؛ 37".
+
+English:Layers To Pause:
+Translated:لایه ها را به مکث:
+
+English:Import Wizard
+Translated:واردات جادوگر
+
+English:Import settings as new QUALITY preset
+Translated:وارد کردن تنظیمات از پیش تعیین شده به عنوان با کیفیت جدید
+
+English:Import settings as new MATERIAL preset
+Translated:وارد کردن تنظیمات از پیش تعیین شده به عنوان مواد جدید
+
+English:Choose File
+Translated:انتخاب فایل
+
+English:Export Wizard
+Translated:صادرات جادوگر
+
+English:Oops! Unable to recognize settings file '{0}'.
+Translated:اوه! قادر به تشخیص فایل تنظیمات '{0}.
+
+English:Unable to Import
+Translated:وارد کردن
+
+English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
+Translated:شما با موفقیت وارد یک پروفایل چاپگر جدید. شما می توانید '{0} در لیست چاپگرهای خود را پیدا کنید.
+
+English:Import Successful
+Translated:واردات موفق
+
+English:The distance between the first layer (the bottom) and the top of the support material. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
+Translated:فاصله بین لایه اول (پایین) و بالای مواد پشتیبانی. ارزش زیادی بستگی به نوع ماده است. برای پارک بازی و ABS یک مقدار بین 0.1 و 0.3 بطو کلی خوبی کار می کند.
+
+English:Printers...
+Translated:چاپگر ...
+
+English:Current
+Translated:جاری
+
+English:Quality preset
+Translated:از پیش تعیین شده با کیفیت
+
+English:Material preset
+Translated:از پیش تعیین شده مواد
+
+English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.
+Translated:شما با موفقیت یک {0} تنظیمات جدید وارد شده است. شما می توانید پیدا کردن '{1}' در لیست خود را از {2} تنظیمات.
+
+English:Select the parts of the printer file that you would like to merge into your current profile.
+Translated:بخش هایی از فایل چاپگر است که شما می خواهم برای ادغام را به مشخصات فعلی خود را انتخاب کنید.
+
+English:Select Parts to Import
+Translated:قطعات انتخاب کنید به واردات
+
+English:Merge
+Translated:ادغام
+
+English:Export As
+Translated:صادرات به عنوان
+
+English:Cura
+Translated:Cura
+
+English:You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.
+Translated:شما با موفقیت یک {1} تنظیمات جدید وارد شده است. شما می توانید پیدا کردن '{0} در لیست خود را از تنظیمات {1}.
+
+English:Select what you would like to merge into your current profile.
+Translated:انتخاب کنید آنچه شما می خواهم برای ادغام را به مشخصات فعلی خود را.
+
+English:Settings have been merged into your current printer.
+Translated:تنظیمات را به چاپگر فعلی ادغام شده است.
+
+English:Select What to Import
+Translated:انتخاب کنید چه به واردات
+
+English:Select section to import to preset.
+Translated:انتخاب بخش به واردات به از پیش تعیین شده.
+
+English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
+Translated:برای دسترسی به پروفایل چاپگر ابر خود را.\n\nهنگامی که در شما امضا برای دسترسی قادر خواهد بود:
+
+English:Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.
+Translated:صرفه جویی در طرح خود را به ابر و آنها را از هر نقطه دسترسی در جهان است. شما همچنین می توانید آنها را هر زمان با هر کسی که می خواهید به اشتراک بگذارید.
+
+English:Cloud Profiles
+Translated:پروفایل ابر
+
+English:Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.
+Translated:ایجاد تنظیمات دستگاه خود را یک بار، و آنها را در دسترس هر نقطه که شما می خواهید برای چاپ. همه تغییرات خود را بر روی تمام دستگاه های خود ظاهر می شود.
+
+English:Remote Monitoring
+Translated:نظارت از راه دور
+
+English:Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.
+Translated:از هر نقطه چک در چاپ خود را. با نظارت بر ابر، شما دسترسی به چاپگر خود را بدون توجه به جایی که شما بروید.
+
+English:Sign In
+Translated:ورود
+
+English:Unable to connect to server
+Translated:قادر به اتصال به سرور
+
+English:What was my password again?
+Translated:رمز عبور من دوباره چه بود؟
+
+English:Reset Password
+Translated:بازیابی رمز عبور
+
+English:Email Address
+Translated:آدرس ایمیل
+
+English:A password reset code will be sent to your email.
+Translated:یک کد بازنشانی رمز ورود به ایمیل شما ارسال می شود.
+
+English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
+Translated:قیمت یک کیلوگرم رشته. مورد استفاده برای برآورد هزینه های چاپ در لایه نمایش.
+
+English:Material density. Only used for estimating mass in the Layer View.
+Translated:تراکم مواد. فقط برای برآورد جرم در لایه نمایش استفاده می شود.
+
+English:Estimated Cost
+Translated:هزینه تخمین زده شده
+
+English:Density
+Translated:تراکم
+
+English:g/cm³
+Translated:گرم / cm³ سرعت
+
+English:Cost
+Translated:هزینه
+
+English:$/kg
+Translated:$ / کیلوگرم
+
+English:OEM Date Modified
+Translated:نصب شده تاریخ تغییر
+
+English:Accept
+Translated:قبول کردن
+
+English:Please wait until the print has finished and try again.
+Translated:لطفا صبر کنید تا چاپ به پایان رسید و دوباره امتحان کنید.
+
+English:Can't switch printers while printing
+Translated:می توانید پرینتر در حالی که چاپ را تغییر نمی
+
+English:Can't log out while printing
+Translated:نمی توانید از سیستم خارج شوید در حالی که چاپ
+
+English:Are you sure you want to logout? You will not have access to your printer profiles or cloud library.
+Translated:آیا برای خارج شدن مطمئن هستید؟ شما دسترسی به پروفایل چاپگر خود و یا کتابخانه ابر است.
+
+English:Logout?
+Translated:خروج از سیستم؟
+
+English:Logout
+Translated:خروج از سیستم
+
+English:Can't login while printing
+Translated:نمی توانید در حالی که چاپ ورود
+
+English:Cloud Printer Profiles
+Translated:ابر پروفایل پرینتر
+
+English:Copy Guest Printers
+Translated:کپی مهمان چاپگر
+
+English:'First Layer Extrusion Width' must be greater than 0.
+Translated:"اولین لایه اکستروژن عرض باید بزرگتر از 0 باشد.
+
+English:It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.
+Translated:از آن زمان به آپلود پرینتر های موجود خود را به حساب MatterHackers خود را است. پس از ارسال، این پرینتر در دسترس خواهد بود هر بار که شما به MatterControl وارد شوید.
+
+English:Select Printers to Upload
+Translated:انتخاب چاپگر برای آپلود
+
+English:Printers to Upload:
+Translated:چاپگر برای آپلود:
+
+English:Upload
+Translated:بارگذاری
+
+English:Printer History
+Translated:تاریخچه چاپگر
+
+English:Subject*
+Translated:موضوع*
+
+English:Message*
+Translated:پیام *
+
+English:Email Address*
+Translated:آدرس ایمیل*
+
+English:Name*
+Translated:نام*
+
+English:MatterControl: Submit Feedback
+Translated:MatterControl: ارسال نظر در
+
+English:How can we improve?
+Translated:چگونه می توانیم بهبود بخشد؟
+
+English:Forums
+Translated:انجمن
+
+English:Wiki
+Translated:ویکی
+
+English:Guides and Arcticles
+Translated:راهنما و Arcticles
+
+English:Guides and Articles
+Translated:راهنما و مقالات
+
+English:Syncing Profiles...
+Translated:پروفایل همگام سازی ...
+
+English:G-Code
+Translated:G-کد
+
+English:Defaults Updated On: {0}
+Translated:به طور پیش فرض به روز شده در: {0}
+
+English:Defaults Updated On: { 0} 
+Translated:به طور پیش فرض به روز شده در: {0}
+
+English:Defaults Updated On: {0} 
+Translated:به طور پیش فرض به روز شده در: {0}
+
+English:Properties
+Translated:خواص
+
+English:Qualities
+Translated:کیفیت
+
+English:Temperatures
+Translated:دمای
+
+English:While Printing
+Translated:در حالی که چاپ
+
+English:On Tool Change
+Translated:در تغییر ابزار
+
+English:Select a Printer.
+Translated:پرینتر را انتخاب کنید.
+
+English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
+Translated:مشخصات شما در حال تلاش برای بارگذاری خراب شده است. ما آخرین قابل استفاده {0} {1} مشخصات خود را از تاریخ مشخصات اخیر خود را به جای لود می شود.
+
+English:Recovered printer profile
+Translated:مشخصات چاپگر بازیافت
+
+English:Sorry! Looks like an account already exists for that email address.
+Translated:متاسف! به نظر می رسد مانند یک حساب کاربری در حال حاضر برای این آدرس ایمیل وجود دارد.
+
+English:Settings History
+Translated:تاریخچه تنظیمات
+
+English:Allows the printer to attempt to connect to a printer over the network.
+Translated:اجازه می دهد تا چاپگر را به تلاش برای اتصال به یک پرینتر بر روی شبکه.
+
+English:IP Address of printer/printer controller
+Translated:آدرس IP چاپگر / کنترل کننده پرینتر
+
+English:Port number to be used with IP Adress to connect to printer over the network
+Translated:شماره پورت می شود با آدرس IP مورد استفاده برای اتصال به چاپگر بر روی شبکه
+
+English:IP Address
+Translated:نشانی آیپی
+
+English:Port
+Translated:بندر
+
+English:Enable Network Printing
+Translated:فعال کردن چاپ شبکه
+
+English:Determines the method of communication used to talk to your printer.
+Translated:تعیین روش ارتباطی استفاده به صحبت کردن با چاپگر خود را.
+
+English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:لایه (بازدید کنندگان) که در آن چاپ مکث، اجازه می دهد برای تغییر در رشته. خالی بگذارید به غیر فعال کنید. برای مکث در لایه های چندگانه، با سمی کالن جدا کردن شماره لایه. به عنوان مثال: "16؛ 37".
+
+English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
+Translated:همه اکستروژن توسط این ارزش ضرب شده است. افزایش آن بالا 1 مقدار رشته بودن اکسترود افزایش (1.1 حداکثر ارزش زیادی است)؛ کاهش آن را به مقدار بودن اکسترود کاهش (0.9 یک مقدار حداقل خوب است).
+
+English:The distance that the perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
+Translated:فاصله ای که محیط خود را هنگامی که آن را کامل حلقه آن هم همپوشانی دارند، به عنوان یک درصد از قطر نازل بیان شده است.
+
+English:Start End Overlap
+Translated:شروع پایان همپوشانی
+
+English:Layer(s) To Pause:
+Translated:لایه (بازدید کنندگان) به مکث:
+
+English:Allows the printer to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+Translated:اجازه می دهد تا چاپگر را به تلاش برای اتصال به یک پرینتر بر روی شبکه. (شما باید قطع کرده و دوباره برای این به اثر)
+
+English:Allows the printer to use the s3g communication method. (You must disconnect and reconnect for this to take effect)
+Translated:اجازه می دهد تا چاپگر به استفاده از روش های ارتباطی S3G. (شما باید قطع کرده و دوباره برای این به اثر)
+
+English:Enable Sailfish Communication
+Translated:فعال کردن ارتباطات انواع شمشیرماهیان دندان دار
+
+English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+Translated:مجموعه MatterControl را به تلاش برای اتصال به یک پرینتر بر روی شبکه. (شما باید قطع کرده و دوباره برای این به اثر)
+
+English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
+Translated:مجموعه MatterControl به استفاده از روش های ارتباطی S3G. (شما باید قطع کرده و دوباره برای این به اثر)
+
+English:Networked Printing
+Translated:چاپ شبکه
+
+English:Sailfish Communication
+Translated:ارتباط انواع شمشیرماهیان دندان دار
+
+English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
+Translated:موقعیت (مختصات x و y) از مرکز بستر چاپ، در میلی متر. به طور معمول این 1/2 اندازه تخت برای پرینتر های دکارتی و 0، 0 برای پرینتر های دلتا است.
+
+English:Update Required
+Translated:به روزرسانی نیاز است
+
+English:There is a required update available.
+Translated:یک به روز رسانی مورد نیاز در دسترس وجود دارد.
+
+English:Import Printer
+Translated:واردات پرینتر
+
+English:Resume Settings
+Translated:تنظیمات رزومه
+
+English:Enable Resuming
+Translated:فعال کردن از سرگیری
+
+English:When this is checked MatterControl will attempt to resume a print in the event of a failure, such as lost connection or lost power.
+Translated:هنگامی که این گزینه انتخاب شود MatterControl تلاش خواهد کرد تا از سر چاپ در صورت شکست، مانند اتصال از دست داده و یا قدرت از دست داد.
+
+English:Minimum Travel Requiring Retraction
+Translated:حداقل سفر جمع نیاز
+
+English:Retreiving sync information...
+Translated:Retreiving اطلاعات همگام سازی ...
+
+English:- default -
+Translated:- پیش فرض -
+
+English:Profile History
+Translated:تاریخچه
+
+English:Detect sections of the model that would be too thin to print, expand them, and print them.
+Translated:شناسایی بخش های از مدل خواهد بود که بیش از حد نازک به چاپ، گسترش آنها، و چاپ آنها.
+
+English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
+Translated:تشخیص شکاف بین محیطی که بیش از حد نازک برای پر کردن با پر طبیعی و تلاش برای پر کردن آنها می باشد.
+
+English:Expand Thin Walls
+Translated:گسترش دیواره های نازک
+
+English:Fill Thin Gaps
+Translated:پر کردن شکاف نازک
+
+English:Sign in Required
+Translated:ورود به سیستم لازم
+
+English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
+Translated:آیا مطمئن هستید که می خواهید سیستم خارج شوید؟ شما دسترسی به پروفایل چاپگر خود و یا کتابخانه ابر است.
+
+English:Sign Out?
+Translated:خروج؟
+
+English:Sign Out
+Translated:خروج
+
+English:Sign in
+Translated:ورود
+
+English:Sign in to my account
+Translated:ورود به حساب کاربری من
+
+English:Don't ask me again
+Translated:دوباره از من پرسیده نمی
+
+English:Sets the models that will be added to the queue when a new printer is created.
+Translated:مجموعه مدل های خواهد شد که به صف اضافه شده که یک چاپگر جدید ایجاد شده است.
+
+English:Don't remind me again
+Translated:دوباره به من یادآوری نیست
+
+English:Retrieving sync information...
+Translated:بازیابی اطلاعات همگام سازی ...
+
+English:Please sign in to continue.
+Translated:لطفا به سیستم وارد شوید به ادامه.
+
+English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
+Translated:سرعت که در آن نازل حرکت خواهد کرد که دوره نقاهت چاپ شکست خورده، برای 1 لایه.
+
+English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
+Translated:هنگامی که این گزینه انتخاب شود MatterControl تلاش خواهد کرد برای بازیابی چاپ در صورت شکست، مانند اتصال از دست داده و یا قدرت از دست داد.
+
+English:Recover Print
+Translated:بازیابی چاپ
+
+English:Enable Recovery
+Translated:فعال کردن بازیابی
+
+English:Recover Layer Speed
+Translated:بازیابی لایه سرعت
+
+English:XY Recover Position
+Translated:XY بازیابی مکان
+
+English:Recover Settings
+Translated:بازیابی تنظیمات
+
+English:Print Recovery
+Translated:بازیابی چاپ
+
+English:XY Homing Position
+Translated:XY خانگی مکان
+
+English:Uh oh! Passwords do not match.
+Translated:اوه اوه! رمزهای ورود مطابقت ندارند.
+
+English:Layers / Surface
+Translated:لایه / سطح
+
+English:Raft / Priming
+Translated:قایق / بتونه کاری
+
+English:Priming
+Translated:چیدن برگ رسیده تنباکو
+
+English:First Layer Expansion
+Translated:توسعه اول لایه
+
+English:Default settings updated: {0} 
+Translated:تنظیمات پیش فرض به روز رسانی: {0}
+
+English:Session Cleared
+Translated:جلسه پاک
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
+Translated:به نظر می رسد آخرین چاپ خود را شکست خورده برای تکمیل.\n\nدوست خود را به تلاش برای بهبود یافتن از آخرین موقعیت دانش؟
+
+English:Recover Last Print
+Translated:بازیابی آخرین چاپ
+
+English:Disconnected
+Translated:قطع شده
+
+English:Limited Connectivity
+Translated:اتصال محدود
+
+English:Connection Status
+Translated:وضعیت اتصال
+
+English:Retry Login
+Translated:دوباره سعی کنید ورود
+
+English:It's time to migrate your existing printer settings to your MatterHackers account. Once added, these printers will be available whenever and wherever you sign in to MatterControl. Printers that are not migrated will only be available in 'guest' mode.
+Translated:از آن زمان به مهاجرت تنظیمات چاپگر موجود خود را به حساب MatterHackers خود را است. پس از اضافه شده، این چاپگرهای موجود در هر زمان و هر کجا که می خواهد ورود به MatterControl. چاپگر که مهاجرت نه تنها در «مهمان حالت در دسترس خواهد بود.
+
+English:Migrate Printers to Account
+Translated:مهاجرت چاپگر به حساب
+
+English:Select and add a new printer.
+Translated:انتخاب کنید و اضافه کردن یک چاپگر جدید.
+
+English:Select an existing printer.
+Translated:یک چاپگر موجود را انتخاب کنید.
+
+English:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
+Translated:فاصله بین بالای پشتیبانی و پایین مدل. ارزش زیادی بستگی به نوع ماده است. برای ABS و PLA یک مقدار بین 0.4 و 0.6 کار خوبی بود.
+
+English:WARNING: Disconnecting will cancel the print
+Translated:هشدار: لوازم یدکی را به چاپ لغو
+
+English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available in 'guest' mode.
+Translated:از آن زمان به کپی کردن تنظیمات چاپگر موجود خود را به حساب MatterHackers خود را است. یک بار کپی، این پرینتر در دسترس خواهد بود هر زمان که شما به سیستم وارد شوید به MatterControl. چاپگر که کپی نه تنها در «مهمان حالت در دسترس خواهد بود.
+
+English:Copy Printers to Account
+Translated:چاپگر کپی به حساب
+
+English:Printers to Copy:
+Translated:چاپگر برای کپی کردن:
+
+English:Profiles
+Translated:پروفایل
+
+English:Profile
+Translated:مشخصات
+
+English:Oops! Settings file '{0}' did not contain any settings we could import.
+Translated:اوه! فایل تنظیمات '{0}' هیچ تنظیمات ما می تواند وارد نیست.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "-" پرینتر '> -> "بازیابی چاپ" -> "فعال کردن بازیابی'
+
+English:Start G-Code cannot contain G29 if Print Recovery is enabled.
+Translated:شروع G-کد نمی تواند G29 اگر بازیابی چاپ را فعال کنید.
+
+English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+Translated:خود را شروع G-کد باید شامل یک G29 اگر شما در حال برنامه ریزی در استفاده از بازیابی چاپ. تغییر شروع خود G-کد یا خاموش کردن بازیابی چاپ
+
+English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+Translated:خود را شروع G-کد باید شامل یک G30 اگر شما در حال برنامه ریزی در استفاده از بازیابی چاپ. تغییر شروع خود G-کد یا خاموش کردن بازیابی چاپ
+
+English:Search results no available in this view
+Translated:نتایج جستجو در دسترس در این نمایش
+
+English:Sorry: Search results not available in this view
+Translated:با عرض پوزش: نتایج جستجو در این نمایش در دسترس نیست
+
+English:Oops! Please select a folder to search
+Translated:اوه! لطفا یک پوشه برای جستجو انتخاب کنید
+
+English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
+Translated:این بستر در حال حاضر گرم و درجه حرارت هدف خود را نمی تواند تغییر کند تا زمانی که {0} رسد ° C. > رشته - -> درجه حرارت\n\nشما می توانید شروع دمای بستر در تنظیمات.\n\n{1}
+
+English:This is automatically set by MatterControl. You do not need to adjust it.
+Translated:این به طور خودکار توسط MatterControl تنظیم شده است. شما لازم نیست برای تنظیم آن.
+
+English:The amount to change the printers home position after a z home has occured. This is used by print leveling and recovery. This should not be manualy edited.
+Translated:مقدار به تغییر موقعیت پرینتر خانه پس از یک خانه Z رخ داده است. این است که با تسطیح چاپ و بازیابی استفاده می شود. این کار را باید دستی ویرایش نیست.
+
+English:Z Home Position
+Translated:Z صفحه اصلی مکان
+
+English:Offset After Homing
+Translated:افست پس از خانگی
+
+English:Leveling Calibration
+Translated:تسطیح کالیبراسیون
+
+English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
+Translated:از آن زمان به کپی کردن تنظیمات چاپگر موجود خود را به حساب MatterHackers خود را است. یک بار کپی، این پرینتر در دسترس خواهد بود هر زمان که شما به سیستم وارد شوید به MatterControl. چاپگر که کپی نه تنها در دسترس خواهد بود زمانی که در امضا نکرده است.
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "->" پرینتر "->" سفارشی G-کد "->" شروع G-کد،
+
+English:none
+Translated:هیچ
+
+English:Exit while printing
+Translated:خروج در حالی که چاپ
+
+English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+Translated:آیا مطمئن هستید که می خواهید خروج در حالی که چاپ در حال اجرا است از کارت SD.\n\nتوجه: اگر خارج می شوید، توصیه می شود شما صبر کنید تا چاپ قبل از اجرای MatterControl دوباره به پایان رسید.
+
+English:Connect printer and power on
+Translated:اتصال چاپگر و قدرت در
+
+English:Detect perimeters that cross over themselves and combine them.
+Translated:تشخیص محیطی که بیش از خود عبور و ترکیب آنها.
+
+English:Merge Overlapping Lines
+Translated:ادغام با هم تداخل دارند خطوط
+
+English:Restore Settings
+Translated:بازگرداندن تنظیمات
+
+English:Streaming GCode...
+Translated:جریان جی کد ...
+
+English:Layers & Infill
+Translated:لایه ها و میانقاب
+
+English:Raft & Support
+Translated:قایق و پشتیبانی
+
+English:Redeem Code
+Translated:استفاده از کد
+
+English:Library - Enter Share Code
+Translated:کتابخانه - به اشتراک کد را وارد کنید
+
+English:Macro Feedback
+Translated:ماکرو فیدبک
+
+English:OK
+Translated:خوب
+
+English:Load Filament
+Translated:رشته بار
+
+English:UnloadFilament
+Translated:UnloadFilament
+
+English:This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.
+Translated:این نسبت اکسترود مواد کنترل در طول پل زدن. کاهش این کمی می تواند کمک به پل زدن با کشش رشته بیشتر، و با استفاده از یک فن همچنین می توانید تا حد زیادی کمک کند.
+
+English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
+Translated:هر بخش فردی به اتمام چاپ پس از آن نازل شده است را به تخت را کاهش داده و قسمت بعدی چاپ شده است.
+
+English:Moves the nozzle up and off the part to allow cooling.
+Translated:حرکت نازل و از بخش اجازه می دهد تا خنک کننده.
+
+English:Detects sections of the model that would be too thin to print and expands them to make them printable.
+Translated:تشخیص بخش از مدل خواهد بود که بیش از حد نازک به چاپ و گسترش می یابد، آنها را به آنها قابل چاپ.
+
+English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
+Translated:نشان می دهد که Z خانه محور پایان داغ از سمت تخت (Z-حداکثر خانگی)
+
+English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
+Translated:X و Y موقعیت از پایان داغ که احتمال برخورد با قطعات روی تخت به حداقل می رساند.
+
+English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
+Translated:درجه حرارت که نازل خواهد شد قبل از چاپ اولین لایه از بخش گرم می شود. چاپگر صبر کنید تا این درجه حرارت شده است قبل از چاپ رسیده است.
+
+English:This will lower the temperature of the non-printing nozzle to help prevent oozing.
+Translated:این درجه حرارت از نازل های غیر چاپ پایین تر به کمک به جلوگیری از تراوش.
+
+English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
+Translated:فاصله ای که یک محیط خود را هنگامی که آن را کامل حلقه آن هم همپوشانی دارند، به عنوان یک درصد از قطر نازل بیان شده است.
+
+English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
+Translated:نیروهای چاپ به تنها یک اکستروژن و به تدریج ارتفاع Z در طول چاپ را افزایش دهد. تنها یک بخش در یک زمان با این ویژگی را چاپ کنید.
+
+English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
+Translated:تعداد درجه سانتیگراد برای کاهش درجه حرارت از یک نازل در حالی که آن فعال است.
+
+English:Disconnect and stop the current print?
+Translated:قطع و جلوگیری از چاپ فعلی؟
+
+English:WARNING: Disconnecting will stop the current print
+Translated:هشدار: قطع چاپ فعلی را متوقف خواهد کرد
+
+English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
+Translated:هشدار: لوازم یدکی را به چاپ فعلی را متوقف کند.\n\nآیا شما مطمئن هستید که میخواهید قطع کنید؟
+
+English:Select a printer.
+Translated:یک چاپگر را انتخاب کنید.
+
+English:Note: Be sure the tip of the extruder is clean.
+Translated:توجه داشته باشید: مطمئن باشید که نوک اکسترودر تمیز است.
+
+English:- none -
+Translated:- ندارد -
+
+English:Actions
+Translated:اعمال
+
+English:Show In Action Menu
+Translated:نمایش در منوی اقدام
+
+English:Unable to Connect
+Translated:قادر به اتصال
+
+English:Port number to be used with IP Address to connect to printer over the network
+Translated:شماره پورت می شود با IP آدرس استفاده برای اتصال به چاپگر بر روی شبکه
+
+English:Reset to Defaults
+Translated:بازنشانیبهپیشفرضها
+
+English:The serial port to use while connecting to this printer.
+Translated:پورت سریال به استفاده از در حالی که اتصال به این چاپگر.
+
+English:Save Changed
+Translated:صرفه جویی در تغییر
+
+English:Discard Changes
+Translated:لغو تغییرات
+
+English:Stay Connected
+Translated:در ارتباط باش
+
+English:Cancel Print
+Translated:لغو چاپ
+
+English:Continue Printing
+Translated:ادامه چاپ
+
+English:Recovered Once
+Translated:بازیافت هنگامی که
+
+English:Recovered once
+Translated:بازیافت یک بار
+
+English:recovered once
+Translated:بهبود یک بار
+
+English:Add New Printer
+Translated:اضافه کردن جدید پرینتر
+
+English:Add New Setting
+Translated:اضافه کردن تنظیمات جدید
+
+English:Sync Dashboard
+Translated:همگام سازی داشبورد
+
+English:SD Card
+Translated:کارت حافظه اس دی
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl: انتخاب کنید نرم افزار فایل
+
+English:Starting firmware update...
+Translated:شروع روز رسانی سیستم عامل ...
+
+English:Disconnecting from printer...
+Translated:قطع از چاپگر ...
+
+English:Initializing hardware...
+Translated:مقدار دهی اولیه سخت افزار ...
+
+English:Creating firmware backup...
+Translated:ایجاد پشتیبان از سیستم عامل ...
+
+English:Update In Progress: {0}
+Translated:روز در حال پیشرفت: {0}
+
+English:Updating firmware...
+Translated:روز رسانی سیستم عامل ...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:سیستم عامل موفقیت به روز شد. لطفا دوباره وصل کنید.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:بخش 'پورت سریال، لیست تمام سریال موجود پورت \ N بر روی دستگاه شما. تغییر که پورت USB چاپگر \ N conneted به ممکن است پورت سریال مرتبط را تغییر دهید.\n\nنکته: اگر شما نامشخص است، جدا / پلاگین در خود چاپگر\nو تازه کردن ضربه. پورت جدید به نظر می رسد که باید باشد\nچاپگر خود را.
+
+English:Reverting firmware to previous version...
+Translated:رجوع به ورژن قبلی ...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:سیستم عامل موفقیت بازیابی شد. لطفا دوباره وصل کنید.
+
+English:SET
+Translated:تنظیم
+
+English:Move X negative
+Translated:حرکت X منفی
+
+English:Move X positive
+Translated:حرکت X مثبت
+
+English:Move Y positive
+Translated:حرکت Y مثبت
+
+English:Move Y negative
+Translated:حرکت Y منفی
+
+English:Move Z positive
+Translated:حرکت Z مثبت
+
+English:Move Z negative
+Translated:حرکت Z منفی
+
+English:Enable cursor keys for movement
+Translated:فعال کردن کلید های مکان نما برای حرکت
+
+English:Retract filament
+Translated:جمع رشته
+
+English:Extrude filament
+Translated:رشته اکسترود
+
+English:Home X, Y and Z
+Translated:صفحه اصلی X، Y و Z
+
+English:Home X
+Translated:صفحه اصلی X
+
+English:Home Y
+Translated:صفحه اصلی Y
+
+English:Home Z
+Translated:صفحه اصلی Z
+
+English:Open cloud sync dashboard in web browser
+Translated:گسترش داشبورد همگام سازی ابری در مرورگر وب
+
+English:Restart
+Translated:شروع دوباره
+
+English:Please Review Your Order
+Translated:لطفا سفارش خود را بررسی
+
+English:Loading product information. Pleast wait...
+Translated:در حال بارگیری اطلاعات محصول می باشد. Pleast صبر کنید ...
+
+English:Enter Code: 
+Translated:کد را وارد کنید:
+
+English:Use Promo Code
+Translated:استفاده از کد های تبلیغاتی
+
+English:Applying...
+Translated:اعمال...
+
+English:Enter your Billing Address
+Translated:را وارد کنید آدرس صورتحساب خود را
+
+English:Full Name
+Translated:نام و نام خانوادگی
+
+English:Enter your Payment Info
+Translated:اطلاعات پرداخت خود را وارد کنید
+
+English:Place Order
+Translated:بصورت مستقیم سفارش
+
+English:Additional payment options coming soon!
+Translated:گزینه های پرداخت اضافی به زودی!
+
+English:- Please Select -
+Translated:- لطفا انتخاب کنید -
+
+English:Credit Card Number
+Translated:شماره کارت اعتباری
+
+English:Expiration Date
+Translated:تاریخ انقضا
+
+English:Card Verification Number
+Translated:شماره رمز کارت
+
+English:Saving...
+Translated:صرفه جویی در...
+
+English:Oops! Payment has been declined.
+Translated:اوه! پرداخت رد شده است.
+

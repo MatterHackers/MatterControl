@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private bool gotBeginFileList = false;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public void LoadFilesFromSD()
 		{
@@ -511,6 +511,17 @@ namespace MatterHackers.MatterControl.PrintQueue
 				&& SelectedCount > 1)
 			{
 				SelectedIndex = selectedIndices[selectedIndices.Count - 1];
+			}
+
+			if(ItemCount > 0
+				&& SelectedIndex < 0)
+			{
+				SelectedIndex = 0;
+			}
+			else if(ItemCount > 0
+				&& SelectedIndex >= ItemCount)
+			{
+				SelectedIndex = ItemCount - 1;
 			}
 		}
 

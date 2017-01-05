@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public TemperatureWidgetBase(string textValue)
 			: base(52 * GuiWidget.DeviceScale, 52 * GuiWidget.DeviceScale)
@@ -102,8 +102,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(temperatureTypeName);
 			this.AddChild(currentTempIndicator);
 			this.AddChild(buttonContainer);
-
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
 			this.MouseEnterBounds += onEnterBounds;
 			this.MouseLeaveBounds += onLeaveBounds;

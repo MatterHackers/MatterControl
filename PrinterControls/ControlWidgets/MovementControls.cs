@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private LimitCallingFrequency reportDestinationChanged = null;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public static double XSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["x"];
 
@@ -195,25 +195,25 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
 			RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
 			textImageButtonFactory.normalFillColor = new RGBA_Bytes(180, 180, 180);
-			homeAllButton = textImageButtonFactory.Generate(LocalizedString.Get("ALL"));
+			homeAllButton = textImageButtonFactory.Generate("ALL".Localize());
 			this.textImageButtonFactory.normalFillColor = oldColor;
-			homeAllButton.ToolTipText = "Home X, Y and Z";
+			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
 			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeAllButton.Click += new EventHandler(homeAll_Click);
 
 			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
 			homeXButton = textImageButtonFactory.Generate("X", centerText: true);
-			homeXButton.ToolTipText = "Home X";
+			homeXButton.ToolTipText = "Home X".Localize();
 			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeXButton.Click += new EventHandler(homeXButton_Click);
 
 			homeYButton = textImageButtonFactory.Generate("Y", centerText: true);
-			homeYButton.ToolTipText = "Home Y";
+			homeYButton.ToolTipText = "Home Y".Localize();
 			homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeYButton.Click += new EventHandler(homeYButton_Click);
 
 			homeZButton = textImageButtonFactory.Generate("Z", centerText: true);
-			homeZButton.ToolTipText = "Home Z";
+			homeZButton.ToolTipText = "Home Z".Localize();
 			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeZButton.Click += new EventHandler(homeZButton_Click);
 
@@ -253,7 +253,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if ((PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 				&& offset.Length > .01)
 			{
-
 				offsetStreamLabel.Text = ("{0} ({1:0.##}, {2:0.##}, {3:0.##})").FormatWith(
 					"Offset".Localize() + ": ",
 					offset.x,

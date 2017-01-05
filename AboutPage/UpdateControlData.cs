@@ -330,7 +330,13 @@ namespace MatterHackers.MatterControl
 					webClient = new WebClient();
 					webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
 					webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-					webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
+					try
+					{
+						webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
+					}
+					catch
+					{
+					}
 				}
 			}
 		}

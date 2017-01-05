@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private GuiWidget thumbnailWidget;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public LibrarySelectorWidget libraryDataView { get; private set; }
 
@@ -72,8 +72,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			CreateGuiElements(openButtonText);
 
-			MouseEnterBounds += (s, e) => EnteredBounds();
-			MouseLeaveBounds += (s, e) => EnteredBounds();
+			MouseEnterBounds += (s, e) => UpdateHoverState();
+			MouseLeaveBounds += (s, e) => UpdateHoverState();
 		}
 
 		public PrintItemCollection PrintItemCollection { get { return printItemCollection; } }
@@ -269,29 +269,38 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			AddHandlers();
 		}
 
-		void EnteredBounds()
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
-			switch (UnderMouseState)
+			UpdateHoverState();
+			base.OnMouseMove(mouseEvent);
+		}
+
+		void UpdateHoverState()
+		{
+			UiThread.RunOnIdle(() =>
 			{
-				case UnderMouseState.NotUnderMouse:
-					IsHoverItem = false;
-					break;
-
-				case UnderMouseState.FirstUnderMouse:
-					IsHoverItem = true;
-					break;
-
-				case UnderMouseState.UnderMouseNotFirst:
-					if (ContainsFirstUnderMouseRecursive())
-					{
-						IsHoverItem = true;
-					}
-					else
-					{
+				switch (UnderMouseState)
+				{
+					case UnderMouseState.NotUnderMouse:
 						IsHoverItem = false;
-					}
-					break;
-			}
+						break;
+
+					case UnderMouseState.FirstUnderMouse:
+						IsHoverItem = true;
+						break;
+
+					case UnderMouseState.UnderMouseNotFirst:
+						if (ContainsFirstUnderMouseRecursive())
+						{
+							IsHoverItem = true;
+						}
+						else
+						{
+							IsHoverItem = false;
+						}
+						break;
+				}
+			});
 		}
 
 		private void AddHandlers()

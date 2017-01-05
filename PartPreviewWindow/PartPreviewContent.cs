@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PartPreviewContent : GuiWidget
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private View3DWidget partPreviewView;
 		private ViewGcodeBasic viewGcodeBasic;
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewGcodeBasic.Closed += (s, e) => Close();
 			}
 
-			TabPage layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View").ToUpper());
+			TabPage layerView = new TabPage(viewGcodeBasic, "Layer View".Localize().ToUpper());
 
 			int tabPointSize = 16;
             // add the correct tabs based on whether we are stand alone or embedded

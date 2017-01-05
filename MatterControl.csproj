@@ -134,7 +134,7 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionMacros.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuOptionAction.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
@@ -169,7 +169,6 @@
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorWidget.cs" />
     <Compile Include="CustomWidgets\PopOutTextTab.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
-    <Compile Include="CustomWidgets\SolidProgressControl.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
     <Compile Include="DataStorage\Models.cs" />

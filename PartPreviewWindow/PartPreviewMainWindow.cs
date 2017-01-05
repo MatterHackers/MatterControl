@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PartPreviewMainWindow : SystemWindow
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private PartPreviewContent partPreviewWidget;
 
@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(750, 550)
 		{
 			UseOpenGL = true;
-			string partPreviewTitle = LocalizedString.Get("MatterControl");
+			string partPreviewTitle = "MatterControl".Localize();
 			Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
 			this.Name = "Part Preview Window";
@@ -57,11 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Close();
 			};
 
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(partPreviewWidget));
-#else
 			this.AddChild(partPreviewWidget);
-#endif
 
 			AddHandlers();
 

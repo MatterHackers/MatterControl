@@ -179,7 +179,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string copyButtonName = "3D View Copy";
 
 				//Click Edit button to make edit controls visible
-				testRunner.ClickByName("3D View Edit");
 				testRunner.Wait(1);
 				int partCountBeforeCopy = view3D.Scene.Children.Count();
 				Assert.IsTrue(partCountBeforeCopy == 1);
@@ -187,20 +186,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName(copyButtonName);
-					testRunner.Wait(1);
+					testRunner.WaitUntil(() => view3D.Scene.Children.Count() == i + 2, 2);
+					Assert.AreEqual(view3D.Scene.Children.Count(), i + 2);
 				}
 
 				testRunner.Wait(1);
 
 				for (int x = 0; x <= 4; x++)
 				{
-
 					int meshCountBeforeUndo = view3D.Scene.Children.Count();
 					testRunner.ClickByName("3D View Undo");
-					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterUndo = view3D.Scene.Children.Count();
-					Assert.IsTrue(meshCountAfterUndo == meshCountBeforeUndo - 1);
 
+					testRunner.WaitUntil(
+						() => view3D.Scene.Children.Count() == meshCountBeforeUndo-1, 
+						2);
+					Assert.AreEqual(view3D.Scene.Children.Count(), meshCountBeforeUndo - 1);
 				}
 
 				testRunner.Wait(1);
@@ -209,16 +209,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					int meshCountBeforeRedo = view3D.Scene.Children.Count();
 					testRunner.ClickByName("3D View Redo");
-					System.Threading.Thread.Sleep(2000);
-					int meshCountAfterRedo = view3D.Scene.Children.Count();
-					Assert.IsTrue(meshCountAfterRedo == meshCountBeforeRedo + 1);
 
+					testRunner.WaitUntil(
+						() => meshCountBeforeRedo + 1 == view3D.Scene.Children.Count(),
+						2);
+					Assert.AreEqual(meshCountBeforeRedo + 1, view3D.Scene.Children.Count());
 				}
 
 				return Task.FromResult(0);	
 			};
 
-			await MatterControlUtilities.RunTest(testToRun);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 640);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]

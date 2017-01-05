@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			});
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{

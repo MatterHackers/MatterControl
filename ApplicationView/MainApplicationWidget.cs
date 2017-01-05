@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl
 	using System.Text.RegularExpressions;
 	using SettingsManagement;
 	using PrintHistory;
+	using Agg.Image;
+	using System.Net;
 
 	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
 	{
@@ -68,7 +70,7 @@ namespace MatterHackers.MatterControl
 
 	public abstract class ApplicationView : GuiWidget
 	{
-		public abstract void AddElements();
+		public abstract void CreateAndAddChildren();
 	}
 
 	public class TouchscreenView : ApplicationView
@@ -82,7 +84,7 @@ namespace MatterHackers.MatterControl
 
 		public TouchscreenView()
 		{
-			AddElements();
+			CreateAndAddChildren();
 			this.AnchorAll();
 		}
 
@@ -96,7 +98,7 @@ namespace MatterHackers.MatterControl
 			this.TopContainer.Visible = !this.TopContainer.Visible;
 		}
 
-		public override void AddElements()
+		public override void CreateAndAddChildren()
 		{
 			topIsHidden = false;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -141,11 +143,11 @@ namespace MatterHackers.MatterControl
 
 		public DesktopView()
 		{
-			AddElements();
+			CreateAndAddChildren();
 			this.AnchorAll();
 		}
 
-		public override void AddElements()
+		public override void CreateAndAddChildren()
 		{
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -185,13 +187,14 @@ namespace MatterHackers.MatterControl
 		private static ApplicationController globalInstance;
 		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
-		public RootedObjectEventHandler ReloadAllRequested = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
-		public static Action<bool> OutboundRequest;
+		
+		public static Action WebRequestFailed;
+		public static Action WebRequestSucceeded;
 
 
 #if DEBUG
@@ -219,7 +222,7 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler ApplicationClosed;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		static int applicationInstanceCount = 0;
 		public static int ApplicationInstanceCount
@@ -257,7 +260,7 @@ namespace MatterHackers.MatterControl
 		public ApplicationController()
 		{
 			// Name = "MainSlidePanel";
-			ActiveTheme.ThemeChanged.RegisterEvent(ReloadAll, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => ReloadAll(), ref unregisterEvents);
 
 			// Remove consumed ClientToken from running list on shutdown
 			ApplicationClosed += (s, e) => ApplicationSettings.Instance.ReleaseClientToken();
@@ -394,53 +397,49 @@ namespace MatterHackers.MatterControl
 		}
 
 		bool pendingReloadRequest = false;
-		public void ReloadAll(object sender, EventArgs e)
+		public void ReloadAll()
 		{
-			if (!pendingReloadRequest 
-				&& MainView != null)
+			if (pendingReloadRequest || MainView == null)
 			{
-				pendingReloadRequest = true;
-				MainView.AfterDraw += DoReloadAll;
-				MainView.Invalidate();
+				return;
 			}
 
-			ReloadAllRequested?.CallEvents(null, null);
+			pendingReloadRequest = true;
+
+			UiThread.RunOnIdle(() =>
+			{
+				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
+				{
+					// give the widget a chance to hear about the close before they are actually closed.
+					PopOutManager.SaveIfClosed = false;
+
+					WidescreenPanel.PreChangePanels.CallEvents(this, null);
+					MainView?.CloseAllChildren();
+					using (new QuickTimer("ReloadAll_AddElements"))
+					{
+						MainView?.CreateAndAddChildren();
+					}
+					PopOutManager.SaveIfClosed = true;
+					this.DoneReloadingAll?.CallEvents(null, null);
+				}
+
+				pendingReloadRequest = false;
+			});
 		}
 
 		static int reloadCount = 0;
-		private void DoReloadAll(GuiWidget drawingWidget, DrawEventArgs e)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				if (MainView != null)
-				{
-					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
-					{
-						// give the widget a chance to hear about the close before they are actually closed.
-						PopOutManager.SaveIfClosed = false;
-						WidescreenPanel.PreChangePanels.CallEvents(this, null);
-						MainView?.CloseAllChildren();
-						using (new QuickTimer("ReloadAll_AddElements"))
-						{
-							MainView?.AddElements();
-						}
-						PopOutManager.SaveIfClosed = true;
-						DoneReloadingAll?.CallEvents(null, null);
-					}
-
-					MainView.AfterDraw -= DoReloadAll;
-					pendingReloadRequest = false;
-				}
-			});
-		}
 
 		public void OnApplicationClosed()
 		{
 			ApplicationClosed?.Invoke(null, null);
 		}
 
-		static void LoadUITheme()
+		static void LoadOemOrDefaultTheme()
 		{
+			ActiveTheme.SuspendEvents();
+
+			// if not check for the oem color and use it if set
+			// else default to "Blue - Light"
 			string oemColor = OemSettings.Instance.ThemeColor;
 			if (string.IsNullOrEmpty(oemColor))
 			{
@@ -448,9 +447,10 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, oemColor);
 				ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
 			}
+
+			ActiveTheme.ResumeEvents();
 		}
 
 		public static ApplicationController Instance
@@ -463,11 +463,10 @@ namespace MatterHackers.MatterControl
 					{
 						globalInstance = new ApplicationController();
 
-						// set the colors
-						LoadUITheme();
+						// Set the default theme colors
+						LoadOemOrDefaultTheme();
 
-						// We previously made a call to Reload, which fired the method twice due to it being in the static constructor. Accessing
-						// any property will run the static constructor and perform the Reload behavior without the overhead of duplicate calls
+						// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 						bool na = ProfileManager.Instance.IsGuestProfile;
 
 						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
@@ -484,7 +483,7 @@ namespace MatterHackers.MatterControl
 							globalInstance.MainView = new DesktopView();
 						}
 
-						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(null, null), ref globalInstance.unregisterEvents);
+						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(), ref globalInstance.unregisterEvents);
 					}
 				}
 				return globalInstance;
@@ -668,6 +667,62 @@ namespace MatterHackers.MatterControl
 		{
 			PrintLibraryWidget.Reload();
 		}
+
+		/// <summary>
+		/// Download an image from the web into the specified ImageBuffer
+		/// </summary>
+		/// <param name="uri"></param>
+		public void DownloadToImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleImage, IRecieveBlenderByte scalingBlender = null)
+		{
+			if (scalingBlender == null)
+			{
+				scalingBlender = new BlenderBGRA();
+			}
+
+			WebClient client = new WebClient();
+			client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
+			{
+				try // if we get a bad result we can get a target invocation exception. In that case just don't show anything
+				{
+					// scale the loaded image to the size of the target image
+					byte[] raw = e.Result;
+					Stream stream = new MemoryStream(raw);
+					ImageBuffer unScaledImage = new ImageBuffer(10, 10);
+					if (!scaleImage)
+					{
+						StaticData.Instance.LoadImageData(stream, unScaledImage);
+						// If the source image (the one we downloaded) is more than twice as big as our dest image.
+						while (unScaledImage.Width > imageToLoadInto.Width * 2)
+						{
+							// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
+							// So we scale as many times as we need to to get the Image to be the right size.
+							// If this were going to be a non-uniform scale we could do the x and y separately to get better results.
+							ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, scalingBlender);
+							halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
+							unScaledImage = halfImage;
+						}
+						imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, imageToLoadInto.Width / (double)unScaledImage.Width, imageToLoadInto.Height / (double)unScaledImage.Height);
+					}
+					else
+					{
+						StaticData.Instance.LoadImageData(stream, imageToLoadInto);
+					}
+					imageToLoadInto.MarkImageChanged();
+				}
+				catch
+				{
+				}
+			};
+
+			try
+			{
+				client.DownloadDataAsync(new Uri(uriToLoad));
+			}
+			catch
+			{
+			}
+		}
+
 	}
 
 	public class SyncReportType

@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			nextButton.Click += (s, e) => this.WizardWindow.ChangeToSetupPrinterForm();
 			nextButton.Visible = false;
 
-			Button configureButton = whiteImageButtonFactory.Generate(LocalizedString.Get("Configure"), centerText: true);
+			Button configureButton = whiteImageButtonFactory.Generate("Configure".Localize(), centerText: true);
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
 			configureButton.Click += (s, e) =>
 			{
