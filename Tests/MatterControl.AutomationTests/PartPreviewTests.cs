@@ -38,6 +38,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitForName("3D View Copy", 3);
 				Assert.AreEqual(1, view3D.Scene.Children.Count, "Should have 1 part before copy");
 
+				testRunner.DragDropByName("centerPartPreviewAndControls", "centerPartPreviewAndControls", offsetDrop:new Agg.Point2D(10,15), mouseButtons: MouseButtons.Right);
+
+				testRunner.Wait(1);
+				testRunner.ClickByName("Calibration - Box");
 
 				// Click Copy button and count Scene.Children 
 				testRunner.ClickByName("3D View Copy");
@@ -52,7 +56,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800, maxTimeToRun: 60);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]

@@ -241,14 +241,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			var addedIndexArgs = e as ItemChangedArgs;			
 			PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
-			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item));
+			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item), addedIndexArgs.Index); 
 		}
 
 		private void ItemRemovedFromQueue(object sender, EventArgs e)
 		{
 			var removeIndexArgs = e as ItemChangedArgs;
 			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
-			}
+		}
 
 		public override void OnClosed(EventArgs e)
 		{

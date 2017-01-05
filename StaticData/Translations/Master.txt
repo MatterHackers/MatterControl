@@ -5887,3 +5887,24 @@ Translated:Rotation Count:
 English:Radius
 Translated:Radius
 
+English:Submit Button
+Translated:Submit Button
+
+English:Enter 12 Digit Redemption Code
+Translated:Enter 12 Digit Redemption Code
+
+English:This is located on the rear of your card
+Translated:This is located on the rear of your card
+
+English:Please wait. Verifying code...
+Translated:Please wait. Verifying code...
+
+English:View Designs
+Translated:View Designs
+
+English:Success! Your code has been redeemed.
+Translated:Success! Your code has been redeemed.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Your new designs will appear in the 'Purchased' library folder.
+
