@@ -5644,6 +5644,198 @@ Translated:Note: Be sure the tip of the extruder is clean.
 English:- none -
 Translated:- none -
 
+English:Actions
+Translated:Actions
+
+English:Show In Action Menu
+Translated:Show In Action Menu
+
+English:Unable to Connect
+Translated:Unable to Connect
+
+English:Port number to be used with IP Address to connect to printer over the network
+Translated:Port number to be used with IP Address to connect to printer over the network
+
+English:Reset to Defaults
+Translated:Reset to Defaults
+
+English:The serial port to use while connecting to this printer.
+Translated:The serial port to use while connecting to this printer.
+
+English:Save Changed
+Translated:Save Changed
+
+English:Discard Changes
+Translated:Discard Changes
+
+English:Stay Connected
+Translated:Stay Connected
+
+English:Cancel Print
+Translated:Cancel Print
+
+English:Continue Printing
+Translated:Continue Printing
+
+English:Recovered Once
+Translated:Recovered Once
+
+English:Recovered once
+Translated:Recovered once
+
+English:recovered once
+Translated:recovered once
+
+English:Add New Printer
+Translated:Add New Printer
+
+English:Add New Setting
+Translated:Add New Setting
+
+English:Sync Dashboard
+Translated:Sync Dashboard
+
+English:SD Card
+Translated:SD Card
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl: Select Firmware File
+
+English:Starting firmware update...
+Translated:Starting firmware update...
+
+English:Disconnecting from printer...
+Translated:Disconnecting from printer...
+
+English:Initializing hardware...
+Translated:Initializing hardware...
+
+English:Creating firmware backup...
+Translated:Creating firmware backup...
+
+English:Update In Progress: {0}
+Translated:Update In Progress: {0}
+
+English:Updating firmware...
+Translated:Updating firmware...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:Firmware updated successfully. Please reconnect.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+
+English:Reverting firmware to previous version...
+Translated:Reverting firmware to previous version...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:Firmware restored successfully. Please reconnect.
+
+English:SET
+Translated:SET
+
+English:Move X negative
+Translated:Move X negative
+
+English:Move X positive
+Translated:Move X positive
+
+English:Move Y positive
+Translated:Move Y positive
+
+English:Move Y negative
+Translated:Move Y negative
+
+English:Move Z positive
+Translated:Move Z positive
+
+English:Move Z negative
+Translated:Move Z negative
+
+English:Enable cursor keys for movement
+Translated:Enable cursor keys for movement
+
+English:Retract filament
+Translated:Retract filament
+
+English:Extrude filament
+Translated:Extrude filament
+
+English:Home X, Y and Z
+Translated:Home X, Y and Z
+
+English:Home X
+Translated:Home X
+
+English:Home Y
+Translated:Home Y
+
+English:Home Z
+Translated:Home Z
+
+English:Open cloud sync dashboard in web browser
+Translated:Open cloud sync dashboard in web browser
+
+English:Restart
+Translated:Restart
+
+English:Please Review Your Order
+Translated:Please Review Your Order
+
+English:Loading product information. Pleast wait...
+Translated:Loading product information. Pleast wait...
+
+English:Enter Code: 
+Translated:Enter Code: 
+
+English:Use Promo Code
+Translated:Use Promo Code
+
+English:Applying...
+Translated:Applying...
+
+English:Enter your Billing Address
+Translated:Enter your Billing Address
+
+English:Full Name
+Translated:Full Name
+
+English:Enter your Payment Info
+Translated:Enter your Payment Info
+
+English:Place Order
+Translated:Place Order
+
+English:Additional payment options coming soon!
+Translated:Additional payment options coming soon!
+
+English:- Please Select -
+Translated:- Please Select -
+
+English:Credit Card Number
+Translated:Credit Card Number
+
+English:Expiration Date
+Translated:Expiration Date
+
+English:Card Verification Number
+Translated:Card Verification Number
+
+English:Saving...
+Translated:Saving...
+
+English:Oops! Payment has been declined.
+Translated:Oops! Payment has been declined.
+
+English:Distance or Loops
+Translated:Distance or Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:The z offset to apply to improve the first layer adhesion.
+
+English:Baby Step Offset
+Translated:Baby Step Offset
+
 English:Overhang
 Translated:Overhang
 
@@ -5659,11 +5851,32 @@ Translated:Text
 English:Braille
 Translated:Braille
 
-English:XOffset
-Translated:XOffset
+English:Height
+Translated:Height
+
+English:Depth
+Translated:Depth
 
 English:Update
 Translated:Update
+
+English:XOffset
+Translated:XOffset
+
+English:HeightFromFloorToBottomOfLeg
+Translated:HeightFromFloorToBottomOfLeg
+
+English:OuterSize
+Translated:OuterSize
+
+English:InnerSize
+Translated:InnerSize
+
+English:InsideReach
+Translated:InsideReach
+
+English:AngleDegrees
+Translated:AngleDegrees
 
 English:Color
 Translated:Color

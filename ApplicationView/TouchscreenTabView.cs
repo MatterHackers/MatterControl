@@ -202,8 +202,6 @@ namespace MatterHackers.MatterControl
 			QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAdvancedControlsPanel(), ref unregisterEvents);
-
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
 			{
 				// ReloadPartPreview
@@ -249,7 +247,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{

@@ -43,21 +43,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MacroControls : ControlWidgetBase
 	{
-		static internal string FixMacroName(string input)
-		{
-			int lengthLimit = 24;
-
-			string result = Regex.Replace(input, @"\r\n?|\n", " ");
-
-			if (result.Length > lengthLimit)
-			{
-				result = result.Substring(0, lengthLimit) + "...";
-			}
-
-			return result;
-		}
-
-
 		public MacroControls()
 		{
 			this.AddChild(new MacroControlsWidget());
@@ -120,17 +105,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 			macroButtonContainer.Margin = new BorderDouble(3, 0);
 			macroButtonContainer.Padding = new BorderDouble(3);
 
-			if (ActiveSliceSettings.Instance?.Macros == null)
+			if (ActiveSliceSettings.Instance?.UserMacros().Any() == false)
 			{
 				return macroButtonContainer;
 			}
 
 			int buttonCount = 0;
-			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.Macros)
+			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.UserMacros())
 			{
 				buttonCount++;
 
-				Button macroButton = textImageButtonFactory.Generate(MacroControls.FixMacroName(macro.Name)); 
+				Button macroButton = textImageButtonFactory.Generate(GCodeMacro.FixMacroName(macro.Name)); 
 				macroButton.Margin = new BorderDouble(right: 5);
 				macroButton.Click += (s, e) => macro.Run();
 
@@ -139,7 +124,104 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (buttonCount == 0)
 			{
-				TextWidget noMacrosFound = new TextWidget(LocalizedString.Get("No macros are currently set up for this printer."), pointSize: 10);
+				TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
+				noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				macroButtonContainer.AddChild(noMacrosFound);
+			}
+
+			return macroButtonContainer;
+		}
+	}
+
+
+	public class ActionControls : ControlWidgetBase
+	{
+		public ActionControls()
+		{
+			if (!ActiveSliceSettings.Instance.ActionMacros().Any())
+			{
+				Margin = new BorderDouble();
+				return;
+			}
+			this.AddChild(new ActionControlsWidget());
+		}
+	}
+
+	public class ActionControlsWidget : FlowLayoutWidget
+	{
+		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		protected FlowLayoutWidget presetButtonsContainer;
+
+		protected string label;
+		protected string editWindowLabel;
+
+		public ActionControlsWidget()
+			: base(FlowDirection.TopToBottom)
+		{
+			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
+			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
+			this.textImageButtonFactory.fontSize = 12;
+			this.textImageButtonFactory.borderWidth = 1;
+			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+
+			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+			this.HAnchor = HAnchor.ParentLeftRight;
+
+			// add the widgets to this window
+			FlowLayoutWidget groupBox = new FlowLayoutWidget()
+			{
+				Padding = new BorderDouble(5),
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
+			};
+
+			groupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			// make sure the client area will get smaller when the contents get smaller
+			groupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
+
+			FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
+			controlRow.Margin = new BorderDouble(top: 5);
+			controlRow.HAnchor |= HAnchor.ParentLeftRight;
+			{
+				this.presetButtonsContainer = GetMacroButtonContainer();
+				controlRow.AddChild(this.presetButtonsContainer);
+			}
+
+			groupBox.AddChild(controlRow);
+			this.AddChild(groupBox);
+		}
+
+		private FlowLayoutWidget GetMacroButtonContainer()
+		{
+			FlowLayoutWidget macroButtonContainer = new FlowLayoutWidget();
+			macroButtonContainer.Margin = new BorderDouble(0,0,3, 0);
+			macroButtonContainer.Padding = new BorderDouble(0,3,3,3);
+
+			if (ActiveSliceSettings.Instance?.ActionMacros().Any() == false)
+			{
+				return macroButtonContainer;
+			}
+
+			int buttonCount = 0;
+			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.ActionMacros())
+			{
+				buttonCount++;
+
+				Button macroButton = textImageButtonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
+				macroButton.Margin = new BorderDouble(right: 5);
+				macroButton.Click += (s, e) => macro.Run();
+
+				macroButtonContainer.AddChild(macroButton);
+			}
+
+			if (buttonCount == 0)
+			{
+				TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
 				noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				macroButtonContainer.AddChild(noMacrosFound);
 			}

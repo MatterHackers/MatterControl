@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public static void Show(string message, bool showOkButton = false, bool showMaterialSelector = false, double expectedSeconds = 0, double expectedTemperature = 0)
 		{

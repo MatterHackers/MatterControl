@@ -9,20 +9,8 @@ namespace MatterHackers.MatterControl
 	// A clickable GuiWidget
 	public class ClickWidget : GuiWidget
 	{
-		private event EventHandler PrivateClick;
-
 		private int borderWidth = 0;
 		private RGBA_Bytes borderColor = RGBA_Bytes.Black;
-
-		public ClickWidget()
-			: base()
-		{
-		}
-
-		public ClickWidget(double width, double height)
-			: base(width, height)
-		{
-		}
 
 		public int BorderWidth
 		{
@@ -44,41 +32,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private List<EventHandler> ClickEventDelegates = new List<EventHandler>();
-
-		public event EventHandler Click
-		{
-			//Wraps the PrivateClick event delegate so that we can track which events have been added and clear them if necessary
-			add
-			{
-				PrivateClick += value;
-				ClickEventDelegates.Add(value);
-			}
-
-			remove
-			{
-				PrivateClick -= value;
-				ClickEventDelegates.Remove(value);
-			}
-		}
-
-		public void UnbindClickEvents()
-		{
-			//Clears all event handlers from the Click event
-			foreach (EventHandler eh in ClickEventDelegates)
-			{
-				PrivateClick -= eh;
-			}
-			ClickEventDelegates.Clear();
-		}
-
-		public void ClickButton(MouseEventArgs mouseEvent)
-		{
-			if (PrivateClick != null)
-			{
-				UiThread.RunOnIdle(() => PrivateClick(this, mouseEvent));
-			}
-		}
+		public event EventHandler Click;
 
 		public bool GetChildClicks = false;
 
@@ -86,9 +40,9 @@ namespace MatterHackers.MatterControl
 		{
 			if (PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{
-				if (GetChildClicks || this.MouseCaptured == true)
+				if (Click != null && (GetChildClicks || this.MouseCaptured))
 				{
-					ClickButton(mouseEvent);
+					UiThread.RunOnIdle(() => Click(this, mouseEvent));
 				}
 			}
 

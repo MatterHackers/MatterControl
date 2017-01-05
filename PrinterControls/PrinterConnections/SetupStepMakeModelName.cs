@@ -92,15 +92,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					LoadCalibrationPrints();
 
 #if __ANDROID__
-					WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
+					UiThread.RunOnIdle(WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
 #else
 					if (OsInformation.OperatingSystem == OSType.Windows)
 					{
-						WizardWindow.ChangeToPage<SetupStepInstallDriver>();
+						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepInstallDriver>);
 					}
 					else
 					{
-						WizardWindow.ChangeToPage<SetupStepComPortOne>();
+						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortOne>);
 					}
 #endif
 				}

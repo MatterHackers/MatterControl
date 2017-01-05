@@ -42,8 +42,8 @@ namespace MatterHackers.MatterControl
 				partIsGCode = true;
 			}
 
-			string McExportFileTitleBeg = LocalizedString.Get("MatterControl");
-			string McExportFileTitleEnd = LocalizedString.Get("Export File");
+			string McExportFileTitleBeg = "MatterControl".Localize();
+			string McExportFileTitleEnd = "Export File".Localize();
 			string McExportFileTitleFull = string.Format("{0}: {1}", McExportFileTitleBeg, McExportFileTitleEnd);
 
 			this.Title = McExportFileTitleFull;
@@ -51,7 +51,6 @@ namespace MatterHackers.MatterControl
 			this.Name = "Export Item Window";
 
 			CreateWindowContent();
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
 			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
 		}
 
@@ -94,7 +93,7 @@ namespace MatterHackers.MatterControl
 
 			if (!partIsGCode)
 			{
-				string exportStlText = LocalizedString.Get("Export as");
+				string exportStlText = "Export as".Localize();
 				string exportStlTextFull = string.Format("{0} STL", exportStlText);
 
 				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
@@ -160,7 +159,16 @@ namespace MatterHackers.MatterControl
 
 									if (partIsGCode)
 									{
-										plugin.Generate(printItemWrapper.FileLocation, saveParam.FileName);
+										try
+										{
+											plugin.Generate(printItemWrapper.FileLocation, saveParam.FileName);
+										}
+										catch (Exception exception)
+										{
+											UiThread.RunOnIdle (() => {
+												StyledMessageBox.ShowMessageBox(null, exception.Message, "Couldn't save file".Localize());
+											});
+										}
 									}
 									else
 									{
@@ -171,7 +179,16 @@ namespace MatterHackers.MatterControl
 											PrintItemWrapper sliceItem = (PrintItemWrapper)printItem;
 											if (File.Exists(sliceItem.GetGCodePathAndFileName()))
 											{
-												plugin.Generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+												try
+												{
+													plugin.Generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
+												}
+												catch (Exception exception)
+												{
+													UiThread.RunOnIdle (() => {
+														StyledMessageBox.ShowMessageBox(null, exception.Message, "Couldn't save file".Localize());
+													});
+												}
 											}
 										};
 									}
@@ -200,7 +217,7 @@ namespace MatterHackers.MatterControl
 			if (OsInformation.OperatingSystem == OSType.Windows
 				|| OsInformation.OperatingSystem == OSType.X11)
 			{
-				showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), ActiveTheme.Instance.PrimaryTextColor, 10);
+				showInFolderAfterSave = new CheckBox("Show file in folder after save".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10);
 				showInFolderAfterSave.HAnchor = HAnchor.ParentLeft;
 				showInFolderAfterSave.Cursor = Cursors.Hand;
 				//showInFolderAfterSave.Margin = new BorderDouble(top: 10);
@@ -209,8 +226,8 @@ namespace MatterHackers.MatterControl
 
 			if (!showExportGCodeButton)
 			{
-				string noGCodeMessageTextBeg = LocalizedString.Get("Note");
-				string noGCodeMessageTextEnd = LocalizedString.Get("To enable GCode export, select a printer profile.");
+				string noGCodeMessageTextBeg = "Note".Localize();
+				string noGCodeMessageTextEnd = "To enable GCode export, select a printer profile.".Localize();
 				string noGCodeMessageTextFull = string.Format("{0}: {1}", noGCodeMessageTextBeg, noGCodeMessageTextEnd);
 				TextWidget noGCodeMessage = new TextWidget(noGCodeMessageTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 				noGCodeMessage.HAnchor = HAnchor.ParentLeft;
@@ -225,7 +242,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			Button cancelButton = textImageButtonFactory.Generate("Cancel");
+			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelButton.Name = "Export Item Window Cancel Button";
 			cancelButton.Cursor = Cursors.Hand;
 			cancelButton.Click += (sender, e) =>
@@ -332,8 +349,11 @@ namespace MatterHackers.MatterControl
 				}
 				ShowFileIfRequested(dest);
 			}
-			catch
+			catch (Exception e)
 			{
+				UiThread.RunOnIdle (() => {
+					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+				});
 			}
 		}
 
@@ -360,7 +380,7 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void ReloadAfterPrinterProfileChanged(object sender, EventArgs e)
 		{
@@ -416,8 +436,11 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}
-			catch
+			catch (Exception e)
 			{
+				UiThread.RunOnIdle (() => {
+					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+				});
 			}
 		}
 
@@ -462,14 +485,24 @@ namespace MatterHackers.MatterControl
 						else
 						{
 							IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation);
-							MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave);
+							
+							if (!MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave))
+							{
+								UiThread.RunOnIdle (() => {
+									StyledMessageBox.ShowMessageBox(null, "AMF to STL conversion failed", "Couldn't save file".Localize());
+								});
+							}
 						}
 						ShowFileIfRequested(filePathToSave);
 					}
 				}
 			}
-			catch
+			catch (Exception e)
 			{
+				UiThread.RunOnIdle (() => {
+					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+				});
+
 			}
 		}
 

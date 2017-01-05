@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private Button configureNotificationSettingsButton;
 
 		public CloudSettingsWidget()
-			: base(LocalizedString.Get("Cloud"))
+			: base("Cloud".Localize())
 		{
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
             linkButtonFactory.fontSize = 10;
             Button cloudSyncGoLink = linkButtonFactory.Generate("Go to Dashboard".Localize().ToUpper());
-            cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser";
+            cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser".Localize();
             cloudSyncGoLink.Click += new EventHandler(cloudSyncGoButton_Click);
 			cloudSyncGoLink.VAnchor = VAnchor.ParentCenter;
 
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
 			configureNotificationSettingsButton.Click += new EventHandler(configureNotificationSettingsButton_Click);
 
-			notificationSettingsLabel = new TextWidget(LocalizedString.Get("Notifications"));
+			notificationSettingsLabel = new TextWidget("Notifications".Localize());
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             }
         }
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{

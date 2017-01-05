@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl
 {
 	public class SetupOptionsPage : WizardPage
 	{
+		private EventHandler unregisterEvents;
+
 		public SetupOptionsPage()
 			: base("Done")
 		{
@@ -63,7 +65,7 @@ namespace MatterHackers.MatterControl
 
 		private Button disconnectButton;
 		private TextWidget connectionStatus;
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public SetupPrinterView(TextImageButtonFactory textImageButtonFactory)
 			: base("Printer Profile")
@@ -99,7 +101,7 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.Disable();
-				WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>();
+				UiThread.RunOnIdle(WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>);
 			};
 			buttonContainer.AddChild(disconnectButton);
 
@@ -127,11 +129,17 @@ namespace MatterHackers.MatterControl
 
 			this.Invalidate();
 		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
+		}
 	}
 
 	public class SetupAccountView : SetupViewBase
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 		private Button signInButton;
 		private Button signOutButton;
 		private TextWidget statusMessage;
@@ -184,7 +192,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
 			buttonContainer.Margin = new BorderDouble(0, 14);
 
-			signInButton = textImageButtonFactory.Generate("Sign In");
+			signInButton = textImageButtonFactory.Generate("Sign In".Localize());
 			signInButton.Margin = new BorderDouble(left: 0);
 			signInButton.VAnchor = VAnchor.ParentCenter;
 			signInButton.Visible = !signedIn;
@@ -197,7 +205,7 @@ namespace MatterHackers.MatterControl
 			});
 			buttonContainer.AddChild(signInButton);
 
-			signOutButton = textImageButtonFactory.Generate("Sign Out");
+			signOutButton = textImageButtonFactory.Generate("Sign Out".Localize());
 			signOutButton.Margin = new BorderDouble(left: 0);
 			signOutButton.VAnchor = VAnchor.ParentCenter;
 			signOutButton.Visible = signedIn;
@@ -248,7 +256,7 @@ namespace MatterHackers.MatterControl
 
 			mainContainer.AddChild(buttonContainer);
 
-			ApplicationController.Instance.ReloadAllRequested.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
+			ApplicationController.Instance.DoneReloadingAll.RegisterEvent(RemoveAndNewControl, ref unregisterEvents);
 		}
 
 		private void RemoveAndNewControl(object sender, EventArgs e)

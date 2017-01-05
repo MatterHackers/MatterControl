@@ -58,7 +58,9 @@ namespace MatterHackers.MatterControl
 			this.SelectionChanged += (s, e) =>
 			{
 				string printerID = this.SelectedValue;
-				if (printerID == "new")
+				if (printerID == "new" 
+					|| string.IsNullOrEmpty(printerID) 
+					|| printerID == ActiveSliceSettings.Instance.ID)
 				{
 					// do nothing
 				}
@@ -78,7 +80,7 @@ namespace MatterHackers.MatterControl
 					else
 					{
 						lastSelectedIndex = this.SelectedIndex;
-						ActiveSliceSettings.SwitchToProfile(printerID);
+						UiThread.RunOnIdle(() => ActiveSliceSettings.SwitchToProfile(printerID));
 					}
 				}
 			};
@@ -87,7 +89,6 @@ namespace MatterHackers.MatterControl
 
 			// Rebuild the droplist any time the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) => Rebuild(), ref unregisterEvents);
-			ApplicationController.Instance.ReloadAllRequested.RegisterEvent((s, e) => Rebuild(), ref unregisterEvents);
 		}
 
 		public void Rebuild()
@@ -107,28 +108,25 @@ namespace MatterHackers.MatterControl
 				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
 
-			this.AddItem(
-				StaticData.Instance.LoadIcon("icon_plus.png", 32, 32),
-				"Add New Printer...",
-				"new").Click += (s, e) =>
+			var menuItem = this.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Printer".Localize() + "...", "new");
+			menuItem.CanHeldSelection = false;
+			menuItem.Click += (s, e) =>
+			{
+				if (AddPrinter != null)
 				{
-					if (AddPrinter != null)
+					if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+						|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 					{
-						if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-							|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-						{
-							UiThread.RunOnIdle(() =>
+						UiThread.RunOnIdle(() =>
 							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())
-							);
-							this.SelectedIndex = lastSelectedIndex;
-						}
-						else
-						{
-							this.SelectedIndex = lastSelectedIndex; 
-							UiThread.RunOnIdle(() => AddPrinter(this, null));
-						}
+						);
 					}
-				};
+					else
+					{
+						UiThread.RunOnIdle(() => AddPrinter(this, null));
+					}
+				}
+			};
 		}
 
 		private void SettingChanged(object sender, EventArgs e)

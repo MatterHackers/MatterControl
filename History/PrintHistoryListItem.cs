@@ -146,7 +146,19 @@ namespace MatterHackers.MatterControl.PrintHistory
 					if (printTask.PercentDone > 0)
 					{
 						timeIndicator.AutoExpandBoundsToText = true;
-						timeIndicator.Text += " ({0:0.0}%)".FormatWith(printTask.PercentDone);
+						timeIndicator.Text += $" ({printTask.PercentDone:0.0}%)";
+						
+						if(printTask.RecoveryCount > 0)
+						{
+							if (printTask.RecoveryCount == 1)
+							{
+								timeIndicator.Text += " - " + "recovered once".Localize();
+							}
+							else
+							{
+								timeIndicator.Text += " - " + "recovered {0} times".FormatWith(printTask.RecoveryCount);
+							}
+						}
 					}
 
 					timeIndicator.Margin = new BorderDouble(right: 6);
@@ -300,11 +312,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 			MouseEnterBounds += new EventHandler(HistoryItem_MouseEnterBounds);
 			MouseLeaveBounds += new EventHandler(HistoryItem_MouseLeaveBounds);
 		}
@@ -351,9 +362,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 					string end = maxLengthName.Substring(maxLengthName.Length - amountRemaining, amountRemaining);
 					maxLengthName = start + end;
 				}
-				string notFoundMessage = LocalizedString.Get("Oops! Could not find this file:");
+				string notFoundMessage = "Oops! Could not find this file:".Localize();
 				string message = "{0}:\n'{1}'".FormatWith(notFoundMessage, maxLengthName);
-				string titleLabel = LocalizedString.Get("Item not Found");
+				string titleLabel = "Item not Found".Localize();
 				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.OK);
 			});
 		}

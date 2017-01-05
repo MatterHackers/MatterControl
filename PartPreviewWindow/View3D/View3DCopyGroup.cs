@@ -69,10 +69,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// now set the selection to the new copy
 				Scene.Children.Last().ExtraData.CurrentScale = Scene.SelectedItem.ExtraData.CurrentScale;
-
-				Debugger.Break(); // Revise undo for scene_bundle
-				// UndoBuffer.Add(new CopyUndoCommand(this, SelectedMeshGroupIndex));
-
 			}
 		}
 

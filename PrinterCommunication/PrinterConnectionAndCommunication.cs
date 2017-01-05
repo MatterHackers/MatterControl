@@ -149,8 +149,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private string deviceCode;
-
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
 		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
@@ -160,8 +158,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private FirmwareTypes firmwareType = FirmwareTypes.Unknown;
 
 		private bool firmwareUriGcodeSend = false;
-
-		private string firmwareVersion;
 
 		private int currentLineIndexToSend = 0;
 
@@ -265,8 +261,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures);
 
-			ReadLineContainsCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
-			ReadLineContainsCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
+			ReadLineStartCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
+			ReadLineStartCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
 			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
 
 			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
@@ -283,12 +279,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("M999", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Error: Extruder switched off", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Heater decoupled", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Bot is Shutdown due to Overheat", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("cold extrusion prevented", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Error:Thermal Runaway, system stopped!", PrinterReportsError);
 
 			// repetier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
+			ReadLineStartCallBacks.AddCallbackToKey("accelerometer send i2c error", PrinterReportsError);
+			ReadLineStartCallBacks.AddCallbackToKey("accelerometer i2c recv error", PrinterReportsError);
+
+			// s3g temperature failures
+			ReadLineContainsCallBacks.AddCallbackToKey("Bot is Shutdown due to Overheat", PrinterReportsError);
 			#endregion
 
 			WriteLineStartCallBacks.AddCallbackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
@@ -415,8 +415,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch
 					{
-						Console.WriteLine("Unable to convert BaudRate to integer");
-						GuiWidget.BreakInDebugger();
 					}
 				}
 				return baudRate;
@@ -579,10 +577,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string DeviceCode
-		{
-			get { return deviceCode; }
-		}
+		public string DeviceCode { get; private set; }
 
 		public bool Disconnecting
 		{
@@ -655,10 +650,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get { return firmwareType; }
 		}
 
-		public string FirmwareVersion
-		{
-			get { return firmwareVersion; }
-		}
+		public string FirmwareVersion { get; private set; }
 
 		public Vector3 LastReportedPosition { get { return lastReportedPosition.position; } }
 
@@ -944,10 +936,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					int layerCount = loadedGCode.NumChangesInZ;
 					return layerCount;
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
-					Debug.Print(e.Message);
-					GuiWidget.BreakInDebugger();
 					return -1;
 				}
 			}
@@ -1044,11 +1034,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					}
 				}
-				catch (Exception e2)
+				catch (Exception)
 				{
-					Debug.Print(e2.Message);
-					GuiWidget.BreakInDebugger();
-					Debug.WriteLine("Unable to Parse Bed Temperature: {0}".FormatWith(temp));
 				}
 			}
 		}
@@ -1068,7 +1055,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				//Attempt connecting to a specific printer
 				this.stopTryingToConnect = false;
 				firmwareType = FirmwareTypes.Unknown;
-				firmwareVersion = null;
 				firmwareUriGcodeSend = false;
 
 				// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
@@ -1209,11 +1195,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						OnFanSpeedSet(null);
 					}
 				}
-				catch (Exception e2)
+				catch (Exception)
 				{
-					Debug.Print(e2.Message);
-					GuiWidget.BreakInDebugger();
-					Debug.WriteLine("Unable to Parse Fan Speed: {0}".FormatWith(fanSpeed));
 				}
 			}
 		}
@@ -1444,17 +1427,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						else
 						{
 							string message = String.Format(removeFromQueueMessage, pathAndFile);
-							StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO);
+							StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO, "Remove".Localize(), "Cancel".Localize());
 						}
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-				// Let's track this issue if possible.
-				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
 		}
 
@@ -1470,17 +1449,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 
-			string[] splitOnColon = foundStringEventArgs.LineToCheck.Split(':');
-
-			if (splitOnColon.Length > 1)
+			if (foundStringEventArgs != null
+				&& !string.IsNullOrEmpty(foundStringEventArgs.LineToCheck))
 			{
-				int result = 0;
-				if (int.TryParse(splitOnColon[1], out result))
+				string line = foundStringEventArgs.LineToCheck;
+				// marlin and repetier send a : before the number and then and ok
+				if (!GCodeFile.GetFirstNumberAfter(":", line, ref currentLineIndexToSend))
 				{
-					currentLineIndexToSend = result;
+					// smoothie sends an N before the number and no ok
+					if (GCodeFile.GetFirstNumberAfter("N", line, ref currentLineIndexToSend))
+					{
+						// clear waiting for ok because smoothie will not send it
+						PrintingCanContinue(null, null);
+					}
 				}
 
-				if(currentLineIndexToSend >= allCheckSumLinesSent.Count)
+				if (currentLineIndexToSend >= allCheckSumLinesSent.Count)
 				{
 					SendLineToPrinterNow("M110 N1");
 				}
@@ -1550,15 +1534,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					string[] split = firmwareVersionReported.Split(splitChar);
 					if (split.Count() == 2)
 					{
-						deviceCode = split[0];
+						DeviceCode = split[0];
 						firmwareVersionReported = split[1];
 					}
 				}
 
 				//Firmware version was detected and is different
-				if (firmwareVersionReported != "" && firmwareVersion != firmwareVersionReported)
+				if (firmwareVersionReported != "" && FirmwareVersion != firmwareVersionReported)
 				{
-					firmwareVersion = firmwareVersionReported;
+					FirmwareVersion = firmwareVersionReported;
 					OnFirmwareVersionRead(null);
 				}
 			}
@@ -1725,36 +1709,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						Thread.Sleep(1);
 					}
 				}
-				catch (TimeoutException e)
+				catch (TimeoutException)
 				{
-					Debug.Print(e.Message);
-					GuiWidget.BreakInDebugger();
 				}
 				catch (IOException e2)
 				{
-					Debug.Print(e2.Message);
-					GuiWidget.BreakInDebugger();
+					PrinterOutputCache.Instance.WriteLine("Exception:" + e2.Message);
 					OnConnectionFailed(null);
 				}
 				catch (InvalidOperationException ex)
 				{
-					Debug.Print(ex.Message);
-					GuiWidget.BreakInDebugger();
-					Debug.WriteLine(ex.Message);
+					PrinterOutputCache.Instance.WriteLine("Exception:" + ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
+					OnConnectionFailed(null);
 				}
 				catch (UnauthorizedAccessException e3)
 				{
-					Debug.Print(e3.Message);
-					GuiWidget.BreakInDebugger();
+					PrinterOutputCache.Instance.WriteLine("Exception:" + e3.Message);
 					OnConnectionFailed(null);
 				}
-				catch (Exception e4)
+				catch (Exception)
 				{
-					Debug.Print(e4.Message);
-					GuiWidget.BreakInDebugger();
-					// Let's track this issue if possible.
-					MatterControlApplication.Instance.ReportException(e4, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 				}
 			}
 		}
@@ -1888,11 +1863,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
 		}
 
@@ -2034,10 +2006,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				string[] portNames = FrostedSerialPort.GetPortNames();
 				return portNames.Any(x => string.Compare(x, portName, true) == 0);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
 				return false;
 			}
 		}
@@ -2222,12 +2192,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void AttemptToConnect(string serialPortName, int baudRate)
 		{
-			connectionFailureMessage = LocalizedString.Get("Unknown Reason");
+			// make sure we don't have a left over print task
+			activePrintTask = null;
+
+			connectionFailureMessage = "Unknown Reason".Localize();
 
 			if (PrinterIsConnected)
 			{
 #if DEBUG
-				throw new Exception(LocalizedString.Get("You can only connect when not currently connected."));
+				throw new Exception("You can only connect when not currently connected.".Localize());
 #else
 				return;
 #endif
@@ -2265,16 +2238,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (System.ArgumentOutOfRangeException e)
 					{
-						Debug.Print(e.Message);
-						GuiWidget.BreakInDebugger();
-						connectionFailureMessage = LocalizedString.Get("Unsupported Baud Rate");
+						PrinterOutputCache.Instance.WriteLine("Exception:" + e.Message);
+						connectionFailureMessage = "Unsupported Baud Rate".Localize();
 						OnConnectionFailed(null);
 					}
 					catch (Exception ex)
 					{
-						Debug.Print(ex.Message);
-						GuiWidget.BreakInDebugger();
-						Debug.WriteLine("An unexpected exception occurred: " + ex.Message);
+						PrinterOutputCache.Instance.WriteLine("Exception:" + ex.Message);
 						OnConnectionFailed(null);
 					}
 				}
@@ -2285,7 +2255,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// port is already opened in another instance or process, then report the connection problem back to the user
 				connectionFailureMessage = (serialPortIsAlreadyOpen ?
 					string.Format("{0} in use", this.ComPort) :
-					LocalizedString.Get("Port not found"));
+					"Port not found".Localize());
 
 				OnConnectionFailed(null);
 			}
@@ -2338,7 +2308,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
 					Disable();
-					connectionFailureMessage = LocalizedString.Get("Canceled");
+					connectionFailureMessage = "Canceled".Localize();
 					OnConnectionFailed(null);
 					return false;
 				}
@@ -2450,6 +2420,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
 					pauseHandlingStream1 = new PauseHandlingStream(new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
+					// And increment the recovery count
+					activePrintTask.RecoveryCount++;
+					activePrintTask.Commit();
 				}
 				else
 				{
@@ -2473,6 +2446,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// make sure we are in the position we were when we stopped printing
 				babyStepsStream6.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
 			}
+			UiThread.RunOnIdle(() => OffsetStreamChanged?.Invoke(null, null));
 			extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
 			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
 			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);
@@ -2606,7 +2580,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool IsNetworkPrinting()
 		{
-			return ActiveSliceSettings.Instance.GetValue(SettingsKey.enable_network_printing) == "1";
+			return ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing);
 		}
 
 		private void OnAtxPowerStateChanged(bool enableAtxPower)
@@ -2819,12 +2793,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						printJobDisplayName = null;
 
+						// get us back to the no printing setting (this will clear the queued commands)
+						CreateStreamProcessors(null, false);
+
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
 						TurnOffBedAndExtruders();
-
-						// get us back to the no printing setting
-						CreateStreamProcessors(null, false);
 					}
 				}
 			}
@@ -2949,23 +2923,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (IOException ex)
 					{
-						GuiWidget.BreakInDebugger(ex.Message);
-						Trace.WriteLine("Error writing to printer: " + ex.Message);
+						PrinterOutputCache.Instance.WriteLine("Exception:" + ex.Message);
 
-						// Handle hardware disconnects by relaying the failure reason and shutting down open resources
-						AbortConnectionAttempt("Connection Lost - " + ex.Message);
+						if (CommunicationState == CommunicationStates.AttemptingToConnect)
+						{
+							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
+							AbortConnectionAttempt("Connection Lost - " + ex.Message);
+						}
 					}
-					catch (TimeoutException e2)
+					catch (TimeoutException) // known ok
 					{
-						GuiWidget.BreakInDebugger(e2.Message);
 					}
 					catch (UnauthorizedAccessException e3)
 					{
+						PrinterOutputCache.Instance.WriteLine("Exception:" + e3.Message);
 						AbortConnectionAttempt(e3.Message);
 					}
-					catch (Exception e)
+					catch (Exception)
 					{
-						GuiWidget.BreakInDebugger(e.Message);
 					}
 				}
 				else

@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class QueueDataView : ScrollableWidget
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private bool mouseDownWithinQueueItemContainer = false;
 
@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			// Hard-coded processing rule to avoid changing the SelectedIndex when clicks occur
 			// with the thumbnail region - aka the first 55 pixels
-			if (mouseEvent.X < 56) return;
+			if (!EditMode && mouseEvent.X < 56) return;
 
 			GuiWidget widgetClicked = ((GuiWidget)sender);
 			for (int index = 0; index < topToBottomItemList.Children.Count; index++)

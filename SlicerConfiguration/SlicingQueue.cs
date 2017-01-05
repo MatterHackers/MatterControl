@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void QueuePartForSlicing(PrintItemWrapper itemToQueue)
 		{
 			itemToQueue.DoneSlicing = false;
-			string preparingToSliceModelTxt = LocalizedString.Get("Preparing to slice model");
+			string preparingToSliceModelTxt = "Preparing to slice model".Localize();
 			string peparingToSliceModelFull = string.Format("{0}...", preparingToSliceModelTxt);
 			itemToQueue.OnSlicingOutputMessage(new StringEventArgs(peparingToSliceModelFull));
 			lock(listOfSlicingItems)
@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return extruder1StlFileToSlice;
 		}
 
-		public static bool runInProcess = false;
+		public static bool runInProcess = true;
 		private static Process slicerProcess = null;
 
 		private static void CreateSlicedPartsThread()

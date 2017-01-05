@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 		private QueueDataView queueDataView;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public FirstPanelTabView(QueueDataView queueDataView)
 		{
@@ -60,15 +60,15 @@ namespace MatterHackers.MatterControl
 
 			this.Margin = new BorderDouble(top: 4);
 
-			QueueTabPage = new TabPage(new QueueDataWidget(queueDataView), LocalizedString.Get("Queue").ToUpper());
+			QueueTabPage = new TabPage(new QueueDataWidget(queueDataView), "Queue".Localize().ToUpper());
 			this.AddTab(new SimpleTextTabWidget(QueueTabPage, "Queue Tab", 15,
 					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			LibraryTabPage = new TabPage(new PrintLibraryWidget(), LocalizedString.Get("Library").ToUpper());
+			LibraryTabPage = new TabPage(new PrintLibraryWidget(), "Library".Localize().ToUpper());
 			this.AddTab(new SimpleTextTabWidget(LibraryTabPage, "Library Tab", 15,
 					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			HistoryTabPage = new TabPage(new PrintHistoryWidget(), LocalizedString.Get("History").ToUpper());
+			HistoryTabPage = new TabPage(new PrintHistoryWidget(), "History".Localize().ToUpper());
 			this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", 15,
 					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 
 		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
 		{
-			string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
+			string queueStringBeg = "Queue".Localize().ToUpper();
 			string queueString = string.Format("{1} ({0})", QueueData.Instance.ItemCount, queueStringBeg);
 			QueueTabPage.Text = string.Format(queueString, QueueData.Instance.ItemCount);
 		}

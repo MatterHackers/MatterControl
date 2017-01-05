@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 			AddHandlers();
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		protected void AddHandlers()
 		{
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 
 		public void AddElements()
 		{
-			Title = LocalizedString.Get("Design Add-ons");
+			Title = "Design Add-ons".Localize();
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 			{
-				string elementHeaderLabelBeg = LocalizedString.Get("Select a Design Tool");
+				string elementHeaderLabelBeg = "Select a Design Tool".Localize();
 				string elementHeaderLabelFull = string.Format("{0}:", elementHeaderLabelBeg);
 				string elementHeaderLabel = elementHeaderLabelFull;
 				TextWidget elementHeader = new TextWidget(string.Format(elementHeaderLabel), pointSize: 14);
@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 			topToBottom.AddChild(presetsFormContainer);
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelPresetsButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(CloseOnIdle);

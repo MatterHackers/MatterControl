@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new AsCountOrDistance("bottom_solid_layers", "downSkinCount", SettingsKey.layer_height),
 				new AsCountOrDistance("top_solid_layers", "upSkinCount", SettingsKey.layer_height),
 				new ScaledSingleNumber("skirt_distance", "skirtDistance", 1000),
-				new MappedSetting("skirts", "skirtLineCount"),
+				new AsCountOrDistance("skirts", "skirtLineCount", SettingsKey.nozzle_diameter),
 				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),
 
 				new MappedSetting("infill_speed", "printSpeed"),

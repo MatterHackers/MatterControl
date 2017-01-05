@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button connectButton;
 		private TextWidget printerErrorMessage;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public SetupStepComPortTwo()
 		{
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate("Manual Configuration".Localize());
 			manualLink.Margin = new BorderDouble(0, 5);
-			manualLink.Click += (s, e) => WizardWindow.ChangeToPage<SetupStepComPortManual>();
+			manualLink.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortManual>);
 
 			printerErrorMessage = new TextWidget("", 0, 0, 10);
 			printerErrorMessage.AutoExpandBoundsToText = true;

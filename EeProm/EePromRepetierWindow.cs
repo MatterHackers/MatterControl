@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private EePromRepetierStorage currentEePromSettings;
 		private FlowLayoutWidget settingsColmun;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public EePromRepetierWindow()
 			: base(650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
@@ -63,13 +63,13 @@ namespace MatterHackers.MatterControl.EeProm
 			FlowLayoutWidget row = new FlowLayoutWidget();
 			row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			row.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			GuiWidget descriptionWidget = AddDescription(LocalizedString.Get("Description"));
+			GuiWidget descriptionWidget = AddDescription("Description".Localize());
 			descriptionWidget.Margin = new BorderDouble(left: 3);
 			row.AddChild(descriptionWidget);
 
 			CreateSpacer(row);
 
-			GuiWidget valueText = new TextWidget(LocalizedString.Get("Value"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			GuiWidget valueText = new TextWidget("Value".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			valueText.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			valueText.Margin = new BorderDouble(left: 5, right: 60);
 			row.AddChild(valueText);
@@ -184,13 +184,9 @@ namespace MatterHackers.MatterControl.EeProm
 
 			topToBottom.AddChild(buttonBar);
 
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(topToBottom));
-#else
 			this.AddChild(topToBottom);
-#endif
 
-			Title = LocalizedString.Get("Firmware EEPROM Settings");
+			Title = "Firmware EEPROM Settings".Localize();
 
 			ShowAsSystemWindow();
 

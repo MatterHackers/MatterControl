@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
-			Button displayControlRestartButton = textImageButtonFactory.Generate("Restart");
+			Button displayControlRestartButton = textImageButtonFactory.Generate("Restart".Localize());
 			displayControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			displayControlRestartButton.Visible = false;
 			displayControlRestartButton.Margin = new BorderDouble(right: 6);
@@ -358,7 +358,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(languageSelector);
 			optionsContainer.Width = 200;
 
-			languageRestartButton = textImageButtonFactory.Generate("Restart");
+			languageRestartButton = textImageButtonFactory.Generate("Restart".Localize());
 			languageRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			languageRestartButton.Visible = false;
 			languageRestartButton.Margin = new BorderDouble(right: 6);
@@ -406,7 +406,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				&& settings.Helpers.ActiveSliceEngineType() != SlicingEngineTypes.MatterSlice)
 			{
 				settings.Helpers.ActiveSliceEngineType(SlicingEngineTypes.MatterSlice);
-				ApplicationController.Instance.ReloadAll(null, null);
+				ApplicationController.Instance.ReloadAll();
 			} 
 
 			optionsContainer.AddChild(new SliceEngineSelector("Slice Engine".Localize()));
@@ -480,7 +480,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 							}
 						}
 
-						ApplicationController.Instance.ReloadAll(null, null);
+						ApplicationController.Instance.ReloadAll();
 					};
 
 					UiThread.RunOnIdle(() =>
@@ -524,7 +524,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 LocalizedString.ResetTranslationMap();
                 ApplicationController.Instance.MainView = new TouchscreenView();
                 app.RemoveAllChildren();
-                app.AddChild(new SoftKeyboardContentOffset(ApplicationController.Instance.MainView));
                 app.AnchorAll();
 #endif
 			});
@@ -546,7 +545,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UserSettings.Instance.Fields.IsSimpleMode = false;
 			}
-			ApplicationController.Instance.ReloadAll(null, null);
+			ApplicationController.Instance.ReloadAll();
 		}
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)

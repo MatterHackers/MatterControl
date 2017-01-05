@@ -1,10 +1,5 @@
-﻿using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Localizations;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
-/*
-Copyright (c) 2014, Kevin Pope
+﻿/*
+Copyright (c) 2016, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,6 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Localizations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -210,6 +209,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class SliceSettingsOrganizer
 	{
+		private static Dictionary<string, string> defaultSettings = null;
+
 		private Dictionary<string, OrganizerUserLevel> userLevels = new Dictionary<string, OrganizerUserLevel>();
 
 		public Dictionary<string, OrganizerUserLevel> UserLevels
@@ -351,14 +352,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer GetDefaultSettings()
 		{
-			Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
-
-			foreach(SliceSettingData settingsData in this.SettingsData)
+			if (defaultSettings == null)
 			{
-				settingsDictionary[settingsData.SlicerConfigName] = settingsData.DefaultValue;
+				var settingsDictionary = new Dictionary<string, string>();
+				foreach (var sliceSettingsData in this.SettingsData)
+				{
+					settingsDictionary[sliceSettingsData.SlicerConfigName] = sliceSettingsData.DefaultValue;
+				}
+
+				defaultSettings = settingsDictionary;
 			}
 
-			return new PrinterSettingsLayer(settingsDictionary);
+			return new PrinterSettingsLayer(defaultSettings);
 		}
 	}
 }

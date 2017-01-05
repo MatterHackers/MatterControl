@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget leftBorderLine;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
 

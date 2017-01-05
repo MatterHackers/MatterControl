@@ -24,12 +24,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public SetupStepInstallDriver()
 		{
-			headerLabel.Text = string.Format(LocalizedString.Get("Install Communication Driver"));
+			headerLabel.Text = string.Format("Install Communication Driver".Localize());
 			printerDriverContainer = createPrinterDriverContainer();
 			contentRow.AddChild(printerDriverContainer);
 			{
 				//Construct buttons
-				installButton = textImageButtonFactory.Generate(LocalizedString.Get("Install Driver"));
+				installButton = textImageButtonFactory.Generate("Install Driver".Localize());
 				installButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					});
 				};
 
-				skipButton = textImageButtonFactory.Generate(LocalizedString.Get("Skip"));
+				skipButton = textImageButtonFactory.Generate("Skip".Localize());
 				skipButton.Click += (s, e) => WizardWindow.ChangeToSetupBaudOrComPortOne();
 
 				//Add buttons to buttonContainer
@@ -59,12 +59,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.Margin = new BorderDouble(0, 5);
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			printerDriverMessage = new TextWidget(LocalizedString.Get("This printer requires a driver for communication."), 0, 0, 10);
+			printerDriverMessage = new TextWidget("This printer requires a driver for communication.".Localize(), 0, 0, 10);
 			printerDriverMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printerDriverMessage.HAnchor = HAnchor.ParentLeftRight;
 			printerDriverMessage.Margin = elementMargin;
 
-			TextWidget printerDriverMessageTwo = new TextWidget(LocalizedString.Get("Driver located. Would you like to install?"), 0, 0, 10);
+			TextWidget printerDriverMessageTwo = new TextWidget("Driver located. Would you like to install?".Localize(), 0, 0, 10);
 			printerDriverMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printerDriverMessageTwo.HAnchor = HAnchor.ParentLeftRight;
 			printerDriverMessageTwo.Margin = elementMargin;

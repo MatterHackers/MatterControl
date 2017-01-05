@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         Vector3 lastDestinationWithLevelingApplied = new Vector3();
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public RadialLevlingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
         {

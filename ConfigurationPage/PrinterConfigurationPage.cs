@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 		{
 			DisableableWidget container = new DisableableWidget();
 
-			AltGroupBox themeControlsGroupBox = new AltGroupBox(LocalizedString.Get("Theme Settings"));
+			AltGroupBox themeControlsGroupBox = new AltGroupBox("Theme Settings".Localize());
 			themeControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			themeControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			themeControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl
 
 		public void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
 		{
-			AltGroupBox releaseOptionsGroupBox = new AltGroupBox(LocalizedString.Get("Update Feed"));
+			AltGroupBox releaseOptionsGroupBox = new AltGroupBox("Update Feed".Localize());
 
 			releaseOptionsGroupBox.Margin = new BorderDouble(0);
 			releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 			this.linkButtonFactory.fontSize = 11;
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private void AddHandlers()
 		{

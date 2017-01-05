@@ -148,11 +148,7 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(buttonRow);
 
-#if __ANDROID__
-			this.AddChild(new SoftKeyboardContentOffset(topToBottom));
-#else
 			this.AddChild(topToBottom);
-#endif
 
 			ShowAsSystemWindow();
 		}

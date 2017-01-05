@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public event HoverValueChangedEventHandler HoverValueChanged;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public LibraryProvider CurrentLibraryProvider
 		{

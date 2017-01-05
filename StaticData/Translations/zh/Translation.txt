@@ -1,0 +1,5832 @@
+English:Connect
+Translated:接
+
+English:Disconnect
+Translated:断开
+
+English:Status
+Translated:状态
+
+English:Connected
+Translated:连接的
+
+English:Not Connected
+Translated:未连接
+
+English:Select Printer
+Translated:选择打印机
+
+English:Options
+Translated:选项
+
+English:Next Print
+Translated:下一个打印
+
+English:Add
+Translated:加
+
+English:Add a file to be printed
+Translated:添加一个要打印的文件
+
+English:Start
+Translated:开始
+
+English:Begin printing the selected item.
+Translated:开始打印所选项目。
+
+English:Skip
+Translated:跳跃
+
+English:Skip the current item and move to the next in queue
+Translated:跳过当前项目，并移动到队列中的下
+
+English:Remove
+Translated:去掉
+
+English:Remove current item from queue
+Translated:卸下队列当前项目
+
+English:Pause
+Translated:暂停
+
+English:Pause the current print
+Translated:暂停当前​​的打印
+
+English:Cancel Connect
+Translated:取消连接
+
+English:Stop trying to connect to the printer.
+Translated:停止尝试连接到打印机。
+
+English:Cancel
+Translated:取消
+
+English:Stop the current print
+Translated:停止当前的打印
+
+English:Resume
+Translated:简历
+
+English:Resume the current print
+Translated:继续当前的打印
+
+English:Reprint
+Translated:重印
+
+English:Print current item again
+Translated:再次打印当前项目
+
+English:Done
+Translated:做
+
+English:Move to next print in queue
+Translated:移动到队列中的下一个打印
+
+English:No printer selected.  Press 'Connect' to choose a printer.
+Translated:没有打印机选择。按“连接”，选择一台打印机。
+
+English:Press 'Add' to choose an item to print
+Translated:按“添加”选择项目进行打印
+
+English:No items in the print queue
+Translated:在打印队列中没有项目
+
+English:Queued to Print
+Translated:排队打印
+
+English:View
+Translated:视图
+
+English:Copy
+Translated:复制
+
+English:Add to Queue
+Translated:添加到队列
+
+English:Export
+Translated:出口
+
+English:Est. Print Time
+Translated:美东时间。打印时间
+
+English:Calculating...
+Translated:计算...
+
+English:complete
+Translated:完成
+
+English:Remove All
+Translated:移除所有
+
+English:Queue Options
+Translated:队列选项
+
+English: Import from Zip
+Translated: 从进口邮编
+
+English: Export to Zip
+Translated: 导出到邮编
+
+English: Export to Folder
+Translated: 导出到文件夹
+
+English:Extra
+Translated:额外
+
+English: Create Part Sheet
+Translated: 创建零件表
+
+English:Search
+Translated:搜索
+
+English:Import
+Translated:进口
+
+English:Create
+Translated:创建
+
+English:Check for Update
+Translated:检查更新
+
+English:Download Update
+Translated:下载更新
+
+English:Install Update
+Translated:安装更新
+
+English:There are updates available.
+Translated:有可用的更新。
+
+English:Checking for updates...
+Translated:检查更新...
+
+English:MatterControl
+Translated:MatterControl
+
+English:Version {0}
+Translated:版本{0}
+
+English:Developed by MatterHackers
+Translated:通过MatterHackers开发
+
+English:Please consider 
+Translated:请考虑
+
+English:donating
+Translated:捐赠
+
+English: to help support and improve MatterControl.
+Translated: 帮助支持和完善MatterControl。
+
+English:Special thanks to Alessandro Ranellucci for his incredible work on 
+Translated:特别感谢亚历山德罗Ranellucci为他的惊人的努力
+
+English:Slic3r
+Translated:Slic3r
+
+English:and to David Braam and Ultimaker BV, for the amazing 
+Translated:和大卫Braam在和Ultimaker BV，为惊人
+
+English:CuraEngine
+Translated:CuraEngine
+
+English:Send Feedback
+Translated:发送反馈
+
+English:www.matterhackers.com
+Translated:www.matterhackers.com
+
+English:Copyright © 2014 MatterHackers, Inc.
+Translated:版权所有©2014 MatterHackers公司
+
+English:Build: {0} | 
+Translated:构建：{0} |
+
+English:Clear Cache
+Translated:清除缓存
+
+English:Queue
+Translated:队列
+
+English:Rotate
+Translated:旋转
+
+English:Scale
+Translated:规模
+
+English:Mirror
+Translated:镜子
+
+English:Display
+Translated:显示
+
+English:Show Print Bed
+Translated:显示打印床
+
+English:Show Print Area
+Translated:显示打印区域
+
+English:Show Wireframe
+Translated:显示线框
+
+English:Auto-Arrange
+Translated:自动排列
+
+English:Save
+Translated:保存
+
+English:Degrees
+Translated:度
+
+English:Align to Bed
+Translated:对齐到床
+
+English:Ratio
+Translated:比
+
+English:Conversions
+Translated:转换
+
+English:reset
+Translated:重启
+
+English:Apply Scale
+Translated:应用规模
+
+English:Finding Parts
+Translated:寻找零件
+
+English:Edit
+Translated:编辑
+
+English:Delete
+Translated:删除
+
+English:Close
+Translated:关
+
+English:Generate
+Translated:生成
+
+English:No GCode Available...
+Translated:G代码没有可用...
+
+English:Loading GCode...
+Translated:G代码加载...
+
+English:Press 'generate' to view layers
+Translated:按“生成”来查看图层
+
+English:Model
+Translated:模型
+
+English:Layer
+Translated:层
+
+English:Library
+Translated:图书馆
+
+English:About
+Translated:关于
+
+English:Advanced\nControls
+Translated:高级\ n控制
+
+English:Print\nQueue
+Translated:打印\ n队列
+
+English:Actual
+Translated:实际
+
+English:Target
+Translated:目标
+
+English:Presets
+Translated:预置
+
+English:Movement Controls
+Translated:运动控制
+
+English:ALL
+Translated:所有
+
+English:UNLOCK
+Translated:开锁
+
+English:Retract
+Translated:撤回
+
+English:Extrude
+Translated:拉伸
+
+English:Communications
+Translated:通讯
+
+English:SHOW TERMINAL
+Translated:SHOW TERMINAL
+
+English:Fan Controls
+Translated:风扇控制
+
+English:Fan Speed:
+Translated:风扇转速：
+
+English:Macros
+Translated:宏
+
+English:No macros are currently setup for this printer.
+Translated:没有宏目前设定为这台打印机。
+
+English:Tuning Adjustment (while printing)
+Translated:优化调整（打印时）
+
+English:Speed Multiplier
+Translated:速度倍增
+
+English:Set
+Translated:组
+
+English:Extrusion Multiplier
+Translated:挤出乘数
+
+English:Controls
+Translated:控制
+
+English:Slice Settings
+Translated:片设置
+
+English:Show Help
+Translated:显示帮助
+
+English:Show All Settings
+Translated:显示所有设置
+
+English:Active Settings
+Translated:活动设置
+
+English:unsaved changes
+Translated:未保存的更改
+
+English:Revert
+Translated:还原
+
+English:Options   
+Translated:选项
+
+English:Slice Engine
+Translated:切片引擎
+
+English:No Printer Selected
+Translated:无打印机选择
+
+English:No printer is currently selected. Select printer to edit slice settings.
+Translated:没有打印机当前选择。选择打印机编辑切片设置。
+
+English:Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
+Translated:试图减少周长交叉的数量。这可以用渗出或字符串帮助。
+
+English:The shape of the physical print bed.
+Translated:物理打印床的形状。
+
+English:The size of the print bed.
+Translated:打印床的大小。
+
+English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
+Translated:温度到床设置为第一层已被打印之后。设置为0，以消除床温的命令。
+
+English:How many layers will be solid filled on the bottom surfaces of the object.
+Translated:多少层将是固体填充物的底表面上。
+
+English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
+Translated:加速桥接时。设置为0禁用更改打印机的加速度。
+
+English:The fan speed to use during bridging.
+Translated:风扇转速，以弥合期间使用。
+
+English:This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
+Translated:这个控制桥接期间材料挤出机的比率。稍稍降低这有助于通过拉伸丝越多，使用风扇还可以极大地帮助弥合。
+
+English:The speed to move when bridging between walls.
+Translated:速度墙壁之间的桥接时移动。
+
+English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
+Translated:将围绕每个对象被绘制的边缘量。这是有用的，以确保零件留贴在床上。
+
+English:The height of the printable area. If set to 0 the parts height will not be validated.
+Translated:可打印区域的高度。如果设置为0的部件的高度将不会被验证。
+
+English:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
+Translated:每个单独的部分被打印到完成，然后挤出机降低回到床上并打印下一部分。
+
+English:Moves the extruder up off the part to allow cooling.
+Translated:移动挤压掉在部分允许冷却。
+
+English:Turns on and off all cooling settings (all settings below this one).
+Translated:打开和关闭所有的冷却设置（在这之下的所有设置）。
+
+English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
+Translated:加速在上面没有定义的所有移动使用。设置为0禁用更改打印机的加速度。
+
+English:The number of layers for which the fan will be forced to remain off.
+Translated:层的数目的量，风扇将被迫保持关闭。
+
+English:This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
+Translated:该G代码将在所有自动输出（G代码命令的尽头）结束插入。
+
+English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Perimeters speed.
+Translated:的速度打印的可见外边缘。这可以显式地或作为周长速度的百分比来设置。
+
+English:Normally external perimeters are printed last, this makes them go first.
+Translated:通常情况下外部周边最后被打印出来，这使他们先走。
+
+English:Allow slicer to generate extra perimeters when needed for sloping walls.
+Translated:允许需要斜墙切片时产生额外的周长。
+
+English:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
+Translated:这是用来找出除了各个部件必须多远被印刷以允许它们在打印的下一部分之前完成。
+
+English:This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+Translated:这是偏移量每相对于所述第一挤出机挤出机。只有多个挤出机是有用的。
+
+English:This is the identifier used in the gcode to specify the extruder.
+Translated:这是在G-码用于指定该挤出机的标识符。
+
+English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good min value) will decrease the amount being extruded.
+Translated:所有凸出部分乘以该值。增加它上面1（1.1是一个很好的最大值），可提高灯丝的量被挤出;它降低（0.9是一个很好的最小值）将减少被挤压的量。
+
+English:Leave this as 0 to allow automatic calculation of extrusion width.
+Translated:离开这个为0，允许挤压宽度自动计算。
+
+English:This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.
+Translated:这将强制风扇在整个打印保持在。一般来说，你应该有这个功能，只启用自动冷却。
+
+English:If a layer is estimated to take less than this to print, the fan will be turned on.
+Translated:如果一个层估计需要比这少打印，风扇将被接通。
+
+English:This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
+Translated:这应设置为您使用的打印机上的长丝的实际直径。测量5次用卡尺，扔掉的顶部和底部，并平均其余3。
+
+English:Sets the starting angle of the infill. Not used when bridging.
+Translated:设置填充的起始角度。桥接时未使用。
+
+English:The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
+Translated:材料到空的比例范围为0到1，零就没有加密; 1是实心填充。
+
+English:The pattern used on the inside portions of the print.
+Translated:在打印的内侧部分中使用的模式。
+
+English:Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.
+Translated:加速在打印第一层使用。设置为0到默认的第一层加速。
+
+English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
+Translated:温度在打印所述第一层之前的床设置。打印机将等到今年温度在打印前已经达成。设置为0，以消除床温的命令。
+
+English:Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.
+Translated:将其设置为大于100％，往往可以帮助第一层要打印床上更好的附着力。
+
+English:Sets the height of the first layer. It is often desirable to print a taller first layer to ensure a good solid adhesion to the build plate.
+Translated:设置在第一层的高度。常常希望打印一个高的第一层以保证良好的固体粘附到构建板。
+
+English:The speed to move while printing the first layer.  If expressed as a percentage it will modify the corresponding speed set above.
+Translated:速度，同时印刷第一层移动。如果以百分比表示它将修改相应速度上面设置。
+
+English:The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
+Translated:温度在打印部的第一层之前在挤出机设定为。打印机将等到今年温度在打印前已经达成。
+
+English:Use G0 for moves rather than G1.
+Translated:使用G0的移动，而不是G1。
+
+English:Speed to fill small gaps. Keep low to avoid vibration. Set to 0 to skip filling small gaps.
+Translated:速度填补小缝隙。保持低以避免震动。设置为0跳过填补小间隙。
+
+English:Use firmware arcs rather than multiple segments for curves.
+Translated:使用固件弧线，而不是多段的曲线。
+
+English:Include detailed comments in the gcode.
+Translated:包括在G代码的详细评论。
+
+English:Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.
+Translated:有些固件使用不同的G和M代码。设置此确保输出G代码将使用正确的命令。
+
+English:Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.
+Translated:加速，同时充填使用。设置为0禁用更改打印机的加速度。
+
+English:Sets which layers will receive infill. This should normally stay set to 1 to make strong parts.
+Translated:设置哪些图层填充接收。这通常应保持设置为1，以强烈的部分。
+
+English:The index of the extruder to use for infill.
+Translated:挤出机的索引以用于填充。
+
+English:Sets infill to happen before perimeters are created.
+Translated:设置填充创建周长之前发生。
+
+English:Creates infill only where it will be used as internal support.
+Translated:创建只有在其将被用作内部支持加密。
+
+English:The speed to print infill.
+Translated:的速度打印填充。
+
+English:This gcode will be inserted right after the change in z height for the next layer.
+Translated:此G-码将在接下来的层中的Z高度变化之后被插入。
+
+English:Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.
+Translated:设置打印的每一层的高度。一个较小的数量将创造更多的层次和更多的垂直精度也较慢打印。
+
+English:This is the maximum speed that your fan can run at.
+Translated:这是你的粉丝可以在运行的最大速度。
+
+English:This is the minimum amount of filament that must be extruded before a rectarction can occure.
+Translated:这是一个必须被挤出之前rectarction可以occure灯丝的最小量。
+
+English:This is the minimum fan speed that your fan can run at.
+Translated:这是你的粉丝可以在运行的最小风扇转速。
+
+English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the min layer time.
+Translated:这是在最低速度，该打印机将减少到使层采取足够长以满足最小层的时间。
+
+English:Sets the minimum amount of filament to use drawing the skirt loops. This will cause at least enough skirt loops to be drawn to use this amount of filament.
+Translated:设置灯丝的最小量使用绘制裙环路。这将导致至少足够裙环被吸引到使用灯丝的此金额。
+
+English:These notes will be added as comments in the header of the output gcode.
+Translated:这些注释将被添加在输出G代码的头注释。
+
+English:This is the diameter of your extruder nozle.
+Translated:这是您的挤出机nozle的直径。
+
+English:Prevents retraction while within a printing perimeter.
+Translated:防止同时印刷周长内回缩。
+
+English:This will lower the temperature of the non-printing extruder to help prevent oozing.
+Translated:此将降低非印刷挤出机的温度以帮助防止渗出。
+
+English:Experimental feature that attempts to improve overhangs using the fan and bridge settings.
+Translated:实验性功能试图提高使用风扇和桥设置突出端。
+
+English:Sets the way that slicer creates file names (this is not used by MatterControl).
+Translated:设置一个限幅器将创建的文件名的方式（在此不使用MatterControl）。
+
+English:Acceleration to use on perimeters. Set to 0 to disable changing the printer's acceleration.
+Translated:加速对周边使用。设置为0禁用更改打印机的加速度。
+
+English:The index of the extruder to use for perimeters.
+Translated:挤出机的索引用于周长。
+
+English:Sets the default movement speed while printing perimeters.
+Translated:设置在打印周边的默认移动速度。
+
+English:The number of external layers or shells to create.
+Translated:外层或炮弹的数量创造。
+
+English:You can include additional programs to process the gcode after slicer is finished. The complete path of the program to run should be included here.
+Translated:您可以包括其他程序切片机完成后处理G代码。要运行的程序的完整路径应该包括在这里。
+
+English:The position (coordinates) of the center of the print bed.
+Translated:打印床的中心的位置（坐标）。
+
+English:Number of layers to print before printing any parts.
+Translated:层数在打印任何部分之前打印。
+
+English:Start each new layer from a different vertex to reduce seams.
+Translated:从不同的顶点开始每个新层，以减少接缝。
+
+English:The minimum distance of a non-printing move that will result in a retraction.
+Translated:的，这将导致在一个缩回非打印移动的最小距离。
+
+English:If set, a retraction will occur prior to changing the layer height.
+Translated:如果置位，一个回缩之前将改变层高度发生。
+
+English:The amount that the filament will be reversed after each qualifying non-printing move.
+Translated:灯丝会后，每个符合条件的非打印的举动被逆转的金额。
+
+English:The amount that the filament will be reversed before changing to a new tool.
+Translated:灯丝会改变到一个新的工具之前被逆转的金额。
+
+English:The amount the extruder head will be lifted after each retraction.
+Translated:量挤出机机头将各自回缩后解除。
+
+English:The amount the filament will be retracted when changing to a different extruder.
+Translated:量灯丝就会改变到不同的挤出机时被缩回。
+
+English:No updates are currently available.
+Translated:无更新目前已经上市。
+
+English:Additional amount of filament that will be extruded after a retraction.
+Translated:长丝的额外量，将一个回缩后挤出。
+
+English:The amount of extra extrusion that will occur when an extruder is selected.
+Translated:额外的挤压时，选择了挤压机将要发生的金额。
+
+English:The speed that the filament will be retracted (and re-extruded).
+Translated:灯丝会后退速度（并重新挤出）。
+
+English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
+Translated:最小特征尺寸从模型中考虑。离开在0使用所有的模型细节。
+
+English:The distance to start drawing the first skirt loop.
+Translated:距离开始绘制第一裙子循环。
+
+English:The number of layers to draw the skirt.
+Translated:层的数目来绘制裙子。
+
+English:The number of loops to draw around all the parts on the bed.
+Translated:循环数周围绘制所有床上的部件。
+
+English:If a layer is estimated to take less than this to print, the movement speed will be reduced to try and make the layer take this long to print.
+Translated:如果一个层估计需要比这少打印时，移动速度将降低，试图使该层借此长打印。
+
+English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
+Translated:用于小周长（通常洞）。这可以明确地或作为周长“速度的百分比来设置。
+
+English:The pattern used on the bottom and top layers of the print.
+Translated:在打印的底部和顶部层中使用的模式。
+
+English:Forces solid infill for any area less than this amount.
+Translated:强制任何面积小于这一数额固体填充。
+
+English:Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.
+Translated:设置图层多久会被迫成为固体填充墙。零，将导致整个正常填充。
+
+English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
+Translated:速度时完全不透明打印填充。这可以显式地或作为腾空速度的百分比来设置。
+
+English:Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.
+Translated:强制打印到只有一层，打印过程中逐步提高挤出机的高度。只有一部分可以使用此功能时进行打印。
+
+English:This is the amount to lower the temperature of an extruder that is not currently printing.
+Translated:这是降低当前未打印的挤出机的温度的量。
+
+English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].
+Translated:此G-码将被插入到设定温度后立即输出。如果必须设定温度在这一部分，他们不会本条外产生的命令。您还可以包括其他设置，如[first_layer_temperature]值。
+
+English:Make sure the first point on a perimeter is a concave point.
+Translated:确保上的周界的第一点是一个凹点。
+
+English:Make sure the first point on a perimeter is not an overhang.
+Translated:确保上的周界的第一点是不是一个突出端。
+
+English:The starting angle of the supports.
+Translated:支撑的起始角度。
+
+English:Create support where needed on internal features.
+Translated:在需要内部功能创建的支持。
+
+English:Generate support material everywhere not touching the bed for n layers, regardless of angle.
+Translated:生成支撑材料处处不接触床的N层，无论角度。
+
+English:The index of the extruder to use for support material.
+Translated:挤出机的索引用于支撑材料。
+
+English:The index of the extruder to use for support material interface layers.
+Translated:挤出机的索引用于支撑材料界面层。
+
+English:The number of layers to print between the supports and the part.
+Translated:层的数目，以支撑与部件之间打印。
+
+English:The space between lines of the interface layers (0 is solid).
+Translated:所述界面层的线的间距（0是固体）。
+
+English:The pattern used while generating support material.
+Translated:同时产生支撑材料使用的模式。
+
+English:The space between the lines of he support material.
+Translated:他支撑材料的线之间的空间。
+
+English:The speed to print support material structures.
+Translated:的速度打印支撑材料结构。
+
+English:The last angle at which support material will be generated. Larger numbers will result in more support. Set to 0 to enable automatic settings.
+Translated:在支持材料上的最后一个角度将生成。较大的数字将导致更多的支持。设置为0，启用自动设置。
+
+English:The distance the support material will be from the object in the x and y direction.
+Translated:的距离，载体材料将是在x和y方向上的对象。
+
+English:The distance the support material will be from the object in the z direction.
+Translated:的距离，载体材料将是在z方向上的对象。
+
+English:This turns on and off the generation of support material.
+Translated:这打开和关闭的支撑材料的产生。
+
+English:The temperature to set the extruder to after the first layer has been printed.
+Translated:温度的挤出机设定为第一层已被打印之后。
+
+English:Detect when walls are too close together and need to be extruded as just one wall.
+Translated:当壁靠得太近，需要挤压成只有一个壁检测。
+
+English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
+Translated:而这样做切片使用的CPU内核的数量。增加这个可以在你的机器慢下来。
+
+English:This gcode will be inserted after every tool change.
+Translated:这将G代码每次换刀后插入。
+
+English:The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
+Translated:的速度打印的顶部填充。这可以显式地或作为腾空速度的百分比来设置。
+
+English:How many layers will be solid filled on the top surfaces of the object.
+Translated:多少层将固体填充物的上表面上。
+
+English:Speed to move when not extruding material.
+Translated:速度在不挤压材料移动。
+
+English:Request the firmware to do retractions rather than specify the extruder movements directly.
+Translated:要求固件做撤稿，而不是直接指定挤出机的动作。
+
+English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
+Translated:通常你想使用绝对É距离。只有检查这个，如果你知道你的打印机需要相对ê距离。
+
+English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
+Translated:这是为了帮助在打印过程中减少振动。如果您的打印机具有制造麻烦，你可以设置此尝试降低打印在该频率的谐振频率。
+
+English:This will cause the extruder to move while retracting to minimize blobs.
+Translated:这将导致挤出机而缩回，以减少斑点移动。
+
+English:This value will be added to all of the z positions of the created gcode.
+Translated:此值将被添加到所有创建的G代码的Z轴位置。
+
+English:Print
+Translated:打印
+
+English:Layers/Perimeters
+Translated:图层/周长
+
+English:Layer Height
+Translated:层高度
+
+English:Perimeters (minimum)
+Translated:周边（最小）
+
+English:Vertical Shells
+Translated:立式壳
+
+English:Infill
+Translated:腾空
+
+English:Fill Density
+Translated:填充密度
+
+English:Fill Pattern
+Translated:填充图案
+
+English:Support Material
+Translated:支撑材料
+
+English:Generate Support Material
+Translated:生成支撑材料
+
+English:Filament
+Translated:灯丝
+
+English:Diameter
+Translated:直径
+
+English:Extrude First Layer
+Translated:挤出第一层
+
+English:Extruder Other Layers
+Translated:挤出机的其他层
+
+English:Bed First Layer
+Translated:床第一层
+
+English:Bed Other Layers
+Translated:床其他层
+
+English:Temperature (�C)
+Translated:温度（℃）
+
+English:Cooling
+Translated:冷却
+
+English:Enable Auto Cooling
+Translated:启用自动冷却
+
+English:Enable
+Translated:启用
+
+English:Printer
+Translated:打印机
+
+English:General
+Translated:一般
+
+English:Bed Size
+Translated:床尺寸
+
+English:Print Center
+Translated:打印中心
+
+English:Build Height
+Translated:结构高度
+
+English:Size and Coordinates
+Translated:尺寸和坐标
+
+English:Extruder 1
+Translated:挤出机1
+
+English:Nozzle Diameter
+Translated:喷嘴直径
+
+English:Size
+Translated:尺寸
+
+English:Configuration
+Translated:组态
+
+English:EEProm Settings
+Translated:EEPROM设置
+
+English:CONFIGURE
+Translated:配置
+
+English:Automatic Calibration
+Translated:自动校准
+
+English:ENABLE
+Translated:ENABLE
+
+English:DISABLE
+Translated:DISABLE
+
+English:Enable Automatic Print Leveling
+Translated:启用自动打印代练
+
+English:Automatic Print Leveling (disabled)
+Translated:自动打印平（禁用）
+
+English:Extruder Temperature
+Translated:挤出机温度
+
+English:View Manual Printer Controls and Slicing Settings
+Translated:查看手册打印机控制和切片设置
+
+English:View Queue and Library
+Translated:查看队列和图书馆
+
+English:Bed Temperature
+Translated:床温
+
+English:This gcode will be inserted when the print is canceled.
+Translated:当打印取消此G代码将被插入。
+
+English:This gcode will be inserted when the printer is paused.
+Translated:当打印机暂停该G代码将被插入。
+
+English:This gcode will be inserted when the printer is resumed.
+Translated:当打印机恢复此G代码将被插入。
+
+English:Print Time
+Translated:打印时间
+
+English:Filament Length
+Translated:丝长度
+
+English:Filament Volume
+Translated:丝卷
+
+English:Weight
+Translated:重量
+
+English:Show Grid
+Translated:显示网格
+
+English:Show Moves
+Translated:移动显示
+
+English:Show Retractions
+Translated:显示撤消
+
+English:Go
+Translated:走
+
+English:start:
+Translated:开始：
+
+English:end:
+Translated:结束：
+
+English:There is a recommended update available.
+Translated:有可用的推荐的更新。
+
+English:Layer View
+Translated:层查看
+
+English:Connect to Printer
+Translated:连接到打印机
+
+English:Choose a 3D Printer Configuration
+Translated:选择一个3D打印机配置
+
+English:Unavailable
+Translated:不可用
+
+English:Refresh
+Translated:刷新
+
+English:Automatic Print Leveling (enabled)
+Translated:自动打印平（启用）
+
+English:Connecting
+Translated:连
+
+English:Status: {0} - {1}
+Translated:状态：{0}  -  {1}
+
+English:edit
+Translated:编辑
+
+English:remove
+Translated:去掉
+
+English:Printer Name
+Translated:打印机名称
+
+English:(refresh)
+Translated:（刷新）
+
+English:Serial Port
+Translated:串行端口
+
+English:Baud Rate
+Translated:波特率
+
+English:Other
+Translated:其他
+
+English:Printer Make
+Translated:打印机生产
+
+English:Printer Model
+Translated:打印机型号
+
+English:Auto Connect
+Translated:自动连接
+
+English:Preparing To Print
+Translated:准备打印
+
+English:Preparing to slice model
+Translated:准备切片模型
+
+English:Printing
+Translated:印花
+
+English:Filter Output
+Translated:滤波器输出
+
+English:Auto Uppercase
+Translated:自动大写
+
+English:Send
+Translated:发送
+
+English:MatterControl - Terminal
+Translated:MatterControl  - 终端
+
+English:First Layer Height
+Translated:第一层高度
+
+English:Spiral Vase
+Translated:螺旋花瓶
+
+English:Number of Solid Layers\non the Top:
+Translated:实心层的\ n在顶部数：
+
+English:Number of Solid Layers\non the Bottom:
+Translated:实心层的\ n底部数：
+
+English:Horizontal Shells
+Translated:卧式壳
+
+English:Speed
+Translated:速度
+
+English:Perimeters
+Translated:周边
+
+English:Speed for Print Moves
+Translated:速度移动打印
+
+English:Travel
+Translated:旅行
+
+English:Speed for non Print Moves
+Translated:速度对于非移动打印
+
+English:First Layer Speed
+Translated:第一层速度
+
+English:Modifiers
+Translated:修饰符
+
+English:Skirt and Brim
+Translated:裙子和帽沿
+
+English:Loops
+Translated:循环
+
+English:Distance from Object
+Translated:从物距
+
+English:Minimum Extrusion Length
+Translated:最小长度挤压
+
+English:Skirt
+Translated:短裙
+
+English:Overhang Threshold
+Translated:悬门槛
+
+English:Pattern Spacing
+Translated:阵列间距
+
+English:X and Y Distance
+Translated:X和Y的距离
+
+English:Z Distance
+Translated:Z方向的距离
+
+English:Internal Support
+Translated:内部支持
+
+English:Notes
+Translated:笔记
+
+English:Output Options
+Translated:输出选项
+
+English:Multiple Extruders
+Translated:多挤出机
+
+English:Advanced
+Translated:高级
+
+English:Enable Extruder Lift
+Translated:启用升降机挤出机
+
+English:Min Fan Speed
+Translated:范敏速度
+
+English:Max Fan Speed
+Translated:最大风扇转速
+
+English:Disable Fan For The First
+Translated:关闭风扇为先
+
+English:Fan Speed
+Translated:风扇转速
+
+English:Slow Down If Layer Print\nTime Is Below
+Translated:慢下来如果打印层\ n时间低于
+
+English:Cooling Thresholds
+Translated:冷却阈值
+
+English:Bed Shape
+Translated:床形状
+
+English:Custom G-Code
+Translated:自定义G代码
+
+English:Start G-Code
+Translated:启动G代码
+
+English:End G-Code
+Translated:结束G代码
+
+English:Length
+Translated:长度
+
+English:Minimum Travel After\nRetraction
+Translated:最小移动\ n退刀后
+
+English:Min Extrusion
+Translated:闵挤出
+
+English:Retraction
+Translated:回缩
+
+English:Generate Extra Perimeters\nWhen Needed:
+Translated:产生额外的周长\ n在需要时：
+
+English:Avoid Crossing Perimeters
+Translated:避免交叉周长
+
+English:Start At Concave Points
+Translated:开始在凹点
+
+English:Start At Non Overhang
+Translated:开始在非悬
+
+English:Thin Walls
+Translated:薄壁
+
+English:Quality (slower slicing)
+Translated:质量（速度较慢切片）
+
+English:Randomize Starting Points
+Translated:随机出发点
+
+English:External Perimeters First
+Translated:外部周长第一
+
+English:Top/Bottom Fill Pattern
+Translated:顶部/底部填充图案
+
+English:Infill Every
+Translated:腾空每
+
+English:Only Infill Where Needed
+Translated:腾空只有在需要的地方
+
+English:Solid Infill Every
+Translated:固体腾空每
+
+English:Fill Angle
+Translated:填写角
+
+English:Solid Infill Threshold Area
+Translated:固体腾空阈值区域
+
+English:Only Retract When\nCrossing Perimeters
+Translated:只有当退\ n隧道周长
+
+English:Do Infill Before Perimeters
+Translated:做腾空周长前
+
+English:Small Perimeters
+Translated:小周长
+
+English:External Perimeters
+Translated:外部周长
+
+English:Solid Infill
+Translated:固体腾空
+
+English:Top Solid Infill
+Translated:顶固腾空
+
+English:Bridges
+Translated:桥梁
+
+English:Gap Fill
+Translated:填补空白
+
+English:Min Print Speed
+Translated:敏打印速度
+
+English:Bridge
+Translated:桥
+
+English:First Layer
+Translated:第一层
+
+English:Default
+Translated:默认
+
+English:Acceleration Control
+Translated:加速度控制
+
+English:Skirt Height
+Translated:裙高度
+
+English:Brim Width
+Translated:帽檐宽
+
+English:Brim
+Translated:边
+
+English:Enforce Support For First
+Translated:强制支持对于第一
+
+English:Raft Layers
+Translated:筏层
+
+English:Raft
+Translated:筏
+
+English:Pattern
+Translated:模式
+
+English:Pattern Angle
+Translated:模角
+
+English:Interface Layers
+Translated:界面层
+
+English:Interface Pattern Spacing
+Translated:接口模式间距
+
+English:Complete Individual Objects
+Translated:完整的个体对象
+
+English:Extruder Clearance Height
+Translated:挤出机净空高度
+
+English:Extruder Clearance Radius
+Translated:挤出机最小转弯半径
+
+English:Sequential Printing
+Translated:连续打印
+
+English:Verbose G-Code
+Translated:详细G代码
+
+English:Output File Name Format
+Translated:输出文件名称格式
+
+English:Output File
+Translated:输出文件
+
+English:Post-Processing Scripts
+Translated:后处理脚本
+
+English:Perimeter Extruder
+Translated:周边挤出机
+
+English:Infill Extruder
+Translated:腾空挤出机
+
+English:Support Material Extruder
+Translated:支撑材料挤出机
+
+English:Support Interface Extruder
+Translated:支持接口挤出机
+
+English:Extruders
+Translated:挤出机
+
+English:Temp Lower Amount
+Translated:温度偏低金额
+
+English:Ooze Prevention
+Translated:软泥预防
+
+English:Default Extrusion Width
+Translated:默认挤出宽度
+
+English:Extrusion Width
+Translated:挤出宽度
+
+English:Bridge Flow Ratio
+Translated:大桥流量比
+
+English:Flow
+Translated:流
+
+English:Threads
+Translated:主题
+
+English:Resolution
+Translated:解析度
+
+English:Extrusion Axis
+Translated:挤压轴
+
+English:Optimize Overhangs
+Translated:优化出挑
+
+English:Keep Fan Always On
+Translated:请范总在
+
+English:Bridging Fan Speed
+Translated:桥接风扇转速
+
+English:Enable Fan If Layer\nPrint Time Is Below
+Translated:启用风扇如果层\ n打印时间低于
+
+English:Z Offset
+Translated:Z旋转偏移
+
+English:G-Code Flavor
+Translated:G代码味
+
+English:Use Relative E Distances
+Translated:使用相对距离ê
+
+English:Use Arcs
+Translated:利用弧
+
+English:Use G0
+Translated:使用G0
+
+English:Firmware
+Translated:固件
+
+English:Use Firmware Retraction
+Translated:使用固件回缩
+
+English:Vibration Limit
+Translated:振动限制
+
+English:Layer Change G-Code
+Translated:换层G代码
+
+English:Tool Change G-Code
+Translated:换刀G代码
+
+English:Pause G-Code
+Translated:暂停G代码
+
+English:Resume G-Code
+Translated:简历G代码
+
+English:Cancel G-Code
+Translated:取消G代码
+
+English:Extruder Offset
+Translated:挤出机胶印机
+
+English:Position (for multi-extrude printers)
+Translated:位置（多挤出打印机）
+
+English:Change Tool
+Translated:更改工具
+
+English:Z Lift
+Translated:ž电梯
+
+English:Extra Length On Restart
+Translated:超长上的重新启动
+
+English:Retract on Layer Change
+Translated:收回的层更改
+
+English:Wipe Before Retract
+Translated:擦拭之前收回
+
+English:Retraction When Tool is Disabled (for multi-extruders)
+Translated:回缩当工具被禁用（多挤出机）
+
+English:Paused
+Translated:已暂停
+
+English:Printing Paused
+Translated:暂停打印
+
+English:Ok
+Translated:好
+
+English:Finished Print
+Translated:打印完
+
+English:Done Printing
+Translated:完成打印
+
+English:Save As
+Translated:另存为
+
+English:Installed Plugins
+Translated:已安装的插件
+
+English:Select a Design Tool
+Translated:选择一个设计工具
+
+English:Temperature (C)
+Translated:温度（℃）
+
+English:Language Settings
+Translated:语言设定
+
+English:Select Model
+Translated:选择型号
+
+English:Theme Settings
+Translated:主题设置
+
+English:New updates are ready to install.
+Translated:新的更新已准备好安装。
+
+English:Select Language
+Translated:选择语言
+
+English:File not found on disk.
+Translated:文件未在磁盘上找到。
+
+English:Not connected. Press 'Connect' to enable printing.
+Translated:未连接。按“连接”，使打印。
+
+English:Loading Parts
+Translated:装载零件
+
+English:CONNECT
+Translated:CONNECT
+
+English:DISCONNECT
+Translated:断开
+
+English:OPTIONS
+Translated:OPTIONS
+
+English:QUEUE
+Translated:队列
+
+English:STATUS
+Translated:状态
+
+English:CONTROLS
+Translated:CONTROLS
+
+English:SLICE SETTINGS
+Translated:SLICE设置
+
+English:CONFIGURATION
+Translated:组态
+
+English:MODEL
+Translated:模型
+
+English:LAYER
+Translated:层
+
+English:DISPLAY
+Translated:显示
+
+English:PRINT TIME
+Translated:打印时间
+
+English:FILAMENT LENGTH
+Translated:丝长度
+
+English:FILAMENT VOLUME
+Translated:长丝VOLUME
+
+English:WEIGHT
+Translated:重量
+
+English:EST. WEIGHT
+Translated:美东时间。重量
+
+English:Saving
+Translated:保存
+
+English:Export File
+Translated:导出文件
+
+English:File export options
+Translated:文件导出选项
+
+English:Export as
+Translated:作为出口
+
+English:Show file in folder after save
+Translated:在文件夹保存文件后
+
+English:HISTORY
+Translated:历史
+
+English:LIBRARY
+Translated:图书馆
+
+English:Developed By: 
+Translated:由开发：
+
+English: to help support MatterControl.
+Translated: 帮助支持MatterControl。
+
+English:ABOUT
+Translated:关于
+
+English:Oops! Could not find this file
+Translated:哎呀！找不到这个文件
+
+English:Would you like to remove it from the queue
+Translated:你想从队列中删除
+
+English:Item not Found
+Translated:项目未找到
+
+English:Yes
+Translated:是
+
+English:No
+Translated:没有
+
+English:History
+Translated:历史
+
+English:Slicing Error. Please review your slice settings.
+Translated:切片错误。请检查您的切片设置。
+
+English:Quality
+Translated:质量
+
+English:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:第一层高度“必须小于或等于”喷嘴直径'。
+
+English:This will cause the print to be centered on the bed. Disable this if you know your models have been created where you want them to print.
+Translated:这将导致打印到床上居中。禁用此，如果你知道你的模型已经创建了您想要的地方进行打印。
+
+English:Center On Bed
+Translated:中心在床
+
+English:Center Print
+Translated:中心Print
+
+English:Note
+Translated:注意
+
+English:To enable GCode export, select a printer profile.
+Translated:为了使G代码出口，选择打印机配置文件。
+
+English:The amount to remove from the bottom of the model
+Translated:量从模型的底部除去
+
+English:The amount the infill edge will push into the preimiter. Helps ensure the infill is connected to the edge.
+Translated:在填充边缘会推入preimiter量。有助于确保填充被连接到边缘。
+
+English:The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
+Translated:距离开始绘制第一裙子循环。将此0创建的部分床上的锚。
+
+English:Bottom Clip
+Translated:底部夹
+
+English:Infill Overlap
+Translated:腾空重叠
+
+English:Inside Perimeters
+Translated:内周长
+
+English:Outside Perimeter
+Translated:外周
+
+English:Sets the default movement speed while printing inside perimeters.
+Translated:设置里面同时打印周边的默认移动速度。
+
+English:The type of support to create for surfaces that need it.
+Translated:该类型的支持来为需要它的表面。
+
+English:Support Type
+Translated:支持类型
+
+English:Top & Bottom Layers
+Translated:顶层和底层
+
+English:
+Translated:
+
+English:gcode_output_type
+Translated:gcode_output_type
+
+English:Starting Angle
+Translated:起始角
+
+English:The space between the lines of the support material.
+Translated:载体材料的线之间的空间。
+
+English:The last angle at which support material will be generated. Larger numbers will result in more support.
+Translated:在支持材料上的最后一个角度将生成。较大的数字将导致更多的支持。
+
+English:Add Printer
+Translated:添加打印机
+
+English:If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+Translated:如果大于0，这是从零部件到创建parimeter进入时擦去距离。
+
+English:Wipe Shield Dist
+Translated:擦拭盾DIST
+
+English:Wipe Shield
+Translated:擦拭盾
+
+English:  Remove All
+Translated:  移除所有
+
+English:The number of layers to skip in z. The gap between the support and the model.
+Translated:层的数量向z跳过。在载体和模型之间的差距。
+
+English:Z Gap
+Translated:ž峡
+
+English:Print Again
+Translated:重新打印
+
+English:Turns on and off the creation of a raft which can help parts adhear to the bed.
+Translated:打开和关闭建立一个木筏，它可以帮助部分adhear在床。
+
+English:Enable Raft
+Translated:启用筏
+
+English:Create Raft
+Translated:创建筏
+
+English:The amount of overhangs to support. 0 is no support 100 is support every overhang regardless of angle.
+Translated:突出的量，以支持。 0为不支持100支持每一个悬不管角度。
+
+English:Overhang Percent
+Translated:悬百分比
+
+English:support_material_overhang_percent
+Translated:support_material_overhang_percent
+
+English:Device
+Translated:设备
+
+English:Material
+Translated:材料
+
+English:Item
+Translated:项目
+
+English:Wipe Shield Distance
+Translated:擦拭盾距离
+
+English: Remove All
+Translated: 移除所有
+
+English:Slice Presets Editor
+Translated:片预置编辑器
+
+English:Attempting to Connect
+Translated:试图连接
+
+English:Making Copy
+Translated:制作复制
+
+English:Arranging Parts
+Translated:配置部
+
+English:Only Show Completed
+Translated:只显示已完成
+
+English:Show Timestamp
+Translated:显示时间戳
+
+English:Render Type
+Translated:渲染类型
+
+English:Shaded
+Translated:阴影
+
+English:Outlines
+Translated:大纲
+
+English:Polygons
+Translated:多边形
+
+English:New updates may be available.
+Translated:新的更新可用。
+
+English:Unable to communicate with printer.
+Translated:无法与打印机沟通。
+
+English:Item selected. Press 'Start' to begin your print.
+Translated:项目选择。按下“开始”，开始打印。
+
+English:Disconnecting
+Translated:断开
+
+English:Leveling Settings
+Translated:代练设置
+
+English:Movement Speeds Presets
+Translated:移动速度预置
+
+English:Axis
+Translated:轴
+
+English:Sampled Positions
+Translated:采样位置
+
+English:Position
+Translated:位置
+
+English:Do not show this again
+Translated:不要再显示此
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:您尝试打印的文件是一个G代码文件。\n\nG代码文件告诉您的打印机究竟该怎么做。他们没有被SliceSettings修改，我不适合您的特定打印机配置。 \ NN \仅从G代码的文件打印，如果你知道他们马赫您当前的打印机和配置。 \神经网络\你确定你想打印文件的G代码？
+
+English:Cannot find\n'{0}'.\nWould you like to remove it from the queue?
+Translated:无法找到\ n'{0}“。 \ n您想从队列中删除呢？
+
+English:Item not found
+Translated:没有找到
+
+English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
+Translated:欢迎到打印练级向导。下面是我们所要做的快速概述。
+
+English:'Home' the printer
+Translated:“家”的打印机
+
+English:Sample the bed at three points
+Translated:品尝床上三点
+
+English:Turn auto leveling on
+Translated:关闭自动调平
+
+English:You should be done in about 3 minutes.
+Translated:应该在约3分钟内完成。
+
+English:Click 'Next' to continue.
+Translated:点击“下一步”继续。
+
+English:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
+Translated:打印机现在应该是“归巢”。一旦完成寻，我们将其移动到第一点采样。 \ NN \为了完成你需要以下几个步骤
+
+English:A standard sheet of paper
+Translated:纸标准表
+
+English:We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.
+Translated:我们将使用本文以测量在挤出机和床之间的距离。 \ NN \点击“下一步”继续。
+
+English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
+Translated:恭喜！ \ NN \自动打印平现在已配置并启用。
+
+English:Remove the paper
+Translated:取出纸张
+
+English:If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.
+Translated:如果将来您要打开自动打印稳定下来，你可以取消选中“高级设置”中找到的“启用”按钮 - >“打印机控制”。 \ NN \点击“完成”关闭此窗口。
+
+English:Step
+Translated:步
+
+English:of
+Translated:的
+
+English:Print Leveling Wizard
+Translated:打印代练向导
+
+English:Back
+Translated:背部
+
+English:Next
+Translated:下一个
+
+English:Low Precision
+Translated:精度低
+
+English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
+Translated:使用此屏幕上的[Z]控制，我们现在就挤出机高度的粗略测量在这个位置。
+
+English:Place the paper under the extruder
+Translated:将纸张挤压下
+
+English:Using the above contols
+Translated:使用上述contols
+
+English:Press [Z-] until there is resistance to moving the paper
+Translated:按[-Z-]直到有到移动纸阻力
+
+English:Press [Z+] once to release the paper
+Translated:按[Z +]一旦释放纸
+
+English:Finally click 'Next' to continue.
+Translated:最后点击“下一步”继续。
+
+English:This part of your bed is too low for the extruder to reach it. You need to raise your bed, or lower your limit, for print leveling to work.
+Translated:你的床的这部分太低挤出去实现它。你需要提高你的床上，或降低你的极限，打印整平工作。
+
+English:Waring Moving Too Low
+Translated:华林移动过低
+
+English:Medium Precision
+Translated:中等精度
+
+English:We will now refine our measurement of the extruder height at this position.
+Translated:现在，我们将在这个位置上改进我们的挤出机的高度测量。
+
+English:High Precision
+Translated:高精准度
+
+English:We will now finalize our measurement of the extruder height at this position.
+Translated:现在，我们将在这个位置完成我们的挤出机的高度测量。
+
+English:Press [Z-] one click PAST the first hint of resistance
+Translated:按[Z-]点击PAST性的第一个提示
+
+English:Save Parts Sheet
+Translated:保存零件表
+
+English:MatterContol
+Translated:MatterContol
+
+English:Saving to Parts Sheet
+Translated:保存到零件表
+
+English:Stop trying to connect to the printer
+Translated:停止试图连接到打印机
+
+English:No printer selected.  Press 'Connect' to choose a printer
+Translated:没有打印机选择。按“连接”，选择一台打印机
+
+English:About                                             
+Translated:关于
+
+English:This controls the ratio of material extruder during bridging.Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
+Translated:这种控制材料挤出bridging.Reducing这种略带可以帮助拉伸丝越多，使用风扇还可以极大地帮助弥合中的比例。
+
+English:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:默认的温度设定床上。有时可以在第一层上覆盖。设置为0，以消除床温的命令。
+
+English:The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
+Translated:默认的温度设定挤出机。有时可以在第一层上覆盖。
+
+English:Macro Editor
+Translated:宏编辑器
+
+English:Macro Presets
+Translated:宏预置
+
+English:Edit Macro
+Translated:编辑宏
+
+English:Macro Name
+Translated:宏名称
+
+English:Give your macro a name
+Translated:给你的宏的名称
+
+English:Macro Commands
+Translated:宏命令
+
+English:This should be in 'Gcode'
+Translated:这应该是“G代码”
+
+English:3D Printer Setup
+Translated:3D打印机设置
+
+English:Give your printer a name.
+Translated:为您的打印机的名称。
+
+English:Select Make
+Translated:选择使
+
+English:Select the printer manufacturer
+Translated:选择打印机制造商
+
+English:Select the printer model
+Translated:选择打印机型号
+
+English:Save & Continue
+Translated:保存并继续
+
+English:MatterControl will now attempt to auto-detect printer.
+Translated:MatterControl现在将尝试自动检测打印机。
+
+English:Disconnect printer
+Translated:断开打印机
+
+English:if currently connected
+Translated:如果当前连接
+
+English:Press
+Translated:按
+
+English:Continue
+Translated:继续
+
+English:Manual Configuration
+Translated:手动配置
+
+English:Setup Manual Configuration
+Translated:安装手册配置
+
+English:or
+Translated:要么
+
+English:Skip Printer Connection
+Translated:跳过打印机连接
+
+English:You can either
+Translated:你可以
+
+English:You can also
+Translated:你也可以
+
+English:Extruder Temperature Settings
+Translated:挤出机温度设置
+
+English:Temperature Shortcut Presets
+Translated:温度预设快捷键
+
+English:Label
+Translated:标签
+
+English:Preset
+Translated:预置
+
+English:Max Temp.
+Translated:最高温度。
+
+English:Bed Temperature Settings
+Translated:床温度设置
+
+English:Movement Speeds
+Translated:移动速度
+
+English:Extruder
+Translated:挤出机
+
+English:Power on and connect printer
+Translated:开机并连接打印机
+
+English:Attempting to connect
+Translated:试图连接
+
+English:Connection succeeded
+Translated:连接成功
+
+English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
+Translated:你不能移动任何降低。在你的床上这个位置太低，挤出机抵达。你需要提高你的床上，或调整自己的极限，让挤出去低。
+
+English:Edit Preset
+Translated:编辑预设
+
+English:Slice-Engine
+Translated:切片引擎
+
+English:Status: Completed
+Translated:状态：已完成
+
+English:Unlock
+Translated:开锁
+
+English:Show Terminal
+Translated:显示终端
+
+English:Configure
+Translated:配置
+
+English:Disable
+Translated:关闭
+
+English:Est. Weight
+Translated:美东时间。重量
+
+English:Downloading updates...
+Translated:下载更新...
+
+English:Duplicate
+Translated:重复
+
+English:End
+Translated:结束
+
+English:The type of support to create inside of parts.
+Translated:该类型的支持，以创建零件的内部。
+
+English:Infill Type
+Translated:填充类型
+
+English:Release Options
+Translated:发布选项
+
+English:No items to select. Press 'Add' to select a file to print.
+Translated:没有项目进行选择。按“添加”，选择要打印的文件。
+
+English:Unknown
+Translated:未知
+
+English:Press 'Add' to select an item.
+Translated:按“添加”选择一个项目。
+
+English:Shop
+Translated:店
+
+English:Slicing Error
+Translated:切片错误
+
+English:Ready to Print
+Translated:打印就绪
+
+English:File Not Found\n'{0}'
+Translated:未找到文件\ n'{0}“
+
+English:Slicing Error.\nPlease review your slice settings.
+Translated:切片错误。 \ n请检查您的切片设置。
+
+English:Special thanks to:
+Translated:特别感谢：
+
+English:Alessandro Ranellucci for 
+Translated:亚历山德罗Ranellucci为
+
+English:David Braam and Ultimaker BV for 
+Translated:大卫Braam在和Ultimaker BV为
+
+English:To enable GCode export, select a printer profile
+Translated:为了使G代码出口，选择打印机配置文件
+
+English:MatterControl: Submit an Issue
+Translated:MatterControl：提交问题
+
+English:Submit
+Translated:提交
+
+English:How can we help?
+Translated:我们能帮你什么吗？
+
+English:Submitting your information...
+Translated:提交您的信息...
+
+English:Question*
+Translated:题*
+
+English:Briefly describe your question
+Translated:简要描述你的问题
+
+English:Details*
+Translated:细节*
+
+English:Fill in the details here
+Translated:填写详细信息点击这里
+
+English:Your Email Address*
+Translated:您的电子邮件地址*
+
+English:Your Name*
+Translated:你的名字*
+
+English:Version 
+Translated:版
+
+English:Developed by:
+Translated:由开发：
+
+English:Send FeedBack
+Translated:发送反馈
+
+English:Build: 
+Translated:建立：
+
+English:Update Feed
+Translated:订阅更新
+
+English:File
+Translated:文件
+
+English:Import File
+Translated:导入文件
+
+English:Exit
+Translated:出口
+
+English:Help
+Translated:帮帮我
+
+English:Getting Started
+Translated:入门
+
+English:View Help
+Translated:查看帮助
+
+English:Manually Configure Connection
+Translated:手动配置连接
+
+English:Skip Connection Setup
+Translated:跳过连接设置
+
+English:Currently available serial ports.
+Translated:目前可用的串行端口。
+
+English:What's this?
+Translated:这是什么？
+
+English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+Translated:在“串行端口”识别哪个连接的设备为\ n您的打印机。您所使用的USB插头可\将N-更改相关的串行端口。 \ NN \提示：如果您不确定，插在打印机和打\ n刷新。出现新的端口应该是你的\ n打印机。
+
+English:Connection succeeded!
+Translated:连接成功！
+
+English:Oops! Unable to install update.
+Translated:哎呀！无法安装更新。
+
+English:Motor de Capas
+Translated:电机去CAPAS
+
+English:Your application is up-to-date.
+Translated:您的应用程序是最新的最新的。
+
+English:Install Communication Driver
+Translated:安装通讯驱动程序
+
+English:This printer requires a driver for communication.
+Translated:这台打印机需要通信的驱动程序。
+
+English:Driver located. Would you like to install?
+Translated:驱动程序位置。你想安装？
+
+English:Install Driver
+Translated:安装驱动程序
+
+English:Apply
+Translated:应用
+
+English:Buy Materials
+Translated:买材料
+
+English:Select an STL file
+Translated:选择一个STL文件
+
+English:Add File
+Translated:添加文件
+
+English:Time
+Translated:时间
+
+English:Press 'Connect' to select a printer.
+Translated:按“连接”，选择一台打印机。
+
+English:Marlin Firmware EEPROM Settings
+Translated:马林固件EEPROM设置
+
+English:Re-Load Default Settings
+Translated:重新加载默认设置
+
+English:Set Default To Factory Settings
+Translated:设置默认出厂设置
+
+English:Steps per mm:
+Translated:每毫米步骤：
+
+English:Maximum feedrates [mm/s]:
+Translated:最大进给率[毫米/秒]
+
+English:Maximum Acceleration [mm/s²]:
+Translated:最大加速度[毫米/秒²]：
+
+English:Acceleration:
+Translated:加速度：
+
+English:Retract Acceleration:
+Translated:收回加速：
+
+English:PID settings:
+Translated:PID设置：
+
+English:Homing Offset:
+Translated:归位偏移量：
+
+English:Min feedrate [mm/s]:
+Translated:分钟进给率[毫米/秒]
+
+English:Min travel feedrate [mm/s]:
+Translated:闽旅游的进给率[毫米/秒]
+
+English:Minimum segment time [ms]:
+Translated:最小段时间[ms]：
+
+English:Maximum X-Y jerk [mm/s]:
+Translated:最大X-Y挺举[毫米/秒]
+
+English:Maximum Z jerk [mm/s]:
+Translated:最大的Z-挺举[毫米/秒]
+
+English:Make Settings Active
+Translated:进行设置活动
+
+English:Make Settings Active\nAnd Save To Default
+Translated:进行设置活动\ n和保存为默认
+
+English:Design Add-ons
+Translated:设计附加组件
+
+English:Lock Ratio
+Translated:锁定比率
+
+English:Retrieving download info...
+Translated:检索下载信息...
+
+English:G-Code Output
+Translated:G代码输出
+
+English:The extra distance the raft will extend around the part.
+Translated:额外的距离木筏将围绕延伸部分。
+
+English:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
+Translated:该'喷嘴直径“是这样的筏和第一层之间的间隙的百分比。一个较小的百分比将会使一部分棒多。一个更大的百分比将使它棍少。
+
+English:Distance
+Translated:距离
+
+English:Gap Percent
+Translated:差距百分比
+
+English:Try to connect mesh edges when the actual mesh data is not all the way connected.
+Translated:尝试网格边时的实际的网格数据是不是所有的连接方式连接。
+
+English:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
+Translated:有时一个网格将不会关闭的周长。当这个被选中这些非封闭周边，而被关闭。
+
+English:Reverse the orientation of overlaps. This can make some unintended holes go away.
+Translated:反向重叠的方向。这可以使一些意想不到的孔消失。
+
+English:Make all overlap areas into one big area. This can make some unintended holes go away..
+Translated:使所有的重叠区域成一个大区域。这可以使一些意想不到的洞走..
+
+English:Repair
+Translated:修理
+
+English:Connect Bad Edges
+Translated:连接错误块
+
+English:Close Polygons
+Translated:关闭多边形
+
+English:Reverse Orientation
+Translated:相反方向
+
+English:Merge All
+Translated:合并所有
+
+English:Overlaps
+Translated:重叠
+
+English:The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:第一层和木筏的顶部之间的距离。一个很好的价值通常是大约1/2的挤压直径。因此，对于0.4喷嘴0.0 .2之间。
+
+English:Air Gap
+Translated:气隙
+
+English:Outline Distance
+Translated:距离大纲
+
+English:Distance Around Object
+Translated:距离环绕对象
+
+English:Minimum Travel\nRequiring Retraction
+Translated:最小移动\ n要求退
+
+English:Show Printing
+Translated:显示印刷
+
+English:Show Current
+Translated:显示当前
+
+English:Printer Sync
+Translated:打印机同步
+
+English:Sync To Print
+Translated:同步到打印
+
+English:Layers
+Translated:层
+
+English:Show 3D
+Translated:3D显示
+
+English:Uh-oh! Could not connect to printer.
+Translated:嗯，哦！无法连接到打印机。
+
+English:Installing
+Translated:安装
+
+English:Initial Printer Setup
+Translated:最初的打印机设置
+
+English:Homing The Printer
+Translated:回原点的打印机
+
+English:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
+Translated:如果将来您需要重新校准打印机，或者您希望打开自动打印趋于平缓，您可以在“高级设置”打印找平控制 - >“配置”。 \ NN \点击“完成”关闭此窗口。
+
+English:Print Leveling Overview
+Translated:打印代练概述
+
+English:Note: Be sure the tip of the extrude is clean.
+Translated:注：确保拉伸的尖端是干净的。
+
+English:Title Stuff
+Translated:标题的东西
+
+English:Oops! You cannot exit while a print is active.
+Translated:哎呀！你不能退出，而打印处于活动状态。
+
+English:Unable to Exit
+Translated:无法退出
+
+English:You are currently saving a parts sheet, are you sure you want to exit?
+Translated:您目前保存的部分表，你确定要退出？
+
+English:Confirm Exit
+Translated:确认退出
+
+English:Disconnect and cancel the current print?
+Translated:断开并取消当前的打印？
+
+English:WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?
+Translated:警告：断开将取消当前的打印。 \神经网络\你要断开？
+
+English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+Translated:注：实际开始打印前片设置应用。而印刷的变化不会影响活动的打印。
+
+English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:挤出机正在加热和目标温度不能被改变，直到它到达{0}℃。 >'灯丝' -  \ NN \您可以在“切片设置”设置开始挤出机温度。\n\n{1}
+
+English:Waiting For Extruder To Heat
+Translated:等待挤出机热
+
+English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:床正在加热和目标温度不能被改变，直到它到达{0}℃。 \ NN \您可以在“切片设置”起始床层温度 - >'丝'。\n\n{1}
+
+English:Waiting For Bed To Heat
+Translated:等待床热
+
+English:Cancel the current print?
+Translated:取消当前的打印？
+
+English:Cancel Print?
+Translated:取消打印？
+
+English:There is a recommended update avalible for MatterControl. Would you like to download it now?
+Translated:有一个推荐的更新avalible为MatterControl。您想现在下载它？
+
+English:Recommended Update Available
+Translated:推荐更新可用
+
+English:Download Now
+Translated:现在下载
+
+English:Remind Me Later
+Translated:稍后提醒我
+
+English:Oops! There is no eeprom mapping for your printer's firmware.
+Translated:哎呀！有您的打印机的固件没有EEPROM的映射。
+
+English:Warning no eeprom mapping
+Translated:警告没有EEPROM映射
+
+English:Sample the bed at two points
+Translated:品尝床上两点
+
+English:You should be done in about 2 minutes.
+Translated:应该在约2分钟内完成。
+
+English:Alert
+Translated:警报
+
+English:Input Required
+Translated:输入必填
+
+English:Apply leveling to gcode during export
+Translated:应用练级出口过程中GCODE
+
+English:File export options:
+Translated:文件输出选项：
+
+English:Report a Bug
+Translated:报告错误
+
+English:About MatterControl
+Translated:关于MatterControl
+
+English:Oops! Printer could not be detected 
+Translated:哎呀！打印机无法检测
+
+English: Load Files
+Translated: 加载文件
+
+English: Eject SD Card
+Translated: 弹出SD卡
+
+English:Show Voxels
+Translated:展会体素
+
+English:Show Mesh
+Translated:显示网格
+
+English:Do Subtract
+Translated:不要减
+
+English:Specify if your printer has a fan.
+Translated:指定如果您的打印机有一个风扇。
+
+English:Specify if your printer has a heated bed.
+Translated:指定如果您的打印机有一个加热床。
+
+English:Specify if your printer has the ability to plug in an SD card.
+Translated:指定如果您的打印机有一个SD卡插上的能力。
+
+English:Has Fan
+Translated:有范
+
+English:Has Heated Bed
+Translated:日益升温床
+
+English:Has SD Card Reader
+Translated:具有SD卡读卡器
+
+English:Cloud Services
+Translated:云服务
+
+English:Cloud Monitoring (disabled)
+Translated:云监控（禁用）
+
+English:Cloud Monitoring (enabled)
+Translated:云监控（启用）
+
+English:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:第一层挤出宽度'必须小于或等于“喷嘴直径'* 4。
+
+English:Export to SD Card
+Translated:导出到SD卡
+
+English:Notification Settings
+Translated:通知设置
+
+English:After a Print is Finished:
+Translated:经过打印完成：
+
+English:Saving your settings...
+Translated:保存设置...
+
+English:Send an SMS notification
+Translated:发送短信通知
+
+English:Experimental
+Translated:试验
+
+English:Have MatterControl send you a text message after your print is finished
+Translated:有MatterControl向您发送短信打印完成后
+
+English:Your Phone Number*
+Translated:你的电话号码*
+
+English:A U.S. or Canadian mobile phone number
+Translated:美国或加拿大的手机号码
+
+English:Send an email notification
+Translated:发送电子邮件通知
+
+English:Have MatterControl send you an email message after your print is finished
+Translated:有MatterControl您发送电子邮件打印完成后
+
+English:A valid email address
+Translated:有效的电子邮件地址
+
+English:Play a Sound
+Translated:播放声音
+
+English:Play a sound after your print is finished
+Translated:播放声音打印完成后
+
+English:Printing From SD Card
+Translated:打印从SD卡
+
+English:Would you also like to remove this file from the Printer's SD Card?
+Translated:您是否也想从打印机中取出的SD卡这个文件？
+
+English:Export to Printer SD Card
+Translated:导出到打印机SD卡
+
+English:Preparing To Send To SD Card
+Translated:准备发送到SD卡
+
+English:Sending To SD Card
+Translated:发送到SD卡
+
+English:Exporting to Folder
+Translated:导出到文件夹
+
+English:Warning GCode file
+Translated:G代码的警告文件
+
+English:Release Notes
+Translated:发行说明
+
+English:More Info
+Translated:更多信息
+
+English:Go To Status
+Translated:到状态
+
+English:View Status
+Translated:查看状态
+
+English:Description
+Translated:描述
+
+English:Value
+Translated:值
+
+English:Save To EEPROM
+Translated:保存到EEPROM
+
+English:Firmware EEPROM Settings
+Translated:固件EEPROM设置
+
+English:Save to EEPROM
+Translated:保存到EEPROM
+
+English:Select the baud rate.
+Translated:选择波特率。
+
+English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+Translated:术语“波特率'大致是指在其\ n个数据传输的速度。波特率可以从打印机不同的\ n打印机。请参阅您的打印机手册获取更多信息。 \ NN \提示：如果您不确定 - 试试250000。
+
+English:This is the minimum amount of filament that must be extruded before a retraction can occur.
+Translated:这是可以发生之前缩回必须挤出长丝的最小量。
+
+English:Support Options
+Translated:支持选项
+
+English:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
+Translated:如果这是选中的支持将开始内部表面的顶部被允许。如果它没有被选中的支持将仅开始在床来创建。
+
+English:Support Everywhere
+Translated:无处不支持
+
+English:The angle the support infill will be drawn.
+Translated:角度的支撑填充将绘制。
+
+English:Infill Angle
+Translated:腾空角度
+
+English:Grid
+Translated:格
+
+English:Moves
+Translated:移动
+
+English:Retractions
+Translated:撤消
+
+English:Speeds
+Translated:速度
+
+English:Extrusion
+Translated:挤压
+
+English:Special thanks to Alessandro Ranellucci for his incredible work on
+Translated:特别感谢亚历山德罗Ranellucci为他的惊人的努力
+
+English:Dilimleme Motoru
+Translated:Dilimleme Motoru
+
+English:Clear
+Translated:明确
+
+English:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+Translated:让床整平码知道，如果打印机可以支持z轴下方会用0分ž终点挡块或软件最终停止可能无法到打印机。
+
+English:Z Can Be Negative
+Translated:Z可以是负
+
+English:Export as X3G
+Translated:导出为X3G
+
+English:Select an Image
+Translated:选择一个图像
+
+English:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+Translated:如果大于0，这是由一个塔的Y规格在X改变挤出机时使用至
+
+English:Extruder Change
+Translated:挤出机更改
+
+English:Wipe Tower Size
+Translated:擦拭塔尺寸
+
+English:Sorry, we were unable to install the driver.
+Translated:很抱歉，我们无法安装驱动程序。
+
+English:Tuning Adjustment
+Translated:优化调整
+
+English:Release
+Translated:发布
+
+English:No printer is currently selected. Select a printer to edit slice settings.
+Translated:没有打印机当前选择。选择打印机编辑切片设置。
+
+English:Part Preview
+Translated:部分预览
+
+English:Layer Preview
+Translated:层预览
+
+English:Enable Cloud Monitoring (disabled)
+Translated:启用云监控（禁用）
+
+English:Warning - Moving Too Low
+Translated:警告 - 移动过低
+
+English:Oops! Could not find this file:
+Translated:哎呀！找不到这个文件：
+
+English:The number of extruders this machine has.
+Translated:挤出机的数量该机拥有。
+
+English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
+Translated:所有凸出部分乘以该值。增加它上面1（1.1是一个很好的最大值），可提高灯丝的量被挤出;它降低（0.9是一个很好的最小值）将减少被挤压的量。
+
+English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
+Translated:这是在最低速度，该打印机将减少到使层采取足够长，以满足最小层的时间。
+
+English:Minimum Print Speed
+Translated:最小打印速度
+
+English:Skirt and Raft
+Translated:裙子和筏
+
+English:Length on Move
+Translated:在移动长度
+
+English:Length on Tool Change
+Translated:在换刀长度
+
+English:Minimum Extrusion\nRequiring Retraction
+Translated:最小挤压\ n要求退
+
+English:Minimum Fan Speed
+Translated:最小风扇转速
+
+English:Extruder Count
+Translated:挤出机计数
+
+English:Hardware
+Translated:硬件
+
+English:Search Library
+Translated:搜索库
+
+English:My Library
+Translated:我的图书馆
+
+English:Add to Library
+Translated:添加到资料库
+
+English:Group
+Translated:组
+
+English:Ungroup
+Translated:取消组合
+
+English:Align...
+Translated:对齐...
+
+English:Selection
+Translated:选择
+
+English:Entering Editor
+Translated:进入编辑器
+
+English:Creating Edit Data
+Translated:创建编辑数据
+
+English:Finding Meshes
+Translated:查找网格
+
+English:Preheat
+Translated:预热
+
+English:Extruder Temperature Override
+Translated:挤出机温度过高
+
+English:Bed Temperature Override
+Translated:床温度过高
+
+English:Hardware Settings
+Translated:硬件设置
+
+English:Cloud Settings
+Translated:云设置
+
+English:Application Settings
+Translated:应用程序设置
+
+English:Update Notification Feed
+Translated:更新通知供稿
+
+English:Pre-Release
+Translated:预发布
+
+English:Development
+Translated:发展
+
+English:Language Options
+Translated:语言选项
+
+English:Change Display Mode
+Translated:更改显示模式
+
+English:Theme/Display Options
+Translated:主题/显示选项
+
+English:Design
+Translated:设计
+
+English:Normal
+Translated:正常
+
+English:Touchscreen
+Translated:触摸屏
+
+English:Theme
+Translated:主题
+
+English:Display Options
+Translated:显示选项
+
+English:Set this if the extruders run off the same heater, if there is only one heater.
+Translated:如果挤出机流掉同一加热器，如果只有一个加热器设置此。
+
+English:Share Temperature
+Translated:分享温度
+
+English:Export...
+Translated:出口...
+
+English:Temperature
+Translated:温度
+
+English:Align
+Translated:对齐
+
+English:Material 1
+Translated:材料1
+
+English:Material 2
+Translated:材料2
+
+English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:'层高度“必须小于或等于”喷嘴直径'。
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+Translated:位置：“高级控制” - >“设置切片” - >“打印” - >“图层/周长”
+
+English:Color {0}
+Translated:颜色{0}
+
+English:Extruder {0}
+Translated:挤出机{0}
+
+English:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
+Translated:您可以指定与挤压或本设置主挤压widthe的百分比。离开这个为0，允许自动计算。
+
+English:Material 3
+Translated:材料3
+
+English:Material 4
+Translated:材料4
+
+English:Material 5
+Translated:材料5
+
+English:Unknown Reason
+Translated:原因不明
+
+English:Port already in use
+Translated:口已在使用中
+
+English:Unsupported Baud Rate
+Translated:不支持的波特率
+
+English:Port not found
+Translated:端口未找到
+
+English:Cancelled
+Translated:取消
+
+English:You can only connect when not currently connected.
+Translated:当当前未连接只能连接。
+
+English:Warning - No EEProm Mapping
+Translated:警告 - 否EEPROM映射
+
+English:The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+Translated:木筏在印刷过程中运行风扇转速，0将离开风扇关闭。
+
+English:The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
+Translated:速度打印筏的层（比第一层外）。这可以显式地或作为腾空速度的百分比来设置。
+
+English:Preparing Meshes
+Translated:准备网格
+
+English:Grouping Meshes
+Translated:分组网格
+
+English:No COM ports available
+Translated:没有可用的COM端口
+
+English:Stable
+Translated:稳定
+
+English:Beta
+Translated:Beta版
+
+English:Alpha
+Translated:Α
+
+English:Ungrouping
+Translated:取消组合
+
+English:Grouping
+Translated:分组
+
+English:WARNING: Disconnecting will cancel the print.
+Translated:警告：断开将取消打印。
+
+English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
+Translated:在填充边缘会推到周边的金额。有助于确保填充被连接到边缘。
+
+English:This is the diameter of your extruder nozzle.
+Translated:这是您的挤出机喷嘴的直径。
+
+English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
+Translated:有时一个网不会关闭了外围。当这个被选中这些非封闭周边，而被关闭。
+
+English:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
+Translated:您可以指定与挤压或本设置主挤压宽度的百分比。离开这个为0，允许自动计算。
+
+English:The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
+Translated:默认的温度设定挤出机。有时可以在第一层上覆盖。
+
+English:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
+Translated:如果大于0，这是从零部件到创建一个外线输入时，拭去距离。
+
+English:Please Confirm
+Translated:请确认
+
+English:Reset to Factory Defaults
+Translated:重置为出厂默认值
+
+English:Save to EEProm
+Translated:保存到EEPROM
+
+English:{0} is not available
+Translated:{0}，不提供
+
+English:Invalid printer response
+Translated:无效打印机响应
+
+English:Could not find a selected button.
+Translated:找不到一个选择按钮。
+
+English:Aligning
+Translated:对齐
+
+English:Single
+Translated:单
+
+English:Warning - GCode file
+Translated:警告 -  G代码文件
+
+English:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+Translated:挤出机的索引以用于筏。将其设置为0将使用支持挤出机索引。
+
+English:Raft Extruder
+Translated:筏挤出机
+
+English:None
+Translated:没有
+
+English:Rectangle
+Translated:长方形
+
+English:Outline
+Translated:大纲
+
+English:Circle
+Translated:圈
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and may not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:您尝试打印的文件是一个G代码文件。\n\nG代码文件告诉您的打印机究竟该怎么做。他们没有被SliceSettings修改，可能不适合您的特定打印机配置。 \ NN \仅从G代码的文件打印，如果你知道他们马赫您当前的打印机和配置。 \神经网络\你确定你想打印文件的G代码？
+
+English:Do not show this message again
+Translated:不要再显示此消息
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:您尝试打印的文件是一个G代码文件。 \ NN \据recommendended只打印已知匹配您的打印机的配置文件的G代码。 \神经网络\你确定你想打印文件的G代码？
+
+English:Cannot find this file\nWould you like to remove it from the queue?
+Translated:找不到此档案\ n你想从队列中删除呢？
+
+English:Supported Angles
+Translated:支持的角度
+
+English:Amount
+Translated:量
+
+English:Settings
+Translated:设置
+
+English:Unsaved Changes
+Translated:未保存的更改
+
+English:No printer is currently selected. Please select a printer to edit slice settings.
+Translated:没有打印机当前选择。请选择一台打印机编辑切片设置。
+
+English:NOTE: You need to select a printer, but do not need to connect to it.
+Translated:注意：您需要选择一台打印机，但并不需要连接到它。
+
+English:Simple
+Translated:简单
+
+English:Intermediate
+Translated:中间
+
+English:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:默认的温度设定床上。有时可以在第一层上覆盖。设置为0，以消除床温的命令。
+
+English:Turns on and off the creation of a raft which can help parts adhere to the bed.
+Translated:打开和关闭建立一个木筏，它可以帮助部分附着在床。
+
+English:Options  
+Translated:选项
+
+English:Expand Distance
+Translated:距离展开
+
+English:Insert
+Translated:插
+
+English:Restore
+Translated:恢复
+
+English:WINDOWED MODE: This tab has been moved to a separate window.
+Translated:窗口模式：该选项卡已被移动到一个单独的窗口。
+
+English:Sending File(s)...
+Translated:发送文件（S）...
+
+English:Slicing File(s)...
+Translated:切片文件（S）...
+
+English:Edit Outline
+Translated:编辑大纲
+
+English:Use Alpha
+Translated:使用Alpha
+
+English:Start Threshold:
+Translated:启动阈值：
+
+English:End Threshold:
+Translated:结束阈值：
+
+English:Edit Model
+Translated:编辑模型
+
+English:Invert
+Translated:倒置
+
+English:Size:
+Translated:尺寸：
+
+English:Height:
+Translated:高度：
+
+English:Edit Base
+Translated:编辑基地
+
+English:Infill:
+Translated:填充：
+
+English:Unlock to Save
+Translated:解锁保存
+
+English:Save & Exit
+Translated:保存并退出
+
+English:Finding Parts:
+Translated:查找零件：
+
+English:Add Image
+Translated:添加图片
+
+English:Search Google
+Translated:谷歌搜索
+
+English:Word Edit
+Translated:编辑字
+
+English:Spacing:
+Translated:间距：
+
+English:Underline
+Translated:强调
+
+English:Rotation:
+Translated:回转：
+
+English:Enter Text Here
+Translated:在此输入文字
+
+English:Inserting image...
+Translated:插入图片...
+
+English:Completed Prints:
+Translated:完成打印：
+
+English:Total Print Time:
+Translated:总打印时间：
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+Translated:位置：“高级控制” - >“设置切片” - >“打印” - >“速度”
+
+English:The '{0}' must be greater than 0.
+Translated:“{0}”必须大于0。
+
+English:It is currently set to {0}.
+Translated:这是当前设置为{0}。
+
+English:Slice Error
+Translated:幅误差
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:位置：“高级控制” - >“设置切片' - >'丝' - >'丝' - >'退'
+
+English:Save Slice Configuration
+Translated:保存切片配置
+
+English:Printing: {0}
+Translated:印刷：{0}
+
+English:Finished Print: {0}
+Translated:成品打印：{0}
+
+English:Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.
+Translated:较小的数字产生更少的支持。较大的数字创造更多的支持。从0开始，从需要支持床上角度。
+
+English:Preview
+Translated:预习
+
+English:Send Test
+Translated:发送测试
+
+English:NOTE: Standard messaging rates may apply.
+Translated:注：标准短信费用可能适用。
+
+English:Include a picture of my finished print
+Translated:包括我完成打印的照片
+
+English:Send to Remote Device
+Translated:发送到远程设备
+
+English:Slice Files Prior to Send
+Translated:切片文件之前发送
+
+English:Please wait. Retrieving available devices...
+Translated:请稍候。检索可用的设备...
+
+English:Token request failed...
+Translated:令牌请求失败...
+
+English:Oops! Your session has expired.  Please sign-in again to continue.
+Translated:哎呀！您的会话已过期。请登录再继续。
+
+English:Sorry! Unable to connect to server. Please try again later.
+Translated:抱歉!无法连接到服务器。请稍后再试。
+
+English:All done! Files have been sent.
+Translated:全做完了！文件已发送。
+
+English:Retry
+Translated:重试
+
+English:Please wait. Preparing to send...
+Translated:请稍候。准备送...
+
+English:Token received...
+Translated:令牌接受...
+
+English:Please wait. Sending files...
+Translated:请稍候。发送文件...
+
+English:File too big to load.
+Translated:文件太大加载。
+
+English:Specify if your printer has the ability to do print leveling directly (support for G29).
+Translated:如果指定您的打印机直接打印做找平的功能（G29支持）。
+
+English:Has Hardware Leveling
+Translated:有硬件平
+
+English:The Fill Density must be between 0 and 1 inclusive.
+Translated:填充密度必须是0 1（含）之间和。
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
+Translated:位置：“高级控制” - >“设置切片” - >“打印” - >“腾空”
+
+English:Inserting Text
+Translated:插入文本
+
+English:Saving Parts:
+Translated:节能部件：
+
+English:Reset Connection
+Translated:重置连接
+
+English:Reboots the firmware on the controller
+Translated:重新启动控制器上的固件
+
+English:Please wait. Slicing files {0} of {1}
+Translated:请稍候。切片文件{0} {1}
+
+English:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
+Translated:通常在打印时，打印机会回家加热挤出机（S）之前。设置此导致加热到归位之前发生。这可以与触摸床上，而寻打印机帮助。
+
+English:Heat Before Homing
+Translated:热寻的前
+
+English:Clear Print History
+Translated:清除打印历史记录
+
+English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [temperature].
+Translated:此G-码将被插入到设定温度后立即输出。如果必须设定温度在这一部分，他们不会本条外产生的命令。您还可以包括如[下]从其他设置值。
+
+English:GCode file too big to load for '{0}'.
+Translated:G代码文件太大加载“{0}”。
+
+English:Reset\nConnection
+Translated:复位\ n连接
+
+English:Show Reset Connection
+Translated:显示重置连接
+
+English:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
+Translated:使得可见一个按钮按下时，将重置连接。这可以在支持它作为紧急停止打印机一起使用。
+
+English:You may need to wait a minute for your printer to finish initializing.
+Translated:您可能需要等待打印机完成初始化一分钟。
+
+English: Export to Folder or SD Card
+Translated: 导出到文件夹或SD卡
+
+English:Converting image...
+Translated:转换图像...
+
+English:Add To Library
+Translated:添加到资料库
+
+English:Print Queue
+Translated:打印队列
+
+English:Interface Mode
+Translated:接口模式
+
+English:Standard
+Translated:标准
+
+English:Connect to the printer
+Translated:连接到打印机
+
+English:Reset
+Translated:重启
+
+English:Console
+Translated:安慰
+
+English:On
+Translated:上
+
+English:Off
+Translated:离
+
+English:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:多少层，或距离，这将是固体填充物的底表面上。添加毫米到数的末尾来指定距离。
+
+English:The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.
+Translated:层的数量，或该距离，以支撑与部件之间打印。添加毫米到数的末尾来指定距离。
+
+English:The number of layers, or the distance, to skip between the support and the model. Add mm to the end of the number to specify distance.
+Translated:层的数量，或该距离，以支撑和模型之间跳过。添加毫米到数的末尾来指定距离。
+
+English:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:多少层，或距离，这将是固体填充物的上表面上。添加毫米到数的末尾来指定距离。
+
+English:Top Solid Layers:
+Translated:顶固层：
+
+English:Bottom Solid Layers:
+Translated:底部实心层：
+
+English:This will cause the extruder to try to wipe itself after retracting to minimize strings.
+Translated:这将导致挤出机尝试缩回，以尽量减少串后擦拭本身。
+
+English:Calculating Positions...
+Translated:计算位置...
+
+English:ATX Power Control
+Translated:ATX电源控制
+
+English:Specify if your printer can control the power supply
+Translated:如果指定您的打印机可以控制电源
+
+English:Has Power Control
+Translated:有权力控制
+
+English:The temperature the bed temperature will be set to when part is to be removed.
+Translated:温度的床温将被设置为当部分是被去除。
+
+English:Extruder Wipe Temperature
+Translated:挤出机温度擦拭
+
+English:Bed Remove Part Temperature
+Translated:床删除部分温度
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:温度时挤出一抹挤出机会。
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:温度时挤出一抹挤出机会。
+
+English:Basic
+Translated:基本
+
+English:Sets the size of the outer solid surface for the entire print.
+Translated:设置外部固体表面的整个印刷的尺寸。
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+Translated:外部壳的数量，或总宽度，以创建。添加毫米到数结束指定的宽度。
+
+English:Layers/Surface
+Translated:图层/表面
+
+English:Width
+Translated:宽度
+
+English:Arrange
+Translated:安排
+
+English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+Translated:速度，同时印刷第一层移动。如果以百分比表示它将修改相应速度上面设置。
+
+English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+Translated:连接后这将G代码发送到打印机。它可以被用于设置特定于给定打印机设置。
+
+English:Features
+Translated:特征
+
+English:Update Available
+Translated:更新可用
+
+English:Check For Update
+Translated:检查更新
+
+English:solid_shell
+Translated:solid_shell
+
+English:GCode file too big to preview ({0}).
+Translated:G代码文件过大，预览（{0}）。
+
+English:Up to Date
+Translated:最新
+
+English:Checking For Update
+Translated:检查更新
+
+English:Loading Parts...
+Translated:加载零件...
+
+English:More
+Translated:更多
+
+English:Share
+Translated:分享
+
+English:WARNING: Write Failed!
+Translated:警告：写失败！
+
+English:Can't access '{0}'.
+Translated:无法访问“{0}”。
+
+English:Oops! Unable to save changes.
+Translated:哎呀！无法保存更改。
+
+English:Unable to save
+Translated:无法保存
+
+English:Terminal
+Translated:终奌站
+
+English:Settings\n& Controls
+Translated:设置\ n和控制
+
+English:Print Area
+Translated:打印区域
+
+English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:第一层挤出宽度= {0} \ n喷嘴直径= {1}
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+Translated:位置：“高级控制” - >“设置切片” - >“打印” - >“高级” - >“弗里斯特层”
+
+English:First Layer Extrusion Width' must be greater than 0.
+Translated:第一层挤出宽度'必须大于0。
+
+English:First Layer Extrusion Width = {0}
+Translated:第一层挤出宽度= {0}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+Translated:位置：“设置和控制” - >“设置” - >“常规” - >“速度”
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:位置：“设置和控制” - >“设置” - >“丝' - >'丝' - >'退'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+Translated:位置：“设置和控制” - >“设置” - >“丝' - >'挤出' - >'弗里斯特层”
+
+English:Open
+Translated:打开
+
+English:Checking For Update...
+Translated:检查更新...
+
+English:Create Folder
+Translated:创建文件夹
+
+English:Redeem
+Translated:赎回
+
+English:First Layer Height = {0}\nNozzle Diameter = {1}
+Translated:第一层高度= {0} \ n喷嘴直径= {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+Translated:位置：“设置和控制” - >“设置” - >“常规” - >“图层/表面”
+
+English:Create New Folder:
+Translated:创建新文件夹：
+
+English:Folder Name
+Translated:文件夹名称
+
+English:Enter a Folder Name Here
+Translated:输入文件夹名称这里
+
+English:Save New Design to Queue
+Translated:保存新设计到队列
+
+English:Design Name
+Translated:设计名称
+
+English:Enter the name of your design.
+Translated:输入您的设计名称。
+
+English:Enter a Design Name Here
+Translated:输入设计名称这里
+
+English:Also save to Library
+Translated:也保存到库
+
+English:Home
+Translated:家
+
+English:The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:您尝试删除集合“{0}”不是空的。你想反正要删除吗？
+
+English:Collection not Empty
+Translated:集合不空
+
+English:Do NOT Delete
+Translated:不要删除
+
+English:Library (cloud)
+Translated:库（云）
+
+English:Purchased
+Translated:购买
+
+English:Session Expired
+Translated:会话过期
+
+English:Thumbnail Rendering
+Translated:缩略图渲染
+
+English:Flat
+Translated:平面
+
+English:3D
+Translated:3D
+
+English:Update Status
+Translated:更新状态
+
+English:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:您试图删除文件夹“{0}”不是空的。你想反正要删除吗？
+
+English:Folder not Empty
+Translated:文件夹不空
+
+English:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+Translated:文件夹'{0}“不是空的。 \ n您想反正要删除吗？
+
+English:Delete folder?
+Translated:删除文件夹？
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:文件夹'{0}“不是空的。 \ NN \还是想删除它？
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:文件夹'{0}“不是空的。 \ NN \还是想删除它？
+
+English:Delete folder?
+Translated:删除文件夹？
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:文件夹'{0}“不是空的。 \ NN \还是想删除它？
+
+English:Delete folder?
+Translated:删除文件夹？
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:文件夹'{0}“不是空的。 \ NN \还是想删除它？
+
+English:Delete folder?
+Translated:删除文件夹？
+
+English:Cloud Library
+Translated:云中图书馆
+
+English:Rename
+Translated:改名
+
+English:Rename Item:
+Translated:重命名项目：
+
+English:New Name
+Translated:新名称
+
+English:Enter New Name Here
+Translated:输入新的名称这里
+
+English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
+Translated:的速度打印的可见外边缘。这可以显式地或作为内部周长速度的百分比来设置。
+
+English:Save New Design
+Translated:保存新设计
+
+English:Save Location
+Translated:保存位置
+
+English:Choose the location to save to.
+Translated:选择要保存的位置。
+
+English:Sample the bed at seven points
+Translated:品尝床上七分
+
+English:You should be done in about 5 minutes.
+Translated:你应该在5分钟内完成。
+
+English:The print leveling alogrithm to use.
+Translated:打印找平alogrithm使用。
+
+English:The print leveling sampling mothod to use.
+Translated:打印练级采样mothod使用。
+
+English:This gcode will be run prior to starting bed probing.
+Translated:此G代码将被启动前床探测运行。
+
+English:This gcode will be run after finishing bed probing.
+Translated:这将G代码整理床探测后运行。
+
+English:The width of the paper (or other calibration device) used when doing manual bed probing.
+Translated:上工床探测当纸（或其他校准装置）的宽度使用。
+
+English:The offset of the probe relative to the extruder.
+Translated:相对于挤出机内的探针的偏移量。
+
+English:The z offset of the probe relative to the extruder.
+Translated:相对于挤出机内的探针的z偏移量。
+
+English:Print Leveling
+Translated:打印代练
+
+English:Leveling Solution
+Translated:代练解决方案
+
+English:Leveling Method
+Translated:练级方法
+
+English:Manual Probe Paper Width
+Translated:手动探头纸张宽度
+
+English:Probe Offset
+Translated:探头偏置
+
+English:Probe Z Offset
+Translated:测头Z偏置
+
+English:There is a recommended update available for MatterControl. Would you like to download it now?
+Translated:没有可用于MatterControl推荐更新。您想现在下载它？
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:您尝试打印的文件是一个G代码文件。 \ NN \建议您只打印已知匹配您的打印机的配置文件的G代码。 \神经网络\你确定你想打印文件的G代码？
+
+English:This printer requires print leveling to run correctly.
+Translated:该打印机需要打印练级才能正确运行。
+
+English:Require Leveling To Print
+Translated:需要练级打印
+
+English:Oops! You cannot restart while a print is active.
+Translated:哎呀！当打印处于活动状态时无法重新启动。
+
+English:Unable to restart
+Translated:无法重新启动
+
+English:Add File To Queue
+Translated:添加文件到队列
+
+English:Add Folder To Library
+Translated:将文件夹添加到库
+
+English:Using the above controls
+Translated:利用上述控制
+
+English:Add Local Folder To Library
+Translated:添加本地文件夹到库
+
+English:Redeem Design Code
+Translated:兑换设计规范
+
+English:You should be done in about 6 minutes.
+Translated:你应该在大约6分钟内完成。
+
+English:Enter Share Code
+Translated:输入股票代码
+
+English:Downloading...
+Translated:下载...
+
+English:Uploading...
+Translated:上传...
+
+English:Click to show in 3D View
+Translated:点击3D视图显示
+
+English:Enter Mulit Select mode
+Translated:进入选择多功能使用方式
+
+English:Add a .stl, .amf, .gcode or .zip File To The Queue
+Translated:添加.STL，.amf，.gcode或.zip文件到队列
+
+English:Choose a Create Tool to generate custom parts
+Translated:选择一个创建工具来生成定制部件
+
+English:Switch to Setings and Manual Controls pannel
+Translated:切换到Setings和手动控制潘内尔
+
+English:Pop This Tab out into its own Window
+Translated:弹出此选项卡伸到自己的窗口
+
+English:Preview layer Tool Paths
+Translated:预览层工具路径
+
+English:Add a .stl, .amf, .gcode or .zip File to the Queue
+Translated:添加.STL，.amf，.gcode或.zip文件到队列
+
+English:Add a .stl, .amf, .gcode or .zip File to the Bed
+Translated:添加.STL，.amf，.gcode或.zip文件的床
+
+English:Add an .stl, .amf, .gcode or .zip file to the Queue
+Translated:添加.STL，.amf，.gcode或.zip文件到队列
+
+English:Insert an .stl, .amf, .gcode or .zip file
+Translated:插入.STL，.amf，.gcode或.zip文件
+
+English:Bring the Window back into this Tab
+Translated:使窗口回到这个选项卡
+
+English:Insert an .stl, .amf or .zip file
+Translated:插入.STL，.amf或.zip文件
+
+English:Update Channel
+Translated:更新通道
+
+English:Current Build : Test Build
+Translated:当前版本：测试版本
+
+English:Stable: The current release version of MatterControl (recommended).
+Translated:稳定：（推荐）MatterControl的当前发行版本。
+
+English:Beta: The release candidate version of MatterControl.
+Translated:Beta版：MatterControl的发布候选版。
+
+English:Alpha: The in development version of MatterControl.
+Translated:阿尔法：本在开发版本MatterControl的。
+
+English:Choose a Create Tool to generate custom designs
+Translated:选择一个创建工具来生成定制设计
+
+English:Switch to Settings, Controls and Options
+Translated:切换到设置，控制和选项
+
+English:Switch to Queue, Library and History
+Translated:切换到队列，图书馆和历史
+
+English:Sign in to your MatterControl account
+Translated:登录到您的帐户MatterControl
+
+English:Connect to the currently selected printer
+Translated:连接到当前所选打印机
+
+English:Disconnect from current printer
+Translated:从当前的打印机断开
+
+English:Select a printer
+Translated:选择打印机
+
+English:Current extruder temperature
+Translated:当前挤出机的温度
+
+English:Preheat the Extruder
+Translated:预热挤出机
+
+English:Current bed temperature
+Translated:目前床层温度
+
+English:Preheat the Bed
+Translated:预热床
+
+English:Shop online for printing materials
+Translated:网上购物的印刷材料
+
+English:Add an .stl, .amf, .gcode or .zip file to the Library
+Translated:添加.STL，.amf，.gcode或.zip文件到图书馆
+
+English:Open your dashboard in a web browser
+Translated:打开你的仪表板在网页浏览器
+
+English:Sign out of your MatterControl account
+Translated:登出MatterControl帐户
+
+English:Add a new Printer Profile
+Translated:添加一个新的打印机配置文件
+
+English:Rotate (Ctrl + L. Mouse)
+Translated:旋转（按Ctrl + L.鼠标）
+
+English:Move (Shift + L. Mouse)
+Translated:移动（Shift + L.鼠标）
+
+English:Zoom (Alt + L. Mouse)
+Translated:变焦（ALT + L.鼠标）
+
+English:Select Part
+Translated:选择零件
+
+English:Move
+Translated:移动
+
+English:Zoom
+Translated:放大
+
+English:Preview 3D Design
+Translated:预览3D设计
+
+English:Rotate (Alt + L. Mouse)
+Translated:旋转（ALT + L.鼠标）
+
+English:Zoom (Ctrl + L. Mouse)
+Translated:变焦（按Ctrl + L.鼠标）
+
+English:Enter Multi Select mode
+Translated:进入多选模式
+
+English:Print leveling is enabled.
+Translated:打印练级已启用。
+
+English:Edit notification settings
+Translated:编辑通知设置
+
+English:Rotate (Alt + Left Mouse)
+Translated:旋转（ALT +鼠标左键）
+
+English:Move (Shift + Left Mouse)
+Translated:移动（SHIFT +鼠标左键）
+
+English:Zoom (Ctrl + Left Mouse)
+Translated:变焦（按Ctrl +鼠标左键）
+
+English:Search Results
+Translated:搜索结果
+
+English:Slice files prior to send
+Translated:切片文件发送之前
+
+English:Oops! Please sign in to continue.
+Translated:哎呀！请登入继续。
+
+English:Login Required
+Translated:需要登录
+
+English:Rebuild Thumbnails Now
+Translated:重建缩略图现在
+
+English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
+Translated:您切换到不同的缩略图渲染模式。如果你愿意，你目前的缩略图可以被删除，并在新的风格重建。可以来回切换随时。会有一些处理开销，同时创建新的缩略图。 \ NN \是否要立即重新构建现有的缩略图？
+
+English:Loading...
+Translated:载入中...
+
+English:Wrapping:
+Translated:包装：
+
+English:Use Braille
+Translated:使用盲文
+
+English:Only Braille
+Translated:只有盲文
+
+English:Retrieving Contents...
+Translated:检索内容...
+
+English:Cloud Sync
+Translated:云同步
+
+English:Include Text
+Translated:包括文本
+
+English:Show normal text under the braille
+Translated:显示盲文下，普通的文本
+
+English:Use Grade 2
+Translated:使用2级
+
+English:Experimental support for Braille grade 2 (contractions)
+Translated:盲文2级（收缩）的实验性支持
+
+English:About Braille
+Translated:关于盲文
+
+English:Add a new Material Preset
+Translated:添加新的材料预置
+
+English:Import an existing Material Preset
+Translated:导入现有的材料预置
+
+English:Share Library Item
+Translated:分享库项目
+
+English:Share Options
+Translated:购股权
+
+English:Your Share Code:
+Translated:您的股票代码：
+
+English:Anyone with this code will have access
+Translated:任何与此代码将有机会获得
+
+English:Share with someone
+Translated:与他人共享
+
+English:read-only
+Translated:只读
+
+English:Generate Share Code
+Translated:生成的代码共享
+
+English:Please wait. Retrieving share code...
+Translated:请稍候。检索共享代码...
+
+English:Provide this code to grant someone read-only access.
+Translated:提供此代码授予某人只读访问。
+
+English:Please wait. Sending invite...
+Translated:请稍候。发送邀请...
+
+English:Invite sent!
+Translated:邀请发送！
+
+English:Your invite has been sent!
+Translated:您的邀请已发送！
+
+English:Enter Share Code:
+Translated:输入股票代码：
+
+English:This code to will provide read-only access.
+Translated:这个代码将提供只读访问。
+
+English:Please wait. Redeeming code...
+Translated:请稍候。兑换代码...
+
+English:Oops! Invalid code.
+Translated:哎呀！无效的代码。
+
+English:Your code has been redeemed.  Please check the Library.
+Translated:您的代码已被赎回。请检查库。
+
+English:Shared with Me
+Translated:与我共享
+
+English:Share designs from your Cloud Library
+Translated:从云中图书馆共享设计
+
+English:Exporting to Folder or SD Card
+Translated:导出到文件夹或SD卡
+
+English:Materials
+Translated:物料
+
+English:Material {0}
+Translated:材料{0}
+
+English:Redeem Purchase
+Translated:购买兑换
+
+English:Oops! Please sign in to enable this feature.
+Translated:哎呀！请登录启用此功能。
+
+English:Rebuild
+Translated:重建
+
+English:Outside Perimeters
+Translated:外周长
+
+English:Sample the bed at {0} points
+Translated:样品在{0}分床
+
+English:Software Print Leveling (disabled)
+Translated:软件打印平（禁用）
+
+English:Calibration Settings
+Translated:校准设置
+
+English:Software Print Leveling (enabled)
+Translated:软件打印平（启用）
+
+English:Layer Height = {0}\nNozzle Diameter = {1}
+Translated:层高度= {0} \ n喷嘴直径= {1}
+
+English:Solid Infill works best when set tu LINES.
+Translated:屠设置线路时固腾空效果最好。
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
+Translated:位置：“设置和控制” - >“设置” - >“常规” - >“腾空类型”
+
+English:Show normal text above the braille
+Translated:显示盲文高于正常文本
+
+English:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
+Translated:您试图加载图像文件无效或没有任何数据。请检查文件或尝试使用其他图片。
+
+English:Could Not Load Image File
+Translated:无法加载图像文件
+
+English:Reset View
+Translated:重置视图
+
+English:If you want to select a layer to pause your print on do so here (for changing filament)
+Translated:如果你想选择一个层暂停打印上这样做在这里（改变灯丝）
+
+English:Select Layer To Pause:
+Translated:选择层要暂停：
+
+English:Offset:
+Translated:抵消：
+
+English:The speed to move while printing the first layer. If expressed as a percentage the above Infill speed is modified.
+Translated:速度，同时印刷第一层移动。如果以百分比表示的上述腾空的速度被修改。
+
+English:The distance between the interface of support and the part. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:支持的接口和部件之间的距离。一个很好的价值通常是大约1/2的挤压直径。因此，对于0.4喷嘴0.0 .2之间。
+
+English:Distance From Object
+Translated:距离对象
+
+English:Maximum Fan Speed
+Translated:最大风扇转速
+
+English:The amount that the filament will be reversed before each qualifying non-printing move.
+Translated:灯丝会前，每个符合条件的非打印的举动被逆转的金额。
+
+English:Wipe After Retract
+Translated:擦拭后收回
+
+English:Print Bed
+Translated:打印床
+
+English:Transparent
+Translated:透明
+
+English:Canceled
+Translated:取消
+
+English:Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.
+Translated:您的打印机正在报告硬件错误。这可能会阻止您的打印机正常工作。
+
+English:Error Reported
+Translated:报告的错误
+
+English:Printer Hardware Error
+Translated:打印机硬件错误
+
+English:Error Loading Contents
+Translated:错误加载内容
+
+English:Temporarily override target temperature
+Translated:暂时覆盖目标温度
+
+English:CHANGE
+Translated:更改
+
+English:REVERT
+Translated:还原
+
+English:UPDATE
+Translated:UPDATE
+
+English:Oops! Could not complete update.
+Translated:哎呀！无法完成更新。
+
+English:Connect your printer to check for firmware updates.
+Translated:将打印机连接到检查固件更新。
+
+English:Fine
+Translated:精细
+
+English:Coarse
+Translated:粗
+
+English:Outer Surface - Perimeters
+Translated:外表面 - 周长
+
+English:Outer Surface - Top & Bottom
+Translated:外表面 - 顶部和底部
+
+English:Light
+Translated:光
+
+English:Heavy
+Translated:重
+
+English:Speed for Infill
+Translated:速度腾空
+
+English:Speed for Perimeters
+Translated:速度周长
+
+English:Speeds for Other Printing
+Translated:速度下其他印刷
+
+English:Speed for Non-Print Moves
+Translated:速非移动打印
+
+English:Touching
+Translated:接触
+
+English:Far
+Translated:远
+
+English:Machine Settings
+Translated:机器设置
+
+English:Probe Settings
+Translated:探头设置
+
+English:On Connect G-Code
+Translated:在连接G代码
+
+English:sign in
+Translated:签到
+
+English:Log into my account
+Translated:登录到我的帐户
+
+English:Login
+Translated:登录
+
+English:Username or Email
+Translated:用户名或电子邮件
+
+English:Enter your username or email address
+Translated:输入您的用户名或电子邮件地址
+
+English:Password
+Translated:密码
+
+English:Forgot Password
+Translated:忘记密码
+
+English:Enter your password
+Translated:输入您的密码
+
+English:New User? 
+Translated:新用户？
+
+English:Create An Account
+Translated:创建一个帐户
+
+English:Please wait. Signing in...
+Translated:请稍候。登录中...
+
+English:Extruder Temperatures
+Translated:挤出机温度
+
+English:Bed Temperatures
+Translated:床温
+
+English:Waiting for device to connect...
+Translated:等待设备连接...
+
+English:Detecting device firmware...
+Translated:检测设备固件...
+
+English:Detecting target firmware...
+Translated:检测目标固件...
+
+English:The amount of support to generate.
+Translated:支持量产生。
+
+English:Support Percent
+Translated:支持百分比
+
+English:Allow Negative Z
+Translated:允许负Z
+
+English:Offset: 
+Translated:抵消：
+
+English:Are you sure you want to abort the current print and close MatterControl?
+Translated:你确定要中止当前的打印和关闭MatterControl？
+
+English:Abort Print
+Translated:中止打印
+
+English:mm / minute
+Translated:毫米/分钟
+
+English:Attempts to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+Translated:试图避免具有周边线交叉现有周边线。这可以用渗出或字符串帮助。
+
+English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
+Translated:打印床的大小的X和Y值，单位为毫米。为具有圆形床打印机，这些值是在X和Y轴的直径。
+
+English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
+Translated:达到的温度的床将用于打印的持续时间来设置。设置为0来禁用。
+
+English:The amount to remove from the bottom of the model, in millimeters.
+Translated:量从模型的底部除去，以毫米为单位。
+
+English:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
+Translated:层的数量或者在毫米至固体填充物的底表面（多个）上的距离。添加毫米到数的末端以毫米为单位来指定距离。
+
+English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
+Translated:在该层冷却风扇运行时桥接的速度，表现为全功率的百分比。
+
+English:The speed at which bridging between walls will print.
+Translated:在该墙之间的桥接将打印速度。
+
+English:The amount of brim that will be drawn around each object, in millimeters. This can be useful to ensure that parts stay affixed to the bed.
+Translated:将围绕每个对象被绘制，以毫米为单位的边缘量。这可以是，以确保零件留贴到床有用的。
+
+English:The height of the printer's printable volume, in millimeters. Primarily controls the height of the visual print area displayed in 3D View.
+Translated:打印机的打印量的高度，单位为毫米。主要控制在3D视图中显示的可视打印区域的高度。
+
+English:G-Code to run when a print is canceled.
+Translated:G代码当打印取消运行。
+
+English:Centers the print on the bed, regardless of where it is moved in Edit Mode. Disable to allow printing a model anywhere on the bed.
+Translated:居中床上打印，无论它在编辑模式下移动的。禁用允许在床上的任意位置打印模式。
+
+English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
+Translated:G-代码在成功连接到打印机上运行。这可以设置特定于一个给定的打印机设置非常有用。
+
+English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
+Translated:创建打印部分下筏。有用以防止翘曲印刷的ABS（和其他翘曲倾向塑料）时，因为它有助于零件附着在床。
+
+English:The extra distance the raft will extend around the edge of the part.
+Translated:额外的距离筏将延伸围绕部分的边缘。
+
+English:The distance between the first layer and the top of the raft. A good value is typically about half the extrusion diameter. For a 0.4 mm nozzle, a value between 0.0 and 0.2 would be best.
+Translated:第一层和木筏的顶部之间的距离。一个很好的价值通常是挤压直径的一半左右。要0.4毫米喷嘴，0.0和0.2之间的一个值将是最好的。
+
+English:The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.
+Translated:在该冷却风扇（S）将筏的印刷过程中运行速度，表现为全功率的百分比。
+
+English:The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.
+Translated:在该筏（比第一层除外）的层将打印速度。这可以显式地或作为腾空速度的百分比来设置。
+
+English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
+Translated:层的数目的量，层冷却风扇将在打印的开始时被强制关闭。
+
+English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
+Translated:G代码在所有自动输出（G代码指令的尽头）结束运行。
+
+English:The speed at which outside, (visible) perimeters will print.
+Translated:以飞快的速度外，（可见）周边将打印。
+
+English:Forces external perimeters to be printed first. By default, they will print last.
+Translated:首先要打印的强制外部周边。默认情况下，他们会打印最后一次。
+
+English:The number of extruders the printer has.
+Translated:挤出机的数量的打印机。
+
+English:Indicate that the extruders share a common heater cartridge.
+Translated:指示该挤出机共享一个公共加热器盒。
+
+English:Forces the printer to heat the nozzle before homing.
+Translated:强制归巢之前加热喷嘴的打印机。
+
+English:This is the identifier used in the G-Code to specify the extruder.
+Translated:这是在G代码用于指定该挤出机的标识符。
+
+English:All extrusions are multiplied by this value. Increasing it above 1  will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
+Translated:所有凸出部分乘以该值。增加它上面1会增加挤出长丝的量（1.1是一个很好的最大值）;减小会降低被挤出的量（0.9是一个很好的最小值）。
+
+English:The actual diameter of the filament used for printing.
+Translated:用于打印的长丝的实际直径。
+
+English:The angle of the infill, measured from the X axis. Not used when bridging.
+Translated:该填充的角度看，从X轴测量的。桥接时未使用。
+
+English:The amount of infill material to generate, expressed as a ratio or a percentage.
+Translated:填充材料的产生量，表示为比率或百分比。
+
+English:The geometric shape of the support structure for the inside of parts.
+Translated:支撑结构零件的内部几何形状。
+
+English:Acceleration to use while printing the first layer. Set to 0 to use the default first layer acceleration.
+Translated:加速在打印第一层使用。设置为0，使用默认的第一层加速。
+
+English:The height of the first layer. A first layer taller than the default layer height can sometimes be used to improve adhesion to the build plate.
+Translated:第一层的高度。第一层比默认层高度高有时可以用于改善粘附到构建板。
+
+English:The speed at which the nozzle will move when printing the first layer. If expressed as a percentage the Infill speed is modified.
+Translated:在该打印第一层当喷嘴将移动速度。如果以百分比表示的腾空的速度被修改。
+
+English:Include detailed comments in the G-Code.
+Translated:包括在G代码的详细评论。
+
+English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
+Translated:G代码的版本打印机的固件进行通信。有些固件使用不同的G和M代码。设置此确保输出G代码将使用正确的命令。
+
+English:The printer has a layer-cooling fan.
+Translated:打印机有一层散热风扇。
+
+English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
+Translated:打印机拥有自己的汽车床整平探头和程序可使用启动G代码时的G29指令调用。
+
+English:The printer has a heated bed.
+Translated:打印机有一个温水床。
+
+English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Control pane.
+Translated:打印机具有控制电源的能力。启用此功能以显示在控制面板中的ATX电源控制部分。
+
+English:The printer has a SD card reader.
+Translated:打印机有一个SD读卡器。
+
+English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
+Translated:显示了用于重置USB连接到打印机的打印机连接栏右侧的按钮。这可以在支持它作为紧急停止打印机一起使用。
+
+English:Acceleration to use when printing infill. Set to 0 to disable changing the printer's acceleration.
+Translated:加速加密打印时使用的。设置为0禁用更改打印机的加速度。
+
+English:The speed at which infill will print.
+Translated:在该填充将打印速度。
+
+English:The print leveling algorithm to use.
+Translated:打印均衡算法使用。
+
+English:The printer requires print leveling to run correctly.
+Translated:打印机需要打印练级才能正确运行。
+
+English:The print leveling sampling method to use.
+Translated:打印练级抽样的方法来使用。
+
+English:The thickness of the paper (or other calibration device) used to perform manual bed probe.
+Translated:纸（或其它标定装置）的厚度来执行手动床探针。
+
+English:G-Code to be run after the change in Z height for the next layer.
+Translated:G代码为下一层中的Z高度变化之后运行。
+
+English:The height of each layer of the print, except the first. A smaller number will create more layers and more vertical accuracy but also a slower print.
+Translated:印刷的各层的高度，除了第一个。一个较小的数量将创造更多的层次和更多的垂直精度也较慢打印。
+
+English:Sets the size of the outer solid surface (perimeter) for the entire print.
+Translated:设置外部固体表面（周长）为整个打印的大小。
+
+English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
+Translated:在该层冷却风扇运行的最大速度，表示为全功率的百分比。
+
+English:The minimum length of filament that must be extruded before a retraction can occur.
+Translated:灯丝的最小长度可以发生之前缩回必须挤出。
+
+English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
+Translated:在该层冷却风扇运行的最低速度，表示为全功率的百分比。
+
+English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
+Translated:该打印机将减少，以便最小速度来尝试使该层印刷时间长到足以满足最小层的时间。
+
+English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
+Translated:灯丝的最小长度以使用打印裙环路。足够的裙子循环将被吸引到用丝适量，覆盖在循环设置如果循环值会产生裙子比这个值小的值。
+
+English:These notes will be added as comments in the header of the output G-Code.
+Translated:这些注释将被添加在输出G代码的头注释。
+
+English:The diameter of the extruder's nozzle.
+Translated:挤出机的喷嘴的直径。
+
+English:G-Code to run when the printer is paused.
+Translated:G代码当打印机暂停运行。
+
+English:A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.
+Translated:挤压宽度的改性剂外印刷周长时。当物体打印比数字模型指定较大或较小的可能是有用的微调实际打印尺寸。
+
+English:The speed at which inside perimeters will print.
+Translated:在这里面周边将打印速度。
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
+Translated:外部壳的数量，或总宽度，以创建。添加毫米到数的末尾指定毫米的宽度。
+
+English:You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.
+Translated:可以包括额外的程序来处理的G码限幅器结束后。要运行的程序的完整路径应该包括在这里。
+
+English:The position (X and Y coordinates) of the center of the print bed, in millimeters.
+Translated:的位置处的打印床的中心（X和Y坐标），以毫米为单位。
+
+English:G-Code to be run when the print resumes after a pause.
+Translated:当暂停后打印恢复G代码来运行。
+
+English:The minimum distance of a non-print move which will trigger a retraction.
+Translated:这将引发回缩非打印移动的最小距离。
+
+English:The distance filament will reverse before each qualifying non-print move
+Translated:距离长丝之前将每个符合条件的非印刷倒退
+
+English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
+Translated:当使用多个挤出机，所述距离灯丝将改变到不同的挤出机中之前，反转。
+
+English:Force a retraction when moving between islands (distinct parts on the layer).
+Translated:（该层上不同的部分）的岛屿之间移动时强制收回。
+
+English:The distance the nozzle will lift after each retraction.
+Translated:距离喷嘴将每个退刀后解除。
+
+English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
+Translated:丝的长度的完整回缩（除了上移动距离的长度的再挤出）之后挤出。
+
+English:The speed at which filament will retract and re-extrude.
+Translated:在这丝将收回并重新挤出速度。
+
+English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
+Translated:循环的数量，以开始在部件之前周围画上的所有床的部分。大都采用以素喷嘴，使流量的实际打印开始时也是如此。
+
+English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
+Translated:一个层必须采取的最少时间进行打印。如果一个层将采取少于这一数额的时间，移动速度降低，从而该层打印时会以最慢匹配此值，下降到最低的打印速度。
+
+English:Forces the print to have only one extrusion and gradually increase the extruder height during the print. Only one part will print at a time with this feature.
+Translated:强制打印到只有一个挤出和印刷过程中逐步提高挤出机的高度。只是其中的一部分将打印在使用此功能的时候。
+
+English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
+Translated:G代码到紧跟在温度设定命令运行。包括命令来设置温度在本节会导致他们不被这部分之外产生的。将接受定制G代码的变量。
+
+English:The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
+Translated:第一层（底层）和木筏的顶部之间的距离。一个很好的价值取决于材料的类型。解放军和ABS 0.1和0.3之间的值generaly效果很好。
+
+English:The percent of the extrusion width that can be overlapped and still generate.
+Translated:可以重叠并且仍然产生挤压宽度的百分比。
+
+English:The angle at which the support material lines will be drawn.
+Translated:在该支撑材料线将被绘制的角度。
+
+English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
+Translated:开始产生内部表面的顶部支撑材料。如果没有选中的支持只会生成开始在床上。
+
+English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
+Translated:挤出机的索引用于打印支撑材料。仅适用在挤出机计数设置为大于1的值。
+
+English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
+Translated:挤出机的指标用来打印的木筏。设置为0到使用支持挤出机索引。
+
+English:A modifier of the width of the extrusion when printing support material. Set to 0 for automatic calculation.
+Translated:挤压宽度的改性剂时，打印支持材料。设置为0，自动计算。
+
+English:The index of the extruder to use for support material interface layer(s).
+Translated:挤出机的索引用于支撑材料界面层（多个）。
+
+English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
+Translated:层或距离要打印的份数的支架和部分之间的固体材料。添加毫米到数的末尾来指定距离。
+
+English:The pattern to draw for the generation of support material.
+Translated:图案绘制为载体材料的生成。
+
+English:The distance between support material lines.
+Translated:支撑材料线之间的距离。
+
+English:The speed at which support material structures will print.
+Translated:在支持材料结构的速度将打印。
+
+English:The minimum angle of overhang for which support material will be created. The angle perpendicular to the bed = 0; parallel with the bed = 90.
+Translated:对于支持材料突出端的最小角度将被创建。垂直于床= 0的角度;与床= 90平行。
+
+English:The distance the support material will be from the object in the X and Y directions.
+Translated:的距离，载体材料将在X和Y方向的对象。
+
+English:The number of layers, or the distance, to skip between the support (including interface layers) and the model. Add mm to the end of the number to specify distance.
+Translated:层的数量，或该距离，所述支撑件（包括接口层）和模型之间跳过。添加毫米到数的末尾来指定距离。
+
+English:Generates support material under areas of the part which may be too steep to support themselves.
+Translated:根据这可能是太陡了，养活自己的部分地区产生支撑材料。
+
+English:The target temperature the extruder will attempt to reach during the print.
+Translated:目标温度挤出机将尝试在打印期间达成。
+
+English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
+Translated:在该挤出机将擦拭喷嘴，通过自定义G代码指定的温度。
+
+English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
+Translated:达到的温度的床将加热（或冷却），以除去该部分，如在自G代码指定。
+
+English:G-Code to be run after every tool change.
+Translated:G代码的每一个换刀后运行。
+
+English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
+Translated:层的数量，或该对象的顶表面（S）上以毫米为单位的距离，实心填充。添加毫米到数的末端以毫米为单位来指定距离。
+
+English:The speed at which the nozzle will move when not extruding material.
+Translated:在其中，当未挤压材料的喷嘴将移动速度。
+
+English:The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.
+Translated:收回后，将挤出机擦拭喷嘴在过去长达刀具路径为10毫米。
+
+English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
+Translated:围绕创建上使用双挤出打印时擦拭喷嘴等部件的周边。设置为0来禁用。
+
+English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
+Translated:在后面创建的塔的长度和宽度左用于多个挤出机间切换时擦拭下一喷嘴的打印。设置为0来禁用。
+
+English:Allows the printer to attempt going below 0 along the Z axis during the Software Print Leveling wizard, and disables related warnings. Does not override actual endstops, physical or software.
+Translated:允许打印机尝试软件打印代练向导期间将低于沿Z轴0，并禁止相关的警告。不会覆盖实际终点挡块，物理或软件。
+
+English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
+Translated:移动的距离的喷嘴沿Z轴，以确保它是从打印床的正确距离。正数会提高喷嘴，和一个负数会降低它。
+
+English:Retract When \nChanging Islands
+Translated:当退\ n改变群岛
+
+English:Movement
+Translated:运动
+
+English:Fan
+Translated:风扇
+
+English:Firmware Version: {0}
+Translated:固件版本：{0}
+
+English:Offset
+Translated:抵消
+
+English:Downloads
+Translated:下载
+
+English:Local Library
+Translated:本地库
+
+English:G-Code Terminal
+Translated:G-CODE端子
+
+English:Go to Dashboard
+Translated:转到仪表板
+
+English:Sign Up for an Account
+Translated:注册一个帐户
+
+English:Create Account
+Translated:创建帐号
+
+English:Username
+Translated:用户名
+
+English:Enter a username
+Translated:输入用户名
+
+English:Email
+Translated:电子邮件
+
+English:Enter your email address
+Translated:输入你的电子邮箱地址
+
+English:Re-enter Password
+Translated:重新输入密码
+
+English:Confirm your Password
+Translated:确认你的密码
+
+English:Oops! Field cannot be left blank
+Translated:哎呀！字段不能留空
+
+English:Sorry!  Must be a valid email address.
+Translated:抱歉!必须是一个有效的E-mail地址。
+
+English:Please wait while we create your account...
+Translated:请稍候，我们建立您的帐户...
+
+English:Account created
+Translated:创建帐户
+
+English:Success! Your account has been created.
+Translated:成功！您的帐号已经建立。
+
+English:Please log in to continue.
+Translated:请登录访问更多内容。
+
+English:Oops! Invalid username, email or password.
+Translated:哎呀！无效的用户名，电子邮件和密码。
+
+English:Generates an outline around the support material to improve strength and hold up interface layers.
+Translated:生成围绕支撑材料的大纲，以提高强度和托起界面层。
+
+English:Create Perimeter
+Translated:创建周长
+
+English:Braille Builder
+Translated:盲文生成器
+
+English:Image Converter
+Translated:图像转换器
+
+English:Text Creator
+Translated:文字的创造者
+
+English:sign out
+Translated:退出
+
+English:No macros are currently set up for this printer.
+Translated:没有宏当前为这台打印机。
+
+English:The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+Translated:每个相对于所述第一挤出机挤出的偏移。只有多个挤出机是有用的。
+
+English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
+Translated:挤出为打印的第一层的宽度的改性剂。值大于100％，可与粘附于打印床上的帮助。
+
+English:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
+Translated:从模型在所述第一裙环绘制的距离。使这个0以创建部到床上，也称为边缘的锚。
+
+English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
+Translated:在这顶固层将打印速度。可明确地或作为腾空速度的百分比设置。
+
+English:Calibration
+Translated:校准
+
+English:EEProm
+Translated:的EEProm
+
+English:Cloud
+Translated:云
+
+English:Notifications
+Translated:通知
+
+English:Application
+Translated:应用
+
+English:Language
+Translated:语言
+
+English:Display Mode
+Translated:显示模式
+
+English:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
+Translated:部分不是在床上或打印区域之外。 \神经网络\你想他们居中在床上？
+
+English:Parts not in print area
+Translated:部分不打印区域
+
+English:Loading G-Code...
+Translated:加载G代码...
+
+English:demo
+Translated:演示
+
+English:Extruder 2
+Translated:挤出机2
+
+English:To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.
+Translated:>“校准” - 重新校准打印机，或关闭自动打印代练，打印练级控件可以在“选项”中找到。 \ NN \点击“完成”关闭此窗口。
+
+English:Start G-Code cannot contain G29 if Print Leveling is enabled.
+Translated:如果启用了打印代练启动G代码不能包含G29。
+
+English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+Translated:您启动G代码不应该包含G29如果您在使用打印练级计划。更改启动G代码或关闭打印练级
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
+Translated:位置：“设置和控制” - >“设置” - >“丝” - >“挤出” - >“第一层”
+
+English:Start G-Code cannot contain G30 if Print Leveling is enabled.
+Translated:如果启用了打印代练启动G代码不能包含G30。
+
+English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
+Translated:您启动G代码不应该包含G30如果您在使用打印练级计划。更改启动G代码或关闭打印练级
+
+English:Loading G-Code
+Translated:装载G代码
+
+English:Estimated Mass
+Translated:估算重量
+
+English:Export EEPROM Settings
+Translated:出口EEPROM设置
+
+English:MatterControl - 
+Translated:MatterControl  - 
+
+English:Export EEPROM
+Translated:出口EEPROM
+
+English:Import EEPROM Settings
+Translated:导入EEPROM设置
+
+English:Import EEPROM
+Translated:进口EEPROM
+
+English:Center on Bed
+Translated:中心在床
+
+English:Would you like to save your changes before exiting the editor?
+Translated:你想退出编辑器之前保存更改？
+
+English:Save Changes
+Translated:保存更改
+
+English:Snap Grid
+Translated:网格对齐
+
+English:Retraction On Tool Change
+Translated:回缩在换刀
+
+English:randomize_start
+Translated:randomize_start
+
+English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+Translated:迫使限​​幅器以试图避免在外围线交叉现有周边线。这可以用渗出或字符串帮助。
+
+English:The height of the printer's printable volume, in millimeters. Serves no purpose for slicing, but controls the height of the visual print area displayed in 3D View.
+Translated:打印机的打印量的高度，单位为毫米。也是没有用处的切割，但在控制3D视图中显示的可视打印区域的高度。
+
+English:The speed at which outside, external, or the otherwise visible perimeters will print.
+Translated:在此之外，外部的，或者以其他方式可见的周长将打印速度。
+
+English:Used to specify if more than one extruder share a common heater cartridge.
+Translated:用于指定一个以上的挤出机都有一个共同的加热器盒。
+
+English:The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
+Translated:用于打印的长丝的实际直径。测量5次用卡尺，扔掉的顶部和底部，并平均其余3。
+
+English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
+Translated:第一层的高度。第一层比默认的层高较高可以确保良好的附着力，以构建板。
+
+English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
+Translated:打印机具有控制电源的能力。启用此功能以显示在控制面板的ATX电源控制部分。
+
+English:The number of loops to draw around parts. Used to provide additional bed adhesion
+Translated:循环的数量来绘制周围部分。用于提供额外的床粘连
+
+English:Skirt (Priming)
+Translated:裙（引发）
+
+English:Brim (Hold Downs)
+Translated:边缘（保持唐斯）
+
+English:Finish Setup...
+Translated:完成设置...
+
+English:Run setup configuration for printer.
+Translated:打印机运行设置配置。
+
+English:Name
+Translated:名称
+
+English:Make
+Translated:使
+
+English:User Manual
+Translated:用户手册
+
+English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
+Translated:打印机的打印量的高度，单位为毫米。控制三维视图中显示的可视打印区域的高度。
+
+English:Extruder 3
+Translated:挤出机3
+
+English:Extruder 4
+Translated:挤出机4
+
+English:Undo
+Translated:解开
+
+English:Redo
+Translated:重做
+
+English:Set Name
+Translated:集名称
+
+English:MatterHackers - Set Name
+Translated:MatterHackers  - 名称
+
+English:Shapes
+Translated:形状
+
+English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
+Translated:这将仅适用于特定的硬件工作。不要使用，除非你确信你的打印机控制器支持此功能
+
+English:Show Firmware Updater
+Translated:显示固件更新
+
+English:Cube
+Translated:立方体
+
+English:Cylinder
+Translated:圆筒
+
+English:Sphere
+Translated:领域
+
+English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
+Translated:仅输出打印的第一层。特别是对于输出数据的G代码像雕刻或切割应用。
+
+English:First Layer Only
+Translated:第一层只
+
+English:File Settings
+Translated:文件设置
+
+English:Solid Infill works best when set to LINES.
+Translated:当设置为LINES固体腾空效果最好。
+
+English:'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:'第一层高度“必须小于或等于”喷嘴直径'。
+
+English:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'第一层挤出宽度'必须小于或等于“喷嘴直径'* 4。
+
+English:Pyramid
+Translated:金字塔
+
+English:Half Sphere
+Translated:半球
+
+English:Cone
+Translated:锥体
+
+English:Wedge
+Translated:楔
+
+English:Roof
+Translated:屋顶
+
+English:Round Roof
+Translated:圆形屋顶
+
+English:Honey Comb
+Translated:蜂巢
+
+English:Apply leveling to G-Code during export
+Translated:应用导出过程中练级G代码
+
+English:Material 0
+Translated:材质0
+
+English:Printers
+Translated:打印机
+
+English:The speed at which the nozzle will move when resuming a failed print, for 1 layer.
+Translated:在此恢复失败的打印时，1层喷嘴将移动速度。
+
+English:Set if the z homing moves the extruder away from the bed (z-max homing)
+Translated:如果z归从床上移动挤出机远位置（Z-MAX归巢）
+
+English:The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.
+Translated:与在床上的部件碰撞的机会最小化的挤出机的X和Y位置。
+
+English:Restore All
+Translated:恢复所有
+
+English:Restore Default
+Translated:恢复默认
+
+English:Outer Surface
+Translated:外表面
+
+English:Minimum Travel equiring Retraction
+Translated:最小旅行equiring退
+
+English:Retract When Changing Islands
+Translated:缩回时改变群岛
+
+English:Minimum Extrusion Requiring Retraction
+Translated:最少需要挤出退
+
+English:Slow Down If Layer Print Time Is Below
+Translated:慢下来如果打印层时间低于
+
+English:Resume Failed Print
+Translated:简历打印失败
+
+English:Homing
+Translated:归巢
+
+English:G-Code to be run before every tool change.
+Translated:G代码的每一个换刀之前运行。
+
+English:Before Tool Change G-Code
+Translated:换刀G代码之前
+
+English:After Tool Change G-Code
+Translated:换刀G代码后
+
+English:One Time
+Translated:一次
+
+English:Single Print Settings
+Translated:单打印设置
+
+English:Single Print
+Translated:单打印
+
+English:Reset at End of Print
+Translated:复位在打印结束
+
+English:Will Clear at End of Print
+Translated:将清除在打印结束
+
+English:Settings Will Clear at End of Print
+Translated:设置将会清除在打印结束
+
+English:Max Temp
+Translated:最高温度
+
+English:Add a new Macro
+Translated:添加一个新的宏
+
+English:Add a new Settings Preset
+Translated:添加新设置预设
+
+English:Import an existing Settings Preset
+Translated:导入现有设置预设
+
+English:The serial port communication speed of the printers firmware.
+Translated:打印机固件的串口通信速度。
+
+English:Home Z Max
+Translated:首页ž最大
+
+English:Resume Layer Speed
+Translated:简历层速度
+
+English:XY Resume Position
+Translated:XY简历职位
+
+English:Resume Print
+Translated:简历打印
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to resume from the last know position?
+Translated:它出现在最后的打印未能完成。 \ NN \请问你想尝试从最后一个已知位置继续？
+
+English:Resume Last Print
+Translated:简历最后打印
+
+English:mm
+Translated:毫米
+
+English:mm or %
+Translated:毫米％
+
+English:count or mm
+Translated:计数或毫米
+
+English:°
+Translated:°
+
+English:mm/s
+Translated:毫米/秒
+
+English:mm/s or %
+Translated:毫米/秒或％
+
+English:%
+Translated:％
+
+English:layers or mm
+Translated:层或毫米
+
+English:°C
+Translated:C
+
+English:seconds
+Translated:秒
+
+English:layers
+Translated:层
+
+English:Action
+Translated:行动
+
+English:ComPort
+Translated:水果盘
+
+English:Set the com port to use while connecting to this printer.
+Translated:设置COM端口在连接到这台打印机使用。
+
+English:If set, the printer will automatically attempt to connect when selected.
+Translated:如果设置，打印机会自动尝试选择时进行连接。
+
+English:Give the macro a name
+Translated:给宏的名称
+
+English:This should be in 'G-Code'
+Translated:这应该是“G代码”
+
+English:Software Print Leveling
+Translated:软件打印代练
+
+English:Edit Preset:
+Translated:编辑预设：
+
+English:Preset Name:
+Translated:预设名称：
+
+English:This is the name of your printer that will be displayed in the choose printer menu.
+Translated:这是您的打印机将显示在打印机选择菜单的名称。
+
+English:Local Computer
+Translated:本地计算机
+
+English:Connection
+Translated:连接
+
+English:Interface
+Translated:接口
+
+English:Behavior
+Translated:行为
+
+English:Connection Info
+Translated:连接信息
+
+English:Camera Monitoring
+Translated:摄像监控
+
+English:Details
+Translated:细节
+
+English:Edit Printer Settings
+Translated:编辑打印机设置
+
+English:Edit Selected Setting
+Translated:编辑所选设置
+
+English:Edit Current Printer Settings
+Translated:编辑当前的打印机设置
+
+English:Printer Settings
+Translated:打印机设置
+
+English:Delete the currently selected printer profile.
+Translated:删除当前选中的打印机配置文件。
+
+English:Delete Printer
+Translated:删除打印机
+
+English:Estimated Print Time
+Translated:估计的打印时间
+
+English:The COM port to use while connecting to this printer.
+Translated:的COM端口在连接到这台打印机使用。
+
+English:COM Port
+Translated:COM端口
+
+English:Setup Wizard
+Translated:安装向导
+
+English:Setup Options
+Translated:设置选项
+
+English:Please wait. Generating printer profile
+Translated:请稍候。生成打印机配置文件
+
+English:Connect Your Device
+Translated:连接设备
+
+English:Instructions:
+Translated:说明：
+
+English:1. Power on your 3D Printer.
+Translated:1.开机您的3D打印机。
+
+English:2. Attach your 3D Printer via USB.
+Translated:2.通过USB连接您的3D打印机。
+
+English:3. Press 'Connect'.
+Translated:3.按“连接”。
+
+English:(Press 'Skip' to setup connection later)
+Translated:（按下“跳过”设置连接后）
+
+English:Troubleshoot
+Translated:疑难解答
+
+English:Estimated Print Time:
+Translated:估计的打印时间：
+
+English:Are you sure you want to delete your currently selected printer?
+Translated:你确定要删除您当前选择的打印机？
+
+English:Delete Printer?
+Translated:删除打印机？
+
+English:The Fill Density must be between 0 and 1.
+Translated:填充密度必须介于0和1之间。
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
+Translated:位置：“设置和控制” - >“设置” - >“常规” - >“腾空”
+
+English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
+Translated:额外长丝的长度的完整换刀（除了换刀回缩距离的再挤出）之后挤出。
+
+English:Extra Length After Tool Change
+Translated:超长换刀后
+
+English:mm zero to disable
+Translated:毫米零禁用
+
+English:Connection Troubleshooting
+Translated:连接故障排除
+
+English:Generate Extra Perimeters When Needed:
+Translated:产生额外的周长在需要时：
+
+English:mm2
+Translated:平方毫米
+
+English:Only Retract When  Crossing Perimeters
+Translated:只有当收回隧道周长
+
+English:mm/s�
+Translated:毫米/秒
+
+English:mm or % leave 0 for auto
+Translated:毫米％0休假汽车
+
+English:Enable Fan If Layer Print Time Is Below
+Translated:启用风扇如果打印层时间低于
+
+English:Hz
+Translated:赫兹
+
+English:Current Settings
+Translated:当前的设置
+
+English:Reset to defaults
+Translated:重置为默认值
+
+English:Bake Overrides
+Translated:烘烤覆盖
+
+English:Export MatterControl settings (*.printer)
+Translated:出口MatterControl设置（* .printer）
+
+English:Export Slic3r settings (*.ini)
+Translated:出口Slic3r设置（* .INI）
+
+English:Export Cura settings (*.ini)
+Translated:出口库拉设置（* .INI）
+
+English:Export Settings
+Translated:导出设置
+
+English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
+Translated:重置为默认值将删除当前替代和恢复您原来的打印机设置。 \ n您确定要继续吗？
+
+English:Revert Settings
+Translated:恢复设置
+
+English:Import as new printer profile
+Translated:导入为新的打印机配置文件
+
+English:Merge into current printer profile
+Translated:合并到当前的打印机配置文件
+
+English:Replace current printer profile
+Translated:替换当前的打印机配置文件
+
+English:Import Settings
+Translated:导入设置
+
+English:Oops! Please select a serial port.
+Translated:哎呀！请选择一个串口。
+
+English:The layers at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:这些层在该打印将暂停，允许在灯丝的变化。留空以禁用。要暂停在多个层，层数用分号分隔。例如：“16 37”。
+
+English:Layers To Pause:
+Translated:图层要暂停：
+
+English:Import Wizard
+Translated:导入向导
+
+English:Import settings as new QUALITY preset
+Translated:进口设置新的质量预设
+
+English:Import settings as new MATERIAL preset
+Translated:导入设置新的材料预置
+
+English:Choose File
+Translated:选择文件
+
+English:Export Wizard
+Translated:导出向导
+
+English:Oops! Unable to recognize settings file '{0}'.
+Translated:哎呀！无法识别的设置文件“{0}”。
+
+English:Unable to Import
+Translated:无法导入
+
+English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
+Translated:您已成功导入了一个新的打印机配置文件。你可以'{0}“在可用打印机列表中找到。
+
+English:Import Successful
+Translated:导入成功
+
+English:The distance between the first layer (the bottom) and the top of the support material. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
+Translated:第一层（底层）和载体材料的顶部之间的距离。一个很好的价值取决于材料的类型。解放军和ABS 0.1和0.3之间的值generaly效果很好。
+
+English:Printers...
+Translated:打印机...
+
+English:Current
+Translated:当前
+
+English:Quality preset
+Translated:质量预设
+
+English:Material preset
+Translated:材料预置
+
+English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.
+Translated:您已成功导入了一个新的{0}设置。你可以找到“{1}”在你的{2}设置列表。
+
+English:Select the parts of the printer file that you would like to merge into your current profile.
+Translated:选择您想合并到当前配置文件打印文件的各个部分。
+
+English:Select Parts to Import
+Translated:选择部分导入
+
+English:Merge
+Translated:合并
+
+English:Export As
+Translated:导出为
+
+English:Cura
+Translated:库拉
+
+English:You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.
+Translated:您已成功导入了一个新的{1}设置。你可以找到“{0}”在您的{1}设置列表。
+
+English:Select what you would like to merge into your current profile.
+Translated:选择您想合并到当前配置文件的内容。
+
+English:Settings have been merged into your current printer.
+Translated:设置已合并到您的打印机。
+
+English:Select What to Import
+Translated:选择什么导入
+
+English:Select section to import to preset.
+Translated:选择部分导入到预设。
+
+English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
+Translated:登录并访问云打印机配置文件。 \ NN \一旦你签就可以访问：
+
+English:Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.
+Translated:保存您的设计到云中，并从任何地方访问他们的世界。你也可以分享他们与任何人任何时候你想。
+
+English:Cloud Profiles
+Translated:云简介
+
+English:Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.
+Translated:创建您的机器设置一次，并让他们可在任何地方，你要打印。您的所有更改会出现在所有设备上。
+
+English:Remote Monitoring
+Translated:远程监控
+
+English:Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.
+Translated:检查您的打印从任何地方。随着云监控，您可以访问您的打印机，无论你走到哪里。
+
+English:Sign In
+Translated:签到
+
+English:Unable to connect to server
+Translated:无法连接到服务器
+
+English:What was my password again?
+Translated:什么是我的密码再次？
+
+English:Reset Password
+Translated:重设密码
+
+English:Email Address
+Translated:电子邮件地址
+
+English:A password reset code will be sent to your email.
+Translated:密码重置密码将被发送到您的电子邮件。
+
+English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
+Translated:丝一公斤的价格。用于在层查看估计打印的成本。
+
+English:Material density. Only used for estimating mass in the Layer View.
+Translated:材料密度。仅用于在视图层质量评估。
+
+English:Estimated Cost
+Translated:估计成本
+
+English:Density
+Translated:密度
+
+English:g/cm³
+Translated:克/立方厘米
+
+English:Cost
+Translated:成本
+
+English:$/kg
+Translated:$ /公斤
+
+English:OEM Date Modified
+Translated:修改OEM日期
+
+English:Accept
+Translated:接受
+
+English:Please wait until the print has finished and try again.
+Translated:请等待打印完成，然后再试一次。
+
+English:Can't switch printers while printing
+Translated:无法切换，同时打印的打印机
+
+English:Can't log out while printing
+Translated:不能注销，而印刷
+
+English:Are you sure you want to logout? You will not have access to your printer profiles or cloud library.
+Translated:你确定要注销？您将无法访问您的打印机配置文件或云库。
+
+English:Logout?
+Translated:登出？
+
+English:Logout
+Translated:登出
+
+English:Can't login while printing
+Translated:而印刷无法登录
+
+English:Cloud Printer Profiles
+Translated:云打印机配置文件
+
+English:Copy Guest Printers
+Translated:复制客户打印机
+
+English:'First Layer Extrusion Width' must be greater than 0.
+Translated:'第一层挤出宽度'必须大于0。
+
+English:It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.
+Translated:现在是时候将现有的打印机上传到您的帐户MatterHackers。一旦上载，这些打印机将可每次你登录到MatterControl时间。
+
+English:Select Printers to Upload
+Translated:选择打印机以上传
+
+English:Printers to Upload:
+Translated:打印机上载：
+
+English:Upload
+Translated:上传
+
+English:Printer History
+Translated:打印机历史
+
+English:Subject*
+Translated:学科*
+
+English:Message*
+Translated:信息*
+
+English:Email Address*
+Translated:电子邮件地址*
+
+English:Name*
+Translated:名称*
+
+English:MatterControl: Submit Feedback
+Translated:MatterControl：提交反馈
+
+English:How can we improve?
+Translated:我们如何改进？
+
+English:Forums
+Translated:论坛
+
+English:Wiki
+Translated:百科
+
+English:Guides and Arcticles
+Translated:指南和Arcticles
+
+English:Guides and Articles
+Translated:指南和文章
+
+English:Syncing Profiles...
+Translated:同步配置文件...
+
+English:G-Code
+Translated:G代码
+
+English:Defaults Updated On: {0}
+Translated:默认更新日期：{0}
+
+English:Defaults Updated On: { 0} 
+Translated:默认更新日期：{0}
+
+English:Defaults Updated On: {0} 
+Translated:默认更新日期：{0}
+
+English:Properties
+Translated:属性
+
+English:Qualities
+Translated:气质
+
+English:Temperatures
+Translated:气温
+
+English:While Printing
+Translated:虽然印刷
+
+English:On Tool Change
+Translated:在换刀
+
+English:Select a Printer.
+Translated:选择一台打印机。
+
+English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
+Translated:您尝试加载配置文件已损坏。我们从最近的资料载入历史的最后可用{0} {1}配置文件;
+
+English:Recovered printer profile
+Translated:恢复打印机配置文件
+
+English:Sorry! Looks like an account already exists for that email address.
+Translated:抱歉!看起来像一个帐户已经存在该电子邮件地址。
+
+English:Settings History
+Translated:设置历史
+
+English:Allows the printer to attempt to connect to a printer over the network.
+Translated:允许打印机尝试连接到网络上的打印机。
+
+English:IP Address of printer/printer controller
+Translated:打印机/打印机控制器的IP地址
+
+English:Port number to be used with IP Adress to connect to printer over the network
+Translated:用IP地址被用于端口号通过网络连接到打印机
+
+English:IP Address
+Translated:IP地址
+
+English:Port
+Translated:港口
+
+English:Enable Network Printing
+Translated:启用网络打印
+
+English:Determines the method of communication used to talk to your printer.
+Translated:确定用于谈谈您的打印机通信的方法。
+
+English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:层（S），在该打印将暂停，允许在灯丝的变化。留空以禁用。要暂停在多个层，层数用分号分隔。例如：“16 37”。
+
+English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
+Translated:所有凸出部分乘以该值。增加它上面1会增加挤出长丝的量（1.1是一个很好的最大值）;减小会降低被挤出的量（0.9是一个很好的最小值）。
+
+English:The distance that the perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
+Translated:当它完成其循环的周边将重叠本身的距离，表示为喷嘴直径的百分比。
+
+English:Start End Overlap
+Translated:开始结束重叠
+
+English:Layer(s) To Pause:
+Translated:层（县）暂停：
+
+English:Allows the printer to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+Translated:允许打印机尝试连接到网络上的打印机。 （您必须断开并重新连接，这才会生效）
+
+English:Allows the printer to use the s3g communication method. (You must disconnect and reconnect for this to take effect)
+Translated:允许使用S3G通信方法的打印机。 （您必须断开并重新连接，这才会生效）
+
+English:Enable Sailfish Communication
+Translated:启用通信旗鱼
+
+English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
+Translated:套MatterControl尝试连接到网络上的打印机。 （您必须断开并重新连接，这才会生效）
+
+English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
+Translated:套MatterControl使用S3G通信方法。 （您必须断开并重新连接，这才会生效）
+
+English:Networked Printing
+Translated:网络印刷
+
+English:Sailfish Communication
+Translated:旗鱼通信
+
+English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
+Translated:的位置处的打印床的中心（X和Y坐标），以毫米为单位。通常，这是1/2床尺寸为直角打印机和0,0台达打印机。
+
+English:Update Required
+Translated:需要更新
+
+English:There is a required update available.
+Translated:有可用需要的更新。
+
+English:Import Printer
+Translated:进口打印机
+
+English:Resume Settings
+Translated:恢复设置
+
+English:Enable Resuming
+Translated:恢复启用
+
+English:When this is checked MatterControl will attempt to resume a print in the event of a failure, such as lost connection or lost power.
+Translated:勾选此选项MatterControl将尝试恢复在出现故障，如丢失连接或失去动力的情况下打印。
+
+English:Minimum Travel Requiring Retraction
+Translated:最低要求旅游退
+
+English:Retreiving sync information...
+Translated:Retreiving同步信息...
+
+English:- default -
+Translated: - 默认 - 
+
+English:Profile History
+Translated:历史档案
+
+English:Detect sections of the model that would be too thin to print, expand them, and print them.
+Translated:检测模型，这将是太薄，打印，扩大它们的节，并打印。
+
+English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
+Translated:检测太薄，以填补与正常的填充，并试图填补他们周边之间的差距。
+
+English:Expand Thin Walls
+Translated:展开薄壁
+
+English:Fill Thin Gaps
+Translated:填写薄差距
+
+English:Sign in Required
+Translated:必须登入
+
+English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
+Translated:您确定要退出吗？您将无法访问您的打印机配置文件或云库。
+
+English:Sign Out?
+Translated:退出？
+
+English:Sign Out
+Translated:退出
+
+English:Sign in
+Translated:签到
+
+English:Sign in to my account
+Translated:登录我的帐户
+
+English:Don't ask me again
+Translated:不要再问我
+
+English:Sets the models that will be added to the queue when a new printer is created.
+Translated:设置在创建一个新的打印机时，将被添加到队列的型号。
+
+English:Don't remind me again
+Translated:不要再提醒我
+
+English:Retrieving sync information...
+Translated:检索同步信息...
+
+English:Please sign in to continue.
+Translated:请登入继续。
+
+English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
+Translated:在此恢复失败的打印时，喷嘴会移动，1层的速度。
+
+English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
+Translated:勾选此选项MatterControl将尝试在发生故障，如丢失连接或失去动力的情况下恢复打印。
+
+English:Recover Print
+Translated:恢复打印
+
+English:Enable Recovery
+Translated:支持恢复
+
+English:Recover Layer Speed
+Translated:恢复速度层
+
+English:XY Recover Position
+Translated:XY位置恢复
+
+English:Recover Settings
+Translated:恢复设置
+
+English:Print Recovery
+Translated:打印恢复
+
+English:XY Homing Position
+Translated:XY原点位置
+
+English:Uh oh! Passwords do not match.
+Translated:嗯哦！密码不匹配。
+
+English:Layers / Surface
+Translated:图层/表面
+
+English:Raft / Priming
+Translated:筏/底漆
+
+English:Priming
+Translated:吸
+
+English:First Layer Expansion
+Translated:第一层扩展
+
+English:Default settings updated: {0} 
+Translated:默认设置更新时间：{0}
+
+English:Session Cleared
+Translated:会话清除
+
+English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
+Translated:它出现在最后的打印未能完成。 \ NN \请问你想尝试从最后一个已知位置恢复？
+
+English:Recover Last Print
+Translated:恢复上次打印
+
+English:Disconnected
+Translated:断开的
+
+English:Limited Connectivity
+Translated:有限的连接
+
+English:Connection Status
+Translated:连接状态
+
+English:Retry Login
+Translated:重试登录
+
+English:It's time to migrate your existing printer settings to your MatterHackers account. Once added, these printers will be available whenever and wherever you sign in to MatterControl. Printers that are not migrated will only be available in 'guest' mode.
+Translated:现在是时候您现有的打印机设置迁移到您的帐户MatterHackers。添加后，只要您登录到MatterControl这些打印机将可无论何时。未迁移的打印机将只在“客户”模式下可用。
+
+English:Migrate Printers to Account
+Translated:迁移打印机账户
+
+English:Select and add a new printer.
+Translated:选择并添加新的打印机。
+
+English:Select an existing printer.
+Translated:选择一个现有的打印机。
+
+English:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
+Translated:支持体的顶部和模型的底部之间的距离。一个很好的价值取决于材料的类型。于ABS和PLA以及分别0.4和0.6作品之间的值。
+
+English:WARNING: Disconnecting will cancel the print
+Translated:警告：断开将取消打印
+
+English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available in 'guest' mode.
+Translated:现在是时候您现有的打印机设置复制到您的帐户MatterHackers。一旦复制，当您登录到MatterControl这些打印机将可用。未复制的打印机将只在“客户”模式下可用。
+
+English:Copy Printers to Account
+Translated:复制打印机账户
+
+English:Printers to Copy:
+Translated:打印机复制：
+
+English:Profiles
+Translated:简介
+
+English:Profile
+Translated:轮廓
+
+English:Oops! Settings file '{0}' did not contain any settings we could import.
+Translated:哎呀！设置文件“{0}”没有包含我们可以导入任何设置。
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
+Translated:位置：“设置和控制” - >“设置” - >“打印机” - >“打印恢复” - >“启动恢复”
+
+English:Start G-Code cannot contain G29 if Print Recovery is enabled.
+Translated:如果打印恢复启用启动G代码不能包含G29。
+
+English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+Translated:您启动G代码不应该包含G29如果您在使用打印恢复计划。更改启动G代码或关闭打印恢复
+
+English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
+Translated:您启动G代码不应该包含G30如果您在使用打印恢复计划。更改启动G代码或关闭打印恢复
+
+English:Search results no available in this view
+Translated:在此视图没有可用的搜索结果
+
+English:Sorry: Search results not available in this view
+Translated:对不起：搜索这个查看结果不可
+
+English:Oops! Please select a folder to search
+Translated:哎呀！请选择一个文件夹进行搜索
+
+English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
+Translated:床正在加热和目标温度不能被改变，直到它到达{0}℃。 >长丝 -   - >温度\ NN \可以在设置中设置起始床层温度。\n\n{1}
+
+English:This is automatically set by MatterControl. You do not need to adjust it.
+Translated:这是通过MatterControl自动设置。你并不需要调整。
+
+English:The amount to change the printers home position after a z home has occured. This is used by print leveling and recovery. This should not be manualy edited.
+Translated:量来改变打印机位置的Z家已经发生了。这是通过打印平整和恢复使用。这不应该被manualy编辑。
+
+English:Z Home Position
+Translated:成首页位置
+
+English:Offset After Homing
+Translated:偏移归位后
+
+English:Leveling Calibration
+Translated:练级校准
+
+English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
+Translated:现在是时候您现有的打印机设置复制到您的帐户MatterHackers。一旦复制，当您登录到MatterControl这些打印机将可用。未复制打印机时没有签署才可用。
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
+Translated:位置：“设置和控制” - >“设置” - >“打印机” - >“自定义G代码” - >“启动G代码”
+
+English:none
+Translated:没有
+
+English:Exit while printing
+Translated:退出而印刷
+
+English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+Translated:你确定你要退出，而打印从SD卡上运行？ \ NN \注意：如果退出，则建议你等到打印再次运行MatterControl前完成。
+
+English:Connect printer and power on
+Translated:连接打印机电源
+
+English:Detect perimeters that cross over themselves and combine them.
+Translated:检测跨越自我，结合他们的周长。
+
+English:Merge Overlapping Lines
+Translated:合并重叠线条
+
+English:Restore Settings
+Translated:恢复设置
+
+English:Streaming GCode...
+Translated:G代码流...
+
+English:Layers & Infill
+Translated:层和Infill
+
+English:Raft & Support
+Translated:筏和支持
+
+English:Redeem Code
+Translated:兑换代码
+
+English:Library - Enter Share Code
+Translated:图书馆 - 输入股票代码
+
+English:Macro Feedback
+Translated:宏反馈
+
+English:OK
+Translated:好
+
+English:Load Filament
+Translated:负载灯丝
+
+English:UnloadFilament
+Translated:UnloadFilament
+
+English:This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.
+Translated:这个控制桥接过程中物质挤出的比率。稍稍减少这可以帮助通过拉伸长丝越多，并且使用风扇也可以极大地帮助桥接。
+
+English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
+Translated:每个单独的部分被打印到完成，然后喷嘴降低回到床上并打印下一部分。
+
+English:Moves the nozzle up and off the part to allow cooling.
+Translated:移动喷嘴向上和关闭部，以允许冷却。
+
+English:Detects sections of the model that would be too thin to print and expands them to make them printable.
+Translated:检测模型，这将是太薄，打印，并扩大他们，使他们可打印的部分。
+
+English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
+Translated:指示该Z轴舍热端从床（Z-最大值归巢）远
+
+English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
+Translated:X和与在床上的部件碰撞的机会最小化的热端的Y位置。
+
+English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
+Translated:的温度，喷嘴将打印部的第一层之前进行加热。打印机将等到今年温度在打印前已经达成。
+
+English:This will lower the temperature of the non-printing nozzle to help prevent oozing.
+Translated:此将降低非印刷喷嘴的温度，以帮助防止渗出。
+
+English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
+Translated:当它完成其循环的周边将重叠本身的距离，表示为喷嘴直径的百分比。
+
+English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
+Translated:强制打印到只有一个挤出和印刷过程中逐渐增加的Z高度。只是其中的一部分将打印在使用此功能的时候。
+
+English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
+Translated:摄氏度的数量，以降低喷嘴的温度，同时它是不活动的。
+
+English:Disconnect and stop the current print?
+Translated:断开并停止当前打印？
+
+English:WARNING: Disconnecting will stop the current print
+Translated:警告：断开将停止当前的打印
+
+English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
+Translated:警告：断开将停止当前的打印。 \神经网络\你确定要断开连接？
+
+English:Select a printer.
+Translated:选择一台打印机。
+
+English:Note: Be sure the tip of the extruder is clean.
+Translated:注：请务必在挤出机前端是干净的。
+
+English:- none -
+Translated:- 没有 -
+
+English:Actions
+Translated:操作
+
+English:Show In Action Menu
+Translated:显示操作菜单
+
+English:Unable to Connect
+Translated:无法连接
+
+English:Port number to be used with IP Address to connect to printer over the network
+Translated:与IP地址使用的端口号通过网络连接到打印机
+
+English:Reset to Defaults
+Translated:重置为默认值
+
+English:The serial port to use while connecting to this printer.
+Translated:串行端口在连接到这台打印机使用。
+
+English:Save Changed
+Translated:保存更改
+
+English:Discard Changes
+Translated:放弃更改
+
+English:Stay Connected
+Translated:保持联系
+
+English:Cancel Print
+Translated:取消打印
+
+English:Continue Printing
+Translated:继续打印
+
+English:Recovered Once
+Translated:一旦恢复
+
+English:Recovered once
+Translated:一旦恢复
+
+English:recovered once
+Translated:一旦恢复
+
+English:Add New Printer
+Translated:添加新打印机
+
+English:Add New Setting
+Translated:添加新设置
+
+English:Sync Dashboard
+Translated:同步信息中心
+
+English:SD Card
+Translated:SD卡
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl：选择固件文件
+
+English:Starting firmware update...
+Translated:开始固件更新...
+
+English:Disconnecting from printer...
+Translated:从断开打印机...
+
+English:Initializing hardware...
+Translated:初始化硬件...
+
+English:Creating firmware backup...
+Translated:创建固件备份...
+
+English:Update In Progress: {0}
+Translated:正在更新：{0}
+
+English:Updating firmware...
+Translated:更新固件...
+
+English:Firmware updated successfully. Please reconnect.
+Translated:固件更新成功。请重新连接。
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:在“串行端口”部分列出设备上所有可用的串口\ n端口。变更与USB端口的打印机\ n为西藏羊八井至可能改变相关的串行端口。 \ NN \提示：如果您不确定，拔掉/插上打印机\ n和命中刷新。出现应该是新的端口\ n您的打印机。
+
+English:Reverting firmware to previous version...
+Translated:恢复固件以前的版本...
+
+English:Firmware restored successfully. Please reconnect.
+Translated:固件成功恢复。请重新连接。
+
+English:SET
+Translated:组
+
+English:Move X negative
+Translated:移动X轴负
+
+English:Move X positive
+Translated:移动X轴正
+
+English:Move Y positive
+Translated:移Y阳性
+
+English:Move Y negative
+Translated:移Y负
+
+English:Move Z positive
+Translated:移动Z轴正
+
+English:Move Z negative
+Translated:移动Z轴负
+
+English:Enable cursor keys for movement
+Translated:启用移动光标键
+
+English:Retract filament
+Translated:退丝
+
+English:Extrude filament
+Translated:拉伸丝
+
+English:Home X, Y and Z
+Translated:家的X，Y和Z
+
+English:Home X
+Translated:首页点¯x
+
+English:Home Y
+Translated:首页ÿ
+
+English:Home Z
+Translated:首页ž
+
+English:Open cloud sync dashboard in web browser
+Translated:在Web浏览器中打开云同步仪表板
+
+English:Restart
+Translated:重新开始
+
+English:Please Review Your Order
+Translated:请查看您的订单
+
+English:Loading product information. Pleast wait...
+Translated:加载产品信息。 Pleast稍候...
+
+English:Enter Code: 
+Translated:输入代码：
+
+English:Use Promo Code
+Translated:使用优惠码
+
+English:Applying...
+Translated:应用...
+
+English:Enter your Billing Address
+Translated:输入您的帐单地址
+
+English:Full Name
+Translated:全名
+
+English:Enter your Payment Info
+Translated:输入您的付款信息
+
+English:Place Order
+Translated:下订单
+
+English:Additional payment options coming soon!
+Translated:其他的付款方式即将推出！
+
+English:- Please Select -
+Translated:- 请选择 -
+
+English:Credit Card Number
+Translated:信用卡号码
+
+English:Expiration Date
+Translated:截止日期
+
+English:Card Verification Number
+Translated:卡片识别号
+
+English:Saving...
+Translated:保存...
+
+English:Oops! Payment has been declined.
+Translated:哎呀！付款遭到拒绝。
+

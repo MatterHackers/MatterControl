@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget thumbnailWidget;
         protected GuiWidget middleColumn;
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		/// <summary>
 		/// Indicates that this item is a logical element meant to support the view or if it's a standard provider item
@@ -81,8 +81,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.IsViewHelperItem = false;
 			this.EnableSlideInActions = true;
 
-			MouseEnterBounds += (s, e) => EnteredBounds();
-			MouseLeaveBounds += (s, e) => EnteredBounds();
+			MouseEnterBounds += (s, e) => UpdateHoverState();
+			MouseLeaveBounds += (s, e) => UpdateHoverState();
 		}
 
 		public string ItemName { get; protected set; }
@@ -308,29 +308,38 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		#endregion Abstract Functions
 
-		void EnteredBounds()
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
-			switch (UnderMouseState)
+			UpdateHoverState();
+			base.OnMouseMove(mouseEvent);
+		}
+
+		void UpdateHoverState()
+		{
+			UiThread.RunOnIdle(() =>
 			{
-				case UnderMouseState.NotUnderMouse:
-					IsHoverItem = false;
-					break;
-
-				case UnderMouseState.FirstUnderMouse:
-					IsHoverItem = true;
-					break;
-
-				case UnderMouseState.UnderMouseNotFirst:
-					if (ContainsFirstUnderMouseRecursive())
-					{
-						IsHoverItem = true;
-					}
-					else
-					{
+				switch (UnderMouseState)
+				{
+					case UnderMouseState.NotUnderMouse:
 						IsHoverItem = false;
-					}
-					break;
-			}
+						break;
+
+					case UnderMouseState.FirstUnderMouse:
+						IsHoverItem = true;
+						break;
+
+					case UnderMouseState.UnderMouseNotFirst:
+						if (ContainsFirstUnderMouseRecursive())
+						{
+							IsHoverItem = true;
+						}
+						else
+						{
+							IsHoverItem = false;
+						}
+						break;
+				}
+			});
 		}
 
 		private void AddHandlers()

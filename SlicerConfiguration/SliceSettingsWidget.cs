@@ -51,14 +51,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AnchorAll();
 			this.Padding = new BorderDouble(3, 0);
 
-			var noConnectionMessageContainer = new AltGroupBox(new TextWidget(LocalizedString.Get("No Printer Selected"), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+			var noConnectionMessageContainer = new AltGroupBox(new TextWidget("No Printer Selected".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
 			noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			noConnectionMessageContainer.Height = 90;
 
-			string noConnectionString = LocalizedString.Get("No printer is currently selected. Please select a printer to edit slice settings.");
-			noConnectionString += "\n\n" + LocalizedString.Get("NOTE: You need to select a printer, but do not need to connect to it.");
+			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
+			noConnectionString += "\n\n" + "NOTE: You need to select a printer, but do not need to connect to it.".Localize();
 			TextWidget noConnectionMessage = new TextWidget(noConnectionString, pointSize: 10);
 			noConnectionMessage.Margin = new BorderDouble(5);
 			noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -205,7 +205,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			pageTopToBottomLayout.AddChild(topCategoryTabs);
-			AddHandlers();
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+
 			SetVisibleControls();
 
 			// Make sure we are on the right tab when we create this view
@@ -279,14 +282,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private event EventHandler unregisterEvents;
-
-		private void AddHandlers()
-		{
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(APP_onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-		}
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -615,7 +611,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			public string SettingsKey { get; set; }
 			public string SettingsValue { get; set; }
-			private event EventHandler unregisterEvents;
+			private EventHandler unregisterEvents;
 
 			/// <summary>
 			/// Gets or sets the delegate to be invoked when the settings values need to be refreshed. The implementation should 
@@ -1253,11 +1249,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
 							// ensuring that a single printer can be shared across different devices and we'll select the correct com port in each case
-							var selectableOptions = new DropDownList("None", maxHeight: 200)
+							var selectableOptions = new DropDownList("None".Localize(), maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble(),
-								Name = "Com Port Dropdown"
+								Name = "Serial Port Dropdown"
 							};
 
 							selectableOptions.Click += (s, e) =>
@@ -1279,7 +1275,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.LIST:
 						{
-							var selectableOptions = new DropDownList("None", maxHeight: 200)
+							var selectableOptions = new DropDownList("None".Localize(), maxHeight: 200)
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble()

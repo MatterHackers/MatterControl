@@ -37,6 +37,7 @@ using Newtonsoft.Json.Linq;
 using System.Text;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -44,7 +45,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public string Name { get; set; }
 		public string GCode { get; set; }
+		public bool ActionGroup { get; set; }
 		public DateTime LastModified { get; set; }
+
+		public static string FixMacroName(string input)
+		{
+			int lengthLimit = 24;
+
+			string result = Regex.Replace(input, @"\r\n?|\n", " ");
+
+			if (result.Length > lengthLimit)
+			{
+				result = result.Substring(0, lengthLimit) + "...";
+			}
+
+			return result;
+		}
 
 		public void Run()
 		{

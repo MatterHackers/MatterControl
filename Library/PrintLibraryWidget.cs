@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				double oldWidth = editButtonFactory.FixedWidth;
 				editButtonFactory.FixedWidth = 0;
-				Button searchButton = editButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
+				Button searchButton = editButtonFactory.Generate("Search".Localize(), centerText: true);
 				searchButton.Name = "Search Library Button";
 				searchButton.Click += searchButtonClick;
 				editButtonFactory.FixedWidth = oldWidth;
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private GuiWidget CreateActionsMenu()
 		{
-			var actionMenu = new DropDownMenu("Action".Localize() + "... ");
+			var actionMenu = new DropDownMenu("Actions".Localize() + "... ");
 			actionMenu.AlignToRightEdge = true;
 			actionMenu.NormalColor = new RGBA_Bytes();
 			actionMenu.BorderWidth = 1;
@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			buttonPanel.RemoveAllChildren();
 			// the add button
 			{
-				addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+				addToLibraryButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
 				addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it. 
 				addToLibraryButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Library".Localize();
 				addToLibraryButton.Name = "Library Add Button";
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			// the create folder button
 			{
-				createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
+				createFolderButton = textImageButtonFactory.Generate("Create Folder".Localize());
 				createFolderButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it.
 				createFolderButton.Name = "Create Folder From Library Button";
 				buttonPanel.AddChild(createFolderButton);
@@ -503,7 +503,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		public override void OnClosed(EventArgs e)
 		{

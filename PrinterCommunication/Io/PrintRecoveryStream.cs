@@ -93,13 +93,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G90; use absolute coordinates");
 					queuedCommands.Add("G92 E0; reset the expected extruder position");
 					queuedCommands.Add("M82; use absolute distance for extrusion");
+					
+					bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed);
+					double bedTemp = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
+					if (hasHeatedBed && bedTemp > 0)
+					{
+						// start heating the bed
+						queuedCommands.Add($"M140 S{bedTemp}");
+					}
+
+					// heat up the extruder
 					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(0)));
+
+					if (hasHeatedBed && bedTemp > 0)
+					{
+						// finish heating the bed
+						queuedCommands.Add($"M190 S{bedTemp}");
+					}
 
 					recoveryState = RecoveryState.Raising;
 					return "";
 
 				// remove it from the part
 				case RecoveryState.Raising:
+					// We don't know where the printer is for sure (it make have been turned off). Disable leveling until we know where it is.
+					PrintLevelingStream.Enabled = false;
 					queuedCommands.Add("M114 ; get current position");
 					queuedCommands.Add("G91 ; move relative");
 					queuedCommands.Add("G1 Z10 F{0}".FormatWith(MovementControls.ZSpeed));
@@ -125,6 +143,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}
+					// We now know where the printer is re-enable print leveling
+					PrintLevelingStream.Enabled = true;
 					recoveryState = RecoveryState.FindingRecoveryLayer;
 					return "";
 					
@@ -175,11 +195,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 
 						// check if the line is something we want to send to the printer (like a temp)
-						if (line.StartsWith("M109")
-							|| line.StartsWith("M104")
-							|| line.StartsWith("T")
-							|| line.StartsWith("M106")
-							|| line.StartsWith("M107"))
+						if (line.StartsWith("M109") // heat and wait extruder
+							|| line.StartsWith("M104") // heat extruder
+							|| line.StartsWith("M190") // heat and wait bed
+							|| line.StartsWith("M140") // heat bed
+							|| line.StartsWith("T") // switch extruder
+							|| line.StartsWith("M106") // fan on
+							|| line.StartsWith("M107") // fan off
+							|| line.StartsWith("G92")) // set position
 						{
 							return line;
 						}

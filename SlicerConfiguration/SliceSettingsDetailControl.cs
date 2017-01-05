@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			settingsHistory.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
 
-			sliceOptionsMenuDropList.AddItem("Reset to defaults".Localize()).Selected += (s, e) => { UiThread.RunOnIdle(ResetToDefaults); };
+			sliceOptionsMenuDropList.AddItem("Reset to Defaults".Localize()).Selected += (s, e) => { UiThread.RunOnIdle(ResetToDefaults); };
 
 			return sliceOptionsMenuDropList;
 		}
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						else
 						{
-							ApplicationController.Instance.ReloadAll(null, null);
+							ApplicationController.Instance.ReloadAll();
 						}
 					}
 				},

@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SetupWizard
 {
@@ -31,7 +32,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 			contentRow.FlowDirection = FlowDirection.TopToBottom;
 			contentRow.AddChild(scrollWindow);
 
-			var revertButton = textImageButtonFactory.Generate("Restore");
+			var revertButton = textImageButtonFactory.Generate("Restore".Localize());
 			footerRow.AddChild(revertButton);
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);

@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl
 				leftRightEdit.AddChild(valueEdit);
 				valueEditors.Add(valueEdit);
 
-				//leftRightEdit.AddChild(textImageButtonFactory.Generate("Delete"));
+				//leftRightEdit.AddChild(textImageButtonFactory.Generate("Delete".Localize()));
 				presetsFormContainer.AddChild(leftRightEdit);
 				preset_count += 1;
 			}
@@ -162,10 +162,10 @@ namespace MatterHackers.MatterControl
 			ShowAsSystemWindow();
 			MinimumSize = new Vector2(260, 300);
 
-			Button savePresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
+			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
 			savePresetsButton.Click += new EventHandler(save_Click);
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelPresetsButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(Close);

@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class FanControls : ControlWidgetBase
 	{
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private EditableNumberDisplay fanSpeedDisplay;
 

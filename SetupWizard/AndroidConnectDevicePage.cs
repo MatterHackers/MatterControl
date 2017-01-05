@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public class AndroidConnectDevicePage : WizardPage
 	{  
-		private event EventHandler unregisterEvents;
+		private EventHandler unregisterEvents;
 
 		private TextWidget generalError;
 
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			troubleshootButton = whiteImageButtonFactory.Generate("Troubleshoot".Localize(), centerText:true);
-			troubleshootButton.Click += (s, e) => WizardWindow.ChangeToPage<SetupWizardTroubleshooting>();
+			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupWizardTroubleshooting>);
 
 			retryButtonContainer = new FlowLayoutWidget()
 			{

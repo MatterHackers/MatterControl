@@ -59,10 +59,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 
+		private EventHandler unregisterEvents;
+
 		// Proxy to MeshViewerWidget
 		public InteractiveScene Scene => meshViewerWidget.Scene;
-
-		private event EventHandler unregisterEvents;
 
 		protected ViewControls3D viewControls3D;
 
@@ -72,11 +72,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-#if false
-            "extruder_offset",
-#endif
-
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => needToRecretaeBed = true, ref unregisterEvents);
 		}
 
 		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
