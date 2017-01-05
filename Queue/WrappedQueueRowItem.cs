@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				mouseEvent.X > 56 && // Disregard clicks within the thumbnail region (x < 56)
 				PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{
-				QueueData.Instance.SelectedPrintItem = queueRowItem.PrintItemWrapper;
+				QueueData.Instance.ToggleSelect(queueRowItem.PrintItemWrapper);
 			}
 
 			mouseDownInBounds = false;
