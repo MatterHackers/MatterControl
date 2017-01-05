@@ -505,6 +505,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		public void ToggleSelect(PrintItemWrapper printItem)
+		{
+			ToggleSelect(GetIndex(printItem));
+		}
+
 		public void MakeSingleSelection()
 		{
 			if (ItemCount > 0
