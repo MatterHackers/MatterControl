@@ -5881,3 +5881,9 @@ Translated:AngleDegrees
 English:Color
 Translated:Color
 
+English:Rotation Count:
+Translated:Rotation Count:
+
+English:Radius
+Translated:Radius
+
