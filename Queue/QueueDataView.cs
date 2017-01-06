@@ -35,10 +35,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -73,10 +71,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 					{
 						QueueData.Instance.MakeSingleSelection();
 					}
-					SelectedIndexChanged(null, null);
-						}
-					}
+					SelectedIndexChanged();
 				}
+			}
+		}
 
 		private void AddWatermark()
 		{
@@ -152,13 +150,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 				topToBottomItemList.AddChild(new WrappedQueueRowItem(this, QueueData.Instance.GetPrintItemWrapper(i)));
 			}
 
-			QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
+			QueueData.Instance.SelectedIndexChanged.RegisterEvent((s,e) => SelectedIndexChanged(), ref unregisterEvents);
 			QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromQueue, ref unregisterEvents);
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
 
-			SelectedIndexChanged(null, null);
+			SelectedIndexChanged();
 		}
 
 		private void PrintItemChange(object sender, EventArgs e)
@@ -166,32 +164,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			QueueData.Instance.SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 		}
 
-		private void SelectedIndexChanged(object sender, EventArgs e)
+		private void SelectedIndexChanged()
 		{
 			if (this.editMode == false)
 			{
 				QueueData.Instance.MakeSingleSelection();
-		}
-
-			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-		{
-				GuiWidget child = topToBottomItemList.Children[index];
-				var queueRowItem = (QueueRowItem)child.Children[0];
-
-				if (QueueData.Instance.SelectedIndexes.Contains(index))
-				{
-					queueRowItem.isSelectedItem = true;
-					queueRowItem.selectionCheckBox.Checked = true;
-				}
-				else
-				{
-					queueRowItem.isSelectedItem = false;
-					queueRowItem.selectionCheckBox.Checked = false;
-				}
 			}
-
-			// Skip this processing while in EditMode
-			if (this.editMode) return;
 
 			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
 			{
@@ -200,48 +178,26 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 				if (index == QueueData.Instance.SelectedIndex)
 				{
-					if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-					{
-						queueRowItem.isActivePrint = true;
-						PrinterConnectionAndCommunication.Instance.ActivePrintItem = queueRowItem.PrintItemWrapper;
-					}
-					else if (queueRowItem.PrintItemWrapper == PrinterConnectionAndCommunication.Instance.ActivePrintItem)
-					{
-						// the selection must be the active print item
-						queueRowItem.isActivePrint = true;
-					}
+					queueRowItem.selectionCheckBox.Checked = true;
 				}
 				else
 				{
 					// Don't test for .Checked as the property already performs validation
 					queueRowItem.selectionCheckBox.Checked = false;
-
-					if (queueRowItem.isSelectedItem)
-					{
-						queueRowItem.isSelectedItem = false;
-					}
-
-					if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-					{
-						if (queueRowItem.isActivePrint)
-						{
-							queueRowItem.isActivePrint = false;
-						}
-					}
 				}
 			}
 
-			if (QueueData.Instance.ItemCount == 0)
-			{
-				PrinterConnectionAndCommunication.Instance.ActivePrintItem = null;
-			}
+			// Skip this processing while in EditMode
+			if (this.editMode) return;
+
+			PrinterConnectionAndCommunication.Instance.ActivePrintItem = QueueData.Instance.SelectedPrintItem;
 		}
 
 		private void ItemAddedToQueue(object sender, EventArgs e)
 		{
-			var addedIndexArgs = e as ItemChangedArgs;			
+			var addedIndexArgs = e as ItemChangedArgs;
 			PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
-			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item), addedIndexArgs.Index); 
+			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item), addedIndexArgs.Index);
 		}
 
 		private void ItemRemovedFromQueue(object sender, EventArgs e)

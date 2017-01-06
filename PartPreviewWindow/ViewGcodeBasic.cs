@@ -1183,7 +1183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DoGenerateButton_Click(object state)
 		{
-			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
 				{

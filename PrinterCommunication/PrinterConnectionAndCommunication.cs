@@ -372,7 +372,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			set
 			{
-				if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+					&& !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 				{
 					if (this.activePrintItem != value)
 					{
@@ -383,10 +384,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 						OnActivePrintItemChanged(null);
 					}
-				}
-				else
-				{
-					throw new Exception("Cannot change active print while printing");
 				}
 			}
 		}

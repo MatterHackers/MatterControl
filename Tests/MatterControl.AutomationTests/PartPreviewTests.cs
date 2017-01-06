@@ -76,32 +76,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 
-				string copyButtonName = "3D View Copy";
-
 				int partCountBeforeCopy = view3D.Scene.Children.Count();
 				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
 				{
-					testRunner.ClickByName(copyButtonName);
-					testRunner.Wait(1);
+					testRunner.ClickByName("3D View Copy");
+					testRunner.WaitUntil(() => view3D.Scene.Children.Count == i+2, 3);
+					Assert.AreEqual(i + 2, view3D.Scene.Children.Count, $"Should have {i+2} parts after copy");
 				}
 
 				//Get MeshGroupCount before Group is clicked
-				System.Threading.Thread.Sleep(2000);
-				int partsOnBedBeforeGroup = view3D.Scene.Children.Count();
-				Assert.IsTrue(partsOnBedBeforeGroup == 6);
+				Assert.AreEqual(6, view3D.Scene.Children.Count());
 
-				//Click Group Button and get MeshGroup count after Group button is clicked
+				testRunner.Type("^a");
+
 				testRunner.ClickByName("3D View Group");
-				System.Threading.Thread.Sleep(2000);
-				int partsOnBedAfterGroup = view3D.Scene.Children.Count();
-				Assert.IsTrue(partsOnBedAfterGroup == 1);
+				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 1, 3);
+				Assert.AreEqual(1, view3D.Scene.Children.Count, $"Should have 1 parts after group");
 
 				testRunner.ClickByName("3D View Ungroup");
-				System.Threading.Thread.Sleep(2000);
-				int partsOnBedAfterUngroup = view3D.Scene.Children.Count();
-				Assert.IsTrue(partsOnBedAfterUngroup == 6);
+				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 6, 3);
+				Assert.AreEqual(6, view3D.Scene.Children.Count, $"Should have 6 parts after ungroup");
 
 				return Task.FromResult(0);
 			};

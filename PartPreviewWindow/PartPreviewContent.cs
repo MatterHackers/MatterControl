@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.AnchorAll();
-			this.Load(printItem);
+			this.LoadPrintItem(printItem);
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void Reload(PrintItemWrapper printItem)
 		{
 			this.CloseAllChildren();
-			this.Load(printItem);
+			this.LoadPrintItem(printItem);
 		}
 
 		private async void onActivePrintItemChanged(object sender, EventArgs e)
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewGcodeBasic.LoadItem(printItem);
 		}
 
-		private void Load(PrintItemWrapper printItem)
+		private void LoadPrintItem(PrintItemWrapper printItem)
 		{
 			tabControl = new TabControl();
 			tabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
