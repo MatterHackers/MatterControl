@@ -623,10 +623,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			set
 			{
-				dragDropSource = value;
+				if (InEditMode)
+				{
+					dragDropSource = value;
 
-				// Suppress ui volumes when dragDropSource is not null
-				meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
+					// Suppress ui volumes when dragDropSource is not null
+					meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
+				}
 			}
 		}
 
@@ -2305,7 +2308,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override bool InEditMode
 		{
-			get { return buttonRightPanel.Visible; }
+			get { return Sidebar != null && Sidebar.Visible; }
 		}
 
 		private void SwitchStateToNotEditing()

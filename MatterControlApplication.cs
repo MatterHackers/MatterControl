@@ -904,12 +904,13 @@ namespace MatterHackers.MatterControl
 					if (child.name != null)
 					{
 						e.graphics2D.DrawString($"{child.widget.GetType().Name} --- {child.name}", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+						start.y += lineHeight;
 					}
 					else
 					{
 						//e.graphics2D.DrawString($"{child.widget.GetType().Name} -- -", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+						//start.y += lineHeight;
 					}
-					start.y += lineHeight;
 				}
 			}
 		}
