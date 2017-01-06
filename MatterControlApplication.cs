@@ -713,14 +713,6 @@ namespace MatterHackers.MatterControl
 			AfterDraw += ShowNamesUnderMouse;
 #endif
 			base.OnLoad(args);
-
-			// HACK: Short term hack to clear bed and enter "Create" mode on startup
-			UiThread.RunOnIdle(() =>
-			{
-				//var view3D = this.Children<View3DWidget>().FirstOrDefault();
-				var view3D = this.FindNamedChildRecursive("View3DWidget") as View3DWidget;
-				view3D?.ClearBedAndLoadPrintItemWrapper(null, true);
-			}, 2);
 		}
 
 		private static void HtmlWindowTest()
