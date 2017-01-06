@@ -520,6 +520,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
 			if (view3DWidget == null)
 			{
+				base.OnMouseDown(mouseEvent);
 				return;
 			}
 
@@ -568,7 +569,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnMouseUp(MouseEventArgs mouseArgs)
 		{
-			if (view3DWidget.DragDropSource != null && view3DWidget.Scene.Children.Contains(view3DWidget.DragDropSource))
+			if (view3DWidget?.DragDropSource != null && view3DWidget.Scene.Children.Contains(view3DWidget.DragDropSource))
 			{
 				// Mouse and widget positions
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
@@ -588,7 +589,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 				}
 			}
 
-			view3DWidget.DragDropSource = null;
+			if (view3DWidget != null)
+			{
+				view3DWidget.DragDropSource = null;
+			}
 
 			base.OnMouseUp(mouseArgs);
 		}
