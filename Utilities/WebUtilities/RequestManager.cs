@@ -39,6 +39,10 @@ namespace MatterHackers.MatterControl
 	{
 		public string LastResponse { protected set; get; }
 
+		/// <summary>
+		/// Gets or sets the time-out value in milliseconds 
+		/// </summary>
+		/// <value>The timeout.</value>
 		public int Timeout { get; internal set; } = 100000;
 
 		private CookieContainer cookies = new CookieContainer();

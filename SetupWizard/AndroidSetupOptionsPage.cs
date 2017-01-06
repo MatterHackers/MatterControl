@@ -196,26 +196,14 @@ namespace MatterHackers.MatterControl
 			signInButton.Margin = new BorderDouble(left: 0);
 			signInButton.VAnchor = VAnchor.ParentCenter;
 			signInButton.Visible = !signedIn;
-			signInButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				signInButton.Visible = false;
-				signOutButton.Visible = false;
-				statusMessage.Visible = true;
-				ApplicationController.Instance.StartSignIn();
-			});
+			signInButton.Click += (s, e) => UiThread.RunOnIdle(ApplicationController.Instance.StartSignIn);
 			buttonContainer.AddChild(signInButton);
 
 			signOutButton = textImageButtonFactory.Generate("Sign Out".Localize());
 			signOutButton.Margin = new BorderDouble(left: 0);
 			signOutButton.VAnchor = VAnchor.ParentCenter;
 			signOutButton.Visible = signedIn;
-			signOutButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				signInButton.Visible = false;
-				signOutButton.Visible = false;
-				statusMessage.Visible = true;
-				ApplicationController.Instance.StartSignOut();
-			});
+			signOutButton.Click += (s, e) => UiThread.RunOnIdle(ApplicationController.Instance.StartSignOut);
 			buttonContainer.AddChild(signOutButton);
 
 			buttonContainer.AddChild(new HorizontalSpacer());
