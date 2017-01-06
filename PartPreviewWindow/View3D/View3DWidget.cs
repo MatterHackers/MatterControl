@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OpenMode openMode;
 		private bool partHasBeenEdited = false;
-		private PrintItemWrapper printItemWrapper;
+		private PrintItemWrapper printItemWrapper { get; set; }
 		private ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private SplitButton saveButtons;
@@ -1019,9 +1019,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnLoad(EventArgs args)
 		{
-			ClearBedAndLoadPrintItemWrapper(printItemWrapper, true);
 			topMostParent = this.TopmostParent();
-
 			base.OnLoad(args);
 		}
 

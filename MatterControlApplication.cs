@@ -896,19 +896,20 @@ namespace MatterHackers.MatterControl
 			{
 				List<WidgetAndPosition> namedChildren = new List<WidgetAndPosition>();
 				this.FindNamedChildrenRecursive("", namedChildren, new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1 , mousePosition.y + 1), SearchType.Partial);
-				int offset = 0;
+				Vector2 start = new Vector2(10, 50);
+				int lineHeight = 20;
+				e.graphics2D.FillRectangle(start, start + new Vector2(500, namedChildren.Count * lineHeight), new RGBA_Bytes(RGBA_Bytes.Black, 120));
 				foreach(var child in namedChildren)
 				{
 					if (child.name != null)
 					{
-						e.graphics2D.DrawString(child.name, 10, 50 + offset, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
-						offset += 20;
-                    }
+						e.graphics2D.DrawString($"{child.widget.GetType().Name} --- {child.name}", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+					}
 					else
 					{
-						//e.graphics2D.DrawString("---", 10, 50 + offset, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
-						//offset += 20;
+						//e.graphics2D.DrawString($"{child.widget.GetType().Name} -- -", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
 					}
+					start.y += lineHeight;
 				}
 			}
 		}
