@@ -66,34 +66,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task ClickingCreateButtonOpensPluginWindow()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-				// Tests that clicking the create button opens create tools plugin window
-				testRunner.CloseSignInAndPrinterSelect();
-
-				//Make sure that plugin window does not exist
-				bool pluginWindowExists1 = testRunner.WaitForName("Plugin Chooser Window", 0);
-				Assert.IsTrue(pluginWindowExists1 == false, "Plugin window does not exist");
-
-				testRunner.ClickByName("Design Tool Button", 5);
-
-				//Test that the plugin window does exist after the create button is clicked
-				SystemWindow containingWindow;
-				GuiWidget pluginWindowExists = testRunner.GetWidgetByName("Plugin Chooser Window", out containingWindow, secondsToWait: 3);
-				Assert.IsTrue(pluginWindowExists != null, "Plugin Chooser Window");
-				pluginWindowExists.CloseOnIdle();
-				testRunner.Wait(.5);
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
-		[Test, Apartment(ApartmentState.STA)]
 		public async Task ClickOnExportButton()
 		{
 			AutomationTest testToRun = (testRunner) =>

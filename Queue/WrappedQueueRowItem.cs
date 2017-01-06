@@ -97,8 +97,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			// If a valid click event occurs then set the selected index in our parent
-			if (mouseDownInBounds &&
-				mouseEvent.X > 56 && // Disregard clicks within the thumbnail region (x < 56)
+			if (mouseDownInBounds && 
+				(queueDataView.EditMode || mouseEvent.X > 56) && // Disregard clicks within the thumbnail region (x < 56)
 				PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{
 				QueueData.Instance.ToggleSelect(queueRowItem.PrintItemWrapper);

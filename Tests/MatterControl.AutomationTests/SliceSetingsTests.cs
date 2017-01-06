@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			};
 
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 110);
 		}
 
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
