@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				GuiWidget child = topToBottomItemList.Children[index];
 				var queueRowItem = (QueueRowItem)child.Children[0];
 
-				if (index == QueueData.Instance.SelectedIndex)
+				if (QueueData.Instance.SelectedIndexes.Contains(index))
 				{
 					queueRowItem.selectionCheckBox.Checked = true;
 				}
