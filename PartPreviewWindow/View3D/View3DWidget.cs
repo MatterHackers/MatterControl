@@ -604,6 +604,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
 
+		public void SelectAll()
+		{
+			Scene.ClearSelection();
+			foreach(var child in Scene.Children)
+			{
+				Scene.AddToSelection(child);
+			}
+		}
+
 		private IObject3D dragDropSource; 
 		public IObject3D DragDropSource
 		{
@@ -652,6 +661,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			switch (keyEvent.KeyCode)
 			{
+				case Keys.A:
+					if (keyEvent.Control)
+					{
+						SelectAll();
+						keyEvent.Handled = true;
+						keyEvent.SuppressKeyPress = true;
+					}
+					break;
+
 				case Keys.Z:
 					if (keyEvent.Control)
 					{
