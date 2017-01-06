@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private TextWidget gcodeProcessingStateInfoText;
 		private ViewGcodeWidget gcodeViewWidget;
-		private PrintItemWrapper printItem;
+		private PrintItemWrapper printItem { get; set; }
 		private bool startedSliceFromGenerateButton = false;
 		private Button generateGCodeButton;
 		private FlowLayoutWidget buttonBottomPanel;
@@ -168,6 +168,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.printItem = printItem;
 			Clear3DGCode();
+
+			gcodeDisplayWidget.CloseAllChildren();
 
 			//firstProcessingMessage = "Loading G-Code...".Localize();
 			if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")

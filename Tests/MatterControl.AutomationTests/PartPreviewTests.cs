@@ -63,8 +63,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				SystemWindow systemWindow;
-
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
@@ -73,6 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
 				//Get View3DWidget and count Scene.Children before Copy button is clicked
+				SystemWindow systemWindow;
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 

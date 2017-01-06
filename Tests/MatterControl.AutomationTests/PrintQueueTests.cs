@@ -34,8 +34,10 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -469,6 +471,37 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Queue Item Checkbox", 3, searchRegion: rowItemRegion);
 				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+		}
+
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task DragTo3DViewAddsItem()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				int queueItemCount = QueueData.Instance.ItemCount;
+
+				bool queueItemExists = testRunner.WaitForName("Queue Item Batman", 2);
+				bool secondQueueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
+
+				SystemWindow systemWindow;
+				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
+				View3DWidget view3D = partPreview as View3DWidget;
+
+				Assert.IsTrue(view3D.Scene.Children.Count() == 1);
+				testRunner.DragDropByName("Queue Item Batman", "centerPartPreviewAndControls");
+				Assert.IsTrue(view3D.Scene.Children.Count() == 1);
+
+				testRunner.ClickByName("3D View Edit");
+				testRunner.DragDropByName("Queue Item Batman", "centerPartPreviewAndControls");
+
+				Assert.IsTrue(view3D.Scene.Children.Count() == 2);
 
 				return Task.FromResult(0);
 			};

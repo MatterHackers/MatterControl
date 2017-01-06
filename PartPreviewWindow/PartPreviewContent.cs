@@ -53,8 +53,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget.OpenMode openMode;
 		private View3DWidget.WindowMode windowMode;
 
+		PrintItemWrapper printItem;
+
 		public PartPreviewContent(PrintItemWrapper printItem, View3DWidget.WindowMode windowMode, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
+			this.printItem = printItem;
 			this.openMode = openMode;
 			this.autoRotate3DView = autoRotate3DView;
 			this.windowMode = windowMode;
@@ -63,7 +66,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AnchorAll();
 			this.LoadPrintItem(printItem);
 
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			{
+				if (windowMode == View3DWidget.WindowMode.Embeded)
+				{
+					this.printItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+					LoadActivePrintItem();
+				}
+			}, ref unregisterEvents);
 
 			// We do this after showing the system window so that when we try and take focus of the parent window (the system window)
 			// it exists and can give the focus to its child the gcode window.
@@ -80,9 +90,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.LoadPrintItem(printItem);
 		}
 
-		private async void onActivePrintItemChanged(object sender, EventArgs e)
+		private async void LoadActivePrintItem()
 		{
-			var printItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 			await partPreviewView.ClearBedAndLoadPrintItemWrapper(printItem);
 			viewGcodeBasic.LoadItem(printItem);
 		}
@@ -168,6 +177,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnLoad(EventArgs args)
 		{
 			MatterControlApplication.Instance.ActiveView3DWidget = partPreviewView;
+
+			LoadActivePrintItem();
 
 			base.OnLoad(args);
 		}

@@ -388,9 +388,9 @@ namespace MatterHackers.MatterControl
 					removeLink.Click += (sender, e) =>
 					{
 						ActiveSliceSettings.Instance.Macros.Remove(localMacroReference);
-						windowController.FunctionToCallOnSave(this, null);
 						windowController.ChangeToMacroList();
 					};
+						windowController.FunctionToCallOnSave(this, null);
 					macroRow.AddChild(removeLink);
 
 					presetsFormContainer.AddChild(macroRow);

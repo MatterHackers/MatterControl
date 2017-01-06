@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
-
 		Vector2 mouseDownAt;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -92,7 +91,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			base.OnMouseMove(mouseEvent);
 		}
-
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
