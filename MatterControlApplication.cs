@@ -711,10 +711,6 @@ namespace MatterHackers.MatterControl
 
 #if DEBUG
 			AfterDraw += ShowNamesUnderMouse;
-			MouseMove += (s, e) =>
-			{
-				mousePosition = e.Position;
-			};
 #endif
 			base.OnLoad(args);
 
@@ -763,6 +759,14 @@ namespace MatterHackers.MatterControl
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+#if DEBUG
+			if (showNamesUnderMouse)
+			{
+				mousePosition = mouseEvent.Position;
+				Invalidate();
+			}
+#endif
+
 			if (GuiWidget.DebugBoundsUnderMouse)
 			{
 				Invalidate();
@@ -908,6 +912,11 @@ namespace MatterHackers.MatterControl
 						e.graphics2D.DrawString(child.name, 10, 50 + offset, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
 						offset += 20;
                     }
+					else
+					{
+						//e.graphics2D.DrawString("---", 10, 50 + offset, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+						//offset += 20;
+					}
 				}
 			}
 		}
