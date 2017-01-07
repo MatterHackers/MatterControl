@@ -42,6 +42,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.Agg;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
@@ -107,6 +108,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			ActiveSliceSettings.Instance?.SetValue(SettingsKey.center_part_on_bed, "0");
 #endif
 			var view3DWidget = new View3DWidget(
 				null,
