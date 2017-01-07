@@ -145,6 +145,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void Select3DPart(this AutomationRunner testRunner, string partNameToSelect)
 		{
+			if(testRunner.NameExists("3D View Edit"))
+			{
+				testRunner.ClickByName("3D View Edit");
+			}
 			testRunner.DragDropByName("centerPartPreviewAndControls", "centerPartPreviewAndControls", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right);
 
 			testRunner.Wait(1);
