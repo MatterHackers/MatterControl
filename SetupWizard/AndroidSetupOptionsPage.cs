@@ -196,7 +196,22 @@ namespace MatterHackers.MatterControl
 			signInButton.Margin = new BorderDouble(left: 0);
 			signInButton.VAnchor = VAnchor.ParentCenter;
 			signInButton.Visible = !signedIn;
-			signInButton.Click += (s, e) => UiThread.RunOnIdle(ApplicationController.Instance.StartSignIn);
+			signInButton.Click += (s, e) =>
+			{
+#if __ANDROID__
+				if (MatterControlApplication.Instance.IsNetworkConnected() 
+				    && AuthenticationData.Instance.IsConnected)
+				{
+					UiThread.RunOnIdle(ApplicationController.Instance.StartSignIn);
+				}
+				else
+				{
+					WizardWindow.Show<NetworkTroubleshooting>("/networktroubleshooting", "Network Troubleshooting");
+				}
+#else
+				UiThread.RunOnIdle(ApplicationController.Instance.StartSignIn);
+#endif
+			};
 			buttonContainer.AddChild(signInButton);
 
 			signOutButton = textImageButtonFactory.Generate("Sign Out".Localize());

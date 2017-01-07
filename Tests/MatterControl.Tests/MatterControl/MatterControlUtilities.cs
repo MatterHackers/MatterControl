@@ -196,6 +196,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// edit the com port
 			SystemWindow containingWindow;
 			var editButton = testRunner.GetWidgetByName("Edit Printer Button", out containingWindow);
+
 			testRunner.WaitUntil(() => editButton.Enabled, 5); // Wait until the edit button is ready to click it. Ensures the printer is loaded.
 			testRunner.ClickByName("Edit Printer Button", 3);
 
