@@ -55,14 +55,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!firstPass)
 			{
 				item.Matrix = originalTransform;
+				firstPass = false;
 			}
 
 			view3DWidget.Scene.ModifyChildren(children =>
 			{
 				children.Add(item);
 			});
-
-			firstPass = false;
 
 			view3DWidget.Scene.Select(item);
 
