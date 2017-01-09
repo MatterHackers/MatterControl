@@ -32,6 +32,8 @@ using MatterHackers.Localizations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using MatterHackers.VectorMath;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -74,6 +76,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void InsertNewItem(IObject3D newItem)
 		{
+			// Reposition first item to bed center
+			if (Scene.Children.Count == 0)
+			{
+				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var center = aabb.Center;
+				newItem.Matrix *= Matrix4X4.CreateTranslation(
+					(MeshViewerWidget.BedCenter.x + center.x),
+					(MeshViewerWidget.BedCenter.y + center.y),
+					 -aabb.minXYZ.z);
+			}
+
 			// Create and perform a new insert operation
 			var insertOperation = new InsertCommand(this, newItem);
 			insertOperation.Do();
