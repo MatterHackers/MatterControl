@@ -98,9 +98,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.WaitForName("Done Button", 30);
 					testRunner.WaitForName("Print Again Button", 1);
-
-					return Task.FromResult(0);
 				}
+
+				return Task.FromResult(0);
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);

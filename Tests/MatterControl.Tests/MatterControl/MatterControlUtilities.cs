@@ -43,7 +43,7 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.RenderOpenGl.OpenGl;
+using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
@@ -171,7 +171,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static Process LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
+		internal class ShutDownEmulator : IDisposable
+		{
+			Emulator emulator;
+			internal ShutDownEmulator(Emulator emulator)
+			{
+				this.emulator = emulator;
+			}
+
+			public void Dispose()
+			{
+				emulator.ShutDown();
+			}
+		}
+
+		public static IDisposable LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
@@ -179,19 +193,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			MatterControlUtilities.AddAndSelectPrinter(testRunner, make, model);
 
-			var process = new PrintEmulatorProcess();
-			process.StartInfo = new ProcessStartInfo()
-			{
-				FileName = "python",
-				Arguments = string.Format("{0} {1}{2}", 
-					StaticData.Instance.MapPath("../PrinterEmulator.py"), 
-					config.Printer, 
-					runSlow ? " slow" : ""),
+			Emulator emulator = new Emulator();
 
-				WindowStyle = ProcessWindowStyle.Minimized
-			};
+			emulator.PortName = config.Printer;
+			emulator.RunSlow = runSlow;
 
-			process.Start();
+			emulator.Startup();
 
 			// edit the com port
 			SystemWindow containingWindow;
@@ -210,8 +217,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitForName("Disconnect from printer button", 5);
 
-			return process;
-		}
+			return new ShutDownEmulator(emulator);
+	}
 
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
 		{

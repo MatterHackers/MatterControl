@@ -46,9 +46,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					Assert.Less(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), 30);
 					Assert.Less(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, 10);
-
-					return Task.FromResult(0);
 				}
+
+				return Task.FromResult(0);
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);

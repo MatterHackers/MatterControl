@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterControl.csproj", "{0B8D6F56-BD7F-4426-B858-D9292B084656}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -110,6 +110,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{FED00F38-E911-45E1-A788-26980E84C3D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net3dBool", "Submodules\agg-sharp\PolygonMesh\Net3dBool\Net3dBool.csproj", "{7EE4636D-8A92-4015-9562-7FCD6ADD0645}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterEmulator", "PrinterEmulator\PrinterEmulator.csproj", "{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1056,6 +1058,38 @@ Global
 		{7EE4636D-8A92-4015-9562-7FCD6ADD0645}.Release64|x64.Build.0 = Release|Any CPU
 		{7EE4636D-8A92-4015-9562-7FCD6ADD0645}.Release64|x86.ActiveCfg = Release|Any CPU
 		{7EE4636D-8A92-4015-9562-7FCD6ADD0645}.Release64|x86.Build.0 = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug|x64.Build.0 = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug|x86.Build.0 = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug64|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug64|Any CPU.Build.0 = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug64|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug64|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug64|x64.ActiveCfg = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug64|x64.Build.0 = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug64|x86.ActiveCfg = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Debug64|x86.Build.0 = Debug|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release|x64.ActiveCfg = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release|x64.Build.0 = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release|x86.ActiveCfg = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release|x86.Build.0 = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release64|Any CPU.ActiveCfg = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release64|Any CPU.Build.0 = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release64|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release64|Mixed Platforms.Build.0 = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release64|x64.ActiveCfg = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release64|x64.Build.0 = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release64|x86.ActiveCfg = Release|Any CPU
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9}.Release64|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1093,6 +1127,8 @@ Global
 		{70FBB82C-558D-4B5F-BE75-A922D392E650} = {32E5B656-D6DF-415E-9E7E-D03F1D8C3A8A}
 		{94838988-523C-4B11-AD82-8B9B76F23A31} = {2AB9B589-5C98-4C05-BBEA-F97DAE168EAB}
 		{418E7058-92EE-4329-86BA-AC26B65AFB25} = {FBE6DF29-85A9-4A8B-B739-35BE4CA0A9B7}
+		{7EE4636D-8A92-4015-9562-7FCD6ADD0645} = {2AB9B589-5C98-4C05-BBEA-F97DAE168EAB}
+		{BB58CA42-991B-41B7-BDE7-DCD2911DF8B9} = {FED00F38-E911-45E1-A788-26980E84C3D6}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MatterControl.csproj
