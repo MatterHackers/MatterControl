@@ -33,6 +33,7 @@ namespace MatterHackers.PrinterEmulator
 	{
 		private double bedGoalTemperature = -1;
 		private double extruderGoalTemperature = 210;
+		bool shutDown = false;
 
 		// no bed present
 		private Random random = new Random();
@@ -131,18 +132,24 @@ namespace MatterHackers.PrinterEmulator
 		{
 			serialPort = new SerialPort(PortName);
 
+			serialPort.ReadTimeout = 500;
+			serialPort.WriteTimeout = 500;
 			serialPort.Open();
 			string speed = RunSlow ? "slow" : "fast";
 			Console.WriteLine($"\n Initializing emulator on port {serialPort.PortName} (Speed: {speed})");
 
 			Task.Run(() =>
 			{
-				while (true)
+				while (true && !shutDown)
 				{
 					string line = "";
 					try
 					{
 						line = serialPort.ReadLine(); // read a '\n' terminated line
+					}
+					catch(TimeoutException te)
+					{
+
 					}
 					catch (Exception e)
 					{
@@ -205,6 +212,11 @@ namespace MatterHackers.PrinterEmulator
 			}
 
 			return "ok\n";
+		}
+
+		public void ShutDown()
+		{
+			shutDown = true;
 		}
 	}
 }

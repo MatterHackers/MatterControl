@@ -24,27 +24,29 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				testRunner.LaunchAndConnectToPrinterEmulator();
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-				testRunner.ClickByName("Printer Tab", 1);
-				testRunner.ClickByName("Custom G-Code Tab", 1);
-				testRunner.ClickByName("end_gcode Edit Field");
-				testRunner.Type("^a");
-				testRunner.Type("{BACKSPACE}");
-				testRunner.Type("G28");
+					testRunner.ClickByName("Printer Tab", 1);
+					testRunner.ClickByName("Custom G-Code Tab", 1);
+					testRunner.ClickByName("end_gcode Edit Field");
+					testRunner.Type("^a");
+					testRunner.Type("{BACKSPACE}");
+					testRunner.Type("G28");
 
-				testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button", 1);
 
-				testRunner.WaitForName("Done Button", 30);
-				testRunner.WaitForName("Print Again Button", 1);
+					testRunner.WaitForName("Done Button", 30);
+					testRunner.WaitForName("Print Again Button", 1);
 
-				testRunner.Wait(5);
+					testRunner.Wait(5);
 
-				Assert.Less(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), 30);
-				Assert.Less(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, 10);
+					Assert.Less(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), 30);
+					Assert.Less(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, 10);
+				}
 
 				return Task.FromResult(0);
 			};

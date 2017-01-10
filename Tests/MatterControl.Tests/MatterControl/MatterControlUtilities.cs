@@ -171,7 +171,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static void LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
+		internal class ShutDownEmulator : IDisposable
+		{
+			Emulator emulator;
+			internal ShutDownEmulator(Emulator emulator)
+			{
+				this.emulator = emulator;
+			}
+
+			public void Dispose()
+			{
+				emulator.ShutDown();
+			}
+		}
+
+		public static IDisposable LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
@@ -202,7 +216,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Connect to printer button", 2);
 
 			testRunner.WaitForName("Disconnect from printer button", 5);
-		}
+
+			return new ShutDownEmulator(emulator);
+	}
 
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
 		{
