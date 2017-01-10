@@ -5836,3 +5836,6 @@ Translated:The z offset to apply to improve the first layer adhesion.
 English:Baby Step Offset
 Translated:Baby Step Offset
 
+English:Oops! Unable to initialize device.
+Translated:Oops! Unable to initialize device.
+
