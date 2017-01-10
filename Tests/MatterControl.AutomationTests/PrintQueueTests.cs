@@ -116,17 +116,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
-		public async Task ExportButtonIsDisabledWithNoItemsInQueue()
+		[Test, Apartment(ApartmentState.STA), Category("FixNeeded") /* Test now works as expected but product does not implement expected functionality */]
+		public async Task QueueExportIsDisabledIfEmpty()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//bool exportButtonExists = testRunner.NameExists("Export Queue Button");
-				bool exportButtonExists = testRunner.WaitForName("Export Queue Button", 10);
-				testRunner.Wait(5);
-				Assert.IsTrue(exportButtonExists == false, "Export button is disabled");
+				SystemWindow systemWindow;
+
+				testRunner.ClickByName("Queue... Menu", 2);
+
+				var exportButton = testRunner.GetWidgetByName(" Export to Zip Menu Item", out systemWindow, 5);
+				Assert.IsNotNull(exportButton, "Export button should exist");
+				Assert.IsTrue(exportButton.Enabled, "Export button should be enabled");
+
+				testRunner.ClickByName(" Remove All Menu Item", 2);
+
+				testRunner.Wait(1);
+
+				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.WaitUntil(() => !exportButton.Enabled, 4);
+				Assert.IsFalse(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
 
 				return Task.FromResult(0);
 			};
