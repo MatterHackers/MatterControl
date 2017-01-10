@@ -510,27 +510,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
-				{
-					// Navigate to Local Library
-					testRunner.ClickByName("Library Tab");
-					testRunner.NavigateToFolder("Local Library Row Item Collection");
+				testRunner.LaunchAndConnectToPrinterEmulator();
+				// Navigate to Local Library
+				testRunner.ClickByName("Library Tab");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-					testRunner.ClickByName("Row Item Calibration - Box");
+				testRunner.ClickByName("Row Item Calibration - Box");
 
-					int initialQueueCount = QueueData.Instance.ItemCount;
+				int initialQueueCount = QueueData.Instance.ItemCount;
 
-					// Click Library Item Print Button
-					testRunner.ClickByName("Row Item Calibration - Box Print Button");
-					testRunner.Wait(.5);
+				// Click Library Item Print Button
+				testRunner.ClickByName("Row Item Calibration - Box Print Button");
+				testRunner.Wait(.5);
 
-					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
-					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
-					Assert.AreEqual("Calibration - Box", QueueData.Instance.SelectedPrintItem.Name, "Library item should be the selected item");
-					Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
+				Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
+				Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
+				Assert.AreEqual("Calibration - Box", QueueData.Instance.SelectedPrintItem.Name, "Library item should be the selected item");
+				Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
 
-					testRunner.ClickByName("Cancel Print Button");
-				}
+				testRunner.ClickByName("Cancel Print Button");
 
 				testRunner.WaitForName("Start Print Button", 5);
 

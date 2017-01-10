@@ -73,34 +73,32 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
-				{
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+				testRunner.LaunchAndConnectToPrinterEmulator();
+				Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
-					testRunner.ClickByName("General Tab", 1);
-					testRunner.ClickByName("Single Print Tab", 1);
-					testRunner.ClickByName("Layer(s) To Pause: Edit");
-					testRunner.Type("4;2;a;not;6");
+				testRunner.ClickByName("General Tab", 1);
+				testRunner.ClickByName("Single Print Tab", 1);
+				testRunner.ClickByName("Layer(s) To Pause: Edit");
+				testRunner.Type("4;2;a;not;6");
 
-					testRunner.ClickByName("Layer View Tab");
+				testRunner.ClickByName("Layer View Tab");
 
-					testRunner.ClickByName("Generate Gcode Button", 1);
-					testRunner.ClickByName("Display Checkbox", 10);
-					testRunner.ClickByName("Sync To Print Checkbox", 1);
+				testRunner.ClickByName("Generate Gcode Button", 1);
+				testRunner.ClickByName("Display Checkbox", 10);
+				testRunner.ClickByName("Sync To Print Checkbox", 1);
 
-					testRunner.ClickByName("Start Print Button", 1);
+				testRunner.ClickByName("Start Print Button", 1);
 
-					WaitForLayerAndResume(testRunner, 2);
-					WaitForLayerAndResume(testRunner, 4);
-					WaitForLayerAndResume(testRunner, 6);
+				WaitForLayerAndResume(testRunner, 2);
+				WaitForLayerAndResume(testRunner, 4);
+				WaitForLayerAndResume(testRunner, 6);
 
-					testRunner.WaitForName("Done Button", 30);
-					testRunner.WaitForName("Print Again Button", 1);
+				testRunner.WaitForName("Done Button", 30);
+				testRunner.WaitForName("Print Again Button", 1);
 
-					return Task.FromResult(0);
-				}
+				return Task.FromResult(0);
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);

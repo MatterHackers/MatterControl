@@ -26,42 +26,46 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace PrinterEmulator
+namespace MatterHackers.PrinterEmulator
 {
 	class Program
 	{
 		static void Main(string[] args)
 		{
-		/*
-			parser = argparse.ArgumentParser(description = 'Set up a printer emulation.')
+			var emulator = new Emulator();
 
-	if len(argv) > 0:
-		ser = serial.Serial(argv[0], 250000, timeout = 1)
-	else:
-		ser = serial.Serial('COM14', 250000, timeout = 1)
+			if (args.Length > 0)
+			{
+				emulator.PortName = args[0];
+			}
+			else
+			{
+				emulator.PortName = "COM14";
+			}
 
-	run_slow = len(argv) > 1 and argv[1] == 'slow'
+			for (int currentCommandIndex = 1; currentCommandIndex < args.Length; currentCommandIndex++)
+			{
+				switch (args[currentCommandIndex])
+				{
+					case "slow":
+						emulator.RunSlow = true;
+						break;
+				}
+			}
 
-	waitForKey = True
+			emulator.Startup();
 
-	print '\n Initializing emulator (Speed: %s)' % ('slow' if run_slow else 'fast')
-	while True:
-		line = ser.readline()   # read a '\n' terminated line
-		if len(line) > 0:
-			print(line)
-			response = getCorrectResponse(line)
-
-			if run_slow:
-				sleep(0.02)
-
-			print response
-			ser.write(response)
-	ser.close()
-	*/
+			while(true)
+			{
+				// do the right amount of time for the given command
+				Thread.Sleep(200);
+			}
 		}
 	}
 }
