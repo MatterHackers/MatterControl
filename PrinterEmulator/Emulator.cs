@@ -23,17 +23,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO.Ports;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.PrinterEmulator
 {
-	public class Emulator
+	public class Emulator : IDisposable
 	{
 		private double bedGoalTemperature = -1;
 		private double extruderGoalTemperature = 210;
-		bool shutDown = false;
 
 		// no bed present
 		private Random random = new Random();
@@ -42,6 +43,7 @@ namespace MatterHackers.PrinterEmulator
 		private Dictionary<string, Func<string, string>> responses = new Dictionary<string, Func<string, string>>();
 
 		private SerialPort serialPort = null;
+		private bool shutDown = false;
 
 		public Emulator()
 		{
@@ -54,10 +56,19 @@ namespace MatterHackers.PrinterEmulator
 			responses.Add("M109", SetExtruderTemperature);
 			responses.Add("M140", SetBedTemperature);
 			responses.Add("M190", SetBedTemperature);
+			responses.Add("G1", SetPosition);
+			responses.Add("G0", SetPosition);
+			responses.Add("G28", HomePosition);
+			responses.Add("G92", ResetPosition);
 		}
 
 		public string PortName { get; set; }
 		public bool RunSlow { get; set; }
+
+		public void Dispose()
+		{
+			ShutDown();
+		}
 
 		public string Echo(string command)
 		{
@@ -103,10 +114,15 @@ namespace MatterHackers.PrinterEmulator
 			return "ok\n";
 		}
 
+		public double XPosition { get; private set; }
+		public double YPosition { get; private set; }
+		public double ZPosition { get; private set; }
+		public double EPosition { get; private set; }
+
 		public string GetPosition(string command)
 		{
 			// position commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
-			return "X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00\nok\n";
+			return $"X:{XPosition:0.00} Y:{YPosition:0.00} Z:{ZPosition:0.00} E:{EPosition:0.00} Count X: 0.00 Y:0.00 Z:0.00\nok\n";
 		}
 
 		// Add response callbacks here
@@ -128,6 +144,11 @@ namespace MatterHackers.PrinterEmulator
 			return "FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a\nok\n";
 		}
 
+		public void ShutDown()
+		{
+			shutDown = true;
+		}
+
 		public void Startup()
 		{
 			serialPort = new SerialPort(PortName);
@@ -147,11 +168,10 @@ namespace MatterHackers.PrinterEmulator
 					{
 						line = serialPort.ReadLine(); // read a '\n' terminated line
 					}
-					catch(TimeoutException te)
+					catch (TimeoutException te)
 					{
-
 					}
-					catch (Exception e)
+					catch (Exception)
 					{
 					}
 					if (line.Length > 0)
@@ -180,6 +200,68 @@ namespace MatterHackers.PrinterEmulator
 			{
 				return command;
 			}
+		}
+
+		private static Regex numberRegex = new Regex(@"[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
+
+		public static double ParseDouble(String source, ref int startIndex)
+		{
+			Match numberMatch = numberRegex.Match(source, startIndex);
+			String returnString = numberMatch.Value;
+			startIndex = numberMatch.Index + numberMatch.Length;
+			double returnVal;
+			double.TryParse(returnString, NumberStyles.Number, CultureInfo.InvariantCulture, out returnVal);
+			return returnVal;
+		}
+
+		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, int startIndex = 0)
+		{
+			int stringPos = stringWithNumber.IndexOf(stringToCheckAfter, startIndex);
+			if (stringPos != -1)
+			{
+				stringPos += stringToCheckAfter.Length;
+				readValue = ParseDouble(stringWithNumber, ref stringPos);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		string ResetPosition(string command)
+		{
+			return "ok\n";
+		}
+
+		string HomePosition(string command)
+		{
+			XPosition = 0;
+			YPosition = 0;
+			ZPosition = 0;
+			return "ok\n";
+		}
+
+		string SetPosition(string command)
+		{
+			double value = 0;
+			if (GetFirstNumberAfter("X", command, ref value))
+			{
+				XPosition = value;
+			}
+			if (GetFirstNumberAfter("Y", command, ref value))
+			{
+				YPosition = value;
+			}
+			if (GetFirstNumberAfter("Z", command, ref value))
+			{
+				ZPosition = value;
+			}
+			if (GetFirstNumberAfter("E", command, ref value))
+			{
+				EPosition = value;
+			}
+
+			return "ok\n";
 		}
 
 		private string SetBedTemperature(string command)
@@ -212,11 +294,6 @@ namespace MatterHackers.PrinterEmulator
 			}
 
 			return "ok\n";
-		}
-
-		public void ShutDown()
-		{
-			shutDown = true;
 		}
 	}
 }
