@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// assert the leveling is working
 					testRunner.WaitForName("Resume Button", 30);
 
-					Assert.Greater(emulator.XPosition, 5);
+					Assert.Greater(emulator.ZPosition, 5);
 
 					testRunner.ClickByName("Cancel Print Button", 1);
 				}
