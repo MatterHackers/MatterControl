@@ -66,6 +66,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 		// Displays the current baby step offset stream values
 		private TextWidget offsetStreamLabel;
 
+		private TextWidget zOffsetStreamDisplay;
+		private Button clearZOffsetButton;
+		private FlowLayoutWidget zOffsetStreamContainer;
+
 		private LimitCallingFrequency reportDestinationChanged = null;
 
 		private EventHandler unregisterEvents;
@@ -233,36 +237,76 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.AddChild(homeYButton);
 			homeButtonBar.AddChild(homeZButton);
 
-			offsetStreamLabel = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
-			offsetStreamLabel.AutoExpandBoundsToText = true;
-			offsetStreamLabel.VAnchor = VAnchor.ParentCenter;
+			offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(left: 10),
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.ParentCenter
+			};
 			homeButtonBar.AddChild(offsetStreamLabel);
+
+			zOffsetStreamContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				Margin = new BorderDouble(3, 0),
+				Padding = new BorderDouble(3),
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.ParentCenter,
+				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				Height = 20
+			};
+			homeButtonBar.AddChild(zOffsetStreamContainer);
+
+			zOffsetStreamDisplay = new TextWidget("0")
+			{
+				AutoExpandBoundsToText = true,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(5, 0, 8, 0),
+				VAnchor = VAnchor.ParentCenter
+			};
+			zOffsetStreamContainer.AddChild(zOffsetStreamDisplay);
+
+			clearZOffsetButton = new Button(
+				new ButtonViewStates(
+					new ImageWidget(SliceSettingsWidget.restoreNormal),
+					new ImageWidget(SliceSettingsWidget.restoreHover),
+					new ImageWidget(SliceSettingsWidget.restorePressed),
+					new ImageWidget(SliceSettingsWidget.restoreNormal)))
+			{
+				Name = "Clear ZOffset button",
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(0, 0, 5, 0),
+				ToolTipText = "Clear ZOffset".Localize(),
+				Visible = false
+			};
+
+			clearZOffsetButton.Click += (sender, e) => PrinterConnectionAndCommunication.Instance.ResetBabyStepOffset();
+
+			zOffsetStreamContainer.AddChild(clearZOffsetButton);
 
 			homeButtonBar.AddChild(new HorizontalSpacer());
 			homeButtonBar.AddChild(disableMotors);
 			homeButtonBar.AddChild(spacerReleaseShow);
 
 			PrinterConnectionAndCommunication.Instance.OffsetStreamChanged += OffsetStreamChanged;
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			{
+				OffsetStreamChanged(null, null);
+			}, ref unregisterEvents);
+
 
 			return homeButtonBar;
 		}
 
 		internal void OffsetStreamChanged(object sender, EventArgs e)
 		{
-			Vector3 offset = PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset;
-			if ((PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-				&& offset.Length > .01)
-			{
-				offsetStreamLabel.Text = ("{0} ({1:0.##}, {2:0.##}, {3:0.##})").FormatWith(
-					"Offset".Localize() + ": ",
-					offset.x,
-					offset.y,
-					offset.z);
-			}
-			else
-			{
-				offsetStreamLabel.Text = "";
-			}
+			double zoffset = PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset.z;
+			bool hasOverriddenZOffset = (zoffset != 0);
+
+			zOffsetStreamContainer.BackgroundColor = (hasOverriddenZOffset) ? SliceSettingsWidget.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
+			clearZOffsetButton.Visible = hasOverriddenZOffset;
+
+			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
 		}
 
 		private FlowLayoutWidget GetHWDestinationBar()
