@@ -85,6 +85,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private NamedSettingsLayers viewFilter;
 
+		internal static ImageBuffer restoreNormal;
+		internal static ImageBuffer restoreHover;
+		internal static ImageBuffer restorePressed;
+
+		static SliceSettingsWidget()
+		{
+			// EnsureRestoreButtonImages
+			int size = (int)(16 * GuiWidget.DeviceScale);
+
+			restoreNormal = ColorCircle(size, new RGBA_Bytes(128, 128, 128));
+			if (OsInformation.OperatingSystem == OSType.Android)
+			{
+				restoreNormal = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
+			}
+			restoreHover = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
+			restorePressed = ColorCircle(size, new RGBA_Bytes(255, 0, 0));
+		}
+
 		public SliceSettingsWidget(List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
 		{
 			this.layerCascade = layerCascade;
@@ -660,7 +678,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static readonly RGBA_Bytes materialSettingBackgroundColor = new RGBA_Bytes(255, 127, 0, 108);
 		private static readonly RGBA_Bytes qualitySettingBackgroundColor = new RGBA_Bytes(255, 255, 0, 108);
 		// blue user setting color
-		private static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 108);
+		public static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 108);
 		// green user color
 		//private static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(0xff248f24);
 
@@ -1607,25 +1625,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ActiveSliceSettings.OnSettingsChanged(settingData);
 				};
 			}
-		}
-
-		static ImageBuffer restoreNormal = EnsureRestoreButtonImages();
-		static ImageBuffer restoreHover;
-		static ImageBuffer restorePressed;
-
-		static ImageBuffer EnsureRestoreButtonImages()
-		{
-			int size = (int)(16 * GuiWidget.DeviceScale);
-
-			restoreNormal = ColorCircle(size, new RGBA_Bytes(128, 128, 128));
-			if (OsInformation.OperatingSystem == OSType.Android)
-			{
-				restoreNormal = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
-			}
-			restoreHover = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
-			restorePressed = ColorCircle(size, new RGBA_Bytes(255, 0, 0));
-
-			return restoreNormal;
 		}
 
 		private static ImageBuffer ColorCircle(int size, RGBA_Bytes color)

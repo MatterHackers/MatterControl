@@ -322,6 +322,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public void ResetBabyStepOffset()
+		{
+			babyStepsStream6.Offset = Vector3.Zero;
+
+			// store the offset
+			ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+
+			OffsetStreamChanged?.Invoke(null, null);
+		}
+
 		public void AddToBabyStepOffset(Axis moveAxis, double moveAmount)
 		{
 			babyStepsStream6.OffsetAxis(moveAxis, moveAmount);

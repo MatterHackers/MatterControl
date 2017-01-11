@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if(PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer == 1)
 			{
 				// store the offset
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, offsetStream.Offset.z.ToString());
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, offsetStream.Offset.z.ToString("0.##"));
 			}
 		}
 
