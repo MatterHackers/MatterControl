@@ -510,7 +510,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					// Navigate to Local Library
 					testRunner.ClickByName("Library Tab");
@@ -530,12 +530,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
 
 					testRunner.ClickByName("Cancel Print Button");
+
+					testRunner.WaitForName("Start Print Button", 5);
 				}
 
-				testRunner.WaitForName("Start Print Button", 5);
-
 				return Task.FromResult(0);
-
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);

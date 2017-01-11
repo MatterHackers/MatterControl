@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
-		public static bool Enabled { get; set; }
+		public static bool Enabled { get; set; } = true;
 
 		public override string ReadLine()
 		{

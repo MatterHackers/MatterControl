@@ -90,9 +90,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// make sure it is showing the correct button
 					Assert.IsTrue(!testRunner.WaitForName("Start Print Button", 1), "Start Print hidden");
 					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", 1), "Finish Setup showing");
-
-					return Task.FromResult(0);
 				}
+
+				return Task.FromResult(0);
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);
