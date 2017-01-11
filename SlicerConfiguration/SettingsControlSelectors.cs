@@ -230,11 +230,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (layerType == NamedSettingsLayers.Material)
 			{
-				// Restore deactivated user overrides by iterating the Material preset we're coming off of
-				RestoreConflictingUserOverrides(activeSettings, activeSettings.MaterialLayer);
-
 				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Value)
 				{
+					// Restore deactivated user overrides by iterating the Material preset we're coming off of
+					RestoreConflictingUserOverrides(activeSettings, activeSettings.MaterialLayer);
+
 					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
 
 					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
@@ -243,11 +243,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (layerType == NamedSettingsLayers.Quality)
 			{
-				// Restore deactivated user overrides by iterating the Quality preset we're coming off of
-				RestoreConflictingUserOverrides(activeSettings, activeSettings.QualityLayer);
-
 				if (activeSettings.ActiveQualityKey != item.Value)
 				{
+					// Restore deactivated user overrides by iterating the Quality preset we're coming off of
+					RestoreConflictingUserOverrides(activeSettings, activeSettings.QualityLayer);
+
 					activeSettings.ActiveQualityKey = item.Value;
 
 					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
