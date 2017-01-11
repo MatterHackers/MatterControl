@@ -267,6 +267,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		private bool showControlBar = true;
+		public bool ShowControlBar
+		{
+			get { return showControlBar; }
+			set
+			{
+				settingsControlBar.Visible = value;
+				showControlBar = value;
+			}
+		}
+
 		public void CurrentlyActiveCategory(out int index, out string name)
 		{
 			index = topCategoryTabs.SelectedTabIndex;
@@ -328,13 +339,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (ActiveSliceSettings.Instance != null)
 			{
 				topCategoryTabs.Visible = true;
-				settingsControlBar.Visible = true;
+				settingsControlBar.Visible = showControlBar;
 				noConnectionMessageContainer.Visible = false;
 			}
 			else
 			{
 				topCategoryTabs.Visible = false;
-				settingsControlBar.Visible = false;
+				settingsControlBar.Visible = showControlBar;
 				noConnectionMessageContainer.Visible = true;
 			}
 		}
