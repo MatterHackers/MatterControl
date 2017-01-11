@@ -281,7 +281,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "raft_air_gap",
 		"PresentationName": "Air Gap",
-		"HelpText": "The distance between the first layer and the top of the raft. A good value is typically about half the extrusion diameter. For a 0.4 mm nozzle, a value between 0.0 and 0.2 would be best.",
+		"HelpText": "The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
 		"ShowAsOverride": true,
