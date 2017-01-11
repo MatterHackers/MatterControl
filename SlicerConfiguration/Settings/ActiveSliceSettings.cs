@@ -92,13 +92,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		// Shouldn't this just be called by .SetValue() rather than explicitly by all the SliceSettingsWidget controls - that way any API level call to .SetValue() inherits the same behavior
 		static public void OnSettingsChanged(SliceSettingData settingData)
 		{
 			SettingChanged.CallEvents(null, new StringEventArgs(settingData.SlicerConfigName));
 
 			if (settingData.ReloadUiWhenChanged)
 			{
-				UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll());
+				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
 			}
 		}
 

@@ -233,12 +233,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Value)
 				{
 					// Restore deactivated user overrides by iterating the Material preset we're coming off of
-					RestoreConflictingUserOverrides(activeSettings, activeSettings.MaterialLayer);
+					activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
 
 					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
 
 					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
-					DeactivateConflictingUserOverrides(activeSettings, activeSettings.MaterialLayer);
+					activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
 				}
 			}
 			else if (layerType == NamedSettingsLayers.Quality)
@@ -246,12 +246,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (activeSettings.ActiveQualityKey != item.Value)
 				{
 					// Restore deactivated user overrides by iterating the Quality preset we're coming off of
-					RestoreConflictingUserOverrides(activeSettings, activeSettings.QualityLayer);
+					activeSettings.RestoreConflictingUserOverrides(activeSettings.QualityLayer);
 
 					activeSettings.ActiveQualityKey = item.Value;
 
 					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
-					DeactivateConflictingUserOverrides(activeSettings, activeSettings.QualityLayer);
+					activeSettings.DeactivateConflictingUserOverrides(activeSettings.QualityLayer);
 				}
 			}
 
@@ -272,49 +272,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			editButton.Enabled = item.Text != defaultMenuItemText;
 		}
-
-		/// <summary>
-		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
-		/// </summary>
-		private static void RestoreConflictingUserOverrides(PrinterSettings printerSettings, PrinterSettingsLayer settingsLayer)
-		{
-			if (settingsLayer == null)
-			{
-				return;
-			}
-
-			foreach (var settingsKey in settingsLayer.Keys)
-			{
-				string stagedUserOverride;
-				if (printerSettings.StagedUserSettings.TryGetValue(settingsKey, out stagedUserOverride))
-				{
-					printerSettings.StagedUserSettings.Remove(settingsKey);
-					printerSettings.UserLayer[settingsKey] = stagedUserOverride;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
-		/// </summary>
-		private static void DeactivateConflictingUserOverrides(PrinterSettings printerSettings, PrinterSettingsLayer settingsLayer)
-		{
-			if (settingsLayer == null)
-			{
-				return;
-			}
-
-			foreach (var settingsKey in settingsLayer.Keys)
-			{
-				string userOverride;
-				if (printerSettings.UserLayer.TryGetValue(settingsKey, out userOverride))
-				{
-					printerSettings.UserLayer.Remove(settingsKey);
-					printerSettings.StagedUserSettings.Add(settingsKey, userOverride);
-				}
-			}
-		}
-
 
 		private DropDownList CreateDropdown()
 		{

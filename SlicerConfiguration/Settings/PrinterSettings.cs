@@ -109,6 +109,61 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		/// <summary>
+		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
+		/// </summary>
+		public void RestoreConflictingUserOverrides(PrinterSettingsLayer settingsLayer)
+		{
+			if (settingsLayer == null)
+			{
+				return;
+			}
+
+			foreach (var settingsKey in settingsLayer.Keys)
+			{
+				RestoreUserOverride(settingsLayer, settingsKey);
+			}
+		}
+
+		private void RestoreUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
+		{
+			string stagedUserOverride;
+			if (StagedUserSettings.TryGetValue(settingsKey, out stagedUserOverride))
+			{
+				StagedUserSettings.Remove(settingsKey);
+				UserLayer[settingsKey] = stagedUserOverride;
+			}
+		}
+
+		/// <summary>
+		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
+		/// </summary>
+		public void DeactivateConflictingUserOverrides(PrinterSettingsLayer settingsLayer)
+		{
+			if (settingsLayer == null)
+			{
+				return;
+			}
+
+			foreach (var settingsKey in settingsLayer.Keys)
+			{
+				StashUserOverride(settingsLayer, settingsKey);
+			}
+		}
+
+		/// <summary>
+		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
+		/// </summary>
+		private void StashUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
+		{
+			string userOverride;
+			if (this.UserLayer.TryGetValue(settingsKey, out userOverride))
+			{
+				this.UserLayer.Remove(settingsKey);
+				this.StagedUserSettings.Add(settingsKey, userOverride);
+			}
+		}
+
 		[OnDeserialized]
 		internal void OnDeserializedMethod(StreamingContext context)
 		{
@@ -971,6 +1026,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
 		{
+			// Stash user overrides if a non-user override is being set
+			if (layer != null && layer != UserLayer)
+			{
+				StashUserOverride(layer, settingsKey);
+			}
+			else
+			{
+				// Remove any staged/conflicting user override, making this the new and active user override
+				if (StagedUserSettings.ContainsKey(settingsKey))
+				{
+					StagedUserSettings.Remove(settingsKey);
+				}
+			}
+
 			var persistenceLayer = layer ?? UserLayer;
 
 			// If the setting exists and is set the requested value, exit without setting or saving
@@ -978,12 +1047,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (persistenceLayer.TryGetValue(settingsKey, out existingValue) && existingValue == settingsValue)
 			{
 				return;
-			}
-
-			// Remove any staged/conflicting user override, making this the new and active user override
-			if (StagedUserSettings.ContainsKey(settingsKey))
-			{
-				StagedUserSettings.Remove(settingsKey);
 			}
 
 			// Otherwise, set and save
@@ -996,12 +1059,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return JsonConvert.SerializeObject(this, formatting);
 		}
 
-		internal void ClearValue(string sliceSetting, PrinterSettingsLayer layer = null)
+		internal void ClearValue(string settingsKey, PrinterSettingsLayer layer = null)
 		{
 			var persistenceLayer = layer ?? UserLayer;
-			if (persistenceLayer.ContainsKey(sliceSetting))
+			if (persistenceLayer.ContainsKey(settingsKey))
 			{
-				persistenceLayer.Remove(sliceSetting);
+				persistenceLayer.Remove(settingsKey);
+
+				// Restore user overrides if a non-user override is being cleared
+				if (layer != null && layer != UserLayer)
+				{
+					RestoreUserOverride(layer, settingsKey);
+				}
+
 				Save();
 			}
 		}

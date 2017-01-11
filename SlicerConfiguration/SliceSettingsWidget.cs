@@ -94,10 +94,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// EnsureRestoreButtonImages
 			int size = (int)(16 * GuiWidget.DeviceScale);
 
-			restoreNormal = ColorCircle(size, new RGBA_Bytes(128, 128, 128));
 			if (OsInformation.OperatingSystem == OSType.Android)
 			{
 				restoreNormal = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
+			}
+			else
+			{
+				restoreNormal = ColorCircle(size, new RGBA_Bytes(128, 128, 128));
 			}
 			restoreHover = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
 			restorePressed = ColorCircle(size, new RGBA_Bytes(255, 0, 0));
@@ -677,10 +680,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static readonly RGBA_Bytes materialSettingBackgroundColor = new RGBA_Bytes(255, 127, 0, 108);
 		private static readonly RGBA_Bytes qualitySettingBackgroundColor = new RGBA_Bytes(255, 255, 0, 108);
-		// blue user setting color
 		public static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 108);
-		// green user color
-		//private static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(0xff248f24);
 
 		private static string GetActiveValue(string slicerConfigName, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
@@ -780,7 +780,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			int extruderIndex, out bool addControl, ref int tabIndexForItem)
 		{
 			addControl = true;
-			GuiWidget container = new GuiWidget();
 
 			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 
@@ -1506,9 +1505,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			container.HAnchor = HAnchor.ParentLeftRight;
-			container.VAnchor = VAnchor.FitToChildren;
-
 			Button restoreButton = null;
 			if (settingData.ShowAsOverride)
 			{
@@ -1538,8 +1534,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				restoreArea.AddChild(restoreButton);
 			}
-
-			container.AddChild(settingsRow);
 
 			// Define the UpdateStyle implementation
 			settingsRow.UpdateStyle = () =>
@@ -1591,7 +1585,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Invoke the UpdateStyle implementation
 			settingsRow.UpdateStyle();
 
-			return container;
+			return settingsRow;
 		}
 
 		private static void AddComMenuItems(SliceSettingData settingData, PrinterSettingsLayer persistenceLayer, SettingsRow settingsRow, DropDownList selectableOptions)
