@@ -171,20 +171,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		internal class ShutDownEmulator : IDisposable
-		{
-			Emulator emulator;
-			internal ShutDownEmulator(Emulator emulator)
-			{
-				this.emulator = emulator;
-			}
-
-			public void Dispose()
-			{
-				emulator.ShutDown();
-			}
-		}
-
 		public static IDisposable LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			// Load the TestEnv config
@@ -217,7 +203,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitForName("Disconnect from printer button", 5);
 
-			return new ShutDownEmulator(emulator);
+			return emulator;
 	}
 
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)

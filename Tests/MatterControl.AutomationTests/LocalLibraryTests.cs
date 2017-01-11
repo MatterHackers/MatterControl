@@ -510,7 +510,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					// Navigate to Local Library
 					testRunner.ClickByName("Library Tab");

@@ -119,6 +119,7 @@ namespace MatterHackers.MatterControl
 
 				cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
 				cancelButton.Click += done_Click;
+				cancelButton.Name = "Cancel Button";
 
 				buttonBar.AddChild(backButton);
 				buttonBar.AddChild(nextButton);

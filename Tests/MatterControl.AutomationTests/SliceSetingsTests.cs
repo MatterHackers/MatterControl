@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
