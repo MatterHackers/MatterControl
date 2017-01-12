@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Start Print Button", 1);
 
-					testRunner.WaitForName("Done Button", 30);
+					testRunner.WaitForName("Done Button", 120);
 					testRunner.WaitForName("Print Again Button", 1);
 
 					testRunner.Wait(5);
