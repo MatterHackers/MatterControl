@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 130);
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
