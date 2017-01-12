@@ -2869,9 +2869,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			string lineWithCount;
 			if (lineToWrite.StartsWith("M110"))
 			{
-				lineWithCount = $"N{0} {lineToWrite}";
+				lineWithCount = $"N1 {lineToWrite}";
 				GCodeFile.GetFirstNumberAfter("N", lineToWrite, ref currentLineIndexToSend);
-				allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend-1);
+				allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend);
 			}
 			else
 			{
