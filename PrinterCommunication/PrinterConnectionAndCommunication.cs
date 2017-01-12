@@ -2824,7 +2824,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		// this is to make it misbehave, chaos monkey, bad checksum
-		//int checkSumCount = 1;
+		int checkSumCount = 1;
 		private void WriteChecksumLineToPrinter(string lineToWrite)
 		{
 			SetDetailedPrintingState(lineToWrite);
@@ -2838,9 +2838,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			string lineWithCount;
 			if (lineToWrite.StartsWith("M110"))
 			{
-				lineWithCount = $"N{0} {lineToWrite}";
+				lineWithCount = $"N1 {lineToWrite}";
 				GCodeFile.GetFirstNumberAfter("N", lineToWrite, ref currentLineIndexToSend);
-				allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend-1);
+				allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend);
 			}
 			else
 			{
@@ -2851,8 +2851,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			
 			allCheckSumLinesSent.Add(lineWithChecksum);
 
-			//if ((checkSumCount++ % 11) == 0)
-				//lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
+			if ((checkSumCount++ % 11) == 0)
+				lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
 
 			WriteRawToPrinter(lineWithChecksum + "\n", lineToWrite);
 		}
