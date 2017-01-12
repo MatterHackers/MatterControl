@@ -5839,3 +5839,9 @@ Translated:Baby Step Offset
 English:Oops! Unable to initialize device.
 Translated:Oops! Unable to initialize device.
 
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+
+English:Clear ZOffset
+Translated:Clear ZOffset
+
