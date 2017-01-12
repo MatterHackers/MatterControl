@@ -101,6 +101,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Done Button");
 
+					testRunner.Wait(1);
+
 					// print a part
 					testRunner.ClickByName("Start Print Button", 1);
 					// assert the leveling is working
