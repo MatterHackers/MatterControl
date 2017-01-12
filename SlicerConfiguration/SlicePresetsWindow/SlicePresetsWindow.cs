@@ -155,10 +155,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ActiveSliceSettings.Instance.BaseLayer
 			};
 
-			var settingsWidget = new SliceSettingsWidget(layerCascade, presetsContext.LayerType);
-			settingsWidget.settingsControlBar.Visible = false;
-
-			return settingsWidget;
+			return new SliceSettingsWidget(layerCascade, presetsContext.LayerType)
+			{
+				ShowControlBar = false
+			};
 		}
 
 		private string GetNonCollidingName(string profileName, IEnumerable<string> existingNames)
