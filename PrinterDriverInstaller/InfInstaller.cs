@@ -1,5 +1,4 @@
-﻿using MatterHackers.Agg;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -25,7 +24,7 @@ namespace MatterHackers.InfInstaller
 		{
 			Process driverInstallerProcess = new Process();
 
-			driverInstallerProcess.StartInfo.Arguments = "-a {0}".FormatWith(Path.GetFullPath(pathAndDriverToInstall));
+			driverInstallerProcess.StartInfo.Arguments = string.Format("-a \"{0}\"", Path.GetFullPath(pathAndDriverToInstall));
 
 			driverInstallerProcess.StartInfo.CreateNoWindow = true;
 			driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -48,10 +47,9 @@ namespace MatterHackers.InfInstaller
 
 			driverInstallerProcess.StartInfo.FileName = pnPUtilPathAndFileName;
 			driverInstallerProcess.StartInfo.Verb = "runas";
-			driverInstallerProcess.StartInfo.UseShellExecute = true;
+			driverInstallerProcess.StartInfo.UseShellExecute = false;
 
 			driverInstallerProcess.Start();
-
 			driverInstallerProcess.WaitForExit();
 
 			if (!fileExists)

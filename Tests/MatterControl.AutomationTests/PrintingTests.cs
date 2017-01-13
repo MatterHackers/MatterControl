@@ -101,10 +101,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Done Button");
 
+					testRunner.Wait(1);
+
 					// print a part
 					testRunner.ClickByName("Start Print Button", 1);
 					// assert the leveling is working
-					testRunner.WaitForName("Resume Button", 30);
+					testRunner.WaitForName("Resume Button", 200);
 
 					Assert.Greater(emulator.ZPosition, 5);
 
@@ -114,7 +116,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 300);
 		}
 	}
 }
