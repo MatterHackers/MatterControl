@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
 				exportAsStlButton.HAnchor = HAnchor.ParentLeft;
 				exportAsStlButton.Cursor = Cursors.Hand;
-				exportAsStlButton.Click += new EventHandler(exportSTL_Click);
+				exportAsStlButton.Click += exportSTL_Click;
 				middleRowContainer.AddChild(exportAsStlButton);
 			}
 
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl
 				Button exportAsAmfButton = textImageButtonFactory.Generate(exportAmfTextFull);
 				exportAsAmfButton.HAnchor = HAnchor.ParentLeft;
 				exportAsAmfButton.Cursor = Cursors.Hand;
-				exportAsAmfButton.Click += new EventHandler(exportAMF_Click);
+				exportAsAmfButton.Click += exportAMF_Click;
 				middleRowContainer.AddChild(exportAsAmfButton);
 			}
 
@@ -122,10 +122,10 @@ namespace MatterHackers.MatterControl
 				exportGCode.Name = "Export as GCode Button";
 				exportGCode.HAnchor = HAnchor.ParentLeft;
 				exportGCode.Cursor = Cursors.Hand;
-				exportGCode.Click += new EventHandler((object sender, EventArgs e) =>
+				exportGCode.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(ExportGCode_Click);
-				});
+				};
 				middleRowContainer.AddChild(exportGCode);
 
 				PluginFinder<ExportGcodePlugin> exportPluginFinder = new PluginFinder<ExportGcodePlugin>();
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 					Button exportButton = textImageButtonFactory.Generate(exportButtonText);
 					exportButton.HAnchor = HAnchor.ParentLeft;
 					exportButton.Cursor = Cursors.Hand;
-					exportButton.Click += (object sender, EventArgs e) =>
+					exportButton.Click += (s, e) =>
 					{
 						UiThread.RunOnIdle(() =>
 						{

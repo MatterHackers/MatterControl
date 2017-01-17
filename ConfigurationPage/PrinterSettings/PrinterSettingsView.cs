@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			cameraLabel.VAnchor = VAnchor.ParentCenter;
 
 			openCameraButton = textImageButtonFactory.Generate("Preview".Localize().ToUpper());
-			openCameraButton.Click += new EventHandler(openCameraPreview_Click);
+			openCameraButton.Click += openCameraPreview_Click;
 			openCameraButton.Margin = new BorderDouble(left: 6);
 
 			buttonRow.AddChild(cameraIcon);
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			openGcodeTerminalButton = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
 			openGcodeTerminalButton.Name = "Show Terminal Button";
-			openGcodeTerminalButton.Click += new EventHandler(openGcodeTerminalButton_Click);
+			openGcodeTerminalButton.Click += openGcodeTerminalButton_Click;
 
 			buttonRow.AddChild(terminalIcon);
 			buttonRow.AddChild(gcodeTerminalLabel);
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			levelingIcon.Margin = new BorderDouble(right: 6);
 
 			Button configureEePromButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
-			configureEePromButton.Click += new EventHandler(configureEePromButton_Click);
+			configureEePromButton.Click += configureEePromButton_Click;
 
 			//buttonRow.AddChild(eePromIcon);
 			buttonRow.AddChild(notificationSettingsLabel);

@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			{
 				UiThread.RunOnIdle(Close);
 			};
-			submitButton.Click += new EventHandler(SubmitContactForm);
+			submitButton.Click += SubmitContactForm;
 		}
 
 		private void SubmitContactForm(object sender, EventArgs mouseEvent)

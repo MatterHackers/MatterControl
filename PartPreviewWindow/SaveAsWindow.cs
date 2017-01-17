@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
 
 			librarySelectorWidget.ChangedCurrentLibraryProvider += EnableSaveAsButtonOnChangedLibraryProvider;
 
-			saveAsButton.Click += new EventHandler(saveAsButton_Click);
+			saveAsButton.Click += saveAsButton_Click;
 
 			//Adds SaveAs and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
