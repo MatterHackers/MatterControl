@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				(moveAxis == PrinterConnectionAndCommunication.Axis.Y) ? moveAmount : 0,
 				(moveAxis == PrinterConnectionAndCommunication.Axis.Z) ? moveAmount : 0);
 
-			if(PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer == 1)
+			if(PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer <= 1)
 			{
 				// store the offset
 				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, offsetStream.Offset.z.ToString("0.##"));
