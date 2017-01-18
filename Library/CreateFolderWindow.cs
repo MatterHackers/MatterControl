@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 			createFolderButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(createFolderButton);
 
-			createFolderButton.Click += new EventHandler(createFolderButton_Click);
+			createFolderButton.Click += createFolderButton_Click;
 			folderNameWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 			//Adds Create and Close Button to button container

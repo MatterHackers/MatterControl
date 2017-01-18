@@ -72,11 +72,7 @@ namespace MatterHackers.MatterControl
 			buttonFactory.hoverBorderColor = this.hoverBorderColor;
 
 			Button button = buttonFactory.Generate(buttonInfo.Item1, normalImageName: imageName, centerText: true);
-
-			button.Click += (object sender, EventArgs e) =>
-			{
-				buttonInfo.Item2();
-			};
+			button.Click += (s, e) => buttonInfo.Item2();
 
 			return button;
 		}

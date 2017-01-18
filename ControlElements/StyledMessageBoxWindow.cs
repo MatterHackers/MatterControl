@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 						Title = "MatterControl - " + "Please Confirm".Localize();
 						Button yesButton = textImageButtonFactory.Generate(yesOk, centerText: true);
 						yesButton.Name = "Yes Button";
-						yesButton.Click += new EventHandler(okButton_Click);
+						yesButton.Click += okButton_Click;
 						yesButton.Cursor = Cursors.Hand;
 						buttonRow.AddChild(yesButton);
 
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl
 
 						Button noButton = textImageButtonFactory.Generate(no, centerText: true);
 						noButton.Name = "No Button";
-						noButton.Click += new EventHandler(noButton_Click);
+						noButton.Click += noButton_Click;
 						noButton.Cursor = Cursors.Hand;
 						buttonRow.AddChild(noButton);
 					}
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl
 						Button okButton = textImageButtonFactory.Generate("Ok".Localize(), centerText: true);
 						okButton.Name = "Ok Button";
 						okButton.Cursor = Cursors.Hand;
-						okButton.Click += new EventHandler(okButton_Click);
+						okButton.Click += okButton_Click;
 						buttonRow.AddChild(okButton);
 					}
 					break;

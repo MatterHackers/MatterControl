@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 			MinimumSize = new Vector2(Width, Height);
 
 			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
-			savePresetsButton.Click += new EventHandler(save_Click);
+			savePresetsButton.Click += save_Click;
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelPresetsButton.Click += (sender, e) =>

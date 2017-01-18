@@ -252,8 +252,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
 			zPlusControl.MoveAmount = 0;
 			zMinusControl.MoveAmount = 0;
-			zPlusControl.Click += new EventHandler(zPlusControl_Click);
-			zMinusControl.Click += new EventHandler(zMinusControl_Click);
+			zPlusControl.Click += zPlusControl_Click;
+			zMinusControl.Click += zMinusControl_Click;
 			return zButtons;
 		}
 
@@ -318,8 +318,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			container.backButton.Enabled = false;
 			container.nextButton.Enabled = false;
 
-			zPlusControl.Click += new EventHandler(zControl_Click);
-			zMinusControl.Click += new EventHandler(zControl_Click);
+			zPlusControl.Click += zControl_Click;
+			zMinusControl.Click += zControl_Click;
 		}
 
 		protected void zControl_Click(object sender, EventArgs mouseEvent)

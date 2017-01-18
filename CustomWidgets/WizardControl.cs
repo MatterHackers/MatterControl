@@ -107,11 +107,11 @@ namespace MatterHackers.MatterControl
 				buttonBar.Padding = new BorderDouble(0, 3);
 
 				backButton = textImageButtonFactory.Generate("Back".Localize(), centerText: true);
-				backButton.Click += new EventHandler(back_Click);
+				backButton.Click += back_Click;
 
 				nextButton = textImageButtonFactory.Generate("Next".Localize(), centerText: true);
 				nextButton.Name = "Next Button";
-				nextButton.Click += new EventHandler(next_Click);
+				nextButton.Click += next_Click;
 
 				doneButton = textImageButtonFactory.Generate("Done".Localize(), centerText: true);
 				doneButton.Name = "Done Button";

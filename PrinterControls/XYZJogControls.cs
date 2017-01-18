@@ -668,7 +668,7 @@ namespace MatterHackers.MatterControl
 				this.ExtruderNumber = extruderNumber;
 				this.movementFeedRate = movementFeedRate;
 
-				this.Click += new EventHandler(moveAxis_Click);
+				this.Click += moveAxis_Click;
 			}
 
 			private void moveAxis_Click(object sender, EventArgs mouseEvent)

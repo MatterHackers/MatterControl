@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl
 				};
 
 				sendCommand = controlButtonFactory.Generate("Send".Localize());
-				sendCommand.Click += new EventHandler(sendManualCommandToPrinter_Click);
+				sendCommand.Click += sendManualCommandToPrinter_Click;
 
 				FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();
 				bottomRowContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;

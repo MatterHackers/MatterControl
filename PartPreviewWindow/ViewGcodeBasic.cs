@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			generateGCodeButton = textImageButtonFactory.Generate("Generate".Localize());
 			generateGCodeButton.Name = "Generate Gcode Button";
-			generateGCodeButton.Click += new EventHandler(generateButton_Click);
+			generateGCodeButton.Click += generateButton_Click;
 			buttonBottomPanel.AddChild(generateGCodeButton);
 
 			layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft);
@@ -1245,7 +1245,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			setLayerButton = textImageButtonFactory.Generate("Go".Localize());
 			setLayerButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			setLayerButton.Click += new EventHandler(layerCountTextWidget_EditComplete);
+			setLayerButton.Click += layerCountTextWidget_EditComplete;
 			this.AddChild(setLayerButton);
 		}
 
@@ -1285,7 +1285,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			prevLayerButton = textImageButtonFactory.Generate("<<");
-			prevLayerButton.Click += new EventHandler(prevLayer_ButtonClick);
+			prevLayerButton.Click += prevLayer_ButtonClick;
 			this.AddChild(prevLayerButton);
 
 			layerCountTextWidget = new TextWidget("/1____", 12);
@@ -1296,7 +1296,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(layerCountTextWidget);
 
 			nextLayerButton = textImageButtonFactory.Generate(">>");
-			nextLayerButton.Click += new EventHandler(nextLayer_ButtonClick);
+			nextLayerButton.Click += nextLayer_ButtonClick;
 			this.AddChild(nextLayerButton);
 		}
 

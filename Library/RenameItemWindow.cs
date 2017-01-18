@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
 			renameItemButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(renameItemButton);
 
-			renameItemButton.Click += new EventHandler(renameItemButton_Click);
+			renameItemButton.Click += renameItemButton_Click;
 			saveAsNameWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 			//Adds Create and Close Button to button container

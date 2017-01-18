@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(printerBaudRateContainer);
 			{
 				nextButton = textImageButtonFactory.Generate("Continue".Localize());
-				nextButton.Click += new EventHandler(NextButton_Click);
+				nextButton.Click += NextButton_Click;
 
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerBaudRateHelpLink = linkButtonFactory.Generate("What's this?".Localize());
 			printerBaudRateHelpLink.Margin = new BorderDouble(left: 5);
 			printerBaudRateHelpLink.VAnchor = VAnchor.ParentBottom;
-			printerBaudRateHelpLink.Click += new EventHandler(printerBaudRateHelp_Click);
+			printerBaudRateHelpLink.Click += printerBaudRateHelp_Click;
 
 			printerBaudRateHelpMessage = new TextWidget("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.".Localize(), 0, 0, 10);
 			printerBaudRateHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
