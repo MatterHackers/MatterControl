@@ -46,23 +46,6 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrintStatusRow : FlowLayoutWidget
 	{
-		protected static event Action<GuiWidget> privateAddIconToPrintStatusRow;
-		protected static FlowLayoutWidget iconContainer;
-		public static event Action<GuiWidget> AddIconToPrintStatusRow
-		{
-			add
-			{
-				privateAddIconToPrintStatusRow += value;
-				// and call it right away
-				value(iconContainer);
-			}
-
-			remove
-			{
-				privateAddIconToPrintStatusRow -= value;
-			}
-		}
-
 		public static GuiWidget Create(QueueDataView queueDataView)
 		{
 			if (UserSettings.Instance.IsTouchScreen)
@@ -73,15 +56,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				return new DesktopPrintStatusRow(queueDataView);
 			}
-		}
-
-		protected PrintStatusRow()
-		{
-		}
-
-		protected void DoAddIconToPrintStatusRow()
-		{
-			 privateAddIconToPrintStatusRow?.Invoke(iconContainer);
 		}
 	}
 
@@ -109,8 +83,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			AddHandlers();
 
 			onActivePrintItemChanged(null, null);
-
-			DoAddIconToPrintStatusRow();
 		}
 
 		private EventHandler unregisterEvents;
@@ -188,7 +160,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			FlowLayoutWidget printStatusContainer = CreateActivePrinterInfoWidget();
 			printStatusContainer.VAnchor |= VAnchor.ParentTop;
 
-			iconContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var iconContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			iconContainer.Name = "PrintStatusRow.IconContainer";
 			iconContainer.VAnchor |= VAnchor.ParentTop;
 			iconContainer.Margin = new BorderDouble(top: 3);
