@@ -843,7 +843,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void AddHandlers()
 		{
-			closeButton.Click += new EventHandler(onCloseButton_Click);
+			closeButton.Click += onCloseButton_Click;
 
 			saveButton.Click += (sender, e) =>
 			{
