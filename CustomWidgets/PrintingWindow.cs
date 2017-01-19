@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
@@ -36,9 +37,10 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.PrinterControls;
+using static MatterHackers.MatterControl.JogControls;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -78,7 +80,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public string ExtruderTemp { get; internal set; }
 		public string BedTemp { get; internal set; }
-		public string TimeString { get; internal set; }
 
 		private RGBA_Bytes PrimaryAccentColor = ActiveTheme.Instance.PrimaryAccentColor;
 		private RGBA_Bytes PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).GetAsRGBA_Bytes();
@@ -193,6 +194,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class ZAxisControls : FlowLayoutWidget
 	{
+		/*
 		private static TextImageButtonFactory buttonFactory = new TextImageButtonFactory()
 		{
 			fontSize = 13,
@@ -200,6 +202,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			hoverFillColor = ActiveTheme.Instance.PrimaryAccentColor,
 			//pressedFillColor = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.8).GetAsRGBA_Bytes()
 		};
+		*/
+
+		private static MoveButtonFactory buttonFactory = new MoveButtonFactory()
+		{
+			FontSize = 13,
+		};
+
+		static ZAxisControls()
+		{
+			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
+			buttonFactory.Colors.Fill.Hover = ActiveTheme.Instance.PrimaryAccentColor;
+			buttonFactory.BorderWidth = 0;
+			buttonFactory.Colors.Text.Normal = ActiveTheme.Instance.PrimaryTextColor;
+		}
 
 		public ZAxisControls() :
 			base(FlowDirection.TopToBottom)
@@ -212,38 +228,33 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			Button button;
 
-			button = CreateButton("1.00 mm");
-			button.HAnchor = HAnchor.ParentCenter;
+			button = CreateButton(1);
 			button.Click += (s, e) => MoveZAxis(1.0);
 			this.AddChild(button);
 
-			button = CreateButton("0.10 mm");
-			button.HAnchor = HAnchor.ParentCenter;
+			button = CreateButton(.1);
 			button.Click += (s, e) => MoveZAxis(0.1);
 			this.AddChild(button);
 
-			button = CreateButton("0.02 mm");
-			button.HAnchor = HAnchor.ParentCenter;
+			button = CreateButton(.02);
 			button.Click += (s, e) => MoveZAxis(0.02);
 			this.AddChild(button);
 
 			this.AddChild(new ZTuningWidget()
 			{
-				HAnchor = HAnchor.ParentCenter
+				HAnchor = HAnchor.ParentCenter,
+				Margin = 10
 			});
 
-			button = CreateButton("0.02 mm");
-			button.HAnchor = HAnchor.ParentCenter;
+			button = CreateButton(-.02);
 			button.Click += (s, e) => MoveZAxis(-0.02);
 			this.AddChild(button);
 
-			button = CreateButton("0.10 mm");
-			button.HAnchor = HAnchor.ParentCenter;
+			button = CreateButton(-.1);
 			button.Click += (s, e) => MoveZAxis(-0.1);
 			this.AddChild(button);
 
-			button = CreateButton("1.00 mm");
-			button.HAnchor = HAnchor.ParentCenter;
+			button = CreateButton(-1);
 			button.Click += (s, e) => MoveZAxis(1.0);
 			this.AddChild(button);
 
@@ -253,14 +264,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = new BorderDouble(top: 9),
 			});
 
-
 			//this.BackgroundColor = new RGBA_Bytes(200, 0, 0, 30);
 
 			this.Margin = new BorderDouble(0);
 			this.Margin = 0;
 			this.Padding = 3;
 			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
-			this.HAnchor = HAnchor.FitToChildren;
 		}
 
 		public void MoveZAxis(double moveAmount)
@@ -268,13 +277,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Move by (moveAmount);
 		}
 
-		private Button CreateButton(string localizedText, bool centerText = true)
+		private Button CreateButton(double moveAmount, bool centerText = true)
 		{
-			var button = buttonFactory.Generate(localizedText, centerText: centerText);
+			var button = buttonFactory.GenerateMoveButton($"{Math.Abs(moveAmount):0.00} mm", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
+			button.MoveAmount = moveAmount;
 			button.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 			button.VAnchor = VAnchor.FitToChildren;
 			button.Margin = new BorderDouble(0, 1);
 			button.Padding = new BorderDouble(15, 7);
+			button.Height = 35;
 			button.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			return button;
@@ -282,11 +293,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	}
 
-    public class PrintingWindow : SystemWindow
-    {
+	public class PrintingWindow : SystemWindow
+	{
 		private static PrintingWindow instance;
-		private EventHandler unregisterEvents;
 		private ProgressDial progressDial;
+		private TextWidget timeWidget;
+		private TextWidget printerName;
+		private TextWidget partName;
 
 		AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 		Stopwatch totalDrawTime = new Stopwatch();
@@ -308,7 +321,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			return button;
 		}
-
 
 		public void MockProgress()
 		{
@@ -335,6 +347,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			UiThread.RunOnIdle(MockProgress, .2);
 		}
 
+		private VerticalLine CreateVerticalLine()
+		{
+			return new VerticalLine()
+			{
+				BackgroundColor = new RGBA_Bytes(200, 200, 200, 30)
+			};
+		}
+	
 		public PrintingWindow(Action onCloseCallback, bool mockMode = false)
 			: base(1024, 600)
 		{
@@ -389,13 +409,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			actionBar.AddChild(resumeButton);
 
-			actionBar.AddChild(new VerticalLine());
+			actionBar.AddChild(CreateVerticalLine());
 
 			var cancelButton = CreateButton("Cancel".Localize().ToUpper());
 			//cancelButton.Click += (sender, e) => UiThread.RunOnIdle(CancelButton_Click);
 			actionBar.AddChild(cancelButton);
 
-			actionBar.AddChild(new VerticalLine());
+			actionBar.AddChild(CreateVerticalLine());
 			
 			var advancedButton = CreateButton("Advanced".Localize().ToUpper());
 			actionBar.AddChild(advancedButton);
@@ -423,7 +443,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			bodyRow.AddChild(partThumbnail);
 
-			bodyRow.AddChild(new VerticalLine());
+			bodyRow.AddChild(CreateVerticalLine());
 
 			var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -440,39 +460,52 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			progressContainer.AddChild(progressDial);
 
-			var time = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "time.png")))
+
+			var timeContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentCenter
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(50, 3)
 			};
-			progressContainer.AddChild(time);
+			progressContainer.AddChild(timeContainer);
 
-			var printer= new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "printer.png")))
+			var timeImage = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "time.png")));
+			timeContainer.AddChild(timeImage);
+
+			timeWidget = new TextWidget("", pointSize: 16)
 			{
-				HAnchor = HAnchor.ParentCenter
+				AutoExpandBoundsToText = true,
+				Margin = new BorderDouble(10, 0)
 			};
 
-			progressContainer.AddChild(printer);
+			timeContainer.AddChild(timeWidget);
 
-			var partName = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "PartName.png")))
+			printerName = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name), pointSize: 16)
 			{
-				HAnchor = HAnchor.ParentCenter
+				AutoExpandBoundsToText = true,
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(50, 3)
+			};
+
+			progressContainer.AddChild(printerName);
+
+			partName = new TextWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16)
+			{
+				AutoExpandBoundsToText = true,
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(50, 3)
 			};
 			progressContainer.AddChild(partName);
 
-			bodyRow.AddChild(new VerticalLine());
+			bodyRow.AddChild(CreateVerticalLine());
 
-			var zControls = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "z_controls.png")))
-			{
-				Margin = new BorderDouble(50, 0)
-			};
-
-			//bodyRow.AddChild(zControls);
-
-			bodyRow.AddChild(new ZAxisControls()
+			var widget = new ZAxisControls()
 			{
 				Margin = new BorderDouble(50, 0),
-				HAnchor = HAnchor.ParentLeftRight,
-			});
+				HAnchor = HAnchor.AbsolutePosition,
+				Width = 100
+			};
+
+			bodyRow.AddChild(widget);
 
 			var footerBar = new FlowLayoutWidget (FlowDirection.LeftToRight) 
 			{
@@ -561,7 +594,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					secondsPrinted);
 			}
 
-			progressDial.TimeString = timeString;
+			timeWidget.Text = timeString;
 
 			//progressDial.SomeText = "{0}: {1}    {2}: {3:.0}% {4}".FormatWith(timeTextString, timeString, progressString, PrinterConnectionAndCommunication.Instance.PercentComplete, completeString);
 

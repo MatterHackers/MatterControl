@@ -62,7 +62,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public static string GetFriendlyName(this PrintItemWrapper printItemWrapper)
 		{
-			return textInfo.ToTitleCase(printItemWrapper.Name.Replace('_', ' '));
+			if (printItemWrapper?.Name == null)
+			{
+				return "";
+			}
+
+			return textInfo?.ToTitleCase(printItemWrapper.Name.Replace('_', ' '));
 		}
 	}
 
