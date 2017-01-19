@@ -295,12 +295,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			printerSettings.SetValue(SettingsKey.print_leveling_enabled, doLeveling ? "1" : "0");
 
-			PrinterSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
-
 			if (doLeveling)
 			{
 				UpdateLevelSettings();
 			}
+
+			PrinterSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
 		}
 
 		public void UpdateLevelSettings()
