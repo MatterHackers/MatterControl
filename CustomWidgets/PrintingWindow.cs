@@ -38,6 +38,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.PrinterControls;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -226,13 +227,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			button.Click += (s, e) => MoveZAxis(0.02);
 			this.AddChild(button);
 
-			this.AddChild(new HorizontalLine());
-			this.AddChild(new TextWidget("-[CurrentValue]-", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(new ZTuningWidget()
 			{
-				HAnchor = HAnchor.ParentCenter,
-				Margin = new BorderDouble(0, 4)
+				HAnchor = HAnchor.ParentCenter
 			});
-			this.AddChild(new HorizontalLine());
 
 			button = CreateButton("0.02 mm");
 			button.HAnchor = HAnchor.ParentCenter;
