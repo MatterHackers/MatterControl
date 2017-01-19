@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public double ExtruderTemperature(int extruderIndex)
 		{
-			if(extruderIndex == 0)
+			if (extruderIndex == 0)
 			{
 				return printerSettings.GetValue<double>(SettingsKey.temperature);
 			}
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (layer.TryGetValue(SettingsKey.temperature, out result))
 						{
 							double value = 0;
-							if(double.TryParse(result, out value))
+							if (double.TryParse(result, out value))
 							{
 								return value;
 							}
@@ -299,7 +299,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (doLeveling)
 			{
-				PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+				UpdateLevelSettings();
+			}
+		}
+
+		public void UpdateLevelSettings()
+		{
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+			if (levelingData.SampledPositions.Count > 2)
+			{
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
 					levelingData.SampledPositions[0],
 					levelingData.SampledPositions[1],
