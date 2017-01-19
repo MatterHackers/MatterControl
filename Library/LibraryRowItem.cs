@@ -186,8 +186,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			WidgetTextColor = RGBA_Bytes.Black;
 			WidgetBackgroundColor = RGBA_Bytes.White;
 
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-
 			SetDisplayAttributes();
 
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);

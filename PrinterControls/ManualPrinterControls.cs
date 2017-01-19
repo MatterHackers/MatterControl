@@ -218,7 +218,6 @@ namespace MatterHackers.MatterControl
 							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
 						movementControlsContainer.jogControls.EnableBabystepping(false);
-						movementControlsContainer.OffsetStreamChanged(null, null);
 
 						break;
 
@@ -240,7 +239,6 @@ namespace MatterHackers.MatterControl
 							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
 						movementControlsContainer.jogControls.EnableBabystepping(false);
-						movementControlsContainer.OffsetStreamChanged(null, null);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
@@ -281,7 +279,6 @@ namespace MatterHackers.MatterControl
 								}
 
 								movementControlsContainer.jogControls.EnableBabystepping(true);
-								movementControlsContainer.OffsetStreamChanged(null, null);
 								break;
 
 							default:
@@ -306,7 +303,6 @@ namespace MatterHackers.MatterControl
 							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
 						movementControlsContainer.jogControls.EnableBabystepping(false);
-						movementControlsContainer.OffsetStreamChanged(null, null);
 
 						break;
 

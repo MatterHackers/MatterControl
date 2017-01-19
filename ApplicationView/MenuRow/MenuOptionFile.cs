@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Linq;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -30,6 +31,9 @@ namespace MatterHackers.MatterControl
 		{
 			return new List<MenuItemAction>
 			{
+				// TODO: Helper while building printing window prototype... remove once finalized
+				new MenuItemAction("Printing Window...".Localize(), () => PrintingWindow.Show(() => Console.WriteLine())),
+				new MenuItemAction("------------------------", null),
 				new MenuItemAction("Add Printer".Localize(), AddPrinter_Click),
 				new MenuItemAction("Import Printer".Localize(), ImportPrinter),
 				new MenuItemAction("Add File To Queue".Localize(), importFile_Click),
