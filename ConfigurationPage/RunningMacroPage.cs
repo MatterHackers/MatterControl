@@ -123,9 +123,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void CountDownTime()
 		{
 			long timeWaitedMs = endTimeMs - UiThread.CurrentTimerMs;
-			double ratioDone = 1 - timeToWaitMs != 0 ? ((double)timeWaitedMs / (double)timeToWaitMs) : 1;
-			progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
-			int seconds = (int)((timeToWaitMs * (1 - ratioDone)) / 1000);
+			double ratioDone = timeToWaitMs != 0 ? ((double)timeWaitedMs / (double)timeToWaitMs) : 1;
+			progressBar.RatioComplete = Math.Min(Math.Max(0, 1 - ratioDone), 1);
+			int seconds = (int)((timeToWaitMs - (timeToWaitMs * (1 - ratioDone))) / 1000);
 			progressBarText.Text = $"Time Remaining: {seconds / 60:#0}:{seconds % 60:00}";
 			if (!HasBeenClosed && ratioDone < 1)
 			{

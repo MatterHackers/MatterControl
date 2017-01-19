@@ -87,18 +87,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Move Z positive");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Move Z positive");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Move Z positive");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
+					for (int i = 0; i < 3; i++)
+					{
+						testRunner.ClickByName("Move Z positive", .5);
+						testRunner.ClickByName("Next Button", .5);
+						testRunner.ClickByName("Next Button", .5);
+						testRunner.ClickByName("Next Button", .5);
+					}
 					testRunner.ClickByName("Done Button");
 
 					testRunner.Wait(1);

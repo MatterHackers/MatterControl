@@ -274,6 +274,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			allPrintButtons.Add(resetConnectionButton);
 
 			SetButtonStates();
+
+			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => SetButtonStates(), ref unregisterEvents);
 		}
 
 		protected void AddHandlers()
