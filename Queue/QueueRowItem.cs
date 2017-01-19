@@ -199,8 +199,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			WidgetTextColor = RGBA_Bytes.Black;
 			WidgetBackgroundColor = RGBA_Bytes.White;
 
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-
 			SetDisplayAttributes();
 
 			FlowLayoutWidget topToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -237,17 +235,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 				middleColumn.Padding = new BorderDouble(8);
 				middleColumn.Margin = new BorderDouble(10, 0);
 				{
-					string labelName = textInfo.ToTitleCase(PrintItemWrapper.Name);
-					labelName = labelName.Replace('_', ' ');
-					partLabel = new TextWidget(labelName, pointSize: 14);
+					partLabel = new TextWidget(PrintItemWrapper.GetFriendlyName(), pointSize: 14);
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 16);
 
-					string partStatusLabelTxt = "Status".Localize().ToUpper();
-					string partStatusLabelTxtTest = "Queued to Print".Localize();
-					string partStatusLabelTxtFull = "{0}: {1}".FormatWith(partStatusLabelTxt, partStatusLabelTxtTest);
-
-					partStatus = new TextWidget(partStatusLabelTxtFull, pointSize: 10);
+					partStatus = new TextWidget($"{"Status".Localize().ToUpper()}: {"Queued to Print".Localize()}", pointSize: 10);
 					partStatus.AutoExpandBoundsToText = true;
 					partStatus.TextColor = WidgetTextColor;
 					partStatus.MinimumSize = new Vector2(50, 12);

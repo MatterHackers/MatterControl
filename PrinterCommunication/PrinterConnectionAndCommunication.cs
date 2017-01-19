@@ -56,6 +56,16 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
+	public static class ExtensionMethods
+	{
+		private static TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+		public static string GetFriendlyName(this PrintItemWrapper printItemWrapper)
+		{
+			return textInfo.ToTitleCase(printItemWrapper.Name.Replace('_', ' '));
+		}
+	}
+
 	/// <summary>
 	/// This is the class that communicates with a RepRap printer over the serial port.
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
