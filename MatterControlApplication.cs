@@ -262,6 +262,7 @@ namespace MatterHackers.MatterControl
 			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
 			{
 				GuiWidget.DeviceScale = 1.3;
+				SystemWindow.ShareSingleOsWindow = true;
 			}
 			//GuiWidget.DeviceScale = 2;
 

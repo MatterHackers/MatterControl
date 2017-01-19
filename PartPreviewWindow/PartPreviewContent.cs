@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int tabPointSize = 16;
             // add the correct tabs based on whether we are stand alone or embedded
             Tab threeDViewTab;
-            if (windowMode == View3DWidget.WindowMode.StandAlone || OsInformation.OperatingSystem == OSType.Android)
+            if (windowMode == View3DWidget.WindowMode.StandAlone || UserSettings.Instance.IsTouchScreen)
 			{
                 threeDViewTab = new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
                     selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
