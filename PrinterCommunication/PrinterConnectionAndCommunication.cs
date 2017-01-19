@@ -909,6 +909,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
+				if (gCodeFileStream0 == null)
+				{
+					return 0;
+				}
+
 				int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
 				return loadedGCode.Ratio0to1IntoContainedLayer(instructionIndex);
 			}
