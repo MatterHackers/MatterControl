@@ -168,6 +168,7 @@
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItemCollection.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorWidget.cs" />
     <Compile Include="CustomWidgets\PopOutTextTab.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="CustomWidgets\ThumbnailTracer.cs" />

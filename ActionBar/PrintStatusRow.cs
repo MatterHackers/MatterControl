@@ -69,7 +69,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TemperatureWidgetBase bedTemperatureWidget;
 		private TemperatureWidgetBase extruderTemperatureWidget;
 		private QueueDataView queueDataView;
-		private TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
 		public DesktopPrintStatusRow(QueueDataView queueDataView)
 		{
@@ -337,9 +336,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
 			{
-				string labelName = textInfo.ToTitleCase(PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name);
-				labelName = labelName.Replace('_', ' ');
-				this.activePrintName.Text = labelName;
+				this.activePrintName.Text = PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName();
 			}
 			else
 			{
@@ -454,7 +451,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TemperatureWidgetBase extruderTemperatureWidget;
 		private QueueDataView queueDataView;
 		private Button setupButton;
-		private TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 		private Stopwatch timeSinceLastDrawTime = new Stopwatch();
 
 		public TouchScreenPrintStatusRow(QueueDataView queueDataView)
@@ -770,9 +766,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
 			{
-				string labelName = textInfo.ToTitleCase(PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name);
-				labelName = labelName.Replace('_', ' ');
-				this.activePrintName.Text = labelName;
+				this.activePrintName.Text = PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName();
 			}
 			else
 			{
