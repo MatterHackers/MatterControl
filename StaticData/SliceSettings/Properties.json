@@ -498,7 +498,7 @@
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
-		"DefaultValue": "0"
+		"DefaultValue": "1"
 	},
 	{
 		"QuickMenuSettings": [ ],
