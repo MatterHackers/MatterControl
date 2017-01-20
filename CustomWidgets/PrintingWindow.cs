@@ -112,9 +112,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ProgressDial()
 		{
-			this.Width = 230;
-			this.Height = 230;
-
 			percentCompleteWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
@@ -134,11 +131,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AddChild(percentCompleteWidget);
 			this.AddChild(layerCountWidget);
 
-			borderStroke = new Stroke(new Ellipse(
-				Vector2.Zero,
-				borderRadius,
-				borderRadius));
-
 			borderColor = ActiveTheme.Instance.PrimaryTextColor;
 			borderColor.Alpha0To1 = 0.3f;
 		}
@@ -148,6 +140,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			borderRadius = this.LocalBounds.Width / 2 - padding;
 			outerRingRadius = borderRadius - (outerRingStrokeWidth / 2) - 6; ;
 			innerRingRadius = outerRingRadius - (outerRingStrokeWidth / 2) - (strokeWidth / 2);
+
+			Console.WriteLine("width: {3} - border: {0}, outer: {1}, inner: {2}", borderRadius, outerRingRadius, innerRingRadius, this.LocalBounds.Width);
+
+			borderStroke = new Stroke(new Ellipse(
+				Vector2.Zero,
+				borderRadius,
+				borderRadius));
 
 			base.OnBoundsChanged(e);
 		}
@@ -285,7 +284,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			button.VAnchor = VAnchor.FitToChildren;
 			button.Margin = new BorderDouble(0, 1);
 			button.Padding = new BorderDouble(15, 7);
-			button.Height = 35;
+			button.Height = 55;
 			button.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			return button;
@@ -356,11 +355,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 	
 		public PrintingWindow(Action onCloseCallback, bool mockMode = false)
-			: base(1024, 600)
+			: base(1280, 750)
 		{
 			this.BackgroundColor = new RGBA_Bytes(35, 40, 49);
 			this.onCloseCallback = onCloseCallback;
-			Title = LocalizedString.Get("Print Monitor");
+			this.Title = "Print Monitor".Localize();
 
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -424,88 +423,104 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(50),
-				BackgroundColor = new RGBA_Bytes(35, 40, 49)
+				Padding = new BorderDouble(50, 70),
+				BackgroundColor = new RGBA_Bytes(35, 40, 49),
 			};
 			topToBottom.AddChild(bodyContainer);
 
 			var bodyRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter,
+				VAnchor =VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
 				//BackgroundColor = new RGBA_Bytes(125, 255, 46, 20),
 			};
 			bodyContainer.AddChild(bodyRow);
 
-			var partThumbnail = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "part_thumbnail.png")))
+			// Thumbnail section
 			{
-				Margin = new BorderDouble(50, 0)
-			};
-			bodyRow.AddChild(partThumbnail);
+				var partThumbnail = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "part_thumbnail.png")))
+				{
+					VAnchor = VAnchor.ParentCenter,
+					Margin = new BorderDouble(right: 50)
+				};
+				bodyRow.AddChild(partThumbnail);
+			}
 
 			bodyRow.AddChild(CreateVerticalLine());
 
-			var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			// Progress section
 			{
-				Margin = new BorderDouble(50, 0),
-				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
-				//BackgroundColor = new RGBA_Bytes(125, 255, 46, 20),
-			};
-			bodyRow.AddChild(progressContainer);
+				var expandingContainer = new HorizontalSpacer()
+				{
+					VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter
+				};
+				bodyRow.AddChild(expandingContainer);
 
-			progressDial = new ProgressDial()
-			{
-				HAnchor = HAnchor.ParentCenter,
-				Height = 200
-			};
-			progressContainer.AddChild(progressDial);
+				var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Margin = new BorderDouble(50, 0),
+					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+					HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
+					//BackgroundColor = new RGBA_Bytes(125, 255, 46, 20),
+				};
+				expandingContainer.AddChild(progressContainer);
 
+				progressDial = new ProgressDial()
+				{
+					HAnchor = HAnchor.ParentCenter,
+					Height = 200,
+					Width = 200
+				};
+				progressContainer.AddChild(progressDial);
 
-			var timeContainer = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(50, 3)
-			};
-			progressContainer.AddChild(timeContainer);
+				var timeContainer = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = new BorderDouble(50, 3)
+				};
+				progressContainer.AddChild(timeContainer);
 
-			var timeImage = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "time.png")));
-			timeContainer.AddChild(timeImage);
+				var timeImage = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "time.png")));
+				timeContainer.AddChild(timeImage);
 
-			timeWidget = new TextWidget("", pointSize: 16)
-			{
-				AutoExpandBoundsToText = true,
-				Margin = new BorderDouble(10, 0)
-			};
+				timeWidget = new TextWidget("", pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				{
+					AutoExpandBoundsToText = true,
+					Margin = new BorderDouble(10, 0)
+				};
 
-			timeContainer.AddChild(timeWidget);
+				timeContainer.AddChild(timeWidget);
 
-			printerName = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name), pointSize: 16)
-			{
-				AutoExpandBoundsToText = true,
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(50, 3)
-			};
+				printerName = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				{
+					AutoExpandBoundsToText = true,
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = new BorderDouble(50, 3)
+				};
 
-			progressContainer.AddChild(printerName);
+				progressContainer.AddChild(printerName);
 
-			partName = new TextWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16)
-			{
-				AutoExpandBoundsToText = true,
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(50, 3)
-			};
-			progressContainer.AddChild(partName);
+				partName = new TextWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				{
+					AutoExpandBoundsToText = true,
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = new BorderDouble(50, 3)
+				};
+				progressContainer.AddChild(partName);
+			}
 
 			bodyRow.AddChild(CreateVerticalLine());
 
-			var widget = new ZAxisControls()
+			// ZControls
 			{
-				Margin = new BorderDouble(50, 0),
-				HAnchor = HAnchor.AbsolutePosition,
-				Width = 100
-			};
-
-			bodyRow.AddChild(widget);
+				var widget = new ZAxisControls()
+				{
+					Margin = new BorderDouble(left: 50),
+					VAnchor = VAnchor.ParentCenter,
+					Width = 120
+				};
+				bodyRow.AddChild(widget);
+			}
 
 			var footerBar = new FlowLayoutWidget (FlowDirection.LeftToRight) 
 			{
@@ -541,8 +556,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 				}
 			}
-
-			AnchorAll();
 
 			UiThread.RunOnIdle(() =>
 			{
