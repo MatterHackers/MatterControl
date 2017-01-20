@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -438,8 +439,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// Thumbnail section
 			{
-				var partThumbnail = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "part_thumbnail.png")))
+				ImageBuffer imageBuffer = null;
+
+				string stlHashCode = PrinterConnectionAndCommunication.Instance.ActivePrintItem?.FileHashCode.ToString();
+				if (!string.IsNullOrEmpty(stlHashCode) && stlHashCode != "0")
 				{
+					imageBuffer = PartThumbnailWidget.LoadImageFromDisk(stlHashCode);
+					if (imageBuffer != null)
+					{
+						imageBuffer = ImageBuffer.CreateScaledImage(imageBuffer, 500, 500);
+					}
+				}
+
+				if (imageBuffer == null)
+				{
+					imageBuffer = StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "part_thumbnail.png"));
+				}
+
+				var partThumbnail = new ImageWidget(imageBuffer)
+				{ 
 					VAnchor = VAnchor.ParentCenter,
 					Margin = new BorderDouble(right: 50)
 				};

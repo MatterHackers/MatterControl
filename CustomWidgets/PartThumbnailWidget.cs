@@ -374,7 +374,7 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
-		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode)
+		public static ImageBuffer LoadImageFromDisk(string stlHashCode)
 		{
 			try
 			{
@@ -668,7 +668,7 @@ namespace MatterHackers.MatterControl
 
 			if (stlHashCode != "0")
 			{
-				ImageBuffer bigRender = LoadImageFromDisk(this, stlHashCode);
+				ImageBuffer bigRender = LoadImageFromDisk(stlHashCode);
 				if (bigRender == null)
 				{
 					this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
