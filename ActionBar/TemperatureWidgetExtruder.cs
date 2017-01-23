@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Kevin Pope, John Lewin
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -46,21 +46,15 @@ namespace MatterHackers.MatterControl.ActionBar
 			: base("150.3°")
 		{
 			temperatureTypeName.Text = "Extruder";
-			setToCurrentTemperature();
+			DisplayCurrentTemperature();
 
 			ToolTipText = "Current extruder temperature".Localize();
 			preheatButton.ToolTipText = "Preheat the Extruder".Localize();
 
-			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) => setToCurrentTemperature(), ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
-		public override void OnClosed(EventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
-		}
-
-		private void setToCurrentTemperature()
+		private void DisplayCurrentTemperature()
 		{
 			string tempDirectionIndicator = "";
 			if (PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1) > 0)
@@ -95,6 +89,12 @@ namespace MatterHackers.MatterControl.ActionBar
 					PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderNumber - 1, (int)(targetTemp + .5));
 				}
 			}
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 }
