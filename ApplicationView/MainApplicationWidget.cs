@@ -109,11 +109,12 @@ namespace MatterHackers.MatterControl
 			TopContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			TopContainer.HAnchor = HAnchor.ParentLeftRight;
 
-#if !__ANDROID__
-			// The application menu bar, which is suppressed on Android
-			ApplicationMenuRow menuRow = new ApplicationMenuRow();
-			TopContainer.AddChild(menuRow);
-#endif
+			if (!UserSettings.Instance.IsTouchScreen)
+			{
+				// The application menu bar, which is suppressed on Android
+				ApplicationMenuRow menuRow = new ApplicationMenuRow();
+				TopContainer.AddChild(menuRow);
+			}
 
 			menuSeparator = new GuiWidget();
 			menuSeparator.Height = 12;
@@ -154,11 +155,12 @@ namespace MatterHackers.MatterControl
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.AnchorAll();
 
-#if !__ANDROID__
-			// The application menu bar, which is suppressed on Android
-			var menuRow = new ApplicationMenuRow();
-			container.AddChild(menuRow);
-#endif
+			if (!UserSettings.Instance.IsTouchScreen)
+			{
+				// The application menu bar, which is suppressed on Android
+				var menuRow = new ApplicationMenuRow();
+				container.AddChild(menuRow);
+			}
 
 			var menuSeparator = new GuiWidget()
 			{

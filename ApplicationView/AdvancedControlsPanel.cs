@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 			TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 			advancedControlsButtonFactory.fontSize = 14;
 			advancedControlsButtonFactory.invertImageLocation = false;
-			backButton = advancedControlsButtonFactory.Generate("Back".Localize(), StaticData.Instance.LoadIcon("icon_arrow_left_32x32.png", 32,32));
+			backButton = advancedControlsButtonFactory.Generate("Back".Localize(), StaticData.Instance.LoadIcon("icon_arrow_left_32x32.png", 32, 32));
 			backButton.ToolTipText = "Switch to Queue, Library and History".Localize();
 			backButton.Margin = new BorderDouble(right: 3);
 			backButton.VAnchor = VAnchor.ParentBottom;
@@ -137,15 +137,16 @@ namespace MatterHackers.MatterControl
 			var sliceSettingsTabPage = new TabPage(sliceSettingsWidget, "Settings".Localize().ToUpper());
 			var sliceSettingPopOut = new PopOutTextTabWidget(sliceSettingsTabPage, SliceSettingsTabName, new Vector2(590, 400), textSize);
 			advancedControls.AddTab(sliceSettingPopOut);
-			
+
 			var controlsTabPage = new TabPage(manualPrinterControlsScrollArea, "Controls".Localize().ToUpper());
 			var controlsPopOut = new PopOutTextTabWidget(controlsTabPage, ControlsTabName, new Vector2(400, 300), textSize);
 			advancedControls.AddTab(controlsPopOut);
 
-#if !__ANDROID__
-			MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
-			MenuOptionSettings.controlsPopOut = controlsPopOut;
-#endif
+			if (!UserSettings.Instance.IsTouchScreen)
+			{
+				MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
+				MenuOptionSettings.controlsPopOut = controlsPopOut;
+			}
 
 			var optionsControls = new PrinterConfigurationScrollWidget();
 			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(optionsControls, "Options".Localize().ToUpper()), "Options Tab", textSize,
