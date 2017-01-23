@@ -361,9 +361,11 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			if (firstDraw)
 			{
-#if !__ANDROID__
-				textToAddWidget.Focus();
-#endif
+				if (!UserSettings.Instance.IsTouchScreen)
+				{
+					textToAddWidget.Focus();
+				}
+
 				//textToAddWidget.Text = "Test Text";
 				firstDraw = false;
 			}

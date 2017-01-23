@@ -125,9 +125,10 @@ namespace MatterHackers.MatterControl
 				if (this.UpdateRequired && !haveShowUpdateRequired)
 				{
 					haveShowUpdateRequired = true;
-#if !__ANDROID__
-					UiThread.RunOnIdle(CheckForUpdateWindow.Show);
-#endif
+					if (!UserSettings.Instance.IsTouchScreen)
+					{
+						UiThread.RunOnIdle(CheckForUpdateWindow.Show);
+					}
 				}
 			}
 		}

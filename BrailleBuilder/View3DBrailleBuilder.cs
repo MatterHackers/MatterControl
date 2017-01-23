@@ -352,9 +352,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			if (firstDraw)
 			{
-#if !__ANDROID__
-				textToAddWidget.Focus();
-#endif
+				if (!UserSettings.Instance.IsTouchScreen)
+				{
+					textToAddWidget.Focus();
+				}
+
 				//textToAddWidget.Text = "Test Text";
 				firstDraw = false;
 			}

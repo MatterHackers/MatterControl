@@ -1,6 +1,7 @@
 ﻿using MatterHackers.MatterControl.DataStorage;
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
@@ -55,6 +56,7 @@ namespace MatterHackers.MatterControl
 						if (globalInstance == null)
 						{
 							globalInstance = new UserSettings();
+							ToolTipManager.AllowToolTips = !UserSettings.Instance.IsTouchScreen;
 						}
 					}
 				}
