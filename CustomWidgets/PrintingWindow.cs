@@ -28,9 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
@@ -45,6 +46,66 @@ using static MatterHackers.MatterControl.JogControls;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
+	public class ExtruderStatusWidget : FlowLayoutWidget
+	{
+		private int extruderIndex;
+
+		int fontSize = 14;
+
+		private TextWidget targetTemp;
+		private TextWidget actualTemp;
+
+		public ExtruderStatusWidget(int extruderIndex)
+		{
+			this.extruderIndex = extruderIndex;
+
+			var extruderName = new TextWidget($"{"Extruder".Localize()} {extruderIndex + 1}", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(right: 8)
+			};
+
+			this.AddChild(extruderName);
+
+			this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "extruder_temp.png")))
+			{
+				Margin = new BorderDouble(right: 8)
+			});
+
+			actualTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(right: 8)
+			};
+			this.AddChild(actualTemp);
+
+			this.AddChild(new VerticalLine()
+			{
+				BackgroundColor = new RGBA_Bytes(200, 200, 200, 30),
+				Margin = new BorderDouble(right: 8)
+			});
+
+			targetTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(right: 8)
+			};
+			this.AddChild(targetTemp);
+		}
+
+		public void UpdateTemperatures()
+		{
+			double targetValue = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex);
+			double actualValue = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex);
+
+			this.actualTemp.Text = $"{actualValue:0.#}°";
+			this.targetTemp.Text = $"{targetValue:0.#}°";
+		}
+	}
+
 	public class ProgressDial : GuiWidget
 	{
 		private double completedRatio = 0;
@@ -78,9 +139,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}
 		}
-
-		public string ExtruderTemp { get; internal set; }
-		public string BedTemp { get; internal set; }
 
 		private RGBA_Bytes PrimaryAccentColor = ActiveTheme.Instance.PrimaryAccentColor;
 		private RGBA_Bytes PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).GetAsRGBA_Bytes();
@@ -204,41 +262,31 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		};
 		*/
 
-		private static MoveButtonFactory buttonFactory = new MoveButtonFactory()
+		private MoveButtonFactory buttonFactory = new MoveButtonFactory()
 		{
 			FontSize = 13,
 		};
 
-		static ZAxisControls()
+		public ZAxisControls() :
+			base(FlowDirection.TopToBottom)
 		{
 			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
 			buttonFactory.Colors.Fill.Hover = ActiveTheme.Instance.PrimaryAccentColor;
 			buttonFactory.BorderWidth = 0;
 			buttonFactory.Colors.Text.Normal = ActiveTheme.Instance.PrimaryTextColor;
-		}
 
-		public ZAxisControls() :
-			base(FlowDirection.TopToBottom)
-		{
 			this.AddChild(new TextWidget("Z+", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				HAnchor = HAnchor.ParentCenter,
 				Margin = new BorderDouble(bottom: 8)
 			});
 
-			Button button;
 
-			button = CreateButton(1);
-			button.Click += (s, e) => MoveZAxis(1.0);
-			this.AddChild(button);
+			this.AddChild(CreateZMoveButton(1));
 
-			button = CreateButton(.1);
-			button.Click += (s, e) => MoveZAxis(0.1);
-			this.AddChild(button);
+			this.AddChild(CreateZMoveButton(.1));
 
-			button = CreateButton(.02);
-			button.Click += (s, e) => MoveZAxis(0.02);
-			this.AddChild(button);
+			this.AddChild(CreateZMoveButton(.02));
 
 			this.AddChild(new ZTuningWidget()
 			{
@@ -246,17 +294,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = 10
 			});
 
-			button = CreateButton(-.02);
-			button.Click += (s, e) => MoveZAxis(-0.02);
-			this.AddChild(button);
+			this.AddChild(CreateZMoveButton(-.02));
 
-			button = CreateButton(-.1);
-			button.Click += (s, e) => MoveZAxis(-0.1);
-			this.AddChild(button);
+			this.AddChild(CreateZMoveButton(-.1));
 
-			button = CreateButton(-1);
-			button.Click += (s, e) => MoveZAxis(1.0);
-			this.AddChild(button);
+			this.AddChild(CreateZMoveButton(-1));
 
 			this.AddChild(new TextWidget("Z-", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
@@ -272,12 +314,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
 		}
 
-		public void MoveZAxis(double moveAmount)
-		{
-			// Move by (moveAmount);
-		}
-
-		private Button CreateButton(double moveAmount, bool centerText = true)
+		private Button CreateZMoveButton(double moveAmount, bool centerText = true)
 		{
 			var button = buttonFactory.GenerateMoveButton($"{Math.Abs(moveAmount):0.00} mm", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
 			button.MoveAmount = moveAmount;
@@ -290,7 +327,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			return button;
 		}
-
 	}
 
 	public class PrintingWindow : SystemWindow
@@ -301,6 +337,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private TextWidget printerName;
 		private TextWidget partName;
 
+		private List<ExtruderStatusWidget> extruderStatusWidgets;
+
+		private EventHandler unregisterEvents;
+
 		AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 		Stopwatch totalDrawTime = new Stopwatch();
 
@@ -310,6 +350,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			fontSize = 15,
 			invertImageLocation = false,
+			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
 		};
 
 		private Button CreateButton(string localizedText, bool centerText = true)
@@ -354,7 +398,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				BackgroundColor = new RGBA_Bytes(200, 200, 200, 30)
 			};
 		}
-	
+
 		public PrintingWindow(Action onCloseCallback, bool mockMode = false)
 			: base(1280, 750)
 		{
@@ -416,7 +460,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(cancelButton);
 
 			actionBar.AddChild(CreateVerticalLine());
-			
+
 			var advancedButton = CreateButton("Advanced".Localize().ToUpper());
 			actionBar.AddChild(advancedButton);
 
@@ -424,14 +468,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(50, 70),
+				Padding = new BorderDouble(50),
 				BackgroundColor = new RGBA_Bytes(35, 40, 49),
 			};
 			topToBottom.AddChild(bodyContainer);
 
 			var bodyRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				VAnchor =VAnchor.ParentBottomTop,
+				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
 				//BackgroundColor = new RGBA_Bytes(125, 255, 46, 20),
 			};
@@ -457,7 +501,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				var partThumbnail = new ImageWidget(imageBuffer)
-				{ 
+				{
 					VAnchor = VAnchor.ParentCenter,
 					Margin = new BorderDouble(right: 50)
 				};
@@ -540,19 +584,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				bodyRow.AddChild(widget);
 			}
 
-			var footerBar = new FlowLayoutWidget (FlowDirection.LeftToRight) 
+			var footerBar = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				VAnchor = VAnchor.ParentBottom | VAnchor.FitToChildren,
 				HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
-				BackgroundColor = new RGBA_Bytes(35, 40, 49)
+				BackgroundColor = new RGBA_Bytes(35, 40, 49),
+				Margin = new BorderDouble(bottom: 30)
 			};
 			topToBottom.AddChild (footerBar);
 
-			int extruderCount = 3;
+			int extruderCount = mockMode ? 3 : ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+
+			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(i)).ToList();
 
 			if (extruderCount == 1)
 			{
-				footerBar.AddChild(new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "Extruder.png"))));
+				footerBar.AddChild(extruderStatusWidgets[0]);
 			}
 			else
 			{
@@ -562,15 +609,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var columnB = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				footerBar.AddChild(columnB);
 
+				// Add each status widget into the scene, placing into the appropriate column
 				for (var i = 0; i < extruderCount; i++)
 				{
+					var widget = extruderStatusWidgets[i];
 					if (i % 2 == 0)
 					{
-						columnA.AddChild(new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "Extruder.png"))));
+						widget.Margin = new BorderDouble(right: 20);
+						columnA.AddChild(widget);
 					}
 					else
 					{
-						columnB.AddChild(new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "Extruder.png"))));
+						columnB.AddChild(widget);
 					}
 				}
 			}
@@ -586,76 +636,42 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					CheckOnPrinter();
 				}
 			});
+
+			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) =>
+			{
+				var eventArgs = e as TemperatureEventArgs;
+				if (eventArgs != null && eventArgs.Index0Based < extruderStatusWidgets.Count)
+				{
+					extruderStatusWidgets[eventArgs.Index0Based].UpdateTemperatures();
+				}
+			}, ref unregisterEvents);
 		}
 
 		void CheckOnPrinter()
 		{
-			//if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-			{
-				GetProgressInfo();
-				UiThread.RunOnIdle(CheckOnPrinter, 1);
-			}
-			/*
-			else
-			{
-				UiThread.RunOnIdle(Close);
-			}
-			*/
+			GetProgressInfo();
+			UiThread.RunOnIdle(CheckOnPrinter, 1);
 		}
 
 		private void GetProgressInfo()
 		{
-			string timeString = "";
 			int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
 			int hoursPrinted = (int)(secondsPrinted / (60 * 60));
 			int minutesPrinted = (int)(secondsPrinted / 60 - hoursPrinted * 60);
 			secondsPrinted = secondsPrinted % 60;
 
-			if (hoursPrinted > 0)
-			{
-				timeString = string.Format("{0}:{1:00}:{2:00}",
-					hoursPrinted,
-					minutesPrinted,
-					secondsPrinted);
-			}
-			else
-			{
-				timeString = string.Format("{0}:{1:00}",
-					minutesPrinted,
-					secondsPrinted);
-			}
-
-			timeWidget.Text = timeString;
-
-			//progressDial.SomeText = "{0}: {1}    {2}: {3:.0}% {4}".FormatWith(timeTextString, timeString, progressString, PrinterConnectionAndCommunication.Instance.PercentComplete, completeString);
-
-			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed");
-
-			progressDial.ExtruderTemp = "Extruder: {0:0.0}° | {1}°".FormatWith(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(0));
-			progressDial.BedTemp = !hasHeatedBed ?  "" : "Bed: {0:0.0}° | {1}°".FormatWith(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, PrinterConnectionAndCommunication.Instance.TargetBedTemperature);
+			// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration 
+			timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{1:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
 
 			progressDial.LayerCount = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
 			progressDial.LayerCompletedRatio = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
 			progressDial.CompletedRatio = PrinterConnectionAndCommunication.Instance.PercentComplete / 100;
-		}
 
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			//totalDrawTime.Restart();
-			base.OnDraw(graphics2D);
-
-			//Vector2 center = new Vector2(Width/2, Height/2);
-			//RectangleDouble thermometerRect = new RectangleDouble(center.x - Width/6, center.y - Height/32, center.x + Width/6, center.y + Height/32);
-			//thermometerRect.Offset(0, -Height/4);
-			//graphics2D.Rectangle(thermometerRect, ActiveTheme.Instance.PrimaryAccentColor);
-			//RectangleDouble thermometerFill = new RectangleDouble(thermometerRect.Left, thermometerRect.Bottom, thermometerRect.Left + thermometerRect.Width * PrinterConnectionAndCommunication.Instance.PercentComplete / 100, thermometerRect.Top);
-			//graphics2D.FillRectangle(thermometerFill, ActiveTheme.Instance.PrimaryAccentColor);
-
-			//totalDrawTime.Stop();
-
-			//millisecondTimer.Update((int)totalDrawTime.ElapsedMilliseconds);
-
-			//millisecondTimer.Draw(graphics2D, this.Width * 3 / 4 - 15, this.Height - 120);
+			/*
+			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed");
+			progressDial.ExtruderTemp = "Extruder: {0:0.0}° | {1}°".FormatWith(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(0));
+			progressDial.BedTemp = !hasHeatedBed ? "" : "Bed: {0:0.0}° | {1}°".FormatWith(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, PrinterConnectionAndCommunication.Instance.TargetBedTemperature);
+			*/
 		}
 
 		public static bool IsShowing 
@@ -682,6 +698,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnClosed(EventArgs e)
 		{
+			unregisterEvents?.Invoke(this, null);
+
 			instance = null;
 			base.OnClosed(e);
 			onCloseCallback();

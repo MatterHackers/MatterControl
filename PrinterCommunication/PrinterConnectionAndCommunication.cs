@@ -3079,43 +3079,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 	public class PrintItemWrapperEventArgs : EventArgs
 	{
-		private PrintItemWrapper printItemWrapper;
-
 		public PrintItemWrapperEventArgs(PrintItemWrapper printItemWrapper)
 		{
-			this.printItemWrapper = printItemWrapper;
+			this.PrintItemWrapper = printItemWrapper;
 		}
 
-		public PrintItemWrapper PrintItemWrapper
-		{
-			get { return printItemWrapper; }
-		}
+		public PrintItemWrapper PrintItemWrapper { get; }
 	}
 
 	/// <summary>
 	/// This is a class to pass temperatures to callbacks that expect them.
-	/// A call back can try and cast to this ( TemperatureEventArgs tempArgs = e as TemperatureEventArgs)
-	/// and then use the temperature if available.
 	/// </summary>
 	public class TemperatureEventArgs : EventArgs
 	{
-		private int index0Based;
-		private double temperature;
-
 		public TemperatureEventArgs(int index0Based, double temperature)
 		{
-			this.index0Based = index0Based;
-			this.temperature = temperature;
+			this.Index0Based = index0Based;
+			this.Temperature = temperature;
 		}
 
-		public int Index0Based
-		{
-			get { return index0Based; }
-		}
-
-		public double Temperature
-		{
-			get { return temperature; }
-		}
+		public int Index0Based { get; }
+		public double Temperature { get; }
 	}
 }
