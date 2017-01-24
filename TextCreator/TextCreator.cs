@@ -37,17 +37,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
 	public class TextCreatorPlugin : MatterControlPlugin
 	{
-		public TextCreatorPlugin()
-		{
-		}
-
-		private GuiWidget mainApplication;
-
 		public override void Initialize(GuiWidget application)
 		{
-			CreatorInformation information = new CreatorInformation(LaunchNewTextCreator, "TC_32x32.png", "Text Creator".Localize());
+			var information = new CreatorInformation(
+				() => new TextCreatorMainWindow(), 
+				"TC_32x32.png", 
+				"Text Creator".Localize());
+
 			RegisteredCreators.Instance.RegisterLaunchFunction(information);
-			mainApplication = application;
 		}
 
 		public override string GetPluginInfoJSon()
@@ -59,11 +56,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				"\"Developer\": \"MatterHackers, Inc.\"," +
 				"\"URL\": \"https://www.matterhackers.com\"" +
 				"}";
-		}
-
-		public void LaunchNewTextCreator(object sender, EventArgs e)
-		{
-			TextCreatorMainWindow mainWindow = new TextCreatorMainWindow();
 		}
 	}
 }

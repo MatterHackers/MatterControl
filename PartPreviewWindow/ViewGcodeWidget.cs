@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewGcodeWidget : GuiWidget
 	{
-		public EventHandler DoneLoading;
+		public event EventHandler DoneLoading;
 
 		public ProgressChangedEventHandler LoadingProgressChanged;
 

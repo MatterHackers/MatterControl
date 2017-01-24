@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Wait(.1);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test, Apartment(ApartmentState.STA) /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
 		public async Task ClearingCheckBoxClearsUserOverride()
 		{
 			AutomationTest testToRun = (testRunner) =>
