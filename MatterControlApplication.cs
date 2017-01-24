@@ -34,13 +34,11 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using Gaming.Game;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PluginSystem;
@@ -58,15 +56,16 @@ namespace MatterHackers.MatterControl
 	public class MatterControlApplication : SystemWindow
 	{
 #if DEBUG
+
 		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
 		public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
+
 #else
 		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
 #endif
 
 		public static bool CameraInUseByExternalProcess { get; set; } = false;
 		public bool RestartOnClose = false;
-		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
 		private string[] commandLineArgs = null;
 		private string confirmExit = "Confirm Exit".Localize();
@@ -84,10 +83,10 @@ namespace MatterHackers.MatterControl
 		private Stopwatch totalDrawTime = new Stopwatch();
 
 #if true//!DEBUG
-		static RaygunClient _raygunClient = GetCorrectClient();
+		private static RaygunClient _raygunClient = GetCorrectClient();
 #endif
 
-		static RaygunClient GetCorrectClient()
+		private static RaygunClient GetCorrectClient()
 		{
 			if (OsInformation.OperatingSystem == OSType.Mac)
 			{
@@ -259,7 +258,7 @@ namespace MatterHackers.MatterControl
 
 			GuiWidget.DefaultEnforceIntegerBounds = true;
 
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				GuiWidget.DeviceScale = 1.3;
 				SystemWindow.ShareSingleOsWindow = true;
@@ -325,7 +324,8 @@ namespace MatterHackers.MatterControl
 			PictureTaken?.Invoke(null, null);
 		}
 
-		bool dropWasOnChild = true;
+		private bool dropWasOnChild = true;
+
 		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
 		{
 			base.OnDragEnter(fileDropEventArgs);
@@ -418,12 +418,19 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler PictureTaken;
 
+		private static Vector2 minSize { get; set; } = new Vector2(600, 600);
+
 		public static MatterControlApplication CreateInstance(int overrideWidth = -1, int overrideHeight = -1)
 		{
 			int width = 0;
 			int height = 0;
 
-			// check if the app has a size alread set
+			if (UserSettings.Instance.IsTouchScreen)
+			{
+				minSize = new Vector2(800, 480);
+			}
+
+			// check if the app has a size already set
 			string windowSize = ApplicationSettings.Instance.get(ApplicationSettingsKey.WindowSize);
 			if (windowSize != null && windowSize != "")
 			{
@@ -619,7 +626,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called 
+						// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called
 						// when MatterControlApplication.OnClosed is invoked
 						CancelClose = true;
 					}
@@ -642,7 +649,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called 
+						// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called
 						// when MatterControlApplication.OnClosed is invoked
 						CancelClose = true;
 					}
@@ -869,7 +876,8 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
-		bool showNamesUnderMouse = false;
+		private bool showNamesUnderMouse = false;
+
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
 			if (keyEvent.KeyCode == Keys.F1)
@@ -878,7 +886,6 @@ namespace MatterHackers.MatterControl
 			}
 			base.OnKeyDown(keyEvent);
 		}
-
 
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
