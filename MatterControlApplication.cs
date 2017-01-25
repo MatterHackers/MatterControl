@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(CheckOnPrinter);
 
 			string desktopPosition = ApplicationSettings.Instance.get(ApplicationSettingsKey.DesktopPosition);
-			if (desktopPosition != null && desktopPosition != "")
+			if (!string.IsNullOrEmpty(desktopPosition))
 			{
 				string[] sizes = desktopPosition.Split(',');
 
@@ -310,6 +310,12 @@ namespace MatterHackers.MatterControl
 
 				DesktopPosition = new Point2D(xpos, ypos);
 			}
+			else
+			{
+				DesktopPosition = new Point2D(-1, -1);
+			}
+
+			this.Maximized = ApplicationSettings.Instance.get(ApplicationSettingsKey.MainWindowMaximized) == "true";
 		}
 
 		public void TakePhoto(string imageFileName)
@@ -436,6 +442,7 @@ namespace MatterHackers.MatterControl
 			{
 				// try and open our window matching the last size that we had for it.
 				string[] sizes = windowSize.Split(',');
+
 				width = Math.Max(int.Parse(sizes[0]), (int)minSize.x + 1);
 				height = Math.Max(int.Parse(sizes[1]), (int)minSize.y + 1);
 			}
@@ -471,14 +478,6 @@ namespace MatterHackers.MatterControl
 			using (new PerformanceTimer("Startup", "Total"))
 			{
 				instance = new MatterControlApplication(width, height);
-
-				if (instance.DesktopPosition == new Point2D())
-				{
-					Point2D desktopSize = OsInformation.DesktopSize;
-
-					// Now try and center the window. If this is saved it will got overridden
-					instance.DesktopPosition = new Point2D((desktopSize.x - instance.Width) / 2, (desktopSize.y - instance.Height) / 2);
-				}
 			}
 
 			return instance;
@@ -599,8 +598,13 @@ namespace MatterHackers.MatterControl
 		public override void OnClosing(out bool CancelClose)
 		{
 			// save the last size of the window so we can restore it next time.
-			ApplicationSettings.Instance.set(ApplicationSettingsKey.WindowSize, string.Format("{0},{1}", Width, Height));
-			ApplicationSettings.Instance.set(ApplicationSettingsKey.DesktopPosition, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
+			ApplicationSettings.Instance.set(ApplicationSettingsKey.MainWindowMaximized, this.Maximized.ToString().ToLower());
+
+			if (!this.Maximized)
+			{
+				ApplicationSettings.Instance.set(ApplicationSettingsKey.WindowSize, string.Format("{0},{1}", Width, Height));
+				ApplicationSettings.Instance.set(ApplicationSettingsKey.DesktopPosition, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
+			}
 
 			//Save a snapshot of the prints in queue
 			QueueData.Instance.SaveDefaultQueue();
