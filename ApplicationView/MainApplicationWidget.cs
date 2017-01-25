@@ -296,8 +296,6 @@ namespace MatterHackers.MatterControl
 
 				return monoSpacedTypeFace;
 			}
-
-			private set { }
 		}
 
 		/// <summary>

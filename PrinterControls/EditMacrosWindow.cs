@@ -34,7 +34,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.FieldValidation;
-using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -43,15 +42,13 @@ namespace MatterHackers.MatterControl
 	public class EditMacrosWindow : SystemWindow
 	{
 		public GCodeMacro ActiveMacro;
-		public EventHandler FunctionToCallOnSave;
 		private static EditMacrosWindow editMacrosWindow = null;
 
-		public EditMacrosWindow(EventHandler functionToCallOnSave)
+		public EditMacrosWindow()
 			: base(560, 420)
 		{
 			AlwaysOnTopOfMain = true;
 			Title = "Macro Editor".Localize();
-			this.FunctionToCallOnSave = functionToCallOnSave;
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			ChangeToMacroList();
 			ShowAsSystemWindow();
@@ -62,7 +59,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (editMacrosWindow == null)
 			{
-				editMacrosWindow = new EditMacrosWindow(ReloadMacros);
+				editMacrosWindow = new EditMacrosWindow();
 				editMacrosWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editMacrosWindow = null; };
 			}
 			else
@@ -88,7 +85,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(DoChangeToMacroList);
 		}
 
-		protected static void ReloadMacros(object sender, EventArgs e)
+		public void RefreshMacros()
 		{
 			ActiveSliceSettings.Instance.Save();
 			ApplicationController.Instance.ReloadAll();
@@ -284,7 +281,8 @@ namespace MatterHackers.MatterControl
 				if (ValidateMacroForm())
 				{
 					SaveActiveMacro();
-					windowController.FunctionToCallOnSave(this, null);
+
+					windowController.RefreshMacros();
 					windowController.ChangeToMacroList();
 				}
 			});
@@ -372,8 +370,8 @@ namespace MatterHackers.MatterControl
 
 					macroRow.AddChild(new HorizontalSpacer());
 
-					// You can't pass a foreach variable into a link function or it wall always be the last item.
-					// So we make a local variable copy of it and pass that. This will get the right one.
+					// You can't use the foreach variable inside the lambda functions directly or it will always be the last item.
+					// We make a local variable to create a closure around it to ensure we get the correct instance
 					var localMacroReference = macro;
 
 					Button editLink = linkButtonFactory.Generate("edit".Localize());
@@ -388,7 +386,8 @@ namespace MatterHackers.MatterControl
 					removeLink.Click += (sender, e) =>
 					{
 						ActiveSliceSettings.Instance.Macros.Remove(localMacroReference);
-						windowController.FunctionToCallOnSave(this, null);
+
+						windowController.RefreshMacros();
 						windowController.ChangeToMacroList();
 					};
 					macroRow.AddChild(removeLink);

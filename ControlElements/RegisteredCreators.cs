@@ -45,19 +45,20 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 		public delegate void UnlockRegisterFunction(EventHandler functionToCallOnEvent, ref EventHandler functionThatWillBeCalledToUnregisterEvent);
 
 		public UnlockRegisterFunction unlockRegisterFunction;
-		public EventHandler functionToLaunchCreator;
+		public Action Show;
 		public string iconPath;
 		public string description;
 		public bool paidAddOnFlag;
 
-		public CreatorInformation(EventHandler functionToLaunchCreator,
+		public CreatorInformation(
+			Action showFunction,
 			string iconPath, string description,
 			bool paidAddOnFlag = false,
 			UnlockFunction unlockFunction = null,
 			PermissionFunction permissionFunction = null,
 			UnlockRegisterFunction unlockRegisterFunction = null)
 		{
-			this.functionToLaunchCreator = functionToLaunchCreator;
+			this.Show = showFunction;
 			this.iconPath = iconPath;
 			this.description = description;
 			this.paidAddOnFlag = paidAddOnFlag;
