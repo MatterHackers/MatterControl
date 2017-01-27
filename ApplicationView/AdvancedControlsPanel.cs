@@ -144,8 +144,10 @@ namespace MatterHackers.MatterControl
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
+#if !__ANDROID__
 				MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
 				MenuOptionSettings.controlsPopOut = controlsPopOut;
+#endif
 			}
 
 			var optionsControls = new PrinterConfigurationScrollWidget();

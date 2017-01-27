@@ -111,9 +111,11 @@ namespace MatterHackers.MatterControl
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
+#if !__ANDROID__
 				// The application menu bar, which is suppressed on Android
 				ApplicationMenuRow menuRow = new ApplicationMenuRow();
 				TopContainer.AddChild(menuRow);
+#endif
 			}
 
 			menuSeparator = new GuiWidget();
@@ -157,9 +159,11 @@ namespace MatterHackers.MatterControl
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
+#if !__ANDROID__
 				// The application menu bar, which is suppressed on Android
 				var menuRow = new ApplicationMenuRow();
 				container.AddChild(menuRow);
+#endif
 			}
 
 			var menuSeparator = new GuiWidget()
