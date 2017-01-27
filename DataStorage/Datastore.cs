@@ -182,20 +182,8 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// <summary>
 		/// Returns the public storage folder (ex. download folder on Android)
 		/// </summary>
-		/// <returns></returns>
-		public string PublicDataStoragePath
-		{
-			get
-			{
-				return Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).ToString();
-			}
-		}
+		public string PublicDataStoragePath { get; } = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
 #endif
-
-		public override string ToString()
-		{
-			return base.ToString();
-		}
 	}
 
 	public class Datastore
