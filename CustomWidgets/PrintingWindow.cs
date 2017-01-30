@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private TextWidget targetTemp;
 		private TextWidget actualTemp;
 
+		private ProgressBar progressBar;
+
 		public ExtruderStatusWidget(int extruderIndex)
 		{
 			this.extruderIndex = extruderIndex;
@@ -68,38 +70,54 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(extruderName);
 
-			this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "extruder_temp.png")))
+			progressBar = new ProgressBar(200, 6)
 			{
-				Margin = new BorderDouble(right: 8)
-			});
+				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+				Margin = new BorderDouble(right: 10),
+				BorderColor = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(1.5).GetAsRGBA_Bytes(),
+				VAnchor = VAnchor.ParentCenter,
+				//BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(2.4).GetAsRGBA_Bytes()
+
+			};
+			this.AddChild(progressBar);
 
 			actualTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(right: 8)
+				Margin = new BorderDouble(right: 0),
+				Width = 60
 			};
 			this.AddChild(actualTemp);
 
 			this.AddChild(new VerticalLine()
 			{
-				BackgroundColor = new RGBA_Bytes(200, 200, 200, 30),
+				BackgroundColor = new RGBA_Bytes(200, 200, 200),
 				Margin = new BorderDouble(right: 8)
 			});
 
 			targetTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(right: 8)
+				Margin = new BorderDouble(right: 8),
+				Width = 60
 			};
 			this.AddChild(targetTemp);
+
+			UiThread.RunOnIdle(UpdateTemperatures);
+		}
+
+		public RGBA_Bytes BorderColor
+		{
+			get { return progressBar.BorderColor; }
+			set { progressBar.BorderColor = value; }
 		}
 
 		public void UpdateTemperatures()
 		{
 			double targetValue = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex);
 			double actualValue = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex);
+
+			progressBar.RatioComplete = actualValue / targetValue;
 
 			this.actualTemp.Text = $"{actualValue:0.#}°";
 			this.targetTemp.Text = $"{targetValue:0.#}°";
@@ -595,7 +613,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			int extruderCount = mockMode ? 3 : ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
-			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(i)).ToList();
+			var borderColor = bodyContainer.BackgroundColor.AdjustLightness(1.5).GetAsRGBA_Bytes();
+
+			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(i) { BorderColor = borderColor }).ToList();
 
 			if (extruderCount == 1)
 			{
