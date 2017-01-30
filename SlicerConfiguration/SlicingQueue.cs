@@ -43,6 +43,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -323,7 +325,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return extruder1StlFileToSlice;
 		}
 
-		public static bool runInProcess = false;
+		public static bool runInProcess = true;
 		private static Process slicerProcess = null;
 
 		private static void CreateSlicedPartsThread()
@@ -346,7 +348,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						itemToSlice.CurrentlySlicing = true;
 
 						string currentConfigurationFileAndPath = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, "config_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString() + ".ini");
-						ActiveSliceSettings.Instance.Helpers.GenerateConfigFile(currentConfigurationFileAndPath, true);
 
 						string gcodePathAndFileName = itemToSlice.GetGCodePathAndFileName();
 						bool gcodeFileIsComplete = itemToSlice.IsGCodeFileComplete(gcodePathAndFileName);
@@ -358,7 +359,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							switch (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
 							{
 								case SlicingEngineTypes.Slic3r:
-									commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
+									Slic3rEngineMappings.WriteSliceSettingsFile(currentConfigurationFileAndPath);
+									// if we have centering turend on and are printing a model loaded up from meshes (not gcode)
+									if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.center_part_on_bed))
+									{
+										// figure out the center position of this file
+										Vector2 bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+										commandArgs = $"--print-center {bedCenter.x:0.##},{bedCenter.y:0.##} " + "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
+									}
+									else
+									{
+										commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
+									}
 									break;
 
 								case SlicingEngineTypes.CuraEngine:
@@ -367,7 +379,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								case SlicingEngineTypes.MatterSlice:
 									{
-										EngineMappingsMatterSlice.WriteMatterSliceSettingsFile(currentConfigurationFileAndPath);
+										EngineMappingsMatterSlice.WriteSliceSettingsFile(currentConfigurationFileAndPath);
 										if (mergeRules == "")
 										{
 											commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\"";

@@ -5848,3 +5848,6 @@ Translated:Clear ZOffset
 English:Printing Window...
 Translated:Printing Window...
 
+English:Only Retract When Crossing Perimeters
+Translated:Only Retract When Crossing Perimeters
+

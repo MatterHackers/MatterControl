@@ -418,7 +418,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
 						{
-							GenerateConfigFile(saveParams.FileName, false);
+							Slic3rEngineMappings.WriteSliceSettingsFile(saveParams.FileName);
 						}
 					}
 					catch (Exception e)
@@ -428,24 +428,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						});
 					}
 				});
-		}
-
-		public void GenerateConfigFile(string fileName, bool replaceMacroValues)
-		{
-			using (var outstream = new StreamWriter(fileName))
-			{
-				// TODO: No longer valid to check for leading MatterControl. token
-				foreach (var key in PrinterSettings.KnownSettings.Where(k => !k.StartsWith("MatterControl.")))
-				{
-					string activeValue = printerSettings.GetValue(key);
-					if (replaceMacroValues)
-					{
-						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
-					}
-					outstream.Write(string.Format("{0} = {1}\n", key, activeValue));
-					activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
-				}
-			}
 		}
 
 		public void ExportAsCuraConfig()
