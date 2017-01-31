@@ -27,12 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using MatterHackers.Agg;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -42,12 +42,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private HashSet<string> matterSliceSettingNames;
 
-		private MappedSetting[] matterSliceSettings;
+		private MappedSetting[] mappedSettings;
 
 		// Singleton use only - prevent external construction
 		private EngineMappingsMatterSlice() : base("MatterSlice")
 		{
-			matterSliceSettings = new MappedSetting[]
+			mappedSettings = new MappedSetting[]
 			{
 				new AsCountOrDistance("bottom_solid_layers", "numberOfBottomLayers", SettingsKey.layer_height),
 				new AsCountOrDistance("perimeters", "numberOfPerimeters", SettingsKey.nozzle_diameter),
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new AsCountOrDistance("support_material_interface_layers", "supportInterfaceLayers", SettingsKey.layer_height),
 				new AsCountOrDistance("top_solid_layers", "numberOfTopLayers", SettingsKey.layer_height),
 				new AsCountOrDistance("brims", "numberOfBrimLoops", SettingsKey.nozzle_diameter),
-				new AsPercentOfReferenceOrDirect("external_perimeter_extrusion_width", "outsidePerimeterExtrusionWidth", SettingsKey.nozzle_diameter),
+				new AsPercentOfReferenceOrDirect(SettingsKey.external_perimeter_extrusion_width, SettingsKey.external_perimeter_extrusion_width, SettingsKey.nozzle_diameter),
 				new AsPercentOfReferenceOrDirect("external_perimeter_speed", "outsidePerimeterSpeed", "perimeter_speed"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_speed, "firstLayerSpeed", "infill_speed"),
 				new AsPercentOfReferenceOrDirect("raft_print_speed", "raftPrintSpeed", "infill_speed"),
@@ -137,20 +137,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new VisibleButNotMappedToEngine("solid_shell"),
 			};
 
-			matterSliceSettingNames = new HashSet<string>(matterSliceSettings.Select(m => m.CanonicalSettingsName));
+			matterSliceSettingNames = new HashSet<string>(mappedSettings.Select(m => m.CanonicalSettingsName));
 		}
 
-		public override bool MapContains(string canonicalSettingsName)
-		{
-			return matterSliceSettingNames.Contains(canonicalSettingsName)
-				|| base.applicationLevelSettings.Contains(canonicalSettingsName);
-		}
-
-		public static void WriteMatterSliceSettingsFile(string outputFilename)
+		public static void WriteSliceSettingsFile(string outputFilename)
 		{
 			using (StreamWriter sliceSettingsFile = new StreamWriter(outputFilename))
 			{
-				foreach (MappedSetting mappedSetting in Instance.matterSliceSettings)
+				foreach (MappedSetting mappedSetting in Instance.mappedSettings)
 				{
 					if (mappedSetting.Value != null)
 					{
@@ -158,6 +152,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 			}
+		}
+
+		public override bool MapContains(string canonicalSettingsName)
+		{
+			return matterSliceSettingNames.Contains(canonicalSettingsName)
+				|| base.applicationLevelSettings.Contains(canonicalSettingsName);
 		}
 
 		public class ExtruderOffsets : MappedSetting
@@ -218,6 +218,81 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public class GCodeForSlicer : InjectGCodeCommands
+		{
+			public GCodeForSlicer(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value => GCodeProcessing.ReplaceMacroValues(base.Value.Replace("\n", "\\n"));
+		}
+
+		public class InfillTranslator : MappedSetting
+		{
+			public InfillTranslator(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
+			{
+				get
+				{
+					double infillRatio0To1 = ParseDouble(base.Value);
+					// 400 = solid (extruder width)
+					double nozzle_diameter = ParseDoubleFromRawValue(SettingsKey.nozzle_diameter);
+					double linespacing = 1000;
+					if (infillRatio0To1 > .01)
+					{
+						linespacing = nozzle_diameter / infillRatio0To1;
+					}
+
+					return ((int)(linespacing * 1000)).ToString();
+				}
+			}
+		}
+
+		public class MapPositionToPlaceObjectCenter : MappedSetting
+		{
+			public MapPositionToPlaceObjectCenter(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
+			{
+				get
+				{
+					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+
+					return "[{0},{1}]".FormatWith(PrinteCenter.x, PrinteCenter.y);
+				}
+			}
+		}
+
+		public class SkirtLengthMapping : MappedSetting
+		{
+			public SkirtLengthMapping(string canonicalSettingsName, string exportedName)
+				: base(canonicalSettingsName, exportedName)
+			{
+			}
+
+			public override string Value
+			{
+				get
+				{
+					double lengthToExtrudeMm = ParseDouble(base.Value);
+					// we need to convert mm of filament to mm of extrusion path
+					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
+					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.first_layer_height) * ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
+
+					return lineLength.ToString();
+				}
+			}
+		}
+
 		public class SupportExtrusionWidth : MappedSetting
 		{
 			public SupportExtrusionWidth(string canonicalSettingsName, string exportedName)
@@ -266,81 +341,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			public override string Value => (ParseDouble(base.Value) + constant).ToString();
-		}
-
-		public class InfillTranslator : MappedSetting
-		{
-			public InfillTranslator(string canonicalSettingsName, string exportedName)
-				: base(canonicalSettingsName, exportedName)
-			{
-			}
-
-			public override string Value
-			{
-				get
-				{
-					double infillRatio0To1 = ParseDouble(base.Value);
-					// 400 = solid (extruder width)
-					double nozzle_diameter = ParseDoubleFromRawValue(SettingsKey.nozzle_diameter);
-					double linespacing = 1000;
-					if (infillRatio0To1 > .01)
-					{
-						linespacing = nozzle_diameter / infillRatio0To1;
-					}
-
-					return ((int)(linespacing * 1000)).ToString();
-				}
-			}
-		}
-
-		public class GCodeForSlicer : InjectGCodeCommands
-		{
-			public GCodeForSlicer(string canonicalSettingsName, string exportedName)
-				: base(canonicalSettingsName, exportedName)
-			{
-			}
-
-			public override string Value => GCodeProcessing.ReplaceMacroValues(base.Value.Replace("\n", "\\n"));
-		}
-
-		public class MapPositionToPlaceObjectCenter : MappedSetting
-		{
-			public MapPositionToPlaceObjectCenter(string canonicalSettingsName, string exportedName)
-				: base(canonicalSettingsName, exportedName)
-			{
-			}
-
-			public override string Value
-			{
-				get
-				{
-					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-
-					return "[{0},{1}]".FormatWith(PrinteCenter.x, PrinteCenter.y);
-				}
-			}
-		}
-
-		public class SkirtLengthMapping : MappedSetting
-		{
-			public SkirtLengthMapping(string canonicalSettingsName, string exportedName)
-				: base(canonicalSettingsName, exportedName)
-			{
-			}
-
-			public override string Value
-			{
-				get
-				{
-					double lengthToExtrudeMm = ParseDouble(base.Value);
-					// we need to convert mm of filament to mm of extrusion path
-					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
-					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.first_layer_height) * ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
-					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
-
-					return lineLength.ToString();
-				}
-			}
 		}
 	}
 }

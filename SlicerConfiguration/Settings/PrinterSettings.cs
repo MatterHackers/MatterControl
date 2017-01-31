@@ -892,6 +892,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
+				if (GetValue<double>(SettingsKey.external_perimeter_extrusion_width) > GetValue<double>(SettingsKey.nozzle_diameter) * 4)
+				{
+					string error = "'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
+					string details = string.Format("External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue(SettingsKey.external_perimeter_extrusion_width), GetValue<double>(SettingsKey.nozzle_diameter));
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'".Localize();
+					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					return false;
+				}
+
+				if (GetValue<double>(SettingsKey.external_perimeter_extrusion_width) <= 0)
+				{
+					string error = "'External Perimeter Extrusion Width' must be greater than 0.".Localize();
+					string details = string.Format("External Perimeter Extrusion Width = {0}".Localize(), GetValue(SettingsKey.external_perimeter_extrusion_width));
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'".Localize();
+					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					return false;
+				}
+
 				if (GetValue<double>(SettingsKey.min_fan_speed) > 100)
 				{
 					string error = "The Minimum Fan Speed can only go as high as 100%.".Localize();

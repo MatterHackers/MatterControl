@@ -5848,3 +5848,30 @@ Translated:Clear ZOffset
 English:Printing Window...
 Translated:Printing Window...
 
+English:Only Retract When Crossing Perimeters
+Translated:Only Retract When Crossing Perimeters
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'External Perimeter Extrusion Width' must be greater than 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:External Perimeter Extrusion Width = {0}
+

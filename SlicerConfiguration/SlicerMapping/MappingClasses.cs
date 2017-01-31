@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MatterHackers.Agg;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -113,6 +115,57 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string CanonicalSettingsName { get; }
 
 		public virtual string Value => ActiveSliceSettings.Instance.GetValue(CanonicalSettingsName);
+	}
+
+	public class Slice3rBedShape : MappedSetting
+	{
+		public Slice3rBedShape(string canonicalSettingsName)
+			: base(canonicalSettingsName, canonicalSettingsName)
+		{
+		}
+
+		public override string Value
+		{
+			get
+			{
+				Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+				Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
+				switch (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape))
+				{
+					case BedShape.Circular:
+						{
+							int numPoints = 10;
+							double angle = MathHelper.Tau / numPoints;
+							string bedString = "";
+							bool first = true;
+							for (int i = 0; i < numPoints; i++)
+							{
+								if(!first)
+								{
+									bedString += ",";
+								}
+								double x = Math.Cos(angle*i);
+								double y = Math.Sin(angle*i);
+								bedString += $"{printCenter.x + x * bedSize.x / 2:0.####}x{printCenter.y + y * bedSize.y / 2:0.####}";
+								first = false;
+							}
+							return bedString;
+						}
+//bed_shape = 99.4522x10.4528,97.8148x20.7912,95.1057x30.9017,91.3545x40.6737,86.6025x50,80.9017x58.7785,74.3145x66.9131,66.9131x74.3145,58.7785x80.9017,50x86.6025,40.6737x91.3545,30.9017x95.1057,20.7912x97.8148,10.4528x99.4522,0x100,-10.4528x99.4522,-20.7912x97.8148,-30.9017x95.1057,-40.6737x91.3545,-50x86.6025,-58.7785x80.9017,-66.9131x74.3145,-74.3145x66.9131,-80.9017x58.7785,-86.6025x50,-91.3545x40.6737,-95.1057x30.9017,-97.8148x20.7912,-99.4522x10.4528,-100x0,-99.4522x - 10.4528,-97.8148x - 20.7912,-95.1057x - 30.9017,-91.3545x - 40.6737,-86.6025x - 50,-80.9017x - 58.7785,-74.3145x - 66.9131,-66.9131x - 74.3145,-58.7785x - 80.9017,-50x - 86.6025,-40.6737x - 91.3545,-30.9017x - 95.1057,-20.7912x - 97.8148,-10.4528x - 99.4522,0x - 100,10.4528x - 99.4522,20.7912x - 97.8148,30.9017x - 95.1057,40.6737x - 91.3545,50x - 86.6025,58.7785x - 80.9017,66.9131x - 74.3145,74.3145x - 66.9131,80.9017x - 58.7785,86.6025x - 50,91.3545x - 40.6737,95.1057x - 30.9017,97.8148x - 20.7912,99.4522x - 10.4528,100x0
+
+					case BedShape.Rectangular:
+					default:
+						{
+							//bed_shape = 0x0,200x0,200x200,0x200
+							string bedString = $"{printCenter.x - bedSize.x / 2}x{printCenter.y - bedSize.y / 2}";
+							bedString += $",{printCenter.x + bedSize.x / 2}x{printCenter.y - bedSize.y / 2}";
+							bedString += $",{printCenter.x + bedSize.x / 2}x{printCenter.y + bedSize.y / 2}";
+							bedString += $",{printCenter.x - bedSize.x / 2}x{printCenter.y + bedSize.y / 2}";
+							return bedString;
+						}
+				}
+			}
+		}
 	}
 
 	public class MapFirstValue : MappedSetting
