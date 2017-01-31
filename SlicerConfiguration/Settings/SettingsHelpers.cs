@@ -66,6 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
+		public const string external_perimeter_extrusion_width = nameof(external_perimeter_extrusion_width);
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
 		public const string filament_diameter = nameof(filament_diameter);
