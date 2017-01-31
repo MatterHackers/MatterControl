@@ -45,10 +45,6 @@ namespace MatterControl.Tests
 	[TestFixture]
 	public class LibraryProviderTests
 	{
-		private bool dataReloaded = false;
-		private const string meshFileName = "Box20x20x10.stl";
-		private string meshPathAndFileName = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "Tests", "TestData", "TestMeshes", "LibraryProviderData", meshFileName);
-
 		public LibraryProviderTests()
 		{
 #if !__ANDROID__
@@ -57,13 +53,17 @@ namespace MatterControl.Tests
 #endif
 		}
 
-		// Timing issues make this test is too unstable to run. The DataReloaded event frequently resets the 
+		// Timing issues make this test too unstable to run. The DataReloaded event frequently resets the 
 		// dataReloaded variable right after being set to false, resulting in a test failure where dataReloaded is
 		// asserted to be false but is not. It repros best via command line but does fail in Visual Studio on release
 		// builds if you run it enough times
-		[Test, Category("FixNeeded")]
+		[Test]
 		public void LibraryProviderFileSystem_NavigationWorking()
 		{
+			string meshFileName = "Box20x20x10.stl";
+			string meshPathAndFileName = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "Tests", "TestData", "TestMeshes", "LibraryProviderData", meshFileName);
+			int dataReloadedCount = 0;
+
 			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 			string testLibraryDirectory = Path.Combine(downloadsDirectory, "LibraryProviderFileSystemTest");
 			if (Directory.Exists(testLibraryDirectory))
@@ -74,64 +74,64 @@ namespace MatterControl.Tests
 			Directory.CreateDirectory(testLibraryDirectory);
 
 			LibraryProviderFileSystem testProvider = new LibraryProviderFileSystem(testLibraryDirectory, "TestPath", null, null);
-			testProvider.DataReloaded += (s, e) => { dataReloaded = true; };
+			testProvider.DataReloaded += (s, e) => { dataReloadedCount++; };
+
+			MatterControlUtilities.SleepUntil(() => { return dataReloadedCount > 0; }, 1);
+			dataReloadedCount = 0;
 
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
 			Assert.IsTrue(testProvider.ItemCount == 0, "Start with a new database for these tests.");
 
 			// create a collection and make sure it is on disk
-			dataReloaded = false; // it has been loaded for the default set of parts
+			Assert.AreEqual(0, dataReloadedCount); // it has been loaded for the default set of parts
 
 			string collectionName = "Collection1";
 			string createdDirectory = Path.Combine(testLibraryDirectory, collectionName);
 
 			Assert.IsFalse(Directory.Exists(createdDirectory), "CreatedDirectory should *not* exist");
-			Assert.IsFalse(dataReloaded, "Reload should *not* have occurred");
+			Assert.AreEqual(0, dataReloadedCount, "Reload should *not* have occurred");
 
 			testProvider.AddCollectionToLibrary(collectionName);
-			Thread.Sleep(500); // wait for the add to finish
+			MatterControlUtilities.SleepUntil(() => { return testProvider.CollectionCount == 1; }, 1);
 
 			Assert.AreEqual(1, testProvider.CollectionCount, "Incorrect collection count");
-			Assert.IsTrue(dataReloaded, "Reload should *have* occurred");
+			Assert.IsTrue(dataReloadedCount > 0, "Reload should *have* occurred");
 			Assert.IsTrue(Directory.Exists(createdDirectory), "CreatedDirectory *should* exist");
 
 			// add an item works correctly
 			LibraryProvider subProvider = testProvider.GetProviderForCollection(testProvider.GetCollectionItem(0));
-			subProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
-			dataReloaded = false;
-			//itemAdded = false;
+			subProvider.DataReloaded += (sender, e) => { dataReloadedCount++; };
+			dataReloadedCount = 0;
 			string subPathAndFile = Path.Combine(createdDirectory, meshFileName);
 			Assert.IsFalse(File.Exists(subPathAndFile), "File should *not* exist: " + subPathAndFile);
-			Assert.IsFalse(dataReloaded, "Reload should *not* have occurred");
-			//Assert.IsTrue(itemAdded == false);
+			Assert.AreEqual(0, dataReloadedCount, "Reload should *not* have occurred");
 
 			// WIP: saving the name incorrectly for this location (does not need to be changed).
 			subProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
-			Thread.Sleep(3000); // wait for the add to finish
+			MatterControlUtilities.SleepUntil(() => { return subProvider.ItemCount == 1; }, 1);
 
 			PrintItemWrapper itemAtRoot = subProvider.GetPrintItemWrapperAsync(0).Result;
 
 			Assert.IsTrue(subProvider.ItemCount == 1);
-			Assert.IsTrue(dataReloaded == true);
+			Assert.IsTrue(dataReloadedCount > 0);
 			//Assert.IsTrue(itemAdded == true);
 			Assert.IsTrue(File.Exists(subPathAndFile));
 
-			// make sure the provider locator is correct
+			// make sure the provider locater is correct
 
 			// remove item works
-			dataReloaded = false;
-			Assert.IsTrue(dataReloaded == false);
+			dataReloadedCount = 0;
+			Assert.IsTrue(dataReloadedCount == 0);
 			subProvider.RemoveItem(0);
-			Thread.Sleep(500); // wait for the remove to finish
-			Assert.IsTrue(dataReloaded == true);
+			MatterControlUtilities.SleepUntil(() => { return subProvider.ItemCount == 0; }, 1);
+			Assert.IsTrue(dataReloadedCount > 0);
 			Assert.IsTrue(!File.Exists(subPathAndFile));
 
 			// remove collection gets rid of it
-			dataReloaded = false;
-			Assert.IsTrue(dataReloaded == false);
+			dataReloadedCount = 0;
 			testProvider.RemoveCollection(0);
-			Thread.Sleep(500); // wait for the remove to finish
-			Assert.IsTrue(dataReloaded == true);
+			MatterControlUtilities.SleepUntil(() => { return testProvider.CollectionCount == 0; }, 1);
+			Assert.IsTrue(dataReloadedCount > 0);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
 
@@ -141,30 +141,10 @@ namespace MatterControl.Tests
 			}
 		}
 
-		[SetUp]
-		public void SetupBeforeTest()
-		{
-			dataReloaded = false;
-		}
-
 		private bool NamedCollectionExists(string nameToLookFor)
 		{
 			string query = string.Format("SELECT * FROM PrintItemCollection WHERE Name = '{0}' ORDER BY Name ASC;", nameToLookFor);
 			foreach (PrintItemCollection collection in Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query))
-			{
-				if (collection.Name == nameToLookFor)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private bool NamedItemExists(string nameToLookFor)
-		{
-			string query = string.Format("SELECT * FROM PrintItem WHERE Name = '{0}' ORDER BY Name ASC;", nameToLookFor);
-			foreach (PrintItem collection in Datastore.Instance.dbSQLite.Query<PrintItem>(query))
 			{
 				if (collection.Name == nameToLookFor)
 				{
