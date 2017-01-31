@@ -118,6 +118,12 @@ namespace MatterHackers.MatterControl
 			noContentFieldDescription.ClearRemovedFlag();
 			AddChild(noContentFieldDescription);
 		}
+
+		public bool Hidden
+		{
+			get { return !passwordCoverText.Visible; }
+			set { passwordCoverText.Visible = !value; }
+		}
 	}
 
 	public class MHNumberEdit : GuiWidget
