@@ -115,6 +115,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Wait(.2);
 		}
 
+		public static void SleepUntil(Func<bool> checkConditionSatisfied, double maxSeconds, int checkInterval = 50)
+		{
+			Stopwatch timer = Stopwatch.StartNew();
+
+			while (timer.Elapsed.Seconds < maxSeconds)
+			{
+				if (checkConditionSatisfied())
+				{
+					break;
+				}
+
+				Thread.Sleep(checkInterval);
+			}
+		}
+
 		public static string PathToExportGcodeFolder
 		{
 			get { return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName); }
