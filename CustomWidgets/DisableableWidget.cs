@@ -40,18 +40,5 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					break;
 			}
 		}
-
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
-		{
-			if (indexInChildrenList == -1)
-			{
-				// put it under the disableOverlay
-				base.AddChild(childToAdd, Children.Count - 1);
-			}
-			else
-			{
-				base.AddChild(childToAdd, indexInChildrenList);
-			}
-		}
 	}
 }
