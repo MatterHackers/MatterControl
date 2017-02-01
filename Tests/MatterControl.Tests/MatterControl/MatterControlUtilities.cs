@@ -207,6 +207,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return emulator;
 	}
 
+		public static void CancelPrint(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Cancel Print Button");
+
+			if (testRunner.WaitForName("Yes Button", 1))
+			{
+				testRunner.ClickByName("Yes Button");
+			}
+		}
+
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
 		{
 			string fullPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", runName, "Test0", "data", "gcode");
@@ -452,6 +462,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SetCompatibleWorkingDirectory(this TestContext context)
 		{
 			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		}
+
+		public static void SwitchToSettingsAndControls(this AutomationRunner testRunner)
+		{
+			if (testRunner.WaitForName("SettingsAndControls", .2))
+			{
+				testRunner.ClickByName("SettingsAndControls");
+				testRunner.Wait(.5);
+			}
 		}
 
 		public static void SwitchToAdvancedSettings(AutomationRunner testRunner)
