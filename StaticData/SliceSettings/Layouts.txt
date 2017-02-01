@@ -329,6 +329,7 @@ Advanced
         print_leveling_method
         print_leveling_required_to_print
       Probe Settings
+        print_leveling_probe_start
         manual_probe_paper_width
       Options
     Print Recovery
