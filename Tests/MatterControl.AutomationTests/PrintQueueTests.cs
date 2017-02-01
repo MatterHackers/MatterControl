@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 
 				testRunner.ClickByName("Queue... Menu", 2);
-				testRunner.WaitUntil(() => !exportButton.Enabled, 4);
+				AutomationRunner.WaitUntil(() => !exportButton.Enabled, 4);
 				Assert.IsFalse(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
 
 				return Task.FromResult(0);
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(.2);
 
 				testRunner.ClickByName("Queue Copy Button", 3);
-				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
+				AutomationRunner.WaitUntil(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
 
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "Copy button increases queue count by one");
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman - copy", 2), "Copied Batman item exists with expected name");
@@ -544,7 +544,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(2);
 				testRunner.Type("{Enter}");
 
-				testRunner.WaitUntil(() => File.Exists(exportZipPath), 3);
+				AutomationRunner.WaitUntil(() => File.Exists(exportZipPath), 3);
 				Assert.IsTrue(File.Exists(exportZipPath), "Queue was exported to zip file, file exists on disk at expected path");
 
 				// Import the exported zip file and confirm the Queue Count increases by 3 
@@ -554,7 +554,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Wait(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == 8, 5);
+				AutomationRunner.WaitUntil(() => QueueData.Instance.ItemCount == 8, 5);
 				Assert.AreEqual(8, QueueData.Instance.ItemCount, "All parts imported successfully from exported zip");
 
 				testRunner.Wait(.3);
@@ -629,7 +629,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Act - remove all print queue items
 				testRunner.RemoveAllFromQueue();
 
-				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == 0, 5);
+				AutomationRunner.WaitUntil(() => QueueData.Instance.ItemCount == 0, 5);
 
 				// Assert that object model has been cleared
 				Assert.AreEqual(0, QueueData.Instance.ItemCount, "Queue is empty after RemoveAll action");

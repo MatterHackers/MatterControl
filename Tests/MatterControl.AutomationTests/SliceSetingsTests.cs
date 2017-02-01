@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Generate Gcode Button", 1);
 				testRunner.Wait(2);
 
-				testRunner.WaitUntil(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
+				AutomationRunner.WaitUntil(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
 				//Call compare slice settings method here
 				Assert.IsTrue(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			GuiWidget layerNumber = testRunner.GetWidgetByName("Current GCode Layer Edit", out containingWindow, 20);
 
 			layerNumber.Invalidate();
-			testRunner.WaitUntil(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
+			AutomationRunner.WaitUntil(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
 
 			Assert.IsTrue(layerNumber.Text == indexToWaitFor.ToString());
 			testRunner.ClickByName("Resume Button", 1);

@@ -115,21 +115,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Wait(.2);
 		}
 
-		public static void SleepUntil(Func<bool> checkConditionSatisfied, double maxSeconds, int checkInterval = 50)
-		{
-			Stopwatch timer = Stopwatch.StartNew();
-
-			while (timer.Elapsed.Seconds < maxSeconds)
-			{
-				if (checkConditionSatisfied())
-				{
-					break;
-				}
-
-				Thread.Sleep(checkInterval);
-			}
-		}
-
 		public static string PathToExportGcodeFolder
 		{
 			get { return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName); }
@@ -205,7 +190,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			SystemWindow containingWindow;
 			var editButton = testRunner.GetWidgetByName("Edit Printer Button", out containingWindow);
 
-			testRunner.WaitUntil(() => editButton.Enabled, 5); // Wait until the edit button is ready to click it. Ensures the printer is loaded.
+			AutomationRunner.WaitUntil(() => editButton.Enabled, 5); // Wait until the edit button is ready to click it. Ensures the printer is loaded.
 			testRunner.ClickByName("Edit Printer Button", 3);
 
 			testRunner.ClickByName("Serial Port Dropdown", 3);

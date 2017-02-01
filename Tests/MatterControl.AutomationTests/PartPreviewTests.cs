@@ -42,12 +42,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Copy button and count MeshGroups 
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 2, 3);
+				AutomationRunner.WaitUntil(() => view3D.MeshGroups.Count == 2, 3);
 				Assert.AreEqual(2, view3D.MeshGroups.Count, "Should have 2 parts after copy");
 
 				// Click Copy button a second time and count MeshGroups
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 3, 3);
+				AutomationRunner.WaitUntil(() => view3D.MeshGroups.Count == 3, 3);
 				Assert.AreEqual(3, view3D.MeshGroups.Count, "Should have 3 parts after 2nd copy");
 
 				return Task.FromResult(0);
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName("3D View Copy");
-					testRunner.WaitUntil(() => view3D.MeshGroups.Count == i + 2, 2);
+					AutomationRunner.WaitUntil(() => view3D.MeshGroups.Count == i + 2, 2);
 					Assert.AreEqual(i + 2, view3D.MeshGroups.Count);
 				}
 
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					int meshCountBeforeUndo = view3D.MeshGroups.Count;
 					testRunner.ClickByName("3D View Undo");
-					testRunner.WaitUntil(() => view3D.MeshGroups.Count == meshCountBeforeUndo - 1, 2);
+					AutomationRunner.WaitUntil(() => view3D.MeshGroups.Count == meshCountBeforeUndo - 1, 2);
 					Assert.AreEqual(meshCountBeforeUndo - 1, view3D.MeshGroups.Count);
 				}
 
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					int meshCountBeforeRedo = view3D.MeshGroups.Count;
 					testRunner.ClickByName("3D View Redo");
-					testRunner.WaitUntil(() => view3D.MeshGroups.Count == meshCountBeforeRedo + 1, 2);
+					AutomationRunner.WaitUntil(() => view3D.MeshGroups.Count == meshCountBeforeRedo + 1, 2);
 					Assert.AreEqual(meshCountBeforeRedo + 1, view3D.MeshGroups.Count);
 				}
 
@@ -240,15 +240,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(6, view3D.MeshGroups.Count, "Should have 6 parts after batch copy");
 
 				testRunner.ClickByName("3D View Remove", 1);
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
+				AutomationRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
 				Assert.AreEqual(5, view3D.MeshGroups.Count, "Should have 5 parts after Remove");
 
 				testRunner.ClickByName("3D View Undo");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 6, 3);
+				AutomationRunner.WaitUntil(() => view3D.MeshGroups.Count == 6, 3);
 				Assert.AreEqual(6, view3D.MeshGroups.Count, "Should have 6 parts after Undo");
 
 				testRunner.ClickByName("3D View Redo");
-				testRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
+				AutomationRunner.WaitUntil(() => view3D.MeshGroups.Count == 5, 3);
 				Assert.AreEqual(5, view3D.MeshGroups.Count, "Should have 5 parts after Redo");
 
 				view3D.CloseOnIdle();
