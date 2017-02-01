@@ -213,7 +213,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			macroContainer.Children.CollectionChanged += (s, e) =>
 			{
-				noMacrosFound.Visible = macroContainer.Children.Count == 0;
+				if (!this.HasBeenClosed)
+				{
+					noMacrosFound.Visible = macroContainer.Children.Count == 0;
+				}
 			};
 			
 			return macroContainer;
