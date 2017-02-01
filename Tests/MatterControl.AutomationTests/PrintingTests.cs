@@ -152,22 +152,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					scrollable.Width = width;
 
 					// Workaround for MatterHackers/MCCentral#1157 - wait for slicing to complete before setting tuning values
-					testRunner.Wait(5);
+					testRunner.Delay(5);
 
 					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
-					testRunner.Wait(.2);
+					testRunner.Delay(.2);
 					testRunner.Type(targetExtrusionRate.ToString());
-					testRunner.Wait(.2);
+					testRunner.Delay(.2);
 
 					testRunner.ClickByName("Feed Rate NumberEdit");
-					testRunner.Wait(.2);
+					testRunner.Delay(.2);
 					testRunner.Type(targetFeedRate.ToString());
-					testRunner.Wait(.2);
+					testRunner.Delay(.2);
 
 					// Force focus away from the feed rate field
 					testRunner.ClickByName("Controls Tab", 1);
 
-					testRunner.Wait(.2);
+					testRunner.Delay(.2);
 
 					// Assert the changes took effect on the UI
 					slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					slider = testRunner.GetWidgetByName("Feed Rate Slider", out systemWindow, 5) as SolidSlider;
 					Assert.AreEqual(targetFeedRate, slider.Value);
 
-					testRunner.Wait(.2);
+					testRunner.Delay(.2);
 
 					// Assert the changes took effect on the model
 					Assert.AreEqual(targetExtrusionRate, PrinterConnectionAndCommunication.Instance.ExtrusionRatio);
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Restart the print
 					testRunner.ClickByName("Print Again Button", 1);
 
-					testRunner.Wait(2);
+					testRunner.Delay(2);
 
 					testRunner.CancelPrint();
 

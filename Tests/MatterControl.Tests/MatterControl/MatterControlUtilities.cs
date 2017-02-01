@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (testRunner.WaitForName("SettingsAndControls", .2))
 			{
 				testRunner.ClickByName("SettingsAndControls");
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 			}
 		}
 
