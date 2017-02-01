@@ -5875,3 +5875,9 @@ Translated:'External Perimeter Extrusion Width' must be greater than 0.
 English:External Perimeter Extrusion Width = {0}
 Translated:External Perimeter Extrusion Width = {0}
 
+English:The starting height (z) of the print head before probing each print level position.
+Translated:The starting height (z) of the print head before probing each print level position.
+
+English:Probe Start Height
+Translated:Probe Start Height
+

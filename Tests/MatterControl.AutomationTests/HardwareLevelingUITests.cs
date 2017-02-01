@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
 				testRunner.ClickByName("Printer Tab", 1);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				//Make sure Print Leveling tab is not visible 
 				bool testPrintLeveling = testRunner.WaitForName("Print Leveling Tab", 3);
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Slice Settings Options Menu", 1);
 					testRunner.ClickByName("Reset to Defaults Menu Item", 1);
 					testRunner.ClickByName("Yes Button", .5);
-					testRunner.Wait(1);
+					testRunner.Delay(1);
 
 					// make sure it is showing the correct button
 					Assert.IsTrue(!testRunner.WaitForName("Start Print Button", 1), "Start Print hidden");

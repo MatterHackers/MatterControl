@@ -51,9 +51,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.ClickByName("Create Folder From Library Button");
 
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 				testRunner.Type("Test Text");
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				SystemWindow containingWindow;
 				GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
 				Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
 				containingWindow.CloseOnIdle();
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				return Task.FromResult(0);
 			};

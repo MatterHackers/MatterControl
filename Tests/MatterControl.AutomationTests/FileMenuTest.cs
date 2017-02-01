@@ -19,9 +19,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.ClickByName("File Menu");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Add Printer Menu Item");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				Assert.IsTrue(testRunner.WaitForName("Select Make", 3));
 
 				testRunner.ClickByName("Cancel Wizard Button");
@@ -40,18 +40,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.ClickByName("File Menu");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Add File To Queue Menu Item");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 
 				int queueBeforeCount = QueueData.Instance.ItemCount;
 
 				testRunner.Type(queueItemPath);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 
 				int queueAfterCount = QueueData.Instance.ItemCount;
@@ -72,9 +72,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.ClickByName("File Menu");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Add File To Queue Menu Item");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 
@@ -84,9 +84,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				int queueBeforeAddCount = QueueData.Instance.ItemCount;
 
 				testRunner.Type(textForBothQueueItems);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type("{Enter}");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 2));
 
@@ -108,17 +108,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.ClickByName("File Menu");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Add File To Queue Menu Item");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				int beforeCount = QueueData.Instance.ItemCount;
 
 				string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
 				testRunner.Type(pathToType);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));

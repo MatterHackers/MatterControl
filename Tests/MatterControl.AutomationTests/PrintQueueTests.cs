@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				GuiWidget pluginWindowExists = testRunner.GetWidgetByName("Plugin Chooser Window", out containingWindow, secondsToWait: 3);
 				Assert.IsTrue(pluginWindowExists != null, "Plugin Chooser Window");
 				pluginWindowExists.CloseOnIdle();
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				return Task.FromResult(0);
 			};
@@ -133,10 +133,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName(" Remove All Menu Item", 2);
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				testRunner.ClickByName("Queue... Menu", 2);
-				testRunner.WaitUntil(() => !exportButton.Enabled, 4);
+				testRunner.Delay(() => !exportButton.Enabled, 4);
 				Assert.IsFalse(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
 
 				return Task.FromResult(0);
@@ -180,14 +180,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.ClickByName("Queue Item Batman", 3);
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				testRunner.ClickByName("Queue Copy Button", 3);
-				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
+				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
 
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "Copy button increases queue count by one");
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman - copy", 2), "Copied Batman item exists with expected name");
-				testRunner.Wait(.3);
+				testRunner.Delay(.3);
 
 				return Task.FromResult(0);
 			};
@@ -212,12 +212,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Click Add Button and Add Part To Queue
 				testRunner.ClickByName("Queue Add Button", 2);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 
 				testRunner.Type(queueItemPath);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				//Make sure single part is added and queue count increases by one
@@ -252,14 +252,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Click Add Button and Add Part To Queue
 				testRunner.ClickByName("Queue Add Button", 2);
 				string pathToFirstQueueItem = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
 				string textForBothQueueItems = string.Format("\"{0}\" \"{1}\"", pathToFirstQueueItem, pathToSecondQueueItem);
 
 				testRunner.Type(textForBothQueueItems);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type("{Enter}");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				//Confirm that both items were added and  that the queue count increases by the appropriate number
 				int queueCountAfterAdd = QueueData.Instance.ItemCount;
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				int expectedQueueCount = QueueData.Instance.ItemCount - 1;
 
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Remove target item
 				testRunner.ClickByName("Queue Remove Button", 2);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				// Assert removed
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "After Remove button click, Queue count should be 1 less");
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				int expectedQueueCount = QueueData.Instance.ItemCount - 1;
 
@@ -331,7 +331,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Remove target item
 				testRunner.ClickByName("Queue Remove Button", 2);
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				// after remove we select the next up the list
 				Assert.AreEqual(QueueData.Instance.SelectedIndex, 0);
@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					testRunner.ClickByName("Queue Done Button", 2);
 
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 
 					SystemWindow containingWindow;
 					GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 1, searchRegion: queueItemRegion);
@@ -413,14 +413,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Enter Edit mode and confirm checkboxes exist
 				testRunner.ClickByName("Queue Edit Button", 2);
-				testRunner.Wait(.3);
+				testRunner.Delay(.3);
 				Assert.IsNotNull(
 					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion), 
 					"While in Edit mode, checkboxes should exist on queue items");
 
 				// Exit Edit mode and confirm checkboxes are missing
 				testRunner.ClickByName("Queue Done Button", 1);
-				testRunner.Wait(.3);
+				testRunner.Delay(.3);
 				Assert.IsNull(
 					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 1, searchRegion), 
 					"After exiting Edit mode, checkboxes should not exist on queue items");
@@ -446,7 +446,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				int queueItemCount = QueueData.Instance.ItemCount;
 
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				testRunner.ClickByName("Queue Edit Button", 2);
 
@@ -454,7 +454,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Queue Remove Button", 2);
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				int queueItemCountAfterRemove = QueueData.Instance.ItemCount;
 
@@ -537,27 +537,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Invoke Queue -> Export to Zip dialog
 				testRunner.ClickByName("Queue... Menu", 2);
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 				testRunner.ClickByName(" Export to Zip Menu Item", 2);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type(exportZipPath);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type("{Enter}");
 
-				testRunner.WaitUntil(() => File.Exists(exportZipPath), 3);
+				testRunner.Delay(() => File.Exists(exportZipPath), 3);
 				Assert.IsTrue(File.Exists(exportZipPath), "Queue was exported to zip file, file exists on disk at expected path");
 
 				// Import the exported zip file and confirm the Queue Count increases by 3 
 				testRunner.ClickByName("Queue Add Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type(exportZipPath);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == 8, 5);
+				testRunner.Delay(() => QueueData.Instance.ItemCount == 8, 5);
 				Assert.AreEqual(8, QueueData.Instance.ItemCount, "All parts imported successfully from exported zip");
 
-				testRunner.Wait(.3);
+				testRunner.Delay(.3);
 
 				try
 				{
@@ -586,10 +586,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(QueueData.Instance.ItemCount > 0, "Queue is not empty at test startup");
 
 				testRunner.ClickByName("More...  Menu", 2);
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				testRunner.ClickByName("Send Menu Item", 2);
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				// WaitFor Ok button and ensure parent window has expected title and named button
 				testRunner.WaitForName("Ok Button", 2);
@@ -597,7 +597,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(widget != null 
 					&& parentWindow.Title == "MatterControl - Alert", "Send Disabled warning appears when no plugins exists to satisfy behavior");
 
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				// Close dialog before exiting
 				testRunner.ClickByName("Ok Button");
@@ -629,13 +629,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Act - remove all print queue items
 				testRunner.RemoveAllFromQueue();
 
-				testRunner.WaitUntil(() => QueueData.Instance.ItemCount == 0, 5);
+				testRunner.Delay(() => QueueData.Instance.ItemCount == 0, 5);
 
 				// Assert that object model has been cleared
 				Assert.AreEqual(0, QueueData.Instance.ItemCount, "Queue is empty after RemoveAll action");
 
 				// Assert that widgets have been removed
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman part removed");
 				Assert.IsFalse(testRunner.NameExists("Queue Item Fennec_Fox"), "Fox part removed");
@@ -664,22 +664,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(queueEmpty == false);
 				testRunner.ClickByName("Queue... Menu", 2);
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 				testRunner.ClickByName(" Create Part Sheet Menu Item", 2);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				string pathToSavePartSheet = MatterControlUtilities.GetTestItemPath("CreatePartSheet");
 				string validatePartSheetPath = Path.Combine("..", "..", "..", "TestData", "QueueItems", "CreatePartSheet.pdf");
 
 				testRunner.Type(pathToSavePartSheet);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
-				testRunner.Wait(1);
-				testRunner.Wait(5);
+				testRunner.Delay(1);
+				testRunner.Delay(5);
 
 				bool partSheetCreated = File.Exists(validatePartSheetPath);
 
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				Assert.IsTrue(partSheetCreated == true);
 
 				if (File.Exists(validatePartSheetPath))
@@ -707,7 +707,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have four items");
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
@@ -715,14 +715,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Queue Item Batman", 1);
 				testRunner.ClickByName("Queue Item Batman Remove");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				Assert.AreEqual(3, QueueData.Instance.ItemCount, "Batman item removed");
 				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman item removed");
 
 				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview"), "Mouthpiece Part Preview should not initially be visible");
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2", 1);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View", 1);
 
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2), "The Mouthpiece Part Preview should appear after the view button is clicked");
@@ -744,10 +744,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button 
 				testRunner.ClickByName("Queue Add Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				// Widget should exist
@@ -773,10 +773,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button 
 				testRunner.ClickByName("Queue Add Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				// Widget should exist
@@ -802,10 +802,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button 
 				testRunner.ClickByName("Queue Add Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				// Widget should exist

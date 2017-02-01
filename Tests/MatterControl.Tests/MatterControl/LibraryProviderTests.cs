@@ -39,6 +39,7 @@ using System.IO;
 using System.Threading;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.Agg;
+using MatterHackers.GuiAutomation;
 
 namespace MatterControl.Tests
 {
@@ -76,7 +77,7 @@ namespace MatterControl.Tests
 			LibraryProviderFileSystem testProvider = new LibraryProviderFileSystem(testLibraryDirectory, "TestPath", null, null);
 			testProvider.DataReloaded += (s, e) => { dataReloadedCount++; };
 
-			MatterControlUtilities.SleepUntil(() => { return dataReloadedCount > 0; }, 1);
+			AutomationRunner.StaticDelay(() => { return dataReloadedCount > 0; }, 1);
 			dataReloadedCount = 0;
 
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
@@ -92,7 +93,7 @@ namespace MatterControl.Tests
 			Assert.AreEqual(0, dataReloadedCount, "Reload should *not* have occurred");
 
 			testProvider.AddCollectionToLibrary(collectionName);
-			MatterControlUtilities.SleepUntil(() => { return testProvider.CollectionCount == 1; }, 1);
+			AutomationRunner.StaticDelay(() => { return testProvider.CollectionCount == 1; }, 1);
 
 			Assert.AreEqual(1, testProvider.CollectionCount, "Incorrect collection count");
 			Assert.IsTrue(dataReloadedCount > 0, "Reload should *have* occurred");
@@ -108,7 +109,7 @@ namespace MatterControl.Tests
 
 			// WIP: saving the name incorrectly for this location (does not need to be changed).
 			subProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
-			MatterControlUtilities.SleepUntil(() => { return subProvider.ItemCount == 1; }, 1);
+			AutomationRunner.StaticDelay(() => { return subProvider.ItemCount == 1; }, 1);
 
 			PrintItemWrapper itemAtRoot = subProvider.GetPrintItemWrapperAsync(0).Result;
 
@@ -123,14 +124,14 @@ namespace MatterControl.Tests
 			dataReloadedCount = 0;
 			Assert.IsTrue(dataReloadedCount == 0);
 			subProvider.RemoveItem(0);
-			MatterControlUtilities.SleepUntil(() => { return subProvider.ItemCount == 0; }, 1);
+			AutomationRunner.StaticDelay(() => { return subProvider.ItemCount == 0; }, 1);
 			Assert.IsTrue(dataReloadedCount > 0);
 			Assert.IsTrue(!File.Exists(subPathAndFile));
 
 			// remove collection gets rid of it
 			dataReloadedCount = 0;
 			testProvider.RemoveCollection(0);
-			MatterControlUtilities.SleepUntil(() => { return testProvider.CollectionCount == 0; }, 1);
+			AutomationRunner.StaticDelay(() => { return testProvider.CollectionCount == 0; }, 1);
 			Assert.IsTrue(dataReloadedCount > 0);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
