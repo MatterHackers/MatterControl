@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,28 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
-using System;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class AdjustmentControls : ControlWidgetBase
 	{
-		private NumberEdit feedRateValue;
+		private MHNumberEdit feedRateValue;
+		private MHNumberEdit extrusionValue;
+
 		private SolidSlider feedRateRatioSlider;
 		private SolidSlider extrusionRatioSlider;
-		private NumberEdit extrusionValue;
 
 		private readonly double minExtrutionRatio = .5;
 		private readonly double maxExtrusionRatio = 3;
@@ -59,141 +53,165 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public AdjustmentControls()
 		{
-			AltGroupBox adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
-			adjustmentControlsGroupBox.Margin = new BorderDouble(0);
-			adjustmentControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			adjustmentControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-
+			var adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor))
 			{
-				FlowLayoutWidget tuningRatiosLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				tuningRatiosLayout.Margin = new BorderDouble(0, 0, 0, 0);
-				tuningRatiosLayout.HAnchor = HAnchor.ParentLeftRight;
-				tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0);
+				Margin = 0,
+				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.ParentLeftRight
+			};
 
-				double sliderWidth = 300 * GuiWidget.DeviceScale;
-				double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
-				if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
-				{
-					sliderThumbWidth = 15 * GuiWidget.DeviceScale;
-				}
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(0, 0, 0, 0),
+				HAnchor = HAnchor.ParentLeftRight,
+				Padding = new BorderDouble(3, 0, 3, 0)
+			};
 
-				TextWidget subheader = new TextWidget("", pointSize: 4, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				subheader.Margin = new BorderDouble(bottom: 6);
-				tuningRatiosLayout.AddChild(subheader);
-				TextWidget feedRateDescription;
-				{
-					FlowLayoutWidget feedRateLeftToRight;
-					{
-						feedRateValue = new NumberEdit(0, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale);
-						feedRateValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
-
-						feedRateLeftToRight = new FlowLayoutWidget();
-						feedRateLeftToRight.HAnchor = HAnchor.ParentLeftRight;
-
-						feedRateDescription = new TextWidget("Speed Multiplier".Localize());
-						feedRateDescription.MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale;
-						feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-						feedRateDescription.VAnchor = VAnchor.ParentCenter;
-						feedRateLeftToRight.AddChild(feedRateDescription);
-						feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio);
-						feedRateRatioSlider.Margin = new BorderDouble(5, 0);
-						feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
-						feedRateRatioSlider.HAnchor = HAnchor.ParentLeftRight;
-						feedRateRatioSlider.TotalWidthInPixels = sliderWidth;
-						feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
-						feedRateRatioSlider.ValueChanged += (sender, e) =>
-						{
-							PrinterConnectionAndCommunication.Instance.FeedRateRatio = feedRateRatioSlider.Value;
-						};
-						PrinterConnectionAndCommunication.Instance.FeedRateRatioChanged.RegisterEvent(FeedRateRatioChanged_Event, ref unregisterEvents);
-						feedRateValue.EditComplete += (sender, e) =>
-						{
-							feedRateRatioSlider.Value = feedRateValue.Value;
-						};
-						feedRateLeftToRight.AddChild(feedRateRatioSlider);
-						tuningRatiosLayout.AddChild(feedRateLeftToRight);
-
-						feedRateLeftToRight.AddChild(feedRateValue);
-						feedRateValue.Margin = new BorderDouble(0, 0, 5, 0);
-						feedRateValue.VAnchor = VAnchor.ParentCenter;
-						textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
-						textImageButtonFactory.borderWidth = 1;
-						textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-						textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-						Button setFeedRateButton = textImageButtonFactory.Generate("Set".Localize());
-						setFeedRateButton.VAnchor = VAnchor.ParentCenter;
-
-						feedRateLeftToRight.AddChild(setFeedRateButton);
-					}
-
-					TextWidget extrusionDescription;
-					{
-						extrusionValue = new NumberEdit(0, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale);
-						extrusionValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
-
-						FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-						leftToRight.HAnchor = HAnchor.ParentLeftRight;
-						leftToRight.Margin = new BorderDouble(top: 10);
-
-						extrusionDescription = new TextWidget("Extrusion Multiplier".Localize());
-						extrusionDescription.MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale;
-						extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-						extrusionDescription.VAnchor = VAnchor.ParentCenter;
-						leftToRight.AddChild(extrusionDescription);
-						extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal);
-						extrusionRatioSlider.TotalWidthInPixels = sliderWidth;
-						extrusionRatioSlider.HAnchor = HAnchor.ParentLeftRight;
-						extrusionRatioSlider.Margin = new BorderDouble(5, 0);
-						extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
-						extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
-						extrusionRatioSlider.ValueChanged += (sender, e) =>
-						{
-							PrinterConnectionAndCommunication.Instance.ExtrusionRatio = extrusionRatioSlider.Value;
-						};
-						PrinterConnectionAndCommunication.Instance.ExtrusionRatioChanged.RegisterEvent(ExtrusionRatioChanged_Event, ref unregisterEvents);
-						extrusionValue.EditComplete += (sender, e) =>
-						{
-							extrusionRatioSlider.Value = extrusionValue.Value;
-						};
-						leftToRight.AddChild(extrusionRatioSlider);
-						tuningRatiosLayout.AddChild(leftToRight);
-						leftToRight.AddChild(extrusionValue);
-						extrusionValue.Margin = new BorderDouble(0, 0, 5, 0);
-						extrusionValue.VAnchor = VAnchor.ParentCenter;
-						textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
-						Button setExtrusionButton = textImageButtonFactory.Generate("Set".Localize());
-						setExtrusionButton.VAnchor = VAnchor.ParentCenter;
-						leftToRight.AddChild(setExtrusionButton);
-					}
-					feedRateLeftToRight.VAnchor = VAnchor.FitToChildren;
-				}
-
-				adjustmentControlsGroupBox.AddChild(tuningRatiosLayout);
+			double sliderWidth = 300 * GuiWidget.DeviceScale;
+			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
+			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			{
+				sliderThumbWidth = 15 * GuiWidget.DeviceScale;
 			}
 
+			var subheader = new TextWidget("", pointSize: 4, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			subheader.Margin = new BorderDouble(bottom: 6);
+			topToBottom.AddChild(subheader);
+
+			{
+				var row = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = 0,
+					VAnchor = VAnchor.FitToChildren
+				};
+
+				var feedRateDescription = new TextWidget("Speed Multiplier".Localize())
+				{
+					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					VAnchor = VAnchor.ParentCenter,
+				};
+				row.AddChild(feedRateDescription);
+
+				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio)
+				{
+					Name = "Feed Rate Slider",
+					Margin = new BorderDouble(5, 0),
+					Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio,
+					HAnchor = HAnchor.ParentLeftRight,
+					TotalWidthInPixels = sliderWidth,
+				};
+				feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
+				feedRateRatioSlider.ValueChanged += (sender, e) =>
+				{
+					PrinterConnectionAndCommunication.Instance.FeedRateRatio = feedRateRatioSlider.Value;
+				};
+				row.AddChild(feedRateRatioSlider);
+
+				var initialValue = Math.Round(PrinterConnectionAndCommunication.Instance.FeedRateRatio, 2);
+				feedRateValue = new MHNumberEdit(initialValue, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				{
+					Name = "Feed Rate NumberEdit",
+					SelectAllOnFocus = true,
+					Margin = new BorderDouble(0, 0, 5, 0),
+					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+					Padding = 0
+				};
+				feedRateValue.ActuallNumberEdit.EditComplete += (sender, e) =>
+				{
+					feedRateRatioSlider.Value = feedRateValue.ActuallNumberEdit.Value;
+				};
+				row.AddChild(feedRateValue);
+
+				topToBottom.AddChild(row);
+
+				textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
+				textImageButtonFactory.borderWidth = 1;
+				textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+				textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+
+				Button setButton = textImageButtonFactory.Generate("Set".Localize());
+				setButton.VAnchor = VAnchor.ParentCenter;
+				row.AddChild(setButton);
+			}
+
+			{
+				var row = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = new BorderDouble(top: 10),
+					VAnchor = VAnchor.FitToChildren
+				};
+
+				var extrusionDescription = new TextWidget("Extrusion Multiplier".Localize())
+				{
+					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					VAnchor = VAnchor.ParentCenter
+				};
+				row.AddChild(extrusionDescription);
+
+				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
+				{
+					Name = "Extrusion Multiplier Slider",
+					TotalWidthInPixels = sliderWidth,
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = new BorderDouble(5, 0),
+					Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio
+				};
+				extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
+				extrusionRatioSlider.ValueChanged += (sender, e) =>
+				{
+					PrinterConnectionAndCommunication.Instance.ExtrusionRatio = extrusionRatioSlider.Value;
+				};
+
+				var initialValue = Math.Round(PrinterConnectionAndCommunication.Instance.ExtrusionRatio, 2);
+				extrusionValue = new MHNumberEdit(initialValue, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				{
+					Name = "Extrusion Multiplier NumberEdit",
+					SelectAllOnFocus = true,
+					Margin = new BorderDouble(0, 0, 5, 0),
+					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+					Padding = 0
+				};
+				extrusionValue.ActuallNumberEdit.EditComplete += (sender, e) =>
+				{
+					extrusionRatioSlider.Value = extrusionValue.ActuallNumberEdit.Value;
+				};
+				row.AddChild(extrusionRatioSlider);
+				row.AddChild(extrusionValue);
+
+				topToBottom.AddChild(row);
+				
+				textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
+
+				Button setButton = textImageButtonFactory.Generate("Set".Localize());
+				setButton.VAnchor = VAnchor.ParentCenter;
+				row.AddChild(setButton);
+			}
+
+			adjustmentControlsGroupBox.AddChild(topToBottom);
+
 			this.AddChild(adjustmentControlsGroupBox);
+
+			PrinterConnectionAndCommunication.Instance.ExtrusionRatioChanged.RegisterEvent((s, e) =>
+			{
+				extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
+				extrusionValue.ActuallNumberEdit.Value = Math.Round(PrinterConnectionAndCommunication.Instance.ExtrusionRatio, 2);
+			}, ref unregisterEvents);
+
+			PrinterConnectionAndCommunication.Instance.FeedRateRatioChanged.RegisterEvent((s, e) =>
+			{
+				feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
+				feedRateValue.ActuallNumberEdit.Value = Math.Round(PrinterConnectionAndCommunication.Instance.FeedRateRatio, 2);
+			}, ref unregisterEvents);
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void ExtrusionRatioChanged_Event(object sender, EventArgs e)
-		{
-			extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
-			extrusionValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
-		}
-
-		private void FeedRateRatioChanged_Event(object sender, EventArgs e)
-		{
-			feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
-			feedRateValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
 		}
 	}
 }
