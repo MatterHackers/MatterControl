@@ -338,13 +338,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
-				StringEventArgs stringEvent = e as StringEventArgs;
-				if (stringEvent != null)
+				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
 				{
-					if (stringEvent.Data == SettingsKey.baby_step_z_offset)
-					{
-						OffsetStreamChanged(null, null);
-					}
+					OffsetStreamChanged(null, null);
 				}
 			}, ref unregisterEvents);
 

@@ -47,14 +47,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
-				StringEventArgs stringEvent = e as StringEventArgs;
-				if (stringEvent != null)
+				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
 				{
-					if (stringEvent.Data == SettingsKey.baby_step_z_offset)
-					{
-						OffsetChanged();
-					}
+					OffsetChanged();
 				}
+
 			}, ref unregisterEvents);
 
 			maxLengthStream = new MaxLengthStream(internalStream, 1);
