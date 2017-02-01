@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			levelingData.SampledPositions.Add(probePositions[2].position - paperWidth);
 
 			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
+			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData, true);
 			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
 
 			base.PageIsBecomingActive();
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
+			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData, true);
 			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
 
 			base.PageIsBecomingActive();

@@ -78,8 +78,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnectionAndCommunication
 	{
-		public event EventHandler OffsetStreamChanged;
-
 		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
@@ -336,24 +334,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				currentlyActiveExtruderIndex = (int)extruderBeingSet;
 			}
 		}
-
-		public void ResetBabyStepOffset()
-		{
-			babyStepsStream6.Offset = Vector3.Zero;
-
-			// store the offset
-			ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
-
-			OffsetStreamChanged?.Invoke(null, null);
-		}
-
-		public void AddToBabyStepOffset(Axis moveAxis, double moveAmount)
-		{
-			babyStepsStream6.OffsetAxis(moveAxis, moveAmount);
-			OffsetStreamChanged?.Invoke(null, null);
-		}
-
-		public Vector3 CurrentBabyStepsOffset => babyStepsStream6?.Offset ?? Vector3.Zero;
 
 		[Flags]
 		public enum Axis { X = 1, Y = 2, Z = 4, E = 8, XYZ = (X | Y | Z) }
@@ -2476,7 +2456,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// make sure we are in the position we were when we stopped printing
 				babyStepsStream6.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
 			}
-			UiThread.RunOnIdle(() => OffsetStreamChanged?.Invoke(null, null));
 			extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
 			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
 			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);

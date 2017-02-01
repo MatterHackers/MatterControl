@@ -514,20 +514,6 @@
 		"DefaultValue": "1",
 		"RebuildGCodeOnChange": true
 	},
-  {
-    "QuickMenuSettings": [ ],
-    "SetSettingsOnChange": [ ],
-    "SlicerConfigName": "expand_thin_walls",
-    "PresentationName": "Expand Thin Walls",
-    "HelpText": "Detect sections of the model that would be too thin to print, expand them, and print them.",
-    "DataEditType": "CHECK_BOX",
-    "ExtraSettings": "",
-    "ShowAsOverride": true,
-    "ShowIfSet": null,
-    "ResetAtEndOfPrint": false,
-    "DefaultValue": "1",
-    "RebuildGCodeOnChange": true
-	},
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
