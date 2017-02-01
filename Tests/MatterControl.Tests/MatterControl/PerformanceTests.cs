@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl
 					
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item Calibration - Box");
-					testRunner.Wait(2);
+					testRunner.Delay(2);
 					MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
 					testRunner.ClickByName("Queue Tab");
 				});
@@ -181,9 +181,9 @@ namespace MatterHackers.MatterControl
 
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item Calibration - Box");
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 					testRunner.Type("Renamed Calibration Cube");
 					testRunner.ClickByName("Rename Button");
 
@@ -206,13 +206,13 @@ namespace MatterHackers.MatterControl
 					testRunner.ClickByName("Library Tab");
 					NavigateToFolder(testRunner, "Local Library Row Item Collection");
 					testRunner.ClickByName("Create Folder From Library Button");
-					testRunner.Wait(2);
+					testRunner.Delay(2);
 					testRunner.Type("New Folder");
 					testRunner.ClickByName("Create Folder Button");
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item New Folder");
 					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 					testRunner.Type("Renamed Folder");
 					testRunner.ClickByName("Rename Button");
 
@@ -229,9 +229,9 @@ namespace MatterHackers.MatterControl
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			testRunner.ClickByName(libraryRowItemName);
 			testRunner.MoveToByName(libraryRowItemName);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 		}
 	}
 }

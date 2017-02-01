@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.True(testRunner.NameExists("Done Button"), "The print has completed");
 					testRunner.WaitForName("Print Again Button", 1);
 
-					testRunner.Wait(5);
+					testRunner.Delay(5);
 
 					Assert.Less(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), 30);
 					Assert.Less(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, 10);
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 					testRunner.ClickByName("Done Button");
 
-					testRunner.Wait(1);
+					testRunner.Delay(1);
 
 					// print a part
 					testRunner.ClickByName("Start Print Button", 1);
