@@ -125,6 +125,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				feedRateValue.ActuallNumberEdit.EditComplete += (sender, e) =>
 				{
 					feedRateRatioSlider.Value = feedRateValue.ActuallNumberEdit.Value;
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.feedrate_ratio, Math.Round(feedRateRatioSlider.Value, 2).ToString());
 				};
 				row.AddChild(feedRateValue);
 
@@ -186,6 +187,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				extrusionValue.ActuallNumberEdit.EditComplete += (sender, e) =>
 				{
 					extrusionRatioSlider.Value = extrusionValue.ActuallNumberEdit.Value;
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.extrusion_ratio, Math.Round(extrusionRatioSlider.Value, 2).ToString());
 				};
 				row.AddChild(extrusionRatioSlider);
 				row.AddChild(extrusionValue);
