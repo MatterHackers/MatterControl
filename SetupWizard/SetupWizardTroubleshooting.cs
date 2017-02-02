@@ -209,8 +209,11 @@ namespace MatterHackers.MatterControl
 			private static RGBA_Bytes disabledBackColor = new RGBA_Bytes(0.22, 0.22, 0.22);
 			private static RGBA_Bytes toggleColor = new RGBA_Bytes(RGBA_Bytes.Gray.red + 2, RGBA_Bytes.Gray.green + 2, RGBA_Bytes.Gray.blue + 2);
 
-			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction) :base(FlowDirection.LeftToRight, HAnchor.ParentLeftRight, VAnchor.AbsolutePosition)
+			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction) 
+				: base(FlowDirection.LeftToRight)
 			{
+				HAnchor = HAnchor.ParentLeftRight;
+				VAnchor = VAnchor.AbsolutePosition;
 				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
 				ErrorText = errorText;

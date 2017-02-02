@@ -12,8 +12,10 @@ namespace MatterHackers.MatterControl
 		private Button DefaultButton { get { return defaultButton; } }
 
 		public SplitButton(string buttonText, Direction direction = Direction.Down)
-			: base(FlowDirection.LeftToRight, HAnchor.FitToChildren, VAnchor.FitToChildren)
+			: base(FlowDirection.LeftToRight)
 		{
+			HAnchor = HAnchor.FitToChildren;
+			VAnchor = VAnchor.FitToChildren;
 			defaultButton = CreateDefaultButton(buttonText);
 			altChoices = CreateDropDown(direction);
 
@@ -24,8 +26,10 @@ namespace MatterHackers.MatterControl
 		}
 
 		public SplitButton(Button button, DynamicDropDownMenu menu)
-			: base(FlowDirection.LeftToRight, HAnchor.FitToChildren, VAnchor.FitToChildren)
+			: base(FlowDirection.LeftToRight)
 		{
+			HAnchor = HAnchor.FitToChildren;
+			VAnchor = VAnchor.FitToChildren;
 			defaultButton = button;
 			altChoices = menu;
 

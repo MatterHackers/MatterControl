@@ -39,14 +39,6 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class Cover : GuiWidget
-	{
-		public Cover(HAnchor hAnchor = HAnchor.AbsolutePosition, VAnchor vAnchor = VAnchor.AbsolutePosition)
-			: base(hAnchor, vAnchor)
-		{
-		}
-	}
-
 	public abstract class PartPreview3DWidget : PartPreviewWidget
 	{
 		protected static readonly int DefaultScrollBarWidth = 120;

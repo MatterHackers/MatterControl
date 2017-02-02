@@ -199,7 +199,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				buttonBottomPanel.AddChild(editToolBar);
 			}
 
-			GuiWidget buttonRightPanelHolder = new GuiWidget(HAnchor.FitToChildren, VAnchor.ParentBottomTop);
+			GuiWidget buttonRightPanelHolder = new GuiWidget()
+			{
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.ParentBottomTop
+			};
 			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
 			buttonRightPanelHolder.AddChild(buttonRightPanel);
 
@@ -210,7 +214,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				meshViewerWidget.ResetView();
 			};
 
-			buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
+			buttonRightPanelDisabledCover = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop
+			};
 			buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
 			buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
 			LockEditControls();

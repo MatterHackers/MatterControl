@@ -89,7 +89,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			this.AddChild(labelText);
-			pullDownContainer = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren);
+			pullDownContainer = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren
+			};
 			pullDownContainer.AddChild(GetPulldownContainer());
 			this.AddChild(pullDownContainer);
 			this.AddChild(new VerticalSpacer());
