@@ -159,6 +159,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			waitingForUserInput = false;
 		}
 
+		public void Cancel()
+		{
+			Reset();
+		}
+
 		public void Continue()
 		{
 			waitingForUserInput = false;
