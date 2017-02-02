@@ -621,7 +621,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
-			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
+			foreach (var item in ActiveSliceSettings.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{
 				switch (item.SlicerConfigName)
 				{
@@ -1070,6 +1070,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Otherwise, set and save
 			persistenceLayer[settingsKey] = settingsValue;
 			Save();
+
+			ActiveSliceSettings.OnSettingChanged(settingsKey);
 		}
 
 		public string ToJson(Formatting formatting = Formatting.Indented)
@@ -1091,6 +1093,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				Save();
+
+				ActiveSliceSettings.OnSettingChanged(settingsKey);
 			}
 		}
 	}

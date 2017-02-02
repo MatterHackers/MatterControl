@@ -387,8 +387,10 @@ namespace MatterHackers.MatterControl
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 			};
 
-			var container = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren)
+			var container = new GuiWidget()
 			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren,
 				Margin = new BorderDouble(25, 15, 5, 5),
 			};
 

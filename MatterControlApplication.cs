@@ -735,7 +735,11 @@ namespace MatterHackers.MatterControl
 				}
 
 				HtmlWidget content = new HtmlWidget(htmlContent, RGBA_Bytes.Black);
-				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.ParentBottomTop));
+				content.AddChild(new GuiWidget()
+				{
+					HAnchor = HAnchor.AbsolutePosition,
+					VAnchor = VAnchor.ParentBottomTop
+				});
 				content.VAnchor |= VAnchor.ParentTop;
 				content.BackgroundColor = RGBA_Bytes.White;
 				htmlTestWindow.AddChild(content);

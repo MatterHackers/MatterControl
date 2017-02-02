@@ -668,7 +668,12 @@ namespace MatterHackers.MatterControl
 
 					if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
 					{
-						PrinterConnectionAndCommunication.Instance.AddToBabyStepOffset(this.moveAxis, this.MoveAmount);
+						if (moveAxis == PrinterConnectionAndCommunication.Axis.Z) // only works on z
+						{
+							var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+							currentZ += this.MoveAmount;
+							ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+						}
 					}
 					else
 					{

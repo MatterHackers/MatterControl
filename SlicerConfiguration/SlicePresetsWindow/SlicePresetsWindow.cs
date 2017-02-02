@@ -114,8 +114,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private FlowLayoutWidget GetTopRow()
 		{
-			var topRow = new FlowLayoutWidget(hAnchor: HAnchor.ParentLeftRight)
+			var topRow = new FlowLayoutWidget()
 			{
+				HAnchor = HAnchor.ParentLeftRight,
 				Padding = new BorderDouble(0, 3)
 			};
 

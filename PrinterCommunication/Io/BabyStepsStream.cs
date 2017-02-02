@@ -28,19 +28,36 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
-using System.Text;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class BabyStepsStream : GCodeStreamProxy
 	{
-		OffsetStream offsetStream;
-		MaxLengthStream maxLengthStream;
-		int layerCount = -1;
+		private int layerCount = -1;
+		private MaxLengthStream maxLengthStream;
+		private OffsetStream offsetStream;
+		private EventHandler unregisterEvents;
+
+		public BabyStepsStream(GCodeStream internalStream)
+			: base(null)
+		{
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
+				{
+					OffsetChanged();
+				}
+
+			}, ref unregisterEvents);
+
+			maxLengthStream = new MaxLengthStream(internalStream, 1);
+			offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset)));
+			base.internalStream = offsetStream;
+		}
 
 		public Vector3 Offset { get { return offsetStream.Offset; } set { offsetStream.Offset = value; } }
 
@@ -48,30 +65,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			offsetStream.Dispose();
 			maxLengthStream.Dispose();
-		}
-
-		public void OffsetAxis(PrinterConnectionAndCommunication.Axis moveAxis, double moveAmount)
-		{
-			offsetStream.Offset = offsetStream.Offset + new Vector3(
-				(moveAxis == PrinterConnectionAndCommunication.Axis.X) ? moveAmount : 0,
-				(moveAxis == PrinterConnectionAndCommunication.Axis.Y) ? moveAmount : 0,
-				(moveAxis == PrinterConnectionAndCommunication.Axis.Z) ? moveAmount : 0);
-
-			if(PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer <= 1)
-			{
-				// store the offset
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, offsetStream.Offset.z.ToString("0.##"));
-			}
-		}
-
-		public BabyStepsStream(GCodeStream internalStream)
-			: base(null)
-		{
-			maxLengthStream = new MaxLengthStream(internalStream, 1);
-			double zOffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
-			var layerZOffset = new Vector3(0, 0, zOffset);
-			offsetStream = new OffsetStream(maxLengthStream, layerZOffset);
-			base.internalStream = offsetStream;
+			unregisterEvents?.Invoke(this, null);
 		}
 
 		public override string ReadLine()
@@ -88,6 +82,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 			}
 			return processedLine;
+		}
+
+		private void OffsetChanged()
+		{
+			offsetStream.Offset = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset));
 		}
 	}
 }

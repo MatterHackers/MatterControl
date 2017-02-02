@@ -159,7 +159,11 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget CreateContentForEmptyControl()
 		{
-			GuiWidget allContent = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
+			GuiWidget allContent = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop,
+			};
 			allContent.Padding = new BorderDouble(5, 10, 5, 10);
 
 			FlowLayoutWidget flowWidget = new FlowLayoutWidget();

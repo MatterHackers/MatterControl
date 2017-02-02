@@ -9,10 +9,29 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public DisableableWidget()
 		{
-			HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			VAnchor = Agg.UI.VAnchor.FitToChildren;
+			HAnchor = HAnchor.ParentLeftRight;
+			VAnchor = VAnchor.FitToChildren;
 			this.Margin = new BorderDouble(3);
-			disableOverlay = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
+			disableOverlay = new GuiWidget(0, 0);
+
+			this.BoundsChanged += (s, e) =>
+			{
+				var childBounds = GetChildrenBoundsIncludingMargins(considerChild: (parent, child) =>
+				{
+					if(child == disableOverlay)
+					{
+						return false;
+					}
+
+					return true;
+				});
+
+				disableOverlay.LocalBounds = new RectangleDouble(childBounds.Left,
+					childBounds.Bottom,
+					childBounds.Right,
+					childBounds.Top - disableOverlay.Margin.Top);
+			};
+
 			disableOverlay.Visible = false;
 			base.AddChild(disableOverlay);
 		}

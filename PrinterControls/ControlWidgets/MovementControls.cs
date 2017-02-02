@@ -336,10 +336,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.FitToChildren;
 			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
 
-			PrinterConnectionAndCommunication.Instance.OffsetStreamChanged += OffsetStreamChanged;
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
-				OffsetStreamChanged(null, null);
+				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
+				{
+					OffsetStreamChanged(null, null);
+				}
 			}, ref unregisterEvents);
 
 			zOffsetStreamContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -375,13 +377,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 				ToolTipText = "Clear ZOffset".Localize(),
 				Visible = false
 			};
-			clearZOffsetButton.Click += (sender, e) => PrinterConnectionAndCommunication.Instance.ResetBabyStepOffset();
+			clearZOffsetButton.Click += (sender, e) =>
+			{
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+			};
 			zOffsetStreamContainer.AddChild(clearZOffsetButton);
 		}
 
 		internal void OffsetStreamChanged(object sender, EventArgs e)
 		{
-			double zoffset = PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset.z;
+			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
 			bool hasOverriddenZOffset = (zoffset != 0);
 
 			zOffsetStreamContainer.BackgroundColor = (hasOverriddenZOffset) ? SliceSettingsWidget.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -392,8 +397,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public override void OnClosed(EventArgs e)
 		{
-			PrinterConnectionAndCommunication.Instance.OffsetStreamChanged -= OffsetStreamChanged;
-
 			unregisterEvents?.Invoke(null, null);
 			base.OnClosed(e);
 		}

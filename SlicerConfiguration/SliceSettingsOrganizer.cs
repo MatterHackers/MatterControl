@@ -219,8 +219,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set { userLevels = value; }
 		}
 
-		public List<SliceSettingData> SettingsData { get; private set; }  = new List<SliceSettingData>();
-
 		private static SliceSettingsOrganizer instance = null;
 
 		public static SliceSettingsOrganizer Instance
@@ -275,7 +273,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingData GetSettingsData(string slicerConfigName)
 		{
-			foreach (SliceSettingData settingData in SettingsData)
+			foreach (SliceSettingData settingData in ActiveSliceSettings.SettingsData)
 			{
 				if (settingData.SlicerConfigName == slicerConfigName)
 				{
@@ -289,9 +287,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void LoadAndParseSettingsFiles()
 		{
-			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			SettingsData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents) as List<SliceSettingData>;
-
 			OrganizerUserLevel userLevelToAddTo = null;
 			OrganizerCategory categoryToAddTo = null;
 			OrganizerGroup groupToAddTo = null;
@@ -355,7 +350,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (defaultSettings == null)
 			{
 				var settingsDictionary = new Dictionary<string, string>();
-				foreach (var sliceSettingsData in this.SettingsData)
+				foreach (var sliceSettingsData in ActiveSliceSettings.SettingsData)
 				{
 					settingsDictionary[sliceSettingsData.SlicerConfigName] = sliceSettingsData.DefaultValue;
 				}

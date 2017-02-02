@@ -186,7 +186,10 @@ namespace MatterHackers.MatterControl
 			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			AddChild(ColumnOne);
-			leftBorderLine = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
+			leftBorderLine = new GuiWidget()
+			{
+				VAnchor = VAnchor.ParentBottomTop
+			};
 			leftBorderLine.Width = 15;
 			leftBorderLine.BeforeDraw += (widget, graphics2D) =>
 			{

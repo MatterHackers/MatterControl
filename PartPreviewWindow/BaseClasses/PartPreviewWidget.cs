@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected ViewControls2D viewControls2D;
 
-		protected Cover buttonRightPanelDisabledCover;
+		protected GuiWidget buttonRightPanelDisabledCover;
 		protected FlowLayoutWidget buttonRightPanel;
 
 		public PartPreviewWidget()

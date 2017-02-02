@@ -212,7 +212,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			centerPartPreviewAndControls.AnchorAll();
 
-			gcodeDisplayWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
+			gcodeDisplayWidget = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop
+			};
 			string firstProcessingMessage = "Press 'Add' to select an item.".Localize();
 
 			if (printItem != null)
@@ -266,7 +270,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			centerPartPreviewAndControls.AddChild(buttonRightPanel);
 
 			// add in a spacer
-			layerSelectionButtonsPanel.AddChild(new GuiWidget(HAnchor.ParentLeftRight));
+			layerSelectionButtonsPanel.AddChild(new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight
+			});
 			buttonBottomPanel.AddChild(layerSelectionButtonsPanel);
 
 			mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);

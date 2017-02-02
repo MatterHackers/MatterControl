@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 						newLevelingData.SampledPositions[i] = positions[i];
 					}
 
-					ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(newLevelingData);
+					ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(newLevelingData, false);
 					ActiveSliceSettings.Instance.Helpers.UpdateLevelSettings();
 					Close();
 				});

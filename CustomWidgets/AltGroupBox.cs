@@ -101,7 +101,11 @@ namespace MatterHackers.MatterControl
 				base.AddChild(groupBoxLabel);
 			}
 
-			clientArea = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren);
+			clientArea = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren
+			};
 			base.AddChild(clientArea);
 		}
 
