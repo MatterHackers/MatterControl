@@ -27,26 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.VectorMath;
 using System.Collections.Generic;
-using System.Threading;
-using MatterHackers.MatterControl.PrinterControls;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Threading;
 using MatterHackers.Agg.UI;
-using System;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.PrinterControls;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class QueuedCommandsStream : GCodeStreamProxy
 	{
-		object locker = new object();
-		private List<string> commandQueue = new List<string>();
-		bool waitingForUserInput = false;
-
 		public const string MacroPrefix = "; Command:";
+		private List<string> commandQueue = new List<string>();
+		private object locker = new object();
+		private bool waitingForUserInput = false;
+		private double maxTimeToWaitForOk = 0;
+		private string commandToRepeat = "";
+		private Stopwatch timeHaveBeenWaiting = new Stopwatch();
 
 		public QueuedCommandsStream(GCodeStream internalStream)
 			: base(internalStream)
@@ -62,14 +62,40 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		public void Cancel()
+		{
+			Reset();
+		}
+
+		public void Continue()
+		{
+			waitingForUserInput = false;
+			timeHaveBeenWaiting.Reset();
+			maxTimeToWaitForOk = 0;
+			commandToRepeat = "";
+		}
+
 		public override string ReadLine()
 		{
 			string lineToSend = null;
 
 			if (waitingForUserInput)
 			{
-				Thread.Sleep(100);
 				lineToSend = "";
+				Thread.Sleep(100);
+
+				if(timeHaveBeenWaiting.IsRunning
+					&& timeHaveBeenWaiting.Elapsed.TotalSeconds < maxTimeToWaitForOk)
+				{
+					Continue();
+				}
+
+				if (maxTimeToWaitForOk > 0
+					&& timeHaveBeenWaiting.Elapsed.TotalSeconds < maxTimeToWaitForOk
+					&& commandToRepeat != "")
+				{
+					lineToSend = commandToRepeat;
+				}
 			}
 			else
 			{
@@ -108,6 +134,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 						switch (command)
 						{
+							case "ChooseMaterial":
+								waitingForUserInput = true;
+								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true, true));
+								break;
+
+							case "Close":
+								UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
+								break;
+
 							case "Message":
 								if (messages.Count > 0)
 								{
@@ -119,9 +154,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								}
 								break;
 
-							case "ChooseMaterial":
+							case "RepeatUntil": // Repeat a command until the user clicks or or the max time elapses.
 								waitingForUserInput = true;
-								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true, true));
+								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true));
 								break;
 
 							case "WaitOK":
@@ -129,15 +164,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true));
 								break;
 
-							case "Close":
-								UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
-								break;
-
 							default:
 								// Don't know the command. Print to terminal log?
 								break;
 						}
-
 					}
 				}
 				else
@@ -156,16 +186,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				commandQueue.Clear();
 			}
 
-			waitingForUserInput = false;
-		}
-
-		public void Cancel()
-		{
-			Reset();
-		}
-
-		public void Continue()
-		{
 			waitingForUserInput = false;
 		}
 	}
