@@ -2689,7 +2689,8 @@
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
-		"DefaultValue": "1"
+		"DefaultValue": "1",
+		"RebuildGCodeOnChange": false
 	},
 	{
 		"QuickMenuSettings": [ ],
@@ -2702,6 +2703,7 @@
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
-		"DefaultValue": "1"
+		"DefaultValue": "1",
+		"RebuildGCodeOnChange": false
 	}
 ]
