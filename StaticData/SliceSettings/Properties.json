@@ -2677,5 +2677,31 @@
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "0"
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "feedrate_ratio",
+		"PresentationName": "Feedrate Ratio",
+		"HelpText": "Controls the speed of printer moves",
+		"DataEditType": "POSITIVE_DOUBLE",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "1"
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "extrusion_ratio",
+		"PresentationName": "Extrusion Ratio",
+		"HelpText": "Controls the amount of extrusion",
+		"DataEditType": "POSITIVE_DOUBLE",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "1"
 	}
 ]

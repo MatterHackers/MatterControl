@@ -179,8 +179,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(.2);
 
 					// Assert the changes took effect on the model
-					Assert.AreEqual(targetExtrusionRate, PrinterConnectionAndCommunication.Instance.ExtrusionRatio);
-					Assert.AreEqual(targetFeedRate, PrinterConnectionAndCommunication.Instance.FeedRateRatio);
+					Assert.AreEqual(targetExtrusionRate, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.extrusion_ratio));
+					Assert.AreEqual(targetFeedRate, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio));
 
 					var resetEvent = new AutoResetEvent(false);
 
@@ -201,8 +201,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.CancelPrint();
 
 					// Assert we've reset to 1
-					Assert.AreEqual(1, PrinterConnectionAndCommunication.Instance.FeedRateRatio);
-					Assert.AreEqual(1, PrinterConnectionAndCommunication.Instance.ExtrusionRatio);
+					Assert.AreEqual(1, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.extrusion_ratio));
+					Assert.AreEqual(1, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio));
 
 					// Assert the changes took effect on the UI
 					slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
