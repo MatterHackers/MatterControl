@@ -2002,7 +2002,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			haveReportedError = false;
 			PrintWasCanceled = false;
 
-			waitingForPosition.Restart();
+			waitingForPosition.Reset();
 
 			ClearQueuedGCode();
 			activePrintTask = printTaskToUse;
