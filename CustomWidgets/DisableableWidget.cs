@@ -16,9 +16,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.BoundsChanged += (s, e) =>
 			{
-				var childBounds = GetChildrenBoundsIncludingMargins(considerChild: (parent, child) =>
+				if (Parent != null
+				&& Parent.Visible && Parent.Width > 0
+				&& Parent.Height > 0
+				&& Parent.Children.Count > 1)
 				{
-					if(child == disableOverlay)
+
+					var childBounds = GetChildrenBoundsIncludingMargins(considerChild: (parent, child) =>
+				{
+					if (child == disableOverlay)
 					{
 						return false;
 					}
@@ -26,10 +32,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					return true;
 				});
 
-				disableOverlay.LocalBounds = new RectangleDouble(childBounds.Left,
-					childBounds.Bottom,
-					childBounds.Right,
-					childBounds.Top - disableOverlay.Margin.Top);
+					disableOverlay.LocalBounds = new RectangleDouble(childBounds.Left,
+						childBounds.Bottom,
+						childBounds.Right,
+						childBounds.Top - disableOverlay.Margin.Top);
+				}
 			};
 
 			disableOverlay.Visible = false;

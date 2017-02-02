@@ -104,28 +104,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 			macroButtonContainer.Margin = new BorderDouble(0, 0, 3, 0);
 			macroButtonContainer.Padding = new BorderDouble(0, 3, 3, 3);
 
-			if (ActiveSliceSettings.Instance?.ActionMacros().Any() == false)
+			if (ActiveSliceSettings.Instance?.ActionMacros().Any() != true)
 			{
 				return macroButtonContainer;
 			}
 
-			int buttonCount = 0;
 			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.ActionMacros())
 			{
-				buttonCount++;
-
 				Button macroButton = textImageButtonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 				macroButton.Margin = new BorderDouble(right: 5);
 				macroButton.Click += (s, e) => macro.Run();
 
 				macroButtonContainer.AddChild(macroButton);
-			}
-
-			if (buttonCount == 0)
-			{
-				TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
-				noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				macroButtonContainer.AddChild(noMacrosFound);
 			}
 
 			return macroButtonContainer;
@@ -193,8 +183,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			FLowLeftRightWithWrapping macroContainer = new FLowLeftRightWithWrapping();
 
-			if (ActiveSliceSettings.Instance?.UserMacros().Any() == false)
+			TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
+			noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			macroContainer.AddChild(noMacrosFound);
+			noMacrosFound.Visible = false;
+
+			if (ActiveSliceSettings.Instance?.UserMacros().Any() != true)
 			{
+				noMacrosFound.Visible = true;
 				return macroContainer;
 			}
 
@@ -206,10 +202,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				macroContainer.AddChild(macroButton);
 			}
-
-			TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
-			noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroContainer.AddChild(noMacrosFound);
 
 			macroContainer.Children.CollectionChanged += (s, e) =>
 			{

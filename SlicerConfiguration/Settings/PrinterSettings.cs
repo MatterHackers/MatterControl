@@ -87,27 +87,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
-		public IEnumerable<GCodeMacro> UserMacros()
-		{
-			foreach (var macro in Macros)
-			{
-				if (!macro.ActionGroup)
-				{
-					yield return macro;
-				}
-			}
-		}
 
-		public IEnumerable<GCodeMacro> ActionMacros()
-		{
-			foreach (var macro in Macros)
-			{
-				if (macro.ActionGroup)
-				{
-					yield return macro;
-				}
-			}
-		}
+		public IEnumerable<GCodeMacro> UserMacros() => Macros.Where(m => !m.ActionGroup);
+		public IEnumerable<GCodeMacro> ActionMacros() => Macros.Where(m => m.ActionGroup);
 
 		/// <summary>
 		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
