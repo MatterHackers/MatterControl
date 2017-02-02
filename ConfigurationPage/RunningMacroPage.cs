@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -46,14 +47,43 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private long timeToWaitMs;
 
+		List<double> startingExtruderTemps = new List<double>();
+		double startingBedTemp = 0;
+
 		public RunningMacroPage(string message, bool showOkButton, bool showMaterialSelector, double expectedSeconds, double expectedTemperature)
-					: base("Close", "Macro Feedback")
+					: base("Cancel", "Macro Feedback")
 		{
 			TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(syncingText);
 
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
+
+			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			for (int i = 0; i < extruderCount; i++)
+			{
+				startingExtruderTemps.Add(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(i));
+			}
+
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+			{
+				startingBedTemp = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
+			}
+
+			cancelButton.Click += (s, e) =>
+			{
+				for (int i = 0; i < startingExtruderTemps.Count; i++)
+				{
+					PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
+				}
+
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+				{
+					PrinterConnectionAndCommunication.Instance.TargetBedTemperature = startingBedTemp;
+				}
+
+				PrinterConnectionAndCommunication.Instance.MacroCancel();
+			};
 
 			if (showMaterialSelector)
 			{

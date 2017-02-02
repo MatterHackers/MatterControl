@@ -2964,6 +2964,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			queuedCommandStream2?.Reset();
 		}
 
+		public void MacroCancel()
+		{
+			queuedCommandStream2?.Cancel();
+		}
+
 		public void MacroContinue()
 		{
 			queuedCommandStream2?.Continue();

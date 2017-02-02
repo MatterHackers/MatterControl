@@ -68,8 +68,8 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(new MenuOptionSettings());
 
-			// put in the help menu
-			if (ActiveSliceSettings.Instance?.ActionMacros().Any() != null)
+			// put in the action menu
+			if (ActiveSliceSettings.Instance?.ActionMacros().Any() == true)
 			{
 				this.AddChild(new MenuOptionAction());
 			}
