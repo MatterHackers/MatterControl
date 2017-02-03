@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if(checkForPermissionTimer != null)
 			{

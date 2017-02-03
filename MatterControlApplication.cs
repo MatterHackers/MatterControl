@@ -563,7 +563,7 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
 

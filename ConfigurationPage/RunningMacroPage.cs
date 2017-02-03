@@ -53,10 +53,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 		double startingBedTemp = 0;
 
 		public RunningMacroPage(string message, bool showOkButton, bool showMaterialSelector, double expectedSeconds, double expectedTemperature, ImageBuffer imageBuffer)
-					: base("Cancel", "Macro Feedback")
+					: base("Cancel", message)
 		{
-			TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			contentRow.AddChild(syncingText);
+			//TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			//contentRow.AddChild(syncingText);
 
 			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 			for (int i = 0; i < extruderCount; i++)
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				//HAnchor = HAnchor.ParentCenter,
+				BackgroundColor = RGBA_Bytes.White,
 				Margin = new BorderDouble(3, 0, 0, 10),
 			};
 			progressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -143,6 +143,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void CancelScript()
 		{
+			PrinterConnectionAndCommunication.Instance.MacroCancel();
+
 			for (int i = 0; i < startingExtruderTemps.Count; i++)
 			{
 				PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
@@ -152,8 +154,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				PrinterConnectionAndCommunication.Instance.TargetBedTemperature = startingBedTemp;
 			}
-
-			PrinterConnectionAndCommunication.Instance.MacroCancel();
 		}
 
 		private EventHandler unregisterEvents;
@@ -163,8 +163,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(message, showOkButton, showMaterialSelector, expectedSeconds, expectedTemperature, image));
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
+			if(e.OsEvent)
+			{
+				CancelScript();
+			}
 			unregisterEvents?.Invoke(this, null);
 
 			base.OnClosed(e);
@@ -198,11 +202,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void ShowTempChangeProgress()
 		{
-			double totalDelta = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(0) - startingTemp;
-			double currentDelta = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0) - startingTemp;
+			double targetTemp = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(0);
+			double actualTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0);
+			double totalDelta = targetTemp - startingTemp;
+			double currentDelta = actualTemp - startingTemp;
 			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;
 			progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
-			//progressBarText.Text = $"Time Remaining: {seconds / 60:#0}:{seconds % 60:00}";
+			progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
 			if (!HasBeenClosed && ratioDone < 1)
 			{
 				UiThread.RunOnIdle(ShowTempChangeProgress, 1);

@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

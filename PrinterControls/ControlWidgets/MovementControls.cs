@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return movementSpeeds["e0"];
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
@@ -395,7 +395,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(null, null);
 			base.OnClosed(e);

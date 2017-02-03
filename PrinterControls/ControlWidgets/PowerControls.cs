@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

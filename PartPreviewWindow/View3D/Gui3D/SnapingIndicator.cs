@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 			this.DrawOnTop = true;
-			MeshViewerToDrawWith.AfterDraw += new DrawEventHandler(MeshViewerToDrawWith_Draw);
+			MeshViewerToDrawWith.AfterDraw += MeshViewerToDrawWith_Draw;
 		}
 
 		public override void SetPosition()
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void MeshViewerToDrawWith_Draw(GuiWidget drawingWidget, DrawEventArgs drawEvent)
+		private void MeshViewerToDrawWith_Draw(object drawingWidget, DrawEventArgs drawEvent)
 		{
 			if (MeshViewerToDrawWith.SelectedMeshGroup != null
 				&& view3DWidget.meshViewerWidget.SnapGridDistance > 0

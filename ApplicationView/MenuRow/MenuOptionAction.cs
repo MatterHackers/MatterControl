@@ -29,7 +29,7 @@ namespace MatterHackers.MatterControl
 			base.OnLoad(args);
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (activePrintPreviewImage.ItemWrapper != null)
 			{
@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

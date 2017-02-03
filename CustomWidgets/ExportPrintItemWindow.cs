@@ -376,7 +376,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			printItemWrapper.SlicingDone -= sliceItem_Done;
 			if (unregisterEvents != null)

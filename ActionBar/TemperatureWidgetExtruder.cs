@@ -31,6 +31,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -92,7 +93,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

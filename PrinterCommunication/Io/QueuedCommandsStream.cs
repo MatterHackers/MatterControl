@@ -223,8 +223,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				return imageBuffer;
 			}
-
-			return null;
 		}
 
 

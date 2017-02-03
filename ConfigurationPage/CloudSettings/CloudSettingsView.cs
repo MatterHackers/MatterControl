@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return notificationSettingsContainer;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

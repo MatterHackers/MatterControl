@@ -5893,3 +5893,33 @@ Translated:feedrate_ratio
 English:extrusion_ratio
 Translated:extrusion_ratio
 
+English:Choose the material that you are loading.
+Translated:Choose the material that you are loading.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Trim the end of the filament to ensure a good load.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Choose the material that you are loading. You are doing some stuff that takes a long description.
+
+English:Confirm the material you are unloading.
+Translated:Confirm the material you are unloading.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Waiting for extruder to heat to 205, before unloading.
+
+English:Unloading filament...
+Translated:Unloading filament...
+
+English:Put filament into extruder and click Continue.
+Translated:Put filament into extruder and click Continue.
+
+English:Loading filament...
+Translated:Loading filament...
+
+English:Waiting for extruder to heat to 205.
+Translated:Waiting for extruder to heat to 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Click 'Continue' when filament is running cleanly.
+

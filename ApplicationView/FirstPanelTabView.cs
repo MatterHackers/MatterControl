@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
 			firstPanelCurrentTab = SelectedTabIndex;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

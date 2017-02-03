@@ -100,7 +100,7 @@ namespace MatterHackers.Agg.UI
 			HoverArrowColor = TextColor;
 		}
 
-		protected override void DropListItems_Closed(object sender, EventArgs e)
+		protected override void DropListItems_Closed(object sender, ClosedEventArgs e)
 		{
 			BackgroundColor = NormalColor;
 			base.DropListItems_Closed(sender, e);

@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
@@ -678,7 +678,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}, ref unregisterEvents);
 			}
 
-			public override void OnClosed(EventArgs e)
+			public override void OnClosed(ClosedEventArgs e)
 			{
 				unregisterEvents?.Invoke(this, null);
 				base.OnClosed(e);
@@ -1687,7 +1687,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			totalContent.Closed += (s, e) =>
 			{
-				localUnregisterEvents?.Invoke(s, e);
+				localUnregisterEvents?.Invoke(s, null);
 			};
 
 			return totalContent;
