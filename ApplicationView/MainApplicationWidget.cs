@@ -676,7 +676,7 @@ namespace MatterHackers.MatterControl
 		/// Download an image from the web into the specified ImageBuffer
 		/// </summary>
 		/// <param name="uri"></param>
-		public void DownloadToImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleImage, IRecieveBlenderByte scalingBlender = null)
+		public void DownloadToImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
 		{
 			if (scalingBlender == null)
 			{
@@ -692,7 +692,7 @@ namespace MatterHackers.MatterControl
 					byte[] raw = e.Result;
 					Stream stream = new MemoryStream(raw);
 					ImageBuffer unScaledImage = new ImageBuffer(10, 10);
-					if (scaleImage)
+					if (scaleToImageX)
 					{
 						StaticData.Instance.LoadImageData(stream, unScaledImage);
 						// If the source image (the one we downloaded) is more than twice as big as our dest image.
@@ -705,7 +705,10 @@ namespace MatterHackers.MatterControl
 							halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
 							unScaledImage = halfImage;
 						}
-						imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, imageToLoadInto.Width / (double)unScaledImage.Width, imageToLoadInto.Height / (double)unScaledImage.Height);
+						
+						double finalScale = imageToLoadInto.Width / (double)unScaledImage.Width;
+						imageToLoadInto.Allocate(imageToLoadInto.Width, (int)(unScaledImage.Height * finalScale), imageToLoadInto.Width * (imageToLoadInto.BitDepth / 8), imageToLoadInto.BitDepth);
+						imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, finalScale, finalScale);
 					}
 					else
 					{

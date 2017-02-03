@@ -160,6 +160,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
 								break;
 
+							case "Ding":
+								MatterControlApplication.Instance.PlaySound("timer-done.wav");
+								break;
+
 							case "Message":
 								if (messages.Count > 0)
 								{
@@ -208,18 +212,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lineToSend;
 		}
 
-		public ImageBuffer LoadImageAsset(string fileName)
+		public ImageBuffer LoadImageAsset(string uri)
 		{
-			string filePath = Path.Combine("Images", "Macros", fileName);
-			if (StaticData.Instance.FileExists(filePath))
+			string filePath = Path.Combine("Images", "Macros", uri);
+			bool imageOnDisk = false;
+			if (uri.IndexOfAny(Path.GetInvalidFileNameChars()) == 0)
+			{
+				try
+				{
+					imageOnDisk = StaticData.Instance.FileExists(filePath);
+				}
+				catch
+				{
+					imageOnDisk = false;
+				}
+			}
+			
+			if (imageOnDisk)
 			{
 				return StaticData.Instance.LoadImage(filePath);
 			}
 			else
 			{
-				var imageBuffer = new ImageBuffer();
+				var imageBuffer = new ImageBuffer(320, 10);
 
-				ApplicationController.Instance.DownloadToImageAsync(imageBuffer, "http://sync-dot-mattercontrol-test.appspot.com/static/macros/" + fileName, false);
+				ApplicationController.Instance.DownloadToImageAsync(imageBuffer, uri, true);
 
 				return imageBuffer;
 			}
