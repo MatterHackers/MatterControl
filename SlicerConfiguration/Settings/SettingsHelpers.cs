@@ -116,6 +116,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string ip_port = nameof(ip_port);
 		public const string first_layer_speed = nameof(first_layer_speed);
 		public const string active_quality_key = nameof(active_quality_key);
+		public const string extrusion_ratio = nameof(extrusion_ratio);
+		public const string feedrate_ratio = nameof(feedrate_ratio);
 	}
 
 	public class SettingsHelpers

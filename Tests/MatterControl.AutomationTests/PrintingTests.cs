@@ -114,8 +114,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		private EventHandler unregisterEvents;
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task TuningAdjustmentsResetToOne()
+		public async Task TuningAdjustmentsDefaultToOneAndPersist()
 		{
+			double targetExtrusionRate = 1.5;
+			double targetFeedRate = 2;
+
 			AutomationTest testToRun = (testRunner) =>
 			{
 				SystemWindow systemWindow;
@@ -124,8 +127,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					SolidSlider slider;
-
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.SwitchToSettingsAndControls();
@@ -140,9 +141,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var scrollable = container.Parents<ManualPrinterControls>().First().Parents<ScrollableWidget>().First();
 					var width = scrollable.Width;
 
-					double targetExtrusionRate = 1.5;
-					double targetFeedRate = 2;
-
 					// Workaround needed to scroll to the bottom of the Controls panel
 					//scrollable.ScrollPosition = new Vector2();
 					scrollable.ScrollPosition = new Vector2(0, 30);
@@ -151,71 +149,76 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					scrollable.Width = width - 1;
 					scrollable.Width = width;
 
-					// Workaround for MatterHackers/MCCentral#1157 - wait for slicing to complete before setting tuning values
-					testRunner.Delay(5);
+					// Tuning values should default to 1 when missing
+					ConfirmExpectedSpeeds(testRunner, 1, 1);
 
+					testRunner.Delay();
 					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
-					testRunner.Delay(.2);
 					testRunner.Type(targetExtrusionRate.ToString());
-					testRunner.Delay(.2);
 
 					testRunner.ClickByName("Feed Rate NumberEdit");
-					testRunner.Delay(.2);
 					testRunner.Type(targetFeedRate.ToString());
-					testRunner.Delay(.2);
 
-					// Force focus away from the feed rate field
+					// Force focus away from the feed rate field, causing an persisted update
 					testRunner.ClickByName("Controls Tab", 1);
+					testRunner.Delay();
 
-					testRunner.Delay(.2);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
-					// Assert the changes took effect on the UI
-					slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
-					Assert.AreEqual(targetExtrusionRate, slider.Value);
+					// Wait for slicing to complete before setting target values
+					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.Printing, 8);
+					testRunner.Delay();
 
-					slider = testRunner.GetWidgetByName("Feed Rate Slider", out systemWindow, 5) as SolidSlider;
-					Assert.AreEqual(targetFeedRate, slider.Value);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
-					testRunner.Delay(.2);
-
-					// Assert the changes took effect on the model
-					Assert.AreEqual(targetExtrusionRate, PrinterConnectionAndCommunication.Instance.ExtrusionRatio);
-					Assert.AreEqual(targetFeedRate, PrinterConnectionAndCommunication.Instance.FeedRateRatio);
-
+					// Wait for printing to complete
 					var resetEvent = new AutoResetEvent(false);
-
-					// Release reset event on PrintFinished
 					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => resetEvent.Set(), ref unregisterEvents);
-
 					resetEvent.WaitOne();
 
-					// Finish the print
 					testRunner.WaitForName("Done Button", 30);
 					testRunner.WaitForName("Print Again Button", 1);
 
+					// Values should match entered values
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+
 					// Restart the print
 					testRunner.ClickByName("Print Again Button", 1);
-
 					testRunner.Delay(2);
 
+					// Values should match entered values
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+
 					testRunner.CancelPrint();
+					testRunner.Delay(1);
 
-					// Assert we've reset to 1
-					Assert.AreEqual(1, PrinterConnectionAndCommunication.Instance.FeedRateRatio);
-					Assert.AreEqual(1, PrinterConnectionAndCommunication.Instance.ExtrusionRatio);
-
-					// Assert the changes took effect on the UI
-					slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
-					Assert.AreEqual(1, slider.Value);
-
-					slider = testRunner.GetWidgetByName("Feed Rate Slider", out systemWindow, 5) as SolidSlider;
-					Assert.AreEqual(1, slider.Value);
+					// Values should match entered values
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 				}
 
 				return Task.FromResult(0);
 			};
 
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight:900, maxTimeToRun: 90);
+			await MatterControlUtilities.RunTest(testToRun, overrideHeight:900, maxTimeToRun: 990);
+		}
+
+		private static void ConfirmExpectedSpeeds(AutomationRunner testRunner, double targetExtrusionRate, double targetFeedRate)
+		{
+			SystemWindow systemWindow;
+			SolidSlider slider;
+
+			// Assert the UI has the expected values
+			slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
+			Assert.AreEqual(targetExtrusionRate, slider.Value);
+
+			slider = testRunner.GetWidgetByName("Feed Rate Slider", out systemWindow, 5) as SolidSlider;
+			Assert.AreEqual(targetFeedRate, slider.Value);
+
+			testRunner.Delay(.2);
+
+			// Assert the changes took effect on the model
+			Assert.AreEqual(targetExtrusionRate, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.extrusion_ratio));
+			Assert.AreEqual(targetFeedRate, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio));
 		}
 	}
 }

@@ -32,10 +32,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					return true;
 				});
 
-					disableOverlay.LocalBounds = new RectangleDouble(childBounds.Left,
-						childBounds.Bottom,
-						childBounds.Right,
-						childBounds.Top - disableOverlay.Margin.Top);
+					if (childBounds != RectangleDouble.ZeroIntersection)
+					{
+						disableOverlay.LocalBounds = new RectangleDouble(childBounds.Left,
+							childBounds.Bottom,
+							childBounds.Right,
+							childBounds.Top - disableOverlay.Margin.Top);
+					}
 				}
 			};
 

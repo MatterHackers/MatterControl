@@ -463,7 +463,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								&& File.Exists(currentConfigurationFileAndPath))
 							{
 								// make sure we have not already written the settings onto this file
-								bool fileHaseSettings = false;
+								bool fileHasSettings = false;
 								int bufferSize = 32000;
 								using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
 								{
@@ -473,13 +473,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 									if (fileEnd.Contains("GCode settings used"))
 									{
-										fileHaseSettings = true;
+										fileHasSettings = true;
 									}
 								}
 
-								if (!fileHaseSettings)
+								if (!fileHasSettings)
 								{
-									using (StreamWriter gcodeWirter = File.AppendText(gcodePathAndFileName))
+									using (StreamWriter gcodeWriter = File.AppendText(gcodePathAndFileName))
 									{
 										string oemName = "MatterControl";
 										if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
@@ -487,12 +487,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 											oemName = oemName + " - {0}".FormatWith(OemSettings.Instance.WindowTitleExtra);
 										}
 
-										gcodeWirter.WriteLine("; {0} Version {1} Build {2} : GCode settings used".FormatWith(oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion));
-										gcodeWirter.WriteLine("; Date {0} Time {1}:{2:00}".FormatWith(DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute));
+										gcodeWriter.WriteLine("; {0} Version {1} Build {2} : GCode settings used".FormatWith(oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion));
+										gcodeWriter.WriteLine("; Date {0} Time {1}:{2:00}".FormatWith(DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute));
 
 										foreach (string line in File.ReadLines(currentConfigurationFileAndPath))
 										{
-											gcodeWirter.WriteLine("; {0}".FormatWith(line));
+											gcodeWriter.WriteLine("; {0}".FormatWith(line));
 										}
 									}
 								}
