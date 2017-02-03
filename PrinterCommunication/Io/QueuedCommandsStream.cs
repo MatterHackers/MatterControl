@@ -29,8 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PrinterControls;
@@ -45,7 +48,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private object locker = new object();
 		private bool waitingForUserInput = false;
 		private double maxTimeToWaitForOk = 0;
-		private string commandToRepeat = "";
+		private int repeatCommandIndex = 0;
+		private List<string> commandsToRepeat = new List<string>();
 		private Stopwatch timeHaveBeenWaiting = new Stopwatch();
 
 		public QueuedCommandsStream(GCodeStream internalStream)
@@ -72,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			waitingForUserInput = false;
 			timeHaveBeenWaiting.Reset();
 			maxTimeToWaitForOk = 0;
-			commandToRepeat = "";
+			commandsToRepeat.Clear();
 		}
 
 		public override string ReadLine()
@@ -85,16 +89,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				Thread.Sleep(100);
 
 				if(timeHaveBeenWaiting.IsRunning
-					&& timeHaveBeenWaiting.Elapsed.TotalSeconds < maxTimeToWaitForOk)
+					&& timeHaveBeenWaiting.Elapsed.TotalSeconds > maxTimeToWaitForOk)
 				{
-					Continue();
+					if(commandsToRepeat.Count > 0)
+					{
+						// We timed out without the user responding. Cancel the operation.
+						Reset();
+					}
+					else
+					{
+						// everything normal continue after time waited
+						Continue();
+					}
 				}
 
 				if (maxTimeToWaitForOk > 0
 					&& timeHaveBeenWaiting.Elapsed.TotalSeconds < maxTimeToWaitForOk
-					&& commandToRepeat != "")
+					&& commandsToRepeat.Count > 0)
 				{
-					lineToSend = commandToRepeat;
+					lineToSend = commandsToRepeat[repeatCommandIndex % commandsToRepeat.Count];
+					repeatCommandIndex++;
 				}
 			}
 			else
@@ -132,6 +146,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							messages.Add(matchString.Substring(1, matchString.Length - 2));
 						}
 
+						var macroMatch = Regex.Match(lineToSend, "MacroImage:([^\\s]+)\\s*");
+						var macroImage = macroMatch.Success ? LoadImageAsset(macroMatch.Groups[1].Value) : null;
+
 						switch (command)
 						{
 							case "ChooseMaterial":
@@ -150,18 +167,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									GCodeFile.GetFirstNumberAfter("ExpectedSeconds:", lineToSend, ref seconds);
 									double temperature = 0;
 									GCodeFile.GetFirstNumberAfter("ExpectedTemperature:", lineToSend, ref temperature);
-									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0], expectedSeconds: seconds, expectedTemperature: temperature));
+									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0], expectedSeconds: seconds, expectedTemperature: temperature, image: macroImage));
 								}
 								break;
 
 							case "RepeatUntil": // Repeat a command until the user clicks or or the max time elapses.
-								waitingForUserInput = true;
-								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true));
+								if(messages.Count > 1)
+								{
+									double seconds = 10;
+									GCodeFile.GetFirstNumberAfter("ExpectedSeconds:", lineToSend, ref seconds);
+									timeHaveBeenWaiting.Restart();
+									maxTimeToWaitForOk = seconds;
+									waitingForUserInput = true;
+									for (int i = 1; i < messages.Count; i++)
+									{
+										commandsToRepeat.Add(messages[i]);
+									}
+
+									UiThread.RunOnIdle(() => RunningMacroPage.Show(messages[0], true, expectedSeconds: seconds, image: macroImage));
+								}
 								break;
 
 							case "WaitOK":
 								waitingForUserInput = true;
-								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true));
+								UiThread.RunOnIdle(() => RunningMacroPage.Show(messages.Count > 0 ? messages[0] : "", true, image: macroImage));
 								break;
 
 							default:
@@ -179,6 +208,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lineToSend;
 		}
 
+		public ImageBuffer LoadImageAsset(string fileName)
+		{
+			string filePath = Path.Combine("Images", "Macros", fileName);
+			if (StaticData.Instance.FileExists(filePath))
+			{
+				return StaticData.Instance.LoadImage(filePath);
+			}
+			else
+			{
+				var imageBuffer = new ImageBuffer();
+
+				ApplicationController.Instance.DownloadToImageAsync(imageBuffer, "http://sync-dot-mattercontrol-test.appspot.com/static/macros/" + fileName, false);
+
+				return imageBuffer;
+			}
+
+			return null;
+		}
+
+
 		public void Reset()
 		{
 			lock (locker)
@@ -187,6 +236,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			waitingForUserInput = false;
+			timeHaveBeenWaiting.Reset();
+			maxTimeToWaitForOk = 0;
+			UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
 		}
 	}
 }

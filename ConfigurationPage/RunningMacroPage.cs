@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -50,14 +52,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 		List<double> startingExtruderTemps = new List<double>();
 		double startingBedTemp = 0;
 
-		public RunningMacroPage(string message, bool showOkButton, bool showMaterialSelector, double expectedSeconds, double expectedTemperature)
+		public RunningMacroPage(string message, bool showOkButton, bool showMaterialSelector, double expectedSeconds, double expectedTemperature, ImageBuffer imageBuffer)
 					: base("Cancel", "Macro Feedback")
 		{
 			TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(syncingText);
-
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
 
 			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 			for (int i = 0; i < extruderCount; i++)
@@ -72,24 +71,45 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			cancelButton.Click += (s, e) =>
 			{
-				for (int i = 0; i < startingExtruderTemps.Count; i++)
-				{
-					PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
-				}
-
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
-				{
-					PrinterConnectionAndCommunication.Instance.TargetBedTemperature = startingBedTemp;
-				}
-
-				PrinterConnectionAndCommunication.Instance.MacroCancel();
+				CancelScript();
 			};
 
 			if (showMaterialSelector)
 			{
 				int extruderIndex = 0;
-				contentRow.AddChild(new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Orange, NamedSettingsLayers.Material, extruderIndex));
+				var materialSelector = new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
+				materialSelector.BackgroundColor = RGBA_Bytes.Transparent;
+				materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
+				contentRow.AddChild(materialSelector);
 			}
+
+			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
+
+			if (showOkButton)
+			{
+				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
+
+				okButton.Click += (s, e) =>
+				{
+					PrinterConnectionAndCommunication.Instance.MacroContinue();
+					UiThread.RunOnIdle(() => WizardWindow?.Close());
+				};
+
+				footerRow.AddChild(okButton);
+			}
+
+			if (imageBuffer != null)
+			{
+				var imageWidget = new ImageWidget(imageBuffer)
+				{
+					HAnchor = HAnchor.ParentCenter,
+					Margin = new BorderDouble(5,15),
+				};
+
+				contentRow.AddChild(imageWidget);
+			}
+
+			contentRow.AddChild(new VerticalSpacer());
 
 			var holder = new FlowLayoutWidget();
 			progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
@@ -117,34 +137,34 @@ namespace MatterHackers.MatterControl.PrinterControls
 				progressBar.Visible = true;
 			}
 
-			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
+		}
 
-			if (showOkButton)
+		private void CancelScript()
+		{
+			for (int i = 0; i < startingExtruderTemps.Count; i++)
 			{
-				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
-				okButton.Margin = new BorderDouble(0, 0, 0, 25);
-				okButton.HAnchor = HAnchor.ParentCenter;
-
-				okButton.Click += (s, e) =>
-				{
-					PrinterConnectionAndCommunication.Instance.MacroContinue();
-					UiThread.RunOnIdle(() => WizardWindow?.Close());
-				};
-
-				contentRow.AddChild(okButton);
+				PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
 			}
+
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+			{
+				PrinterConnectionAndCommunication.Instance.TargetBedTemperature = startingBedTemp;
+			}
+
+			PrinterConnectionAndCommunication.Instance.MacroCancel();
 		}
 
 		private EventHandler unregisterEvents;
 
-		public static void Show(string message, bool showOkButton = false, bool showMaterialSelector = false, double expectedSeconds = 0, double expectedTemperature = 0)
+		public static void Show(string message, bool showOkButton = false, bool showMaterialSelector = false, double expectedSeconds = 0, double expectedTemperature = 0, ImageBuffer image = null)
 		{
-			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(message, showOkButton, showMaterialSelector, expectedSeconds, expectedTemperature));
+			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(message, showOkButton, showMaterialSelector, expectedSeconds, expectedTemperature, image));
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			PrinterConnectionAndCommunication.Instance.MacroContinue();
 			unregisterEvents?.Invoke(this, null);
 
 			base.OnClosed(e);
