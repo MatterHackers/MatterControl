@@ -803,7 +803,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public WindowMode windowType { get; set; }
 		private bool DoAddFileAfterCreatingEditData { get; set; }
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{
@@ -2199,7 +2199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					providerLocator = printItemWrapper.SourceLibraryProviderLocator;
 				}
 				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator, true, true);
-				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
+				saveAsWindow.Closed += SaveAsWindow_Closed;
 			}
 			else
 			{
@@ -2297,7 +2297,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return true;
 		}
 
-		private void SaveAsWindow_Closed(object sender, EventArgs e)
+		private void SaveAsWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			this.saveAsWindow = null;
 		}

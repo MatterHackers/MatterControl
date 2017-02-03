@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.Tests.Automation;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -50,7 +51,7 @@ namespace MatterHackers.MatterControl
 			Stopwatch totalDrawTime = Stopwatch.StartNew();
 			int drawCount = 0;
 
-			DrawEventHandler beforeDraw = (sender, e) =>
+			EventHandler<DrawEventArgs> beforeDraw = (sender, e) =>
 			{
 				if (firstDraw)
 				{
@@ -82,7 +83,7 @@ namespace MatterHackers.MatterControl
 
 			container.BeforeDraw += beforeDraw;
 
-			DrawEventHandler afterDraw = null;
+			EventHandler<DrawEventArgs> afterDraw = null;
 			afterDraw = (sender, e) =>
 			{
 				totalDrawTime.Stop();
@@ -106,7 +107,7 @@ namespace MatterHackers.MatterControl
 		{
 			AutomationRunner clickPreview;
 
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				clickPreview = new AutomationRunner();
@@ -129,7 +130,7 @@ namespace MatterHackers.MatterControl
 		{
 			//To run test invoke method in the queue data widget 
 			AutomationRunner testRunner;
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				testRunner = new AutomationRunner();
@@ -147,7 +148,7 @@ namespace MatterHackers.MatterControl
 		public static void AddLocalLibraryItemToQueue(GuiWidget container, double secondsBetweenClicks = .1)
 		{
 			AutomationRunner testRunner;
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				testRunner = new AutomationRunner();
@@ -170,7 +171,7 @@ namespace MatterHackers.MatterControl
 		public static void RenameLibraryItem(GuiWidget container, double secondsBetweenClicks = .1)
 		{
 			AutomationRunner testRunner;
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				testRunner = new AutomationRunner();
@@ -197,7 +198,7 @@ namespace MatterHackers.MatterControl
 		public static void CreateAndRenameLocalLibraryFolder(GuiWidget container, double secondsBetweenClicks = .1)
 		{
 			AutomationRunner testRunner;
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				testRunner = new AutomationRunner();

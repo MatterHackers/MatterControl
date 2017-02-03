@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}, ref unregisterEvents);
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

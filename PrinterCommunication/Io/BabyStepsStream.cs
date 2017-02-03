@@ -88,5 +88,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			offsetStream.Offset = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset));
 		}
+
+		public void CancelMoves()
+		{
+			maxLengthStream.Cancel();
+		}
 	}
 }

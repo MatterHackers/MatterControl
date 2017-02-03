@@ -2908,6 +2908,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void MacroCancel()
 		{
+			babyStepsStream6?.CancelMoves();
+			waitForTempStream5?.Cancel();
 			queuedCommandStream2?.Cancel();
 		}
 

@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			PrintItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
 			if (unregisterEvents != null)
@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
 				viewingWindow.Name = "Queue Item " + PrintItemWrapper.Name + " Part Preview";
 				this.viewWindowIsOpen = true;
-				viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
+				viewingWindow.Closed += PartPreviewWindow_Closed;
 			}
 			else
 			{
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)
+		private void ExportQueueItemWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			this.exportingWindowIsOpen = false;
 		}
@@ -476,7 +476,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				exportingWindow = new ExportPrintItemWindow(this.PrintItemWrapper);
 				this.exportingWindowIsOpen = true;
-				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
+				exportingWindow.Closed += ExportQueueItemWindow_Closed;
 				exportingWindow.ShowAsSystemWindow();
 			}
 			else
@@ -488,7 +488,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void PartPreviewWindow_Closed(object sender, EventArgs e)
+		private void PartPreviewWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			this.viewWindowIsOpen = false;
 		}

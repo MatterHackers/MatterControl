@@ -144,8 +144,8 @@ namespace MatterHackers.MatterControl
 					manualCommandTextEdit.Margin = new BorderDouble(right: 3);
 					manualCommandTextEdit.HAnchor = HAnchor.ParentLeftRight;
 					manualCommandTextEdit.VAnchor = VAnchor.ParentBottom;
-					manualCommandTextEdit.ActualTextEditWidget.EnterPressed += new KeyEventHandler(manualCommandTextEdit_EnterPressed);
-					manualCommandTextEdit.ActualTextEditWidget.KeyDown += new KeyEventHandler(manualCommandTextEdit_KeyDown);
+					manualCommandTextEdit.ActualTextEditWidget.EnterPressed += manualCommandTextEdit_EnterPressed;
+					manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
 					manualEntryLayout.AddChild(manualCommandTextEdit);
 				}
 

@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public abstract bool Protected { get; }
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

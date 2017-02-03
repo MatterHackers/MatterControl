@@ -447,7 +447,7 @@ namespace MatterHackers.MatterControl
 			tempOffButton.Click += onOffButtonClicked;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents.Invoke(this, null);
 			base.OnClosed(e);
@@ -544,7 +544,7 @@ namespace MatterHackers.MatterControl
 			tempOffButton.Click += onOffButtonClicked;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

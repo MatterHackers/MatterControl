@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

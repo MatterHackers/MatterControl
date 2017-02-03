@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{
