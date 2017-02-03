@@ -5881,3 +5881,15 @@ Translated:The starting height (z) of the print head before probing each print l
 English:Probe Start Height
 Translated:Probe Start Height
 
+English:Controls the speed of printer moves
+Translated:Controls the speed of printer moves
+
+English:Controls the amount of extrusion
+Translated:Controls the amount of extrusion
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
