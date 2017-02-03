@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl
 						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
