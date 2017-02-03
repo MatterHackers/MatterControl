@@ -69,12 +69,6 @@ namespace MatterHackers.MatterControl
 			TextColor = RGBA_Bytes.Black;
 			TrackColor = new RGBA_Bytes(220, 220, 220);
 			ThumbColor = ActiveTheme.Instance.SecondaryAccentColor;
-
-			sliderWidget.ValueChanged += new EventHandler(sliderWidget_ValueChanged);
-		}
-
-		private void sliderWidget_ValueChanged(object sender, EventArgs e)
-		{
 		}
 
 		private RectangleDouble GetTrackBounds()
@@ -384,10 +378,7 @@ namespace MatterHackers.MatterControl
 
 			if (oldValue != Value)
 			{
-				if (ValueChanged != null)
-				{
-					ValueChanged(this, mouseEvent);
-				}
+				ValueChanged?.Invoke(this, mouseEvent);
 				Invalidate();
 			}
 
@@ -424,9 +415,10 @@ namespace MatterHackers.MatterControl
 		{
 			downOnThumb = false;
 			base.OnMouseUp(mouseEvent);
-			if (valueOnMouseDown != Value && SliderReleased != null)
+
+			if (valueOnMouseDown != Value)
 			{
-				SliderReleased(this, mouseEvent);
+				SliderReleased?.Invoke(this, mouseEvent);
 			}
 		}
 	}

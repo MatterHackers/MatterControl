@@ -1042,7 +1042,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var persistenceLayer = layer ?? UserLayer;
 
-			// If the setting exists and is set the requested value, exit without setting or saving
+			// If the setting exists and is set to the requested value, exit without setting or saving
 			string existingValue;
 			if (persistenceLayer.TryGetValue(settingsKey, out existingValue) && existingValue == settingsValue)
 			{
