@@ -21,16 +21,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				&& Parent.Height > 0
 				&& Parent.Children.Count > 1)
 				{
-
-					var childBounds = GetChildrenBoundsIncludingMargins(considerChild: (parent, child) =>
-				{
-					if (child == disableOverlay)
+					if(Children.IndexOf(disableOverlay) != Children.Count-1)
 					{
-						return false;
+						Children.RemoveAt(Children.IndexOf(disableOverlay));
+						disableOverlay.ClearRemovedFlag();
+						Children.Add(disableOverlay);
 					}
 
-					return true;
-				});
+					var childBounds = GetChildrenBoundsIncludingMargins(considerChild: (parent, child) =>
+					{
+						if (child == disableOverlay)
+						{
+							return false;
+						}
+
+						return true;
+					});
 
 					if (childBounds != RectangleDouble.ZeroIntersection)
 					{
