@@ -408,7 +408,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								addedSettingToSubGroup = true;
 								bool addControl;
-								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingData, layerCascade, persistenceLayer, viewFilter, copyIndex, out addControl, ref tabIndexForItem);
+								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
+									settingData, 
+									layerCascade, 
+									persistenceLayer, 
+									viewFilter, 
+									copyIndex,
+									out addControl,
+									ref tabIndexForItem);
+
 								if (addControl)
 								{
 									topToBottomSettings.AddChild(controlsForThisSetting);
@@ -602,7 +610,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(settingData.SlicerConfigName))
 						{
 							bool addControl;
-							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingData, layerCascade, persistenceLayer, viewFilter, 0, out addControl, ref tabIndexForItem);
+							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
+								settingData,
+								layerCascade,
+								persistenceLayer,
+								viewFilter,
+								0,
+								out addControl,
+								ref tabIndexForItem);
+
 							if (addControl)
 							{
 								topToBottomSettings.AddChild(controlsForThisSetting);
@@ -779,10 +795,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				NamedSettingsLayers.All,
 				0,
 				out addControl,
-				ref tabIndex
-				);
+				ref tabIndex);
 
-			if(addControl)
+			if (addControl)
 			{
 				return settingsRow;
 			}
@@ -790,9 +805,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return null;
 		}
 
-		private static GuiWidget CreateSettingInfoUIControls(SliceSettingData settingData, List<PrinterSettingsLayer> layerCascade, PrinterSettingsLayer persistenceLayer,
+		private static GuiWidget CreateSettingInfoUIControls(
+			SliceSettingData settingData, 
+			List<PrinterSettingsLayer> layerCascade, 
+			PrinterSettingsLayer persistenceLayer,
 			NamedSettingsLayers viewFilter,
-			int extruderIndex, out bool addControl, ref int tabIndexForItem)
+			int extruderIndex, 
+			out bool addControl, 
+			ref int tabIndexForItem)
 		{
 			addControl = true;
 
@@ -1271,6 +1291,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #if __ANDROID__
 							addControl = false;
 #endif
+
+							EventHandler localUnregisterEvents = null;
+
 							// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "com_port" settings name to
 							// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
@@ -1279,7 +1302,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								ToolTipText = settingData.HelpText,
 								Margin = new BorderDouble(),
-								Name = "Serial Port Dropdown"
+								Name = "Serial Port Dropdown",
+								// Prevent droplist interaction when connected
+								Enabled = !PrinterConnectionAndCommunication.Instance.PrinterIsConnected
 							};
 
 							selectableOptions.Click += (s, e) =>
@@ -1295,6 +1320,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								// Lookup the machine specific comport value rather than the passed in text value
 								selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
+							};
+
+							// Prevent droplist interaction when connected
+							PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+							{
+								selectableOptions.Enabled = !PrinterConnectionAndCommunication.Instance.PrinterIsConnected;
+							}, ref localUnregisterEvents);
+
+							// Release event listener on close
+							selectableOptions.Closed += (s, e) =>
+							{
+								localUnregisterEvents?.Invoke(null, null);
 							};
 						}
 						break;
