@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				SendCommandToPrinter(GCode);
 				if (GCode.Contains(QueuedCommandsStream.MacroPrefix))
 				{
-					SendCommandToPrinter("\n" + QueuedCommandsStream.MacroPrefix + "Close");
+					SendCommandToPrinter("\n" + QueuedCommandsStream.MacroPrefix + "close()");
 				}
 			}
 		}

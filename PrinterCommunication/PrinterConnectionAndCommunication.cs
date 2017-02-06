@@ -2158,6 +2158,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #endif
 			}
 
+			FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(serialPortName).Close();
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
 			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).SerialPortAlreadyOpen(serialPortName);
 

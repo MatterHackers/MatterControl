@@ -5923,3 +5923,15 @@ Translated:Waiting for extruder to heat to 205.
 English:Click 'Continue' when filament is running cleanly.
 Translated:Click 'Continue' when filament is running cleanly.
 
+English:Heating side 1.
+Translated:Heating side 1.
+
+English:Turn Sandvich over!
+Translated:Turn Sandvich over!
+
+English:Heating side 2.
+Translated:Heating side 2.
+
+English:Done!
+Translated:Done!
+

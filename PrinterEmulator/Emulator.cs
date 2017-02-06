@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO.Ports;
 using System.Text.RegularExpressions;
@@ -57,6 +58,7 @@ namespace MatterHackers.PrinterEmulator
 			responses.Add("M140", SetBedTemperature);
 			responses.Add("M190", SetBedTemperature);
 			responses.Add("G1", SetPosition);
+			responses.Add("G4", Wait);
 			responses.Add("G0", SetPosition);
 			responses.Add("G28", HomePosition);
 			responses.Add("G92", ResetPosition);
@@ -230,6 +232,30 @@ namespace MatterHackers.PrinterEmulator
 
 		string ResetPosition(string command)
 		{
+			return "ok\n";
+		}
+
+		string Wait(string command)
+		{
+			try
+			{
+				// M140 S210 or M190 S[temp]
+				double timeToWait = 0;
+				if (!GetFirstNumberAfter("S", command, ref timeToWait))
+				{
+					if (GetFirstNumberAfter("P", command, ref timeToWait))
+					{
+						timeToWait /= 1000;
+					}
+				}
+
+				Thread.Sleep((int)(timeToWait * 1000));
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+
 			return "ok\n";
 		}
 
