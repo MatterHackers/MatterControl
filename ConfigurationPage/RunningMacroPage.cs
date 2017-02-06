@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
 
-			if (macroData.waitOk)
+			if (macroData.waitOk | macroData.expireTime > 0)
 			{
 				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
 
@@ -109,8 +109,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				contentRow.AddChild(imageWidget);
 			}
 
-			contentRow.AddChild(new VerticalSpacer());
-
 			var holder = new FlowLayoutWidget();
 			progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 			{
@@ -133,8 +131,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				timeToWaitMs = (long)(macroData.countDown * 1000);
 				endTimeMs = UiThread.CurrentTimerMs + timeToWaitMs;
-				UiThread.RunOnIdle(CountDownTime, 1);
-				progressBar.Visible = true;
+				UiThread.RunOnIdle(CountDownTime);
 			}
 
 			footerRow.AddChild(new HorizontalSpacer());
@@ -187,6 +184,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void CountDownTime()
 		{
+			progressBar.Visible = true;
 			long timeWaitedMs = endTimeMs - UiThread.CurrentTimerMs;
 			double ratioDone = timeToWaitMs != 0 ? ((double)timeWaitedMs / (double)timeToWaitMs) : 1;
 			progressBar.RatioComplete = Math.Min(Math.Max(0, 1 - ratioDone), 1);
@@ -206,13 +204,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 				&& stringEvent.Data.Contains("M104"))
 			{
 				startingTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0);
-				UiThread.RunOnIdle(ShowTempChangeProgress, 1);
-				progressBar.Visible = true;
+				UiThread.RunOnIdle(ShowTempChangeProgress);
 			}
 		}
 
 		private void ShowTempChangeProgress()
 		{
+			progressBar.Visible = true;
 			double targetTemp = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(0);
 			double actualTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0);
 			double totalDelta = targetTemp - startingTemp;

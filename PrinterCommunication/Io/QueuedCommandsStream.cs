@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 						if (TryGetAfterString(lineToSend, "repeat_gcode", out value))
 						{
-							foreach(string line in value.Split('\n'))
+							foreach(string line in value.Split('|'))
 							{ 
 								commandsToRepeat.Add(line);
 							}
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								break;
 
 							case "show_message":
-								waitingForUserInput = macroData.waitOk;
+								waitingForUserInput = macroData.waitOk | macroData.expireTime > 0;
 								UiThread.RunOnIdle(() => RunningMacroPage.Show(macroData));
 								break;
 
