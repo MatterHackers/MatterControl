@@ -44,12 +44,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		public const string MacroPrefix = "; host.";
 		private List<string> commandQueue = new List<string>();
+		private List<string> commandsToRepeat = new List<string>();
 		private object locker = new object();
-		private bool waitingForUserInput = false;
 		private double maxTimeToWaitForOk = 0;
 		private int repeatCommandIndex = 0;
-		private List<string> commandsToRepeat = new List<string>();
+		private bool runningMacro = false;
+		private double startingBedTemp = 0;
+		private List<double> startingExtruderTemps = new List<double>();
 		private Stopwatch timeHaveBeenWaiting = new Stopwatch();
+		private bool waitingForUserInput = false;
 
 		public QueuedCommandsStream(GCodeStream internalStream)
 			: base(internalStream)
@@ -78,6 +81,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			commandsToRepeat.Clear();
 		}
 
+		public ImageBuffer LoadImageAsset(string uri)
+		{
+			string filePath = Path.Combine("Images", "Macros", uri);
+			bool imageOnDisk = false;
+			if (uri.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
+			{
+				try
+				{
+					imageOnDisk = StaticData.Instance.FileExists(filePath);
+				}
+				catch
+				{
+					imageOnDisk = false;
+				}
+			}
+
+			if (imageOnDisk)
+			{
+				return StaticData.Instance.LoadImage(filePath);
+			}
+			else
+			{
+				var imageBuffer = new ImageBuffer(320, 10);
+
+				ApplicationController.Instance.DownloadToImageAsync(imageBuffer, uri, true);
+
+				return imageBuffer;
+			}
+		}
+
 		public override string ReadLine()
 		{
 			string lineToSend = null;
@@ -87,10 +120,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				lineToSend = "";
 				Thread.Sleep(100);
 
-				if(timeHaveBeenWaiting.IsRunning
+				if (timeHaveBeenWaiting.IsRunning
 					&& timeHaveBeenWaiting.Elapsed.TotalSeconds > maxTimeToWaitForOk)
 				{
-					if(commandsToRepeat.Count > 0)
+					if (commandsToRepeat.Count > 0)
 					{
 						// We timed out without the user responding. Cancel the operation.
 						Reset();
@@ -127,6 +160,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					if (lineToSend.StartsWith(MacroPrefix) && lineToSend.TrimEnd().EndsWith(")"))
 					{
+						if (!runningMacro)
+						{
+							runningMacro = true;
+							int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+							for (int i = 0; i < extruderCount; i++)
+							{
+								startingExtruderTemps.Add(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(i));
+							}
+
+							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+							{
+								startingBedTemp = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
+							}
+						}
 						int parensAfterCommand = lineToSend.IndexOf('(', MacroPrefix.Length);
 						string command = "";
 						if (parensAfterCommand > 0)
@@ -160,8 +207,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 						if (TryGetAfterString(lineToSend, "repeat_gcode", out value))
 						{
-							foreach(string line in value.Split('|'))
-							{ 
+							foreach (string line in value.Split('|'))
+							{
 								commandsToRepeat.Add(line);
 							}
 						}
@@ -176,6 +223,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								break;
 
 							case "close":
+								runningMacro = false;
 								UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
 								break;
 
@@ -203,45 +251,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lineToSend;
 		}
 
-		private bool TryGetAfterString(string macroLine, string variableName, out string value)
-		{
-			var macroMatch = Regex.Match(macroLine, variableName + ":\"([^\"]+)");
-			value = macroMatch.Success ? macroMatch.Groups[1].Value : null;
-
-			return macroMatch.Success;
-		}
-
-		public ImageBuffer LoadImageAsset(string uri)
-		{
-			string filePath = Path.Combine("Images", "Macros", uri);
-			bool imageOnDisk = false;
-			if (uri.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
-			{
-				try
-				{
-					imageOnDisk = StaticData.Instance.FileExists(filePath);
-				}
-				catch
-				{
-					imageOnDisk = false;
-				}
-			}
-			
-			if (imageOnDisk)
-			{
-				return StaticData.Instance.LoadImage(filePath);
-			}
-			else
-			{
-				var imageBuffer = new ImageBuffer(320, 10);
-
-				ApplicationController.Instance.DownloadToImageAsync(imageBuffer, uri, true);
-
-				return imageBuffer;
-			}
-		}
-
-
 		public void Reset()
 		{
 			lock (locker)
@@ -249,10 +258,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				commandQueue.Clear();
 			}
 
+			if (runningMacro)
+			{
+				runningMacro = false;
+				for (int i = 0; i < startingExtruderTemps.Count; i++)
+				{
+					PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
+				}
+
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+				{
+					PrinterConnectionAndCommunication.Instance.TargetBedTemperature = startingBedTemp;
+				}
+			}
 			waitingForUserInput = false;
 			timeHaveBeenWaiting.Reset();
 			maxTimeToWaitForOk = 0;
 			UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
+		}
+
+		private bool TryGetAfterString(string macroLine, string variableName, out string value)
+		{
+			var macroMatch = Regex.Match(macroLine, variableName + ":\"([^\"]+)");
+			value = macroMatch.Success ? macroMatch.Groups[1].Value : null;
+
+			return macroMatch.Success;
 		}
 	}
 }

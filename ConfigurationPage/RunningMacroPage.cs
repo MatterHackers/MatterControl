@@ -42,15 +42,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class RunningMacroPage : WizardPage
 	{
-		private long endTimeMs;
+		private long startTimeMs;
 		private ProgressBar progressBar;
 
 		private TextWidget progressBarText;
 
 		private long timeToWaitMs;
-
-		List<double> startingExtruderTemps = new List<double>();
-		double startingBedTemp = 0;
 
 		public RunningMacroPage(MacroCommandData macroData)
 					: base("Cancel", macroData.title)
@@ -58,20 +55,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			//TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			//contentRow.AddChild(syncingText);
 
-			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
-			for (int i = 0; i < extruderCount; i++)
-			{
-				startingExtruderTemps.Add(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(i));
-			}
-
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
-			{
-				startingBedTemp = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
-			}
-
 			cancelButton.Click += (s, e) =>
 			{
-				CancelScript();
+				PrinterConnectionAndCommunication.Instance.MacroCancel();
 			};
 
 			if (macroData.showMaterialSelector)
@@ -130,27 +116,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if (macroData.countDown > 0)
 			{
 				timeToWaitMs = (long)(macroData.countDown * 1000);
-				endTimeMs = UiThread.CurrentTimerMs + timeToWaitMs;
+				startTimeMs = UiThread.CurrentTimerMs;
 				UiThread.RunOnIdle(CountDownTime);
 			}
 
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
-		}
-
-		private void CancelScript()
-		{
-			PrinterConnectionAndCommunication.Instance.MacroCancel();
-
-			for (int i = 0; i < startingExtruderTemps.Count; i++)
-			{
-				PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
-			}
-
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
-			{
-				PrinterConnectionAndCommunication.Instance.TargetBedTemperature = startingBedTemp;
-			}
 		}
 
 		private EventHandler unregisterEvents;
@@ -175,7 +146,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			if(e.OsEvent)
 			{
-				CancelScript();
+				PrinterConnectionAndCommunication.Instance.MacroCancel();
 			}
 			unregisterEvents?.Invoke(this, null);
 
@@ -185,14 +156,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void CountDownTime()
 		{
 			progressBar.Visible = true;
-			long timeWaitedMs = endTimeMs - UiThread.CurrentTimerMs;
-			double ratioDone = timeToWaitMs != 0 ? ((double)timeWaitedMs / (double)timeToWaitMs) : 1;
-			progressBar.RatioComplete = Math.Min(Math.Max(0, 1 - ratioDone), 1);
-			int seconds = (int)((timeToWaitMs - (timeToWaitMs * (1 - ratioDone))) / 1000);
+			long timeSinceStartMs = UiThread.CurrentTimerMs - startTimeMs;
+			progressBar.RatioComplete = timeToWaitMs == 0 ? 1 : Math.Max(0, Math.Min(1, ((double)timeSinceStartMs / (double)timeToWaitMs)));
+			int seconds = (int)((timeToWaitMs - (timeToWaitMs * (progressBar.RatioComplete))) / 1000);
 			progressBarText.Text = $"Time Remaining: {seconds / 60:#0}:{seconds % 60:00}";
-			if (!HasBeenClosed && ratioDone < 1)
+			if (!HasBeenClosed && progressBar.RatioComplete < 1)
 			{
-				UiThread.RunOnIdle(CountDownTime, 1);
+				UiThread.RunOnIdle(CountDownTime, .2);
 			}
 		}
 
