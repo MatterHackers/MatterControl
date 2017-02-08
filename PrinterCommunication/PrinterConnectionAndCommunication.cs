@@ -2127,6 +2127,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				// no matter what we no longer have a print task
 				activePrintTask = null;
+
+				// get us back to the no printing setting (this will clear the queued commands)
+				CreateStreamProcessors(null, false);
 			}
 		}
 
