@@ -175,6 +175,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
 			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
 			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);
+			resetConnectionButton.Click += (s, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 
 			string skipButtonText = "Skip".Localize();
 			string skipButtonMessage = "Skip the current item and move to the next in queue".Localize();
@@ -285,7 +286,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			addButton.Click += onAddButton_Click;
             skipButton.Click += onSkipButton_Click;
-			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
 			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelPrinting); };
