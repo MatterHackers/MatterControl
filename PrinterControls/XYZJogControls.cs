@@ -56,12 +56,9 @@ namespace MatterHackers.MatterControl
 
 		private MoveButton zPlusControl;
 		private MoveButton zMinusControl;
-		public bool hotKeysEnabled = false;
-		private TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
+		RadioButton hotKeyButton;
 
 		private MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
-
-		private EventHandler unregisterEvents;
 
 		public JogControls(XYZColors colors)
 		{
@@ -91,115 +88,116 @@ namespace MatterHackers.MatterControl
 					}
 
 					this.KeyDown += (sender, e) =>
-				{
-					double moveAmountPositive = AxisMoveAmount;
-					double moveAmountNegative = -AxisMoveAmount;
-					int eMoveAmountPositive = EAxisMoveAmount;
-					int eMoveAmountNegative = -EAxisMoveAmount;
+					{
+						if (!hotKeyButton.Checked)
+						{
+							return;
+						}
 
-					if (OsInformation.OperatingSystem == OSType.Windows)
-					{
-						if (e.KeyCode == Keys.Home && hotKeysEnabled)
+						double moveAmountPositive = AxisMoveAmount;
+						double moveAmountNegative = -AxisMoveAmount;
+						int eMoveAmountPositive = EAxisMoveAmount;
+						int eMoveAmountNegative = -EAxisMoveAmount;
+
+						if (OsInformation.OperatingSystem == OSType.Windows)
 						{
-							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
+							if (e.KeyCode == Keys.Home)
+							{
+								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
+							}
+							else if (e.KeyCode == Keys.Z)
+							{
+								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
+							}
+							else if (e.KeyCode == Keys.Y)
+							{
+								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
+							}
+							else if (e.KeyCode == Keys.X)
+							{
+								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
+							}
+							else if (e.KeyCode == Keys.Left)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountNegative, MovementControls.XSpeed);
+							}
+							else if (e.KeyCode == Keys.Right)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountPositive, MovementControls.XSpeed);
+							}
+							else if (e.KeyCode == Keys.Up)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
+							}
+							else if (e.KeyCode == Keys.Down)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
+							}
+							else if (e.KeyCode == Keys.PageUp)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
+							}
+							else if (e.KeyCode == Keys.PageDown)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
+							}
+							else if (e.KeyCode == Keys.E)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
+							}
+							else if (e.KeyCode == Keys.R)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
+							}
 						}
-						else if (e.KeyCode == Keys.Z && hotKeysEnabled)
+						else if (OsInformation.OperatingSystem == OSType.Mac)
 						{
-							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
+							if (e.KeyCode == Keys.Z)
+							{
+								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
+							}
+							else if (e.KeyCode == Keys.Y)
+							{
+								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
+							}
+							else if (e.KeyCode == Keys.X)
+							{
+								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
+							}
+							else if (e.KeyCode == Keys.Left)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountNegative, MovementControls.XSpeed);
+							}
+							else if (e.KeyCode == Keys.Right)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountPositive, MovementControls.XSpeed);
+							}
+							else if (e.KeyCode == Keys.Up)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
+							}
+							else if (e.KeyCode == Keys.Down)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
+							}
+							else if (e.KeyCode == (Keys.Back | Keys.Cancel))
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
+							}
+							else if (e.KeyCode == Keys.Clear)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
+							}
+							else if (e.KeyCode == Keys.E)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
+							}
+							else if (e.KeyCode == Keys.R)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
+							}
 						}
-						else if (e.KeyCode == Keys.Y && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
-						}
-						else if (e.KeyCode == Keys.X && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
-						}
-						else if (e.KeyCode == Keys.Left && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountNegative, MovementControls.XSpeed);
-						}
-						else if (e.KeyCode == Keys.Right && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountPositive, MovementControls.XSpeed);
-						}
-						else if (e.KeyCode == Keys.Up && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
-						}
-						else if (e.KeyCode == Keys.Down && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
-						}
-						else if (e.KeyCode == Keys.PageUp && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
-						}
-						else if (e.KeyCode == Keys.PageDown && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
-						}
-						else if (e.KeyCode == Keys.E && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
-						}
-						else if (e.KeyCode == Keys.R && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
-						}
-					}
-					else if (OsInformation.OperatingSystem == OSType.Mac)
-					{
-						if (e.KeyCode == Keys.LButton && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
-						}
-						else if (e.KeyCode == Keys.Z && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
-						}
-						else if (e.KeyCode == Keys.Y && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
-						}
-						else if (e.KeyCode == Keys.X && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
-						}
-						else if (e.KeyCode == Keys.Left && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountNegative, MovementControls.XSpeed);
-						}
-						else if (e.KeyCode == Keys.Right && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountPositive, MovementControls.XSpeed);
-						}
-						else if (e.KeyCode == Keys.Up && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
-						}
-						else if (e.KeyCode == Keys.Down && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
-						}
-						else if (e.KeyCode == (Keys.Back | Keys.Cancel) && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
-						}
-						else if (e.KeyCode == Keys.Clear && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
-						}
-						else if (e.KeyCode == Keys.E && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
-						}
-						else if (e.KeyCode == Keys.R && hotKeysEnabled)
-						{
-							PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
-						}
-					}
-				};
+					};
 
 					// add in some movement radio buttons
 					FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
@@ -279,9 +277,7 @@ namespace MatterHackers.MatterControl
 				allControlsLeftToRight.AddChild(xYZWithDistance);
 
 #if !__ANDROID__
-
 				allControlsLeftToRight.AddChild(GetHotkeyControlContainer());
-
 #endif
 				GuiWidget barBetweenZAndE = new GuiWidget(2, 2);
 				barBetweenZAndE.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
@@ -308,12 +304,6 @@ namespace MatterHackers.MatterControl
 			Margin = new BorderDouble(3);
 
 			// this.HAnchor |= HAnchor.ParentLeftRight;
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
 		}
 
 		internal void EnableBabystepping(bool enableBabysteppingMode)
@@ -393,21 +383,18 @@ namespace MatterHackers.MatterControl
 			hotkeyControlContainer.ToolTipText = "Enable cursor keys for movement".Localize();
 			hotkeyControlContainer.Margin = new BorderDouble(left: 10);
 
-			RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).InvertLightness());
+			hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).InvertLightness());
 			hotKeyButton.Margin = new BorderDouble(5);
 			hotKeyButton.FocusChanged += (sender, e) =>
 			{
 				if ((sender as GuiWidget).Focused)
 				{
-					hotKeyButton.Checked = false;
-					hotKeyButton.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-					hotKeysEnabled = false;
+					hotKeyButton.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				}
 				else
 				{
-					hotKeyButton.Checked = true;
+					hotKeyButton.Checked = false;
 					hotKeyButton.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-					hotKeysEnabled = true;
 				}
 			};
 

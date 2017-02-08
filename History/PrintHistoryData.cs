@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					}
 					else // make sure we include a waring
 					{
-						StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryMessage + "\n" + printRecoveryWarningMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
+						StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryMessage + "\n\n" + printRecoveryWarningMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
 					}
 				}
 			}
