@@ -1785,19 +1785,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			try
 			{
-				if (this.ActivePrinter != null
-					&& serialPort != null)
+				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
 					// first make sure we are not printing if possible (cancel slicing)
-					Stop(false);
 					if (serialPort != null) // we still have a serial port
 					{
+						Stop(false);
 						ClearQueuedGCode();
 
+						CommunicationState = CommunicationStates.Disconnecting;
+						ReadThread.Join();
 						ToggleHighLowHeigh(serialPort);
+						if (serialPort != null)
+						{
+							serialPort.Close();
+							serialPort.Dispose();
+						}
+						serialPort = null;
+						CommunicationState = CommunicationStates.Disconnected;
 
-						// let the process know we canceled not ended normally.
-						CommunicationState = CommunicationStates.Connected;
+						// We were connected to a printer so try to reconnect
+						UiThread.RunOnIdle(() =>
+						{
+							//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+							PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+						}, 2);
 					}
 					else
 					{
