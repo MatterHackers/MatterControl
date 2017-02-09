@@ -27,8 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Diagnostics;
+using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -37,29 +39,10 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	public class PrintStatusRow : FlowLayoutWidget
-	{
-		public static GuiWidget Create(QueueDataView queueDataView)
-		{
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				return new TouchScreenPrintStatusRow(queueDataView);
-			}
-			else
-			{
-				return new DesktopPrintStatusRow(queueDataView);
-			}
-		}
-	}
-
-	public class DesktopPrintStatusRow : PrintStatusRow
+	public class TouchScreenPrintStatusRow : PrintStatusRow
 	{
 		private TextWidget activePrintInfo;
 		private TextWidget activePrintLabel;
@@ -69,8 +52,10 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TemperatureWidgetBase bedTemperatureWidget;
 		private TemperatureWidgetBase extruderTemperatureWidget;
 		private QueueDataView queueDataView;
+		private Button setupButton;
+		private Stopwatch timeSinceLastDrawTime = new Stopwatch();
 
-		public DesktopPrintStatusRow(QueueDataView queueDataView)
+		public TouchScreenPrintStatusRow(QueueDataView queueDataView)
 		{
 			Initialize();
 
@@ -84,8 +69,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			onActivePrintItemChanged(null, null);
 		}
 
-		private EventHandler unregisterEvents;
+		public delegate void AddIconToPrintStatusRowDelegate(GuiWidget iconContainer);
 
+		private EventHandler unregisterEvents;
 		private string ActivePrintStatusText
 		{
 			set
@@ -99,33 +85,48 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (activePrintPreviewImage.ItemWrapper != null)
-			{
-				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
-			}
-
 			unregisterEvents?.Invoke(this, null);
-		
 			base.OnClosed(e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			timeSinceLastDrawTime.Restart();
 			base.OnDraw(graphics2D);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
+		{
+			int boxSize = 20;
+
+			// Handle errors in the touch panel that push touch event positions to the screen edge by
+			// proxying all clicks in the target region back into the desired control
+			RectangleDouble topRightHitbox = new RectangleDouble(this.Width - boxSize, this.Height - boxSize, this.Width, this.Height);
+			if (topRightHitbox.Contains(mouseEvent.Position) && this.MouseCaptured)
+			{
+				setupButton.ClickButton(null);
+				return;
+			}
+
+			base.OnMouseUp(mouseEvent);
 		}
 
 		protected void AddHandlers()
 		{
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onPrintItemChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(Instance_WroteLine, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent((s, e) => UpdatePrintStatus(), ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 		}
 
 		protected void Initialize()
 		{
 			UiThread.RunOnIdle(OnIdle);
-			this.Margin = new BorderDouble(6, 3, 6, 6);
+			this.Margin = new BorderDouble(6, 3, 0, 0);
+
+			// Use top and right padding rather than margin to position controls but still
+			// ensure corner click events can be caught in this control
+			this.Padding = new BorderDouble(0, 0, 6, 6);
 		}
 
 		protected void onPrintItemChanged(object sender, EventArgs e)
@@ -136,39 +137,48 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void AddChildElements()
 		{
-			activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", PartThumbnailWidget.ImageSizes.Size115x115);
-			activePrintPreviewImage.VAnchor = VAnchor.ParentTop;
-			activePrintPreviewImage.Padding = new BorderDouble(0);
-			activePrintPreviewImage.HoverBackgroundColor = new RGBA_Bytes();
-			activePrintPreviewImage.BorderWidth = 3;
+			FlowLayoutWidget tempWidgets = new FlowLayoutWidget();
+			tempWidgets.VAnchor = VAnchor.ParentBottomTop;
 
-			FlowLayoutWidget temperatureWidgets = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			tempWidgets.Width = 120;
+
+			extruderTemperatureWidget = new TemperatureWidgetExtruder();
+			//extruderTemperatureWidget.Margin = new BorderDouble(right: 6);
+			extruderTemperatureWidget.VAnchor = VAnchor.ParentTop;
+
+			bedTemperatureWidget = new TemperatureWidgetBed();
+			bedTemperatureWidget.VAnchor = VAnchor.ParentTop;
+
+			tempWidgets.AddChild(extruderTemperatureWidget);
+			tempWidgets.AddChild(new GuiWidget(6, 6));
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
-				extruderTemperatureWidget = new TemperatureWidgetExtruder();
-				temperatureWidgets.AddChild(extruderTemperatureWidget);
-
-				bedTemperatureWidget = new TemperatureWidgetBed();
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
-				{
-					temperatureWidgets.AddChild(bedTemperatureWidget);
-				}
+				tempWidgets.AddChild(bedTemperatureWidget);
 			}
-			temperatureWidgets.VAnchor |= VAnchor.ParentTop;
-			temperatureWidgets.Margin = new BorderDouble(left: 6);
+			tempWidgets.AddChild(new GuiWidget(6, 6));
 
 			FlowLayoutWidget printStatusContainer = CreateActivePrinterInfoWidget();
-			printStatusContainer.VAnchor |= VAnchor.ParentTop;
 
-			var iconContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			iconContainer.Name = "PrintStatusRow.IconContainer";
-			iconContainer.VAnchor |= VAnchor.ParentTop;
-			iconContainer.Margin = new BorderDouble(top: 3);
-			iconContainer.AddChild(GetAutoLevelIndicator());
+			PrintActionRow printActionRow = new PrintActionRow(queueDataView);
+			printActionRow.VAnchor = VAnchor.ParentTop;
 
-			this.AddChild(activePrintPreviewImage);
+			ImageButtonFactory factory = new ImageButtonFactory();
+			factory.InvertImageColor = false;
+
+			setupButton = factory.Generate(StaticData.Instance.LoadIcon("icon_gear_dot.png").InvertLightness(), null);
+			setupButton.Margin = new BorderDouble(left: 6);
+			setupButton.VAnchor = VAnchor.ParentCenter;
+			setupButton.Click += (sender, e) =>
+			{
+				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
+				//WizardWindow.Show(true);
+			};
+
 			this.AddChild(printStatusContainer);
-			this.AddChild(iconContainer);
-			this.AddChild(temperatureWidgets);
+			this.AddChild(printActionRow);
+			this.AddChild(tempWidgets);
+			this.AddChild(setupButton);
+			this.Height = 80;
 
 			UpdatePrintStatus();
 			UpdatePrintItemName();
@@ -179,7 +189,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.Margin = new BorderDouble(6, 0, 6, 0);
 			container.HAnchor = HAnchor.ParentLeftRight;
-			container.VAnchor |= VAnchor.ParentTop;
+			container.VAnchor = VAnchor.ParentCenter;
+			container.Height = 80;
 
 			FlowLayoutWidget topRow = new FlowLayoutWidget();
 			topRow.Name = "PrintStatusRow.ActivePrinterInfo.TopRow";
@@ -192,23 +203,44 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			topRow.AddChild(activePrintLabel);
 
-			activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);
-			activePrintName.AutoExpandBoundsToText = false;
-			activePrintStatus = getPrintStatusLabel("this is the biggest label we will allow - bigger", pointSize: 11);
-			activePrintStatus.AutoExpandBoundsToText = false;
-			activePrintStatus.Text = "";
-			activePrintStatus.Margin = new BorderDouble(top: 3);
+			FlowLayoutWidget bottomRow = new FlowLayoutWidget();
 
-			activePrintInfo = getPrintStatusLabel("", pointSize: 11);
-			activePrintInfo.AutoExpandBoundsToText = true;
+			activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", PartThumbnailWidget.ImageSizes.Size50x50);
+			activePrintPreviewImage.VAnchor = VAnchor.ParentTop;
+			activePrintPreviewImage.Padding = new BorderDouble(0);
+			activePrintPreviewImage.HoverBackgroundColor = new RGBA_Bytes();
+			activePrintPreviewImage.BorderWidth = 3;
 
-			PrintActionRow printActionRow = new PrintActionRow(queueDataView);
+			FlowLayoutWidget labelContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			labelContainer.VAnchor |= VAnchor.ParentTop;
+			labelContainer.Margin = new BorderDouble(8, 0, 0, 4);
+			{
+				activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);
+				activePrintName.AutoExpandBoundsToText = false;
+
+				activePrintStatus = getPrintStatusLabel("this is the biggest label we will allow - bigger", pointSize: 11);
+				activePrintStatus.AutoExpandBoundsToText = false;
+				activePrintStatus.Text = "";
+				activePrintStatus.Margin = new BorderDouble(top: 3);
+
+				activePrintInfo = getPrintStatusLabel("", pointSize: 11);
+				activePrintInfo.AutoExpandBoundsToText = true;
+
+				labelContainer.AddChild(activePrintName);
+				labelContainer.AddChild(activePrintStatus);
+			}
+
+			bottomRow.AddChild(activePrintPreviewImage);
+			bottomRow.AddChild(labelContainer);
+
+			//PrintActionRow printActionRow = new PrintActionRow(queueDataView);
 
 			container.AddChild(topRow);
-			container.AddChild(activePrintName);
-			container.AddChild(activePrintStatus);
+			container.AddChild(bottomRow);
 			//container.AddChild(activePrintInfo);
-			container.AddChild(printActionRow);
+			//container.AddChild(printActionRow);
+			//container.AddChild(new VerticalSpacer());
+			//container.AddChild(new MessageActionRow());
 
 			return container;
 		}
@@ -217,11 +249,12 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
 			imageButtonFactory.InvertImageColor = false;
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 16, 16).InvertLightness();
-			Button autoLevelButton = imageButtonFactory.Generate(levelingImage, levelingImage);
+			string notifyIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
+			string notifyHoverIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
+			Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
+			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
-			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled);
 
 			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
@@ -236,7 +269,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (!ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				return "Select a Printer.".Localize();
+				return "Select a printer.".Localize();
 			}
 			else
 			{
@@ -246,9 +279,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						return "Not connected. Press 'Connect' to enable printing.".Localize();
 
 					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-						string attemptToConnect = "Attempting to Connect".Localize();
-						string attemptToConnectFull = string.Format("{0}...", attemptToConnect);
-						return attemptToConnectFull;
+						return "Attempting to Connect".Localize() + "...";
 
 					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
 					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
@@ -267,11 +298,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			widget.AutoExpandBoundsToText = true;
 			widget.MinimumSize = new Vector2(widget.Width, widget.Height);
 			return widget;
-		}
-
-		private void Instance_WroteLine(object sender, EventArgs e)
-		{
-			UpdatePrintStatus();
 		}
 
 		private void onActivePrintItemChanged(object sender, EventArgs e)
@@ -297,12 +323,20 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
-				UpdatePrintStatus();
+				if (!timeSinceLastDrawTime.IsRunning)
+				{
+					timeSinceLastDrawTime.Start();
+				}
+				else if (timeSinceLastDrawTime.ElapsedMilliseconds > 999)
+				{
+					UpdatePrintStatus();
+					timeSinceLastDrawTime.Restart();
+				}
 			}
 
 			if (!HasBeenClosed)
 			{
-				UiThread.RunOnIdle(OnIdle, 1);
+				UiThread.RunOnIdle(OnIdle);
 			}
 		}
 
@@ -316,10 +350,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			StringEventArgs message = e as StringEventArgs;
 			ActivePrintStatusText = message.Data;
 		}
-
 		private void SetVisibleStatus()
 		{
-			if (ActiveSliceSettings.Instance.PrinterSelected)
+			if (ActiveSliceSettings.Instance != null)
 			{
 				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
@@ -331,7 +364,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			}
 		}
-
 		private void UpdatePrintItemName()
 		{
 			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
@@ -354,7 +386,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				int totalMinutesInPrint = (int)(totalSecondsInPrint / 60 - totalHoursInPrint * 60);
 				totalSecondsInPrint = totalSecondsInPrint % 60;
 
-				string estimatedTimeLabel = "Estimated Print Time".Localize();
+				string estimatedTimeLabel = "Est. Print Time".Localize();
 				string calculatingLabel = "Calculating...".Localize();
 				string totalPrintTimeText;
 
@@ -439,4 +471,5 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 	}
+
 }
