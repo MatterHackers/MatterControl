@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -40,7 +39,7 @@ using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture]
+	[TestFixture, RunInApplicationDomain]
 	public class GCodeStreamTests
 	{
 		[Test, Category("GCodeStream")]
