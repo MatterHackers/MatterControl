@@ -99,58 +99,8 @@ namespace MatterHackers.MatterControl
 						int eMoveAmountPositive = EAxisMoveAmount;
 						int eMoveAmountNegative = -EAxisMoveAmount;
 
-						if (OsInformation.OperatingSystem == OSType.Windows)
-						{
-							if (e.KeyCode == Keys.Home)
-							{
-								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
-							}
-							else if (e.KeyCode == Keys.Z)
-							{
-								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
-							}
-							else if (e.KeyCode == Keys.Y)
-							{
-								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
-							}
-							else if (e.KeyCode == Keys.X)
-							{
-								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
-							}
-							else if (e.KeyCode == Keys.Left)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountNegative, MovementControls.XSpeed);
-							}
-							else if (e.KeyCode == Keys.Right)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.X, moveAmountPositive, MovementControls.XSpeed);
-							}
-							else if (e.KeyCode == Keys.Up)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
-							}
-							else if (e.KeyCode == Keys.Down)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
-							}
-							else if (e.KeyCode == Keys.PageUp)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
-							}
-							else if (e.KeyCode == Keys.PageDown)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
-							}
-							else if (e.KeyCode == Keys.E)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
-							}
-							else if (e.KeyCode == Keys.R)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
-							}
-						}
-						else if (OsInformation.OperatingSystem == OSType.Mac)
+						if (OsInformation.OperatingSystem == OSType.Windows
+							|| OsInformation.OperatingSystem == OSType.Mac)
 						{
 							if (e.KeyCode == Keys.Z)
 							{
@@ -180,14 +130,6 @@ namespace MatterHackers.MatterControl
 							{
 								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
 							}
-							else if (e.KeyCode == (Keys.Back | Keys.Cancel))
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
-							}
-							else if (e.KeyCode == Keys.Clear)
-							{
-								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
-							}
 							else if (e.KeyCode == Keys.E)
 							{
 								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
@@ -195,6 +137,33 @@ namespace MatterHackers.MatterControl
 							else if (e.KeyCode == Keys.R)
 							{
 								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
+							}
+						}
+
+						if (OsInformation.OperatingSystem == OSType.Windows)
+						{
+							if (e.KeyCode == Keys.Home)
+							{
+								PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
+							}
+							else if (e.KeyCode == Keys.PageUp)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
+							}
+							else if (e.KeyCode == Keys.PageDown)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
+							}
+						}
+						else if (OsInformation.OperatingSystem == OSType.Mac)
+						{
+							if (e.KeyCode == (Keys.Back | Keys.Cancel))
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
+							}
+							else if (e.KeyCode == Keys.Clear)
+							{
+								PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
 							}
 						}
 					};
