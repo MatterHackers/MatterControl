@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
+using System;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -37,12 +38,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		protected PrinterMove lastDestination = new PrinterMove();
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
+		private EventHandler unregisterEvents;
+
 		public FeedRateMultiplyerStream(GCodeStream internalStream)
 			: base(internalStream)
 		{
+			this.FeedRateRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio);
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				var eventArgs = e as StringEventArgs;
+				if (eventArgs?.Data == SettingsKey.feedrate_ratio)
+				{
+					this.FeedRateRatio  = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio);
+				}
+			}, ref unregisterEvents);
 		}
 
-		public double FeedRateRatio { get; set; } = 1;
+		public double FeedRateRatio { get; set; }
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
@@ -68,6 +81,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			return lineToSend;
+		}
+
+		public override void Dispose()
+		{
+			unregisterEvents?.Invoke(null, null);
+			base.Dispose();
 		}
 	}
 }

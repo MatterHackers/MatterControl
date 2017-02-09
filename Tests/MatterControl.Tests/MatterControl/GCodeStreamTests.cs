@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -40,7 +41,7 @@ using NUnit.Framework;
 namespace MatterControl.Tests.MatterControl
 {
 	[TestFixture]
-	public class GCodeMaxLengthStreamTests
+	public class GCodeStreamTests
 	{
 		[Test, Category("GCodeStream")]
 		public void MaxLengthStreamTests()
@@ -416,6 +417,36 @@ namespace MatterControl.Tests.MatterControl
 
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
 			}
+		}
+
+		[Test, Category("GCodeStream")]
+		public void FeedRateStreamTracksSettings()
+		{
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var gcodeStream = new FeedRateMultiplyerStream(new TestGCodeStream(new string[0]));
+
+			Assert.AreEqual(1, gcodeStream.FeedRateRatio, "FeedRateRatio should default to 1");
+
+			ActiveSliceSettings.Instance.SetValue(SettingsKey.feedrate_ratio, "0.3");
+
+			Assert.AreEqual(0.3, gcodeStream.FeedRateRatio, "FeedRateRatio should remain synced with PrinterSettings");
+		}
+
+		[Test, Category("GCodeStream")]
+		public void ExtrusionRateStreamTracksSettings()
+		{
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var gcodeStream = new ExtrusionMultiplyerStream(new TestGCodeStream(new string[0]));
+
+			Assert.AreEqual(1, gcodeStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
+
+			ActiveSliceSettings.Instance.SetValue(SettingsKey.extrusion_ratio, "0.3");
+
+			Assert.AreEqual(0.3, gcodeStream.ExtrusionRatio, "ExtrusionRatio should remain synced with PrinterSettings");
 		}
 	}
 
