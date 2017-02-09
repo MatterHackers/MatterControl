@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void SetVisibleStatus()
 		{
-			if (ActiveSliceSettings.Instance != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
@@ -750,7 +750,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		}
 		private void SetVisibleStatus()
 		{
-			if (ActiveSliceSettings.Instance != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 				{

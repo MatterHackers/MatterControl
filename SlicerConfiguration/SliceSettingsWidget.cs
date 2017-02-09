@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void SetVisibleControls()
 		{
-			if (ActiveSliceSettings.Instance != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				topCategoryTabs.Visible = true;
 				settingsControlBar.Visible = showControlBar;

@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 				this.AddItem(printer.Name, printer.ID.ToString());
 			}
 
-			if (ActiveSliceSettings.Instance != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				this.SelectedValue = ActiveSliceSettings.Instance.ID;
 				lastSelectedIndex = this.SelectedIndex;
