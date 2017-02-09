@@ -5935,6 +5935,6 @@ Translated:Heating side 2.
 English:Done!
 Translated:Done!
 
-English:WARNING: In order to perform print recovery, your printer must move down to reach it's home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:WARNING: In order to perform print recovery, your printer must move down to reach it's home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 
