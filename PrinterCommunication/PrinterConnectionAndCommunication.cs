@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			set
 			{
-				if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				if (!PrinterIsPrinting)
 				{
 					if (this.activePrintItem != value)
 					{
@@ -556,11 +556,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (value)
 				{
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M80");
+					SendLineToPrinterNow("M80");
 				}
 				else
 				{
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M81");
+					SendLineToPrinterNow("M81");
 				}
 			}
 		}
@@ -996,7 +996,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void ConnectToActivePrinter(bool showHelpIfNoPort = false)
 		{
-			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
+			if (ActivePrinter != null)
 			{
 				// Start the process of requesting permission and exit if permission is not currently granted
 				if (!FrostedSerialPort.EnsureDeviceAccess())
@@ -1207,13 +1207,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
+			SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
 		}
 
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
+			SendLineToPrinterNow("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
 		}
 
 		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
@@ -1227,14 +1227,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (requiresToolChange)
 				{
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
+					SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
 				}
 
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0:0.###} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
+				SendLineToPrinterNow("G1 E{0:0.###} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
 
 				if (requiresToolChange)
 				{
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T0"); //Reset back to extruder one
+					SendLineToPrinterNow("T0"); //Reset back to extruder one
 				}
 
 				SetMovementToAbsolute();
@@ -1246,7 +1246,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (moveAmountMm != 0)
 			{
 				SetMovementToRelative();
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
+				SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
 				SetMovementToAbsolute();
 			}
 		}
@@ -1331,13 +1331,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 
-				if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
+				if (ActivePrintItem != null)
 				{
-					string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
+					string pathAndFile = ActivePrintItem.FileLocation;
 					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 						&& pathAndFile == QueueData.SdCardFileName)
 					{
-						PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
+						StartSdCardPrint();
 					}
 					else if (ActiveSliceSettings.Instance.IsValid())
 					{
@@ -1372,8 +1372,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							}
 							else
 							{
-								PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-								PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+								CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+								PrintItemWrapper partToPrint = ActivePrintItem;
 								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 								partToPrint.SlicingDone += partToPrint_SliceDone;
 							}
@@ -1802,13 +1802,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							serialPort.Dispose();
 						}
 						serialPort = null;
+						// make sure we clear out the stream processors
+						CreateStreamProcessors(null, false);
 						CommunicationState = CommunicationStates.Disconnected;
 
 						// We were connected to a printer so try to reconnect
 						UiThread.RunOnIdle(() =>
 						{
-							//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-							PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+							//HaltConnectionThread();
+							ConnectToActivePrinter();
 						}, 2);
 					}
 					else
@@ -1980,12 +1982,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void SetMovementToAbsolute()
 		{
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G90");
+			SendLineToPrinterNow("G90");
 		}
 
 		public void SetMovementToRelative()
 		{
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G91");
+			SendLineToPrinterNow("G91");
 		}
 
 		public void SetTargetExtruderTemperature(int extruderIndex0Based, double temperature, bool forceSend = false)
@@ -2057,10 +2059,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					break;
 
 				case CommunicationStates.Printing:
-					{
-						CancelPrint(markPrintCanceled);
-					}
-
+					CancelPrint(markPrintCanceled);
 					break;
 
 				case CommunicationStates.Paused:
@@ -2127,9 +2126,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				// no matter what we no longer have a print task
 				activePrintTask = null;
-
-				// get us back to the no printing setting (this will clear the queued commands)
-				CreateStreamProcessors(null, false);
 			}
 		}
 
@@ -2505,8 +2501,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (messageBoxResponse)
 			{
-				PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-				PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+				CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+				PrintItemWrapper partToPrint = ActivePrintItem;
 				SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 				partToPrint.SlicingDone += partToPrint_SliceDone;
 			}
@@ -2571,7 +2567,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{
-							PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
+							StartPrint(gcodePathAndFileName);
 							return;
 						}
 						else
@@ -2602,7 +2598,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									}
 									else
 									{
-										PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
+										StartPrint(gcodePathAndFileName);
 									}
 									return;
 								}
@@ -2610,7 +2606,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 					}
 
-					PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
+					CommunicationState = CommunicationStates.Connected;
 				}
 			}
 		}

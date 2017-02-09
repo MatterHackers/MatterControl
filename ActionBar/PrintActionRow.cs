@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			pauseButton = makeButton("Pause".Localize(), "Pause the current print".Localize());
 			pauseButton.Click += (s, e) =>
 			{
-				PrinterConnectionAndCommunication.Instance.RequestPause();
+				UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RequestPause);
 				pauseButton.Enabled = false;
 			};
 			this.AddChild(pauseButton);
