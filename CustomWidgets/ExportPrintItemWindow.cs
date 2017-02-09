@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.AddChild(exportAsAmfButton);
 			}
 
-			bool showExportGCodeButton = ActiveSliceSettings.Instance != null || partIsGCode;
+			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
 			if (showExportGCodeButton)
 			{
 				string exportGCodeTextFull = string.Format("{0} G-Code", "Export as".Localize());

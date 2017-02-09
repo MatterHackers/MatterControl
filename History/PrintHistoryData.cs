@@ -54,10 +54,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 			foreach (PrintTask lastPrint in PrintHistoryData.Instance.GetHistoryItems(1))
 			{
 				if (!lastPrint.PrintComplete // Top Print History Item is not complete
-				&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
-				&& File.Exists(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is still on disk
-				&& lastPrint.PercentDone > 0 // we are actually part way into the print
-				&& !ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
+					&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
+					&& File.Exists(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is still on disk
+					&& lastPrint.PercentDone > 0 // we are actually part way into the print
+					&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled)
+					&& !ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
                 {
 					lastPrintTask = lastPrint;
 					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))

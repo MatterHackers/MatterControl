@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						shopButton.Click += (sender, e) =>
 						{
 							double activeFilamentDiameter = 0;
-							if (ActiveSliceSettings.Instance != null)
+							if (ActiveSliceSettings.Instance.PrinterSelected)
 							{
 								activeFilamentDiameter = 3;
 								if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
