@@ -452,7 +452,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					//PrinterConnectionAndCommunication.Instance.RequestPause();
+					PrinterConnectionAndCommunication.Instance.RequestPause();
 					pauseButton.Visible = false;
 					resumeButton.Visible = true;
 				});
@@ -464,7 +464,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					//PrinterConnectionAndCommunication.Instance.Resume();
+					if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+					{
+						PrinterConnectionAndCommunication.Instance.Resume();
+					}
+
 					resumeButton.Visible = false;
 					pauseButton.Visible = true;
 				});
@@ -563,10 +567,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var timeImage = new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("Screensaver", "time.png")));
 				timeContainer.AddChild(timeImage);
 
-				timeWidget = new TextWidget("", pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				timeWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					AutoExpandBoundsToText = true,
-					Margin = new BorderDouble(10, 0)
+					Margin = new BorderDouble(10, 0),
+					VAnchor = VAnchor.ParentCenter
 				};
 
 				timeContainer.AddChild(timeWidget);
@@ -677,11 +682,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
 			int hoursPrinted = (int)(secondsPrinted / (60 * 60));
-			int minutesPrinted = (int)(secondsPrinted / 60 - hoursPrinted * 60);
+			int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
 			secondsPrinted = secondsPrinted % 60;
 
 			// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration 
-			timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{1:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
+			timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
 
 			progressDial.LayerCount = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
 			progressDial.LayerCompletedRatio = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
