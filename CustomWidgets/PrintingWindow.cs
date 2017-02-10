@@ -490,7 +490,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(50),
+				Padding = new BorderDouble(50, 30),
 				BackgroundColor = new RGBA_Bytes(35, 40, 49),
 			};
 			topToBottom.AddChild(bodyContainer);
@@ -602,7 +602,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					Margin = new BorderDouble(left: 50),
 					VAnchor = VAnchor.ParentCenter,
-					Width = 120
+					Width = 135
 				};
 				bodyRow.AddChild(widget);
 			}
