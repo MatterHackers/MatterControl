@@ -449,7 +449,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					case CommunicationStates.Connected:
 						SendLineToPrinterNow("M115");
-						SendLineToPrinterNow("M114");
+						ReadPosition();
 						break;
 
 					case CommunicationStates.ConnectionLost:
@@ -2414,6 +2414,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
 			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);
 			totalGCodeStream = requestTemperaturesStream9;
+
+			// Get the current position of the printer any time we reset our streams
+			ReadPosition();
 		}
 
 		private void LoadGCodeToPrint(string gcodeFilename)
@@ -2835,7 +2838,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						|| lineWithoutChecksum.StartsWith("G92") // is a reset of printer position
 						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
-						SendLineToPrinterNow("M114");
+						ReadPosition();
 					}
 
 					// write data to communication

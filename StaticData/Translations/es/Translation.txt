@@ -806,7 +806,7 @@ English:Printer
 Translated:Impresora
 
 English:General
-Translated:general
+Translated:General
 
 English:Bed Size
 Translated:Tamaño de la cama
@@ -824,7 +824,7 @@ English:Extruder 1
 Translated:extrusora 1
 
 English:Nozzle Diameter
-Translated:Diámetro de la boquilla
+Translated:diámetro de la boquilla
 
 English:Size
 Translated:tamaño
@@ -1169,7 +1169,7 @@ English:Bridges
 Translated:puentes
 
 English:Gap Fill
-Translated:Llenar los espacios en blanco
+Translated:Llenar Gap
 
 English:Min Print Speed
 Translated:Min Velocidad de impresión
@@ -2108,7 +2108,7 @@ English:Driver located. Would you like to install?
 Translated:Controlador que se encuentra. ¿Quieres instalar?
 
 English:Install Driver
-Translated:Instalar el controlador
+Translated:instalar el controlador
 
 English:Apply
 Translated:Aplicar
@@ -4691,7 +4691,7 @@ English:Restore Default
 Translated:restaurar valores predeterminados
 
 English:Outer Surface
-Translated:Superficie externa
+Translated:Superficie exterior
 
 English:Minimum Travel equiring Retraction
 Translated:Viajes mínima retracción equiring
@@ -5207,7 +5207,7 @@ English:MatterControl: Submit Feedback
 Translated:MatterControl: Enviar comentarios
 
 English:How can we improve?
-Translated:¿Cómo podemos mejorar?
+Translated:¿Como podemos mejorar?
 
 English:Forums
 Translated:foros
@@ -5829,4 +5829,115 @@ Translated:Ahorro...
 
 English:Oops! Payment has been declined.
 Translated:Ups! El pago se ha rechazado.
+
+English:Distance or Loops
+Translated:La distancia o Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:El desplazamiento z aplicar para mejorar la adherencia de la primera capa.
+
+English:Baby Step Offset
+Translated:Bebé Paso Offset
+
+English:Oops! Unable to initialize device.
+Translated:Ups! No se puede inicializar el dispositivo.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:La distancia entre la parte superior de la balsa y la parte inferior del modelo. 0,6 mm es un buen punto de partida para PLA y 0,4 mm es un buen punto de partida para el ABS. Los valores más bajos dan una superficie más suave, los valores más altos hacen que la impresión más fácil de quitar.
+
+English:Clear ZOffset
+Translated:claro ZOffset
+
+English:Printing Window...
+Translated:Impresión de la ventana ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Sólo se retraen cuando Crossing Perímetros
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'Perímetro externo de extrusión Ancho' debe ser menor o igual que el "surtidor Diámetro '* 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Perímetro externo de extrusión Ancho = {0}\nBoquilla Diámetro = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Ubicación: "Configuración y control" -> "Configuración" -> "Filamento '->' extrusión '->' perímetro exterior '
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'Perímetro externo de extrusión Ancho' debe ser mayor que 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Perímetro externo de extrusión Ancho = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:La altura inicial (Z) de la cabeza de impresión antes de sondear cada posición de nivel de impresión.
+
+English:Probe Start Height
+Translated:Sonda de inicio Altura
+
+English:Controls the speed of printer moves
+Translated:Controla la velocidad de la impresora se mueve
+
+English:Controls the amount of extrusion
+Translated:Controla la cantidad de extrusión
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Elegir el material de que está cargando.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Recorte el extremo del filamento para asegurar una buena carga.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Elegir el material de que está cargando. Que está haciendo un poco de materia que tiene una descripción larga.
+
+English:Confirm the material you are unloading.
+Translated:Confirmar el material vaya a descargar.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:A la espera de la extrusora para calentar a 205, antes de la descarga.
+
+English:Unloading filament...
+Translated:Descarga de filamento ...
+
+English:Put filament into extruder and click Continue.
+Translated:Ponga filamento en extrusor y haga clic en Continuar.
+
+English:Loading filament...
+Translated:Cargando ... filamento
+
+English:Waiting for extruder to heat to 205.
+Translated:Esperando extrusor para calentar a 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Haga clic en "Continuar" cuando filamento está ejecutando limpiamente.
+
+English:Heating side 1.
+Translated:Lado de calor 1.
+
+English:Turn Sandvich over!
+Translated:Girar Focata más!
+
+English:Heating side 2.
+Translated:Lado de calor 2.
+
+English:Done!
+Translated:¡Hecho!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:ADVERTENCIA: Con el fin de realizar la recuperación de impresión, la impresora debe moverse hacia abajo hasta llegar a su posición inicial. \ N Si la impresión es demasiado grande, que forma parte de la impresora puede chocar con él cuando se mueve hacia abajo. \ N Asegúrese de que es seguro para realizar esta operación antes de proceder.
 

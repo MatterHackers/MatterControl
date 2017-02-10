@@ -41,7 +41,7 @@ English:Skip the current item and move to the next in queue
 Translated:현재 항목을 건너 뛰고 큐에서 다음으로 이동
 
 English:Remove
-Translated:없애다
+Translated:풀다
 
 English:Remove current item from queue
 Translated:큐에서 현재 항목을 제거합니다
@@ -59,7 +59,7 @@ English:Stop trying to connect to the printer.
 Translated:프린터에 연결을 시도 중지합니다.
 
 English:Cancel
-Translated:취소하다
+Translated:취소
 
 English:Stop the current print
 Translated:현재 인쇄를 중지
@@ -107,7 +107,7 @@ English:Export
 Translated:수출
 
 English:Est. Print Time
-Translated:예상. 인쇄 시간
+Translated:동부 표준시. 인쇄 시간
 
 English:Calculating...
 Translated:계산 ...
@@ -311,7 +311,7 @@ English:ALL
 Translated:모든
 
 English:UNLOCK
-Translated:잠금 해제
+Translated:터놓다
 
 English:Retract
 Translated:쑥 들어가게 하다
@@ -776,7 +776,7 @@ English:Filament
 Translated:필라멘트
 
 English:Diameter
-Translated:지름
+Translated:직경
 
 English:Extrude First Layer
 Translated:돌출 첫 번째 레이어
@@ -935,7 +935,7 @@ English:edit
 Translated:편집하다
 
 English:remove
-Translated:없애다
+Translated:풀다
 
 English:Printer Name
 Translated:프린터 이름
@@ -1235,7 +1235,7 @@ English:Output File Name Format
 Translated:출력 파일 이름 형식
 
 English:Output File
-Translated:출력 파일
+Translated:결과물 파일
 
 English:Post-Processing Scripts
 Translated:후 처리 스크립트
@@ -1454,7 +1454,7 @@ English:WEIGHT
 Translated:무게
 
 English:EST. WEIGHT
-Translated:EST. 무게
+Translated:동부 표준시. 무게
 
 English:Saving
 Translated:절약
@@ -1940,7 +1940,7 @@ English:Status: Completed
 Translated:상태 : 완료
 
 English:Unlock
-Translated:잠금 해제
+Translated:터놓다
 
 English:Show Terminal
 Translated:쇼 터미널
@@ -1952,7 +1952,7 @@ English:Disable
 Translated:사용 안 함
 
 English:Est. Weight
-Translated:예상. 무게
+Translated:동부 표준시. 무게
 
 English:Downloading updates...
 Translated:다운로드 업데이트 ...
@@ -2033,7 +2033,7 @@ English:Fill in the details here
 Translated:여기에 세부 정보를 입력
 
 English:Your Email Address*
-Translated:당신의 이메일 주소*
+Translated:귀하의 이메일 주소 *
 
 English:Your Name*
 Translated:귀하의 이름 *
@@ -2978,7 +2978,7 @@ English:Unlock to Save
 Translated:저장하기 위해 잠금 해제
 
 English:Save & Exit
-Translated:저장하고 종료
+Translated:저장 및 종료
 
 English:Finding Parts:
 Translated:부품 찾기 :
@@ -3065,7 +3065,7 @@ English:Token request failed...
 Translated:토큰 요청이 실패했습니다 ...
 
 English:Oops! Your session has expired.  Please sign-in again to continue.
-Translated:아차! 세션이 만료되었습니다. 로그인하세요 다시 계속합니다.
+Translated:아차! 기간이 만료되었습니다. 로그인하세요 다시 계속합니다.
 
 English:Sorry! Unable to connect to server. Please try again later.
 Translated:죄송합니다! 서버에 연결할 수 없습니다. 나중에 다시 시도 해주십시오.
@@ -3809,7 +3809,7 @@ English:Exporting to Folder or SD Card
 Translated:폴더 또는 SD 카드로 내보내기
 
 English:Materials
-Translated:재료
+Translated:기재
 
 English:Material {0}
 Translated:소재 {0}
@@ -3857,7 +3857,7 @@ English:Could Not Load Image File
 Translated:이미지 파일을로드 할 수 없음
 
 English:Reset View
-Translated:보기 재설정
+Translated:관점을 다시 설정
 
 English:If you want to select a layer to pause your print on do so here (for changing filament)
 Translated:당신이 (필라멘트를 변경) 그래서 여기에 수행에 인쇄를 일시 중지 레이어를 선택하려면
@@ -4619,7 +4619,7 @@ English:Show Firmware Updater
 Translated:쇼 펌웨어 업데
 
 English:Cube
-Translated:큐브
+Translated:입방체
 
 English:Cylinder
 Translated:실린더
@@ -5237,7 +5237,7 @@ English:Defaults Updated On: {0}
 Translated:업데이트 기본값 : {0}
 
 English:Properties
-Translated:속성
+Translated:등록
 
 English:Qualities
 Translated:자질
@@ -5327,7 +5327,7 @@ English:The position (X and Y coordinates) of the center of the print bed, in mi
 Translated:위치 mm의 인쇄 층의 중심 (X 및 Y 좌표). 일반적으로이 델타 프린터 직교 프린터의 1/2 사이즈 침대 0, 0입니다.
 
 English:Update Required
-Translated:업데이트 필요
+Translated:업데이트가 필요함
 
 English:There is a required update available.
 Translated:사용할 수있는 필수 업데이트가 있습니다.
@@ -5829,4 +5829,115 @@ Translated:절약...
 
 English:Oops! Payment has been declined.
 Translated:아차! 결제가 거부되었습니다.
+
+English:Distance or Loops
+Translated:거리 또는 루프
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Z 오프셋은 제 밀착성을 향상시키기 위해 적용한다.
+
+English:Baby Step Offset
+Translated:아기 단계 오프셋
+
+English:Oops! Unable to initialize device.
+Translated:아차! 장치를 초기화 할 수 없습니다.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:뗏목의 상단과 모델의 바닥 사이의 거리. 0.6 mm는 PLA를위한 좋은 출발점이 될 것입니다 0.4 mm는 ABS에 대한 좋은 출발점이 될 것입니다. 값이 낮을수록 더 높은 값을 제거하기 인쇄 쉽게, 매끄러운 표면을 제공합니다.
+
+English:Clear ZOffset
+Translated:클리어 ZOffset
+
+English:Printing Window...
+Translated:창을 인쇄 ...
+
+English:Only Retract When Crossing Perimeters
+Translated:경우에만 건너 둘레 후퇴
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'외부 경계 돌출 폭'는 '노즐 직경'보다 작거나 같아야합니다 * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:외부 경계 돌출 폭 = {0}\n개의 노즐 직경 = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:위치 : '설정 및 제어'-> '설정'-> '필라멘트'-> '돌출'-> '외부 경계'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'외부 경계 돌출 폭은 0보다 커야합니다.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:외부 경계 돌출 폭 = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:각 출력 레벨 위치를 프로빙 전에 프린트 헤드의 시작 높이 (z).
+
+English:Probe Start Height
+Translated:프로브 시작 높이
+
+English:Controls the speed of printer moves
+Translated:프린터의 이동 속도를 제어
+
+English:Controls the amount of extrusion
+Translated:압출 량을 제어
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:당신이로드 재료를 선택합니다.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:좋은로드를 위해 필라멘트의 단부를 트림.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:당신이로드 재료를 선택합니다. 당신은 긴 설명이 필요 몇 가지 물건을 다하고 있습니다.
+
+English:Confirm the material you are unloading.
+Translated:당신이 언로드 자료를 확인합니다.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:압출기 언로드하기 전에, (205)에 열을 기다리고 있습니다.
+
+English:Unloading filament...
+Translated:필라멘트를 언로드 ...
+
+English:Put filament into extruder and click Continue.
+Translated:압출기에 필라멘트를 넣고 계속을 클릭합니다.
+
+English:Loading filament...
+Translated:필라멘트로드 중 ...
+
+English:Waiting for extruder to heat to 205.
+Translated:압출기 기다리는 (205)에 열을합니다.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:필라멘트가 정상적으로 실행되고있을 때 '계속'을 클릭합니다.
+
+English:Heating side 1.
+Translated:난방 측 1.
+
+English:Turn Sandvich over!
+Translated:샌드를 뒤집!
+
+English:Heating side 2.
+Translated:난방 측이.
+
+English:Done!
+Translated:끝난!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:경고 : 인쇄 복구를 수행하기 위해 프린터가 홈 위치에 도달 아래로 이동해야합니다. 인쇄가 너무 큰 경우 아래로 이동할 때\n프린터의 일부는 충돌 할 수 있습니다. \ n이 진행하기 전에이 작업을 수행하는 것이 안전해야합니다.
 

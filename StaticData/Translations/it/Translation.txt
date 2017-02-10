@@ -23,7 +23,7 @@ English:Next Print
 Translated:Avanti Stampa
 
 English:Add
-Translated:Aggiungere
+Translated:Inserisci
 
 English:Add a file to be printed
 Translated:Aggiungere un file da stampare
@@ -98,7 +98,7 @@ English:View
 Translated:vista
 
 English:Copy
-Translated:Copia
+Translated:copia
 
 English:Add to Queue
 Translated:Aggiungi alla coda
@@ -260,7 +260,7 @@ English:Edit
 Translated:Modifica
 
 English:Delete
-Translated:cancellare
+Translated:Elimina
 
 English:Close
 Translated:Vicino
@@ -296,7 +296,7 @@ English:Print\nQueue
 Translated:Stampa\nQueue
 
 English:Actual
-Translated:attuale
+Translated:Effettivo
 
 English:Target
 Translated:Bersaglio
@@ -800,7 +800,7 @@ English:Enable Auto Cooling
 Translated:Attiva Auto di raffreddamento
 
 English:Enable
-Translated:consentire
+Translated:Abilitare
 
 English:Printer
 Translated:Stampante
@@ -842,10 +842,10 @@ English:Automatic Calibration
 Translated:Calibrazione automatica
 
 English:ENABLE
-Translated:CONSENTIRE
+Translated:ABILITARE
 
 English:DISABLE
-Translated:DISABILITA
+Translated:DISATTIVARE
 
 English:Enable Automatic Print Leveling
 Translated:Abilita livellamento stampa automatica
@@ -896,7 +896,7 @@ English:Show Retractions
 Translated:Mostra Ritrattazioni
 
 English:Go
-Translated:Andare
+Translated:Partire
 
 English:start:
 Translated:inizio:
@@ -935,7 +935,7 @@ English:edit
 Translated:Modifica
 
 English:remove
-Translated:Rimuovere
+Translated:rimuovere
 
 English:Printer Name
 Translated:Nome stampante
@@ -1049,7 +1049,7 @@ English:Internal Support
 Translated:Supporto interno
 
 English:Notes
-Translated:Note
+Translated:Gli appunti
 
 English:Output Options
 Translated:Opzioni di output
@@ -1274,7 +1274,7 @@ English:Flow
 Translated:Flusso
 
 English:Threads
-Translated:discussioni
+Translated:Fili
 
 English:Resolution
 Translated:Risoluzione
@@ -1457,7 +1457,7 @@ English:EST. WEIGHT
 Translated:EST. PESO
 
 English:Saving
-Translated:Risparmio
+Translated:Salvataggio
 
 English:Export File
 Translated:Esporta file
@@ -1658,7 +1658,7 @@ English:Shaded
 Translated:ombroso
 
 English:Outlines
-Translated:lineamenti
+Translated:Lineamenti
 
 English:Polygons
 Translated:poligoni
@@ -1874,7 +1874,7 @@ English:Press
 Translated:stampa
 
 English:Continue
-Translated:proseguire
+Translated:Continua
 
 English:Manual Configuration
 Translated:Configurazione manuale
@@ -1949,7 +1949,7 @@ English:Configure
 Translated:Configurazione
 
 English:Disable
-Translated:disabilitare
+Translated:disattivare
 
 English:Est. Weight
 Translated:Est. Peso
@@ -2012,7 +2012,7 @@ English:MatterControl: Submit an Issue
 Translated:MatterControl: Invia un problema
 
 English:Submit
-Translated:invio
+Translated:Sottoscrivi
 
 English:How can we help?
 Translated:Come possiamo aiutare?
@@ -2336,10 +2336,10 @@ English:Recommended Update Available
 Translated:Disponibile aggiornamento consigliato
 
 English:Download Now
-Translated:Scaricare ora
+Translated:Scarica ora
 
 English:Remind Me Later
-Translated:Ricordamelo dopo
+Translated:Ricordamelo più tardi
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:Oops! Non vi è alcuna mappatura EEPROM per il firmware della stampante.
@@ -2555,7 +2555,7 @@ English:Dilimleme Motoru
 Translated:Dilimleme Motoru
 
 English:Clear
-Translated:Pulire
+Translated:Chiaro
 
 English:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
 Translated:Consente il codice letto livellamento sapere se la stampante in grado di supportare l'asse Z che vanno sotto 0. Una stampante con finecorsa z minimo o fine un programma non può non essere in grado di.
@@ -2585,7 +2585,7 @@ English:Tuning Adjustment
 Translated:Regolazione messa a punto
 
 English:Release
-Translated:Uscita
+Translated:Liberare
 
 English:No printer is currently selected. Select a printer to edit slice settings.
 Translated:Nessuna stampante è attualmente selezionata. Selezionare una stampante per modificare le impostazioni fetta.
@@ -3320,7 +3320,7 @@ English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusio
 Translated:Località: 'Impostazioni e controlli' -> 'Impostazioni' -> 'Filament' -> 'Estrusione' -> 'Frist Layer'
 
 English:Open
-Translated:aperto
+Translated:Aperto
 
 English:Checking For Update...
 Translated:La verifica degli aggiornamenti ...
@@ -3662,7 +3662,7 @@ English:Move
 Translated:Mossa
 
 English:Zoom
-Translated:ingrandimento
+Translated:Zoom
 
 English:Preview 3D Design
 Translated:Anteprima 3D design
@@ -3911,7 +3911,7 @@ English:Temporarily override target temperature
 Translated:Temporaneamente ignorare temperatura nominale
 
 English:CHANGE
-Translated:CAMBIAMENTO
+Translated:MODIFICARE
 
 English:REVERT
 Translated:REVERT
@@ -3986,7 +3986,7 @@ English:Enter your username or email address
 Translated:Inserisci il tuo indirizzo e-mail nome utente o
 
 English:Password
-Translated:parola d'ordine
+Translated:Parola d'ordine
 
 English:Forgot Password
 Translated:Ha dimenticato la password
@@ -4376,7 +4376,7 @@ English:Sign Up for an Account
 Translated:Registrati per un account
 
 English:Create Account
-Translated:Crea un account
+Translated:Creare un profilo
 
 English:Username
 Translated:Nome utente
@@ -4400,7 +4400,7 @@ English:Oops! Field cannot be left blank
 Translated:Oops! Il campo non può essere lasciato vuoto
 
 English:Sorry!  Must be a valid email address.
-Translated:Scusate! Deve essere un indirizzo e-mail valido.
+Translated:Scusate! Deve essere un indirizzo email valido.
 
 English:Please wait while we create your account...
 Translated:Si prega di attendere mentre creiamo il tuo account ...
@@ -4730,7 +4730,7 @@ English:Single Print
 Translated:Stampa singolo
 
 English:Reset at End of Print
-Translated:Ripristina nella Fine Print
+Translated:Ripristinare a Fine Print
 
 English:Will Clear at End of Print
 Translated:Sarà chiaro a Fine Print
@@ -4895,7 +4895,7 @@ English:Connect Your Device
 Translated:Collegare il dispositivo
 
 English:Instructions:
-Translated:istruzioni:
+Translated:Istruzioni:
 
 English:1. Power on your 3D Printer.
 Translated:1. Accendere la stampante 3D.
@@ -5159,10 +5159,10 @@ English:Are you sure you want to logout? You will not have access to your printe
 Translated:Sei sicuro di voler uscire? Non avrete accesso ai vostri profili di stampa o biblioteca cloud.
 
 English:Logout?
-Translated:Disconnettersi?
+Translated:Logout?
 
 English:Logout
-Translated:Disconnettersi
+Translated:Logout
 
 English:Can't login while printing
 Translated:Non è possibile accedere durante la stampa
@@ -5279,7 +5279,7 @@ English:IP Address
 Translated:Indirizzo IP
 
 English:Port
-Translated:porto
+Translated:Porta
 
 English:Enable Network Printing
 Translated:Attivare la stampa in rete
@@ -5543,7 +5543,7 @@ English:Leveling Calibration
 Translated:Livellamento di calibrazione
 
 English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:E 'tempo di copiare le impostazioni della stampante esistente al tuo account MatterHackers. Una volta copiato, queste stampanti saranno disponibili ogni volta che si accede a MatterControl. Le stampanti che non sono copiati saranno disponibili solo quando non effettuato.
+Translated:E 'tempo di copiare le impostazioni della stampante esistente al tuo account MatterHackers. Una volta copiato, queste stampanti saranno disponibili ogni volta che si accede a MatterControl. Stampanti che non vengono copiati saranno disponibili solo quando non effettuato.
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
 Translated:Località: 'Impostazioni e controlli' -> 'Impostazioni' -> 'stampante' -> 'Custom G-Code' -> 'Start G-Code'
@@ -5555,7 +5555,7 @@ English:Exit while printing
 Translated:Uscita mentre la stampa
 
 English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Sei sicuro di volere uscita, mentre una stampa è in esecuzione da scheda SD?\n\nNota: Se si esce, si consiglia di attendere fino a quando la stampa è stata completata prima di eseguire nuovamente MatterControl.
+Translated:Sei sicuro di volere uscire mentre una stampa è in esecuzione da scheda SD?\n\nNota: Se si esce, si consiglia di attendere fino a quando la stampa è stata completata prima di eseguire nuovamente MatterControl.
 
 English:Connect printer and power on
 Translated:Collegare la stampante e accendere
@@ -5648,7 +5648,7 @@ English:- none -
 Translated:- Nessuno -
 
 English:Actions
-Translated:azioni
+Translated:Azioni
 
 English:Show In Action Menu
 Translated:Mostra in azione Menu
@@ -5825,8 +5825,119 @@ English:Card Verification Number
 Translated:Card Verification Number
 
 English:Saving...
-Translated:Risparmio...
+Translated:Salvataggio...
 
 English:Oops! Payment has been declined.
 Translated:Oops! Il pagamento è stata rifiutata.
+
+English:Distance or Loops
+Translated:Distanza o Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:La Z di offset da applicare per migliorare l'adesione prima layer.
+
+English:Baby Step Offset
+Translated:Bambino Passo Offset
+
+English:Oops! Unable to initialize device.
+Translated:Oops! Impossibile inizializzare dispositivo.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:La distanza tra la parte superiore della zattera e la parte inferiore del modello. 0,6 millimetri è un buon punto di partenza per PLA e 0,4 mm è un buon punto di partenza per l'ABS. I valori più bassi danno una superficie più liscia, valori più alti rendono la stampa più facile da rimuovere.
+
+English:Clear ZOffset
+Translated:Cancella ZOffset
+
+English:Printing Window...
+Translated:Stampa di Window ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Ritrarre Solo quando attraversano perimetri
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'Perimetrale Extrusion Larghezza esterna' deve essere minore o uguale al 'Diametro dell'ugello' * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Esterno perimetrale Estrusione Width = {0}\nDiametro dell'ugello = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Località: 'Impostazioni e controlli' -> 'Impostazioni' -> 'Filament' -> 'Estrusione' -> 'perimetro esterno'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'Esterno perimetrale Extrusion Larghezza' deve essere maggiore di 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Esterno perimetrale Estrusione Width = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:L'altezza iniziale (z) della testina di stampa prima di controllare ogni posizione del livello di stampa.
+
+English:Probe Start Height
+Translated:Sonda Inizio Altezza
+
+English:Controls the speed of printer moves
+Translated:Controlla la velocità di stampa si muove
+
+English:Controls the amount of extrusion
+Translated:Controlla la quantità di estrusione
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Scegliere il materiale che si sta caricando.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Tagliare la fine del filamento per assicurare un buon carico.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Scegliere il materiale che si sta caricando. Si sta facendo un po 'di roba che richiede molto descrizione.
+
+English:Confirm the material you are unloading.
+Translated:Confermare il materiale che si scarico.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:In attesa di estrusore al calore a 205, prima dello scarico.
+
+English:Unloading filament...
+Translated:Scarico filamento ...
+
+English:Put filament into extruder and click Continue.
+Translated:Mettere filamento in estrusore e fare clic su Continua.
+
+English:Loading filament...
+Translated:Caricamento filamento ...
+
+English:Waiting for extruder to heat to 205.
+Translated:In attesa di estrusore per riscaldare a 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Fare clic su 'Continua' quando filamento è in esecuzione in modo pulito.
+
+English:Heating side 1.
+Translated:lato riscaldamento 1.
+
+English:Turn Sandvich over!
+Translated:Girare Sandvich finita!
+
+English:Heating side 2.
+Translated:lato riscaldamento 2.
+
+English:Done!
+Translated:Fatto!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:ATTENZIONE: Al fine di eseguire il ripristino di stampa, la stampante deve spostare verso il basso per raggiungere la sua posizione iniziale. \ N Se la stampa è troppo grande, parte della vostra stampante può collidere con esso quando ci si sposta verso il basso. \ N Assicurarsi che sia sicuro per eseguire questa operazione prima di procedere.
 
