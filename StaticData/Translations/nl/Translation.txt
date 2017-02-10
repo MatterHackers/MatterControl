@@ -1,8 +1,8 @@
 English:Connect
-Translated:aansluiten
+Translated:Aansluiten
 
 English:Disconnect
-Translated:losmaken
+Translated:Loskoppelen
 
 English:Status
 Translated:toestand
@@ -116,7 +116,7 @@ English:complete
 Translated:compleet
 
 English:Remove All
-Translated:Alles verwijderen
+Translated:Verwijder alles
 
 English:Queue Options
 Translated:Queue Opties
@@ -149,7 +149,7 @@ English:Check for Update
 Translated:Controleer op updates
 
 English:Download Update
-Translated:update downloaden
+Translated:Download update
 
 English:Install Update
 Translated:Installeer update
@@ -356,7 +356,7 @@ English:Slice Settings
 Translated:slice Instellingen
 
 English:Show Help
-Translated:Show Help
+Translated:Hulp laten zien
 
 English:Show All Settings
 Translated:Laat alle instellingen
@@ -959,7 +959,7 @@ English:Printer Model
 Translated:printer Model
 
 English:Auto Connect
-Translated:Auto Connect
+Translated:Automatisch verbinden
 
 English:Preparing To Print
 Translated:Voorbereiding voor het afdrukken
@@ -1409,10 +1409,10 @@ English:Loading Parts
 Translated:Loading Parts
 
 English:CONNECT
-Translated:CONNECT
+Translated:AANSLUITEN
 
 English:DISCONNECT
-Translated:DISCONNECT
+Translated:LOSKOPPELEN
 
 English:OPTIONS
 Translated:OPTIES
@@ -1589,7 +1589,7 @@ English:Wipe Shield
 Translated:veeg Shield
 
 English:  Remove All
-Translated:  Alles verwijderen
+Translated:  Verwijder alles
 
 English:The number of layers to skip in z. The gap between the support and the model.
 Translated:Het aantal lagen te slaan in z. De kloof tussen de steun en het model.
@@ -1631,7 +1631,7 @@ English:Wipe Shield Distance
 Translated:Veeg Shield Afstand
 
 English: Remove All
-Translated: Alles verwijderen
+Translated: Verwijder alles
 
 English:Slice Presets Editor
 Translated:Slice Presets Editor
@@ -1718,7 +1718,7 @@ English:You should be done in about 3 minutes.
 Translated:U moet worden gedaan in ongeveer 3 minuten.
 
 English:Click 'Next' to continue.
-Translated:Klik op 'Next' om door te gaan.
+Translated:Klik op 'volgende' om door te gaan.
 
 English:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
 Translated:De printer moet nu 'homing'. Zodra het klaar is homing zullen we verplaatsen naar het eerste punt om te proeven.\n\nOm de komende paar stappen die u moet invullen
@@ -1730,7 +1730,7 @@ English:We will use this paper to measure the distance between the extruder and 
 Translated:We zullen dit document gebruikt om de afstand tussen de extruder en het bed gemeten.\n\nKlik op 'Next' om door te gaan.
 
 English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
-Translated:Gefeliciteerd!\n\nAuto Print Leveling is nu geconfigureerd en ingeschakeld.
+Translated:Hartelijk gefeliciteerd!\n\nAuto Print Leveling is nu geconfigureerd en ingeschakeld.
 
 English:Remove the paper
 Translated:Verwijder het papier
@@ -1904,7 +1904,7 @@ English:Label
 Translated:Etiket
 
 English:Preset
-Translated:preset
+Translated:Vooraf ingesteld
 
 English:Max Temp.
 Translated:Max Temp.
@@ -1955,7 +1955,7 @@ English:Est. Weight
 Translated:Est. Gewicht
 
 English:Downloading updates...
-Translated:Updates downloaden ...
+Translated:Updates downloaden...
 
 English:Duplicate
 Translated:Duplicaat
@@ -2054,7 +2054,7 @@ English:Update Feed
 Translated:Feed-update
 
 English:File
-Translated:file
+Translated:het dossier
 
 English:Import File
 Translated:Importeer bestand
@@ -2063,7 +2063,7 @@ English:Exit
 Translated:Uitgang
 
 English:Help
-Translated:Hulp
+Translated:Helpen
 
 English:Getting Started
 Translated:Ermee beginnen
@@ -2408,7 +2408,7 @@ English:Has SD Card Reader
 Translated:Heeft een SD-kaartlezer
 
 English:Cloud Services
-Translated:Cloud Services
+Translated:Cloud diensten
 
 English:Cloud Monitoring (disabled)
 Translated:Monitoring Cloud (uitgeschakeld)
@@ -2585,7 +2585,7 @@ English:Tuning Adjustment
 Translated:tuning aanpassing
 
 English:Release
-Translated:vrijlating
+Translated:Vrijlating
 
 English:No printer is currently selected. Select a printer to edit slice settings.
 Translated:Geen printer is geselecteerd. Selecteer een printer om slice te bewerken.
@@ -3377,7 +3377,7 @@ English:Library (cloud)
 Translated:Library (cloud)
 
 English:Purchased
-Translated:gekochte
+Translated:Gekocht
 
 English:Session Expired
 Translated:Sessie verlopen
@@ -3404,7 +3404,7 @@ English:The folder '{0}' is not empty.\nWould you like to delete it anyway?
 Translated:De map '{0}' is niet leeg. \ N Wilt u het toch verwijderen?
 
 English:Delete folder?
-Translated:map te verwijderen?
+Translated:Verwijder map?
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:De map '{0}' is niet leeg.\n\nWilt u het toch verwijderen?
@@ -3413,19 +3413,19 @@ English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:De map '{0}' is niet leeg.\n\nWilt u het toch verwijderen?
 
 English:Delete folder?
-Translated:map te verwijderen?
+Translated:Verwijder map?
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:De map '{0}' is niet leeg.\n\nWilt u het toch verwijderen?
 
 English:Delete folder?
-Translated:map te verwijderen?
+Translated:Verwijder map?
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:De map '{0}' is niet leeg.\n\nWilt u het toch verwijderen?
 
 English:Delete folder?
-Translated:map te verwijderen?
+Translated:Verwijder map?
 
 English:Cloud Library
 Translated:Cloud Bibliotheek
@@ -3476,7 +3476,7 @@ English:The width of the paper (or other calibration device) used when doing man
 Translated:De breedte van het papier (of ander kalibreerinrichting) gebruikt bij handenarbeid bed sonderen.
 
 English:The offset of the probe relative to the extruder.
-Translated:De verschuiving van de sonde verhouding tot de extruder.
+Translated:De verschuiving van de sonde ten opzichte van de extruder.
 
 English:The z offset of the probe relative to the extruder.
 Translated:De z offset van de sonde ten opzichte van de extruder.
@@ -3524,7 +3524,7 @@ English:Add Folder To Library
 Translated:Map toevoegen in bibliotheek
 
 English:Using the above controls
-Translated:Onder toepassing van bovenstaande controles
+Translated:Met de bovengenoemde controles
 
 English:Add Local Folder To Library
 Translated:Voeg Lokale map in bibliotheek
@@ -3551,7 +3551,7 @@ English:Enter Mulit Select mode
 Translated:Voer Mulit Select mode
 
 English:Add a .stl, .amf, .gcode or .zip File To The Queue
-Translated:Toevoegen .stl, .amf, .gcode of .zip bestand naar de wachtrij
+Translated:Voeg een .stl, .amf, .gcode of .zip bestand naar de wachtrij
 
 English:Choose a Create Tool to generate custom parts
 Translated:Kies a Maak Tool om aangepaste onderdelen te genereren
@@ -3752,7 +3752,7 @@ English:Share Library Item
 Translated:Share Bibliotheek Item
 
 English:Share Options
-Translated:Deel mogelijkheden
+Translated:aandelenopties
 
 English:Your Share Code:
 Translated:Uw Share Code:
@@ -4364,7 +4364,7 @@ English:Downloads
 Translated:downloads
 
 English:Local Library
-Translated:Local Library
+Translated:Lokale bibliotheek
 
 English:G-Code Terminal
 Translated:G-code Terminal
@@ -5369,7 +5369,7 @@ English:Fill Thin Gaps
 Translated:Vul Thin Gaps
 
 English:Sign in Required
-Translated:Aanmelden verplicht
+Translated:Inloggen vereist
 
 English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
 Translated:Weet u zeker dat u zich wilt afmelden? U krijgt geen toegang tot uw printer profielen of cloud bibliotheek.
@@ -5456,7 +5456,7 @@ English:Recover Last Print
 Translated:Recover Last Print
 
 English:Disconnected
-Translated:losgekoppeld
+Translated:Losgekoppeld
 
 English:Limited Connectivity
 Translated:beperkte Connectiviteit
@@ -5645,7 +5645,7 @@ English:Note: Be sure the tip of the extruder is clean.
 Translated:Opmerking: Zorg ervoor dat de punt van de extruder is schoon.
 
 English:- none -
-Translated:- Geen -
+Translated:- geen -
 
 English:Actions
 Translated:acties
@@ -5795,7 +5795,7 @@ English:Use Promo Code
 Translated:Gebruik Promo Code
 
 English:Applying...
-Translated:Het toepassen ...
+Translated:Toepassen...
 
 English:Enter your Billing Address
 Translated:Voer uw factuuradres
@@ -5813,7 +5813,7 @@ English:Additional payment options coming soon!
 Translated:Extra betaalmogelijkheden coming soon!
 
 English:- Please Select -
-Translated:- Selecteer aub -
+Translated:- Selecteer alstublieft -
 
 English:Credit Card Number
 Translated:creditcardnummer
@@ -5829,4 +5829,115 @@ Translated:Besparing...
 
 English:Oops! Payment has been declined.
 Translated:Oeps! De betaling is geweigerd.
+
+English:Distance or Loops
+Translated:Afstand of Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:De z offset toe te passen op de eerste laag hechting te verbeteren.
+
+English:Baby Step Offset
+Translated:Baby Step Offset
+
+English:Oops! Unable to initialize device.
+Translated:Oeps! Kan geen apparaat initialiseren.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:De afstand tussen de bovenkant van het vlot en de onderkant van het model. 0,6 mm is een goed uitgangspunt voor PLA en 0,4 mm is een goed uitgangspunt voor ABS. Lagere waarden geven een gladder oppervlak, hogere waarden maken de afdruk makkelijker te verwijderen.
+
+English:Clear ZOffset
+Translated:Clear ZOffset
+
+English:Printing Window...
+Translated:Venster afdrukken ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Alleen Trek Wanneer Crossing Perimeters
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'Externe Perimeter extrusie Breedte' moet kleiner zijn dan of gelijk aan de 'Nozzle Diameter' te zijn * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Externe Perimeter extrusie width = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Locatie: 'Instellingen en Controls' -> 'Instellingen' -> 'gloeidraad' -> 'extrusie' -> 'Externe Perimeter'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'Externe Perimeter extrusie Breedte' moet groter zijn dan 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Externe Perimeter extrusie width = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:Het uitgangspunt hoogte (z) van de printkop voordat indringende elke afdruktaak level positie.
+
+English:Probe Start Height
+Translated:Probe Start Hoogte
+
+English:Controls the speed of printer moves
+Translated:Regelt de snelheid van de printer beweegt
+
+English:Controls the amount of extrusion
+Translated:Regelt de hoeveelheid extrusie
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Kies het materiaal dat u plaatst.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Knip het uiteinde van het filament een goede lading te garanderen.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Kies het materiaal dat u plaatst. U doen een aantal dingen die een lange beschrijving duurt.
+
+English:Confirm the material you are unloading.
+Translated:Bevestig het materiaal dat u lossen.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Wachten op extruder op te warmen tot 205, niet gelost.
+
+English:Unloading filament...
+Translated:Lossen filament ...
+
+English:Put filament into extruder and click Continue.
+Translated:Zet filament in extruder en klik op Doorgaan.
+
+English:Loading filament...
+Translated:Laden filament ...
+
+English:Waiting for extruder to heat to 205.
+Translated:Wachten extruder te verhitten tot 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Klik op 'Doorgaan' als filament netjes loopt.
+
+English:Heating side 1.
+Translated:Verwarming zijde 1.
+
+English:Turn Sandvich over!
+Translated:Draai Sandvich over!
+
+English:Heating side 2.
+Translated:Verwarming zijde 2.
+
+English:Done!
+Translated:Gedaan!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:WAARSCHUWING: Om de druk herstel uitvoeren, moet uw printer neer te bewegen naar de uitgangspositie te bereiken. \ N Als uw print te groot is, een deel van uw printer kan botsen met het toen naar beneden. \ N Zorg ervoor dat het veilig is om deze handeling uit te voeren voordat u verder gaat.
 

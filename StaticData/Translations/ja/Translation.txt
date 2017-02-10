@@ -101,7 +101,7 @@ English:Copy
 Translated:コピー
 
 English:Add to Queue
-Translated:キューに追加
+Translated:キューに追加する
 
 English:Export
 Translated:輸出する
@@ -131,7 +131,7 @@ English: Export to Folder
 Translated: フォルダへのエクスポート
 
 English:Extra
-Translated:余分な
+Translated:余分
 
 English: Create Part Sheet
 Translated: パートシートを作成します。
@@ -278,13 +278,13 @@ English:Press 'generate' to view layers
 Translated:押してレイヤを表示する 'を生成」
 
 English:Model
-Translated:Model
+Translated:モデル
 
 English:Layer
 Translated:層
 
 English:Library
-Translated:ライブラリ
+Translated:としょうかん
 
 English:About
 Translated:約
@@ -695,7 +695,7 @@ English:The speed to print support material structures.
 Translated:支持材の構造を印刷する速度。
 
 English:The last angle at which support material will be generated. Larger numbers will result in more support. Set to 0 to enable automatic settings.
-Translated:材料をサポートれる最後の角度が生成されます。数字が大きいほどより多くのサポートになります。自動設定を有効にするには0に設定します。
+Translated:材料をサポートれる最後の角度が生成されます。数字が大きいほどより多くのサポートになります。 0に設定すると、自動設定を有効にします。
 
 English:The distance the support material will be from the object in the x and y direction.
 Translated:距離は、支持体材料は、xおよびy方向のオブジェクトからなります。
@@ -1475,7 +1475,7 @@ English:HISTORY
 Translated:歴史
 
 English:LIBRARY
-Translated:LIBRARY
+Translated:としょうかん
 
 English:Developed By: 
 Translated:によって開発された：
@@ -2015,7 +2015,7 @@ English:Submit
 Translated:提出します
 
 English:How can we help?
-Translated:どのように我々は助けることができますか？
+Translated:どのように我々は助けることができます？
 
 English:Submitting your information...
 Translated:あなたの情報を送信しています...
@@ -2513,7 +2513,7 @@ English:Select the baud rate.
 Translated:ボーレートを選択します。
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:用語「通信速度」はおおよその\ n個のデータが送信される速度を意味します。ボーレートは、n個のプリンタを\にプリンタから異なる場合があります。詳細は、プリンタのマニュアルを参照してください。 \ NN \ヒント：あなたが不明な場合 -  250000を試してみてください。
+Translated:用語「通信速度」はおおよそ\ n個のデータが送信される速度を意味します。ボーレートは、n個のプリンタを\にプリンタから異なる場合があります。詳細は、プリンタのマニュアルを参照してください。 \ NN \ヒント：あなたが不明な場合 -  250000を試してみてください。
 
 English:This is the minimum amount of filament that must be extruded before a retraction can occur.
 Translated:これは、後退が発生する前に押し出されなければならないフィラメントの最小量です。
@@ -2654,7 +2654,7 @@ English:Ungroup
 Translated:グループ解除
 
 English:Align...
-Translated:整列します...
+Translated:揃え...
 
 English:Selection
 Translated:選択
@@ -2873,7 +2873,7 @@ English:None
 Translated:なし
 
 English:Rectangle
-Translated:長方形
+Translated:矩形
 
 English:Outline
 Translated:アウトライン
@@ -2885,7 +2885,7 @@ English:The file you are attempting to print is a GCode file.\n\nGCode files tel
 Translated:あなたが印刷しようとしているファイルはGCodeファイルです。\n\nGCodeファイルは、正確に何をすべきかあなたのプリンタを教えてください。彼らはSliceSettingsによって変更されないし、あなたの特定のプリンタの設定のために適切でないかもしれません。 \ NN \あなたは彼らがあなたの現在のプリンタとコンフィギュレーションをマッハ知っている場合にのみGCodeファイルから印刷します。 \ NN \は、あなたがこのGCodeファイルを印刷してもよろしいですか？
 
 English:Do not show this message again
-Translated:今後このメッセージを表示しません
+Translated:このメッセージを再び表示しない
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 Translated:あなたが印刷しようとしているファイルはGCodeファイルです。 \ NN \あなただけのプリンタの設定を一致させることが知られているGcodeファイルを印刷しておくことrecommendendedされます。 \ NN \は、あなたがこのGCodeファイルを印刷してもよろしいですか？
@@ -3152,7 +3152,7 @@ English:Add To Library
 Translated:ライブラリに追加
 
 English:Print Queue
-Translated:印刷待ち行列
+Translated:印刷キュー
 
 English:Interface Mode
 Translated:インタフェースモード
@@ -4265,7 +4265,7 @@ English:G-Code to be run immediately following the temperature setting commands.
 Translated:Gコードは温度設定コマンドの直後に実行されます。含むが、このセクションで温度を設定するコマンド彼らは、このセクションの外で生成されない原因になります。カスタムGコード変数を受け入れます。
 
 English:The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
-Translated:第一層（底部）とラフトの上部との間の距離。良い値は、材料の種類によって異なります。およびPLAに適していますgeneraly 0.1と0.3の間の値をABS。
+Translated:第一層（底部）及びラフトの上部との間の距離。良い値は、材料の種類によって異なります。およびPLAに適していますgeneraly 0.1と0.3の間の値をABS。
 
 English:The percent of the extrusion width that can be overlapped and still generate.
 Translated:重ねて、まだ生成することができ、押出幅のパーセント。
@@ -5829,4 +5829,115 @@ Translated:保存しています...
 
 English:Oops! Payment has been declined.
 Translated:おっとっと！お支払いは承認されませんでした。
+
+English:Distance or Loops
+Translated:距離またはループ
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:zは第一層の密着性を向上させるために適用するオフセット。
+
+English:Baby Step Offset
+Translated:ベイビーステップオフセット
+
+English:Oops! Unable to initialize device.
+Translated:おっとっと！デバイスを初期化できません。
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:いかだのトップとモデルの底部との間の距離。 0.6ミリメートルは、PLAのための良い出発点であり、0.4ミリメートルは、ABSのための良い出発点です。低い値は、より高い値が取り外し印刷をより簡単に、より滑らかな表面を与えます。
+
+English:Clear ZOffset
+Translated:クリアZOffset
+
+English:Printing Window...
+Translated:印刷ウィンドウ...
+
+English:Only Retract When Crossing Perimeters
+Translated:周囲を横断するときにのみを引っ込め
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:「外部境界押し出し幅は ''ノズル径」以下でなければなりません* 4。
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:外部境界押し出し幅= {0} \ nはノズル径= {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:場所：「設定とコントロール ' - >「設定」 - >'フィラメント ' - >'押出 ' - >'外部境界」
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:「外部境界押し出し幅は '0より大きくなければなりません。
+
+English:External Perimeter Extrusion Width = {0}
+Translated:外部境界押し出し幅= {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:各印刷レベルの位置を探索する前に、プリントヘッドの開始高さ（Z）。
+
+English:Probe Start Height
+Translated:プローブスタート身長
+
+English:Controls the speed of printer moves
+Translated:プリンタの移動の速度を制御します
+
+English:Controls the amount of extrusion
+Translated:押出量を制御します
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:あなたがロードしている材料を選択してください。
+
+English:Trim the end of the filament to ensure a good load.
+Translated:良好な負荷を保証するために、フィラメントの最後をトリミング。
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:あなたがロードしている材料を選択してください。あなたは、長い説明を要するいくつかのものを行っています。
+
+English:Confirm the material you are unloading.
+Translated:あなたがアンロードされている材料を確認してください。
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:アンロードする前に、205に加熱する押出機を待っています。
+
+English:Unloading filament...
+Translated:フィラメントをアンロード...
+
+English:Put filament into extruder and click Continue.
+Translated:押出機にフィラメントを入れて、[続行]をクリックします。
+
+English:Loading filament...
+Translated:フィラメントを読み込んでいます...
+
+English:Waiting for extruder to heat to 205.
+Translated:205に加熱する押出機を待っています。
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:フィラメントがきれいに実行されているときに[続行]をクリックします。
+
+English:Heating side 1.
+Translated:加熱側1。
+
+English:Turn Sandvich over!
+Translated:サンドヴィッチを裏返し！
+
+English:Heating side 2.
+Translated:加熱側2。
+
+English:Done!
+Translated:完了！
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:警告：プリントリカバリを実行するためには、お使いのプリンタがホームポジションに到達するために下に移動しなければなりません。お使いのプリントが大きすぎると下降時\ nは、お使いのプリンタの部分は、それと衝突する可能性があります。 \ nは進む前に、この操作を実行しても安全であることを確認してください。
 

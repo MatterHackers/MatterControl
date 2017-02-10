@@ -17,7 +17,7 @@ English:Select Printer
 Translated:Vælg printer
 
 English:Options
-Translated:Indstillinger
+Translated:Muligheder
 
 English:Next Print
 Translated:Næste Print
@@ -29,7 +29,7 @@ English:Add a file to be printed
 Translated:Tilføj en fil, der skal udskrives
 
 English:Start
-Translated:Starte
+Translated:Start
 
 English:Begin printing the selected item.
 Translated:Begynd at udskrive det valgte emne.
@@ -59,7 +59,7 @@ English:Stop trying to connect to the printer.
 Translated:Stop forsøger at oprette forbindelse til printeren.
 
 English:Cancel
-Translated:Ophæve
+Translated:Afbestille
 
 English:Stop the current print
 Translated:Standsning af det aktuelle print
@@ -137,13 +137,13 @@ English: Create Part Sheet
 Translated: Opret del Sheet
 
 English:Search
-Translated:Søge
+Translated:Søg
 
 English:Import
 Translated:Importere
 
 English:Create
-Translated:Skabe
+Translated:skab
 
 English:Check for Update
 Translated:Søg efter opdatering
@@ -212,7 +212,7 @@ English:Rotate
 Translated:Rotere
 
 English:Scale
-Translated:Scale
+Translated:vægt
 
 English:Mirror
 Translated:Spejl
@@ -233,7 +233,7 @@ English:Auto-Arrange
 Translated:Automatisk Arranger
 
 English:Save
-Translated:Spare
+Translated:Gemme
 
 English:Degrees
 Translated:Grader
@@ -248,7 +248,7 @@ English:Conversions
 Translated:Konverteringer
 
 English:reset
-Translated:reset
+Translated:nulstille
 
 English:Apply Scale
 Translated:Anvend Scale
@@ -260,7 +260,7 @@ English:Edit
 Translated:Redigere
 
 English:Delete
-Translated:Slette
+Translated:Slet
 
 English:Close
 Translated:Tæt
@@ -371,7 +371,7 @@ English:Revert
 Translated:Vende tilbage
 
 English:Options   
-Translated:Indstillinger
+Translated:Muligheder
 
 English:Slice Engine
 Translated:Slice Engine
@@ -743,7 +743,7 @@ English:This value will be added to all of the z positions of the created gcode.
 Translated:Denne værdi vil blive tilføjet til alle z holdninger skabte gcode.
 
 English:Print
-Translated:Trykke
+Translated:Print
 
 English:Layers/Perimeters
 Translated:Lag / Perimetre
@@ -800,7 +800,7 @@ English:Enable Auto Cooling
 Translated:Aktiver Auto Køling
 
 English:Enable
-Translated:Muliggøre
+Translated:Aktiver
 
 English:Printer
 Translated:Printer
@@ -842,7 +842,7 @@ English:Automatic Calibration
 Translated:Automatisk kalibrering
 
 English:ENABLE
-Translated:MULIGGØRE
+Translated:ENABLE
 
 English:DISABLE
 Translated:DEAKTIVER
@@ -899,7 +899,7 @@ English:Go
 Translated:Gå
 
 English:start:
-Translated:starte:
+Translated:Start:
 
 English:end:
 Translated:ende:
@@ -920,7 +920,7 @@ English:Unavailable
 Translated:Ikke tilgængelig
 
 English:Refresh
-Translated:Opfriske
+Translated:Opdater
 
 English:Automatic Print Leveling (enabled)
 Translated:Automatisk Print Leveling (aktiveret)
@@ -941,16 +941,16 @@ English:Printer Name
 Translated:Printernavn
 
 English:(refresh)
-Translated:(opfriske)
+Translated:(Opdater)
 
 English:Serial Port
-Translated:Serial Port
+Translated:Serie Port
 
 English:Baud Rate
 Translated:Baud Rate
 
 English:Other
-Translated:Andre
+Translated:Andet
 
 English:Printer Make
 Translated:Printer Make
@@ -1181,7 +1181,7 @@ English:First Layer
 Translated:første lag
 
 English:Default
-Translated:Misligholdelse
+Translated:Standard
 
 English:Acceleration Control
 Translated:Acceleration Kontrol
@@ -1415,7 +1415,7 @@ English:DISCONNECT
 Translated:KOBLE FRA
 
 English:OPTIONS
-Translated:OPTIONS
+Translated:MULIGHEDER
 
 English:QUEUE
 Translated:KØ
@@ -1523,7 +1523,7 @@ English:Center Print
 Translated:center-Print
 
 English:Note
-Translated:Note
+Translated:Bemærk
 
 English:To enable GCode export, select a printer profile.
 Translated:For at aktivere GCode eksport, vælge en printer profil.
@@ -1901,7 +1901,7 @@ English:Temperature Shortcut Presets
 Translated:Temperatur Genvej Presets
 
 English:Label
-Translated:Mærke
+Translated:Etiket
 
 English:Preset
 Translated:Preset
@@ -2012,7 +2012,7 @@ English:MatterControl: Submit an Issue
 Translated:MatterControl: Indsend et problem
 
 English:Submit
-Translated:Indsende
+Translated:Indsend
 
 English:How can we help?
 Translated:Hvordan kan vi hjælpe?
@@ -2027,7 +2027,7 @@ English:Briefly describe your question
 Translated:Beskriv kort dit spørgsmål
 
 English:Details*
-Translated:Detaljer *
+Translated:Detaljer*
 
 English:Fill in the details here
 Translated:Udfyld detaljerne her
@@ -2060,7 +2060,7 @@ English:Import File
 Translated:Import File
 
 English:Exit
-Translated:Udgang
+Translated:Afslut
 
 English:Help
 Translated:Hjælp
@@ -2111,7 +2111,7 @@ English:Install Driver
 Translated:Installer driver
 
 English:Apply
-Translated:Ansøge
+Translated:ansøge
 
 English:Buy Materials
 Translated:Køb Materialer
@@ -2216,7 +2216,7 @@ English:Make all overlap areas into one big area. This can make some unintended 
 Translated:Gør alle overlappende områder i ét stort område. Dette kan gøre nogle utilsigtede huller gå væk ..
 
 English:Repair
-Translated:Reparere
+Translated:Reparation
 
 English:Connect Bad Edges
 Translated:Tilslut Bad Edges
@@ -2537,7 +2537,7 @@ English:Grid
 Translated:Grid
 
 English:Moves
-Translated:flytter
+Translated:Flytter sig
 
 English:Retractions
 Translated:tilbagetrækninger
@@ -2924,7 +2924,7 @@ English:Turns on and off the creation of a raft which can help parts adhere to t
 Translated:Tænder og slukker oprettelsen af ​​en tømmerflåde, som kan hjælpe dele klæbe til sengen.
 
 English:Options  
-Translated:Indstillinger
+Translated:Muligheder
 
 English:Expand Distance
 Translated:Udvid Afstand
@@ -3041,7 +3041,7 @@ English:Smaller numbers create less support. Larger numbers create more support.
 Translated:Mindre tal skaber mindre støtte. Større tal skabe mere støtte. Fra 0, vinklerne fra sengen, der kræver støtte.
 
 English:Preview
-Translated:Fernisering
+Translated:Eksempel
 
 English:Send Test
 Translated:Send Test
@@ -3074,7 +3074,7 @@ English:All done! Files have been sent.
 Translated:Helt færdig! Filer er blevet sendt.
 
 English:Retry
-Translated:Prøv igen
+Translated:Prøve igen
 
 English:Please wait. Preparing to send...
 Translated:Vent venligst. Forbereder til at sende ...
@@ -3164,7 +3164,7 @@ English:Connect to the printer
 Translated:Opret forbindelse til printeren
 
 English:Reset
-Translated:Nulstil
+Translated:Nulstille
 
 English:Console
 Translated:konsol
@@ -3173,7 +3173,7 @@ English:On
 Translated:På
 
 English:Off
-Translated:Slukket
+Translated:Af
 
 English:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
 Translated:Hvor mange lag, eller afstand, vil det være fast fyldt på de nederste flader af objektet. Tilføj mm til slutningen af ​​nummeret for at angive afstanden.
@@ -3248,7 +3248,7 @@ English:This gcode will sent to the printer immediately after connecting. It can
 Translated:Denne gcode vil sendes til printeren umiddelbart efter tilslutning. Det kan bruges til at indstille opsætningen specifikt for en given printer.
 
 English:Features
-Translated:Egenskaber
+Translated:Funktioner
 
 English:Update Available
 Translated:Opdatering tilgængelig
@@ -3710,7 +3710,7 @@ English:You are switching to a different thumbnail rendering mode. If you want, 
 Translated:Du skifter til en anden miniature gengivelsestilstand. Hvis du vil, kan dine nuværende thumbnails fjernes og genskabt i den nye stil. Du kan skifte frem og tilbage på ethvert tidspunkt. Der vil være nogle behandlingsoverhead mens de nye miniaturebilleder oprettes.\n\nVil du genopbygge dine eksisterende miniaturer nu?
 
 English:Loading...
-Translated:Indlæser ...
+Translated:Indlæser...
 
 English:Wrapping:
 Translated:Indpakning:
@@ -3971,7 +3971,7 @@ English:On Connect G-Code
 Translated:På Connect G-kode
 
 English:sign in
-Translated:log ind
+Translated:Log ind
 
 English:Log into my account
 Translated:Log ind på min konto
@@ -4469,7 +4469,7 @@ English:Language
 Translated:Sprog
 
 English:Display Mode
-Translated:Display mode
+Translated:Visningstilstand
 
 English:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
 Translated:Dele er ikke på sengen eller uden for udskriftsområdet.\n\nVil du centrere dem på sengen?
@@ -4853,7 +4853,7 @@ English:Camera Monitoring
 Translated:Kamera Overvågning
 
 English:Details
-Translated:Detaljer
+Translated:detaljer
 
 English:Edit Printer Settings
 Translated:Rediger Printerindstillinger
@@ -5042,7 +5042,7 @@ English:Printers...
 Translated:Printere ...
 
 English:Current
-Translated:Strøm
+Translated:Nuværende
 
 English:Quality preset
 Translated:forudindstillet Kvalitet
@@ -5060,7 +5060,7 @@ English:Select Parts to Import
 Translated:Vælg Dele skal importeres
 
 English:Merge
-Translated:Flet
+Translated:Fusionere
 
 English:Export As
 Translated:Eksport som
@@ -5129,7 +5129,7 @@ English:Estimated Cost
 Translated:Anslåede omkostninger
 
 English:Density
-Translated:density
+Translated:Massefylde
 
 English:g/cm³
 Translated:g / cm³
@@ -5237,7 +5237,7 @@ English:Defaults Updated On: {0}
 Translated:Defaults opdateret: {0}
 
 English:Properties
-Translated:Egenskaber
+Translated:Ejendomme
 
 English:Qualities
 Translated:Kvaliteter
@@ -5648,7 +5648,7 @@ English:- none -
 Translated:- ingen -
 
 English:Actions
-Translated:handlinger
+Translated:Handlinger
 
 English:Show In Action Menu
 Translated:Vis i aktion Menu
@@ -5829,4 +5829,115 @@ Translated:Gemmer ...
 
 English:Oops! Payment has been declined.
 Translated:Ups! Betaling er blevet afvist.
+
+English:Distance or Loops
+Translated:Afstand eller Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Den z offset til anvendelse for at forbedre det første lag vedhæftning.
+
+English:Baby Step Offset
+Translated:Baby Step Offset
+
+English:Oops! Unable to initialize device.
+Translated:Ups! Kan ikke initialisere enhed.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:Afstanden mellem toppen af ​​raft og bunden af ​​modellen. 0,6 mm er et godt udgangspunkt for PLA og 0,4 mm er et godt udgangspunkt for ABS. Lavere værdier giver en glattere overflade, højere værdier gør print lettere at fjerne.
+
+English:Clear ZOffset
+Translated:Clear ZOffset
+
+English:Printing Window...
+Translated:Udskrivning Window ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Kun Træk ved passage Perimetre
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'Ekstern Perimeter Ekstrudering bredde «skal være mindre end eller lig med" Dyse Diameter «* 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Ekstern Perimeter Ekstrudering Bredde = {0}\ndyse Diameter = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Beliggenhed: 'Indstillinger og Controls "->" Indstillinger "->" Filament "->" Ekstrudering "->" Ekstern Perimeter'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'Ekstern Perimeter Ekstrudering bredde «skal være større end 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Ekstern Perimeter Ekstrudering Bredde = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:Udgangspunktet højde (z) af skrivehovedet før sondering hvert print niveau position.
+
+English:Probe Start Height
+Translated:Probe Start Højde
+
+English:Controls the speed of printer moves
+Translated:Styrer hastigheden af ​​printer flytter
+
+English:Controls the amount of extrusion
+Translated:Styrer mængden af ​​ekstrudering
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Vælg det materiale, du lægger i.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Trim slutningen af ​​glødetråden for at sikre en god belastning.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Vælg det materiale, du lægger i. Du laver nogle ting, der tager lang beskrivelse.
+
+English:Confirm the material you are unloading.
+Translated:Bekræft materiale, du losning.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Venter på ekstruder til varme til 205, ikke aflæsset.
+
+English:Unloading filament...
+Translated:Aflæsning glødetråd ...
+
+English:Put filament into extruder and click Continue.
+Translated:Put glødetråd i ekstruder og klik på Fortsæt.
+
+English:Loading filament...
+Translated:Indlæser glødetråd ...
+
+English:Waiting for extruder to heat to 205.
+Translated:Venter på ekstruder til at opvarme til 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Klik på 'Fortsæt' når glødetråd kører rent.
+
+English:Heating side 1.
+Translated:Varme side 1.
+
+English:Turn Sandvich over!
+Translated:Vend Sandvich over!
+
+English:Heating side 2.
+Translated:Varme side 2.
+
+English:Done!
+Translated:Færdig!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:ADVARSEL: For at udføre print nyttiggørelse, skal printeren flytte ned for at nå sin udgangsposition. \ N Hvis dit print er for stor, kan en del af din printer kolliderer med det, når de flytter ned. \ N Sørg for at det er sikkert at udføre denne operation, før du fortsætter.
 
