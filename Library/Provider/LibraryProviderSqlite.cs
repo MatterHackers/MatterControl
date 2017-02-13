@@ -226,13 +226,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			AddItem(itemToAdd.Name, itemToAdd.FileLocation);
 		}
 
-		public async void AddItem(string fileName, string fileLocation)
+		private async void AddItem(string fileName, string fileLocation)
 		{
 			await Task.Run(() =>
 			{
 				if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(fileLocation))
 				{
-					AddStlOrGcode(fileLocation, fileName);
+					using (var stream = File.OpenRead(fileLocation))
+					{
+						AddItem(stream, Path.GetExtension(fileLocation).ToUpper(), fileName);
+					}
 				}
 
 				UiThread.RunOnIdle(() =>
@@ -248,55 +251,41 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			PreloadingCalibrationFiles = true;
 
-			// Ensure the CalibrationParts directory exists to store/import the files from disk
-			string tempPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "calibration-parts");
-			Directory.CreateDirectory(tempPath);
-
 			var existingLibaryItems = this.GetLibraryItems().Select(i => i.Name);
 
-			// Drop extensions and build a list of files that need to be imported into the library
+			// Build a list of filenames that need to be imported into the library
 			var missingFiles = filenamesToValidate.Where(fileName => !existingLibaryItems.Contains(Path.GetFileNameWithoutExtension(fileName), StringComparer.OrdinalIgnoreCase));
 
-			// Create temp files on disk that can be imported into the library
-			var tempFilesToImport = missingFiles.Select(fileName =>
+			// Import missing content into the library
+			foreach (string fileName in missingFiles)
 			{
-				// Copy calibration prints from StaticData to the filesystem before importing into the library
-				string tempFilePath = Path.Combine(tempPath, Path.GetFileName(fileName));
-				using (FileStream outstream = File.OpenWrite(tempFilePath))
 				using (Stream instream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "SampleParts", fileName)))
 				{
-					instream.CopyTo(outstream);
+					// Ideally all StaticData content should be AMF but allow STL if that's what we have
+					this.AddItem(instream, Path.GetExtension(fileName), Path.GetFileNameWithoutExtension(fileName), forceAMF: false);
 				}
-
-				// Project the new filename to the output
-				return tempFilePath;
-			}).ToArray();
-
-			// Import any missing files into the library
-			foreach (string file in tempFilesToImport)
-			{
-				// Ensure these operations run in serial rather than in parallel where they stomp on each other when writing to default.mcp
-				this.AddItem(Path.GetFileNameWithoutExtension(file), file);
 			}
 
-			// Finally, make sure that we always add at least one item to the queue.
-			if (tempFilesToImport.Length > 0)
+			// Finally, make sure that we always add at least one item to the queue - ensures that even without printer selection we have some content
+			var firstItem = this.GetLibraryItems().FirstOrDefault();
+			if (firstItem != null)
 			{
-				PreLoadItemToQueue(tempFilesToImport[0]);
+				PreLoadItemToQueue(firstItem);
 			}
 
 			PreloadingCalibrationFiles = false;
 		}
 
-		private void PreLoadItemToQueue(string fileDest)
+		private void PreLoadItemToQueue(PrintItem printItem)
 		{
+			string fileDest = printItem.FileLocation;
 			if (!string.IsNullOrEmpty(fileDest)
 				&& File.Exists(fileDest))
 			{
-				PrintItemWrapper printItemToAdd = new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileDest), fileDest));
+				var printItemToAdd = new PrintItemWrapper(printItem);
 
 				// check if there is a thumbnail image for this file and load it into the user cache if so
-				string justThumbFile = Path.ChangeExtension(Path.GetFileNameWithoutExtension(fileDest), ".png");
+				string justThumbFile = printItem.Name + ".png";
 				string applicationUserDataPath = StaticData.Instance.MapPath(Path.Combine("OEMSettings", "SampleParts"));
 				string thumbnailSourceFile = Path.Combine(applicationUserDataPath, justThumbFile);
 				if (File.Exists(thumbnailSourceFile))
@@ -395,44 +384,43 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
         }
 
-		protected static void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
+		/// <summary>
+		/// Creates a database PrintItem entity, if forceAMF is set, converts to AMF otherwise just copies 
+		/// the source file to a new library path and updates the PrintItem to point at the new target
+		/// </summary>
+		private void AddItem(Stream stream, string extension, string displayName, bool forceAMF = true)
 		{
-			string[] metaData = { "Created By", "MatterControl" };
-			if (AbsolutePositioned)
-			{
-				metaData = new string[] { "Created By", "MatterControl", "BedPosition", "Absolute" };
-			}
-
-			// if it is not already in the right location
-			if (!printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
-			{
-				// save a copy to the library and update this to point at it
-				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
-				printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
-
-				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
-			}
-		}
-
-		protected virtual void AddStlOrGcode(string loadedFileName, string displayName)
-		{
-			string extension = Path.GetExtension(loadedFileName).ToUpper();
-
+			// Create a new entity in the database
 			PrintItem printItem = new PrintItem();
 			printItem.Name = displayName;
-			printItem.FileLocation = Path.GetFullPath(loadedFileName);
 			printItem.PrintItemCollectionID = this.baseLibraryCollection.Id;
 			printItem.Commit();
 
-			if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
+			// Special load processing for mesh data, simple copy below for non-mesh
+			if (forceAMF 
+				&& (extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension.ToUpper())))
 			{
-				List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
-
 				try
 				{
-					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, this.GetProviderLocator());
-					SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
+					// Load mesh
+					List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(stream, extension);
+
+					// Create a new PrintItemWrapper
+
+					if (!printItem.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+					{
+						string[] metaData = { "Created By", "MatterControl" };
+						if (false) //AbsolutePositioned
+						{
+							metaData = new string[] { "Created By", "MatterControl", "BedPosition", "Absolute" };
+						}
+
+						// save a copy to the library and update this to point at it
+						printItem.FileLocation = CreateLibraryPath(".amf");
+						var outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+						MeshFileIo.Save(meshToConvertAndSave, printItem.FileLocation, outputInfo);
+						printItem.Commit();
+					}
 				}
 				catch (System.UnauthorizedAccessException)
 				{
@@ -452,15 +440,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			else // it is not a mesh so just add it
 			{
-				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, this.GetProviderLocator());
-				string sourceFileName = printItem.FileLocation;
-				string newFileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItem.FileLocation));
-				string destFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, newFileName);
-
-				File.Copy(sourceFileName, destFileName, true);
-
-				printItemWrapper.FileLocation = destFileName;
-				printItemWrapper.PrintItem.Commit();
+				// Non-mesh content - copy stream to new Library path
+				printItem.FileLocation = CreateLibraryPath(extension);
+				using (var outStream = File.Create(printItem.FileLocation))
+				{
+					stream.CopyTo(outStream);
+				}
+				printItem.Commit();
 			}
 		}
 
@@ -512,6 +498,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				childCollections.AddRange(collections);
 			}
 			OnDataReloaded(null);
+		}
+
+		private static string CreateLibraryPath(string extension)
+		{
+			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), string.IsNullOrEmpty(extension) ? ".amf" : extension);
+			return Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 		}
 	}
 
