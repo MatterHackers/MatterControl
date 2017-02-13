@@ -211,7 +211,6 @@ namespace MatterHackers.MatterControl
 
 			foreach (string file in Directory.EnumerateFiles(path, "*.*"))
 			{
-				bool loadingCalibrationParts = (LibraryProviderSQLite.PreloadingCalibrationFiles && Path.GetDirectoryName(file).Contains("calibration-parts"));
 				bool fileIsNew = new FileInfo(file).LastAccessTime > DateTime.Now.AddDays(-daysOldToDelete);
 
 				switch (Path.GetExtension(file).ToUpper())
@@ -222,7 +221,7 @@ namespace MatterHackers.MatterControl
 					case ".PNG":
 					case ".TGA":
 						if (referencedFilePaths.Contains(file)
-							|| loadingCalibrationParts
+							|| LibraryProviderSQLite.PreloadingCalibrationFiles
 							|| fileIsNew)
 						{
 							contentCount++;
