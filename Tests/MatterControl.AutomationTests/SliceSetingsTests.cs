@@ -106,6 +106,58 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
 		}
 
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task CancelWorksAsExpected()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.WaitForName("Cancel Wizard Button", 1);
+
+				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
+
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+					testRunner.ClickByName("General Tab", 1);
+					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("Layer(s) To Pause: Edit");
+					testRunner.Type("2");
+
+					testRunner.ClickByName("Layer View Tab");
+
+					testRunner.ClickByName("Generate Gcode Button", 1);
+					testRunner.ClickByName("Display Checkbox", 10);
+					testRunner.ClickByName("Sync To Print Checkbox", 1);
+
+					testRunner.ClickByName("Start Print Button", 1);
+
+					testRunner.WaitForName("Resume Button", 30);
+					testRunner.ClickByName("Cancel Print Button");
+
+					testRunner.WaitForName("Start Print Button", 1);
+					Assert.IsTrue(testRunner.NameExists("Start Print Button"));
+
+					int g28Count = 0;
+					foreach(var line in PrinterOutputCache.Instance.PrinterLines)
+					{
+						if(line.Contains("G28"))
+						{
+							g28Count++;
+						}
+					}
+
+					Assert.AreEqual(2, g28Count, "There should be the start come and the cancel print home");
+				}
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
+		}
+
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
 		{
 			testRunner.WaitForName("Resume Button", 30);

@@ -151,6 +151,13 @@ namespace MatterHackers.PrinterEmulator
 			shutDown = true;
 		}
 
+		public bool CDState;
+		public int CDChangeCount;
+		public bool DsrState;
+		public int DsrChangeCount;
+		public bool CtsState;
+		public int CtsChangeCount;
+
 		public void Startup()
 		{
 			serialPort = new SerialPort(PortName);
@@ -160,6 +167,30 @@ namespace MatterHackers.PrinterEmulator
 			serialPort.Open();
 			string speed = RunSlow ? "slow" : "fast";
 			Console.WriteLine($"\n Initializing emulator on port {serialPort.PortName} (Speed: {speed})");
+
+			Task.Run(() =>
+			{
+				while (true && !shutDown)
+				{
+					if (serialPort.CDHolding != CDState)
+					{
+						CDState = serialPort.CDHolding;
+						CDChangeCount++;
+					}
+					if (serialPort.CtsHolding != CtsState)
+					{
+						CtsState = serialPort.CtsHolding;
+						CtsChangeCount++;
+					}
+					if (serialPort.DsrHolding != DsrState)
+					{
+						DsrState = serialPort.DsrHolding;
+						DsrChangeCount++;
+					}
+
+					Thread.Sleep(10);
+				}
+			});
 
 			Task.Run(() =>
 			{
