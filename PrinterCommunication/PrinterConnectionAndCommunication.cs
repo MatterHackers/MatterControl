@@ -2692,7 +2692,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				else
 				{
 					int waitTimeInMs = 60000; // 60 seconds
-					if (waitingForPosition.IsRunning && waitingForPosition.ElapsedMilliseconds < waitTimeInMs)
+					if (waitingForPosition.IsRunning 
+						&& waitingForPosition.ElapsedMilliseconds < waitTimeInMs
+						&& PrinterIsConnected)
 					{
 						// we are waiting for a position response don't print more
 						return;
@@ -2706,7 +2708,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						string[] splitOnSemicolon = currentSentLine.Split(';');
 						string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
 
-						if (currentSentLine.Contains("M114"))
+						if (currentSentLine.Contains("M114") 
+							&& PrinterIsConnected)
 						{
 							waitingForPosition.Restart();
 						}
