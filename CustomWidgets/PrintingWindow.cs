@@ -417,6 +417,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 		}
 
+		private HorizontalLine CreateHorizontalLine()
+		{
+			return new HorizontalLine()
+			{
+				BackgroundColor = new RGBA_Bytes(200, 200, 200, 30)
+			};
+		}
+
 		public PrintingWindow(Action onCloseCallback, bool mockMode = false)
 			: base(1280, 750)
 		{
@@ -478,13 +486,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(CreateVerticalLine());
 
 			var cancelButton = CreateButton("Cancel".Localize().ToUpper());
-			//cancelButton.Click += (sender, e) => UiThread.RunOnIdle(CancelButton_Click);
+			cancelButton.Click += (s, e) =>
+			{
+				bool canceled = ApplicationController.Instance.ConditionalCancelPrint();
+				if (canceled)
+				{
+					this.Close();
+				}
+			};
 			actionBar.AddChild(cancelButton);
 
 			actionBar.AddChild(CreateVerticalLine());
 
 			var advancedButton = CreateButton("Advanced".Localize().ToUpper());
 			actionBar.AddChild(advancedButton);
+
+			topToBottom.AddChild(CreateHorizontalLine());
 
 			var bodyContainer = new GuiWidget()
 			{
@@ -559,8 +576,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				var timeContainer = new FlowLayoutWidget()
 				{
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = new BorderDouble(50, 3)
+					HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
+					Margin = 3
 				};
 				progressContainer.AddChild(timeContainer);
 
@@ -570,8 +587,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				timeWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					AutoExpandBoundsToText = true,
-					Margin = new BorderDouble(10, 0),
-					VAnchor = VAnchor.ParentCenter
+					Margin = new BorderDouble(10, 0, 0, 0),
+					VAnchor = VAnchor.ParentCenter,
 				};
 
 				timeContainer.AddChild(timeWidget);
