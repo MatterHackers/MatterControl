@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -260,6 +261,22 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("GCodeStream")]
 		public void PauseHandlingStreamTests()
 		{
+			double readX = 50;
+			// Validate that the number parsing code is working as expected, specifically ignoring data that appears in comments
+			// This is a regression that we saw in the Lulzbot Mini profile after adding macro processing.
+			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 ; suck up XXmm of filament", ref readX);
+			// did not change
+			Assert.AreEqual(50, readX, "Don't change the x if it is after a comment");
+
+			// a comments that looks more like a valid line
+			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 ; X33", ref readX);
+			// did not change
+			Assert.AreEqual(50, readX, "Don't change the x if it is after a comment");
+			// a line that should parse
+			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 X33", ref readX);
+			// did change
+			Assert.AreEqual(33, readX, "not in a comment, do a change");
+
 			string[] inputLines = new string[]
 			{
 				"; the printer is moving normally",
@@ -269,7 +286,7 @@ namespace MatterControl.Tests.MatterControl
 
 				"; the printer pauses",
 				"G91",
-				"G1 Z10 E - 10 F12000",
+				"G1 Z10 E - 10 F12000 ; suck up XXmm of filament",
 				"G90",
 
 				"; the user moves the printer",
