@@ -170,7 +170,7 @@ namespace MatterHackers.PrinterEmulator
 
 			Task.Run(() =>
 			{
-				while (true && !shutDown)
+				while (!shutDown)
 				{
 					if (serialPort.CDHolding != CDState)
 					{
@@ -194,7 +194,7 @@ namespace MatterHackers.PrinterEmulator
 
 			Task.Run(() =>
 			{
-				while (true && !shutDown)
+				while (!shutDown)
 				{
 					string line = "";
 					try
@@ -218,6 +218,7 @@ namespace MatterHackers.PrinterEmulator
 				}
 
 				serialPort.Close();
+				serialPort.Dispose();
 			});
 		}
 
