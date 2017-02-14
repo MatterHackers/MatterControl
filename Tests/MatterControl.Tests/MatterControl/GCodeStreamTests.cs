@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -260,6 +261,11 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("GCodeStream")]
 		public void PauseHandlingStreamTests()
 		{
+			double readX = 50;
+			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 ; suck up XXmm of filament", ref readX);
+
+			Assert.AreEqual(50, readX, "Don't change the x if it is after a comment");
+
 			string[] inputLines = new string[]
 			{
 				"; the printer is moving normally",
@@ -269,7 +275,7 @@ namespace MatterControl.Tests.MatterControl
 
 				"; the printer pauses",
 				"G91",
-				"G1 Z10 E - 10 F12000",
+				"G1 Z10 E - 10 F12000 ; suck up XXmm of filament",
 				"G90",
 
 				"; the user moves the printer",
