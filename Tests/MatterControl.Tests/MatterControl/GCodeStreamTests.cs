@@ -262,9 +262,20 @@ namespace MatterControl.Tests.MatterControl
 		public void PauseHandlingStreamTests()
 		{
 			double readX = 50;
+			// Validate that the number parsing code is working as expected, specifically ignoring data that appears in comments
+			// This is a regression that we saw in the Lulzbot Mini profile after adding macro processing.
 			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 ; suck up XXmm of filament", ref readX);
-
+			// did not change
 			Assert.AreEqual(50, readX, "Don't change the x if it is after a comment");
+
+			// a comments that looks more like a valid line
+			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 ; X33", ref readX);
+			// did not change
+			Assert.AreEqual(50, readX, "Don't change the x if it is after a comment");
+			// a line that should parse
+			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 X33", ref readX);
+			// did change
+			Assert.AreEqual(33, readX, "not in a comment, do a change");
 
 			string[] inputLines = new string[]
 			{
