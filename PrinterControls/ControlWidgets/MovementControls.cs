@@ -355,7 +355,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			this.AddChild(zOffsetStreamContainer);
 
-			zOffsetStreamDisplay = new TextWidget("0")
+			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"))
 			{
 				AutoExpandBoundsToText = true,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -375,7 +376,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(0, 0, 5, 0),
 				ToolTipText = "Clear ZOffset".Localize(),
-				Visible = false
+				Visible = zoffset != 0
 			};
 			clearZOffsetButton.Click += (sender, e) =>
 			{
