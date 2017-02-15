@@ -181,6 +181,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static void SettingsChanged(object sender, EventArgs e)
 		{
+			if (Instance.ActiveProfile == null)
+			{
+				return;
+			}
+
 			string settingsKey = ((StringEventArgs)e).Data;
 			switch (settingsKey)
 			{
