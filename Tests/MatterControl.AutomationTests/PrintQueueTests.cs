@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.AreEqual(QueueData.Instance.SelectedIndex, 0);
 
-				testRunner.ClickByName("Queue Item MatterControl - Coin", 2);
+				testRunner.ClickByName("Queue Item Calibration - Box", 2);
 
 				Assert.AreEqual(QueueData.Instance.SelectedIndex, 3);
 
