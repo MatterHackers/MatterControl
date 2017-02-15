@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
@@ -37,29 +38,10 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrintStatusRow : FlowLayoutWidget
-	{
-		public static GuiWidget Create(QueueDataView queueDataView)
-		{
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				return new TouchScreenPrintStatusRow(queueDataView);
-			}
-			else
-			{
-				return new DesktopPrintStatusRow(queueDataView);
-			}
-		}
-	}
-
-	public class DesktopPrintStatusRow : PrintStatusRow
 	{
 		private TextWidget activePrintInfo;
 		private TextWidget activePrintLabel;
@@ -69,32 +51,38 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TemperatureWidgetBase bedTemperatureWidget;
 		private TemperatureWidgetBase extruderTemperatureWidget;
 		private QueueDataView queueDataView;
+		private EventHandler unregisterEvents;
 
-		public DesktopPrintStatusRow(QueueDataView queueDataView)
+		public PrintStatusRow(QueueDataView queueDataView)
 		{
-			Initialize();
+			UiThread.RunOnIdle(OnIdle);
 
+			this.Margin = new BorderDouble(6, 3, 6, 6);
 			this.HAnchor = HAnchor.ParentLeftRight;
 
 			this.queueDataView = queueDataView;
 
 			AddChildElements();
-			AddHandlers();
+
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			{
+				UpdatePrintItemName();
+				UpdatePrintStatus();
+			}, ref unregisterEvents);
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				UpdatePrintStatus();
+			}, ref unregisterEvents);
+
+			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent((s, e) =>
+			{
+				UpdatePrintStatus();
+			}, ref unregisterEvents);
+
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 
 			onActivePrintItemChanged(null, null);
-		}
-
-		private EventHandler unregisterEvents;
-
-		private string ActivePrintStatusText
-		{
-			set
-			{
-				if (activePrintStatus.Text != value)
-				{
-					activePrintStatus.Text = value;
-				}
-			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -105,33 +93,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 
 			unregisterEvents?.Invoke(this, null);
-		
 			base.OnClosed(e);
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-		}
-
-		protected void AddHandlers()
-		{
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onPrintItemChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(Instance_WroteLine, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-		}
-
-		protected void Initialize()
-		{
-			UiThread.RunOnIdle(OnIdle);
-			this.Margin = new BorderDouble(6, 3, 6, 6);
-		}
-
-		protected void onPrintItemChanged(object sender, EventArgs e)
-		{
-			UpdatePrintItemName();
-			UpdatePrintStatus();
 		}
 
 		private void AddChildElements()
@@ -185,15 +147,14 @@ namespace MatterHackers.MatterControl.ActionBar
 			topRow.Name = "PrintStatusRow.ActivePrinterInfo.TopRow";
 			topRow.HAnchor = HAnchor.ParentLeftRight;
 
-			string nextPrintLabel = "Next Print".Localize();
-			string nextPrintLabelFull = string.Format("{0}:", nextPrintLabel);
-			activePrintLabel = getPrintStatusLabel(nextPrintLabelFull, pointSize: 11);
+			activePrintLabel = getPrintStatusLabel("Next Print".Localize() + ":", pointSize: 11);
 			activePrintLabel.VAnchor = VAnchor.ParentTop;
 
 			topRow.AddChild(activePrintLabel);
 
 			activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);
 			activePrintName.AutoExpandBoundsToText = false;
+
 			activePrintStatus = getPrintStatusLabel("this is the biggest label we will allow - bigger", pointSize: 11);
 			activePrintStatus.AutoExpandBoundsToText = false;
 			activePrintStatus.Text = "";
@@ -207,7 +168,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(topRow);
 			container.AddChild(activePrintName);
 			container.AddChild(activePrintStatus);
-			//container.AddChild(activePrintInfo);
 			container.AddChild(printActionRow);
 
 			return container;
@@ -232,34 +192,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			return autoLevelButton;
 		}
 
-		private string getConnectionMessage()
-		{
-			if (!ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				return "Select a Printer.".Localize();
-			}
-			else
-			{
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-						return "Not connected. Press 'Connect' to enable printing.".Localize();
-
-					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-						string attemptToConnect = "Attempting to Connect".Localize();
-						string attemptToConnectFull = string.Format("{0}...", attemptToConnect);
-						return attemptToConnectFull;
-
-					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-						return "Unable to communicate with printer.".Localize();
-
-					default:
-						return "";
-				}
-			}
-		}
-
 		private TextWidget getPrintStatusLabel(string text, int pointSize)
 		{
 			TextWidget widget = new TextWidget(text, pointSize: pointSize);
@@ -267,11 +199,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			widget.AutoExpandBoundsToText = true;
 			widget.MinimumSize = new Vector2(widget.Width, widget.Height);
 			return widget;
-		}
-
-		private void Instance_WroteLine(object sender, EventArgs e)
-		{
-			UpdatePrintStatus();
 		}
 
 		private void onActivePrintItemChanged(object sender, EventArgs e)
@@ -306,15 +233,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		private void onStateChanged(object sender, EventArgs e)
+		private void PrintItem_SlicingOutputMessage(object sender, StringEventArgs message)
 		{
-			UpdatePrintStatus();
-		}
-
-		private void PrintItem_SlicingOutputMessage(object sender, EventArgs e)
-		{
-			StringEventArgs message = e as StringEventArgs;
-			ActivePrintStatusText = message.Data;
+			activePrintStatus.Text = message.Data;
 		}
 
 		private void SetVisibleStatus()
@@ -373,7 +294,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					if (totalSecondsInPrint < 0)
 					{
-						totalPrintTimeText = string.Format("{0}", "Streaming GCode...".Localize());
+						totalPrintTimeText = "Streaming GCode...".Localize();
 					}
 					else
 					{
@@ -381,61 +302,64 @@ namespace MatterHackers.MatterControl.ActionBar
 					}
 				}
 
-				//GC.WaitForFullGCComplete();
-
-				string printPercentRemainingText;
-				string printPercentCompleteText = "complete".Localize();
-				printPercentRemainingText = string.Format("{0:0.0}% {1}", PrinterConnectionAndCommunication.Instance.PercentComplete, printPercentCompleteText);
-
 				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
 				{
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-						string preparingPrintLabel = "Preparing To Print".Localize();
-						string preparingPrintLabelFull = string.Format("{0}:", preparingPrintLabel);
-						activePrintLabel.Text = preparingPrintLabelFull;
-						//ActivePrintStatusText = ""; // set by slicer
+						activePrintLabel.Text = "Preparing To Print".Localize() + ":";
 						activePrintInfo.Text = "";
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						{
-							activePrintLabel.Text = PrinterConnectionAndCommunication.Instance.PrintingStateString;
-							ActivePrintStatusText = totalPrintTimeText;
-						}
+						activePrintLabel.Text = PrinterConnectionAndCommunication.Instance.PrintingStateString;
+						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						{
-							string activePrintLabelText = "Printing Paused".Localize();
-							string activePrintLabelTextFull = string.Format("{0}:", activePrintLabelText);
-							activePrintLabel.Text = activePrintLabelTextFull;
-							ActivePrintStatusText = totalPrintTimeText;
-						}
+						activePrintLabel.Text = "Printing Paused".Localize() + ":";
+						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-						string donePrintingText = "Done Printing".Localize();
-						string donePrintingTextFull = string.Format("{0}:", donePrintingText);
-						activePrintLabel.Text = donePrintingTextFull;
-						ActivePrintStatusText = totalPrintTimeText;
+						activePrintLabel.Text = "Done Printing".Localize() + ":";
+						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
 					default:
-						string nextPrintLabelActive = "Next Print".Localize();
-						string nextPrintLabelActiveFull = string.Format("{0}: ", nextPrintLabelActive);
+						activePrintLabel.Text = "Next Print".Localize() + ":";
 
-						activePrintLabel.Text = nextPrintLabelActiveFull;
-						ActivePrintStatusText = getConnectionMessage();
+						string statusMessage = "";
+
+						if (!ActiveSliceSettings.Instance.PrinterSelected)
+						{
+							statusMessage = "Select a Printer.".Localize();
+						}
+						else
+						{
+							switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+							{
+								case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
+									statusMessage = "Not connected. Press 'Connect' to enable printing.".Localize();
+									break;
+
+								case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
+									statusMessage = "Attempting to Connect".Localize() + "...";
+									break;
+
+								case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
+								case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
+									statusMessage = "Unable to communicate with printer.".Localize();
+									break;
+							}
+						}
+
+						activePrintStatus.Text = statusMessage;
 						break;
 				}
 			}
 			else
 			{
-				string nextPrintLabel = "Next Print".Localize();
-				string nextPrintLabelFull = string.Format("{0}:", nextPrintLabel);
-
-				activePrintLabel.Text = nextPrintLabelFull;
-				ActivePrintStatusText = string.Format("Press 'Add' to choose an item to print".Localize());
+				activePrintLabel.Text = "Next Print".Localize() + ":";
+				activePrintStatus.Text = "Press 'Add' to choose an item to print".Localize();
 			}
 		}
 	}

@@ -70,24 +70,26 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button skipButton;
 		private Button startButton;
 		private Button finishSetupButton;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private TextImageButtonFactory textImageButtonFactory;
 		private EventHandler unregisterEvents;
 
 		public PrintActionRow(QueueDataView queueDataView)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 
-			textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
-			textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.AllowThemeToAdjustImage = false;
-
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.FixedHeight = 52 * GuiWidget.DeviceScale;
-			textImageButtonFactory.fontSize = 14;
-			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
-			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
+			textImageButtonFactory = new TextImageButtonFactory()
+			{
+				normalTextColor = RGBA_Bytes.White,
+				disabledTextColor = RGBA_Bytes.LightGray,
+				hoverTextColor = RGBA_Bytes.White,
+				pressedTextColor = RGBA_Bytes.White,
+				AllowThemeToAdjustImage = false,
+				borderWidth = 1,
+				FixedHeight = 52 * GuiWidget.DeviceScale,
+				fontSize = 14,
+				normalBorderColor = new RGBA_Bytes(255, 255, 255, 100),
+				hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100)
+			};
 
 			this.queueDataView = queueDataView;
 
