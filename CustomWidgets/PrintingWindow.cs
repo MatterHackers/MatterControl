@@ -38,6 +38,7 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
@@ -581,22 +582,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// Thumbnail section
 			{
-				ImageBuffer imageBuffer = null;
-
-				string stlHashCode = PrinterConnectionAndCommunication.Instance.ActivePrintItem?.FileHashCode.ToString();
-				if (!string.IsNullOrEmpty(stlHashCode) && stlHashCode != "0")
-				{
-					imageBuffer = PartThumbnailWidget.LoadImageFromDisk(stlHashCode);
-					if (imageBuffer != null)
-					{
-						imageBuffer = ImageBuffer.CreateScaledImage(imageBuffer, 500, 500);
-					}
-				}
+				ImageBuffer imageBuffer = PartThumbnailWidget.GetImageForItem(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 500, 500);
 
 				if (imageBuffer == null)
 				{
 					imageBuffer = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "part_thumbnail.png"));
 				}
+
+				WhiteToColor.DoWhiteToColor(imageBuffer, ActiveTheme.Instance.PrimaryAccentColor);
 
 				var partThumbnail = new ImageWidget(imageBuffer)
 				{

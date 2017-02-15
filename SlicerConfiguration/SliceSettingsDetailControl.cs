@@ -20,44 +20,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
 		private static string resetToDefaultsWindowTitle = "Revert Settings".Localize();
+		bool pimarySettingsView;
 
 		public SliceSettingsDetailControl(List<PrinterSettingsLayer> layerCascade)
 		{
-			showHelpBox = new CheckBox(0, 0, "Show Help".Localize(), textSize: 10)
-			{
-				VAnchor = VAnchor.ParentCenter,
-			};
-
-			if (layerCascade == null)
-			{
-				// only turn of the help if in the main view and it is set to on
-				showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
-			}
-
-			// add in the ability to turn on and off help text
-			showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			showHelpBox.Margin = new BorderDouble(right: 3);
-			showHelpBox.VAnchor = VAnchor.ParentCenter;
-			showHelpBox.Cursor = Cursors.Hand;
-			showHelpBox.CheckedStateChanged += (s, e) =>
-			{
-				if (layerCascade == null)
-				{
-					// only save the help settings if in the main view
-					UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
-				}
-				ShowHelpChanged?.Invoke(this, null);
-			};
-
-			this.AddChild(showHelpBox);
-
+			pimarySettingsView = layerCascade == null;
 			settingsDetailSelector = new DropDownList("Basic", maxHeight: 200);
 			settingsDetailSelector.Name = "User Level Dropdown";
 			settingsDetailSelector.AddItem("Basic".Localize(), "Simple");
 			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");
 			settingsDetailSelector.AddItem("Advanced".Localize(), "Advanced");
 
-			if (layerCascade == null)
+			if (pimarySettingsView)
 			{
 				// set to the user requested value when in default view
 				if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
@@ -77,7 +51,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsDetailSelector.Margin = new BorderDouble(5, 3);
 			settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
 
-			if (layerCascade == null)
+			if (pimarySettingsView)
 			{
 				// only add these in the default view
 				this.AddChild(settingsDetailSelector);
@@ -91,12 +65,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string SelectedValue => settingsDetailSelector.SelectedValue; 
 
-		public bool ShowingHelp => showHelpBox.Checked;
+		public bool ShowingHelp => pimarySettingsView ? showHelpBox.Checked : false;
 
 		private DropDownMenu GetSliceOptionsMenuDropList()
 		{
 			DropDownMenu sliceOptionsMenuDropList;
-			sliceOptionsMenuDropList = new DropDownMenu("Profile".Localize() + "... ")
+			sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ")
 			{
 				HoverColor = new RGBA_Bytes(0, 0, 0, 50),
 				NormalColor = new RGBA_Bytes(0, 0, 0, 0),
@@ -108,6 +82,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			sliceOptionsMenuDropList.Name = "Slice Settings Options Menu";
 			sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
+
+
+			showHelpBox = new CheckBox("Show Help".Localize());
+
+			if (pimarySettingsView)
+			{
+				// only turn on the help if in the main view and it is set to on
+				showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
+			}
+
+			showHelpBox.CheckedStateChanged += (s, e) =>
+			{
+				if (pimarySettingsView)
+				{
+					// only save the help settings if in the main view
+					UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
+				}
+				ShowHelpChanged?.Invoke(this, null);
+			};
+
+			MenuItem showHelp = new MenuItem(showHelpBox, "Show Help Checkbox")
+			{
+				Padding = sliceOptionsMenuDropList.MenuItemsPadding,
+			};
+			sliceOptionsMenuDropList.MenuItems.Add(showHelp);
+			sliceOptionsMenuDropList.AddHorizontalLine();
 
 			sliceOptionsMenuDropList.AddItem("Import".Localize()).Selected += (s, e) => { ImportSettingsMenu_Click(); };
 			sliceOptionsMenuDropList.AddItem("Export".Localize()).Selected += (s, e) => { WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); };
