@@ -31,26 +31,14 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.PrintQueue;
-using System;
 
 namespace MatterHackers.MatterControl
 {
 	public class ActionBarPlus : FlowLayoutWidget
 	{
-		private QueueDataView queueDataView;
-
 		public ActionBarPlus(QueueDataView queueDataView)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.queueDataView = queueDataView;
-			this.Create();
-		}
-
-		private EventHandler unregisterEvents;
-
-		public void Create()
-		{
-			// Set Display Attributes
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
@@ -59,23 +47,17 @@ namespace MatterHackers.MatterControl
 			{
 				this.AddChild(new PrinterConnectAndSelectControl());
 			}
-			this.AddChild(PrintStatusRow.Create(queueDataView));
-			this.Padding = new BorderDouble(bottom: 6);
-		}
 
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.Invalidate();
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			if (unregisterEvents != null)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
-				unregisterEvents(this, null);
+				this.AddChild(new TouchScreenPrintStatusRow(queueDataView));
 			}
-			base.OnClosed(e);
+			else
+			{
+				this.AddChild(new PrintStatusRow(queueDataView));
+			}
+
+			this.Padding = new BorderDouble(bottom: 6);
 		}
 	}
 }
