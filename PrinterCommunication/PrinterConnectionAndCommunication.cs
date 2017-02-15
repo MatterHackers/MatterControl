@@ -778,16 +778,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				switch (PrintingState)
 				{
 					case DetailedPrintingState.HomingAxis:
-						return "Homing Axis";
+						return "Homing Axis".Localize();
 
 					case DetailedPrintingState.HeatingBed:
-						return "Waiting for Bed to Heat to {0}°".FormatWith(TargetBedTemperature);
+						return "Waiting for Bed to Heat to".Localize() + $" {TargetBedTemperature}°";
 
 					case DetailedPrintingState.HeatingExtruder:
-						return "Waiting for Extruder to Heat to {0}°".FormatWith(GetTargetExtruderTemperature(0));
+						return "Waiting for Extruder to Heat to".Localize() + $" {GetTargetExtruderTemperature(0)}°";
 
 					case DetailedPrintingState.Printing:
-						return "Currently Printing:";
+						return "Currently Printing".Localize() + ":";
 
 					default:
 						return "";
