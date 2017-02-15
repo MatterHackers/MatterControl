@@ -181,6 +181,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static void SettingsChanged(object sender, EventArgs e)
 		{
+			if (Instance?.ActiveProfile == null)
+			{
+				return;
+			}
+
 			string settingsKey = ((StringEventArgs)e).Data;
 			switch (settingsKey)
 			{
@@ -202,7 +207,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public IEnumerable<PrinterInfo> ActiveProfiles => Profiles.Where(profile => !profile.MarkedForDelete).ToList();
 
 		[JsonIgnore]
-		public PrinterInfo ActiveProfile => this[ActiveSliceSettings.Instance.ID];
+		public PrinterInfo ActiveProfile
+		{
+			get
+			{
+				var activeID = ActiveSliceSettings.Instance?.ID;
+				if (activeID == null)
+				{
+					return null;
+				}
+
+				return this[activeID];
+			}
+		}
 
 		public PrinterInfo this[string profileID]
 		{
