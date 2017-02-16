@@ -164,6 +164,239 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	#endregion tempWidgets
 
+	public class AdvancedBody : GuiWidget
+	{
+		public AdvancedBody()
+		{
+			VAnchor = VAnchor.ParentBottomTop;
+			HAnchor = HAnchor.ParentLeftRight;
+
+			AddChild(new ManualPrinterControls());
+		}
+	}
+
+	public class BasicBody : GuiWidget
+	{
+		private TextWidget partName;
+		private TextWidget printerName;
+		private ProgressDial progressDial;
+		private TextWidget timeWidget;
+		private List<ExtruderStatusWidget> extruderStatusWidgets;
+
+		private void CheckOnPrinter()
+		{
+			if (!HasBeenClosed)
+			{
+				GetProgressInfo();
+				UiThread.RunOnIdle(CheckOnPrinter, 1);
+			}
+		}
+
+		private void GetProgressInfo()
+		{
+			int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
+			int hoursPrinted = (int)(secondsPrinted / (60 * 60));
+			int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
+			secondsPrinted = secondsPrinted % 60;
+
+			// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
+			timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
+
+			progressDial.LayerCount = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
+			progressDial.LayerCompletedRatio = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
+			progressDial.CompletedRatio = PrinterConnectionAndCommunication.Instance.PercentComplete / 100;
+		}
+
+		public BasicBody()
+		{
+			VAnchor = VAnchor.ParentBottomTop;
+			HAnchor = HAnchor.ParentLeftRight;
+			Padding = new BorderDouble(50, 30);
+
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.ParentLeftRight
+			};
+
+			AddChild(topToBottom);
+
+			var bodyRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			topToBottom.AddChild(bodyRow);
+
+			// Thumbnail section
+			{
+				ImageBuffer imageBuffer = PartThumbnailWidget.GetImageForItem(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 500, 500);
+
+				if (imageBuffer == null)
+				{
+					imageBuffer = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "part_thumbnail.png"));
+				}
+
+				WhiteToColor.DoWhiteToColor(imageBuffer, ActiveTheme.Instance.PrimaryAccentColor);
+
+				var partThumbnail = new ImageWidget(imageBuffer)
+				{
+					VAnchor = VAnchor.ParentCenter,
+					Margin = new BorderDouble(right: 50)
+				};
+				bodyRow.AddChild(partThumbnail);
+			}
+
+			bodyRow.AddChild(PrintingWindow.CreateVerticalLine());
+
+			// Progress section
+			{
+				var expandingContainer = new HorizontalSpacer()
+				{
+					VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter
+				};
+				bodyRow.AddChild(expandingContainer);
+
+				var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Margin = new BorderDouble(50, 0),
+					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+					HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
+				};
+				expandingContainer.AddChild(progressContainer);
+
+				progressDial = new ProgressDial()
+				{
+					HAnchor = HAnchor.ParentCenter,
+					Height = 200,
+					Width = 200
+				};
+				progressContainer.AddChild(progressDial);
+
+				var timeContainer = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
+					Margin = 3
+				};
+				progressContainer.AddChild(timeContainer);
+
+				var timeImage = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "time.png"));
+				if (!ActiveTheme.Instance.IsDarkTheme)
+				{
+					timeImage.InvertLightness();
+				}
+
+				timeContainer.AddChild(new ImageWidget(timeImage));
+
+				timeWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				{
+					AutoExpandBoundsToText = true,
+					Margin = new BorderDouble(10, 0, 0, 0),
+					VAnchor = VAnchor.ParentCenter,
+				};
+
+				timeContainer.AddChild(timeWidget);
+
+				printerName = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				{
+					AutoExpandBoundsToText = true,
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = new BorderDouble(50, 3)
+				};
+
+				progressContainer.AddChild(printerName);
+
+				partName = new TextWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				{
+					AutoExpandBoundsToText = true,
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = new BorderDouble(50, 3)
+				};
+				progressContainer.AddChild(partName);
+			}
+
+			bodyRow.AddChild(PrintingWindow.CreateVerticalLine());
+
+			// ZControls
+			{
+				var widget = new ZAxisControls()
+				{
+					Margin = new BorderDouble(left: 50),
+					VAnchor = VAnchor.ParentCenter,
+					Width = 135
+				};
+				bodyRow.AddChild(widget);
+			}
+
+			var footerBar = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				VAnchor = VAnchor.ParentBottom | VAnchor.FitToChildren,
+				HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
+				Margin = new BorderDouble(bottom: 30)
+			};
+			topToBottom.AddChild(footerBar);
+
+			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+
+			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(i)).ToList();
+
+			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed");
+			if (hasHeatedBed)
+			{
+				var extruderColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				footerBar.AddChild(extruderColumn);
+
+				// Add each status widget into the scene, placing into the appropriate column
+				for (var i = 0; i < extruderCount; i++)
+				{
+					var widget = extruderStatusWidgets[i];
+					widget.Margin = new BorderDouble(right: 20);
+					extruderColumn.AddChild(widget);
+				}
+
+				footerBar.AddChild(new BedStatusWidget()
+				{
+					VAnchor = VAnchor.ParentCenter,
+				});
+			}
+			else
+			{
+				if (extruderCount == 1)
+				{
+					footerBar.AddChild(extruderStatusWidgets[0]);
+				}
+				else
+				{
+					var columnA = new FlowLayoutWidget(FlowDirection.TopToBottom);
+					footerBar.AddChild(columnA);
+
+					var columnB = new FlowLayoutWidget(FlowDirection.TopToBottom);
+					footerBar.AddChild(columnB);
+
+					// Add each status widget into the scene, placing into the appropriate column
+					for (var i = 0; i < extruderCount; i++)
+					{
+						var widget = extruderStatusWidgets[i];
+						if (i % 2 == 0)
+						{
+							widget.Margin = new BorderDouble(right: 20);
+							columnA.AddChild(widget);
+						}
+						else
+						{
+							columnB.AddChild(widget);
+						}
+					}
+				}
+			}
+
+			UiThread.RunOnIdle(() =>
+			{
+				CheckOnPrinter();
+			});
+		}
+	}
+
 	public class PrintingWindow : SystemWindow
 	{
 		protected EventHandler unregisterEvents;
@@ -180,14 +413,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
 		};
 
-		private List<ExtruderStatusWidget> extruderStatusWidgets;
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 		private Action onCloseCallback;
-		private TextWidget partName;
-		private TextWidget printerName;
-		private ProgressDial progressDial;
-		private TextWidget timeWidget;
 		private Stopwatch totalDrawTime = new Stopwatch();
+		GuiWidget bodyContainer;
 
 		public PrintingWindow(Action onCloseCallback)
 			: base(1280, 750)
@@ -204,13 +433,29 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			this.AddChild(topToBottom);
 
+			topToBottom.AddChild(CreateActionBar());
+
+			topToBottom.AddChild(CreateHorizontalLine());
+
+			topToBottom.AddChild(CreateDropShadow());
+
+			bodyContainer = new GuiWidget()
+			{
+				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			bodyContainer.AddChild(new BasicBody());
+			topToBottom.AddChild(bodyContainer);
+		}
+
+		private GuiWidget CreateActionBar()
+		{
 			var actionBar = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
 				HAnchor = HAnchor.ParentLeftRight,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
-			topToBottom.AddChild(actionBar);
 
 			var mcLogo = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "logo.png"));
 			if (!ActiveTheme.Instance.IsDarkTheme)
@@ -278,196 +523,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var advancedButton = CreateButton("Advanced".Localize().ToUpper());
 			actionBar.AddChild(advancedButton);
-
-			topToBottom.AddChild(CreateHorizontalLine());
-
-			topToBottom.AddChild(CreateDropShadow());
-
-			var bodyContainer = new GuiWidget()
+			advancedButton.Click += (s, e) =>
 			{
-				VAnchor = VAnchor.ParentBottomTop,
-				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(50, 30),
-				//BackgroundColor = new RGBA_Bytes(35, 40, 49),
-			};
-			topToBottom.AddChild(bodyContainer);
-
-			var bodyRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				VAnchor = VAnchor.ParentBottomTop,
-				HAnchor = HAnchor.ParentLeftRight,
-				//BackgroundColor = new RGBA_Bytes(125, 255, 46, 20),
-			};
-			bodyContainer.AddChild(bodyRow);
-
-			// Thumbnail section
-			{
-				ImageBuffer imageBuffer = PartThumbnailWidget.GetImageForItem(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 500, 500);
-
-				if (imageBuffer == null)
+				if (bodyContainer.Children[0].GetType() == typeof(BasicBody))
 				{
-					imageBuffer = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "part_thumbnail.png"));
-				}
-
-				WhiteToColor.DoWhiteToColor(imageBuffer, ActiveTheme.Instance.PrimaryAccentColor);
-
-				var partThumbnail = new ImageWidget(imageBuffer)
-				{
-					VAnchor = VAnchor.ParentCenter,
-					Margin = new BorderDouble(right: 50)
-				};
-				bodyRow.AddChild(partThumbnail);
-			}
-
-			bodyRow.AddChild(CreateVerticalLine());
-
-			// Progress section
-			{
-				var expandingContainer = new HorizontalSpacer()
-				{
-					VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter
-				};
-				bodyRow.AddChild(expandingContainer);
-
-				var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					Margin = new BorderDouble(50, 0),
-					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
-					HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
-					//BackgroundColor = new RGBA_Bytes(125, 255, 46, 20),
-				};
-				expandingContainer.AddChild(progressContainer);
-
-				progressDial = new ProgressDial()
-				{
-					HAnchor = HAnchor.ParentCenter,
-					Height = 200,
-					Width = 200
-				};
-				progressContainer.AddChild(progressDial);
-
-				var timeContainer = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
-					Margin = 3
-				};
-				progressContainer.AddChild(timeContainer);
-
-				var timeImage = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "time.png"));
-				if (!ActiveTheme.Instance.IsDarkTheme)
-				{
-					timeImage.InvertLightness();
-				}
-
-				timeContainer.AddChild(new ImageWidget(timeImage));
-
-				timeWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
-				{
-					AutoExpandBoundsToText = true,
-					Margin = new BorderDouble(10, 0, 0, 0),
-					VAnchor = VAnchor.ParentCenter,
-				};
-
-				timeContainer.AddChild(timeWidget);
-
-				printerName = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
-				{
-					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = new BorderDouble(50, 3)
-				};
-
-				progressContainer.AddChild(printerName);
-
-				partName = new TextWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
-				{
-					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = new BorderDouble(50, 3)
-				};
-				progressContainer.AddChild(partName);
-			}
-
-			bodyRow.AddChild(CreateVerticalLine());
-
-			// ZControls
-			{
-				var widget = new ZAxisControls()
-				{
-					Margin = new BorderDouble(left: 50),
-					VAnchor = VAnchor.ParentCenter,
-					Width = 135
-				};
-				bodyRow.AddChild(widget);
-			}
-
-			var footerBar = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				VAnchor = VAnchor.ParentBottom | VAnchor.FitToChildren,
-				HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
-				//BackgroundColor = new RGBA_Bytes(35, 40, 49),
-				Margin = new BorderDouble(bottom: 30)
-			};
-			topToBottom.AddChild(footerBar);
-
-			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
-
-			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(i)).ToList();
-
-			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed");
-			if (hasHeatedBed)
-			{
-				var extruderColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				footerBar.AddChild(extruderColumn);
-
-				// Add each status widget into the scene, placing into the appropriate column
-				for (var i = 0; i < extruderCount; i++)
-				{
-					var widget = extruderStatusWidgets[i];
-					widget.Margin = new BorderDouble(right: 20);
-					extruderColumn.AddChild(widget);
-				}
-
-				footerBar.AddChild(new BedStatusWidget()
-				{
-					VAnchor = VAnchor.ParentCenter,
-				});
-			}
-			else
-			{
-				if (extruderCount == 1)
-				{
-					footerBar.AddChild(extruderStatusWidgets[0]);
+					bodyContainer.CloseAllChildren();
+					bodyContainer.AddChild(new AdvancedBody());
 				}
 				else
 				{
-					var columnA = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					footerBar.AddChild(columnA);
-
-					var columnB = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					footerBar.AddChild(columnB);
-
-					// Add each status widget into the scene, placing into the appropriate column
-					for (var i = 0; i < extruderCount; i++)
-					{
-						var widget = extruderStatusWidgets[i];
-						if (i % 2 == 0)
-						{
-							widget.Margin = new BorderDouble(right: 20);
-							columnA.AddChild(widget);
-						}
-						else
-						{
-							columnB.AddChild(widget);
-						}
-					}
+					bodyContainer.CloseAllChildren();
+					bodyContainer.AddChild(new BasicBody());
 				}
-			}
+			};
 
-			UiThread.RunOnIdle(() =>
-			{
-				CheckOnPrinter();
-			});
+			return actionBar;
 		}
 
 		public static bool IsShowing
@@ -498,12 +568,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			instance = null;
 			base.OnClosed(e);
 			onCloseCallback();
-		}
-
-		private void CheckOnPrinter()
-		{
-			GetProgressInfo();
-			UiThread.RunOnIdle(CheckOnPrinter, 1);
 		}
 
 		private Button CreateButton(string localizedText, bool centerText = true)
@@ -545,7 +609,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return dropShadowWidget;
 		}
 
-		private HorizontalLine CreateHorizontalLine()
+		public static HorizontalLine CreateHorizontalLine()
 		{
 			return new HorizontalLine()
 			{
@@ -553,27 +617,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 		}
 
-		private VerticalLine CreateVerticalLine()
+		public static VerticalLine CreateVerticalLine()
 		{
 			return new VerticalLine()
 			{
 				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
 			};
-		}
-
-		private void GetProgressInfo()
-		{
-			int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
-			int hoursPrinted = (int)(secondsPrinted / (60 * 60));
-			int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
-			secondsPrinted = secondsPrinted % 60;
-
-			// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
-			timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
-
-			progressDial.LayerCount = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
-			progressDial.LayerCompletedRatio = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
-			progressDial.CompletedRatio = PrinterConnectionAndCommunication.Instance.PercentComplete / 100;
 		}
 	}
 
