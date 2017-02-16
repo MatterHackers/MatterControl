@@ -3,13 +3,13 @@ Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,7 +23,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
@@ -48,14 +48,65 @@ using static MatterHackers.MatterControl.JogControls;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class TemperatureStatusWidget : FlowLayoutWidget
+	#region tempWidgets
+
+	public class BedStatusWidget : TemperatureStatusWidget
 	{
-		int fontSize = 14;
+		public BedStatusWidget()
+			: base("Bed Temperature".Localize())
+		{
+			PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent((s, e) =>
+			{
+				UpdateTemperatures();
+			}, ref unregisterEvents);
+		}
 
-		protected TextWidget targetTemp;
+		public override void UpdateTemperatures()
+		{
+			double targetValue = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
+			double actualValue = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
+
+			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
+
+			this.actualTemp.Text = $"{actualValue:0.#}°";
+			this.targetTemp.Text = $"{targetValue:0.#}°";
+		}
+	}
+
+	public class ExtruderStatusWidget : TemperatureStatusWidget
+	{
+		private int extruderIndex;
+
+		public ExtruderStatusWidget(int extruderIndex)
+			: base($"{"Extruder".Localize()} {extruderIndex + 1}")
+		{
+			this.extruderIndex = extruderIndex;
+
+			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) =>
+			{
+				UpdateTemperatures();
+			}, ref unregisterEvents);
+		}
+
+		public override void UpdateTemperatures()
+		{
+			double targetValue = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex);
+			double actualValue = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex);
+
+			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
+
+			this.actualTemp.Text = $"{actualValue:0.#}°";
+			this.targetTemp.Text = $"{targetValue:0.#}°";
+		}
+	}
+
+	public abstract class TemperatureStatusWidget : FlowLayoutWidget
+	{
 		protected TextWidget actualTemp;
-
 		protected ProgressBar progressBar;
+		protected TextWidget targetTemp;
+		protected EventHandler unregisterEvents;
+		private int fontSize = 14;
 
 		public TemperatureStatusWidget(string dispalyName)
 		{
@@ -99,296 +150,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Width = 60
 			};
 			this.AddChild(targetTemp);
-		}
-	}
-
-	public class ExtruderStatusWidget : TemperatureStatusWidget
-	{
-		private int extruderIndex;
-
-		public ExtruderStatusWidget(int extruderIndex)
-			: base($"{"Extruder".Localize()} {extruderIndex + 1}")
-		{
-			this.extruderIndex = extruderIndex;
 
 			UiThread.RunOnIdle(UpdateTemperatures);
 		}
 
-		public void UpdateTemperatures()
+		public override void OnClosed(ClosedEventArgs e)
 		{
-			double targetValue = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex);
-			double actualValue = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex);
-
-			progressBar.RatioComplete = actualValue / targetValue;
-
-			this.actualTemp.Text = $"{actualValue:0.#}°";
-			this.targetTemp.Text = $"{targetValue:0.#}°";
+			unregisterEvents?.Invoke(this, null);
 		}
+
+		public abstract void UpdateTemperatures();
 	}
 
-	public class BedStatusWidget : TemperatureStatusWidget
-	{
-		public BedStatusWidget()
-			: base("Bed Temperature".Localize())
-		{
-			UiThread.RunOnIdle(UpdateTemperatures);
-		}
-
-		public void UpdateTemperatures()
-		{
-			double targetValue = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
-			double actualValue = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
-
-			progressBar.RatioComplete = actualValue / targetValue;
-
-			this.actualTemp.Text = $"{actualValue:0.#}°";
-			this.targetTemp.Text = $"{targetValue:0.#}°";
-		}
-	}
-
-	public class ProgressDial : GuiWidget
-	{
-		private double completedRatio = -1;
-		public double CompletedRatio
-		{
-			get { return completedRatio; }
-			set
-			{
-				if (completedRatio != value)
-				{
-					completedRatio = Math.Min(value, 1);
-
-					// Flag for redraw
-					this.Invalidate();
-
-					percentCompleteWidget.Text = $"{CompletedRatio * 100:0}%";
-				}
-			}
-		}
-
-		private double layerCompletedRatio = 0;
-		public double LayerCompletedRatio
-		{
-			get { return layerCompletedRatio; }
-			set
-			{
-				if (layerCompletedRatio != value)
-				{
-					layerCompletedRatio = value;
-					this.Invalidate();
-				}
-			}
-		}
-
-		private RGBA_Bytes PrimaryAccentColor = ActiveTheme.Instance.PrimaryAccentColor;
-		private RGBA_Bytes PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).GetAsRGBA_Bytes();
-		private double strokeWidth = 10;
-		private double outerRingStrokeWidth = 7;
-
-		private int layerCount = -1;
-		public int LayerCount
-		{
-			get { return layerCount; }
-			set
-			{
-				if (layerCount != value)
-				{
-					layerCount = value;
-					layerCountWidget.Text = "Layer " + layerCount;
-				}
-			}
-		}
-
-		private TextWidget percentCompleteWidget;
-		private TextWidget layerCountWidget;
-		private Stroke borderStroke;
-		private RGBA_Bytes borderColor;
-		private double borderRadius;
-
-		private int padding = 20;
-		private double outerRingRadius = 100;
-		private double innerRingRadius = 90;
-
-		public ProgressDial()
-		{
-			percentCompleteWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				AutoExpandBoundsToText = true,
-				VAnchor = VAnchor.ParentCenter,
-				HAnchor = HAnchor.ParentCenter,
-				Margin = new BorderDouble(bottom: 20)
-			};
-
-			CompletedRatio = 0;
-
-			layerCountWidget = new TextWidget("", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				AutoExpandBoundsToText = true,
-				VAnchor = VAnchor.ParentCenter,
-				HAnchor = HAnchor.ParentCenter,
-				Margin = new BorderDouble(top: 32)
-			};
-
-			LayerCount = 0;
-
-			this.AddChild(percentCompleteWidget);
-			this.AddChild(layerCountWidget);
-
-			borderColor = ActiveTheme.Instance.PrimaryTextColor;
-			borderColor.Alpha0To1 = 0.3f;
-		}
-
-		public override void OnBoundsChanged(EventArgs e)
-		{
-			borderRadius = this.LocalBounds.Width / 2 - padding;
-			outerRingRadius = borderRadius - (outerRingStrokeWidth / 2) - 6; ;
-			innerRingRadius = outerRingRadius - (outerRingStrokeWidth / 2) - (strokeWidth / 2);
-
-			Console.WriteLine("width: {3} - border: {0}, outer: {1}, inner: {2}", borderRadius, outerRingRadius, innerRingRadius, this.LocalBounds.Width);
-
-			borderStroke = new Stroke(new Ellipse(
-				Vector2.Zero,
-				borderRadius,
-				borderRadius));
-
-			base.OnBoundsChanged(e);
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			var bounds = this.LocalBounds;
-
-			// Draw border ring
-			graphics2D.Render(
-				borderStroke.Translate(bounds.Center),
-				borderColor);
-
-			// Draw outer progress ring
-			var ringArc = new Arc(
-				Vector2.Zero, 
-				new Vector2(outerRingRadius, outerRingRadius), 
-				0,
-				MathHelper.DegreesToRadians(360) * LayerCompletedRatio, // percentCompletedInRadians
-				Arc.Direction.ClockWise);
-			var arcStroke = new Stroke(ringArc);
-			arcStroke.width(outerRingStrokeWidth);
-			graphics2D.Render(
-				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center), 
-				PrimaryAccentShade);
-
-			// Draw inner progress ring
-			ringArc = new Arc(
-				Vector2.Zero, 
-				new Vector2(innerRingRadius, innerRingRadius), 
-				0,
-				MathHelper.DegreesToRadians(360) * CompletedRatio, // percentCompletedInRadians
-				Arc.Direction.ClockWise);
-			arcStroke = new Stroke(ringArc);
-			arcStroke.width(strokeWidth);
-			graphics2D.Render(
-				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center), 
-				PrimaryAccentColor);
-
-			// Draw child controls
-			base.OnDraw(graphics2D);
-		}
-	}
-
-	public class ZAxisControls : FlowLayoutWidget
-	{
-		/*
-		private static TextImageButtonFactory buttonFactory = new TextImageButtonFactory()
-		{
-			fontSize = 13,
-			invertImageLocation = false,
-			hoverFillColor = ActiveTheme.Instance.PrimaryAccentColor,
-			//pressedFillColor = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.8).GetAsRGBA_Bytes()
-		};
-		*/
-
-		private MoveButtonFactory buttonFactory = new MoveButtonFactory()
-		{
-			FontSize = 13,
-		};
-
-		public ZAxisControls() :
-			base(FlowDirection.TopToBottom)
-		{
-			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
-			buttonFactory.Colors.Fill.Hover = ActiveTheme.Instance.PrimaryAccentColor;
-			buttonFactory.BorderWidth = 0;
-			buttonFactory.Colors.Text.Normal = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.AddChild(new TextWidget("Z+", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				HAnchor = HAnchor.ParentCenter,
-				Margin = new BorderDouble(bottom: 8)
-			});
-
-
-			this.AddChild(CreateZMoveButton(1));
-
-			this.AddChild(CreateZMoveButton(.1));
-
-			this.AddChild(CreateZMoveButton(.02));
-
-			this.AddChild(new ZTuningWidget()
-			{
-				HAnchor = HAnchor.ParentCenter,
-				Margin = 10
-			});
-
-			this.AddChild(CreateZMoveButton(-.02));
-
-			this.AddChild(CreateZMoveButton(-.1));
-
-			this.AddChild(CreateZMoveButton(-1));
-
-			this.AddChild(new TextWidget("Z-", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				HAnchor = HAnchor.ParentCenter,
-				Margin = new BorderDouble(top: 9),
-			});
-
-			//this.BackgroundColor = new RGBA_Bytes(200, 0, 0, 30);
-
-			this.Margin = new BorderDouble(0);
-			this.Margin = 0;
-			this.Padding = 3;
-			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
-		}
-
-		private Button CreateZMoveButton(double moveAmount, bool centerText = true)
-		{
-			var button = buttonFactory.GenerateMoveButton($"{Math.Abs(moveAmount):0.00} mm", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
-			button.MoveAmount = moveAmount;
-			button.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-			button.VAnchor = VAnchor.FitToChildren;
-			button.Margin = new BorderDouble(0, 1);
-			button.Padding = new BorderDouble(15, 7);
-			button.Height = 55;
-			button.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-
-			return button;
-		}
-	}
+	#endregion tempWidgets
 
 	public class PrintingWindow : SystemWindow
 	{
+		protected EventHandler unregisterEvents;
 		private static PrintingWindow instance;
-		private ProgressDial progressDial;
-		private TextWidget timeWidget;
-		private TextWidget printerName;
-		private TextWidget partName;
-
-		private List<ExtruderStatusWidget> extruderStatusWidgets;
-
-		private EventHandler unregisterEvents;
-
-		AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-		Stopwatch totalDrawTime = new Stopwatch();
-
-		Action onCloseCallback;
 
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory()
 		{
@@ -396,88 +175,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			invertImageLocation = false,
 			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
+			disabledFillColor = RGBA_Bytes.Transparent,
 			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
 		};
 
-		private Button CreateButton(string localizedText, bool centerText = true)
-		{
-			var button = buttonFactory.Generate(localizedText, centerText: centerText);
-			button.Cursor = Cursors.Hand;
-			button.Margin = new BorderDouble(40, 10);
-			button.VAnchor = VAnchor.ParentCenter;
-
-			return button;
-		}
-
-		public void MockProgress()
-		{
-			if (progressDial.CompletedRatio >= 1)
-			{
-				progressDial.CompletedRatio = 0;
-				progressDial.LayerCount = 0;
-			}
-			else
-			{
-				progressDial.CompletedRatio = Math.Min(progressDial.CompletedRatio + 0.01, 1);
-			}
-
-			if (progressDial.LayerCompletedRatio >= 1)
-			{
-				progressDial.LayerCompletedRatio = 0;
-				progressDial.LayerCount += 1;
-			}
-			else
-			{
-				progressDial.LayerCompletedRatio = Math.Min(progressDial.LayerCompletedRatio + 0.1, 1);
-			}
-
-			UiThread.RunOnIdle(MockProgress, .2);
-		}
-
-		private VerticalLine CreateVerticalLine()
-		{
-			return new VerticalLine()
-			{
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
-			};
-		}
-
-		private GuiWidget CreateDropShadow()
-		{
-			var dropShadowWidget = new GuiWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Height = 12 * GuiWidget.DeviceScale,
-				DoubleBuffer = true,
-			};
-
-			dropShadowWidget.AfterDraw += (s, e) =>
-			{
-				Byte[] buffer = dropShadowWidget.BackBuffer.GetBuffer();
-				for (int y = 0; y < dropShadowWidget.Height; y++)
-				{
-					int yOffset = dropShadowWidget.BackBuffer.GetBufferOffsetY(y);
-					byte alpha = (byte)((y / dropShadowWidget.Height) * 100);
-					for (int x = 0; x < dropShadowWidget.Width; x++)
-					{
-						buffer[yOffset + x * 4 + 0] = 0;
-						buffer[yOffset + x * 4 + 1] = 0;
-						buffer[yOffset + x * 4 + 2] = 0;
-						buffer[yOffset + x * 4 + 3] = alpha;
-					}
-				}
-			};
-
-			return dropShadowWidget;
-		}
-		private HorizontalLine CreateHorizontalLine()
-		{
-			return new HorizontalLine()
-			{
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
-			};
-		}
+		private List<ExtruderStatusWidget> extruderStatusWidgets;
+		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
+		private Action onCloseCallback;
+		private TextWidget partName;
+		private TextWidget printerName;
+		private ProgressDial progressDial;
+		private TextWidget timeWidget;
+		private Stopwatch totalDrawTime = new Stopwatch();
 
 		public PrintingWindow(Action onCloseCallback, bool mockMode = false)
 			: base(1280, 750)
@@ -498,7 +208,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
 				HAnchor = HAnchor.ParentLeftRight,
-				//BackgroundColor = new RGBA_Bytes(34, 38, 46),
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 			topToBottom.AddChild(actionBar);
 
@@ -523,6 +233,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					resumeButton.Visible = true;
 				});
 			};
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+			}, ref unregisterEvents);
+			pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
 			actionBar.AddChild(pauseButton);
 
 			resumeButton.Visible = false;
@@ -552,6 +267,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.Close();
 				}
 			};
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+			}, ref unregisterEvents);
+			cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
 			actionBar.AddChild(cancelButton);
 
 			actionBar.AddChild(CreateVerticalLine());
@@ -688,7 +408,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				//BackgroundColor = new RGBA_Bytes(35, 40, 49),
 				Margin = new BorderDouble(bottom: 30)
 			};
-			topToBottom.AddChild (footerBar);
+			topToBottom.AddChild(footerBar);
 
 			int extruderCount = mockMode ? 3 : ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
@@ -755,39 +475,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					CheckOnPrinter();
 				}
 			});
-
-			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) =>
-			{
-				var eventArgs = e as TemperatureEventArgs;
-				if (eventArgs != null && eventArgs.Index0Based < extruderStatusWidgets.Count)
-				{
-					extruderStatusWidgets[eventArgs.Index0Based].UpdateTemperatures();
-				}
-			}, ref unregisterEvents);
 		}
 
-		void CheckOnPrinter()
-		{
-			GetProgressInfo();
-			UiThread.RunOnIdle(CheckOnPrinter, 1);
-		}
-
-		private void GetProgressInfo()
-		{
-			int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
-			int hoursPrinted = (int)(secondsPrinted / (60 * 60));
-			int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
-			secondsPrinted = secondsPrinted % 60;
-
-			// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration 
-			timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
-
-			progressDial.LayerCount = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
-			progressDial.LayerCompletedRatio = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
-			progressDial.CompletedRatio = PrinterConnectionAndCommunication.Instance.PercentComplete / 100;
-		}
-
-		public static bool IsShowing 
+		public static bool IsShowing
 		{
 			get
 			{
@@ -809,13 +499,347 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public void MockProgress()
+		{
+			if (progressDial.CompletedRatio >= 1)
+			{
+				progressDial.CompletedRatio = 0;
+				progressDial.LayerCount = 0;
+			}
+			else
+			{
+				progressDial.CompletedRatio = Math.Min(progressDial.CompletedRatio + 0.01, 1);
+			}
+
+			if (progressDial.LayerCompletedRatio >= 1)
+			{
+				progressDial.LayerCompletedRatio = 0;
+				progressDial.LayerCount += 1;
+			}
+			else
+			{
+				progressDial.LayerCompletedRatio = Math.Min(progressDial.LayerCompletedRatio + 0.1, 1);
+			}
+
+			UiThread.RunOnIdle(MockProgress, .2);
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-
 			instance = null;
 			base.OnClosed(e);
 			onCloseCallback();
+		}
+
+		private void CheckOnPrinter()
+		{
+			GetProgressInfo();
+			UiThread.RunOnIdle(CheckOnPrinter, 1);
+		}
+
+		private Button CreateButton(string localizedText, bool centerText = true)
+		{
+			var button = buttonFactory.Generate(localizedText, centerText: centerText);
+			button.Cursor = Cursors.Hand;
+			button.Margin = new BorderDouble(40, 10);
+			button.VAnchor = VAnchor.ParentCenter;
+
+			return button;
+		}
+
+		private GuiWidget CreateDropShadow()
+		{
+			var dropShadowWidget = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Height = 12 * GuiWidget.DeviceScale,
+				DoubleBuffer = true,
+			};
+
+			dropShadowWidget.AfterDraw += (s, e) =>
+			{
+				Byte[] buffer = dropShadowWidget.BackBuffer.GetBuffer();
+				for (int y = 0; y < dropShadowWidget.Height; y++)
+				{
+					int yOffset = dropShadowWidget.BackBuffer.GetBufferOffsetY(y);
+					byte alpha = (byte)((y / dropShadowWidget.Height) * 100);
+					for (int x = 0; x < dropShadowWidget.Width; x++)
+					{
+						buffer[yOffset + x * 4 + 0] = 0;
+						buffer[yOffset + x * 4 + 1] = 0;
+						buffer[yOffset + x * 4 + 2] = 0;
+						buffer[yOffset + x * 4 + 3] = alpha;
+					}
+				}
+			};
+
+			return dropShadowWidget;
+		}
+
+		private HorizontalLine CreateHorizontalLine()
+		{
+			return new HorizontalLine()
+			{
+				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
+			};
+		}
+
+		private VerticalLine CreateVerticalLine()
+		{
+			return new VerticalLine()
+			{
+				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
+			};
+		}
+
+		private void GetProgressInfo()
+		{
+			int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
+			int hoursPrinted = (int)(secondsPrinted / (60 * 60));
+			int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
+			secondsPrinted = secondsPrinted % 60;
+
+			// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
+			timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
+
+			progressDial.LayerCount = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
+			progressDial.LayerCompletedRatio = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
+			progressDial.CompletedRatio = PrinterConnectionAndCommunication.Instance.PercentComplete / 100;
+		}
+	}
+
+	public class ProgressDial : GuiWidget
+	{
+		private RGBA_Bytes borderColor;
+		private double borderRadius;
+		private Stroke borderStroke;
+		private double completedRatio = -1;
+		private double innerRingRadius = 90;
+
+		private double layerCompletedRatio = 0;
+
+		private int layerCount = -1;
+
+		private TextWidget layerCountWidget;
+
+		private double outerRingRadius = 100;
+
+		private double outerRingStrokeWidth = 7;
+
+		private int padding = 20;
+
+		private TextWidget percentCompleteWidget;
+
+		private RGBA_Bytes PrimaryAccentColor = ActiveTheme.Instance.PrimaryAccentColor;
+
+		private RGBA_Bytes PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).GetAsRGBA_Bytes();
+
+		private double strokeWidth = 10;
+
+		public ProgressDial()
+		{
+			percentCompleteWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.ParentCenter,
+				HAnchor = HAnchor.ParentCenter,
+				Margin = new BorderDouble(bottom: 20)
+			};
+
+			CompletedRatio = 0;
+
+			layerCountWidget = new TextWidget("", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.ParentCenter,
+				HAnchor = HAnchor.ParentCenter,
+				Margin = new BorderDouble(top: 32)
+			};
+
+			LayerCount = 0;
+
+			this.AddChild(percentCompleteWidget);
+			this.AddChild(layerCountWidget);
+
+			borderColor = ActiveTheme.Instance.PrimaryTextColor;
+			borderColor.Alpha0To1 = 0.3f;
+		}
+
+		public double CompletedRatio
+		{
+			get { return completedRatio; }
+			set
+			{
+				if (completedRatio != value)
+				{
+					completedRatio = Math.Min(value, 1);
+
+					// Flag for redraw
+					this.Invalidate();
+
+					percentCompleteWidget.Text = $"{CompletedRatio * 100:0}%";
+				}
+			}
+		}
+
+		public double LayerCompletedRatio
+		{
+			get { return layerCompletedRatio; }
+			set
+			{
+				if (layerCompletedRatio != value)
+				{
+					layerCompletedRatio = value;
+					this.Invalidate();
+				}
+			}
+		}
+
+		public int LayerCount
+		{
+			get { return layerCount; }
+			set
+			{
+				if (layerCount != value)
+				{
+					layerCount = value;
+					layerCountWidget.Text = "Layer " + layerCount;
+				}
+			}
+		}
+
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			borderRadius = this.LocalBounds.Width / 2 - padding;
+			outerRingRadius = borderRadius - (outerRingStrokeWidth / 2) - 6; ;
+			innerRingRadius = outerRingRadius - (outerRingStrokeWidth / 2) - (strokeWidth / 2);
+
+			Console.WriteLine("width: {3} - border: {0}, outer: {1}, inner: {2}", borderRadius, outerRingRadius, innerRingRadius, this.LocalBounds.Width);
+
+			borderStroke = new Stroke(new Ellipse(
+				Vector2.Zero,
+				borderRadius,
+				borderRadius));
+
+			base.OnBoundsChanged(e);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			var bounds = this.LocalBounds;
+
+			// Draw border ring
+			graphics2D.Render(
+				borderStroke.Translate(bounds.Center),
+				borderColor);
+
+			// Draw outer progress ring
+			var ringArc = new Arc(
+				Vector2.Zero,
+				new Vector2(outerRingRadius, outerRingRadius),
+				0,
+				MathHelper.DegreesToRadians(360) * LayerCompletedRatio, // percentCompletedInRadians
+				Arc.Direction.ClockWise);
+			var arcStroke = new Stroke(ringArc);
+			arcStroke.width(outerRingStrokeWidth);
+			graphics2D.Render(
+				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center),
+				PrimaryAccentShade);
+
+			// Draw inner progress ring
+			ringArc = new Arc(
+				Vector2.Zero,
+				new Vector2(innerRingRadius, innerRingRadius),
+				0,
+				MathHelper.DegreesToRadians(360) * CompletedRatio, // percentCompletedInRadians
+				Arc.Direction.ClockWise);
+			arcStroke = new Stroke(ringArc);
+			arcStroke.width(strokeWidth);
+			graphics2D.Render(
+				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center),
+				PrimaryAccentColor);
+
+			// Draw child controls
+			base.OnDraw(graphics2D);
+		}
+	}
+
+	public class ZAxisControls : FlowLayoutWidget
+	{
+		/*
+		private static TextImageButtonFactory buttonFactory = new TextImageButtonFactory()
+		{
+			fontSize = 13,
+			invertImageLocation = false,
+			hoverFillColor = ActiveTheme.Instance.PrimaryAccentColor,
+			//pressedFillColor = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.8).GetAsRGBA_Bytes()
+		};
+		*/
+
+		private MoveButtonFactory buttonFactory = new MoveButtonFactory()
+		{
+			FontSize = 13,
+		};
+
+		public ZAxisControls() :
+			base(FlowDirection.TopToBottom)
+		{
+			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
+			buttonFactory.Colors.Fill.Hover = ActiveTheme.Instance.PrimaryAccentColor;
+			buttonFactory.BorderWidth = 0;
+			buttonFactory.Colors.Text.Normal = RGBA_Bytes.White;
+
+			this.AddChild(new TextWidget("Z+", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				HAnchor = HAnchor.ParentCenter,
+				Margin = new BorderDouble(bottom: 8)
+			});
+
+			this.AddChild(CreateZMoveButton(1));
+
+			this.AddChild(CreateZMoveButton(.1));
+
+			this.AddChild(CreateZMoveButton(.02));
+
+			this.AddChild(new ZTuningWidget()
+			{
+				HAnchor = HAnchor.ParentCenter,
+				Margin = 10
+			});
+
+			this.AddChild(CreateZMoveButton(-.02));
+
+			this.AddChild(CreateZMoveButton(-.1));
+
+			this.AddChild(CreateZMoveButton(-1));
+
+			this.AddChild(new TextWidget("Z-", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				HAnchor = HAnchor.ParentCenter,
+				Margin = new BorderDouble(top: 9),
+			});
+
+			//this.BackgroundColor = new RGBA_Bytes(200, 0, 0, 30);
+
+			this.Margin = new BorderDouble(0);
+			this.Margin = 0;
+			this.Padding = 3;
+			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
+		}
+
+		private Button CreateZMoveButton(double moveAmount, bool centerText = true)
+		{
+			var button = buttonFactory.GenerateMoveButton($"{Math.Abs(moveAmount):0.00} mm", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
+			button.MoveAmount = moveAmount;
+			button.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			button.VAnchor = VAnchor.FitToChildren;
+			button.Margin = new BorderDouble(0, 1);
+			button.Padding = new BorderDouble(15, 7);
+			button.Height = 55;
+			button.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+
+			return button;
 		}
 	}
 }
