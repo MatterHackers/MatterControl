@@ -20,18 +20,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
 		private static string resetToDefaultsWindowTitle = "Revert Settings".Localize();
-		bool pimarySettingsView;
+		bool primarySettingsView;
 
 		public SliceSettingsDetailControl(List<PrinterSettingsLayer> layerCascade)
 		{
-			pimarySettingsView = layerCascade == null;
+			primarySettingsView = layerCascade == null;
 			settingsDetailSelector = new DropDownList("Basic", maxHeight: 200);
 			settingsDetailSelector.Name = "User Level Dropdown";
 			settingsDetailSelector.AddItem("Basic".Localize(), "Simple");
 			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");
 			settingsDetailSelector.AddItem("Advanced".Localize(), "Advanced");
 
-			if (pimarySettingsView)
+			if (primarySettingsView)
 			{
 				// set to the user requested value when in default view
 				if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsDetailSelector.Margin = new BorderDouble(5, 3);
 			settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
 
-			if (pimarySettingsView)
+			if (primarySettingsView)
 			{
 				// only add these in the default view
 				this.AddChild(settingsDetailSelector);
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string SelectedValue => settingsDetailSelector.SelectedValue; 
 
-		public bool ShowingHelp => pimarySettingsView ? showHelpBox.Checked : false;
+		public bool ShowingHelp => primarySettingsView ? showHelpBox.Checked : false;
 
 		private DropDownMenu GetSliceOptionsMenuDropList()
 		{
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			showHelpBox = new CheckBox("Show Help".Localize());
 
-			if (pimarySettingsView)
+			if (primarySettingsView)
 			{
 				// only turn on the help if in the main view and it is set to on
 				showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			showHelpBox.CheckedStateChanged += (s, e) =>
 			{
-				if (pimarySettingsView)
+				if (primarySettingsView)
 				{
 					// only save the help settings if in the main view
 					UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
