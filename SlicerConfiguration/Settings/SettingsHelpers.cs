@@ -342,14 +342,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Vector2.Zero;
 		}
 
-		private static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.MatterSlice;
-
 		public SlicingEngineTypes ActiveSliceEngineType()
 		{
-			List<SliceEngineInfo> availableEnginens = SlicingQueue.AvailableSliceEngines;
-
 			if (OsInformation.OperatingSystem == OSType.Android
-				|| availableEnginens.Count == 1)
+				|| SlicingQueue.AvailableSliceEngines.Count == 1)
 			{
 				// android only has MatterSlice available, so always return it.
 				return SlicingEngineTypes.MatterSlice;
@@ -358,7 +354,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string engineType = printerSettings.GetValue("slicing_engine");
 			if (string.IsNullOrEmpty(engineType))
 			{
-				return defaultEngineType;
+				return SlicingEngineTypes.MatterSlice;
 			}
 
 			var engine = (SlicingEngineTypes)Enum.Parse(typeof(SlicingEngineTypes), engineType);

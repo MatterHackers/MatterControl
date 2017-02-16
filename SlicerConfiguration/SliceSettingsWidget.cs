@@ -399,11 +399,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						this.HAnchor = HAnchor.ParentLeftRight;
 
+						var sliceEngineMapping = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine();
+
 						foreach (SliceSettingData settingData in subGroup.SettingDataList)
 						{
 							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
 
-							if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(settingData.SlicerConfigName)
+							if (sliceEngineMapping.MapContains(settingData.SlicerConfigName)
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
@@ -602,12 +604,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				this.HAnchor = HAnchor.ParentLeftRight;
 
+				var sliceEngineMapping = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine();
+
 				foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
 				{
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
 					{
 						SliceSettingData settingData = new SliceSettingData(keyValue.Key, keyValue.Key, SliceSettingData.DataEditTypes.STRING);
-						if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(settingData.SlicerConfigName))
+						if (sliceEngineMapping.MapContains(settingData.SlicerConfigName))
 						{
 							bool addControl;
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(

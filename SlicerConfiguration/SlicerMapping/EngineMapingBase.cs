@@ -33,8 +33,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public abstract class SliceEngineMapping
 	{
-		private string engineName;
-
 		/// <summary>
 		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
 		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
@@ -91,10 +89,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceEngineMapping(string engineName)
 		{
-			this.engineName = engineName;
+			this.Name = engineName;
 		}
 
-		public string Name { get { return engineName; } }
+		public string Name { get; }
 
 		public abstract bool MapContains(string canonicalSettingsName);
 	}
