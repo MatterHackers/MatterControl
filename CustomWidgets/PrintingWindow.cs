@@ -164,14 +164,238 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	#endregion tempWidgets
 
-	public class AdvancedBody : GuiWidget
+	public class PrintingWindow : SystemWindow
 	{
-		public AdvancedBody()
-		{
-			VAnchor = VAnchor.ParentBottomTop;
-			HAnchor = HAnchor.ParentLeftRight;
+		protected EventHandler unregisterEvents;
+		private static PrintingWindow instance;
 
-			AddChild(new ManualPrinterControls());
+		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory()
+		{
+			fontSize = 15,
+			invertImageLocation = false,
+			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
+			disabledFillColor = RGBA_Bytes.Transparent,
+			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+		};
+
+		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
+		private Action onCloseCallback;
+		private Stopwatch totalDrawTime = new Stopwatch();
+		GuiWidget bodyContainer;
+
+		public PrintingWindow(Action onCloseCallback)
+			: base(1280, 750)
+		{
+			AlwaysOnTopOfMain = true;
+			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			this.onCloseCallback = onCloseCallback;
+			this.Title = "Print Monitor".Localize();
+
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.ParentLeftRight
+			};
+			this.AddChild(topToBottom);
+
+			topToBottom.AddChild(CreateActionBar());
+
+			topToBottom.AddChild(CreateHorizontalLine());
+
+			topToBottom.AddChild(CreateDropShadow());
+
+			bodyContainer = new GuiWidget()
+			{
+				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.ParentLeftRight,
+			};
+			bodyContainer.AddChild(new BasicBody());
+			topToBottom.AddChild(bodyContainer);
+		}
+
+		private GuiWidget CreateActionBar()
+		{
+			var actionBar = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+			};
+
+			var mcLogo = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "logo.png"));
+			if (!ActiveTheme.Instance.IsDarkTheme)
+			{
+				mcLogo.InvertLightness();
+			}
+			actionBar.AddChild(new ImageWidget(mcLogo));
+
+			actionBar.AddChild(new HorizontalSpacer());
+
+			var pauseButton = CreateButton("Pause".Localize().ToUpper());
+			var resumeButton = CreateButton("Resume".Localize().ToUpper());
+
+			pauseButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					PrinterConnectionAndCommunication.Instance.RequestPause();
+					pauseButton.Visible = false;
+					resumeButton.Visible = true;
+				});
+			};
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+			}, ref unregisterEvents);
+			pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+			actionBar.AddChild(pauseButton);
+
+			resumeButton.Visible = false;
+			resumeButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+					{
+						PrinterConnectionAndCommunication.Instance.Resume();
+					}
+
+					resumeButton.Visible = false;
+					pauseButton.Visible = true;
+				});
+			};
+			actionBar.AddChild(resumeButton);
+
+			actionBar.AddChild(CreateVerticalLine());
+
+			var cancelButton = CreateButton("Cancel".Localize().ToUpper());
+			cancelButton.Click += (s, e) =>
+			{
+				bool canceled = ApplicationController.Instance.ConditionalCancelPrint();
+				if (canceled)
+				{
+					this.Close();
+				}
+			};
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+			}, ref unregisterEvents);
+			cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+			actionBar.AddChild(cancelButton);
+
+			actionBar.AddChild(CreateVerticalLine());
+
+			var advancedButton = CreateButton("Advanced".Localize().ToUpper());
+			actionBar.AddChild(advancedButton);
+			advancedButton.Click += (s, e) =>
+			{
+				bool inBasicMode = bodyContainer.Children[0] is BasicBody;
+
+				bodyContainer.CloseAllChildren();
+
+				if (inBasicMode)
+				{
+					bodyContainer.AddChild(new ManualPrinterControls()
+					{
+						VAnchor = VAnchor.ParentBottomTop,
+						HAnchor = HAnchor.ParentLeftRight
+					});
+				}
+				else
+				{
+					bodyContainer.AddChild(new BasicBody());
+				}
+			};
+
+			return actionBar;
+		}
+
+		public static bool IsShowing
+		{
+			get
+			{
+				if (instance != null)
+				{
+					return true;
+				}
+
+				return false;
+			}
+		}
+
+		public static void Show(Action onCloseCallback)
+		{
+			if (instance == null)
+			{
+				instance = new PrintingWindow(onCloseCallback);
+				instance.ShowAsSystemWindow();
+			}
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			instance = null;
+			base.OnClosed(e);
+			onCloseCallback();
+		}
+
+		private Button CreateButton(string localizedText, bool centerText = true)
+		{
+			var button = buttonFactory.Generate(localizedText, centerText: centerText);
+			button.Cursor = Cursors.Hand;
+			button.Margin = new BorderDouble(40, 10);
+			button.VAnchor = VAnchor.ParentCenter;
+
+			return button;
+		}
+
+		private GuiWidget CreateDropShadow()
+		{
+			var dropShadowWidget = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Height = 12 * GuiWidget.DeviceScale,
+				DoubleBuffer = true,
+			};
+
+			dropShadowWidget.AfterDraw += (s, e) =>
+			{
+				Byte[] buffer = dropShadowWidget.BackBuffer.GetBuffer();
+				for (int y = 0; y < dropShadowWidget.Height; y++)
+				{
+					int yOffset = dropShadowWidget.BackBuffer.GetBufferOffsetY(y);
+					byte alpha = (byte)((y / dropShadowWidget.Height) * 100);
+					for (int x = 0; x < dropShadowWidget.Width; x++)
+					{
+						buffer[yOffset + x * 4 + 0] = 0;
+						buffer[yOffset + x * 4 + 1] = 0;
+						buffer[yOffset + x * 4 + 2] = 0;
+						buffer[yOffset + x * 4 + 3] = alpha;
+					}
+				}
+			};
+
+			return dropShadowWidget;
+		}
+
+		public static HorizontalLine CreateHorizontalLine()
+		{
+			return new HorizontalLine()
+			{
+				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
+			};
+		}
+
+		public static VerticalLine CreateVerticalLine()
+		{
+			return new VerticalLine()
+			{
+				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
+			};
 		}
 	}
 
@@ -394,235 +618,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				CheckOnPrinter();
 			});
-		}
-	}
-
-	public class PrintingWindow : SystemWindow
-	{
-		protected EventHandler unregisterEvents;
-		private static PrintingWindow instance;
-
-		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory()
-		{
-			fontSize = 15,
-			invertImageLocation = false,
-			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
-			disabledFillColor = RGBA_Bytes.Transparent,
-			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-		};
-
-		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-		private Action onCloseCallback;
-		private Stopwatch totalDrawTime = new Stopwatch();
-		GuiWidget bodyContainer;
-
-		public PrintingWindow(Action onCloseCallback)
-			: base(1280, 750)
-		{
-			AlwaysOnTopOfMain = true;
-			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			this.onCloseCallback = onCloseCallback;
-			this.Title = "Print Monitor".Localize();
-
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				VAnchor = VAnchor.ParentBottomTop,
-				HAnchor = HAnchor.ParentLeftRight
-			};
-			this.AddChild(topToBottom);
-
-			topToBottom.AddChild(CreateActionBar());
-
-			topToBottom.AddChild(CreateHorizontalLine());
-
-			topToBottom.AddChild(CreateDropShadow());
-
-			bodyContainer = new GuiWidget()
-			{
-				VAnchor = VAnchor.ParentBottomTop,
-				HAnchor = HAnchor.ParentLeftRight,
-			};
-			bodyContainer.AddChild(new BasicBody());
-			topToBottom.AddChild(bodyContainer);
-		}
-
-		private GuiWidget CreateActionBar()
-		{
-			var actionBar = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
-				HAnchor = HAnchor.ParentLeftRight,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-			};
-
-			var mcLogo = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "logo.png"));
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				mcLogo.InvertLightness();
-			}
-			actionBar.AddChild(new ImageWidget(mcLogo));
-
-			actionBar.AddChild(new HorizontalSpacer());
-
-			var pauseButton = CreateButton("Pause".Localize().ToUpper());
-			var resumeButton = CreateButton("Resume".Localize().ToUpper());
-
-			pauseButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					PrinterConnectionAndCommunication.Instance.RequestPause();
-					pauseButton.Visible = false;
-					resumeButton.Visible = true;
-				});
-			};
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
-			{
-				pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-			}, ref unregisterEvents);
-			pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-			actionBar.AddChild(pauseButton);
-
-			resumeButton.Visible = false;
-			resumeButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-					{
-						PrinterConnectionAndCommunication.Instance.Resume();
-					}
-
-					resumeButton.Visible = false;
-					pauseButton.Visible = true;
-				});
-			};
-			actionBar.AddChild(resumeButton);
-
-			actionBar.AddChild(CreateVerticalLine());
-
-			var cancelButton = CreateButton("Cancel".Localize().ToUpper());
-			cancelButton.Click += (s, e) =>
-			{
-				bool canceled = ApplicationController.Instance.ConditionalCancelPrint();
-				if (canceled)
-				{
-					this.Close();
-				}
-			};
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
-			{
-				cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-			}, ref unregisterEvents);
-			cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-			actionBar.AddChild(cancelButton);
-
-			actionBar.AddChild(CreateVerticalLine());
-
-			var advancedButton = CreateButton("Advanced".Localize().ToUpper());
-			actionBar.AddChild(advancedButton);
-			advancedButton.Click += (s, e) =>
-			{
-				if (bodyContainer.Children[0].GetType() == typeof(BasicBody))
-				{
-					bodyContainer.CloseAllChildren();
-					bodyContainer.AddChild(new AdvancedBody());
-				}
-				else
-				{
-					bodyContainer.CloseAllChildren();
-					bodyContainer.AddChild(new BasicBody());
-				}
-			};
-
-			return actionBar;
-		}
-
-		public static bool IsShowing
-		{
-			get
-			{
-				if (instance != null)
-				{
-					return true;
-				}
-
-				return false;
-			}
-		}
-
-		public static void Show(Action onCloseCallback)
-		{
-			if (instance == null)
-			{
-				instance = new PrintingWindow(onCloseCallback);
-				instance.ShowAsSystemWindow();
-			}
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			instance = null;
-			base.OnClosed(e);
-			onCloseCallback();
-		}
-
-		private Button CreateButton(string localizedText, bool centerText = true)
-		{
-			var button = buttonFactory.Generate(localizedText, centerText: centerText);
-			button.Cursor = Cursors.Hand;
-			button.Margin = new BorderDouble(40, 10);
-			button.VAnchor = VAnchor.ParentCenter;
-
-			return button;
-		}
-
-		private GuiWidget CreateDropShadow()
-		{
-			var dropShadowWidget = new GuiWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Height = 12 * GuiWidget.DeviceScale,
-				DoubleBuffer = true,
-			};
-
-			dropShadowWidget.AfterDraw += (s, e) =>
-			{
-				Byte[] buffer = dropShadowWidget.BackBuffer.GetBuffer();
-				for (int y = 0; y < dropShadowWidget.Height; y++)
-				{
-					int yOffset = dropShadowWidget.BackBuffer.GetBufferOffsetY(y);
-					byte alpha = (byte)((y / dropShadowWidget.Height) * 100);
-					for (int x = 0; x < dropShadowWidget.Width; x++)
-					{
-						buffer[yOffset + x * 4 + 0] = 0;
-						buffer[yOffset + x * 4 + 1] = 0;
-						buffer[yOffset + x * 4 + 2] = 0;
-						buffer[yOffset + x * 4 + 3] = alpha;
-					}
-				}
-			};
-
-			return dropShadowWidget;
-		}
-
-		public static HorizontalLine CreateHorizontalLine()
-		{
-			return new HorizontalLine()
-			{
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
-			};
-		}
-
-		public static VerticalLine CreateVerticalLine()
-		{
-			return new VerticalLine()
-			{
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
-			};
 		}
 	}
 
