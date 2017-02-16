@@ -52,11 +52,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string PresentationName { get; set; }
 
-		public string HelpText { get; set; }
+		public string ShowIfSet { get; set; }
+
+		public string DefaultValue { get; set; }
 
 		public DataEditTypes DataEditType { get; set; }
 
-		public string ExtraSettings { get; set; }
+		public string HelpText { get; set; } = "";
+
+		public string ExtraSettings { get; set; } = "";
 
 		public bool ShowAsOverride { get; set; } = true;
 
@@ -64,44 +68,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<Dictionary<string, string>> SetSettingsOnChange = new List<Dictionary<string,string>>();
 
-		public string ShowIfSet { get; set; }
-		
-		public bool ResetAtEndOfPrint { get; set; }
+		public bool ResetAtEndOfPrint { get; set; } = false;
 
 		public bool RebuildGCodeOnChange { get; set; } = true;
-
-		public string DefaultValue { get; set; }
-
-		public bool ReloadUiWhenChanged { get; set; }
-
-		static public SliceSettingData NewOrganizerSettingData(string slicerConfigName, string presentationName, SliceSettingData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
-		{
-			return new SliceSettingData(slicerConfigName, presentationName, dataEditType, extraSettings, helpText);
-		}
-
-		static public SliceSettingData NewOrganizerSettingData(string lineFromSettingsFile)
-		{
-			string[] parameters = lineFromSettingsFile.Split('|');
-			SliceSettingData.DataEditTypes valueType = (SliceSettingData.DataEditTypes)Enum.Parse(typeof(SliceSettingData.DataEditTypes), parameters[2].Trim());
-			switch (parameters.Length)
-			{
-				case 3:
-					return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType);
-
-				case 4:
-					return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType, parameters[3].Trim());
-
-				case 5:
-					return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType, parameters[3].Trim(), parameters[4].Trim());
-
-				default:
-					throw new Exception("Bad number of parameters.");
-			}
-		}
+		
+		public bool ReloadUiWhenChanged { get; set; } = false;
 
 		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
 		{
-			this.ExtraSettings = extraSettings;
+			// During deserialization Json.net has to call this constructor but may fail to find the optional ExtraSettings
+			// value. When this occurs, it passes null overriding the default empty string. To ensure empty string instead
+			// of null, we conditionally reassign "" if null
+			this.ExtraSettings = extraSettings ?? "";
 			this.SlicerConfigName = slicerConfigName;
 			this.PresentationName = presentationName;
 			this.DataEditType = dataEditType;
@@ -111,49 +89,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class OrganizerSubGroup
 	{
-		private string name;
-
-		public string Name
-		{
-			get { return name; }
-			set { name = value; }
-		}
+		public string Name { get; }
 
 		public List<SliceSettingData> SettingDataList { get; private set; } = new List<SliceSettingData>();
 
 		public OrganizerSubGroup(string groupName)
 		{
-			this.name = groupName;
+			this.Name = groupName;
 		}
 	}
 
 	public class OrganizerGroup
 	{
-		private string groupName;
+		public string Name { get; }
 
-		public string Name
-		{
-			get { return groupName; }
-		}
-
-		private List<OrganizerSubGroup> subGroupsList = new List<OrganizerSubGroup>();
-
-		public List<OrganizerSubGroup> SubGroupsList
-		{
-			get { return subGroupsList; }
-			set { subGroupsList = value; }
-		}
-
+		public List<OrganizerSubGroup> SubGroupsList { get; set; } = new List<OrganizerSubGroup>();
+		
 		public OrganizerGroup(string displayName)
 		{
-			this.groupName = displayName;
-		}
-
-		internal OrganizerSubGroup NewAndAddSettingsSubGroup(string subGroupName)
-		{
-			OrganizerSubGroup newSettingsSubGroup = new OrganizerSubGroup(subGroupName);
-			SubGroupsList.Add(newSettingsSubGroup);
-			return newSettingsSubGroup;
+			this.Name = displayName;
 		}
 	}
 
@@ -161,24 +115,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public string Name { get; set; }
 
-		private List<OrganizerGroup> groupsList = new List<OrganizerGroup>();
-
-		public List<OrganizerGroup> GroupsList
-		{
-			get { return groupsList; }
-			set { groupsList = value; }
-		}
+		public List<OrganizerGroup> GroupsList { get; set; } = new List<OrganizerGroup>();
 
 		public OrganizerCategory(string categoryName)
 		{
-			Name = categoryName;
-		}
-
-		public OrganizerGroup NewAndAddSettingsGroup(string settingsGroupName)
-		{
-			OrganizerGroup newSettingsGroup = new OrganizerGroup(settingsGroupName);
-			GroupsList.Add(newSettingsGroup);
-			return newSettingsGroup;
+			this.Name = categoryName;
 		}
 	}
 
@@ -186,24 +127,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public string Name { get; set; }
 
-		private List<OrganizerCategory> categoriesList = new List<OrganizerCategory>();
-
-		public List<OrganizerCategory> CategoriesList
-		{
-			get { return categoriesList; }
-			set { categoriesList = value; }
-		}
+		public List<OrganizerCategory> CategoriesList = new List<OrganizerCategory>();
 
 		public OrganizerUserLevel(string userLevelName)
 		{
-			Name = userLevelName;
-		}
-
-		public OrganizerCategory NewAndAddSettingsGroup(string settingsGroupName)
-		{
-			OrganizerCategory newCategoriesGroup = new OrganizerCategory(settingsGroupName);
-			CategoriesList.Add(newCategoriesGroup);
-			return newCategoriesGroup;
+			this.Name = userLevelName;
 		}
 	}
 
@@ -211,13 +139,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private static Dictionary<string, string> defaultSettings = null;
 
-		private Dictionary<string, OrganizerUserLevel> userLevels = new Dictionary<string, OrganizerUserLevel>();
-
-		public Dictionary<string, OrganizerUserLevel> UserLevels
-		{
-			get { return userLevels; }
-			set { userLevels = value; }
-		}
+		public Dictionary<string, OrganizerUserLevel> UserLevels { get; set; } = new Dictionary<string, OrganizerUserLevel>();
 
 		private static SliceSettingsOrganizer instance = null;
 
