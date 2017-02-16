@@ -5941,3 +5941,12 @@ Translated:WARNING: In order to perform print recovery, your printer must move d
 English:Print Monitor
 Translated:Print Monitor
 
+English:Currently Printing
+Translated:Currently Printing
+
+English:Homing Axis
+Translated:Homing Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Waiting for Extruder to Heat to
+
