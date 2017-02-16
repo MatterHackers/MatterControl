@@ -181,16 +181,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		};
 
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-		private Action onCloseCallback;
 		private Stopwatch totalDrawTime = new Stopwatch();
 		GuiWidget bodyContainer;
 
-		public PrintingWindow(Action onCloseCallback)
+		public PrintingWindow()
 			: base(1280, 750)
 		{
 			AlwaysOnTopOfMain = true;
 			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			this.onCloseCallback = onCloseCallback;
 			this.Title = "Print Monitor".Localize();
 
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -247,9 +245,26 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+				pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+					&& !PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+
+				// Close if not Preparing, Printing or Paused
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				{
+					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+						break;
+
+					default:
+						this.CloseOnIdle();
+						break;
+				}
 			}, ref unregisterEvents);
-			pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+
+			pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+				&& !PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+
 			actionBar.AddChild(pauseButton);
 
 			resumeButton.Visible = false;
@@ -326,11 +341,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public static void Show(Action onCloseCallback)
+		public static void Show()
 		{
 			if (instance == null)
 			{
-				instance = new PrintingWindow(onCloseCallback);
+				instance = new PrintingWindow();
 				instance.ShowAsSystemWindow();
 			}
 		}
@@ -340,7 +355,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			unregisterEvents?.Invoke(this, null);
 			instance = null;
 			base.OnClosed(e);
-			onCloseCallback();
 		}
 
 		private Button CreateButton(string localizedText, bool centerText = true)
