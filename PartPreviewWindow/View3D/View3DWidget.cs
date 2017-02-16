@@ -1387,7 +1387,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
 			if (renderTypeString == null)
 			{
-				if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+				if (UserSettings.Instance.IsTouchScreen)
 				{
 					renderTypeString = "Shaded";
 				}

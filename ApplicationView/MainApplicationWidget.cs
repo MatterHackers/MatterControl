@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl
 						// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 						bool na = ProfileManager.Instance.IsGuestProfile;
 
-						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+						if (UserSettings.Instance.IsTouchScreen)
 						{
 							// make sure that on touchscreen (due to lazy tabs) we initialize our stating parts and queue
 							var temp = new LibraryProviderSQLite(null, null, null, null);

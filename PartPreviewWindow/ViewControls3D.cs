@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls3D(MeshViewerWidget meshViewerWidget)
 		{
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				buttonHeight = 40;
 			}
