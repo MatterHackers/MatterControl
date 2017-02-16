@@ -117,7 +117,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 				if (editManualMovementSettingsWindow == null)
 				{
 					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), ActiveSliceSettings.Instance.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
-					editManualMovementSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editManualMovementSettingsWindow = null; };
+					editManualMovementSettingsWindow.Closed += (s, e2) =>
+					{
+						editManualMovementSettingsWindow = null;
+					};
 				}
 				else
 				{
@@ -155,19 +158,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(movementControlsGroupBox);
 		}
 
-		private static void SetMovementSpeeds(object sender, EventArgs e)
+		private static void SetMovementSpeeds(string speedString)
 		{
-			StringEventArgs stringEvent = e as StringEventArgs;
-			if (stringEvent != null && stringEvent.Data != null)
+			if (!string.IsNullOrEmpty(speedString))
 			{
-				ActiveSliceSettings.Instance.Helpers.SetManualMovementSpeeds(stringEvent.Data);
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.manual_movement_speeds, speedString);
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
-		}
-
-		private void disableMotors_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.ReleaseMotors();
 		}
 
 		private FlowLayoutWidget GetHomeButtonBar()
@@ -219,7 +216,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
 			disableMotors.Margin = new BorderDouble(0);
-			disableMotors.Click += disableMotors_Click;
+			disableMotors.Click += (s, e) =>
+			{
+				PrinterConnectionAndCommunication.Instance.ReleaseMotors();
+			};
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			GuiWidget spacerReleaseShow = new GuiWidget(10 * GuiWidget.DeviceScale, 0);
