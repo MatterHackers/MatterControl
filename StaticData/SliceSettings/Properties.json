@@ -285,13 +285,13 @@
 		"DefaultValue": "0",
 		"ReloadUiWhenChanged": true
 	},
-  {
-    "SlicerConfigName": "heat_extruder_before_homing",
-    "PresentationName": "Heat Before Homing",
-    "HelpText": "Forces the printer to heat the nozzle before homing.",
-    "DataEditType": "CHECK_BOX",
-    "DefaultValue": "0"
-  },
+	{
+		"SlicerConfigName": "heat_extruder_before_homing",
+		"PresentationName": "Heat Before Homing",
+		"HelpText": "Forces the printer to heat the nozzle before homing.",
+		"DataEditType": "CHECK_BOX",
+		"DefaultValue": "0"
+	},
 	{
 		"SlicerConfigName": "merge_overlapping_lines",
 		"PresentationName": "Merge Overlapping Lines",
@@ -703,16 +703,16 @@
 		"ReloadUiWhenChanged": true,
 		"RebuildGCodeOnChange": false
 	},
-  {
-    "SlicerConfigName": "print_leveling_required_to_print",
-    "PresentationName": "Require Leveling To Print",
-    "HelpText": "The printer requires print leveling to run correctly.",
-    "DataEditType": "CHECK_BOX",
-    "ShowIfSet": "!has_hardware_leveling",
-    "DefaultValue": "0",
-    "ReloadUiWhenChanged": true,
-    "RebuildGCodeOnChange": false
-  },
+	{
+		"SlicerConfigName": "print_leveling_required_to_print",
+		"PresentationName": "Require Leveling To Print",
+		"HelpText": "The printer requires print leveling to run correctly.",
+		"DataEditType": "CHECK_BOX",
+		"ShowIfSet": "!has_hardware_leveling",
+		"DefaultValue": "0",
+		"ReloadUiWhenChanged": true,
+		"RebuildGCodeOnChange": false
+	},
 	{
 		"SlicerConfigName": "print_leveling_probe_start",
 		"PresentationName": "Probe Start Height",
@@ -953,7 +953,7 @@
 		"DefaultValue": "100"
 	},
 	{
-				"SlicerConfigName": "perimeters",
+		"SlicerConfigName": "perimeters",
 		"PresentationName": "Perimeters",
 		"HelpText": "The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.",
 		"DataEditType": "INT_OR_MM",
@@ -1689,6 +1689,14 @@
 		"HelpText": "Controls the amount of extrusion",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"DefaultValue": "1",
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"SlicerConfigName": "manual_movement_speeds",
+		"PresentationName": "Manual Movement Speeds",
+		"HelpText": "Axis movement speeds",
+		"DataEditType": "STRING",
+		"DefaultValue": "x,3000,y,3000,z,315,e0,150",
 		"RebuildGCodeOnChange": false
 	}
 ]

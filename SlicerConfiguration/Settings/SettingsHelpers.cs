@@ -118,6 +118,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string active_quality_key = nameof(active_quality_key);
 		public const string extrusion_ratio = nameof(extrusion_ratio);
 		public const string feedrate_ratio = nameof(feedrate_ratio);
+		public const string manual_movement_speeds = nameof(manual_movement_speeds);
 	}
 
 	public class SettingsHelpers
@@ -253,11 +254,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void SetName(string name)
 		{
 			printerSettings.SetValue(SettingsKey.printer_name, name);
-		}
-
-		public void SetManualMovementSpeeds(string speed)
-		{
-			printerSettings.SetValue("manual_movement_speeds", speed);
 		}
 
 		private PrintLevelingData printLevelingData = null;
@@ -443,7 +439,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			Vector3 feedRate = new Vector3(3000, 3000, 315);
 
-			string savedSettings = ActiveSliceSettings.Instance.GetValue("manual_movement_speeds");
+			string savedSettings = ActiveSliceSettings.Instance.GetValue(SettingsKey.manual_movement_speeds);
 			if (!string.IsNullOrEmpty(savedSettings))
 			{
 				var segments = savedSettings.Split(',');
@@ -473,7 +469,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
 			if (PrinterConnectionAndCommunication.Instance != null)
 			{
-				string savedSettings = printerSettings.GetValue("manual_movement_speeds");
+				string savedSettings = printerSettings.GetValue(SettingsKey.manual_movement_speeds);
 				if (!string.IsNullOrEmpty(savedSettings))
 				{
 					presets = savedSettings;
