@@ -263,8 +263,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				printLevelingData = PrintLevelingData.Create(
 					ActiveSliceSettings.Instance,
-					printerSettings.GetValue(SettingsKey.print_leveling_data),
-					printerSettings.GetValue("MatterControl.PrintLevelingProbePositions"));
+					printerSettings.GetValue(SettingsKey.print_leveling_data));
 
 				if (printLevelingData.SampledPositions.Count == 3)
 				{
