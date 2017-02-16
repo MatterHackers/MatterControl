@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private TextWidget timeWidget;
 		private Stopwatch totalDrawTime = new Stopwatch();
 
-		public PrintingWindow(Action onCloseCallback, bool mockMode = false)
+		public PrintingWindow(Action onCloseCallback)
 			: base(1280, 750)
 		{
 			AlwaysOnTopOfMain = true;
@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			topToBottom.AddChild(footerBar);
 
-			int extruderCount = mockMode ? 3 : ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
 			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(i)).ToList();
 
@@ -466,14 +466,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			UiThread.RunOnIdle(() =>
 			{
-				if (mockMode)
-				{
-					MockProgress();
-				}
-				else
-				{
-					CheckOnPrinter();
-				}
+				CheckOnPrinter();
 			});
 		}
 
@@ -497,31 +490,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				instance = new PrintingWindow(onCloseCallback);
 				instance.ShowAsSystemWindow();
 			}
-		}
-
-		public void MockProgress()
-		{
-			if (progressDial.CompletedRatio >= 1)
-			{
-				progressDial.CompletedRatio = 0;
-				progressDial.LayerCount = 0;
-			}
-			else
-			{
-				progressDial.CompletedRatio = Math.Min(progressDial.CompletedRatio + 0.01, 1);
-			}
-
-			if (progressDial.LayerCompletedRatio >= 1)
-			{
-				progressDial.LayerCompletedRatio = 0;
-				progressDial.LayerCount += 1;
-			}
-			else
-			{
-				progressDial.LayerCompletedRatio = Math.Min(progressDial.LayerCompletedRatio + 0.1, 1);
-			}
-
-			UiThread.RunOnIdle(MockProgress, .2);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
