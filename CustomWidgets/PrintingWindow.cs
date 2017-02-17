@@ -184,6 +184,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private Stopwatch totalDrawTime = new Stopwatch();
 		GuiWidget bodyContainer;
 
+		private BasicBody basicBody;
+
 		public PrintingWindow()
 			: base(1280, 750)
 		{
@@ -204,12 +206,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			topToBottom.AddChild(CreateDropShadow());
 
+			basicBody = new BasicBody();
 			bodyContainer = new GuiWidget()
 			{
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
 			};
-			bodyContainer.AddChild(new BasicBody());
+			bodyContainer.AddChild(basicBody);
 			topToBottom.AddChild(bodyContainer);
 		}
 
@@ -243,25 +246,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					resumeButton.Visible = true;
 				});
 			};
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
-			{
-				pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-					&& !PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-
-				// Close if not Preparing, Printing or Paused
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-				{
-					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						break;
-
-					default:
-						this.CloseOnIdle();
-						break;
-				}
-			}, ref unregisterEvents);
-
 			pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
 				&& !PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
 
@@ -294,10 +278,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.Close();
 				}
 			};
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
-			{
-				cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-			}, ref unregisterEvents);
 			cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
 			actionBar.AddChild(cancelButton);
 
@@ -308,11 +288,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			advancedButton.Click += (s, e) =>
 			{
 				bool inBasicMode = bodyContainer.Children[0] is BasicBody;
-
-				bodyContainer.CloseAllChildren();
-
 				if (inBasicMode)
 				{
+					bodyContainer.RemoveChild(basicBody);
+
 					bodyContainer.AddChild(new ManualPrinterControls()
 					{
 						VAnchor = VAnchor.ParentBottomTop,
@@ -321,9 +300,36 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else
 				{
-					bodyContainer.AddChild(new BasicBody());
+					bodyContainer.CloseAllChildren();
+
+					basicBody.ClearRemovedFlag();
+					bodyContainer.AddChild(basicBody);
 				}
 			};
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+					&& !PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+
+				// Close if not Preparing, Printing or Paused
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				{
+					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+						break;
+
+					default:
+						this.CloseOnIdle();
+						break;
+				}
+			}, ref unregisterEvents);
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+			}, ref unregisterEvents);
 
 			return actionBar;
 		}
@@ -352,6 +358,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			basicBody?.Close();
 			unregisterEvents?.Invoke(this, null);
 			instance = null;
 			base.OnClosed(e);
@@ -456,13 +463,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight
 			};
-
 			AddChild(topToBottom);
 
 			var bodyRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(bottom: 30),
 			};
 			topToBottom.AddChild(bodyRow);
 
@@ -570,7 +577,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentBottom | VAnchor.FitToChildren,
 				HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
-				Margin = new BorderDouble(bottom: 30)
+				Margin = new BorderDouble(bottom: 30),
 			};
 			topToBottom.AddChild(footerBar);
 
