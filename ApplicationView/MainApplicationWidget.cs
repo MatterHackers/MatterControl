@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl
 	using PrintHistory;
 	using Agg.Image;
 	using System.Net;
+	using CustomWidgets;
 
 	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
 	{
@@ -202,7 +203,6 @@ namespace MatterHackers.MatterControl
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
 
-
 #if DEBUG
 		public const string EnvironmentName = "TestEnv_";
 #else
@@ -270,6 +270,20 @@ namespace MatterHackers.MatterControl
 
 			// Remove consumed ClientToken from running list on shutdown
 			ApplicationClosed += (s, e) => ApplicationSettings.Instance.ReleaseClientToken();
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				{
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+						if (UserSettings.Instance.IsTouchScreen)
+						{
+							UiThread.RunOnIdle(PrintingWindow.Show);
+						}
+
+						break;
+				}
+			}, ref unregisterEvents);
 		}
 
 		public void StartSignIn()
@@ -646,7 +660,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        private EventHandler unregisterEvent;
+		private EventHandler unregisterEvent;
 		public void StartPrintingTest()
 		{
 			QueueData.Instance.RemoveAll();
