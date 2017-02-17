@@ -5,8 +5,6 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
-	public enum ApplicationDisplayType { Responsive, Touchscreen };
-
 	public static class UserSettingsKey
 	{
 		public const string UpdateFeedType = nameof(UpdateFeedType);
@@ -102,21 +100,6 @@ namespace MatterHackers.MatterControl
 
 			setting.Value = value;
 			setting.Commit();
-		}
-
-		public ApplicationDisplayType DisplayMode
-		{
-			get
-			{
-				if (this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen")
-				{
-					return ApplicationDisplayType.Touchscreen;
-				}
-				else
-				{
-					return ApplicationDisplayType.Responsive;
-				}
-			}
 		}
 
 		public bool IsTouchScreen => this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";

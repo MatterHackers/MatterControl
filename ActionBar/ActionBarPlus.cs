@@ -42,18 +42,13 @@ namespace MatterHackers.MatterControl
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
-			// Add Child Elements
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Responsive)
-			{
-				this.AddChild(new PrinterConnectAndSelectControl());
-			}
-
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				this.AddChild(new TouchScreenPrintStatusRow(queueDataView));
 			}
 			else
 			{
+				this.AddChild(new PrinterConnectAndSelectControl());
 				this.AddChild(new PrintStatusRow(queueDataView));
 			}
 
