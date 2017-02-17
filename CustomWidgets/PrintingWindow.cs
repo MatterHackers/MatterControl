@@ -175,6 +175,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			invertImageLocation = false,
 			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			hoverFillColor = RGBA_Bytes.Transparent,
 			disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
 			disabledFillColor = RGBA_Bytes.Transparent,
 			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -297,6 +298,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						VAnchor = VAnchor.ParentBottomTop,
 						HAnchor = HAnchor.ParentLeftRight
 					});
+
+					advancedButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				}
 				else
 				{
@@ -304,6 +307,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					basicBody.ClearRemovedFlag();
 					bodyContainer.AddChild(basicBody);
+
+					advancedButton.BackgroundColor = RGBA_Bytes.Transparent;
 				}
 			};
 
@@ -367,9 +372,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private Button CreateButton(string localizedText, bool centerText = true)
 		{
 			var button = buttonFactory.Generate(localizedText, centerText: centerText);
+			var bounds = button.LocalBounds;
+			bounds.Inflate(new BorderDouble(40, 10));
+			button.LocalBounds = bounds;
 			button.Cursor = Cursors.Hand;
-			button.Margin = new BorderDouble(40, 10);
-			button.VAnchor = VAnchor.ParentCenter;
+			button.Margin = new BorderDouble(0);
+			foreach (var child in button.Children)
+			{
+				child.VAnchor = VAnchor.ParentCenter;
+			}
+			button.VAnchor = VAnchor.ParentBottomTop;
 
 			return button;
 		}
