@@ -489,7 +489,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
-				Margin = smallScreen ? new BorderDouble(30, 5) : new BorderDouble(30,20),
+				Margin = smallScreen ? new BorderDouble(30, 5, 30, 0) : new BorderDouble(30,20, 30, 20- 12), // the -12 is to take out the top bar
 			};
 			topToBottom.AddChild(bodyRow);
 
@@ -534,8 +534,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				progressDial = new ProgressDial()
 				{
 					HAnchor = HAnchor.ParentCenter,
-					Height = 200,
-					Width = 200
+					Height = 200 * DeviceScale,
+					Width = 200 * DeviceScale
 				};
 				progressContainer.AddChild(progressDial);
 
@@ -672,10 +672,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class ProgressDial : GuiWidget
 	{
 		private RGBA_Bytes borderColor;
-		private double borderRadius;
 		private Stroke borderStroke;
 		private double completedRatio = -1;
-		private double innerRingRadius = 90;
+		private double innerRingRadius;
 
 		private double layerCompletedRatio = 0;
 
@@ -683,11 +682,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private TextWidget layerCountWidget;
 
-		private double outerRingRadius = 100;
+		private double outerRingRadius;
 
-		private double outerRingStrokeWidth = 7;
-
-		private int padding = 20;
+		private double outerRingStrokeWidth = 7 * DeviceScale;
 
 		private TextWidget percentCompleteWidget;
 
@@ -695,7 +692,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private RGBA_Bytes PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).GetAsRGBA_Bytes();
 
-		private double strokeWidth = 10;
+		private double innerRingStrokeWidth = 10 * GuiWidget.DeviceScale;
 
 		public ProgressDial()
 		{
@@ -771,16 +768,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
-			borderRadius = this.LocalBounds.Width / 2 - padding;
-			outerRingRadius = borderRadius - (outerRingStrokeWidth / 2) - 6; ;
-			innerRingRadius = outerRingRadius - (outerRingStrokeWidth / 2) - (strokeWidth / 2);
+			double borderRadius = this.LocalBounds.Width / 2 - 20 * DeviceScale;
+			outerRingRadius = borderRadius - (outerRingStrokeWidth / 2) - 6 * DeviceScale;
+			innerRingRadius = outerRingRadius - (outerRingStrokeWidth / 2) - (innerRingStrokeWidth / 2);
 
-			Console.WriteLine("width: {3} - border: {0}, outer: {1}, inner: {2}", borderRadius, outerRingRadius, innerRingRadius, this.LocalBounds.Width);
-
-			borderStroke = new Stroke(new Ellipse(
-				Vector2.Zero,
-				borderRadius,
-				borderRadius));
+			borderStroke = new Stroke(new Ellipse(Vector2.Zero, borderRadius, borderRadius));
 
 			base.OnBoundsChanged(e);
 		}
@@ -801,6 +793,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				0,
 				MathHelper.DegreesToRadians(360) * LayerCompletedRatio, // percentCompletedInRadians
 				Arc.Direction.ClockWise);
+
 			var arcStroke = new Stroke(ringArc);
 			arcStroke.width(outerRingStrokeWidth);
 			graphics2D.Render(
@@ -815,7 +808,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				MathHelper.DegreesToRadians(360) * CompletedRatio, // percentCompletedInRadians
 				Arc.Direction.ClockWise);
 			arcStroke = new Stroke(ringArc);
-			arcStroke.width(strokeWidth);
+			arcStroke.width(innerRingStrokeWidth);
 			graphics2D.Render(
 				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center),
 				PrimaryAccentColor);
