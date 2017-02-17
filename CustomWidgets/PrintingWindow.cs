@@ -52,8 +52,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class BedStatusWidget : TemperatureStatusWidget
 	{
-		public BedStatusWidget()
-			: base("Bed Temperature".Localize())
+		public BedStatusWidget(bool smallScreen)
+			: base(smallScreen ? "Bed".Localize() : "Bed Temperature".Localize())
 		{
 			PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent((s, e) =>
 			{
@@ -470,11 +470,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			progressDial.CompletedRatio = PrinterConnectionAndCommunication.Instance.PercentComplete / 100;
 		}
 
-		public BasicBody()
+		public override void OnLoad(EventArgs args)
 		{
-			VAnchor = VAnchor.ParentBottomTop;
-			HAnchor = HAnchor.ParentLeftRight;
-			Padding = new BorderDouble(50, 30);
+			base.OnLoad(args);
+
+			bool smallScreen = Parent.Width <= 1180;
+
+			Padding = smallScreen ? new BorderDouble(20, 5) : new BorderDouble(50, 30);
 
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -487,13 +489,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(bottom: 30),
+				Margin = smallScreen ? new BorderDouble(30, 5) : new BorderDouble(30,20),
 			};
 			topToBottom.AddChild(bodyRow);
 
 			// Thumbnail section
 			{
-				ImageBuffer imageBuffer = PartThumbnailWidget.GetImageForItem(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 500, 500);
+				int imageSize = smallScreen ? 300 : 500;
+				ImageBuffer imageBuffer = PartThumbnailWidget.GetImageForItem(PrinterConnectionAndCommunication.Instance.ActivePrintItem, imageSize, imageSize);
 
 				if (imageBuffer == null)
 				{
@@ -505,7 +508,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var partThumbnail = new ImageWidget(imageBuffer)
 				{
 					VAnchor = VAnchor.ParentCenter,
-					Margin = new BorderDouble(right: 50)
+					Margin = smallScreen ? new BorderDouble(right: 20) : new BorderDouble(right: 50),
 				};
 				bodyRow.AddChild(partThumbnail);
 			}
@@ -582,7 +585,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// ZControls
 			{
-				var widget = new ZAxisControls()
+				var widget = new ZAxisControls(smallScreen)
 				{
 					Margin = new BorderDouble(left: 50),
 					VAnchor = VAnchor.ParentCenter,
@@ -595,7 +598,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentBottom | VAnchor.FitToChildren,
 				HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
-				Margin = new BorderDouble(bottom: 30),
+				Margin = new BorderDouble(bottom: 0),
 			};
 			topToBottom.AddChild(footerBar);
 
@@ -617,7 +620,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					extruderColumn.AddChild(widget);
 				}
 
-				footerBar.AddChild(new BedStatusWidget()
+				footerBar.AddChild(new BedStatusWidget(smallScreen)
 				{
 					VAnchor = VAnchor.ParentCenter,
 				});
@@ -657,6 +660,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				CheckOnPrinter();
 			});
+		}
+
+		public BasicBody()
+		{
+			VAnchor = VAnchor.ParentBottomTop;
+			HAnchor = HAnchor.ParentLeftRight;
 		}
 	}
 
@@ -833,7 +842,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			FontSize = 13,
 		};
 
-		public ZAxisControls() :
+		public ZAxisControls(bool smallScreen) :
 			base(FlowDirection.TopToBottom)
 		{
 			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
@@ -841,17 +850,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			buttonFactory.BorderWidth = 0;
 			buttonFactory.Colors.Text.Normal = RGBA_Bytes.White;
 
-			this.AddChild(new TextWidget("Z+", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(new TextWidget("Z+", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				HAnchor = HAnchor.ParentCenter,
 				Margin = new BorderDouble(bottom: 8)
 			});
 
-			this.AddChild(CreateZMoveButton(1));
+			this.AddChild(CreateZMoveButton(1, smallScreen));
 
-			this.AddChild(CreateZMoveButton(.1));
+			this.AddChild(CreateZMoveButton(.1, smallScreen));
 
-			this.AddChild(CreateZMoveButton(.02));
+			this.AddChild(CreateZMoveButton(.02, smallScreen));
 
 			this.AddChild(new ZTuningWidget()
 			{
@@ -859,13 +868,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = 10
 			});
 
-			this.AddChild(CreateZMoveButton(-.02));
+			this.AddChild(CreateZMoveButton(-.02, smallScreen));
 
-			this.AddChild(CreateZMoveButton(-.1));
+			this.AddChild(CreateZMoveButton(-.1, smallScreen));
 
-			this.AddChild(CreateZMoveButton(-1));
+			this.AddChild(CreateZMoveButton(-1, smallScreen));
 
-			this.AddChild(new TextWidget("Z-", pointSize: 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(new TextWidget("Z-", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				HAnchor = HAnchor.ParentCenter,
 				Margin = new BorderDouble(top: 9),
@@ -879,7 +888,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
 		}
 
-		private Button CreateZMoveButton(double moveAmount, bool centerText = true)
+		private Button CreateZMoveButton(double moveAmount, bool smallScreen)
 		{
 			var button = buttonFactory.GenerateMoveButton($"{Math.Abs(moveAmount):0.00} mm", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
 			button.MoveAmount = moveAmount;
@@ -887,7 +896,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			button.VAnchor = VAnchor.FitToChildren;
 			button.Margin = new BorderDouble(0, 1);
 			button.Padding = new BorderDouble(15, 7);
-			button.Height = 55;
+			if (smallScreen) button.Height = 45; else button.Height = 55;
 			button.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			return button;
