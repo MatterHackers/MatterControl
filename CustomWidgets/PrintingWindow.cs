@@ -489,7 +489,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				VAnchor = VAnchor.ParentBottomTop,
 				HAnchor = HAnchor.ParentLeftRight,
-				Margin = smallScreen ? new BorderDouble(30, 5, 30, 0) : new BorderDouble(30,20, 30, 20- 12), // the -12 is to take out the top bar
+				Margin = smallScreen ? new BorderDouble(30, 5, 30, 0) : new BorderDouble(30,20, 30, 0), // the -12 is to take out the top bar
 			};
 			topToBottom.AddChild(bodyRow);
 
@@ -761,7 +761,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (layerCount != value)
 				{
 					layerCount = value;
-					layerCountWidget.Text = "Layer " + layerCount;
+					layerCountWidget.Text = "Layer".Localize() + " " + layerCount;
 				}
 			}
 		}
