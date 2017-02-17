@@ -5950,3 +5950,9 @@ Translated:Homing Axis
 English:Waiting for Extruder to Heat to
 Translated:Waiting for Extruder to Heat to
 
+English:Waiting for Bed to Heat to
+Translated:Waiting for Bed to Heat to
+
+English:Bed
+Translated:Bed
+
