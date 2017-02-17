@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl
 		public ManualPrinterControls()
 		{
 			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 			AnchorAll();
 			AutoScroll = true;
 

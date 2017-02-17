@@ -243,8 +243,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				UiThread.RunOnIdle(() =>
 				{
 					PrinterConnectionAndCommunication.Instance.RequestPause();
-					pauseButton.Visible = false;
-					resumeButton.Visible = true;
 				});
 			};
 			pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
@@ -261,9 +259,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						PrinterConnectionAndCommunication.Instance.Resume();
 					}
-
-					resumeButton.Visible = false;
-					pauseButton.Visible = true;
 				});
 			};
 			actionBar.AddChild(resumeButton);
@@ -316,6 +311,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				pauseButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
 					&& !PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+
+				if(PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				{
+					resumeButton.Visible = true;
+					pauseButton.Visible = false;
+				}
+				else
+				{
+					resumeButton.Visible = false;
+					pauseButton.Visible = true;
+				}
 
 				// Close if not Preparing, Printing or Paused
 				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
@@ -377,7 +383,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			button.LocalBounds = bounds;
 			button.Cursor = Cursors.Hand;
 			button.Margin = new BorderDouble(0);
-			foreach (var child in button.Children)
+			foreach(var child in button.Children)
 			{
 				child.VAnchor = VAnchor.ParentCenter;
 			}
