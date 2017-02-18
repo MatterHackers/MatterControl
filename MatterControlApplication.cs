@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl
 			{
 				UseOpenGL = true;
 			}
-			string version = "1.6";
+			string version = "1.7";
 
 			Title = "MatterHackers: MatterControl {0}".FormatWith(version);
 			if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
@@ -614,49 +614,22 @@ namespace MatterHackers.MatterControl
 				if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
 				{
 					// Needed as we can't assign to CancelClose inside of the lambda below
-					bool continueWithShutdown = false;
-
-					StyledMessageBox.ShowMessageBox(
-						(shutdownConfirmed) => continueWithShutdown = shutdownConfirmed,
+					StyledMessageBox.ShowMessageBox(ConditionalyCloseNow,
 						"Are you sure you want to abort the current print and close MatterControl?".Localize(),
 						"Abort Print".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
 
-					if (continueWithShutdown)
-					{
-						PrinterConnectionAndCommunication.Instance.Disable();
-						this.Close();
-						CancelClose = false;
-					}
-					else
-					{
-						// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called
-						// when MatterControlApplication.OnClosed is invoked
-						CancelClose = true;
-					}
+					CancelClose = true;
 				}
 				else
 				{
-					bool continueWithShutdown = false;
-
 					StyledMessageBox.ShowMessageBox(
-						(shutdownConfirmed) => continueWithShutdown = shutdownConfirmed,
+						ConditionalyCloseNow,
 						"Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize(),
 						"Exit while printing".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
 
-					if (continueWithShutdown)
-					{
-						PrinterConnectionAndCommunication.Instance.Disable();
-						this.Close();
-						CancelClose = false;
-					}
-					else
-					{
-						// It's safe to cancel an active print because PrinterConnectionAndCommunication.Disable will be called
-						// when MatterControlApplication.OnClosed is invoked
-						CancelClose = true;
-					}
+					CancelClose = true;
 				}
 			}
 			else if (PartsSheet.IsSaving())
@@ -667,6 +640,18 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				base.OnClosing(out CancelClose);
+			}
+		}
+
+		private void ConditionalyCloseNow(bool continueWithShutdown)
+		{
+			if (continueWithShutdown)
+			{
+				PrinterConnectionAndCommunication.Instance.Disable();
+
+				MatterControlApplication app = MatterControlApplication.Instance;
+				app.RestartOnClose = false;
+				app.Close();
 			}
 		}
 
