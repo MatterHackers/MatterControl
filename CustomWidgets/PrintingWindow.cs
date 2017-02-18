@@ -849,23 +849,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = new BorderDouble(bottom: 8)
 			});
 
-			this.AddChild(CreateZMoveButton(1, smallScreen));
-
 			this.AddChild(CreateZMoveButton(.1, smallScreen));
 
 			this.AddChild(CreateZMoveButton(.02, smallScreen));
 
-			this.AddChild(new ZTuningWidget()
+			this.AddChild(new ZTuningWidget(false)
 			{
-				HAnchor = HAnchor.ParentCenter,
+				HAnchor = HAnchor.ParentCenter | HAnchor.FitToChildren,
 				Margin = 10
 			});
 
 			this.AddChild(CreateZMoveButton(-.02, smallScreen));
 
 			this.AddChild(CreateZMoveButton(-.1, smallScreen));
-
-			this.AddChild(CreateZMoveButton(-1, smallScreen));
 
 			this.AddChild(new TextWidget("Z-", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
