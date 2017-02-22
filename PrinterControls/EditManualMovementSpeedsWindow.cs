@@ -42,12 +42,12 @@ namespace MatterHackers.MatterControl
 	public class EditManualMovementSpeedsWindow : SystemWindow
 	{
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		private EventHandler functionToCallOnSave;
+		private Action<string> functionToCallOnSave;
 		private List<string> axisLabels = new List<string>();
 		private List<GuiWidget> valueEditors = new List<GuiWidget>();
 
 
-		public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, EventHandler functionToCallOnSave)
+		public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, Action<string> functionToCallOnSave)
 			: base(260, 300)
 		{
 			AlwaysOnTopOfMain = true;
@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
 			MinimumSize = new Vector2(260, 300);
 
 			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
-			savePresetsButton.Click += new EventHandler(save_Click);
+			savePresetsButton.Click += save_Click;
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelPresetsButton.Click += (sender, e) =>
@@ -210,9 +210,11 @@ namespace MatterHackers.MatterControl
 				double movementSpeed = 0;
 				double.TryParse(valueEditors[i].Text, out movementSpeed);
 				movementSpeed = movementSpeed * 60;	// Convert to mm/min
+
 				settingString.Append(movementSpeed.ToString());
 			}
-			functionToCallOnSave(this, new StringEventArgs(settingString.ToString()));
+
+			functionToCallOnSave(settingString.ToString());
 			Close();
 		}
 	}

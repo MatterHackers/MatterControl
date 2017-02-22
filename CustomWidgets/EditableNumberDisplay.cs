@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 			valueDisplay.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			valueDisplay.Margin = new BorderDouble(6);
 
-			clickableValueContainer.Click += new EventHandler(editField_Click);
+			clickableValueContainer.Click += editField_Click;
 
 			clickableValueContainer.AddChild(valueDisplay);
 			clickableValueContainer.SetBoundsToEncloseChildren();
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-			setButton.Click += new EventHandler(setButton_Click);
+			setButton.Click += setButton_Click;
 
 			this.AddChild(clickableValueContainer);
 			this.AddChild(numberInputField);

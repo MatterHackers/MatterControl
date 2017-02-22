@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl
 		public ManualPrinterControls()
 		{
 			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 			AnchorAll();
 			AutoScroll = true;
 
@@ -105,7 +106,7 @@ namespace MatterHackers.MatterControl
 			pluginsQueuedToAdd = false;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
@@ -218,7 +219,6 @@ namespace MatterHackers.MatterControl
 							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
 						movementControlsContainer.jogControls.EnableBabystepping(false);
-						movementControlsContainer.OffsetStreamChanged(null, null);
 
 						break;
 
@@ -233,14 +233,13 @@ namespace MatterHackers.MatterControl
 						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
 							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
 						movementControlsContainer.jogControls.EnableBabystepping(false);
-						movementControlsContainer.OffsetStreamChanged(null, null);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
@@ -281,7 +280,6 @@ namespace MatterHackers.MatterControl
 								}
 
 								movementControlsContainer.jogControls.EnableBabystepping(true);
-								movementControlsContainer.OffsetStreamChanged(null, null);
 								break;
 
 							default:
@@ -306,7 +304,6 @@ namespace MatterHackers.MatterControl
 							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
 						movementControlsContainer.jogControls.EnableBabystepping(false);
-						movementControlsContainer.OffsetStreamChanged(null, null);
 
 						break;
 

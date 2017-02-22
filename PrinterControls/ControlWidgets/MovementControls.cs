@@ -89,12 +89,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return movementSpeeds["e0"];
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
-			PrinterConnectionAndCommunication.Instance.OffsetStreamChanged -= OffsetStreamChanged;
-
 			unregisterEvents?.Invoke(this, null);
-
 			base.OnClosed(e);
 		}
 
@@ -120,7 +117,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 				if (editManualMovementSettingsWindow == null)
 				{
 					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), ActiveSliceSettings.Instance.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
-					editManualMovementSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editManualMovementSettingsWindow = null; };
+					editManualMovementSettingsWindow.Closed += (s, e2) =>
+					{
+						editManualMovementSettingsWindow = null;
+					};
 				}
 				else
 				{
@@ -158,19 +158,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(movementControlsGroupBox);
 		}
 
-		private static void SetMovementSpeeds(object sender, EventArgs e)
+		private static void SetMovementSpeeds(string speedString)
 		{
-			StringEventArgs stringEvent = e as StringEventArgs;
-			if (stringEvent != null && stringEvent.Data != null)
+			if (!string.IsNullOrEmpty(speedString))
 			{
-				ActiveSliceSettings.Instance.Helpers.SetManualMovementSpeeds(stringEvent.Data);
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.manual_movement_speeds, speedString);
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
-		}
-
-		private void disableMotors_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.ReleaseMotors();
 		}
 
 		private FlowLayoutWidget GetHomeButtonBar()
@@ -199,30 +193,33 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.textImageButtonFactory.normalFillColor = oldColor;
 			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
 			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeAllButton.Click += new EventHandler(homeAll_Click);
+			homeAllButton.Click += homeAll_Click;
 
 			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
 			homeXButton = textImageButtonFactory.Generate("X", centerText: true);
 			homeXButton.ToolTipText = "Home X".Localize();
 			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeXButton.Click += new EventHandler(homeXButton_Click);
+			homeXButton.Click += homeXButton_Click;
 
 			homeYButton = textImageButtonFactory.Generate("Y", centerText: true);
 			homeYButton.ToolTipText = "Home Y".Localize();
 			homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeYButton.Click += new EventHandler(homeYButton_Click);
+			homeYButton.Click += homeYButton_Click;
 
 			homeZButton = textImageButtonFactory.Generate("Z", centerText: true);
 			homeZButton.ToolTipText = "Home Z".Localize();
 			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeZButton.Click += new EventHandler(homeZButton_Click);
+			homeZButton.Click += homeZButton_Click;
 
 			textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
 			textImageButtonFactory.FixedWidth = 0;
 
 			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
 			disableMotors.Margin = new BorderDouble(0);
-			disableMotors.Click += new EventHandler(disableMotors_Click);
+			disableMotors.Click += (s, e) =>
+			{
+				PrinterConnectionAndCommunication.Instance.ReleaseMotors();
+			};
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			GuiWidget spacerReleaseShow = new GuiWidget(10 * GuiWidget.DeviceScale, 0);
@@ -233,36 +230,23 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.AddChild(homeYButton);
 			homeButtonBar.AddChild(homeZButton);
 
-			offsetStreamLabel = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
-			offsetStreamLabel.AutoExpandBoundsToText = true;
-			offsetStreamLabel.VAnchor = VAnchor.ParentCenter;
+			offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(left: 10),
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.ParentCenter
+			};
 			homeButtonBar.AddChild(offsetStreamLabel);
 
+			var ztuningWidget = new ZTuningWidget();
+			homeButtonBar.AddChild(ztuningWidget);
+			
 			homeButtonBar.AddChild(new HorizontalSpacer());
 			homeButtonBar.AddChild(disableMotors);
 			homeButtonBar.AddChild(spacerReleaseShow);
 
-			PrinterConnectionAndCommunication.Instance.OffsetStreamChanged += OffsetStreamChanged;
-
 			return homeButtonBar;
-		}
-
-		internal void OffsetStreamChanged(object sender, EventArgs e)
-		{
-			Vector3 offset = PrinterConnectionAndCommunication.Instance.CurrentBabyStepsOffset;
-			if ((PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-				&& offset.Length > .01)
-			{
-				offsetStreamLabel.Text = ("{0} ({1:0.##}, {2:0.##}, {3:0.##})").FormatWith(
-					"Offset".Localize() + ": ",
-					offset.x,
-					offset.y,
-					offset.z);
-			}
-			else
-			{
-				offsetStreamLabel.Text = "";
-			}
 		}
 
 		private FlowLayoutWidget GetHWDestinationBar()
@@ -338,4 +322,87 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 		}
 	}
+
+	public class ZTuningWidget : GuiWidget
+	{
+		private TextWidget zOffsetStreamDisplay;
+		private Button clearZOffsetButton;
+		private FlowLayoutWidget zOffsetStreamContainer;
+
+		private EventHandler unregisterEvents;
+		private bool allowRemoveButton;
+
+		public ZTuningWidget(bool allowRemoveButton = true)
+		{
+			this.allowRemoveButton = allowRemoveButton;
+			this.HAnchor = HAnchor.FitToChildren;
+			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
+				{
+					OffsetStreamChanged(null, null);
+				}
+			}, ref unregisterEvents);
+
+			zOffsetStreamContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				Margin = new BorderDouble(3, 0),
+				Padding = new BorderDouble(3),
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.ParentCenter,
+				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				Height = 20
+			};
+			this.AddChild(zOffsetStreamContainer);
+
+			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"))
+			{
+				AutoExpandBoundsToText = true,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(5, 0, 8, 0),
+				VAnchor = VAnchor.ParentCenter
+			};
+			zOffsetStreamContainer.AddChild(zOffsetStreamDisplay);
+
+			clearZOffsetButton = new Button(
+				new ButtonViewStates(
+					new ImageWidget(SliceSettingsWidget.restoreNormal),
+					new ImageWidget(SliceSettingsWidget.restoreHover),
+					new ImageWidget(SliceSettingsWidget.restorePressed),
+					new ImageWidget(SliceSettingsWidget.restoreNormal)))
+			{
+				Name = "Clear ZOffset button",
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(0, 0, 5, 0),
+				ToolTipText = "Clear ZOffset".Localize(),
+				Visible = allowRemoveButton && zoffset != 0
+			};
+			clearZOffsetButton.Click += (sender, e) =>
+			{
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+			};
+			zOffsetStreamContainer.AddChild(clearZOffsetButton);
+		}
+
+		internal void OffsetStreamChanged(object sender, EventArgs e)
+		{
+			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+			bool hasOverriddenZOffset = (zoffset != 0);
+
+			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? SliceSettingsWidget.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
+			clearZOffsetButton.Visible = allowRemoveButton && hasOverriddenZOffset;
+
+			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(null, null);
+			base.OnClosed(e);
+		}
+	}
+
 }

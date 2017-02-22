@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.SelectedItems.Clear();
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (currentLibraryProvider != null)
 			{

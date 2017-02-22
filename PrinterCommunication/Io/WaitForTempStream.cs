@@ -27,10 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
+using System;
 using System.Diagnostics;
 using System.Threading;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public WaitForTempStream(GCodeStream internalStream)
 			: base(internalStream)
 		{
+			state = State.passthrough;
 		}
 
 		private enum State
@@ -55,6 +56,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
 		public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
+
+		public void Cancel()
+		{
+			state = State.passthrough;
+		}
 
 		public override string ReadLine()
 		{

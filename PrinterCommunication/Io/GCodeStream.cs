@@ -28,12 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
+using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
@@ -65,40 +61,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public string CreateMovementLine(PrinterMove destination, PrinterMove start)
 		{
-			string lineBeingSent;
-			StringBuilder newLine = new StringBuilder("G1 ");
-
 			bool moveHasExtrusion = destination.extrusion != start.extrusion;
-			if (useG0ForMovement && !moveHasExtrusion)
-			{
-				newLine = new StringBuilder("G0 ");
-			}
+
+			string command = (useG0ForMovement && !moveHasExtrusion) ? "G0 " : "G1 ";
+
+			var sb = new StringBuilder(command);
 
 			if (destination.position.x != start.position.x)
 			{
-				newLine = newLine.Append(String.Format("X{0:0.##} ", destination.position.x));
+				sb.AppendFormat("X{0:0.##} ", destination.position.x);
 			}
 			if (destination.position.y != start.position.y)
 			{
-				newLine = newLine.Append(String.Format("Y{0:0.##} ", destination.position.y));
+				sb.AppendFormat("Y{0:0.##} ", destination.position.y);
 			}
 			if (destination.position.z != start.position.z)
 			{
-				newLine = newLine.Append(String.Format("Z{0:0.###} ", destination.position.z));
+				sb.AppendFormat("Z{0:0.###} ", destination.position.z);
 			}
 
 			if (moveHasExtrusion)
 			{
-				newLine = newLine.Append(String.Format("E{0:0.###} ", destination.extrusion));
+				sb.AppendFormat("E{0:0.###} ", destination.extrusion);
 			}
 
 			if (destination.feedRate != start.feedRate)
 			{
-				newLine = newLine.Append(String.Format("F{0:0.##}", destination.feedRate));
+				sb.AppendFormat("F{0:0.##}", destination.feedRate);
 			}
 
-			lineBeingSent = newLine.ToString();
-			return lineBeingSent.Trim();
+			return sb.ToString().Trim();
 		}
 
 		public static PrinterMove GetPosition(string lineBeingSent, PrinterMove startPositionPosition)

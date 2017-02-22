@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 			UserSettings.Instance.set(TerminalWindowPositionKey, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			SaveOnClosing();
 			UserSettings.Instance.Fields.SetBool(TerminalWindowLeftOpen, terminalWasOpenOnAppClose);

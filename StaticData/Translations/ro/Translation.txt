@@ -35,7 +35,7 @@ English:Begin printing the selected item.
 Translated:Începe imprimarea elementul selectat.
 
 English:Skip
-Translated:sări
+Translated:Ocolire
 
 English:Skip the current item and move to the next in queue
 Translated:Sări peste elementul curent și pentru a trece la următoarea coadă în
@@ -95,7 +95,7 @@ English:Queued to Print
 Translated:Print pusă în așteptare pentru
 
 English:View
-Translated:vedere
+Translated:Vedere
 
 English:Copy
 Translated:Copie
@@ -158,7 +158,7 @@ English:There are updates available.
 Translated:Sunt disponibile actualizări.
 
 English:Checking for updates...
-Translated:Se caută actualizări...
+Translated:Verificare actualizări ...
 
 English:MatterControl
 Translated:MatterControl
@@ -1202,7 +1202,7 @@ English:Raft Layers
 Translated:Straturi Raft
 
 English:Raft
-Translated:Raft
+Translated:Plută
 
 English:Pattern
 Translated:Model
@@ -1391,7 +1391,7 @@ English:Select Model
 Translated:Selectați modelul
 
 English:Theme Settings
-Translated:Setări temă
+Translated:Setari tema
 
 English:New updates are ready to install.
 Translated:Noi actualizări sunt gata de instalare.
@@ -2999,7 +2999,7 @@ English:Underline
 Translated:sublinia
 
 English:Rotation:
-Translated:Rotatie:
+Translated:Rotație:
 
 English:Enter Text Here
 Translated:Introduceți text aici
@@ -3248,7 +3248,7 @@ English:This gcode will sent to the printer immediately after connecting. It can
 Translated:Acest lucru va gcode trimis la imprimantă imediat după conectarea. Acesta poate fi folosit pentru a seta setări specifice pentru o imprimantă dat.
 
 English:Features
-Translated:caracteristici
+Translated:Caracteristici
 
 English:Update Available
 Translated:Actualizare disponibila
@@ -3779,7 +3779,7 @@ English:Please wait. Sending invite...
 Translated:Te rog asteapta. Se trimite invitați ...
 
 English:Invite sent!
-Translated:Invitația a fost trimisă!
+Translated:Invitație trimisă!
 
 English:Your invite has been sent!
 Translated:Invitația a fost trimisă!
@@ -4406,7 +4406,7 @@ English:Please wait while we create your account...
 Translated:Vă rugăm să așteptați în timp ce creați un cont ...
 
 English:Account created
-Translated:contul creat
+Translated:Cont creat
 
 English:Success! Your account has been created.
 Translated:Succes! Contul dvs. a fost creat.
@@ -4601,7 +4601,7 @@ English:Undo
 Translated:Anula
 
 English:Redo
-Translated:Reface
+Translated:A reface
 
 English:Set Name
 Translated:Nume set
@@ -4691,7 +4691,7 @@ English:Restore Default
 Translated:Restabili implicit
 
 English:Outer Surface
-Translated:Suprafața exterioară
+Translated:Suprafata exterioara
 
 English:Minimum Travel equiring Retraction
 Translated:Minimă de călătorie Retractare equiring
@@ -5829,4 +5829,115 @@ Translated:Economisire...
 
 English:Oops! Payment has been declined.
 Translated:Oops! Plata a fost refuzată.
+
+English:Distance or Loops
+Translated:La distanță sau Buclele
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Z compensare pentru a aplica pentru a îmbunătăți aderența primului strat.
+
+English:Baby Step Offset
+Translated:Pat pentru Etapa Offset
+
+English:Oops! Unable to initialize device.
+Translated:Oops! Nu se poate inițializa dispozitivul.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:Distanța dintre partea de sus a plutei și partea de jos a modelului. 0,6 mm, este un bun punct de plecare pentru PLA și 0,4 mm, este un bun punct de pornire pentru ABS. Valori mai mici dau o suprafață mai netedă, valori mai mari fac imprimarea mai ușor de îndepărtat.
+
+English:Clear ZOffset
+Translated:clar ZOffset
+
+English:Printing Window...
+Translated:Fereastra de imprimare ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Retrageți numai la trecerea Perimetrele
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:"Extern perimetru de extrudare Lățimea" trebuie să fie mai mică sau egală cu 'Diametrul ajutajului' * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Extern de perimetru Extrudarea Lățime = {0}\nDuza Diametrul = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Locul de amplasare: "setările și comenzile '->' Setări '->' filamentelor '->' extrudare '->' Perimetru extern '
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:"Extern perimetru de extrudare Lățimea 'trebuie să fie mai mare decât 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Extern de perimetru Extrudarea Lățime = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:Inaltimea de pornire (z) a capului de tipărire, înainte de palpare fiecare poziție de nivel de imprimare.
+
+English:Probe Start Height
+Translated:Sonda Start Înălțime
+
+English:Controls the speed of printer moves
+Translated:Controlează viteza de mișcări ale imprimantei
+
+English:Controls the amount of extrusion
+Translated:Controlează cantitatea de extrudare
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Alege materialul pe care îl încărcați.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Trim capătul filamentului pentru a asigura o încărcare bună.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Alege materialul pe care îl încărcați. Tu faci unele lucruri care durează o descriere lungă.
+
+English:Confirm the material you are unloading.
+Translated:Confirmați că materialul pe care îl descărcare.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Se așteaptă extruder să se încălzească la 205, înainte de descărcare.
+
+English:Unloading filament...
+Translated:Filament ... descărcare
+
+English:Put filament into extruder and click Continue.
+Translated:Pune filament în extruder și faceți clic pe Continuare.
+
+English:Loading filament...
+Translated:Se încarcă ... filament
+
+English:Waiting for extruder to heat to 205.
+Translated:Se așteaptă extruder să se încălzească la 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Faceți clic pe "Continuați" atunci când filament se execută curat.
+
+English:Heating side 1.
+Translated:laterale de încălzire 1.
+
+English:Turn Sandvich over!
+Translated:Rândul său, Sandvich peste!
+
+English:Heating side 2.
+Translated:laterale de încălzire 2.
+
+English:Done!
+Translated:Terminat!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:ATENȚIE: Pentru a efectua recuperarea de imprimare, imprimanta trebuie să se deplaseze în jos pentru a ajunge la poziția sa de origine. \ N Dacă dvs. de imprimare este prea mare, o parte a imprimantei se poate ciocni cu ea atunci când se deplasează în jos. \ N Asigurați-vă că este în siguranță pentru a efectua această operație înainte de a continua.
 

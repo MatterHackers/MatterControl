@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			this.SelectedItems.Clear();
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			currentLibraryProvider.DataReloaded -= LibraryDataReloaded;
 

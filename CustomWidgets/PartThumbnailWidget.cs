@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl
 			return GetImageFileName(item.FileHashCode.ToString());
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{
@@ -326,11 +326,6 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		private static void CreateImage(PartThumbnailWidget thumbnailWidget, double Width, double Height)
-		{
-			thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height);
-		}
-
 		private static string GetImageFileName(string stlHashCode)
 		{
 			string folderToSaveThumbnailsTo = ThumbnailPath();
@@ -390,7 +385,7 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
-		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode)
+		public static ImageBuffer LoadImageFromDisk(string stlHashCode)
 		{
 			try
 			{
@@ -408,7 +403,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						if (ImageTgaIO.LoadImageData(imageFileName, tempImage))
+						if (ImageTgaIO.LoadImageData(tempImage, imageFileName))
 						{
 							return tempImage;
 						}
@@ -544,7 +539,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private bool MeshIsTooBigToLoad(string fileLocation)
+		private static bool MeshIsTooBigToLoad(string fileLocation)
 		{
 			if (Is32Bit())
 			{
@@ -601,6 +596,71 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public static ImageBuffer GetImageForItem(PrintItemWrapper itemWrapper, int width, int height)
+		{
+			if (itemWrapper == null)
+			{
+				return StaticData.Instance.LoadIcon("part_icon_transparent_100x100.png");
+			}
+
+			ImageBuffer thumbnailImage = new ImageBuffer((int)width, (int)height);
+			if (itemWrapper.FileLocation == QueueData.SdCardFileName)
+			{
+				ImageBuffer sdCardImage = StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_115x115", partExtension)).InvertLightness();
+				thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+				Graphics2D graphics = thumbnailImage.NewGraphics2D();
+				graphics.Render(sdCardImage, width / 2 - sdCardImage.Width / 2, height / 2 - sdCardImage.Height / 2);
+				Ellipse outline = new Ellipse(new Vector2(width / 2.0, height / 2.0), width / 2 - width / 12);
+				graphics.Render(new Stroke(outline, width / 12), RGBA_Bytes.White);
+				return thumbnailImage;
+			}
+			else if (Path.GetExtension(itemWrapper.FileLocation).ToUpper() == ".GCODE")
+			{
+				thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+				Graphics2D graphics = thumbnailImage.NewGraphics2D();
+				Vector2 center = new Vector2(width / 2.0, height / 2.0);
+				Ellipse outline = new Ellipse(center, width / 2 - width / 12);
+				graphics.Render(new Stroke(outline, width / 12), RGBA_Bytes.White);
+				graphics.DrawString("GCode", center.x, center.y, 8 * width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
+				return thumbnailImage;
+			}
+			else if (!File.Exists(itemWrapper.FileLocation))
+			{
+				thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+				Graphics2D graphics = thumbnailImage.NewGraphics2D();
+				Vector2 center = new Vector2(width / 2.0, height / 2.0);
+				graphics.DrawString("Missing", center.x, center.y, 8 * width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
+				return thumbnailImage;
+			}
+			else if (MeshIsTooBigToLoad(itemWrapper.FileLocation))
+			{
+				thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+				Graphics2D graphics = thumbnailImage.NewGraphics2D();
+				Vector2 center = new Vector2(width / 2.0, height / 2.0);
+				double yOffset = 8 * width / 50 * GuiWidget.DeviceScale * 2;
+				graphics.DrawString("Reduce\nPolygons\nto\nRender", center.x, center.y + yOffset, 8 * width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
+				return thumbnailImage;
+			}
+
+			string stlHashCode = itemWrapper.FileHashCode.ToString();
+
+			if (stlHashCode != "0")
+			{
+				ImageBuffer bigRender = LoadImageFromDisk(stlHashCode);
+				if (bigRender != null)
+				{
+					thumbnailImage = bigRender;
+				}
+
+				bigRender.SetRecieveBlender(new BlenderPreMultBGRA());
+
+				thumbnailImage = ImageBuffer.CreateScaledImage(bigRender, (int)width, (int)height);
+			}
+
+			thumbnailImage.MarkImageChanged();
+			return thumbnailImage;
+		}
+
 		private bool SetImageFast()
 		{
 			if (this.ItemWrapper == null)
@@ -639,7 +699,7 @@ namespace MatterHackers.MatterControl
 			}
 			else if (Path.GetExtension(this.ItemWrapper.FileLocation).ToUpper() == ".GCODE")
 			{
-				CreateImage(this, Width, Height);
+				this.thumbnailImage = new ImageBuffer((int)Width, (int)Height);
 				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
 				Graphics2D graphics = this.thumbnailImage.NewGraphics2D();
 				Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
@@ -652,7 +712,7 @@ namespace MatterHackers.MatterControl
 			}
 			else if (!File.Exists(this.ItemWrapper.FileLocation))
 			{
-				CreateImage(this, Width, Height);
+				this.thumbnailImage = new ImageBuffer((int)Width, (int)Height);
 				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
 				Graphics2D graphics = this.thumbnailImage.NewGraphics2D();
 				Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
@@ -663,7 +723,7 @@ namespace MatterHackers.MatterControl
 			}
 			else if (MeshIsTooBigToLoad(this.ItemWrapper.FileLocation))
 			{
-				CreateImage(this, Width, Height);
+				this.thumbnailImage = new ImageBuffer((int)Width, (int)Height);
 				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
 				Graphics2D graphics = this.thumbnailImage.NewGraphics2D();
 				Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
@@ -678,7 +738,7 @@ namespace MatterHackers.MatterControl
 
 			if (stlHashCode != "0")
 			{
-				ImageBuffer bigRender = LoadImageFromDisk(this, stlHashCode);
+				ImageBuffer bigRender = LoadImageFromDisk(stlHashCode);
 				if (bigRender == null)
 				{
 					this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);

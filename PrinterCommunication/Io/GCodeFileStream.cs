@@ -27,40 +27,41 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class GCodeFileStream : GCodeStream
-    {
-        public GCodeFile FileStreaming { get; private set; }
-        private int printerCommandQueueLineIndex = -1;
+	public class GCodeFileStream : GCodeStream
+	{
+		public GCodeFile FileStreaming { get; private set; }
+		private int printerCommandQueueLineIndex = -1;
 
-        public GCodeFileStream(GCodeFile fileStreaming, int startLine = 0)
-        {
-            this.FileStreaming = fileStreaming;
-            printerCommandQueueLineIndex = startLine;
-        }
+		public GCodeFileStream(GCodeFile fileStreaming, int startLine = 0)
+		{
+			this.FileStreaming = fileStreaming;
+			printerCommandQueueLineIndex = startLine;
+		}
 
-        public int LineIndex { get { return printerCommandQueueLineIndex; } }
+		public int LineIndex { get { return printerCommandQueueLineIndex; } }
 
-        public override void Dispose()
-        {
-        }
+		public override void Dispose()
+		{
+		}
 
-        public override string ReadLine()
-        {
-            if (printerCommandQueueLineIndex < FileStreaming.LineCount)
-            {
-                return FileStreaming.Instruction(printerCommandQueueLineIndex++).Line;
-            }
+		public override string ReadLine()
+		{
+			if (printerCommandQueueLineIndex < FileStreaming.LineCount)
+			{
+				return FileStreaming.Instruction(printerCommandQueueLineIndex++).Line;
+			}
 
-            return null;
-        }
+			return null;
+		}
 
-        public override void SetPrinterPosition(PrinterMove position)
-        {
-        }
-    }
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+		}
+	}
 }

@@ -101,7 +101,7 @@ English:Copy
 Translated:עותק
 
 English:Add to Queue
-Translated:להוסיף לתור
+Translated:הוסף לתור
 
 English:Export
 Translated:יְצוּא
@@ -137,7 +137,7 @@ English: Create Part Sheet
 Translated: צור גיליון חלק
 
 English:Search
-Translated:לחפש
+Translated:חפש
 
 English:Import
 Translated:יְבוּא
@@ -152,7 +152,7 @@ English:Download Update
 Translated:להוריד עדכון
 
 English:Install Update
-Translated:התקן את העדכון
+Translated:התקן עדכון
 
 English:There are updates available.
 Translated:ישנם עדכונים זמינים.
@@ -1889,7 +1889,7 @@ English:Skip Printer Connection
 Translated:דלג חיבור מדפסת
 
 English:You can either
-Translated:אתה יכול
+Translated:גם אתה יכול
 
 English:You can also
 Translated:אתה יכול גם
@@ -1955,7 +1955,7 @@ English:Est. Weight
 Translated:Est. מִשׁקָל
 
 English:Downloading updates...
-Translated:הורדת עדכונים ...
+Translated:מוריד עדכונים...
 
 English:Duplicate
 Translated:לְשַׁכְפֵּל
@@ -2495,7 +2495,7 @@ English:View Status
 Translated:צג מצב
 
 English:Description
-Translated:תיאור
+Translated:תאור
 
 English:Value
 Translated:ערך
@@ -2642,7 +2642,7 @@ English:Search Library
 Translated:ספריית חיפוש
 
 English:My Library
-Translated:הספרייה שלי
+Translated:הספריה שלי
 
 English:Add to Library
 Translated:הוספה לספריה
@@ -2870,7 +2870,7 @@ English:Raft Extruder
 Translated:Extruder Raft
 
 English:None
-Translated:אף לא אחד
+Translated:אף אחד
 
 English:Rectangle
 Translated:מַלבֵּן
@@ -2984,7 +2984,7 @@ English:Finding Parts:
 Translated:מציאת חלקים:
 
 English:Add Image
-Translated:הוספת תמונה
+Translated:להוסיף תמונה
 
 English:Search Google
 Translated:חיפוש Google
@@ -3068,10 +3068,10 @@ English:Oops! Your session has expired.  Please sign-in again to continue.
 Translated:אופס! המועד שלך פג. היכנס שוב כדי להמשיך.
 
 English:Sorry! Unable to connect to server. Please try again later.
-Translated:מצטער! לא ניתן להתחבר לשרת. בבקשה נסה שוב מאוחר יותר.
+Translated:מצטער! לא יכול להתחבר לשרת. בבקשה נסה שוב מאוחר יותר.
 
 English:All done! Files have been sent.
-Translated:הכל גמור! קבצים שנשלחו.
+Translated:הכל בוצע! קבצים שנשלחו.
 
 English:Retry
 Translated:נסה שוב
@@ -3371,7 +3371,7 @@ English:Collection not Empty
 Translated:אוסף לא ריק
 
 English:Do NOT Delete
-Translated:אל תמחק
+Translated:לא למחוק
 
 English:Library (cloud)
 Translated:הספרייה (ענן)
@@ -3752,7 +3752,7 @@ English:Share Library Item
 Translated:פריט הספרייה שתפו
 
 English:Share Options
-Translated:אופציות למניות
+Translated:שתף אפשרויות
 
 English:Your Share Code:
 Translated:קוד השיתוף שלך:
@@ -3779,7 +3779,7 @@ English:Please wait. Sending invite...
 Translated:המתן בבקשה. שליחת מזמינים ...
 
 English:Invite sent!
-Translated:ההזמנה נשלחה!
+Translated:הזמנה נשלחה!
 
 English:Your invite has been sent!
 Translated:ההזמנה שלך נשלחה!
@@ -3977,7 +3977,7 @@ English:Log into my account
 Translated:התחבר לחשבון שלי
 
 English:Login
-Translated:התחבר
+Translated:התחברות
 
 English:Username or Email
 Translated:שם משתמש או דוא"ל
@@ -4373,7 +4373,7 @@ English:Go to Dashboard
 Translated:עבור אל מרכז השליטה
 
 English:Sign Up for an Account
-Translated:הרשם לקבלת חשבון
+Translated:תירשם בשביל חשבון
 
 English:Create Account
 Translated:צור חשבון
@@ -4382,7 +4382,7 @@ English:Username
 Translated:שם משתמש
 
 English:Enter a username
-Translated:הזן את שם משתמש
+Translated:הכנס שם משתמש
 
 English:Email
 Translated:אֶלֶקטרוֹנִי
@@ -4406,7 +4406,7 @@ English:Please wait while we create your account...
 Translated:אנא המתן בזמן שאנו יוצרים את חשבונך ...
 
 English:Account created
-Translated:החשבון נוצר
+Translated:חשבון נוצר
 
 English:Success! Your account has been created.
 Translated:הַצלָחָה! החשבון שלך נוצר.
@@ -4685,7 +4685,7 @@ English:The X and Y position of the extruder that minimizes the chance of collid
 Translated:עמדת X ו- Y של המכבש כי מקטין את הסיכוי של התנגשות עם החלקים על המיטה.
 
 English:Restore All
-Translated:לשחזר הכל
+Translated:שחזר הכל
 
 English:Restore Default
 Translated:להחזיר לברירת מחדל
@@ -5105,7 +5105,7 @@ English:Sign In
 Translated:היכנס
 
 English:Unable to connect to server
-Translated:לא ניתן להתחבר לשרת
+Translated:לא יכול להתחבר לשרת
 
 English:What was my password again?
 Translated:מה הייתה הסיסמה שלי שוב?
@@ -5198,7 +5198,7 @@ English:Message*
 Translated:הוֹדָעָה*
 
 English:Email Address*
-Translated:כתובת דוא"ל *
+Translated:כתובת דוא"ל*
 
 English:Name*
 Translated:שֵׁם*
@@ -5207,7 +5207,7 @@ English:MatterControl: Submit Feedback
 Translated:MatterControl: שלח משוב
 
 English:How can we improve?
-Translated:איך נוכל לשפר?
+Translated:איך אנחנו יכולים להשתפר?
 
 English:Forums
 Translated:פורומים
@@ -5369,7 +5369,7 @@ English:Fill Thin Gaps
 Translated:למלא פערים רזים
 
 English:Sign in Required
-Translated:נדרשת כניסה
+Translated:נדרשת חתימה
 
 English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
 Translated:האם אתה בטוח שאתה רוצה לצאת? לא תהיה לך גישה לפרופילי המדפסת או ספריית ענן שלך.
@@ -5549,7 +5549,7 @@ English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-
 Translated:מיקום: 'הגדרות ובקרות' -> 'הגדרות' -> 'מדפסת' -> 'מותאם אישית G-Code "->" התחל G-Code "
 
 English:none
-Translated:אף לא אחד
+Translated:אף אחד
 
 English:Exit while printing
 Translated:יציאה בעת הדפסה
@@ -5645,7 +5645,7 @@ English:Note: Be sure the tip of the extruder is clean.
 Translated:הערה: הקפד קצה המכבש נקי.
 
 English:- none -
-Translated:- אף לא אחד -
+Translated:- אף אחד -
 
 English:Actions
 Translated:פעולות
@@ -5829,4 +5829,115 @@ Translated:חִסָכוֹן...
 
 English:Oops! Payment has been declined.
 Translated:אופס! תשלום נדחה.
+
+English:Distance or Loops
+Translated:מרחק או לולאות
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:The Z לקזז ליישם כדי לשפר את הידבקות השכבה הראשונה.
+
+English:Baby Step Offset
+Translated:בייבי שלב אופסט
+
+English:Oops! Unable to initialize device.
+Translated:אופס! לא ניתן לאתחל את המכשיר.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:המרחק בין החלק העליון של הרפסודה והחלק התחתון של המודל. 0.6 מ"מ הוא נקודת התחלה טובה עבור PLA ו -0.4 מ"מ הוא נקודת התחלה טובה עבור ABS. ערכים נמוכים לתת משטח חלק, ערכים גבוהים להפוך את האותיות יותר קל להסיר.
+
+English:Clear ZOffset
+Translated:נקה ZOffset
+
+English:Printing Window...
+Translated:הדפסת חלון ...
+
+English:Only Retract When Crossing Perimeters
+Translated:רק לחזור בו כאשר היקפה מעבר
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'החיצוני ההיקפי שחול רוחב' חייב להיות קטן או שווה ל 'קוטר הנחיר' * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:שחול במעטפת החיצונית רוחב = {0}\nקוטר נחיר = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:מיקום: 'הגדרות ובקרות' -> 'הגדרות' -> 'נימה' -> 'שחול' -> 'חיצוני היקפי'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'חיצוני היקפי שחול רוחב' חייב להיות גדול מ 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:שחול במעטפת החיצונית רוחב = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:גובה ההתחלה (z) של ראש ההדפסה בטרם ניסה כל עמדה רמת ההדפסה.
+
+English:Probe Start Height
+Translated:גובה Probe התחל
+
+English:Controls the speed of printer moves
+Translated:שולט במהירות של מהלכי מדפסת
+
+English:Controls the amount of extrusion
+Translated:שולט בכמות שחול
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:בחר את החומר שאתה טוען.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:חתוך את סוף הנימה כדי להבטיח מטען טוב.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:בחר את החומר שאתה טוען. אתה עושה כמה דברים שלוקחים תיאור ארוך.
+
+English:Confirm the material you are unloading.
+Translated:אשר את החומר שאתה פריק.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:מחכה מכבש לחום 205, לפני ההסרה.
+
+English:Unloading filament...
+Translated:פריקת נימה ...
+
+English:Put filament into extruder and click Continue.
+Translated:שים נימה לתוך מכבש ולחץ על המשך.
+
+English:Loading filament...
+Translated:טוען נימה ...
+
+English:Waiting for extruder to heat to 205.
+Translated:מחכה מכבש לחום 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:לחץ על 'המשך' כאשר הנימה פועלת בצורה נקיה.
+
+English:Heating side 1.
+Translated:צד חימום 1.
+
+English:Turn Sandvich over!
+Translated:הפעל Sandvich נגמר!
+
+English:Heating side 2.
+Translated:צד חימום 2.
+
+English:Done!
+Translated:בוצע!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:אזהרה: כדי לבצע שחזור הדפסה, המדפסת חייבת לזוז למטה כדי להגיע לעמדת המוצא שלה. \ N אם ההדפסה שלך גדולה מדי, חלק המדפסת עשוי להתנגש עם זה בעת מעבר למטה. \ N ודא זה בטוח לבצע פעולה זו לפני שתמשיך.
 

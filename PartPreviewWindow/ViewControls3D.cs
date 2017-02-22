@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls3D(MeshViewerWidget meshViewerWidget)
 		{
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				buttonHeight = 40;
 			}
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

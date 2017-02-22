@@ -159,7 +159,11 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget CreateContentForEmptyControl()
 		{
-			GuiWidget allContent = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
+			GuiWidget allContent = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop,
+			};
 			allContent.Padding = new BorderDouble(5, 10, 5, 10);
 
 			FlowLayoutWidget flowWidget = new FlowLayoutWidget();
@@ -219,7 +223,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ShowOnNextMatterControlDraw(GuiWidget drawingWidget, DrawEventArgs e)
+		private void ShowOnNextMatterControlDraw(Object drawingWidget, DrawEventArgs e)
 		{
 			if (widgetWithPopContent.Children.Count > 0)
 			{
@@ -236,7 +240,7 @@ namespace MatterHackers.MatterControl
 			ApplicationController.Instance.MainView.AfterDraw -= ShowOnNextMatterControlDraw;
 		}
 
-		private void SystemWindow_Closing(object sender, WidgetClosingEnventArgs closingEvent)
+		private void SystemWindow_Closing(object sender, ClosingEventArgs closingEvent)
 		{
 			if (systemWindowWithPopContent != null)
 			{

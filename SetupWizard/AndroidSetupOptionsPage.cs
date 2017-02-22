@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
@@ -196,26 +196,29 @@ namespace MatterHackers.MatterControl
 			signInButton.Margin = new BorderDouble(left: 0);
 			signInButton.VAnchor = VAnchor.ParentCenter;
 			signInButton.Visible = !signedIn;
-			signInButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			signInButton.Click += (s, e) =>
 			{
-				signInButton.Visible = false;
-				signOutButton.Visible = false;
-				statusMessage.Visible = true;
-				ApplicationController.Instance.StartSignIn();
-			});
+#if __ANDROID__
+				if (MatterControlApplication.Instance.IsNetworkConnected() 
+				    && AuthenticationData.Instance.IsConnected)
+				{
+					UiThread.RunOnIdle(ApplicationController.Instance.StartSignIn);
+				}
+				else
+				{
+					WizardWindow.Show<NetworkTroubleshooting>("/networktroubleshooting", "Network Troubleshooting");
+				}
+#else
+				UiThread.RunOnIdle(ApplicationController.Instance.StartSignIn);
+#endif
+			};
 			buttonContainer.AddChild(signInButton);
 
 			signOutButton = textImageButtonFactory.Generate("Sign Out".Localize());
 			signOutButton.Margin = new BorderDouble(left: 0);
 			signOutButton.VAnchor = VAnchor.ParentCenter;
 			signOutButton.Visible = signedIn;
-			signOutButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				signInButton.Visible = false;
-				signOutButton.Visible = false;
-				statusMessage.Visible = true;
-				ApplicationController.Instance.StartSignOut();
-			});
+			signOutButton.Click += (s, e) => UiThread.RunOnIdle(ApplicationController.Instance.StartSignOut);
 			buttonContainer.AddChild(signOutButton);
 
 			buttonContainer.AddChild(new HorizontalSpacer());
@@ -268,7 +271,7 @@ namespace MatterHackers.MatterControl
 			this.Close();
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

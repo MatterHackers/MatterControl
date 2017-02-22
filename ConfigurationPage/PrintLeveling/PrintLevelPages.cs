@@ -70,8 +70,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			levelingData.SampledPositions.Add(probePositions[2].position - paperWidth);
 
 			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
-
+			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData, true);
 			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
 
 			base.PageIsBecomingActive();
@@ -100,9 +99,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData);
-
+			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData, true);
 			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
+
 			base.PageIsBecomingActive();
 		}
 	}
@@ -123,7 +122,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 
@@ -223,7 +222,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{
@@ -252,8 +251,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
 			zPlusControl.MoveAmount = 0;
 			zMinusControl.MoveAmount = 0;
-			zPlusControl.Click += new EventHandler(zPlusControl_Click);
-			zMinusControl.Click += new EventHandler(zMinusControl_Click);
+			zPlusControl.Click += zPlusControl_Click;
+			zMinusControl.Click += zMinusControl_Click;
 			return zButtons;
 		}
 
@@ -318,8 +317,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			container.backButton.Enabled = false;
 			container.nextButton.Enabled = false;
 
-			zPlusControl.Click += new EventHandler(zControl_Click);
-			zMinusControl.Click += new EventHandler(zControl_Click);
+			zPlusControl.Click += zControl_Click;
+			zMinusControl.Click += zControl_Click;
 		}
 
 		protected void zControl_Click(object sender, EventArgs mouseEvent)

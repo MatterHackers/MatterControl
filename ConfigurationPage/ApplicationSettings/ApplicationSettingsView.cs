@@ -56,10 +56,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
 			cannotRestartWhileActive = "Unable to restart".Localize();
-#if __ANDROID__
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			if (UserSettings.Instance.IsTouchScreen)
+			{
+				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			}
 
-#endif
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetUpdateControl());
@@ -70,21 +71,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(GetLanguageControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			GuiWidget sliceEngineControl = GetSliceEngineControl();
-			if (ActiveSliceSettings.Instance != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				mainContainer.AddChild(sliceEngineControl);
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			}
 
+			//#if !__ANDROID__
+			{
+				mainContainer.AddChild(GetThumbnailRenderingControl());
+				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
-#if !__ANDROID__
-			mainContainer.AddChild(GetThumbnailRenderingControl());
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-
-			mainContainer.AddChild(GetDisplayControl());
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-
-#endif
+				mainContainer.AddChild(GetDisplayControl());
+				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			}
+			//#endif
+			
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetModeControl());
@@ -446,11 +448,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (acceptableUpdateFeedTypeValues.IndexOf(currentThumbnailRenderingMode) == -1)
 			{
-#if __ANDROID__
+				if (!UserSettings.Instance.IsTouchScreen)
+				{
 					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
-#else
+				}
+				else
+				{
 					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "raytraced");
-#endif
+				}
 			}
 
 			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);

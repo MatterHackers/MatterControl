@@ -65,7 +65,7 @@ English:Stop the current print
 Translated:停止当前的打印
 
 English:Resume
-Translated:简历
+Translated:恢复
 
 English:Resume the current print
 Translated:继续当前的打印
@@ -158,7 +158,7 @@ English:There are updates available.
 Translated:有可用的更新。
 
 English:Checking for updates...
-Translated:检查更新...
+Translated:查询更新...
 
 English:MatterControl
 Translated:MatterControl
@@ -4433,7 +4433,7 @@ English:Text Creator
 Translated:文字的创造者
 
 English:sign out
-Translated:退出
+Translated:登出
 
 English:No macros are currently set up for this printer.
 Translated:没有宏当前为这台打印机。
@@ -5156,7 +5156,7 @@ English:Can't log out while printing
 Translated:不能注销，而印刷
 
 English:Are you sure you want to logout? You will not have access to your printer profiles or cloud library.
-Translated:你确定要注销？您将无法访问您的打印机配置文件或云库。
+Translated:您确定要退出？您将无法访问您的打印机配置文件或云库。
 
 English:Logout?
 Translated:登出？
@@ -5213,7 +5213,7 @@ English:Forums
 Translated:论坛
 
 English:Wiki
-Translated:百科
+Translated:维基
 
 English:Guides and Arcticles
 Translated:指南和Arcticles
@@ -5375,10 +5375,10 @@ English:Are you sure you want to sign out? You will not have access to your prin
 Translated:您确定要退出吗？您将无法访问您的打印机配置文件或云库。
 
 English:Sign Out?
-Translated:退出？
+Translated:登出？
 
 English:Sign Out
-Translated:退出
+Translated:登出
 
 English:Sign in
 Translated:签到
@@ -5816,7 +5816,7 @@ English:- Please Select -
 Translated:- 请选择 -
 
 English:Credit Card Number
-Translated:信用卡号码
+Translated:信用卡号
 
 English:Expiration Date
 Translated:截止日期
@@ -5829,4 +5829,115 @@ Translated:保存...
 
 English:Oops! Payment has been declined.
 Translated:哎呀！付款遭到拒绝。
+
+English:Distance or Loops
+Translated:距离或循环
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:的Z偏置申请提高第一层的粘合性。
+
+English:Baby Step Offset
+Translated:小步偏移
+
+English:Oops! Unable to initialize device.
+Translated:哎呀！无法初始化设备。
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:筏的顶部和模型的底部之间的距离。 0.6毫米是解放军一个很好的起点和0.4 mm的为ABS一个很好的起点。较低的值给一个光滑的表面，值越高越使打印更容易去除。
+
+English:Clear ZOffset
+Translated:清除ZOffset
+
+English:Printing Window...
+Translated:打印窗口...
+
+English:Only Retract When Crossing Perimeters
+Translated:只有当收回隧道周长
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:“外部周边挤压宽度'必须小于或等于”喷嘴直径'* 4。
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:外周长挤出宽度= {0} \ n喷嘴直径= {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:位置：“设置和控制” - >“设置” - >“丝' - >'挤出' - >'外部周边”
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:“外部周边挤压宽度'必须大于0。
+
+English:External Perimeter Extrusion Width = {0}
+Translated:外周长挤出宽度= {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:探测每个打印水平位置之前打印头的起始高度（z）的。
+
+English:Probe Start Height
+Translated:探头开始高度
+
+English:Controls the speed of printer moves
+Translated:控制打印机的移动速度
+
+English:Controls the amount of extrusion
+Translated:控制挤出量
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:选择您装入的材料。
+
+English:Trim the end of the filament to ensure a good load.
+Translated:修剪灯丝的结束，以确保良好的负荷。
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:选择您装入的材料。你正在做的一些东西，需要很长的描述。
+
+English:Confirm the material you are unloading.
+Translated:确认要卸载的材料。
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:等待挤出机加热到205，卸载前。
+
+English:Unloading filament...
+Translated:卸丝...
+
+English:Put filament into extruder and click Continue.
+Translated:把长丝进入挤出机，并单击继续。
+
+English:Loading filament...
+Translated:加载丝...
+
+English:Waiting for extruder to heat to 205.
+Translated:等待挤出机加热到205。
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:点击“继续”时，灯丝干净运行。
+
+English:Heating side 1.
+Translated:暖气边1。
+
+English:Turn Sandvich over!
+Translated:打开三明治了！
+
+English:Heating side 2.
+Translated:加热侧2。
+
+English:Done!
+Translated:完成！
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:警告：为了进行打印的恢复，您的打印机必须向下移动到达其位置。 \ n如果您打印太大，打印机的部分可以用它向下移动时发生碰撞。 \ n请确保它是安全的，然后再继续执行此操作。
 

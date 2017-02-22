@@ -130,8 +130,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			printerSettings.UserLayer[SettingsKey.print_leveling_data] = JsonConvert.SerializeObject(printLevelingData);
 			printerSettings.UserLayer[SettingsKey.print_leveling_enabled] = printer.DoPrintLeveling ? "true" : "false";
-
-			printerSettings.UserLayer["manual_movement_speeds"] = printer.ManualMovementSpeeds;
+			printerSettings.UserLayer[SettingsKey.manual_movement_speeds] = printer.ManualMovementSpeeds;
 
 			// make sure we clear the one time settings
 			printerSettings.OemLayer[SettingsKey.spiral_vase] = "";

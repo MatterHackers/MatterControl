@@ -44,12 +44,6 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-
-	public interface IClickable
-	{
-		event EventHandler Click;
-	}
-
 	public class LibraryRowItemPart : LibraryRowItem
 	{
 		public bool isActivePrint = false;
@@ -64,7 +58,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			: base(libraryDataView, thumbnailWidget)
 		{
 			thumbnailWidth = thumbnailWidget.Width;
-			var widget = thumbnailWidget as IClickable;
+			var widget = thumbnailWidget;
 			if (widget != null)
 			{
 				widget.Click += onViewPartClick;
@@ -253,7 +247,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					printItemWrapper = await this.GetPrintItemWrapperAsync();
 				}
 				viewingWindow = new PartPreviewMainWindow(printItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
-				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
+				viewingWindow.Closed += PartPreviewMainWindow_Closed;
 			}
 			else
 			{
@@ -332,7 +326,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			libraryDataView.CurrentLibraryProvider.RemoveItem(ItemIndex);
 		}
 
-		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)
+		private void ExportQueueItemWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			exportingWindow = null;
 		}
@@ -409,7 +403,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (exportingWindow == null)
 			{
 				exportingWindow = new ExportPrintItemWindow(await this.GetPrintItemWrapperAsync());
-				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
+				exportingWindow.Closed += ExportQueueItemWindow_Closed;
 				exportingWindow.ShowAsSystemWindow();
 			}
 			else
@@ -423,7 +417,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (exportingWindow == null)
 			{
 				exportingWindow = new ExportPrintItemWindow(printItem);
-				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
+				exportingWindow.Closed += ExportQueueItemWindow_Closed;
 				exportingWindow.ShowAsSystemWindow();
 			}
 			else
@@ -451,7 +445,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private void PartPreviewMainWindow_Closed(object sender, EventArgs e)
+		private void PartPreviewMainWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			viewingWindow = null;
 		}

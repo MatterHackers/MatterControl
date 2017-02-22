@@ -505,7 +505,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (this.libraryDataView != null
 				&& this.libraryDataView.CurrentLibraryProvider != null)

@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public abstract bool Protected { get; }
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{
@@ -185,8 +185,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			WidgetTextColor = RGBA_Bytes.Black;
 			WidgetBackgroundColor = RGBA_Bytes.White;
-
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
 			SetDisplayAttributes();
 

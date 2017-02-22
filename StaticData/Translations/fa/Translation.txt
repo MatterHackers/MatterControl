@@ -170,7 +170,7 @@ English:Developed by MatterHackers
 Translated:طراحی و توسعه توسط MatterHackers
 
 English:Please consider 
-Translated:لطفا در نظر داشته باشید
+Translated:لطفا درنظر داشته باشید
 
 English:donating
 Translated:اهدای
@@ -3287,7 +3287,7 @@ English:Oops! Unable to save changes.
 Translated:اوه! امکان ذخیره تغییرات.
 
 English:Unable to save
-Translated:قادر به ذخیره نیست
+Translated:قادر به ذخیره
 
 English:Terminal
 Translated:پایانه
@@ -3386,7 +3386,7 @@ English:Thumbnail Rendering
 Translated:تصویر بند انگشتی از ارائه
 
 English:Flat
-Translated:تخت
+Translated:سطح صاف
 
 English:3D
 Translated:3D
@@ -3698,7 +3698,7 @@ English:Slice files prior to send
 Translated:برش فایل ها قبل از ارسال
 
 English:Oops! Please sign in to continue.
-Translated:اوه! لطفا به سیستم وارد شوید به ادامه.
+Translated:اوه! لطفا برای ادامه وارد شوید.
 
 English:Login Required
 Translated:ورود مورد نیاز
@@ -3752,7 +3752,7 @@ English:Share Library Item
 Translated:مورد به اشتراک گذاشتن کتابخانه
 
 English:Share Options
-Translated:گزینه ها را به اشتراک بگذار
+Translated:گزینه های اشتراک گذاری
 
 English:Your Share Code:
 Translated:شما کد اشتراک:
@@ -4373,7 +4373,7 @@ English:Go to Dashboard
 Translated:برو به صفحه
 
 English:Sign Up for an Account
-Translated:ثبت نام برای یک حساب
+Translated:برای یک حساب کار بری ثبت نام کنید
 
 English:Create Account
 Translated:ایجاد حساب کاربری
@@ -4685,7 +4685,7 @@ English:The X and Y position of the extruder that minimizes the chance of collid
 Translated:X و Y موقعیت اکسترودر که احتمال برخورد با قطعات روی تخت به حداقل می رساند.
 
 English:Restore All
-Translated:بازیابی همه
+Translated:بازگرداندن همه
 
 English:Restore Default
 Translated:بازیابی پیش فرض
@@ -5399,7 +5399,7 @@ English:Retrieving sync information...
 Translated:بازیابی اطلاعات همگام سازی ...
 
 English:Please sign in to continue.
-Translated:لطفا به سیستم وارد شوید به ادامه.
+Translated:لطفا برای ادامه وارد شوید.
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
 Translated:سرعت که در آن نازل حرکت خواهد کرد که دوره نقاهت چاپ شکست خورده، برای 1 لایه.
@@ -5829,4 +5829,115 @@ Translated:صرفه جویی در...
 
 English:Oops! Payment has been declined.
 Translated:اوه! پرداخت رد شده است.
+
+English:Distance or Loops
+Translated:فاصله و یا حلقه
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:z به جبران به درخواست برای بهبود چسبندگی لایه اول.
+
+English:Baby Step Offset
+Translated:بچه گام افست
+
+English:Oops! Unable to initialize device.
+Translated:اوه! قادر به مقداردهی اولیه دستگاه است.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:فاصله بین بالای قایق و پایین مدل. 0.6 میلی متر یک نقطه شروع خوب برای PLA است و 0.4 میلی متر یک نقطه شروع خوب برای ABS است. مقادیر پایین تر به یک سطح صاف، ارزش بالاتری را چاپ ساده تر برای حذف.
+
+English:Clear ZOffset
+Translated:روشن ZOffset
+
+English:Printing Window...
+Translated:چاپ پنجره ...
+
+English:Only Retract When Crossing Perimeters
+Translated:فقط پسگرفتن هنگام عبور محیطی
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:"خارجی محیط اکستروژن عرض باید کمتر یا مساوی به" قطر نازل »باشد * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:خارجی محیط اکستروژن عرض = {0} \ N نازل قطر = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:محل سکونت: تنظیمات و کنترل "->" تنظیمات "->" رشته "->" اکستروژن "->" خارجی محیط،
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:"خارجی محیط اکستروژن عرض باید بزرگتر از 0 باشد.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:خارجی محیط اکستروژن عرض = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:ارتفاع شروع (Z) سر چاپ قبل از کاوش هر موقعیت سطح چاپ.
+
+English:Probe Start Height
+Translated:ارتفاع پروب شروع
+
+English:Controls the speed of printer moves
+Translated:کنترل سرعت حرکت چاپگر
+
+English:Controls the amount of extrusion
+Translated:کنترل مقدار اکستروژن
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:مواد است که شما در حال بارگذاری را انتخاب نمایید.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:تر و تمیز به پایان رشته برای اطمینان یک بار خوب است.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:مواد است که شما در حال بارگذاری را انتخاب نمایید. شما در حال انجام برخی از مسائل که طول می کشد شرح طولانی است.
+
+English:Confirm the material you are unloading.
+Translated:اعلام مواد شما تخلیه.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:در حال انتظار برای اکسترودر برای گرم به 205، قبل از تخلیه.
+
+English:Unloading filament...
+Translated:تخلیه رشته ...
+
+English:Put filament into extruder and click Continue.
+Translated:قرار دادن رشته به اکسترودر و روی ادامه کلیک کنید.
+
+English:Loading filament...
+Translated:در حال بارگذاری ... رشته
+
+English:Waiting for extruder to heat to 205.
+Translated:در حال انتظار برای اکسترودر برای گرم به 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:کلیک کنید 'ادامه' که رشته در حال اجرا است پاک.
+
+English:Heating side 1.
+Translated:سمت و حرارت 1.
+
+English:Turn Sandvich over!
+Translated:روشن Sandvich بیش از!
+
+English:Heating side 2.
+Translated:سمت و حرارت 2.
+
+English:Done!
+Translated:انجام شده!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:هشدار: به منظور انجام بازیابی چاپ، چاپگر شما باید پایین حرکت می کند برای رسیدن به موقعیت خانه آن است.\nاگر چاپ خود را بیش از حد بزرگ است، بخشی از چاپگر خود را ممکن است با آن برخورد می کنند که در حال حرکت است. \ N اطمینان حاصل کنید که آن را بی خطر است برای انجام این عملیات قبل از اقدام.
 

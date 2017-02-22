@@ -80,10 +80,10 @@ namespace MatterHackers.MatterControl
 			//Construct buttons
 			connectButton = whiteImageButtonFactory.Generate("Connect".Localize(),centerText:true);
 			connectButton.Margin = new BorderDouble(0,0,10,0);
-			connectButton.Click += new EventHandler(ConnectButton_Click);
+			connectButton.Click += ConnectButton_Click;
 
 			skipButton = whiteImageButtonFactory.Generate("Skip".Localize(), centerText:true);
-			skipButton.Click += new EventHandler(NextButton_Click);
+			skipButton.Click += NextButton_Click;
 
 			connectButtonContainer.AddChild(connectButton);
 			connectButtonContainer.AddChild(skipButton);
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

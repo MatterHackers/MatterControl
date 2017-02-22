@@ -230,7 +230,7 @@ English:Show Wireframe
 Translated:Pokaż Szkielet
 
 English:Auto-Arrange
-Translated:Auto-aranżacji
+Translated:Auto zorganizować
 
 English:Save
 Translated:Zapisać
@@ -356,7 +356,7 @@ English:Slice Settings
 Translated:Ustawienia slice
 
 English:Show Help
-Translated:Pokaż Pomoc
+Translated:Pokaż pomoc
 
 English:Show All Settings
 Translated:Pokaż wszystkie ustawienia
@@ -767,7 +767,7 @@ English:Fill Pattern
 Translated:wzór wypełnienia
 
 English:Support Material
-Translated:Wsparcie Materiał
+Translated:Materiał nośnika
 
 English:Generate Support Material
 Translated:Generowanie pomocy materialnej
@@ -959,7 +959,7 @@ English:Printer Model
 Translated:model drukarki
 
 English:Auto Connect
-Translated:Połącz automatycznie
+Translated:Automatyczne polączenie
 
 English:Preparing To Print
 Translated:Przygotowanie do druku
@@ -1718,7 +1718,7 @@ English:You should be done in about 3 minutes.
 Translated:Należy to zrobić w około 3 minuty.
 
 English:Click 'Next' to continue.
-Translated:Kliknij "Dalej", aby kontynuować.
+Translated:Naciśnij dalej by kontynuować.
 
 English:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
 Translated:Drukarka powinna być teraz "naprowadzające". Po jej zakończeniu bazowania będziemy przenieść go do pierwszego punktu próbki.\n\nAby ukończyć kilku kolejnych krokach trzeba będzie
@@ -1955,7 +1955,7 @@ English:Est. Weight
 Translated:Est. Waga
 
 English:Downloading updates...
-Translated:Pobieranie aktualizacji ...
+Translated:Pobieranie aktualizacji...
 
 English:Duplicate
 Translated:Duplikować
@@ -2063,7 +2063,7 @@ English:Exit
 Translated:Wyjście
 
 English:Help
-Translated:Pomoc
+Translated:Wsparcie
 
 English:Getting Started
 Translated:Pierwsze kroki
@@ -2642,7 +2642,7 @@ English:Search Library
 Translated:Wyszukiwanie
 
 English:My Library
-Translated:Moja biblioteka
+Translated:Moja Biblioteka
 
 English:Add to Library
 Translated:Dodaj do biblioteki
@@ -3287,7 +3287,7 @@ English:Oops! Unable to save changes.
 Translated:Ups! Nie można zapisać zmian.
 
 English:Unable to save
-Translated:Nie udało się zapisać
+Translated:Nie można zapisać
 
 English:Terminal
 Translated:Terminal
@@ -3338,7 +3338,7 @@ English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Su
 Translated:Lokalizacja: "Ustawienia i sterowania" -> "Ustawienia" -> "Ogólne" -> "Warstwy / Surface"
 
 English:Create New Folder:
-Translated:Utwórz nowy folder:
+Translated:Stwórz nowy folder:
 
 English:Folder Name
 Translated:Nazwa folderu
@@ -3371,7 +3371,7 @@ English:Collection not Empty
 Translated:Kolekcja nie jest pusty
 
 English:Do NOT Delete
-Translated:Nie usuwaj
+Translated:Nie usuwać
 
 English:Library (cloud)
 Translated:Biblioteka (cloud)
@@ -3404,7 +3404,7 @@ English:The folder '{0}' is not empty.\nWould you like to delete it anyway?
 Translated:Folder '{0}' nie jest pusty. \ N Czy chcesz go skasować?
 
 English:Delete folder?
-Translated:Usuwanie folderu?
+Translated:Usunięty folder?
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:Folder '{0}' nie jest pusty.\n\nchcesz go skasować?
@@ -3413,19 +3413,19 @@ English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:Folder '{0}' nie jest pusty.\n\nchcesz go skasować?
 
 English:Delete folder?
-Translated:Usuwanie folderu?
+Translated:Usunięty folder?
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:Folder '{0}' nie jest pusty.\n\nchcesz go skasować?
 
 English:Delete folder?
-Translated:Usuwanie folderu?
+Translated:Usunięty folder?
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:Folder '{0}' nie jest pusty.\n\nchcesz go skasować?
 
 English:Delete folder?
-Translated:Usuwanie folderu?
+Translated:Usunięty folder?
 
 English:Cloud Library
 Translated:chmura Biblioteka
@@ -3692,7 +3692,7 @@ English:Zoom (Ctrl + Left Mouse)
 Translated:Powiększenie (Ctrl + Lewy przycisk myszy)
 
 English:Search Results
-Translated:wyniki wyszukiwania
+Translated:Wyniki wyszukiwania
 
 English:Slice files prior to send
 Translated:Kawałek przed wysyłać pliki
@@ -3710,7 +3710,7 @@ English:You are switching to a different thumbnail rendering mode. If you want, 
 Translated:Jesteś przełączania na inny tryb renderowania miniatur. Jeśli chcesz, bieżące miniaturki mogą być usunięte i ponownie w nowym stylu. Można przełączać się w dowolnym momencie. Będzie niektóre napowietrznych przetwarzania podczas gdy nowe miniaturki są tworzone.\n\nCzy chcesz przebudować istniejące miniaturki teraz?
 
 English:Loading...
-Translated:Załadunek...
+Translated:Ładuję...
 
 English:Wrapping:
 Translated:Zawijanie:
@@ -3779,7 +3779,7 @@ English:Please wait. Sending invite...
 Translated:Proszę czekać. Wysyłanie zaprosić ...
 
 English:Invite sent!
-Translated:Zaproszenie wysłane!
+Translated:Zaproś wysłany!
 
 English:Your invite has been sent!
 Translated:Twoje zaproszenie zostało wysłane!
@@ -4373,10 +4373,10 @@ English:Go to Dashboard
 Translated:Przejdź do panelu
 
 English:Sign Up for an Account
-Translated:Załóż konto
+Translated:Zaloguj się na konto
 
 English:Create Account
-Translated:Utworzyć konto
+Translated:Utwórz konto
 
 English:Username
 Translated:Nazwa Użytkownika
@@ -5042,7 +5042,7 @@ English:Printers...
 Translated:Drukarki ...
 
 English:Current
-Translated:Aktualny, bieżący
+Translated:obecny
 
 English:Quality preset
 Translated:Ustawienie jakości
@@ -5648,7 +5648,7 @@ English:- none -
 Translated:- Żaden -
 
 English:Actions
-Translated:Akcje
+Translated:działania
 
 English:Show In Action Menu
 Translated:Zobacz w akcji Menu
@@ -5816,7 +5816,7 @@ English:- Please Select -
 Translated:- Proszę wybrać -
 
 English:Credit Card Number
-Translated:Numer karty kredytowej
+Translated:numer karty kredytowej
 
 English:Expiration Date
 Translated:Termin ważności
@@ -5829,4 +5829,115 @@ Translated:Oszczędność...
 
 English:Oops! Payment has been declined.
 Translated:Ups! Płatność została odrzucona.
+
+English:Distance or Loops
+Translated:Odległość lub Pętle
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:The Z przesunięcie do zastosowania w celu poprawy przyczepności pierwszej warstwy.
+
+English:Baby Step Offset
+Translated:Dziecko Krok offsetowy
+
+English:Oops! Unable to initialize device.
+Translated:Ups! Nie można zainicjować urządzenia.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:Odległość pomiędzy górną tratwy i na dole modelu. 0,6 mm jest dobrym punktem wyjścia do PLA i 0,4 mm jest dobrym punktem wyjścia dla ABS. Niższe wartości dają gładszą powierzchnię, większe wartości druku łatwiejsze do usunięcia.
+
+English:Clear ZOffset
+Translated:Usuń ZOffset
+
+English:Printing Window...
+Translated:Drukowanie okno ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Wycofać Tylko podczas przekraczania obwodów
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:"Zewnętrzna obwodowa Wyciskanie Width 'musi być mniejsza lub równa średnicy dyszy' '* 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Zewnętrzna obwodowa Wyciskanie Szerokość = {0}\nDysza Średnica = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Lokalizacja: "Ustawienia i sterowania" -> "Ustawienia" -> 'włókien' -> 'Wyciskanie' -> 'Zewnętrzna obwodowa "
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:"Zewnętrzna obwodowa Wyciskanie Width" musi być większa niż 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Zewnętrzna obwodowa Wyciskanie Szerokość = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:Wysokość początkowa (z) głowicy drukującej przed sondowania każdą pozycję poziomu druku.
+
+English:Probe Start Height
+Translated:Sonda start Wzrost
+
+English:Controls the speed of printer moves
+Translated:Kontroluje prędkość ruchów drukarek
+
+English:Controls the amount of extrusion
+Translated:Kontroluje ilość wytłaczania
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Wybierz materiał, który ma być załadowany.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Przycinania końca włókna, aby zapewnić dobre obciążenia.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Wybierz materiał, który ma być załadowany. Robisz pewne rzeczy, które ma długi opis.
+
+English:Confirm the material you are unloading.
+Translated:Potwierdź materiał jesteś rozładunku.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Oczekiwanie na wytłaczarki do ogrzania do 205, przed rozładunkiem.
+
+English:Unloading filament...
+Translated:Rozładunek włókna ...
+
+English:Put filament into extruder and click Continue.
+Translated:Włóż włókna do wytłaczarki i kliknij Kontynuuj.
+
+English:Loading filament...
+Translated:Ładowanie włókna ...
+
+English:Waiting for extruder to heat to 205.
+Translated:Oczekiwanie na wytłaczarki do ogrzania do 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Kliknij przycisk "Kontynuuj", gdy włókno pracuje równo.
+
+English:Heating side 1.
+Translated:Strona grzania 1.
+
+English:Turn Sandvich over!
+Translated:Skręć Bizona koniec!
+
+English:Heating side 2.
+Translated:Strona grzania 2.
+
+English:Done!
+Translated:Gotowe!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:UWAGA: W celu przeprowadzenia odzyskiwania druku, drukarka musi poruszać się w dół, aby osiągnąć swoją pozycję domową. \ N Jeśli wydruk jest zbyt duża, część drukarki mogą zderzyć się z nim podczas ruchu w dół. \ N Upewnij się, że można bezpiecznie wykonać tę operację przed przystąpieniem.
 

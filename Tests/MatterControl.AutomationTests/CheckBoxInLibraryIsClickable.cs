@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				SearchRegion rowItemRegion = testRunner.GetRegionByName(itemName, 3);
 
 				testRunner.ClickByName("Library Edit Button", 3);
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
 				CheckBox checkBoxWidget = foundWidget as CheckBox;

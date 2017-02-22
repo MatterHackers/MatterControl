@@ -9,10 +9,45 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public DisableableWidget()
 		{
-			HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			VAnchor = Agg.UI.VAnchor.FitToChildren;
+			HAnchor = HAnchor.ParentLeftRight;
+			VAnchor = VAnchor.FitToChildren;
 			this.Margin = new BorderDouble(3);
-			disableOverlay = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
+			disableOverlay = new GuiWidget(0, 0);
+
+			this.BoundsChanged += (s, e) =>
+			{
+				if (Parent != null
+				&& Parent.Visible && Parent.Width > 0
+				&& Parent.Height > 0
+				&& Parent.Children.Count > 1)
+				{
+					if(Children.IndexOf(disableOverlay) != Children.Count-1)
+					{
+						Children.RemoveAt(Children.IndexOf(disableOverlay));
+						disableOverlay.ClearRemovedFlag();
+						Children.Add(disableOverlay);
+					}
+
+					var childBounds = GetChildrenBoundsIncludingMargins(considerChild: (parent, child) =>
+					{
+						if (child == disableOverlay)
+						{
+							return false;
+						}
+
+						return true;
+					});
+
+					if (childBounds != RectangleDouble.ZeroIntersection)
+					{
+						disableOverlay.LocalBounds = new RectangleDouble(childBounds.Left,
+							childBounds.Bottom,
+							childBounds.Right,
+							childBounds.Top - disableOverlay.Margin.Top);
+					}
+				}
+			};
+
 			disableOverlay.Visible = false;
 			base.AddChild(disableOverlay);
 		}
@@ -38,19 +73,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				case EnableLevel.Enabled:
 					disableOverlay.Visible = false;
 					break;
-			}
-		}
-
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
-		{
-			if (indexInChildrenList == -1)
-			{
-				// put it under the disableOverlay
-				base.AddChild(childToAdd, Children.Count - 1);
-			}
-			else
-			{
-				base.AddChild(childToAdd, indexInChildrenList);
 			}
 		}
 	}

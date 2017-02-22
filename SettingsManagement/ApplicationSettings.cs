@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
@@ -14,6 +15,7 @@ namespace MatterHackers.MatterControl
 		public const string HideGCodeWarning = nameof(HideGCodeWarning);
 		public const string DesktopPosition = nameof(DesktopPosition);
 		public const string WindowSize = nameof(WindowSize);
+		public const string MainWindowMaximized = nameof(MainWindowMaximized);
 	}
 
 	public class ApplicationSettings

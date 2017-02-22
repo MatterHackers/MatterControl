@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		private void View3DWidget_AfterDraw(GuiWidget drawingWidget, DrawEventArgs e)
+		private void View3DWidget_AfterDraw(object sender, DrawEventArgs e)
 		{
 			if (view3DWidget?.meshViewerWidget?.TrackballTumbleWidget != null)
 			{
@@ -489,7 +489,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonBottomPanel.AddChild(editToolBar);
 			}
 
-			GuiWidget buttonRightPanelHolder = new GuiWidget(HAnchor.FitToChildren, VAnchor.ParentBottomTop);
+			GuiWidget buttonRightPanelHolder = new GuiWidget()
+			{
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.ParentBottomTop
+			};
 			buttonRightPanelHolder.Name = "buttonRightPanelHolder";
 			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
 			buttonRightPanelHolder.AddChild(Sidebar);
@@ -504,7 +508,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.ResetView();
 			};
 
-			buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
+			buttonRightPanelDisabledCover = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop
+			};
 			buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
 			buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
 
@@ -731,7 +739,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		Vector3 rotChange = new Vector3(.011, .012, .013);
 		Vector3 scaleChange = new Vector3(.0011, .0012, .0013);
 		Vector3 scaleCurrent = new Vector3(1, 1, 1);
-		private void CreateBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
+
+		private void CreateBooleanTestGeometry(object sender, DrawEventArgs e)
 		{
 			try
 			{
@@ -836,7 +845,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return meshToAdd;
 		}
 
-		private void RemoveBooleanTestGeometry(GuiWidget drawingWidget, DrawEventArgs e)
+		private void RemoveBooleanTestGeometry(object sender, DrawEventArgs e)
         {
 			if (meshViewerWidget.Scene.Children.Contains(booleanGroup))
 			{
@@ -856,13 +865,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public WindowMode windowType { get; set; }
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -1417,7 +1422,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TextWidget centeredX = new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredX.Margin = new BorderDouble(3, 0, 0, 0); centeredX.AnchorCenter(); rotateXButton.AddChild(centeredX);
 			rotateButtonContainer.AddChild(rotateXButton);
 			rotateControls.Add(rotateXButton);
-			rotateXButton.Click += (object sender, EventArgs mouseEvent) =>
+			rotateXButton.Click += (s, e) =>
 			{
 				if (Scene.HasSelection)
 				{
@@ -1435,7 +1440,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TextWidget centeredY = new TextWidget("Y", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredY.Margin = new BorderDouble(3, 0, 0, 0); centeredY.AnchorCenter(); rotateYButton.AddChild(centeredY);
 			rotateButtonContainer.AddChild(rotateYButton);
 			rotateControls.Add(rotateYButton);
-			rotateYButton.Click += (object sender, EventArgs mouseEvent) =>
+			rotateYButton.Click += (s, e) =>
 			{
 				if (Scene.HasSelection)
 				{
@@ -1453,7 +1458,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TextWidget centeredZ = new TextWidget("Z", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredZ.Margin = new BorderDouble(3, 0, 0, 0); centeredZ.AnchorCenter(); rotateZButton.AddChild(centeredZ);
 			rotateButtonContainer.AddChild(rotateZButton);
 			rotateControls.Add(rotateZButton);
-			rotateZButton.Click += (object sender, EventArgs mouseEvent) =>
+			rotateZButton.Click += (s, e) =>
 			{
 				if (Scene.HasSelection)
 				{
@@ -1473,7 +1478,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layFlatButton.Cursor = Cursors.Hand;
 			buttonPanel.AddChild(layFlatButton);
 
-			layFlatButton.Click += (object sender, EventArgs mouseEvent) =>
+			layFlatButton.Click += (s, e) =>
 			{
 				if (Scene.HasSelection)
 				{
@@ -1634,7 +1639,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
 			if (renderTypeString == null)
 			{
-				if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+				if (UserSettings.Instance.IsTouchScreen)
 				{
 					renderTypeString = "Shaded";
 				}
@@ -1773,7 +1778,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: VAnchor.FitToChildren);
+			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.FitToChildren
+			};
 
 			if (mappedEditors != null)
 			{
@@ -2278,7 +2286,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return true;
 		}
 
-		private void SaveAsWindow_Closed(object sender, EventArgs e)
+		private void SaveAsWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			this.saveAsWindow = null;
 		}

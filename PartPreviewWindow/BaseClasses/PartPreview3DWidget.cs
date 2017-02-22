@@ -42,14 +42,6 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class Cover : GuiWidget
-	{
-		public Cover(HAnchor hAnchor = HAnchor.AbsolutePosition, VAnchor vAnchor = VAnchor.AbsolutePosition)
-			: base(hAnchor, vAnchor)
-		{
-		}
-	}
-
 	public abstract class PartPreview3DWidget : PartPreviewWidget
 	{
 		protected static readonly int DefaultScrollBarWidth = 120;
@@ -186,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{
@@ -198,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public static SolidSlider InsertUiForSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				scrollBarWidth = 20;
 			}

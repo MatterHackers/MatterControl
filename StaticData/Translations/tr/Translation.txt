@@ -356,7 +356,7 @@ English:Slice Settings
 Translated:dilim Ayarları
 
 English:Show Help
-Translated:göster Yardım
+Translated:Yardımı göster
 
 English:Show All Settings
 Translated:Tüm Ayarları Göster
@@ -767,7 +767,7 @@ English:Fill Pattern
 Translated:Desen Dolgu
 
 English:Support Material
-Translated:Destek malzemesi
+Translated:Destek Materyalleri
 
 English:Generate Support Material
 Translated:Destek malzemesi oluşturmak
@@ -959,7 +959,7 @@ English:Printer Model
 Translated:Yazıcı Modeli
 
 English:Auto Connect
-Translated:Otomatik Bağlan
+Translated:Otomatik bağlantı
 
 English:Preparing To Print
 Translated:Yazdır Hazırlama
@@ -1508,7 +1508,7 @@ English:Slicing Error. Please review your slice settings.
 Translated:Dilimleme hata. senin dilim ayarlarınızı gözden geçirin.
 
 English:Quality
-Translated:kalite
+Translated:Kalite
 
 English:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
 Translated:İlk Katman Yüksekliği Meme Çapı '' az veya eşit olmalıdır '.
@@ -1691,7 +1691,7 @@ English:Position
 Translated:pozisyon
 
 English:Do not show this again
-Translated:Bunu bir daha gösterme
+Translated:Bunu tekrar gösterme
 
 English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
 Translated:yazdırmaya çalıştığınız dosya bir GCode dosyasıdır.\n\nGCode dosyaları tam olarak ne yapmak yazıcınızı söyle. Onlar SliceSettings tarafından değiştirilmez ve benim özel yazıcı yapılandırması için uygun olmayabilir.\n\nonlar mevcut yazıcı ve yapılandırmayı Mach biliyorsanız sadece GCode dosyaları yazdırın.\n\nEğer bu GCode dosyayı yazdırmak istediğiniz emin misiniz?
@@ -1748,7 +1748,7 @@ English:Print Leveling Wizard
 Translated:Tesviye Sihirbazı yazdırmak
 
 English:Back
-Translated:Arka
+Translated:Geri
 
 English:Next
 Translated:Sonraki
@@ -1955,7 +1955,7 @@ English:Est. Weight
 Translated:Avustralya, Brezilya ve Kuzey Amerika ülkelerinin kullandığı saat uygulaması. Ağırlık
 
 English:Downloading updates...
-Translated:Indiriliyor güncellemeler ...
+Translated:Güncellemeler indiriliyor...
 
 English:Duplicate
 Translated:Çift
@@ -2354,7 +2354,7 @@ English:You should be done in about 2 minutes.
 Translated:Yaklaşık 2 dakika içinde yapılmalıdır.
 
 English:Alert
-Translated:uyarı
+Translated:Alarm
 
 English:Input Required
 Translated:girdi Gerekli
@@ -2897,7 +2897,7 @@ English:Supported Angles
 Translated:desteklenen Açılar
 
 English:Amount
-Translated:miktar
+Translated:Tutar
 
 English:Settings
 Translated:Ayarlar
@@ -3068,7 +3068,7 @@ English:Oops! Your session has expired.  Please sign-in again to continue.
 Translated:Oops! Oturumunuz sona erdi. oturum açın tekrar devam etmek.
 
 English:Sorry! Unable to connect to server. Please try again later.
-Translated:Üzgünüm! Sunucuya bağlanılamıyor. Lütfen daha sonra tekrar deneyiniz.
+Translated:Afedersiniz! Sunucuya bağlanılamıyor. Lütfen daha sonra tekrar deneyiniz.
 
 English:All done! Files have been sent.
 Translated:Hepsi tamam! Dosyalar gönderildi.
@@ -3287,7 +3287,7 @@ English:Oops! Unable to save changes.
 Translated:Oops! Değişiklikleri kaydetmek için açılamıyor.
 
 English:Unable to save
-Translated:Kaydedilemiyor
+Translated:kaydedilemiyor
 
 English:Terminal
 Translated:terminal
@@ -3371,7 +3371,7 @@ English:Collection not Empty
 Translated:Boş değil Koleksiyon
 
 English:Do NOT Delete
-Translated:Sil yapmayın
+Translated:Silme
 
 English:Library (cloud)
 Translated:Kütüphane (bulut)
@@ -4400,7 +4400,7 @@ English:Oops! Field cannot be left blank
 Translated:Oops! Alan boş bırakılamaz
 
 English:Sorry!  Must be a valid email address.
-Translated:Üzgünüm! Geçerli bir e-posta adresi olmalı.
+Translated:Afedersiniz! Geçerli bir e-posta adresi olmalı.
 
 English:Please wait while we create your account...
 Translated:Hesabınızı oluşturmak lütfen bekleyin ...
@@ -4415,7 +4415,7 @@ English:Please log in to continue.
 Translated:Devam etmek için lütfen giriş yapınız.
 
 English:Oops! Invalid username, email or password.
-Translated:Oops! Geçersiz kullanıcı adı, e-posta veya parola.
+Translated:Oops! Geçersiz kullanıcı adı, e-posta veya şifre.
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:gücünü artırmak ve arayüz katmanları tutmak için destek malzeme etrafında bir taslak oluşturur.
@@ -5261,7 +5261,7 @@ English:Recovered printer profile
 Translated:Kurtarılan yazıcı profili
 
 English:Sorry! Looks like an account already exists for that email address.
-Translated:Üzgünüm! Bir hesap zaten e-posta adresi var gibi görünüyor.
+Translated:Afedersiniz! Bir hesap zaten e-posta adresi var gibi görünüyor.
 
 English:Settings History
 Translated:Ayarlar Tarih
@@ -5462,7 +5462,7 @@ English:Limited Connectivity
 Translated:sınırlı Bağlantı
 
 English:Connection Status
-Translated:bağlantı Durumu
+Translated:Bağlantı durumu
 
 English:Retry Login
 Translated:Giriş Yeniden Dene
@@ -5829,4 +5829,115 @@ Translated:Tasarruf ...
 
 English:Oops! Payment has been declined.
 Translated:Oops! Ödeme reddedildi edilmiştir.
+
+English:Distance or Loops
+Translated:Mesafe veya Döngüler
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Ofset z ilk kat yapışma geliştirmek için uygulanacak.
+
+English:Baby Step Offset
+Translated:Bebek Adım Ofset
+
+English:Oops! Unable to initialize device.
+Translated:Oops! Cihazı başlatılamadı.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:salın üst ve modelin tabanı arasındaki mesafe. 0.6 mm PLA için iyi bir başlangıç ​​noktasıdır ve 0,4 mm ABS için iyi bir başlangıç ​​noktasıdır. Düşük değerler daha yüksek değerler kaldırmak için baskı kolaylaştırmak, daha düzgün bir yüzey verir.
+
+English:Clear ZOffset
+Translated:temizle ZOffset
+
+English:Printing Window...
+Translated:Pencere yazdırma ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Sadece ne zaman Geçişi Perimeters geri çekin
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'Dış Çevre Ekstrüzyon Genişliği' 'Meme Çapı' az veya eşit olmalıdır * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Dış Çevre Ekstrüzyon Genişliği = {0}\nMeme Çapı = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Yer: 'Ayarlar ve Kontroller' -> 'Ayarlar' -> 'Filament' -> 'ekstrüzyon' -> 'Dış Çevre'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'Dış Çevre Ekstrüzyon Genişliği' 0'dan büyük olmalıdır.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Dış Çevre Ekstrüzyon Genişliği = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:Her baskı düzey bir pozisyon sondalama önce baskı kafasının başlangıç ​​yüksekliği (z).
+
+English:Probe Start Height
+Translated:Probe Başlangıç ​​Yüksekliği
+
+English:Controls the speed of printer moves
+Translated:Yazıcı hamle hızını kontrol
+
+English:Controls the amount of extrusion
+Translated:ekstrüzyon miktarını kontrol
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Yüklediğiniz malzeme seçin.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:İyi bir yük sağlamak için filamanın sonunu kesin.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Yüklediğiniz malzeme seçin. Uzun bir açıklama alır bazı şeyler yapıyoruz.
+
+English:Confirm the material you are unloading.
+Translated:Eğer boşaltma malzeme onaylayın.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:ekstruder boşaltma önce, 205 ısıtmak için bekliyor.
+
+English:Unloading filament...
+Translated:filamanın Boşaltma ...
+
+English:Put filament into extruder and click Continue.
+Translated:ekstrüder içine filamanın koyun ve Devam'ı tıklayın.
+
+English:Loading filament...
+Translated:filamanın yükleniyor ...
+
+English:Waiting for extruder to heat to 205.
+Translated:ekstruder için bekleyen 205 ısıtmak için.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Filament temiz çalışırken 'Devam tıklayın.
+
+English:Heating side 1.
+Translated:Isıtma tarafı 1.
+
+English:Turn Sandvich over!
+Translated:Sandviç ters çevirin!
+
+English:Heating side 2.
+Translated:Isıtma tarafı 2.
+
+English:Done!
+Translated:Bitti!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:UYARI: Baskı kurtarma gerçekleştirmek için, yazıcı kendi ev konuma ulaşmak için aşağı hareket etmelidir. Baskı çok büyükse aşağı hareket ederken\nyazıcınızdan parçası onunla çarpışmak olabilir. \ N daha ilerlemeden önce bu işlemi gerçekleştirmek için güvenli olduğundan emin olun.
 

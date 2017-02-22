@@ -388,7 +388,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			if (partPreviewWindow == null)
 			{
 				partPreviewWindow = new PartPreviewMainWindow(itemWrapper, autoRotate);
-				partPreviewWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
+				partPreviewWindow.Closed += PartPreviewWindow_Closed;
 			}
 			else
 			{
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 		}
 
-		private void PartPreviewWindow_Closed(object sender, EventArgs e)
+		private void PartPreviewWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			this.partPreviewWindow = null;
 		}
@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			rightButtonOverlay.SlideIn();
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

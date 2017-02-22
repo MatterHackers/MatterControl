@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			AddChildElements();
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				resetConnectionButton.Margin = new BorderDouble(6, 0, 3, 3);
 				this.AddChild(resetConnectionButton);
 
-				resetConnectionButton.Click += new EventHandler((s,e) => PrinterConnectionAndCommunication.Instance.RebootBoard());
+				resetConnectionButton.Click += (s, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 				resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
 
 				ActiveSliceSettings.SettingChanged.RegisterEvent((sender, e) => 

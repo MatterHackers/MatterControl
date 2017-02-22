@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonPanel.AddChild(applyScaleButton);
 
 			scaleControls.Add(applyScaleButton);
-			applyScaleButton.Click += (object sender, EventArgs mouseEvent) =>
+			applyScaleButton.Click += (s, e) =>
 			{
 				ApplyScaleFromEditField();
 			};

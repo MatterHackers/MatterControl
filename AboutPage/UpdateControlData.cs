@@ -125,9 +125,12 @@ namespace MatterHackers.MatterControl
 				if (this.UpdateRequired && !haveShowUpdateRequired)
 				{
 					haveShowUpdateRequired = true;
+					if (!UserSettings.Instance.IsTouchScreen)
+					{
 #if !__ANDROID__
-					UiThread.RunOnIdle(CheckForUpdateWindow.Show);
+						UiThread.RunOnIdle(CheckForUpdateWindow.Show);
 #endif
+					}
 				}
 			}
 		}
@@ -435,7 +438,7 @@ namespace MatterHackers.MatterControl
 			{
 				//Change download file to friendly file name
 				System.IO.File.Move(updateFileName, friendlyFileName);
-#if __ANDROID__ 
+#if __ANDROID__
 				if (InstallUpdateFromMainActivity != null)
 				{
 					InstallUpdateFromMainActivity(this, null);

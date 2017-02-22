@@ -128,6 +128,7 @@
     <Compile Include="AboutPage\HTMLParser\HtmlParser.cs" />
     <Compile Include="ActionBar\ActionBarPlus.cs" />
     <Compile Include="ActionBar\PrinterSelector.cs" />
+    <Compile Include="ActionBar\TouchScreenPrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterConnectAndSelectControl.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItemCollection.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorWidget.cs" />
     <Compile Include="CustomWidgets\PopOutTextTab.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
@@ -397,12 +399,12 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Mindscape.Raygun4Net, Version=5.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Mindscape.Raygun4Net.5.3.1\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
+    <Reference Include="Mindscape.Raygun4Net, Version=5.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Mindscape.Raygun4Net.5.4.1\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Mindscape.Raygun4Net4, Version=5.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Mindscape.Raygun4Net.5.3.1\lib\net40\Mindscape.Raygun4Net4.dll</HintPath>
+    <Reference Include="Mindscape.Raygun4Net4, Version=5.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Mindscape.Raygun4Net.5.4.1\lib\net40\Mindscape.Raygun4Net4.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -567,6 +569,18 @@
     <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
       <Project>{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}</Project>
       <Name>InfInstaller</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\MatterSlice\MSClipperLib\MSClipperLib.csproj">
+      <Project>{2c564be1-352d-4ddb-8226-f0981f983c60}</Project>
+      <Name>MSClipperLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\MatterSlice\Pathfinding\Pathfinding.csproj">
+      <Project>{8cb3464f-6130-4edb-8dc6-ccd2697fafbb}</Project>
+      <Name>Pathfinding</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\MatterSlice\QuadTree\QuadTree.csproj">
+      <Project>{23ec3364-7c93-4169-9ab2-7181c66004c0}</Project>
+      <Name>QuadTree</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

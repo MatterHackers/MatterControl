@@ -44,6 +44,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -330,7 +332,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return extruder1StlFileToSlice;
 		}
 
-		public static bool runInProcess = true;
+		public static bool runInProcess = false;
 		private static Process slicerProcess = null;
 
 		private static void CreateSlicedPartsThread()
@@ -353,7 +355,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						itemToSlice.CurrentlySlicing = true;
 
 						string currentConfigurationFileAndPath = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, "config_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString() + ".ini");
-						ActiveSliceSettings.Instance.Helpers.GenerateConfigFile(currentConfigurationFileAndPath, true);
 
 						string gcodePathAndFileName = itemToSlice.GetGCodePathAndFileName();
 						bool gcodeFileIsComplete = itemToSlice.IsGCodeFileComplete(gcodePathAndFileName);
@@ -365,7 +366,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							switch (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
 							{
 								case SlicingEngineTypes.Slic3r:
-									commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
+									Slic3rEngineMappings.WriteSliceSettingsFile(currentConfigurationFileAndPath);
+									// if we have centering turend on and are printing a model loaded up from meshes (not gcode)
+									if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.center_part_on_bed))
+									{
+										// figure out the center position of this file
+										Vector2 bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+										commandArgs = $"--print-center {bedCenter.x:0.##},{bedCenter.y:0.##} " + "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
+									}
+									else
+									{
+										commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
+									}
 									break;
 
 								case SlicingEngineTypes.CuraEngine:
@@ -374,7 +386,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								case SlicingEngineTypes.MatterSlice:
 									{
-										EngineMappingsMatterSlice.WriteMatterSliceSettingsFile(currentConfigurationFileAndPath);
+										EngineMappingsMatterSlice.WriteSliceSettingsFile(currentConfigurationFileAndPath);
 										if (mergeRules == "")
 										{
 											commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\"";
@@ -458,7 +470,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								&& File.Exists(currentConfigurationFileAndPath))
 							{
 								// make sure we have not already written the settings onto this file
-								bool fileHaseSettings = false;
+								bool fileHasSettings = false;
 								int bufferSize = 32000;
 								using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
 								{
@@ -468,13 +480,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 									if (fileEnd.Contains("GCode settings used"))
 									{
-										fileHaseSettings = true;
+										fileHasSettings = true;
 									}
 								}
 
-								if (!fileHaseSettings)
+								if (!fileHasSettings)
 								{
-									using (StreamWriter gcodeWirter = File.AppendText(gcodePathAndFileName))
+									using (StreamWriter gcodeWriter = File.AppendText(gcodePathAndFileName))
 									{
 										string oemName = "MatterControl";
 										if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
@@ -482,12 +494,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 											oemName = oemName + " - {0}".FormatWith(OemSettings.Instance.WindowTitleExtra);
 										}
 
-										gcodeWirter.WriteLine("; {0} Version {1} Build {2} : GCode settings used".FormatWith(oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion));
-										gcodeWirter.WriteLine("; Date {0} Time {1}:{2:00}".FormatWith(DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute));
+										gcodeWriter.WriteLine("; {0} Version {1} Build {2} : GCode settings used".FormatWith(oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion));
+										gcodeWriter.WriteLine("; Date {0} Time {1}:{2:00}".FormatWith(DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute));
 
 										foreach (string line in File.ReadLines(currentConfigurationFileAndPath))
 										{
-											gcodeWirter.WriteLine("; {0}".FormatWith(line));
+											gcodeWriter.WriteLine("; {0}".FormatWith(line));
 										}
 									}
 								}

@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
 
-		private static PrinterSettings activeInstance = PrinterSettings.Empty;
+		private static PrinterSettings activeInstance;
 		public static PrinterSettings Instance
 		{
 			get
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			set
 			{
-				if (activeInstance != value 
+				if (activeInstance != value
 					&& value != null)
 				{
 					// If we have an active printer, run Disable
@@ -92,13 +92,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		static public void OnSettingsChanged(SliceSettingData settingData)
-		{
-			SettingChanged.CallEvents(null, new StringEventArgs(settingData.SlicerConfigName));
+		public static List<SliceSettingData> SettingsData { get; private set; } = new List<SliceSettingData>();
+		private static Dictionary<string, SliceSettingData> settingsByName;
 
-			if (settingData.ReloadUiWhenChanged)
+		static ActiveSliceSettings()
+		{
+			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			SettingsData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents) as List<SliceSettingData>;
+
+			settingsByName = new Dictionary<string, SliceSettingData>();
+			foreach (var settingsData in ActiveSliceSettings.SettingsData)
 			{
-				UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll());
+				settingsByName.Add(settingsData.SlicerConfigName, settingsData);
+			}
+			activeInstance = PrinterSettings.Empty;
+		}
+
+		public static void OnSettingChanged(string slicerConfigName)
+		{
+			SettingChanged.CallEvents(null, new StringEventArgs(slicerConfigName));
+
+			SliceSettingData settingsData;
+			if (settingsByName.TryGetValue(slicerConfigName, out settingsData) && settingsData.ReloadUiWhenChanged)
+			{
+				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
 			}
 		}
 

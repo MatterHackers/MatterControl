@@ -152,7 +152,7 @@ English:Download Update
 Translated:अद्यतन डाउनलोड करे
 
 English:Install Update
-Translated:नए बदलाव को लगाओ
+Translated:अद्यतन स्थापित करें
 
 English:There are updates available.
 Translated:उपलब्ध अद्यतन नहीं हैं।
@@ -1751,7 +1751,7 @@ English:Back
 Translated:वापस
 
 English:Next
-Translated:अगला
+Translated:आगामी
 
 English:Low Precision
 Translated:कम प्रेसिजन
@@ -2021,7 +2021,7 @@ English:Submitting your information...
 Translated:आपकी जानकारी भेजने से ...
 
 English:Question*
-Translated:सवाल*
+Translated:प्रश्न*
 
 English:Briefly describe your question
 Translated:संक्षेप में अपने प्रश्न का वर्णन
@@ -2441,7 +2441,7 @@ English:Have MatterControl send you a text message after your print is finished
 Translated:MatterControl आप एक पाठ संदेश भेज दिया है अपने प्रिंट के बाद समाप्त हो गया है
 
 English:Your Phone Number*
-Translated:आपका फोन नंबर*
+Translated:आपकी दूरभाष संख्या*
 
 English:A U.S. or Canadian mobile phone number
 Translated:एक अमेरिकी या कनाडा के मोबाइल फोन नंबर
@@ -2534,7 +2534,7 @@ English:Infill Angle
 Translated:infill कोण
 
 English:Grid
-Translated:ग्रिड
+Translated:जाल
 
 English:Moves
 Translated:चालें
@@ -3338,7 +3338,7 @@ English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Su
 Translated:स्थान: 'सेटिंग और नियंत्रण' -> 'सेटिंग' -> 'जनरल' -> 'परतें / भूतल'
 
 English:Create New Folder:
-Translated:नया फ़ोल्डर बनाएं:
+Translated:नया फ़ोल्डर बनाओ:
 
 English:Folder Name
 Translated:फोल्डर का नाम
@@ -3779,7 +3779,7 @@ English:Please wait. Sending invite...
 Translated:कृपया प्रतीक्षा करें। को आमंत्रित भेजा जा रहा है ...
 
 English:Invite sent!
-Translated:आमंत्रण भेजा!
+Translated:आमंत्रण भेज दिया!
 
 English:Your invite has been sent!
 Translated:आपका आमंत्रण भेज दिया गया है!
@@ -4046,7 +4046,7 @@ English:The X and Y values of the size of the print bed, in millimeters. For pri
 Translated:एक्स और वाई मिलीमीटर में प्रिंट बिस्तर के आकार के मूल्यों,। एक परिपत्र बिस्तर के साथ प्रिंटर के लिए, इन मूल्यों एक्स और वाई अक्ष पर व्यास हैं।
 
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
-Translated:तापमान जो करने के लिए बिस्तर प्रिंट की अवधि के लिए स्थापित किया जाएगा। निष्क्रिय करने के लिए 0 करने के लिए सेट करें।
+Translated:तापमान जो करने के लिए बिस्तर की अवधि के लिए प्रिंट का गठन किया जाएगा। निष्क्रिय करने के लिए 0 करने के लिए सेट करें।
 
 English:The amount to remove from the bottom of the model, in millimeters.
 Translated:राशि मॉडल के नीचे से दूर करने के लिए, मिलीमीटर में।
@@ -4073,7 +4073,7 @@ English:Centers the print on the bed, regardless of where it is moved in Edit Mo
 Translated:बिस्तर पर प्रिंट केन्द्रों, जहां यह संपादन मोड में ले जाया जाता है की परवाह किए बिना। बिस्तर पर कहीं भी एक मॉडल के मुद्रण की अनुमति को अक्षम करें।
 
 English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
-Translated:जी कोड एक प्रिंटर के लिए सफल कनेक्शन पर चलाने के लिए। यह एक दिया प्रिंटर के लिए विशेष रूपरेखा तय करने के लिए उपयोगी हो सकता है।
+Translated:कोड जी एक प्रिंटर के लिए सफल कनेक्शन पर चलाने के लिए। यह एक दिया प्रिंटर के लिए विशेष रूपरेखा तय करने के लिए उपयोगी हो सकता है।
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:मुद्रित हिस्से के तहत एक बेड़ा बनाता है। जब एबीएस (और अन्य warping-प्रवण प्लास्टिक) के मुद्रण के रूप में यह मदद करता है भागों बिस्तर का पालन warping को रोकने के लिए उपयोगी है।
@@ -4094,7 +4094,7 @@ English:The number of layers for which the layer cooling fan will be forced off 
 Translated:परतों की संख्या है जिसके लिए परत शीतलन प्रशंसक प्रिंट के शुरू में बंद मजबूर हो जाएगा।
 
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
-Translated:जी कोड सभी स्वत: निर्गम (जी कोड आदेशों के बहुत अंत) के अंत में चलाने के लिए।
+Translated:जी कोड सभी स्वत: निर्गम (जी कोड आदेशों के बहुत अंत) के अंत में चलाया जा सके।
 
 English:The speed at which outside, (visible) perimeters will print.
 Translated:गति के बाहर है, जिस पर, (दृश्य) परिधि प्रिंट होगा।
@@ -4133,7 +4133,7 @@ English:Acceleration to use while printing the first layer. Set to 0 to use the 
 Translated:त्वरण पहली परत छपाई के दौरान उपयोग करें। डिफ़ॉल्ट पहली परत त्वरण का उपयोग करने के लिए 0 करने के लिए सेट करें।
 
 English:The height of the first layer. A first layer taller than the default layer height can sometimes be used to improve adhesion to the build plate.
-Translated:पहली परत की ऊंचाई। डिफ़ॉल्ट परत ऊंचाई की तुलना में लम्बे पहली परत कभी कभी निर्माण थाली करने के लिए आसंजन में सुधार करने के लिए इस्तेमाल किया जा सकता है।
+Translated:पहली परत के ऊंचाई। डिफ़ॉल्ट परत ऊंचाई की तुलना में लम्बे पहली परत कभी कभी निर्माण थाली करने के लिए आसंजन में सुधार करने के लिए इस्तेमाल किया जा सकता है।
 
 English:The speed at which the nozzle will move when printing the first layer. If expressed as a percentage the Infill speed is modified.
 Translated:गति जब पहली परत मुद्रण, जिस पर नोक कदम होगा। अगर एक प्रतिशत के रूप में व्यक्त Infill गति संशोधित किया गया है।
@@ -4406,7 +4406,7 @@ English:Please wait while we create your account...
 Translated:कृपया प्रतीक्षा करें हम अपना खाता बनाने, जबकि ...
 
 English:Account created
-Translated:खाता खुल गया
+Translated:खाता बन गया
 
 English:Success! Your account has been created.
 Translated:सफलता! आपका खाता बना दिया गया है।
@@ -4559,7 +4559,7 @@ English:The actual diameter of the filament used for printing. Measure 5 times w
 Translated:मुद्रण के लिए प्रयोग किया जाता है फिलामेंट की वास्तविक व्यास। उपाय नली का व्यास के साथ 5 बार, ऊपर और नीचे से बाहर फेंक, और शेष 3 औसत।
 
 English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
-Translated:पहली परत की ऊंचाई। एक पहली परत डिफ़ॉल्ट परत ऊंचाई की तुलना में लम्बे बिल्ड प्लेट के लिए अच्छा आसंजन सुनिश्चित कर सकते हैं।
+Translated:पहली परत के ऊंचाई। एक पहली परत डिफ़ॉल्ट परत ऊंचाई की तुलना में लम्बे बिल्ड प्लेट के लिए अच्छा आसंजन सुनिश्चित कर सकते हैं।
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
 Translated:प्रिंटर बिजली की आपूर्ति को नियंत्रित करने की क्षमता है। नियंत्रण फलक पर ATX पावर नियंत्रण खंड को दिखाने के लिए इस समारोह में सक्षम करें।
@@ -5829,4 +5829,115 @@ Translated:सहेजा जा रहा है ...
 
 English:Oops! Payment has been declined.
 Translated:उफ़! भुगतान रोक दिया गया है।
+
+English:Distance or Loops
+Translated:दूरी या छोरों
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Z ऑफसेट पहली परत आसंजन में सुधार करने के लिए लागू करने के लिए।
+
+English:Baby Step Offset
+Translated:बच्चे कदम ऑफसेट
+
+English:Oops! Unable to initialize device.
+Translated:उफ़! डिवाइस प्रारंभ करने में असमर्थ है।
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:बेड़ा के शीर्ष और मॉडल के नीचे के बीच की दूरी। 0.6 मिमी पीएलए के लिए एक अच्छा प्रारंभिक बिंदु है और 0.4 मिमी पेट के लिए एक अच्छा प्रारंभिक बिंदु है। लोअर मूल्यों उच्च मूल्यों प्रिंट दूर करने के लिए आसान बनाने के लिए, एक चिकनी सतह दे।
+
+English:Clear ZOffset
+Translated:साफ ZOffset
+
+English:Printing Window...
+Translated:खिड़की मुद्रण ...
+
+English:Only Retract When Crossing Perimeters
+Translated:केवल वापस लेना जब पार परिधि
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'बाहरी परिधि बाहर निकालना चौड़ाई' 'नोक व्यास' से कम या बराबर होना चाहिए * 4।
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:बाहरी परिधि बाहर निकालना चौड़ाई = {0} \ N नोक व्यास = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:स्थान: 'सेटिंग और नियंत्रण' -> 'सेटिंग' -> 'रेशा' -> 'बाहर निकालना' -> 'बाहरी परिधि'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'बाहरी परिधि बाहर निकालना चौड़ाई' 0 से अधिक होना चाहिए।
+
+English:External Perimeter Extrusion Width = {0}
+Translated:बाहरी परिधि बाहर निकालना चौड़ाई = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:प्रत्येक प्रिंट स्तर की स्थिति की जांच कर रही शुरू करने से पहले ऊंचाई (जेड) प्रिंट सिर की।
+
+English:Probe Start Height
+Translated:जांच शुरू ऊंचाई
+
+English:Controls the speed of printer moves
+Translated:प्रिंटर चाल की गति को नियंत्रित करता है
+
+English:Controls the amount of extrusion
+Translated:बाहर निकालना की मात्रा को नियंत्रित
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:सामग्री है कि आप लोड कर रहे हैं चुनें।
+
+English:Trim the end of the filament to ensure a good load.
+Translated:रेशा के अंत ट्रिम एक अच्छा लोड सुनिश्चित करने के लिए।
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:सामग्री है कि आप लोड कर रहे हैं चुनें। आप कुछ सामान है कि एक लंबे विवरण लेता कर रहे हैं।
+
+English:Confirm the material you are unloading.
+Translated:आप सामग्री उतारने कर रहे हैं की पुष्टि करें।
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:बाहर निकालना उतारने से पहले 205 को गर्म करने के लिए, प्रतीक्षा कर रहा है।
+
+English:Unloading filament...
+Translated:रेशा उतराई ...
+
+English:Put filament into extruder and click Continue.
+Translated:extruder में रेशा रखो और जारी रखें क्लिक करें।
+
+English:Loading filament...
+Translated:रेशा लोड हो रहा है ...
+
+English:Waiting for extruder to heat to 205.
+Translated:बाहर निकालना के लिए प्रतीक्षा कर 205 करने के लिए गर्म करने के लिए।
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:'जारी रखें' जब रेशा सफाई से चल रहा है पर क्लिक करें।
+
+English:Heating side 1.
+Translated:ताप पक्ष 1।
+
+English:Turn Sandvich over!
+Translated:Sandvich पर बारी!
+
+English:Heating side 2.
+Translated:ताप तरफ 2।
+
+English:Done!
+Translated:किया हुआ!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:चेतावनी: आदेश प्रिंट वसूली प्रदर्शन करने के लिए, अपने प्रिंटर अपने घर की स्थिति तक पहुंचने के लिए नीचे कदम होगा। \ N अगर आपके प्रिंट बहुत बड़ी है, अपने प्रिंटर का हिस्सा इसके साथ टकराने सकता है जब नीचे घूम रहा है। \ N इसे आगे बढ़ने से पहले यह कार्रवाई करने के लिए सुरक्षित है सुनिश्चित करें।
 

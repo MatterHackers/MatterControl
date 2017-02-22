@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					addToQueueButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Queue".Localize();
 					buttonPanel1.AddChild(addToQueueButton);
 					addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
-					addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
+					addToQueueButton.Click += addToQueueButton_Click;
 					addToQueueButton.Name = "Queue Add Button";
 
 					// put in the creator button
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						shopButton.Click += (sender, e) =>
 						{
 							double activeFilamentDiameter = 0;
-							if (ActiveSliceSettings.Instance != null)
+							if (ActiveSliceSettings.Instance.PrinterSelected)
 							{
 								activeFilamentDiameter = 3;
 								if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
@@ -261,21 +261,21 @@ namespace MatterHackers.MatterControl.PrintQueue
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
 			exportItemButton.Name = "Queue Export Button";
 			exportItemButton.Margin = new BorderDouble(3, 0);
-			exportItemButton.Click += new EventHandler(exportButton_Click);
+			exportItemButton.Click += exportButton_Click;
 			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
 			itemOperationButtons.AddChild(exportItemButton);
 
 			Button copyItemButton = editButtonFactory.Generate("Copy".Localize());
 			copyItemButton.Name = "Queue Copy Button";
 			copyItemButton.Margin = new BorderDouble(3, 0);
-			copyItemButton.Click += new EventHandler(copyButton_Click);
+			copyItemButton.Click += copyButton_Click;
 			editButtonsEnableData.Add(new ButtonEnableData(false, true, false));
 			itemOperationButtons.AddChild(copyItemButton);
 
 			Button removeItemButton = editButtonFactory.Generate("Remove".Localize());
 			removeItemButton.Name = "Queue Remove Button";
 			removeItemButton.Margin = new BorderDouble(3, 0);
-			removeItemButton.Click += new EventHandler(removeButton_Click);
+			removeItemButton.Click += removeButton_Click;
 			editButtonsEnableData.Add(new ButtonEnableData(true, true, true));
 			itemOperationButtons.AddChild(removeItemButton);
 
@@ -362,7 +362,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

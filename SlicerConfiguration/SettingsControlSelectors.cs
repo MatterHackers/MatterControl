@@ -89,7 +89,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			this.AddChild(labelText);
-			pullDownContainer = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.FitToChildren);
+			pullDownContainer = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren
+			};
 			pullDownContainer.AddChild(GetPulldownContainer());
 			this.AddChild(pullDownContainer);
 			this.AddChild(new VerticalSpacer());
@@ -230,91 +234,36 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (layerType == NamedSettingsLayers.Material)
 			{
-				// Restore deactivated user overrides by iterating the Material preset we're coming off of
-				RestoreConflictingUserOverrides(activeSettings, activeSettings.MaterialLayer);
-
 				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Value)
 				{
+					// Restore deactivated user overrides by iterating the Material preset we're coming off of
+					activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
+
 					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
 
 					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
-					DeactivateConflictingUserOverrides(activeSettings, activeSettings.MaterialLayer);
+					activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
 				}
 			}
 			else if (layerType == NamedSettingsLayers.Quality)
 			{
-				// Restore deactivated user overrides by iterating the Quality preset we're coming off of
-				RestoreConflictingUserOverrides(activeSettings, activeSettings.QualityLayer);
-
 				if (activeSettings.ActiveQualityKey != item.Value)
 				{
+					// Restore deactivated user overrides by iterating the Quality preset we're coming off of
+					activeSettings.RestoreConflictingUserOverrides(activeSettings.QualityLayer);
+
 					activeSettings.ActiveQualityKey = item.Value;
 
 					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
-					DeactivateConflictingUserOverrides(activeSettings, activeSettings.QualityLayer);
+					activeSettings.DeactivateConflictingUserOverrides(activeSettings.QualityLayer);
 				}
 			}
 
 			// Ensure that activated or deactivated user overrides are always persisted to disk
 			activeSettings.Save();
 
-			UiThread.RunOnIdle(() =>
-			{
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
-				foreach (var keyName in PrinterSettings.KnownSettings)
-				{
-					if(settingBeforeChange[keyName] != ActiveSliceSettings.Instance.GetValue(keyName))
-					{
-						ActiveSliceSettings.OnSettingsChanged(SliceSettingsOrganizer.Instance.GetSettingsData(keyName));
-					}
-				}
-			});
-
 			editButton.Enabled = item.Text != defaultMenuItemText;
 		}
-
-		/// <summary>
-		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
-		/// </summary>
-		private static void RestoreConflictingUserOverrides(PrinterSettings printerSettings, PrinterSettingsLayer settingsLayer)
-		{
-			if (settingsLayer == null)
-			{
-				return;
-			}
-
-			foreach (var settingsKey in settingsLayer.Keys)
-			{
-				string stagedUserOverride;
-				if (printerSettings.StagedUserSettings.TryGetValue(settingsKey, out stagedUserOverride))
-				{
-					printerSettings.StagedUserSettings.Remove(settingsKey);
-					printerSettings.UserLayer[settingsKey] = stagedUserOverride;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
-		/// </summary>
-		private static void DeactivateConflictingUserOverrides(PrinterSettings printerSettings, PrinterSettingsLayer settingsLayer)
-		{
-			if (settingsLayer == null)
-			{
-				return;
-			}
-
-			foreach (var settingsKey in settingsLayer.Keys)
-			{
-				string userOverride;
-				if (printerSettings.UserLayer.TryGetValue(settingsKey, out userOverride))
-				{
-					printerSettings.UserLayer.Remove(settingsKey);
-					printerSettings.StagedUserSettings.Add(settingsKey, userOverride);
-				}
-			}
-		}
-
 
 		private DropDownList CreateDropdown()
 		{
@@ -401,7 +350,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private EventHandler unregisterEvents;
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

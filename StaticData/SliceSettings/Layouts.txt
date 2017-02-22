@@ -33,7 +33,7 @@ Intermediate
     Raft / Priming
       Raft
         create_raft
-      Priming
+      Skirt
         skirt_distance
     Support Material
       Support Material
@@ -152,14 +152,13 @@ Advanced
         raft_layers
         raft_fan_speed_percent
         raft_extruder
-      Priming
+      Skirt
         skirts
         skirt_distance
         skirt_height
         min_skirt_length
-      First Layer Expansion
-        brims
       Brim
+        brims
         brim_width
     Support Material
       Support Material
@@ -330,6 +329,7 @@ Advanced
         print_leveling_method
         print_leveling_required_to_print
       Probe Settings
+        print_leveling_probe_start
         manual_probe_paper_width
       Options
     Print Recovery

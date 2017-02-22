@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             linkButtonFactory.fontSize = 10;
             Button cloudSyncGoLink = linkButtonFactory.Generate("Go to Dashboard".Localize().ToUpper());
             cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser".Localize();
-            cloudSyncGoLink.Click += new EventHandler(cloudSyncGoButton_Click);
+            cloudSyncGoLink.Click += cloudSyncGoButton_Click;
 			cloudSyncGoLink.VAnchor = VAnchor.ParentCenter;
 
 
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			configureNotificationSettingsButton.Name = "Configure Notification Settings Button";
 			configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
 			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
-			configureNotificationSettingsButton.Click += new EventHandler(configureNotificationSettingsButton_Click);
+			configureNotificationSettingsButton.Click += configureNotificationSettingsButton_Click;
 
 			notificationSettingsLabel = new TextWidget("Notifications".Localize());
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return notificationSettingsContainer;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{
