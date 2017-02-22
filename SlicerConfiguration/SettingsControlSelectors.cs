@@ -262,6 +262,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Ensure that activated or deactivated user overrides are always persisted to disk
 			activeSettings.Save();
 
+			UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+				foreach (var keyName in PrinterSettings.KnownSettings)
+				{
+					if (settingBeforeChange[keyName] != ActiveSliceSettings.Instance.GetValue(keyName))
+					{
+						ActiveSliceSettings.OnSettingChanged(keyName);
+					}
+				}
+			});
+
 			editButton.Enabled = item.Text != defaultMenuItemText;
 		}
 

@@ -5956,3 +5956,6 @@ Translated:Waiting for Bed to Heat to
 English:Bed
 Translated:Bed
 
+English:Axis movement speeds
+Translated:Axis movement speeds
+
