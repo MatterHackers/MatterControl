@@ -4631,7 +4631,7 @@ English:Output only the first layer of the print. Especially useful for outputti
 Translated:Output solo il primo strato della stampa. Particolarmente utile per l'emissione dei dati Gcode per applicazioni come l'incisione o il taglio.
 
 English:First Layer Only
-Translated:Solo Primo strato
+Translated:Solamente Primo strato
 
 English:File Settings
 Translated:Impostazioni file
@@ -5336,7 +5336,7 @@ English:Import Printer
 Translated:Importa stampante
 
 English:Resume Settings
-Translated:Impostazioni CV
+Translated:impostazioni di ripristino
 
 English:Enable Resuming
 Translated:Attiva Ripresa
@@ -5543,7 +5543,7 @@ English:Leveling Calibration
 Translated:Livellamento di calibrazione
 
 English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:E 'tempo di copiare le impostazioni della stampante esistente al tuo account MatterHackers. Una volta copiato, queste stampanti saranno disponibili ogni volta che si accede a MatterControl. Stampanti che non vengono copiati saranno disponibili solo quando non effettuato.
+Translated:E 'tempo di copiare le impostazioni della stampante esistente al tuo account MatterHackers. Una volta copiato, queste stampanti saranno disponibili ogni volta che si accede a MatterControl. Le stampanti che non sono copiati saranno disponibili solo quando non effettuato.
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
 Translated:Località: 'Impostazioni e controlli' -> 'Impostazioni' -> 'stampante' -> 'Custom G-Code' -> 'Start G-Code'
@@ -5555,7 +5555,7 @@ English:Exit while printing
 Translated:Uscita mentre la stampa
 
 English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Sei sicuro di volere uscire mentre una stampa è in esecuzione da scheda SD?\n\nNota: Se si esce, si consiglia di attendere fino a quando la stampa è stata completata prima di eseguire nuovamente MatterControl.
+Translated:Sei sicuro di volere uscita, mentre una stampa è in esecuzione da scheda SD?\n\nNota: Se si esce, si consiglia di attendere fino a quando la stampa è stata completata prima di eseguire nuovamente MatterControl.
 
 English:Connect printer and power on
 Translated:Collegare la stampante e accendere
@@ -5940,4 +5940,25 @@ Translated:Fatto!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ATTENZIONE: Al fine di eseguire il ripristino di stampa, la stampante deve spostare verso il basso per raggiungere la sua posizione iniziale. \ N Se la stampa è troppo grande, parte della vostra stampante può collidere con esso quando ci si sposta verso il basso. \ N Assicurarsi che sia sicuro per eseguire questa operazione prima di procedere.
+
+English:Print Monitor
+Translated:Print Monitor
+
+English:Currently Printing
+Translated:attualmente stampa
+
+English:Homing Axis
+Translated:homing Axis
+
+English:Waiting for Extruder to Heat to
+Translated:In attesa di estrusore di calore per
+
+English:Waiting for Bed to Heat to
+Translated:In attesa di letto di calore a
+
+English:Bed
+Translated:Letto
+
+English:Axis movement speeds
+Translated:movimento dell'asse velocità
 

@@ -5941,3 +5941,24 @@ Translated:끝난!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:경고 : 인쇄 복구를 수행하기 위해 프린터가 홈 위치에 도달 아래로 이동해야합니다. 인쇄가 너무 큰 경우 아래로 이동할 때\n프린터의 일부는 충돌 할 수 있습니다. \ n이 진행하기 전에이 작업을 수행하는 것이 안전해야합니다.
 
+English:Print Monitor
+Translated:인쇄 모니터
+
+English:Currently Printing
+Translated:현재 인쇄
+
+English:Homing Axis
+Translated:축 원점 복귀
+
+English:Waiting for Extruder to Heat to
+Translated:압출기가 가열하기 위해 대기 중
+
+English:Waiting for Bed to Heat to
+Translated:열을 베드에 대기
+
+English:Bed
+Translated:침대
+
+English:Axis movement speeds
+Translated:축 이동 속도
+

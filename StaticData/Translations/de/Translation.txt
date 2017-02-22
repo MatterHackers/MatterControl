@@ -5941,3 +5941,24 @@ Translated:Erledigt!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ACHTUNG: Um Druckwiederherstellung durchzuführen, der Drucker muss seine Ausgangsposition nach unten zu erreichen. \ N Wenn Ihr Druck zu groß ist, Teil Ihres Druckers mit ihm kollidieren, wenn nach unten bewegen kann. \ N Stellen Sie sicher, es ist sicher, diesen Vorgang auszuführen, bevor Sie fortfahren.
 
+English:Print Monitor
+Translated:Print Monitor
+
+English:Currently Printing
+Translated:Derzeit Drucken
+
+English:Homing Axis
+Translated:Homing Achse
+
+English:Waiting for Extruder to Heat to
+Translated:Warten auf Extruder zu erhitzen, um
+
+English:Waiting for Bed to Heat to
+Translated:Warten auf Bed Heat
+
+English:Bed
+Translated:Bett
+
+English:Axis movement speeds
+Translated:Achsenbewegung beschleunigt
+

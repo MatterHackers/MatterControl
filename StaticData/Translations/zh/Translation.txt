@@ -1037,7 +1037,7 @@ English:Overhang Threshold
 Translated:悬门槛
 
 English:Pattern Spacing
-Translated:阵列间距
+Translated:模式间距
 
 English:X and Y Distance
 Translated:X和Y的距离
@@ -1289,7 +1289,7 @@ English:Keep Fan Always On
 Translated:请范总在
 
 English:Bridging Fan Speed
-Translated:桥接风扇转速
+Translated:桥接风扇调速
 
 English:Enable Fan If Layer\nPrint Time Is Below
 Translated:启用风扇如果层\ n打印时间低于
@@ -5940,4 +5940,25 @@ Translated:完成！
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:警告：为了进行打印的恢复，您的打印机必须向下移动到达其位置。 \ n如果您打印太大，打印机的部分可以用它向下移动时发生碰撞。 \ n请确保它是安全的，然后再继续执行此操作。
+
+English:Print Monitor
+Translated:打印监视器
+
+English:Currently Printing
+Translated:目前印刷
+
+English:Homing Axis
+Translated:轴归位
+
+English:Waiting for Extruder to Heat to
+Translated:等待挤出机加热至
+
+English:Waiting for Bed to Heat to
+Translated:等待床加热到
+
+English:Bed
+Translated:床
+
+English:Axis movement speeds
+Translated:轴移动速度
 

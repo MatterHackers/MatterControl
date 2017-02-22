@@ -5941,3 +5941,24 @@ Translated:Готово!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ВНИМАНИЕ: Для того, чтобы выполнить восстановление печати, принтер должен двигаться вниз, чтобы достигнуть его исходное положение. \ П Если печать слишком велик, часть вашего принтера может столкнуться с ней при движении вниз. \ П Убедитесь, что она безопасна для выполнения этой операции, прежде чем продолжить.
 
+English:Print Monitor
+Translated:Print Monitor
+
+English:Currently Printing
+Translated:В настоящее время Печать
+
+English:Homing Axis
+Translated:Наведение Ось
+
+English:Waiting for Extruder to Heat to
+Translated:Ожидание Экструдер нагреется до
+
+English:Waiting for Bed to Heat to
+Translated:Ожидание кровати, чтобы Нагревать
+
+English:Bed
+Translated:Постель
+
+English:Axis movement speeds
+Translated:скорость движения оси
+

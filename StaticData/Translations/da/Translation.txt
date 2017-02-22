@@ -5941,3 +5941,24 @@ Translated:Færdig!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ADVARSEL: For at udføre print nyttiggørelse, skal printeren flytte ned for at nå sin udgangsposition. \ N Hvis dit print er for stor, kan en del af din printer kolliderer med det, når de flytter ned. \ N Sørg for at det er sikkert at udføre denne operation, før du fortsætter.
 
+English:Print Monitor
+Translated:print Monitor
+
+English:Currently Printing
+Translated:I øjeblikket Printing
+
+English:Homing Axis
+Translated:målsøgende Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Venter på ekstruder til varme til
+
+English:Waiting for Bed to Heat to
+Translated:Venter på Bed til Heat til
+
+English:Bed
+Translated:Seng
+
+English:Axis movement speeds
+Translated:Axis bevægelse hastigheder
+
