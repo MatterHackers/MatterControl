@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.Padding = new BorderDouble(top: 6);
 
 			RGBA_Bytes selectedTabColor;
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Responsive)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int tabPointSize = 16;
             // add the correct tabs based on whether we are stand alone or embedded
             Tab threeDViewTab;
-            if (windowMode == View3DWidget.WindowMode.StandAlone || OsInformation.OperatingSystem == OSType.Android)
+            if (windowMode == View3DWidget.WindowMode.StandAlone || UserSettings.Instance.IsTouchScreen)
 			{
                 threeDViewTab = new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
                     selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewGcodeBasic.Focus();
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

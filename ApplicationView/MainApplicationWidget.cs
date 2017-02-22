@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl
 	using PrintHistory;
 	using Agg.Image;
 	using System.Net;
+	using CustomWidgets;
 
 	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
 	{
@@ -109,11 +110,14 @@ namespace MatterHackers.MatterControl
 			TopContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			TopContainer.HAnchor = HAnchor.ParentLeftRight;
 
+			if (!UserSettings.Instance.IsTouchScreen)
+			{
 #if !__ANDROID__
-			// The application menu bar, which is suppressed on Android
-			ApplicationMenuRow menuRow = new ApplicationMenuRow();
-			TopContainer.AddChild(menuRow);
+				// The application menu bar, which is suppressed on Android
+				ApplicationMenuRow menuRow = new ApplicationMenuRow();
+				TopContainer.AddChild(menuRow);
 #endif
+			}
 
 			menuSeparator = new GuiWidget();
 			menuSeparator.Height = 12;
@@ -154,11 +158,14 @@ namespace MatterHackers.MatterControl
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.AnchorAll();
 
+			if (!UserSettings.Instance.IsTouchScreen)
+			{
 #if !__ANDROID__
-			// The application menu bar, which is suppressed on Android
-			var menuRow = new ApplicationMenuRow();
-			container.AddChild(menuRow);
+				// The application menu bar, which is suppressed on Android
+				var menuRow = new ApplicationMenuRow();
+				container.AddChild(menuRow);
 #endif
+			}
 
 			var menuSeparator = new GuiWidget()
 			{
@@ -195,7 +202,6 @@ namespace MatterHackers.MatterControl
 		
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
-
 
 #if DEBUG
 		public const string EnvironmentName = "TestEnv_";
@@ -264,6 +270,20 @@ namespace MatterHackers.MatterControl
 
 			// Remove consumed ClientToken from running list on shutdown
 			ApplicationClosed += (s, e) => ApplicationSettings.Instance.ReleaseClientToken();
+
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				{
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+						if (UserSettings.Instance.IsTouchScreen)
+						{
+							UiThread.RunOnIdle(PrintingWindow.Show);
+						}
+
+						break;
+				}
+			}, ref unregisterEvents);
 		}
 
 		public void StartSignIn()
@@ -294,8 +314,6 @@ namespace MatterHackers.MatterControl
 
 				return monoSpacedTypeFace;
 			}
-
-			private set { }
 		}
 
 		/// <summary>
@@ -469,7 +487,7 @@ namespace MatterHackers.MatterControl
 						// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 						bool na = ProfileManager.Instance.IsGuestProfile;
 
-						if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+						if (UserSettings.Instance.IsTouchScreen)
 						{
 							// make sure that on touchscreen (due to lazy tabs) we initialize our stating parts and queue
 							var temp = new LibraryProviderSQLite(null, null, null, null);
@@ -642,7 +660,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        private EventHandler unregisterEvent;
+		private EventHandler unregisterEvent;
 		public void StartPrintingTest()
 		{
 			QueueData.Instance.RemoveAll();
@@ -672,7 +690,7 @@ namespace MatterHackers.MatterControl
 		/// Download an image from the web into the specified ImageBuffer
 		/// </summary>
 		/// <param name="uri"></param>
-		public void DownloadToImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleImage, IRecieveBlenderByte scalingBlender = null)
+		public void DownloadToImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
 		{
 			if (scalingBlender == null)
 			{
@@ -688,7 +706,7 @@ namespace MatterHackers.MatterControl
 					byte[] raw = e.Result;
 					Stream stream = new MemoryStream(raw);
 					ImageBuffer unScaledImage = new ImageBuffer(10, 10);
-					if (!scaleImage)
+					if (scaleToImageX)
 					{
 						StaticData.Instance.LoadImageData(stream, unScaledImage);
 						// If the source image (the one we downloaded) is more than twice as big as our dest image.
@@ -701,7 +719,10 @@ namespace MatterHackers.MatterControl
 							halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
 							unScaledImage = halfImage;
 						}
-						imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, imageToLoadInto.Width / (double)unScaledImage.Width, imageToLoadInto.Height / (double)unScaledImage.Height);
+						
+						double finalScale = imageToLoadInto.Width / (double)unScaledImage.Width;
+						imageToLoadInto.Allocate(imageToLoadInto.Width, (int)(unScaledImage.Height * finalScale), imageToLoadInto.Width * (imageToLoadInto.BitDepth / 8), imageToLoadInto.BitDepth);
+						imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, finalScale, finalScale);
 					}
 					else
 					{
@@ -723,6 +744,41 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		/// <summary>
+		/// Cancels prints within the first two minutes or interactively prompts the user to confirm cancellation
+		/// </summary>
+		/// <returns>A boolean value indicating if the print was canceled</returns>
+		public bool ConditionalCancelPrint()
+		{
+			bool canceled = false;
+
+			if (PrinterConnectionAndCommunication.Instance.SecondsPrinted > 120)
+			{
+				StyledMessageBox.ShowMessageBox(
+					(bool response) =>
+					{
+						if (response)
+						{
+							UiThread.RunOnIdle(() => PrinterConnectionAndCommunication.Instance.Stop());
+							canceled = true;
+						}
+
+						canceled = false;
+					},
+					"Cancel the current print?".Localize(),
+					"Cancel Print?".Localize(),
+					StyledMessageBox.MessageType.YES_NO,
+					"Cancel Print".Localize(),
+					"Continue Printing".Localize());
+			}
+			else
+			{
+				PrinterConnectionAndCommunication.Instance.Stop();
+				canceled = false;
+			}
+
+			return canceled;
+		}
 	}
 
 	public class SyncReportType

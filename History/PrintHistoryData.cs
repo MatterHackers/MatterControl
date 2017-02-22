@@ -44,7 +44,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 	{
 		static string recoverPrint = "Recover Print".Localize();
 		static string cancelRecovery = "Cancel".Localize();
-		static string printRecoveryPrintMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize();
+		static string printRecoveryWarningMessage = "WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.".Localize();
+		static string printRecoveryMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize();
 		static string recoverPrintTitle = "Recover Last Print".Localize();
 		static PrintTask lastPrintTask;
 
@@ -53,13 +54,21 @@ namespace MatterHackers.MatterControl.PrintHistory
 			foreach (PrintTask lastPrint in PrintHistoryData.Instance.GetHistoryItems(1))
 			{
 				if (!lastPrint.PrintComplete // Top Print History Item is not complete
-				&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
-				&& File.Exists(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is still on disk
-				&& lastPrint.PercentDone > 0 // we are actually part way into the print
-				&& ActiveSliceSettings.Instance.GetValue(SettingsKey.has_hardware_leveling) == "0")
+					&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
+					&& File.Exists(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is still on disk
+					&& lastPrint.PercentDone > 0 // we are actually part way into the print
+					&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled)
+					&& !ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
                 {
 					lastPrintTask = lastPrint;
-                    StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryPrintMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
+					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
+					{
+						StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
+					}
+					else // make sure we include a waring
+					{
+						StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryMessage + "\n\n" + printRecoveryWarningMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
+					}
 				}
 			}
 		}

@@ -35,6 +35,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -50,7 +51,7 @@ namespace MatterHackers.MatterControl
 			Stopwatch totalDrawTime = Stopwatch.StartNew();
 			int drawCount = 0;
 
-			EventHandler formLoad = (sender1, e1) =>
+			EventHandler formLoad = (s, e) =>
 			{
 				clickPreview = new AutomationRunner();
 				Task.Run(() =>
@@ -81,7 +82,7 @@ namespace MatterHackers.MatterControl
 				totalDrawTime.Restart();
 			};
 
-			DrawEventHandler afterDraw = null;
+			EventHandler<DrawEventArgs> afterDraw = null;
 			afterDraw = (sender, e) =>
 			{
 				totalDrawTime.Stop();
@@ -105,7 +106,7 @@ namespace MatterHackers.MatterControl
 		{
 			AutomationRunner clickPreview;
 
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				clickPreview = new AutomationRunner();
@@ -128,7 +129,7 @@ namespace MatterHackers.MatterControl
 		{
 			//To run test invoke method in the queue data widget 
 			AutomationRunner testRunner;
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				testRunner = new AutomationRunner();
@@ -146,7 +147,7 @@ namespace MatterHackers.MatterControl
 		public static void AddLocalLibraryItemToQueue(GuiWidget container, double secondsBetweenClicks = .1)
 		{
 			AutomationRunner testRunner;
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				testRunner = new AutomationRunner();
@@ -157,7 +158,7 @@ namespace MatterHackers.MatterControl
 					
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item Calibration - Box");
-					testRunner.Wait(2);
+					testRunner.Delay(2);
 					MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
 					testRunner.ClickByName("Queue Tab");
 				});
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl
 		public static void RenameLibraryItem(GuiWidget container, double secondsBetweenClicks = .1)
 		{
 			AutomationRunner testRunner;
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				testRunner = new AutomationRunner();
@@ -180,9 +181,9 @@ namespace MatterHackers.MatterControl
 
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item Calibration - Box");
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 					testRunner.Type("Renamed Calibration Cube");
 					testRunner.ClickByName("Rename Button");
 
@@ -196,7 +197,7 @@ namespace MatterHackers.MatterControl
 		public static void CreateAndRenameLocalLibraryFolder(GuiWidget container, double secondsBetweenClicks = .1)
 		{
 			AutomationRunner testRunner;
-			DrawEventHandler beforeDraw = null;
+			EventHandler<DrawEventArgs> beforeDraw = null;
 			beforeDraw = (sender, e) =>
 			{
 				testRunner = new AutomationRunner();
@@ -205,13 +206,13 @@ namespace MatterHackers.MatterControl
 					testRunner.ClickByName("Library Tab");
 					NavigateToFolder(testRunner, "Local Library Row Item Collection");
 					testRunner.ClickByName("Create Folder From Library Button");
-					testRunner.Wait(2);
+					testRunner.Delay(2);
 					testRunner.Type("New Folder");
 					testRunner.ClickByName("Create Folder Button");
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item New Folder");
 					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 					testRunner.Type("Renamed Folder");
 					testRunner.ClickByName("Rename Button");
 
@@ -228,9 +229,9 @@ namespace MatterHackers.MatterControl
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			testRunner.ClickByName(libraryRowItemName);
 			testRunner.MoveToByName(libraryRowItemName);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 		}
 	}
 }

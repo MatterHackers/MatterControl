@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             double bedRadius = Math.Min(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y) / 2;
 			bool allowLessThanZero = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_can_be_negative);
 
-			double startProbeHeight = 5;
+			double startProbeHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.print_leveling_probe_start);
             for (int i = 0; i < numberOfRadialSamples + 1; i++)
             {
                 Vector2 probePosition = GetPrintLevelPositionToSample(i, bedRadius);

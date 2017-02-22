@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl
 						// put the image into the widget when it is done downloading.
 						var image = new ImageBuffer(Math.Max(elementState.SizeFixed.x, 1), Math.Max(elementState.SizeFixed.y, 1));
 						var imageWidget = new ImageWidget(image);
-						imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, elementState.src, elementState.SizeFixed.x == 0);
+						imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, elementState.src, elementState.SizeFixed.x != 0);
 
 						if (elementsUnderConstruction.Peek().Name == "a")
 						{

@@ -27,12 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Gaming.Game;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
@@ -43,19 +50,24 @@ using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
 using Microsoft.Win32.SafeHandles;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
+	public static class ExtensionMethods
+	{
+		private static TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+		public static string GetFriendlyName(this PrintItemWrapper printItemWrapper)
+		{
+			if (printItemWrapper?.Name == null)
+			{
+				return "";
+			}
+
+			return textInfo?.ToTitleCase(printItemWrapper.Name.Replace('_', ' '));
+		}
+	}
+
 	/// <summary>
 	/// This is the class that communicates with a RepRap printer over the serial port.
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
@@ -63,8 +75,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnectionAndCommunication
 	{
-		public event EventHandler OffsetStreamChanged;
-
 		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
@@ -89,11 +99,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler ExtruderTemperatureSet = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler ExtrusionRatioChanged = new RootedObjectEventHandler();
-
 		public RootedObjectEventHandler FanSpeedSet = new RootedObjectEventHandler();
-
-		public RootedObjectEventHandler FeedRateRatioChanged = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler FirmwareVersionRead = new RootedObjectEventHandler();
 
@@ -155,8 +161,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private int fanSpeed;
 
-		private FirmwareTypes firmwareType = FirmwareTypes.Unknown;
-
 		private bool firmwareUriGcodeSend = false;
 
 		private int currentLineIndexToSend = 0;
@@ -194,10 +198,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private DetailedPrintingState printingStatePrivate;
 
-		private string printJobDisplayName = null;
-
-		private bool printWasCanceled = false;
-
 		private FoundStringContainsCallbacks ReadLineContainsCallBacks = new FoundStringContainsCallbacks();
 
 		private FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
@@ -234,6 +234,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private FoundStringStartsWithCallbacks WriteLineStartCallBacks = new FoundStringStartsWithCallbacks();
 
 		private double secondsSinceUpdateHistory = 0;
+
+		private EventHandler unregisterEvents;
+
+		private double feedRateRatio = 1;
 
 		private PrinterConnectionAndCommunication()
 		{
@@ -309,6 +313,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
 
 			WriteLineStartCallBacks.AddCallbackToKey("T", ExtruderIndexSet);
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				var eventArgs = e as StringEventArgs;
+				if (eventArgs?.Data == SettingsKey.feedrate_ratio)
+				{
+					feedRateRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio);
+				}
+			}, ref unregisterEvents);
+
 		}
 
 		private void ExtruderIndexSet(object sender, EventArgs e)
@@ -321,14 +335,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				currentlyActiveExtruderIndex = (int)extruderBeingSet;
 			}
 		}
-
-		public void AddToBabyStepOffset(Axis moveAxis, double moveAmount)
-		{
-			babyStepsStream6.OffsetAxis(moveAxis, moveAmount);
-			OffsetStreamChanged?.Invoke(null, null);
-		}
-
-		public Vector3 CurrentBabyStepsOffset => babyStepsStream6?.Offset ?? Vector3.Zero;
 
 		[Flags]
 		public enum Axis { X = 1, Y = 2, Z = 4, E = 8, XYZ = (X | Y | Z) }
@@ -372,18 +378,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			set
 			{
-				if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-					&& !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				if (!PrinterIsPrinting
+					&& !PrinterIsPaused
+					&& this.activePrintItem != value)
 				{
-					if (this.activePrintItem != value)
+					this.activePrintItem = value;
+					if (CommunicationState == CommunicationStates.FinishedPrint)
 					{
-						this.activePrintItem = value;
-						if (CommunicationState == CommunicationStates.FinishedPrint)
-						{
-							CommunicationState = CommunicationStates.Connected;
-						}
-						OnActivePrintItemChanged(null);
+						CommunicationState = CommunicationStates.Connected;
 					}
+					OnActivePrintItemChanged(null);
 				}
 			}
 		}
@@ -440,7 +444,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					case CommunicationStates.Connected:
 						SendLineToPrinterNow("M115");
-						SendLineToPrinterNow("M114");
+						ReadPosition();
 						break;
 
 					case CommunicationStates.ConnectionLost:
@@ -547,11 +551,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (value)
 				{
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M80");
+					SendLineToPrinterNow("M80");
 				}
 				else
 				{
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M81");
+					SendLineToPrinterNow("M81");
 				}
 			}
 		}
@@ -584,28 +588,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public double ExtrusionRatio
-		{
-			get
-			{
-				if (extrusionMultiplyerStream7 != null)
-				{
-					return extrusionMultiplyerStream7.ExtrusionRatio;
-				}
-
-				return 1;
-			}
-			set
-			{
-				if (extrusionMultiplyerStream7 != null
-					&& value != extrusionMultiplyerStream7.ExtrusionRatio)
-				{
-					extrusionMultiplyerStream7.ExtrusionRatio = value;
-					ExtrusionRatioChanged.CallEvents(this, null);
-				}
-			}
-		}
-
 		public int FanSpeed0To255
 		{
 			get { return fanSpeed; }
@@ -620,42 +602,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public double FeedRateRatio
-		{
-			get
-			{
-				if (feedrateMultiplyerStream8 != null)
-				{
-					return feedrateMultiplyerStream8.FeedRateRatio;
-				}
-
-				return 1;
-			}
-			set
-			{
-				if (feedrateMultiplyerStream8 != null
-					&& value != feedrateMultiplyerStream8.FeedRateRatio)
-				{
-					feedrateMultiplyerStream8.FeedRateRatio = value;
-					FeedRateRatioChanged.CallEvents(this, null);
-				}
-			}
-		}
-
-		public FirmwareTypes FirmwareType
-		{
-			get { return firmwareType; }
-		}
+		public FirmwareTypes FirmwareType { get; private set; } = FirmwareTypes.Unknown;
 
 		public string FirmwareVersion { get; private set; }
 
 		public Vector3 LastReportedPosition { get { return lastReportedPosition.position; } }
 
-		public bool MonitorPrinterTemperature
-		{
-			get;
-			set;
-		}
+		public bool MonitorPrinterTemperature { get; set; }
 
 		public double PercentComplete
 		{
@@ -820,16 +773,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				switch (PrintingState)
 				{
 					case DetailedPrintingState.HomingAxis:
-						return "Homing Axis";
+						return "Homing Axis".Localize();
 
 					case DetailedPrintingState.HeatingBed:
-						return "Waiting for Bed to Heat to {0}°".FormatWith(TargetBedTemperature);
+						return "Waiting for Bed to Heat to".Localize() + $" {TargetBedTemperature}°";
 
 					case DetailedPrintingState.HeatingExtruder:
-						return "Waiting for Extruder to Heat to {0}°".FormatWith(GetTargetExtruderTemperature(0));
+						return "Waiting for Extruder to Heat to".Localize() + $" {GetTargetExtruderTemperature(0)}°";
 
 					case DetailedPrintingState.Printing:
-						return "Currently Printing:";
+						return "Currently Printing".Localize() + ":";
 
 					default:
 						return "";
@@ -872,20 +825,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string PrintJobName
-		{
-			get
-			{
-				return printJobDisplayName;
-			}
-		}
+		public string PrintJobName { get; private set; } = null;
 
-		public bool PrintWasCanceled { get { return printWasCanceled; } }
+		public bool PrintWasCanceled { get; set; } = false;
 
 		public double RatioIntoCurrentLayer
 		{
 			get
 			{
+				if (gCodeFileStream0 == null)
+				{
+					return 0;
+				}
+
 				int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
 				return loadedGCode.Ratio0to1IntoContainedLayer(instructionIndex);
 			}
@@ -946,9 +898,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (loadedGCode.LineCount > 0)
 				{
-					if (FeedRateRatio != 0)
+					if (feedRateRatio != 0)
 					{
-						return (int)(loadedGCode.TotalSecondsInPrint / FeedRateRatio);
+						return (int)(loadedGCode.TotalSecondsInPrint / feedRateRatio);
 					}
 
 					return (int)(loadedGCode.TotalSecondsInPrint);
@@ -1039,7 +991,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void ConnectToActivePrinter(bool showHelpIfNoPort = false)
 		{
-			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
+			if (ActivePrinter != null)
 			{
 				// Start the process of requesting permission and exit if permission is not currently granted
 				if (!FrostedSerialPort.EnsureDeviceAccess())
@@ -1051,7 +1003,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				PrinterOutputCache.Instance.Clear();
 				//Attempt connecting to a specific printer
 				this.stopTryingToConnect = false;
-				firmwareType = FirmwareTypes.Unknown;
+				this.FirmwareType = FirmwareTypes.Unknown;
 				firmwareUriGcodeSend = false;
 
 				// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
@@ -1250,13 +1202,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
+			SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
 		}
 
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
+			SendLineToPrinterNow("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
 		}
 
 		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
@@ -1270,14 +1222,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (requiresToolChange)
 				{
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
+					SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
 				}
 
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0:0.###} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
+				SendLineToPrinterNow("G1 E{0:0.###} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
 
 				if (requiresToolChange)
 				{
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T0"); //Reset back to extruder one
+					SendLineToPrinterNow("T0"); //Reset back to extruder one
 				}
 
 				SetMovementToAbsolute();
@@ -1289,7 +1241,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (moveAmountMm != 0)
 			{
 				SetMovementToRelative();
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
+				SendLineToPrinterNow("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
 				SetMovementToAbsolute();
 			}
 		}
@@ -1374,13 +1326,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 
-				if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
+				if (ActivePrintItem != null)
 				{
-					string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
+					string pathAndFile = ActivePrintItem.FileLocation;
 					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 						&& pathAndFile == QueueData.SdCardFileName)
 					{
-						PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
+						StartSdCardPrint();
 					}
 					else if (ActiveSliceSettings.Instance.IsValid())
 					{
@@ -1415,8 +1367,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							}
 							else
 							{
-								PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-								PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+								CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+								PrintItemWrapper partToPrint = ActivePrintItem;
 								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 								partToPrint.SlicingDone += partToPrint_SliceDone;
 							}
@@ -1511,15 +1463,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				firmwareName = firmwareName.ToLower();
 				if (firmwareName.Contains("repetier"))
 				{
-					firmwareType = FirmwareTypes.Repetier;
+					this.FirmwareType = FirmwareTypes.Repetier;
 				}
 				else if (firmwareName.Contains("marlin"))
 				{
-					firmwareType = FirmwareTypes.Marlin;
+					this.FirmwareType = FirmwareTypes.Marlin;
 				}
 				else if (firmwareName.Contains("sprinter"))
 				{
-					firmwareType = FirmwareTypes.Sprinter;
+					this.FirmwareType = FirmwareTypes.Sprinter;
 				}
 			}
 			string firmwareVersionReported = "";
@@ -1828,19 +1780,33 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			try
 			{
-				if (this.ActivePrinter != null
-					&& serialPort != null)
+				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
 					// first make sure we are not printing if possible (cancel slicing)
-					Stop(false);
 					if (serialPort != null) // we still have a serial port
 					{
+						Stop(false);
 						ClearQueuedGCode();
 
+						CommunicationState = CommunicationStates.Disconnecting;
+						ReadThread.Join();
 						ToggleHighLowHeigh(serialPort);
+						if (serialPort != null)
+						{
+							serialPort.Close();
+							serialPort.Dispose();
+						}
+						serialPort = null;
+						// make sure we clear out the stream processors
+						CreateStreamProcessors(null, false);
+						CommunicationState = CommunicationStates.Disconnected;
 
-						// let the process know we canceled not ended normally.
-						CommunicationState = CommunicationStates.Connected;
+						// We were connected to a printer so try to reconnect
+						UiThread.RunOnIdle(() =>
+						{
+							//HaltConnectionThread();
+							ConnectToActivePrinter();
+						}, 2);
 					}
 					else
 					{
@@ -2011,12 +1977,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void SetMovementToAbsolute()
 		{
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G90");
+			SendLineToPrinterNow("G90");
 		}
 
 		public void SetMovementToRelative()
 		{
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G91");
+			SendLineToPrinterNow("G91");
 		}
 
 		public void SetTargetExtruderTemperature(int extruderIndex0Based, double temperature, bool forceSend = false)
@@ -2043,10 +2009,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			haveReportedError = false;
-			printWasCanceled = false;
-			ExtrusionRatio = 1;
-			FeedRateRatio = 1;
-			waitingForPosition.Stop();
+			PrintWasCanceled = false;
+
 			waitingForPosition.Reset();
 
 			ClearQueuedGCode();
@@ -2090,10 +2054,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					break;
 
 				case CommunicationStates.Printing:
-					{
-						CancelPrint(markPrintCanceled);
-					}
-
+					CancelPrint(markPrintCanceled);
 					break;
 
 				case CommunicationStates.Paused:
@@ -2146,7 +2107,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					InjectGCode(cancelGCode);
 				}
 				// let the process know we canceled not ended normally.
-				printWasCanceled = true;
+				this.PrintWasCanceled = true;
 				if (markPrintCanceled
 					&& activePrintTask != null)
 				{
@@ -2203,6 +2164,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #endif
 			}
 
+			FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(serialPortName).Close();
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
 			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).SerialPortAlreadyOpen(serialPortName);
 
@@ -2332,7 +2294,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			});
 			CommunicationState = CommunicationStates.FinishedPrint;
 
-			printJobDisplayName = null;
+			this.PrintJobName = null;
 
 			// never leave the extruder and the bed hot
 			TurnOffBedAndExtruders();
@@ -2443,11 +2405,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// make sure we are in the position we were when we stopped printing
 				babyStepsStream6.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
 			}
-			UiThread.RunOnIdle(() => OffsetStreamChanged?.Invoke(null, null));
 			extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
 			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
 			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);
 			totalGCodeStream = requestTemperaturesStream9;
+
+			// Get the current position of the printer any time we reset our streams
+			ReadPosition();
 		}
 
 		private void LoadGCodeToPrint(string gcodeFilename)
@@ -2535,8 +2499,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (messageBoxResponse)
 			{
-				PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-				PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+				CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+				PrintItemWrapper partToPrint = ActivePrintItem;
 				SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 				partToPrint.SlicingDone += partToPrint_SliceDone;
 			}
@@ -2601,7 +2565,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{
-							PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
+							StartPrint(gcodePathAndFileName);
 							return;
 						}
 						else
@@ -2632,7 +2596,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									}
 									else
 									{
-										PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
+										StartPrint(gcodePathAndFileName);
 									}
 									return;
 								}
@@ -2640,7 +2604,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 					}
 
-					PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
+					CommunicationState = CommunicationStates.Connected;
 				}
 			}
 		}
@@ -2723,7 +2687,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				else
 				{
 					int waitTimeInMs = 60000; // 60 seconds
-					if (waitingForPosition.IsRunning && waitingForPosition.ElapsedMilliseconds < waitTimeInMs)
+					if (waitingForPosition.IsRunning 
+						&& waitingForPosition.ElapsedMilliseconds < waitTimeInMs
+						&& PrinterIsConnected)
 					{
 						// we are waiting for a position response don't print more
 						return;
@@ -2737,7 +2703,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						string[] splitOnSemicolon = currentSentLine.Split(';');
 						string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
 
-						if (currentSentLine.Contains("M114"))
+						if (currentSentLine.Contains("M114") 
+							&& PrinterIsConnected)
 						{
 							waitingForPosition.Restart();
 						}
@@ -2776,19 +2743,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							currentLineIndexToSend++;
 						}
 					}
-					else if (printWasCanceled)
+					else if (this.PrintWasCanceled)
 					{
 						CommunicationState = CommunicationStates.Connected;
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
 						TurnOffBedAndExtruders();
-						printWasCanceled = false;
+						this.PrintWasCanceled = false;
 					}
 					else if(communicationState == CommunicationStates.Printing)// we finished printing normally
 					{
 						CommunicationState = CommunicationStates.FinishedPrint;
 
-						printJobDisplayName = null;
+						this.PrintJobName = null;
 
 						// get us back to the no printing setting (this will clear the queued commands)
 						CreateStreamProcessors(null, false);
@@ -2825,9 +2792,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			string lineWithCount;
 			if (lineToWrite.StartsWith("M110"))
 			{
-				lineWithCount = $"N{0} {lineToWrite}";
+				lineWithCount = $"N1 {lineToWrite}";
 				GCodeFile.GetFirstNumberAfter("N", lineToWrite, ref currentLineIndexToSend);
-				allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend-1);
+				allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend);
 			}
 			else
 			{
@@ -2869,7 +2836,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						|| lineWithoutChecksum.StartsWith("G92") // is a reset of printer position
 						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
-						SendLineToPrinterNow("M114");
+						ReadPosition();
 					}
 
 					// write data to communication
@@ -2950,6 +2917,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MacroStart()
 		{
 			queuedCommandStream2?.Reset();
+		}
+
+		public void MacroCancel()
+		{
+			babyStepsStream6?.CancelMoves();
+			waitForTempStream5?.Cancel();
+			queuedCommandStream2?.Cancel();
 		}
 
 		public void MacroContinue()
@@ -3046,43 +3020,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 	public class PrintItemWrapperEventArgs : EventArgs
 	{
-		private PrintItemWrapper printItemWrapper;
-
 		public PrintItemWrapperEventArgs(PrintItemWrapper printItemWrapper)
 		{
-			this.printItemWrapper = printItemWrapper;
+			this.PrintItemWrapper = printItemWrapper;
 		}
 
-		public PrintItemWrapper PrintItemWrapper
-		{
-			get { return printItemWrapper; }
-		}
+		public PrintItemWrapper PrintItemWrapper { get; }
 	}
 
 	/// <summary>
 	/// This is a class to pass temperatures to callbacks that expect them.
-	/// A call back can try and cast to this ( TemperatureEventArgs tempArgs = e as TemperatureEventArgs)
-	/// and then use the temperature if available.
 	/// </summary>
 	public class TemperatureEventArgs : EventArgs
 	{
-		private int index0Based;
-		private double temperature;
-
 		public TemperatureEventArgs(int index0Based, double temperature)
 		{
-			this.index0Based = index0Based;
-			this.temperature = temperature;
+			this.Index0Based = index0Based;
+			this.Temperature = temperature;
 		}
 
-		public int Index0Based
-		{
-			get { return index0Based; }
-		}
-
-		public double Temperature
-		{
-			get { return temperature; }
-		}
+		public int Index0Based { get; }
+		public double Temperature { get; }
 	}
 }

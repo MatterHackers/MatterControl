@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 			base.OnBoundsChanged(e);
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
@@ -177,11 +177,14 @@ namespace MatterHackers.MatterControl
 			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			AddChild(ColumnOne);
-			leftBorderLine = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
+			leftBorderLine = new GuiWidget()
+			{
+				VAnchor = VAnchor.ParentBottomTop
+			};
 			leftBorderLine.Width = 15;
 			leftBorderLine.BeforeDraw += (widget, graphics2D) =>
 			{
-				RectangleDouble bounds = widget.LocalBounds;
+				RectangleDouble bounds = ((GuiWidget)widget).LocalBounds;
 				bounds.Left += 3;
 				bounds.Right -= 8;
 				graphics2D.graphics2D.FillRectangle(bounds, new RGBA_Bytes(160, 160, 160));

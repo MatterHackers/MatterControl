@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		internal static PrintLevelingData Create(PrinterSettings printerProfile, string jsonData, string depricatedPositionsCsv3ByXYZ)
+		internal static PrintLevelingData Create(PrinterSettings printerProfile, string jsonData, string depricatedPositionsCsv3ByXYZ = "")
 		{
 			if (!string.IsNullOrEmpty(jsonData))
 			{

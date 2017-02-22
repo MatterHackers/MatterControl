@@ -66,6 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
+		public const string external_perimeter_extrusion_width = nameof(external_perimeter_extrusion_width);
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
 		public const string filament_diameter = nameof(filament_diameter);
@@ -94,6 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string print_center = nameof(print_center);
 		public const string print_leveling_data = nameof(print_leveling_data);
 		public const string print_leveling_enabled = nameof(print_leveling_enabled);
+		public const string print_leveling_probe_start = nameof(print_leveling_probe_start);
 		public const string print_leveling_required_to_print = nameof(print_leveling_required_to_print);
 		public const string printer_name = nameof(printer_name);
 		public const string publish_bed_image = nameof(publish_bed_image);
@@ -114,6 +116,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string ip_port = nameof(ip_port);
 		public const string first_layer_speed = nameof(first_layer_speed);
 		public const string active_quality_key = nameof(active_quality_key);
+		public const string extrusion_ratio = nameof(extrusion_ratio);
+		public const string feedrate_ratio = nameof(feedrate_ratio);
+		public const string manual_movement_speeds = nameof(manual_movement_speeds);
 	}
 
 	public class SettingsHelpers
@@ -127,7 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public double ExtruderTemperature(int extruderIndex)
 		{
-			if(extruderIndex == 0)
+			if (extruderIndex == 0)
 			{
 				return printerSettings.GetValue<double>(SettingsKey.temperature);
 			}
@@ -146,7 +151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (layer.TryGetValue(SettingsKey.temperature, out result))
 						{
 							double value = 0;
-							if(double.TryParse(result, out value))
+							if (double.TryParse(result, out value))
 							{
 								return value;
 							}
@@ -251,11 +256,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.SetValue(SettingsKey.printer_name, name);
 		}
 
-		public void SetManualMovementSpeeds(string speed)
-		{
-			printerSettings.SetValue("manual_movement_speeds", speed);
-		}
-
 		private PrintLevelingData printLevelingData = null;
 		public PrintLevelingData GetPrintLevelingData()
 		{
@@ -263,8 +263,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				printLevelingData = PrintLevelingData.Create(
 					ActiveSliceSettings.Instance,
-					printerSettings.GetValue(SettingsKey.print_leveling_data),
-					printerSettings.GetValue("MatterControl.PrintLevelingProbePositions"));
+					printerSettings.GetValue(SettingsKey.print_leveling_data));
 
 				if (printLevelingData.SampledPositions.Count == 3)
 				{
@@ -279,8 +278,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return printLevelingData;
 		}
 
-		public void SetPrintLevelingData(PrintLevelingData data)
+		public void SetPrintLevelingData(PrintLevelingData data, bool clearUserZOffset)
 		{
+			if (clearUserZOffset)
+			{
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+			}
 			printLevelingData = data;
 			printerSettings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(data));
 		}
@@ -295,11 +298,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			printerSettings.SetValue(SettingsKey.print_leveling_enabled, doLeveling ? "1" : "0");
 
-			PrinterSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
-
 			if (doLeveling)
 			{
-				PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+				UpdateLevelSettings();
+			}
+
+			PrinterSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
+		}
+
+		public void UpdateLevelSettings()
+		{
+			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+			if (levelingData.SampledPositions.Count > 2)
+			{
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
 					levelingData.SampledPositions[0],
 					levelingData.SampledPositions[1],
@@ -326,14 +337,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Vector2.Zero;
 		}
 
-		private static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.MatterSlice;
-
 		public SlicingEngineTypes ActiveSliceEngineType()
 		{
-			List<SliceEngineInfo> availableEnginens = SlicingQueue.AvailableSliceEngines;
-
 			if (OsInformation.OperatingSystem == OSType.Android
-				|| availableEnginens.Count == 1)
+				|| SlicingQueue.AvailableSliceEngines.Count == 1)
 			{
 				// android only has MatterSlice available, so always return it.
 				return SlicingEngineTypes.MatterSlice;
@@ -342,7 +349,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string engineType = printerSettings.GetValue("slicing_engine");
 			if (string.IsNullOrEmpty(engineType))
 			{
-				return defaultEngineType;
+				return SlicingEngineTypes.MatterSlice;
 			}
 
 			var engine = (SlicingEngineTypes)Enum.Parse(typeof(SlicingEngineTypes), engineType);
@@ -410,7 +417,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
 						{
-							GenerateConfigFile(saveParams.FileName, false);
+							Slic3rEngineMappings.WriteSliceSettingsFile(saveParams.FileName);
 						}
 					}
 					catch (Exception e)
@@ -422,24 +429,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				});
 		}
 
-		public void GenerateConfigFile(string fileName, bool replaceMacroValues)
-		{
-			using (var outstream = new StreamWriter(fileName))
-			{
-				// TODO: No longer valid to check for leading MatterControl. token
-				foreach (var key in PrinterSettings.KnownSettings.Where(k => !k.StartsWith("MatterControl.")))
-				{
-					string activeValue = printerSettings.GetValue(key);
-					if (replaceMacroValues)
-					{
-						activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
-					}
-					outstream.Write(string.Format("{0} = {1}\n", key, activeValue));
-					activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
-				}
-			}
-		}
-
 		public void ExportAsCuraConfig()
 		{
 			throw new NotImplementedException();
@@ -449,7 +438,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			Vector3 feedRate = new Vector3(3000, 3000, 315);
 
-			string savedSettings = ActiveSliceSettings.Instance.GetValue("manual_movement_speeds");
+			string savedSettings = ActiveSliceSettings.Instance.GetValue(SettingsKey.manual_movement_speeds);
 			if (!string.IsNullOrEmpty(savedSettings))
 			{
 				var segments = savedSettings.Split(',');
@@ -479,7 +468,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
 			if (PrinterConnectionAndCommunication.Instance != null)
 			{
-				string savedSettings = printerSettings.GetValue("manual_movement_speeds");
+				string savedSettings = printerSettings.GetValue(SettingsKey.manual_movement_speeds);
 				if (!string.IsNullOrEmpty(savedSettings))
 				{
 					presets = savedSettings;

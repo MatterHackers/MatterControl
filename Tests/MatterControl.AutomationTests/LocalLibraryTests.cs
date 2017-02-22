@@ -33,9 +33,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Get Library Item to Add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type(rowItemPath);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
@@ -75,9 +75,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string secondRowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
 
 				string textForBothRowItems = string.Format("\"{0}\" \"{1}\"", firstRowItemPath, secondRowItemPath);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type(textForBothRowItems);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				bool firstRowItemWasAdded = testRunner.WaitForName(firstItemName, 2);
@@ -113,9 +113,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Get Library Item to Add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Rook.amf");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type(rowItemPath);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
@@ -153,9 +153,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Get Library Item to Add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.zip");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type(rowItemPath);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				bool firstItemInZipWasAdded = testRunner.WaitForName(firstItemName, 2);
@@ -180,15 +180,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				string rowItemToRename = "Row Item Calibration - Box";
 				testRunner.ClickByName("Library Edit Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName(rowItemToRename);
 				MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
 
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				testRunner.Type("Library Item Renamed");
 
@@ -215,35 +215,35 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// Create New Folder
 				testRunner.ClickByName("Create Folder From Library Button");
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				testRunner.Type("New Folder");
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				testRunner.ClickByName("Create Folder Button");
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				// Confirm newly created folder exists
 				Assert.IsTrue(testRunner.WaitForName("New Folder Row Item Collection", 1), "New folder should appear as GuiWidget");
 
 				testRunner.ClickByName("Library Edit Button");
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				testRunner.ClickByName("New Folder Row Item Collection");
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 				testRunner.Type("Renamed Library Folder");
 
 				testRunner.ClickByName("Rename Button");
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				// Make sure the renamed Library Folder exists
 				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2), "Renamed folder should exist");
@@ -264,11 +264,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				string rowItem = "Row Item Calibration - Box";
 				testRunner.ClickByName("Library Edit Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName(rowItem);
 
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
@@ -293,16 +293,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				string rowItem = "Row Item Calibration - Box";
 				testRunner.ClickByName("Library Edit Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName(rowItem);
 
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				//Make sure that Export Item Window exists after Export button is clicked
 				bool rowItemExists = testRunner.WaitForName(rowItem, 1);
@@ -325,17 +325,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Library Edit Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 				testRunner.ClickByName("Library Add Button");
 
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type(rowItemPath);
 				testRunner.Type("{Enter}");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				string rowItemOne = "Row Item Calibration - Box";
 				testRunner.ClickByName(rowItemOne, 1);
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string rowItemTwo = "Row Item Fennec Fox";
 				testRunner.ClickByName(rowItemTwo, 1);
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				// Make sure row items exist before remove
 				Assert.IsTrue(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should exist before remove");
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Remove items
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				// Make sure both selected items are removed
 				Assert.IsFalse(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should *not* exist after remove");
@@ -374,22 +374,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Library Edit Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				//Select Library Item
 				string rowItemOne = "Row Item Calibration - Box";
 				testRunner.ClickByName(rowItemOne);
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
 				//Add Library Item to the Print Queue
 				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
 
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				//Make sure that the Queue Count increases by one
 				int queueCountAfterAdd = QueueData.Instance.ItemCount;
@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Navigate to Queue
 				testRunner.ClickByName("Queue Tab");
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				//Make sure that the Print Item was added
 				string queueItem = "Queue Item Calibration - Box";
@@ -427,14 +427,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string libraryItemToAdd = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 				testRunner.ClickByName("Library Add Button");
 
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type(libraryItemToAdd);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 				testRunner.Type("{Enter}");
 
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Library Edit Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
@@ -446,9 +446,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName(rowItemTwo);
 
 				//Click the Add To Queue button
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				//Make sure Queue Count increases by the correct amount
 				int queueCountAfterAdd = QueueData.Instance.ItemCount;
@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to the Print Queue
 				testRunner.ClickByName("Queue Tab");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				//Test that both added print items exist
 				string queueItemOne = "Queue Item Calibration - Box";
@@ -488,13 +488,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.WaitForName("Part Preview Window", 1), "Preview Window should not exist before we click the view button");
 
 				testRunner.ClickByName("Row Item Calibration - Box");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				// Click Library Item View Button
 				testRunner.ClickByName("Row Item Calibration - Box View Button");
 
 				Assert.IsTrue(testRunner.WaitForName("Part Preview Window", 2), "Part Preview Window should be open after View button is clicked");
-				testRunner.Wait(.2);
+				testRunner.Delay(.2);
 
 				return Task.FromResult(0);
 			};
@@ -510,7 +510,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					// Navigate to Local Library
 					testRunner.ClickByName("Library Tab");
@@ -522,7 +522,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Click Library Item Print Button
 					testRunner.ClickByName("Row Item Calibration - Box Print Button");
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 
 					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
 					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
@@ -530,12 +530,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
 
 					testRunner.ClickByName("Cancel Print Button");
+
+					testRunner.WaitForName("Start Print Button", 5);
 				}
 
-				testRunner.WaitForName("Start Print Button", 5);
-
 				return Task.FromResult(0);
-
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);

@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 				this.AddItem(printer.Name, printer.ID.ToString());
 			}
 
-			if (ActiveSliceSettings.Instance != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				this.SelectedValue = ActiveSliceSettings.Instance.ID;
 				lastSelectedIndex = this.SelectedIndex;
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

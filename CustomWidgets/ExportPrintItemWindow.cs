@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
 				exportAsStlButton.HAnchor = HAnchor.ParentLeft;
 				exportAsStlButton.Cursor = Cursors.Hand;
-				exportAsStlButton.Click += new EventHandler(exportSTL_Click);
+				exportAsStlButton.Click += exportSTL_Click;
 				middleRowContainer.AddChild(exportAsStlButton);
 			}
 
@@ -112,17 +112,17 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.AddChild(exportAsAmfButton);
 			}
 
-			bool showExportGCodeButton = ActiveSliceSettings.Instance != null || partIsGCode;
+			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
 			if (showExportGCodeButton)
 			{
 				Button exportGCode = textImageButtonFactory.Generate(string.Format("{0} G-Code", "Export as".Localize()));
 				exportGCode.Name = "Export as GCode Button";
 				exportGCode.HAnchor = HAnchor.ParentLeft;
 				exportGCode.Cursor = Cursors.Hand;
-				exportGCode.Click += new EventHandler((object sender, EventArgs e) =>
+				exportGCode.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(ExportGCode_Click);
-				});
+				};
 				middleRowContainer.AddChild(exportGCode);
 
 				PluginFinder<ExportGcodePlugin> exportPluginFinder = new PluginFinder<ExportGcodePlugin>();
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 					Button exportButton = textImageButtonFactory.Generate(plugin.GetButtonText().Localize());
 					exportButton.HAnchor = HAnchor.ParentLeft;
 					exportButton.Cursor = Cursors.Hand;
-					exportButton.Click += (object sender, EventArgs e) =>
+					exportButton.Click += (s, e) =>
 					{
 						UiThread.RunOnIdle(() =>
 						{
@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			printItemWrapper.SlicingDone -= sliceItem_Done;
 			if (unregisterEvents != null)

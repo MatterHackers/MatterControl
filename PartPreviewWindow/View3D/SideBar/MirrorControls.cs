@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Button mirrorXButton = view3DWidget.textImageButtonFactory.Generate("X", centerText: true);
 			buttonContainer.AddChild(mirrorXButton);
 			mirrorControls.Add(mirrorXButton);
-			mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
+			mirrorXButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Button mirrorYButton = view3DWidget.textImageButtonFactory.Generate("Y", centerText: true);
 			buttonContainer.AddChild(mirrorYButton);
 			mirrorControls.Add(mirrorYButton);
-			mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
+			mirrorYButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Button mirrorZButton = view3DWidget.textImageButtonFactory.Generate("Z", centerText: true);
 			buttonContainer.AddChild(mirrorZButton);
 			mirrorControls.Add(mirrorZButton);
-			mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
+			mirrorZButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{

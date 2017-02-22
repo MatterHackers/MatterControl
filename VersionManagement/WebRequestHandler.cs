@@ -201,8 +201,12 @@ namespace MatterHackers.MatterControl.VersionManagement
 			requestValues = new Dictionary<string, string>();
 		}
 
+		/// <summary>
+		/// Gets or sets the time-out value in milliseconds 
+		/// </summary>
+		/// <value>The timeout.</value>
 		public int Timeout { get; set; } = 100000;
-		
+
 		public event EventHandler RequestComplete;
 
 		public event EventHandler<ResponseErrorEventArgs> RequestFailed;

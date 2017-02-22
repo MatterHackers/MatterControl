@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

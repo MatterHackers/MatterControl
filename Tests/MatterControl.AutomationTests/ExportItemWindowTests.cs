@@ -30,20 +30,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
 
 				//Add STL part items to Downloads and then type paths into file dialog
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				//Get test results 
 				Assert.IsTrue(testRunner.WaitForName(firstItemName, 2) == true);
 
 				testRunner.ClickByName("Queue Export Button");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				testRunner.WaitForName("Export Item Window", 2);
 				testRunner.ClickByName("Export as GCode Button", 2);
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				string gcodeOutputPath = MatterControlUtilities.PathToExportGcodeFolder;
 
@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Batman");
 				testRunner.Type(fullPathToGcodeFile);
 				testRunner.Type("{Enter}");
-				testRunner.Wait(2);
+				testRunner.Delay(2);
 
 				Console.WriteLine(gcodeOutputPath);
 

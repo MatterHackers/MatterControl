@@ -87,25 +87,62 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
-		public IEnumerable<GCodeMacro> UserMacros()
+
+		public IEnumerable<GCodeMacro> UserMacros() => Macros.Where(m => !m.ActionGroup);
+		public IEnumerable<GCodeMacro> ActionMacros() => Macros.Where(m => m.ActionGroup);
+
+		/// <summary>
+		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
+		/// </summary>
+		public void RestoreConflictingUserOverrides(PrinterSettingsLayer settingsLayer)
 		{
-			foreach (var macro in Macros)
+			if (settingsLayer == null)
 			{
-				if (!macro.ActionGroup)
-				{
-					yield return macro;
-				}
+				return;
+			}
+
+			foreach (var settingsKey in settingsLayer.Keys)
+			{
+				RestoreUserOverride(settingsLayer, settingsKey);
 			}
 		}
 
-		public IEnumerable<GCodeMacro> ActionMacros()
+		private void RestoreUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
 		{
-			foreach (var macro in Macros)
+			string stagedUserOverride;
+			if (StagedUserSettings.TryGetValue(settingsKey, out stagedUserOverride))
 			{
-				if (macro.ActionGroup)
-				{
-					yield return macro;
-				}
+				StagedUserSettings.Remove(settingsKey);
+				UserLayer[settingsKey] = stagedUserOverride;
+			}
+		}
+
+		/// <summary>
+		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
+		/// </summary>
+		public void DeactivateConflictingUserOverrides(PrinterSettingsLayer settingsLayer)
+		{
+			if (settingsLayer == null)
+			{
+				return;
+			}
+
+			foreach (var settingsKey in settingsLayer.Keys)
+			{
+				StashUserOverride(settingsLayer, settingsKey);
+			}
+		}
+
+		/// <summary>
+		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
+		/// </summary>
+		private void StashUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
+		{
+			string userOverride;
+			if (this.UserLayer.TryGetValue(settingsKey, out userOverride))
+			{
+				this.UserLayer.Remove(settingsKey);
+				this.StagedUserSettings.Add(settingsKey, userOverride);
 			}
 		}
 
@@ -566,7 +603,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
-			foreach (var item in SliceSettingsOrganizer.Instance.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
+			foreach (var item in ActiveSliceSettings.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{
 				switch (item.SlicerConfigName)
 				{
@@ -837,6 +874,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
+				if (GetValue<double>(SettingsKey.external_perimeter_extrusion_width) > GetValue<double>(SettingsKey.nozzle_diameter) * 4)
+				{
+					string error = "'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
+					string details = string.Format("External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue(SettingsKey.external_perimeter_extrusion_width), GetValue<double>(SettingsKey.nozzle_diameter));
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'".Localize();
+					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					return false;
+				}
+
+				if (GetValue<double>(SettingsKey.external_perimeter_extrusion_width) <= 0)
+				{
+					string error = "'External Perimeter Extrusion Width' must be greater than 0.".Localize();
+					string details = string.Format("External Perimeter Extrusion Width = {0}".Localize(), GetValue(SettingsKey.external_perimeter_extrusion_width));
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'".Localize();
+					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					return false;
+				}
+
 				if (GetValue<double>(SettingsKey.min_fan_speed) > 100)
 				{
 					string error = "The Minimum Fan Speed can only go as high as 100%.".Localize();
@@ -971,24 +1026,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
 		{
+			// Stash user overrides if a non-user override is being set
+			if (layer != null && layer != UserLayer)
+			{
+				StashUserOverride(layer, settingsKey);
+			}
+			else
+			{
+				// Remove any staged/conflicting user override, making this the new and active user override
+				if (StagedUserSettings.ContainsKey(settingsKey))
+				{
+					StagedUserSettings.Remove(settingsKey);
+				}
+			}
+
 			var persistenceLayer = layer ?? UserLayer;
 
-			// If the setting exists and is set the requested value, exit without setting or saving
+			// If the setting exists and is set to the requested value, exit without setting or saving
 			string existingValue;
 			if (persistenceLayer.TryGetValue(settingsKey, out existingValue) && existingValue == settingsValue)
 			{
 				return;
 			}
 
-			// Remove any staged/conflicting user override, making this the new and active user override
-			if (StagedUserSettings.ContainsKey(settingsKey))
-			{
-				StagedUserSettings.Remove(settingsKey);
-			}
-
 			// Otherwise, set and save
 			persistenceLayer[settingsKey] = settingsValue;
 			Save();
+
+			ActiveSliceSettings.OnSettingChanged(settingsKey);
 		}
 
 		public string ToJson(Formatting formatting = Formatting.Indented)
@@ -996,13 +1061,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return JsonConvert.SerializeObject(this, formatting);
 		}
 
-		internal void ClearValue(string sliceSetting, PrinterSettingsLayer layer = null)
+		internal void ClearValue(string settingsKey, PrinterSettingsLayer layer = null)
 		{
 			var persistenceLayer = layer ?? UserLayer;
-			if (persistenceLayer.ContainsKey(sliceSetting))
+			if (persistenceLayer.ContainsKey(settingsKey))
 			{
-				persistenceLayer.Remove(sliceSetting);
+				persistenceLayer.Remove(settingsKey);
+
+				// Restore user overrides if a non-user override is being cleared
+				if (layer != null && layer != UserLayer)
+				{
+					RestoreUserOverride(layer, settingsKey);
+				}
+
 				Save();
+
+				ActiveSliceSettings.OnSettingChanged(settingsKey);
 			}
 		}
 	}

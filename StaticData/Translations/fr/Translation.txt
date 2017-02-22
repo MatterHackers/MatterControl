@@ -5,7 +5,7 @@ English:Disconnect
 Translated:couper
 
 English:Status
-Translated:statut
+Translated:Statut
 
 English:Connected
 Translated:Connecté
@@ -29,7 +29,7 @@ English:Add a file to be printed
 Translated:Ajouter un fichier à imprimer
 
 English:Start
-Translated:Démarrer
+Translated:Début
 
 English:Begin printing the selected item.
 Translated:Commencez l'impression de l'élément sélectionné.
@@ -209,7 +209,7 @@ English:Queue
 Translated:Queue
 
 English:Rotate
-Translated:Faire tourner
+Translated:Tourner
 
 English:Scale
 Translated:Échelle
@@ -278,7 +278,7 @@ English:Press 'generate' to view layers
 Translated:Appuyez sur «générer» pour afficher les calques
 
 English:Model
-Translated:Modèle
+Translated:maquette
 
 English:Layer
 Translated:Couche
@@ -899,7 +899,7 @@ English:Go
 Translated:Aller
 
 English:start:
-Translated:Démarrer:
+Translated:début:
 
 English:end:
 Translated:fin:
@@ -1007,7 +1007,7 @@ English:Speed for Print Moves
 Translated:Vitesse d'impression se déplace
 
 English:Travel
-Translated:Voyager
+Translated:Voyage
 
 English:Speed for non Print Moves
 Translated:Vitesse pour les non Moves Imprimer
@@ -1175,7 +1175,7 @@ English:Min Print Speed
 Translated:Min Vitesse d'impression
 
 English:Bridge
-Translated:pont
+Translated:Pont
 
 English:First Layer
 Translated:Première couche
@@ -1271,7 +1271,7 @@ English:Bridge Flow Ratio
 Translated:Ratio Pont de débit
 
 English:Flow
-Translated:Écoulement
+Translated:Couler
 
 English:Threads
 Translated:Threads
@@ -1433,7 +1433,7 @@ English:CONFIGURATION
 Translated:CONFIGURATION
 
 English:MODEL
-Translated:MODÈLE
+Translated:MAQUETTE
 
 English:LAYER
 Translated:COUCHE
@@ -1718,7 +1718,7 @@ English:You should be done in about 3 minutes.
 Translated:Vous devriez être fait en 3 minutes environ.
 
 English:Click 'Next' to continue.
-Translated:Cliquez sur 'Suivant' pour continuer.
+Translated:Cliquer sur Suivant pour continuer.
 
 English:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
 Translated:L'imprimante devrait maintenant être «homing». Une fois terminé homing nous allons passer au premier point à l'échantillon.\n\nPour compléter les prochaines étapes que vous devrez
@@ -1730,7 +1730,7 @@ English:We will use this paper to measure the distance between the extruder and 
 Translated:Nous allons utiliser ce papier pour mesurer la distance entre l'extrudeuse et le lit.\n\nCliquez sur 'Suivant' pour continuer.
 
 English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
-Translated:Félicitations à vous!\n\nAuto Print Leveling est maintenant configuré et activé.
+Translated:Toutes nos félicitations!\n\nAuto Print Leveling est maintenant configuré et activé.
 
 English:Remove the paper
 Translated:Retirez le papier
@@ -2069,7 +2069,7 @@ English:Getting Started
 Translated:Commencer
 
 English:View Help
-Translated:Voir Aide
+Translated:Voir aide
 
 English:Manually Configure Connection
 Translated:Configuration manuelle Connexion
@@ -2441,7 +2441,7 @@ English:Have MatterControl send you a text message after your print is finished
 Translated:Avoir MatterControl vous envoyer un message texte après votre impression est terminé
 
 English:Your Phone Number*
-Translated:Ton numéro de téléphone*
+Translated:Votre numéro de téléphone*
 
 English:A U.S. or Canadian mobile phone number
 Translated:Un numéro de téléphone mobile États-Unis ou au Canada
@@ -2483,7 +2483,7 @@ English:Warning GCode file
 Translated:Avertissement fichier Gcode
 
 English:Release Notes
-Translated:notes de version
+Translated:Notes de version
 
 English:More Info
 Translated:Plus d'informations
@@ -2708,7 +2708,7 @@ English:Design
 Translated:Conception
 
 English:Normal
-Translated:Ordinaire
+Translated:Normal
 
 English:Touchscreen
 Translated:Écran tactile
@@ -2837,7 +2837,7 @@ English:If greater than 0, this is the distance away from parts to create a peri
 Translated:Si supérieur à 0, c'est la distance de pièces pour créer un périmètre pour essuyer lors de la saisie.
 
 English:Please Confirm
-Translated:S'il vous plaît confirmer
+Translated:Veuillez confirmer
 
 English:Reset to Factory Defaults
 Translated:Réinitialiser les paramètres par défaut
@@ -2912,7 +2912,7 @@ English:NOTE: You need to select a printer, but do not need to connect to it.
 Translated:REMARQUE: Vous devez sélectionner une imprimante, mais n'a pas besoin de s'y connecter.
 
 English:Simple
-Translated:simple
+Translated:Simple
 
 English:Intermediate
 Translated:Intermédiaire
@@ -3158,7 +3158,7 @@ English:Interface Mode
 Translated:Mode Interface
 
 English:Standard
-Translated:Standard
+Translated:la norme
 
 English:Connect to the printer
 Translated:Connectez-vous à l'imprimante
@@ -3287,7 +3287,7 @@ English:Oops! Unable to save changes.
 Translated:Oops! Impossible d'enregistrer les modifications.
 
 English:Unable to save
-Translated:Impossible d'enregistrer
+Translated:Impossible de sauvegarder
 
 English:Terminal
 Translated:Terminal
@@ -3320,7 +3320,7 @@ English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusio
 Translated:Localisation: «Paramètres et commandes '->' Paramètres '->' Filament '->' Extrusion '->' Frist couche '
 
 English:Open
-Translated:Ouvert
+Translated:Ouvrir
 
 English:Checking For Update...
 Translated:Vérification de la mise à jour ...
@@ -3539,10 +3539,10 @@ English:Enter Share Code
 Translated:Entrez Share Code
 
 English:Downloading...
-Translated:Téléchargement en cours...
+Translated:Téléchargement...
 
 English:Uploading...
-Translated:Uploading ...
+Translated:Téléchargement...
 
 English:Click to show in 3D View
 Translated:Cliquez pour voir en 3D View
@@ -3659,7 +3659,7 @@ English:Select Part
 Translated:Sélectionnez Partie
 
 English:Move
-Translated:Déplacer
+Translated:Bouge toi
 
 English:Zoom
 Translated:Zoom
@@ -3698,10 +3698,10 @@ English:Slice files prior to send
 Translated:Slice fichiers avant d'envoyer
 
 English:Oops! Please sign in to continue.
-Translated:Oops! S'il vous plait, connectez-vous pour continuer.
+Translated:Oops! S'il vous plaît vous connecter pour continuer.
 
 English:Login Required
-Translated:Pseudo requis
+Translated:Connexion requise
 
 English:Rebuild Thumbnails Now
 Translated:Reconstruire les vignettes Maintenant
@@ -3752,7 +3752,7 @@ English:Share Library Item
 Translated:Partager Library Item
 
 English:Share Options
-Translated:Options de partage
+Translated:options sur actions
 
 English:Your Share Code:
 Translated:Votre Share Code:
@@ -3866,7 +3866,7 @@ English:Select Layer To Pause:
 Translated:Sélectionner le calque Pour faire une pause:
 
 English:Offset:
-Translated:Offset:
+Translated:Décalage:
 
 English:The speed to move while printing the first layer. If expressed as a percentage the above Infill speed is modified.
 Translated:La vitesse de déplacement lors de l'impression de la première couche. Si elle est exprimée en pourcentage de la vitesse de remplissage ci-dessus est modifiée.
@@ -3956,7 +3956,7 @@ English:Speed for Non-Print Moves
 Translated:Vitesse de non-impression se déplace
 
 English:Touching
-Translated:Touchant
+Translated:Émouvant
 
 English:Far
 Translated:Loin
@@ -4028,7 +4028,7 @@ English:Allow Negative Z
 Translated:Autoriser Z négatif
 
 English:Offset: 
-Translated:Offset:
+Translated:Décalage:
 
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:Êtes-vous sûr de vouloir annuler l'impression en cours et à proximité MatterControl?
@@ -4358,7 +4358,7 @@ English:Firmware Version: {0}
 Translated:Version du micrologiciel: {0}
 
 English:Offset
-Translated:Offset
+Translated:Décalage
 
 English:Downloads
 Translated:Téléchargements
@@ -4409,7 +4409,7 @@ English:Account created
 Translated:Compte créé
 
 English:Success! Your account has been created.
-Translated:Le succès! Votre compte a été créé.
+Translated:Succès! Votre compte a été créé.
 
 English:Please log in to continue.
 Translated:Merci de vous connecter pour continuer.
@@ -4433,7 +4433,7 @@ English:Text Creator
 Translated:Créateur de texte
 
 English:sign out
-Translated:se déconnecter
+Translated:Déconnexion
 
 English:No macros are currently set up for this printer.
 Translated:Aucun macros sont actuellement mis en place pour cette imprimante.
@@ -4913,7 +4913,7 @@ English:Troubleshoot
 Translated:Dépanner
 
 English:Estimated Print Time:
-Translated:Temps estimé d'impression:
+Translated:Durée estimée d'impression:
 
 English:Are you sure you want to delete your currently selected printer?
 Translated:Êtes-vous sûr de vouloir supprimer l'imprimante sélectionnée?
@@ -5018,13 +5018,13 @@ English:Import settings as new MATERIAL preset
 Translated:Importer les paramètres comme nouveau preset MATERIAL
 
 English:Choose File
-Translated:Choisissez fichier
+Translated:Choisir le fichier
 
 English:Export Wizard
 Translated:Assistant Export
 
 English:Oops! Unable to recognize settings file '{0}'.
-Translated:Oops! Impossible à reconnaître fichier de paramètres '{0}'.
+Translated:Oops! Impossible de reconnaître le fichier de configuration '{0}'.
 
 English:Unable to Import
 Translated:Impossible d'importer
@@ -5042,7 +5042,7 @@ English:Printers...
 Translated:Imprimantes ...
 
 English:Current
-Translated:Courant
+Translated:Actuel
 
 English:Quality preset
 Translated:préréglage de la qualité
@@ -5159,10 +5159,10 @@ English:Are you sure you want to logout? You will not have access to your printe
 Translated:Êtes-vous sûr de vouloir vous déconnecter? Vous ne pourrez pas accéder à vos profils d'imprimante ou d'une bibliothèque de nuages.
 
 English:Logout?
-Translated:Se déconnecter?
+Translated:Connectez - Out?
 
 English:Logout
-Translated:Se déconnecter
+Translated:Connectez - Out
 
 English:Can't login while printing
 Translated:Vous ne pouvez pas ouvrir une session en cours d'impression
@@ -5375,10 +5375,10 @@ English:Are you sure you want to sign out? You will not have access to your prin
 Translated:Êtes-vous certain de vouloir vous déconnecter? Vous ne pourrez pas accéder à vos profils d'imprimante ou d'une bibliothèque de nuages.
 
 English:Sign Out?
-Translated:Se déconnecter?
+Translated:Déconnexion?
 
 English:Sign Out
-Translated:Se déconnecter
+Translated:Déconnexion
 
 English:Sign in
 Translated:se connecter
@@ -5399,7 +5399,7 @@ English:Retrieving sync information...
 Translated:Récupération des informations de synchronisation ...
 
 English:Please sign in to continue.
-Translated:S'il vous plait, connectez-vous pour continuer.
+Translated:S'il vous plaît vous connecter pour continuer.
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
 Translated:La vitesse à laquelle la buse se déplace lors de la récupération d'une impression qui a échoué, pour 1 couche.
@@ -5456,7 +5456,7 @@ English:Recover Last Print
 Translated:Récupérez Fin Imprimer
 
 English:Disconnected
-Translated:coupé
+Translated:Débranché
 
 English:Limited Connectivity
 Translated:connectivité limitée
@@ -5816,7 +5816,7 @@ English:- Please Select -
 Translated:- S'il vous plaît Choisir -
 
 English:Credit Card Number
-Translated:Numéro de carte de crédit
+Translated:Numéro de Carte de Crédit
 
 English:Expiration Date
 Translated:Date d'expiration
@@ -5829,4 +5829,115 @@ Translated:Économie...
 
 English:Oops! Payment has been declined.
 Translated:Oops! Le paiement a été refusé.
+
+English:Distance or Loops
+Translated:Distance ou Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Le décalage z à appliquer pour améliorer la première adhérence de la couche.
+
+English:Baby Step Offset
+Translated:Bébé Étape Offset
+
+English:Oops! Unable to initialize device.
+Translated:Oops! Impossible de dispositif initialiser.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:La distance entre le sommet du radeau et la base du modèle. 0,6 mm est un bon point de départ pour PLA et 0,4 mm est un bon point de départ pour l'ABS. Des valeurs inférieures donnent une surface plus lisse, des valeurs plus élevées rendent l'impression plus facile à enlever.
+
+English:Clear ZOffset
+Translated:Effacer ZOffset
+
+English:Printing Window...
+Translated:Impression fenêtre ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Seulement Rentrez Lors de la traversée Périmètres
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'Externe Perimeter Extrusion Largeur' doit être inférieure ou égale à la 'buse Diamètre' * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Perimeter externe Extrusion Largeur = {0}\nBuse Diamètre = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Localisation: «Paramètres et commandes '->' Paramètres '->' Filament '->' Extrusion '->' périmètre externe '
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'Externe Perimeter Extrusion Largeur' doit être supérieur à 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Perimeter externe Extrusion Largeur = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:La hauteur de départ (z) de la tête d'impression avant de sonder chaque position de niveau d'impression.
+
+English:Probe Start Height
+Translated:Probe Début Hauteur
+
+English:Controls the speed of printer moves
+Translated:Contrôle de la vitesse de mouvements de l'imprimante
+
+English:Controls the amount of extrusion
+Translated:Contrôle la quantité d'extrusion
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Choisissez le matériel que vous chargez.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Coupez l'extrémité du filament pour assurer une bonne charge.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Choisissez le matériel que vous chargez. Vous faites des choses qui prend une longue description.
+
+English:Confirm the material you are unloading.
+Translated:Confirmez le matériel que vous déchargez.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:En attente de l'extrudeuse à la chaleur à 205, avant le déchargement.
+
+English:Unloading filament...
+Translated:Déchargement filament ...
+
+English:Put filament into extruder and click Continue.
+Translated:Mettez filament dans l'extrudeuse et cliquez sur Continuer.
+
+English:Loading filament...
+Translated:Chargement filament ...
+
+English:Waiting for extruder to heat to 205.
+Translated:En attente de l'extrudeuse à la chaleur à 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Cliquez sur «Continuer» lorsque filament est en cours d'exécution proprement.
+
+English:Heating side 1.
+Translated:côté chauffage 1.
+
+English:Turn Sandvich over!
+Translated:Tournez Sandvich plus!
+
+English:Heating side 2.
+Translated:côté chauffage 2.
+
+English:Done!
+Translated:Terminé!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:AVERTISSEMENT: Afin d'effectuer la récupération d'impression, l'imprimante doit se déplacer vers le bas pour atteindre sa position d'origine. \ N Si votre impression est trop grande, une partie de votre imprimante peut entrer en collision avec elle lors du déplacement vers le bas. \ N Assurez-vous qu'il est sûr d'effectuer cette opération avant de poursuivre.
 

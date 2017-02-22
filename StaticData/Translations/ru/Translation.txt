@@ -5830,3 +5830,114 @@ Translated:Сохранение ...
 English:Oops! Payment has been declined.
 Translated:К сожалению! Оплата была отклонена.
 
+English:Distance or Loops
+Translated:Расстояние или Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Г компенсировано применять для улучшения адгезии первого слоя.
+
+English:Baby Step Offset
+Translated:Ребенок Шаг Смещение
+
+English:Oops! Unable to initialize device.
+Translated:К сожалению! Невозможно инициализировать устройство.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:Расстояние между верхней частью плота и нижней части модели. 0,6 мм является хорошей отправной точкой для PLA и 0,4 мм является хорошей отправной точкой для ABS. Более низкие значения дают более гладкую поверхность, более высокие значения делают печать легче удалить.
+
+English:Clear ZOffset
+Translated:Ясно ZOffset
+
+English:Printing Window...
+Translated:Печать окна ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Отвод только при пересечении периметров
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'Внешняя Периметр Экструзия Ширина' должно быть меньше или равно '' Диаметр сопла * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Внешняя Периметр Экструзия Ширина = {0} \ п Сопло Диаметр = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Расположение: 'Настройки и управления "->" Настройки "->" Нить "->" Экструзия "->" Внешний Периметр "
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'Внешняя Периметр Экструзия Ширина' должна быть больше 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Внешняя Периметр Экструзия Ширина = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:Начальная высота (г) печатающей головки Перед зондированием каждую позицию на уровне печати.
+
+English:Probe Start Height
+Translated:Зонд Start Высота
+
+English:Controls the speed of printer moves
+Translated:Управляет скоростью движения принтера
+
+English:Controls the amount of extrusion
+Translated:Управляет количеством экструзии
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Вы можете выбрать материал, который вы загружаемой.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Обрежьте конец нити, чтобы обеспечить хорошую нагрузку.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Вы можете выбрать материал, который вы загружаемой. Вы делаете некоторые вещи, которые берет длинное описание.
+
+English:Confirm the material you are unloading.
+Translated:Подтвердите материал вы разгрузку.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Ожидание экструдера для нагрева до 205, перед разгрузкой.
+
+English:Unloading filament...
+Translated:Разгрузка нить ...
+
+English:Put filament into extruder and click Continue.
+Translated:Положите нить в экструдер и нажмите кнопку Продолжить.
+
+English:Loading filament...
+Translated:Загрузка нити ...
+
+English:Waiting for extruder to heat to 205.
+Translated:Ожидание экструдера для нагрева до 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Нажмите кнопку "Продолжить", когда нить работает чисто.
+
+English:Heating side 1.
+Translated:Отопление сторона 1.
+
+English:Turn Sandvich over!
+Translated:Включите Sandvich окончен!
+
+English:Heating side 2.
+Translated:греющего 2.
+
+English:Done!
+Translated:Готово!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:ВНИМАНИЕ: Для того, чтобы выполнить восстановление печати, принтер должен двигаться вниз, чтобы достигнуть его исходное положение. \ П Если печать слишком велик, часть вашего принтера может столкнуться с ней при движении вниз. \ П Убедитесь, что она безопасна для выполнения этой операции, прежде чем продолжить.
+

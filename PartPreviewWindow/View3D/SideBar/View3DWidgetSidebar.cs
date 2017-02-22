@@ -211,7 +211,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// Add vertical spacer
-				this.AddChild(new GuiWidget(vAnchor: VAnchor.ParentBottomTop));
+				this.AddChild(new GuiWidget()
+				{
+					VAnchor = VAnchor.ParentBottomTop
+				});
 
 				AddGridSnapSettings(this);
 			}

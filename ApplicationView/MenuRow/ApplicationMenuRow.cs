@@ -68,8 +68,8 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(new MenuOptionSettings());
 
-			// put in the help menu
-			if (ActiveSliceSettings.Instance.ActionMacros().Any())
+			// put in the action menu
+			if (ActiveSliceSettings.Instance?.ActionMacros().Any() == true)
 			{
 				this.AddChild(new MenuOptionAction());
 			}
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 			}, ref unregisterEvents);
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

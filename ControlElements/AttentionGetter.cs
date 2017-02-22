@@ -150,9 +150,9 @@ namespace MatterHackers.MatterControl
 			return 2.0f * t * (1.0f - t) + 0.5;
 		}
 
-		private void ConnectToWidget(GuiWidget drawingWidget, DrawEventArgs e)
+		private void ConnectToWidget(object drawingWidget, DrawEventArgs e)
 		{
-			GuiWidget parent = drawingWidget;
+			GuiWidget parent = drawingWidget as GuiWidget;
 			while (parent.BackgroundColor.Alpha0To255 == 0)
 			{
 				parent = parent.Parent;

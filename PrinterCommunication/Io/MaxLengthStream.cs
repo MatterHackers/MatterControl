@@ -54,9 +54,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             {
                 string lineFromChild = base.ReadLine();
 
-                // disable this for a test
-                //return lineFromChild;
-
                 if (lineFromChild != null
                     && LineIsMovement(lineFromChild))
                 {
@@ -82,13 +79,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                             nextPoint.feedRate = currentDestination.feedRate;
                             for (int i = 0; i < numSegmentsToSend; i++)
                             {
-                                movesToSend.Add(nextPoint);
+								lock (movesToSend)
+								{
+									movesToSend.Add(nextPoint);
+								}
                                 nextPoint += deltaForSegment;
                             }
 
                             // send the first one
                             PrinterMove positionToSend = movesToSend[0];
-                            movesToSend.RemoveAt(0);
+							lock (movesToSend)
+							{
+								movesToSend.RemoveAt(0);
+							}
 
                             string altredLineToSend = CreateMovementLine(positionToSend, lastDestination);
                             lastDestination = positionToSend;
@@ -103,7 +106,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             else
             {
                 PrinterMove positionToSend = movesToSend[0];
-                movesToSend.RemoveAt(0);
+				lock (movesToSend)
+				{
+					movesToSend.RemoveAt(0);
+				}
 
                 string lineToSend = CreateMovementLine(positionToSend, lastDestination);
 
@@ -112,6 +118,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 return lineToSend;
             }
         }
+
+		public void Cancel()
+		{
+			lock (movesToSend)
+			{
+				movesToSend.Clear();
+			}
+		}
 
         public override void SetPrinterPosition(PrinterMove position)
         {

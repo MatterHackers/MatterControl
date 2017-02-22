@@ -57,8 +57,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private List<Button> allPrintButtons = new List<Button>();
 		private Button cancelButton;
 		private Button cancelConnectButton;
-		private string cancelCurrentPrintMessage = "Cancel the current print?".Localize();
-		private string cancelCurrentPrintTitle = "Cancel Print?".Localize();
 		private Button connectButton;
 		private Button addPrinterButton;
 		private Button selectPrinterButton;
@@ -72,45 +70,35 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button skipButton;
 		private Button startButton;
 		private Button finishSetupButton;
-		private MatterHackers.MatterControl.TextImageButtonFactory textImageButtonFactory = new MatterHackers.MatterControl.TextImageButtonFactory();
-		private Stopwatch timeSincePrintStarted = new Stopwatch();
+		private TextImageButtonFactory textImageButtonFactory;
+		private EventHandler unregisterEvents;
 
 		public PrintActionRow(QueueDataView queueDataView)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 
-			textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
-			textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.AllowThemeToAdjustImage = false;
-
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.FixedHeight = 52 * GuiWidget.DeviceScale;
-			textImageButtonFactory.fontSize = 14;
-			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
-			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
+			textImageButtonFactory = new TextImageButtonFactory()
+			{
+				normalTextColor = RGBA_Bytes.White,
+				disabledTextColor = RGBA_Bytes.LightGray,
+				hoverTextColor = RGBA_Bytes.White,
+				pressedTextColor = RGBA_Bytes.White,
+				AllowThemeToAdjustImage = false,
+				borderWidth = 1,
+				FixedHeight = 52 * GuiWidget.DeviceScale,
+				fontSize = 14,
+				normalBorderColor = new RGBA_Bytes(255, 255, 255, 100),
+				hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100)
+			};
 
 			this.queueDataView = queueDataView;
 
 			AddChildElements();
-			AddHandlers();
-		}
 
-		private EventHandler unregisterEvents;
-
-		public override void OnClosed(EventArgs e)
-		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-			base.OnClosed(e);
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.Invalidate();
+			// Add Handlers
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
+			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 		}
 
 		protected void AddChildElements()
@@ -118,6 +106,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			addButton = textImageButtonFactory.GenerateTooltipButton("Add".Localize(), StaticData.Instance.LoadIcon("icon_circle_plus.png",32,32).InvertLightness());
 			addButton.ToolTipText = "Add a file to be printed".Localize();
 			addButton.Margin = new BorderDouble(6, 6, 6, 3);
+			addButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(AddButtonOnIdle);
+			};
 
 			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32).InvertLightness());
 			startButton.Name = "Start Print Button";
@@ -169,45 +161,43 @@ namespace MatterHackers.MatterControl.ActionBar
 				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
 			};
 
-			string resetConnectionButtontText = "Reset".Localize();
-			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
-			resetConnectionButton = textImageButtonFactory.GenerateTooltipButton(resetConnectionButtontText, StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
-			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
-			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
+			resetConnectionButton = textImageButtonFactory.GenerateTooltipButton("Reset".Localize(), StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
+			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
 			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);
+			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
 
-			string skipButtonText = "Skip".Localize();
-			string skipButtonMessage = "Skip the current item and move to the next in queue".Localize();
-			skipButton = makeButton(skipButtonText, skipButtonMessage);
+			skipButton = makeButton("Skip".Localize(), "Skip the current item and move to the next in queue".Localize());
+			skipButton.Click += onSkipButton_Click;
 
-			string removeButtonText = "Remove".Localize();
-			string removeButtonMessage = "Remove current item from queue".Localize();
-			removeButton = makeButton(removeButtonText, removeButtonMessage);
+			removeButton = makeButton("Remove".Localize(), "Remove current item from queue".Localize());
 			removeButton.Click += onRemoveButton_Click;
 
-			string pauseButtonText = "Pause".Localize();
-			string pauseButtonMessage = "Pause the current print".Localize();
-			pauseButton = makeButton(pauseButtonText, pauseButtonMessage);
+			pauseButton = makeButton("Pause".Localize(), "Pause the current print".Localize());
 			pauseButton.Click += (s, e) =>
 			{
-				PrinterConnectionAndCommunication.Instance.RequestPause();
+				UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RequestPause);
 				pauseButton.Enabled = false;
 			};
 			this.AddChild(pauseButton);
 			allPrintButtons.Add(pauseButton);
 
-			string cancelCancelButtonText = "Cancel Connect".Localize();
-			string cancelConnectButtonMessage = "Stop trying to connect to the printer.".Localize();
-			cancelConnectButton = makeButton(cancelCancelButtonText, cancelConnectButtonMessage);
+			cancelConnectButton = makeButton("Cancel Connect".Localize(), "Stop trying to connect to the printer.".Localize());
+			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.ConditionalCancelPrint();
+				UiThread.RunOnIdle(SetButtonStates);
+			});
+			
 
-			string cancelButtonText = "Cancel".Localize();
-			string cancelButtonMessage = "Stop the current print".Localize();
-			cancelButton = makeButton(cancelButtonText, cancelButtonMessage);
+			cancelButton = makeButton("Cancel".Localize(), "Stop the current print".Localize());
 			cancelButton.Name = "Cancel Print Button";
+			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.ConditionalCancelPrint();
+				SetButtonStates();
+			});
 
-			string resumeButtonText = "Resume".Localize();
-			string resumeButtonMessage = "Resume the current print".Localize();
-			resumeButton = makeButton(resumeButtonText, resumeButtonMessage);
+			resumeButton = makeButton("Resume".Localize(), "Resume the current print".Localize());
 			resumeButton.Name = "Resume Button";
 			resumeButton.Click += (s, e) =>
 			{
@@ -221,15 +211,13 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(resumeButton);
 			allPrintButtons.Add(resumeButton);
 
-			string reprintButtonText = "Print Again".Localize();
-			string reprintButtonMessage = "Print current item again".Localize();
-			reprintButton = makeButton(reprintButtonText, reprintButtonMessage);
+			reprintButton = makeButton("Print Again".Localize(), "Print current item again".Localize());
 			reprintButton.Name = "Print Again Button";
+			reprintButton.Click += onReprintButton_Click;
 
-			string doneCurrentPartButtonText = "Done".Localize();
-			string doenCurrentPartButtonMessage = "Move to next print in queue".Localize();
-			doneWithCurrentPartButton = makeButton(doneCurrentPartButtonText, doenCurrentPartButtonMessage);
+			doneWithCurrentPartButton = makeButton("Done".Localize(), "Move to next print in queue".Localize());
 			doneWithCurrentPartButton.Name = "Done Button";
+			doneWithCurrentPartButton.Click += onDoneWithCurrentPartButton_Click;
 
 			this.Margin = new BorderDouble(0, 0, 10, 0);
 			this.HAnchor = HAnchor.FitToChildren;
@@ -274,21 +262,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			allPrintButtons.Add(resetConnectionButton);
 
 			SetButtonStates();
-		}
 
-		protected void AddHandlers()
-		{
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			addButton.Click += onAddButton_Click;
-            skipButton.Click += onSkipButton_Click;
-			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
-
-			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
-			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelPrinting); };
-			reprintButton.Click += onReprintButton_Click;
-			doneWithCurrentPartButton.Click += onDoneWithCurrentPartButton_Click;
+			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => SetButtonStates(), ref unregisterEvents);
 		}
 
 		protected void DisableActiveButtons()
@@ -386,11 +361,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
 					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						if (!timeSincePrintStarted.IsRunning)
-						{
-							timeSincePrintStarted.Restart();
-						}
-
 						if (!PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
 						{
 							this.activePrintButtons.Add(pauseButton);
@@ -464,46 +434,9 @@ namespace MatterHackers.MatterControl.ActionBar
 				});
 		}
 
-		private void CancelButton_Click()
-		{
-			if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
-			{
-				StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO, "Cancel Print".Localize(), "Continue Printing".Localize());
-			}
-			else
-			{
-				CancelPrinting();
-				UiThread.RunOnIdle(SetButtonStates);
-			}
-		}
-
-		private void CancelPrinting()
-		{
-			if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint)
-			{
-				SlicingQueue.Instance.CancelCurrentSlicing();
-			}
-			PrinterConnectionAndCommunication.Instance.Stop();
-			timeSincePrintStarted.Reset();
-			UiThread.RunOnIdle(SetButtonStates);
-		}
-
-		private void onAddButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(AddButtonOnIdle);
-		}
-
 		void RunTroubleShooting()
 		{
 			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
-		}
-
-		private void onConfirmCancelPrint(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				UiThread.RunOnIdle(CancelPrinting);
-			}
 		}
 
 		private void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
@@ -540,6 +473,12 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void onStateChanged(object sender, EventArgs e)
 		{
 			UiThread.RunOnIdle(SetButtonStates);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 }

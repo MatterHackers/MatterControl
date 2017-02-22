@@ -44,12 +44,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected ViewControls2D viewControls2D;
 
-		protected Cover buttonRightPanelDisabledCover;
+		protected GuiWidget buttonRightPanelDisabledCover;
 		protected FlowLayoutWidget buttonRightPanel;
 
 		public PartPreviewWidget()
 		{
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				SideBarButtonWidth = 180;
 				ShortButtonHeight = 40;

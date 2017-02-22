@@ -33,8 +33,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public abstract class SliceEngineMapping
 	{
-		private string engineName;
-
 		/// <summary>
 		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
 		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
@@ -62,6 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"manual_probe_paper_width",
 			SettingsKey.pause_gcode,
 			"print_leveling_method",
+			SettingsKey.print_leveling_probe_start,
 			SettingsKey.print_leveling_required_to_print,
 			"print_leveling_solution",
 			SettingsKey.recover_first_layer_speed,
@@ -90,10 +89,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceEngineMapping(string engineName)
 	{
-			this.engineName = engineName;
+			this.Name = engineName;
 		}
 
-		public string Name { get { return engineName; } }
+		public string Name { get; }
 
 		public abstract bool MapContains(string canonicalSettingsName);
 	}

@@ -28,61 +28,100 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class Slic3rEngineMappings : SliceEngineMapping
 	{
 		public static readonly Slic3rEngineMappings Instance = new Slic3rEngineMappings();
-
-		private List<string> hiddenSettings = null;
+		private List<MappedSetting> mappedSettings = new List<MappedSetting>();
+		private HashSet<string> slic3rSliceSettingNames;
 
 		// Singleton use only - prevent external construction
-		private Slic3rEngineMappings() : base ("Slic3r")
+		private Slic3rEngineMappings() : base("Slic3r")
 		{
-			hiddenSettings = new List<string>();
-			hiddenSettings.Add("cool_extruder_lift");
-			hiddenSettings.Add("support_material_create_internal_support");
-			hiddenSettings.Add("support_material_create_perimeter");
-			hiddenSettings.Add("min_extrusion_before_retract");
-			hiddenSettings.Add("support_material_xy_distance");
-			hiddenSettings.Add("support_material_z_distance");
-			hiddenSettings.Add(SettingsKey.center_part_on_bed);
-			hiddenSettings.Add(SettingsKey.expand_thin_walls);
-			hiddenSettings.Add(SettingsKey.merge_overlapping_lines);
-			hiddenSettings.Add(SettingsKey.fill_thin_gaps);
-			hiddenSettings.Add("infill_overlap_perimeter");
-			hiddenSettings.Add("support_type");
-			hiddenSettings.Add("infill_type");
-			hiddenSettings.Add("create_raft");
-			hiddenSettings.Add("z_gap");
-			hiddenSettings.Add(SettingsKey.bottom_clip_amount);
-			hiddenSettings.Add("gcode_output_type");
-			hiddenSettings.Add("raft_extra_distance_around_part");
-			hiddenSettings.Add("output_only_first_layer");
-			hiddenSettings.Add("raft_air_gap");
-			hiddenSettings.Add("support_air_gap");
-			hiddenSettings.Add("repair_outlines_extensive_stitching");
-			hiddenSettings.Add("repair_outlines_keep_open");
-			hiddenSettings.Add("complete_objects");
-			hiddenSettings.Add("output_filename_format");
-			hiddenSettings.Add("support_material_percent");
-			hiddenSettings.Add("post_process");
-			hiddenSettings.Add("extruder_clearance_height");
-			hiddenSettings.Add("extruder_clearance_radius");
-			hiddenSettings.Add("wipe_shield_distance");
-			hiddenSettings.Add(SettingsKey.heat_extruder_before_homing);
-			hiddenSettings.Add("extruders_share_temperature");
-			hiddenSettings.Add("print_leveling_method");
-			hiddenSettings.Add("solid_shell");
-			hiddenSettings.Add("retractWhenChangingIslands");
-			hiddenSettings.Add(SettingsKey.perimeter_start_end_overlap);
+			foreach (var key in PrinterSettings.KnownSettings.Where(k => !k.StartsWith("MatterControl.")))
+			{
+				mappedSettings.Add(new MappedSetting(key, key));
+			}
+
+			string[] hiddenSettings =
+			{
+				"cool_extruder_lift",
+				"support_material_create_internal_support",
+				"support_material_create_perimeter",
+				"min_extrusion_before_retract",
+				"support_material_xy_distance",
+				"support_material_z_distance",
+				SettingsKey.print_center,
+				SettingsKey.expand_thin_walls,
+				SettingsKey.merge_overlapping_lines,
+				SettingsKey.fill_thin_gaps,
+				"infill_overlap_perimeter",
+					"support_type",
+				"infill_type",
+				"create_raft",
+				"z_gap",
+				SettingsKey.bottom_clip_amount,
+				"gcode_output_type",
+				"raft_extra_distance_around_part",
+				"output_only_first_layer",
+				"raft_air_gap",
+				"support_air_gap",
+				"repair_outlines_extensive_stitching",
+				"repair_outlines_keep_open",
+				"complete_objects",
+				"output_filename_format",
+				"support_material_percent",
+				"post_process",
+				"extruder_clearance_height",
+				"extruder_clearance_radius",
+				"wipe_shield_distance",
+				SettingsKey.heat_extruder_before_homing,
+				"extruders_share_temperature",
+				"print_leveling_method",
+				"solid_shell",
+				"retractWhenChangingIslands",
+				SettingsKey.perimeter_start_end_overlap,
+				SettingsKey.bed_shape,
+			};
+
+			foreach(string key in hiddenSettings)
+			{
+				for (int i = mappedSettings.Count - 1; i >= 0; i--)
+				{
+					if (mappedSettings[i].CanonicalSettingsName == key)
+					{
+						mappedSettings.RemoveAt(i);
+					}
+				}
+			}
+
+			mappedSettings.Add(new Slice3rBedShape(SettingsKey.bed_shape));
+			slic3rSliceSettingNames = new HashSet<string>(mappedSettings.Select(m => m.CanonicalSettingsName));
 		}
 
-		public override bool MapContains(string key)
+		public static void WriteSliceSettingsFile(string outputFilename)
 		{
-			// Visible items are anything not in the hiddenSettings set
-			return !hiddenSettings.Contains(key);
+			using (StreamWriter sliceSettingsFile = new StreamWriter(outputFilename))
+			{
+				foreach (MappedSetting mappedSetting in Instance.mappedSettings)
+				{
+					if (mappedSetting.Value != null)
+					{
+						sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(mappedSetting.ExportedName, mappedSetting.Value));
+					}
+				}
+			}
+		}
+
+		public override bool MapContains(string canonicalSettingsName)
+		{
+			return slic3rSliceSettingNames.Contains(canonicalSettingsName)
+				|| base.applicationLevelSettings.Contains(canonicalSettingsName);
 		}
 	}
 }

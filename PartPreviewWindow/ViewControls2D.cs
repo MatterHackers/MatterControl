@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControlsBase()
 		{
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				buttonHeight = 40;
 			}
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls2D()
 		{
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				buttonHeight = 40;
 			}
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			threeDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", select3dIconPath);
 			threeDimensionButton.Margin = new BorderDouble(3);
 
-			if (UserSettings.Instance.DisplayMode != ApplicationDisplayType.Touchscreen)
+			if (!UserSettings.Instance.IsTouchScreen)
 			{
 				AddChild(threeDimensionButton);
 

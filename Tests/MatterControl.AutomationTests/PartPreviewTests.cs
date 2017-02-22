@@ -25,11 +25,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				testRunner.ClickByName("Row Item Calibration - Box");
 				testRunner.ClickByName("Row Item Calibration - Box View Button");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				// Get View3DWidget
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
@@ -42,12 +42,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Copy button and count Scene.Children 
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 2, 3);
+				testRunner.Delay(() => view3D.Scene.Children.Count == 2, 3);
 				Assert.AreEqual(2, view3D.Scene.Children.Count, "Should have 2 parts after copy");
 
 				// Click Copy button a second time and count Scene.Children
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 3, 3);
+				testRunner.Delay(() => view3D.Scene.Children.Count == 3, 3);
 				Assert.AreEqual(3, view3D.Scene.Children.Count, "Should have 3 parts after 2nd copy");
 
 				return Task.FromResult(0);
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName("3D View Copy");
-					testRunner.WaitUntil(() => view3D.Scene.Children.Count == i+2, 3);
+					testRunner.Delay(() => view3D.Scene.Children.Count == i+2, 3);
 					Assert.AreEqual(i + 2, view3D.Scene.Children.Count, $"Should have {i+2} parts after copy");
 				}
 
@@ -91,11 +91,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("^a");
 
 				testRunner.ClickByName("3D View Group");
-				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 1, 3);
+				testRunner.Delay(() => view3D.Scene.Children.Count == 1, 3);
 				Assert.AreEqual(1, view3D.Scene.Children.Count, $"Should have 1 parts after group");
 
 				testRunner.ClickByName("3D View Ungroup");
-				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 6, 3);
+				testRunner.Delay(() => view3D.Scene.Children.Count == 6, 3);
 				Assert.AreEqual(6, view3D.Scene.Children.Count, $"Should have 6 parts after ungroup");
 
 				return Task.FromResult(0);
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName(copyButtonName);
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 				}
 
 				//Get MeshGroupCount before Group is clicked
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth:600);
 		}
 
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
+		[Test, Apartment(ApartmentState.STA)]
 		public async Task UndoRedoCopy()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -161,10 +161,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				SystemWindow systemWindow;
 
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Wait(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
@@ -175,38 +174,38 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string copyButtonName = "3D View Copy";
 
 				//Click Edit button to make edit controls visible
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				int partCountBeforeCopy = view3D.Scene.Children.Count();
 				Assert.IsTrue(partCountBeforeCopy == 1);
 
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName(copyButtonName);
-					testRunner.WaitUntil(() => view3D.Scene.Children.Count() == i + 2, 2);
+					testRunner.Delay(() => view3D.Scene.Children.Count() == i + 2, 2);
 					Assert.AreEqual(view3D.Scene.Children.Count(), i + 2);
 				}
 
-				testRunner.Wait(1);
+				testRunner.Delay(.2);
 
 				for (int x = 0; x <= 4; x++)
 				{
 					int meshCountBeforeUndo = view3D.Scene.Children.Count();
 					testRunner.ClickByName("3D View Undo");
 
-					testRunner.WaitUntil(
+					testRunner.Delay(
 						() => view3D.Scene.Children.Count() == meshCountBeforeUndo-1, 
 						2);
 					Assert.AreEqual(view3D.Scene.Children.Count(), meshCountBeforeUndo - 1);
 				}
 
-				testRunner.Wait(1);
+				testRunner.Delay(.2);
 
 				for (int z = 0; z <= 4; z++)
 				{
 					int meshCountBeforeRedo = view3D.Scene.Children.Count();
 					testRunner.ClickByName("3D View Redo");
 
-					testRunner.WaitUntil(
+					testRunner.Delay(
 						() => meshCountBeforeRedo + 1 == view3D.Scene.Children.Count(),
 						2);
 					Assert.AreEqual(meshCountBeforeRedo + 1, view3D.Scene.Children.Count());
@@ -238,31 +237,31 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Edit button to make edit controls visible
 				testRunner.WaitForName("3D View Copy", 3);
-				testRunner.Wait(1); // wait for window to finish opening
+				testRunner.Delay(1); // wait for window to finish opening
 				Assert.AreEqual(1, view3D.Scene.Children.Count, "Should have 1 part before copy");
 
 				for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName("3D View Copy", 1);
-					testRunner.Wait(.2);
+					testRunner.Delay(.2);
 				}
 
 				Assert.AreEqual(6, view3D.Scene.Children.Count, "Should have 6 parts after batch copy");
 
 				testRunner.ClickByName("3D View Remove", 1);
-				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 5, 3);
+				testRunner.Delay(() => view3D.Scene.Children.Count == 5, 3);
 				Assert.AreEqual(5, view3D.Scene.Children.Count, "Should have 5 parts after Remove");
 
 				testRunner.ClickByName("3D View Undo");
-				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 6, 3);
+				testRunner.Delay(() => view3D.Scene.Children.Count == 6, 3);
 				Assert.AreEqual(6, view3D.Scene.Children.Count, "Should have 6 parts after Undo");
 
 				testRunner.ClickByName("3D View Redo");
-				testRunner.WaitUntil(() => view3D.Scene.Children.Count == 5, 3);
+				testRunner.Delay(() => view3D.Scene.Children.Count == 5, 3);
 				Assert.AreEqual(5, view3D.Scene.Children.Count, "Should have 5 parts after Redo");
 
 				view3D.CloseOnIdle();
-				testRunner.Wait(.1);
+				testRunner.Delay(.1);
 
 				return Task.FromResult(0);
 			};
@@ -280,7 +279,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Row Item Calibration - Box");
 				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
 
@@ -291,28 +290,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 0; i <= 2; i++)
 				{
 					testRunner.ClickByName("3D View Copy");
-					testRunner.Wait(.5);
+					testRunner.Delay(.5);
 				}
 
 				//Click Save As button to save changes to the part
 				testRunner.ClickByName("Save As Menu");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Save As Menu Item");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 
 				//Type in name of new part and then save to Print Queue
 				testRunner.Type("Save As Print Queue");
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Save As Save Button");
 
 				view3D.CloseOnIdle();
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 
 				//Make sure there is a new Queue item with a name that matches the new part
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				testRunner.ClickByName("Queue Tab");
-				testRunner.Wait(1);
+				testRunner.Delay(1);
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Save As Print Queue", 5));
 
 				return Task.FromResult(0);

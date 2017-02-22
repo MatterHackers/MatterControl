@@ -43,7 +43,7 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.RenderOpenGl.OpenGl;
+using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Queue... Menu", 2);
-			testRunner.Wait(1);
+			testRunner.Delay(1);
 			testRunner.ClickByName(" Remove All Menu Item", 2);
 		}
 
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.ClickByName("User Options Menu", 2);
 			testRunner.ClickByName("Sign Out Menu Item", 2);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 
 			// Rather than waiting a fixed amount of time, we wait for the ReloadAll to complete before returning
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			unregisterEvents(null, null);
 
 			// Wait for any post DoneReloadingAll code to finish up and return
-			testRunner.Wait(.2);
+			testRunner.Delay(.2);
 		}
 
 		public static string PathToExportGcodeFolder
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("File Menu", 5);
 			testRunner.ClickByName("Exit Menu Item", 5);
 
-			testRunner.Wait(.2);
+			testRunner.Delay(.2);
 			if (mcWindowLocal.Parent != null)
 			{
 				mcWindowLocal.CloseOnIdle();
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 			testRunner.DragDropByName("centerPartPreviewAndControls", "centerPartPreviewAndControls", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right);
 
-			testRunner.Wait(1);
+			testRunner.Delay(1);
 			testRunner.ClickByName(partNameToSelect);
 		}
 
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static Process LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
+		public static IDisposable LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
@@ -191,24 +191,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			MatterControlUtilities.AddAndSelectPrinter(testRunner, make, model);
 
-			var process = new PrintEmulatorProcess();
-			process.StartInfo = new ProcessStartInfo()
-			{
-				FileName = "python",
-				Arguments = string.Format("{0} {1}{2}", 
-					StaticData.Instance.MapPath("../PrinterEmulator.py"), 
-					config.Printer, 
-					runSlow ? " slow" : ""),
+			Emulator emulator = new Emulator();
 
-				WindowStyle = ProcessWindowStyle.Minimized
-			};
+			emulator.PortName = config.Printer;
+			emulator.RunSlow = runSlow;
 
-			process.Start();
+			emulator.Startup();
 
 			// edit the com port
 			SystemWindow containingWindow;
 			var editButton = testRunner.GetWidgetByName("Edit Printer Button", out containingWindow);
-			testRunner.WaitUntil(() => editButton.Enabled, 5); // Wait until the edit button is ready to click it. Ensures the printer is loaded.
+
+			testRunner.Delay(() => editButton.Enabled, 5); // Wait until the edit button is ready to click it. Ensures the printer is loaded.
 			testRunner.ClickByName("Edit Printer Button", 3);
 
 			testRunner.ClickByName("Serial Port Dropdown", 3);
@@ -222,7 +216,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitForName("Disconnect from printer button", 5);
 
-			return process;
+			return emulator;
+	}
+
+		public static void CancelPrint(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Cancel Print Button");
+
+			if (testRunner.WaitForName("Yes Button", 1))
+			{
+				testRunner.ClickByName("Yes Button");
+			}
 		}
 
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
@@ -248,10 +252,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			// delete printer
 			testRunner.ClickByName("Edit Printer Button", 5);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 
 			testRunner.ClickByName("Delete Printer Button", 5);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button", 5));
 		}
@@ -277,7 +281,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			WaitForReloadAll(testRunner, () => testRunner.ClickByName("Save & Continue Button", 2));
 
 			testRunner.ClickByName("Cancel Wizard Button", 5);
-			testRunner.Wait(1);
+			testRunner.Delay(1);
 		}
 
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)
@@ -361,10 +365,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			testRunner.ClickByName(libraryRowItemName);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 
 			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 		}
 
 		public static async Task RunTest(
@@ -434,7 +438,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.ClickByName("LibraryActionMenu");
 			testRunner.ClickByName("Edit Menu Item", 1);
-			testRunner.Wait(1); // wait for the new window to open
+			testRunner.Delay(1); // wait for the new window to open
 		}
 
 		public static void LibraryRenameSelectedItem(AutomationRunner testRunner)
@@ -472,17 +476,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		}
 
+		public static void SwitchToSettingsAndControls(this AutomationRunner testRunner)
+		{
+			if (testRunner.WaitForName("SettingsAndControls", .2))
+			{
+				testRunner.ClickByName("SettingsAndControls");
+				testRunner.Delay(.5);
+			}
+		}
+
 		public static void SwitchToAdvancedSettings(AutomationRunner testRunner)
 		{
 			if (testRunner.WaitForName("SettingsAndControls", .2))
 			{
 				testRunner.ClickByName("SettingsAndControls");
-				testRunner.Wait(.5);
+				testRunner.Delay(.5);
 			}
 
 			testRunner.ClickByName("User Level Dropdown");
 			testRunner.ClickByName("Advanced Menu Item");
-			testRunner.Wait(.5);
+			testRunner.Delay(.5);
 		}
 	}
 

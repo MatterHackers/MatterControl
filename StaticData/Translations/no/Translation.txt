@@ -2,7 +2,7 @@ English:Connect
 Translated:Koble
 
 English:Disconnect
-Translated:Frakople
+Translated:Koble fra
 
 English:Status
 Translated:Status
@@ -29,7 +29,7 @@ English:Add a file to be printed
 Translated:Legg til en fil som skal skrives ut
 
 English:Start
-Translated:Begynne
+Translated:Start
 
 English:Begin printing the selected item.
 Translated:Begynn å skrive det valgte elementet.
@@ -59,7 +59,7 @@ English:Stop trying to connect to the printer.
 Translated:Stopp prøver å koble til skriveren.
 
 English:Cancel
-Translated:Kansellere
+Translated:Avbryt
 
 English:Stop the current print
 Translated:Stoppe gjeldende utskrifts
@@ -158,7 +158,7 @@ English:There are updates available.
 Translated:Det finnes oppdateringer tilgjengelig.
 
 English:Checking for updates...
-Translated:Ser etter oppdateringer ...
+Translated:Ser etter oppdateringer...
 
 English:MatterControl
 Translated:MatterControl
@@ -248,7 +248,7 @@ English:Conversions
 Translated:Konverteringer
 
 English:reset
-Translated:reset
+Translated:tilbakestille
 
 English:Apply Scale
 Translated:Påfør Scale
@@ -263,10 +263,10 @@ English:Delete
 Translated:Slett
 
 English:Close
-Translated:Lukke
+Translated:Lukk
 
 English:Generate
-Translated:Generere
+Translated:generere
 
 English:No GCode Available...
 Translated:Ingen GCode Tilgjengelig ...
@@ -800,7 +800,7 @@ English:Enable Auto Cooling
 Translated:Aktiver Auto Kjøling
 
 English:Enable
-Translated:aktiver
+Translated:Aktiver
 
 English:Printer
 Translated:Skriver
@@ -842,7 +842,7 @@ English:Automatic Calibration
 Translated:automatisk kalibrering
 
 English:ENABLE
-Translated:AKTIV
+Translated:AKTIVER
 
 English:DISABLE
 Translated:SKRU
@@ -899,7 +899,7 @@ English:Go
 Translated:Gå
 
 English:start:
-Translated:begynne:
+Translated:start:
 
 English:end:
 Translated:slutt:
@@ -1103,7 +1103,7 @@ English:Min Extrusion
 Translated:min Extrusion
 
 English:Retraction
-Translated:Tilbaketrekking
+Translated:tilbaketrekking
 
 English:Generate Extra Perimeters\nWhen Needed:
 Translated:Generere ekstra Perimetere\nved behov:
@@ -1277,7 +1277,7 @@ English:Threads
 Translated:tråder
 
 English:Resolution
-Translated:oppløsning
+Translated:Vedtak
 
 English:Extrusion Axis
 Translated:Extrusion Axis
@@ -1385,7 +1385,7 @@ English:Temperature (C)
 Translated:Temperatur (C)
 
 English:Language Settings
-Translated:Språkinnstillinger
+Translated:språk~~POS=TRUNC innstillinger~~POS=HEADCOMP
 
 English:Select Model
 Translated:Velg modell
@@ -1412,7 +1412,7 @@ English:CONNECT
 Translated:KOBLE
 
 English:DISCONNECT
-Translated:FRAKOPLE
+Translated:KOBLE FRA
 
 English:OPTIONS
 Translated:ALTERNATIVER
@@ -1523,7 +1523,7 @@ English:Center Print
 Translated:Senter Skriv ut
 
 English:Note
-Translated:Notat
+Translated:Merk
 
 English:To enable GCode export, select a printer profile.
 Translated:For å aktivere GCode eksport, velger du en skriverprofil.
@@ -1688,7 +1688,7 @@ English:Sampled Positions
 Translated:samplet Posisjoner
 
 English:Position
-Translated:Stilling
+Translated:Posisjon
 
 English:Do not show this again
 Translated:Ikke vis dette igjen
@@ -1787,7 +1787,7 @@ English:We will now refine our measurement of the extruder height at this positi
 Translated:Vi vil nå raffinere vår måling av ekstruderen høyde i denne posisjon.
 
 English:High Precision
-Translated:High Precision
+Translated:Høy presisjon
 
 English:We will now finalize our measurement of the extruder height at this position.
 Translated:Vi skal nå sluttføre vår måling av ekstruderen høyde i denne posisjon.
@@ -2423,7 +2423,7 @@ English:Export to SD Card
 Translated:Eksporter til SD-kort
 
 English:Notification Settings
-Translated:varslings~~POS=TRUNC innstillinger~~POS=HEADCOMP
+Translated:Varslingsinnstillinger
 
 English:After a Print is Finished:
 Translated:Etter en Utskriften er ferdig:
@@ -2534,7 +2534,7 @@ English:Infill Angle
 Translated:infill Angle
 
 English:Grid
-Translated:Grid
+Translated:Nett
 
 English:Moves
 Translated:Beveger seg
@@ -3152,7 +3152,7 @@ English:Add To Library
 Translated:Legg til i bibliotek
 
 English:Print Queue
-Translated:Print Queue
+Translated:Utskriftskø
 
 English:Interface Mode
 Translated:Interface Mode
@@ -3164,7 +3164,7 @@ English:Connect to the printer
 Translated:Koble til skriveren
 
 English:Reset
-Translated:Tilbakestill
+Translated:tilbakestille
 
 English:Console
 Translated:Console
@@ -3917,7 +3917,7 @@ English:REVERT
 Translated:revert
 
 English:UPDATE
-Translated:OPPDATERING
+Translated:OPPDATER
 
 English:Oops! Could not complete update.
 Translated:Oops! Kunne ikke fullføre oppdateringen.
@@ -3977,7 +3977,7 @@ English:Log into my account
 Translated:Logg inn på min konto
 
 English:Login
-Translated:Logg inn
+Translated:Logg Inn
 
 English:Username or Email
 Translated:Brukernavn eller e-post
@@ -4583,7 +4583,7 @@ English:Name
 Translated:Navn
 
 English:Make
-Translated:Lage
+Translated:Gjøre
 
 English:User Manual
 Translated:Brukermanual
@@ -5111,7 +5111,7 @@ English:What was my password again?
 Translated:Hva var passordet mitt igjen?
 
 English:Reset Password
-Translated:Tilbakestill passord
+Translated:Tilbakestille passord
 
 English:Email Address
 Translated:Epostadresse
@@ -5195,7 +5195,7 @@ English:Subject*
 Translated:Emne*
 
 English:Message*
-Translated:Beskjed*
+Translated:Budskap*
 
 English:Email Address*
 Translated:Epostadresse*
@@ -5549,7 +5549,7 @@ English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-
 Translated:Sted: Innstillinger og kontroller '-> Innstillinger ->' skriver '->' Custom G-kode '->' Start G-kode '
 
 English:none
-Translated:none
+Translated:ingen
 
 English:Exit while printing
 Translated:Exit mens utskrift
@@ -5645,7 +5645,7 @@ English:Note: Be sure the tip of the extruder is clean.
 Translated:Merk: Pass på at tuppen av ekstruder er ren.
 
 English:- none -
-Translated:- Ingen -
+Translated:- ingen -
 
 English:Actions
 Translated:handlinger
@@ -5829,4 +5829,115 @@ Translated:Lagrer ...
 
 English:Oops! Payment has been declined.
 Translated:Oops! Betalingen har blitt avvist.
+
+English:Distance or Loops
+Translated:Avstand eller Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Z-forskyvning for å søke å forbedre den første lag adhesjon.
+
+English:Baby Step Offset
+Translated:Baby-Step Offset
+
+English:Oops! Unable to initialize device.
+Translated:Oops! Kan ikke initialisere enheten.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:Avstanden mellom toppen av flåten og bunnen av modellen. 0,6 mm er et godt utgangspunkt for PLA og 0,4 mm er et godt utgangspunkt for ABS. Lavere verdier gir en glattere overflate, høyere verdier gjøre utskriften lettere å fjerne.
+
+English:Clear ZOffset
+Translated:Clear ZOffset
+
+English:Printing Window...
+Translated:Skrive Window ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Bare trekke når Crossing Perimetere
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'External Perimeter Extrusion Width "må være mindre enn eller lik' Nozzle Diameter '* 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Ekstern Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Sted: Innstillinger og kontroller "->" Innstillinger "->" Filament '->' Ekstrudering '->' External Perimeter '
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'External Perimeter Extrusion Width "må være større enn 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Ekstern Perimeter Extrusion Width = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:Start høyde (z) på skrivehodet før sondering hver utskrifts nivå posisjon.
+
+English:Probe Start Height
+Translated:Probe start Høyde
+
+English:Controls the speed of printer moves
+Translated:Kontrollerer hastigheten på skrive trekk
+
+English:Controls the amount of extrusion
+Translated:Styrer mengden av ekstrudering
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Velg materialet du legger i.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Trimme enden av filamentet for å sikre en god belastning.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Velg materialet du legger i. Du gjør noen ting som tar lang beskrivelse.
+
+English:Confirm the material you are unloading.
+Translated:Bekreft materialet du lossing.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Venter på ekstruder for varme til 205, før lossing.
+
+English:Unloading filament...
+Translated:Lossing filament ...
+
+English:Put filament into extruder and click Continue.
+Translated:Sett filament i ekstruder og klikk på Fortsett.
+
+English:Loading filament...
+Translated:Laster filament ...
+
+English:Waiting for extruder to heat to 205.
+Translated:Venter på ekstruder for varme til 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Klikk "Fortsett" når filament kjører rent.
+
+English:Heating side 1.
+Translated:Oppvarming side 1.
+
+English:Turn Sandvich over!
+Translated:Slå Sandvich over!
+
+English:Heating side 2.
+Translated:Oppvarming side 2.
+
+English:Done!
+Translated:Ferdig!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:ADVARSEL: For å utføre print utvinning, må skriveren flytte ned for å nå utgangsposisjon. \ N Hvis utskriften er for stor, en del av skriveren kan kollidere med den når den går ned. \ N Sørg for at det er trygt å utføre denne operasjonen før du fortsetter.
 

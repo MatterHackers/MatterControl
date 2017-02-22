@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return true;
 		}
 
-		private void ExportToFolderFeedbackWindow_Closed(object sender, EventArgs e)
+		private void ExportToFolderFeedbackWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			this.exportingWindow = null;
 		}
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					if (exportingWindow == null)
 					{
 						exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-						exportingWindow.Closed += new EventHandler(ExportToFolderFeedbackWindow_Closed);
+						exportingWindow.Closed += ExportToFolderFeedbackWindow_Closed;
 						exportingWindow.ShowAsSystemWindow();
 					}
 					else

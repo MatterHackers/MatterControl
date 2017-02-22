@@ -287,7 +287,7 @@ English:Library
 Translated:Bibliothek
 
 English:About
-Translated:Etwa
+Translated:Über
 
 English:Advanced\nControls
 Translated:Advanced\nKontrollen
@@ -959,7 +959,7 @@ English:Printer Model
 Translated:Druckermodell
 
 English:Auto Connect
-Translated:Automatische Verbindung
+Translated:Auto Connect
 
 English:Preparing To Print
 Translated:Druckvorbereitung
@@ -1484,7 +1484,7 @@ English: to help support MatterControl.
 Translated: Unterstützung MatterControl zu helfen.
 
 English:ABOUT
-Translated:ETWA
+Translated:ÜBER
 
 English:Oops! Could not find this file
 Translated:Hoppla! Könnte diese Datei nicht finden
@@ -1496,7 +1496,7 @@ English:Item not Found
 Translated:Artikel nicht gefunden
 
 English:Yes
-Translated:ja
+Translated:Ja
 
 English:No
 Translated:Nein
@@ -1622,7 +1622,7 @@ English:Device
 Translated:Gerät
 
 English:Material
-Translated:Stoff
+Translated:Material
 
 English:Item
 Translated:Artikel
@@ -1730,7 +1730,7 @@ English:We will use this paper to measure the distance between the extruder and 
 Translated:Wir werden dieses Papier verwenden Sie den Abstand zwischen dem Extruder und dem Bett zu messen. Klicken Sie auf\n\n"Weiter", um fortzufahren.
 
 English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
-Translated:Herzliche Glückwünsche!\n\nAuto Print Leveling ist jetzt konfiguriert und aktiviert ist.
+Translated:Glückwünsche!\n\nAuto Print Leveling ist jetzt konfiguriert und aktiviert ist.
 
 English:Remove the paper
 Translated:Entfernen Sie das Papier
@@ -1811,7 +1811,7 @@ English:No printer selected.  Press 'Connect' to choose a printer
 Translated:Kein Drucker ausgewählt. Drücken Sie "Verbinden" wählen, um einen Drucker
 
 English:About                                             
-Translated:Etwa
+Translated:Über
 
 English:This controls the ratio of material extruder during bridging.Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
 Translated:Dies steuert das Verhältnis von Material Extruder während bridging.Reducing kann dies etwas durch die Dehnung des Filaments überbrücken helfen, können auch sehr helfen, mit einem Lüfter.
@@ -2069,7 +2069,7 @@ English:Getting Started
 Translated:Anfangen
 
 English:View Help
-Translated:Hilfe-
+Translated:Hilfe anzeigen
 
 English:Manually Configure Connection
 Translated:Manuelle Verbindung konfigurieren
@@ -2111,7 +2111,7 @@ English:Install Driver
 Translated:Installiere Treiber
 
 English:Apply
-Translated:anwenden
+Translated:Sich bewerben
 
 English:Buy Materials
 Translated:Kaufen Materialien
@@ -3002,7 +3002,7 @@ English:Rotation:
 Translated:Drehung:
 
 English:Enter Text Here
-Translated:Geben Sie Text hier
+Translated:Hier Text eingeben
 
 English:Inserting image...
 Translated:Einfügen Bild ...
@@ -3239,7 +3239,7 @@ English:Width
 Translated:Breite
 
 English:Arrange
-Translated:Arrangieren
+Translated:Ordnen
 
 English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
 Translated:Die Geschwindigkeit zu bewegen, während die erste Schicht zu drucken. Wenn in Prozent ausgedrückt wird es die entsprechende Geschwindigkeit oben gesetzt zu ändern.
@@ -3539,7 +3539,7 @@ English:Enter Share Code
 Translated:Geben Sie Teile-Code
 
 English:Downloading...
-Translated:Herunterladen ...
+Translated:Wird heruntergeladen...
 
 English:Uploading...
 Translated:Hochladen ...
@@ -3698,7 +3698,7 @@ English:Slice files prior to send
 Translated:Slice-Dateien vor dem senden
 
 English:Oops! Please sign in to continue.
-Translated:Hoppla! Bitte melden Sie sich an, um fortzufahren.
+Translated:Hoppla! Bitte einloggen, um fortzufahren.
 
 English:Login Required
 Translated:Anmeldung erforderlich
@@ -3980,7 +3980,7 @@ English:Login
 Translated:Anmeldung
 
 English:Username or Email
-Translated:Benutzername oder E-Mail
+Translated:Benutzername oder E-Mail-Adresse
 
 English:Enter your username or email address
 Translated:Geben Sie Ihren Benutzernamen oder E-Mail-Adresse
@@ -4394,7 +4394,7 @@ English:Re-enter Password
 Translated:Kennwort erneut eingeben
 
 English:Confirm your Password
-Translated:Bestätige dein Passwort
+Translated:Bestätigen Sie Ihr Passwort
 
 English:Oops! Field cannot be left blank
 Translated:Hoppla! Feld kann nicht leer gelassen werden
@@ -5276,7 +5276,7 @@ English:Port number to be used with IP Adress to connect to printer over the net
 Translated:Portnummer mit IP-Adresse verwendet werden, um Drucker über das Netzwerk zu verbinden,
 
 English:IP Address
-Translated:IP-Adresse
+Translated:IP Adresse
 
 English:Port
 Translated:Hafen
@@ -5399,7 +5399,7 @@ English:Retrieving sync information...
 Translated:Abrufen von Sync-Information ...
 
 English:Please sign in to continue.
-Translated:Bitte melden Sie sich an, um fortzufahren.
+Translated:Bitte einloggen, um fortzufahren.
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
 Translated:Die Geschwindigkeit, mit der die Düse bewegt, wenn ein ausgefallenes Druck erholt, für 1 Schicht.
@@ -5829,4 +5829,115 @@ Translated:Speichern ...
 
 English:Oops! Payment has been declined.
 Translated:Hoppla! Die Zahlung wurde abgelehnt.
+
+English:Distance or Loops
+Translated:Entfernung oder Loops
+
+English:The z offset to apply to improve the first layer adhesion.
+Translated:Die z-Offset anzuwenden, um die erste Schicht die Haftung zu verbessern.
+
+English:Baby Step Offset
+Translated:Baby-Step-Offset
+
+English:Oops! Unable to initialize device.
+Translated:Hoppla! Unfähig Gerät zu initialisieren.
+
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:Der Abstand zwischen der Oberseite des Floßes und der Unterseite des Modells. 0,6 mm ist ein guter Ausgangspunkt für PLA und 0,4 mm ist ein guter Ausgangspunkt für ABS. Niedrigere Werte geben eine glattere Oberfläche, höhere Werte der Druck leichter entfernen lassen.
+
+English:Clear ZOffset
+Translated:klar ZOFFSET
+
+English:Printing Window...
+Translated:Drucken Fenster ...
+
+English:Only Retract When Crossing Perimeters
+Translated:Einfahren Only When Crossing Perimeters
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:"Außen Perimeter Extrusion Width 'muss kleiner als oder gleich dem" Düsendurchmesser * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:Externe Perimeter Extrusion Width = {0}\nDüsendurchmesser = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Ort: 'Einstellungen und Kontrolle' -> 'Einstellungen' -> 'Glühfaden' -> 'Extrusion' -> 'Externe Perimeter'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:"Außen Perimeter Extrusion Width 'muss größer als 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:Externe Perimeter Extrusion Width = {0}
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:Die Starthöhe (z) des Druckkopfes vor jedem Druckniveau Position Sondieren.
+
+English:Probe Start Height
+Translated:Sonde starten Höhe
+
+English:Controls the speed of printer moves
+Translated:Steuert die Geschwindigkeit des Druckers bewegt
+
+English:Controls the amount of extrusion
+Translated:Steuert die Menge der Extrusion
+
+English:feedrate_ratio
+Translated:feedrate_ratio
+
+English:extrusion_ratio
+Translated:extrusion_ratio
+
+English:Choose the material that you are loading.
+Translated:Wählen Sie das Material, das Sie laden.
+
+English:Trim the end of the filament to ensure a good load.
+Translated:Schneiden Sie das Ende des Fadens eine gute Last zu gewährleisten.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Wählen Sie das Material, das Sie laden. Sie machen ein paar Sachen, die eine lange Beschreibung nimmt.
+
+English:Confirm the material you are unloading.
+Translated:Bestätigen Sie das Material, das Sie entladen.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Warten auf Extruder auf 205 zu erwärmen, vor dem Entladen.
+
+English:Unloading filament...
+Translated:Entladen Faden ...
+
+English:Put filament into extruder and click Continue.
+Translated:Setzen Faden in den Extruder und klicken Sie auf Weiter.
+
+English:Loading filament...
+Translated:Laden Faden ...
+
+English:Waiting for extruder to heat to 205.
+Translated:Warten auf Extruder auf 205 zu erhitzen.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Klicken Sie auf "Weiter", wenn Faden sauber läuft.
+
+English:Heating side 1.
+Translated:Heizung Seite 1.
+
+English:Turn Sandvich over!
+Translated:Drehen Sie Sandvich vorbei!
+
+English:Heating side 2.
+Translated:Heizung Seite 2.
+
+English:Done!
+Translated:Erledigt!
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:ACHTUNG: Um Druckwiederherstellung durchzuführen, der Drucker muss seine Ausgangsposition nach unten zu erreichen. \ N Wenn Ihr Druck zu groß ist, Teil Ihres Druckers mit ihm kollidieren, wenn nach unten bewegen kann. \ N Stellen Sie sicher, es ist sicher, diesen Vorgang auszuführen, bevor Sie fortfahren.
 

@@ -259,13 +259,11 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 		private void CloseOnIdle(object state)
 		{
 			Close();
-			CreatorInformation callCorrectFunctionHold = state as CreatorInformation;
-			if (callCorrectFunctionHold != null)
+
+			CreatorInformation creatorInfo = state as CreatorInformation;
+			if (creatorInfo != null)
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					callCorrectFunctionHold.functionToLaunchCreator(null, null);
-				});
+				UiThread.RunOnIdle(creatorInfo.Show);
 			}
 		}
 	}

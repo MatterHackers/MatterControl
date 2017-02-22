@@ -160,12 +160,10 @@ namespace MatterHackers.MatterControl
 
 					// put in the actual temperature controls
 					{
-						FlowLayoutWidget extruderActualIndicator = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
+						var extruderActualIndicator = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
 
 						extruderActualIndicator.Margin = new BorderDouble(3, 0);
-						string extruderActualLabelTxt = "Actual".Localize();
-						string extruderActualLabelTxtFull = string.Format("{0}: ", extruderActualLabelTxt);
-						TextWidget extruderActualLabel = new TextWidget(extruderActualLabelTxtFull, pointSize: 10);
+						TextWidget extruderActualLabel = new TextWidget("Actual".Localize() + ": ", pointSize: 10);
 						extruderActualLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 						extruderActualLabel.VAnchor = VAnchor.ParentCenter;
 
@@ -177,10 +175,7 @@ namespace MatterHackers.MatterControl
 						extruderActualIndicator.AddChild(extruderActualLabel);
 						extruderActualIndicator.AddChild(actualTempIndicator);
 
-						string extruderAboutLabelTxt = "Target".Localize();
-						string extruderAboutLabelTxtFull = string.Format("{0}: ", extruderAboutLabelTxt);
-
-						TextWidget extruderTargetLabel = new TextWidget(extruderAboutLabelTxtFull, pointSize: 10);
+						var extruderTargetLabel = new TextWidget("Target".Localize() + ": ", pointSize: 10);
 						extruderTargetLabel.Margin = new BorderDouble(left: 10);
 						extruderTargetLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 						extruderTargetLabel.VAnchor = VAnchor.ParentCenter;
@@ -449,16 +444,12 @@ namespace MatterHackers.MatterControl
 		{
 			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-			tempOffButton.Click += new EventHandler(onOffButtonClicked);
+			tempOffButton.Click += onOffButtonClicked;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
+			unregisterEvents.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -550,10 +541,10 @@ namespace MatterHackers.MatterControl
 		{
 			PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.BedTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-			tempOffButton.Click += new EventHandler(onOffButtonClicked);
+			tempOffButton.Click += onOffButtonClicked;
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (unregisterEvents != null)
 			{

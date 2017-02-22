@@ -5908,3 +5908,45 @@ Translated:Success! Your code has been redeemed.
 English:Your new designs will appear in the 'Purchased' library folder.
 Translated:Your new designs will appear in the 'Purchased' library folder.
 
+English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+Translated:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
+
+English:The starting height (z) of the print head before probing each print level position.
+Translated:The starting height (z) of the print head before probing each print level position.
+
+English:Controls the speed of printer moves
+Translated:Controls the speed of printer moves
+
+English:Controls the amount of extrusion
+Translated:Controls the amount of extrusion
+
+English:Axis movement speeds
+Translated:Axis movement speeds
+
+English:Printing Window...
+Translated:Printing Window...
+
+English:Clear ZOffset
+Translated:Clear ZOffset
+
+English:Probe Start Height
+Translated:Probe Start Height
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+
+English:Images
+Translated:Images
+
+English:Select Image
+Translated:Select Image
+
+English:Creating Mesh
+Translated:Creating Mesh
+
+English:Updating Mesh
+Translated:Updating Mesh
+
+English:Updating Base
+Translated:Updating Base
+
