@@ -330,9 +330,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private FlowLayoutWidget zOffsetStreamContainer;
 
 		private EventHandler unregisterEvents;
+		private bool allowRemoveButton;
 
-		public ZTuningWidget()
+		public ZTuningWidget(bool allowRemoveButton = true)
 		{
+			this.allowRemoveButton = allowRemoveButton;
 			this.HAnchor = HAnchor.FitToChildren;
 			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
 
@@ -376,7 +378,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(0, 0, 5, 0),
 				ToolTipText = "Clear ZOffset".Localize(),
-				Visible = zoffset != 0
+				Visible = allowRemoveButton && zoffset != 0
 			};
 			clearZOffsetButton.Click += (sender, e) =>
 			{
@@ -390,8 +392,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
 			bool hasOverriddenZOffset = (zoffset != 0);
 
-			zOffsetStreamContainer.BackgroundColor = (hasOverriddenZOffset) ? SliceSettingsWidget.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
-			clearZOffsetButton.Visible = hasOverriddenZOffset;
+			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? SliceSettingsWidget.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
+			clearZOffsetButton.Visible = allowRemoveButton && hasOverriddenZOffset;
 
 			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
 		}

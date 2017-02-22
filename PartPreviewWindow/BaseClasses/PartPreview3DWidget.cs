@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected static SolidSlider InsertUiForSlider(FlowLayoutWidget wordOptionContainer, string header, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				scrollBarWidth = 20;
 			}

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
-			if (UserSettings.Instance.DisplayMode == ApplicationDisplayType.Touchscreen)
+			if (UserSettings.Instance.IsTouchScreen)
 			{
 				sliderThumbWidth = 15 * GuiWidget.DeviceScale;
 			}
