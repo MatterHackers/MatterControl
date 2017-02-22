@@ -4046,7 +4046,7 @@ English:The X and Y values of the size of the print bed, in millimeters. For pri
 Translated:एक्स और वाई मिलीमीटर में प्रिंट बिस्तर के आकार के मूल्यों,। एक परिपत्र बिस्तर के साथ प्रिंटर के लिए, इन मूल्यों एक्स और वाई अक्ष पर व्यास हैं।
 
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
-Translated:तापमान जो करने के लिए बिस्तर की अवधि के लिए प्रिंट का गठन किया जाएगा। निष्क्रिय करने के लिए 0 करने के लिए सेट करें।
+Translated:तापमान जो करने के लिए बिस्तर प्रिंट की अवधि के लिए स्थापित किया जाएगा। निष्क्रिय करने के लिए 0 करने के लिए सेट करें।
 
 English:The amount to remove from the bottom of the model, in millimeters.
 Translated:राशि मॉडल के नीचे से दूर करने के लिए, मिलीमीटर में।
@@ -4073,7 +4073,7 @@ English:Centers the print on the bed, regardless of where it is moved in Edit Mo
 Translated:बिस्तर पर प्रिंट केन्द्रों, जहां यह संपादन मोड में ले जाया जाता है की परवाह किए बिना। बिस्तर पर कहीं भी एक मॉडल के मुद्रण की अनुमति को अक्षम करें।
 
 English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
-Translated:कोड जी एक प्रिंटर के लिए सफल कनेक्शन पर चलाने के लिए। यह एक दिया प्रिंटर के लिए विशेष रूपरेखा तय करने के लिए उपयोगी हो सकता है।
+Translated:जी कोड एक प्रिंटर के लिए सफल कनेक्शन पर चलाने के लिए। यह एक दिया प्रिंटर के लिए विशेष रूपरेखा तय करने के लिए उपयोगी हो सकता है।
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:मुद्रित हिस्से के तहत एक बेड़ा बनाता है। जब एबीएस (और अन्य warping-प्रवण प्लास्टिक) के मुद्रण के रूप में यह मदद करता है भागों बिस्तर का पालन warping को रोकने के लिए उपयोगी है।
@@ -4094,7 +4094,7 @@ English:The number of layers for which the layer cooling fan will be forced off 
 Translated:परतों की संख्या है जिसके लिए परत शीतलन प्रशंसक प्रिंट के शुरू में बंद मजबूर हो जाएगा।
 
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
-Translated:जी कोड सभी स्वत: निर्गम (जी कोड आदेशों के बहुत अंत) के अंत में चलाया जा सके।
+Translated:जी कोड सभी स्वत: निर्गम (जी कोड आदेशों के बहुत अंत) के अंत में चलाने के लिए।
 
 English:The speed at which outside, (visible) perimeters will print.
 Translated:गति के बाहर है, जिस पर, (दृश्य) परिधि प्रिंट होगा।
@@ -4133,7 +4133,7 @@ English:Acceleration to use while printing the first layer. Set to 0 to use the 
 Translated:त्वरण पहली परत छपाई के दौरान उपयोग करें। डिफ़ॉल्ट पहली परत त्वरण का उपयोग करने के लिए 0 करने के लिए सेट करें।
 
 English:The height of the first layer. A first layer taller than the default layer height can sometimes be used to improve adhesion to the build plate.
-Translated:पहली परत के ऊंचाई। डिफ़ॉल्ट परत ऊंचाई की तुलना में लम्बे पहली परत कभी कभी निर्माण थाली करने के लिए आसंजन में सुधार करने के लिए इस्तेमाल किया जा सकता है।
+Translated:पहली परत की ऊंचाई। डिफ़ॉल्ट परत ऊंचाई की तुलना में लम्बे पहली परत कभी कभी निर्माण थाली करने के लिए आसंजन में सुधार करने के लिए इस्तेमाल किया जा सकता है।
 
 English:The speed at which the nozzle will move when printing the first layer. If expressed as a percentage the Infill speed is modified.
 Translated:गति जब पहली परत मुद्रण, जिस पर नोक कदम होगा। अगर एक प्रतिशत के रूप में व्यक्त Infill गति संशोधित किया गया है।
@@ -4559,7 +4559,7 @@ English:The actual diameter of the filament used for printing. Measure 5 times w
 Translated:मुद्रण के लिए प्रयोग किया जाता है फिलामेंट की वास्तविक व्यास। उपाय नली का व्यास के साथ 5 बार, ऊपर और नीचे से बाहर फेंक, और शेष 3 औसत।
 
 English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
-Translated:पहली परत के ऊंचाई। एक पहली परत डिफ़ॉल्ट परत ऊंचाई की तुलना में लम्बे बिल्ड प्लेट के लिए अच्छा आसंजन सुनिश्चित कर सकते हैं।
+Translated:पहली परत की ऊंचाई। एक पहली परत डिफ़ॉल्ट परत ऊंचाई की तुलना में लम्बे बिल्ड प्लेट के लिए अच्छा आसंजन सुनिश्चित कर सकते हैं।
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
 Translated:प्रिंटर बिजली की आपूर्ति को नियंत्रित करने की क्षमता है। नियंत्रण फलक पर ATX पावर नियंत्रण खंड को दिखाने के लिए इस समारोह में सक्षम करें।
@@ -5940,4 +5940,25 @@ Translated:किया हुआ!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:चेतावनी: आदेश प्रिंट वसूली प्रदर्शन करने के लिए, अपने प्रिंटर अपने घर की स्थिति तक पहुंचने के लिए नीचे कदम होगा। \ N अगर आपके प्रिंट बहुत बड़ी है, अपने प्रिंटर का हिस्सा इसके साथ टकराने सकता है जब नीचे घूम रहा है। \ N इसे आगे बढ़ने से पहले यह कार्रवाई करने के लिए सुरक्षित है सुनिश्चित करें।
+
+English:Print Monitor
+Translated:प्रिंट मॉनिटर
+
+English:Currently Printing
+Translated:वर्तमान में मुद्रण
+
+English:Homing Axis
+Translated:एक्सिस घर वापस आना
+
+English:Waiting for Extruder to Heat to
+Translated:बाहर निकालना के लिए गर्मी के लिए प्रतीक्षा कर रहा है
+
+English:Waiting for Bed to Heat to
+Translated:हीट के लिए बिस्तर के लिए प्रतीक्षा करने के लिए
+
+English:Bed
+Translated:बिस्तर
+
+English:Axis movement speeds
+Translated:एक्सिस आंदोलन को गति
 

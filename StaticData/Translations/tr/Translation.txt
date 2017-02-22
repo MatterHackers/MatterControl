@@ -2138,7 +2138,7 @@ English:Set Default To Factory Settings
 Translated:Fabrika Ayarları Set Standart
 
 English:Steps per mm:
-Translated:mm başına Adımlar:
+Translated:mm başına Adımları:
 
 English:Maximum feedrates [mm/s]:
 Translated:Maksimum ilerleme hızları [mm / s]:
@@ -5940,4 +5940,25 @@ Translated:Bitti!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:UYARI: Baskı kurtarma gerçekleştirmek için, yazıcı kendi ev konuma ulaşmak için aşağı hareket etmelidir. Baskı çok büyükse aşağı hareket ederken\nyazıcınızdan parçası onunla çarpışmak olabilir. \ N daha ilerlemeden önce bu işlemi gerçekleştirmek için güvenli olduğundan emin olun.
+
+English:Print Monitor
+Translated:baskı Monitör
+
+English:Currently Printing
+Translated:Şu anda Baskı
+
+English:Homing Axis
+Translated:Eksen güdümlü
+
+English:Waiting for Extruder to Heat to
+Translated:Extruder için ısıtın için bekleyen
+
+English:Waiting for Bed to Heat to
+Translated:Heat Bed bekliyorum
+
+English:Bed
+Translated:Yatak
+
+English:Axis movement speeds
+Translated:Eksen hareketi hızlandırır
 

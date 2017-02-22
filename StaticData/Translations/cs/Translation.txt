@@ -5941,3 +5941,24 @@ Translated:Hotovo!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:POZOR: Aby bylo možné provést obnovení tisku, tiskárna se musí pohybovat dolů k dosažení výchozí polohy. \ N Pokud je váš tiskový je příliš velký, část tiskárny může kolidovat s ním při pohybu dolů. \ N Ujistěte se, že je bezpečné tuto operaci provést před pokračováním.
 
+English:Print Monitor
+Translated:Print Monitor
+
+English:Currently Printing
+Translated:V současné době tisku
+
+English:Homing Axis
+Translated:naváděcí osa
+
+English:Waiting for Extruder to Heat to
+Translated:Čekání na Extruder ohřát na teplotu
+
+English:Waiting for Bed to Heat to
+Translated:Čekání na Bed vůči teplu, aby
+
+English:Bed
+Translated:Postel
+
+English:Axis movement speeds
+Translated:Pohyb osa zrychluje
+

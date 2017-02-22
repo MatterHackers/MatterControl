@@ -695,7 +695,7 @@ English:The speed to print support material structures.
 Translated:支持材の構造を印刷する速度。
 
 English:The last angle at which support material will be generated. Larger numbers will result in more support. Set to 0 to enable automatic settings.
-Translated:材料をサポートれる最後の角度が生成されます。数字が大きいほどより多くのサポートになります。 0に設定すると、自動設定を有効にします。
+Translated:材料をサポートれる最後の角度が生成されます。数字が大きいほどより多くのサポートになります。自動設定を有効にするには0に設定します。
 
 English:The distance the support material will be from the object in the x and y direction.
 Translated:距離は、支持体材料は、xおよびy方向のオブジェクトからなります。
@@ -5940,4 +5940,25 @@ Translated:完了！
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:警告：プリントリカバリを実行するためには、お使いのプリンタがホームポジションに到達するために下に移動しなければなりません。お使いのプリントが大きすぎると下降時\ nは、お使いのプリンタの部分は、それと衝突する可能性があります。 \ nは進む前に、この操作を実行しても安全であることを確認してください。
+
+English:Print Monitor
+Translated:プリントモニター
+
+English:Currently Printing
+Translated:現在の印刷
+
+English:Homing Axis
+Translated:Axisをホーミング
+
+English:Waiting for Extruder to Heat to
+Translated:押出機はに熱するのを待っています
+
+English:Waiting for Bed to Heat to
+Translated:に熱にベッドを待っています
+
+English:Bed
+Translated:ベッド
+
+English:Axis movement speeds
+Translated:軸移動速度
 

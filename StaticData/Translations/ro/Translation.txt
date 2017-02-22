@@ -5941,3 +5941,24 @@ Translated:Terminat!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ATENȚIE: Pentru a efectua recuperarea de imprimare, imprimanta trebuie să se deplaseze în jos pentru a ajunge la poziția sa de origine. \ N Dacă dvs. de imprimare este prea mare, o parte a imprimantei se poate ciocni cu ea atunci când se deplasează în jos. \ N Asigurați-vă că este în siguranță pentru a efectua această operație înainte de a continua.
 
+English:Print Monitor
+Translated:Monitor de imprimare
+
+English:Currently Printing
+Translated:În prezent, Tipărire
+
+English:Homing Axis
+Translated:homing Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Se așteaptă să se încălzească la Extruder
+
+English:Waiting for Bed to Heat to
+Translated:Se așteaptă Pat la căldură pentru
+
+English:Bed
+Translated:Pat
+
+English:Axis movement speeds
+Translated:viteze de circulație a axei
+

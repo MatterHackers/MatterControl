@@ -836,7 +836,7 @@ English:EEProm Settings
 Translated:Ustawienia pamięci EEPROM
 
 English:CONFIGURE
-Translated:KONFIGURACJA
+Translated:KONFIGURUJ
 
 English:Automatic Calibration
 Translated:Automatyczna kalibracja
@@ -5940,4 +5940,25 @@ Translated:Gotowe!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:UWAGA: W celu przeprowadzenia odzyskiwania druku, drukarka musi poruszać się w dół, aby osiągnąć swoją pozycję domową. \ N Jeśli wydruk jest zbyt duża, część drukarki mogą zderzyć się z nim podczas ruchu w dół. \ N Upewnij się, że można bezpiecznie wykonać tę operację przed przystąpieniem.
+
+English:Print Monitor
+Translated:Print monitor
+
+English:Currently Printing
+Translated:obecnie drukarnie
+
+English:Homing Axis
+Translated:homing Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Oczekiwanie na ciepło do wytłaczarki
+
+English:Waiting for Bed to Heat to
+Translated:Oczekiwanie na łóżko do ciepła do
+
+English:Bed
+Translated:Łóżko
+
+English:Axis movement speeds
+Translated:Oś przyspiesza ruch
 

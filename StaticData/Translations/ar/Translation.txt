@@ -5941,3 +5941,24 @@ Translated:فعله!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:تحذير: من أجل تنفيذ استرداد الطباعة، يجب أن الطابعة يتحرك أسفل للوصول إلى موقف وطنه. \ ن إذا الطباعة كبيرة جدا، وهي جزء من الطابعة قد تتصادم معها عندما تتحرك إلى أسفل. \ ن تأكد من أنها آمنة لإنجاز هذه العملية قبل المتابعة.
 
+English:Print Monitor
+Translated:مراقب الطباعة
+
+English:Currently Printing
+Translated:الطباعة حاليا
+
+English:Homing Axis
+Translated:صاروخ موجه المحور
+
+English:Waiting for Extruder to Heat to
+Translated:انتظار الطارد للحرارة ل
+
+English:Waiting for Bed to Heat to
+Translated:في انتظار سرير للحرارة ل
+
+English:Bed
+Translated:السرير
+
+English:Axis movement speeds
+Translated:يسرع حركة محور
+

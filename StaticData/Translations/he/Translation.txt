@@ -2816,7 +2816,7 @@ English:Grouping
 Translated:הַקבָּצָה
 
 English:WARNING: Disconnecting will cancel the print.
-Translated:אזהרה: ניתוק יבטל את ההדפסה.
+Translated:זהירות: ניתוק יבטל את ההדפסה.
 
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
 Translated:הסכום בקצה infill ידחוף לתוך המערכת. עוזר להבטיח איכות infill מחובר לקצה.
@@ -4256,52 +4256,52 @@ English:The number of loops to draw around all the parts on the bed before start
 Translated:מספר לולאות לצייר סביב כל החלקים על המיטה לפני שמתחיל על החלקים. משמש בעיקר ממשלת הנחיר כך שהזרים גם כאשר מתחילה את ההדפסה בפועל.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:הסכום המינימאלי של זמן שכבה חייבת לקחת להדפיס. אם שכבה תיקח פחות מכמות זו של זמן, את מהירות התנועה מצטמצמת אז בפעם שכבת ההדפסה תתאים ערך זה, עד מהירות הדפסת המינימום האיטי ביותר.
+Translated:!!Encoding Error!!
 
 English:Forces the print to have only one extrusion and gradually increase the extruder height during the print. Only one part will print at a time with this feature.
-Translated:כופה את האותיות יש רק שחול אחד ובהדרגה להגדיל את גובה המכבש במהלך ההדפסה. רק חלק אחד יהיה להדפיס בכל פעם עם תכונה זו.
+Translated:!!Encoding Error!!
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
-Translated:G-Code שיופעל מיד לאחר פקודות הגדרת הטמפרטורה. כולל פקודות להגדיר טמפרטורה בסעיף זה יגרום להם לא להיות שנוצר מחוץ סעיף זה. אקבל משתנה המותאם אישית G-Code.
+Translated:!!Encoding Error!!
 
 English:The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
-Translated:המרחק בין השכבה הראשונה (התחתונה) וחלקו העליון של הרפסודה. A טוב תלוי בסוג החומר. עבור PLA ו- ABS ערך בין 0.1 ו 0.3 generaly עובד היטב.
+Translated:!!Encoding Error!!
 
 English:The percent of the extrusion width that can be overlapped and still generate.
-Translated:האחוזים של הרוחב שהחול שניתן חפף ועדיין ליצור.
+Translated:!!Encoding Error!!
 
 English:The angle at which the support material lines will be drawn.
-Translated:הזווית שבה קווי חומר התמיכה יצוירו.
+Translated:!!Encoding Error!!
 
 English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
-Translated:מייצר חומר תמיכה החל על גבי משטחים פנימיים. אם תמיכה מסומנת תפיק רק החל על המיטה.
+Translated:!!Encoding Error!!
 
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
-Translated:מדד המכבש להשתמש להדפסת חומר תמיכה. רוזן ישים רק כאשר Extruder מוגדר ערך יותר מ -1.
+Translated:!!Encoding Error!!
 
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
-Translated:מדד המכבש להשתמש כדי להדפיס את הרפסודה. גדר 0 להשתמש במדד מכבש תמיכה.
+Translated:!!Encoding Error!!
 
 English:A modifier of the width of the extrusion when printing support material. Set to 0 for automatic calculation.
-Translated:צירוף של רוחב שהחול בהדפסת חומר תמיכה. גדר 0 עבור חישוב אוטומטי.
+Translated:!!Encoding Error!!
 
 English:The index of the extruder to use for support material interface layer(s).
-Translated:מדד המכבש להשתמש עבור שכבת ממשק חומר תמיכה (ים).
+Translated:!!Encoding Error!!
 
 English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
-Translated:מספר שכבות או המרחק להדפיס חומר מוצק בין התומך והחלק. להוסיף מ"מ עד סוף את המספר מציין מרחק.
+Translated:!!Encoding Error!!
 
 English:The pattern to draw for the generation of support material.
-Translated:הדפוס לצייר עבור הדור של חומר תמיכה.
+Translated:!!Encoding Error!!
 
 English:The distance between support material lines.
-Translated:המרחק בין קווי חומר תמיכה.
+Translated:!!Encoding Error!!
 
 English:The speed at which support material structures will print.
-Translated:המהירות שבה לתמוך מבני חומר תודפס.
+Translated:!!Encoding Error!!
 
 English:The minimum angle of overhang for which support material will be created. The angle perpendicular to the bed = 0; parallel with the bed = 90.
-Translated:הזווית המינימלית של הסככה עבורו תמיכה חומרית תיווצר. הזווית בניצב למיטה = 0; במקביל המיטה = 90.
+Translated:!!Encoding Error!!
 
 English:The distance the support material will be from the object in the X and Y directions.
 Translated:מרחק חומר התמיכה יהיה מהאובייקט בכיווני X ו- Y.
@@ -5940,4 +5940,25 @@ Translated:בוצע!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:אזהרה: כדי לבצע שחזור הדפסה, המדפסת חייבת לזוז למטה כדי להגיע לעמדת המוצא שלה. \ N אם ההדפסה שלך גדולה מדי, חלק המדפסת עשוי להתנגש עם זה בעת מעבר למטה. \ N ודא זה בטוח לבצע פעולה זו לפני שתמשיך.
+
+English:Print Monitor
+Translated:צג הדפסה
+
+English:Currently Printing
+Translated:הדפסה כרגע
+
+English:Homing Axis
+Translated:ביות ציר
+
+English:Waiting for Extruder to Heat to
+Translated:מחכים Extruder לחום כדי
+
+English:Waiting for Bed to Heat to
+Translated:מחכה Bed לחום כדי
+
+English:Bed
+Translated:מיטה
+
+English:Axis movement speeds
+Translated:תנועת הציר מהירויות
 

@@ -5084,7 +5084,7 @@ English:Select section to import to preset.
 Translated:Seleccione la sección de importar preajustar.
 
 English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
-Translated:Inicia sesión para acceder a sus perfiles de impresora en la nube.\n\nUna vez firmado en usted será capaz de acceder a:
+Translated:Inicie sesión para ingresar perfiles impresora nube.\n\nUna vez firmado en usted será capaz de acceder a:
 
 English:Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.
 Translated:Guarde sus diseños a la nube y acceder a ellos desde cualquier lugar del mundo. También puede compartir cualquier momento con cualquier persona con la que desea.
@@ -5940,4 +5940,25 @@ Translated:¡Hecho!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ADVERTENCIA: Con el fin de realizar la recuperación de impresión, la impresora debe moverse hacia abajo hasta llegar a su posición inicial. \ N Si la impresión es demasiado grande, que forma parte de la impresora puede chocar con él cuando se mueve hacia abajo. \ N Asegúrese de que es seguro para realizar esta operación antes de proceder.
+
+English:Print Monitor
+Translated:monitor de impresión
+
+English:Currently Printing
+Translated:Impresión actualmente
+
+English:Homing Axis
+Translated:homing Eje
+
+English:Waiting for Extruder to Heat to
+Translated:A la espera de Extrusora de calor para
+
+English:Waiting for Bed to Heat to
+Translated:A la espera de la cama a una Calor de
+
+English:Bed
+Translated:Cama
+
+English:Axis movement speeds
+Translated:movimiento del eje acelera
 
