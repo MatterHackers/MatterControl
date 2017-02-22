@@ -100,6 +100,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
 			SettingsData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
 
+			activeInstance = PrinterSettings.Empty;
+
 			settingsByName = new Dictionary<string, SliceSettingData>();
 			foreach (var settingsData in ActiveSliceSettings.SettingsData)
 			{
