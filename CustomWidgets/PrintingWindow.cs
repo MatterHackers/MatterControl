@@ -131,6 +131,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actualTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
+				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(right: 0),
 				Width = 60
@@ -145,6 +146,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			targetTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
+				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(right: 8),
 				Width = 60
@@ -845,6 +847,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(new TextWidget("Z+", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
+				AutoExpandBoundsToText = true,
 				HAnchor = HAnchor.ParentCenter,
 				Margin = new BorderDouble(bottom: 8)
 			});
@@ -865,6 +868,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(new TextWidget("Z-", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
+				AutoExpandBoundsToText = true,
 				HAnchor = HAnchor.ParentCenter,
 				Margin = new BorderDouble(top: 9),
 			});
