@@ -393,24 +393,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					engineAllowed = false;
 				}
 
-				if (engineAllowed)
+				MenuItem item = AddItem(engineMenuItem.Name);
+				item.Enabled = engineAllowed;
+				SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
+				item.Selected += (sender, e) =>
 				{
-					MenuItem item = AddItem(engineMenuItem.Name);
-					SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
-					item.Selected += (sender, e) =>
+					if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() != itemEngineType)
 					{
-						if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() != itemEngineType)
-						{
-							ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType(itemEngineType);
-							ApplicationController.Instance.ReloadAdvancedControlsPanel();
-						}
-					};
-
-					//Set item as selected if it matches the active slice engine
-					if (engineMenuItem.GetSliceEngineType() == ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
-					{
-						SelectedLabel = engineMenuItem.Name;
+						ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType(itemEngineType);
+						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					}
+				};
+
+				//Set item as selected if it matches the active slice engine
+				if (engineMenuItem.GetSliceEngineType() == ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
+				{
+					SelectedLabel = engineMenuItem.Name;
 				}
 			}
 

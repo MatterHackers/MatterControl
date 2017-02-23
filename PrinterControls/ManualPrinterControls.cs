@@ -468,7 +468,6 @@ namespace MatterHackers.MatterControl
 
 				terminalControlsContainer = new TerminalControls();
 				terminalControlsContainer.VAnchor |= VAnchor.ParentBottomTop;
-				terminalControlsContainer.DebugShowBounds = true;
 
 				terminalContainerContainer.AddChild(terminalControlsContainer);
 

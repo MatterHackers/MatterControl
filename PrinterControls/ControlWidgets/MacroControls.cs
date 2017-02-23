@@ -54,11 +54,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 	{
 		public TerminalControls()
 		{
-			if (!ActiveSliceSettings.Instance.ActionMacros().Any())
-			{
-				Margin = new BorderDouble();
-				return;
-			}
 			this.AddChild(new TerminalWidget(false));
 		}
 	}
