@@ -135,8 +135,13 @@ namespace MatterHackers.MatterControl
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
 
 			SetThemedColors();
-			UpdatePrintStatus();
-			UiThread.RunOnIdle(OnIdle);
+
+			// This is a bit of a hack. Now that we have the printing window we don't want this to show progress but it is still used on touch screen for expanding the display.
+			if (!UserSettings.Instance.IsTouchScreen)
+			{
+				UiThread.RunOnIdle(OnIdle);
+				UpdatePrintStatus();
+			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
