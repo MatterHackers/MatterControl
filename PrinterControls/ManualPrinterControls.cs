@@ -147,7 +147,9 @@ namespace MatterHackers.MatterControl
 
 		private void AddAtxPowerControls(FlowLayoutWidget controlsTopToBottomLayout)
 		{
+#if !__ANDROID__
 			controlsTopToBottomLayout.AddChild(new PowerControls());
+#endif
 		}
 
 		private void AddHandlers()
