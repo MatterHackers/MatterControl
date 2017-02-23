@@ -387,14 +387,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//Add Each SliceEngineInfo Objects to DropMenu
 			foreach (SliceEngineInfo engineMenuItem in SlicingQueue.AvailableSliceEngines)
 			{
-				bool engineAllowed = true;
-				if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1 && engineMenuItem.Name != "MatterSlice")
-				{
-					engineAllowed = false;
-				}
-
 				MenuItem item = AddItem(engineMenuItem.Name);
-				item.Enabled = engineAllowed;
+				item.Enabled = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) < 2 || engineMenuItem.Name == "MatterSlice";
+
 				SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
 				item.Selected += (sender, e) =>
 				{
@@ -406,7 +401,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				//Set item as selected if it matches the active slice engine
-				if (engineMenuItem.GetSliceEngineType() == ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
+				if (itemEngineType == ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
 				{
 					SelectedLabel = engineMenuItem.Name;
 				}
