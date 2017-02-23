@@ -183,14 +183,6 @@ namespace MatterHackers.MatterControl
 				"Options".Localize().ToUpper(),
 				() => new PrinterConfigurationScrollWidget());
 
-			if (!simpleMode)
-			{
-				this.AddTab(
-					"Terminal Tab",
-					"Console".Localize().ToUpper(),
-					() => new TerminalWidget(false));
-			}
-
 			this.AddTab(
 				"About Tab",
 				"About".Localize().ToUpper(),

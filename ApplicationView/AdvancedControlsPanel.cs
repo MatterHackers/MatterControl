@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl
 			ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
 			manualPrinterControlsScrollArea.ScrollArea.HAnchor |= HAnchor.ParentLeftRight;
 			manualPrinterControlsScrollArea.AnchorAll();
-			manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
+			//manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl
 			var sliceSettingPopOut = new PopOutTextTabWidget(sliceSettingsTabPage, SliceSettingsTabName, new Vector2(590, 400), textSize);
 			advancedControls.AddTab(sliceSettingPopOut);
 
-			var controlsTabPage = new TabPage(manualPrinterControlsScrollArea, "Controls".Localize().ToUpper());
+			var controlsTabPage = new TabPage(manualPrinterControls, "Controls".Localize().ToUpper());
 			var controlsPopOut = new PopOutTextTabWidget(controlsTabPage, ControlsTabName, new Vector2(400, 300), textSize);
 			advancedControls.AddTab(controlsPopOut);
 
