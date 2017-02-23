@@ -5959,3 +5959,6 @@ Translated:Bed
 English:Axis movement speeds
 Translated:Axis movement speeds
 
+English:Tuning Adjust
+Translated:Tuning Adjust
+
