@@ -77,7 +77,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			}
 
-			//#if !__ANDROID__
+
+			#if !__ANDROID__
 			{
 				mainContainer.AddChild(GetThumbnailRenderingControl());
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -85,7 +86,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				mainContainer.AddChild(GetDisplayControl());
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			}
-			//#endif
+			#endif
 			
 			if (UserSettings.Instance.IsTouchScreen)
 			{
