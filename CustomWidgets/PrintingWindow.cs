@@ -454,7 +454,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				GetProgressInfo();
 
-				// Here for safty
+				// Here for safety
 				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
 				{
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
