@@ -288,10 +288,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			resetButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
-				});
+				UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
 			};
 			actionBar.AddChild(resetButton);
 
