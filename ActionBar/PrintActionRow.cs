@@ -131,12 +131,13 @@ namespace MatterHackers.MatterControl.ActionBar
 				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
 #if __ANDROID__
-				if (!FrostedSerialPort.HasPermissionToDevice())
-				{
-					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
-					FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
-				}
-				else
+					if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing)
+					    && !FrostedSerialPort.HasPermissionToDevice())
+					{
+						// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
+						FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
+					}
+					else
 #endif
 					{
 						PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
