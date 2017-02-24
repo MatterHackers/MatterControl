@@ -64,12 +64,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void UpdateTemperatures()
 		{
 			double targetValue = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
-			double actualValue = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
+			double actualValue = Math.Max(0, PrinterConnectionAndCommunication.Instance.ActualBedTemperature);
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			this.actualTemp.Text = $"{actualValue:0}°";
-			this.targetTemp.Text = $"{targetValue:0}°";
+			var actual = $"{actualValue:0}";
+			this.actualTemp.Text = actual.PadLeft(Math.Max(0, 4 - actual.Length), ' ') + "°"; // put in padding spaces to make it at least 3 characters
+			var target = $"{targetValue:0}";
+			this.targetTemp.Text = target.PadLeft(Math.Max(0, 4 - target.Length), ' ') + "°"; // put in padding spaces to make it at least 3 characters
 		}
 	}
 
@@ -91,12 +93,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void UpdateTemperatures()
 		{
 			double targetValue = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex);
-			double actualValue = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex);
+			double actualValue = Math.Max(0, PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex));
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			this.actualTemp.Text = $"{actualValue:0}°";
-			this.targetTemp.Text = $"{targetValue:0}°";
+			var actual = $"{actualValue:0}";
+			this.actualTemp.Text = actual.PadLeft(Math.Max(0, 4 - actual.Length), ' ') + "°"; // put in padding spaces to make it at least 3 characters
+			var target = $"{targetValue:0}";
+			this.targetTemp.Text = target.PadLeft(Math.Max(0, 4 - target.Length), ' ') + "°"; // put in padding spaces to make it at least 3 characters
 		}
 	}
 
