@@ -5962,3 +5962,9 @@ Translated:Постель
 English:Axis movement speeds
 Translated:скорость движения оси
 
+English:Tuning Adjust
+Translated:Настройка Настройка
+
+English:Initializing
+Translated:Инициализация
+

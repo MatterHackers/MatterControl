@@ -5962,3 +5962,9 @@ Translated:Seng
 English:Axis movement speeds
 Translated:Axis bevægelse hastigheder
 
+English:Tuning Adjust
+Translated:Tuning Juster
+
+English:Initializing
+Translated:Initialiserer
+

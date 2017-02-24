@@ -383,70 +383,70 @@ English:No printer is currently selected. Select printer to edit slice settings.
 Translated:Aucune imprimante est actuellement sélectionnée. Sélectionnez l'imprimante pour modifier les paramètres de tranche.
 
 English:Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
-Translated:!!Encoding Error!!
+Translated:Des tentatives pour réduire au minimum le nombre de périmètre de passage. Cela peut aider à suintement ou cordes.
 
 English:The shape of the physical print bed.
-Translated:!!Encoding Error!!
+Translated:La forme du lit d'impression physique.
 
 English:The size of the print bed.
-Translated:!!Encoding Error!!
+Translated:La taille du lit d'impression.
 
 English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
-Translated:!!Encoding Error!!
+Translated:La température pour régler le lit après que la première couche est imprimée. Mettre à 0 pour éliminer les commandes de température de lit.
 
 English:How many layers will be solid filled on the bottom surfaces of the object.
-Translated:!!Encoding Error!!
+Translated:Combien de couches sera solide rempli sur les surfaces inférieures de l'objet.
 
 English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
-Translated:!!Encoding Error!!
+Translated:Accélération au cours de pontage. Mettre à 0 pour désactiver la modification de l'accélération de l'imprimante.
 
 English:The fan speed to use during bridging.
-Translated:!!Encoding Error!!
+Translated:La vitesse du ventilateur à utiliser pendant pontage.
 
 English:This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
-Translated:!!Encoding Error!!
+Translated:Cette commande le rapport de l'extrudeuse matériau pendant pontage. La réduction de cette légèrement peut aider à combler en étirant le filament plus, en utilisant un ventilateur peut aussi aider grandement.
 
 English:The speed to move when bridging between walls.
-Translated:!!Encoding Error!!
+Translated:La vitesse de déplacement lorsque le pontage entre les murs.
 
 English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
-Translated:!!Encoding Error!!
+Translated:La quantité de bord qui sera établi autour de chaque objet. Ceci est utile pour faire en sorte que les parties restent apposées sur le lit.
 
 English:The height of the printable area. If set to 0 the parts height will not be validated.
-Translated:!!Encoding Error!!
+Translated:La hauteur de la zone imprimable. Si la valeur 0 la hauteur des pièces ne sera pas validé.
 
 English:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
-Translated:!!Encoding Error!!
+Translated:Chaque partie individuelle est imprimé à la réalisation puis l'extrudeuse est abaissée vers le lit et la partie suivante est imprimé.
 
 English:Moves the extruder up off the part to allow cooling.
-Translated:!!Encoding Error!!
+Translated:Déplace l'extrudeuse au large de la partie pour permettre le refroidissement.
 
 English:Turns on and off all cooling settings (all settings below this one).
-Translated:!!Encoding Error!!
+Translated:Active et désactive tous les paramètres de refroidissement (tous les paramètres ci-dessous celui-ci).
 
 English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
-Translated:!!Encoding Error!!
+Translated:Accélération à utiliser sur tous les mouvements ne sont pas définis ci-dessus. Mettre à 0 pour désactiver la modification de l'accélération de l'imprimante.
 
 English:The number of layers for which the fan will be forced to remain off.
-Translated:!!Encoding Error!!
+Translated:Le nombre de couches pour lesquelles le ventilateur sera forcé de rester hors tension.
 
 English:This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
-Translated:!!Encoding Error!!
+Translated:Ce gcode sera inséré à la fin de toutes les sorties automatique (la fin des commandes Gcode).
 
 English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Perimeters speed.
-Translated:!!Encoding Error!!
+Translated:La vitesse pour imprimer les bords extérieurs visibles. Ceci peut être défini explicitement ou en pourcentage de la vitesse Périmètres.
 
 English:Normally external perimeters are printed last, this makes them go first.
-Translated:!!Encoding Error!!
+Translated:Normalement, les périmètres externes sont imprimées dernière, ce qui les rend d'abord aller.
 
 English:Allow slicer to generate extra perimeters when needed for sloping walls.
-Translated:!!Encoding Error!!
+Translated:Laisser trancheuse pour générer des périmètres supplémentaires en cas de besoin pour les murs en pente.
 
 English:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
-Translated:!!Encoding Error!!
+Translated:Ceci est utilisé pour déterminer dans quelle mesure les parties en dehors individuelles doivent être imprimées pour leur permettre d'être terminés avant l'impression de la partie suivante.
 
 English:This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
-Translated:!!Encoding Error!!
+Translated:Ceci est le décalage de chaque extrudeuse par rapport à la première extrudeuse. Seulement utile pour plusieurs machines d'extrusion.
 
 English:This is the identifier used in the gcode to specify the extruder.
 Translated:Ceci est l'identifiant utilisé dans le gcode pour spécifier l'extrudeuse.
@@ -575,79 +575,79 @@ English:Sets the default movement speed while printing perimeters.
 Translated:Définit la vitesse de déplacement par défaut lors de l'impression des périmètres.
 
 English:The number of external layers or shells to create.
-Translated:!!Encoding Error!!
+Translated:Le nombre de couches ou de coquilles externes pour créer.
 
 English:You can include additional programs to process the gcode after slicer is finished. The complete path of the program to run should be included here.
-Translated:!!Encoding Error!!
+Translated:Vous pouvez inclure des programmes supplémentaires pour traiter le gcode après trancheuse est terminée. Le chemin complet du programme à exécuter doit être inclus ici.
 
 English:The position (coordinates) of the center of the print bed.
-Translated:!!Encoding Error!!
+Translated:La position (coordonnées) du centre du lit d'impression.
 
 English:Number of layers to print before printing any parts.
-Translated:!!Encoding Error!!
+Translated:Nombre de couches pour imprimer avant d'imprimer toutes les pièces.
 
 English:Start each new layer from a different vertex to reduce seams.
-Translated:!!Encoding Error!!
+Translated:Commencez chaque nouvelle couche d'un sommet différent pour réduire les coutures.
 
 English:The minimum distance of a non-printing move that will result in a retraction.
-Translated:!!Encoding Error!!
+Translated:La distance minimale d'un mouvement non-impression qui se traduira par une rétractation.
 
 English:If set, a retraction will occur prior to changing the layer height.
-Translated:!!Encoding Error!!
+Translated:Si elle est définie, une rétraction se produira avant de changer la hauteur de la couche.
 
 English:The amount that the filament will be reversed after each qualifying non-printing move.
-Translated:!!Encoding Error!!
+Translated:Le montant que le filament sera inversé après chaque déplacement admissible non-impression.
 
 English:The amount that the filament will be reversed before changing to a new tool.
-Translated:!!Encoding Error!!
+Translated:Le montant que le filament sera inversée avant de passer à un nouvel outil.
 
 English:The amount the extruder head will be lifted after each retraction.
-Translated:!!Encoding Error!!
+Translated:Le montant de la tête de l'extrudeuse sera levée après chaque retrait.
 
 English:The amount the filament will be retracted when changing to a different extruder.
-Translated:!!Encoding Error!!
+Translated:Le montant du filament sera rétracté lors du passage à une extrudeuse différente.
 
 English:No updates are currently available.
-Translated:!!Encoding Error!!
+Translated:Aucune mise à jour sont actuellement disponibles.
 
 English:Additional amount of filament that will be extruded after a retraction.
-Translated:!!Encoding Error!!
+Translated:Montant supplémentaire de filament qui sera extrudée après une rétraction.
 
 English:The amount of extra extrusion that will occur when an extruder is selected.
-Translated:!!Encoding Error!!
+Translated:La quantité d'extrusion supplémentaire qui se produit lorsque une extrudeuse est sélectionnée.
 
 English:The speed that the filament will be retracted (and re-extruded).
-Translated:!!Encoding Error!!
+Translated:La vitesse à laquelle le filament sera rétracté (et re-extrudé).
 
 English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
-Translated:!!Encoding Error!!
+Translated:La taille minimum à considérer à partir du modèle. Laisser à 0 à utiliser tous les détails du modèle.
 
 English:The distance to start drawing the first skirt loop.
-Translated:!!Encoding Error!!
+Translated:La distance pour commencer à dessiner la première boucle de la jupe.
 
 English:The number of layers to draw the skirt.
-Translated:!!Encoding Error!!
+Translated:Le nombre de couches pour dessiner la jupe.
 
 English:The number of loops to draw around all the parts on the bed.
-Translated:!!Encoding Error!!
+Translated:Le nombre de boucles pour dessiner autour de toutes les parties sur le lit.
 
 English:If a layer is estimated to take less than this to print, the movement speed will be reduced to try and make the layer take this long to print.
-Translated:!!Encoding Error!!
+Translated:Si une couche est estimée à moins que cela à imprimer, la vitesse de déplacement sera réduite à essayer de faire la couche de prendre ce temps pour imprimer.
 
 English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
-Translated:!!Encoding Error!!
+Translated:Utilisé pour les petits périmètres (généralement trous). Ceci peut être défini explicitement ou en pourcentage de la vitesse des Périmètres.
 
 English:The pattern used on the bottom and top layers of the print.
-Translated:!!Encoding Error!!
+Translated:Le modèle utilisé sur les couches inférieures et supérieures de l'impression.
 
 English:Forces solid infill for any area less than this amount.
-Translated:!!Encoding Error!!
+Translated:Force remplissage solide pour toute surface inférieure à ce montant.
 
 English:Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.
-Translated:!!Encoding Error!!
+Translated:Définit à quelle fréquence une couche sera obligé d'être solide remblayée. Zéro se traduira par remplissage normale tout au long.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:!!Encoding Error!!
+Translated:La vitesse pour imprimer remplissage quand il est complètement solide. Ceci peut être défini de manière explicite ou en pourcentage de la vitesse de remplissage.
 
 English:Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.
 Translated:Force l'impression d'avoir une seule couche et augmenter progressivement la hauteur de l'extrudeuse au cours de l'impression. Une seule pièce peut être imprimé à la fois avec cette fonctionnalité.
@@ -5961,4 +5961,10 @@ Translated:Lit
 
 English:Axis movement speeds
 Translated:accélère le mouvement Axis
+
+English:Tuning Adjust
+Translated:Tuning Ajuster
+
+English:Initializing
+Translated:Initialisation
 

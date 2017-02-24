@@ -836,7 +836,7 @@ English:EEProm Settings
 Translated:Ustawienia pamięci EEPROM
 
 English:CONFIGURE
-Translated:KONFIGURUJ
+Translated:KONFIGURACJA
 
 English:Automatic Calibration
 Translated:Automatyczna kalibracja
@@ -2204,7 +2204,7 @@ English:Gap Percent
 Translated:Procent Gap
 
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
-Translated:Spróbuj połączyć krawędzie siatki, gdy rzeczywiste dane oczka nie jest tym sposobem podłączone.
+Translated:Spróbuj połączyć krawędzie siatki, gdy rzeczywiste dane oczka nie jest aż podłączony.
 
 English:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
 Translated:Jakiś czas siatka nie zostały zamknięte do obrzeża. Gdy ta opcja jest zaznaczona tych nie zamknięte obwody jednocześnie być zamknięte.
@@ -5961,4 +5961,10 @@ Translated:Łóżko
 
 English:Axis movement speeds
 Translated:Oś przyspiesza ruch
+
+English:Tuning Adjust
+Translated:Tuning Ustaw
+
+English:Initializing
+Translated:Inicjowanie
 

@@ -5962,3 +5962,9 @@ Translated:Κρεβάτι
 English:Axis movement speeds
 Translated:Άξονα κίνησης ταχύτητες
 
+English:Tuning Adjust
+Translated:Συντονισμός Ρύθμιση
+
+English:Initializing
+Translated:αρχικοποίηση
+

@@ -5962,3 +5962,9 @@ Translated:Letto
 English:Axis movement speeds
 Translated:movimento dell'asse velocità
 
+English:Tuning Adjust
+Translated:tuning Regolare
+
+English:Initializing
+Translated:L'inizializzazione
+
