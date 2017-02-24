@@ -5962,3 +5962,9 @@ Translated:床
 English:Axis movement speeds
 Translated:轴移动速度
 
+English:Tuning Adjust
+Translated:调整调优
+
+English:Initializing
+Translated:初始化
+

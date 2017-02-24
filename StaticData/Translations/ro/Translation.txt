@@ -5962,3 +5962,9 @@ Translated:Pat
 English:Axis movement speeds
 Translated:viteze de circulație a axei
 
+English:Tuning Adjust
+Translated:Tuning Ajustați
+
+English:Initializing
+Translated:inițializează
+

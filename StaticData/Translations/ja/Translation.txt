@@ -5962,3 +5962,9 @@ Translated:ベッド
 English:Axis movement speeds
 Translated:軸移動速度
 
+English:Tuning Adjust
+Translated:調整のチューニング
+
+English:Initializing
+Translated:初期化
+

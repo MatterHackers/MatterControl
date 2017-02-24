@@ -5962,3 +5962,9 @@ Translated:Postel
 English:Axis movement speeds
 Translated:Pohyb osa zrychluje
 
+English:Tuning Adjust
+Translated:Ladění Nastavení
+
+English:Initializing
+Translated:Inicializace
+

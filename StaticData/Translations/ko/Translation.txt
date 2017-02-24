@@ -5962,3 +5962,9 @@ Translated:침대
 English:Axis movement speeds
 Translated:축 이동 속도
 
+English:Tuning Adjust
+Translated:조정 조정
+
+English:Initializing
+Translated:초기화
+

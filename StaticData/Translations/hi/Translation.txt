@@ -5962,3 +5962,9 @@ Translated:बिस्तर
 English:Axis movement speeds
 Translated:एक्सिस आंदोलन को गति
 
+English:Tuning Adjust
+Translated:ट्यूनिंग समायोजित करें
+
+English:Initializing
+Translated:आरंभ कर रहा है
+

@@ -5962,3 +5962,9 @@ Translated:Yatak
 English:Axis movement speeds
 Translated:Eksen hareketi hızlandırır
 
+English:Tuning Adjust
+Translated:ayarlayın Tuning
+
+English:Initializing
+Translated:başlatılıyor
+

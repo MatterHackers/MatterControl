@@ -5962,3 +5962,9 @@ Translated:Bett
 English:Axis movement speeds
 Translated:Achsenbewegung beschleunigt
 
+English:Tuning Adjust
+Translated:Tuning einstellen
+
+English:Initializing
+Translated:Initialisieren
+

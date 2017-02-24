@@ -5962,3 +5962,9 @@ Translated:Bed
 English:Axis movement speeds
 Translated:Axis beweging versnelt
 
+English:Tuning Adjust
+Translated:tuning Adjust
+
+English:Initializing
+Translated:initialiseren
+
