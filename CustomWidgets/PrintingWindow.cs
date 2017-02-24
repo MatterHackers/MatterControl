@@ -453,6 +453,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (!HasBeenClosed)
 			{
 				GetProgressInfo();
+
+				// Here for safety
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				{
+					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+						break;
+
+					default:
+						this.CloseOnIdle();
+						break;
+				}
+
 				UiThread.RunOnIdle(CheckOnPrinter, 1);
 			}
 		}
@@ -763,7 +777,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (layerCount != value)
 				{
 					layerCount = value;
-					layerCountWidget.Text = "Layer".Localize() + " " + layerCount;
+					if (layerCount == 0)
+					{
+						layerCountWidget.Text = "Initializing".Localize();
+					}
+					else
+					{
+						layerCountWidget.Text = "Layer".Localize() + " " + layerCount;
+					}
 				}
 			}
 		}
