@@ -201,12 +201,12 @@ namespace MatterHackers.MatterControl
 				{
 					extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				}
-				temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
 			else // we at least have a printer selected
 			{
@@ -221,18 +221,18 @@ namespace MatterHackers.MatterControl
 						{
 							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						}
-						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer.jogControls.EnableBabystepping(false);
+						movementControlsContainer?.jogControls.EnableBabystepping(false);
 
 						break;
 
@@ -242,31 +242,31 @@ namespace MatterHackers.MatterControl
 						{
 							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer.jogControls.EnableBabystepping(false);
+						movementControlsContainer?.jogControls.EnableBabystepping(false);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
-							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
@@ -279,21 +279,20 @@ namespace MatterHackers.MatterControl
 							case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
 								foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 								{
-									extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+									extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 								}
-								temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								//movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-								fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-								actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-								tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+								actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+								tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 								foreach(var widget in movementControlsContainer.DisableableWidgets)
 								{
-									widget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+									widget?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								}
 
-								movementControlsContainer.jogControls.EnableBabystepping(true);
+								movementControlsContainer?.jogControls.EnableBabystepping(true);
 								break;
 
 							default:
@@ -304,20 +303,20 @@ namespace MatterHackers.MatterControl
 					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
-							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer.jogControls.EnableBabystepping(false);
+						movementControlsContainer?.jogControls.EnableBabystepping(false);
 
 						break;
 
@@ -500,13 +499,13 @@ namespace MatterHackers.MatterControl
 				{
 					extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				}
-				temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
-				macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
 			else // we at least have a printer selected
 			{
@@ -519,14 +518,14 @@ namespace MatterHackers.MatterControl
 					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
-							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+							extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						}
-						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
@@ -542,12 +541,12 @@ namespace MatterHackers.MatterControl
 						{
 							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
@@ -562,12 +561,12 @@ namespace MatterHackers.MatterControl
 						{
 							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
@@ -582,19 +581,19 @@ namespace MatterHackers.MatterControl
 								{
 									extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 								}
-								temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-								actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+								temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+								actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 
 								foreach (var widget in movementControlsContainer.DisableableWidgets)
 								{
-									widget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+									widget?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								}
 
-								movementControlsContainer.jogControls.EnableBabystepping(true);
+								movementControlsContainer?.jogControls.EnableBabystepping(true);
 
 								break;
 
@@ -606,21 +605,21 @@ namespace MatterHackers.MatterControl
 					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
-							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						actionControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						temperatureControlsContainer?.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer.jogControls.EnableBabystepping(false);
+						movementControlsContainer?.jogControls.EnableBabystepping(false);
 
 						break;
 
