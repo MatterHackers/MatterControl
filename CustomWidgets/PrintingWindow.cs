@@ -68,10 +68,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			var actual = $"{actualValue:0}";
-			this.actualTemp.Text = actual.PadLeft(Math.Max(0, 4 - actual.Length), ' ') + "°"; // put in padding spaces to make it at least 3 characters
-			var target = $"{targetValue:0}";
-			this.targetTemp.Text = target.PadLeft(Math.Max(0, 4 - target.Length), ' ') + "°"; // put in padding spaces to make it at least 3 characters
+			this.actualTemp.Text = $"{actualValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+			this.targetTemp.Text = $"{targetValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
 		}
 	}
 
@@ -97,10 +95,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			var actual = $"{actualValue:0}";
-			this.actualTemp.Text = actual.PadLeft(Math.Max(0, 4 - actual.Length), ' ') + "°"; // put in padding spaces to make it at least 3 characters
-			var target = $"{targetValue:0}";
-			this.targetTemp.Text = target.PadLeft(Math.Max(0, 4 - target.Length), ' ') + "°"; // put in padding spaces to make it at least 3 characters
+			this.actualTemp.Text = $"{actualValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+			this.targetTemp.Text = $"{targetValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
 		}
 	}
 
