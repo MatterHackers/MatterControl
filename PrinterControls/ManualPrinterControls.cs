@@ -88,7 +88,6 @@ namespace MatterHackers.MatterControl
 		public ManualPrinterControlsDesktop()
 		{
 			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 			AnchorAll();
 			AutoScroll = true;
 
@@ -134,6 +133,9 @@ namespace MatterHackers.MatterControl
 		{
 			tuningAdjustmentControlsContainer = new AdjustmentControls();
 			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
+
+			// this is a hack to make the layout engine fire again for this control
+			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
 		}
 
 		private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
