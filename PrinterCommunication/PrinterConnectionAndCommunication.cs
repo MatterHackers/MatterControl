@@ -999,7 +999,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (ActivePrinter != null)
 			{
 				// Start the process of requesting permission and exit if permission is not currently granted
-				if (!FrostedSerialPort.EnsureDeviceAccess())
+				if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing) 
+				    && !FrostedSerialPort.EnsureDeviceAccess())
 				{
 					CommunicationState = CommunicationStates.FailedToConnect;
 					return;
