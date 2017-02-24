@@ -5962,3 +5962,6 @@ Translated:Axis movement speeds
 English:Tuning Adjust
 Translated:Tuning Adjust
 
+English:Initializing
+Translated:Initializing
+
