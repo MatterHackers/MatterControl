@@ -2482,7 +2482,7 @@
 		"DataEditType": "INT",
 		"ExtraSettings": "",
 		"ShowAsOverride": false,
-		"ShowIfSet": "!enable_network_printing",
+		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "250000",
 		"RebuildGCodeOnChange": false
