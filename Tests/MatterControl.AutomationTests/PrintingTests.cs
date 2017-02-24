@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out systemWindow, 5);
 
 					// Scroll the widget into view
-					var scrollable = container.Parents<ManualPrinterControls>().First().Parents<ScrollableWidget>().First();
+					var scrollable = container.Parents<ManualPrinterControls>().First().Children<ScrollableWidget>().First();
 					var width = scrollable.Width;
 
 					// Workaround needed to scroll to the bottom of the Controls panel
