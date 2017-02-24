@@ -177,7 +177,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			invertImageLocation = false,
 			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			hoverFillColor = RGBA_Bytes.Transparent,
 			disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
 			disabledFillColor = RGBA_Bytes.Transparent,
 			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -237,9 +236,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(new HorizontalSpacer());
 
+			// put in the pause button
 			var pauseButton = CreateButton("Pause".Localize().ToUpper());
-			var resumeButton = CreateButton("Resume".Localize().ToUpper());
-
 			pauseButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -252,6 +250,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(pauseButton);
 
+			// put in the resume button
+			var resumeButton = CreateButton("Resume".Localize().ToUpper());
 			resumeButton.Visible = false;
 			resumeButton.Click += (s, e) =>
 			{
@@ -267,6 +267,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(CreateVerticalLine());
 
+			// put in cancel button
 			var cancelButton = CreateButton("Cancel".Localize().ToUpper());
 			cancelButton.Click += (s, e) =>
 			{
@@ -278,6 +279,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			cancelButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
 			actionBar.AddChild(cancelButton);
+
+			actionBar.AddChild(CreateVerticalLine());
+
+			// put in the reset button
+			var resetButton = CreateButton("Reset".Localize().ToUpper(), true, StaticData.Instance.LoadIcon("e_stop4.png", 32, 32));
+
+			resetButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
+			resetButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
+				});
+			};
+			actionBar.AddChild(resetButton);
 
 			actionBar.AddChild(CreateVerticalLine());
 
@@ -377,9 +393,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnClosed(e);
 		}
 
-		private Button CreateButton(string localizedText, bool centerText = true)
+		private Button CreateButton(string localizedText, bool centerText = true, ImageBuffer icon = null)
 		{
-			var button = buttonFactory.Generate(localizedText, centerText: centerText);
+			Button button = null;
+			if(icon == null)
+			{
+				button = buttonFactory.Generate(localizedText, centerText: centerText);
+			}
+			else
+			{
+				button = buttonFactory.GenerateTooltipButton(localizedText, icon);
+			}
 			var bounds = button.LocalBounds;
 			bounds.Inflate(new BorderDouble(40, 10));
 			button.LocalBounds = bounds;

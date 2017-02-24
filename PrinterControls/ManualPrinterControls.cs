@@ -387,7 +387,7 @@ namespace MatterHackers.MatterControl
 				temperatureContainerContainer.AnchorAll();
 
 				temperatureControlsContainer = new TemperatureControls();
-				temperatureControlsContainer.VAnchor = VAnchor.ParentTop;
+				temperatureControlsContainer.VAnchor |= VAnchor.ParentTop;
 
 				temperatureContainerContainer.AddChild(temperatureControlsContainer);
 
