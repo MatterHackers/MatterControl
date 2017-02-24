@@ -68,8 +68,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			this.actualTemp.Text = $"{actualValue:0.#}°";
-			this.targetTemp.Text = $"{targetValue:0.#}°";
+			this.actualTemp.Text = $"{actualValue:0}°";
+			this.targetTemp.Text = $"{targetValue:0}°";
 		}
 	}
 
@@ -95,8 +95,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			this.actualTemp.Text = $"{actualValue:0.#}°";
-			this.targetTemp.Text = $"{targetValue:0.#}°";
+			this.actualTemp.Text = $"{actualValue:0}°";
+			this.targetTemp.Text = $"{targetValue:0}°";
 		}
 	}
 
