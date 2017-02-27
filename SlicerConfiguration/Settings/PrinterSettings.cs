@@ -700,14 +700,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						return (T)(object)(GetValue<double>(SettingsKey.layer_height) * ratio);
 					}
-					else if (settingsKey == SettingsKey.first_layer_extrusion_width)
+					else if (settingsKey == SettingsKey.first_layer_extrusion_width 
+						|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
 					{
 						return (T)(object)(GetValue<double>(SettingsKey.nozzle_diameter) * ratio);
 					}
 
 					return (T)(object)(ratio);
 				}
-				else if (settingsKey == SettingsKey.first_layer_extrusion_width)
+				else if (settingsKey == SettingsKey.first_layer_extrusion_width
+					|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
 				{
 					double extrusionResult;
 					double.TryParse(this.GetValue(settingsKey), out extrusionResult);
