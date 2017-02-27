@@ -191,6 +191,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public PrintingWindow()
 			: base(1280, 750)
 		{
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			bool smallScreen = Parent.Width <= 1180;
+
 			AlwaysOnTopOfMain = true;
 			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			this.Title = "Print Monitor".Localize();
@@ -202,7 +208,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			this.AddChild(topToBottom);
 
-			topToBottom.AddChild(CreateActionBar());
+			topToBottom.AddChild(CreateActionBar(smallScreen));
 
 			topToBottom.AddChild(CreateHorizontalLine());
 
@@ -216,9 +222,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			bodyContainer.AddChild(basicBody);
 			topToBottom.AddChild(bodyContainer);
+
+			base.OnLoad(args);
 		}
 
-		private GuiWidget CreateActionBar()
+		private GuiWidget CreateActionBar(bool smallScreen)
 		{
 			var actionBar = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
@@ -237,7 +245,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(new HorizontalSpacer());
 
 			// put in the pause button
-			var pauseButton = CreateButton("Pause".Localize().ToUpper());
+			var pauseButton = CreateButton("Pause".Localize().ToUpper(), smallScreen);
 			pauseButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -251,7 +259,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(pauseButton);
 
 			// put in the resume button
-			var resumeButton = CreateButton("Resume".Localize().ToUpper());
+			var resumeButton = CreateButton("Resume".Localize().ToUpper(), smallScreen);
 			resumeButton.Visible = false;
 			resumeButton.Click += (s, e) =>
 			{
@@ -268,7 +276,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(CreateVerticalLine());
 
 			// put in cancel button
-			var cancelButton = CreateButton("Cancel".Localize().ToUpper());
+			var cancelButton = CreateButton("Cancel".Localize().ToUpper(), smallScreen);
 			cancelButton.Click += (s, e) =>
 			{
 				bool canceled = ApplicationController.Instance.ConditionalCancelPrint();
@@ -283,7 +291,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(CreateVerticalLine());
 
 			// put in the reset button
-			var resetButton = CreateButton("Reset".Localize().ToUpper(), true, StaticData.Instance.LoadIcon("e_stop4.png", 32, 32));
+			var resetButton = CreateButton("Reset".Localize().ToUpper(), smallScreen, true, StaticData.Instance.LoadIcon("e_stop4.png", 32, 32));
 
 			resetButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetButton.Click += (s, e) =>
@@ -294,7 +302,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(CreateVerticalLine());
 
-			var advancedButton = CreateButton("Advanced".Localize().ToUpper());
+			var advancedButton = CreateButton("Advanced".Localize().ToUpper(), smallScreen);
 			actionBar.AddChild(advancedButton);
 			advancedButton.Click += (s, e) =>
 			{
@@ -390,7 +398,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnClosed(e);
 		}
 
-		private Button CreateButton(string localizedText, bool centerText = true, ImageBuffer icon = null)
+		private Button CreateButton(string localizedText, bool smallScreen, bool centerText = true, ImageBuffer icon = null)
 		{
 			Button button = null;
 			if(icon == null)
@@ -402,7 +410,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				button = buttonFactory.GenerateTooltipButton(localizedText, icon);
 			}
 			var bounds = button.LocalBounds;
-			bounds.Inflate(new BorderDouble(40, 10));
+			if (smallScreen)
+			{
+				bounds.Inflate(new BorderDouble(10, 10));
+			}
+			else
+			{
+				bounds.Inflate(new BorderDouble(40, 10));
+			}
 			button.LocalBounds = bounds;
 			button.Cursor = Cursors.Hand;
 			button.Margin = new BorderDouble(0);
