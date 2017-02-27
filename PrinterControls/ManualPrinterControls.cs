@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl
 						{
 							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer?.jogControls.EnableBabystepping(false);
+						movementControlsContainer?.jogControls.SetEnabledLevels(false, false);
 
 						break;
 
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl
 						{
 							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer?.jogControls.EnableBabystepping(false);
+						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl
 									widget?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								}
 
-								movementControlsContainer?.jogControls.EnableBabystepping(true);
+								movementControlsContainer?.jogControls.SetEnabledLevels(true, false);
 								break;
 
 							default:
@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl
 						{
 							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer?.jogControls.EnableBabystepping(false);
+						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
 
 						break;
 
@@ -533,7 +533,7 @@ namespace MatterHackers.MatterControl
 						{
 							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer.jogControls.EnableBabystepping(false);
+						movementControlsContainer.jogControls.SetEnabledLevels(false, false);
 
 						break;
 
@@ -554,7 +554,7 @@ namespace MatterHackers.MatterControl
 						{
 							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer.jogControls.EnableBabystepping(false);
+						movementControlsContainer.jogControls.SetEnabledLevels(false, true);
 
 						break;
 
@@ -595,7 +595,7 @@ namespace MatterHackers.MatterControl
 									widget?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								}
 
-								movementControlsContainer?.jogControls.EnableBabystepping(true);
+								movementControlsContainer?.jogControls.SetEnabledLevels(true, false);
 
 								break;
 
@@ -621,7 +621,7 @@ namespace MatterHackers.MatterControl
 						{
 							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						}
-						movementControlsContainer?.jogControls.EnableBabystepping(false);
+						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
 
 						break;
 
