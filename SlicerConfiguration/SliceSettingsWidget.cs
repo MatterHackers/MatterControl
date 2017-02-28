@@ -489,7 +489,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if(group.Name == "Connection")
 				{
-					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreatePrinterExtraControls());
+					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreatePrinterExtraControls(isPrimaryView: true));
 				}
 			}
 
@@ -718,38 +718,66 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return ActiveSliceSettings.Instance.GetValue(slicerConfigName, layerCascade);
 		}
 
-		public static GuiWidget CreatePrinterExtraControls()
+		public static GuiWidget CreatePrinterExtraControls(bool isPrimaryView = false)
 		{
 			var dataArea = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 			};
 
-			// OEM_LAYER_DATE:
-			string lastUpdateTime = "March 1, 2016";
-			if (ActiveSliceSettings.Instance?.OemLayer != null)
+			if (isPrimaryView)
 			{
-				string fromCreatedDate = ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date);
-				try
+				// OEM_LAYER_DATE:
+				string lastUpdateTime = "March 1, 2016";
+				if (ActiveSliceSettings.Instance?.OemLayer != null)
 				{
-					if (!string.IsNullOrEmpty(fromCreatedDate))
+					string fromCreatedDate = ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date);
+					try
 					{
-						DateTime time = Convert.ToDateTime(fromCreatedDate).ToLocalTime();
-						lastUpdateTime = time.ToString("MMMM d, yyyy ") + time.ToString("h:mm tt");
+						if (!string.IsNullOrEmpty(fromCreatedDate))
+						{
+							DateTime time = Convert.ToDateTime(fromCreatedDate).ToLocalTime();
+							lastUpdateTime = time.ToString("MMMM d, yyyy h:mm tt");
+						}
+					}
+					catch
+					{
 					}
 				}
-				catch
+
+				var row = new FlowLayoutWidget()
 				{
+					BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
+					Padding = new BorderDouble(5),
+					Margin = new BorderDouble(3, 20, 3, 0),
+					HAnchor = HAnchor.ParentLeftRight
+				};
+
+				string make = ActiveSliceSettings.Instance.GetValue(SettingsKey.make);
+				string model = ActiveSliceSettings.Instance.GetValue(SettingsKey.model);
+
+				string title = $"{make} {model}";
+				if (title == "Other Other")
+				{
+					title = "Custom Profile".Localize();
 				}
+
+				row.AddChild(new TextWidget(title, pointSize: 9)
+				{
+					Margin = new BorderDouble(0, 4, 10, 4),
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				});
+
+				row.AddChild(new HorizontalSpacer());
+
+				row.AddChild(new TextWidget(lastUpdateTime, pointSize: 9)
+				{
+					Margin = new BorderDouble(0, 4, 10, 4),
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				});
+
+				dataArea.AddChild(row);
 			}
-
-			lastUpdateTime = "Default settings updated: {0} ".Localize().FormatWith(lastUpdateTime);
-
-			dataArea.AddChild(new TextWidget(lastUpdateTime, textColor: ActiveTheme.Instance.SecondaryTextColor)
-			{
-				HAnchor= HAnchor.ParentCenter,
-				Margin = new BorderDouble(0, 15),
-			});
 
 			// DELETE_PRINTER:
 			{
