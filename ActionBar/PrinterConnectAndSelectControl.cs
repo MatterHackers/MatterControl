@@ -27,17 +27,17 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			actionBarButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
 			actionBarButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 
 			actionBarButtonFactory.hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -98,7 +98,14 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// connect and disconnect buttons
 			{
-				connectPrinterButton = actionBarButtonFactory.Generate("Connect".Localize().ToUpper(), "icon_power_32x32.png");
+				var normalImage = StaticData.Instance.LoadIcon("icon_power_32x32.png");
+
+				// Generate the disabled image by inverting and colorizing with disabledTextColor
+				var disabledImage = new ImageBuffer(normalImage).InvertLightness();
+				WhiteToColor.DoWhiteToColor(disabledImage, actionBarButtonFactory.disabledTextColor);
+
+				// Create the image button with the normal and disabled ImageBuffers
+				connectPrinterButton = actionBarButtonFactory.Generate("Connect".Localize().ToUpper(), normalImage, disabledImage: disabledImage);
 				connectPrinterButton.Name = "Connect to printer button";
 				connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
 				connectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
