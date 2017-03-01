@@ -2334,7 +2334,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			for (int i = 0; i < lines.Length; i++)
 			{
-				queuedCommandStream2.Add(lines[i]);
+				queuedCommandStream2?.Add(lines[i]);
 			}
 		}
 
