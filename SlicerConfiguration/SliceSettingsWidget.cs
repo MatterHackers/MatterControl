@@ -401,6 +401,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						foreach (SliceSettingData settingData in subGroup.SettingDataList)
 						{
+							// Note: tab sections may disappear if they when they are empty, as controlled by:
+							// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
 							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
 
 							if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(settingData.SlicerConfigName)
