@@ -217,8 +217,8 @@ namespace MatterHackers.MatterControl
 		}
 #endif
 
-		readonly static string writeFaildeWaring = "WARNING: Write Failed!".Localize();
-		readonly static string cantAccessPath = "Can't access '{0}'.".Localize();
+		string writeFaildeWaring = "WARNING: Write Failed!".Localize();
+		string cantAccessPath = "Can't access '{0}'.".Localize();
 
 		private void onExportLogFileSelected(SaveFileDialogParams saveParams)
 		{

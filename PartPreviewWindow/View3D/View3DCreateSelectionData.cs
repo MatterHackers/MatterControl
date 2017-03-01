@@ -40,8 +40,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private static string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?".Localize();
-		private static string PartsNotPrintableTitle = "Parts not in print area".Localize();
+		private string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?".Localize();
+		private string PartsNotPrintableTitle = "Parts not in print area".Localize();
 
 		private void CreateSelectionData()
 		{
