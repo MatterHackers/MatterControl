@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrintStatusRow : FlowLayoutWidget
 	{
-		private TextWidget activePrintInfo;
 		private TextWidget activePrintLabel;
 		private TextWidget activePrintName;
 		private PartThumbnailWidget activePrintPreviewImage;
@@ -160,15 +159,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			activePrintStatus.Text = "";
 			activePrintStatus.Margin = new BorderDouble(top: 3);
 
-			activePrintInfo = getPrintStatusLabel("", pointSize: 11);
-			activePrintInfo.AutoExpandBoundsToText = true;
-
-			PrintActionRow printActionRow = new PrintActionRow(queueDataView);
-
 			container.AddChild(topRow);
 			container.AddChild(activePrintName);
 			container.AddChild(activePrintStatus);
-			container.AddChild(printActionRow);
+			container.AddChild(new PrintActionRow(queueDataView));
 
 			return container;
 		}
@@ -306,7 +300,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
 						activePrintLabel.Text = "Preparing To Print".Localize() + ":";
-						activePrintInfo.Text = "";
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
