@@ -2170,9 +2170,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #endif
 			}
 
-			FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(serialPortName).Close();
+			var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
+
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).SerialPortAlreadyOpen(serialPortName);
+			bool serialPortIsAlreadyOpen = portFactory.SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 			{
@@ -2180,7 +2181,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).CreateAndOpen(serialPortName, baudRate, true);
+						serialPort = portFactory.CreateAndOpen(serialPortName, baudRate, true);
 #if __ANDROID__
 						ToggleHighLowHigh(serialPort);
 #endif
