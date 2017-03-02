@@ -1622,18 +1622,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						case NamedSettingsLayers.All:
 							if (settingData.ShowAsOverride)
 							{
-								settingsRow.BackgroundColor = userSettingBackgroundColor;
+								var defaultCascade = ActiveSliceSettings.Instance.defaultLayerCascade;
+								var firstParentValue = ActiveSliceSettings.Instance.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade.Skip(1));
+								var currentValueAndLayerName = ActiveSliceSettings.Instance.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
+
+								var currentValue = currentValueAndLayerName.Item1;
+								var layerName = currentValueAndLayerName.Item2;
+
+								if (firstParentValue.Item1 == currentValue)
+								{
+									if (layerName.StartsWith("Material"))
+									{
+										settingsRow.BackgroundColor = materialSettingBackgroundColor;
+									}
+									else if (layerName.StartsWith("Quality"))
+									{
+										settingsRow.BackgroundColor = qualitySettingBackgroundColor;
+									}
+									else
+									{
+										settingsRow.BackgroundColor = RGBA_Bytes.Transparent;
+									}
+
+									if (restoreButton != null)
+									{
+										restoreButton.Visible = false;
+									}
+								}
+								else
+								{
+									settingsRow.BackgroundColor = userSettingBackgroundColor;
+									if (restoreButton != null) restoreButton.Visible = true;
+								}
 							}
 							break;
 						case NamedSettingsLayers.Material:
 							settingsRow.BackgroundColor = materialSettingBackgroundColor;
+							if (restoreButton != null) restoreButton.Visible = true;
 							break;
 						case NamedSettingsLayers.Quality:
 							settingsRow.BackgroundColor = qualitySettingBackgroundColor;
+							if (restoreButton != null) restoreButton.Visible = true;
 							break;
 					}
-
-					if(restoreButton != null) restoreButton.Visible = true;
 				}
 				else if (layerCascade == null)
 				{

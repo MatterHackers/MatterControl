@@ -531,6 +531,44 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
+		public Tuple<string, string> GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			if (layerCascade == null)
+			{
+				layerCascade = defaultLayerCascade;
+			}
+
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				string value;
+				if (layer.TryGetValue(sliceSetting, out value))
+				{
+					string layerName = "User";
+
+					if (layer == this.BaseLayer)
+					{
+						layerName = "Base";
+					}
+					else if (layer == this.OemLayer)
+					{
+						layerName = "Oem";
+					}
+					else if (layer == this.MaterialLayer)
+					{
+						layerName = "Material";
+					}
+					else if (layer == this.QualityLayer)
+					{
+						layerName = "Quality";
+					}
+
+					return new Tuple<string, string>(value, layerName);
+				}
+			}
+
+			return new Tuple<string, string>("", "");
+		}
+
 		public bool Contains(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 			if (layerCascade == null)
@@ -550,7 +588,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public PrinterSettingsLayer BaseLayer { get; set; } = SliceSettingsOrganizer.Instance.GetDefaultSettings();
 
-		private IEnumerable<PrinterSettingsLayer> defaultLayerCascade
+		internal IEnumerable<PrinterSettingsLayer> defaultLayerCascade
 		{
 			get
 			{
