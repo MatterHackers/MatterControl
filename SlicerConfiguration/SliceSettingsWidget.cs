@@ -1243,19 +1243,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							};
 							checkBoxWidget.Click += (sender, e) =>
 							{
-								bool isChecked = ((CheckBox)sender).Checked;
-								ActiveSliceSettings.Instance.SetValue(settingData.SlicerConfigName, isChecked ? "1" : "0", persistenceLayer);
-								foreach(var setSettingsData in settingData.SetSettingsOnChange)
+								// SetValue should only be called when the checkbox is clicked. If this code makes its way into checkstatechanged
+								// we end up adding a key back into the dictionary after we call .ClearValue, resulting in the blue override bar reappearing after
+								// clearing a useroverride with the red x
+								ActiveSliceSettings.Instance.SetValue(settingData.SlicerConfigName, checkBoxWidget.Checked ? "1" : "0", persistenceLayer);
+							};
+							checkBoxWidget.CheckedStateChanged += (s, e) =>
+							{
+								// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
+								foreach (var setSettingsData in settingData.SetSettingsOnChange)
 								{
 									string targetValue;
-									if(setSettingsData.TryGetValue(isChecked?"OnValue": "OffValue", out targetValue))
+									if (setSettingsData.TryGetValue(checkBoxWidget.Checked ? "OnValue" : "OffValue", out targetValue))
 									{
 										ActiveSliceSettings.Instance.SetValue(setSettingsData["TargetSetting"], targetValue, persistenceLayer);
 									}
 								}
+
 								settingsRow.UpdateStyle();
 							};
-
 							dataArea.AddChild(checkBoxWidget);
 
 							settingsRow.ValueChanged = (text) =>
