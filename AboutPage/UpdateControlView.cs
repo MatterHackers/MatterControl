@@ -127,8 +127,8 @@ namespace MatterHackers.MatterControl
 			UpdateControlData.Instance.InitiateUpdateDownload();
 		}
 
-		static string recommendedUpdateAvailable = "There is a recommended update available.".Localize();
-		static string requiredUpdateAvailable = "There is a required update available.".Localize();
+		string recommendedUpdateAvailable = "There is a recommended update available.".Localize();
+		string requiredUpdateAvailable = "There is a required update available.".Localize();
 
 		private void UpdateStatusChanged(object sender, EventArgs e)
 		{
