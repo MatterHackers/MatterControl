@@ -1524,7 +1524,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				Thread.Sleep(500);
 
-				ToggleHighLowHeigh(resetSerialPort);
+				ToggleHighLowHigh(resetSerialPort);
 
 				resetSerialPort.Close();
 			}
@@ -1796,7 +1796,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						CommunicationState = CommunicationStates.Disconnecting;
 						ReadThread.Join();
-						ToggleHighLowHeigh(serialPort);
+						ToggleHighLowHigh(serialPort);
 						if (serialPort != null)
 						{
 							serialPort.Close();
@@ -1823,7 +1823,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						Thread.Sleep(500);
 
-						ToggleHighLowHeigh(resetSerialPort);
+						ToggleHighLowHigh(resetSerialPort);
 
 						resetSerialPort.Close();
 
@@ -1837,7 +1837,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private void ToggleHighLowHeigh(IFrostedSerialPort serialPort)
+		private void ToggleHighLowHigh(IFrostedSerialPort serialPort)
 		{
 			serialPort.RtsEnable = true;
 			serialPort.DtrEnable = true;
@@ -2170,9 +2170,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #endif
 			}
 
-			FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(serialPortName).Close();
+			var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
+
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).SerialPortAlreadyOpen(serialPortName);
+			bool serialPortIsAlreadyOpen = portFactory.SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 			{
@@ -2180,9 +2181,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).CreateAndOpen(serialPortName, baudRate, true);
+						serialPort = portFactory.CreateAndOpen(serialPortName, baudRate, true);
 #if __ANDROID__
-						ToggleHighLowHeigh(serialPort);
+						ToggleHighLowHigh(serialPort);
 #endif
 						// wait a bit of time to let the firmware start up
 						Thread.Sleep(500);
