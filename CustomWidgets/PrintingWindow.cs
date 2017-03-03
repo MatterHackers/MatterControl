@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(new VerticalLine()
 			{
-				BackgroundColor = new RGBA_Bytes(200, 200, 200),
+				BackgroundColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(right: 8)
 			});
 
@@ -815,7 +815,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					layerCount = value;
 					if (layerCount == 0)
 					{
-						layerCountWidget.Text = "Initializing".Localize();
+						layerCountWidget.Text = "Printing".Localize();
 					}
 					else
 					{

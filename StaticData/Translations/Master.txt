@@ -5965,3 +5965,6 @@ Translated:Tuning Adjust
 English:Initializing
 Translated:Initializing
 
+English:Connection Failed
+Translated:Connection Failed
+
