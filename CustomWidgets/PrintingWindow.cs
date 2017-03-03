@@ -615,20 +615,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				timeContainer.AddChild(timeWidget);
 
+				int maxTextWidth = 350;
 				printerName = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
-					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = new BorderDouble(50, 3)
+					HAnchor = HAnchor.ParentCenter,
+					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
+					Width = maxTextWidth,
+					Margin = new BorderDouble(0, 3),
 				};
 
 				progressContainer.AddChild(printerName);
 
 				partName = new TextWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
-					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = new BorderDouble(50, 3)
+					HAnchor = HAnchor.ParentCenter,
+					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
+					Width = maxTextWidth,
+					Margin = new BorderDouble(0, 3)
 				};
 				progressContainer.AddChild(partName);
 			}
