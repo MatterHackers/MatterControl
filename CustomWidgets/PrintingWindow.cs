@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AddChild(new VerticalLine()
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryTextColor,
-				Margin = new BorderDouble(right: 8)
+				Margin = new BorderDouble(8, 0)
 			});
 
 			targetTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -815,7 +815,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					layerCount = value;
 					if (layerCount == 0)
 					{
-						layerCountWidget.Text = "Printing".Localize();
+						layerCountWidget.Text = "Printing".Localize() + "...";
 					}
 					else
 					{
