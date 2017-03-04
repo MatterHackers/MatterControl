@@ -100,6 +100,11 @@ namespace MatterHackers.MatterControl
 
 		public static bool IsLoading { get; private set; } = true;
 
+		public static void RequestPowerShutDown()
+		{
+			// does nothing on windows
+		}
+
 		static MatterControlApplication()
 		{
 			if (OsInformation.OperatingSystem == OSType.Mac && StaticData.Instance == null)
