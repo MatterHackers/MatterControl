@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			headerRow.AddChild(new HorizontalSpacer());
 			var powerImage = StaticData.Instance.LoadIcon("power.png", 24, 24);
 			var powerButton = new TextImageButtonFactory() { FixedHeight = 32, Margin = new BorderDouble(0), borderWidth = 0 }.GenerateTooltipButton("", powerImage);
-			powerButton.Click += (s, e) => MatterControlApplication.RequestPowerShutDown();
+			powerButton.Click += (s, e) => MatterControlApplication.Instance.RequestPowerShutDown();
 			powerButton.VAnchor |= VAnchor.ParentCenter;
 			headerRow.AddChild(powerButton);
 #endif
