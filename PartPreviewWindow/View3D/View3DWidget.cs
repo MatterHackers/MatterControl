@@ -258,10 +258,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					Button exportButton = textImageButtonFactory.Generate("Export".Localize() + "...");
-					if (printItemWrapper != null)
-					{
-						exportButton.Enabled = false;
-					}
 
 					exportButton.Margin = new BorderDouble(right: 10);
 					exportButton.Click += (sender, e) =>
