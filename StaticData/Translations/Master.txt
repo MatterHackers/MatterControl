@@ -5968,3 +5968,6 @@ Translated:Initializing
 English:Connection Failed
 Translated:Connection Failed
 
+English:Show Password
+Translated:Show Password
+

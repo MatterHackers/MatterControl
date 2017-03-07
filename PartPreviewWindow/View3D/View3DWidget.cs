@@ -257,9 +257,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						enterEdittingButton.Enabled = false;
 					}
 
-					Button exportButton = textImageButtonFactory.Generate("Export...".Localize());
-					if (printItemWrapper != null &&
-						(printItemWrapper.PrintItem.Protected || printItemWrapper.PrintItem.ReadOnly))
+					Button exportButton = textImageButtonFactory.Generate("Export".Localize() + "...");
+					if (printItemWrapper != null)
 					{
 						exportButton.Enabled = false;
 					}
