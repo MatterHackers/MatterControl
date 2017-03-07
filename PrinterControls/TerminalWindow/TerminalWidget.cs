@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl
 				};
 
 				//Output Console text to screen
-				Button exportConsoleTextButton = controlButtonFactory.Generate("Export...".Localize());
+				Button exportConsoleTextButton = controlButtonFactory.Generate("Export".Localize() + "...");
 				exportConsoleTextButton.Click += (sender, mouseEvent) =>
 				{
 					UiThread.RunOnIdle(DoExportExportLog_Click);
