@@ -107,6 +107,7 @@ namespace MatterHackers.MatterControl
 				string exportStlTextFull = string.Format("{0} STL", exportStlText);
 
 				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
+				exportAsStlButton.Name = "Export as STL button";
 				exportAsStlButton.HAnchor = HAnchor.ParentLeft;
 				exportAsStlButton.Cursor = Cursors.Hand;
 				exportAsStlButton.Click += exportSTL_Click;
@@ -117,6 +118,7 @@ namespace MatterHackers.MatterControl
 				string exportAmfTextFull = string.Format("{0} AMF", exportAmfText);
 
 				Button exportAsAmfButton = textImageButtonFactory.Generate(exportAmfTextFull);
+				exportAsAmfButton.Name = "Export as AMF button";
 				exportAsAmfButton.HAnchor = HAnchor.ParentLeft;
 				exportAsAmfButton.Cursor = Cursors.Hand;
 				exportAsAmfButton.Click += exportAMF_Click;

@@ -354,7 +354,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			testRunner.ClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
-
 			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
 			testRunner.Delay(.5);
 		}
