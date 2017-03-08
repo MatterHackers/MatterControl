@@ -614,7 +614,7 @@ namespace MatterHackers.MatterControl
 			//Save a snapshot of the prints in queue
 			QueueData.Instance.SaveDefaultQueue();
 
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+			if (!closeHasBeenConfirmed && PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
 				if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
 				{
@@ -648,11 +648,19 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		bool closeHasBeenConfirmed = false;
 		private void ConditionalyCloseNow(bool continueWithShutdown)
 		{
 			if (continueWithShutdown)
 			{
-				PrinterConnectionAndCommunication.Instance.Disable();
+				closeHasBeenConfirmed = true;
+				bool printingFromSdCard = PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd
+					|| (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Paused
+					&& PrinterConnectionAndCommunication.Instance.PrePauseCommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd);
+				if (!printingFromSdCard)
+				{
+					PrinterConnectionAndCommunication.Instance.Disable();
+				}
 
 				MatterControlApplication app = MatterControlApplication.Instance;
 				app.RestartOnClose = false;
