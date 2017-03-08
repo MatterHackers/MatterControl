@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "QueueItems", queueItemToLoad);
 		}
 
-		private static void CloseMatterControlViaMenu(AutomationRunner testRunner)
+		public static void CloseMatterControlViaMenu(this AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
 			testRunner.ClickByName("File Menu", 5);

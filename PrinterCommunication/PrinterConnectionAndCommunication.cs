@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMachineInstruction.MovementTypes movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
 
-		private CommunicationStates prePauseCommunicationState = CommunicationStates.Printing;
+		public CommunicationStates PrePauseCommunicationState { get; private set; } = CommunicationStates.Printing;
 
 		private DetailedPrintingState printingStatePrivate;
 
@@ -482,11 +482,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								{
 									if (communicationState == CommunicationStates.Printing)
 									{
-										prePauseCommunicationState = CommunicationStates.Printing;
+										PrePauseCommunicationState = CommunicationStates.Printing;
 									}
 									else
 									{
-										prePauseCommunicationState = CommunicationStates.PrintingFromSd;
+										PrePauseCommunicationState = CommunicationStates.PrintingFromSd;
 									}
 									timeSinceStartedPrint.Stop();
 								}
@@ -620,7 +620,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get
 			{
 				if (CommunicationState == CommunicationStates.PrintingFromSd
-					|| (communicationState == CommunicationStates.Paused && prePauseCommunicationState == CommunicationStates.PrintingFromSd))
+					|| (communicationState == CommunicationStates.Paused && PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
 				{
 					if (totalSdBytes > 0)
 					{
@@ -1885,7 +1885,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (PrinterIsPaused)
 			{
-				if (prePauseCommunicationState == CommunicationStates.PrintingFromSd)
+				if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
 				{
 					CommunicationState = CommunicationStates.PrintingFromSd;
 
@@ -2065,7 +2065,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.Paused:
 					{
-						if (prePauseCommunicationState == CommunicationStates.PrintingFromSd)
+						if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
 						{
 							CancelSDCardPrint();
 							CommunicationState = CommunicationStates.Connected;

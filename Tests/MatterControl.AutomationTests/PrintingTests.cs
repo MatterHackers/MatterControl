@@ -202,6 +202,96 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideHeight:900, maxTimeToRun: 990);
 		}
 
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task CancelingSdCardPrintLeavesHeatAndFanOn()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.WaitForName("Cancel Wizard Button", 1);
+
+				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					Emulator emulator = (Emulator)emulatorDisposable;
+
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+
+					testRunner.ClickByName("Queue... Menu", 2);
+					testRunner.ClickByName(" Remove All Menu Item", 2);
+					testRunner.ClickByName("Queue... Menu", 2);
+					testRunner.ClickByName(" Load Files Menu Item", 2);
+					testRunner.Delay(2);
+
+					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.Delay(2);
+
+					int tempChangedCount = 0;
+					int fanChangedCount = 0;
+					emulator.ExtruderTemperatureChanged += (s, e) =>
+					{
+						tempChangedCount++;
+					};
+					emulator.FanSpeedChanged += (s, e) =>
+					{
+						fanChangedCount++;
+					};
+
+					testRunner.CloseMatterControlViaMenu();
+
+					testRunner.ClickByName("Yes Button");
+
+					testRunner.Delay(2);
+					Assert.AreEqual(0, tempChangedCount, "We should not change this while exiting an sd card print.");
+					Assert.AreEqual(0, fanChangedCount, "We should not change this while exiting an sd card print.");
+				}
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+		}
+
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task CancelingNormalPrintTurnsHeatAndFanOff()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.WaitForName("Cancel Wizard Button", 1);
+
+				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					Emulator emulator = (Emulator)emulatorDisposable;
+
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+
+					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.Delay(5);
+
+					int tempChangedCount = 0;
+					int fanChangedCount = 0;
+					emulator.ExtruderTemperatureChanged += (s, e) =>
+					{
+						tempChangedCount++;
+					};
+					emulator.FanSpeedChanged += (s, e) =>
+					{
+						fanChangedCount++;
+					};
+
+					testRunner.CloseMatterControlViaMenu();
+
+					testRunner.ClickByName("Yes Button");
+
+					testRunner.Delay(5);
+					Assert.AreEqual(1, tempChangedCount, "We should change this while exiting a print.");
+					Assert.AreEqual(1, fanChangedCount, "We should change this while exiting a print.");
+				}
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+		}
+
 		private static void ConfirmExpectedSpeeds(AutomationRunner testRunner, double targetExtrusionRate, double targetFeedRate)
 		{
 			SystemWindow systemWindow;
