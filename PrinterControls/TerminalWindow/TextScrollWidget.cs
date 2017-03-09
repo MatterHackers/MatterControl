@@ -107,6 +107,7 @@ namespace MatterHackers.MatterControl
 				foreach (string startFilter in StartLineStringFilters)
 				{
 					if (line == null
+						|| line.Contains("M105")
 						|| line.Length < 3
 						|| line.StartsWith(startFilter))
 					{
