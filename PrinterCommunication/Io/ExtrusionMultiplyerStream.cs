@@ -40,24 +40,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double currentActualExtrusionPosition = 0;
 		private double previousGcodeRequestedExtrusionPosition = 0;
 
-		private EventHandler unregisterEvents;
-
 		public ExtrusionMultiplyerStream(GCodeStream internalStream)
 			: base(internalStream)
 		{
-			this.ExtrusionRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.extrusion_ratio);
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				var eventArgs = e as StringEventArgs;
-				if (eventArgs?.Data == SettingsKey.extrusion_ratio)
-				{
-					this.ExtrusionRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.extrusion_ratio);
-				}
-			}, ref unregisterEvents);
 		}
 
-		public double ExtrusionRatio { get; set; }
+		public static double ExtrusionRatio { get; set; } = 1;
 
 		public override string ReadLine()
 		{
@@ -92,12 +80,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			return lineBeingSent;
-		}
-
-		public override void Dispose()
-		{
-			unregisterEvents?.Invoke(null, null);
-			base.Dispose();
 		}
 	}
 }

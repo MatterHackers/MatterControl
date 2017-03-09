@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -94,12 +95,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				row.AddChild(feedRateDescription);
 
-				double feedrateRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio);
 				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio)
 				{
 					Name = "Feed Rate Slider",
 					Margin = new BorderDouble(5, 0),
-					Value = feedrateRatio,
+					Value = FeedRateMultiplyerStream.FeedRateRatio,
 					HAnchor = HAnchor.ParentLeftRight,
 					TotalWidthInPixels = sliderWidth,
 				};
@@ -110,11 +110,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				feedRateRatioSlider.SliderReleased += (s, e) =>
 				{
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.feedrate_ratio, Math.Round(feedRateRatioSlider.Value, 2).ToString());
+					// Update state for runtime use
+					FeedRateMultiplyerStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
+
+					// Persist data for future use
+					ActiveSliceSettings.Instance.SetValue(
+						SettingsKey.feedrate_ratio,
+						FeedRateMultiplyerStream.FeedRateRatio.ToString());
 				};
 				row.AddChild(feedRateRatioSlider);
 
-				feedRateValue = new MHNumberEdit(Math.Round(feedrateRatio, 2), allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplyerStream.FeedRateRatio, 2), allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Feed Rate NumberEdit",
 					SelectAllOnFocus = true,
@@ -125,7 +131,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 				feedRateValue.ActuallNumberEdit.EditComplete += (sender, e) =>
 				{
 					feedRateRatioSlider.Value = feedRateValue.ActuallNumberEdit.Value;
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.feedrate_ratio, Math.Round(feedRateRatioSlider.Value, 2).ToString());
+
+					// Update state for runtime use
+					FeedRateMultiplyerStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
+
+					// Persist data for future use
+					ActiveSliceSettings.Instance.SetValue(
+						SettingsKey.feedrate_ratio,
+						FeedRateMultiplyerStream.FeedRateRatio.ToString());
 				};
 				row.AddChild(feedRateValue);
 
@@ -157,14 +170,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				row.AddChild(extrusionDescription);
 
-				double extrusionRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.extrusion_ratio);
 				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
 				{
 					Name = "Extrusion Multiplier Slider",
 					TotalWidthInPixels = sliderWidth,
 					HAnchor = HAnchor.ParentLeftRight,
 					Margin = new BorderDouble(5, 0),
-					Value = extrusionRatio
+					Value = ExtrusionMultiplyerStream.ExtrusionRatio
 				};
 				extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
 				extrusionRatioSlider.ValueChanged += (sender, e) =>
@@ -173,10 +185,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				extrusionRatioSlider.SliderReleased += (s, e) =>
 				{
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.extrusion_ratio, Math.Round(extrusionRatioSlider.Value, 2).ToString());
+					// Update state for runtime use
+					ExtrusionMultiplyerStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
+
+					// Persist data for future use
+					ActiveSliceSettings.Instance.SetValue(
+						SettingsKey.extrusion_ratio,
+						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
 				};
 
-				extrusionValue = new MHNumberEdit(Math.Round(extrusionRatio, 2), allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplyerStream.ExtrusionRatio, 2), allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Extrusion Multiplier NumberEdit",
 					SelectAllOnFocus = true,
@@ -187,7 +205,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 				extrusionValue.ActuallNumberEdit.EditComplete += (sender, e) =>
 				{
 					extrusionRatioSlider.Value = extrusionValue.ActuallNumberEdit.Value;
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.extrusion_ratio, Math.Round(extrusionRatioSlider.Value, 2).ToString());
+
+					// Update state for runtime use
+					ExtrusionMultiplyerStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
+
+					// Persist data for future use
+					ActiveSliceSettings.Instance.SetValue(
+						SettingsKey.extrusion_ratio,
+						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
 				};
 				row.AddChild(extrusionRatioSlider);
 				row.AddChild(extrusionValue);
