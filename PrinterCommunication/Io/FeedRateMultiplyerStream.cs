@@ -35,32 +35,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class FeedRateMultiplyerStream : GCodeStreamProxy
 	{
-		protected PrinterMove lastDestination = new PrinterMove();
-		public PrinterMove LastDestination { get { return lastDestination; } }
-
-		private EventHandler unregisterEvents;
+		public PrinterMove LastDestination { get; private set; }
 
 		public FeedRateMultiplyerStream(GCodeStream internalStream)
 			: base(internalStream)
 		{
-			this.FeedRateRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio);
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				var eventArgs = e as StringEventArgs;
-				if (eventArgs?.Data == SettingsKey.feedrate_ratio)
-				{
-					this.FeedRateRatio  = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio);
-				}
-			}, ref unregisterEvents);
 		}
 
-		public double FeedRateRatio { get; set; }
+		public static double FeedRateRatio { get; set; } = 1;
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
-			lastDestination = position;
-			internalStream.SetPrinterPosition(lastDestination);
+			this.LastDestination = position;
+			internalStream.SetPrinterPosition(this.LastDestination);
 		}
 
 		public override string ReadLine()
@@ -70,23 +57,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend != null
 				&& LineIsMovement(lineToSend))
 			{
-				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
+				PrinterMove currentMove = GetPosition(lineToSend, this.LastDestination);
 
 				PrinterMove moveToSend = currentMove;
 				moveToSend.feedRate *= FeedRateRatio;
 
-				lineToSend = CreateMovementLine(moveToSend, lastDestination);
-				lastDestination = currentMove;
+				lineToSend = CreateMovementLine(moveToSend, this.LastDestination);
+				this.LastDestination = currentMove;
 				return lineToSend;
 			}
 
 			return lineToSend;
-		}
-
-		public override void Dispose()
-		{
-			unregisterEvents?.Invoke(null, null);
-			base.Dispose();
 		}
 	}
 }
