@@ -4100,7 +4100,7 @@ English:The speed at which outside, (visible) perimeters will print.
 Translated:La vitesse à laquelle l'extérieur, périmètres (visibles) va imprimer.
 
 English:Forces external perimeters to be printed first. By default, they will print last.
-Translated:Forces périmètres externes à imprimer en premier. Par défaut, ils vont imprimer dernière.
+Translated:Forces des périmètres extérieurs à imprimer en premier. Par défaut, ils vont imprimer dernière.
 
 English:The number of extruders the printer has.
 Translated:Le nombre d'extrudeuses l'imprimante a.
@@ -4121,7 +4121,7 @@ English:The actual diameter of the filament used for printing.
 Translated:Le diamètre réel du fil utilisé pour l'impression.
 
 English:The angle of the infill, measured from the X axis. Not used when bridging.
-Translated:L'angle de l'élément de remplissage, mesuré à partir de l'axe X. Non utilisé lors de pontage.
+Translated:L'angle de l'élément de remplissage, mesuré à partir de l'axe X.. Non utilisé lors de pontage.
 
 English:The amount of infill material to generate, expressed as a ratio or a percentage.
 Translated:La quantité de matériau de remplissage pour générer, exprimé comme un rapport ou un pourcentage.
@@ -5967,4 +5967,31 @@ Translated:Tuning Ajuster
 
 English:Initializing
 Translated:Initialisation
+
+English:Connection Failed
+Translated:La connexion a échoué
+
+English:Show Password
+Translated:Montrer le mot de passe
+
+English:Submit Button
+Translated:Bouton de soumission
+
+English:Enter 12 Digit Redemption Code
+Translated:Entrez 12 chiffres du code de rachat
+
+English:This is located on the rear of your card
+Translated:Il est situé à l'arrière de votre carte
+
+English:Please wait. Verifying code...
+Translated:S'il vous plaît, attendez. Code Vérification ...
+
+English:View Designs
+Translated:Voir Designs
+
+English:Success! Your code has been redeemed.
+Translated:Succès! Votre code a été racheté.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Vos nouveaux modèles apparaissent dans le dossier de la bibliothèque «Acheté».
 

@@ -5968,3 +5968,30 @@ Translated:Tuning Ajustați
 English:Initializing
 Translated:inițializează
 
+English:Connection Failed
+Translated:Conexiune esuata
+
+English:Show Password
+Translated:Arata parola
+
+English:Submit Button
+Translated:trimiteţi butonul
+
+English:Enter 12 Digit Redemption Code
+Translated:Introdu o format din 12 cifre Cod de răscumpărare
+
+English:This is located on the rear of your card
+Translated:Acest lucru este situat pe partea din spate a cardului
+
+English:Please wait. Verifying code...
+Translated:Te rog asteapta. Codul de verificare ...
+
+English:View Designs
+Translated:Vezi modele
+
+English:Success! Your code has been redeemed.
+Translated:Succes! Codul a fost valorificat.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Noile dvs. modele vor apărea în directorul bibliotecii "Achiziționate".
+

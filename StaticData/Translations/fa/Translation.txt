@@ -1892,250 +1892,250 @@ English:You can either
 Translated:شما هم می توانید
 
 English:You can also
-Translated:!!Encoding Error!!
+Translated:شما همچنین می توانید
 
 English:Extruder Temperature Settings
-Translated:!!Encoding Error!!
+Translated:تنظیمات اکسترودر دما
 
 English:Temperature Shortcut Presets
-Translated:!!Encoding Error!!
+Translated:ایستگاه از پیش تنظیم میانبر دما
 
 English:Label
-Translated:!!Encoding Error!!
+Translated:برچسب
 
 English:Preset
-Translated:!!Encoding Error!!
+Translated:از پیش تعیین شده
 
 English:Max Temp.
-Translated:!!Encoding Error!!
+Translated:حداکثر دما.
 
 English:Bed Temperature Settings
-Translated:!!Encoding Error!!
+Translated:تنظیمات دما تختخواب
 
 English:Movement Speeds
-Translated:!!Encoding Error!!
+Translated:سرعت حرکت
 
 English:Extruder
-Translated:!!Encoding Error!!
+Translated:اکسترودر
 
 English:Power on and connect printer
-Translated:!!Encoding Error!!
+Translated:قدرت و اتصال چاپگر
 
 English:Attempting to connect
-Translated:!!Encoding Error!!
+Translated:تلاش برای اتصال
 
 English:Connection succeeded
-Translated:!!Encoding Error!!
+Translated:اتصال موفق
 
 English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
-Translated:!!Encoding Error!!
+Translated:شما می توانید هر پایین حرکت می کند. این موقعیت در بستر شما بسیار کم برای اکسترودر برای رسیدن به است. شما نیاز به افزایش تخت خود را، و یا تنظیم محدودیت های خود را اجازه می دهد تا اکسترودر به پایین تر است.
 
 English:Edit Preset
-Translated:!!Encoding Error!!
+Translated:ویرایش از پیش تعیین شده
 
 English:Slice-Engine
-Translated:!!Encoding Error!!
+Translated:تکه موتور
 
 English:Status: Completed
-Translated:!!Encoding Error!!
+Translated:وضعیت: پایان
 
 English:Unlock
-Translated:!!Encoding Error!!
+Translated:باز کردن قفل
 
 English:Show Terminal
-Translated:!!Encoding Error!!
+Translated:نمایش ترمینال
 
 English:Configure
-Translated:!!Encoding Error!!
+Translated:پیکربندی
 
 English:Disable
-Translated:!!Encoding Error!!
+Translated:از کار انداختن
 
 English:Est. Weight
-Translated:!!Encoding Error!!
+Translated:EST. وزن
 
 English:Downloading updates...
-Translated:!!Encoding Error!!
+Translated:دانلود به روز رسانی ...
 
 English:Duplicate
-Translated:!!Encoding Error!!
+Translated:تکراری
 
 English:End
-Translated:!!Encoding Error!!
+Translated:پایان
 
 English:The type of support to create inside of parts.
-Translated:!!Encoding Error!!
+Translated:نوع پشتیبانی ایجاد در داخل از قطعات.
 
 English:Infill Type
-Translated:!!Encoding Error!!
+Translated:میانقاب نوع
 
 English:Release Options
-Translated:!!Encoding Error!!
+Translated:گزینه های انتشار
 
 English:No items to select. Press 'Add' to select a file to print.
-Translated:!!Encoding Error!!
+Translated:هیچ آیتمی را انتخاب کنید. "اضافه کردن" را فشار دهید برای انتخاب یک فایل برای چاپ.
 
 English:Unknown
-Translated:!!Encoding Error!!
+Translated:ناشناخته
 
 English:Press 'Add' to select an item.
-Translated:!!Encoding Error!!
+Translated:"اضافه کردن" را فشار دهید برای انتخاب یک آیتم.
 
 English:Shop
-Translated:!!Encoding Error!!
+Translated:فروشگاه
 
 English:Slicing Error
-Translated:!!Encoding Error!!
+Translated:خطا برش
 
 English:Ready to Print
-Translated:!!Encoding Error!!
+Translated:آماده برای چاپ
 
 English:File Not Found\n'{0}'
-Translated:!!Encoding Error!!
+Translated:فایل یافت نشد \ N '{0}
 
 English:Slicing Error.\nPlease review your slice settings.
-Translated:!!Encoding Error!!
+Translated:خطا برش.\nلطفا تنظیمات قطعه خود را بررسی می کند.
 
 English:Special thanks to:
-Translated:!!Encoding Error!!
+Translated:با تشکر ویژه از:
 
 English:Alessandro Ranellucci for 
-Translated:!!Encoding Error!!
+Translated:الساندرو Ranellucci برای
 
 English:David Braam and Ultimaker BV for 
-Translated:!!Encoding Error!!
+Translated:دیوید Braam و Ultimaker BV برای
 
 English:To enable GCode export, select a printer profile
-Translated:!!Encoding Error!!
+Translated:برای فعال کردن صادرات جی کد، یک پروفایل چاپگر را انتخاب کنید
 
 English:MatterControl: Submit an Issue
-Translated:!!Encoding Error!!
+Translated:MatterControl: ارسال یک موضوع
 
 English:Submit
-Translated:!!Encoding Error!!
+Translated:ارسال
 
 English:How can we help?
-Translated:!!Encoding Error!!
+Translated:چگونه می توانیم کمک کند؟
 
 English:Submitting your information...
-Translated:!!Encoding Error!!
+Translated:ارسال اطلاعات ...
 
 English:Question*
-Translated:!!Encoding Error!!
+Translated:درخواست *
 
 English:Briefly describe your question
-Translated:!!Encoding Error!!
+Translated:خلاصه درخواست خود را توصیف
 
 English:Details*
-Translated:!!Encoding Error!!
+Translated:جزئیات*
 
 English:Fill in the details here
-Translated:!!Encoding Error!!
+Translated:پر کردن در جزئیات اینجا
 
 English:Your Email Address*
-Translated:!!Encoding Error!!
+Translated:آدرس ایمیل شما*
 
 English:Your Name*
-Translated:!!Encoding Error!!
+Translated:اسم شما*
 
 English:Version 
-Translated:!!Encoding Error!!
+Translated:نسخه
 
 English:Developed by:
-Translated:!!Encoding Error!!
+Translated:توسعه یافته توسط:
 
 English:Send FeedBack
-Translated:!!Encoding Error!!
+Translated:ارسال بازخورد
 
 English:Build: 
-Translated:!!Encoding Error!!
+Translated:ساختن:
 
 English:Update Feed
-Translated:!!Encoding Error!!
+Translated:به روز رسانی خوراک
 
 English:File
-Translated:!!Encoding Error!!
+Translated:پرونده
 
 English:Import File
-Translated:!!Encoding Error!!
+Translated:واردات فایل
 
 English:Exit
-Translated:!!Encoding Error!!
+Translated:خروج
 
 English:Help
-Translated:!!Encoding Error!!
+Translated:کمک
 
 English:Getting Started
-Translated:!!Encoding Error!!
+Translated:شروع شدن
 
 English:View Help
-Translated:!!Encoding Error!!
+Translated:نمایش راهنما
 
 English:Manually Configure Connection
-Translated:!!Encoding Error!!
+Translated:اتصال صورت دستی پیکربندی
 
 English:Skip Connection Setup
-Translated:!!Encoding Error!!
+Translated:پرش اتصال راه اندازی
 
 English:Currently available serial ports.
-Translated:!!Encoding Error!!
+Translated:پورت های سریال در حال حاضر در دسترس است.
 
 English:What's this?
-Translated:!!Encoding Error!!
+Translated:این چیه؟
 
 English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
-Translated:!!Encoding Error!!
+Translated:شناسایی، پورت سریال که دستگاه متصل است \ N چاپگر خود را. تغییر که پلاگین USB استفاده می کنید ممکن است \ N پورت سریال ارتباط را تغییر دهید.\n\nنکته: اگر شما نامشخص است، پلاگین در در چاپگر خود و ضربه زدن است\nتازه کردن. پورت جدید به نظر می رسد که باید شما\nچاپگر باشد.
 
 English:Connection succeeded!
-Translated:!!Encoding Error!!
+Translated:اتصال موفق!
 
 English:Oops! Unable to install update.
-Translated:!!Encoding Error!!
+Translated:اوه! قادر به نصب به روز رسانی.
 
 English:Motor de Capas
-Translated:!!Encoding Error!!
+Translated:موتور د کلاه
 
 English:Your application is up-to-date.
-Translated:!!Encoding Error!!
+Translated:نرم افزار خود را تا به امروز است.
 
 English:Install Communication Driver
-Translated:!!Encoding Error!!
+Translated:نصب درایور ارتباطات
 
 English:This printer requires a driver for communication.
-Translated:!!Encoding Error!!
+Translated:این چاپگر نیاز به درایور برای برقراری ارتباط.
 
 English:Driver located. Would you like to install?
-Translated:!!Encoding Error!!
+Translated:درایور واقع شده است. دوست دارید نصب کنید؟
 
 English:Install Driver
-Translated:!!Encoding Error!!
+Translated:نصب درایور
 
 English:Apply
-Translated:!!Encoding Error!!
+Translated:درخواست
 
 English:Buy Materials
-Translated:!!Encoding Error!!
+Translated:فروش مواد
 
 English:Select an STL file
-Translated:!!Encoding Error!!
+Translated:انتخاب یک فایل STL
 
 English:Add File
-Translated:!!Encoding Error!!
+Translated:اضافه کردن فایل
 
 English:Time
-Translated:!!Encoding Error!!
+Translated:زمان
 
 English:Press 'Connect' to select a printer.
-Translated:!!Encoding Error!!
+Translated:"اتصال" را فشار دهید تا انتخاب یک چاپگر.
 
 English:Marlin Firmware EEPROM Settings
-Translated:!!Encoding Error!!
+Translated:تنظیمات EEPROM مارلین افزار
 
 English:Re-Load Default Settings
-Translated:!!Encoding Error!!
+Translated:تنظیمات پیش فرض دوباره بار
 
 English:Set Default To Factory Settings
-Translated:!!Encoding Error!!
+Translated:تنظیم پیش فرض به تنظیمات کارخانه
 
 English:Steps per mm:
 Translated:مراحل در هر میلی متر:
@@ -5961,4 +5961,37 @@ Translated:بستر
 
 English:Axis movement speeds
 Translated:جنبش محور سرعت
+
+English:Tuning Adjust
+Translated:تنظیم تنظیم
+
+English:Initializing
+Translated:مقدار دهی اولیه
+
+English:Connection Failed
+Translated:ارتباط ناموفق بود
+
+English:Show Password
+Translated:نمایش رمز عبور
+
+English:Submit Button
+Translated:ثبت کردن دکمه
+
+English:Enter 12 Digit Redemption Code
+Translated:را وارد کنید 12 رقمی کد فعال سازی
+
+English:This is located on the rear of your card
+Translated:این است که در پشت کارت خود را واقع
+
+English:Please wait. Verifying code...
+Translated:لطفا صبر کنید. تأیید کد ...
+
+English:View Designs
+Translated:نمایش طراحی
+
+English:Success! Your code has been redeemed.
+Translated:موفقیت! کد شما استفاده شده است.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:طرح های جدید خود را در "خریداری شده 'پوشه کتابخانه ظاهر خواهد شد.
 

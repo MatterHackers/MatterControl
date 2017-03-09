@@ -5968,3 +5968,30 @@ Translated:Ladění Nastavení
 English:Initializing
 Translated:Inicializace
 
+English:Connection Failed
+Translated:Připojení se nezdařilo
+
+English:Show Password
+Translated:Zobrazit heslo
+
+English:Submit Button
+Translated:Vložení tlačítko
+
+English:Enter 12 Digit Redemption Code
+Translated:Zadejte 12místné platební kód
+
+English:This is located on the rear of your card
+Translated:Ten se nachází na zadní straně karty
+
+English:Please wait. Verifying code...
+Translated:Prosím, čekejte. Ověřování kódu ...
+
+English:View Designs
+Translated:Zobrazit designy
+
+English:Success! Your code has been redeemed.
+Translated:Úspěch! Váš kód byl vykoupen.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Vaše nové vzory se objeví v Zakoupené složce knihovny.
+

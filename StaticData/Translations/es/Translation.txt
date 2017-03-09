@@ -5968,3 +5968,30 @@ Translated:Ajustar la sintonización
 English:Initializing
 Translated:La inicialización
 
+English:Connection Failed
+Translated:La conexión falló
+
+English:Show Password
+Translated:Mostrar contraseña
+
+English:Submit Button
+Translated:Botón de enviar
+
+English:Enter 12 Digit Redemption Code
+Translated:Introduzca 12 dígitos Código de canje
+
+English:This is located on the rear of your card
+Translated:Esta se encuentra en la parte posterior de su tarjeta
+
+English:Please wait. Verifying code...
+Translated:Por favor espera. Verificación de código ...
+
+English:View Designs
+Translated:Ver diseños
+
+English:Success! Your code has been redeemed.
+Translated:¡Éxito! Su código ha sido redimido.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Sus nuevos diseños aparecerán en la carpeta "Comprados" biblioteca.
+

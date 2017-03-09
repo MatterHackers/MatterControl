@@ -2204,7 +2204,7 @@ English:Gap Percent
 Translated:Procent Gap
 
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
-Translated:Spróbuj połączyć krawędzie siatki, gdy rzeczywiste dane oczka nie jest aż podłączony.
+Translated:Spróbuj połączyć krawędzie siatki, gdy rzeczywiste dane oczka nie jest tym sposobem podłączone.
 
 English:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
 Translated:Jakiś czas siatka nie zostały zamknięte do obrzeża. Gdy ta opcja jest zaznaczona tych nie zamknięte obwody jednocześnie być zamknięte.
@@ -3527,7 +3527,7 @@ English:Using the above controls
 Translated:Stosując powyższe kontrole
 
 English:Add Local Folder To Library
-Translated:Dodaj lokalny folder do biblioteki
+Translated:Dodaj Local folder Aby Bibliotece
 
 English:Redeem Design Code
 Translated:Zrealizuj kod projektu
@@ -5967,4 +5967,31 @@ Translated:Tuning Ustaw
 
 English:Initializing
 Translated:Inicjowanie
+
+English:Connection Failed
+Translated:Połączenie nieudane
+
+English:Show Password
+Translated:Pokaż hasło
+
+English:Submit Button
+Translated:Umieść przycisk
+
+English:Enter 12 Digit Redemption Code
+Translated:Wprowadź 12-cyfrowy kod Wykupu
+
+English:This is located on the rear of your card
+Translated:Ten znajduje się z tyłu karty
+
+English:Please wait. Verifying code...
+Translated:Proszę czekać. Sprawdzanie kodu ...
+
+English:View Designs
+Translated:Zobacz wzory
+
+English:Success! Your code has been redeemed.
+Translated:Powodzenie! Twój kod został wykorzystany.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Twoje nowe wzory pojawią się w folderze "Kupione" biblioteki.
 
