@@ -465,7 +465,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SwitchToSettingsAndControls(this AutomationRunner testRunner)
 		{
-			if (testRunner.WaitForName("SettingsAndControls", .2))
+			if (testRunner.WaitForName("SettingsAndControls"))
 			{
 				testRunner.ClickByName("SettingsAndControls");
 				testRunner.Delay(.5);
@@ -474,7 +474,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SwitchToAdvancedSettings(AutomationRunner testRunner)
 		{
-			if (testRunner.WaitForName("SettingsAndControls", .2))
+			if (testRunner.WaitForName("SettingsAndControls"))
 			{
 				testRunner.ClickByName("SettingsAndControls");
 				testRunner.Delay(.5);
