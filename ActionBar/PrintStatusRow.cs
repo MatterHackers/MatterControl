@@ -261,6 +261,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void UpdatePrintStatus()
 		{
+			string printLabel = "Next Print".Localize() + ":";
+			string printerStatus = activePrintStatus.Text;
+
 			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
 			{
 				int totalSecondsInPrint = PrinterConnectionAndCommunication.Instance.TotalSecondsInPrint;
@@ -296,52 +299,53 @@ namespace MatterHackers.MatterControl.ActionBar
 					}
 				}
 
-				activePrintLabel.Text = "Next Print".Localize() + ":";
-
 				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
 				{
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-						activePrintLabel.Text = "Preparing To Print".Localize() + ":";
+						printLabel = "Preparing To Print".Localize() + ":";
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						activePrintLabel.Text = PrinterConnectionAndCommunication.Instance.PrintingStateString;
-						activePrintStatus.Text = totalPrintTimeText;
+						printLabel = PrinterConnectionAndCommunication.Instance.PrintingStateString;
+						printerStatus = totalPrintTimeText;
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						activePrintLabel.Text = "Printing Paused".Localize() + ":";
-						activePrintStatus.Text = totalPrintTimeText;
+						printLabel = "Printing Paused".Localize() + ":";
+						printerStatus = totalPrintTimeText;
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-						activePrintLabel.Text = "Done Printing".Localize() + ":";
-						activePrintStatus.Text = totalPrintTimeText;
+						printLabel = "Done Printing".Localize() + ":";
+						printerStatus = totalPrintTimeText;
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-						activePrintStatus.Text = "Not connected. Press 'Connect' to enable printing.".Localize();
+						printerStatus = "Not connected. Press 'Connect' to enable printing.".Localize();
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-						activePrintStatus.Text = "Attempting to Connect".Localize() + "...";
+						printerStatus = "Attempting to Connect".Localize() + "...";
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
 					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-						activePrintStatus.Text = "Connection Failed".Localize() + ": " + PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage;
+						printerStatus = "Connection Failed".Localize() + ": " + PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage;
 						break;
 
 					default:
-						activePrintStatus.Text = ActiveSliceSettings.Instance.PrinterSelected ? "" : "Select a Printer.".Localize();
+						printerStatus = ActiveSliceSettings.Instance.PrinterSelected ? "" : "Select a Printer.".Localize();
 						break;
 				}
 			}
 			else
 			{
-				activePrintLabel.Text = "Next Print".Localize() + ":";
-				activePrintStatus.Text = "Press 'Add' to choose an item to print".Localize();
+				printLabel = "Next Print".Localize() + ":";
+				printerStatus = "Press 'Add' to choose an item to print".Localize();
 			}
+
+			activePrintLabel.Text = printLabel;
+			activePrintStatus.Text = printerStatus;
 		}
 	}
 }
