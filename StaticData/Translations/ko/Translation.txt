@@ -5968,3 +5968,30 @@ Translated:조정 조정
 English:Initializing
 Translated:초기화
 
+English:Connection Failed
+Translated:연결에 실패
+
+English:Show Password
+Translated:암호 표시
+
+English:Submit Button
+Translated:버튼 제출
+
+English:Enter 12 Digit Redemption Code
+Translated:12 자리의 보너스 코드를 입력
+
+English:This is located on the rear of your card
+Translated:이것은 카드의 뒷면에 있습니다
+
+English:Please wait. Verifying code...
+Translated:기다려주십시오. 코드를 확인 중 ...
+
+English:View Designs
+Translated:보기 디자인
+
+English:Success! Your code has been redeemed.
+Translated:성공! 당신의 코드가 사용되었습니다.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:새 디자인은 '구매'라이브러리 폴더에 표시됩니다.
+

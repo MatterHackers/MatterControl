@@ -4631,7 +4631,7 @@ English:Output only the first layer of the print. Especially useful for outputti
 Translated:Output solo il primo strato della stampa. Particolarmente utile per l'emissione dei dati Gcode per applicazioni come l'incisione o il taglio.
 
 English:First Layer Only
-Translated:Solamente Primo strato
+Translated:Solo Primo strato
 
 English:File Settings
 Translated:Impostazioni file
@@ -5336,7 +5336,7 @@ English:Import Printer
 Translated:Importa stampante
 
 English:Resume Settings
-Translated:impostazioni di ripristino
+Translated:Impostazioni CV
 
 English:Enable Resuming
 Translated:Attiva Ripresa
@@ -5967,4 +5967,31 @@ Translated:tuning Regolare
 
 English:Initializing
 Translated:L'inizializzazione
+
+English:Connection Failed
+Translated:Connessione fallita
+
+English:Show Password
+Translated:Mostra password
+
+English:Submit Button
+Translated:pulsante Invia
+
+English:Enter 12 Digit Redemption Code
+Translated:Inserire il codice di riscatto 12 cifre
+
+English:This is located on the rear of your card
+Translated:Questo si trova sul retro della carta
+
+English:Please wait. Verifying code...
+Translated:Attendere prego. Verifica codice ...
+
+English:View Designs
+Translated:Vista Designs
+
+English:Success! Your code has been redeemed.
+Translated:Successo! Il tuo codice è stato riscattato.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:I suoi nuovi disegni appariranno nella cartella della libreria 'Acquistato'.
 

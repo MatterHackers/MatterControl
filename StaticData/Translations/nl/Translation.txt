@@ -5968,3 +5968,30 @@ Translated:tuning Adjust
 English:Initializing
 Translated:initialiseren
 
+English:Connection Failed
+Translated:Verbinding mislukt
+
+English:Show Password
+Translated:Laat wachtwoord zien
+
+English:Submit Button
+Translated:Verzendknop
+
+English:Enter 12 Digit Redemption Code
+Translated:Voer 12 Digit Inwisselcode
+
+English:This is located on the rear of your card
+Translated:Deze bevindt zich aan de achterzijde van uw kaart
+
+English:Please wait. Verifying code...
+Translated:Even geduld aub. Het verifiëren van code ...
+
+English:View Designs
+Translated:Bekijk Designs
+
+English:Success! Your code has been redeemed.
+Translated:Succes! Uw code is ingewisseld.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Uw nieuwe ontwerpen zullen verschijnen in de 'Gekocht' bibliotheek map.
+

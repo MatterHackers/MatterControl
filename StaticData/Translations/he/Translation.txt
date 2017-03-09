@@ -2816,7 +2816,7 @@ English:Grouping
 Translated:הַקבָּצָה
 
 English:WARNING: Disconnecting will cancel the print.
-Translated:זהירות: ניתוק יבטל את ההדפסה.
+Translated:אזהרה: ניתוק יבטל את ההדפסה.
 
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
 Translated:הסכום בקצה infill ידחוף לתוך המערכת. עוזר להבטיח איכות infill מחובר לקצה.
@@ -5967,4 +5967,31 @@ Translated:כוונון התאם
 
 English:Initializing
 Translated:מאתחל
+
+English:Connection Failed
+Translated:חיבור נכשל
+
+English:Show Password
+Translated:הראה סיסמה
+
+English:Submit Button
+Translated:שלח את הלחצן
+
+English:Enter 12 Digit Redemption Code
+Translated:זן 12 ספרות קוד מימוש
+
+English:This is located on the rear of your card
+Translated:זו ממוקמת בחלק האחורי של הכרטיס שלך
+
+English:Please wait. Verifying code...
+Translated:המתן בבקשה. מאמת את הקוד ...
+
+English:View Designs
+Translated:עיצובים צפו
+
+English:Success! Your code has been redeemed.
+Translated:הַצלָחָה! הקוד שלך מומש.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:העיצובים החדשים שלך יופיעו בתיקייה 'נרכשה' הספרייה.
 

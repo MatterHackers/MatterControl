@@ -5968,3 +5968,30 @@ Translated:ट्यूनिंग समायोजित करें
 English:Initializing
 Translated:आरंभ कर रहा है
 
+English:Connection Failed
+Translated:कनेक्शन विफल
+
+English:Show Password
+Translated:शो पासवर्ड
+
+English:Submit Button
+Translated:जमा करने वाला बटन
+
+English:Enter 12 Digit Redemption Code
+Translated:12 डिजिट मुक्ति कोड दर्ज
+
+English:This is located on the rear of your card
+Translated:यह आपके कार्ड के पीछे पर स्थित है
+
+English:Please wait. Verifying code...
+Translated:कृपया प्रतीक्षा करें। कोड का सत्यापन ...
+
+English:View Designs
+Translated:डिजाइन देखें
+
+English:Success! Your code has been redeemed.
+Translated:सफलता! आपका कोड भुनाया जा चुका है।
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:अपने नए डिजाइन 'खरीदा' लाइब्रेरी फ़ोल्डर में दिखाई देगा।
+

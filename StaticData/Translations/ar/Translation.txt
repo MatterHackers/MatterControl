@@ -5962,3 +5962,36 @@ Translated:السرير
 English:Axis movement speeds
 Translated:يسرع حركة محور
 
+English:Tuning Adjust
+Translated:ضبط ضبط
+
+English:Initializing
+Translated:جار تهيئة
+
+English:Connection Failed
+Translated:فشل الاتصال
+
+English:Show Password
+Translated:عرض كلمة المرور
+
+English:Submit Button
+Translated:زر الإرسال
+
+English:Enter 12 Digit Redemption Code
+Translated:إدخال 12 أرقام رمز الفداء
+
+English:This is located on the rear of your card
+Translated:يقع هذا في الجزء الخلفي من البطاقة
+
+English:Please wait. Verifying code...
+Translated:أرجو الإنتظار. التحقق من كود ...
+
+English:View Designs
+Translated:عرض التصاميم
+
+English:Success! Your code has been redeemed.
+Translated:نجاح! وقد تم استبدال التعليمات البرمجية.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:ستظهر تصاميم جديدة في مجلد مكتبة "شراؤها".
+

@@ -5968,3 +5968,30 @@ Translated:tuning Juster
 English:Initializing
 Translated:Initial
 
+English:Connection Failed
+Translated:Tilkoblingen mislyktes
+
+English:Show Password
+Translated:Vis passord
+
+English:Submit Button
+Translated:Send Button
+
+English:Enter 12 Digit Redemption Code
+Translated:Skriv inn 12 siffer Innløsningskode
+
+English:This is located on the rear of your card
+Translated:Denne er plassert på baksiden av kortet ditt
+
+English:Please wait. Verifying code...
+Translated:Vennligst vent. Bekrefter kode ...
+
+English:View Designs
+Translated:Se Designs
+
+English:Success! Your code has been redeemed.
+Translated:Suksess! Koden er innløst.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:De nye design vil vises i Kjøpt-bibliotek mappe.
+
