@@ -89,7 +89,8 @@ namespace MatterHackers.MatterControl
 
 					this.KeyDown += (sender, e) =>
 					{
-						if (!hotKeyButton.Checked)
+						if (hotKeyButton == null || 
+                            !hotKeyButton.Checked)
 						{
 							return;
 						}
