@@ -388,6 +388,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				instance = new PrintingWindow();
 				instance.ShowAsSystemWindow();
 			}
+			else
+			{
+				instance.BringToFront();
+			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

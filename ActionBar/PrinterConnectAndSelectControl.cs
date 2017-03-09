@@ -100,12 +100,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				var normalImage = StaticData.Instance.LoadIcon("icon_power_32x32.png");
 
-				// Generate the disabled image by inverting and colorizing with disabledTextColor
-				var disabledImage = new ImageBuffer(normalImage).InvertLightness();
-				WhiteToColor.DoWhiteToColor(disabledImage, actionBarButtonFactory.disabledTextColor);
-
 				// Create the image button with the normal and disabled ImageBuffers
-				connectPrinterButton = actionBarButtonFactory.Generate("Connect".Localize().ToUpper(), normalImage, disabledImage: disabledImage);
+				connectPrinterButton = actionBarButtonFactory.Generate("Connect".Localize().ToUpper(), normalImage);
 				connectPrinterButton.Name = "Connect to printer button";
 				connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
 				connectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
