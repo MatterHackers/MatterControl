@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			finishSetupButton.Margin = new BorderDouble(6, 6, 6, 3);
 			finishSetupButton.Click += onStartButton_Click;
 
-			touchScreenConnectButton = textImageButtonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32).InvertLightness());
+			touchScreenConnectButton = textImageButtonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("connect.png", 32,32).InvertLightness());
 			touchScreenConnectButton.ToolTipText = "Connect to the printer".Localize();
 			touchScreenConnectButton.Margin = new BorderDouble(6, 6, 6, 3);
 			touchScreenConnectButton.Click += (s, e) =>

@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// connect and disconnect buttons
 			{
-				var normalImage = StaticData.Instance.LoadIcon("icon_power_32x32.png");
+				var normalImage = StaticData.Instance.LoadIcon("connect.png", 32, 32);
 
 				// Create the image button with the normal and disabled ImageBuffers
 				connectPrinterButton = actionBarButtonFactory.Generate("Connect".Localize().ToUpper(), normalImage);
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					}
 				};
 
-				disconnectPrinterButton = actionBarButtonFactory.Generate("Disconnect".Localize().ToUpper(), "icon_power_32x32.png");
+				disconnectPrinterButton = actionBarButtonFactory.Generate("Disconnect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 32, 32));
 				disconnectPrinterButton.Name = "Disconnect from printer button";
 				disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
 				disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
