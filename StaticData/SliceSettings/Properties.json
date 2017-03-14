@@ -1543,7 +1543,8 @@
 		"HelpText": "The serial port communication speed of the printers firmware.",
 		"DataEditType": "INT",
 		"ShowAsOverride": false,
-		"ShowIfSet": "!enable_network_printing",
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
 		"DefaultValue": "250000",
 		"RebuildGCodeOnChange": false
 	},

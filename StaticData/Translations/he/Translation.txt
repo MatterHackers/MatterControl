@@ -5941,3 +5941,57 @@ Translated:בוצע!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:אזהרה: כדי לבצע שחזור הדפסה, המדפסת חייבת לזוז למטה כדי להגיע לעמדת המוצא שלה. \ N אם ההדפסה שלך גדולה מדי, חלק המדפסת עשוי להתנגש עם זה בעת מעבר למטה. \ N ודא זה בטוח לבצע פעולה זו לפני שתמשיך.
 
+English:Print Monitor
+Translated:צג הדפסה
+
+English:Currently Printing
+Translated:הדפסה כרגע
+
+English:Homing Axis
+Translated:ביות ציר
+
+English:Waiting for Extruder to Heat to
+Translated:מחכים Extruder לחום כדי
+
+English:Waiting for Bed to Heat to
+Translated:מחכה Bed לחום כדי
+
+English:Bed
+Translated:מיטה
+
+English:Axis movement speeds
+Translated:תנועת הציר מהירויות
+
+English:Tuning Adjust
+Translated:כוונון התאם
+
+English:Initializing
+Translated:מאתחל
+
+English:Connection Failed
+Translated:חיבור נכשל
+
+English:Show Password
+Translated:הראה סיסמה
+
+English:Submit Button
+Translated:שלח את הלחצן
+
+English:Enter 12 Digit Redemption Code
+Translated:זן 12 ספרות קוד מימוש
+
+English:This is located on the rear of your card
+Translated:זו ממוקמת בחלק האחורי של הכרטיס שלך
+
+English:Please wait. Verifying code...
+Translated:המתן בבקשה. מאמת את הקוד ...
+
+English:View Designs
+Translated:עיצובים צפו
+
+English:Success! Your code has been redeemed.
+Translated:הַצלָחָה! הקוד שלך מומש.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:העיצובים החדשים שלך יופיעו בתיקייה 'נרכשה' הספרייה.
+

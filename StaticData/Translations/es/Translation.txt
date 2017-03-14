@@ -5941,3 +5941,57 @@ Translated:¡Hecho!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ADVERTENCIA: Con el fin de realizar la recuperación de impresión, la impresora debe moverse hacia abajo hasta llegar a su posición inicial. \ N Si la impresión es demasiado grande, que forma parte de la impresora puede chocar con él cuando se mueve hacia abajo. \ N Asegúrese de que es seguro para realizar esta operación antes de proceder.
 
+English:Print Monitor
+Translated:monitor de impresión
+
+English:Currently Printing
+Translated:Impresión actualmente
+
+English:Homing Axis
+Translated:homing Eje
+
+English:Waiting for Extruder to Heat to
+Translated:A la espera de Extrusora de calor para
+
+English:Waiting for Bed to Heat to
+Translated:A la espera de la cama a una Calor de
+
+English:Bed
+Translated:Cama
+
+English:Axis movement speeds
+Translated:movimiento del eje acelera
+
+English:Tuning Adjust
+Translated:Ajustar la sintonización
+
+English:Initializing
+Translated:La inicialización
+
+English:Connection Failed
+Translated:La conexión falló
+
+English:Show Password
+Translated:Mostrar contraseña
+
+English:Submit Button
+Translated:Botón de enviar
+
+English:Enter 12 Digit Redemption Code
+Translated:Introduzca 12 dígitos Código de canje
+
+English:This is located on the rear of your card
+Translated:Esta se encuentra en la parte posterior de su tarjeta
+
+English:Please wait. Verifying code...
+Translated:Por favor espera. Verificación de código ...
+
+English:View Designs
+Translated:Ver diseños
+
+English:Success! Your code has been redeemed.
+Translated:¡Éxito! Su código ha sido redimido.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Sus nuevos diseños aparecerán en la carpeta "Comprados" biblioteca.
+

@@ -23,7 +23,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO.Ports;
 using System.Text.RegularExpressions;
@@ -34,8 +33,13 @@ namespace MatterHackers.PrinterEmulator
 {
 	public class Emulator : IDisposable
 	{
-		private double bedGoalTemperature = -1;
-		private double extruderGoalTemperature = 210;
+		public int CDChangeCount;
+		public bool CDState;
+		public int CtsChangeCount;
+		public bool CtsState;
+		public int DsrChangeCount;
+		public bool DsrState;
+		private static Regex numberRegex = new Regex(@"[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
 
 		// no bed present
 		private Random random = new Random();
@@ -48,24 +52,70 @@ namespace MatterHackers.PrinterEmulator
 
 		public Emulator()
 		{
-			responses.Add("M105", RandomTemp);
 			responses.Add("A", Echo);
-			responses.Add("M114", GetPosition);
-			responses.Add("N", ParseChecksumLine);
-			responses.Add("M115", reportMarlinFirmware);
+			responses.Add("G0", SetPosition);
+			responses.Add("G1", SetPosition);
+			responses.Add("G28", HomePosition);
+			responses.Add("G4", Wait);
+			responses.Add("G92", ResetPosition);
 			responses.Add("M104", SetExtruderTemperature);
+			responses.Add("M105", RandomTemp);
+			responses.Add("M106", SetFan);
 			responses.Add("M109", SetExtruderTemperature);
+			responses.Add("M114", GetPosition);
+			responses.Add("M115", reportMarlinFirmware);
 			responses.Add("M140", SetBedTemperature);
 			responses.Add("M190", SetBedTemperature);
-			responses.Add("G1", SetPosition);
-			responses.Add("G4", Wait);
-			responses.Add("G0", SetPosition);
-			responses.Add("G28", HomePosition);
-			responses.Add("G92", ResetPosition);
+			responses.Add("M20", ListSdCard);
+			responses.Add("M21", InitSdCard);
+			responses.Add("N", ParseChecksumLine);
 		}
 
+		public event EventHandler ExtruderTemperatureChanged;
+
+		public event EventHandler FanSpeedChanged;
+
+		public double BedGoalTemperature { get; private set; } = -1;
+
+		public double EPosition { get; private set; }
+
+		public double ExtruderGoalTemperature { get; private set; } = 210;
+
+		public double FanSpeed { get; private set; }
+
 		public string PortName { get; set; }
+
 		public bool RunSlow { get; set; }
+
+		public double XPosition { get; private set; }
+
+		public double YPosition { get; private set; }
+
+		public double ZPosition { get; private set; }
+
+		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, int startIndex = 0)
+		{
+			int stringPos = stringWithNumber.IndexOf(stringToCheckAfter, startIndex);
+			if (stringPos != -1)
+			{
+				stringPos += stringToCheckAfter.Length;
+				readValue = ParseDouble(stringWithNumber, ref stringPos);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public static double ParseDouble(String source, ref int startIndex)
+		{
+			Match numberMatch = numberRegex.Match(source, startIndex);
+			String returnString = numberMatch.Value;
+			startIndex = numberMatch.Index + numberMatch.Length;
+			double returnVal;
+			double.TryParse(returnString, NumberStyles.Number, CultureInfo.InvariantCulture, out returnVal);
+			return returnVal;
+		}
 
 		public void Dispose()
 		{
@@ -116,11 +166,6 @@ namespace MatterHackers.PrinterEmulator
 			return "ok\n";
 		}
 
-		public double XPosition { get; private set; }
-		public double YPosition { get; private set; }
-		public double ZPosition { get; private set; }
-		public double EPosition { get; private set; }
-
 		public string GetPosition(string command)
 		{
 			// position commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
@@ -131,13 +176,13 @@ namespace MatterHackers.PrinterEmulator
 		public string RandomTemp(string command)
 		{
 			// temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
-			if (bedGoalTemperature == -1)
+			if (BedGoalTemperature == -1)
 			{
-				return $"ok T:{(extruderGoalTemperature + random.Next(-2, 2))}\n";
+				return $"ok T:{(ExtruderGoalTemperature + random.Next(-2, 2))}\n";
 			}
 			else
 			{
-				return $"ok T:{extruderGoalTemperature + random.Next(-2, 2)} B:{bedGoalTemperature + random.Next(-2, 2) }\n";
+				return $"ok T:{ExtruderGoalTemperature + random.Next(-2, 2)} B:{BedGoalTemperature + random.Next(-2, 2) }\n";
 			}
 		}
 
@@ -146,17 +191,27 @@ namespace MatterHackers.PrinterEmulator
 			return "FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a\nok\n";
 		}
 
+		public string SetFan(string command)
+		{
+			try
+			{
+				// M104 S210 or M109 S[temp]
+				var sIndex = command.IndexOf('S') + 1;
+				FanSpeed = int.Parse(command.Substring(sIndex));
+				FanSpeedChanged?.Invoke(this, null);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+
+			return "ok\n";
+		}
+
 		public void ShutDown()
 		{
 			shutDown = true;
 		}
-
-		public bool CDState;
-		public int CDChangeCount;
-		public bool DsrState;
-		public int DsrChangeCount;
-		public bool CtsState;
-		public int CtsChangeCount;
 
 		public void Startup()
 		{
@@ -222,6 +277,38 @@ namespace MatterHackers.PrinterEmulator
 			});
 		}
 
+		private string HomePosition(string command)
+		{
+			XPosition = 0;
+			YPosition = 0;
+			ZPosition = 0;
+			return "ok\n";
+		}
+
+		private string InitSdCard(string arg)
+		{
+			return "ok\n";
+		}
+
+		private string ListSdCard(string arg)
+		{
+			string[] responsList =
+			{
+				"Begin file list",
+				"Item 1.gcode",
+				"Item 2.gcode",
+				"End file list",
+			};
+
+			foreach (var response in responsList)
+			{
+				Console.WriteLine(response);
+				serialPort.WriteLine(response);
+			}
+
+			return "ok\n";
+		}
+
 		private string ParseChecksumLine(string command)
 		{
 			if (command[0] == 'N')
@@ -236,52 +323,18 @@ namespace MatterHackers.PrinterEmulator
 			}
 		}
 
-		private static Regex numberRegex = new Regex(@"[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
-
-		public static double ParseDouble(String source, ref int startIndex)
-		{
-			Match numberMatch = numberRegex.Match(source, startIndex);
-			String returnString = numberMatch.Value;
-			startIndex = numberMatch.Index + numberMatch.Length;
-			double returnVal;
-			double.TryParse(returnString, NumberStyles.Number, CultureInfo.InvariantCulture, out returnVal);
-			return returnVal;
-		}
-
-		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, int startIndex = 0)
-		{
-			int stringPos = stringWithNumber.IndexOf(stringToCheckAfter, startIndex);
-			if (stringPos != -1)
-			{
-				stringPos += stringToCheckAfter.Length;
-				readValue = ParseDouble(stringWithNumber, ref stringPos);
-
-				return true;
-			}
-
-			return false;
-		}
-
-		string ResetPosition(string command)
+		private string ResetPosition(string command)
 		{
 			return "ok\n";
 		}
 
-		string Wait(string command)
+		private string SetBedTemperature(string command)
 		{
 			try
 			{
 				// M140 S210 or M190 S[temp]
-				double timeToWait = 0;
-				if (!GetFirstNumberAfter("S", command, ref timeToWait))
-				{
-					if (GetFirstNumberAfter("P", command, ref timeToWait))
-					{
-						timeToWait /= 1000;
-					}
-				}
-
-				Thread.Sleep((int)(timeToWait * 1000));
+				var sIndex = command.IndexOf('S') + 1;
+				BedGoalTemperature = int.Parse(command.Substring(sIndex));
 			}
 			catch (Exception e)
 			{
@@ -291,15 +344,24 @@ namespace MatterHackers.PrinterEmulator
 			return "ok\n";
 		}
 
-		string HomePosition(string command)
+		private string SetExtruderTemperature(string command)
 		{
-			XPosition = 0;
-			YPosition = 0;
-			ZPosition = 0;
+			try
+			{
+				// M104 S210 or M109 S[temp]
+				var sIndex = command.IndexOf('S') + 1;
+				ExtruderGoalTemperature = int.Parse(command.Substring(sIndex));
+				ExtruderTemperatureChanged?.Invoke(this, null);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+
 			return "ok\n";
 		}
 
-		string SetPosition(string command)
+		private string SetPosition(string command)
 		{
 			double value = 0;
 			if (GetFirstNumberAfter("X", command, ref value))
@@ -322,29 +384,21 @@ namespace MatterHackers.PrinterEmulator
 			return "ok\n";
 		}
 
-		private string SetBedTemperature(string command)
+		private string Wait(string command)
 		{
 			try
 			{
 				// M140 S210 or M190 S[temp]
-				var sIndex = command.IndexOf('S') + 1;
-				bedGoalTemperature = int.Parse(command.Substring(sIndex));
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-			}
+				double timeToWait = 0;
+				if (!GetFirstNumberAfter("S", command, ref timeToWait))
+				{
+					if (GetFirstNumberAfter("P", command, ref timeToWait))
+					{
+						timeToWait /= 1000;
+					}
+				}
 
-			return "ok\n";
-		}
-
-		private string SetExtruderTemperature(string command)
-		{
-			try
-			{
-				// M104 S210 or M109 S[temp]
-				var sIndex = command.IndexOf('S') + 1;
-				extruderGoalTemperature = int.Parse(command.Substring(sIndex));
+				Thread.Sleep((int)(timeToWait * 1000));
 			}
 			catch (Exception e)
 			{

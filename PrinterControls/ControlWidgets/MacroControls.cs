@@ -50,6 +50,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 		}
 	}
 
+	public class TerminalControls : ControlWidgetBase
+	{
+		public TerminalControls()
+		{
+			this.AddChild(new TerminalWidget(false));
+		}
+	}
+
 	public class ActionControlsWidget : FlowLayoutWidget
 	{
 		protected string editWindowLabel;

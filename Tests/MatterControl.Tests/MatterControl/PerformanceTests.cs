@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 				Task.Run(() =>
 				{
 					testRunner.ClickByName("Library Tab");
-					NavigateToFolder(testRunner, "Local Library Row Item Collection");
+					testRunner.NavigateToFolder("Local Library Row Item Collection");
 					
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item Calibration - Box");
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl
 				Task.Run(() =>
 				{
 					testRunner.ClickByName("Library Tab");
-					NavigateToFolder(testRunner, "Local Library Row Item Collection");
+					testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item Calibration - Box");
@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl
 				Task.Run(() =>
 				{
 					testRunner.ClickByName("Library Tab");
-					NavigateToFolder(testRunner, "Local Library Row Item Collection");
+					testRunner.NavigateToFolder("Local Library Row Item Collection");
 					testRunner.ClickByName("Create Folder From Library Button");
 					testRunner.Delay(2);
 					testRunner.Type("New Folder");
@@ -222,17 +222,6 @@ namespace MatterHackers.MatterControl
 				container.BeforeDraw -= beforeDraw;
 			};
 			container.BeforeDraw += beforeDraw;
-		}
-
-		//This is Temporary and will probably be moved once we get a functional test harness!!!
-		public static void NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
-		{
-			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
-			testRunner.ClickByName(libraryRowItemName);
-			testRunner.MoveToByName(libraryRowItemName);
-			testRunner.Delay(.5);
-			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
-			testRunner.Delay(.5);
 		}
 	}
 }

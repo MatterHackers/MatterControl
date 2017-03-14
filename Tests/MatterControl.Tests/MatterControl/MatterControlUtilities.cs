@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "QueueItems", queueItemToLoad);
 		}
 
-		private static void CloseMatterControlViaMenu(AutomationRunner testRunner)
+		public static void CloseMatterControlViaMenu(this AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
 			testRunner.ClickByName("File Menu", 5);
@@ -354,7 +354,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			testRunner.ClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
-
 			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
 			testRunner.Delay(.5);
 		}
@@ -466,7 +465,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SwitchToSettingsAndControls(this AutomationRunner testRunner)
 		{
-			if (testRunner.WaitForName("SettingsAndControls", .2))
+			if (testRunner.WaitForName("SettingsAndControls"))
 			{
 				testRunner.ClickByName("SettingsAndControls");
 				testRunner.Delay(.5);
@@ -475,7 +474,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SwitchToAdvancedSettings(AutomationRunner testRunner)
 		{
-			if (testRunner.WaitForName("SettingsAndControls", .2))
+			if (testRunner.WaitForName("SettingsAndControls"))
 			{
 				testRunner.ClickByName("SettingsAndControls");
 				testRunner.Delay(.5);

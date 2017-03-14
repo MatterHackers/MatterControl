@@ -198,6 +198,49 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 		}
 
+		[Test, Apartment(ApartmentState.STA) /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		public async Task SwitchingMaterialsCausesSettingsChangedEvents()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				EventHandler unregisterEvents = null;
+				int layerHeightChangedCount = 0;
+				ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+				{
+					StringEventArgs stringEvent = e as StringEventArgs;
+					if (stringEvent != null)
+					{
+						if (stringEvent.Data == SettingsKey.layer_height)
+						{
+							layerHeightChangedCount++;
+						}
+					}
+				}, ref unregisterEvents);
+
+				testRunner.CloseSignInAndPrinterSelect();
+
+				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+
+				//Navigate to Local Library 
+				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+				testRunner.ClickByName("General Tab", 1);
+				testRunner.ClickByName("Layers / Surface Tab", 1);
+
+				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("Fine Menu", 2, delayBeforeReturn: .5);
+				Assert.AreEqual(1, layerHeightChangedCount, "Changed to fine.");
+				testRunner.ClickByName("Quality", 2);
+				testRunner.ClickByName("Standard Menu", 2, delayBeforeReturn: .5);
+				Assert.AreEqual(2, layerHeightChangedCount, "Changed to standard.");
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+		}
+
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task DeleteProfileWorksForGuest()
 		{

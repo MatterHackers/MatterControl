@@ -436,33 +436,48 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
-		public void FeedRateStreamTracksSettings()
+		public void FeedRateRatioChangesFeedRate()
 		{
+			string line;
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			var gcodeStream = new FeedRateMultiplyerStream(new TestGCodeStream(new string[0]));
+			Assert.AreEqual(1, FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
-			Assert.AreEqual(1, gcodeStream.FeedRateRatio, "FeedRateRatio should default to 1");
+			var gcodeStream = new FeedRateMultiplyerStream(new TestGCodeStream(new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
 
-			ActiveSliceSettings.Instance.SetValue(SettingsKey.feedrate_ratio, "0.3");
+			line = gcodeStream.ReadLine();
 
-			Assert.AreEqual(0.3, gcodeStream.FeedRateRatio, "FeedRateRatio should remain synced with PrinterSettings");
+			Assert.AreEqual("G1 X10 F1000", line, "FeedRate should remain unchanged when FeedRateRatio is 1.0");
+
+			FeedRateMultiplyerStream.FeedRateRatio = 2;
+
+			line = gcodeStream.ReadLine();
+			Assert.AreEqual("G1 Y5 F2000", line, "FeedRate should scale from F1000 to F2000 when FeedRateRatio is 2x");
 		}
 
 		[Test, Category("GCodeStream")]
-		public void ExtrusionRateStreamTracksSettings()
+		public void ExtrusionRatioChangesExtrusionAmount()
 		{
+			string line;
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			var gcodeStream = new ExtrusionMultiplyerStream(new TestGCodeStream(new string[0]));
+			Assert.AreEqual(1, ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
-			Assert.AreEqual(1, gcodeStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
+			var gcodeStream = new ExtrusionMultiplyerStream(new TestGCodeStream(new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
 
-			ActiveSliceSettings.Instance.SetValue(SettingsKey.extrusion_ratio, "0.3");
+			line = gcodeStream.ReadLine();
+			// Move back to E0
+			gcodeStream.ReadLine();
 
-			Assert.AreEqual(0.3, gcodeStream.ExtrusionRatio, "ExtrusionRatio should remain synced with PrinterSettings");
+			Assert.AreEqual("G1 E10", line, "ExtrusionMultiplyer should remain unchanged when FeedRateRatio is 1.0");
+
+			ExtrusionMultiplyerStream.ExtrusionRatio = 2;
+
+			line = gcodeStream.ReadLine();
+
+			Assert.AreEqual("G1 E24", line, "ExtrusionMultiplyer should scale from E12 to E24 when ExtrusionRatio is 2x");
 		}
 	}
 

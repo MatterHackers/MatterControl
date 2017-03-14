@@ -392,7 +392,7 @@ English:The size of the print bed.
 Translated:印刷ベッドのサイズ。
 
 English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
-Translated:温度が第1の層が印刷された後に床を設定します。床温コマンドを排除するために0に設定します。
+Translated:温度が第1の層が印刷された後に床を設定します。床温度のコマンドを除去するために0に設定します。
 
 English:How many layers will be solid filled on the bottom surfaces of the object.
 Translated:どのように多くの層は、物体の底面に充填された固体になります。
@@ -410,7 +410,7 @@ English:The speed to move when bridging between walls.
 Translated:壁の間のブリッジング時に速度が移動します。
 
 English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
-Translated:各オブジェクトの周りに描画されるつばの量。これは、部品がベッドに取り付けられとどまることを確実にするために有用です。
+Translated:各オブジェクトの周りに描画されるつばの量。このことは、部品がベッドに取り付けられとどまることを保証するのに有用です。
 
 English:The height of the printable area. If set to 0 the parts height will not be validated.
 Translated:印刷可能領域の高さ。 0に設定した場合、部品の高さが検証されません。
@@ -425,7 +425,7 @@ English:Turns on and off all cooling settings (all settings below this one).
 Translated:すべての冷却設定（この1以下のすべての設定）オンとオフを切り替えます。
 
 English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
-Translated:加速度は上記で定義されていないすべての移動に使用します。プリンタの加速を変更する無効にするには、0に設定します。
+Translated:上記で定義されていないすべての移動に使用するためのアクセラレーション。プリンタの加速を変更する無効にするには、0に設定します。
 
 English:The number of layers for which the fan will be forced to remain off.
 Translated:層の数は、対象のファンはオフのままに強制されます。
@@ -443,7 +443,7 @@ English:Allow slicer to generate extra perimeters when needed for sloping walls.
 Translated:傾斜壁のために必要なときにスライサーが余分周囲を生成することを許可します。
 
 English:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
-Translated:これは離れて個々の部分は彼らが次の部分を印刷する前に完了することができるように印刷する必要がありますどの程度まで把握するために使用されます。
+Translated:これは離れて個々の部分は彼らが次の部分を印刷する前に完了することができるように印刷されなければなりませんどのくらい把握するために使用されます。
 
 English:This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
 Translated:これは、第1押出機と比較し、各押出機のオフセットです。複数の押出機にのみ有効。
@@ -479,7 +479,7 @@ English:Acceleration to use while printing the first layer. Set to 0 to the defa
 Translated:第1の層を印刷している間に使用する加速。デフォルトの最初の層の加速度に0に設定します。
 
 English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
-Translated:温度は、第1の層を印刷する前にベッドを設定します。この温度は、印刷前に到達するまでプリンタが待機します。床温コマンドを排除するために0に設定します。
+Translated:温度は、第1の層を印刷する前にベッドを設定します。この温度は、印刷前に到達するまでプリンタが待機します。床温度のコマンドを除去するために0に設定します。
 
 English:Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.
 Translated:100％を超えるに設定すると、多くの場合、印刷のベッドに優れた接着性を有する第1の層を助けることができます。
@@ -695,7 +695,7 @@ English:The speed to print support material structures.
 Translated:支持材の構造を印刷する速度。
 
 English:The last angle at which support material will be generated. Larger numbers will result in more support. Set to 0 to enable automatic settings.
-Translated:材料をサポートれる最後の角度が生成されます。数字が大きいほどより多くのサポートになります。 0に設定すると、自動設定を有効にします。
+Translated:材料をサポートれる最後の角度が生成されます。数字が大きいほどより多くのサポートになります。自動設定を有効にするには0に設定します。
 
 English:The distance the support material will be from the object in the x and y direction.
 Translated:距離は、支持体材料は、xおよびy方向のオブジェクトからなります。
@@ -1817,7 +1817,7 @@ English:This controls the ratio of material extruder during bridging.Reducing th
 Translated:これはまた、大幅に助けることができるファンを使用して、より多くのフィラメントを延伸することにより、ブリッジングすることができ、わずかにこれをbridging.Reducing中の材料押出機の比率を制御します。
 
 English:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
-Translated:デフォルトの温度は、ベッドを設定します。時々、第1の層上に上書きすることができます。床温コマンドを排除するために0に設定します。
+Translated:デフォルトの温度は、ベッドを設定します。時々、第1の層上に上書きすることができます。床温度のコマンドを除去するために0に設定します。
 
 English:The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
 Translated:デフォルトの温度は、押出機にセットします。時々、第1の層上に上書きすることができます。
@@ -2918,7 +2918,7 @@ English:Intermediate
 Translated:中間体
 
 English:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
-Translated:デフォルトの温度は、ベッドを設定します。時々、第1の層上に上書きすることができます。床温コマンドを排除するために0に設定します。
+Translated:デフォルトの温度は、ベッドを設定します。時々、第1の層上に上書きすることができます。床温度のコマンドを除去するために0に設定します。
 
 English:Turns on and off the creation of a raft which can help parts adhere to the bed.
 Translated:部品が床に付着することができますいかだの作成オンとオフを切り替えます。
@@ -5940,4 +5940,58 @@ Translated:完了！
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:警告：プリントリカバリを実行するためには、お使いのプリンタがホームポジションに到達するために下に移動しなければなりません。お使いのプリントが大きすぎると下降時\ nは、お使いのプリンタの部分は、それと衝突する可能性があります。 \ nは進む前に、この操作を実行しても安全であることを確認してください。
+
+English:Print Monitor
+Translated:プリントモニター
+
+English:Currently Printing
+Translated:現在の印刷
+
+English:Homing Axis
+Translated:Axisをホーミング
+
+English:Waiting for Extruder to Heat to
+Translated:押出機はに熱するのを待っています
+
+English:Waiting for Bed to Heat to
+Translated:に熱にベッドを待っています
+
+English:Bed
+Translated:ベッド
+
+English:Axis movement speeds
+Translated:軸移動速度
+
+English:Tuning Adjust
+Translated:調整のチューニング
+
+English:Initializing
+Translated:初期化
+
+English:Connection Failed
+Translated:接続に失敗しました
+
+English:Show Password
+Translated:ショーのパスワード
+
+English:Submit Button
+Translated:送信ボタン
+
+English:Enter 12 Digit Redemption Code
+Translated:12桁の引き換えコードを入力してください
+
+English:This is located on the rear of your card
+Translated:これはあなたのカードの背面に配置されています
+
+English:Please wait. Verifying code...
+Translated:お待ちください。コードを確認しています...
+
+English:View Designs
+Translated:ビューのデザイン
+
+English:Success! Your code has been redeemed.
+Translated:成功！あなたのコードが償還されています。
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:あなたの新しいデザインは、「購入」ライブラリフォルダに表示されます。
 

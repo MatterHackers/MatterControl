@@ -5941,3 +5941,57 @@ Translated:Bitti!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:UYARI: Baskı kurtarma gerçekleştirmek için, yazıcı kendi ev konuma ulaşmak için aşağı hareket etmelidir. Baskı çok büyükse aşağı hareket ederken\nyazıcınızdan parçası onunla çarpışmak olabilir. \ N daha ilerlemeden önce bu işlemi gerçekleştirmek için güvenli olduğundan emin olun.
 
+English:Print Monitor
+Translated:baskı Monitör
+
+English:Currently Printing
+Translated:Şu anda Baskı
+
+English:Homing Axis
+Translated:eksen güdümlü
+
+English:Waiting for Extruder to Heat to
+Translated:Extruder için ısıtın için bekleyen
+
+English:Waiting for Bed to Heat to
+Translated:Heat Bed bekliyorum
+
+English:Bed
+Translated:Yatak
+
+English:Axis movement speeds
+Translated:Eksen hareketi hızlandırır
+
+English:Tuning Adjust
+Translated:ayarlayın Tuning
+
+English:Initializing
+Translated:başlatılıyor
+
+English:Connection Failed
+Translated:bağlantı Başarısız
+
+English:Show Password
+Translated:Şifreni göster
+
+English:Submit Button
+Translated:Düğmesi Gönder
+
+English:Enter 12 Digit Redemption Code
+Translated:12 Haneli Redemption Kodunu giriniz
+
+English:This is located on the rear of your card
+Translated:Bu kartın arkasında bulunan
+
+English:Please wait. Verifying code...
+Translated:Lütfen bekle. kod doğrulanıyor ...
+
+English:View Designs
+Translated:Görünüm Tasarımlar
+
+English:Success! Your code has been redeemed.
+Translated:Başarı! Kodunuzu kullanıldı.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Yeni tasarımlar 'Satın' kütüphane klasöründe görünür.
+

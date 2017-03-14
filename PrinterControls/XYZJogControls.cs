@@ -89,7 +89,8 @@ namespace MatterHackers.MatterControl
 
 					this.KeyDown += (sender, e) =>
 					{
-						if (!hotKeyButton.Checked)
+						if (hotKeyButton == null || 
+                            !hotKeyButton.Checked)
 						{
 							return;
 						}
@@ -257,6 +258,7 @@ namespace MatterHackers.MatterControl
 				FlowLayoutWidget eButtons = CreateEButtons(buttonSeparationDistance);
 				disableableEButtons = new DisableableWidget()
 				{
+					Name = "disableableEButtons",
 					HAnchor = HAnchor.FitToChildren,
 					VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
 				};
@@ -275,7 +277,7 @@ namespace MatterHackers.MatterControl
 			// this.HAnchor |= HAnchor.ParentLeftRight;
 		}
 
-		internal void EnableBabystepping(bool enableBabysteppingMode)
+		internal void SetEnabledLevels(bool enableBabysteppingMode, bool enableEControls)
 		{
 			if (enableBabysteppingMode)
 			{
@@ -295,7 +297,7 @@ namespace MatterHackers.MatterControl
 			tenButton.Enabled = !enableBabysteppingMode;
 			oneHundredButton.Enabled = !enableBabysteppingMode;
 
-			disableableEButtons.SetEnableLevel(enableBabysteppingMode ? DisableableWidget.EnableLevel.Disabled : DisableableWidget.EnableLevel.Enabled);
+			disableableEButtons.SetEnableLevel(enableEControls ? DisableableWidget.EnableLevel.Enabled : DisableableWidget.EnableLevel.Disabled);
 			tooBigForBabyStepping.SetEnableLevel(enableBabysteppingMode ? DisableableWidget.EnableLevel.Disabled : DisableableWidget.EnableLevel.Enabled);
 		}
 

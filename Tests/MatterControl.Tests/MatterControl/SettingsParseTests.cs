@@ -21,6 +21,9 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void CheckIfShouldBeShownParseTests()
 		{
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0" };
 				var profile = GetProfile(settings);
