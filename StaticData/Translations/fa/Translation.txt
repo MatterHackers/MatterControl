@@ -5941,3 +5941,57 @@ Translated:انجام شده!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:هشدار: به منظور انجام بازیابی چاپ، چاپگر شما باید پایین حرکت می کند برای رسیدن به موقعیت خانه آن است.\nاگر چاپ خود را بیش از حد بزرگ است، بخشی از چاپگر خود را ممکن است با آن برخورد می کنند که در حال حرکت است. \ N اطمینان حاصل کنید که آن را بی خطر است برای انجام این عملیات قبل از اقدام.
 
+English:Print Monitor
+Translated:چاپ مانیتور
+
+English:Currently Printing
+Translated:چاپ در حال حاضر
+
+English:Homing Axis
+Translated:موشک محور
+
+English:Waiting for Extruder to Heat to
+Translated:در حال انتظار برای اکسترودر به گرما به
+
+English:Waiting for Bed to Heat to
+Translated:در حال انتظار برای تختخواب به حرارت به
+
+English:Bed
+Translated:بستر
+
+English:Axis movement speeds
+Translated:جنبش محور سرعت
+
+English:Tuning Adjust
+Translated:تنظیم تنظیم
+
+English:Initializing
+Translated:مقدار دهی اولیه
+
+English:Connection Failed
+Translated:ارتباط ناموفق بود
+
+English:Show Password
+Translated:نمایش رمز عبور
+
+English:Submit Button
+Translated:ثبت کردن دکمه
+
+English:Enter 12 Digit Redemption Code
+Translated:را وارد کنید 12 رقمی کد فعال سازی
+
+English:This is located on the rear of your card
+Translated:این است که در پشت کارت خود را واقع
+
+English:Please wait. Verifying code...
+Translated:لطفا صبر کنید. تأیید کد ...
+
+English:View Designs
+Translated:نمایش طراحی
+
+English:Success! Your code has been redeemed.
+Translated:موفقیت! کد شما استفاده شده است.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:طرح های جدید خود را در "خریداری شده 'پوشه کتابخانه ظاهر خواهد شد.
+

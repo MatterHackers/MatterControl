@@ -56,16 +56,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 	internal class ButtonEnableData
 	{
 		internal bool multipleItems;
-		internal bool protectedItems;
 		internal bool collectionItems;
-		internal bool shareItems;
 
-		internal ButtonEnableData(bool multipleItems, bool protectedItems, bool collectionItems, bool shareItems = false)
+		internal ButtonEnableData(bool multipleItems, bool protectedItems, bool collectionItems)
 		{
 			this.multipleItems = multipleItems;
-			this.protectedItems = protectedItems;
 			this.collectionItems = collectionItems;
-			this.shareItems = shareItems;
 		}
 	}
 
@@ -832,19 +828,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 					}
 					else
 					{
-						bool enabledState = enabled;
-
-						if (!editButtonsEnableData[buttonIndex].protectedItems)
-						{
-							// so we can show for multi items lets check for protected items
-							for (int itemIndex = 0; itemIndex < QueueData.Instance.ItemCount; itemIndex++)
-							{
-								if (queueDataView.GetQueueRowItem(itemIndex)?.PrintItemWrapper.PrintItem.Protected == true)
-								{
-									enabled = false;
-								}
-							}
-						}
 					}
 					button.Enabled = enabled;
 				}

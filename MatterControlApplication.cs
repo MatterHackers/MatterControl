@@ -103,6 +103,11 @@ namespace MatterHackers.MatterControl
 
 		public static bool IsLoading { get; private set; } = true;
 
+		public static void RequestPowerShutDown()
+		{
+			// does nothing on windows
+		}
+
 		static MatterControlApplication()
 		{
 			if (OsInformation.OperatingSystem == OSType.Mac && StaticData.Instance == null)
@@ -600,8 +605,9 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		public override void OnClosing(out bool CancelClose)
+		public override void OnClosing(out bool cancelClose)
 		{
+			cancelClose = false;
 			// save the last size of the window so we can restore it next time.
 			ApplicationSettings.Instance.set(ApplicationSettingsKey.MainWindowMaximized, this.Maximized.ToString().ToLower());
 
@@ -614,8 +620,20 @@ namespace MatterHackers.MatterControl
 			//Save a snapshot of the prints in queue
 			QueueData.Instance.SaveDefaultQueue();
 
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+			// If we are waiting for a response and get another request, just cancel the close until we get a response.
+			if(closeMessageBoxIsOpen)
 			{
+				cancelClose = true;
+			}
+
+			if (!closeHasBeenConfirmed 
+				&& !closeMessageBoxIsOpen
+				&& PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+			{
+				cancelClose = true;
+				// Record that we are waiting for a response to the request to close
+				closeMessageBoxIsOpen = true;
+
 				if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
 				{
 					// Needed as we can't assign to CancelClose inside of the lambda below
@@ -623,8 +641,6 @@ namespace MatterHackers.MatterControl
 						"Are you sure you want to abort the current print and close MatterControl?".Localize(),
 						"Abort Print".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
-
-					CancelClose = true;
 				}
 				else
 				{
@@ -633,26 +649,35 @@ namespace MatterHackers.MatterControl
 						"Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize(),
 						"Exit while printing".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
-
-					CancelClose = true;
 				}
 			}
 			else if (PartsSheet.IsSaving())
 			{
 				StyledMessageBox.ShowMessageBox(onConfirmExit, savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO);
-				CancelClose = true;
+				cancelClose = true;
 			}
-			else
+			else if(!cancelClose) // only check if we have not already canceled
 			{
-				base.OnClosing(out CancelClose);
+				base.OnClosing(out cancelClose);
 			}
 		}
 
+		bool closeHasBeenConfirmed = false;
+		bool closeMessageBoxIsOpen = false;
 		private void ConditionalyCloseNow(bool continueWithShutdown)
 		{
+			// Response received, cecord that we are not waiting anymore.
+			closeMessageBoxIsOpen = false;
 			if (continueWithShutdown)
 			{
-				PrinterConnectionAndCommunication.Instance.Disable();
+				closeHasBeenConfirmed = true;
+				bool printingFromSdCard = PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd
+					|| (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Paused
+					&& PrinterConnectionAndCommunication.Instance.PrePauseCommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd);
+				if (!printingFromSdCard)
+				{
+					PrinterConnectionAndCommunication.Instance.Disable();
+				}
 
 				MatterControlApplication app = MatterControlApplication.Instance;
 				app.RestartOnClose = false;

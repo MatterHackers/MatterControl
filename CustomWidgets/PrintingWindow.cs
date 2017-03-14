@@ -64,12 +64,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void UpdateTemperatures()
 		{
 			double targetValue = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
-			double actualValue = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
+			double actualValue = Math.Max(0, PrinterConnectionAndCommunication.Instance.ActualBedTemperature);
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			this.actualTemp.Text = $"{actualValue:0.#}°";
-			this.targetTemp.Text = $"{targetValue:0.#}°";
+			this.actualTemp.Text = $"{actualValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+			this.targetTemp.Text = $"{targetValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
 		}
 	}
 
@@ -91,12 +91,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void UpdateTemperatures()
 		{
 			double targetValue = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex);
-			double actualValue = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex);
+			double actualValue = Math.Max(0, PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex));
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			this.actualTemp.Text = $"{actualValue:0.#}°";
-			this.targetTemp.Text = $"{targetValue:0.#}°";
+			this.actualTemp.Text = $"{actualValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+			this.targetTemp.Text = $"{targetValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
 		}
 	}
 
@@ -131,6 +131,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actualTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
+				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(right: 0),
 				Width = 60
@@ -139,12 +140,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(new VerticalLine()
 			{
-				BackgroundColor = new RGBA_Bytes(200, 200, 200),
-				Margin = new BorderDouble(right: 8)
+				BackgroundColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(8, 0)
 			});
 
 			targetTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
+				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(right: 8),
 				Width = 60
@@ -175,7 +177,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			invertImageLocation = false,
 			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			hoverFillColor = RGBA_Bytes.Transparent,
 			disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
 			disabledFillColor = RGBA_Bytes.Transparent,
 			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -190,6 +191,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public PrintingWindow()
 			: base(1280, 750)
 		{
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			bool smallScreen = Parent.Width <= 1180;
+
 			AlwaysOnTopOfMain = true;
 			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			this.Title = "Print Monitor".Localize();
@@ -201,7 +208,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			this.AddChild(topToBottom);
 
-			topToBottom.AddChild(CreateActionBar());
+			topToBottom.AddChild(CreateActionBar(smallScreen));
 
 			topToBottom.AddChild(CreateHorizontalLine());
 
@@ -215,9 +222,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			bodyContainer.AddChild(basicBody);
 			topToBottom.AddChild(bodyContainer);
+
+			base.OnLoad(args);
 		}
 
-		private GuiWidget CreateActionBar()
+		private GuiWidget CreateActionBar(bool smallScreen)
 		{
 			var actionBar = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
@@ -235,9 +244,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(new HorizontalSpacer());
 
-			var pauseButton = CreateButton("Pause".Localize().ToUpper());
-			var resumeButton = CreateButton("Resume".Localize().ToUpper());
-
+			// put in the pause button
+			var pauseButton = CreateButton("Pause".Localize().ToUpper(), smallScreen);
 			pauseButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -250,6 +258,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(pauseButton);
 
+			// put in the resume button
+			var resumeButton = CreateButton("Resume".Localize().ToUpper(), smallScreen);
 			resumeButton.Visible = false;
 			resumeButton.Click += (s, e) =>
 			{
@@ -265,7 +275,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(CreateVerticalLine());
 
-			var cancelButton = CreateButton("Cancel".Localize().ToUpper());
+			// put in cancel button
+			var cancelButton = CreateButton("Cancel".Localize().ToUpper(), smallScreen);
 			cancelButton.Click += (s, e) =>
 			{
 				bool canceled = ApplicationController.Instance.ConditionalCancelPrint();
@@ -279,7 +290,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(CreateVerticalLine());
 
-			var advancedButton = CreateButton("Advanced".Localize().ToUpper());
+			// put in the reset button
+			var resetButton = CreateButton("Reset".Localize().ToUpper(), smallScreen, true, StaticData.Instance.LoadIcon("e_stop4.png", 32, 32));
+
+			resetButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
+			resetButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
+			};
+			actionBar.AddChild(resetButton);
+
+			actionBar.AddChild(CreateVerticalLine());
+
+			var advancedButton = CreateButton("Advanced".Localize().ToUpper(), smallScreen);
 			actionBar.AddChild(advancedButton);
 			advancedButton.Click += (s, e) =>
 			{
@@ -365,6 +388,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				instance = new PrintingWindow();
 				instance.ShowAsSystemWindow();
 			}
+			else
+			{
+				instance.BringToFront();
+			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -375,11 +402,26 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnClosed(e);
 		}
 
-		private Button CreateButton(string localizedText, bool centerText = true)
+		private Button CreateButton(string localizedText, bool smallScreen, bool centerText = true, ImageBuffer icon = null)
 		{
-			var button = buttonFactory.Generate(localizedText, centerText: centerText);
+			Button button = null;
+			if(icon == null)
+			{
+				button = buttonFactory.Generate(localizedText, centerText: centerText);
+			}
+			else
+			{
+				button = buttonFactory.GenerateTooltipButton(localizedText, icon);
+			}
 			var bounds = button.LocalBounds;
-			bounds.Inflate(new BorderDouble(40, 10));
+			if (smallScreen)
+			{
+				bounds.Inflate(new BorderDouble(10, 10));
+			}
+			else
+			{
+				bounds.Inflate(new BorderDouble(40, 10));
+			}
 			button.LocalBounds = bounds;
 			button.Cursor = Cursors.Hand;
 			button.Margin = new BorderDouble(0);
@@ -451,6 +493,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (!HasBeenClosed)
 			{
 				GetProgressInfo();
+
+				// Here for safety
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				{
+					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+						break;
+
+					default:
+						this.CloseOnIdle();
+						break;
+				}
+
 				UiThread.RunOnIdle(CheckOnPrinter, 1);
 			}
 		}
@@ -563,20 +619,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				timeContainer.AddChild(timeWidget);
 
+				int maxTextWidth = 350;
 				printerName = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
-					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = new BorderDouble(50, 3)
+					HAnchor = HAnchor.ParentCenter,
+					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
+					Width = maxTextWidth,
+					Margin = new BorderDouble(0, 3),
 				};
 
 				progressContainer.AddChild(printerName);
 
 				partName = new TextWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
-					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = new BorderDouble(50, 3)
+					HAnchor = HAnchor.ParentCenter,
+					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
+					Width = maxTextWidth,
+					Margin = new BorderDouble(0, 3)
 				};
 				progressContainer.AddChild(partName);
 			}
@@ -761,7 +820,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (layerCount != value)
 				{
 					layerCount = value;
-					layerCountWidget.Text = "Layer".Localize() + " " + layerCount;
+					if (layerCount == 0)
+					{
+						layerCountWidget.Text = "Printing".Localize() + "...";
+					}
+					else
+					{
+						layerCountWidget.Text = "Layer".Localize() + " " + layerCount;
+					}
 				}
 			}
 		}
@@ -845,6 +911,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(new TextWidget("Z+", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
+				AutoExpandBoundsToText = true,
 				HAnchor = HAnchor.ParentCenter,
 				Margin = new BorderDouble(bottom: 8)
 			});
@@ -865,6 +932,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(new TextWidget("Z-", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
+				AutoExpandBoundsToText = true,
 				HAnchor = HAnchor.ParentCenter,
 				Margin = new BorderDouble(top: 9),
 			});

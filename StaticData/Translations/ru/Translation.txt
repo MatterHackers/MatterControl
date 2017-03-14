@@ -5941,3 +5941,57 @@ Translated:Готово!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ВНИМАНИЕ: Для того, чтобы выполнить восстановление печати, принтер должен двигаться вниз, чтобы достигнуть его исходное положение. \ П Если печать слишком велик, часть вашего принтера может столкнуться с ней при движении вниз. \ П Убедитесь, что она безопасна для выполнения этой операции, прежде чем продолжить.
 
+English:Print Monitor
+Translated:Print Monitor
+
+English:Currently Printing
+Translated:В настоящее время Печать
+
+English:Homing Axis
+Translated:Наведение Ось
+
+English:Waiting for Extruder to Heat to
+Translated:Ожидание Экструдер нагреется до
+
+English:Waiting for Bed to Heat to
+Translated:Ожидание кровати, чтобы Нагревать
+
+English:Bed
+Translated:Постель
+
+English:Axis movement speeds
+Translated:скорость движения оси
+
+English:Tuning Adjust
+Translated:Настройка Настройка
+
+English:Initializing
+Translated:Инициализация
+
+English:Connection Failed
+Translated:Ошибка подключения
+
+English:Show Password
+Translated:Показать пароль
+
+English:Submit Button
+Translated:Отправить Button
+
+English:Enter 12 Digit Redemption Code
+Translated:Введите 12-значный код Redemption
+
+English:This is located on the rear of your card
+Translated:Он расположен на задней стороне карты
+
+English:Please wait. Verifying code...
+Translated:Пожалуйста, подождите. Проверка кода ...
+
+English:View Designs
+Translated:Просмотр образцов
+
+English:Success! Your code has been redeemed.
+Translated:Успех! Ваш код был выкуплен.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Ваши новые проекты будут появляться в "Приобретенные" папку библиотеки.
+

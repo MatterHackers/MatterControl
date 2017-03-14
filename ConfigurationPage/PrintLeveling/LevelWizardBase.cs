@@ -158,7 +158,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(false);
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			levelingData.SampledPositions.Clear(); 
+			levelingData.SampledPositions.Clear();
+			ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 
 			LevelWizardBase printLevelWizardWindow;

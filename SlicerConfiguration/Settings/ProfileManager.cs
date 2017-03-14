@@ -511,7 +511,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// The collector specifically returns null to ensure LoadCacheable skips writing the
 					// result to the cache. After this result is returned, it will attempt to load from
 					// the local cache if the collector yielded no result
-					if(File.Exists(cachePath))
+					if(File.Exists(cachePath) 
+						|| ApplicationController.DownloadPublicProfileAsync == null)
 					{
 						return null;
 					}

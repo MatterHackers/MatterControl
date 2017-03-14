@@ -445,7 +445,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 			actionMenuEnableData.Add(new MenuEnableData(
 				actionMenu.AddItem(menuItems[menuItems.Count - 1].Title),
-				false, false, false));
+				false, true, false));
 
 			// share menu item
 			menuItems.Add(new PrintItemAction()

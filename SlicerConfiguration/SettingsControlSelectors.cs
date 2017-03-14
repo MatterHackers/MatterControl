@@ -262,6 +262,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Ensure that activated or deactivated user overrides are always persisted to disk
 			activeSettings.Save();
 
+			UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+				foreach (var keyName in PrinterSettings.KnownSettings)
+				{
+					if (settingBeforeChange[keyName] != ActiveSliceSettings.Instance.GetValue(keyName))
+					{
+						ActiveSliceSettings.OnSettingChanged(keyName);
+					}
+				}
+			});
+
 			editButton.Enabled = item.Text != defaultMenuItemText;
 		}
 
@@ -375,30 +387,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//Add Each SliceEngineInfo Objects to DropMenu
 			foreach (SliceEngineInfo engineMenuItem in SlicingQueue.AvailableSliceEngines)
 			{
-				bool engineAllowed = true;
-				if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1 && engineMenuItem.Name != "MatterSlice")
-				{
-					engineAllowed = false;
-				}
+				MenuItem item = AddItem(engineMenuItem.Name);
+				item.Enabled = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) < 2 || engineMenuItem.Name == "MatterSlice";
 
-				if (engineAllowed)
+				SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
+				item.Selected += (sender, e) =>
 				{
-					MenuItem item = AddItem(engineMenuItem.Name);
-					SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
-					item.Selected += (sender, e) =>
+					if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() != itemEngineType)
 					{
-						if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() != itemEngineType)
-						{
-							ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType(itemEngineType);
-							ApplicationController.Instance.ReloadAdvancedControlsPanel();
-						}
-					};
-
-					//Set item as selected if it matches the active slice engine
-					if (engineMenuItem.GetSliceEngineType() == ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
-					{
-						SelectedLabel = engineMenuItem.Name;
+						ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType(itemEngineType);
+						ApplicationController.Instance.ReloadAdvancedControlsPanel();
 					}
+				};
+
+				//Set item as selected if it matches the active slice engine
+				if (itemEngineType == ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
+				{
+					SelectedLabel = engineMenuItem.Name;
 				}
 			}
 

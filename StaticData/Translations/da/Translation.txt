@@ -638,7 +638,7 @@ English:Used for small perimeters (usually holes). This can be set explicitly or
 Translated:Anvendes til små perimetre (normalt huller). Dette kan indstilles eksplicit eller som en procentdel af det påbudt 'hastighed.
 
 English:The pattern used on the bottom and top layers of the print.
-Translated:Mønstret bruges på de nederste og øverste lag af udskriften.
+Translated:Mønstret bruges på bunden og toppen lag af udskriften.
 
 English:Forces solid infill for any area less than this amount.
 Translated:Tvinger solid infill til ethvert område mindre end dette beløb.
@@ -647,7 +647,7 @@ English:Sets how often a layer will be forced to be solid infilled. Zero will re
 Translated:Angiver, hvor ofte et lag vil blive tvunget til at være fast udfyldt af. Nul vil resultere i normal infill overalt.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Hastigheden for at udskrive infill når helt fast. Dette kan indstilles eksplicit eller som en procentdel af fyldmaterialet hastighed.
+Translated:Hastigheden for at udskrive infill når helt fast. Dette kan indstilles eksplicit eller som en procentdel af Infill hastighed.
 
 English:Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.
 Translated:Tving print kun at have ét lag og gradvist øge ekstruder højde under udskriften. Kun en del kan udskrives ad gangen med denne funktion.
@@ -719,7 +719,7 @@ English:This gcode will be inserted after every tool change.
 Translated:Denne gcode vil blive indsat efter hver værktøjsskift.
 
 English:The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Hastigheden for at udskrive den øverste infill. Dette kan indstilles eksplicit eller som en procentdel af fyldmaterialet hastighed.
+Translated:Hastigheden for at udskrive den øverste infill. Dette kan indstilles eksplicit eller som en procentdel af Infill hastighed.
 
 English:How many layers will be solid filled on the top surfaces of the object.
 Translated:Hvor mange lag vil blive solidt fyldt på de øverste overflader af objektet.
@@ -4088,7 +4088,7 @@ English:The speed at which the cooling fan(s) will run during the printing of th
 Translated:Den hastighed, hvormed køleventilator (er) vil løbe under udskrivningen af ​​raft, udtrykt som en procentdel af fuld effekt.
 
 English:The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Den hastighed, hvormed lagene af flåden (andre end det første lag) udskrives. Dette kan indstilles eksplicit eller som en procentdel af fyldmaterialet hastighed.
+Translated:Den hastighed, hvormed lagene af flåden (andre end det første lag) udskrives. Dette kan indstilles eksplicit eller som en procentdel af Infill hastighed.
 
 English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
 Translated:Antallet af lag, for hvilke laget køleventilator vil blive tvunget ud i begyndelsen af ​​udskriften.
@@ -5940,4 +5940,58 @@ Translated:Færdig!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ADVARSEL: For at udføre print nyttiggørelse, skal printeren flytte ned for at nå sin udgangsposition. \ N Hvis dit print er for stor, kan en del af din printer kolliderer med det, når de flytter ned. \ N Sørg for at det er sikkert at udføre denne operation, før du fortsætter.
+
+English:Print Monitor
+Translated:print Monitor
+
+English:Currently Printing
+Translated:I øjeblikket Printing
+
+English:Homing Axis
+Translated:målsøgende Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Venter på ekstruder til varme til
+
+English:Waiting for Bed to Heat to
+Translated:Venter på Bed til Heat til
+
+English:Bed
+Translated:Seng
+
+English:Axis movement speeds
+Translated:Axis bevægelse hastigheder
+
+English:Tuning Adjust
+Translated:Tuning Juster
+
+English:Initializing
+Translated:Initialiserer
+
+English:Connection Failed
+Translated:Forbindelsen mislykkedes
+
+English:Show Password
+Translated:Vis adgangskode
+
+English:Submit Button
+Translated:Indsend Button
+
+English:Enter 12 Digit Redemption Code
+Translated:Indtast 12 Digit Redemption Code
+
+English:This is located on the rear of your card
+Translated:Dette er placeret på bagsiden af ​​dit kort
+
+English:Please wait. Verifying code...
+Translated:Vent venligst. Bekræfter kode ...
+
+English:View Designs
+Translated:Vis Designs
+
+English:Success! Your code has been redeemed.
+Translated:Succes! Din kode er blevet indløst.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Dine nye designs vil blive vist i "Købt" bibliotek mappe.
 

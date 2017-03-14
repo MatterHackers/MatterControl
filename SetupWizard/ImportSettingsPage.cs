@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 {
 	public class SelectPartsOfPrinterToImport : WizardPage
 	{
-		private static string importMessage = "Select what you would like to merge into your current profile.".Localize();
+		private string importMessage = "Select what you would like to merge into your current profile.".Localize();
 
 		private string settingsFilePath;
 		private PrinterSettings settingsToImport;
@@ -239,7 +239,8 @@ namespace MatterHackers.MatterControl
 					if (!isMergeIntoUserLayer)
 					{
 						string sourceName = isMergeIntoUserLayer ? Path.GetFileNameWithoutExtension(settingsFilePath) : destinationLayer[SettingsKey.layer_name];
-						successMessage = ImportSettingsPage.importSettingSuccessMessage.FormatWith(sourceName, sectionName);
+						string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
+						successMessage = importSettingSuccessMessage.FormatWith(sourceName, sectionName);
 					}
 
 					WizardWindow.ChangeToPage(new ImportSucceeded(successMessage)
@@ -250,7 +251,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static string importPrinterSuccessMessage = "Settings have been merged into your current printer.".Localize();
+		private string importPrinterSuccessMessage = "Settings have been merged into your current printer.".Localize();
 	}
 
 	public class ImportSucceeded : WizardPage
@@ -399,8 +400,8 @@ namespace MatterHackers.MatterControl
 			return container;
 		}
 
-		private static string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-		internal static string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
+		protected string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
+		protected string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
 
 		private void ImportSettingsFile(string settingsFilePath)
 		{

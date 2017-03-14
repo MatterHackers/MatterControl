@@ -31,9 +31,10 @@ namespace MatterHackers.MatterControl
 		{
 			return new List<MenuItemAction>
 			{
-				// TODO: Helper while building printing window prototype... remove once finalized
+#if DEBUG
 				new MenuItemAction("Printing Window...".Localize(), () => PrintingWindow.Show()),
 				new MenuItemAction("------------------------", null),
+#endif
 				new MenuItemAction("Add Printer".Localize(), AddPrinter_Click),
 				new MenuItemAction("Import Printer".Localize(), ImportPrinter),
 				new MenuItemAction("Add File To Queue".Localize(), importFile_Click),

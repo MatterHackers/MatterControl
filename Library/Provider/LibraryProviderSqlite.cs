@@ -293,10 +293,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					string thumbnailDestFile = PartThumbnailWidget.GetImageFileName(printItemToAdd);
 
-					Directory.CreateDirectory(Path.GetDirectoryName(thumbnailDestFile));
+					try
+					{
+						Directory.CreateDirectory(Path.GetDirectoryName(thumbnailDestFile));
 
-					// copy it to the right place
-					File.Copy(thumbnailSourceFile, thumbnailDestFile);
+						// copy it to the right place
+						File.Copy(thumbnailSourceFile, thumbnailDestFile, true);
+					}
+					catch
+					{
+					}
 				}
 
 				QueueData.Instance.AddItem(printItemToAdd);

@@ -5941,3 +5941,57 @@ Translated:Gedaan!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WAARSCHUWING: Om de druk herstel uitvoeren, moet uw printer neer te bewegen naar de uitgangspositie te bereiken. \ N Als uw print te groot is, een deel van uw printer kan botsen met het toen naar beneden. \ N Zorg ervoor dat het veilig is om deze handeling uit te voeren voordat u verder gaat.
 
+English:Print Monitor
+Translated:Print Monitor
+
+English:Currently Printing
+Translated:momenteel Printing
+
+English:Homing Axis
+Translated:homing Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Wachten op Extruder naar Heat naar
+
+English:Waiting for Bed to Heat to
+Translated:Wachten op bed te Verwarm
+
+English:Bed
+Translated:Bed
+
+English:Axis movement speeds
+Translated:Axis beweging versnelt
+
+English:Tuning Adjust
+Translated:tuning Adjust
+
+English:Initializing
+Translated:initialiseren
+
+English:Connection Failed
+Translated:Verbinding mislukt
+
+English:Show Password
+Translated:Laat wachtwoord zien
+
+English:Submit Button
+Translated:Verzendknop
+
+English:Enter 12 Digit Redemption Code
+Translated:Voer 12 Digit Inwisselcode
+
+English:This is located on the rear of your card
+Translated:Deze bevindt zich aan de achterzijde van uw kaart
+
+English:Please wait. Verifying code...
+Translated:Even geduld aub. Het verifiëren van code ...
+
+English:View Designs
+Translated:Bekijk Designs
+
+English:Success! Your code has been redeemed.
+Translated:Succes! Uw code is ingewisseld.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Uw nieuwe ontwerpen zullen verschijnen in de 'Gekocht' bibliotheek map.
+

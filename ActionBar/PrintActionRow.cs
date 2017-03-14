@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private List<Button> allPrintButtons = new List<Button>();
 		private Button cancelButton;
 		private Button cancelConnectButton;
-		private Button connectButton;
+		private Button touchScreenConnectButton;
 		private Button addPrinterButton;
 		private Button selectPrinterButton;
 		private Button resetConnectionButton;
@@ -123,20 +123,21 @@ namespace MatterHackers.MatterControl.ActionBar
 			finishSetupButton.Margin = new BorderDouble(6, 6, 6, 3);
 			finishSetupButton.Click += onStartButton_Click;
 
-			connectButton = textImageButtonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("icon_power_32x32.png",32,32).InvertLightness());
-			connectButton.ToolTipText = "Connect to the printer".Localize();
-			connectButton.Margin = new BorderDouble(6, 6, 6, 3);
-			connectButton.Click += (s, e) =>
+			touchScreenConnectButton = textImageButtonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("connect.png", 32,32).InvertLightness());
+			touchScreenConnectButton.ToolTipText = "Connect to the printer".Localize();
+			touchScreenConnectButton.Margin = new BorderDouble(6, 6, 6, 3);
+			touchScreenConnectButton.Click += (s, e) =>
 			{
 				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
 #if __ANDROID__
-				if (!FrostedSerialPort.HasPermissionToDevice())
-				{
-					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
-					FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
-				}
-				else
+					if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing)
+					    && !FrostedSerialPort.HasPermissionToDevice())
+					{
+						// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
+						FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
+					}
+					else
 #endif
 					{
 						PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
@@ -222,8 +223,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Margin = new BorderDouble(0, 0, 10, 0);
 			this.HAnchor = HAnchor.FitToChildren;
 
-			this.AddChild(connectButton);
-			allPrintButtons.Add(connectButton);
+			this.AddChild(touchScreenConnectButton);
+			allPrintButtons.Add(touchScreenConnectButton);
 
 			this.AddChild(addPrinterButton);
 			allPrintButtons.Add(addPrinterButton);
@@ -306,7 +307,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					// only on touch screen because desktop has a printer list and a connect button
 					if (ActiveSliceSettings.Instance.PrinterSelected)
 					{
-						this.activePrintButtons.Add(connectButton);
+						this.activePrintButtons.Add(touchScreenConnectButton);
 					}
 					else // no printer selected
 					{
