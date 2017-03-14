@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 						{
 							if (filterOutput.Checked)
 							{
-								textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "->M105", "<-T" });
+								textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "<-T" });
 							}
 							else
 							{
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl
 				};
 
 				//Output Console text to screen
-				Button exportConsoleTextButton = controlButtonFactory.Generate("Export...".Localize());
+				Button exportConsoleTextButton = controlButtonFactory.Generate("Export".Localize() + "...");
 				exportConsoleTextButton.Click += (sender, mouseEvent) =>
 				{
 					UiThread.RunOnIdle(DoExportExportLog_Click);
@@ -217,8 +217,8 @@ namespace MatterHackers.MatterControl
 		}
 #endif
 
-		readonly static string writeFaildeWaring = "WARNING: Write Failed!".Localize();
-		readonly static string cantAccessPath = "Can't access '{0}'.".Localize();
+		string writeFaildeWaring = "WARNING: Write Failed!".Localize();
+		string cantAccessPath = "Can't access '{0}'.".Localize();
 
 		private void onExportLogFileSelected(SaveFileDialogParams saveParams)
 		{

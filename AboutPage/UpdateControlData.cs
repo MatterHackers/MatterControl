@@ -201,13 +201,13 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static string updateAvailableMessage = "There is a recommended update available for MatterControl. Would you like to download it now?".Localize();
-		private static string updateAvailableTitle = "Recommended Update Available".Localize();
-		private static string downloadNow = "Download Now".Localize();
-		private static string remindMeLater = "Remind Me Later".Localize();
-
 		private void onVersionRequestSucceeded(object sender, EventArgs e)
 		{
+			string updateAvailableMessage = "There is a recommended update available for MatterControl. Would you like to download it now?".Localize();
+			string updateAvailableTitle = "Recommended Update Available".Localize();
+			string downloadNow = "Download Now".Localize();
+			string remindMeLater = "Remind Me Later".Localize();
+
 			string currentBuildToken = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken);
 			string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
 

@@ -3527,7 +3527,7 @@ English:Using the above controls
 Translated:Stosując powyższe kontrole
 
 English:Add Local Folder To Library
-Translated:Dodaj lokalny folder do biblioteki
+Translated:Dodaj Local folder Aby Bibliotece
 
 English:Redeem Design Code
 Translated:Zrealizuj kod projektu
@@ -5940,4 +5940,58 @@ Translated:Gotowe!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:UWAGA: W celu przeprowadzenia odzyskiwania druku, drukarka musi poruszać się w dół, aby osiągnąć swoją pozycję domową. \ N Jeśli wydruk jest zbyt duża, część drukarki mogą zderzyć się z nim podczas ruchu w dół. \ N Upewnij się, że można bezpiecznie wykonać tę operację przed przystąpieniem.
+
+English:Print Monitor
+Translated:Print monitor
+
+English:Currently Printing
+Translated:obecnie drukarnie
+
+English:Homing Axis
+Translated:homing Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Oczekiwanie na ciepło do wytłaczarki
+
+English:Waiting for Bed to Heat to
+Translated:Oczekiwanie na łóżko do ciepła do
+
+English:Bed
+Translated:Łóżko
+
+English:Axis movement speeds
+Translated:Oś przyspiesza ruch
+
+English:Tuning Adjust
+Translated:Tuning Ustaw
+
+English:Initializing
+Translated:Inicjowanie
+
+English:Connection Failed
+Translated:Połączenie nieudane
+
+English:Show Password
+Translated:Pokaż hasło
+
+English:Submit Button
+Translated:Umieść przycisk
+
+English:Enter 12 Digit Redemption Code
+Translated:Wprowadź 12-cyfrowy kod Wykupu
+
+English:This is located on the rear of your card
+Translated:Ten znajduje się z tyłu karty
+
+English:Please wait. Verifying code...
+Translated:Proszę czekać. Sprawdzanie kodu ...
+
+English:View Designs
+Translated:Zobacz wzory
+
+English:Success! Your code has been redeemed.
+Translated:Powodzenie! Twój kod został wykorzystany.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:Twoje nowe wzory pojawią się w folderze "Kupione" biblioteki.
 

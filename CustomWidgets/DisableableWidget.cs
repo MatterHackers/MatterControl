@@ -14,42 +14,45 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Margin = new BorderDouble(3);
 			disableOverlay = new GuiWidget(0, 0);
 
-			this.BoundsChanged += (s, e) =>
-			{
-				if (Parent != null
-				&& Parent.Visible && Parent.Width > 0
-				&& Parent.Height > 0
-				&& Parent.Children.Count > 1)
-				{
-					if(Children.IndexOf(disableOverlay) != Children.Count-1)
-					{
-						Children.RemoveAt(Children.IndexOf(disableOverlay));
-						disableOverlay.ClearRemovedFlag();
-						Children.Add(disableOverlay);
-					}
-
-					var childBounds = GetChildrenBoundsIncludingMargins(considerChild: (parent, child) =>
-					{
-						if (child == disableOverlay)
-						{
-							return false;
-						}
-
-						return true;
-					});
-
-					if (childBounds != RectangleDouble.ZeroIntersection)
-					{
-						disableOverlay.LocalBounds = new RectangleDouble(childBounds.Left,
-							childBounds.Bottom,
-							childBounds.Right,
-							childBounds.Top - disableOverlay.Margin.Top);
-					}
-				}
-			};
+			this.BoundsChanged += (s, e) => EnsureCorrectBounds();
+			this.ParentChanged += (s, e) => EnsureCorrectBounds();
 
 			disableOverlay.Visible = false;
 			base.AddChild(disableOverlay);
+		}
+
+		private void EnsureCorrectBounds()
+		{
+			if (Parent != null
+				&& Parent.Visible && Parent.Width > 0
+				&& Parent.Height > 0
+				&& Parent.Children.Count > 1)
+			{
+				if (Children.IndexOf(disableOverlay) != Children.Count - 1)
+				{
+					Children.RemoveAt(Children.IndexOf(disableOverlay));
+					disableOverlay.ClearRemovedFlag();
+					Children.Add(disableOverlay);
+				}
+
+				var childBounds = GetChildrenBoundsIncludingMargins(considerChild: (parent, child) =>
+				{
+					if (child == disableOverlay)
+					{
+						return false;
+					}
+
+					return true;
+				});
+
+				if (childBounds != RectangleDouble.ZeroIntersection)
+				{
+					disableOverlay.LocalBounds = new RectangleDouble(childBounds.Left,
+						childBounds.Bottom,
+						childBounds.Right,
+						childBounds.Top - disableOverlay.Margin.Top);
+				}
+			}
 		}
 
 		public enum EnableLevel { Disabled, ConfigOnly, Enabled };

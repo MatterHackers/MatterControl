@@ -42,15 +42,16 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
 	public static class PrintRecovery
 	{
-		static string recoverPrint = "Recover Print".Localize();
-		static string cancelRecovery = "Cancel".Localize();
-		static string printRecoveryWarningMessage = "WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.".Localize();
-		static string printRecoveryMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize();
-		static string recoverPrintTitle = "Recover Last Print".Localize();
 		static PrintTask lastPrintTask;
 
         public static void CheckIfNeedToRecoverPrint(object sender, EventArgs e)
 		{
+			string recoverPrint = "Recover Print".Localize();
+			string cancelRecovery = "Cancel".Localize();
+			string printRecoveryWarningMessage = "WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.".Localize();
+			string printRecoveryMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize();
+			string recoverPrintTitle = "Recover Last Print".Localize();
+
 			foreach (PrintTask lastPrint in PrintHistoryData.Instance.GetHistoryItems(1))
 			{
 				if (!lastPrint.PrintComplete // Top Print History Item is not complete

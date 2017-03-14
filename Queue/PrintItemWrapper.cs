@@ -46,11 +46,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public event EventHandler SlicingDone;
 		public event EventHandler<StringEventArgs> SlicingOutputMessage;
-		private static string fileNotFound = "File Not Found\n'{0}'".Localize();
 
-		private static string readyToPrint = "Ready to Print".Localize();
-
-		private static string slicingError = "Slicing Error".Localize();
+		private string fileNotFound = "File Not Found\n'{0}'".Localize();
+		private string readyToPrint = "Ready to Print".Localize();
+		private string slicingError = "Slicing Error".Localize();
 
 		private bool doneSlicing;
 

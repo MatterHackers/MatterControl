@@ -61,6 +61,9 @@ namespace MatterControl.Tests
 		[Test]
 		public void LibraryProviderFileSystem_NavigationWorking()
 		{
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
 			string meshFileName = "Box20x20x10.stl";
 			string meshPathAndFileName = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "Tests", "TestData", "TestMeshes", "LibraryProviderData", meshFileName);
 			int dataReloadedCount = 0;

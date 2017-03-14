@@ -5941,3 +5941,57 @@ Translated:Ferdig!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ADVARSEL: For å utføre print utvinning, må skriveren flytte ned for å nå utgangsposisjon. \ N Hvis utskriften er for stor, en del av skriveren kan kollidere med den når den går ned. \ N Sørg for at det er trygt å utføre denne operasjonen før du fortsetter.
 
+English:Print Monitor
+Translated:Print Monitor
+
+English:Currently Printing
+Translated:foreløpig Utskrift
+
+English:Homing Axis
+Translated:homing Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Venter på Extruder å varme til
+
+English:Waiting for Bed to Heat to
+Translated:Venter på Bed å varme det opp til
+
+English:Bed
+Translated:Seng
+
+English:Axis movement speeds
+Translated:Axis bevegelse hastigheter
+
+English:Tuning Adjust
+Translated:tuning Juster
+
+English:Initializing
+Translated:Initial
+
+English:Connection Failed
+Translated:Tilkoblingen mislyktes
+
+English:Show Password
+Translated:Vis passord
+
+English:Submit Button
+Translated:Send Button
+
+English:Enter 12 Digit Redemption Code
+Translated:Skriv inn 12 siffer Innløsningskode
+
+English:This is located on the rear of your card
+Translated:Denne er plassert på baksiden av kortet ditt
+
+English:Please wait. Verifying code...
+Translated:Vennligst vent. Bekrefter kode ...
+
+English:View Designs
+Translated:Se Designs
+
+English:Success! Your code has been redeemed.
+Translated:Suksess! Koden er innløst.
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:De nye design vil vises i Kjøpt-bibliotek mappe.
+

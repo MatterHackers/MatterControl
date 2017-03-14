@@ -34,6 +34,8 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl
 {
@@ -56,6 +58,15 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(cancelButton);
 
 			cancelButton.Text = "Back".Localize();
+
+#if ANDROID_T7X
+			headerRow.AddChild(new HorizontalSpacer());
+			var powerImage = StaticData.Instance.LoadIcon("power.png", 32, 32);
+			var powerButton = new TextImageButtonFactory() { FixedHeight = 42, Margin = new BorderDouble(0, 0, 10, 0), borderWidth = 0 }.GenerateTooltipButton("", powerImage);
+			powerButton.Click += (s, e) => MatterControlApplication.Instance.RequestPowerShutDown();
+			powerButton.VAnchor |= VAnchor.ParentCenter;
+			headerRow.AddChild(powerButton);
+#endif
 		}
 	}
 

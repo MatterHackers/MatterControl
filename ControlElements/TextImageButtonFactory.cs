@@ -340,21 +340,6 @@ namespace MatterHackers.MatterControl
 
 		private ButtonViewStates getButtonView(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
 		{
-			if (hoverImageName == null)
-			{
-				hoverImageName = normalImageName;
-			}
-
-			if (pressedImageName == null)
-			{
-				pressedImageName = hoverImageName;
-			}
-
-			if (disabledImageName == null)
-			{
-				disabledImageName = normalImageName;
-			}
-
 			ImageBuffer normalImage = null;
 			ImageBuffer pressedImage = null;
 			ImageBuffer hoverImage = null;
@@ -401,7 +386,8 @@ namespace MatterHackers.MatterControl
 
 			if (disabledImage == null && normalImage != null)
 			{
-				disabledImage = new ImageBuffer(normalImage);
+				// Generate the disabled image by lowering the alpha
+				disabledImage = normalImage.Multiply(new RGBA_Bytes(255, 255, 255, 150));
 			}
 
 			if (ActiveTheme.Instance.IsDarkTheme

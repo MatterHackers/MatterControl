@@ -5630,7 +5630,7 @@ English:The number of degrees Centigrade to lower the temperature of a nozzle wh
 Translated:摄氏度的数量，以降低喷嘴的温度，同时它是不活动的。
 
 English:Disconnect and stop the current print?
-Translated:断开并停止当前打印？
+Translated:断开，并停止当前打印？
 
 English:WARNING: Disconnecting will stop the current print
 Translated:警告：断开将停止当前的打印
@@ -5657,7 +5657,7 @@ English:Unable to Connect
 Translated:无法连接
 
 English:Port number to be used with IP Address to connect to printer over the network
-Translated:与IP地址使用的端口号通过网络连接到打印机
+Translated:与IP地址使用的端口号通过网络连接打印机
 
 English:Reset to Defaults
 Translated:重置为默认值
@@ -5783,7 +5783,7 @@ English:Restart
 Translated:重新开始
 
 English:Please Review Your Order
-Translated:请查看您的订单
+Translated:，请检查您订购
 
 English:Loading product information. Pleast wait...
 Translated:加载产品信息。 Pleast稍候...
@@ -5940,4 +5940,58 @@ Translated:完成！
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:警告：为了进行打印的恢复，您的打印机必须向下移动到达其位置。 \ n如果您打印太大，打印机的部分可以用它向下移动时发生碰撞。 \ n请确保它是安全的，然后再继续执行此操作。
+
+English:Print Monitor
+Translated:打印监视器
+
+English:Currently Printing
+Translated:目前印刷
+
+English:Homing Axis
+Translated:轴归位
+
+English:Waiting for Extruder to Heat to
+Translated:等待挤出机加热至
+
+English:Waiting for Bed to Heat to
+Translated:等待床加热到
+
+English:Bed
+Translated:床
+
+English:Axis movement speeds
+Translated:轴移动速度
+
+English:Tuning Adjust
+Translated:调整调优
+
+English:Initializing
+Translated:初始化
+
+English:Connection Failed
+Translated:连接失败
+
+English:Show Password
+Translated:显示密码
+
+English:Submit Button
+Translated:提交按钮
+
+English:Enter 12 Digit Redemption Code
+Translated:输入12位兑换码
+
+English:This is located on the rear of your card
+Translated:这是位于您的卡后
+
+English:Please wait. Verifying code...
+Translated:请稍候。验证码...
+
+English:View Designs
+Translated:查看设计
+
+English:Success! Your code has been redeemed.
+Translated:成功！您的代码已被赎回。
+
+English:Your new designs will appear in the 'Purchased' library folder.
+Translated:您的新设计将出现在“已购买”库文件夹。
 

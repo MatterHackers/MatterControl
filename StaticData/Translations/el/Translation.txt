@@ -5941,3 +5941,30 @@ Translated:Εγινε!
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Για να εκτελέσει την ανάκτηση εκτύπωσης, ο εκτυπωτής σας πρέπει να μετακινηθείτε προς τα κάτω για να φτάσει στην αρχική του θέση. \ N Εάν η εκτύπωση είναι πολύ μεγάλο, μέρος του εκτυπωτή σας μπορεί να συγκρουστεί με αυτό όταν κινείται προς τα κάτω. \ N Βεβαιωθείτε ότι είναι ασφαλές να εκτελέσετε αυτή τη λειτουργία πριν προχωρήσετε.
 
+English:Print Monitor
+Translated:Print Monitor
+
+English:Currently Printing
+Translated:Εκτύπωση Επί του παρόντος,
+
+English:Homing Axis
+Translated:παλιννόστησης του Άξονα
+
+English:Waiting for Extruder to Heat to
+Translated:Αναμονή για Κάδος σε θερμότητα για να
+
+English:Waiting for Bed to Heat to
+Translated:Αναμονή για Κρεβάτι σε θερμότητα για να
+
+English:Bed
+Translated:Κρεβάτι
+
+English:Axis movement speeds
+Translated:Άξονα κίνησης ταχύτητες
+
+English:Tuning Adjust
+Translated:Συντονισμός Ρύθμιση
+
+English:Initializing
+Translated:αρχικοποίηση
+

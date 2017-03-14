@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrintStatusRow : FlowLayoutWidget
 	{
-		private TextWidget activePrintInfo;
 		private TextWidget activePrintLabel;
 		private TextWidget activePrintName;
 		private PartThumbnailWidget activePrintPreviewImage;
@@ -160,15 +159,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			activePrintStatus.Text = "";
 			activePrintStatus.Margin = new BorderDouble(top: 3);
 
-			activePrintInfo = getPrintStatusLabel("", pointSize: 11);
-			activePrintInfo.AutoExpandBoundsToText = true;
-
-			PrintActionRow printActionRow = new PrintActionRow(queueDataView);
-
 			container.AddChild(topRow);
 			container.AddChild(activePrintName);
 			container.AddChild(activePrintStatus);
-			container.AddChild(printActionRow);
+			container.AddChild(new PrintActionRow(queueDataView));
 
 			return container;
 		}
@@ -267,6 +261,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void UpdatePrintStatus()
 		{
+			string printLabel = "Next Print".Localize() + ":";
+			string printerStatus = activePrintStatus.Text;
+
 			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
 			{
 				int totalSecondsInPrint = PrinterConnectionAndCommunication.Instance.TotalSecondsInPrint;
@@ -305,62 +302,50 @@ namespace MatterHackers.MatterControl.ActionBar
 				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
 				{
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-						activePrintLabel.Text = "Preparing To Print".Localize() + ":";
-						activePrintInfo.Text = "";
+						printLabel = "Preparing To Print".Localize() + ":";
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						activePrintLabel.Text = PrinterConnectionAndCommunication.Instance.PrintingStateString;
-						activePrintStatus.Text = totalPrintTimeText;
+						printLabel = PrinterConnectionAndCommunication.Instance.PrintingStateString;
+						printerStatus = totalPrintTimeText;
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						activePrintLabel.Text = "Printing Paused".Localize() + ":";
-						activePrintStatus.Text = totalPrintTimeText;
+						printLabel = "Printing Paused".Localize() + ":";
+						printerStatus = totalPrintTimeText;
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-						activePrintLabel.Text = "Done Printing".Localize() + ":";
-						activePrintStatus.Text = totalPrintTimeText;
+						printLabel = "Done Printing".Localize() + ":";
+						printerStatus = totalPrintTimeText;
+						break;
+
+					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
+						printerStatus = "Not connected. Press 'Connect' to enable printing.".Localize();
+						break;
+
+					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
+						printerStatus = "Attempting to Connect".Localize() + "...";
+						break;
+
+					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
+					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
+						printerStatus = "Connection Failed".Localize() + ": " + PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage;
 						break;
 
 					default:
-						activePrintLabel.Text = "Next Print".Localize() + ":";
-
-						string statusMessage = "";
-
-						if (!ActiveSliceSettings.Instance.PrinterSelected)
-						{
-							statusMessage = "Select a Printer.".Localize();
-						}
-						else
-						{
-							switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-							{
-								case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-									statusMessage = "Not connected. Press 'Connect' to enable printing.".Localize();
-									break;
-
-								case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-									statusMessage = "Attempting to Connect".Localize() + "...";
-									break;
-
-								case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-								case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-									statusMessage = "Unable to communicate with printer.".Localize();
-									break;
-							}
-						}
-
-						activePrintStatus.Text = statusMessage;
+						printerStatus = ActiveSliceSettings.Instance.PrinterSelected ? "" : "Select a Printer.".Localize();
 						break;
 				}
 			}
 			else
 			{
-				activePrintLabel.Text = "Next Print".Localize() + ":";
-				activePrintStatus.Text = "Press 'Add' to choose an item to print".Localize();
+				printLabel = "Next Print".Localize() + ":";
+				printerStatus = "Press 'Add' to choose an item to print".Localize();
 			}
+
+			activePrintLabel.Text = printLabel;
+			activePrintStatus.Text = printerStatus;
 		}
 	}
 }

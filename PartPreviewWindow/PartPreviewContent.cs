@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.Padding = new BorderDouble(top: 6);
 
 			RGBA_Bytes selectedTabColor;
-			if (UserSettings.Instance.IsTouchScreen)
+			if (!UserSettings.Instance.IsTouchScreen)
 			{
 				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				selectedTabColor = ActiveTheme.Instance.TabLabelSelected;

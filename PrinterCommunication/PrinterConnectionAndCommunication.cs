@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMachineInstruction.MovementTypes movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
 
-		private CommunicationStates prePauseCommunicationState = CommunicationStates.Printing;
+		public CommunicationStates PrePauseCommunicationState { get; private set; } = CommunicationStates.Printing;
 
 		private DetailedPrintingState printingStatePrivate;
 
@@ -482,11 +482,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								{
 									if (communicationState == CommunicationStates.Printing)
 									{
-										prePauseCommunicationState = CommunicationStates.Printing;
+										PrePauseCommunicationState = CommunicationStates.Printing;
 									}
 									else
 									{
-										prePauseCommunicationState = CommunicationStates.PrintingFromSd;
+										PrePauseCommunicationState = CommunicationStates.PrintingFromSd;
 									}
 									timeSinceStartedPrint.Stop();
 								}
@@ -620,7 +620,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get
 			{
 				if (CommunicationState == CommunicationStates.PrintingFromSd
-					|| (communicationState == CommunicationStates.Paused && prePauseCommunicationState == CommunicationStates.PrintingFromSd))
+					|| (communicationState == CommunicationStates.Paused && PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
 				{
 					if (totalSdBytes > 0)
 					{
@@ -999,7 +999,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (ActivePrinter != null)
 			{
 				// Start the process of requesting permission and exit if permission is not currently granted
-				if (!FrostedSerialPort.EnsureDeviceAccess())
+				if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing) 
+				    && !FrostedSerialPort.EnsureDeviceAccess())
 				{
 					CommunicationState = CommunicationStates.FailedToConnect;
 					return;
@@ -1523,7 +1524,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				Thread.Sleep(500);
 
-				ToggleHighLowHeigh(resetSerialPort);
+				ToggleHighLowHigh(resetSerialPort);
 
 				resetSerialPort.Close();
 			}
@@ -1795,7 +1796,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						CommunicationState = CommunicationStates.Disconnecting;
 						ReadThread.Join();
-						ToggleHighLowHeigh(serialPort);
+						ToggleHighLowHigh(serialPort);
 						if (serialPort != null)
 						{
 							serialPort.Close();
@@ -1822,7 +1823,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						Thread.Sleep(500);
 
-						ToggleHighLowHeigh(resetSerialPort);
+						ToggleHighLowHigh(resetSerialPort);
 
 						resetSerialPort.Close();
 
@@ -1836,7 +1837,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private void ToggleHighLowHeigh(IFrostedSerialPort serialPort)
+		private void ToggleHighLowHigh(IFrostedSerialPort serialPort)
 		{
 			serialPort.RtsEnable = true;
 			serialPort.DtrEnable = true;
@@ -1884,7 +1885,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (PrinterIsPaused)
 			{
-				if (prePauseCommunicationState == CommunicationStates.PrintingFromSd)
+				if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
 				{
 					CommunicationState = CommunicationStates.PrintingFromSd;
 
@@ -2064,7 +2065,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.Paused:
 					{
-						if (prePauseCommunicationState == CommunicationStates.PrintingFromSd)
+						if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
 						{
 							CancelSDCardPrint();
 							CommunicationState = CommunicationStates.Connected;
@@ -2169,9 +2170,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #endif
 			}
 
-			FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(serialPortName).Close();
+			var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
+
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).SerialPortAlreadyOpen(serialPortName);
+			bool serialPortIsAlreadyOpen = portFactory.SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 			{
@@ -2179,9 +2181,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).CreateAndOpen(serialPortName, baudRate, true);
+						serialPort = portFactory.CreateAndOpen(serialPortName, baudRate, true);
 #if __ANDROID__
-						ToggleHighLowHeigh(serialPort);
+						ToggleHighLowHigh(serialPort);
 #endif
 						// wait a bit of time to let the firmware start up
 						Thread.Sleep(500);
@@ -2333,7 +2335,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			for (int i = 0; i < lines.Length; i++)
 			{
-				queuedCommandStream2.Add(lines[i]);
+				queuedCommandStream2?.Add(lines[i]);
 			}
 		}
 
@@ -2838,6 +2840,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// If we get a home command, ask the printer where it is after sending it.
 					if (lineWithoutChecksum.StartsWith("G28") // is a home
 						|| lineWithoutChecksum.StartsWith("G29") // is a bed level
+						|| lineWithoutChecksum.StartsWith("G30") // is a bed level
 						|| lineWithoutChecksum.StartsWith("G92") // is a reset of printer position
 						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
