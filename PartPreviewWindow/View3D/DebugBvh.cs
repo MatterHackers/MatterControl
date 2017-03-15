@@ -36,6 +36,7 @@ using MatterHackers.RenderOpenGl;
 using MatterHackers.Agg;
 using System.Collections.Generic;
 using MatterHackers.RayTracer.Traceable;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -70,13 +71,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (zBuffered)
 			{
-				RenderMeshToGl.Render(lineMesh, RGBA_Bytes.Black, lineTransform, RenderTypes.Shaded);
+				GLHelper.Render(lineMesh, RGBA_Bytes.Black, lineTransform, RenderTypes.Shaded);
 				//drawEvent.graphics2D.Line(cornerPositionScreen, cornerPositionCcwScreen, RGBA_Bytes.Gray);
 			}
 			else
 			{
 				// render on top of everything very lightly
-				RenderMeshToGl.Render(lineMesh, new RGBA_Bytes(RGBA_Bytes.Black, 5), lineTransform, RenderTypes.Shaded);
+				GLHelper.Render(lineMesh, new RGBA_Bytes(RGBA_Bytes.Black, 5), lineTransform, RenderTypes.Shaded);
 			}
 		}
 

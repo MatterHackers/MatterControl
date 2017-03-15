@@ -64,7 +64,6 @@ namespace MatterControl.Tests
 						MatterHackers.Agg.ImageProcessing.dll
 						MatterHackers.MarchingSquares.dll
 						GuiAutomation.dll
-						BrailBuilder.dll
 						TextCreator.dll";
 
 			foreach (string assemblyName in knownAssemblies.Split('\n').Select(s => s.Trim()))

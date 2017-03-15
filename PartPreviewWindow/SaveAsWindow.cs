@@ -15,13 +15,13 @@ namespace MatterHackers.MatterControl
 {
 	public class SaveAsWindow : SystemWindow
 	{
-		private Action<SaveAsReturnInfo> functionToCallOnSaveAs;
+		private Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
 		LibrarySelectorWidget librarySelectorWidget;
 		Button saveAsButton;
 
-        public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator, bool showQueue, bool getNewName)
+        public SaveAsWindow(Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -30,10 +30,9 @@ namespace MatterHackers.MatterControl
 			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
 			textImageButtonFactory.disabledFillColor = new RGBA_Bytes();
 
-			Title = "MatterControl - " + "Save As".Localize();
 			AlwaysOnTopOfMain = true;
+			Title = "MatterControl - " + "Save As".Localize();
 			this.Name = "Save As Window";
-
 			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -41,32 +40,34 @@ namespace MatterHackers.MatterControl
 			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
 			// Creates Header
-			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(0, 3, 0, 0),
+				Padding = new BorderDouble(0, 3, 0, 3)
+			};
+
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			//Creates Text and adds into header
+			TextWidget elementHeader = new TextWidget("Save New Design".Localize() + ":", pointSize: 14)
 			{
-				string saveAsLabel = "Save New Design".Localize() + ":";
-				TextWidget elementHeader = new TextWidget(saveAsLabel, pointSize: 14);
-				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.ParentLeftRight;
-				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = Agg.UI.VAnchor.ParentBottom
+			};
 
-				headerRow.AddChild(elementHeader);
-				topToBottom.AddChild(headerRow);
-			}
+			headerRow.AddChild(elementHeader);
+			topToBottom.AddChild(headerRow);
 
 			//Creates container in the middle of window
-			FlowLayoutWidget middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			FlowLayoutWidget middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
-				middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
-				middleRowContainer.Padding = new BorderDouble(5);
-				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			}
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop,
+				Padding = new BorderDouble(5),
+				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor
+			};
 
 			librarySelectorWidget = new LibrarySelectorWidget(showQueue);
 
@@ -77,32 +78,34 @@ namespace MatterHackers.MatterControl
 			librarySelectorWidget.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
 			// put in the area to pick the provider to save to
+			// Adds text box and check box to the above container
+			GuiWidget chooseWindow = new GuiWidget(10, 30)
 			{
-				//Adds text box and check box to the above container
-				GuiWidget chooseWindow = new GuiWidget(10, 30);
-				chooseWindow.HAnchor = HAnchor.ParentLeftRight;
-				chooseWindow.VAnchor = VAnchor.ParentBottomTop;
-				chooseWindow.Margin = new BorderDouble(5);
-				chooseWindow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				chooseWindow.Padding = new BorderDouble(3);
-				chooseWindow.AddChild(librarySelectorWidget);
-
-				middleRowContainer.AddChild(chooseWindow);
-			}
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop,
+				Margin = new BorderDouble(5),
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				Padding = new BorderDouble(3),
+			};
+			chooseWindow.AddChild(librarySelectorWidget);
+			middleRowContainer.AddChild(chooseWindow);
 
 			// put in the area to type in the new name
 			if(getNewName)
 			{
-				string fileNameLabel = "Design Name".Localize();
-				TextWidget fileNameHeader = new TextWidget(fileNameLabel, pointSize: 12);
-				fileNameHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				fileNameHeader.Margin = new BorderDouble(5);
-				fileNameHeader.HAnchor = HAnchor.ParentLeft;
+				TextWidget fileNameHeader = new TextWidget("Design Name".Localize(), pointSize: 12)
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					Margin = new BorderDouble(5),
+					HAnchor = HAnchor.ParentLeft
+				};
 
 				//Adds text box and check box to the above container
-				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize());
-				textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
-				textToAddWidget.Margin = new BorderDouble(5);
+				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+					Margin = new BorderDouble(5)
+				};
 				textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 				middleRowContainer.AddChild(fileNameHeader);
@@ -190,7 +193,8 @@ namespace MatterHackers.MatterControl
 				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
 				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, librarySelectorWidget.CurrentLibraryProvider);
-				functionToCallOnSaveAs(returnInfo);
+				functionToCallOnSaveAs(returnInfo, null);
+
 				CloseOnIdle();
 			}
 		}

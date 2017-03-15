@@ -143,6 +143,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			CloseSignInAndPrinterSelect,
 		};
 
+		public static void Select3DPart(this AutomationRunner testRunner, string partNameToSelect)
+		{
+			if(testRunner.NameExists("3D View Edit"))
+			{
+				testRunner.ClickByName("3D View Edit");
+			}
+			testRunner.DragDropByName("centerPartPreviewAndControls", "centerPartPreviewAndControls", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right);
+
+			testRunner.Delay(1);
+			testRunner.ClickByName(partNameToSelect);
+		}
+
 		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
 		{
 			// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases

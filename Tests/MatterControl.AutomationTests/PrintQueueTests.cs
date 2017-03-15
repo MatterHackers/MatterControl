@@ -34,8 +34,10 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -63,34 +65,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
-		}
-
-		[Test, Apartment(ApartmentState.STA)]
-		public async Task ClickingCreateButtonOpensPluginWindow()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-				// Tests that clicking the create button opens create tools plugin window
-				testRunner.CloseSignInAndPrinterSelect();
-
-				//Make sure that plugin window does not exist
-				bool pluginWindowExists1 = testRunner.WaitForName("Plugin Chooser Window", 0);
-				Assert.IsTrue(pluginWindowExists1 == false, "Plugin window does not exist");
-
-				testRunner.ClickByName("Design Tool Button", 5);
-
-				//Test that the plugin window does exist after the create button is clicked
-				SystemWindow containingWindow;
-				GuiWidget pluginWindowExists = testRunner.GetWidgetByName("Plugin Chooser Window", out containingWindow, secondsToWait: 3);
-				Assert.IsTrue(pluginWindowExists != null, "Plugin Chooser Window");
-				pluginWindowExists.CloseOnIdle();
-				testRunner.Delay(.5);
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
@@ -508,6 +482,37 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Queue Item Checkbox", 3, searchRegion: rowItemRegion);
 				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+		}
+
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task DragTo3DViewAddsItem()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				int queueItemCount = QueueData.Instance.ItemCount;
+
+				bool queueItemExists = testRunner.WaitForName("Queue Item Batman", 2);
+				bool secondQueueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
+
+				SystemWindow systemWindow;
+				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
+				View3DWidget view3D = partPreview as View3DWidget;
+
+				Assert.IsTrue(view3D.Scene.Children.Count() == 1);
+				testRunner.DragDropByName("Queue Item Batman", "centerPartPreviewAndControls");
+				Assert.IsTrue(view3D.Scene.Children.Count() == 1);
+
+				testRunner.ClickByName("3D View Edit");
+				testRunner.DragDropByName("Queue Item Batman", "centerPartPreviewAndControls");
+
+				Assert.IsTrue(view3D.Scene.Children.Count() == 2);
 
 				return Task.FromResult(0);
 			};

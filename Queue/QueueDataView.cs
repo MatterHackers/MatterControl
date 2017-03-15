@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2016, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 	{
 		private EventHandler unregisterEvents;
 
+		private bool mouseDownWithinQueueItemContainer = false;
+
 		// make this private so it can only be built from the Instance
 		private void SetDisplayAttributes()
 		{
@@ -69,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					{
 						QueueData.Instance.MakeSingleSelection();
 					}
-					SelectedIndexChanged(null, null);
+					SelectedIndexChanged();
 				}
 			}
 		}
@@ -102,13 +104,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return null;
 		}
 
-		public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
+		internal FlowLayoutWidget topToBottomItemList;
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
 
 		public event HoverValueChangedEventHandler HoverValueChanged;
-
-		protected FlowLayoutWidget topToBottomItemList;
 
 		private RGBA_Bytes hoverColor = new RGBA_Bytes(204, 204, 204, 255);
 
@@ -147,19 +147,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			for (int i = 0; i < QueueData.Instance.ItemCount; i++)
 			{
-				PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(i);
-				QueueRowItem queueItem = new QueueRowItem(item, this);
-				AddChild(queueItem);
+				topToBottomItemList.AddChild(new WrappedQueueRowItem(this, QueueData.Instance.GetPrintItemWrapper(i)));
 			}
 
-			QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
+			QueueData.Instance.SelectedIndexChanged.RegisterEvent((s,e) => SelectedIndexChanged(), ref unregisterEvents);
 			QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromQueue, ref unregisterEvents);
-			QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
 
-			SelectedIndexChanged(null, null);
+			SelectedIndexChanged();
 		}
 
 		private void PrintItemChange(object sender, EventArgs e)
@@ -167,7 +164,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			QueueData.Instance.SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 		}
 
-		private void SelectedIndexChanged(object sender, EventArgs e)
+		private void SelectedIndexChanged()
 		{
 			if (this.editMode == false)
 			{
@@ -181,12 +178,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 				if (QueueData.Instance.SelectedIndexes.Contains(index))
 				{
-					queueRowItem.isSelectedItem = true;
 					queueRowItem.selectionCheckBox.Checked = true;
 				}
 				else
 				{
-					queueRowItem.isSelectedItem = false;
+					// Don't test for .Checked as the property already performs validation
 					queueRowItem.selectionCheckBox.Checked = false;
 				}
 			}
@@ -194,95 +190,47 @@ namespace MatterHackers.MatterControl.PrintQueue
 			// Skip this processing while in EditMode
 			if (this.editMode) return;
 
-			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-			{
-				GuiWidget child = topToBottomItemList.Children[index];
-				var queueRowItem = (QueueRowItem)child.Children[0];
-
-				if (index == QueueData.Instance.SelectedIndex)
-				{
-					if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-					{
-						queueRowItem.isActivePrint = true;
-						PrinterConnectionAndCommunication.Instance.ActivePrintItem = queueRowItem.PrintItemWrapper;
-					}
-					else if (queueRowItem.PrintItemWrapper == PrinterConnectionAndCommunication.Instance.ActivePrintItem)
-					{
-						// the selection must be the active print item
-						queueRowItem.isActivePrint = true;
-					}
-				}
-				else
-				{
-					// Don't test for .Checked as the property already performs validation
-					queueRowItem.selectionCheckBox.Checked = false;
-
-					if (queueRowItem.isSelectedItem)
-					{
-						queueRowItem.isSelectedItem = false;
-					}
-
-					if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-					{
-						if (queueRowItem.isActivePrint)
-						{
-							queueRowItem.isActivePrint = false;
-						}
-					}
-				}
-			}
-
-			if (QueueData.Instance.ItemCount == 0)
-			{
-				PrinterConnectionAndCommunication.Instance.ActivePrintItem = null;
-			}
+			PrinterConnectionAndCommunication.Instance.ActivePrintItem = QueueData.Instance.SelectedPrintItem;
 		}
 
 		private void ItemAddedToQueue(object sender, EventArgs e)
 		{
-			IndexArgs addedIndexArgs = e as IndexArgs;
+			var addedIndexArgs = e as ItemChangedArgs;
 			PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
-			QueueRowItem queueItem = new QueueRowItem(item, this);
-			AddChild(queueItem, addedIndexArgs.Index);
+			topToBottomItemList.AddChild(new WrappedQueueRowItem(this, item), addedIndexArgs.Index);
 		}
 
 		private void ItemRemovedFromQueue(object sender, EventArgs e)
 		{
-			IndexArgs removeIndexArgs = e as IndexArgs;
+			var removeIndexArgs = e as ItemChangedArgs;
 			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
-		}
-
-		private void QueueOrderChanged(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-			itemHolder.Name = "PrintQueueControl itemHolder";
-			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
-			itemHolder.HAnchor = HAnchor.ParentLeftRight;
-			itemHolder.AddChild(childToAdd);
-			itemHolder.VAnchor = VAnchor.FitToChildren;
-			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
+			var topToBottomItemListBounds = topToBottomItemList.LocalBounds;
+			mouseDownWithinQueueItemContainer = topToBottomItemList.LocalBounds.Contains(mouseEvent.Position);
 
-			AddItemHandlers(itemHolder);
+			base.OnMouseDown(mouseEvent);
 		}
 
-		private void AddItemHandlers(GuiWidget itemHolder)
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			itemHolder.MouseDownInBounds += itemHolder_MouseDownInBounds;
-			itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
+			mouseDownWithinQueueItemContainer = false;
+			this.SuppressScroll = false;
+			base.OnMouseUp(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			this.SuppressScroll = mouseDownWithinQueueItemContainer && !PositionWithinLocalBounds(mouseEvent.X, 20);
+			base.OnMouseMove(mouseEvent);
 		}
 
 		private bool settingLocalBounds = false;
@@ -316,12 +264,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void itemHolder_ParentChanged(object sender, EventArgs e)
-		{
-			FlowLayoutWidget itemHolder = (FlowLayoutWidget)sender;
-			itemHolder.MouseDownInBounds -= itemHolder_MouseDownInBounds;
-			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
-		}
+		public QueueRowItem DragSourceRowItem { get; internal set; }
 
 		private void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
 		{

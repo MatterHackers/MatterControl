@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -52,15 +53,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget.OpenMode openMode;
 		private View3DWidget.WindowMode windowMode;
 
+		PrintItemWrapper printItem;
+
 		public PartPreviewContent(PrintItemWrapper printItem, View3DWidget.WindowMode windowMode, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
+			this.printItem = printItem;
 			this.openMode = openMode;
 			this.autoRotate3DView = autoRotate3DView;
 			this.windowMode = windowMode;
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.AnchorAll();
-			this.Load(printItem);
+			this.LoadPrintItem(printItem);
+
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			{
+				if (windowMode == View3DWidget.WindowMode.Embeded)
+				{
+					this.printItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+					LoadActivePrintItem();
+				}
+			}, ref unregisterEvents);
 
 			// We do this after showing the system window so that when we try and take focus of the parent window (the system window)
 			// it exists and can give the focus to its child the gcode window.
@@ -74,10 +87,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void Reload(PrintItemWrapper printItem)
 		{
 			this.CloseAllChildren();
-			this.Load(printItem);
+			this.LoadPrintItem(printItem);
 		}
 
-		private void Load(PrintItemWrapper printItem)
+		private async void LoadActivePrintItem()
+		{
+			await partPreviewView.ClearBedAndLoadPrintItemWrapper(printItem);
+			viewGcodeBasic.LoadItem(printItem);
+		}
+
+		private void LoadPrintItem(PrintItemWrapper printItem)
 		{
 			tabControl = new TabControl();
 			tabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
@@ -116,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gcodeWindowMode = ViewGcodeBasic.WindowMode.StandAlone;
 			}
 
-			viewGcodeBasic = new ViewGcodeBasic(printItem,
+			viewGcodeBasic = new ViewGcodeBasic(
 				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
 				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
 				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape), gcodeWindowMode);
@@ -153,6 +172,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
 
             this.AddChild(tabControl);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			MatterControlApplication.Instance.ActiveView3DWidget = partPreviewView;
+
+			LoadActivePrintItem();
+
+			base.OnLoad(args);
 		}
 
 		public void SwitchToGcodeView()

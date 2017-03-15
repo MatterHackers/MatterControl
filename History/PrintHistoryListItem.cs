@@ -375,7 +375,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 		{
 			if (messageBoxResponse)
 			{
-				QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(itemToRemove));
+				int index = QueueData.Instance.GetIndex(itemToRemove);
+				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 			}
 		}
 

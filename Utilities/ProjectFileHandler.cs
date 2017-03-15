@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh.Processors;
@@ -240,7 +241,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public List<PrintItem> ImportFromProjectArchive(string loadedFileName = null)
+		public static List<PrintItem> ImportFromProjectArchive(string loadedFileName = null)
 		{
 			if (loadedFileName == null)
 			{
@@ -320,7 +321,11 @@ namespace MatterHackers.MatterControl
 						{
 							for (int i = 1; i <= item.ItemQuantity; i++)
 							{
-								printItemList.Add(this.GetPrintItemFromFile(Path.Combine(stagingFolder, item.FileName), item.Name));
+								printItemList.Add(new PrintItem()
+								{
+									FileLocation = Path.Combine(stagingFolder, item.FileName),
+									Name = item.Name
+								});
 							}
 						}
 					}
@@ -329,7 +334,11 @@ namespace MatterHackers.MatterControl
 						string[] files = Directory.GetFiles(stagingFolder, "*.*", SearchOption.AllDirectories);
 						foreach (string fileName in files)
 						{
-							printItemList.Add(this.GetPrintItemFromFile(fileName, Path.GetFileNameWithoutExtension(fileName)));
+							printItemList.Add(new PrintItem()
+							{
+								FileLocation = fileName,
+								Name = Path.GetFileNameWithoutExtension(fileName)
+							});
 						}
 					}
 
@@ -340,14 +349,6 @@ namespace MatterHackers.MatterControl
 			{
 				return null;
 			}
-		}
-
-		private PrintItem GetPrintItemFromFile(string fileName, string displayName)
-		{
-			PrintItem item = new PrintItem();
-			item.FileLocation = fileName;
-			item.Name = displayName;
-			return item;
 		}
 	}
 }

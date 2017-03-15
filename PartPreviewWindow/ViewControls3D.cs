@@ -39,7 +39,6 @@ using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-
 	public enum ViewControls3DButtons
 	{
 		Rotate,
@@ -59,6 +58,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioButton rotateButton;
 		private RadioButton scaleButton;
 		private RadioButton partSelectButton;
+
+		private EventHandler unregisterEvents;
 
 		private int buttonHeight;
 
@@ -123,77 +124,65 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.meshViewerWidget = meshViewerWidget;
-			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+			var textImageButtonFactory = new TextImageButtonFactory()
+			{
+				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FixedHeight = buttonHeight,
+				FixedWidth = buttonHeight,
+				AllowThemeToAdjustImage = false,
+				checkedBorderColor = RGBA_Bytes.White
+			};
 
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			
+			string iconPath;
 
-			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-			textImageButtonFactory.FixedHeight = buttonHeight * GuiWidget.DeviceScale;
-			textImageButtonFactory.FixedWidth = buttonHeight * GuiWidget.DeviceScale;
-			textImageButtonFactory.AllowThemeToAdjustImage = false;
-			textImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
-
-            string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = textImageButtonFactory.Generate("", StaticData.Instance.LoadIcon(resetViewIconPath, 32,32).InvertLightness());
+			iconPath = Path.Combine("ViewTransformControls", "reset.png");
+			resetViewButton = textImageButtonFactory.Generate("", StaticData.Instance.LoadIcon(iconPath,32,32).InvertLightness());
 			resetViewButton.ToolTipText = "Reset View".Localize();
 			AddChild(resetViewButton);
-			resetViewButton.Click += (sender, e) =>
-			{
-				ResetView?.Invoke(this, null);
-            };
+			resetViewButton.Click += (s, e) => ResetView?.Invoke(this, null);
 
-			string rotateIconPath = Path.Combine("ViewTransformControls", "rotate.png");
-			rotateButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(rotateIconPath,32,32));
+			iconPath = Path.Combine("ViewTransformControls", "rotate.png");
+			rotateButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
-            rotateButton.Margin = new BorderDouble(3);
+			rotateButton.Margin = new BorderDouble(3);
 			AddChild(rotateButton);
-			rotateButton.Click += (sender, e) =>
-			{
-				this.ActiveButton = ViewControls3DButtons.Rotate;
-			};
+			rotateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Rotate;
 
-			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
-			translateButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(translateIconPath,32,32));
+			iconPath = Path.Combine("ViewTransformControls", "translate.png");
+			translateButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
-            translateButton.Margin = new BorderDouble(3);
+			translateButton.Margin = new BorderDouble(3);
 			AddChild(translateButton);
-			translateButton.Click += (sender, e) =>
-			{
-				this.ActiveButton = ViewControls3DButtons.Translate;
-			};
+			translateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Translate;
 
-			string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
-			scaleButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(scaleIconPath,32,32));
+			iconPath = Path.Combine("ViewTransformControls", "scale.png");
+			scaleButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
-            scaleButton.Margin = new BorderDouble(3);
+			scaleButton.Margin = new BorderDouble(3);
 			AddChild(scaleButton);
-			scaleButton.Click += (sender, e) =>
-			{
-				this.ActiveButton = ViewControls3DButtons.Scale;
-			};
+			scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
 
 			partSelectSeparator = new GuiWidget(2, 32);
 			partSelectSeparator.BackgroundColor = RGBA_Bytes.White;
 			partSelectSeparator.Margin = new BorderDouble(3);
 			AddChild(partSelectSeparator);
 
-			string partSelectIconPath = Path.Combine("ViewTransformControls", "partSelect.png");
-			partSelectButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(partSelectIconPath,32,32));
+			iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
+			partSelectButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
             partSelectButton.ToolTipText = "Select Part".Localize();
             partSelectButton.Margin = new BorderDouble(3);
 			AddChild(partSelectButton);
-			partSelectButton.Click += (sender, e) =>
-			{
-				this.ActiveButton = ViewControls3DButtons.PartSelect;
-			};
+			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			Margin = new BorderDouble(5);
 			HAnchor |= Agg.UI.HAnchor.ParentLeft;
 			VAnchor = Agg.UI.VAnchor.ParentTop;
 			rotateButton.Checked = true;
+			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 
 			SetMeshViewerDisplayTheme();
 			partSelectButton.CheckedStateChanged += SetMeshViewerDisplayTheme;
@@ -201,14 +190,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
-		private EventHandler unregisterEvents;
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

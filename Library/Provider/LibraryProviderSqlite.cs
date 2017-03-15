@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -409,7 +410,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				try
 				{
 					// Load mesh
-					List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(stream, extension);
+					IObject3D loadedItem = MeshFileIo.Load(stream, extension);
+					var meshToConvertAndSave = new List<MeshGroup> { loadedItem.Flatten() };
 
 					// Create a new PrintItemWrapper
 

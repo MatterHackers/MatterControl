@@ -33,6 +33,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -194,12 +195,7 @@ namespace MatterHackers.MatterControl
 			// first create images for all the parts
 			foreach (FileNameAndPresentationName queuePartFileName in queuPartFilesToAdd)
 			{
-				List<MeshGroup> loadedMeshGroups = null;
-				if (File.Exists(queuePartFileName.fileName))
-				{
-					loadedMeshGroups = MeshFileIo.Load(queuePartFileName.fileName);
-				}
-
+				List<MeshGroup> loadedMeshGroups = Object3D.Load(queuePartFileName.fileName)?.ToMeshGroupList();
 				if (loadedMeshGroups != null)
 				{
 					bool firstMeshGroup = true;
@@ -216,6 +212,7 @@ namespace MatterHackers.MatterControl
 							aabb = AxisAlignedBoundingBox.Union(aabb, meshGroup.GetAxisAlignedBoundingBox());
 						}
 					}
+
 					RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
 					double widthInMM = bounds2D.Width + PartMarginMM * 2;
 					double textSpaceMM = 5;

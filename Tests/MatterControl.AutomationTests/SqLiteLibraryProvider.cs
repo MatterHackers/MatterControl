@@ -31,7 +31,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
 				View3DWidget view3D = partPreview as View3DWidget;
 
-				testRunner.ClickByName("3D View Edit", 3);
+				Assert.IsFalse(view3D.Scene.HasSelection);
+				testRunner.Select3DPart("Calibration - Box");
+				Assert.IsTrue(view3D.Scene.HasSelection);
 
 				testRunner.ClickByName("3D View Copy", 3);
 				// wait for the copy to finish

@@ -378,21 +378,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			set
 			{
-				if (!PrinterIsPrinting)
+				if (!PrinterIsPrinting
+					&& !PrinterIsPaused
+					&& this.activePrintItem != value)
 				{
-					if (this.activePrintItem != value)
+					this.activePrintItem = value;
+					if (CommunicationState == CommunicationStates.FinishedPrint)
 					{
-						this.activePrintItem = value;
-						if (CommunicationState == CommunicationStates.FinishedPrint)
-						{
-							CommunicationState = CommunicationStates.Connected;
-						}
-						OnActivePrintItemChanged(null);
+						CommunicationState = CommunicationStates.Connected;
 					}
-				}
-				else
-				{
-					throw new Exception("Cannot change active print while printing");
+					OnActivePrintItemChanged(null);
 				}
 			}
 		}

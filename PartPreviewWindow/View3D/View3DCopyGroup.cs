@@ -27,69 +27,72 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.PolygonMesh;
-using System.ComponentModel;
-using System.Globalization;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using MatterHackers.VectorMath;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void CopyGroup()
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-			MeshGroup meshGroupToCopy = asyncMeshGroups[SelectedMeshGroupIndex];
-			MeshGroup copyMeshGroup = new MeshGroup();
-			double meshCount = meshGroupToCopy.Meshes.Count;
-			for (int i = 0; i < meshCount; i++)
-			{
-				Mesh mesh = asyncMeshGroups[SelectedMeshGroupIndex].Meshes[i];
-				copyMeshGroup.Meshes.Add(Mesh.Copy(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
-				{
-					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
-				}));
-			}
-
-			PlatingHelper.FindPositionForGroupAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, asyncPlatingDatas, asyncMeshGroups, asyncMeshGroupTransforms);
-			PlatingHelper.CreateITraceableForMeshGroup(asyncPlatingDatas, asyncMeshGroups, asyncMeshGroups.Count - 1, null);
-
-			bool continueProcessing2;
-			ReportProgressChanged(.95, "", out continueProcessing2);
-		}
-
 		private async void MakeCopyOfGroup()
 		{
-			if (MeshGroups.Count > 0
-				&& SelectedMeshGroupIndex != -1)
+			if (Scene.HasSelection)
 			{
-				string makingCopyLabel = "Making Copy".Localize();
-				string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-				processingProgressControl.ProcessType = makingCopyLabelFull;
+				processingProgressControl.ProcessType = "Making Copy".Localize() + ":";
 				processingProgressControl.Visible = true;
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				await Task.Run((System.Action)CopyGroup);
+				// Copy selected item
+				IObject3D newItem = await Task.Run(() =>
+				{
+					var clonedItem = Scene.SelectedItem.Clone();
+					PlatingHelper.MoveToOpenPosition(clonedItem, Scene);
+
+					return clonedItem;
+				});
 
 				if (HasBeenClosed)
 				{
 					return;
 				}
 
+				InsertNewItem(newItem);
+
 				UnlockEditControls();
-				PullMeshGroupDataFromAsynchLists();
 				PartHasBeenChanged();
 
+				// TODO: jlewin - why do we need to reset the scale?
+
 				// now set the selection to the new copy
-				SelectedMeshGroupIndex = MeshGroups.Count - 1;
-				UndoBuffer.Add(new CopyUndoCommand(this, SelectedMeshGroupIndex));
+				Scene.Children.Last().ExtraData.CurrentScale = Scene.SelectedItem.ExtraData.CurrentScale;
 			}
+		}
+
+		public void InsertNewItem(IObject3D newItem)
+		{
+			// Reposition first item to bed center
+			if (Scene.Children.Count == 0)
+			{
+				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var center = aabb.Center;
+				newItem.Matrix *= Matrix4X4.CreateTranslation(
+					(MeshViewerWidget.BedCenter.x + center.x),
+					(MeshViewerWidget.BedCenter.y + center.y),
+					 -aabb.minXYZ.z);
+			}
+
+			// Create and perform a new insert operation
+			var insertOperation = new InsertCommand(this, newItem);
+			insertOperation.Do();
+
+			// Store the operation for undo/redo
+			UndoBuffer.Add(insertOperation);
 		}
 	}
 }

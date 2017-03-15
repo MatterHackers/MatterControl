@@ -46,6 +46,7 @@ using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Localizations;
 using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl
 {
@@ -69,6 +70,9 @@ namespace MatterHackers.MatterControl
 		private static string partExtension = ".png";
 		private static bool processingThumbnail = false;
 		private ImageBuffer buildingThumbnailImage = new Agg.Image.ImageBuffer();
+
+		// TODO: temporarily work around exception when trying to gen thumbnails for new file type
+		private bool supportsThumbnails = true;
 
 		private RGBA_Bytes normalBackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
@@ -174,11 +178,17 @@ namespace MatterHackers.MatterControl
 				}
 				
 				printItemWrapper = value;
-				
+
+				supportsThumbnails = false;
+
 				thumbNailHasBeenCreated = false;
 				if (ItemWrapper != null)
 				{
 					PrintItemWrapper.FileHasChanged.RegisterEvent(item_FileHasChanged, ref unregisterEvents);
+
+					supportsThumbnails = !string.IsNullOrEmpty(printItemWrapper.FileLocation) &&
+					 File.Exists(printItemWrapper.FileLocation) &&
+					Path.GetExtension(printItemWrapper.FileLocation).ToLower() != ".mcp";
 				}
 			}
 		}
@@ -224,11 +234,17 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
-		
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			if(ItemWrapper == null)
+			{
+				return;
+			}
+
 			//Trigger thumbnail generation if neeeded
-			if (!thumbNailHasBeenCreated && !processingThumbnail)
+			string stlHashCode = this.ItemWrapper.FileHashCode.ToString();
+			if (!thumbNailHasBeenCreated && !processingThumbnail && supportsThumbnails)
 			{
 				if (SetImageFast())
 				{
@@ -419,7 +435,7 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
-			List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(this.ItemWrapper.FileLocation);
+			IObject3D loadedItem = Object3D.Load(this.ItemWrapper.FileLocation);
 
 			RenderType renderType = GetRenderType(this.ItemWrapper.FileLocation);
 
@@ -427,34 +443,28 @@ namespace MatterHackers.MatterControl
 			{
 				case RenderType.RAY_TRACE:
 					{
-						ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
+						ThumbnailTracer tracer = new ThumbnailTracer(loadedItem, BigRenderSize.x, BigRenderSize.y);
 						tracer.DoTrace();
 
-						bigRender = tracer.destImage;
+						bigRender = (tracer.destImage != null) ? tracer.destImage : new ImageBuffer(this.noThumbnailImage);
 					}
 					break;
 
 				case RenderType.PERSPECTIVE:
 					{
-						ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
+						ThumbnailTracer tracer = new ThumbnailTracer(loadedItem, BigRenderSize.x, BigRenderSize.y);
 						this.thumbnailImage = new ImageBuffer(this.buildingThumbnailImage);
 						this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
 
 						bigRender = new ImageBuffer(BigRenderSize.x, BigRenderSize.y);
 
-						foreach (MeshGroup meshGroup in loadedMeshGroups)
+						foreach (IObject3D item in loadedItem.Children)
 						{
 							double minZ = double.MaxValue;
 							double maxZ = double.MinValue;
-							foreach (Mesh loadedMesh in meshGroup.Meshes)
-							{
-								tracer.GetMinMaxZ(loadedMesh, ref minZ, ref maxZ);
-							}
 
-							foreach (Mesh loadedMesh in meshGroup.Meshes)
-							{
-								tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White, minZ, maxZ);
-							}
+							tracer.GetMinMaxZ(item.Mesh, ref minZ, ref maxZ);
+							tracer.DrawTo(bigRender.NewGraphics2D(), item.Mesh, RGBA_Bytes.White, minZ, maxZ);
 						}
 
 						if (bigRender == null)
@@ -469,7 +479,7 @@ namespace MatterHackers.MatterControl
 
 					this.thumbnailImage = new ImageBuffer(this.buildingThumbnailImage);
 					this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-					bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, BigRenderSize);
+					bigRender = BuildImageFromMeshGroups(loadedItem.ToMeshGroupList(), stlHashCode, BigRenderSize);
 					if (bigRender == null)
 					{
 						bigRender = new ImageBuffer(this.noThumbnailImage);

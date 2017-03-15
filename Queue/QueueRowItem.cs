@@ -36,16 +36,33 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class QueueRowItem : GuiWidget
 	{
-		public bool isActivePrint = false;
+		public bool IsActivePrint
+		{
+			get
+			{
+				return PrinterConnectionAndCommunication.Instance.ActivePrintItem == PrintItemWrapper;
+			}
+		}
 
-		public bool isHoverItem = false;
+		private bool isHoverItem = false;
 
-		public bool isSelectedItem = false;
+		public bool IsSelectedItem 
+		{
+			get
+			{
+				if (QueueData.Instance.SelectedIndexes.Contains(QueueData.Instance.GetIndex(PrintItemWrapper)))
+				{
+					return true;
+				}
+				return false;
+			}
+		}
 
 		public CheckBox selectionCheckBox;
 
@@ -296,7 +313,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			RectangleDouble Bounds = LocalBounds;
 			RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
-			if (this.isActivePrint && !this.queueDataView.EditMode)
+			if (this.IsActivePrint && !this.queueDataView.EditMode)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
 				SetTextColors(RGBA_Bytes.White);
@@ -306,7 +323,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				//Draw interior border
 				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
 			}
-			else if (this.isSelectedItem)
+			else if (this.IsSelectedItem)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = RGBA_Bytes.White;
@@ -365,18 +382,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			if (this.isActivePrint)
-			{
-				//Set background and text color to new theme
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.partLabel.TextColor = RGBA_Bytes.White;
-				this.partStatus.TextColor = RGBA_Bytes.White;
-				this.Invalidate();
-			}
-		}
-
 		internal void DeletePartFromQueue()
 		{
 			if (PrintItemWrapper.PrintItem.FileLocation == QueueData.SdCardFileName)
@@ -384,15 +389,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 				StyledMessageBox.ShowMessageBox(onDeleteFileConfirm, alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO);
 			}
 
-			int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
-			QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);
+			int index = QueueData.Instance.GetIndex(PrintItemWrapper);
+			UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 		}
 
 		private static void onConfirmRemove(bool messageBoxResponse)
 		{
 			if (messageBoxResponse)
 			{
-				QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(itemToRemove));
+				int index = QueueData.Instance.GetIndex(itemToRemove);
+				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 			}
 		}
 

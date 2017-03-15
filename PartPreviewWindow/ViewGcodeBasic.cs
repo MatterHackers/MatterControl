@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private TextWidget gcodeProcessingStateInfoText;
 		private ViewGcodeWidget gcodeViewWidget;
-		private PrintItemWrapper printItem;
+		private PrintItemWrapper printItem { get; set; }
 		private bool startedSliceFromGenerateButton = false;
 		private Button generateGCodeButton;
 		private FlowLayoutWidget buttonBottomPanel;
@@ -90,13 +90,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private BedShape bedShape;
 		private int sliderWidth;
 
-		public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode)
+		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode)
 		{
 			this.viewerVolume = viewerVolume;
 			this.bedShape = bedShape;
 			this.bedCenter = bedCenter;
 			this.windowMode = windowMode;
-			this.printItem = printItem;
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
@@ -110,8 +109,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			CreateAndAddChildren();
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => ClearGCode(), ref unregisterEvents);
+
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 		}
+
+		private void RecreateBedAndPartPosition(object sender, EventArgs e)
+				{
+					viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height));
+					bedShape = ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape);
+					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+
+					double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
+
+					UiThread.RunOnIdle(() =>
+					{
+						meshViewerWidget.CreatePrintBed(
+							viewerVolume,
+							bedCenter,
+							bedShape);
+					});
+				}
 
 		private void CheckSettingChanged(object sender, EventArgs e)
 		{
@@ -135,31 +155,62 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					|| stringEvent.Data == SettingsKey.bed_shape
 					|| stringEvent.Data == SettingsKey.center_part_on_bed)
 				{
-					viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height));
-					bedShape = ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape);
-					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-
-					double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
-
-					UiThread.RunOnIdle(() =>
-					{
-						meshViewerWidget.CreatePrintBed(
-							viewerVolume,
-							bedCenter,
-							bedShape);
-					});
+					RecreateBedAndPartPosition(null, null);
 				}
 				else if(stringEvent.Data == "extruder_offset")
 				{
-					ClearGCode();
+					Clear3DGCode();
 				}
 			}
 		}
 
-		private void ClearGCode()
+		public void LoadItem(PrintItemWrapper printItem)
 		{
-			if (gcodeViewWidget != null
-				&& gcodeViewWidget.gCodeRenderer != null)
+			this.printItem = printItem;
+			Clear3DGCode();
+
+			gcodeDisplayWidget.CloseAllChildren();
+
+			//firstProcessingMessage = "Loading G-Code...".Localize();
+			if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
+			{
+				gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
+			}
+			else
+			{
+				if (File.Exists(printItem.FileLocation))
+				{
+					string gcodePathAndFileName = printItem.GetGCodePathAndFileName();
+					bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
+
+					//if (printItem.SlicingHadError)
+					//{
+					//	firstProcessingMessage = slicingErrorMessage;
+					//}
+					//else
+					//{
+					//	firstProcessingMessage = pressGenerateMessage;
+					//}
+
+					if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
+					{
+						gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
+					}
+
+					// we only hook these up to make sure we can regenerate the gcode when we want
+					printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
+					printItem.SlicingDone += sliceItem_Done;
+				}
+				//else
+				//{
+				//	firstProcessingMessage = string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name);
+				//}
+			}
+		}
+
+		private void Clear3DGCode()
+		{
+			if (gcodeViewWidget?.gCodeRenderer != null)
 			{
 				gcodeViewWidget.gCodeRenderer.Clear3DGCode();
 				gcodeViewWidget.Invalidate();
@@ -219,49 +270,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			string firstProcessingMessage = "Press 'Add' to select an item.".Localize();
 
-			if (printItem != null)
-			{
-				firstProcessingMessage = "Loading G-Code...".Localize();
-				if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
-				{
-					gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
-				}
-				else
-				{
-					if (File.Exists(printItem.FileLocation))
-					{
-						string gcodePathAndFileName = printItem.GetGCodePathAndFileName();
-						bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
-
-						if (printItem.SlicingHadError)
-						{
-							firstProcessingMessage = slicingErrorMessage;
-						}
-						else
-						{
-							firstProcessingMessage = pressGenerateMessage;
-						}
-
-						if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
-						{
-							gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
-						}
-
-						// we only hook these up to make sure we can regenerate the gcode when we want
-						printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-						printItem.SlicingDone += sliceItem_Done;
-					}
-					else
-					{
-						firstProcessingMessage = string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name);
-					}
-				}
-			}
-			else
-			{
-				generateGCodeButton.Visible = false;
-			}
-
 			SetProcessingMessage(firstProcessingMessage);
 			centerPartPreviewAndControls.AddChild(gcodeDisplayWidget);
 
@@ -285,7 +293,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.AllowBedRenderingWhenEmpty = true;
 			gcodeDisplayWidget.AddChild(meshViewerWidget);
 			meshViewerWidget.Visible = false;
-			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
+			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 
 			viewControls2D = new ViewControls2D();
 			AddChild(viewControls2D);
@@ -1048,16 +1056,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				CloseIfNotNull(selectLayerSlider);
 				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
-				selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
-				gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
+				selectLayerSlider.ValueChanged += selectLayerSlider_ValueChanged;
+				gcodeViewWidget.ActiveLayerChanged += gcodeViewWidget_ActiveLayerChanged;
 				AddChild(selectLayerSlider);
 
 				CloseIfNotNull(layerRenderRatioSlider);
 				layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
 				layerRenderRatioSlider.FirstValue = 0;
-				layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
+				layerRenderRatioSlider.FirstValueChanged += layerStartRenderRatioSlider_ValueChanged;
 				layerRenderRatioSlider.SecondValue = 1;
-				layerRenderRatioSlider.SecondValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
+				layerRenderRatioSlider.SecondValueChanged += layerEndRenderRatioSlider_ValueChanged;
 				AddChild(layerRenderRatioSlider);
 
 				SetSliderSizes();
@@ -1066,7 +1074,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gcodeViewWidget.ActiveLayerIndex = gcodeViewWidget.ActiveLayerIndex + 1;
 				gcodeViewWidget.ActiveLayerIndex = gcodeViewWidget.ActiveLayerIndex - 1;
 
-				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
+				BoundsChanged += PartPreviewGCode_BoundsChanged;
 
 				meshViewerWidget.partProcessingInfo.Visible = false;
 			}
@@ -1184,7 +1192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DoGenerateButton_Click(object state)
 		{
-			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
+			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
 				{
@@ -1220,7 +1228,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
 			printItem.SlicingDone -= sliceItem_Done;
 
-			UiThread.RunOnIdle(CreateAndAddChildren);
+			UiThread.RunOnIdle(() => LoadItem(printItem));
+			
 			startedSliceFromGenerateButton = false;
 		}
 	}
@@ -1245,10 +1254,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editCurrentLayerIndex = new NumberEdit(1, pixelWidth: 40);
 			editCurrentLayerIndex.VAnchor = VAnchor.ParentCenter;
 			editCurrentLayerIndex.Margin = new BorderDouble(5, 0);
-			editCurrentLayerIndex.EditComplete += new EventHandler(editCurrentLayerIndex_EditComplete);
+			editCurrentLayerIndex.EditComplete += editCurrentLayerIndex_EditComplete;
 			editCurrentLayerIndex.Name = "Current GCode Layer Edit";
 			this.AddChild(editCurrentLayerIndex);
-			gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
+			gcodeViewWidget.ActiveLayerChanged += gcodeViewWidget_ActiveLayerChanged;
 
 			setLayerButton = textImageButtonFactory.Generate("Go".Localize());
 			setLayerButton.VAnchor = Agg.UI.VAnchor.ParentCenter;

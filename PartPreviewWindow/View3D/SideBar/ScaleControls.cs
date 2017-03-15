@@ -26,7 +26,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-//#define DoBooleanTest
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
@@ -150,15 +149,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ApplyScaleFromEditField()
 		{
-			if (view3DWidget.HaveSelection)
+			if (view3DWidget.Scene.HasSelection)
 			{
-				Matrix4X4 startingTransform = view3DWidget.SelectedMeshGroupTransform;
+				Matrix4X4 startingTransform = view3DWidget.Scene.SelectedItem.Matrix;
+				Vector3 currentScale = view3DWidget.Scene.SelectedItem.ExtraData.CurrentScale;
 
 				double scale = scaleRatioControl.ActuallNumberEdit.Value;
 				if (scale > 0)
 				{
 					ScaleAxis(scale, 0);
+
+					view3DWidget.Scene.SelectedItem.ExtraData.CurrentScale.y = currentScale.y;
+					view3DWidget.Scene.SelectedItem.ExtraData.CurrentScale.z = currentScale.z;
 					ScaleAxis(scale, 1);
+
+					view3DWidget.Scene.SelectedItem.ExtraData.CurrentScale.z = currentScale.z;
 					ScaleAxis(scale, 2);
 				}
 
@@ -178,11 +183,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sizeDisplay[axisIndex] = new EditableNumberDisplay(view3DWidget.textImageButtonFactory, "100", "1000.00");
 			sizeDisplay[axisIndex].EditComplete += (sender, e) =>
 			{
-				if (view3DWidget.HaveSelection)
+				if (view3DWidget.Scene.HasSelection)
 				{
-					Matrix4X4 startingTransform = view3DWidget.SelectedMeshGroupTransform;
+					Matrix4X4 startingTransform = view3DWidget.Scene.SelectedItem.Matrix;
 					SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
-					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
+					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(view3DWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Size[axisIndex]));
 					OnSelectedTransformChanged(null, null);
 					view3DWidget.AddUndoForSelectedMeshGroupTransform(startingTransform);
 				}
@@ -260,31 +265,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ScaleAxis(double scaleIn, int axis)
 		{
-			AxisAlignedBoundingBox originalMeshBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox();
+			var selectedItem = view3DWidget.Scene.SelectedItem;
+			AxisAlignedBoundingBox originalMeshBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-			Vector3 newScale = Vector3.One;
+			AxisAlignedBoundingBox scaledBounds = selectedItem.GetAxisAlignedBoundingBox(selectedItem.Matrix);
+
+			// first we remove any scale we have applied and then scale to the new value
+			Vector3 axisRemoveScalings = Vector3.One;
+			if(originalMeshBounds.XSize > 0 && scaledBounds.XSize > 0) axisRemoveScalings.x = originalMeshBounds.XSize / scaledBounds.XSize;
+			if (originalMeshBounds.YSize > 0 && scaledBounds.YSize > 0) axisRemoveScalings.y = originalMeshBounds.YSize / scaledBounds.YSize;
+			if (originalMeshBounds.ZSize > 0 && scaledBounds.ZSize > 0) axisRemoveScalings.z = originalMeshBounds.ZSize / scaledBounds.ZSize;
+
+			Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(axisRemoveScalings);
+
+			Vector3 newScale = selectedItem.ExtraData.CurrentScale;
 			newScale[axis] = scaleIn;
 			Matrix4X4 totalScale = Matrix4X4.CreateScale(newScale);
 
-			view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, totalScale);
+			selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, totalScale);
 
-			// keep the bottom where it was
-			AxisAlignedBoundingBox scaledBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
-			PlatingHelper.PlaceMeshAtHeight(view3DWidget.MeshGroups, view3DWidget.MeshGroupTransforms, view3DWidget.SelectedMeshGroupIndex, scaledBounds.minXYZ.z);
-
-			PlatingHelper.PlaceMeshGroupOnBed(view3DWidget.MeshGroups, view3DWidget.MeshGroupTransforms, view3DWidget.SelectedMeshGroupIndex);
+			PlatingHelper.PlaceMeshAtHeight(selectedItem, originalMeshBounds.minXYZ.z);
 
 			view3DWidget.PartHasBeenChanged();
 			Invalidate();
+			view3DWidget.Scene.SelectedItem.ExtraData.CurrentScale[axis] = scaleIn;
 			OnSelectedTransformChanged(this, null);
 		}
 
 		private void SetNewModelSize(double sizeInMm, int axis)
 		{
-			if (view3DWidget.HaveSelection)
+			if (view3DWidget.Scene.HasSelection)
 			{
 				// because we remove any current scale before we change to a new one we only get the size of the base mesh data
-				AxisAlignedBoundingBox originalMeshBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
+				AxisAlignedBoundingBox originalMeshBounds = view3DWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				double currentSize = originalMeshBounds.Size[axis];
 				double desiredSize = sizeDisplay[axis].GetValue();
@@ -309,20 +322,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void OnSelectedTransformChanged(object sender, EventArgs e)
 		{
 			if (sizeDisplay[0] != null
-				&& view3DWidget.SelectedMeshGroup != null)
+				&& view3DWidget.Scene.HasSelection)
 			{
-				AxisAlignedBoundingBox bounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
+				var selectedItem = view3DWidget.Scene.SelectedItem;
+
+				// TODO: jlewin - could be this simple but how do we call old/new transform values from this context given they've likely been updated and we track one value
+				// AxisAlignedBoundingBox bounds = view3DWidget.SelectedObject3D.GetAxisAlignedBoundingBox();
+				AxisAlignedBoundingBox bounds = selectedItem.GetAxisAlignedBoundingBox(selectedItem.Matrix);
 				sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
 				sizeDisplay[1].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[1]));
 				sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));
 
 				// set the scaling to be this new size
-				AxisAlignedBoundingBox originalMeshBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox();
-				AxisAlignedBoundingBox scaledBounds = view3DWidget.SelectedMeshGroup.GetAxisAlignedBoundingBox(view3DWidget.SelectedMeshGroupTransform);
+				AxisAlignedBoundingBox originalMeshBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox scaledBounds = selectedItem.GetAxisAlignedBoundingBox(selectedItem.Matrix);
 				Vector3 currentScale = new Vector3();
 				currentScale.x = scaledBounds.XSize / originalMeshBounds.XSize;
 				currentScale.y = scaledBounds.YSize / originalMeshBounds.YSize;
 				currentScale.z = scaledBounds.ZSize / originalMeshBounds.ZSize;
+
+				selectedItem.ExtraData.CurrentScale = currentScale;
 			}
 			else
 			{

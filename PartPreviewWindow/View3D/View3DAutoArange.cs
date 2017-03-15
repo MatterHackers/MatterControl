@@ -28,29 +28,22 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
+using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	internal class ArangeUndoCommand : IUndoRedoCommand
 	{
-		List<TransformUndoCommand> allUndoTransforms = new List<TransformUndoCommand>();
+		private List<TransformUndoCommand> allUndoTransforms = new List<TransformUndoCommand>();
 
 		public ArangeUndoCommand(View3DWidget view3DWidget, List<Matrix4X4> preArrangeTarnsforms, List<Matrix4X4> postArrangeTarnsforms)
 		{
-			for(int i=0; i<preArrangeTarnsforms.Count; i++)
+			for (int i = 0; i < preArrangeTarnsforms.Count; i++)
 			{
-				allUndoTransforms.Add(new TransformUndoCommand(view3DWidget, i, preArrangeTarnsforms[i], postArrangeTarnsforms[i]));
+				//allUndoTransforms.Add(new TransformUndoCommand(view3DWidget, i, preArrangeTarnsforms[i], postArrangeTarnsforms[i]));
 			}
 		}
 
@@ -75,44 +68,66 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private async void AutoArrangePartsInBackground()
 		{
-			if (MeshGroups.Count > 0)
+			// TODO: ******************** !!!!!!!!!!!!!!! ********************
+			var arrangedScene = new Object3D();
+			await Task.Run(() =>
 			{
-				string progressArrangeParts = "Arranging Parts".Localize();
-				string progressArrangePartsFull = string.Format("{0}:", progressArrangeParts);
-				processingProgressControl.ProcessType = progressArrangePartsFull;
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				List<Matrix4X4> preArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
-
-				await Task.Run(() =>
+				foreach (var sceneItem in Scene.Children)
 				{
-					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-					PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
-					PlatingHelper.ArrangeMeshGroups(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas, ReportProgressChanged);
-				});
+					PlatingHelper.MoveToOpenPosition(sceneItem, Scene);
 
-				if (HasBeenClosed)
-				{
-					return;
+					arrangedScene.Children.Add(sceneItem);
 				}
+			});
 
-				// offset them to the center of the bed
-				for (int i = 0; i < asyncMeshGroups.Count; i++)
-				{
-					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center), 0));
-				}
-
-				PartHasBeenChanged();
-
-				PullMeshGroupDataFromAsynchLists();
-				List<Matrix4X4> postArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
-
-				UndoBuffer.Add(new ArangeUndoCommand(this, preArrangeTarnsforms, postArrangeTarnsforms));
-
-				UnlockEditControls();
-			}
+			Scene.ModifyChildren(children =>
+			{
+				children.Clear();
+				children.AddRange(arrangedScene.Children);
+			});
 		}
 	}
+
+	/*
+	private async void AutoArrangePartsInBackground()
+	{
+		if (MeshGroups.Count > 0)
+		{
+			string progressArrangeParts = LocalizedString.Get("Arranging Parts");
+			string progressArrangePartsFull = string.Format("{0}:", progressArrangeParts);
+			processingProgressControl.ProcessType = progressArrangePartsFull;
+			processingProgressControl.Visible = true;
+			processingProgressControl.PercentComplete = 0;
+			LockEditControls();
+
+			List<Matrix4X4> preArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
+
+			await Task.Run(() =>
+			{
+				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+				PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
+				PlatingHelper.ArrangeMeshGroups(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas, ReportProgressChanged);
+			});
+
+			if (WidgetHasBeenClosed)
+			{
+				return;
+			}
+
+			// offset them to the center of the bed
+			for (int i = 0; i < asyncMeshGroups.Count; i++)
+			{
+				asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.BedCenter, 0));
+			}
+
+			PartHasBeenChanged();
+
+			PullMeshGroupDataFromAsynchLists();
+			List<Matrix4X4> postArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
+
+			undoBuffer.Add(new ArangeUndoCommand(this, preArrangeTarnsforms, postArrangeTarnsforms));
+
+			UnlockEditControls();
+		}
+	} */
 }

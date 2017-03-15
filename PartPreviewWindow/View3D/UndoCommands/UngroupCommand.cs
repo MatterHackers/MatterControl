@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2016, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,34 +28,27 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CreatorPlugins;
-using MatterHackers.MatterControl.PluginSystem;
-using System;
+using MatterHackers.DataConverters3D;
 
-namespace MatterHackers.MatterControl.Plugins.TextCreator
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class TextCreatorPlugin : MatterControlPlugin
+	public class UngroupCommand : IUndoRedoCommand
 	{
-		public override void Initialize(GuiWidget application)
-		{
-			var information = new CreatorInformation(
-				() => new TextCreatorMainWindow(), 
-				"TC_32x32.png", 
-				"Text Creator".Localize());
+		private GroupCommand groupCommand;
 
-			RegisteredCreators.Instance.RegisterLaunchFunction(information);
+		public UngroupCommand(View3DWidget view3DWidget, IObject3D ungroupingItem)
+		{
+			this.groupCommand = new GroupCommand(view3DWidget, ungroupingItem);
 		}
 
-		public override string GetPluginInfoJSon()
+		public void Do()
 		{
-			return "{" +
-				"\"Name\": \"Text Creator\"," +
-				"\"UUID\": \"fbd06000-66c3-11e3-949a-0800200c9a66\"," +
-				"\"About\": \"A Creator that allows you to type in text and have it turned into printable extrusions.\"," +
-				"\"Developer\": \"MatterHackers, Inc.\"," +
-				"\"URL\": \"https://www.matterhackers.com\"" +
-				"}";
+			groupCommand.Undo();
+		}
+
+		public void Undo()
+		{
+			groupCommand.Do();
 		}
 	}
 }

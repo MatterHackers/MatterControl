@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -47,10 +48,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PlaneShape hitPlane;
 		private Vector3 lastMoveDelta;
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private Mesh upArrow;
+
+		private static IObject3D upArrowItem = null;
+
 		private View3DWidget view3DWidget;
 		private double zHitHeight;
-
+		
 		public UpArrow3D(View3DWidget view3DWidget)
 			: base(null, view3DWidget.meshViewerWidget)
 		{
@@ -60,23 +63,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			DrawOnTop = true;
 
 			this.view3DWidget = view3DWidget;
-			string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
-			if (StaticData.Instance.FileExists(arrowFile))
-			{
-				using (Stream staticDataStream = StaticData.Instance.OpenSteam(arrowFile))
-				{
-					using (MemoryStream arrowStream = new MemoryStream())
-					{
-						staticDataStream.CopyTo(arrowStream, 1 << 16);
-						List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
-						upArrow = loadedMeshGroups[0].Meshes[0];
 
-						CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
-						//CollisionVolume = new CylinderShape(arrowBounds.XSize / 2, arrowBounds.ZSize, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
-						//CollisionVolume = new CylinderShape(arrowBounds.XSize / 2 * 4, arrowBounds.ZSize * 4, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
-					}
+			if (upArrowItem == null)
+			{
+				string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
+				using (Stream arrowStream = StaticData.Instance.OpenSteam(arrowFile))
+				{
+					upArrowItem = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
 				}
 			}
+
+			CollisionVolume = upArrowItem.TraceData();
 		}
 
 		public override void DrawGlContent(EventArgs e)
@@ -87,16 +84,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				shouldDrawScaleControls = false;
 			}
-			if (MeshViewerToDrawWith.SelectedMeshGroup != null
+			if (MeshViewerToDrawWith.Scene.HasSelection
 				&& shouldDrawScaleControls)
 			{
 				if (MouseOver)
 				{
-					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
+					GLHelper.Render(upArrowItem.Mesh, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
 				}
 				else
 				{
-					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
+					GLHelper.Render(upArrowItem.Mesh, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
 				}
 			}
 
@@ -112,7 +109,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 			zHitHeight = info.hitPosition.z;
-			transformOnMouseDown = MeshViewerToDrawWith.SelectedMeshGroupTransform;
+
+			var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
+			if (selectedItem != null)
+			{
+				transformOnMouseDown = selectedItem.Matrix;
+			}
 
 			base.OnMouseDown(mouseEvent3D);
 		}
@@ -121,18 +123,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
-			if (info != null && MeshViewerToDrawWith.SelectedMeshGroupIndex != -1)
+			if (info != null && MeshViewerToDrawWith.Scene.HasSelection)
 			{
+				var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
 				Vector3 delta = new Vector3(0, 0, info.hitPosition.z - zHitHeight);
 
 				// move it back to where it started
-				MeshViewerToDrawWith.SelectedMeshGroupTransform *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
+				selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
 
 				if (MeshViewerToDrawWith.SnapGridDistance > 0)
 				{
 					// snap this position to the grid
 					double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
-					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 					// snap the z position
 					double bottom = selectedBounds.minXYZ.z + delta.z;
@@ -141,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// and move it from there to where we are now
-				MeshViewerToDrawWith.SelectedMeshGroupTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
+				selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(delta));
 
 				lastMoveDelta = delta;
 
@@ -158,9 +161,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent3D);
 		}
 
-		public override void SetPosition()
+		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = selectedBounds.Center;
 			Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 

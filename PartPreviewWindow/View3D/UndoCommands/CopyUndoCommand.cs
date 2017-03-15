@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg.UI;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -8,39 +9,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private int newItemIndex;
 		private View3DWidget view3DWidget;
-		private Matrix4X4 newItemTransform;
-		PlatingMeshGroupData newItemPlatingData;
 
-		MeshGroup meshGroupThatWasDeleted;
+		IObject3D addedObject3D;
+
+		bool wasLastItem;
 
 		public CopyUndoCommand(View3DWidget view3DWidget, int newItemIndex)
 		{
 			this.view3DWidget = view3DWidget;
 			this.newItemIndex = newItemIndex;
-			meshGroupThatWasDeleted = view3DWidget.MeshGroups[newItemIndex];
-			newItemTransform = view3DWidget.MeshGroupTransforms[newItemIndex];
-			newItemPlatingData = view3DWidget.MeshGroupExtraData[newItemIndex];
+
+			addedObject3D = view3DWidget.Scene.Children[newItemIndex];
+
+			wasLastItem = view3DWidget.Scene.Children.Last() == addedObject3D;
 		}
 
 		public void Undo()
 		{
-			view3DWidget.MeshGroups.RemoveAt(newItemIndex);
-			view3DWidget.MeshGroupExtraData.RemoveAt(newItemIndex);
-			view3DWidget.MeshGroupTransforms.RemoveAt(newItemIndex);
-			if(view3DWidget.SelectedMeshGroupIndex >= view3DWidget.MeshGroups.Count)
+			view3DWidget.Scene.Children.RemoveAt(newItemIndex);
+
+			if (wasLastItem)
 			{
-				view3DWidget.SelectedMeshGroupIndex = view3DWidget.MeshGroups.Count - 1;
+				view3DWidget.Scene.SelectLastChild();
 			}
 			view3DWidget.PartHasBeenChanged();
 		}
 
 		public void Do()
 		{
-			view3DWidget.MeshGroups.Insert(newItemIndex, meshGroupThatWasDeleted);
-			view3DWidget.MeshGroupTransforms.Insert(newItemIndex, newItemTransform);
-			view3DWidget.MeshGroupExtraData.Insert(newItemIndex, newItemPlatingData);
+			view3DWidget.Scene.Children.Insert(newItemIndex, addedObject3D);
 			view3DWidget.Invalidate();
-			view3DWidget.SelectedMeshGroupIndex = view3DWidget.MeshGroups.Count - 1;
+			view3DWidget.Scene.SelectLastChild();
 		}
 	}
 }

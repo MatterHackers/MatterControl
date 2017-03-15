@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using Gaming.Game;
@@ -39,8 +40,10 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PluginSystem;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
@@ -72,7 +75,7 @@ namespace MatterHackers.MatterControl
 		private bool DoCGCollectEveryDraw = false;
 		private int drawCount = 0;
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-		private DataViewGraph msGraph;
+		private DataViewGraph msGraph = new DataViewGraph(50, 50, 0, 200);
 		private string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
 		private bool ShowMemoryUsed = false;
 
@@ -219,7 +222,7 @@ namespace MatterHackers.MatterControl
 						break;
 
 					case "SLICE_AND_EXPORT_GCODE":
-						if (currentCommandIndex + 1 <= commandLineArgs.Length)
+						if (currentCommandIndex + 1 <= commandLineArgs.Length) 
 						{
 							currentCommandIndex++;
 							string fullPath = commandLineArgs[currentCommandIndex];
@@ -430,6 +433,8 @@ namespace MatterHackers.MatterControl
 		public event EventHandler PictureTaken;
 
 		private static Vector2 minSize { get; set; } = new Vector2(600, 600);
+
+		public View3DWidget ActiveView3DWidget { get; internal set; }
 
 		public static MatterControlApplication CreateInstance(int overrideWidth = -1, int overrideHeight = -1)
 		{
@@ -725,6 +730,11 @@ namespace MatterHackers.MatterControl
 			//HtmlWindowTest();
 
 			IsLoading = false;
+
+#if DEBUG
+			AfterDraw += ShowNamesUnderMouse;
+#endif
+			base.OnLoad(args);
 		}
 
 		private static void HtmlWindowTest()
@@ -767,6 +777,14 @@ namespace MatterHackers.MatterControl
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+#if DEBUG
+			if (showNamesUnderMouse)
+			{
+				mousePosition = mouseEvent.Position;
+				Invalidate();
+			}
+#endif
+
 			if (GuiWidget.DebugBoundsUnderMouse)
 			{
 				Invalidate();
@@ -896,6 +914,33 @@ namespace MatterHackers.MatterControl
 
 		private bool showNamesUnderMouse = false;
 
+#if DEBUG
+		Vector2 mousePosition;
+		private void ShowNamesUnderMouse(object sender, DrawEventArgs e)
+		{
+			if (showNamesUnderMouse)
+			{
+				List<WidgetAndPosition> namedChildren = new List<WidgetAndPosition>();
+				this.FindNamedChildrenRecursive("", namedChildren, new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1 , mousePosition.y + 1), SearchType.Partial);
+				Vector2 start = new Vector2(10, 50);
+				int lineHeight = 20;
+				e.graphics2D.FillRectangle(start, start + new Vector2(500, namedChildren.Count * lineHeight), new RGBA_Bytes(RGBA_Bytes.Black, 120));
+				foreach(var child in namedChildren)
+				{
+					if (child.name != null)
+					{
+						e.graphics2D.DrawString($"{child.widget.GetType().Name} --- {child.name}", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+						start.y += lineHeight;
+					}
+					else
+					{
+						//e.graphics2D.DrawString($"{child.widget.GetType().Name} -- -", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+						//start.y += lineHeight;
+					}
+				}
+			}
+		}
+
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
 			if (keyEvent.KeyCode == Keys.F1)
@@ -904,7 +949,7 @@ namespace MatterHackers.MatterControl
 			}
 			base.OnKeyDown(keyEvent);
 		}
-
+#endif
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
 			MatterControlApplication.AssertDebugNotDefined();

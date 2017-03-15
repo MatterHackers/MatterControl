@@ -44,6 +44,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg.PlatformAbstract;
+using Newtonsoft.Json;
+using MatterHackers.PolygonMesh;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -189,7 +195,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 						createButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createButton.Click += (sender, e) =>
 						{
-							OpenPluginChooserWindow();
+							// Clear the queue selection
+							QueueData.Instance.SelectedIndex = -1;
+
+							// Clear the scene and switch to editing view
+							view3DWidget.ClearBedAndLoadPrintItemWrapper(null, true);
 						};
 					}
 
@@ -378,8 +388,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 }
                 else if (extension == ".ZIP")
                 {
-                    ProjectFileHandler project = new ProjectFileHandler(null);
-                    List<PrintItem> partFiles = project.ImportFromProjectArchive(fileToAdd);
+                    List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(fileToAdd);
                     if (partFiles != null)
                     {
                         foreach (PrintItem part in partFiles)
@@ -446,8 +455,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 							string extension = Path.GetExtension(fileNameToLoad).ToUpper();
 							if (extension == ".ZIP")
 							{
-								ProjectFileHandler project = new ProjectFileHandler(null);
-								List<PrintItem> partFiles = project.ImportFromProjectArchive(fileNameToLoad);
+								List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(fileNameToLoad);
 								if (partFiles != null)
 								{
 									foreach (PrintItem part in partFiles)
@@ -477,7 +485,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			QueueData.Instance.AddItem(new PrintItemWrapper(partInfo.PrintItem), partInfo.InsertAfterIndex, QueueData.ValidateSizeOn32BitSystems.Skip);
 		}
 
-		void DoAddToSpecificLibrary(SaveAsWindow.SaveAsReturnInfo returnInfo)
+		void DoAddToSpecificLibrary(SaveAsWindow.SaveAsReturnInfo returnInfo, Action action)
 		{
 			if (returnInfo != null)
 			{
@@ -489,16 +497,100 @@ namespace MatterHackers.MatterControl.PrintQueue
 						var queueItem = queueDataView.GetQueueRowItem(queueItemIndex);
 						if (queueItem != null)
 						{
-							if (File.Exists(queueItem.PrintItemWrapper.FileLocation))
-							{
-								PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
-								libraryToSaveTo.AddItem(printItemWrapper);
-							}
+						if (File.Exists(queueItem.PrintItemWrapper.FileLocation))
+						{
+							PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(queueItem.PrintItemWrapper.PrintItem.Name, queueItem.PrintItemWrapper.FileLocation), returnInfo.destinationLibraryProvider.GetProviderLocator());
+							libraryToSaveTo.AddItem(printItemWrapper);
 						}
+					}
 					}
 					libraryToSaveTo.Dispose();
 				}
 			}
+		}
+
+		private View3DWidget view3DWidget;
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
+			if (view3DWidget == null)
+			{
+				base.OnMouseDown(mouseEvent);
+				return;
+			}
+
+			var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
+			var topToBottomItemListBounds = queueDataView.topToBottomItemList.TransformToScreenSpace(queueDataView.topToBottomItemList.LocalBounds);
+
+			bool mouseInQueueItemList = topToBottomItemListBounds.Contains(screenSpaceMousePosition);
+
+			// Clear or assign a drag source
+			view3DWidget.DragDropSource = (!mouseInQueueItemList) ? null : new Object3D
+			{
+				ItemType = Object3DTypes.Model,
+				Mesh = PlatonicSolids.CreateCube(10, 10, 10)
+			};
+
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseArgs)
+		{
+			if (!this.HasBeenClosed &&
+				view3DWidget?.DragDropSource != null &&
+				queueDataView.DragSourceRowItem != null)
+			{
+				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+
+				if(!File.Exists(queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation))
+				{
+					view3DWidget.DragDropSource = null;
+					queueDataView.DragSourceRowItem = null;
+					return;
+				}
+
+				if(view3DWidget.AltDragOver(screenSpaceMousePosition))
+				{
+					view3DWidget.DragDropSource.MeshPath = queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation;
+
+					base.OnMouseMove(mouseArgs);
+
+					view3DWidget.LoadDragSource();
+				}
+			}
+
+			base.OnMouseMove(mouseArgs);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseArgs)
+		{
+			if (view3DWidget?.DragDropSource != null && view3DWidget.Scene.Children.Contains(view3DWidget.DragDropSource))
+			{
+				// Mouse and widget positions
+				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+				var meshViewerPosition = this.view3DWidget.meshViewerWidget.TransformToScreenSpace(view3DWidget.meshViewerWidget.LocalBounds);
+
+				// If the mouse is not within the meshViewer, remove the inserted drag item
+				if (!meshViewerPosition.Contains(screenSpaceMousePosition))
+				{
+					view3DWidget.Scene.ModifyChildren(children => children.Remove(view3DWidget.DragDropSource));
+					view3DWidget.Scene.ClearSelection();
+				}
+				else
+				{
+					// Create and push the undo operation
+					view3DWidget.AddUndoOperation(
+						new InsertCommand(view3DWidget, view3DWidget.DragDropSource));
+				}
+			}
+
+			if (view3DWidget != null)
+			{
+				view3DWidget.DragDropSource = null;
+			}
+
+			base.OnMouseUp(mouseArgs);
 		}
 
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
@@ -544,9 +636,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 				QueueRowItem libraryItem = queueDataView.GetQueueRowItem(QueueData.Instance.SelectedIndex);
 				if (libraryItem != null)
 				{
-					OpenExportWindow(libraryItem.PrintItemWrapper);
-				}
+				OpenExportWindow(libraryItem.PrintItemWrapper);
 			}
+		}
 		}
 
 		private void exportQueueButton_Click(object sender, EventArgs mouseEvent)
@@ -632,7 +724,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void removeButton_Click(object sender, EventArgs mouseEvent)
 		{
 			QueueData.Instance.RemoveSelected();
-		}
+			}
 
 		private void sendButton_Click(object sender, EventArgs mouseEvent)
 		{
@@ -709,21 +801,21 @@ namespace MatterHackers.MatterControl.PrintQueue
 			int selectedCount = QueueData.Instance.SelectedCount;
 
 			// Disable menu items which are singleSelection only
-			foreach (MenuItem menuItem in moreMenu.MenuItems)
+			foreach(MenuItem menuItem in moreMenu.MenuItems)
 			{
 				// TODO: Ideally this would set .Enabled but at the moment, disabled controls don't have enough 
 				// functionality to convey the disabled aspect or suppress click events
 				if (selectedCount == 1)
 				{
 					menuItem.Enabled = !multiSelectionMenuItems.Contains(menuItem.Text);
-				}
+			}
 				else
 				{
 					menuItem.Enabled = !singleSelectionMenuItems.Contains(menuItem.Text);
 				}
 			}
 
-			for (int buttonIndex = 0; buttonIndex < itemOperationButtons.Children.Count; buttonIndex++)
+			for(int buttonIndex=0; buttonIndex<itemOperationButtons.Children.Count; buttonIndex++)
 			{
 				bool enabled = selectedCount > 0;
 				var child = itemOperationButtons.Children[buttonIndex];

@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		};
 
 		public SliceEngineMapping(string engineName)
-		{
+	{
 			this.Name = engineName;
 		}
 
