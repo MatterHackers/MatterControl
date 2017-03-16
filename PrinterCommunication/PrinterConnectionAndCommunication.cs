@@ -2167,7 +2167,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
 
-			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
+			bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName);
 			bool serialPortIsAlreadyOpen = portFactory.SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
@@ -2215,7 +2215,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// If the serial port isn't available (i.e. the specified port name wasn't found in GetPortNames()) or the serial
 				// port is already opened in another instance or process, then report the connection problem back to the user
 				connectionFailureMessage = (serialPortIsAlreadyOpen ?
-					string.Format("{0} in use", this.ComPort) :
+					this.ComPort + " in use".Localize() :
 					"Port not found".Localize());
 
 				OnConnectionFailed(null);
