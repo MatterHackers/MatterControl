@@ -171,6 +171,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			gcodeDisplayWidget.CloseAllChildren();
 
+            if(printItem == null)
+            {
+                return;
+            }
+
 			//firstProcessingMessage = "Loading G-Code...".Localize();
 			if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
 			{

@@ -38,12 +38,33 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterControl.Tests.MatterControl
 {
 	[TestFixture]
 	public class GCodeProcessingTests
 	{
+		[Test, Category("GCodeProcessing")]
+		public void ReadTemperaturesCorrectly()
+		{
+			ParseTempAndValidate("ok B:12.0 /0.0 T0:12.8 /0.0 T1:12.8 /0.0 T2:12.8 /0.0 @:0 B@:0", 12.8, 12.8, 12.8, 12.0);
+
+			ParseTempAndValidate("ok T:139.6 /0.0 @:0.00W", 139.6, 0, 0, 0.0);
+			ParseTempAndValidate("ok T:139.6 B:136.2 /0.0 @:0.00W", 139.6, 0, 0, 136.2);
+		}
+
+		private void ParseTempAndValidate(string gcodeString, double? extruder0, double? extruder1, double? extruder2, double? bedTemp)
+		{
+			double[] extruders = new double[16];
+			double bed = 0;
+			PrinterConnectionAndCommunication.ParseTemperatureString(gcodeString, extruders, null, ref bed, null);
+			Assert.IsTrue(extruders[0] == extruder0);
+			Assert.IsTrue(extruders[1] == extruder1);
+			Assert.IsTrue(extruders[2] == extruder2);
+			Assert.IsTrue(bed == bedTemp);
+		}
+
 		[Test, Category("GCodeProcessing")]
 		public void ReplaceMacroValuesWorking()
 		{
