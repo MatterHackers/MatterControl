@@ -187,8 +187,8 @@ namespace MatterHackers.MatterControl
 					PrintItemWrapper.FileHasChanged.RegisterEvent(item_FileHasChanged, ref unregisterEvents);
 
 					supportsThumbnails = !string.IsNullOrEmpty(printItemWrapper.FileLocation) &&
-					 File.Exists(printItemWrapper.FileLocation) &&
-					Path.GetExtension(printItemWrapper.FileLocation).ToLower() != ".mcp";
+					( File.Exists(printItemWrapper.FileLocation) || printItemWrapper.FileLocation == QueueData.SdCardFileName)
+					&& Path.GetExtension(printItemWrapper.FileLocation).ToLower() != ".mcp";
 				}
 			}
 		}
