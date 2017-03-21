@@ -85,9 +85,11 @@ namespace MatterHackers.MatterControl
 
 		private Stopwatch totalDrawTime = new Stopwatch();
 
-#if true//!DEBUG
+		private const int RaygunMaxNotifications = 15;
+
+		private static int raygunNotificationCount = 0;
+
 		private static RaygunClient _raygunClient = GetCorrectClient();
-#endif
 
 		private static RaygunClient GetCorrectClient()
 		{
@@ -409,7 +411,10 @@ namespace MatterHackers.MatterControl
 			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
 			{
 #if !DEBUG
-				_raygunClient.Send(e);
+				if (raygunNotificationCount++ < RaygunMaxNotifications)
+				{
+					_raygunClient.Send(e);
+				}
 #endif
 			}
 		}
@@ -522,14 +527,20 @@ namespace MatterHackers.MatterControl
 		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
 		{
 #if !DEBUG
-			_raygunClient.Send(e.Exception);
+			if(raygunNotificationCount++ < RaygunMaxNotifications)
+			{
+				_raygunClient.Send(e.Exception);
+			}
 #endif
 		}
 
 		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 #if !DEBUG
-			_raygunClient.Send(e.ExceptionObject as Exception);
+			if(raygunNotificationCount++ < RaygunMaxNotifications)
+			{
+				_raygunClient.Send(e.ExceptionObject as Exception);
+			}
 #endif
 		}
 
