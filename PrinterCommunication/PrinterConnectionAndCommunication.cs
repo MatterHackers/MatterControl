@@ -254,16 +254,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineStartCallBacks.AddCallbackToKey("ok", PrintingCanContinue);
 			ReadLineStartCallBacks.AddCallbackToKey("Done saving file", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallbackToKey("ok T0:", ReadTemperatures); // marlin
 			ReadLineStartCallBacks.AddCallbackToKey("B:", ReadTemperatures); // smoothie
+			ReadLineContainsCallBacks.AddCallbackToKey("T0:", ReadTemperatures); // marlin
+			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repatier
 
-			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
+            ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
 
 			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
 			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
 			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
-
-			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures);
 
 			ReadLineStartCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
 			ReadLineStartCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
@@ -1731,11 +1730,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			waitingForPosition.Reset();
 		}
 
-		public void ReadTemperatures(object sender, EventArgs e)
+		public static void ParseTemperatureString(string temperatureString,
+			double[] actualExtruderTemperature, Action<TemperatureEventArgs> extruderTemperatureChange,
+			ref double actualBedTemperature, Action<TemperatureEventArgs> bedTemperatureChanged)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-
-			string temperatureString = foundStringEventArgs.LineToCheck;
 			{
 				double readExtruderTemp = 0;
 				if (GCodeFile.GetFirstNumberAfter("T:", temperatureString, ref readExtruderTemp))
@@ -1743,7 +1741,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					if (actualExtruderTemperature[0] != readExtruderTemp)
 					{
 						actualExtruderTemperature[0] = readExtruderTemp;
-						OnExtruderTemperatureRead(new TemperatureEventArgs(0, GetActualExtruderTemperature(0)));
+						extruderTemperatureChange?.Invoke(new TemperatureEventArgs(0, readExtruderTemp));
 					}
 				}
 
@@ -1755,7 +1753,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						if (actualExtruderTemperature[extruderIndex] != readExtruderTemp)
 						{
 							actualExtruderTemperature[extruderIndex] = readExtruderTemp;
-							OnExtruderTemperatureRead(new TemperatureEventArgs(extruderIndex, GetActualExtruderTemperature(extruderIndex)));
+							extruderTemperatureChange?.Invoke(new TemperatureEventArgs(extruderIndex, readExtruderTemp));
 						}
 					}
 					else
@@ -1771,10 +1769,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					if (actualBedTemperature != readBedTemp)
 					{
 						actualBedTemperature = readBedTemp;
-						OnBedTemperatureRead(new TemperatureEventArgs(0, ActualBedTemperature));
+						bedTemperatureChanged?.Invoke(new TemperatureEventArgs(0, readBedTemp));
 					}
 				}
 			}
+		}
+
+		public void ReadTemperatures(object sender, FoundStringEventArgs foundStringEventArgs)
+		{
+			ParseTemperatureString(foundStringEventArgs.LineToCheck, actualExtruderTemperature, OnExtruderTemperatureRead,
+				ref actualBedTemperature, OnBedTemperatureRead);
 		}
 
 		public void RebootBoard()
@@ -2288,7 +2292,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private void DonePrintingSdFile(object sender, EventArgs e)
+		private void DonePrintingSdFile(object sender, FoundStringEventArgs e)
 		{
 			UiThread.RunOnIdle(() =>
 			{
