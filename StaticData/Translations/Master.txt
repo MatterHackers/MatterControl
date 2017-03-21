@@ -5986,3 +5986,15 @@ Translated:Success! Your code has been redeemed.
 English:Your new designs will appear in the 'Purchased' library folder.
 Translated:Your new designs will appear in the 'Purchased' library folder.
 
+English:Currently Printing
+Translated:Currently Printing
+
+English:Waiting for Bed to Heat to
+Translated:Waiting for Bed to Heat to
+
+English:Homing Axis
+Translated:Homing Axis
+
+English:Waiting for Extruder to Heat to
+Translated:Waiting for Extruder to Heat to
+
