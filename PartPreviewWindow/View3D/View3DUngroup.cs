@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.DataConverters3D;
 using System.Threading.Tasks;
+using MatterHackers.PolygonMesh;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -36,7 +38,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private async void UngroupSelectedMeshGroup()
 		{
-			if (Scene.HasChildren)
+			if (Scene.HasSelection)
 			{
 				processingProgressControl.PercentComplete = 0;
 				processingProgressControl.Visible = true;
@@ -45,7 +47,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				await Task.Run(() =>
 				{
-					if (Scene.IsSelected(Object3DTypes.Group))
+					var selectedItem = Scene.SelectedItem;
+					bool isGroupItemType = Scene.IsSelected(Object3DTypes.Group);
+
+					// If not a Group ItemType, look for mesh volumes and split into disctinct objects if found
+					if (!isGroupItemType 
+						&& !selectedItem.HasChildren
+						&& selectedItem.Mesh != null)
+					{
+						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
+						{
+							ReportProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
+						});
+
+						if (discreetMeshes.Count == 1)
+						{
+							// No further processing needed, nothing to ungroup
+							return;
+						}
+
+						selectedItem.Children = discreetMeshes.Select(mesh => new Object3D()
+						{
+							ItemType = Object3DTypes.Model,
+							Mesh = mesh
+						}).ToList<IObject3D>();
+
+						selectedItem.Mesh = null;
+						selectedItem.MeshPath = null;
+						selectedItem.ItemType = Object3DTypes.Group;
+
+						isGroupItemType = true;
+					}
+
+					if (isGroupItemType)
 					{
 						// Create and perform the delete operation
 						var operation = new UngroupCommand(this, Scene.SelectedItem);
