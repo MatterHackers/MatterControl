@@ -9,12 +9,13 @@ using System.Runtime.Serialization.Formatters.Binary;
 using MatterHackers.Localizations;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
 	public class AuthenticationData
 	{
-		public RootedObjectEventHandler SessionUpdateTrigger = new RootedObjectEventHandler();
+		public RootedObjectEventHandler AuthSessionChanged = new RootedObjectEventHandler();
 		static int failedRequestCount = int.MaxValue;
 
 		public bool IsConnected
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl
 		public void SessionRefresh()
 		{
 			//Called after completing a purchase (for example)
-			SessionUpdateTrigger.CallEvents(null, null);
+			AuthSessionChanged.CallEvents(null, null);
 		}
 
 		public void ClearActiveSession()
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl
 			this.ActiveClientToken = null;
 
 			ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Cleared".Localize());
-			SessionUpdateTrigger.CallEvents(null, null);
+			AuthSessionChanged.CallEvents(null, null);
 		}
 
 		public void SetActiveSession(string userName, string userEmail, string sessionKey, string clientToken)
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl
 			this.ActiveClientToken = clientToken;
 
 			ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: true);
-			SessionUpdateTrigger.CallEvents(null, null);
+			AuthSessionChanged.CallEvents(null, null);
 		}
 		
 		public bool ClientAuthenticatedSessionValid
