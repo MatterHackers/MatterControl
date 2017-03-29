@@ -29,26 +29,70 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class UngroupCommand : IUndoRedoCommand
 	{
-		private GroupCommand groupCommand;
-
+		private IObject3D originalItem;
+		private View3DWidget view3DWidget;
+		
 		public UngroupCommand(View3DWidget view3DWidget, IObject3D ungroupingItem)
 		{
-			this.groupCommand = new GroupCommand(view3DWidget, ungroupingItem);
+			this.originalItem = ungroupingItem;
+			this.view3DWidget = view3DWidget;
 		}
 
 		public void Do()
 		{
-			groupCommand.Undo();
+			if (!view3DWidget.Scene.Children.Contains(originalItem))
+			{
+				return;
+			}
+
+			view3DWidget.Scene.ModifyChildren(children =>
+			{
+				// Remove the group
+				children.Remove(originalItem);
+
+				// Apply transform
+				foreach(var child in originalItem.Children)
+				{
+					child.Matrix *= originalItem.Matrix;
+				}
+
+				// Add all children from the group
+				children.AddRange(originalItem.Children);
+			});
+
+			view3DWidget.Scene.SelectLastChild();
+			view3DWidget.PartHasBeenChanged();
 		}
 
 		public void Undo()
 		{
-			groupCommand.Do();
+			// Remove the children from the Scene root, add the original item back into the root
+			view3DWidget.Scene.ModifyChildren(children =>
+			{
+				foreach(var child in originalItem.Children)
+				{
+					if (children.Contains(child))
+					{
+						children.Remove(child);
+					}
+
+					Matrix4X4 inverseMatrix = originalItem.Matrix;
+					inverseMatrix.Invert();
+
+					child.Matrix = inverseMatrix * child.Matrix;
+				}
+
+				children.Add(originalItem);
+			});
+
+			view3DWidget.Scene.SelectLastChild();
+			view3DWidget.PartHasBeenChanged();
 		}
 	}
 }
