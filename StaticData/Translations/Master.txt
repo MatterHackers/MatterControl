@@ -5998,3 +5998,12 @@ Translated:Homing Axis
 English:Waiting for Extruder to Heat to
 Translated:Waiting for Extruder to Heat to
 
+English:Firmware Updates
+Translated:Firmware Updates
+
+English:Firmware Options
+Translated:Firmware Options
+
+English:Backup before update
+Translated:Backup before update
+
