@@ -708,57 +708,69 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
-			if (libraryDataView != null
+			if (mouseEvent.DragFiles?.Count > 0)
+			{
+				if (libraryDataView != null
 				&& libraryDataView.CurrentLibraryProvider != null
 				&& !libraryDataView.CurrentLibraryProvider.IsProtected())
-			{
-				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
-					string extension = Path.GetExtension(file).ToUpper();
-					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-						|| extension == ".GCODE"
-						|| extension == ".ZIP")
+					foreach (string file in mouseEvent.DragFiles)
 					{
-						fileDropEventArgs.AcceptDrop = true;
+						string extension = Path.GetExtension(file).ToUpper();
+						if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+							|| extension == ".GCODE"
+							|| extension == ".ZIP")
+						{
+							mouseEvent.AcceptDrop = true;
+						}
 					}
 				}
 			}
-			base.OnDragEnter(fileDropEventArgs);
+
+			base.OnMouseEnterBounds(mouseEvent);
 		}
 
-		public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
-			if (libraryDataView != null
-				&& libraryDataView.CurrentLibraryProvider != null
-				&& !libraryDataView.CurrentLibraryProvider.IsProtected())
+			if (PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y)
+				&& mouseEvent.DragFiles?.Count > 0)
 			{
-				foreach (string file in fileDropEventArgs.DroppedFiles)
+				if (libraryDataView != null
+					&& libraryDataView.CurrentLibraryProvider != null
+					&& !libraryDataView.CurrentLibraryProvider.IsProtected())
 				{
-					string extension = Path.GetExtension(file).ToUpper();
-					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-						|| extension == ".GCODE"
-						|| extension == ".ZIP")
+					foreach (string file in mouseEvent.DragFiles)
 					{
-						fileDropEventArgs.AcceptDrop = true;
-						break;
+						string extension = Path.GetExtension(file).ToUpper();
+						if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+							|| extension == ".GCODE"
+							|| extension == ".ZIP")
+						{
+							mouseEvent.AcceptDrop = true;
+							break;
+						}
 					}
 				}
 			}
-			base.OnDragOver(fileDropEventArgs);
+
+			base.OnMouseMove(mouseEvent);
 		}
 
-		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			if (libraryDataView != null
+			if (mouseEvent.DragFiles?.Count > 0)
+			{
+				if (libraryDataView != null
 				&& libraryDataView.CurrentLibraryProvider != null
 				&& !libraryDataView.CurrentLibraryProvider.IsProtected())
-			{
-				libraryDataView.CurrentLibraryProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
+				{
+					libraryDataView.CurrentLibraryProvider.AddFilesToLibrary(mouseEvent.DragFiles);
+				}
 			}
 
-			base.OnDragDrop(fileDropEventArgs);
+			base.OnMouseUp(mouseEvent);
 		}
 
 		private void importToLibraryloadFile_ClickOnIdle()

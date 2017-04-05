@@ -866,88 +866,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		// TODO: Just realized we don't implement DragLeave, meaning that injected items can't be removed. Must implement
-		public override void OnDragDrop(FileDropEventArgs fileDropArgs)
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
-			if (AllowDragDrop() && fileDropArgs.DroppedFiles.Count == 1)
+			if (mouseEvent.DragFiles?.Count > 0)
 			{
-				// Item is already in the scene
-				DragDropSource = null;
-			}
-			else if (AllowDragDrop())
-			{
-				// Items need to be added to the scene
-				var partsToAdd = (from droppedFileName in fileDropArgs.DroppedFiles
-								  let extension = Path.GetExtension(droppedFileName).ToLower()
-								  where !string.IsNullOrEmpty(extension) && ApplicationSettings.OpenDesignFileParams.Contains(extension)
-								  select droppedFileName).ToArray();
-			
-				if (partsToAdd.Length > 0)
+				if (AllowDragDrop())
 				{
-					bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
-					if (enterEditModeBeforeAddingParts)
+					foreach (string file in mouseEvent.DragFiles)
 					{
-						SwitchStateToEditing();
+						string extension = Path.GetExtension(file).ToLower();
+						if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
+						{
+							mouseEvent.AcceptDrop = true;
+						}
 					}
 
-					loadAndAddPartsToPlate(partsToAdd);
-				}
-			}
-
-			base.OnDragDrop(fileDropArgs);
-		}
-
-		public override void OnDragEnter(FileDropEventArgs fileDropArgs)
-		{
-			if (AllowDragDrop())
-			{
-				foreach (string file in fileDropArgs.DroppedFiles)
-				{
-					string extension = Path.GetExtension(file).ToLower();
-					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
+					if (mouseEvent.AcceptDrop)
 					{
-						fileDropArgs.AcceptDrop = true;
+						DragDropSource = new Object3D
+						{
+							ItemType = Object3DTypes.Model,
+							Mesh = PlatonicSolids.CreateCube(10, 10, 10)
+						};
 					}
 				}
-
-				if(fileDropArgs.AcceptDrop)
-				{
-					DragDropSource = new Object3D
-					{
-						ItemType = Object3DTypes.Model,
-						Mesh = PlatonicSolids.CreateCube(10, 10, 10)
-					};
-				}
-			}
-			base.OnDragEnter(fileDropArgs);
-		}
-
-		public override async void OnDragOver(FileDropEventArgs fileDropArgs)
-		{
-			if (AllowDragDrop() && fileDropArgs.DroppedFiles.Count == 1) 
-			{
-				var screenSpaceMousePosition = this.TransformToScreenSpace(new Vector2(fileDropArgs.X, fileDropArgs.Y));
-
-				// If the DragDropSource was added to the scene on this DragOver call, we start a task to replace 
-				// the "loading" mesh with the actual file contents
-				if (AltDragOver(screenSpaceMousePosition))
-				{
-					DragDropSource.MeshPath = fileDropArgs.DroppedFiles.First();
-
-					// Run the rest of the OnDragOver pipeline since we're starting a new thread and won't finish for an unknown time
-					base.OnDragOver(fileDropArgs);
-
-					LoadDragSource();
-
-					// Don't fall through to the base.OnDragOver because we preemptively invoked it above
-					return;
-				}
 			}
 
-			// AcceptDrop anytime a DropSource has been queued
-			fileDropArgs.AcceptDrop = DragDropSource != null;
-
-			base.OnDragOver(fileDropArgs);
+			base.OnMouseEnterBounds(mouseEvent);
 		}
 
 		private GuiWidget topMostParent;
@@ -1294,6 +1239,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+			if (AllowDragDrop() && mouseEvent.DragFiles?.Count == 1)
+			{
+				var screenSpaceMousePosition = this.TransformToScreenSpace(new Vector2(mouseEvent.X, mouseEvent.Y));
+
+				// If the DragDropSource was added to the scene on this DragOver call, we start a task to replace 
+				// the "loading" mesh with the actual file contents
+				if (AltDragOver(screenSpaceMousePosition))
+				{
+					DragDropSource.MeshPath = mouseEvent.DragFiles.First();
+
+					// Run the rest of the OnDragOver pipeline since we're starting a new thread and won't finish for an unknown time
+					base.OnMouseMove(mouseEvent);
+
+					LoadDragSource();
+
+					// Don't fall through to the base.OnDragOver because we preemptively invoked it above
+					return;
+				}
+			}
+
+			// AcceptDrop anytime a DropSource has been queued
+			mouseEvent.AcceptDrop = DragDropSource != null;
+
 			if (CurrentSelectInfo.DownOnPart && meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
 				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
@@ -1310,8 +1278,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		// TODO: Just realized we don't implement DragLeave, meaning that injected items can't be removed. Must implement
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			if (mouseEvent.DragFiles?.Count > 0)
+			{
+				if (AllowDragDrop() && mouseEvent.DragFiles.Count == 1)
+				{
+					// Item is already in the scene
+					DragDropSource = null;
+				}
+				else if (AllowDragDrop())
+				{
+					// Items need to be added to the scene
+					var partsToAdd = (from droppedFileName in mouseEvent.DragFiles
+									  let extension = Path.GetExtension(droppedFileName).ToLower()
+									  where !string.IsNullOrEmpty(extension) && ApplicationSettings.OpenDesignFileParams.Contains(extension)
+									  select droppedFileName).ToArray();
+
+					if (partsToAdd.Length > 0)
+					{
+						bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
+						if (enterEditModeBeforeAddingParts)
+						{
+							SwitchStateToEditing();
+						}
+
+						loadAndAddPartsToPlate(partsToAdd);
+					}
+				}
+			}
+
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
 				&& CurrentSelectInfo.DownOnPart
 				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)

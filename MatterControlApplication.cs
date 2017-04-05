@@ -342,63 +342,14 @@ namespace MatterHackers.MatterControl
 
 		private bool dropWasOnChild = true;
 
-		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			base.OnDragEnter(fileDropEventArgs);
+			// do this first to make sure a child can process the drag drop if interested
+			base.OnMouseUp(mouseEvent);
 
-			if (!fileDropEventArgs.AcceptDrop)
+			if (!dropWasOnChild && mouseEvent.DragFiles != null)
 			{
-				// no child has accepted the drop
-				foreach (string file in fileDropEventArgs.DroppedFiles)
-				{
-					string extension = Path.GetExtension(file).ToUpper();
-					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-						|| extension == ".GCODE"
-						|| extension == ".ZIP")
-					{
-						fileDropEventArgs.AcceptDrop = true;
-					}
-				}
-				dropWasOnChild = false;
-			}
-			else
-			{
-				dropWasOnChild = true;
-			}
-		}
-
-		public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
-		{
-			base.OnDragOver(fileDropEventArgs);
-
-			if (!fileDropEventArgs.AcceptDrop)
-			{
-				// no child has accepted the drop
-				foreach (string file in fileDropEventArgs.DroppedFiles)
-				{
-					string extension = Path.GetExtension(file).ToUpper();
-					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-						|| extension == ".GCODE"
-						|| extension == ".ZIP")
-					{
-						fileDropEventArgs.AcceptDrop = true;
-					}
-				}
-				dropWasOnChild = false;
-			}
-			else
-			{
-				dropWasOnChild = true;
-			}
-		}
-
-		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
-		{
-			base.OnDragDrop(fileDropEventArgs);
-
-			if (!dropWasOnChild)
-			{
-				QueueDataWidget.DoAddFiles(fileDropEventArgs.DroppedFiles);
+				QueueDataWidget.DoAddFiles(mouseEvent.DragFiles);
 			}
 		}
 
@@ -788,6 +739,29 @@ namespace MatterHackers.MatterControl
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+			// run this first to make sure a child has the chance to take the drag drop event
+			base.OnMouseMove(mouseEvent);
+
+			if (!mouseEvent.AcceptDrop && mouseEvent.DragFiles != null)
+			{
+				// no child has accepted the drop
+				foreach (string file in mouseEvent.DragFiles)
+				{
+					string extension = Path.GetExtension(file).ToUpper();
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+						|| extension == ".GCODE"
+						|| extension == ".ZIP")
+					{
+						//mouseEvent.AcceptDrop = true;
+					}
+				}
+				dropWasOnChild = false;
+			}
+			else
+			{
+				dropWasOnChild = true;
+			}
+
 #if DEBUG
 			if (showNamesUnderMouse)
 			{
@@ -800,7 +774,6 @@ namespace MatterHackers.MatterControl
 			{
 				Invalidate();
 			}
-			base.OnMouseMove(mouseEvent);
 		}
 
 		public override void OnParentChanged(EventArgs e)
