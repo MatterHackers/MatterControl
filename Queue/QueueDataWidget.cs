@@ -367,14 +367,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnClosed(e);
 		}
 
-		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
-        {
-            DoAddFiles(fileDropEventArgs.DroppedFiles);
-
-            base.OnDragDrop(fileDropEventArgs);
-        }
-
-        public static void DoAddFiles(List<string> files)
+		public static void DoAddFiles(List<string> files)
         {
             int preAddCount = QueueData.Instance.ItemCount;
 
@@ -405,34 +398,23 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
-			foreach (string file in fileDropEventArgs.DroppedFiles)
+			if (mouseEvent.DragFiles?.Count > 0)
 			{
-				string extension = Path.GetExtension(file).ToUpper();
-				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-					|| extension == ".GCODE"
-					|| extension == ".ZIP")
+				foreach (string file in mouseEvent.DragFiles)
 				{
-					fileDropEventArgs.AcceptDrop = true;
+					string extension = Path.GetExtension(file).ToUpper();
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+						|| extension == ".GCODE"
+						|| extension == ".ZIP")
+					{
+						mouseEvent.AcceptDrop = true;
+					}
 				}
 			}
-			base.OnDragEnter(fileDropEventArgs);
-		}
 
-		public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
-		{
-			foreach (string file in fileDropEventArgs.DroppedFiles)
-			{
-				string extension = Path.GetExtension(file).ToUpper();
-				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-					|| extension == ".GCODE"
-					|| extension == ".ZIP")
-				{
-					fileDropEventArgs.AcceptDrop = true;
-				}
-			}
-			base.OnDragOver(fileDropEventArgs);
+			base.OnMouseEnterBounds(mouseEvent);
 		}
 
 		private void AddItemsToQueue()
@@ -535,13 +517,28 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnMouseDown(mouseEvent);
 		}
 
-		public override void OnMouseMove(MouseEventArgs mouseArgs)
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+			if (PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y)
+				&& mouseEvent.DragFiles?.Count > 0)
+			{
+				foreach (string file in mouseEvent.DragFiles)
+				{
+					string extension = Path.GetExtension(file).ToUpper();
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+						|| extension == ".GCODE"
+						|| extension == ".ZIP")
+					{
+						mouseEvent.AcceptDrop = true;
+					}
+				}
+			}
+
 			if (!this.HasBeenClosed &&
 				view3DWidget?.DragDropSource != null &&
 				queueDataView.DragSourceRowItem != null)
 			{
-				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
 
 				if(!File.Exists(queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation))
 				{
@@ -554,21 +551,26 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					view3DWidget.DragDropSource.MeshPath = queueDataView.DragSourceRowItem.PrintItemWrapper.FileLocation;
 
-					base.OnMouseMove(mouseArgs);
+					base.OnMouseMove(mouseEvent);
 
 					view3DWidget.LoadDragSource();
 				}
 			}
 
-			base.OnMouseMove(mouseArgs);
+			base.OnMouseMove(mouseEvent);
 		}
 
-		public override void OnMouseUp(MouseEventArgs mouseArgs)
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			if (mouseEvent.DragFiles?.Count > 0)
+			{
+				DoAddFiles(mouseEvent.DragFiles);
+			}
+
 			if (view3DWidget?.DragDropSource != null && view3DWidget.Scene.Children.Contains(view3DWidget.DragDropSource))
 			{
 				// Mouse and widget positions
-				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseArgs.Position);
+				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
 				var meshViewerPosition = this.view3DWidget.meshViewerWidget.TransformToScreenSpace(view3DWidget.meshViewerWidget.LocalBounds);
 
 				// If the mouse is not within the meshViewer, remove the inserted drag item
@@ -590,7 +592,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				view3DWidget.DragDropSource = null;
 			}
 
-			base.OnMouseUp(mouseArgs);
+			base.OnMouseUp(mouseEvent);
 		}
 
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
