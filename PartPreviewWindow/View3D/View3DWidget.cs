@@ -186,6 +186,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public partial class View3DWidget : PartPreview3DWidget
 	{
 		private bool DoBooleanTest = false;
+		private bool deferEditorTillMouseUp = false;
+
 		public FlowLayoutWidget doEdittingButtonsContainer;
 		public UndoBuffer UndoBuffer { get; private set; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
@@ -872,22 +874,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (AllowDragDrop())
 				{
-					foreach (string file in mouseEvent.DragFiles)
-					{
-						string extension = Path.GetExtension(file).ToLower();
-						if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
-						{
-							mouseEvent.AcceptDrop = true;
-						}
-					}
+					mouseEvent.AcceptDrop = mouseEvent.DragFiles.TrueForAll(filePath => AllowFileDrop(filePath));
 
 					if (mouseEvent.AcceptDrop)
 					{
-						DragDropSource = new Object3D
+						string filePath = mouseEvent.DragFiles.FirstOrDefault();
+						string extensionWithoutPeriod = Path.GetExtension(filePath).Trim('.');
+
+						IContentProvider contentProvider;
+						if (!string.IsNullOrEmpty(filePath)
+							&& ApplicationController.Instance.SceneContentProviders.TryGetValue(extensionWithoutPeriod, out contentProvider))
 						{
-							ItemType = Object3DTypes.Model,
-							Mesh = PlatonicSolids.CreateCube(10, 10, 10)
-						};
+							DragDropSource = contentProvider.CreateItem(filePath).Object3D;
+						}
+						else
+						{
+							DragDropSource = new Object3D
+							{
+								ItemType = Object3DTypes.Model,
+								Mesh = PlatonicSolids.CreateCube(10, 10, 10)
+							};
+						}
 					}
 				}
 			}
@@ -903,7 +910,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// Provides a View3DWidget specific drag implementation
 		/// </summary>
 		/// <param name="screenSpaceMousePosition">The screen space mouse position.</param>
-		/// <returns>A value indicating in the DragDropSource was added to the scene</returns>
+		/// <returns>A value indicating if a new item was generated for the DragDropSource and added to the scene</returns>
 		public bool AltDragOver(Vector2 screenSpaceMousePosition)
 		{
 			if (this.HasBeenClosed)
@@ -941,6 +948,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					CurrentSelectInfo.PlaneDownHitPos = intersectInfo.hitPosition;
 					CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
+
+					this.deferEditorTillMouseUp = true;
 
 					// Add item to scene and select it
 					Scene.ModifyChildren(children =>
@@ -987,14 +996,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IObject3D loadedItem = await Task.Run(() =>
 			{
-				return Object3D.Load(dragSource.MeshPath, progress: new DragDropLoadProgress(this, dragSource).UpdateLoadProgress);
+				string extensionWithoutPeriod = Path.GetExtension(dragSource.MeshPath).Trim('.');
+				if (ApplicationController.Instance.SceneContentProviders.ContainsKey(extensionWithoutPeriod))
+				{
+					return null;
+				}
+				else
+				{
+					return Object3D.Load(dragSource.MeshPath, progress: new DragDropLoadProgress(this, dragSource).UpdateLoadProgress);
+				}
 			});
 
 			if (loadedItem != null)
 			{
-				// TODO: Changing an item in the scene has a risk of collection modified during enumeration errors. This approach works as 
-				// a proof of concept but needs to take the more difficult route of managing state and swapping the dragging instance with 
-				// the new loaded item data
 				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
 				dragSource.Mesh = loadedItem.Mesh;
 				dragSource.Children.AddRange(loadedItem.Children);
@@ -1247,7 +1261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// the "loading" mesh with the actual file contents
 				if (AltDragOver(screenSpaceMousePosition))
 				{
-					DragDropSource.MeshPath = mouseEvent.DragFiles.First();
+					DragDropSource.MeshPath = mouseEvent.DragFiles.FirstOrDefault();
 
 					// Run the rest of the OnDragOver pipeline since we're starting a new thread and won't finish for an unknown time
 					base.OnMouseMove(mouseEvent);
@@ -1291,10 +1305,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else if (AllowDragDrop())
 				{
 					// Items need to be added to the scene
-					var partsToAdd = (from droppedFileName in mouseEvent.DragFiles
-									  let extension = Path.GetExtension(droppedFileName).ToLower()
-									  where !string.IsNullOrEmpty(extension) && ApplicationSettings.OpenDesignFileParams.Contains(extension)
-									  select droppedFileName).ToArray();
+					var partsToAdd = mouseEvent.DragFiles.Where(filePath => AllowFileDrop(filePath)).ToArray();
 
 					if (partsToAdd.Length > 0)
 					{
@@ -1306,6 +1317,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						loadAndAddPartsToPlate(partsToAdd);
 					}
+				}
+
+				if (deferEditorTillMouseUp)
+				{
+					this.deferEditorTillMouseUp = false;
+					Scene_SelectionChanged(null, null);
 				}
 			}
 
@@ -1520,6 +1537,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			flowToAddTo.AddChild(saveButtons);
 		}
 
+		// Indicates if DragDrop operations should be allowed for the given file type
+		private bool AllowFileDrop(string filePath)
+		{
+			string extension = Path.GetExtension(filePath).ToLower();
+			string extensionWithoutPeriod = extension.Trim('.');
+
+			return !string.IsNullOrEmpty(extension)
+				&& (ApplicationSettings.OpenDesignFileParams.Contains(extension) || ApplicationController.Instance.SceneContentProviders.Keys.Contains(extensionWithoutPeriod));
+		}
+
+		// Indicates if MatterControl is in a mode that allows DragDrop
 		private bool AllowDragDrop()
 		{ 
 			if ((!enterEditButtonsContainer.Visible
@@ -1753,6 +1781,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
+			if (deferEditorTillMouseUp)
+			{
+				return;
+			}
+
 			var selectedItem = Scene.SelectedItem;
 
 			HashSet<IObject3DEditor> mappedEditors;
@@ -1952,13 +1985,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				foreach (string loadedFileName in filesToLoad)
 				{
-					IObject3D newItem = Object3D.Load(loadedFileName, itemCache, (double progress0To1, string processingState, out bool continueProcessing) =>
+					IObject3D newItem;
+
+					string extension = Path.GetExtension(loadedFileName).ToLower();
+					IContentProvider contentProvider;
+					if (ApplicationController.Instance.SceneContentProviders.TryGetValue(extension.Trim('.'), out contentProvider))
 					{
-						continueProcessing = !this.HasBeenClosed;
-						double ratioAvailable = (ratioPerFile * .5);
-						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
-						ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
-					});
+						newItem = contentProvider.CreateItem(loadedFileName).Object3D;
+					}
+					else
+					{
+						newItem = Object3D.Load(loadedFileName, itemCache, (double progress0To1, string processingState, out bool continueProcessing) =>
+						{
+							continueProcessing = !this.HasBeenClosed;
+							double ratioAvailable = (ratioPerFile * .5);
+							double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
+							ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
+						});
+					}
 
 					if (HasBeenClosed)
 					{
