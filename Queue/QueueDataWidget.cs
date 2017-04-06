@@ -50,6 +50,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using System.Threading.Tasks;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -426,15 +427,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 					ActionButtonLabel = "Add to Queue",
 					Title = "MatterControl: Select A File"
 				},
-				(openParams) =>
+				async (openParams) =>
 				{
 					if (openParams.FileNames != null)
 					{
 						int preAddCount = QueueData.Instance.ItemCount;
 
+						IContentProvider contentProvider;
+
 						foreach (string fileNameToLoad in openParams.FileNames)
 						{
 							string extension = Path.GetExtension(fileNameToLoad).ToUpper();
+							string extensionWithoutPeriod = extension.ToLower().Trim('.');
+
 							if (extension == ".ZIP")
 							{
 								List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(fileNameToLoad);
@@ -445,6 +450,29 @@ namespace MatterHackers.MatterControl.PrintQueue
 										QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
 									}
 								}
+							}
+							else if (extension != "" && ApplicationController.Instance.SceneContentProviders.TryGetValue(extensionWithoutPeriod, out contentProvider))
+							{
+								// Generate the object
+								var result = contentProvider.CreateItem(fileNameToLoad);
+
+								await result.MeshLoaded;
+
+								// Save to the library
+								string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".mcx");
+								string libraryPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+								var tempScene = new InteractiveScene();
+								tempScene.Children.Add(result.Object3D);
+								tempScene.Save(libraryPath, ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
+
+								// Add the generated .mcx file to the queue
+								QueueData.Instance.AddItem(
+									new PrintItemWrapper(
+										new PrintItem(
+											Path.GetFileNameWithoutExtension(fileNameToLoad),
+											libraryPath)));
+
 							}
 							else if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension.ToLower()))
 							{

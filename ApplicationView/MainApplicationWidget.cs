@@ -56,9 +56,42 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using System.Net;
 	using CustomWidgets;
+	using MatterHackers.DataConverters3D;
 
 	public class OemProfileDictionary : Dictionary<string, Dictionary<string, PublicDevice>>
 	{
+	}
+
+	public class ContentResult
+	{
+		public IObject3D Object3D { get; set; }
+		public Task MeshLoaded { get; set; }
+	}
+
+	public interface IContentProvider
+	{
+		ContentResult CreateItem(string filePath);
+	}
+
+	public class SimpleContentProvider : IContentProvider
+	{
+		public Func<string, ContentResult> Generator { get; set; }
+
+		public ContentResult CreateItem(string filePath)
+		{
+			return this.Generator(filePath);
+		}
+	}
+
+	public static class ExtensionMethods
+	{
+		public static void Add(this Dictionary<string, IContentProvider> list, IEnumerable<string> extensions, IContentProvider provider)
+		{
+			foreach(var extension in extensions)
+			{
+				list.Add(extension, provider);
+			}
+		}
 	}
 
 	public class PublicDevice
@@ -223,6 +256,8 @@ namespace MatterHackers.MatterControl
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
 		public SlicePresetsWindow EditQualityPresetsWindow { get; set; }
+
+		public Dictionary<string, IContentProvider> SceneContentProviders = new Dictionary<string, IContentProvider>();
 
 		public ApplicationView MainView;
 
