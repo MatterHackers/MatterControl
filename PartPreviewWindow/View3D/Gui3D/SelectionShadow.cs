@@ -28,6 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -63,7 +68,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				Mesh bottomBounds = PlatonicSolids.CreateCube(selectedBounds.XSize, selectedBounds.YSize, .1);
-				GLHelper.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
+
+				bool authorized = true;
+				if (authorized)
+				{
+					GLHelper.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
+				}
+				else
+				{
+					TypeFacePrinter demoTextPrinter = new TypeFacePrinter("Demo ", 62);
+					var bounds = demoTextPrinter.LocalBounds;
+
+					var demoTexture = new ImageBuffer(512, 512);
+					var scale = demoTexture.Width / bounds.Width;
+					demoTextPrinter.Origin = new Vector2(0, -bounds.Bottom / scale / 2);
+
+					Graphics2D imageGraphics = demoTexture.NewGraphics2D();
+					imageGraphics.Clear(new RGBA_Bytes(RGBA_Bytes.White, 30));
+
+					imageGraphics.Render(new VertexSourceApplyTransform(demoTextPrinter, Affine.NewScaling(scale, scale)), new RGBA_Bytes(RGBA_Bytes.White, 100));
+
+					int count = 0;
+					ImageBuffer clearImage = new ImageBuffer(2, 2, 32, new BlenderBGRA());
+					foreach (Face face in bottomBounds.Faces)
+					{
+						if (count == 0)
+						{
+							MeshHelper.PlaceTextureOnFace(face, demoTexture);
+						}
+						else
+						{
+							MeshHelper.PlaceTextureOnFace(face, clearImage);
+						}
+						count++;
+					}
+
+					ImageGlPlugin.GetImageGlPlugin(demoTexture, true);
+					GLHelper.Render(bottomBounds, new RGBA_Bytes(RGBA_Bytes.Black, 254), TotalTransform, RenderTypes.Shaded);
+				}
 			}
 
 			base.DrawGlContent(e);
