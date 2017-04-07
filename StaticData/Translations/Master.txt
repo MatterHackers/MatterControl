@@ -6007,3 +6007,9 @@ Translated:Firmware Options
 English:Backup before update
 Translated:Backup before update
 
+English:Only Retract When Crossing Perimeters
+Translated:Only Retract When Crossing Perimeters
+
+English:Demo
+Translated:Demo
+
