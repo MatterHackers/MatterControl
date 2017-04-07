@@ -34,9 +34,11 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using System;
 
@@ -44,6 +46,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SelectionShadow : InteractionVolume
 	{
+		static Mesh normalShadowMesh;
+		static Mesh demoShadowMesh;
+		static RGBA_Bytes shadowColor = new RGBA_Bytes(22, 80, 220);
+		readonly int shadowAlpha = 40;
+
 		private View3DWidget view3DWidget;
 
 		public SelectionShadow(View3DWidget view3DWidget)
@@ -60,6 +67,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.x, boundsCenter.y, 0.1));
 		}
 
+		Mesh GetNormalShadowMesh()
+		{
+			if(normalShadowMesh == null)
+			{
+				normalShadowMesh = PlatonicSolids.CreateCube(1, 1, .1);
+			}
+
+			return normalShadowMesh;
+		}
+
+		Mesh GetDemoShadowMesh()
+		{
+			if (demoShadowMesh == null)
+			{
+				demoShadowMesh = PlatonicSolids.CreateCube(1, 1, .1);
+				TypeFacePrinter demoTextPrinter = new TypeFacePrinter("Demo".Localize() + " ", 62);
+				var bounds = demoTextPrinter.LocalBounds;
+
+				var demoTexture = new ImageBuffer(512, 512);
+				var scale = demoTexture.Width / bounds.Width;
+				demoTextPrinter.Origin = new Vector2(0, -bounds.Bottom / scale / 2);
+
+				Graphics2D imageGraphics = demoTexture.NewGraphics2D();
+				imageGraphics.Clear(new RGBA_Bytes(RGBA_Bytes.White, shadowAlpha));
+
+				imageGraphics.Render(new VertexSourceApplyTransform(demoTextPrinter, Affine.NewScaling(scale, scale)), new RGBA_Bytes(RGBA_Bytes.White, 100));
+
+				int count = 0;
+				ImageBuffer clearImage = new ImageBuffer(2, 2, 32, new BlenderBGRA());
+				foreach (Face face in demoShadowMesh.Faces)
+				{
+					if (count == 0)
+					{
+						MeshHelper.PlaceTextureOnFace(face, demoTexture);
+					}
+					else
+					{
+						MeshHelper.PlaceTextureOnFace(face, clearImage);
+					}
+					count++;
+				}
+
+				ImageGlPlugin.GetImageGlPlugin(demoTexture, true);
+			}
+
+			return demoShadowMesh;
+		}
+
 		public override void DrawGlContent(EventArgs e)
 		{
 			if (MeshViewerToDrawWith.Scene.HasSelection)
@@ -67,44 +122,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// draw the bounds on the bed
 				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-				Mesh bottomBounds = PlatonicSolids.CreateCube(selectedBounds.XSize, selectedBounds.YSize, .1);
-
+				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
 				bool authorized = true;
 				if (authorized)
 				{
-					GLHelper.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
+					GLHelper.Render(GetNormalShadowMesh(), new RGBA_Bytes(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);
 				}
 				else
 				{
-					TypeFacePrinter demoTextPrinter = new TypeFacePrinter("Demo ", 62);
-					var bounds = demoTextPrinter.LocalBounds;
-
-					var demoTexture = new ImageBuffer(512, 512);
-					var scale = demoTexture.Width / bounds.Width;
-					demoTextPrinter.Origin = new Vector2(0, -bounds.Bottom / scale / 2);
-
-					Graphics2D imageGraphics = demoTexture.NewGraphics2D();
-					imageGraphics.Clear(new RGBA_Bytes(RGBA_Bytes.White, 30));
-
-					imageGraphics.Render(new VertexSourceApplyTransform(demoTextPrinter, Affine.NewScaling(scale, scale)), new RGBA_Bytes(RGBA_Bytes.White, 100));
-
-					int count = 0;
-					ImageBuffer clearImage = new ImageBuffer(2, 2, 32, new BlenderBGRA());
-					foreach (Face face in bottomBounds.Faces)
-					{
-						if (count == 0)
-						{
-							MeshHelper.PlaceTextureOnFace(face, demoTexture);
-						}
-						else
-						{
-							MeshHelper.PlaceTextureOnFace(face, clearImage);
-						}
-						count++;
-					}
-
-					ImageGlPlugin.GetImageGlPlugin(demoTexture, true);
-					GLHelper.Render(bottomBounds, new RGBA_Bytes(RGBA_Bytes.Black, 254), TotalTransform, RenderTypes.Shaded);
+					GLHelper.Render(GetDemoShadowMesh(), new RGBA_Bytes(shadowColor, 254), withScale, RenderTypes.Shaded);
 				}
 			}
 
