@@ -522,16 +522,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Click Library Item Print Button
 					testRunner.ClickByName("Row Item Calibration - Box Print Button");
-					testRunner.Delay(.5);
+					testRunner.Delay(2);
 
 					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
 					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
 					Assert.AreEqual("Calibration - Box", QueueData.Instance.SelectedPrintItem.Name, "Library item should be the selected item");
 					Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
 
-					testRunner.ClickByName("Cancel Print Button");
+					testRunner.CancelPrint();
+					testRunner.Delay(1);
 
-					testRunner.WaitForName("Start Print Button", 5);
+					testRunner.NameExists("Start Print Button");
 				}
 
 				return Task.FromResult(0);
