@@ -59,12 +59,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 		}
 
-		public void Add(string line)
+		public void Add(string line, bool forceTopOfQueue = false)
 		{
 			// lock queue
 			lock (locker)
 			{
-				commandQueue.Add(line);
+				if (forceTopOfQueue)
+				{
+					commandQueue.Insert(0, line);
+				}
+				else
+				{
+					commandQueue.Add(line);
+				}
 			}
 		}
 
