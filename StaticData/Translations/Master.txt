@@ -5992,3 +5992,12 @@ Translated:Success! Your code has been redeemed.
 English:Your new designs will appear in the 'Purchased' library folder.
 Translated:Your new designs will appear in the 'Purchased' library folder.
 
+English:Firmware Updates
+Translated:Firmware Updates
+
+English:Firmware Options
+Translated:Firmware Options
+
+English:Backup before update
+Translated:Backup before update
+
