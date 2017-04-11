@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& nextReadTimeMs < UiThread.CurrentTimerMs
 				&& PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
             {
-                nextReadTimeMs = UiThread.CurrentTimerMs + 5000;
+                nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
                 return "M105";
             }
 
