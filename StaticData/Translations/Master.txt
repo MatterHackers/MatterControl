@@ -6001,3 +6001,39 @@ Translated:Firmware Options
 English:Backup before update
 Translated:Backup before update
 
+English:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic bed probing, this is the offset of the probe from the tip of the nozzle.
+Translated:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic bed probing, this is the offset of the probe from the tip of the nozzle.
+
+English:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic (G30) bed probing, this is the offset of the probe from the tip of the nozzle.
+Translated:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic (G30) bed probing, this is the offset of the probe from the tip of the nozzle.
+
+English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
+Translated:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
+
+English:Use G30 for probing
+Translated:Use G30 for probing
+
+English:Auto Calibrate
+Translated:Auto Calibrate
+
+English:You should be done in about {0} minutes.
+Translated:You should be done in about {0} minutes.
+
+English:Auto Print Leveling is now configured and enabled.
+Translated:Auto Print Leveling is now configured and enabled.
+
+English:Click 'Done' to close this window.
+Translated:Click 'Done' to close this window.
+
+English:To complete the next few steps you will need
+Translated:To complete the next few steps you will need
+
+English:We should be done in less than {0} minutes.
+Translated:We should be done in less than {0} minutes.
+
+English:Note: Be sure the tip of the extruder is clean and the bed is clear.
+Translated:Note: Be sure the tip of the extruder is clean and the bed is clear.
+
+English:Use G30 For Probing
+Translated:Use G30 For Probing
+

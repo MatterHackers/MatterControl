@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class SettingsKey
 	{
+		public const string active_quality_key = nameof(active_quality_key);
 		public const string active_theme_name = nameof(active_theme_name);
 		public const string auto_connect = nameof(auto_connect);
 		public const string baby_step_z_offset = nameof(baby_step_z_offset);
@@ -62,11 +63,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string default_material_presets = nameof(default_material_presets);
 		public const string device_token = nameof(device_token);
 		public const string device_type = nameof(device_type);
+		public const string enable_network_printing = nameof(enable_network_printing);
+		public const string enable_sailfish_communication = nameof(enable_sailfish_communication);
 		public const string expand_thin_walls = nameof(expand_thin_walls);
-		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
+		public const string external_perimeter_extrusion_width = nameof(external_perimeter_extrusion_width);
 		public const string extruder_count = nameof(extruder_count);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
-		public const string external_perimeter_extrusion_width = nameof(external_perimeter_extrusion_width);
+		public const string extrusion_ratio = nameof(extrusion_ratio);
+		public const string feedrate_ratio = nameof(feedrate_ratio);
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
 		public const string filament_diameter = nameof(filament_diameter);
@@ -74,6 +78,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string fill_thin_gaps = nameof(fill_thin_gaps);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
 		public const string first_layer_height = nameof(first_layer_height);
+		public const string first_layer_speed = nameof(first_layer_speed);
 		public const string g0 = nameof(g0);
 		public const string has_fan = nameof(has_fan);
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
@@ -81,11 +86,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
+		public const string ip_address = nameof(ip_address);
+		public const string ip_port = nameof(ip_port);
 		public const string layer_gcode = nameof(layer_gcode);
 		public const string layer_height = nameof(layer_height);
 		public const string layer_name = nameof(layer_name);
 		public const string layer_to_pause = nameof(layer_to_pause);
 		public const string make = nameof(make);
+		public const string manual_probe_paper_width = nameof(manual_probe_paper_width);
+		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string min_fan_speed = nameof(min_fan_speed);
 		public const string model = nameof(model);
 		public const string nozzle_diameter = nameof(nozzle_diameter);
@@ -107,17 +116,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
 		public const string temperature = nameof(temperature);
+		public const string use_g30_for_bed_probe = nameof(use_g30_for_bed_probe);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
-		public const string enable_sailfish_communication = nameof(enable_sailfish_communication);
-		public const string enable_network_printing = nameof(enable_network_printing);
-		public const string ip_address = nameof(ip_address);
-		public const string ip_port = nameof(ip_port);
-		public const string first_layer_speed = nameof(first_layer_speed);
-		public const string active_quality_key = nameof(active_quality_key);
-		public const string extrusion_ratio = nameof(extrusion_ratio);
-		public const string feedrate_ratio = nameof(feedrate_ratio);
 	}
 
 	public class SettingsHelpers

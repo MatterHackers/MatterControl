@@ -248,6 +248,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}, ref unregisterEvents);
 		}
 
+		public override void OnLoad(EventArgs args)
+		{
+			// This is a hack to fix the layout issue this control is having.
+			Width = Width + 1;
+			base.OnLoad(args);
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);

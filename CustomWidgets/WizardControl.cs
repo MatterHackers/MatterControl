@@ -222,6 +222,7 @@ namespace MatterHackers.MatterControl
 		public void AddPage(WizardControlPage widgetForPage)
 		{
 			pages.Add(widgetForPage);
+			pages[pages.Count-1].Visible = false;
 			bottomToTopLayout.AddChild(widgetForPage);
 			SetPageVisibility();
 		}
