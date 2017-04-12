@@ -6034,3 +6034,6 @@ Translated:We should be done in less than {0} minutes.
 English:Note: Be sure the tip of the extruder is clean and the bed is clear.
 Translated:Note: Be sure the tip of the extruder is clean and the bed is clear.
 
+English:Use G30 For Probing
+Translated:Use G30 For Probing
+
