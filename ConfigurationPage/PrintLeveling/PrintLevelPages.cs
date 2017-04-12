@@ -49,15 +49,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class LastPage3PointInstructions : InstructionsPage
 	{
+		protected WizardControl container;
 		private List<ProbePosition> probePositions = new List<ProbePosition>(3)
 		{
 			new ProbePosition(),new ProbePosition(),new ProbePosition()
 		};
 
-		public LastPage3PointInstructions(string pageDescription, string instructionsText, List<ProbePosition> probePositions)
+		public LastPage3PointInstructions(WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
 			: base(pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;
+			this.container = container;
 		}
 
 		public override void PageIsBecomingActive()
@@ -79,18 +81,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
 			}
 
+			container.backButton.Enabled = false;
+
 			base.PageIsBecomingActive();
 		}
 	}
 
 	public class LastPageRadialInstructions : InstructionsPage
 	{
+		protected WizardControl container;
 		private List<ProbePosition> probePositions;
 
-		public LastPageRadialInstructions(string pageDescription, string instructionsText, List<ProbePosition> probePositions)
+		public LastPageRadialInstructions(WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
 			: base(pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;
+			this.container = container;
 		}
 
 		public override void PageIsBecomingActive()
@@ -112,6 +118,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
 			}
+
+			container.backButton.Enabled = false;
 
 			base.PageIsBecomingActive();
 		}

@@ -6016,3 +6016,21 @@ Translated:Use G30 for probing
 English:Auto Calibrate
 Translated:Auto Calibrate
 
+English:You should be done in about {0} minutes.
+Translated:You should be done in about {0} minutes.
+
+English:Auto Print Leveling is now configured and enabled.
+Translated:Auto Print Leveling is now configured and enabled.
+
+English:Click 'Done' to close this window.
+Translated:Click 'Done' to close this window.
+
+English:To complete the next few steps you will need
+Translated:To complete the next few steps you will need
+
+English:We should be done in less than {0} minutes.
+Translated:We should be done in less than {0} minutes.
+
+English:Note: Be sure the tip of the extruder is clean and the bed is clear.
+Translated:Note: Be sure the tip of the extruder is clean and the bed is clear.
+
