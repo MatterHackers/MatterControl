@@ -331,7 +331,7 @@ Advanced
       Probe Settings
         print_leveling_probe_start
         manual_probe_paper_width
-      Options
+        use_g30_for_bed_probe
     Print Recovery
       Recover Settings
         recover_is_enabled
