@@ -207,7 +207,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             printLevelWizard.AddPage(new HomePrinterPage(homingPageStepText, homingPageInstructions));
 
             string positionLabel = "Position".Localize();
-            string lowPrecisionLabel = "Low Precision".Localize();
+			string autoCalibrateLabel = "Auto Calibrate".Localize();
+			string lowPrecisionLabel = "Low Precision".Localize();
             string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
@@ -217,10 +218,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double startProbeHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.print_leveling_probe_start);
             for (int i = 0; i < numberOfRadialSamples + 1; i++)
             {
-                Vector2 probePosition = GetPrintLevelPositionToSample(i, bedRadius);
-                printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, allowLessThanZero));
-                printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, medPrecisionLabel), probePositions, i, allowLessThanZero));
-                printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, highPrecisionLabel), probePositions, i, allowLessThanZero));
+				Vector2 probePosition = GetPrintLevelPositionToSample(i, bedRadius);
+
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_g30_for_bed_probe))
+				{
+					var stepString = string.Format("{0} {1} {2} {3}:", stepTextBeg, i + 1, stepTextEnd, numberOfRadialSamples+1);
+					printLevelWizard.AddPage(new AutoProbeFeedback(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i, allowLessThanZero));
+				}
+				else
+				{
+					printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, allowLessThanZero));
+					printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, medPrecisionLabel), probePositions, i, allowLessThanZero));
+					printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, highPrecisionLabel), probePositions, i, allowLessThanZero));
+				}
             }
 
             string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}", doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);

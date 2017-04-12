@@ -1179,13 +1179,25 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "manual_probe_paper_width",
 		"PresentationName": "Manual Probe Paper Width",
-		"HelpText": "The thickness of the paper (or other calibration device) used to perform manual bed probe.",
+		"HelpText": "The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic (G30) bed probing, this is the offset of the probe from the tip of the nozzle.",
 		"DataEditType": "DOUBLE",
 		"ExtraSettings": "mm",
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": ".1",
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "use_g30_for_bed_probe",
+		"PresentationName": "Use G30 for probing",
+		"HelpText": "Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.",
+		"DataEditType": "CHECK_BOX",
+		"ShowAsOverride": true,
+		"ShowIfSet": "!has_hardware_leveling",
+		"ResetAtEndOfPrint": false,
 		"RebuildGCodeOnChange": false
 	},
 	{

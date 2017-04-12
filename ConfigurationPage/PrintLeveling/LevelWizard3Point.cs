@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new HomePrinterPage(homingPageStepText, homingPageInstructions));
 
 			string positionLabel = "Position".Localize();
+			string autoCalibrateLabel = "Auto Calibrate".Localize();
 			string lowPrecisionLabel = "Low Precision".Localize();
 			string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
@@ -83,20 +84,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			double startProbeHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.print_leveling_probe_start);
 
-			Vector2 probeBackCenter = LevelWizardBase.GetPrintLevelPositionToSample(0);
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeBackCenter, startProbeHeight), string.Format("{0} {1} 1 - {2}", GetStepString(), positionLabel, lowPrecisionLabel), probePositions, 0, allowLessThanZero));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 1 - {2}", GetStepString(), positionLabel, medPrecisionLabel), probePositions, 0, allowLessThanZero));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 1 - {2}", GetStepString(), positionLabel, highPrecisionLabel), probePositions, 0, allowLessThanZero));
+			for(int i=0; i<3; i++)
+			{
+				Vector2 probePosition = LevelWizardBase.GetPrintLevelPositionToSample(i);
 
-			Vector2 probeFrontLeft = LevelWizardBase.GetPrintLevelPositionToSample(1);
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontLeft, startProbeHeight), string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabel, lowPrecisionLabel), probePositions, 1, allowLessThanZero));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabel, medPrecisionLabel), probePositions, 1, allowLessThanZero));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabel, highPrecisionLabel), probePositions, 1, allowLessThanZero));
-
-			Vector2 probeFrontRight = LevelWizardBase.GetPrintLevelPositionToSample(2);
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontRight, startProbeHeight), string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabel, lowPrecisionLabel), probePositions, 2, allowLessThanZero));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabel, medPrecisionLabel), probePositions,2, allowLessThanZero));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabel, highPrecisionLabel), probePositions,2, allowLessThanZero));
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_g30_for_bed_probe))
+				{
+					var stepString = string.Format("{0} {1} {2} {3}:", stepTextBeg, i+1, stepTextEnd, 3);
+					printLevelWizard.AddPage(new AutoProbeFeedback(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i, allowLessThanZero));
+				}
+				else
+				{
+					printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, allowLessThanZero));
+					printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, medPrecisionLabel), probePositions, i, allowLessThanZero));
+					printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, highPrecisionLabel), probePositions, i, allowLessThanZero));
+				}
+			}
 
 			string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}", doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
 			printLevelWizard.AddPage(new LastPage3PointInstructions("Done".Localize(), doneInstructions, probePositions));
