@@ -6013,3 +6013,12 @@ Translated:Only Retract When Crossing Perimeters
 English:Demo
 Translated:Demo
 
+English:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic (G30) bed probing, this is the offset of the probe from the tip of the nozzle.
+Translated:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic (G30) bed probing, this is the offset of the probe from the tip of the nozzle.
+
+English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
+Translated:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
+
+English:Use G30 for probing
+Translated:Use G30 for probing
+
