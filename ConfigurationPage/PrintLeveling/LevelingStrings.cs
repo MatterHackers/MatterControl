@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string homingLine3b = "Click 'Next' to continue.".Localize();
 		private int stepNumber = 1;
 		private string welcomeLine1 = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
-		private string welcomeLine2 = "'Home the printer".Localize();
+		private string welcomeLine2 = "Home the printer".Localize();
 		private string welcomeLine3 = "Sample the bed at {0} points".Localize();
 		private string welcomeLine4 = "Turn auto leveling on".Localize();
 		private string welcomeLine5 = "We should be done in less than {0} minutes.".Localize();

@@ -335,10 +335,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			StringEventArgs currentEvent = e as StringEventArgs;
 			if (currentEvent != null)
 			{
-				if (currentEvent.Data.StartsWith("Bed Position"))
+				if (currentEvent.Data.StartsWith("Bed Position") // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
+					|| currentEvent.Data.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:.01')
 				{
-					GCodeFile.GetFirstNumberAfter("X:", currentEvent.Data, ref probePositions[probePositionsBeingEditedIndex].position.x);
-					GCodeFile.GetFirstNumberAfter("Y:", currentEvent.Data, ref probePositions[probePositionsBeingEditedIndex].position.y);
+					probePositions[probePositionsBeingEditedIndex].position.x = probeStartPosition.x;
+					probePositions[probePositionsBeingEditedIndex].position.y = probeStartPosition.y;
 					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref probePositions[probePositionsBeingEditedIndex].position.z);
 					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
 				}
