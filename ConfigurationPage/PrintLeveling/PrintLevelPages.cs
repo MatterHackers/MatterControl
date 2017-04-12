@@ -335,12 +335,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			StringEventArgs currentEvent = e as StringEventArgs;
 			if (currentEvent != null)
 			{
-				if (currentEvent.Data.StartsWith("Bed Position") // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
-					|| currentEvent.Data.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:.01')
+				if (currentEvent.Data.StartsWith("Bed Position")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
 				{
 					probePositions[probePositionsBeingEditedIndex].position.x = probeStartPosition.x;
 					probePositions[probePositionsBeingEditedIndex].position.y = probeStartPosition.y;
 					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref probePositions[probePositionsBeingEditedIndex].position.z);
+					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+				}
+				else if (currentEvent.Data.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:10.01')
+				{
+					probePositions[probePositionsBeingEditedIndex].position.x = probeStartPosition.x;
+					probePositions[probePositionsBeingEditedIndex].position.y = probeStartPosition.y;
+					// smoothie returns the position relative to the start postion
+					double reportedProbeZ = 0;
+					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref reportedProbeZ);
+					probePositions[probePositionsBeingEditedIndex].position.z = reportedProbeZ - probeStartPosition.z;
 					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
 				}
 			}
