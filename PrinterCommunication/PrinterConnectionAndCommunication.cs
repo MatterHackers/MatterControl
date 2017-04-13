@@ -293,6 +293,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("Heater decoupled", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("cold extrusion prevented", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Error:Thermal Runaway, system stopped!", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("Error:Heating failed", PrinterReportsError);
 
 			// repetier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
