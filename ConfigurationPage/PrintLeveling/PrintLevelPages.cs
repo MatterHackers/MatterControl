@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			StringEventArgs currentEvent = e as StringEventArgs;
 			if (currentEvent != null)
 			{
-				if (currentEvent.Data.StartsWith("Bed Position")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
+				if (currentEvent.Data.StartsWith("Bed")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
 				{
 					probePositions[probePositionsBeingEditedIndex].position.x = probeStartPosition.x;
 					probePositions[probePositionsBeingEditedIndex].position.y = probeStartPosition.y;
