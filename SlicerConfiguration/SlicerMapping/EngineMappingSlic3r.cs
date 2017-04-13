@@ -82,7 +82,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"wipe_shield_distance",
 				SettingsKey.heat_extruder_before_homing,
 				"extruders_share_temperature",
-				"print_leveling_method",
 				"solid_shell",
 				"retractWhenChangingIslands",
 				SettingsKey.perimeter_start_end_overlap,

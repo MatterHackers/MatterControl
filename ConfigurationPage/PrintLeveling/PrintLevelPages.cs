@@ -349,7 +349,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					// smoothie returns the position relative to the start postion
 					double reportedProbeZ = 0;
 					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref reportedProbeZ);
-					probePositions[probePositionsBeingEditedIndex].position.z = reportedProbeZ - probeStartPosition.z;
+					probePositions[probePositionsBeingEditedIndex].position.z = probeStartPosition.z - reportedProbeZ;
 					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
 				}
 			}

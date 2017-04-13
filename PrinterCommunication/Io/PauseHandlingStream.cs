@@ -34,6 +34,7 @@ using System;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System.Linq;
 using MatterHackers.GCodeVisualizer;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -94,8 +95,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return false;
 		}
 
-		public void DoPause()
+		public enum PauseReason { UserRequested, PauseLayerReached, GCodeRequest, FillamentRunout }
+		public void DoPause(PauseReason pauseReason)
 		{
+			var pcc = PrinterConnectionAndCommunication.Instance;
+			switch (pauseReason)
+			{
+				case PauseReason.UserRequested:
+					// do nothing special
+					break;
+
+				case PauseReason.PauseLayerReached:
+				case PauseReason.GCodeRequest:
+					pcc.PauseOnLayer.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
+					break;
+
+				case PauseReason.FillamentRunout:
+					pcc.FillamentRunout.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
+					break;
+			}
+			
 			// Add the pause_gcode to the loadedGCode.GCodeCommandQueue
 			string pauseGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.pause_gcode);
 
@@ -123,6 +142,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			InjectPauseGCode("M114"); // make sure we know where we are after this resume code
 		}
 
+		Stopwatch timeSinceLastEndstopRead = new Stopwatch();
+
 		public override string ReadLine()
 		{
 			string lineToSend = null;
@@ -145,6 +166,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						return lineToSend;
 					}
+
+					// We got a line from the gcode we are sending check if we should queue a request for fillament runout
+					if(ActiveSliceSettings.Instance.GetValue(SettingsKey.fillament_runout_endstop) != "None")
+					{
+						// request to read the endstop state
+						if (!timeSinceLastEndstopRead.IsRunning || timeSinceLastEndstopRead.ElapsedMilliseconds > 5000)
+						{
+							PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M119");
+							timeSinceLastEndstopRead.Restart();
+						}
+					}
 				}
 				else
 				{
@@ -157,12 +189,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				string layerNumber = lineToSend.Split(':')[1];
 				if (PauseOnLayer(layerNumber))
 				{
-					DoPause();
+					DoPause(PauseReason.PauseLayerReached);
 				}
 			}
-			else if (lineToSend.StartsWith("M226") || lineToSend.StartsWith("@pause"))
+			else if (lineToSend.StartsWith("M226") 
+				|| lineToSend.StartsWith("@pause"))
 			{
-				DoPause();
+				DoPause(PauseReason.GCodeRequest);
+				lineToSend = "";
+			}
+			else if (OutOfFillament())
+			{
+				DoPause(PauseReason.FillamentRunout);
 				lineToSend = "";
 			}
 			else if (lineToSend == "MH_PAUSE")
@@ -186,6 +224,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			return lineToSend;
+		}
+
+		private bool OutOfFillament()
+		{
+			if (ActiveSliceSettings.Instance.GetValue(SettingsKey.fillament_runout_endstop) != "None")
+			{
+
+			}
+
+			return false;
 		}
 	}
 }
