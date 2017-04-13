@@ -735,13 +735,14 @@
 	},
 	{
 		"SlicerConfigName": "use_g30_for_bed_probe",
-		"PresentationName": "Use G30 for probing",
+		"PresentationName": "Use G30 For Probing",
 		"HelpText": "Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.",
 		"DataEditType": "CHECK_BOX",
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling",
 		"ResetAtEndOfPrint": false,
-		"RebuildGCodeOnChange": false
+		"RebuildGCodeOnChange": false,
+		"DefaultValue": "0"
 	},
 	{
 		"QuickMenuSettings": [ ],

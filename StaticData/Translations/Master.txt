@@ -5836,83 +5836,50 @@ Translated:The z offset to apply to improve the first layer adhesion.
 English:Baby Step Offset
 Translated:Baby Step Offset
 
-English:Overhang
-Translated:Overhang
-
-English:OpenSCAD1
-Translated:OpenSCAD1
-
-English:TEXT
-Translated:TEXT
-
-English:Text
-Translated:Text
-
-English:Braille
-Translated:Braille
-
-English:Height
-Translated:Height
-
-English:Depth
-Translated:Depth
-
-English:Update
-Translated:Update
-
-English:XOffset
-Translated:XOffset
-
-English:HeightFromFloorToBottomOfLeg
-Translated:HeightFromFloorToBottomOfLeg
-
-English:OuterSize
-Translated:OuterSize
-
-English:InnerSize
-Translated:InnerSize
-
-English:InsideReach
-Translated:InsideReach
-
-English:AngleDegrees
-Translated:AngleDegrees
-
-English:Color
-Translated:Color
-
-English:Rotation Count:
-Translated:Rotation Count:
-
-English:Radius
-Translated:Radius
-
-English:Submit Button
-Translated:Submit Button
-
-English:Enter 12 Digit Redemption Code
-Translated:Enter 12 Digit Redemption Code
-
-English:This is located on the rear of your card
-Translated:This is located on the rear of your card
-
-English:Please wait. Verifying code...
-Translated:Please wait. Verifying code...
-
-English:View Designs
-Translated:View Designs
-
-English:Success! Your code has been redeemed.
-Translated:Success! Your code has been redeemed.
-
-English:Your new designs will appear in the 'Purchased' library folder.
-Translated:Your new designs will appear in the 'Purchased' library folder.
+English:Oops! Unable to initialize device.
+Translated:Oops! Unable to initialize device.
 
 English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
 Translated:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
 
+English:Clear ZOffset
+Translated:Clear ZOffset
+
+English:Printing Window...
+Translated:Printing Window...
+
+English:Only Retract When Crossing Perimeters
+Translated:Only Retract When Crossing Perimeters
+
+English:baby_step_z_offset
+Translated:baby_step_z_offset
+
+English:gcode_arcs
+Translated:gcode_arcs
+
+English:calibration_files
+Translated:calibration_files
+
+English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+
+English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
+
+English:'External Perimeter Extrusion Width' must be greater than 0.
+Translated:'External Perimeter Extrusion Width' must be greater than 0.
+
+English:External Perimeter Extrusion Width = {0}
+Translated:External Perimeter Extrusion Width = {0}
+
 English:The starting height (z) of the print head before probing each print level position.
 Translated:The starting height (z) of the print head before probing each print level position.
+
+English:Probe Start Height
+Translated:Probe Start Height
 
 English:Controls the speed of printer moves
 Translated:Controls the speed of printer moves
@@ -5920,35 +5887,74 @@ Translated:Controls the speed of printer moves
 English:Controls the amount of extrusion
 Translated:Controls the amount of extrusion
 
-English:Axis movement speeds
-Translated:Axis movement speeds
+English:feedrate_ratio
+Translated:feedrate_ratio
 
-English:Printing Window...
-Translated:Printing Window...
+English:extrusion_ratio
+Translated:extrusion_ratio
 
-English:Clear ZOffset
-Translated:Clear ZOffset
+English:Choose the material that you are loading.
+Translated:Choose the material that you are loading.
 
-English:Probe Start Height
-Translated:Probe Start Height
+English:Trim the end of the filament to ensure a good load.
+Translated:Trim the end of the filament to ensure a good load.
+
+English:Choose the material that you are loading. You are doing some stuff that takes a long description.
+Translated:Choose the material that you are loading. You are doing some stuff that takes a long description.
+
+English:Confirm the material you are unloading.
+Translated:Confirm the material you are unloading.
+
+English:Waiting for extruder to heat to 205, before unloading.
+Translated:Waiting for extruder to heat to 205, before unloading.
+
+English:Unloading filament...
+Translated:Unloading filament...
+
+English:Put filament into extruder and click Continue.
+Translated:Put filament into extruder and click Continue.
+
+English:Loading filament...
+Translated:Loading filament...
+
+English:Waiting for extruder to heat to 205.
+Translated:Waiting for extruder to heat to 205.
+
+English:Click 'Continue' when filament is running cleanly.
+Translated:Click 'Continue' when filament is running cleanly.
+
+English:Heating side 1.
+Translated:Heating side 1.
+
+English:Turn Sandvich over!
+Translated:Turn Sandvich over!
+
+English:Heating side 2.
+Translated:Heating side 2.
+
+English:Done!
+Translated:Done!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 
-English:Images
-Translated:Images
+English:Print Monitor
+Translated:Print Monitor
 
-English:Select Image
-Translated:Select Image
+English:Currently Printing
+Translated:Currently Printing
 
-English:Creating Mesh
-Translated:Creating Mesh
+English:Homing Axis
+Translated:Homing Axis
 
-English:Updating Mesh
-Translated:Updating Mesh
+English:Waiting for Extruder to Heat to
+Translated:Waiting for Extruder to Heat to
 
-English:Updating Base
-Translated:Updating Base
+English:Waiting for Bed to Heat to
+Translated:Waiting for Bed to Heat to
+
+English:Bed
+Translated:Bed
 
 English:Axis movement speeds
 Translated:Axis movement speeds
@@ -5986,18 +5992,6 @@ Translated:Success! Your code has been redeemed.
 English:Your new designs will appear in the 'Purchased' library folder.
 Translated:Your new designs will appear in the 'Purchased' library folder.
 
-English:Currently Printing
-Translated:Currently Printing
-
-English:Waiting for Bed to Heat to
-Translated:Waiting for Bed to Heat to
-
-English:Homing Axis
-Translated:Homing Axis
-
-English:Waiting for Extruder to Heat to
-Translated:Waiting for Extruder to Heat to
-
 English:Firmware Updates
 Translated:Firmware Updates
 
@@ -6007,11 +6001,8 @@ Translated:Firmware Options
 English:Backup before update
 Translated:Backup before update
 
-English:Only Retract When Crossing Perimeters
-Translated:Only Retract When Crossing Perimeters
-
-English:Demo
-Translated:Demo
+English:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic bed probing, this is the offset of the probe from the tip of the nozzle.
+Translated:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic bed probing, this is the offset of the probe from the tip of the nozzle.
 
 English:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic (G30) bed probing, this is the offset of the probe from the tip of the nozzle.
 Translated:The thickness of the paper (or other calibration device) used to perform manual bed probe. For automatic (G30) bed probing, this is the offset of the probe from the tip of the nozzle.
@@ -6021,4 +6012,28 @@ Translated:Enable this if your printer has hardware support for G30 (automatic b
 
 English:Use G30 for probing
 Translated:Use G30 for probing
+
+English:Auto Calibrate
+Translated:Auto Calibrate
+
+English:You should be done in about {0} minutes.
+Translated:You should be done in about {0} minutes.
+
+English:Auto Print Leveling is now configured and enabled.
+Translated:Auto Print Leveling is now configured and enabled.
+
+English:Click 'Done' to close this window.
+Translated:Click 'Done' to close this window.
+
+English:To complete the next few steps you will need
+Translated:To complete the next few steps you will need
+
+English:We should be done in less than {0} minutes.
+Translated:We should be done in less than {0} minutes.
+
+English:Note: Be sure the tip of the extruder is clean and the bed is clear.
+Translated:Note: Be sure the tip of the extruder is clean and the bed is clear.
+
+English:Use G30 For Probing
+Translated:Use G30 For Probing
 
