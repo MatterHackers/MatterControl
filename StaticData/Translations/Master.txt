@@ -6046,3 +6046,24 @@ Translated:Fillament Runout Endstop
 English:Home the printer
 Translated:Home the printer
 
+English:Print Notification Settings:
+Translated:Print Notification Settings:
+
+English:Send SMS notifications
+Translated:Send SMS notifications
+
+English:Have MatterControl send you text messages about your print
+Translated:Have MatterControl send you text messages about your print
+
+English:Send email notifications
+Translated:Send email notifications
+
+English:Have MatterControl send you email messages about your print
+Translated:Have MatterControl send you email messages about your print
+
+English:Play a sound for notifications
+Translated:Play a sound for notifications
+
+English:Include a picture of my print
+Translated:Include a picture of my print
+
