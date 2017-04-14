@@ -6037,3 +6037,33 @@ Translated:Note: Be sure the tip of the extruder is clean and the bed is clear.
 English:Use G30 For Probing
 Translated:Use G30 For Probing
 
+English:Specifies the endstop (if any) that is used to detect filament runout. Closed state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:Specifies the endstop (if any) that is used to detect filament runout. Closed state defines filament has runout. If runout is detected the printers pause G-Code is run.
+
+English:Fillament Runout Endstop
+Translated:Fillament Runout Endstop
+
+English:Home the printer
+Translated:Home the printer
+
+English:Print Notification Settings:
+Translated:Print Notification Settings:
+
+English:Send SMS notifications
+Translated:Send SMS notifications
+
+English:Have MatterControl send you text messages about your print
+Translated:Have MatterControl send you text messages about your print
+
+English:Send email notifications
+Translated:Send email notifications
+
+English:Have MatterControl send you email messages about your print
+Translated:Have MatterControl send you email messages about your print
+
+English:Play a sound for notifications
+Translated:Play a sound for notifications
+
+English:Include a picture of my print
+Translated:Include a picture of my print
+
