@@ -74,6 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
 		public const string filament_diameter = nameof(filament_diameter);
+		public const string fillament_runout_endstop = nameof(fillament_runout_endstop);
 		public const string fill_density = nameof(fill_density);
 		public const string fill_thin_gaps = nameof(fill_thin_gaps);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
@@ -106,6 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string print_leveling_enabled = nameof(print_leveling_enabled);
 		public const string print_leveling_probe_start = nameof(print_leveling_probe_start);
 		public const string print_leveling_required_to_print = nameof(print_leveling_required_to_print);
+		public const string print_leveling_solution = nameof(print_leveling_solution);
 		public const string printer_name = nameof(printer_name);
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string recover_first_layer_speed = nameof(recover_first_layer_speed);
