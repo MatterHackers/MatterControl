@@ -6043,3 +6043,6 @@ Translated:Specifies the endstop (if any) that is used to detect filament runout
 English:Fillament Runout Endstop
 Translated:Fillament Runout Endstop
 
+English:Home the printer
+Translated:Home the printer
+

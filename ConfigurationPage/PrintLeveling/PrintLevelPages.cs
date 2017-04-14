@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -335,12 +336,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			StringEventArgs currentEvent = e as StringEventArgs;
 			if (currentEvent != null)
 			{
+				double sampleRead = double.MinValue;
 				if (currentEvent.Data.StartsWith("Bed")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
 				{
 					probePositions[probePositionsBeingEditedIndex].position.x = probeStartPosition.x;
 					probePositions[probePositionsBeingEditedIndex].position.y = probeStartPosition.y;
-					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref probePositions[probePositionsBeingEditedIndex].position.z);
-					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref sampleRead);
 				}
 				else if (currentEvent.Data.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:10.01')
 				{
@@ -349,8 +350,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					// smoothie returns the position relative to the start postion
 					double reportedProbeZ = 0;
 					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref reportedProbeZ);
-					probePositions[probePositionsBeingEditedIndex].position.z = probeStartPosition.z - reportedProbeZ;
-					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+					sampleRead = probeStartPosition.z - reportedProbeZ;
+				}
+
+				if (sampleRead != double.MinValue)
+				{
+					samples.Add(sampleRead);
+
+					if (samples.Count == NumberOfSamples)
+					{
+						samples.Sort();
+						if (samples.Count > 3)
+						{
+							// drop the high and low values
+							samples.RemoveAt(0);
+							samples.RemoveAt(samples.Count - 1);
+						}
+
+						probePositions[probePositionsBeingEditedIndex].position.z = Math.Round(samples.Average(), 2);
+						UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+					}
 				}
 			}
 		}
@@ -364,6 +383,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnClosed(e);
 		}
 
+		readonly int NumberOfSamples = 5;
+		List<double> samples = new List<double>();
+
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
@@ -375,7 +397,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30"); // probe the current position
+			for (int i = 0; i < NumberOfSamples; i++)
+			{
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30"); // probe the current position
+			}
 
 			container.backButton.Enabled = false;
 			container.nextButton.Enabled = false;
