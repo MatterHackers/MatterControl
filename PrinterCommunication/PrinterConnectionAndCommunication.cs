@@ -107,6 +107,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler PrintFinished = new RootedObjectEventHandler();
 
+		public RootedObjectEventHandler PauseOnLayer = new RootedObjectEventHandler();
+
+		public RootedObjectEventHandler FillamentRunout = new RootedObjectEventHandler();
+
 		public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler ReadLine = new RootedObjectEventHandler();
@@ -288,6 +292,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("Heater decoupled", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("cold extrusion prevented", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Error:Thermal Runaway, system stopped!", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("Error:Heating failed", PrinterReportsError);
 
 			// repetier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
@@ -1868,7 +1873,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return;
 				}
 
-				pauseHandlingStream1.DoPause();
+				pauseHandlingStream1.DoPause(PauseHandlingStream.PauseReason.UserRequested);
 			}
 		}
 

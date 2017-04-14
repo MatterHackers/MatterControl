@@ -704,12 +704,16 @@
 		"RebuildGCodeOnChange": false
 	},
 	{
-		"SlicerConfigName": "print_leveling_required_to_print",
-		"PresentationName": "Require Leveling To Print",
-		"HelpText": "The printer requires print leveling to run correctly.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!has_hardware_leveling",
-		"DefaultValue": "0",
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "fillament_runout_endstop",
+		"PresentationName": "Fillament Runout Endstop",
+		"HelpText": "Specifies the endstop (if any) that is used to detect filament runout. Closed state defines filament has runout. If runout is detected the printers pause G-Code is run.",
+		"DataEditType": "LIST",
+		"ExtraSettings": "None,X Min,X Max,Y Min,Y Max,Z Min,Z Max",
+		"ShowAsOverride": true,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "None",
 		"ReloadUiWhenChanged": true,
 		"RebuildGCodeOnChange": false
 	},
