@@ -36,6 +36,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -367,7 +368,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					{
 						directories = Directory.GetDirectories(Path.Combine(rootPath, currentDirectory));
 					}
-					foreach (string directoryName in directories)
+					foreach (string directoryName in directories.OrderBy(f => f))
 					{
 						string subPath = directoryName.Substring(rootPath.Length + 1);
 						newReadDirectoryDirectories.Add(subPath);
@@ -382,7 +383,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					string upperFilter = keywordFilter.ToUpper();
 					string[] files = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
-					foreach (string filename in files)
+					foreach (string filename in files.OrderBy(f => f))
 					{
 						string fileExtensionLower = Path.GetExtension(filename).ToLower();
 						if (!string.IsNullOrEmpty(fileExtensionLower) 
@@ -401,7 +402,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						{
 							string subDirectory = Path.Combine(rootPath, directory);
 							string[] subDirectoryFiles = Directory.GetFiles(subDirectory);
-							foreach (string filename in subDirectoryFiles)
+							foreach (string filename in subDirectoryFiles.OrderBy(f => f))
 							{
 								if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
 								{
