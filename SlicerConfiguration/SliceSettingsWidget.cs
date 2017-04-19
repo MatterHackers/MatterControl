@@ -517,39 +517,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		public static bool ParseShowString(string unsplitSettings, PrinterSettings printerSettings, List<PrinterSettingsLayer> layerCascade)
-		{
-			if (!string.IsNullOrEmpty(unsplitSettings))
-			{
-				string[] splitSettings = unsplitSettings.Split('&');
-
-				foreach (var inLookupSettings in splitSettings)
-				{
-					var lookupSettings = inLookupSettings;
-					if (!string.IsNullOrEmpty(lookupSettings))
-					{
-						string showValue = "0";
-						if (lookupSettings.StartsWith("!"))
-						{
-							showValue = "1";
-							lookupSettings = lookupSettings.Substring(1);
-						}
-
-						string sliceSettingValue = printerSettings.GetValue(lookupSettings, layerCascade);
-						if (sliceSettingValue == showValue)
-						{
-							return false;
-						}
-					}
-				}
-			}
-
-			return true;
-		}
-
 		private bool CheckIfShouldBeShown(SliceSettingData settingData)
 		{
-			bool settingShouldBeShown = ParseShowString(settingData.ShowIfSet, ActiveSliceSettings.Instance, layerCascade);
+			bool settingShouldBeShown = ActiveSliceSettings.Instance.ParseShowString(settingData.ShowIfSet, layerCascade);
 			if (viewFilter == NamedSettingsLayers.Material || viewFilter == NamedSettingsLayers.Quality)
 			{
 				if (!settingData.ShowAsOverride)

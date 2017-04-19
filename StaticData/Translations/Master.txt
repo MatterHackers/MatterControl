@@ -6067,3 +6067,9 @@ Translated:Play a sound for notifications
 English:Include a picture of my print
 Translated:Include a picture of my print
 
+English:If set, these positions will be used when running the 3 point leveling solution. Leave empty for defaults. Data Format:'x1,y1:x2,y2:x3,y3'
+Translated:If set, these positions will be used when running the 3 point leveling solution. Leave empty for defaults. Data Format:'x1,y1:x2,y2:x3,y3'
+
+English:Leveling Positions
+Translated:Leveling Positions
+
