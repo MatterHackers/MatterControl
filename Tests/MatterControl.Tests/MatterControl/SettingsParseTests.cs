@@ -12,12 +12,69 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.VectorMath;
 
 namespace MatterControl.Tests.MatterControl
 {
 	[TestFixture, Category("ConfigIni")]
 	public class SettingsParseTests
 	{
+		[Test]
+		public void Check3PointLevelingPositions()
+		{
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			{
+				var sample0 = LevelWizardBase.GetPrintLevelPositionToSample(0);
+				var sample1 = LevelWizardBase.GetPrintLevelPositionToSample(1);
+				var sample2 = LevelWizardBase.GetPrintLevelPositionToSample(2);
+				Assert.AreEqual("200,200", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_size));
+				Assert.AreEqual("100,100", ActiveSliceSettings.Instance.GetValue(SettingsKey.print_center));
+				Assert.AreEqual("rectangular", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_shape));
+				Assert.AreEqual("", ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_3point_manual_positions));
+				Assert.AreEqual(new Vector2(100, 180), sample0);
+				Assert.AreEqual(new Vector2(20, 20), sample1);
+				Assert.AreEqual(new Vector2(180, 20), sample2);
+			}
+
+			{
+				// nothing set
+				var manualPositions = LevelWizardBase.GetManualPositions("");
+				Assert.IsNull(manualPositions);
+
+				// not enough points
+				manualPositions = LevelWizardBase.GetManualPositions("0,0:100,50");
+				Assert.IsNull(manualPositions);
+
+				// too many points
+				manualPositions = LevelWizardBase.GetManualPositions("0,0:100,0:200,200:50,3");
+				Assert.IsNull(manualPositions);
+
+				// bad data
+				manualPositions = LevelWizardBase.GetManualPositions("0,oe:100,0:200,200");
+				Assert.IsNull(manualPositions);
+
+				// good data
+				manualPositions = LevelWizardBase.GetManualPositions("0,1:100,2:50,101");
+				Assert.IsTrue(manualPositions.Count == 3);
+				Assert.IsTrue(manualPositions[0] == new Vector2(0, 1));
+				Assert.IsTrue(manualPositions[1] == new Vector2(100, 2));
+				Assert.IsTrue(manualPositions[2] == new Vector2(50, 101));
+			}
+
+			{
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.leveling_3point_manual_positions, "1,2:211,3:113,104");
+				var sample0 = LevelWizardBase.GetPrintLevelPositionToSample(0);
+				var sample1 = LevelWizardBase.GetPrintLevelPositionToSample(1);
+				var sample2 = LevelWizardBase.GetPrintLevelPositionToSample(2);
+				Assert.IsTrue(sample0 == new Vector2(1, 2));
+				Assert.IsTrue(sample1 == new Vector2(211, 3));
+				Assert.IsTrue(sample2 == new Vector2(113, 104));
+			}
+		}
+
 		[Test]
 		public void CheckIfShouldBeShownParseTests()
 		{
@@ -27,57 +84,68 @@ namespace MatterControl.Tests.MatterControl
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0" };
 				var profile = GetProfile(settings);
-				Assert.IsFalse(SliceSettingsWidget.ParseShowString("has_heated_bed", profile, null));
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed", profile, null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed", null));
+				Assert.IsTrue(profile.ParseShowString("!has_heated_bed", null));
 			}
 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed", profile, null));
-				Assert.IsFalse(SliceSettingsWidget.ParseShowString("!has_heated_bed", profile, null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed", null));
 			}
 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "0" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsTrue(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsTrue(profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "0" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1", SettingsKey.has_fan, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect&has_fan", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect&!has_fan", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect&has_fan", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect&has_fan", profile, null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&has_fan", null));
+				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&auto_connect&!has_fan", null));
+				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&!auto_connect&has_fan", null));
+				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&auto_connect&has_fan", null));
+			}
+
+			// test list setting value
+			{
+				string[] settings = new string[] { SettingsKey.has_hardware_leveling, "0", SettingsKey.print_leveling_solution, "3 Point Plane" };
+				var profile = GetProfile(settings);
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane", null));
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&!print_leveling_solution=7 Point Disk", null));
+				Assert.IsFalse(profile.ParseShowString("has_hardware_leveling&print_leveling_solution=3 Point Plane", null));
+				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&!print_leveling_solution=3 Point Plane", null));
+				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=7 Point Disk", null));
 			}
 		}
 

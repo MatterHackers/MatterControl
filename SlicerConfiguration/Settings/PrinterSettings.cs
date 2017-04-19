@@ -133,6 +133,64 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public bool ParseShowString(string unsplitSettings, List<PrinterSettingsLayer> layerCascade)
+		{
+			PrinterSettings printerSettings = this;
+			if (!string.IsNullOrEmpty(unsplitSettings))
+			{
+				string[] splitSettingsAnd = unsplitSettings.Split('&');
+
+				foreach (var inLookupSettings in splitSettingsAnd)
+				{
+					if (inLookupSettings.Contains("="))
+					{
+						string[] splitSettingsEquals = inLookupSettings.Split('=');
+						var lookupSettings = splitSettingsEquals[0];
+						var lookupValue = splitSettingsEquals[1];
+						if (!string.IsNullOrEmpty(lookupSettings))
+						{
+							bool checkEquals = true;
+							if (lookupSettings.StartsWith("!"))
+							{
+								checkEquals = false;
+								lookupSettings = lookupSettings.Substring(1);
+							}
+
+							string sliceSettingValue = printerSettings.GetValue(lookupSettings, layerCascade);
+							if (
+								(checkEquals && sliceSettingValue != lookupValue)
+								|| (!checkEquals && sliceSettingValue == lookupValue)
+								)
+							{
+								return false;
+							}
+						}
+					}
+					else
+					{
+						var lookupSettings = inLookupSettings;
+						if (!string.IsNullOrEmpty(lookupSettings))
+						{
+							string hideValue = "0";
+							if (lookupSettings.StartsWith("!"))
+							{
+								hideValue = "1";
+								lookupSettings = lookupSettings.Substring(1);
+							}
+
+							string sliceSettingValue = printerSettings.GetValue(lookupSettings, layerCascade);
+							if (sliceSettingValue == hideValue)
+							{
+								return false;
+							}
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
 		/// </summary>
