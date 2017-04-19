@@ -6067,3 +6067,21 @@ Translated:Play a sound for notifications
 English:Include a picture of my print
 Translated:Include a picture of my print
 
+English:Overhang
+Translated:Overhang
+
+English:OpenSCAD1
+Translated:OpenSCAD1
+
+English:Images
+Translated:Images
+
+English:TEXT
+Translated:TEXT
+
+English:Text
+Translated:Text
+
+English:Braille
+Translated:Braille
+

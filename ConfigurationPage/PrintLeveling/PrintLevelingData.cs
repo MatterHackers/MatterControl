@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		};
 
 		[JsonConverter(typeof(StringEnumConverter))]
-		public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial }
+		public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial, Probe3x3Mesh }
 
 		public PrintLevelingData(PrinterSettings printerProfile)
 		{

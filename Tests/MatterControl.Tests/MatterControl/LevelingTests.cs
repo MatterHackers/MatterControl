@@ -185,11 +185,50 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual(outPosition2.z, levelingData.SampledPositions[6].z, .001);
 		}
 
+
+		[Test, Category("Leveling")]
+		public void LevelingMesh3x3CorectInterpolation()
+		{
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
+
+			levelingData.SampledPositions = new List<Vector3>();
+			levelingData.SampledPositions.Add(new Vector3(10, 10, 1));
+			levelingData.SampledPositions.Add(new Vector3(20, 10, 2));
+			levelingData.SampledPositions.Add(new Vector3(30, 10, 3));
+
+			levelingData.SampledPositions.Add(new Vector3(10, 20, 4));
+			levelingData.SampledPositions.Add(new Vector3(20, 20, 5));
+			levelingData.SampledPositions.Add(new Vector3(30, 20, 6));
+
+			levelingData.SampledPositions.Add(new Vector3(10, 30, 7));
+			levelingData.SampledPositions.Add(new Vector3(20, 30, 8));
+			levelingData.SampledPositions.Add(new Vector3(30, 30, 9));
+
+			Vector2 bedCenter = Vector2.Zero;
+
+			MeshLevlingFunctions levelingFunctionsMesh3x3 = new MeshLevlingFunctions(2, 2, levelingData, bedCenter);
+
+			AssertMeshLevelPoint(new Vector3(), new Vector3(), levelingFunctionsMesh3x3);
+		}
+
+		void AssertMeshLevelPoint(Vector3 testUnleveled, Vector3 controlLeveled, MeshLevlingFunctions levelingFunctions)
+		{
+			Vector3 testLeveled = levelingFunctions.GetPositionWithZOffset(testUnleveled);
+			Assert.AreEqual(testLeveled.x, testUnleveled.x, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.x, controlLeveled.x, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.y, testUnleveled.y, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.y, controlLeveled.y, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.z, controlLeveled.z, .001);
+			string outPositionString = levelingFunctions.DoApplyLeveling(GetGCodeString(testUnleveled), testUnleveled, PrinterMachineInstruction.MovementTypes.Absolute);
+			Assert.AreEqual(GetGCodeString(testLeveled), outPositionString);
+		}
+
 		private string GetGCodeString(Vector3 destPosition)
 		{
 			return "G1 X{0:0.##} Y{1:0.##} Z{2:0.###}".FormatWith(destPosition.x, destPosition.y, destPosition.z);
 		}
-
-		// TODO: do all the same tests for 13 point leveling.
 	}
 }
