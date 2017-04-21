@@ -1162,15 +1162,13 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
-		"SlicerConfigName": "fillament_runout_endstop",
-		"PresentationName": "Fillament Runout Endstop",
-		"HelpText": "Specifies the endstop (if any) that is used to detect filament runout. Closed state defines filament has runout. If runout is detected the printers pause G-Code is run.",
-		"DataEditType": "LIST",
-		"ExtraSettings": "None,X Min,X Max,Y Min,Y Max,Z Min,Z Max",
+		"SlicerConfigName": "fillament_runout_sensor",
+		"PresentationName": "Has Fillament Runout Sensor",
+		"HelpText": "Specifies that the firmware has support for ros_0 enstrop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.",
+		"DataEditType": "CHECK_BOX",
 		"ShowAsOverride": true,
 		"ResetAtEndOfPrint": false,
-		"DefaultValue": "None",
-		"ReloadUiWhenChanged": true,
+		"DefaultValue": "0",
 		"RebuildGCodeOnChange": false
 	},
   {

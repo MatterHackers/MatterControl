@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
 		public const string filament_diameter = nameof(filament_diameter);
-		public const string fillament_runout_endstop = nameof(fillament_runout_endstop);
+		public const string fillament_runout_sensor = nameof(fillament_runout_sensor);
 		public const string fill_density = nameof(fill_density);
 		public const string fill_thin_gaps = nameof(fill_thin_gaps);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
