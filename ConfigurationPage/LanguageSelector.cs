@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
 				["Română"] = "RO",
 				["Türkçe"] = "TR",
 				["Vlaams"] = "NL",
+                ["Portuguesa"] = "PO",
 			};
 
 #if DEBUG
