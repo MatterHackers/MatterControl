@@ -309,9 +309,9 @@ Advanced
         has_heated_bed
         has_sd_card_reader
         has_power_control
+        fillament_runout_sensor
         enable_network_printing
         enable_sailfish_communication
-        fillament_runout_endstop
       Behavior
         z_homes_to_max
         z_can_be_negative
