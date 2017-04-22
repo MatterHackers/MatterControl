@@ -305,23 +305,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			#endregion hardware failure callbacks
 
+			WriteLineStartCallBacks.AddCallbackToKey("G90", MovementWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
+			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M82", ExtruderWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.AddCallbackToKey("M83", ExtruderWasSetToRelativeMode);
 			WriteLineStartCallBacks.AddCallbackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M140", BedTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M190", BedTemperatureWasWritenToPrinter);
-
-			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
-
-			WriteLineStartCallBacks.AddCallbackToKey("M82", ExtruderWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallbackToKey("M83", ExtruderWasSetToRelativeMode);
-
-			WriteLineStartCallBacks.AddCallbackToKey("G90", MovementWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
-
-			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
-
 			WriteLineStartCallBacks.AddCallbackToKey("T", ExtruderIndexSet);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
@@ -2816,6 +2811,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
+				if (lineToWrite.StartsWith("M999"))
+				{
+					allCheckSumLinesSent.SetStartingIndex(1);
+				}
 				lineWithCount = $"N{allCheckSumLinesSent.Count} {lineToWrite}";
 			}
 

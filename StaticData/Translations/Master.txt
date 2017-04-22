@@ -6079,3 +6079,6 @@ Translated:Specifies that the firmware has support for ros_0 enstrop reporting o
 English:Has Fillament Runout Sensor
 Translated:Has Fillament Runout Sensor
 
+English:Specifies that the firmware has support for ros_0 enstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:Specifies that the firmware has support for ros_0 enstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+
