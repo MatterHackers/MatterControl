@@ -2811,11 +2811,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
+				lineWithCount = $"N{allCheckSumLinesSent.Count} {lineToWrite}";
 				if (lineToWrite.StartsWith("M999"))
 				{
 					allCheckSumLinesSent.SetStartingIndex(1);
 				}
-				lineWithCount = $"N{allCheckSumLinesSent.Count} {lineToWrite}";
 			}
 
 			string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
