@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return currentLevelingFunctions;
 		}
 
-		public abstract Vector2 GetPrintLevelPositionToSample(int index);
+		new public abstract Vector2 GetPrintLevelPositionToSample(int index);
 	}
 
 	public class MeshLevlingFunctions : IDisposable
@@ -189,8 +189,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						LeftBottom = levelingData.SampledPositions[y * gridWidth + x],
 						RightBottom = levelingData.SampledPositions[y * gridWidth + x + 1],
-						RightTop = levelingData.SampledPositions[(y + 1) * gridWidth + x],
-						LeftTop = levelingData.SampledPositions[(y + 1) * gridWidth + x +  1],
+						LeftTop = levelingData.SampledPositions[(y + 1) * gridWidth + x],
+						RightTop = levelingData.SampledPositions[(y + 1) * gridWidth + x + 1],
 					});
 				}
 			}
@@ -263,7 +263,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private Region GetCorrectRegion(Vector3 currentDestination)
 		{
-			return Regions[0];
+			int bestIndex = 0;
+			double bestDist = double.PositiveInfinity;
+
+			currentDestination.z = 0;
+			for (int regionIndex = 0; regionIndex < Regions.Count; regionIndex++)
+			{
+				var dist = (Regions[regionIndex].Center - currentDestination).LengthSquared;
+				if(dist < bestDist)
+				{
+					bestIndex = regionIndex;
+					bestDist = dist;
+				}
+			}
+
+			return Regions[bestIndex];
 		}
 
 		private void PrinterReportedPosition(object sender, EventArgs e)
@@ -273,32 +287,36 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public class Region
 		{
-			public Vector3 LeftBottom;
-			public Vector3 LeftTop;
-			public Vector3 RightBottom;
-			public Vector3 RightTop;
+			public Vector3 LeftBottom { get; set; }
+			public Vector3 LeftTop { get; set; }
+			public Vector3 RightBottom { get; set; }
+			public Vector3 RightTop { get; set; }
 
-			private Plane LeftBottomPlane;
-			private Plane RightTopPlane;
+			internal Vector3 Center { get; private set; }
+			internal Vector3 LeftBottomCenter { get; private set; }
+			internal Vector3 RightTopCenter { get; private set; }
+
+			internal Plane LeftBottomPlane { get; private set; }
+			internal Plane RightTopPlane { get; private set; }
 
 			internal Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 			{
-				if (LeftBottomPlane == null)
+				if (LeftBottomPlane.PlaneNormal == Vector3.Zero)
 				{
 					InitializePlanes();
 				}
 
-				// which triangle to check
-				bool checkLeftBottom = true;
+				var destinationAtZ0 = new Vector3(currentDestination.x, currentDestination.y, 0);
 
-				if (checkLeftBottom)
+				// which triangle to check (distance to the centers)
+				if ((LeftBottomCenter - destinationAtZ0).LengthSquared < (RightTopCenter - destinationAtZ0).LengthSquared)
 				{
-					double hitDistance = LeftBottomPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
+					double hitDistance = LeftBottomPlane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
 					currentDestination.z += hitDistance;
 				}
 				else
 				{
-					double hitDistance = RightTopPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
+					double hitDistance = RightTopPlane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
 					currentDestination.z += hitDistance;
 				}
 
@@ -308,7 +326,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			private void InitializePlanes()
 			{
 				LeftBottomPlane = new Plane(LeftBottom, RightBottom, LeftTop);
+				LeftBottomCenter = (LeftBottom + RightBottom + LeftTop) / 3;
+
 				RightTopPlane = new Plane(RightBottom, RightTop, LeftTop);
+				RightTopCenter = (RightBottom + RightTop + LeftTop) / 3;
+
+				Center = (LeftBottomCenter + RightTopCenter) / 2;
 			}
 		}
 	}

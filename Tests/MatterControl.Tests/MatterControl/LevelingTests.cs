@@ -227,6 +227,48 @@ namespace MatterControl.Tests.MatterControl
 				AssertMeshLevelPoint(new Vector3(15, 0, 0), new Vector3(15, 0, 15), levelingFunctionsMesh2x2);
 				AssertMeshLevelPoint(new Vector3(15, 0, 5), new Vector3(15, 0, 20), levelingFunctionsMesh2x2);
 			}
+
+			// a 3 x 3 mesh that goes form 0 on the left to 10 on the right
+			{
+				var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
+
+				// put them in left to right - bottom to top
+				levelingData.SampledPositions = new List<Vector3>();
+				levelingData.SampledPositions.Add(new Vector3(0, 0, 0));
+				levelingData.SampledPositions.Add(new Vector3(5, 0, 5));
+				levelingData.SampledPositions.Add(new Vector3(10, 0, 10));
+				levelingData.SampledPositions.Add(new Vector3(0, 5, 0));
+				levelingData.SampledPositions.Add(new Vector3(5, 5, 5));
+				levelingData.SampledPositions.Add(new Vector3(10, 5, 10));
+				levelingData.SampledPositions.Add(new Vector3(0, 10, 0));
+				levelingData.SampledPositions.Add(new Vector3(5, 10, 5));
+				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
+
+				MeshLevlingFunctions levelingFunctionsMesh2x2 = new MeshLevlingFunctions(3, 3, levelingData);
+
+				// check on points
+				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(10, 0, 0), new Vector3(10, 0, 10), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(10, 10, 0), new Vector3(10, 10, 10), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(0, 10, 0), new Vector3(0, 10, 0), levelingFunctionsMesh2x2);
+
+				// check raised on ponits
+				AssertMeshLevelPoint(new Vector3(0, 0, 5), new Vector3(0, 0, 5), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(10, 0, 5), new Vector3(10, 0, 15), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(10, 10, 5), new Vector3(10, 10, 15), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(0, 10, 5), new Vector3(0, 10, 5), levelingFunctionsMesh2x2);
+
+				// check between points
+				AssertMeshLevelPoint(new Vector3(5, 0, 0), new Vector3(5, 0, 5), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(5, 0, 5), new Vector3(5, 0, 10), levelingFunctionsMesh2x2);
+
+				// check outside points
+				AssertMeshLevelPoint(new Vector3(-5, 0, 0), new Vector3(-5, 0, -5), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(-5, 0, 5), new Vector3(-5, 0, 0), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(15, 0, 0), new Vector3(15, 0, 15), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(15, 0, 5), new Vector3(15, 0, 20), levelingFunctionsMesh2x2);
+			}
+
 		}
 
 		void AssertMeshLevelPoint(Vector3 testUnleveled, Vector3 controlLeveled, MeshLevlingFunctions levelingFunctions)
