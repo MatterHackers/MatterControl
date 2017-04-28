@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 			}
 
-			printLevelWizard.AddPage(new LastPageRadialInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
+			printLevelWizard.AddPage(new LastPagelInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
 		public static RadialLevlingFunctions GetLevelingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)

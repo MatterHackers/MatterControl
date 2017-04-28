@@ -146,6 +146,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					}
 					break;
 
+				case LevelingSystem.Probe3x3Mesh:
+					if (SampledPositions.Count != 9) // different criteria for what is not initialized
+					{
+						return false;
+					}
+					break;
+
 				default:
 					throw new NotImplementedException();
 			}

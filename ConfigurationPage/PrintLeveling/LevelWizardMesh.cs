@@ -157,8 +157,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string printLevelWizardTitle = "MatterControl";
 			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
-			List<ProbePosition> probePositions = new List<ProbePosition>(gridWidth + 1);
-			for (int i = 0; i < gridWidth + 1; i++)
+			int probeCount = gridWidth * gridHeight;
+			List<ProbePosition> probePositions = new List<ProbePosition>(probeCount);
+			for (int i = 0; i < probeCount; i++)
 			{
 				probePositions.Add(new ProbePosition());
 			}
@@ -172,7 +173,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.initialPrinterSetupStepText, requiredPageInstructions));
 			}
 
-			printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.OverviewText, levelingStrings.WelcomeText(gridWidth + 1, 5)));
+			printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.OverviewText, levelingStrings.WelcomeText(probeCount, 5)));
 
 			printLevelWizard.AddPage(new HomePrinterPage(levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
 
@@ -186,13 +187,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			bool allowLessThanZero = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_can_be_negative);
 
 			double startProbeHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.print_leveling_probe_start);
-			for (int i = 0; i < gridWidth + 1; i++)
+			for (int i = 0; i < probeCount; i++)
 			{
 				Vector2 probePosition = GetPrintLevelPositionToSample(i);
 
 				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_g30_for_bed_probe))
 				{
-					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, gridWidth + 1);
+					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, probeCount);
 					printLevelWizard.AddPage(new AutoProbeFeedback(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i, allowLessThanZero));
 				}
 				else
@@ -203,8 +204,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 			}
 
-			throw new NotImplementedException();
-			//printLevelWizard.AddPage(new LastPageMeshInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
+			printLevelWizard.AddPage(new LastPagelInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
 		public static MeshLevlingFunctions GetLevelingFunctions(int gridWidth, int gridHeight, PrintLevelingData levelingData)

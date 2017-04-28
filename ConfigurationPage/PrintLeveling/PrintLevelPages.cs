@@ -88,12 +88,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	public class LastPageRadialInstructions : InstructionsPage
+	public class LastPagelInstructions : InstructionsPage
 	{
 		protected WizardControl container;
 		private List<ProbePosition> probePositions;
 
-		public LastPageRadialInstructions(WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
+		public LastPagelInstructions(WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
 			: base(pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;
