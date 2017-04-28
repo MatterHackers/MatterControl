@@ -185,11 +185,65 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual(outPosition2.z, levelingData.SampledPositions[6].z, .001);
 		}
 
+
+		[Test, Category("Leveling")]
+		public void LevelingMesh3x3CorectInterpolation()
+		{
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// a 2 x 2 mesh that goes form 0 on the left to 10 on the right
+			{
+				var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
+
+				// put them in left to right - bottom to top
+				levelingData.SampledPositions = new List<Vector3>();
+				levelingData.SampledPositions.Add(new Vector3(0, 0, 0));
+				levelingData.SampledPositions.Add(new Vector3(10, 0, 10));
+				levelingData.SampledPositions.Add(new Vector3(0, 10, 0));
+				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
+
+				MeshLevlingFunctions levelingFunctionsMesh2x2 = new MeshLevlingFunctions(2, 2, levelingData);
+
+				// check on points
+				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(10, 0, 0), new Vector3(10, 0, 10), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(10, 10, 0), new Vector3(10, 10, 10), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(0, 10, 0), new Vector3(0, 10, 0), levelingFunctionsMesh2x2);
+
+				// check raised on ponits
+				AssertMeshLevelPoint(new Vector3(0, 0, 5), new Vector3(0, 0, 5), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(10, 0, 5), new Vector3(10, 0, 15), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(10, 10, 5), new Vector3(10, 10, 15), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(0, 10, 5), new Vector3(0, 10, 5), levelingFunctionsMesh2x2);
+
+				// check between points
+				AssertMeshLevelPoint(new Vector3(5, 0, 0), new Vector3(5, 0, 5), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(5, 0, 5), new Vector3(5, 0, 10), levelingFunctionsMesh2x2);
+
+				// check outside points
+				AssertMeshLevelPoint(new Vector3(-5, 0, 0), new Vector3(-5, 0, -5), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(-5, 0, 5), new Vector3(-5, 0, 0), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(15, 0, 0), new Vector3(15, 0, 15), levelingFunctionsMesh2x2);
+				AssertMeshLevelPoint(new Vector3(15, 0, 5), new Vector3(15, 0, 20), levelingFunctionsMesh2x2);
+			}
+		}
+
+		void AssertMeshLevelPoint(Vector3 testUnleveled, Vector3 controlLeveled, MeshLevlingFunctions levelingFunctions)
+		{
+			Vector3 testLeveled = levelingFunctions.GetPositionWithZOffset(testUnleveled);
+			Assert.AreEqual(testLeveled.x, testUnleveled.x, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.x, controlLeveled.x, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.y, testUnleveled.y, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.y, controlLeveled.y, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.z, controlLeveled.z, .001);
+			string outPositionString = levelingFunctions.DoApplyLeveling(GetGCodeString(testUnleveled), testUnleveled, PrinterMachineInstruction.MovementTypes.Absolute);
+			Assert.AreEqual(GetGCodeString(testLeveled), outPositionString);
+		}
+
 		private string GetGCodeString(Vector3 destPosition)
 		{
 			return "G1 X{0:0.##} Y{1:0.##} Z{2:0.###}".FormatWith(destPosition.x, destPosition.y, destPosition.z);
 		}
-
-		// TODO: do all the same tests for 13 point leveling.
 	}
 }
