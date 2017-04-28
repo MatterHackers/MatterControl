@@ -38,6 +38,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					case "13 Point Disk":
 						return LevelingSystem.Probe13PointRadial;
 
+					case "3x3 Mesh":
+						return LevelingSystem.Probe3x3Mesh;
+
 					case "3 Point Plane":
 					default:
 						return LevelingSystem.Probe3Points;

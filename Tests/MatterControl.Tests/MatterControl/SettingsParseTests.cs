@@ -33,7 +33,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual("200,200", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_size));
 				Assert.AreEqual("100,100", ActiveSliceSettings.Instance.GetValue(SettingsKey.print_center));
 				Assert.AreEqual("rectangular", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_shape));
-				Assert.AreEqual("", ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_3point_manual_positions));
+				Assert.AreEqual("", ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions));
 				Assert.AreEqual(new Vector2(100, 180), sample0);
 				Assert.AreEqual(new Vector2(20, 20), sample1);
 				Assert.AreEqual(new Vector2(180, 20), sample2);
@@ -41,31 +41,44 @@ namespace MatterControl.Tests.MatterControl
 
 			{
 				// nothing set
-				var manualPositions = LevelWizardBase.GetManualPositions("");
+				var manualPositions = LevelWizardBase.GetManualPositions("", 3);
 				Assert.IsNull(manualPositions);
 
 				// not enough points
-				manualPositions = LevelWizardBase.GetManualPositions("0,0:100,50");
+				manualPositions = LevelWizardBase.GetManualPositions("0,0:100,50", 3);
 				Assert.IsNull(manualPositions);
 
 				// too many points
-				manualPositions = LevelWizardBase.GetManualPositions("0,0:100,0:200,200:50,3");
+				manualPositions = LevelWizardBase.GetManualPositions("0,0:100,0:200,200:50,3", 3);
 				Assert.IsNull(manualPositions);
 
 				// bad data
-				manualPositions = LevelWizardBase.GetManualPositions("0,oe:100,0:200,200");
+				manualPositions = LevelWizardBase.GetManualPositions("0,oe:100,0:200,200", 3);
 				Assert.IsNull(manualPositions);
 
 				// good data
-				manualPositions = LevelWizardBase.GetManualPositions("0,1:100,2:50,101");
+				manualPositions = LevelWizardBase.GetManualPositions("0,1:100,2:50,101", 3);
 				Assert.IsTrue(manualPositions.Count == 3);
 				Assert.IsTrue(manualPositions[0] == new Vector2(0, 1));
 				Assert.IsTrue(manualPositions[1] == new Vector2(100, 2));
 				Assert.IsTrue(manualPositions[2] == new Vector2(50, 101));
+
+				// good data
+				manualPositions = LevelWizardBase.GetManualPositions("0,1:100,2:50,103:0,4:100,5:50,106:0,7:100,8:50,109", 9);
+				Assert.IsTrue(manualPositions.Count == 9);
+				Assert.IsTrue(manualPositions[0] == new Vector2(0, 1));
+				Assert.IsTrue(manualPositions[1] == new Vector2(100, 2));
+				Assert.IsTrue(manualPositions[2] == new Vector2(50, 103));
+				Assert.IsTrue(manualPositions[3] == new Vector2(0, 4));
+				Assert.IsTrue(manualPositions[4] == new Vector2(100, 5));
+				Assert.IsTrue(manualPositions[5] == new Vector2(50, 106));
+				Assert.IsTrue(manualPositions[6] == new Vector2(0, 7));
+				Assert.IsTrue(manualPositions[7] == new Vector2(100, 8));
+				Assert.IsTrue(manualPositions[8] == new Vector2(50, 109));
 			}
 
 			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.leveling_3point_manual_positions, "1,2:211,3:113,104");
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.leveling_manual_positions, "1,2:211,3:113,104");
 				var sample0 = LevelWizardBase.GetPrintLevelPositionToSample(0);
 				var sample1 = LevelWizardBase.GetPrintLevelPositionToSample(1);
 				var sample2 = LevelWizardBase.GetPrintLevelPositionToSample(2);

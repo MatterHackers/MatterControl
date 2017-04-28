@@ -32,6 +32,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -82,9 +83,66 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override Vector2 GetPrintLevelPositionToSample(int index)
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			return GetLevelingFunctions(3, 3, levelingData)
-				.GetPrintLevelPositionToSample(index);
+			var manualPositions = GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), 9);
+			if (manualPositions != null)
+			{
+				return manualPositions[index];
+			}
+
+			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+
+			if (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
+			{
+				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a ciclular bed
+				bedSize *= 1.0 / Math.Sqrt(2);
+			}
+
+			// we know we are getting 3x3 sample positions they run like this
+			// 6 7 8  Y max
+			// 3 4 5
+			// 0 1 2  Y min
+			int xIndex = index % 3;
+			int yIndex = index / 3;
+
+			Vector2 samplePosition = new Vector2();
+			switch (xIndex)
+			{
+				case 0:
+					samplePosition.x = printCenter.x - (bedSize.x / 2) * .8;
+					break;
+
+				case 1:
+					samplePosition.x = printCenter.x;
+					break;
+
+				case 2:
+					samplePosition.x = printCenter.x + (bedSize.x / 2) * .8;
+					break;
+
+				default:
+					throw new IndexOutOfRangeException();
+			}
+
+			switch (yIndex)
+			{
+				case 0:
+					samplePosition.y = printCenter.y - (bedSize.y / 2) * .8;
+					break;
+
+				case 1:
+					samplePosition.y = printCenter.y;
+					break;
+
+				case 2:
+					samplePosition.y = printCenter.y + (bedSize.y / 2) * .8;
+					break;
+
+				default:
+					throw new IndexOutOfRangeException();
+			}
+
+			return samplePosition;
 		}
 	}
 
@@ -256,9 +314,53 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return region.GetPositionWithZOffset(currentDestination);
 		}
 
-		public Vector2 GetPrintLevelPositionToSample(int index)
+		public Vector2 GetPrintLevelPositionToSample(int index, int gridWidth, int gridHeight)
 		{
-			throw new NotImplementedException();
+			var manualPositions = LevelWizardBase.GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), gridWidth * gridHeight);
+			if (manualPositions != null)
+			{
+				return manualPositions[index];
+			}
+
+			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+
+			switch (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape))
+			{
+				case BedShape.Circular:
+					Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
+					switch (index)
+					{
+						case 0:
+							return firstPosition;
+
+						case 1:
+							return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
+
+						case 2:
+							return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
+
+						default:
+							throw new IndexOutOfRangeException();
+					}
+
+				case BedShape.Rectangular:
+				default:
+					switch (index)
+					{
+						case 0:
+							return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+
+						case 1:
+							return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+
+						case 2:
+							return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+
+						default:
+							throw new IndexOutOfRangeException();
+					}
+			}
 		}
 
 		private Region GetCorrectRegion(Vector3 currentDestination)
