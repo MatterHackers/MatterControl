@@ -326,7 +326,7 @@ Advanced
     Print Leveling
       Machine Settings
         print_leveling_solution
-        leveling_3point_manual_positions
+        leveling_manual_positions
         print_leveling_required_to_print
       Probe Settings
         print_leveling_probe_start

@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 			}
 
-			printLevelWizard.AddPage(new LastPage3PointInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
+			printLevelWizard.AddPage(new LastPagelInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
 		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)

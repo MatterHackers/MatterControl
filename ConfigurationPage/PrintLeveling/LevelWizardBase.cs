@@ -60,13 +60,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.totalSteps = totalSteps;
 		}
 
-		public static List<Vector2> GetManualPositions(string settingsValue)
+		public static List<Vector2> GetManualPositions(string settingsValue, int requiredCount)
 		{
 			// can look like "0,1:100,2:50,101"
-			if(!string.IsNullOrEmpty(settingsValue))
+			if (!string.IsNullOrEmpty(settingsValue))
 			{
 				var coordinates = settingsValue.Split(':');
-				if(coordinates.Length == 3)
+				if(coordinates.Length == requiredCount)
 				{
 					var result = new List<Vector2>();
 					foreach(var coordinate in coordinates)
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						}
 						result.Add(probePosition);
 					}
-					if (result.Count == 3)
+					if (result.Count == requiredCount)
 					{
 						return result;
 					}
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public static Vector2 GetPrintLevelPositionToSample(int index)
 		{
-			var manualPositions = GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_3point_manual_positions));
+			var manualPositions = GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), 3);
 			if(manualPositions != null)
 			{
 				return manualPositions[index];
@@ -204,6 +204,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
 					printLevelWizardWindow = new LevelWizard13PointRadial(runningState);
+					break;
+
+				case PrintLevelingData.LevelingSystem.Probe3x3Mesh:
+					printLevelWizardWindow = new LevelWizard3x3Mesh(runningState);
 					break;
 
 				default:
