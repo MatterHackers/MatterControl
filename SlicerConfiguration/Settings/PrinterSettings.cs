@@ -133,57 +133,55 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		/// <summary>
+		/// Order of precidence &, |, !, =
+		/// </summary>
+		/// <param name="unsplitSettings"></param>
+		/// <param name="layerCascade"></param>
+		/// <returns></returns>
 		public bool ParseShowString(string unsplitSettings, List<PrinterSettingsLayer> layerCascade)
 		{
 			PrinterSettings printerSettings = this;
 			if (!string.IsNullOrEmpty(unsplitSettings))
 			{
-				string[] splitSettingsAnd = unsplitSettings.Split('&');
-
-				foreach (var inLookupSettings in splitSettingsAnd)
+				string[] splitOnAnd = unsplitSettings.Split('&');
+				foreach (var andGroup in splitOnAnd)
 				{
-					if (inLookupSettings.Contains("="))
+					bool orResult = false;
+					string[] splitOnOr = andGroup.Split('|');
+					foreach (var orGroup in splitOnOr)
 					{
-						string[] splitSettingsEquals = inLookupSettings.Split('=');
-						var lookupSettings = splitSettingsEquals[0];
-						var lookupValue = splitSettingsEquals[1];
-						if (!string.IsNullOrEmpty(lookupSettings))
+						var matchString = "1";
+						var orItem = orGroup;
+						bool negate = orItem.StartsWith("!");
+						if (negate)
 						{
-							bool checkEquals = true;
-							if (lookupSettings.StartsWith("!"))
-							{
-								checkEquals = false;
-								lookupSettings = lookupSettings.Substring(1);
-							}
+							orItem = orItem.Substring(1);
+						}
 
-							string sliceSettingValue = printerSettings.GetValue(lookupSettings, layerCascade);
-							if (
-								(checkEquals && sliceSettingValue != lookupValue)
-								|| (!checkEquals && sliceSettingValue == lookupValue)
-								)
-							{
-								return false;
-							}
+						string sliceSettingValue = "";
+						if (orItem.Contains("="))
+						{
+							string[] splitOnEquals = orItem.Split('=');
+
+							sliceSettingValue = printerSettings.GetValue(splitOnEquals[0], layerCascade);
+							matchString = splitOnEquals[1];
+						}
+						else
+						{
+							sliceSettingValue = printerSettings.GetValue(orItem, layerCascade);
+						}
+
+						if ((!negate && sliceSettingValue == matchString)
+							|| (negate && sliceSettingValue != matchString))
+						{
+							orResult = true;
 						}
 					}
-					else
-					{
-						var lookupSettings = inLookupSettings;
-						if (!string.IsNullOrEmpty(lookupSettings))
-						{
-							string hideValue = "0";
-							if (lookupSettings.StartsWith("!"))
-							{
-								hideValue = "1";
-								lookupSettings = lookupSettings.Substring(1);
-							}
 
-							string sliceSettingValue = printerSettings.GetValue(lookupSettings, layerCascade);
-							if (sliceSettingValue == hideValue)
-							{
-								return false;
-							}
-						}
+					if(orResult == false)
+					{
+						return false;
 					}
 				}
 			}

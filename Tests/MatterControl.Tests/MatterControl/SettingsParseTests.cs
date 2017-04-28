@@ -111,43 +111,46 @@ namespace MatterControl.Tests.MatterControl
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "0" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&!auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect", null));
 				Assert.IsTrue(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&!auto_connect", null));
 				Assert.IsTrue(profile.ParseShowString("!has_heated_bed&auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "0" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&auto_connect", null));
 				Assert.IsTrue(profile.ParseShowString("has_heated_bed&!auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1" };
 				var profile = GetProfile(settings);
 				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&!auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&auto_connect", null));
-				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1", SettingsKey.has_fan, "1" };
 				var profile = GetProfile(settings);
 				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&has_fan", null));
-				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&auto_connect&!has_fan", null));
-				Assert.IsTrue(!profile.ParseShowString("has_heated_bed&!auto_connect&has_fan", null));
-				Assert.IsTrue(!profile.ParseShowString("!has_heated_bed&auto_connect&has_fan", null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&has_fan|!has_sdcard", null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&!has_sdcard|has_fan", null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&has_sdcard|has_fan", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&auto_connect&!has_fan", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&!auto_connect&has_fan", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect&has_fan", null));
 			}
 
 			// test list setting value
@@ -155,6 +158,8 @@ namespace MatterControl.Tests.MatterControl
 				string[] settings = new string[] { SettingsKey.has_hardware_leveling, "0", SettingsKey.print_leveling_solution, "3 Point Plane" };
 				var profile = GetProfile(settings);
 				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane", null));
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane|print_leveling_solution=3x3 Mesh", null));
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3x3 Mesh|print_leveling_solution=3 Point Plane", null));
 				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&!print_leveling_solution=7 Point Disk", null));
 				Assert.IsFalse(profile.ParseShowString("has_hardware_leveling&print_leveling_solution=3 Point Plane", null));
 				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&!print_leveling_solution=3 Point Plane", null));
