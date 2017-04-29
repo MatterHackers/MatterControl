@@ -324,12 +324,16 @@ namespace MatterHackers.MatterControl
 			int eMoveAmountPositive = EAxisMoveAmount;
 			int eMoveAmountNegative = -EAxisMoveAmount;
 
-			if (OsInformation.OperatingSystem == OSType.Windows
-				|| OsInformation.OperatingSystem == OSType.Mac)
+			// if we are not printing and on mac or PC
+			if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.Printing
+				&& (OsInformation.OperatingSystem == OSType.Windows || OsInformation.OperatingSystem == OSType.Mac))
 			{
 				if (e.KeyCode == Keys.Z)
 				{
-					PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
+					if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.Printing)
+					{
+						PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
+					}
 				}
 				else if (e.KeyCode == Keys.Y)
 				{
@@ -338,6 +342,10 @@ namespace MatterHackers.MatterControl
 				else if (e.KeyCode == Keys.X)
 				{
 					PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
+				}
+				if (e.KeyCode == Keys.Home)
+				{
+					PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
 				}
 				else if (e.KeyCode == Keys.Left)
 				{
@@ -365,28 +373,30 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (OsInformation.OperatingSystem == OSType.Windows)
+			if ((OsInformation.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageUp)
+				|| (OsInformation.OperatingSystem == OSType.Mac && e.KeyCode == (Keys.Back | Keys.Cancel)))
 			{
-				if (e.KeyCode == Keys.Home)
+				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
 				{
-					PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
+					var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+					currentZ += moveAmountPositive;
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 				}
-				else if (e.KeyCode == Keys.PageUp)
+				else
 				{
 					PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
-				}
-				else if (e.KeyCode == Keys.PageDown)
-				{
-					PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
 				}
 			}
-			else if (OsInformation.OperatingSystem == OSType.Mac)
+			else if ((OsInformation.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageDown)
+				|| (OsInformation.OperatingSystem == OSType.Mac && e.KeyCode == Keys.Clear))
 			{
-				if (e.KeyCode == (Keys.Back | Keys.Cancel))
+				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
 				{
-					PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
+					var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+					currentZ += moveAmountNegative;
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 				}
-				else if (e.KeyCode == Keys.Clear)
+				else
 				{
 					PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
 				}
