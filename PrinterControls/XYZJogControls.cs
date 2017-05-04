@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl
 		private DisableableWidget tooBigForBabyStepping;
 		private RadioButton movePointZeroTwoMmButton;
 		private RadioButton moveOneMmButton;
-		GuiWidget keyboardFocusBoarder;
+		GuiWidget keyboardFocusBorder;
 		ImageWidget keyboardImage;
 
 		private FlowLayoutWidget GetHotkeyControlContainer()
@@ -283,21 +283,23 @@ namespace MatterHackers.MatterControl
 				Visible = false,
 			};
 
-			keyboardFocusBoarder = new GuiWidget(1, 1)
+			keyboardFocusBorder = new GuiWidget(1, 1)
 			{
 				MinimumSize = new Vector2(keyboardImage.Width + 5, keyboardImage.Height + 5),
 			};
 
-			keyboardFocusBoarder.AddChild(keyboardImage);
+			keyboardFocusBorder.AddChild(keyboardImage);
 
-			keyFocusedContainer.AddChild(keyboardFocusBoarder);
+			keyFocusedContainer.AddChild(keyboardFocusBorder);
 
 			return keyFocusedContainer;
 		}
 
+// OnLoad overridden for keyboard and only applicable on non-Android builds
+#if !__ANDROID__
 		public override void OnLoad(EventArgs args)
 		{
-			var parents = keyboardFocusBoarder.Parents<AltGroupBox>();
+			var parents = keyboardFocusBorder.Parents<AltGroupBox>();
 
 			parents.First().KeyDown += JogControls_KeyDown;
 
@@ -316,6 +318,7 @@ namespace MatterHackers.MatterControl
 
 			base.OnLoad(args);
 		}
+#endif
 
 		private void JogControls_KeyDown(object sender, KeyEventArgs e)
 		{
