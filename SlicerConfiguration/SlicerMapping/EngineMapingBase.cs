@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.com_port,
 			SettingsKey.filament_cost,
 			SettingsKey.filament_density,
-			SettingsKey.fillament_runout_sensor,
+			SettingsKey.filament_runout_sensor,
 			SettingsKey.leveling_manual_positions,
 			SettingsKey.manual_probe_paper_width,
 			SettingsKey.use_g30_for_bed_probe,

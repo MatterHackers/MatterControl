@@ -6094,3 +6094,6 @@ Translated:Out of filament detected\nYour 3D print has been paused.
 English:Your 3D print has been auto-pasued.\nPause layer{0} reached.
 Translated:Your 3D print has been auto-pasued.\nPause layer{0} reached.
 
+English:Has Filament Runout Sensor
+Translated:Has Filament Runout Sensor
+

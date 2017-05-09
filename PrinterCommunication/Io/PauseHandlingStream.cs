@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			base.Dispose();
 		}
 
-		public enum PauseReason { UserRequested, PauseLayerReached, GCodeRequest, FillamentRunout }
+		public enum PauseReason { UserRequested, PauseLayerReached, GCodeRequest, FilamentRunout }
 
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		string pauseCaption = "Printer Paused".Localize();
 		string layerPauseMessage = "Your 3D print has been auto-pasued.\nPause layer{0} reached.".Localize();
-		string fillamentPauseMessage = "Out of filament detected\nYour 3D print has been paused.".Localize();
+		string filamentPauseMessage = "Out of filament detected\nYour 3D print has been paused.".Localize();
 
 		public void DoPause(PauseReason pauseReason, string layerNumber = "")
 		{
@@ -108,9 +108,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, yesOk: "Resume".Localize()));
 					break;
 
-				case PauseReason.FillamentRunout:
-					pcc.FillamentRunout.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
-					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, fillamentPauseMessage, pauseCaption, yesOk: "Resume".Localize()));
+				case PauseReason.FilamentRunout:
+					pcc.FilamentRunout.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
+					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, yesOk: "Resume".Localize()));
 					break;
 			}
 
@@ -157,8 +157,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						return lineToSend;
 					}
 
-					// We got a line from the gcode we are sending check if we should queue a request for fillament runout
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.fillament_runout_sensor))
+					// We got a line from the gcode we are sending check if we should queue a request for filament runout
+					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.filament_runout_sensor))
 					{
 						// request to read the endstop state
 						if (!timeSinceLastEndstopRead.IsRunning || timeSinceLastEndstopRead.ElapsedMilliseconds > 5000)
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			else if (readOutOfFilament)
 			{
 				readOutOfFilament = false;
-				DoPause(PauseReason.FillamentRunout);
+				DoPause(PauseReason.FilamentRunout);
 				lineToSend = "";
 			}
 
