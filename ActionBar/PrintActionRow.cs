@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -466,9 +467,33 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
+		string unsavedChangesCaption = "Unsaved Changes";
+		string unsavedChangesMessage = "You have unsaved changes to your part. Are you sure you want to start this print?";
 		private void onStartButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle(() => PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible());
+			UiThread.RunOnIdle(() =>
+				{
+					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+					var view3D = systemWindow.ChildrenRecursive<View3DWidget>().FirstOrDefault();
+
+					if (view3D != null 
+						&& view3D.ShouldBeSaved)
+					{
+						StyledMessageBox.ShowMessageBox((bool startPrint) =>
+						{
+							if (startPrint)
+							{
+								PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+							}
+
+						}, unsavedChangesMessage, unsavedChangesCaption, StyledMessageBox.MessageType.YES_NO, "Start Print", "Cancel");
+					}
+					else
+					{
+						PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+					}
+				}
+			);
 		}
 
 		private void onStateChanged(object sender, EventArgs e)

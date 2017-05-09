@@ -500,12 +500,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		}
 
+		public bool ShouldBeSaved
+		{
+			get { return InEditMode && saveButtons.Visible; }
+		}
+
 		private void trackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			if(allObjects != null)
+			if (allObjects != null)
 			{
 				//DebugBvh.Render(allObjects, Matrix4X4.Identity);
-            }
+			}
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
