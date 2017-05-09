@@ -19,19 +19,19 @@ namespace MatterHackers.MatterControl
 		public enum MessageType { OK, YES_NO };
 		double extraTextScaling = 1;
 
-		public static void ShowMessageBox(Action<bool> callback, String message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string no = "")
+		public static void ShowMessageBox(Action<bool> callback, String message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string noCancel = "")
 		{
-			ShowMessageBox(callback, message, caption, null, messageType, yesOk, no);
+			ShowMessageBox(callback, message, caption, null, messageType, yesOk, noCancel);
 		}
 
-		public static void ShowMessageBox(Action<bool> callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string no = "")
+		public static void ShowMessageBox(Action<bool> callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string noCancel = "")
 		{
-			StyledMessageBox messageBox = new StyledMessageBox(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, no);
+			StyledMessageBox messageBox = new StyledMessageBox(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, noCancel);
 			messageBox.CenterInParent = true;
 			messageBox.ShowAsSystemWindow();
 		}
 
-		public StyledMessageBox(Action<bool> callback, String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string no)
+		public StyledMessageBox(Action<bool> callback, String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string noCancel)
 			: base(width, height)
 		{
 			if (UserSettings.Instance.IsTouchScreen)
@@ -51,9 +51,9 @@ namespace MatterHackers.MatterControl
 					yesOk = "Yes".Localize();
 				}
 			}
-			if (no == "")
+			if (noCancel == "")
 			{
-				no = "No".Localize();
+				noCancel = "No".Localize();
 			}
 
 			responseCallback = callback;
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl
 
 						buttonRow.AddChild(new HorizontalSpacer());
 
-						Button noButton = textImageButtonFactory.Generate(no, centerText: true);
+						Button noButton = textImageButtonFactory.Generate(noCancel, centerText: true);
 						noButton.Name = "No Button";
 						noButton.Click += noButton_Click;
 						noButton.Cursor = Cursors.Hand;

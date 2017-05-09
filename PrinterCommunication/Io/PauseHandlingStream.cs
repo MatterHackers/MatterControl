@@ -105,12 +105,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
 					pcc.PauseOnLayer.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
-					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, yesOk: "Resume".Localize()));
+					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, StyledMessageBox.MessageType.YES_NO, "Ok".Localize(), "Resume".Localize()));
 					break;
 
 				case PauseReason.FilamentRunout:
 					pcc.FilamentRunout.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
-					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, yesOk: "Resume".Localize()));
+					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, StyledMessageBox.MessageType.YES_NO, "Ok".Localize(), "Resume".Localize()));
 					break;
 			}
 
@@ -126,9 +126,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			InjectPauseGCode("MH_PAUSE");
 		}
 
-		private void ResumePrint(bool obj)
+		private void ResumePrint(bool clickedOk)
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			// They clicked either Resume or Ok
+			if (!clickedOk && PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
 			{
 				PrinterConnectionAndCommunication.Instance.Resume();
 			}
