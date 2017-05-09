@@ -309,7 +309,7 @@ Advanced
         has_heated_bed
         has_sd_card_reader
         has_power_control
-        fillament_runout_sensor
+        filament_runout_sensor
         enable_network_printing
         enable_sailfish_communication
       Behavior

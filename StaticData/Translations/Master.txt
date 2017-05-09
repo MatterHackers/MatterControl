@@ -6085,3 +6085,15 @@ Translated:Specifies that the firmware has support for ros_0 enstop reporting on
 English:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
 Translated:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
 
+English:Printer Paused
+Translated:Printer Paused
+
+English:Out of filament detected\nYour 3D print has been paused.
+Translated:Out of filament detected\nYour 3D print has been paused.
+
+English:Your 3D print has been auto-pasued.\nPause layer{0} reached.
+Translated:Your 3D print has been auto-pasued.\nPause layer{0} reached.
+
+English:Has Filament Runout Sensor
+Translated:Has Filament Runout Sensor
+

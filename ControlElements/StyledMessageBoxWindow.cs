@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
 				case MessageType.OK:
 					{
 						Title = "MatterControl - " + "Alert".Localize();
-						Button okButton = textImageButtonFactory.Generate("Ok".Localize(), centerText: true);
+						Button okButton = textImageButtonFactory.Generate(yesOk, centerText: true);
 						okButton.Name = "Ok Button";
 						okButton.Cursor = Cursors.Hand;
 						okButton.Click += okButton_Click;

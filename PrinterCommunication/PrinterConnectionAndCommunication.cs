@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler PauseOnLayer = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler FillamentRunout = new RootedObjectEventHandler();
+		public RootedObjectEventHandler FilamentRunout = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
 

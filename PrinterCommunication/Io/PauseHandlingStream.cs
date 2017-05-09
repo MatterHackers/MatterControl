@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			base.Dispose();
 		}
 
-		public enum PauseReason { UserRequested, PauseLayerReached, GCodeRequest, FillamentRunout }
+		public enum PauseReason { UserRequested, PauseLayerReached, GCodeRequest, FilamentRunout }
 
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
@@ -88,7 +89,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		public void DoPause(PauseReason pauseReason)
+		string pauseCaption = "Printer Paused".Localize();
+		string layerPauseMessage = "Your 3D print has been auto-pasued.\nPause layer{0} reached.".Localize();
+		string filamentPauseMessage = "Out of filament detected\nYour 3D print has been paused.".Localize();
+
+		public void DoPause(PauseReason pauseReason, string layerNumber = "")
 		{
 			var pcc = PrinterConnectionAndCommunication.Instance;
 			switch (pauseReason)
@@ -100,10 +105,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
 					pcc.PauseOnLayer.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
+					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, yesOk: "Resume".Localize()));
 					break;
 
-				case PauseReason.FillamentRunout:
-					pcc.FillamentRunout.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
+				case PauseReason.FilamentRunout:
+					pcc.FilamentRunout.CallEvents(pcc, new PrintItemWrapperEventArgs(pcc.ActivePrintItem));
+					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, yesOk: "Resume".Localize()));
 					break;
 			}
 
@@ -117,6 +124,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			InjectPauseGCode("M114");
 
 			InjectPauseGCode("MH_PAUSE");
+		}
+
+		private void ResumePrint(bool obj)
+		{
+			if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			{
+				PrinterConnectionAndCommunication.Instance.Resume();
+			}
 		}
 
 		public override string ReadLine()
@@ -142,8 +157,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						return lineToSend;
 					}
 
-					// We got a line from the gcode we are sending check if we should queue a request for fillament runout
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.fillament_runout_sensor))
+					// We got a line from the gcode we are sending check if we should queue a request for filament runout
+					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.filament_runout_sensor))
 					{
 						// request to read the endstop state
 						if (!timeSinceLastEndstopRead.IsRunning || timeSinceLastEndstopRead.ElapsedMilliseconds > 5000)
@@ -164,7 +179,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				string layerNumber = lineToSend.Split(':')[1];
 				if (PauseOnLayer(layerNumber))
 				{
-					DoPause(PauseReason.PauseLayerReached);
+					DoPause(PauseReason.PauseLayerReached, $" {layerNumber}");
 				}
 			}
 			else if (lineToSend.StartsWith("M226")
@@ -188,7 +203,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			else if (readOutOfFilament)
 			{
 				readOutOfFilament = false;
-				DoPause(PauseReason.FillamentRunout);
+				DoPause(PauseReason.FilamentRunout);
 				lineToSend = "";
 			}
 
