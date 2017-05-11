@@ -6097,3 +6097,12 @@ Translated:Your 3D print has been auto-pasued.\nPause layer{0} reached.
 English:Has Filament Runout Sensor
 Translated:Has Filament Runout Sensor
 
+English:The printer has a z probe for measuring bed level.
+Translated:The printer has a z probe for measuring bed level.
+
+English:Has Z Probe
+Translated:Has Z Probe
+
+English:Use Z Probe
+Translated:Use Z Probe
+

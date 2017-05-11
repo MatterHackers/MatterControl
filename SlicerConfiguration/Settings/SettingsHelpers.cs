@@ -119,7 +119,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
 		public const string temperature = nameof(temperature);
-		public const string use_g30_for_bed_probe = nameof(use_g30_for_bed_probe);
+		public const string use_z_probe = nameof(use_z_probe);
+		public const string has_z_probe = nameof(has_z_probe);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
@@ -500,6 +501,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+		}
+
+		public bool UseZProbe()
+		{
+			return ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_probe) && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 	}
 

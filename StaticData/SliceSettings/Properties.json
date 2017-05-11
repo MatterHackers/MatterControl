@@ -929,6 +929,20 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "has_z_probe",
+		"PresentationName": "Has Z Probe",
+		"HelpText": "The printer has a z probe for measuring bed level.",
+		"DataEditType": "HARDWARE_PRESENT",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0",
+		"ReloadUiWhenChanged": true,
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "has_hardware_leveling",
 		"PresentationName": "Has Hardware Leveling",
 		"HelpText": "The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.",
@@ -1217,12 +1231,12 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
-		"SlicerConfigName": "use_g30_for_bed_probe",
-		"PresentationName": "Use G30 For Probing",
+		"SlicerConfigName": "use_z_probe",
+		"PresentationName": "Use Z Probe",
 		"HelpText": "Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.",
 		"DataEditType": "CHECK_BOX",
 		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling",
+		"ShowIfSet": "!has_hardware_leveling&has_z_probe",
 		"ResetAtEndOfPrint": false,
 		"RebuildGCodeOnChange": false,
 		"DefaultValue": "0"
