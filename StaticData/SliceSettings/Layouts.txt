@@ -310,6 +310,7 @@ Advanced
         has_sd_card_reader
         has_power_control
         filament_runout_sensor
+        has_z_probe
         enable_network_printing
         enable_sailfish_communication
       Behavior
@@ -331,7 +332,7 @@ Advanced
       Probe Settings
         print_leveling_probe_start
         manual_probe_paper_width
-        use_g30_for_bed_probe
+        use_z_probe
     Print Recovery
       Recover Settings
         recover_is_enabled
