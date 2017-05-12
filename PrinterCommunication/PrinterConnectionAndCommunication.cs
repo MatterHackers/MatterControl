@@ -1625,6 +1625,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
 										{
 											CommunicationState = CommunicationStates.Connected;
+											TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 											haveReportedError = false;
 											// now send any command that initialize this printer
 											ClearQueuedGCode();
@@ -2913,8 +2914,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							AbortConnectionAttempt("Connection Lost - " + ex.Message);
 						}
 					}
-					catch (TimeoutException) // known ok
+					catch (TimeoutException e2) // known ok
 					{
+						// This writes on the next line, and there may have been another write attempt before it is printer. Write indented to attempt to show its association.
+						PrinterOutputCache.Instance.WriteLine("        Error writing command:" + e2.Message);
 					}
 					catch (UnauthorizedAccessException e3)
 					{
