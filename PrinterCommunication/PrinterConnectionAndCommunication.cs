@@ -1625,6 +1625,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
 										{
 											CommunicationState = CommunicationStates.Connected;
+											TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 											haveReportedError = false;
 											// now send any command that initialize this printer
 											ClearQueuedGCode();
