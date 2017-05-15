@@ -327,7 +327,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			// we can only change the queue selection when we are not printing
 			if(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting 
-				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused
+				|| PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint)
 			{
 				return;
 			}
