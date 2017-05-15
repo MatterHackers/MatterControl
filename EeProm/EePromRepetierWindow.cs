@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.EeProm
 			{
 				if(!PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
 				{
-					this.Close();
+					this.CloseOnIdle();
 				}
 			}, ref unregisterEvents);
 		}
