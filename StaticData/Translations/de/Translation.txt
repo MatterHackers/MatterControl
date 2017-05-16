@@ -239,7 +239,7 @@ English:Degrees
 Translated:Grad
 
 English:Align to Bed
-Translated:Richten Sie sich an Bed
+Translated:Richten Sie sich an das Bett
 
 English:Ratio
 Translated:Verhältnis
@@ -461,7 +461,7 @@ English:This will force the fan to remain on throughout the print. In general yo
 Translated:Dies zwingt den Lüfter, während des gesamten Drucks zu bleiben. Im Allgemeinen solltest du das ausschalten und einfach nur die Kühlung aktivieren.
 
 English:If a layer is estimated to take less than this to print, the fan will be turned on.
-Translated:Wenn eine Schicht geschätzt wird, um weniger als dies zu drucken, wird der Lüfter eingeschaltet.
+Translated:Wenn eine Schicht geschätzt wird, um weniger als diese zu drucken, wird der Lüfter eingeschaltet.
 
 English:This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
 Translated:Dies sollte auf den tatsächlichen Durchmesser des Filaments eingestellt werden, den Sie auf Ihrem Drucker verwenden. Messen Sie 5 mal mit Bremssätteln, werfen Sie die obere und untere, und durchschnittlich die restlichen 3.
@@ -572,7 +572,7 @@ English:The index of the extruder to use for perimeters.
 Translated:Der Index des Extruders für Perimeter zu verwenden.
 
 English:Sets the default movement speed while printing perimeters.
-Translated:Legt die Standardbewegungsgeschwindigkeit fest, während Sie die Perimeter drucken.
+Translated:Setzt die Standardbewegungsgeschwindigkeit beim Drucken von Perimetern.
 
 English:The number of external layers or shells to create.
 Translated:Die Anzahl der äußeren Ebenen oder Schalen zu erstellen.
@@ -635,7 +635,7 @@ English:If a layer is estimated to take less than this to print, the movement sp
 Translated:Wenn eine Schicht geschätzt wird, um weniger als diese zu drucken, wird die Bewegungsgeschwindigkeit reduziert, um zu versuchen und machen die Schicht nehmen diese lange zu drucken.
 
 English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
-Translated:Wird für kleine Perimeter verwendet (meist Löcher). Dies kann explizit oder in Prozent der Geschwindigkeit der Perimeter festgelegt werden.
+Translated:Wird für kleine Perimeter (meist Löcher) verwendet. Dies kann explizit oder in Prozent der Geschwindigkeit der Perimeter festgelegt werden.
 
 English:The pattern used on the bottom and top layers of the print.
 Translated:Das Muster auf der unteren und oberen Schichten des Drucks verwendet.
@@ -653,7 +653,7 @@ English:Force the print to have only one layer and gradually increase the extrud
 Translated:Erzwinge den Druck, nur eine Schicht zu haben und allmählich die Extruderhöhe während des Druckes zu erhöhen. Mit diesem Merkmal kann nur ein Teil gedruckt werden.
 
 English:This is the amount to lower the temperature of an extruder that is not currently printing.
-Translated:Dies ist die Menge, um die Temperatur eines Extruders zu senken, der momentan nicht druckt.
+Translated:Dies ist die Menge, um die Temperatur eines Extruders zu senken, der derzeit nicht druckt.
 
 English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].
 Translated:Dieser Gcode wird nach der Temperatureinstellung direkt in den Ausgang eingefügt. Wenn Sie die Befehle haben, um die Temperatur in diesem Abschnitt einzustellen, werden sie nicht außerhalb dieses Abschnitts erzeugt. Sie können auch Werte aus anderen Einstellungen wie [first_layer_temperature] enthalten.
@@ -911,7 +911,7 @@ English:Layer View
 Translated:Ebenenansicht
 
 English:Connect to Printer
-Translated:Verbindung zum Drucker herstellen
+Translated:Verbinden mit Drucker
 
 English:Choose a 3D Printer Configuration
 Translated:Wählen Sie eine 3D-Druckerkonfiguration
@@ -1256,7 +1256,7 @@ English:Extruders
 Translated:Extruder
 
 English:Temp Lower Amount
-Translated:Temp niedriger Betrag
+Translated:Temp niedrigerer Betrag
 
 English:Ooze Prevention
 Translated:Ooze Vorbeugung
@@ -1790,7 +1790,7 @@ English:High Precision
 Translated:Hohe Präzision
 
 English:We will now finalize our measurement of the extruder height at this position.
-Translated:Wir werden nun unsere Messung der Extruderhöhe an dieser Stelle abschließen.
+Translated:Wir werden nun die Messung der Extruderhöhe an dieser Stelle abschließen.
 
 English:Press [Z-] one click PAST the first hint of resistance
 Translated:Drücken Sie [Z-] einen Klick PAST den ersten Hinweis auf Widerstand
@@ -2309,7 +2309,7 @@ English:WARNING: Disconnecting will cancel the current print.\n\nDo you want to 
 Translated:WARNUNG: Beim Trennen wird der aktuelle Druck abgebrochen.\n\nMöchten Sie die Verbindung trennen?
 
 English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
-Translated:Hinweis: Scheibeneinstellungen werden angewendet, bevor der Druck tatsächlich beginnt. Änderungen während des Druckvorgangs wirken sich nicht auf den aktiven Druck aus.
+Translated:Hinweis: Scheibeneinstellungen werden angewendet, bevor der Druck tatsächlich beginnt. Änderungen beim Drucken wirken sich nicht auf den aktiven Druck aus.
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 Translated:Der Extruder heizt derzeit und seine Zieltemperatur kann erst geändert werden, wenn er {0} ° C erreicht.\n\nSie können die Ausgangsextrudertemperatur in 'Scheibeneinstellungen' -> 'Filament' einstellen.\n\n{1}
@@ -2342,7 +2342,7 @@ English:Remind Me Later
 Translated:Erinnere mich später
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
-Translated:Hoppla! Es gibt keine eeprom Mapping für die Firmware Ihres Druckers.
+Translated:Hoppla! Es gibt keine Eeprom-Mapping für die Firmware Ihres Druckers.
 
 English:Warning no eeprom mapping
 Translated:Warnung kein eeprom Mapping
@@ -2513,7 +2513,7 @@ English:Select the baud rate.
 Translated:Wählen Sie die Baudrate.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:Der Begriff "Baudrate" bedeutet in etwa die Geschwindigkeit, mit der\nDaten übertragen werden. Die Baudraten können vom Drucker zum Drucker abweichen. Weitere Informationen finden Sie in Ihrem Druckerhandbuch.\n\nTipp: Wenn Sie unsicher sind - versuchen Sie 250000.
+Translated:Der Begriff "Baudrate" bedeutet in etwa die Geschwindigkeit, mit der die Daten übertragen werden. Die Baudraten können vom Drucker zum Drucker abweichen. Weitere Informationen finden Sie in Ihrem Druckerhandbuch.\n\nTipp: Wenn Sie unsicher sind - versuchen Sie 250000.
 
 English:This is the minimum amount of filament that must be extruded before a retraction can occur.
 Translated:Dies ist die minimale Menge an Filament, die extrudiert werden muss, bevor ein Rückzug auftreten kann.
@@ -2522,7 +2522,7 @@ English:Support Options
 Translated:Unterstützungsoptionen
 
 English:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
-Translated:Wenn dies überprüft wird, wird die Unterstützung von oben auf die Innenflächen gestattet. Wenn es nicht überprüft wird, wird die Unterstützung nur am Bett angelegt.
+Translated:Wenn dies überprüft wird, wird die Unterstützung von oben auf die inneren Flächen gestattet. Wenn es nicht überprüft wird, wird die Unterstützung nur am Bett angelegt.
 
 English:Support Everywhere
 Translated:Unterstützung überall
@@ -2828,7 +2828,7 @@ English:Sometime a mesh will not have closed a perimeter. When this is checked t
 Translated:Irgendwann wird ein Netz nicht einen Umkreis geschlossen. Wenn dies überprüft wird, werden diese nicht geschlossenen Perimeter geschlossen.
 
 English:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
-Translated:Sie können die Extrusion mit oder legen Sie diese auf eine% der Haupt-Extrusion Breite. Verlassen Sie diese als 0, um eine automatische Berechnung zu ermöglichen.
+Translated:Sie können die Extrusion mit oder legen Sie diese auf eine% der Haupt-Extrusionsbreite. Verlassen Sie diese als 0, um eine automatische Berechnung zu ermöglichen.
 
 English:The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
 Translated:Die Standardtemperatur zum Einstellen des Extruders auf. Kann manchmal auf der ersten Schicht überschrieben werden.
@@ -2852,7 +2852,7 @@ English:Invalid printer response
 Translated:Ungültige Druckerantwort
 
 English:Could not find a selected button.
-Translated:Eine ausgewählte Schaltfläche konnte nicht gefunden werden.
+Translated:Eine ausgewählte Taste konnte nicht gefunden werden.
 
 English:Aligning
 Translated:Ausrichten
@@ -3302,7 +3302,7 @@ English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
 Translated:Erste Schicht Extrusionsbreite = {0}\nDüsendurchmesser = {1}
 
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
-Translated:Ort: 'Erweiterte Bedienelemente' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+Translated:Ort: 'Erweiterte Bedienelemente' -> 'Scheibeneinstellungen' -> 'Drucken' -> 'Erweitert' -> 'Frist Layer'
 
 English:First Layer Extrusion Width' must be greater than 0.
 Translated:Erste Schicht Extrusionsbreite 'muss größer als 0 sein.
@@ -3665,7 +3665,7 @@ English:Zoom
 Translated:Zoom
 
 English:Preview 3D Design
-Translated:Vorschau 3D Design
+Translated:Vorschau 3D-Design
 
 English:Rotate (Alt + L. Mouse)
 Translated:Drehen (Alt + L. Maus)
@@ -4277,7 +4277,7 @@ English:Generates support material starting on top of internal surfaces. If unch
 Translated:Erzeugt Stützmaterial, das auf der Oberseite der Innenflächen beginnt. Wenn die unkontrollierte Unterstützung nur auf dem Bett beginnt.
 
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
-Translated:Der Index des Extruders, der zum Bedrucken von Trägermaterial verwendet wird. Nur gültig, wenn Extruderzähler auf einen Wert von mehr als 1 gesetzt ist.
+Translated:Der Index des Extruders, der zum Bedrucken von Trägermaterial verwendet wird. Nur gültig, wenn Extruder Count auf einen Wert von mehr als 1 gesetzt ist.
 
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
 Translated:Der Index des Extruders, um das Floß zu drucken. Auf 0 setzen, um den Extruderindex zu verwenden.
@@ -4628,7 +4628,7 @@ English:Sphere
 Translated:Kugel
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:Ausgabe nur die erste Schicht des Drucks. Besonders nützlich für die Ausgabe von Gcode-Daten für Anwendungen wie Gravieren oder Schneiden.
+Translated:Geben Sie nur die erste Schicht des Drucks aus. Besonders nützlich für die Ausgabe von Gcode-Daten für Anwendungen wie Gravieren oder Schneiden.
 
 English:First Layer Only
 Translated:Nur erste Schicht
@@ -5177,7 +5177,7 @@ English:'First Layer Extrusion Width' must be greater than 0.
 Translated:'First Layer Extrusion Width' muss größer als 0 sein.
 
 English:It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.
-Translated:Es ist Zeit, deine vorhandenen Drucker auf dein MatterHackers-Konto hochzuladen. Nach dem Hochladen werden diese Drucker jedes Mal verfügbar, wenn Sie sich bei MatterControl anmelden.
+Translated:Es ist Zeit, deine vorhandenen Drucker auf dein MatterHackers-Konto hochzuladen. Nach dem Hochladen werden diese Drucker jedes Mal verfügbar sein, wenn Sie sich bei MatterControl anmelden.
 
 English:Select Printers to Upload
 Translated:Wählen Sie Drucker zum Hochladen aus
@@ -5903,7 +5903,7 @@ English:Trim the end of the filament to ensure a good load.
 Translated:Trimmen Sie das Ende des Glühfadens, um eine gute Belastung zu gewährleisten.
 
 English:Choose the material that you are loading. You are doing some stuff that takes a long description.
-Translated:Wählen Sie das Material, das Sie laden. Du machst ein paar Sachen, die eine lange Beschreibung machen.
+Translated:Wählen Sie das Material, das Sie laden. Du machst ein paar Sachen, die eine lange Beschreibung haben.
 
 English:Confirm the material you are unloading.
 Translated:Bestätigen Sie das Material, das Sie entladen.
@@ -6075,4 +6075,37 @@ Translated:Wenn diese Einstellung eingestellt ist, werden diese Positionen beim 
 
 English:Leveling Positions
 Translated:Ausgleichspositionen
+
+English:Specifies that the firmware has support for ros_0 enstrop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:Gibt an, dass die Firmware Unterstützung für ros_0 enstrop Reporting auf M119 hat. TRIGGERED-Zustand definiert, dass Faden läuft. Wenn der Ausfall erkannt wird, wird die Druckpause angehalten. G-Code wird ausgeführt.
+
+English:Has Fillament Runout Sensor
+Translated:Hat Fillament Runout Sensor
+
+English:Specifies that the firmware has support for ros_0 enstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:Gibt an, dass die Firmware Unterstützung für ros_0 enstop Reporting auf M119 hat. TRIGGERED-Zustand definiert, dass Faden läuft. Wenn der Ausfall erkannt wird, wird die Druckpause angehalten. G-Code wird ausgeführt.
+
+English:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
+Translated:Wenn diese Einstellung eingestellt ist, werden diese Positionen beim Ausführen der Nivellierlösung verwendet. Leer lassen für Voreinstellungen. Datenformat: 'X1, Y1: ...: Xn, Yn'
+
+English:Printer Paused
+Translated:Drucker pausiert
+
+English:Out of filament detected\nYour 3D print has been paused.
+Translated:Aus Filament erkannt\nIhr 3D-Druck wurde pausiert.
+
+English:Your 3D print has been auto-pasued.\nPause layer{0} reached.
+Translated:Ihr 3D-Druck wurde automatisch angelegt. \ N Pause-Ebene {0} erreicht.
+
+English:Has Filament Runout Sensor
+Translated:Hat Filament Runout Sensor
+
+English:The printer has a z probe for measuring bed level.
+Translated:Der Drucker hat eine Z-Sonde zur Messung der Bettniveau.
+
+English:Has Z Probe
+Translated:Hat Z Probe
+
+English:Use Z Probe
+Translated:Z Probe prüfen
 

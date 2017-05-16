@@ -239,6 +239,10 @@ namespace MatterHackers.MatterControl
 						PrinterOutputCache.Instance.PrinterLines.Add(writeFaildeWaring);
 						PrinterOutputCache.Instance.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
 						PrinterOutputCache.Instance.PrinterLines.Add("");
+
+						UiThread.RunOnIdle(() => {
+							StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+						});
 					}
 				}
 			}
