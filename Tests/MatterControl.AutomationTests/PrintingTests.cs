@@ -115,6 +115,149 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 300);
 		}
 
+		[Test, Apartment(ApartmentState.STA)]
+		public void ExpectedEmulatorResponses()
+		{
+			string[] test1 = new string[]
+			{
+				"N1 M110 N1 * 125",
+				"ok",
+				"N2 M114 * 37",
+				"X:0.00 Y: 0.00 Z: 0.00 E: 0.00 Count X: 0.00 Y: 0.00 Z: 0.00",
+				"ok",
+				"N3 M105 * 36",
+				"ok T:27.0 / 0.0",
+				"N1 M110 N1*125",
+				"ok",
+				"N2 M115 * 36",
+				"FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a",
+				"ok",
+				"N3 M104 T0 S0 * 34",
+				"ok",
+				"N4 M104 T1 S0 * 36",
+				"ok",
+				"N5 M105 * 34",
+				"ok T:27.0 / 0.0",
+				"N6 M105 * 45",
+				"Error:checksum mismatch, Last Line: 5",
+				"Resend: 6",
+				"ok",
+				"N6 M105 * 33",
+				"ok T:27.0 / 0.0",
+				"N7 M105 * 32",
+				"ok T:27.0 / 0.0",
+				"N8 M105 * 47",
+				"ok T:27.0 / 0.0",
+				"N9 M105 * 46",
+				"ok T:27.0 / 0.0",
+				"N10 M105 * 22",
+				"ok T:27.0 / 0.0",
+				"N11 M105 * 23",
+				"ok T:27.0 / 0.0",
+				"N12 M105 * 20",
+				"ok T:27.0 / 0.0",
+				"N13 M105 * 21",
+				"ok T:27.0 / 0.0",
+				"N14 M105 * 18",
+				"ok T:27.0 / 0.0",
+				"N15 M105 * 19",
+				"ok T:27.0 / 0.0",
+				"N16 M105 * 16",
+				"ok T:27.0 / 0.0",
+				"N17 M105 * 40",
+				"Error:checksum mismatch, Last Line: 16",
+				"Resend: 17",
+				"ok",
+				"N17 M105 * 17",
+				"ok T:27.0 / 0.0",
+			};
+
+			string[] test2 = new string[]
+			{
+				"N1 M110 N1*125",
+				"ok",
+				"N1 M110 N1*125",
+				"ok",
+				"N1 M110 N1*125",
+				"ok",
+				"N2 M114*37",
+				"X:0.00 Y: 0.00 Z: 0.00 E: 0.00 Count X: 0.00 Y: 0.00 Z: 0.00",
+				 "ok",
+			};
+
+			SimulatePrint(test1);
+			SimulatePrint(test2);
+		}
+
+		private static void SimulatePrint(string[] sendRecieveLog)
+		{
+			Emulator emulator = new Emulator();
+			int lineIndex = 0;
+			while (lineIndex < sendRecieveLog.Length)
+			{
+				var sentCommand = sendRecieveLog[lineIndex];
+				string response = emulator.GetCorrectResponse(sentCommand);
+				lineIndex++;
+				var lines = response.Split('\n');
+				for (int i = 0; i < lines.Length; i++)
+				{
+					if (!string.IsNullOrEmpty(lines[i]))
+					{
+						Assert.AreEqual(sendRecieveLog[lineIndex], lines[i]);
+						lineIndex++;
+					}
+				}
+			}
+		}
+
+		[Test, Apartment(ApartmentState.STA)]
+		public async Task PrinterRequestsResumeWorkingAsExpected()
+		{
+			AutomationTest testToRun = (testRunner) =>
+			{
+				testRunner.WaitForName("Cancel Wizard Button", 1);
+
+				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					var emulator = emulatorDisposable as Emulator;
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+
+					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+
+					testRunner.ClickByName("General Tab", 1);
+					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("Layer(s) To Pause: Edit");
+					testRunner.Type("2;6");
+
+					// switch to controls so we can see the heights
+					testRunner.ClickByName("Controls Tab");
+
+					// print a part
+					testRunner.ClickByName("Start Print Button", 1);
+
+					// turn on line error simulation
+					emulator.SimulateLineErrors = true;
+
+					// close the pause dialog pop-up (resume)
+					testRunner.ClickByName("No Button", 200);
+
+					// simulate board reboot
+					emulator.SimulateRebot();
+
+					// close the pause dialog pop-up (resume)
+					testRunner.ClickByName("No Button", 200);
+
+					// Wait for done
+					testRunner.WaitForName("Done Button", 60);
+					testRunner.WaitForName("Print Again Button", 1);
+				}
+
+				return Task.FromResult(0);
+			};
+
+			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 300);
+		}
+
 		private EventHandler unregisterEvents;
 
 		[Test, Apartment(ApartmentState.STA)]

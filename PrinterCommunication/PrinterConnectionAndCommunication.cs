@@ -1420,9 +1420,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 
-				if (currentLineIndexToSend >= allCheckSumLinesSent.Count)
+				if (currentLineIndexToSend >= allCheckSumLinesSent.Count
+					|| currentLineIndexToSend == 1)
 				{
 					SendLineToPrinterNow("M110 N1");
+					allCheckSumLinesSent.SetStartingIndex(1);
 				}
 			}
 		}
