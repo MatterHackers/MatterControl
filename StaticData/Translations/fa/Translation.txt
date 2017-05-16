@@ -6076,3 +6076,36 @@ Translated:اگر تعیین شود، این مواضع می شود زمانی �
 English:Leveling Positions
 Translated:پوزیشن های تسطیح
 
+English:Specifies that the firmware has support for ros_0 enstrop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:مشخص می کند که سیستم عامل دارای پشتیبانی از enstrop ros_0 گزارش در M119. دولت باعث تعریف رشته انحراف است. اگر انحراف است شناسایی شده است پرینتر مکث G-کد اجرا می شود.
+
+English:Has Fillament Runout Sensor
+Translated:دارای سنسور انحراف Fillament
+
+English:Specifies that the firmware has support for ros_0 enstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:مشخص می کند که سیستم عامل دارای پشتیبانی از enstop ros_0 گزارش در M119. دولت باعث تعریف رشته انحراف است. اگر انحراف است شناسایی شده است پرینتر مکث G-کد اجرا می شود.
+
+English:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
+Translated:اگر تعیین شود، این مواضع می شود زمانی که در حال اجرا راه حل تسطیح استفاده خواهد شد. خالی به پیش فرض. فرمت داده ها: x1، y1: ...: ñ، YN،
+
+English:Printer Paused
+Translated:پرینتر مکث
+
+English:Out of filament detected\nYour 3D print has been paused.
+Translated:از رشته شناسایی نشد\nچاپ 3D شما موقتا متوقف شده است.
+
+English:Your 3D print has been auto-pasued.\nPause layer{0} reached.
+Translated:چاپ 3D شما با خودکار pasued بوده است. \ N مکث لایه {0} است.
+
+English:Has Filament Runout Sensor
+Translated:دارای سنسور انحراف رشته
+
+English:The printer has a z probe for measuring bed level.
+Translated:است که پرینتر دارای یک کاوشگر Z برای اندازه گیری سطح بستر.
+
+English:Has Z Probe
+Translated:است Z پروب
+
+English:Use Z Probe
+Translated:استفاده از Z پروب
+

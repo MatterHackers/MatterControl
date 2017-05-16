@@ -53,7 +53,7 @@ English:Pause the current print
 Translated:Wstrzymaj bieżący wydruk
 
 English:Cancel Connect
-Translated:Anuluj Połącz
+Translated:Anuluj Łączenie
 
 English:Stop trying to connect to the printer.
 Translated:Przestań próbować połączyć się z drukarką.
@@ -305,7 +305,7 @@ English:Presets
 Translated:Presety
 
 English:Movement Controls
-Translated:Kontrola ruchu
+Translated:Kontrole ruchu
 
 English:ALL
 Translated:WSZYSTKO
@@ -410,16 +410,16 @@ English:The speed to move when bridging between walls.
 Translated:Prędkość poruszania się przy mostku pomiędzy ścianami.
 
 English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
-Translated:Kwota brimu, która będzie rysowana wokół każdego obiektu. To jest przydatne, aby zapewnić, że części pozostają przymocowane do łóżka.
+Translated:Kwota brimu, która będzie rysowana wokół każdego obiektu. Jest to przydatne, aby zapewnić, że części pozostają przymocowane do łóżka.
 
 English:The height of the printable area. If set to 0 the parts height will not be validated.
 Translated:Wysokość zadruku. Jeśli ustawiono na 0, wysokość części nie zostanie potwierdzona.
 
 English:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
-Translated:Każda poszczególna część jest drukowana do końca, a następnie wytłaczarka jest opuszczana do łóżka, a następnie drukowana jest kolejna część.
+Translated:Każda poszczególna część jest drukowana do końca, a następnie wytłaczarka jest opuszczana z powrotem do łóżka, a następnie drukowana jest kolejna część.
 
 English:Moves the extruder up off the part to allow cooling.
-Translated:Przenosi wytłaczarkę z góry, aby umożliwić chłodzenie.
+Translated:Przesuwa wytłaczarkę z góry, aby umożliwić chłodzenie.
 
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:Włącza i wyłącza wszystkie ustawienia chłodzenia (wszystkie ustawienia poniżej tej opcji).
@@ -482,10 +482,10 @@ English:The temperature to set the bed to before printing the first layer. The p
 Translated:Temperatura do ustawienia łóżka przed wydrukowaniem pierwszej warstwy. Drukarka poczeka, aż temperatura zostanie osiągnięta przed drukowaniem. Ustaw wartość 0 w celu wyeliminowania poleceń temperatury złoża.
 
 English:Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.
-Translated:Ustawienie tej wartości na większą niż 100% może często pomóc pierwszemu warstwowi lepiej przylegać do łóżka drukującego.
+Translated:Ustawienie tej wartości na większą niż 100% może często pomóc pierwszemu warstwom lepiej przylegać do łóżka drukującego.
 
 English:Sets the height of the first layer. It is often desirable to print a taller first layer to ensure a good solid adhesion to the build plate.
-Translated:Ustawia wysokość pierwszej warstwy. Często pożądane jest drukowanie wyższej pierwszej warstwy w celu zapewnienia dobrej przyczepności do płyty.
+Translated:Ustawia wysokość pierwszej warstwy. Często pożądane jest drukowanie wyższej pierwszej warstwy w celu zapewnienia dobrej przyczepności do płytki.
 
 English:The speed to move while printing the first layer.  If expressed as a percentage it will modify the corresponding speed set above.
 Translated:Prędkość poruszania się podczas drukowania pierwszej warstwy. Jeśli wyrażone jest w procentach, zmodyfikuje odpowiednią prędkość ustawioną powyżej.
@@ -584,7 +584,7 @@ English:The position (coordinates) of the center of the print bed.
 Translated:Położenie (współrzędne) środka łóżka drukującego.
 
 English:Number of layers to print before printing any parts.
-Translated:Liczba warstw do drukowania przed drukowaniem jakichkolwiek części.
+Translated:Liczba warstw do drukowania przed wydrukowaniem jakichkolwiek części.
 
 English:Start each new layer from a different vertex to reduce seams.
 Translated:Rozpocznij każdą nową warstwę z innego wierzchołka, aby zmniejszyć szwy.
@@ -632,7 +632,7 @@ English:The number of loops to draw around all the parts on the bed.
 Translated:Liczba pętli, aby narysować wszystkie części na łóżku.
 
 English:If a layer is estimated to take less than this to print, the movement speed will be reduced to try and make the layer take this long to print.
-Translated:Jeśli szacowana jest, że warstwa jest mniejsza niż ta, aby wydrukować, prędkość przesuwania zostanie zredukowana, aby spróbować zrobić tę warstwę, aby ją wydrukować.
+Translated:Jeśli szacowana jest, że warstwa jest mniejsza niż ta, aby wydrukować, prędkość przesuwania zostanie zredukowana, aby spróbować wykonać tę warstwę, aby drukować.
 
 English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
 Translated:Używany do małych obwodów (zwykle otworów). Można to ustawić jawnie lub jako procent szybkości Perimetersa.
@@ -734,7 +734,7 @@ English:Normally you will want to use absolute e distances. Only check this if y
 Translated:Zwykle będziesz chciał używać absolutnych odległości. Sprawdź to tylko wtedy, gdy wiesz, że drukarka potrzebuje względnych odległości.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:Ma to na celu zmniejszenie drgań podczas drukowania. Jeśli drukarka ma częstotliwość rezonansową powodującą problemy, można ją ustawić, aby spróbować zmniejszyć drukowanie z tą częstotliwością.
+Translated:Ma to na celu zmniejszenie drgań podczas drukowania. Jeśli drukarka ma częstotliwość rezonansową powodującą problemy, można ją ustawić, aby spróbować zmniejszyć drukowanie przy tej częstotliwości.
 
 English:This will cause the extruder to move while retracting to minimize blobs.
 Translated:To spowoduje, że wytłaczarka będzie się poruszać podczas wysuwania, aby zminimalizować ślady.
@@ -1292,7 +1292,7 @@ English:Bridging Fan Speed
 Translated:Prędkość wentylatora mostkującego
 
 English:Enable Fan If Layer\nPrint Time Is Below
-Translated:Włącz Fan Jeśli Layer\nCzas wydruku jest poniżej
+Translated:Włącz wentylator Jeśli warstwa\nCzas drukowania jest poniżej
 
 English:Z Offset
 Translated:Z Przesunięcie
@@ -1403,7 +1403,7 @@ English:File not found on disk.
 Translated:Plik nie znaleziono na dysku.
 
 English:Not connected. Press 'Connect' to enable printing.
-Translated:Nie połączony. Naciśnij 'Połącz', aby włączyć drukowanie.
+Translated:Nie połączony. Naciśnij przycisk "Połącz", aby włączyć drukowanie.
 
 English:Loading Parts
 Translated:Ładowanie części
@@ -1592,7 +1592,7 @@ English:  Remove All
 Translated:  Usuń wszystko
 
 English:The number of layers to skip in z. The gap between the support and the model.
-Translated:Liczba warstw do pominięcia w z. Różnica pomiędzy wsparciem a modelem.
+Translated:Liczba warstw do pominięcia w z. Różnica między wsparciem a modelem.
 
 English:Z Gap
 Translated:Z Gap
@@ -1634,7 +1634,7 @@ English: Remove All
 Translated: Usuń wszystko
 
 English:Slice Presets Editor
-Translated:Edytor Slice Presets
+Translated:Slice Presets Editor
 
 English:Attempting to Connect
 Translated:Próbuj połączyć się
@@ -1727,7 +1727,7 @@ English:A standard sheet of paper
 Translated:Standardowy arkusz papieru
 
 English:We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.
-Translated:Będziemy używać tego papieru do pomiaru odległości między wytłaczarką a łóżkiem.\n\nKliknij przycisk "Dalej", aby kontynuować.
+Translated:Będziemy używać tego papieru do pomiaru odległości między wytłaczarką a łożem.\n\nKliknij przycisk "Dalej", aby kontynuować.
 
 English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
 Translated:Gratulacje!\n\nAuto Print Leveling jest teraz skonfigurowany i włączony.
@@ -1778,7 +1778,7 @@ English:This part of your bed is too low for the extruder to reach it. You need 
 Translated:Ta część łóżka jest za mała, aby wytłaczarka dotarła do niego. Trzeba podnieść łóżko lub obniżyć limit, aby poziomowanie druku działało.
 
 English:Waring Moving Too Low
-Translated:Ostrzeganie Zbyt Nisko
+Translated:Ostrzeżenie Zbliża się
 
 English:Medium Precision
 Translated:Średnia precyzja
@@ -1814,7 +1814,7 @@ English:About
 Translated:O
 
 English:This controls the ratio of material extruder during bridging.Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
-Translated:Kontroluje to stosunek materiału wytłaczarki podczas mostkowania. Ograniczenie tego może nieco pomagać w mostku przez rozciąganie włókna bardziej, przy użyciu wentylatora może również znacznie pomóc.
+Translated:Kontroluje to stosunek materiału wytłaczarki podczas mostkowania. Wyeliminowanie tego może nieco pomagać w mostku przez rozciąganie włókna bardziej, przy użyciu wentylatora może również znacznie pomóc.
 
 English:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
 Translated:Domyślna temperatura, aby ustawić łóżko. Czasami może być overriden na pierwszej warstwie. Ustaw wartość 0 w celu wyeliminowania poleceń temperatury złoża.
@@ -1835,13 +1835,13 @@ English:Macro Name
 Translated:Makro Nazwa
 
 English:Give your macro a name
-Translated:Podaj swoje imię
+Translated:Podaj swoje makra
 
 English:Macro Commands
 Translated:Polecenia makr
 
 English:This should be in 'Gcode'
-Translated:To powinno być w "Gcode"
+Translated:To powinno być w 'Gcode'
 
 English:3D Printer Setup
 Translated:Konfiguracja drukarki 3D
@@ -1922,13 +1922,13 @@ English:Power on and connect printer
 Translated:Włączanie i podłączanie drukarki
 
 English:Attempting to connect
-Translated:Próba połączenia
+Translated:Próba łączenia się
 
 English:Connection succeeded
 Translated:Połączenie zostało zakończone pomyślnie
 
 English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
-Translated:Nie możesz ruszać się w dół. Ta pozycja na łóżku jest za mała, aby osiągnąć osiągnięcie przez wytłaczarkę. Trzeba podnieść łóżko lub dostosować limity, aby umożliwić wytłaczarce obniżyć się.
+Translated:Nie możesz ruszać się w dół. Ta pozycja na łóżku jest za mała, aby osiągnąć osiągnięcie przez wytłaczarkę. Musisz podnieść łóżko lub dostosować limity, aby umożliwić wytłaczarkę obniżyć się.
 
 English:Edit Preset
 Translated:Edytuj ustawienia predefiniowane
@@ -2096,7 +2096,7 @@ English:Motor de Capas
 Translated:Motor de Capas
 
 English:Your application is up-to-date.
-Translated:Twoja aplikacja jest aktualna.
+Translated:Aplikacja jest aktualna.
 
 English:Install Communication Driver
 Translated:Zainstaluj sterownik komunikacji
@@ -2129,7 +2129,7 @@ English:Press 'Connect' to select a printer.
 Translated:Naciśnij przycisk 'Połącz', aby wybrać drukarkę.
 
 English:Marlin Firmware EEPROM Settings
-Translated:Ustawienia EDSROM Firmware Marlin
+Translated:Ustawienia modułu EEPROM Firmware Marlin
 
 English:Re-Load Default Settings
 Translated:Ponownie załaduj ustawienia domyślne
@@ -2318,7 +2318,7 @@ English:Waiting For Extruder To Heat
 Translated:Czekając na wytłaczarkę
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:Łóżko jest w trakcie ogrzewania, a jego temperatura docelowa nie może być zmieniona, dopóki nie osiągnie {0} ° C.\n\nMożna ustawić temperaturę w łóżku wyjściowym w 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:Łóżko jest ogrzewane i nie można zmienić jego temperatury docelowej, dopóki nie osiągnie {0} ° C.\n\nMożna ustawić temperaturę w łóżku wyjściowym w 'Slice Settings' -> 'Filament'.\n\n{1}
 
 English:Waiting For Bed To Heat
 Translated:Czekając na łóżko na ciepło
@@ -2936,7 +2936,7 @@ English:Restore
 Translated:Przywracać
 
 English:WINDOWED MODE: This tab has been moved to a separate window.
-Translated:WINDOWED MODE: Ta karta została przeniesiona do osobnego okna.
+Translated:WINDOWED MODE: Ta karta została przeniesiona do oddzielnego okna.
 
 English:Sending File(s)...
 Translated:Wysyłanie plików (plików) ...
@@ -3461,7 +3461,7 @@ English:You should be done in about 5 minutes.
 Translated:Powinieneś być zrobiony w ciągu około 5 minut.
 
 English:The print leveling alogrithm to use.
-Translated:Alogrite do wyrównywania wydruku.
+Translated:Alogrite do wyrównywania wydruku do użycia.
 
 English:The print leveling sampling mothod to use.
 Translated:Do pobierania próbkowania poziomowania.
@@ -3593,7 +3593,7 @@ English:Stable: The current release version of MatterControl (recommended).
 Translated:Stabilny: aktualna wersja MatterControl (zalecane).
 
 English:Beta: The release candidate version of MatterControl.
-Translated:Beta: wersja testowa MatterControl.
+Translated:Wersja Beta: wersja testowa MatterControl.
 
 English:Alpha: The in development version of MatterControl.
 Translated:Alpha: wersja rozwojowa MatterControl.
@@ -3845,7 +3845,7 @@ English:Solid Infill works best when set tu LINES.
 Translated:Solid Infill działa najlepiej, gdy ustawisz LINIE.
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
-Translated:Lokalizacja: "Ustawienia i elementy sterujące" -> "Ustawienia" -> "Ogólne" -> "Typ wypełnienia"
+Translated:Lokalizacja: 'Ustawienia i elementy sterujące' -> 'Ustawienia' -> 'Ogólne' -> 'Typ wypełnienia'
 
 English:Show normal text above the braille
 Translated:Pokaż zwykły tekst powyżej znaczek Braille'a
@@ -3860,7 +3860,7 @@ English:Reset View
 Translated:Resetuj widok
 
 English:If you want to select a layer to pause your print on do so here (for changing filament)
-Translated:Jeśli chcesz zaznaczyć warstwę, aby wstrzymać drukowanie, wykonaj ją tutaj (w celu zmiany filamentu)
+Translated:Jeśli chcesz wybrać warstwę, aby wstrzymać drukowanie, wykonaj ją tutaj (w celu zmiany filamentu)
 
 English:Select Layer To Pause:
 Translated:Wybierz warstwę, aby wstrzymać:
@@ -4076,13 +4076,13 @@ English:G-Code to run upon successful connection to a printer. This can be usefu
 Translated:G-Code do pracy po udanym połączeniu z drukarką. Może to być przydatne do ustawienia określonych ustawień dla danej drukarki.
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:Tworzy tratwę pod drukowaną częścią. Przydatne w zapobieganiu wypaczaniu podczas drukowania ABS (i innych tworzyw sztucznych odpornych na skręcanie), ponieważ ułatwia przyklejenie się części do łóżka.
+Translated:Tworzy tratwę pod drukowaną częścią. Przydatne w zapobieganiu wypaczaniu podczas drukowania ABS (i innych tworzyw sztucznych odpornych na wahania), ponieważ ułatwia przyklejenie się części do łóżka.
 
 English:The extra distance the raft will extend around the edge of the part.
 Translated:Dodatkowa odległość tratwy rozciąga się wokół krawędzi części.
 
 English:The distance between the first layer and the top of the raft. A good value is typically about half the extrusion diameter. For a 0.4 mm nozzle, a value between 0.0 and 0.2 would be best.
-Translated:Odległość pomiędzy pierwszą warstwą a wierzchołkiem tratwy. Dobra wartość typowo wynosi około połowy średnicy wytłaczania. W przypadku dyszy o średnicy 0,4 mm najlepszy byłby wartość między 0,0 a 0,2.
+Translated:Odległość pomiędzy pierwszą warstwą a wierzchołkiem tratwy. Dobra wartość typowo wynosi około połowy średnicy wytłaczania. W przypadku dyszy o średnicy 0,4 mm najlepszym rozwiązaniem byłaby wartość między 0,0 a 0,2.
 
 English:The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.
 Translated:Prędkość, z jaką wentylator chłodzący będzie pracował podczas drukowania tratwy, wyrażony jako procent pełnej mocy.
@@ -4142,7 +4142,7 @@ English:Include detailed comments in the G-Code.
 Translated:Uwzględnij szczegółowe komentarze w kodzie G.
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:Wersja G-Code, z którą komunikuje się oprogramowanie sprzętowe drukarki. Niektóre firmware używają różnych kodów G i M. Ustawienie to zapewnia, że ​​wyjściowy kod G będzie używać prawidłowych poleceń.
+Translated:Wersja G-Code, z którą się komunikuje oprogramowanie układowe drukarki. Niektóre firmware używają różnych kodów G i M. Ustawienie to zapewnia, że ​​wyjściowy kod G będzie używać prawidłowych poleceń.
 
 English:The printer has a layer-cooling fan.
 Translated:Drukarka posiada wentylator chłodzący warstwę.
@@ -4190,7 +4190,7 @@ English:Sets the size of the outer solid surface (perimeter) for the entire prin
 Translated:Ustawia rozmiar zewnętrznej powierzchni stałej (obwód) dla całego wydruku.
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:Maksymalna prędkość, z jaką będzie pracować wentylator chłodzący, wyrażony jako procent pełnej mocy.
+Translated:Maksymalna prędkość, z jaką będzie działać wentylator chłodzący, wyrażony jako procent pełnej mocy.
 
 English:The minimum length of filament that must be extruded before a retraction can occur.
 Translated:Minimalna długość żarnika musi być wytłaczana przed wystąpieniem wycofania.
@@ -4214,7 +4214,7 @@ English:G-Code to run when the printer is paused.
 Translated:Kod G jest uruchamiany, gdy drukarka jest wstrzymana.
 
 English:A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.
-Translated:Modyfikator szerokości wytłaczania podczas drukowania na obwodzie. Może być użyteczne w celu precyzyjnego dostosowania rozmiaru wydruku rzeczywistego, gdy obiekty wydrukują większe lub mniejsze niż określone w modelu cyfrowym.
+Translated:Modyfikator szerokości wytłaczania podczas drukowania na obwodzie. Może być przydatna w celu precyzyjnego dostosowania rozmiaru wydruku rzeczywistego, gdy obiekty drukowane są w rozmiarze większym lub mniejszym niż określone w modelu cyfrowym.
 
 English:The speed at which inside perimeters will print.
 Translated:Prędkość, z jaką będą drukowane obwody wewnętrzne.
@@ -4223,7 +4223,7 @@ English:The number, or total width, of external shells to create. Add mm to the 
 Translated:Liczba lub całkowita szerokość zewnętrznych muszli do utworzenia. Dodaj koniec na końcu numeru, aby określić szerokość w milimetrach.
 
 English:You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.
-Translated:Możesz dodać dodatkowe programy do przetworzenia kodu G po skończeniu krajarki. Należy tu podać pełną ścieżkę do uruchomienia programu.
+Translated:Możesz dodać kolejne programy do przetworzenia kodu G po skończeniu krajarki. Należy tu podać pełną ścieżkę do uruchomienia programu.
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters.
 Translated:Pozycja (współrzędne X i Y) środka łóżka druku, w milimetrach.
@@ -4250,7 +4250,7 @@ English:Length of filament to extrude after a complete retraction (in addition t
 Translated:Długość włókna do wytłaczania po całkowitym wycofaniu (oprócz ponownego wytłaczania długości w ruchu).
 
 English:The speed at which filament will retract and re-extrude.
-Translated:Prędkość, z jaką włókno wycofie się i ponownie wytłacza.
+Translated:Prędkość, z jaką włókna wycofają się i ponownie wytłaczają.
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
 Translated:Liczba pętli, aby narysować wszystkie części na łóżku przed rozpoczęciem na części. Stosowany głównie do rozpylania dyszy, dzięki czemu przepływ jest nawet wtedy, gdy zaczyna się właściwy wydruk.
@@ -4262,7 +4262,7 @@ English:Forces the print to have only one extrusion and gradually increase the e
 Translated:Umożliwia wydruk tylko jednemu wytłoczeniu i stopniowo zwiększać wysokość wytłaczarki podczas drukowania. W tej chwili tylko ta część zostanie wydrukowana.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
-Translated:Kod G będzie uruchamiany natychmiast po poleceniach ustawiania temperatury. Włączenie poleceń do ustawienia temperatury w tej sekcji spowoduje, że nie zostaną wygenerowane poza tą sekcją. Zaakceptuje zmienne niestandardowe G-Code.
+Translated:Kod G będzie uruchamiany natychmiast po poleceniach ustawiania temperatury. Włączenie poleceń do ustawienia temperatury w tej sekcji spowoduje, że nie zostaną wygenerowane poza tą sekcją. Przyjmie zmienne niestandardowe G-Code.
 
 English:The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
 Translated:Odległość między pierwszą warstwą (na dole) a wierzchołkiem tratwy. Dobra jakość zależy od rodzaju materiału. Dla PLA i ABS wartość od 0,1 do 0,3 generału działa dobrze.
@@ -4319,7 +4319,7 @@ English:The temperature at which the extruder will wipe the nozzle, as specified
 Translated:Temperatura, w której wytłaczarka wyciernie dyszę, zgodnie z Kodeksem G-Custom.
 
 English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
-Translated:Temperatura, w której łóżko będzie ogrzewać (lub chłodzi) w celu usunięcia części, zgodnie z Kodeksem G.
+Translated:Temperatura, w której łóżko będzie rozgrzewać (lub chłodzi) w celu usunięcia części zgodnie z Kodeksem G.
 
 English:G-Code to be run after every tool change.
 Translated:Kod G, który ma być uruchamiany po każdej zmianie narzędzia.
@@ -4472,7 +4472,7 @@ English:Display Mode
 Translated:Tryb wyświetlania
 
 English:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
-Translated:Części nie znajdują się na łóżku ani poza obszarem wydruku.\n\nChciałbyś wyśrodkować je na łóżku?
+Translated:Części nie znajdują się na łóżku ani poza obszarem drukowania.\n\nChciałbyś wyśrodkować je na łóżku?
 
 English:Parts not in print area
 Translated:Części nie znajdujące się w obszarze wydruku
@@ -4571,10 +4571,10 @@ English:Skirt (Priming)
 Translated:Spódnica (podkład)
 
 English:Brim (Hold Downs)
-Translated:Brim (Trzymaj w dół)
+Translated:Brim (Trzymaj Downs)
 
 English:Finish Setup...
-Translated:Konfiguracja Zakończ ...
+Translated:Koniec instalacji ...
 
 English:Run setup configuration for printer.
 Translated:Uruchom konfigurację konfiguracji drukarki.
@@ -4628,7 +4628,7 @@ English:Sphere
 Translated:Kula
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:Wyjście tylko pierwszej warstwy nadruku. Szczególnie przydatna do wyprowadzania danych gcode do aplikacji takich jak grawerowanie lub cięcie.
+Translated:Wyjście tylko pierwszej warstwy nadruku. Szczególnie przydatna do wyprowadzania danych gcode do zastosowań takich jak grawerowanie lub cięcie.
 
 English:First Layer Only
 Translated:Tylko pierwsza warstwa
@@ -4643,7 +4643,7 @@ English:'First Layer Height' must be less than or equal to the 'Nozzle Diameter'
 Translated:"Wysokość pierwszej warstwy" musi być mniejsza lub równa średnicy "średnicy dyszy".
 
 English:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
-Translated:"Szerokość wyprodukowania warstwy pierwszej" musi być mniejsza lub równa średnicy "średnicy dyszy" * 4.
+Translated:"Szerokość wyprodukowania warstwy pierwszej" musi być mniejsza lub równa średnicy "Średnicy dyszy" * 4.
 
 English:Pyramid
 Translated:Piramida
@@ -4667,7 +4667,7 @@ English:Honey Comb
 Translated:Miodowa Grzebień
 
 English:Apply leveling to G-Code during export
-Translated:Zastosuj poziomowanie do kodu G podczas eksportowania
+Translated:Zastosuj poziomowanie do kodu G podczas eksportu
 
 English:Material 0
 Translated:Materiał 0
@@ -4682,7 +4682,7 @@ English:Set if the z homing moves the extruder away from the bed (z-max homing)
 Translated:Ustawiaj, jeśli zetknięcie z urządzeniem powoduje przesuwanie wytłaczarki z dna (z-max homing)
 
 English:The X and Y position of the extruder that minimizes the chance of colliding with the parts on the bed.
-Translated:Położenie X i Y wytłaczarki minimalizuje ryzyko zderzenia się z częściami na łóżku.
+Translated:Pozycja X i Y wytłaczarki minimalizuje ryzyko zderzenia się z częściami na łóżku.
 
 English:Restore All
 Translated:Przywrócić wszystkie
@@ -4877,7 +4877,7 @@ English:Estimated Print Time
 Translated:Szacowany czas wydruku
 
 English:The COM port to use while connecting to this printer.
-Translated:Port COM używany podczas łączenia się z tą drukarką.
+Translated:Port COM używany podczas połączenia z tą drukarką.
 
 English:COM Port
 Translated:Port COM
@@ -5099,7 +5099,7 @@ English:Remote Monitoring
 Translated:Zdalny monitoring
 
 English:Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.
-Translated:Sprawdź swoje druki z dowolnego miejsca. Dzięki monitorowaniu w chmurze masz dostęp do drukarki bez względu na to gdzie jesteś.
+Translated:Sprawdź swoje druki z dowolnego miejsca. Dzięki monitorowaniu w chmurze masz dostęp do drukarki niezależnie od tego, gdzie jesteś.
 
 English:Sign In
 Translated:Zaloguj
@@ -5123,7 +5123,7 @@ English:The price of one kilogram of filament. Used for estimating the cost of a
 Translated:Cena jednego kilograma żarnika. Używane do szacowania kosztu wydruku w widoku warstwy.
 
 English:Material density. Only used for estimating mass in the Layer View.
-Translated:Gęstość materiału. Tylko używany do szacowania masy w widoku warstwy.
+Translated:Gęstość materiału. Używany tylko do szacowania masy w widoku warstwy.
 
 English:Estimated Cost
 Translated:Szacowany koszt
@@ -5312,7 +5312,7 @@ English:Enable Sailfish Communication
 Translated:Włącz komunikację Sailfish
 
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
-Translated:Ustawia MatterControl, aby połączyć się z drukarką przez sieć. (Musisz odłączyć i ponownie do niego włączyć)
+Translated:Ustawia MatterControl w celu próby połączenia z drukarką przez sieć. (Musisz odłączyć i ponownie do niego włączyć)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Ustawia MatterControl w celu użycia metody komunikacji s3g. (Musisz odłączyć i ponownie do niego włączyć)
@@ -5468,7 +5468,7 @@ English:Retry Login
 Translated:Spróbuj ponownie
 
 English:It's time to migrate your existing printer settings to your MatterHackers account. Once added, these printers will be available whenever and wherever you sign in to MatterControl. Printers that are not migrated will only be available in 'guest' mode.
-Translated:Nadszedł czas na migrację istniejących ustawień drukarki na konto MatterHackers. Po dodaniu drukarki te będą dostępne zawsze i wszędzie tam, gdzie się logujesz do MatterControl. Drukarki, które nie są migrowane, będą dostępne tylko w trybie "gość".
+Translated:Nadszedł czas na migrację istniejących ustawień drukarki do konta MatterHackers. Po dodaniu drukarki te będą dostępne zawsze i wszędzie tam, gdzie się logujesz do MatterControl. Drukarki, które nie są migrowane, będą dostępne tylko w trybie "goście".
 
 English:Migrate Printers to Account
 Translated:Migruj drukarki do konta
@@ -5486,7 +5486,7 @@ English:WARNING: Disconnecting will cancel the print
 Translated:OSTRZEŻENIE: Odłączenie spowoduje anulowanie drukowania
 
 English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available in 'guest' mode.
-Translated:Nadszedł czas, aby skopiować istniejące ustawienia drukarki na konto MatterHackers. Po skopiowaniu drukarki będą dostępne po każdym zalogowaniu się do MatterControl. Drukarki, które nie zostaną skopiowane, będą dostępne tylko w trybie gościa.
+Translated:Nadszedł czas, aby skopiować istniejące ustawienia drukarki na konto MatterHackers. Po skopiowaniu drukarki będą dostępne po każdym zalogowaniu się do MatterControl. Drukarki, które nie zostaną skopiowane, będą dostępne tylko w trybie "gość".
 
 English:Copy Printers to Account
 Translated:Kopiuj drukarki do konta
@@ -5513,7 +5513,7 @@ English:Your Start G-Code should not contain a G29 if you are planning on using 
 Translated:Twój kod startowy G nie powinien zawierać G29, jeśli planujesz skorzystać z funkcji odzyskiwania wydruku. Zmień swój kod pocztowy lub wyłączyć drukowanie
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
-Translated:Twój kod startowy G nie powinien zawierać G30, jeśli planujesz skorzystać z funkcji odzyskiwania wydruku. Zmień swój kod pocztowy lub wyłączyć drukowanie
+Translated:Twój kod startowy G nie powinien zawierać G30, jeśli planujesz skorzystać z funkcji odzyskiwania wydruku. Zmień kod startowy lub wyłącz drukarkę
 
 English:Search results no available in this view
 Translated:Wyniki wyszukiwania nie są dostępne w tym widoku
@@ -5525,7 +5525,7 @@ English:Oops! Please select a folder to search
 Translated:Ups! Proszę wybrać folder do przeszukiwania
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
-Translated:Łóżko jest w trakcie ogrzewania, a jego temperatura docelowa nie może być zmieniona, dopóki nie osiągnie {0} ° C.\n\nMożna ustawić temperaturę w łóżku wyjściowym w USTAWIENIA -> Filament -> Temperatury.\n\n{1}
+Translated:Łóżko jest ogrzewane i nie można zmienić jego temperatury docelowej, dopóki nie osiągnie {0} ° C.\n\nMożna ustawić temperaturę w łóżku wyjściowym w USTAWIENIA -> Filament -> Temperatury.\n\n{1}
 
 English:This is automatically set by MatterControl. You do not need to adjust it.
 Translated:Jest to automatycznie ustawiane przez MatterControl. Nie musisz jej modyfikować.
@@ -5597,7 +5597,7 @@ English:UnloadFilament
 Translated:UnloadFilament
 
 English:This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.
-Translated:Kontroluje to stosunek materiału wytłaczanego podczas mostkowania. Zmniejszenie tego może nieco pomóc mostkowania przez rozciąganie włókna więcej, a przy użyciu wentylatora może również bardzo pomóc.
+Translated:Kontroluje to stosunek materiału wytłaczanego podczas mostkowania. Zmniejszenie tego może nieco pomóc mostkowania przez rozciąganie włókna więcej, a przy użyciu wentylatora może również znacznie pomóc.
 
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
 Translated:Każda poszczególna część jest drukowana do wykończenia, a następnie dysza jest opuszczana do łóżka, a następnie drukowana jest kolejna część.
@@ -5606,7 +5606,7 @@ English:Moves the nozzle up and off the part to allow cooling.
 Translated:Przenosi dyszę do góry i do środka, aby umożliwić chłodzenie.
 
 English:Detects sections of the model that would be too thin to print and expands them to make them printable.
-Translated:Wykrywa sekcje modelu, które byłyby zbyt cienkie, aby je wydrukować i rozszerzyć, aby umożliwić drukowanie.
+Translated:Wykrywa fragmenty modelu, które byłyby zbyt cienkie, aby je wydrukować i rozszerzyć, aby umożliwić drukowanie.
 
 English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
 Translated:Wskazuje, że oś Z trzyma gorący koniec z dna (z-max homing)
@@ -5867,10 +5867,10 @@ English:'External Perimeter Extrusion Width' must be less than or equal to the '
 Translated:"Szerokość zewnętrznego wytłaczania obrzeża" musi być mniejsza lub równa średnicy "średnicy dyszy" * 4.
 
 English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
-Translated:Szerokość wytłaczania zewnętrznego obwodu perimetru = {0}\nŚrednica dyszy = {1}
+Translated:Szerokość wytłaczania obrzeża zewnętrznego = {0}\nŚrednica dyszy = {1}
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
-Translated:Lokalizacja: 'Ustawienia i elementy sterujące' -> 'Ustawienia' -> 'Filament' -> 'Wytłaczanie' -> 'Zewnetrzny Perymetr'
+Translated:Lokalizacja: "Ustawienia i elementy sterujące" -> 'Ustawienia' -> 'Filament' -> 'Wytłaczanie' -> 'Zewnetrzny obwód'
 
 English:'External Perimeter Extrusion Width' must be greater than 0.
 Translated:"Szerokość zewnętrznego wytłaczania obrzeża" musi być większa niż 0.
@@ -5939,7 +5939,7 @@ English:Done!
 Translated:Gotowe!
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:OSTRZEŻENIE: Aby wykonać odzyskiwanie wydruków, drukarka musi przejść w dół, aby osiągnąć jego pozycję wyjściową. \ N Jeśli druk jest zbyt duży, część drukarki może się z nią zgiąć podczas przenoszenia. \ N Przed kontynuowaniem upewnij się, że wykonywanie tej operacji jest bezpieczne.
+Translated:OSTRZEŻENIE: Aby wykonać odzyskiwanie wydruków, drukarka musi przejść w dół, aby osiągnąć jego pozycję wyjściową. \ N Jeśli druk jest zbyt duży, część z nią może się z nim sparować. \ N Przed kontynuowaniem upewnij się, że wykonywanie tej operacji jest bezpieczne.
 
 English:Print Monitor
 Translated:Monitor wydruku
@@ -5960,7 +5960,7 @@ English:Bed
 Translated:Łóżko
 
 English:Axis movement speeds
-Translated:Prędkość poruszania się osi
+Translated:Prędkość ruchu osi
 
 English:Tuning Adjust
 Translated:Regulacja strojenia
@@ -5987,7 +5987,7 @@ English:Please wait. Verifying code...
 Translated:Proszę czekać. Weryfikowanie kodu ...
 
 English:View Designs
-Translated:Wyświetl projekty
+Translated:Zobacz projekty
 
 English:Success! Your code has been redeemed.
 Translated:Powodzenie! Twój kod został wykupiony.
@@ -6075,4 +6075,37 @@ Translated:Jeśli są ustawione, pozycje te będą używane podczas uruchamiania
 
 English:Leveling Positions
 Translated:Pozycje wyrównywania
+
+English:Specifies that the firmware has support for ros_0 enstrop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:Określa, że ​​oprogramowanie układowe obsługuje generowanie raportów typu ros_0 na M119. TRIGGERED stan definiuje włókno ma runout. Jeśli zostanie wykryty błąd, drukarka wstrzymuje działanie kodu G.
+
+English:Has Fillament Runout Sensor
+Translated:Posiada czujnik wyczerpania wylewu
+
+English:Specifies that the firmware has support for ros_0 enstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:Określa, że ​​oprogramowanie układowe obsługuje raportowanie ros_0 enstop w M119. TRIGGERED stan definiuje włókno ma runout. Jeśli zostanie wykryty błąd, drukarka wstrzymuje działanie kodu G.
+
+English:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
+Translated:Jeśli są ustawione, pozycje te zostaną użyte podczas uruchamiania rozwiązania poziomowania. Opuść puste wartości domyślne. Format danych: "X1, Y1: ...: Xn, Yn '
+
+English:Printer Paused
+Translated:Wstrzymano drukarkę
+
+English:Out of filament detected\nYour 3D print has been paused.
+Translated:Z wykryciem włókna\nTwój wydruk 3D został wstrzymany.
+
+English:Your 3D print has been auto-pasued.\nPause layer{0} reached.
+Translated:Twój 3D wydruk został autopromieniowany. \ N Wstrzymaj warstwę {0}.
+
+English:Has Filament Runout Sensor
+Translated:Ma czujnik wyczerpania żarnika
+
+English:The printer has a z probe for measuring bed level.
+Translated:Drukarka ma sondę z do pomiaru poziomu łóżka.
+
+English:Has Z Probe
+Translated:Ma Z Probe
+
+English:Use Z Probe
+Translated:Użyj Z Probe
 
