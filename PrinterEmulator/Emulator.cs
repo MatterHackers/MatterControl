@@ -41,8 +41,9 @@ namespace MatterHackers.PrinterEmulator
 		public bool DsrState;
 		private static Regex numberRegex = new Regex(@"[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
 
-		// no bed present
-		private Random random = new Random();
+		private long commandIndex = 1;
+
+		private int recievedCount = 0;
 
 		// Dictionary of command and response callback
 		private Dictionary<string, Func<string, string>> responses = new Dictionary<string, Func<string, string>>();
@@ -59,11 +60,12 @@ namespace MatterHackers.PrinterEmulator
 			responses.Add("G4", Wait);
 			responses.Add("G92", ResetPosition);
 			responses.Add("M104", SetExtruderTemperature);
-			responses.Add("M105", RandomTemp);
+			responses.Add("M105", ReturnTemp);
 			responses.Add("M106", SetFan);
 			responses.Add("M109", SetExtruderTemperature);
+			responses.Add("M110", SetLineCount);
 			responses.Add("M114", GetPosition);
-			responses.Add("M115", reportMarlinFirmware);
+			responses.Add("M115", ReportMarlinFirmware);
 			responses.Add("M140", SetBedTemperature);
 			responses.Add("M190", SetBedTemperature);
 			responses.Add("M20", ListSdCard);
@@ -75,23 +77,38 @@ namespace MatterHackers.PrinterEmulator
 
 		public event EventHandler FanSpeedChanged;
 
+		public double BedCurrentTemperature { get; private set; } = 26;
 		public double BedGoalTemperature { get; private set; } = -1;
-
 		public double EPosition { get; private set; }
 
-		public double ExtruderGoalTemperature { get; private set; } = 210;
-
+		public double ExtruderCurrentTemperature { get; private set; } = 27;
+		public double ExtruderGoalTemperature { get; private set; } = 0;
 		public double FanSpeed { get; private set; }
 
 		public string PortName { get; set; }
 
 		public bool RunSlow { get; set; }
 
+		public bool SimulateLineErrors { get; set; } = false;
 		public double XPosition { get; private set; }
 
 		public double YPosition { get; private set; }
 
 		public double ZPosition { get; private set; }
+
+		public static int CalculateChecksum(string commandToGetChecksumFor)
+		{
+			int checksum = 0;
+			if (commandToGetChecksumFor.Length > 0)
+			{
+				checksum = commandToGetChecksumFor[0];
+				for (int i = 1; i < commandToGetChecksumFor.Length; i++)
+				{
+					checksum ^= commandToGetChecksumFor[i];
+				}
+			}
+			return checksum;
+		}
 
 		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, int startIndex = 0)
 		{
@@ -127,7 +144,7 @@ namespace MatterHackers.PrinterEmulator
 			return command;
 		}
 
-		public string getCommandKey(string command)
+		public string GetCommandKey(string command)
 		{
 			if (command.IndexOf(' ') != -1)
 			{
@@ -136,14 +153,18 @@ namespace MatterHackers.PrinterEmulator
 			return command;
 		}
 
-		public string GetCorrectResponse(string command)
+		public string GetCorrectResponse(string inCommand)
 		{
 			try
 			{
 				// Remove line returns
-				command = command.Split('\n')[0]; // strip of the trailing cr (\n)
-				command = ParseChecksumLine(command);
-				var commandKey = getCommandKey(command);
+				var commandNoNl = inCommand.Split('\n')[0]; // strip of the trailing cr (\n)
+				var command = ParseChecksumLine(commandNoNl);
+				if (command.Contains("Resend"))
+				{
+					return command + "ok\n";
+				}
+				var commandKey = GetCommandKey(command);
 				if (responses.ContainsKey(commandKey))
 				{
 					if (RunSlow)
@@ -169,33 +190,38 @@ namespace MatterHackers.PrinterEmulator
 		public string GetPosition(string command)
 		{
 			// position commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
-			return $"X:{XPosition:0.00} Y:{YPosition:0.00} Z:{ZPosition:0.00} E:{EPosition:0.00} Count X: 0.00 Y:0.00 Z:0.00\nok\n";
+			return $"X:{XPosition:0.00} Y: {YPosition:0.00} Z: {ZPosition:0.00} E: {EPosition:0.00} Count X: 0.00 Y: 0.00 Z: 0.00\nok\n";
+		}
+
+		public string ReportMarlinFirmware(string command)
+		{
+			return "FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a\nok\n";
 		}
 
 		// Add response callbacks here
-		public string RandomTemp(string command)
+		public string ReturnTemp(string command)
 		{
 			// temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
 			if (BedGoalTemperature == -1)
 			{
-				return $"ok T:{(ExtruderGoalTemperature + random.Next(-2, 2))}\n";
+				if (ExtruderGoalTemperature != 0)
+				{
+					ExtruderCurrentTemperature = ExtruderCurrentTemperature + (ExtruderGoalTemperature - ExtruderCurrentTemperature) * .8;
+				}
+				return $"ok T:{ExtruderCurrentTemperature:0.0} / {ExtruderGoalTemperature:0.0}\n";
 			}
 			else
 			{
-				return $"ok T:{ExtruderGoalTemperature + random.Next(-2, 2)} B:{BedGoalTemperature + random.Next(-2, 2) }\n";
+				ExtruderCurrentTemperature = ExtruderCurrentTemperature + (ExtruderGoalTemperature - ExtruderCurrentTemperature) * .8;
+				BedCurrentTemperature = BedCurrentTemperature + (BedGoalTemperature - BedCurrentTemperature) * .8;
+				return $"ok T:{ExtruderCurrentTemperature:0.0} / {ExtruderGoalTemperature:0.0} B: {BedCurrentTemperature:0.0} / {BedGoalTemperature:0.0}\n";
 			}
-		}
-
-		public string reportMarlinFirmware(string command)
-		{
-			return "FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a\nok\n";
 		}
 
 		public string SetFan(string command)
 		{
 			try
 			{
-				// M104 S210 or M109 S[temp]
 				var sIndex = command.IndexOf('S') + 1;
 				FanSpeed = int.Parse(command.Substring(sIndex));
 				FanSpeedChanged?.Invoke(this, null);
@@ -211,6 +237,12 @@ namespace MatterHackers.PrinterEmulator
 		public void ShutDown()
 		{
 			shutDown = true;
+		}
+
+		public void SimulateRebot()
+		{
+			commandIndex = 1;
+			recievedCount = 0;
 		}
 
 		public void Startup()
@@ -311,11 +343,38 @@ namespace MatterHackers.PrinterEmulator
 
 		private string ParseChecksumLine(string command)
 		{
+			recievedCount++;
+			if (SimulateLineErrors && (recievedCount % 11) == 0)
+			{
+				command = "N-1 nthoeuc 654*";
+			}
+
 			if (command[0] == 'N')
 			{
-				int spaceIndex = command.IndexOf(' ') + 1;
-				int endIndex = command.IndexOf('*');
-				return command.Substring(spaceIndex, endIndex - spaceIndex);
+				double lineNumber = 0;
+				GetFirstNumberAfter("N", command, ref lineNumber);
+				var checksumStart = command.LastIndexOf('*');
+				var commandToChecksum = command.Substring(0, checksumStart);
+				if(commandToChecksum[commandToChecksum.Length-1] == ' ')
+				{
+					commandToChecksum = commandToChecksum.Substring(0, commandToChecksum.Length - 1);
+				}
+				double expectedChecksum = 0;
+				GetFirstNumberAfter("*", command, ref expectedChecksum, checksumStart);
+				int actualChecksum = CalculateChecksum(commandToChecksum);
+				if ((lineNumber == commandIndex
+					&& actualChecksum == expectedChecksum)
+					|| command.Contains("M110"))
+				{
+					commandIndex++;
+					int spaceIndex = command.IndexOf(' ') + 1;
+					int endIndex = command.IndexOf('*');
+					return command.Substring(spaceIndex, endIndex - spaceIndex);
+				}
+				else
+				{
+					return $"Error:checksum mismatch, Last Line: {commandIndex - 1}\nResend: {commandIndex}\n";
+				}
 			}
 			else
 			{
@@ -356,6 +415,17 @@ namespace MatterHackers.PrinterEmulator
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
+			}
+
+			return "ok\n";
+		}
+
+		private string SetLineCount(string command)
+		{
+			double number = commandIndex;
+			if (GetFirstNumberAfter("N", command, ref number))
+			{
+				commandIndex = (long)number + 1;
 			}
 
 			return "ok\n";
