@@ -160,7 +160,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
 		{
-			testRunner.WaitForName("Resume Button", 30);
+			// assert the leveling is working
+			testRunner.WaitForName("Yes Button", 30);
+			// close the pause dialog pop-up
+			testRunner.ClickByName("Yes Button");
 
 			SystemWindow containingWindow;
 			GuiWidget layerNumber = testRunner.GetWidgetByName("Current GCode Layer Edit", out containingWindow, 20);

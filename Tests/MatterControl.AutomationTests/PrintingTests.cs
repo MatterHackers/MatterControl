@@ -98,8 +98,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// print a part
 					testRunner.ClickByName("Start Print Button", 1);
+
 					// assert the leveling is working
-					testRunner.WaitForName("Resume Button", 200);
+					testRunner.WaitForName("Yes Button", 200);
+					// close the pause dialog pop-up
+					testRunner.ClickByName("Yes Button");
 
 					Assert.Greater(emulator.ZPosition, 5);
 
