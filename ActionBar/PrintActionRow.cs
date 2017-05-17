@@ -219,7 +219,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			doneWithCurrentPartButton = makeButton("Done".Localize(), "Move to next print in queue".Localize());
 			doneWithCurrentPartButton.Name = "Done Button";
-			doneWithCurrentPartButton.Click += onDoneWithCurrentPartButton_Click;
+			doneWithCurrentPartButton.Click += (s,e) => UiThread.RunOnIdle(() =>
+			{
+				PrinterConnectionAndCommunication.Instance.ResetToReadyState();
+				QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
+				// We don't have to change the selected index because we should be on the next one as we deleted the one
+				// we were on.
+			});
 
 			this.Margin = new BorderDouble(0, 0, 10, 0);
 			this.HAnchor = HAnchor.FitToChildren;
@@ -439,14 +445,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		void RunTroubleShooting()
 		{
 			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
-		}
-
-		private void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.ResetToReadyState();
-			QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
-			// We don't have to change the selected index because we should be on the next one as we deleted the one
-			// we were on.
 		}
 
 		private void onRemoveButton_Click(object sender, EventArgs mouseEvent)
