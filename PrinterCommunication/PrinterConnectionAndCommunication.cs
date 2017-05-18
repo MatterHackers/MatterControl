@@ -125,6 +125,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (waitingForPosition.ElapsedMilliseconds > 60000)
 				{
 					waitingForPosition.Reset();
+					PositionReadQueued = false;
 				}
 
 				return waitingForPosition.IsRunning || PositionReadQueued;
