@@ -117,7 +117,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
 
-		public bool WatingForPositionRead { get { return waitingForPosition.IsRunning || PositionReadQueued; } }
+		public bool WatingForPositionRead
+		{
+			get
+			{
+				// make sure the longest we will wait under any circumstance is 60 seconds
+				if (waitingForPosition.ElapsedMilliseconds > 60000)
+				{
+					waitingForPosition.Reset();
+				}
+
+				return waitingForPosition.IsRunning || PositionReadQueued;
+			}
+		}
 
 		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
 
@@ -1425,6 +1437,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					SendLineToPrinterNow("M110 N1");
 					allCheckSumLinesSent.SetStartingIndex(1);
+					waitingForPosition.Reset();
+					PositionReadQueued = false;
 				}
 			}
 		}
@@ -1738,7 +1752,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			PositionRead.CallEvents(this, null);
 
-			waitingForPosition.Stop();
 			waitingForPosition.Reset();
 			PositionReadQueued = false;
 		}
