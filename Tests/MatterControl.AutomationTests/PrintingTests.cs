@@ -509,24 +509,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Start Print Button", 1);
 					testRunner.Delay(5);
 
-					int tempChangedCount = 0;
 					int fanChangedCount = 0;
-					emulator.ExtruderTemperatureChanged += (s, e) =>
-					{
-						tempChangedCount++;
-					};
 					emulator.FanSpeedChanged += (s, e) =>
 					{
 						fanChangedCount++;
 					};
-
 					testRunner.CloseMatterControlViaMenu();
 
 					testRunner.ClickByName("Yes Button");
 
 					testRunner.Delay(5);
-					Assert.AreEqual(1, tempChangedCount, "We should change this while exiting a print.");
-					Assert.AreEqual(1, fanChangedCount, "We should change this while exiting a print.");
+					Assert.AreEqual(0, emulator.ExtruderGoalTemperature, "We need to set the temp to 0.");
+					// TODO: chagne this to checking that the fan speed is 0 - when the emulator tracks fan speed.
+					Assert.AreEqual(1, fanChangedCount, "We expected to see fan chage on quiting.");
 				}
 
 				return Task.FromResult(0);
