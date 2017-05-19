@@ -33,6 +33,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -59,8 +60,54 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.totalSteps = totalSteps;
 		}
 
+		public static List<Vector2> GetManualPositions(string settingsValue, int requiredCount)
+		{
+			// can look like "0,1:100,2:50,101"
+			if (!string.IsNullOrEmpty(settingsValue))
+			{
+				var coordinates = settingsValue.Split(':');
+				if(coordinates.Length == requiredCount)
+				{
+					var result = new List<Vector2>();
+					foreach(var coordinate in coordinates)
+					{
+						var xyData = coordinate.Split(',');
+						if(xyData.Length != 2)
+						{
+							// bad data
+							return null;
+						}
+
+						Vector2 probePosition = new Vector2();
+						if (!double.TryParse(xyData[0], out probePosition.x))
+						{
+							// error
+							return null;
+						}
+						if (!double.TryParse(xyData[1], out probePosition.y))
+						{
+							// error
+							return null;
+						}
+						result.Add(probePosition);
+					}
+					if (result.Count == requiredCount)
+					{
+						return result;
+					}
+				}
+			}
+			return null;
+		}
+
 		public static Vector2 GetPrintLevelPositionToSample(int index)
 		{
+			var manualPositions = GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), 3);
+			if(manualPositions != null)
+			{
+				return manualPositions[index];
+			}
+
 			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
 			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
 
@@ -157,6 +204,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
 					printLevelWizardWindow = new LevelWizard13PointRadial(runningState);
+					break;
+
+				case PrintLevelingData.LevelingSystem.Probe3x3Mesh:
+					printLevelWizardWindow = new LevelWizard3x3Mesh(runningState);
 					break;
 
 				default:

@@ -310,9 +310,10 @@ Advanced
         has_heated_bed
         has_sd_card_reader
         has_power_control
+        filament_runout_sensor
+        has_z_probe
         enable_network_printing
         enable_sailfish_communication
-        fillament_runout_endstop
       Behavior
         z_homes_to_max
         z_can_be_negative
@@ -327,11 +328,12 @@ Advanced
     Print Leveling
       Machine Settings
         print_leveling_solution
+        leveling_manual_positions
         print_leveling_required_to_print
       Probe Settings
         print_leveling_probe_start
         manual_probe_paper_width
-        use_g30_for_bed_probe
+        use_z_probe
     Print Recovery
       Recover Settings
         recover_is_enabled

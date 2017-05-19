@@ -32,6 +32,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -39,12 +40,10 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard7PointRadial : LevelWizardRadialBase
+	public class LevelWizard3x3Mesh : LevelWizardMeshBase
 	{
-		private static readonly int numberOfRadialSamples = 6;
-
-		public LevelWizard7PointRadial(LevelWizardBase.RuningState runningState)
-			: base(runningState, 500, 370, 21, numberOfRadialSamples)
+		public LevelWizard3x3Mesh(LevelWizardBase.RuningState runningState)
+			: base(runningState, 500, 370, 21, 3, 3)
 		{
 		}
 
@@ -57,7 +56,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& lineBeingSent[2] == ' ')
 			{
 				PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-				return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
+				return GetLevelingFunctions(3, 3, levelingData)
 					.DoApplyLeveling(lineBeingSent, currentDestination, movementMode);
 			}
 
@@ -82,27 +81,85 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return lines;
 		}
 
-		public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
+		public override Vector2 GetPrintLevelPositionToSample(int index)
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
-				.GetPrintLevelPositionToSample(index, radius);
+			var manualPositions = GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), 9);
+			if (manualPositions != null)
+			{
+				return manualPositions[index];
+			}
+
+			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+
+			if (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
+			{
+				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a ciclular bed
+				bedSize *= 1.0 / Math.Sqrt(2);
+			}
+
+			// we know we are getting 3x3 sample positions they run like this
+			// 6 7 8  Y max
+			// 3 4 5
+			// 0 1 2  Y min
+			int xIndex = index % 3;
+			int yIndex = index / 3;
+
+			Vector2 samplePosition = new Vector2();
+			switch (xIndex)
+			{
+				case 0:
+					samplePosition.x = printCenter.x - (bedSize.x / 2) * .8;
+					break;
+
+				case 1:
+					samplePosition.x = printCenter.x;
+					break;
+
+				case 2:
+					samplePosition.x = printCenter.x + (bedSize.x / 2) * .8;
+					break;
+
+				default:
+					throw new IndexOutOfRangeException();
+			}
+
+			switch (yIndex)
+			{
+				case 0:
+					samplePosition.y = printCenter.y - (bedSize.y / 2) * .8;
+					break;
+
+				case 1:
+					samplePosition.y = printCenter.y;
+					break;
+
+				case 2:
+					samplePosition.y = printCenter.y + (bedSize.y / 2) * .8;
+					break;
+
+				default:
+					throw new IndexOutOfRangeException();
+			}
+
+			return samplePosition;
 		}
 	}
 
-	public abstract class LevelWizardRadialBase : LevelWizardBase
+	public abstract class LevelWizardMeshBase : LevelWizardBase
 	{
-		private static RadialLevlingFunctions currentLevelingFunctions = null;
+		private static MeshLevlingFunctions currentLevelingFunctions = null;
 		private LevelingStrings levelingStrings = new LevelingStrings();
 
-		public LevelWizardRadialBase(LevelWizardBase.RuningState runningState, int width, int height, int totalSteps, int numberOfRadialSamples)
+		public LevelWizardMeshBase(LevelWizardBase.RuningState runningState, int width, int height, int totalSteps, int gridWidth, int gridHeight)
 			: base(width, height, totalSteps)
 		{
 			string printLevelWizardTitle = "MatterControl";
 			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
-			List<ProbePosition> probePositions = new List<ProbePosition>(numberOfRadialSamples + 1);
-			for (int i = 0; i < numberOfRadialSamples + 1; i++)
+			int probeCount = gridWidth * gridHeight;
+			List<ProbePosition> probePositions = new List<ProbePosition>(probeCount);
+			for (int i = 0; i < probeCount; i++)
 			{
 				probePositions.Add(new ProbePosition());
 			}
@@ -116,7 +173,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.initialPrinterSetupStepText, requiredPageInstructions));
 			}
 
-			printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.OverviewText, levelingStrings.WelcomeText(numberOfRadialSamples + 1, 5)));
+			printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.OverviewText, levelingStrings.WelcomeText(probeCount, 5)));
 
 			printLevelWizard.AddPage(new HomePrinterPage(levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
 
@@ -130,13 +187,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			bool allowLessThanZero = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_can_be_negative);
 
 			double startProbeHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.print_leveling_probe_start);
-			for (int i = 0; i < numberOfRadialSamples + 1; i++)
+			for (int i = 0; i < probeCount; i++)
 			{
-				Vector2 probePosition = GetPrintLevelPositionToSample(i, bedRadius);
+				Vector2 probePosition = GetPrintLevelPositionToSample(i);
 
 				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
 				{
-					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, numberOfRadialSamples + 1);
+					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, probeCount);
 					printLevelWizard.AddPage(new AutoProbeFeedback(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i, allowLessThanZero));
 				}
 				else
@@ -150,11 +207,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new LastPagelInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
-		public static RadialLevlingFunctions GetLevelingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
+		public static MeshLevlingFunctions GetLevelingFunctions(int gridWidth, int gridHeight, PrintLevelingData levelingData)
 		{
 			if (currentLevelingFunctions == null
-				|| currentLevelingFunctions.NumberOfRadialSamples != numberOfRadialSamples
-				|| currentLevelingFunctions.BedCenter != bedCenter
 				|| currentLevelingFunctions.LevelingData != levelingData)
 			{
 				if (currentLevelingFunctions != null)
@@ -162,40 +217,47 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					currentLevelingFunctions.Dispose();
 				}
 
-				currentLevelingFunctions = new RadialLevlingFunctions(numberOfRadialSamples, levelingData, bedCenter);
+				currentLevelingFunctions = new MeshLevlingFunctions(gridWidth, gridHeight, levelingData);
 			}
 
 			return currentLevelingFunctions;
 		}
 
-		public abstract Vector2 GetPrintLevelPositionToSample(int index, double radius);
+		new public abstract Vector2 GetPrintLevelPositionToSample(int index);
 	}
 
-	public class RadialLevlingFunctions : IDisposable
+	public class MeshLevlingFunctions : IDisposable
 	{
 		private Vector3 lastDestinationWithLevelingApplied = new Vector3();
+
 		private EventHandler unregisterEvents;
 
-		public RadialLevlingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
+		public MeshLevlingFunctions(int gridWidth, int gridHeight, PrintLevelingData levelingData)
 		{
 			this.LevelingData = levelingData;
-			this.BedCenter = bedCenter;
-			this.NumberOfRadialSamples = numberOfRadialSamples;
 
 			PrinterConnectionAndCommunication.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
+
+			for (int y = 0; y < gridHeight - 1; y++)
+			{
+				for (int x = 0; x < gridWidth - 1; x++)
+				{
+					// add all the regions
+					Regions.Add(new Region()
+					{
+						LeftBottom = levelingData.SampledPositions[y * gridWidth + x],
+						RightBottom = levelingData.SampledPositions[y * gridWidth + x + 1],
+						LeftTop = levelingData.SampledPositions[(y + 1) * gridWidth + x],
+						RightTop = levelingData.SampledPositions[(y + 1) * gridWidth + x + 1],
+					});
+				}
+			}
 		}
 
-		public Vector2 BedCenter
-		{
-			get; set;
-		}
+		// you can only set this on construction
+		public PrintLevelingData LevelingData { get; private set; }
 
-		public PrintLevelingData LevelingData
-		{
-			get; set;
-		}
-
-		public int NumberOfRadialSamples { get; set; }
+		public List<Region> Regions { get; private set; } = new List<Region>();
 
 		public void Dispose()
 		{
@@ -247,54 +309,132 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 		{
-			if (LevelingData.SampledPositions.Count == NumberOfRadialSamples + 1)
-			{
-				Vector2 destinationFromCenter = new Vector2(currentDestination) - BedCenter;
+			Region region = GetCorrectRegion(currentDestination);
 
-				double angleToPoint = Math.Atan2(destinationFromCenter.y, destinationFromCenter.x);
-
-				if (angleToPoint < 0)
-				{
-					angleToPoint += MathHelper.Tau;
-				}
-
-				double oneSegmentAngle = MathHelper.Tau / NumberOfRadialSamples;
-				int firstIndex = (int)(angleToPoint / oneSegmentAngle);
-				int lastIndex = firstIndex + 1;
-				if (lastIndex == NumberOfRadialSamples)
-				{
-					lastIndex = 0;
-				}
-
-				Plane currentPlane = new Plane(LevelingData.SampledPositions[firstIndex], LevelingData.SampledPositions[lastIndex], LevelingData.SampledPositions[NumberOfRadialSamples]);
-
-				double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
-
-				currentDestination.z += hitDistance;
-			}
-
-			return currentDestination;
+			return region.GetPositionWithZOffset(currentDestination);
 		}
 
-		public Vector2 GetPrintLevelPositionToSample(int index, double radius)
+		public Vector2 GetPrintLevelPositionToSample(int index, int gridWidth, int gridHeight)
 		{
-			Vector2 bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-			if (index < NumberOfRadialSamples)
+			var manualPositions = LevelWizardBase.GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), gridWidth * gridHeight);
+			if (manualPositions != null)
 			{
-				Vector2 position = new Vector2(radius, 0);
-				position.Rotate(MathHelper.Tau / NumberOfRadialSamples * index);
-				position += bedCenter;
-				return position;
+				return manualPositions[index];
 			}
-			else
+
+			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+
+			switch (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape))
 			{
-				return bedCenter;
+				case BedShape.Circular:
+					Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
+					switch (index)
+					{
+						case 0:
+							return firstPosition;
+
+						case 1:
+							return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
+
+						case 2:
+							return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
+
+						default:
+							throw new IndexOutOfRangeException();
+					}
+
+				case BedShape.Rectangular:
+				default:
+					switch (index)
+					{
+						case 0:
+							return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+
+						case 1:
+							return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+
+						case 2:
+							return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+
+						default:
+							throw new IndexOutOfRangeException();
+					}
 			}
+		}
+
+		private Region GetCorrectRegion(Vector3 currentDestination)
+		{
+			int bestIndex = 0;
+			double bestDist = double.PositiveInfinity;
+
+			currentDestination.z = 0;
+			for (int regionIndex = 0; regionIndex < Regions.Count; regionIndex++)
+			{
+				var dist = (Regions[regionIndex].Center - currentDestination).LengthSquared;
+				if(dist < bestDist)
+				{
+					bestIndex = regionIndex;
+					bestDist = dist;
+				}
+			}
+
+			return Regions[bestIndex];
 		}
 
 		private void PrinterReportedPosition(object sender, EventArgs e)
 		{
 			lastDestinationWithLevelingApplied = GetPositionWithZOffset(PrinterConnectionAndCommunication.Instance.LastReportedPosition);
+		}
+
+		public class Region
+		{
+			public Vector3 LeftBottom { get; set; }
+			public Vector3 LeftTop { get; set; }
+			public Vector3 RightBottom { get; set; }
+			public Vector3 RightTop { get; set; }
+
+			internal Vector3 Center { get; private set; }
+			internal Vector3 LeftBottomCenter { get; private set; }
+			internal Vector3 RightTopCenter { get; private set; }
+
+			internal Plane LeftBottomPlane { get; private set; }
+			internal Plane RightTopPlane { get; private set; }
+
+			internal Vector3 GetPositionWithZOffset(Vector3 currentDestination)
+			{
+				if (LeftBottomPlane.PlaneNormal == Vector3.Zero)
+				{
+					InitializePlanes();
+				}
+
+				var destinationAtZ0 = new Vector3(currentDestination.x, currentDestination.y, 0);
+
+				// which triangle to check (distance to the centers)
+				if ((LeftBottomCenter - destinationAtZ0).LengthSquared < (RightTopCenter - destinationAtZ0).LengthSquared)
+				{
+					double hitDistance = LeftBottomPlane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
+					currentDestination.z += hitDistance;
+				}
+				else
+				{
+					double hitDistance = RightTopPlane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
+					currentDestination.z += hitDistance;
+				}
+
+				return currentDestination;
+			}
+
+			private void InitializePlanes()
+			{
+				LeftBottomPlane = new Plane(LeftBottom, RightBottom, LeftTop);
+				LeftBottomCenter = (LeftBottom + RightBottom + LeftTop) / 3;
+
+				RightTopPlane = new Plane(RightBottom, RightTop, LeftTop);
+				RightTopCenter = (RightBottom + RightTop + LeftTop) / 3;
+
+				Center = (LeftBottomCenter + RightTopCenter) / 2;
+			}
 		}
 	}
 }

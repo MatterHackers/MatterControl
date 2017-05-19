@@ -37,7 +37,33 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-	public partial class EePromRepetierWindow : SystemWindow
+	public class CloseOnDisconnectWindow : SystemWindow
+	{
+		private EventHandler unregisterEvents;
+
+		public CloseOnDisconnectWindow(double width, double height)
+			: base(width, height)
+		{
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				if(!PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+				{
+					this.CloseOnIdle();
+				}
+			}, ref unregisterEvents);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
+	}
+
+	public class EePromRepetierWindow : CloseOnDisconnectWindow
 	{
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 

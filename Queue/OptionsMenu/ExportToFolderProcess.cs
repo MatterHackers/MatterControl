@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (UpdatePartStatus != null)
 				{
-					UpdatePartStatus(this, new StringEventArgs("Calculating Total fillament mm..."));
+					UpdatePartStatus(this, new StringEventArgs("Calculating Total filament mm..."));
 				}
 
 				if (savedGCodeFileNames.Count > 0)

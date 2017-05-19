@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl
 	{
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		protected TextWidget actualTempIndicator;
-		protected Button tempOffButton;
 		protected FlowLayoutWidget presetButtonsContainer;
 
 		protected EditableNumberDisplay targetTemperatureDisplay;
@@ -107,7 +106,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		protected FlowLayoutWidget tempSliderContainer;
+		protected FlowLayoutWidget tempEditContainer;
 		private EditTemperaturePresetsWindow editSettingsWindow;
 
 		protected void AddChildElements()
@@ -139,14 +138,14 @@ namespace MatterHackers.MatterControl
 			{
 				// put in the temperature slider and preset buttons
 
-				tempSliderContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
+				tempEditContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
 
 				{
 					GuiWidget sliderLabels = GetSliderLabels();
 
-					tempSliderContainer.HAnchor = HAnchor.ParentLeftRight;
-					tempSliderContainer.AddChild(sliderLabels);
-					tempSliderContainer.Visible = false;
+					tempEditContainer.HAnchor = HAnchor.ParentLeftRight;
+					tempEditContainer.AddChild(sliderLabels);
+					tempEditContainer.Visible = false;
 				}
 				GuiWidget spacer = new GuiWidget(0, 10);
 				spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -242,7 +241,7 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(() =>
 					{
 						SetTargetTemperature(temp);
-						tempSliderContainer.Visible = false;
+						tempEditContainer.Visible = false;
 					});
 				};
 			}
@@ -259,7 +258,7 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(() =>
 					{
 						SetTargetTemperature(GetPreheatTemperature());
-						tempSliderContainer.Visible = false;
+						tempEditContainer.Visible = false;
 					});
 				};
 			}
@@ -273,7 +272,7 @@ namespace MatterHackers.MatterControl
 			targetTemperatureDisplay = new EditableNumberDisplay(textImageButtonFactory, string.Format("{0:0.0}°C", GetTargetTemperature()), string.Format("{0:0.0}°C", 240.2));
 			targetTemperatureDisplay.EditEnabled += (sender, e) =>
 			{
-				tempSliderContainer.Visible = true;
+				tempEditContainer.Visible = true;
 			};
 
 			targetTemperatureDisplay.EditComplete += (sender, e) =>
@@ -339,11 +338,6 @@ namespace MatterHackers.MatterControl
 				double buttonOffset = -10 * GuiWidget.DeviceScale;
 				var offPosition = buttonOffset;
 
-				tempOffButton = textImageButtonFactory.Generate("Off".Localize());
-				tempOffButton.OriginRelativeParent = new Vector2(offPosition, 0);
-
-				//sliderLabels.AddChild(tempOffButton);
-
 				SortedDictionary<double, string> labels = GetTemperaturePresetLabels();
 
 				bool firstElement = true;
@@ -370,7 +364,7 @@ namespace MatterHackers.MatterControl
 					tempButton.Click += (sender, e) =>
 					{
 						SetTargetTemperature(temp);
-						tempSliderContainer.Visible = false;
+						tempEditContainer.Visible = false;
 					};
 				}
 			}
@@ -407,12 +401,23 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		protected void onTemperatureSet(Object sender, EventArgs e)
+		protected void ExtruderTemperatureSet(Object sender, EventArgs e)
 		{
 			TemperatureEventArgs tempArgs = e as TemperatureEventArgs;
 			if (tempArgs != null && tempArgs.Index0Based == extruderIndex0Based)
 			{
-				SetTargetTemperature(tempArgs.Temperature);
+				string displayString = string.Format("{0:0.0}°C", tempArgs.Temperature);
+				targetTemperatureDisplay.SetDisplayString(displayString);
+			}
+		}
+
+		protected void BedTemperatureSet(Object sender, EventArgs e)
+		{
+			TemperatureEventArgs tempArgs = e as TemperatureEventArgs;
+			if (tempArgs != null)
+			{
+				string displayString = string.Format("{0:0.0}°C", tempArgs.Temperature);
+				targetTemperatureDisplay.SetDisplayString(displayString);
 			}
 		}
 	}
@@ -443,19 +448,13 @@ namespace MatterHackers.MatterControl
 		private void AddHandlers()
 		{
 			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-			tempOffButton.Click += onOffButtonClicked;
+			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureSet.RegisterEvent(ExtruderTemperatureSet, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void onOffButtonClicked(object sender, EventArgs e)
-		{
-			SetTargetTemperature(0);
 		}
 
 		protected override string GetTemperaturePresets()
@@ -540,8 +539,7 @@ namespace MatterHackers.MatterControl
 		private void AddHandlers()
 		{
 			PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.BedTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-			tempOffButton.Click += onOffButtonClicked;
+			PrinterConnectionAndCommunication.Instance.BedTemperatureSet.RegisterEvent(BedTemperatureSet, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

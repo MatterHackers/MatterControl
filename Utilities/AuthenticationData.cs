@@ -31,6 +31,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		/// <summary>
+		/// Immediately push application into offline mode
+		/// </summary>
+		public void SetOffline()
+		{
+			failedRequestCount = 6;
+		}
+
 		public void WebRequestFailed()
 		{
 			failedRequestCount++;

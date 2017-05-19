@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_cost = nameof(filament_cost);
 		public const string filament_density = nameof(filament_density);
 		public const string filament_diameter = nameof(filament_diameter);
-		public const string fillament_runout_endstop = nameof(fillament_runout_endstop);
+		public const string filament_runout_sensor = nameof(filament_runout_sensor);
 		public const string fill_density = nameof(fill_density);
 		public const string fill_thin_gaps = nameof(fill_thin_gaps);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
@@ -93,6 +93,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string layer_height = nameof(layer_height);
 		public const string layer_name = nameof(layer_name);
 		public const string layer_to_pause = nameof(layer_to_pause);
+		public const string leveling_manual_positions = nameof(leveling_manual_positions);
 		public const string make = nameof(make);
 		public const string manual_probe_paper_width = nameof(manual_probe_paper_width);
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
@@ -118,7 +119,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
 		public const string temperature = nameof(temperature);
-		public const string use_g30_for_bed_probe = nameof(use_g30_for_bed_probe);
+		public const string use_z_probe = nameof(use_z_probe);
+		public const string has_z_probe = nameof(has_z_probe);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
@@ -490,6 +492,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+		}
+
+		public bool UseZProbe()
+		{
+			return ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_probe) && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 	}
 

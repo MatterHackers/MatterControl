@@ -115,6 +115,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
 						break;
 
+					case PrintLevelingData.LevelingSystem.Probe3x3Mesh:
+						lineBeingSent = LevelWizard3x3Mesh.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+						break;
+
 					default:
 						throw new NotImplementedException();
 				}
