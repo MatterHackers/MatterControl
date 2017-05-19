@@ -401,12 +401,22 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		protected void onTemperatureSet(Object sender, EventArgs e)
+		protected void ExtruderTemperatureSet(Object sender, EventArgs e)
 		{
 			TemperatureEventArgs tempArgs = e as TemperatureEventArgs;
 			if (tempArgs != null && tempArgs.Index0Based == extruderIndex0Based)
 			{
-				string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based));
+				string displayString = string.Format("{0:0.0}°C", tempArgs.Temperature);
+				targetTemperatureDisplay.SetDisplayString(displayString);
+			}
+		}
+
+		protected void BedTemperatureSet(Object sender, EventArgs e)
+		{
+			TemperatureEventArgs tempArgs = e as TemperatureEventArgs;
+			if (tempArgs != null)
+			{
+				string displayString = string.Format("{0:0.0}°C", tempArgs.Temperature);
 				targetTemperatureDisplay.SetDisplayString(displayString);
 			}
 		}
@@ -438,7 +448,7 @@ namespace MatterHackers.MatterControl
 		private void AddHandlers()
 		{
 			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureSet.RegisterEvent(ExtruderTemperatureSet, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -529,7 +539,7 @@ namespace MatterHackers.MatterControl
 		private void AddHandlers()
 		{
 			PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.BedTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.BedTemperatureSet.RegisterEvent(BedTemperatureSet, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
