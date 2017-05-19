@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(resetViewButton);
 			resetViewButton.Click += (sender, e) =>
 			{
-				ResetView?.Invoke(this, null);
+				UiThread.RunOnIdle(() => ResetView?.Invoke(this, null));
 			};
 
 			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");

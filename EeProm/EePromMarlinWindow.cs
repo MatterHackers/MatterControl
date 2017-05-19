@@ -36,7 +36,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-	public partial class EePromMarlinWindow : SystemWindow
+	public partial class EePromMarlinWindow : CloseOnDisconnectWindow
 	{
 		private EePromMarlinSettings currentEePromSettings;
 

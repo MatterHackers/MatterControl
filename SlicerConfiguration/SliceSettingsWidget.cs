@@ -192,22 +192,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
 			topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 
-			if (sliceSettingsDetailControl.SelectedValue == "Advanced" && ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.Slic3r)
-			{
-				TabPage extraSettingsPage = new TabPage("Other");
-				SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, "Other Tab", 16,
-						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-				extraSettingsPage.AnchorAll();
-				int count;
-				TabControl extraSettingsSideTabs = CreateExtraSettingsSideTabsAndPages(topCategoryTabs, out count);
-				if (count > 0)
-				{
-					topCategoryTabs.AddTab(extraSettingsTextTabWidget);
-					sideTabBarsListForLayout.Add(extraSettingsSideTabs.TabBar);
-					extraSettingsPage.AddChild(extraSettingsSideTabs);
-				}
-			}
-
 			double sideTabBarsMinimumWidth = 0;
 			foreach (TabBar tabBar in sideTabBarsListForLayout)
 			{
@@ -517,39 +501,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		public static bool ParseShowString(string unsplitSettings, PrinterSettings printerSettings, List<PrinterSettingsLayer> layerCascade)
-		{
-			if (!string.IsNullOrEmpty(unsplitSettings))
-			{
-				string[] splitSettings = unsplitSettings.Split('&');
-
-				foreach (var inLookupSettings in splitSettings)
-				{
-					var lookupSettings = inLookupSettings;
-					if (!string.IsNullOrEmpty(lookupSettings))
-					{
-						string showValue = "0";
-						if (lookupSettings.StartsWith("!"))
-						{
-							showValue = "1";
-							lookupSettings = lookupSettings.Substring(1);
-						}
-
-						string sliceSettingValue = printerSettings.GetValue(lookupSettings, layerCascade);
-						if (sliceSettingValue == showValue)
-						{
-							return false;
-						}
-					}
-				}
-			}
-
-			return true;
-		}
-
 		private bool CheckIfShouldBeShown(SliceSettingData settingData)
 		{
-			bool settingShouldBeShown = ParseShowString(settingData.ShowIfSet, ActiveSliceSettings.Instance, layerCascade);
+			bool settingShouldBeShown = ActiveSliceSettings.Instance.ParseShowString(settingData.ShowIfSet, layerCascade);
 			if (viewFilter == NamedSettingsLayers.Material || viewFilter == NamedSettingsLayers.Quality)
 			{
 				if (!settingData.ShowAsOverride)
@@ -580,71 +534,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			allText.MinimumSize = new Vector2(0, allText.MinimumSize.y);
 			return allText;
-		}
-
-		private TabControl CreateExtraSettingsSideTabsAndPages(TabControl categoryTabs, out int count)
-		{
-			int rightContentWidth = (int)(280 * GuiWidget.DeviceScale + .5);
-			count = 0;
-			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
-			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
-			leftSideGroupTabs.TabBar.BorderColor = RGBA_Bytes.White;
-			{
-				TabPage groupTabPage = new TabPage("Extra Settings");
-				SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, "Extra Settings Tab", 14,
-				   ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-				leftSideGroupTabs.AddTab(groupTabWidget);
-
-				FlowLayoutWidget subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				subGroupLayoutTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-				subGroupLayoutTopToBottom.VAnchor = VAnchor.FitToChildren;
-
-				FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				topToBottomSettings.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-
-				this.HAnchor = HAnchor.ParentLeftRight;
-
-				foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
-				{
-					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
-					{
-						SliceSettingData settingData = new SliceSettingData(keyValue.Key, keyValue.Key, SliceSettingData.DataEditTypes.STRING);
-						if (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(settingData.SlicerConfigName))
-						{
-							bool addControl;
-							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
-								settingData,
-								layerCascade,
-								persistenceLayer,
-								viewFilter,
-								0,
-								out addControl,
-								ref tabIndexForItem);
-
-							if (addControl)
-							{
-								topToBottomSettings.AddChild(controlsForThisSetting);
-							}
-							count++;
-						}
-					}
-				}
-
-				AltGroupBox groupBox = new AltGroupBox("Extra".Localize());
-				groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-				groupBox.AddChild(topToBottomSettings);
-				groupBox.VAnchor = VAnchor.FitToChildren;
-				groupBox.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-
-				subGroupLayoutTopToBottom.AddChild(groupBox);
-
-				SliceSettingListControl scrollOnGroupTab = new SliceSettingListControl();
-				scrollOnGroupTab.AnchorAll();
-				scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
-				groupTabPage.AddChild(scrollOnGroupTab);
-			}
-			return leftSideGroupTabs;
 		}
 
 		private static GuiWidget GetExtraSettingsWidget(SliceSettingData settingData)

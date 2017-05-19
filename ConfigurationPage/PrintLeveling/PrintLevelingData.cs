@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		};
 
 		[JsonConverter(typeof(StringEnumConverter))]
-		public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial }
+		public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial, Probe3x3Mesh }
 
 		public PrintLevelingData(PrinterSettings printerProfile)
 		{
@@ -37,6 +37,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 					case "13 Point Disk":
 						return LevelingSystem.Probe13PointRadial;
+
+					case "3x3 Mesh":
+						return LevelingSystem.Probe3x3Mesh;
 
 					case "3 Point Plane":
 					default:
@@ -138,6 +141,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
 					if (SampledPositions.Count != 13) // different criteria for what is not initialized
+					{
+						return false;
+					}
+					break;
+
+				case LevelingSystem.Probe3x3Mesh:
+					if (SampledPositions.Count != 9) // different criteria for what is not initialized
 					{
 						return false;
 					}

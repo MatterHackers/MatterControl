@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -218,7 +219,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			doneWithCurrentPartButton = makeButton("Done".Localize(), "Move to next print in queue".Localize());
 			doneWithCurrentPartButton.Name = "Done Button";
-			doneWithCurrentPartButton.Click += onDoneWithCurrentPartButton_Click;
+			doneWithCurrentPartButton.Click += (s,e) => UiThread.RunOnIdle(() =>
+			{
+				PrinterConnectionAndCommunication.Instance.ResetToReadyState();
+				QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
+				// We don't have to change the selected index because we should be on the next one as we deleted the one
+				// we were on.
+			});
 
 			this.Margin = new BorderDouble(0, 0, 10, 0);
 			this.HAnchor = HAnchor.FitToChildren;
@@ -440,14 +447,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
 		}
 
-		private void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.ResetToReadyState();
-			QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
-			// We don't have to change the selected index because we should be on the next one as we deleted the one
-			// we were on.
-		}
-
 		private void onRemoveButton_Click(object sender, EventArgs mouseEvent)
 		{
 			QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
@@ -466,9 +465,33 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
+		string unsavedChangesCaption = "Unsaved Changes";
+		string unsavedChangesMessage = "You have unsaved changes to your part. Are you sure you want to start this print?";
 		private void onStartButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle(() => PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible());
+			UiThread.RunOnIdle(() =>
+				{
+					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+					var view3D = systemWindow.ChildrenRecursive<View3DWidget>().FirstOrDefault();
+
+					if (view3D != null 
+						&& view3D.ShouldBeSaved)
+					{
+						StyledMessageBox.ShowMessageBox((bool startPrint) =>
+						{
+							if (startPrint)
+							{
+								PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+							}
+
+						}, unsavedChangesMessage, unsavedChangesCaption, StyledMessageBox.MessageType.YES_NO, "Start Print", "Cancel");
+					}
+					else
+					{
+						PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+					}
+				}
+			);
 		}
 
 		private void onStateChanged(object sender, EventArgs e)

@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_g30_for_bed_probe))
+				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
 				{
 					return "{0}{1}\n\n{2}{3}".FormatWith(doneLine1, doneLine1b, doneLine3, doneLine3b);
 				}
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_g30_for_bed_probe))
+				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
 				{
 					return "{0}\n\n{1}".FormatWith(homingLine1, homingLine3b);
 				}
@@ -99,9 +99,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public string WelcomeText(int numberOfSteps, int numberOfMinutes)
 		{
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_g30_for_bed_probe))
+			if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
 			{
-				numberOfMinutes = 1;
+				numberOfMinutes = 2;
 			}
 
 			return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}\n\n{6}".FormatWith(

@@ -34,7 +34,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	//Normally step one of the setup process
+	// Normally step one of the setup process
 	public class SetupWizardWifi : WizardPage
 	{
 		public SetupWizardWifi()
@@ -56,20 +56,35 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			Button skipButton = whiteImageButtonFactory.Generate("Skip".Localize(), centerText: true);
-			skipButton.Click += (s, e) => this.WizardWindow.ChangeToSetupPrinterForm();
+			skipButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					this.WizardWindow.ChangeToSetupPrinterForm();
+				});
+			};
 
 			Button nextButton = textImageButtonFactory.Generate("Continue".Localize());
-			nextButton.Click += (s, e) => this.WizardWindow.ChangeToSetupPrinterForm();
+			nextButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					this.WizardWindow.ChangeToSetupPrinterForm();
+				});
+			};
 			nextButton.Visible = false;
 
 			Button configureButton = whiteImageButtonFactory.Generate("Configure".Localize(), centerText: true);
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
 			configureButton.Click += (s, e) =>
 			{
-				nextButton.Visible = true;
-				skipButton.Visible = false;
-				configureButton.Visible = false;
-				MatterControlApplication.Instance.ConfigureWifi();
+				UiThread.RunOnIdle(() =>
+				{
+					nextButton.Visible = true;
+					skipButton.Visible = false;
+					configureButton.Visible = false;
+					MatterControlApplication.Instance.ConfigureWifi();
+				});
 			};
 
 			connectButtonContainer.AddChild(configureButton);

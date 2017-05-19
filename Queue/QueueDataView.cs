@@ -325,6 +325,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
 		{
+			// we can only change the queue selection when we are not printing
+			if(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting 
+				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused
+				|| PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint)
+			{
+				return;
+			}
+
 			// Hard-coded processing rule to avoid changing the SelectedIndex when clicks occur
 			// with the thumbnail region - aka the first 55 pixels
 			if (!EditMode && mouseEvent.X < 56) return;

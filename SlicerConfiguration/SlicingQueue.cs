@@ -251,41 +251,59 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (doMergeInSlicer)
 							{
 								int meshCount = meshGroup.Meshes.Count;
-                                for (int meshIndex =0; meshIndex< meshCount; meshIndex++)
+								if (meshCount > 0)
 								{
-									Mesh mesh = meshGroup.Meshes[meshIndex];
-									if ((meshIndex % 2) == 0)
+									for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
 									{
-										mergeRules += "({0}".FormatWith(savedStlCount);
-									}
-									else
-									{
-										if(meshIndex < meshCount -1)
+										Mesh mesh = meshGroup.Meshes[meshIndex];
+										if ((meshIndex % 2) == 0)
 										{
-											mergeRules += ",({0}".FormatWith(savedStlCount);
+											mergeRules += "({0}".FormatWith(savedStlCount);
 										}
 										else
 										{
-											mergeRules += ",{0}".FormatWith(savedStlCount);
+											if (meshIndex < meshCount - 1)
+											{
+												mergeRules += ",({0}".FormatWith(savedStlCount);
+											}
+											else
+											{
+												mergeRules += ",{0}".FormatWith(savedStlCount);
+											}
 										}
+										int currentMeshMaterialIntdex = MeshMaterialData.Get(mesh).MaterialIndex;
+										if (materialsToInclude.Contains(currentMeshMaterialIntdex))
+										{
+											extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(mesh));
+										}
+										savedStlCount++;
 									}
-									int currentMeshMaterialIntdex = MeshMaterialData.Get(mesh).MaterialIndex;
-									if (materialsToInclude.Contains(currentMeshMaterialIntdex))
+
+									for (int i = 0; i < meshCount; i++)
 									{
-										extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(mesh));
+										mergeRules += ")";
 									}
+								}
+								else // this extruder has no meshes
+								{
+									// check if there are any more meshes after this extruder that will be added
+									int otherMeshCounts = 0;
+									for (int otherExtruderIndex = extruderIndex + 1; otherExtruderIndex < extruderMeshGroups.Count; otherExtruderIndex++)
+									{
+										otherMeshCounts += extruderMeshGroups[otherExtruderIndex].Meshes.Count;
+									}
+									if (otherMeshCounts > 0) // there are more extrudes to use after this not used one
+									{
+										// add in a blank for this extruder
+										mergeRules += $"({savedStlCount})";
+									}
+									// save an empty mesh
+									extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(PlatonicSolids.CreateCube(.001,.001,.001)));
 									savedStlCount++;
 								}
-								for (int i = 0; i < meshCount-1; i++)
-								{
-									mergeRules += ")";
-								}
-							}
-							else
-							{
-								extruderFilesToSlice.Add(SaveAndGetFilenameForMaterial(meshGroup, materialsToInclude));
 							}
 						}
+
 						return extruderFilesToSlice.ToArray();
 					}
 					return new string[] { "" };
