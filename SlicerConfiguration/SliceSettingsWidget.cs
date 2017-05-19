@@ -192,22 +192,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
 			topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 
-			if (sliceSettingsDetailControl.SelectedValue == "Advanced" && ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.Slic3r)
-			{
-				TabPage extraSettingsPage = new TabPage("Other");
-				SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, "Other Tab", 16,
-						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-				extraSettingsPage.AnchorAll();
-				int count;
-				TabControl extraSettingsSideTabs = CreateExtraSettingsSideTabsAndPages(topCategoryTabs, out count);
-				if (count > 0)
-				{
-					topCategoryTabs.AddTab(extraSettingsTextTabWidget);
-					sideTabBarsListForLayout.Add(extraSettingsSideTabs.TabBar);
-					extraSettingsPage.AddChild(extraSettingsSideTabs);
-				}
-			}
-
 			double sideTabBarsMinimumWidth = 0;
 			foreach (TabBar tabBar in sideTabBarsListForLayout)
 			{
@@ -519,39 +503,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		public static bool ParseShowString(string unsplitSettings, PrinterSettings printerSettings, List<PrinterSettingsLayer> layerCascade)
-		{
-			if (!string.IsNullOrEmpty(unsplitSettings))
-			{
-				string[] splitSettings = unsplitSettings.Split('&');
-
-				foreach (var inLookupSettings in splitSettings)
-				{
-					var lookupSettings = inLookupSettings;
-					if (!string.IsNullOrEmpty(lookupSettings))
-					{
-						string showValue = "0";
-						if (lookupSettings.StartsWith("!"))
-						{
-							showValue = "1";
-							lookupSettings = lookupSettings.Substring(1);
-						}
-
-						string sliceSettingValue = printerSettings.GetValue(lookupSettings, layerCascade);
-						if (sliceSettingValue == showValue)
-						{
-							return false;
-						}
-					}
-				}
-			}
-
-			return true;
-		}
-
 		private bool CheckIfShouldBeShown(SliceSettingData settingData)
 		{
-			bool settingShouldBeShown = ParseShowString(settingData.ShowIfSet, ActiveSliceSettings.Instance, layerCascade);
+			bool settingShouldBeShown = ActiveSliceSettings.Instance.ParseShowString(settingData.ShowIfSet, layerCascade);
 			if (viewFilter == NamedSettingsLayers.Material || viewFilter == NamedSettingsLayers.Quality)
 			{
 				if (!settingData.ShowAsOverride)

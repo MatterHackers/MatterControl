@@ -6067,3 +6067,60 @@ Translated:Play a sound for notifications
 English:Include a picture of my print
 Translated:Include a picture of my print
 
+English:If set, these positions will be used when running the 3 point leveling solution. Leave empty for defaults. Data Format:'x1,y1:x2,y2:x3,y3'
+Translated:If set, these positions will be used when running the 3 point leveling solution. Leave empty for defaults. Data Format:'x1,y1:x2,y2:x3,y3'
+
+English:Leveling Positions
+Translated:Leveling Positions
+
+English:Specifies that the firmware has support for ros_0 enstrop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:Specifies that the firmware has support for ros_0 enstrop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+
+English:Has Fillament Runout Sensor
+Translated:Has Fillament Runout Sensor
+
+English:Specifies that the firmware has support for ros_0 enstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+Translated:Specifies that the firmware has support for ros_0 enstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
+
+English:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
+Translated:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
+
+English:Printer Paused
+Translated:Printer Paused
+
+English:Out of filament detected\nYour 3D print has been paused.
+Translated:Out of filament detected\nYour 3D print has been paused.
+
+English:Your 3D print has been auto-pasued.\nPause layer{0} reached.
+Translated:Your 3D print has been auto-pasued.\nPause layer{0} reached.
+
+English:Has Filament Runout Sensor
+Translated:Has Filament Runout Sensor
+
+English:The printer has a z probe for measuring bed level.
+Translated:The printer has a z probe for measuring bed level.
+
+English:Has Z Probe
+Translated:Has Z Probe
+
+English:Use Z Probe
+Translated:Use Z Probe
+
+English:Overhang
+Translated:Overhang
+
+English:OpenSCAD1
+Translated:OpenSCAD1
+
+English:Images
+Translated:Images
+
+English:TEXT
+Translated:TEXT
+
+English:Text
+Translated:Text
+
+English:Braille
+Translated:Braille
+

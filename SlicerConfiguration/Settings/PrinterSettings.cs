@@ -134,6 +134,62 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
+		/// Order of precidence &, |, !, =
+		/// </summary>
+		/// <param name="unsplitSettings"></param>
+		/// <param name="layerCascade"></param>
+		/// <returns></returns>
+		public bool ParseShowString(string unsplitSettings, List<PrinterSettingsLayer> layerCascade)
+		{
+			PrinterSettings printerSettings = this;
+			if (!string.IsNullOrEmpty(unsplitSettings))
+			{
+				string[] splitOnAnd = unsplitSettings.Split('&');
+				foreach (var andGroup in splitOnAnd)
+				{
+					bool orResult = false;
+					string[] splitOnOr = andGroup.Split('|');
+					foreach (var orGroup in splitOnOr)
+					{
+						var matchString = "1";
+						var orItem = orGroup;
+						bool negate = orItem.StartsWith("!");
+						if (negate)
+						{
+							orItem = orItem.Substring(1);
+						}
+
+						string sliceSettingValue = "";
+						if (orItem.Contains("="))
+						{
+							string[] splitOnEquals = orItem.Split('=');
+
+							sliceSettingValue = printerSettings.GetValue(splitOnEquals[0], layerCascade);
+							matchString = splitOnEquals[1];
+						}
+						else
+						{
+							sliceSettingValue = printerSettings.GetValue(orItem, layerCascade);
+						}
+
+						if ((!negate && sliceSettingValue == matchString)
+							|| (negate && sliceSettingValue != matchString))
+						{
+							orResult = true;
+						}
+					}
+
+					if(orResult == false)
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		/// <summary>
 		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
 		/// </summary>
 		private void StashUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)

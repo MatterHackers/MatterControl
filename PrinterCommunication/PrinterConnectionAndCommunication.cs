@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler PauseOnLayer = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler FillamentRunout = new RootedObjectEventHandler();
+		public RootedObjectEventHandler FilamentRunout = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
 
@@ -117,7 +117,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
 
-		public bool WatingForPositionRead { get { return waitingForPosition.IsRunning || PositionReadQueued; } }
+		public bool WatingForPositionRead
+		{
+			get
+			{
+				// make sure the longest we will wait under any circumstance is 60 seconds
+				if (waitingForPosition.ElapsedMilliseconds > 60000)
+				{
+					waitingForPosition.Reset();
+					PositionReadQueued = false;
+				}
+
+				return waitingForPosition.IsRunning || PositionReadQueued;
+			}
+		}
 
 		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
 
@@ -304,23 +317,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			#endregion hardware failure callbacks
 
+			WriteLineStartCallBacks.AddCallbackToKey("G90", MovementWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
+			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M82", ExtruderWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.AddCallbackToKey("M83", ExtruderWasSetToRelativeMode);
 			WriteLineStartCallBacks.AddCallbackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M140", BedTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M190", BedTemperatureWasWritenToPrinter);
-
-			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
-
-			WriteLineStartCallBacks.AddCallbackToKey("M82", ExtruderWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallbackToKey("M83", ExtruderWasSetToRelativeMode);
-
-			WriteLineStartCallBacks.AddCallbackToKey("G90", MovementWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
-
-			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
-
 			WriteLineStartCallBacks.AddCallbackToKey("T", ExtruderIndexSet);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
@@ -1419,9 +1427,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 
-				if (currentLineIndexToSend >= allCheckSumLinesSent.Count)
+				if (currentLineIndexToSend >= allCheckSumLinesSent.Count
+					|| currentLineIndexToSend == 1)
 				{
 					SendLineToPrinterNow("M110 N1");
+					allCheckSumLinesSent.SetStartingIndex(1);
+					waitingForPosition.Reset();
+					PositionReadQueued = false;
 				}
 			}
 		}
@@ -1624,6 +1636,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
 										{
 											CommunicationState = CommunicationStates.Connected;
+											TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 											haveReportedError = false;
 											// now send any command that initialize this printer
 											ClearQueuedGCode();
@@ -1734,7 +1747,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			PositionRead.CallEvents(this, null);
 
-			waitingForPosition.Stop();
 			waitingForPosition.Reset();
 			PositionReadQueued = false;
 		}
@@ -2816,6 +2828,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			else
 			{
 				lineWithCount = $"N{allCheckSumLinesSent.Count} {lineToWrite}";
+				if (lineToWrite.StartsWith("M999"))
+				{
+					allCheckSumLinesSent.SetStartingIndex(1);
+				}
 			}
 
 			string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
@@ -2913,8 +2929,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							AbortConnectionAttempt("Connection Lost - " + ex.Message);
 						}
 					}
-					catch (TimeoutException) // known ok
+					catch (TimeoutException e2) // known ok
 					{
+						// This writes on the next line, and there may have been another write attempt before it is printer. Write indented to attempt to show its association.
+						PrinterOutputCache.Instance.WriteLine("        Error writing command:" + e2.Message);
 					}
 					catch (UnauthorizedAccessException e3)
 					{

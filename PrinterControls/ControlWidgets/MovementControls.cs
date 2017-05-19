@@ -48,7 +48,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MovementControls : ControlWidgetBase
 	{
-		public bool hotKeysEnabled = false;
 		public FlowLayoutWidget manualControlsLayout;
 		private Button disableMotors;
 		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
@@ -56,7 +55,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private Button homeXButton;
 		private Button homeYButton;
 		private Button homeZButton;
-		private TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
 		internal JogControls jogControls;
 		private AltGroupBox movementControlsGroupBox;
 
