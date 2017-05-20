@@ -1152,9 +1152,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ActiveSliceSettings.OnSettingChanged(settingsKey);
 		}
 
-		public string ToJson(Formatting formatting = Formatting.Indented)
+		public string ToJson()
 		{
-			return JsonConvert.SerializeObject(this, formatting);
+			return JsonConvert.SerializeObject(this, Formatting.Indented);
 		}
 
 		internal void ClearValue(string settingsKey, PrinterSettingsLayer layer = null)

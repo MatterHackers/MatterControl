@@ -552,7 +552,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Thumbnail section
 			{
 				int imageSize = smallScreen ? 300 : 500;
-				ImageBuffer imageBuffer = PartThumbnailWidget.GetImageForItem(PrinterConnectionAndCommunication.Instance.ActivePrintItem, imageSize, imageSize);
+
+				// TODO: Undo this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				//ImageBuffer imageBuffer = PartThumbnailWidget.GetImageForItem(PrinterConnectionAndCommunication.Instance.ActivePrintItem, imageSize, imageSize);
+				ImageBuffer imageBuffer = null;
 
 				if (imageBuffer == null)
 				{

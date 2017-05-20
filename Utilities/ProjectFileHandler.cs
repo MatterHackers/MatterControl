@@ -38,6 +38,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Collections;
+using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
@@ -48,55 +50,17 @@ namespace MatterHackers.MatterControl
 		public string Name { get; set; }
 
 		public string FileName { get; set; }
+
+		internal ILibraryContentStream PrintItem { get; set; }
 	}
 
 	internal class Project
 	{
-		private List<ManifestItem> projectFiles;
-		private string projectName = "Test Project";
-		private string projectDateCreated;
+		public List<ManifestItem> ProjectFiles { get; set; }
 
-		public Project()
-		{
-			DateTime now = DateTime.Now;
-			projectDateCreated = now.ToString("s");
-		}
+		public string ProjectName { get; set; } = "Test Project";
 
-		public List<ManifestItem> ProjectFiles
-		{
-			get
-			{
-				return projectFiles;
-			}
-			set
-			{
-				projectFiles = value;
-			}
-		}
-
-		public string ProjectName
-		{
-			get
-			{
-				return projectName;
-			}
-			set
-			{
-				projectName = value;
-			}
-		}
-
-		public string ProjectDateCreated
-		{
-			get
-			{
-				return projectDateCreated;
-			}
-			set
-			{
-				projectDateCreated = value;
-			}
-		}
+		public string ProjectDateCreated { get; set; } = DateTime.Now.ToString("s");
 	}
 
 	internal class ProjectFileHandler
@@ -105,56 +69,58 @@ namespace MatterHackers.MatterControl
 		private Dictionary<string, ManifestItem> sourceFiles = new Dictionary<string, ManifestItem>();
 		private HashSet<string> addedFileNames = new HashSet<string>();
 
-		public ProjectFileHandler(List<PrintItem> projectFiles)
+		public ProjectFileHandler(IEnumerable<ILibraryContentStream> sourceItems)
 		{
-			if (projectFiles != null)
+			if (sourceItems != null)
 			{
 				project = new Project();
 
-				foreach (PrintItem item in projectFiles)
+				foreach (var item in sourceItems)
 				{
-					if (sourceFiles.ContainsKey(item.FileLocation))
+					if (sourceFiles.ContainsKey(item.ID))
 					{
-						sourceFiles[item.FileLocation].ItemQuantity = sourceFiles[item.FileLocation].ItemQuantity + 1;
+						sourceFiles[item.ID].ItemQuantity += 1;
 					}
 					else
 					{
-						string fileNameOnly = Path.GetFileName(item.FileLocation);
-						if (addedFileNames.Contains(fileNameOnly))
+						if (addedFileNames.Contains(item.ID))
 						{
-							StyledMessageBox.ShowMessageBox(null, string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", fileNameOnly, item.FileLocation), "Duplicate File");
+							StyledMessageBox.ShowMessageBox(
+								null, 
+								string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", item.Name, item.ID), 
+								"Duplicate File");
 							continue;
 						}
 
-						addedFileNames.Add(fileNameOnly);
+						addedFileNames.Add(item.ID);
 
-						ManifestItem manifestItem = new ManifestItem();
-						manifestItem.ItemQuantity = 1;
-						manifestItem.Name = item.Name;
-						manifestItem.FileName = Path.GetFileName(item.FileLocation);
-
-						sourceFiles.Add(item.FileLocation, manifestItem);
+						var manifestItem = new ManifestItem()
+						{
+							ItemQuantity = 1,
+							Name = item.Name,
+							FileName = item.Name,
+							PrintItem = item
+						};
+						sourceFiles.Add(item.ID, manifestItem);
 					}
 				}
-				List<ManifestItem> manifestFiles = sourceFiles.Values.ToList();
-				project.ProjectFiles = manifestFiles;
+
+				project.ProjectFiles = sourceFiles.Values.ToList();
 			}
 		}
 
 		//Opens Save file dialog and outputs current queue as a project
 		public void SaveAs()
 		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.zip");
-
-			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
-		}
-
-		private void onSaveFileSelected(SaveFileDialogParams saveParams)
-		{
-			if (!string.IsNullOrEmpty(saveParams.FileName))
-			{
-				ExportToProjectArchive(saveParams.FileName);
-			}
+			FileDialog.SaveFileDialog(
+				new SaveFileDialogParams("Save Project|*.zip"), 
+				(saveParams) =>
+				{
+					if (!string.IsNullOrEmpty(saveParams.FileName))
+					{
+						ExportToProjectArchive(saveParams.FileName);
+					}
+				});
 		}
 
 		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
@@ -189,9 +155,9 @@ namespace MatterHackers.MatterControl
 			//Create and save the project manifest file into the temp directory
 			File.WriteAllText(defaultManifestPathAndFileName, JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented));
 
-			foreach (KeyValuePair<string, ManifestItem> item in this.sourceFiles)
+			foreach (var manifestItem in this.sourceFiles.Values)
 			{
-				CopyFileToTempFolder(item.Key, item.Value.FileName);
+				CopyFileToTempFolder(manifestItem);
 			}
 
 			// Delete or move existing file out of the way as CreateFromDirectory will not overwrite and throws an exception
@@ -206,11 +172,10 @@ namespace MatterHackers.MatterControl
 					string directory = Path.GetDirectoryName(savedFileName);
 					string fileName = Path.GetFileNameWithoutExtension(savedFileName);
 					string extension = Path.GetExtension(savedFileName);
-					string candidatePath;
 
 					for (int i = 1; i < 20; i++)
 					{
-						candidatePath = Path.Combine(directory, string.Format("{0}({1}){2}", fileName, i, extension));
+						string candidatePath = Path.Combine(directory, $"{fileName}({i}){extension}");
 						if (!File.Exists(candidatePath))
 						{
 							File.Move(savedFileName, candidatePath);
@@ -223,21 +188,22 @@ namespace MatterHackers.MatterControl
 			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName, CompressionLevel.Optimal, true);
 		}
 
-		private static void CopyFileToTempFolder(string sourceFile, string fileName)
+		private static async void CopyFileToTempFolder(ManifestItem item)
 		{
-			if (File.Exists(sourceFile))
+			try
 			{
-				try
+				var streamInterface = item.PrintItem as ILibraryContentStream;
+				using (var streamAndLength = await streamInterface.GetContentStream(null))
 				{
-					// Will not overwrite if the destination file already exists.
-					File.Copy(sourceFile, Path.Combine(archiveStagingFolder, fileName));
+					using (var outputStream = File.OpenWrite(Path.Combine(archiveStagingFolder, item.FileName)))
+					{
+						streamAndLength.Stream.CopyTo(outputStream);
+					}
 				}
-
-				// Catch exception if the file was already copied.
-				catch (IOException copyError)
-				{
-					Console.WriteLine(copyError.Message);
-				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
 			}
 		}
 

@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public event EventHandler UpdatePartStatus;
 
-		public event EventHandler StartingNextPart;
+		public event EventHandler<StringEventArgs> StartingNextPart;
 
 		public event EventHandler DoneSaving;
 
@@ -96,10 +96,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			if (allFilesToExport.Count > 0)
 			{
-				if (StartingNextPart != null)
-				{
-					StartingNextPart(this, new StringEventArgs(ItemNameBeingWorkedOn));
-				}
+				StartingNextPart?.Invoke(this, new StringEventArgs(ItemNameBeingWorkedOn));
 
 				savedGCodeFileNames = new List<string>();
 				foreach (PrintItem part in allFilesToExport)

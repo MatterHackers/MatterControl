@@ -26,6 +26,16 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
@@ -37,29 +47,15 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RayTracer;
-using MatterHackers.RayTracer.Traceable;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -69,6 +65,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 
 		public string Name { get { return "General"; } }
+
+		public bool Unlocked => true;
 
 		public IEnumerable<Type> SupportedTypes()
 		{
@@ -146,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void UpdateLoadProgress(double progress0To1, string processingState, out bool continueProcessing)
+		public void ProgressReporter(double progress0To1, string processingState, out bool continueProcessing)
 		{
 			continueProcessing = true;
 			progressBar.RatioComplete = progress0To1;
@@ -165,19 +163,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class InteractionVolumePlugin : IInteractionVolumeCreator
 	{
 		public virtual InteractionVolume CreateInteractionVolume(View3DWidget widget)
-		{
-			return null;
-		}
-	}
-
-	public interface ISideBarToolCreator
-	{
-		GuiWidget CreateSideBarTool(View3DWidget widget);
-	}
-
-	public class SideBarPlugin : ISideBarToolCreator
-	{
-		public virtual GuiWidget CreateSideBarTool(View3DWidget widget)
 		{
 			return null;
 		}
@@ -617,6 +602,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Scene.AddToSelection(child);
 			}
 		}
+		public ILibraryContentStream DragSourceModel { get; set; }
+
+		// TODO: Rename to DragDropItem
 
 		private IObject3D dragDropSource; 
 		public IObject3D DragDropSource
@@ -630,7 +618,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (InEditMode)
 				{
+					// <IObject3D>
 					dragDropSource = value;
+
+					// Clear the DragSourceModel - <ILibraryItem>
+					DragSourceModel = null;
 
 					// Suppress ui volumes when dragDropSource is not null
 					meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
@@ -638,6 +630,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		// TODO: Still valid?
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
 			return;
@@ -874,7 +867,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (AllowDragDrop())
 				{
-					mouseEvent.AcceptDrop = mouseEvent.DragFiles.TrueForAll(filePath => AllowFileDrop(filePath));
+					mouseEvent.AcceptDrop = mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath));
 
 					if (mouseEvent.AcceptDrop)
 					{
@@ -883,13 +876,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						IContentProvider contentProvider;
 						if (!string.IsNullOrEmpty(filePath)
-							&& ApplicationController.Instance.SceneContentProviders.TryGetValue(extensionWithoutPeriod, out contentProvider))
+							&& ApplicationController.Instance.Library.ContentProviders.TryGetValue(extensionWithoutPeriod, out contentProvider)
+							&& contentProvider is ISceneContentProvider)
 						{
-							DragDropSource = contentProvider.CreateItem(filePath).Object3D;
+							var sceneProvider = contentProvider as ISceneContentProvider;
+							this.DragDropSource = sceneProvider.CreateItem(new FileSystemFileItem(filePath), null).Object3D;
 						}
 						else
 						{
-							DragDropSource = new Object3D
+							this.DragDropSource = new Object3D
 							{
 								ItemType = Object3DTypes.Model,
 								Mesh = PlatonicSolids.CreateCube(10, 10, 10)
@@ -913,7 +908,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <returns>A value indicating if a new item was generated for the DragDropSource and added to the scene</returns>
 		public bool AltDragOver(Vector2 screenSpaceMousePosition)
 		{
-			if (this.HasBeenClosed)
+			if (this.HasBeenClosed || this.DragDropSource == null)
 			{
 				return false;
 			}
@@ -922,7 +917,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var meshViewerPosition = this.meshViewerWidget.TransformToScreenSpace(meshViewerWidget.LocalBounds);
 
-			if (meshViewerPosition.Contains(screenSpaceMousePosition) && DragDropSource != null)
+			// If the mouse is within this control
+			if (meshViewerPosition.Contains(screenSpaceMousePosition) 
+				&& this.DragDropSource != null)
 			{
 				var localPosition = this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition);
 
@@ -961,6 +958,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					itemAddedToScene = true;
 				}
 
+				// Move the object being dragged
 				if (Scene.HasSelection)
 				{
 					// Pass the mouse position, transformed to local cords, through to the view3D widget to move the target item
@@ -974,6 +972,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return false;
 		}
 
+		internal void FinishDrop()
+		{
+			this.DragDropSource = null;
+			this.DragSourceModel = null;
+
+			this.deferEditorTillMouseUp = false;
+			Scene_SelectionChanged(null, null);
+		}
+
 		public override void OnLoad(EventArgs args)
 		{
 			topMostParent = this.TopmostParent();
@@ -985,34 +992,76 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// </summary>
 		/// <param name="dragSource">The drag source at the original time of invocation.</param>
 		/// <returns></returns>
-		public async Task LoadDragSource()
+		public async Task LoadDragSource(ListViewItem sourceListItem)
 		{
-			// The drag source at the original time of invocation.
-			IObject3D dragSource = DragDropSource;
-			if (dragSource == null)
+			// Hold initial reference
+			IObject3D dragDropItem = DragDropSource;
+			if (dragDropItem == null)
 			{
 				return;
 			}
 
-			IObject3D loadedItem = await Task.Run(() =>
+			this.DragSourceModel = sourceListItem?.Model as ILibraryContentStream;
+
+			IObject3D loadedItem = await Task.Run(async () =>
 			{
-				string extensionWithoutPeriod = Path.GetExtension(dragSource.MeshPath).Trim('.');
-				if (ApplicationController.Instance.SceneContentProviders.ContainsKey(extensionWithoutPeriod))
+				if (File.Exists(dragDropItem.MeshPath))
 				{
-					return null;
+					string extensionWithoutPeriod = Path.GetExtension(dragDropItem.MeshPath).Trim('.');
+
+					if (ApplicationController.Instance.Library.ContentProviders.ContainsKey(extensionWithoutPeriod))
+					{
+						return null;
+					}
+					else
+					{
+						return Object3D.Load(dragDropItem.MeshPath, progress: new DragDropLoadProgress(this, dragDropItem).ProgressReporter);
+					}
 				}
-				else
+				else if (DragSourceModel != null)
 				{
-					return Object3D.Load(dragSource.MeshPath, progress: new DragDropLoadProgress(this, dragSource).UpdateLoadProgress);
+					var loadProgress = new DragDropLoadProgress(this, dragDropItem);
+
+					ContentResult contentResult;
+
+					if (sourceListItem == null)
+					{
+						contentResult = DragSourceModel.CreateContent(loadProgress.ProgressReporter);
+						await contentResult.MeshLoaded;
+					}
+					else
+					{
+						sourceListItem.StartProgress();
+
+						contentResult = DragSourceModel.CreateContent((double progress0To1, string processingState, out bool continueProcessing) =>
+						{
+							sourceListItem.ProgressReporter(progress0To1, processingState, out continueProcessing);
+							loadProgress.ProgressReporter(progress0To1, processingState, out continueProcessing);
+						});
+
+						await contentResult.MeshLoaded;
+
+						sourceListItem.EndProgress();
+
+						loadProgress.ProgressReporter(1, "", out bool continuex);
+					}
+
+					return contentResult?.Object3D;
 				}
+
+				return null;
 			});
 
 			if (loadedItem != null)
 			{
 				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
-				dragSource.Mesh = loadedItem.Mesh;
-				dragSource.Children.AddRange(loadedItem.Children);
-				dragSource.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragSource.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
+
+				dragDropItem.Mesh = loadedItem.Mesh;
+				dragDropItem.Children = loadedItem.Children;
+
+				// TODO: jlewin - also need to apply the translation to the scale/rotation from the source (loadedItem.Matrix)
+				dragDropItem.Matrix = loadedItem.Matrix * dragDropItem.Matrix;
+				dragDropItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragDropItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
 			}
 		}
 
@@ -1261,12 +1310,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// the "loading" mesh with the actual file contents
 				if (AltDragOver(screenSpaceMousePosition))
 				{
-					DragDropSource.MeshPath = mouseEvent.DragFiles.FirstOrDefault();
+					this.DragDropSource.MeshPath = mouseEvent.DragFiles.FirstOrDefault();
 
 					// Run the rest of the OnDragOver pipeline since we're starting a new thread and won't finish for an unknown time
 					base.OnMouseMove(mouseEvent);
 
-					LoadDragSource();
+					LoadDragSource(null);
 
 					// Don't fall through to the base.OnDragOver because we preemptively invoked it above
 					return;
@@ -1274,7 +1323,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// AcceptDrop anytime a DropSource has been queued
-			mouseEvent.AcceptDrop = DragDropSource != null;
+			mouseEvent.AcceptDrop = this.DragDropSource != null;
 
 			if (CurrentSelectInfo.DownOnPart && meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
@@ -1292,7 +1341,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		// TODO: Just realized we don't implement DragLeave, meaning that injected items can't be removed. Must implement
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			if (mouseEvent.DragFiles?.Count > 0)
@@ -1300,12 +1348,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (AllowDragDrop() && mouseEvent.DragFiles.Count == 1)
 				{
 					// Item is already in the scene
-					DragDropSource = null;
+					this.DragDropSource = null;
 				}
 				else if (AllowDragDrop())
 				{
 					// Items need to be added to the scene
-					var partsToAdd = mouseEvent.DragFiles.Where(filePath => AllowFileDrop(filePath)).ToArray();
+					var partsToAdd = mouseEvent.DragFiles.Where(filePath => ApplicationController.Instance.IsLoadableFile(filePath)).ToArray();
 
 					if (partsToAdd.Length > 0)
 					{
@@ -1317,12 +1365,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						loadAndAddPartsToPlate(partsToAdd);
 					}
-				}
-
-				if (deferEditorTillMouseUp)
-				{
-					this.deferEditorTillMouseUp = false;
-					Scene_SelectionChanged(null, null);
 				}
 			}
 
@@ -1348,6 +1390,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.OnMouseUp(mouseEvent);
+
+			if (deferEditorTillMouseUp)
+			{
+				this.deferEditorTillMouseUp = false;
+				Scene_SelectionChanged(null, null);
+			}
 		}
 
 		public void PartHasBeenChanged()
@@ -1535,16 +1583,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			saveButtons.VAnchor |= VAnchor.ParentCenter;
 
 			flowToAddTo.AddChild(saveButtons);
-		}
-
-		// Indicates if DragDrop operations should be allowed for the given file type
-		private bool AllowFileDrop(string filePath)
-		{
-			string extension = Path.GetExtension(filePath).ToLower();
-			string extensionWithoutPeriod = extension.Trim('.');
-
-			return !string.IsNullOrEmpty(extension)
-				&& (ApplicationSettings.OpenDesignFileParams.Contains(extension) || ApplicationController.Instance.SceneContentProviders.Keys.Contains(extensionWithoutPeriod));
 		}
 
 		// Indicates if MatterControl is in a mode that allows DragDrop
@@ -1773,6 +1811,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
 
+		public IObject3DEditor ActiveSelectionEditor { get; set; }
+
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			if (!Scene.HasSelection)
@@ -1829,20 +1869,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedObjectPanel.AddChild(editorPanel);
 
 				// Select the active editor or fall back to the first if not found
-				IObject3DEditor activeEditor = (from editor in mappedEditors
+				this.ActiveSelectionEditor = (from editor in mappedEditors
 								   let type = editor.GetType()
 								   where type.Name == selectedItem.ActiveEditor
 								   select editor).FirstOrDefault();
 
-				if(activeEditor == null)
+				// Fall back to default editor?
+				if(this.ActiveSelectionEditor == null)
 				{
-					activeEditor = mappedEditors.First();
+					this.ActiveSelectionEditor = mappedEditors.First();
 				}
 
 				int selectedIndex = 0;
 				for(int i = 0; i < dropDownList.MenuItems.Count; i++)
 				{
-					if(dropDownList.MenuItems[i].Text == activeEditor.Name)
+					if(dropDownList.MenuItems[i].Text == this.ActiveSelectionEditor.Name)
 					{
 						selectedIndex = i;
 						break;
@@ -1851,14 +1892,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				dropDownList.SelectedIndex = selectedIndex;
 
-				ShowObjectEditor(activeEditor);
+				ShowObjectEditor(this.ActiveSelectionEditor);
 			}
 		}
 
 		private void ShowObjectEditor(IObject3DEditor editor)
 		{
-
 			editorPanel.CloseAllChildren();
+
 			var newEditor = editor.Create(Scene.SelectedItem, this);
 			editorPanel.AddChild(newEditor);
 		}
@@ -1983,40 +2024,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var itemCache = new Dictionary<string, IObject3D>();
 
-				foreach (string loadedFileName in filesToLoad)
+				foreach (string filePath in filesToLoad)
 				{
-					IObject3D newItem;
+					var libraryItem = new FileSystemFileItem(filePath);
 
-					string extension = Path.GetExtension(loadedFileName).ToLower();
-					IContentProvider contentProvider;
-					if (ApplicationController.Instance.SceneContentProviders.TryGetValue(extension.Trim('.'), out contentProvider))
+					var contentResult = libraryItem.CreateContent((double progress0To1, string processingState, out bool continueProcessing) =>
 					{
-						newItem = contentProvider.CreateItem(loadedFileName).Object3D;
-					}
-					else
+						double ratioAvailable = (ratioPerFile * .5);
+						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
+						ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
+					});
+
+					contentResult?.MeshLoaded.ContinueWith((task) =>
 					{
-						newItem = Object3D.Load(loadedFileName, itemCache, (double progress0To1, string processingState, out bool continueProcessing) =>
+						if (contentResult != null && contentResult.Object3D != null)
 						{
-							continueProcessing = !this.HasBeenClosed;
-							double ratioAvailable = (ratioPerFile * .5);
-							double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
-							ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
-						});
-					}
+							Scene.ModifyChildren(children => children.Add(contentResult.Object3D));
+
+							PlatingHelper.MoveToOpenPosition(contentResult.Object3D, this.Scene);
+
+							// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
+							//this.InsertNewItem(tempScene);
+						}
+					});
 
 					if (HasBeenClosed)
 					{
 						return;
-					}
-
-					if (newItem != null)
-					{
-						Scene.ModifyChildren(children => children.Add(newItem));
-
-						PlatingHelper.MoveToOpenPosition(newItem, this.Scene);
-
-						// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
-						//this.InsertNewItem(tempScene);
 					}
 
 					currentRatioDone += ratioPerFile;
@@ -2166,7 +2200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									Name = returnInfo.newName,
 									FileLocation = Path.ChangeExtension(returnInfo.fileNameAndPath, ".mcx")
 								}, 
-								returnInfo.destinationLibraryProvider.GetProviderLocator());
+								returnInfo.destinationLibraryProvider);
 						}
 
 						// TODO: Hook up progress reporting
@@ -2181,11 +2215,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						if (returnInfo?.destinationLibraryProvider != null)
 						{
 							// save this part to correct library provider
-							LibraryProvider libraryToSaveTo = returnInfo.destinationLibraryProvider;
+							var libraryToSaveTo = returnInfo.destinationLibraryProvider;
 							if (libraryToSaveTo != null)
 							{
 								libraryToSaveTo.AddItem(printItemWrapper);
-								libraryToSaveTo.Dispose();
+
+								Debugger.Break(); // Disabled dispose
+								//libraryToSaveTo.Dispose();
 							}
 						}
 

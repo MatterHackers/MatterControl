@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 {
 	public class ActionBarPlus : FlowLayoutWidget
 	{
-		public ActionBarPlus(QueueDataView queueDataView)
+		public ActionBarPlus()
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
@@ -44,12 +44,12 @@ namespace MatterHackers.MatterControl
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				this.AddChild(new TouchScreenPrintStatusRow(queueDataView));
+				this.AddChild(new TouchScreenPrintStatusRow());
 			}
 			else
 			{
 				this.AddChild(new PrinterConnectAndSelectControl());
-				this.AddChild(new PrintStatusRow(queueDataView));
+				this.AddChild(new PrintStatusRow());
 			}
 
 			this.Padding = new BorderDouble(bottom: 6);

@@ -27,13 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
@@ -46,8 +45,8 @@ namespace MatterHackers.MatterControl.DataStorage
 		private static readonly string applicationDataFolderName = "MatterControl";
 		private readonly string datastoreName = "MatterControl.db";
 		private string applicationPath;
-		private static string applicationUserDataPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
-
+		private static string applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
+		
 		public ApplicationDataStorage()
 		//Constructor - validates that local storage folder exists, creates if necessary
 		{
@@ -80,6 +79,22 @@ namespace MatterHackers.MatterControl.DataStorage
 				Path.ChangeExtension(Path.GetRandomFileName(), "." + fileExtension.TrimStart('.'));
 
 			return Path.Combine(this.ApplicationTempDataPath, tempFileName);
+		}
+
+		public string GetNewLibraryFilePath(string extension)
+		{
+			string filePath;
+
+			// Loop until we've found a non-conflicting library path for the given extension
+			do
+			{
+				filePath = Path.Combine(
+					ApplicationDataStorage.Instance.ApplicationLibraryDataPath,
+					Path.ChangeExtension(Path.GetRandomFileName(), extension));
+
+			} while (File.Exists(filePath));
+
+			return filePath;
 		}
 
 		public string ApplicationLibraryDataPath
@@ -139,6 +154,10 @@ namespace MatterHackers.MatterControl.DataStorage
 				return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName, "data", "temp");
 			}
 		}
+
+		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+		public string CustomLibraryFoldersPath { get; } = Path.Combine(applicationUserDataPath, "LibraryFolders.conf");
 
 		/// <summary>
 		/// Returns the application user data folder
@@ -324,6 +343,16 @@ namespace MatterHackers.MatterControl.DataStorage
 			{
 				ValidateSchema();
 			}
+
+			// Contruct the root library collection if missing
+			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
+			if (rootLibraryCollection == null)
+			{
+				rootLibraryCollection = new PrintItemCollection();
+				rootLibraryCollection.Name = "_library";
+				rootLibraryCollection.Commit();
+			}
+
 			StartSession();
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,24 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
 
 namespace MatterHackers.MatterControl
 {
@@ -80,35 +80,13 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private List<FileNameAndPresentationName> queuPartFilesToAdd;
+		private IEnumerable<ILibraryContentStream> itemSource;
 		private List<PartImage> partImagesToPrint = new List<PartImage>();
 		private const double inchesPerMm = 0.0393701;
 
-		private int countThatHaveBeenSaved;
+		private static bool currentlySaving = false;
 
-		public int CountThatHaveBeenSaved
-		{
-			get
-			{
-				return countThatHaveBeenSaved;
-			}
-		}
-
-		public int CountOfParts
-		{
-			get
-			{
-				return queuPartFilesToAdd.Count;
-			}
-		}
-
-		private Vector2 sheetSizeMM;
-
-		public Vector2 SheetSizeMM
-		{
-			get { return sheetSizeMM; }
-			set { sheetSizeMM = value; }
-		}
+		public Vector2 SheetSizeMM { get; set; }
 
 		public Vector2 SheetSizeInches
 		{
@@ -116,175 +94,137 @@ namespace MatterHackers.MatterControl
 			set { SheetSizeMM = value / inchesPerMm; }
 		}
 
-		public double PixelPerMM
-		{
-			get { return inchesPerMm * SheetDpi; }
-		}
+		public double PixelPerMM => inchesPerMm * SheetDpi;
 
-		public BorderDouble PageMarginMM
-		{
-			get { return new BorderDouble(10, 5); }
-		}
+		public BorderDouble PageMarginMM { get; } = new BorderDouble(10, 5);
+		
+		public BorderDouble PageMarginPixels => PageMarginMM * PixelPerMM;
 
-		public BorderDouble PageMarginPixels
-		{
-			get { return PageMarginMM * PixelPerMM; }
-		}
+		public double PartMarginMM { get; } = 2;
 
-		public double PartMarginMM
-		{
-			get { return 2; }
-		}
+		public double PartMarginPixels =>  PartMarginMM * PixelPerMM;
 
-		public double PartMarginPixels
-		{
-			get { return PartMarginMM * PixelPerMM; }
-		}
-
-		public double PartPaddingMM
-		{
-			get { return 2; }
-		}
-
-		public double PartPaddingPixels
-		{
-			get { return PartPaddingMM * PixelPerMM; }
-		}
+		public double PartPaddingMM { get; } = 2;
+		
+		public double PartPaddingPixels => PartPaddingMM * PixelPerMM;
 
 		public int SheetDpi { get; set; }
 
-		public PartsSheet(List<PrintItem> dataSource, string pathAndFileToSaveTo)
+		public PartsSheet(IEnumerable<ILibraryContentStream> itemSource, string pathAndFileToSaveTo)
 		{
 			this.pathAndFileToSaveTo = pathAndFileToSaveTo;
 			SheetDpi = 300;
 			SheetSizeInches = new Vector2(8.5, 11);
-			// make sure we have our own list so it can't get stepped on while we output it.
-			queuPartFilesToAdd = new List<FileNameAndPresentationName>();
-			foreach (PrintItem queueToCopy in dataSource)
-			{
-				queuPartFilesToAdd.Add(new FileNameAndPresentationName(queueToCopy.FileLocation, queueToCopy.Name));
-			}
+
+			this.itemSource = itemSource;
 		}
 
 		private void OnDoneSaving()
 		{
-			if (DoneSaving != null)
-			{
-				DoneSaving(this, new StringEventArgs(Path.GetFileName("Saving to PDF")));
-			}
+			DoneSaving?.Invoke(this, new StringEventArgs(Path.GetFileName("Saving to PDF")));
 		}
 
-		public void SaveSheets()
+		public async Task SaveSheets()
 		{
-#if false
-            SavingFunction();
-#else
-			Thread saveThread = new Thread(SavingFunction);
-			saveThread.Name = "Save Part Sheet";
-			saveThread.IsBackground = true;
-			saveThread.Start();
-#endif
-		}
-
-		private static bool currentlySaving = false;
-
-		public void SavingFunction()
-		{
-			currentlySaving = true;
-			countThatHaveBeenSaved = 0;
-			// first create images for all the parts
-			foreach (FileNameAndPresentationName queuePartFileName in queuPartFilesToAdd)
+			await Task.Run(async () =>
 			{
-				List<MeshGroup> loadedMeshGroups = Object3D.Load(queuePartFileName.fileName)?.ToMeshGroupList();
-				if (loadedMeshGroups != null)
+				currentlySaving = true;
+				// first create images for all the parts
+				foreach (var item in itemSource)
 				{
-					bool firstMeshGroup = true;
-					AxisAlignedBoundingBox aabb = null;
-					foreach (MeshGroup meshGroup in loadedMeshGroups)
+					var contentResult = item.CreateContent();
+
+					await contentResult.MeshLoaded;
+
+					List<MeshGroup> loadedMeshGroups = contentResult.Object3D?.ToMeshGroupList();
+					if (loadedMeshGroups?.Count > 0)
 					{
-						if (firstMeshGroup)
+						bool firstMeshGroup = true;
+						AxisAlignedBoundingBox aabb = null;
+						foreach (MeshGroup meshGroup in loadedMeshGroups)
 						{
-							aabb = meshGroup.GetAxisAlignedBoundingBox();
-							firstMeshGroup = false;
+							if (firstMeshGroup)
+							{
+								aabb = meshGroup.GetAxisAlignedBoundingBox();
+								firstMeshGroup = false;
+							}
+							else
+							{
+								aabb = AxisAlignedBoundingBox.Union(aabb, meshGroup.GetAxisAlignedBoundingBox());
+							}
 						}
-						else
+
+						RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
+						double widthInMM = bounds2D.Width + PartMarginMM * 2;
+						double textSpaceMM = 5;
+						double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
+
+						TypeFacePrinter typeFacePrinter = new TypeFacePrinter(item.Name, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
+						double sizeOfNameX = typeFacePrinter.GetSize().x + PartMarginPixels * 2;
+						Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
+
+						ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.x)), (int)(sizeOfRender.y));
+						typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelPerMM);
+
+						Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
+
+						RectangleDouble rectBounds = new RectangleDouble(0, 0, imageOfPart.Width, imageOfPart.Height);
+						double strokeWidth = .5 * PixelPerMM;
+						rectBounds.Inflate(-strokeWidth / 2);
+						RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelPerMM);
+						partGraphics2D.Render(rect, RGBA_Bytes.LightGray);
+						Stroke rectOutline = new Stroke(rect, strokeWidth);
+						partGraphics2D.Render(rectOutline, RGBA_Bytes.DarkGray);
+
+						foreach (MeshGroup meshGroup in loadedMeshGroups)
 						{
-							aabb = AxisAlignedBoundingBox.Union(aabb, meshGroup.GetAxisAlignedBoundingBox());
+							foreach (Mesh loadedMesh in meshGroup.Meshes)
+							{
+								PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
+							}
 						}
+						partGraphics2D.Render(typeFacePrinter, RGBA_Bytes.Black);
+
+						partImagesToPrint.Add(new PartImage(imageOfPart));
 					}
 
-					RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
-					double widthInMM = bounds2D.Width + PartMarginMM * 2;
-					double textSpaceMM = 5;
-					double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
-
-					TypeFacePrinter typeFacePrinter = new TypeFacePrinter(queuePartFileName.presentationName, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
-					double sizeOfNameX = typeFacePrinter.GetSize().x + PartMarginPixels * 2;
-					Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
-
-					ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.x)), (int)(sizeOfRender.y));
-					typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelPerMM);
-
-					Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
-
-					RectangleDouble rectBounds = new RectangleDouble(0, 0, imageOfPart.Width, imageOfPart.Height);
-					double strokeWidth = .5 * PixelPerMM;
-					rectBounds.Inflate(-strokeWidth / 2);
-					RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelPerMM);
-					partGraphics2D.Render(rect, RGBA_Bytes.LightGray);
-					Stroke rectOutline = new Stroke(rect, strokeWidth);
-					partGraphics2D.Render(rectOutline, RGBA_Bytes.DarkGray);
-
-					foreach (MeshGroup meshGroup in loadedMeshGroups)
-					{
-						foreach (Mesh loadedMesh in meshGroup.Meshes)
-						{
-							PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
-						}
-					}
-					partGraphics2D.Render(typeFacePrinter, RGBA_Bytes.Black);
-
-					partImagesToPrint.Add(new PartImage(imageOfPart));
-
-					countThatHaveBeenSaved++;
+					UpdateRemainingItems?.Invoke(this, new StringEventArgs(item.Name));
 				}
 
-				if (UpdateRemainingItems != null)
+				partImagesToPrint.Sort(BiggestToLittlestImages);
+
+				PdfDocument document = new PdfDocument();
+				document.Info.Title = "MatterHackers Parts Sheet";
+				document.Info.Author = "MatterHackers Inc.";
+				document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
+				document.Info.Keywords = "MatterControl, STL, 3D Printing";
+
+				int nextPartToPrintIndex = 0;
+				int plateNumber = 1;
+				bool done = false;
+
+				while (!done && nextPartToPrintIndex < partImagesToPrint.Count)
 				{
-					UpdateRemainingItems(this, new StringEventArgs(Path.GetFileName(queuePartFileName.presentationName)));
+					PdfPage pdfPage = document.AddPage();
+					CreateOnePage(plateNumber++, ref nextPartToPrintIndex, pdfPage);
 				}
-			}
 
-			partImagesToPrint.Sort(BiggestToLittlestImages);
+				try
+				{
+					// save the final document
+					document.Save(pathAndFileToSaveTo);
 
-			PdfDocument document = new PdfDocument();
-			document.Info.Title = "MatterHackers Parts Sheet";
-			document.Info.Author = "MatterHackers Inc.";
-			document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
-			document.Info.Keywords = "MatterControl, STL, 3D Printing";
+					// Now try and open the document. This will launch whatever PDF viewer is on the system and ask it
+					// to show the file (at least on Windows).
+					Process.Start(pathAndFileToSaveTo);
+				}
+				catch (Exception)
+				{
+				}
 
-			int nextPartToPrintIndex = 0;
-			int plateNumber = 1;
-			bool done = false;
-			while (!done && nextPartToPrintIndex < partImagesToPrint.Count)
-			{
-				PdfPage pdfPage = document.AddPage();
-				CreateOnePage(plateNumber++, ref nextPartToPrintIndex, pdfPage);
-			}
-			try
-			{
-				// save the final document
-				document.Save(pathAndFileToSaveTo);
-				// Now try and open the document. This will launch whatever PDF viewer is on the system and ask it
-				// to show the file (at least on Windows).
-				Process.Start(pathAndFileToSaveTo);
-			}
-			catch (Exception)
-			{
-			}
-
-			OnDoneSaving();
-			currentlySaving = false;
+				OnDoneSaving();
+				currentlySaving = false;
+			});
 		}
 
 		private static int BiggestToLittlestImages(PartImage one, PartImage two)

@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private TextObject injectedItem = null;
 
+		public bool Unlocked { get; } = true;
+
 		public IEnumerable<Type> SupportedTypes()
 		{
 			return new Type[] { typeof(TextObject) };

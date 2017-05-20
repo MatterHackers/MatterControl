@@ -1,15 +1,40 @@
-﻿using MatterHackers.Agg;
+﻿/*
+Copyright (c) 2017, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
+using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.CustomWidgets.LibrarySelector;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.MatterControl.PrintQueue;
-using System;
-using System.Collections.Generic;
-using System.IO;
+using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
@@ -18,10 +43,10 @@ namespace MatterHackers.MatterControl
 		private Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
-		LibrarySelectorWidget librarySelectorWidget;
+		ListView librarySelectorWidget;
 		Button saveAsButton;
 
-        public SaveAsWindow(Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator, bool showQueue, bool getNewName)
+        public SaveAsWindow(Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -69,13 +94,24 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor
 			};
 
-			librarySelectorWidget = new LibrarySelectorWidget(showQueue);
+			// TODO: Needs a separate implementation that doesn't change the standard list view contents as we browse around
+			System.Diagnostics.Debugger.Break();
+			librarySelectorWidget = new ListView(ApplicationController.Instance.Library);
 
 			// put in the bread crumb widget
-			FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget.SetCurrentLibraryProvider, librarySelectorWidget.CurrentLibraryProvider);
+			var breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget);
 			middleRowContainer.AddChild(breadCrumbWidget);
 
-			librarySelectorWidget.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
+			// TODO: Resolve
+			/*
+			librarySelectorWidget.LibraryContainerChanged += (s, e) =>
+			{
+				breadCrumbWidget.SetBreadCrumbs(e.ActiveContainer);
+
+				// Once we have navigated to any provider enable the ability to click the save as button.
+				saveAsButton.Enabled = true;
+
+			}; */
 
 			// put in the area to pick the provider to save to
 			// Adds text box and check box to the above container
@@ -128,11 +164,8 @@ namespace MatterHackers.MatterControl
 			// Disable the save as button until the user actually selects a provider
 			saveAsButton.Enabled = false;
 			saveAsButton.Cursor = Cursors.Hand;
-			buttonRow.AddChild(saveAsButton);
-
-			librarySelectorWidget.ChangedCurrentLibraryProvider += EnableSaveAsButtonOnChangedLibraryProvider;
-
 			saveAsButton.Click += saveAsButton_Click;
+			buttonRow.AddChild(saveAsButton);
 
 			//Adds SaveAs and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -151,12 +184,6 @@ namespace MatterHackers.MatterControl
 			this.AddChild(topToBottom);
 
 			ShowAsSystemWindow();
-		}
-
-		private void EnableSaveAsButtonOnChangedLibraryProvider(LibraryProvider arg1, LibraryProvider arg2)
-		{
-			// Once we have navigated to any provider enable the ability to click the save as button.
-			saveAsButton.Enabled = true;
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -192,8 +219,7 @@ namespace MatterHackers.MatterControl
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
 				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, librarySelectorWidget.CurrentLibraryProvider);
-				functionToCallOnSaveAs(returnInfo, null);
+				functionToCallOnSaveAs(new SaveAsReturnInfo(newName, fileNameAndPath, librarySelectorWidget.ActiveContainer), null);
 
 				CloseOnIdle();
 			}
@@ -203,9 +229,9 @@ namespace MatterHackers.MatterControl
 		{
 			public string fileNameAndPath;
 			public string newName;
-			public LibraryProvider destinationLibraryProvider;
+			public ILibraryContainer destinationLibraryProvider;
 
-			public SaveAsReturnInfo(string newName, string fileNameAndPath, LibraryProvider destinationLibraryProvider)
+			public SaveAsReturnInfo(string newName, string fileNameAndPath, ILibraryContainer destinationLibraryProvider)
 			{
 				this.destinationLibraryProvider = destinationLibraryProvider;
 				this.newName = newName;

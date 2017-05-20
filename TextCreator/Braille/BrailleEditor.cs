@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private TextObject injectedItem = null;
 
+		public bool Unlocked { get; } = true;
+
 		public IEnumerable<Type> SupportedTypes()
 		{
 			return new Type[] { typeof(TextObject) };

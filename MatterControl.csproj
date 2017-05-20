@@ -135,16 +135,16 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
+    <Compile Include="ApplicationView\ApplicationController.cs" />
+    <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionAction.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
     <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
-    <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="ApplicationView\TouchscreenTabView.cs" />
     <Compile Include="ApplicationView\AdvancedControlsPanel.cs" />
-    <Compile Include="ApplicationView\FirstPanelTabView.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
     <Compile Include="ConfigurationPage\CloudSettings\CloudSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
@@ -166,21 +166,49 @@
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
-    <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItem.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\FolderBreadCrumbWidget.cs" />
-    <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItemCollection.cs" />
-    <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorWidget.cs" />
     <Compile Include="CustomWidgets\PopOutTextTab.cs" />
     <Compile Include="CustomWidgets\PrintingWindow.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
-    <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
     <Compile Include="DataStorage\Models.cs" />
+    <Compile Include="Library\ContentProviders\MeshContentProvider.cs" />
+    <Compile Include="Library\ExtensionMethods.cs" />
+    <Compile Include="Library\Interfaces\ILibraryContainer.cs" />
+    <Compile Include="Library\Interfaces\ILibraryContainerLink.cs" />
+    <Compile Include="Library\Interfaces\IThumbnail.cs" />
+    <Compile Include="Library\Interfaces\ILibraryItem.cs" />
+    <Compile Include="Library\Interfaces\KnownLengthStream.cs" />
+    <Compile Include="Library\Providers\CreatorsContainer.cs" />
+    <Compile Include="Library\Providers\LibraryConfig.cs" />
+    <Compile Include="Library\Providers\MatterControl\CalibrationPartsContainer.cs" />
+    <Compile Include="Library\Widgets\ListView\IconListView.cs" />
+    <Compile Include="Library\Widgets\ListView\IListContentView.cs" />
+    <Compile Include="Library\Widgets\ListView\ListViewItemBase.cs" />
+    <Compile Include="Library\Providers\MessageItem.cs" />
+    <Compile Include="Library\Providers\GeneratorItem.cs" />
+    <Compile Include="Library\Widgets\ListView\RowListView.cs" />
+    <Compile Include="Library\Providers\MatterControl\HistoryContainer.cs" />
+    <Compile Include="Library\Providers\MatterControl\SqliteLibraryContainer.cs" />
+    <Compile Include="Library\Providers\MatterControl\PrintQueueContainer.cs" />
+    <Compile Include="Library\Providers\SDCard\SDCardContainer.cs" />
+    <Compile Include="Library\Providers\SDCard\SDCardFileItem.cs" />
+    <Compile Include="Library\Providers\LibraryContainer.cs" />
+    <Compile Include="Library\Providers\LibraryProviderHelpers.cs" />
+    <Compile Include="Library\Widgets\ListView\PrintItemAction.cs" />
+    <Compile Include="Library\Providers\DynamicContainerLink.cs" />
+    <Compile Include="Library\Providers\FileSystem\FileSystemContainer.cs" />
+    <Compile Include="Library\Providers\FileSystem\FileSystemItem.cs" />
+    <Compile Include="Library\Providers\FileSystem\FileSystemFileItem.cs" />
+    <Compile Include="Library\Providers\RootLibraryContainer.cs" />
+    <Compile Include="Library\Providers\Zip\LocalZipContainerLink.cs" />
+    <Compile Include="Library\Providers\Zip\ZipMemoryItem.cs" />
+    <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
+    <Compile Include="Library\Widgets\ListView\ListView.cs" />
+    <Compile Include="Library\Widgets\ListView\ListViewItem.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
-    <Compile Include="Library\RenameItemWindow.cs" />
-    <Compile Include="Library\Provider\LibraryProviderHistory.cs" />
-    <Compile Include="Library\Provider\LibraryProviderQueue.cs" />
+    <Compile Include="Library\Widgets\SystemWindows\RenameItemWindow.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
@@ -243,14 +271,7 @@
     <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="History\PrintHistoryData.cs" />
-    <Compile Include="Library\CreateFolderWindow.cs" />
-    <Compile Include="Library\LibraryRowItemCollection.cs" />
-    <Compile Include="Library\LibraryRowItemPart.cs" />
-    <Compile Include="Library\Provider\LibraryProviderPlugin.cs" />
-    <Compile Include="Library\Provider\LibraryProviderSelector.cs" />
-    <Compile Include="Library\Provider\LibraryProviderFileSystem.cs" />
-    <Compile Include="Library\Provider\LibraryProviderSqlite.cs" />
-    <Compile Include="Library\Provider\LibraryProvider.cs" />
+    <Compile Include="Library\Widgets\SystemWindows\CreateFolderWindow.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
     <Compile Include="SetupWizard\EditPrinterSettingsPage.cs" />
@@ -275,15 +296,12 @@
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
     <Compile Include="Utilities\AuthenticationData.cs" />
-    <Compile Include="Queue\WrappedQueueRowItem.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
-    <Compile Include="History\PrintHistoryDataView.cs" />
     <Compile Include="History\PrintHistoryListItem.cs" />
-    <Compile Include="History\PrintHistoryWidget.cs" />
     <Compile Include="Queue\QueueData.cs" />
     <Compile Include="SettingsManagement\OemSettings.cs" />
     <Compile Include="SettingsManagement\UserSettingsFields.cs" />
@@ -357,20 +375,14 @@
     <Compile Include="PrinterControls\PrinterConnections\ConnectionWizardPage.cs" />
     <Compile Include="PrinterControls\TemperatureIndicator.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
-    <Compile Include="Library\LibraryDataView.cs" />
-    <Compile Include="Library\LibraryRowItem.cs" />
-    <Compile Include="Library\PrintLibraryWidget.cs" />
+    <Compile Include="Library\Widgets\PrintLibraryWidget.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderProcess.cs" />
     <Compile Include="CustomWidgets\PartThumbnailWidget.cs" />
     <Compile Include="Queue\PrintItemWrapper.cs" />
-    <Compile Include="Queue\QueueRowItem.cs" />
     <Compile Include="MatterControlApplication.cs" />
-    <Compile Include="Queue\QueueDataView.cs" />
-    <Compile Include="Queue\OptionsMenu\QueueOptionsMenu.cs" />
     <Compile Include="Utilities\ProjectFileHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\WebUtilities\RequestManager.cs" />
-    <Compile Include="Queue\QueueDataWidget.cs" />
     <Compile Include="SettingsManagement\ApplicationSettings.cs" />
     <Compile Include="SettingsManagement\UserSettings.cs" />
     <Compile Include="SlicerConfiguration\SettingsControlBar.cs" />
@@ -459,6 +471,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Library\LibraryProviders.cd" />
+    <None Include="Library\Widgets\ListView\ListView.cd" />
     <None Include="SlicerConfiguration\Settings\SettingsDiagram.cd" />
     <None Include="packages.config" />
     <None Include="StaticData\OEMSettings\Settings.json" />
@@ -495,6 +509,10 @@
     <ProjectReference Include="Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj">
       <Project>{DF6845CD-64C6-4263-8357-DA8066855739}</Project>
       <Name>MarchingSquares</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj">
+      <Project>{1a901129-c885-425f-8d4b-86698f98a2b4}</Project>
+      <Name>MeshThumbnails</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
       <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>

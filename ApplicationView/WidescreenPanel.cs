@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl
 
 		public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
 
-		private QueueDataView queueDataView = null;
-
 		public WidescreenPanel()
 			: base(FlowDirection.LeftToRight)
 		{
@@ -87,16 +85,20 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		private CompactSlidePanel compactSlidePanel;
+		AdvancedControlsPanel advancedControlsPanel;
 
 		private void LoadCompactView()
 		{
-			queueDataView = new QueueDataView();
-
 			ColumnOne.RemoveAllChildren();
-			ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-			compactSlidePanel = new CompactSlidePanel(queueDataView);
-			ColumnOne.AddChild(compactSlidePanel);
+			ColumnOne.AddChild(new ActionBarPlus());
+
+			advancedControlsPanel = new AdvancedControlsPanel()
+			{
+				Name = "For - CompactSlidePanel"
+			};
+
+			ColumnOne.AddChild(new PrintProgressBar());
+			ColumnOne.AddChild(advancedControlsPanel);
 			ColumnOne.AnchorAll();
 		}
 
@@ -164,7 +166,9 @@ namespace MatterHackers.MatterControl
 					ColumnTwo.Visible = true;
 					ColumnOne.HAnchor = HAnchor.AbsolutePosition;
 					ColumnOne.Width = ColumnOneFixedWidth; // it can hold the slice settings so it needs to be bigger.
-					ColumnOne.MinimumSize = new Vector2(Math.Max(compactSlidePanel.TabBarWidth, ColumnOneFixedWidth), 0); //Ordering here matters - must go after children are added
+
+					// TODO: Couldn't this just use this.Width so that we could lose the advancedControlsPanel variable?
+					ColumnOne.MinimumSize = new Vector2(Math.Max(advancedControlsPanel.Width, ColumnOneFixedWidth), 0); //Ordering here matters - must go after children are added
 					break;
 			}
 		}

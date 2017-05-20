@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
+using MatterHackers.MatterControl.PrintLibrary;
 
 namespace MatterHackers.MatterControl
 {
@@ -91,32 +92,20 @@ namespace MatterHackers.MatterControl
 
 		private TabControl CreateAdvancedControlsTab()
 		{
-			TabControl advancedControls = new TabControl();
-
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			var advancedControls = new TabControl();
 			advancedControls.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
-			advancedControls.TabBar.Margin = new BorderDouble(0, 0);
-			advancedControls.TabBar.Padding = new BorderDouble(0, 2);
+			advancedControls.TabBar.Margin = 0;
+			advancedControls.TabBar.Padding = new BorderDouble(0, 12);
 
-			int textSize = 16;
-
-			// this means we are in compact view and so we will make the tabs text a bit smaller
-			textSize = 14;
-			TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
-			advancedControlsButtonFactory.fontSize = 14;
-			advancedControlsButtonFactory.invertImageLocation = false;
-			backButton = advancedControlsButtonFactory.Generate("Back".Localize(), StaticData.Instance.LoadIcon("icon_arrow_left_32x32.png", 32, 32));
-			backButton.ToolTipText = "Switch to Queue, Library and History".Localize();
-			backButton.Margin = new BorderDouble(right: 3);
-			backButton.VAnchor = VAnchor.ParentBottom;
-			backButton.Cursor = Cursors.Hand;
-			backButton.Click += (s, e) => BackClicked?.Invoke(this, null);
-
-			advancedControls.TabBar.AddChild(backButton);
-
-			advancedControls.TabBar.AddChild(new HorizontalSpacer());
+			int textSize = 14;
 
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
+
+			var libraryTabPage = new TabPage(new PrintLibraryWidget(), "Library".Localize().ToUpper());
+			advancedControls.AddTab(new SimpleTextTabWidget(libraryTabPage, "Library Tab", 15,
+					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
@@ -127,26 +116,38 @@ namespace MatterHackers.MatterControl
 				sliceSettingsWidget = new NoSettingsWidget();
 			}
 
-			var sliceSettingsTabPage = new TabPage(sliceSettingsWidget, "Settings".Localize().ToUpper());
-			var sliceSettingPopOut = new PopOutTextTabWidget(sliceSettingsTabPage, SliceSettingsTabName, new Vector2(590, 400), textSize);
+			var sliceSettingPopOut = new PopOutTextTabWidget(
+					new TabPage(sliceSettingsWidget, "Settings".Localize().ToUpper()),
+					SliceSettingsTabName,
+					new Vector2(590, 400),
+					textSize);
+
+			var controlsPopOut = new PopOutTextTabWidget(
+					new TabPage(new ManualPrinterControls(), "Controls".Localize().ToUpper()),
+					ControlsTabName,
+					new Vector2(400, 300),
+					textSize);
+
 			advancedControls.AddTab(sliceSettingPopOut);
-
-			var controlsTabPage = new TabPage(new ManualPrinterControls(), "Controls".Localize().ToUpper());
-			var controlsPopOut = new PopOutTextTabWidget(controlsTabPage, ControlsTabName, new Vector2(400, 300), textSize);
 			advancedControls.AddTab(controlsPopOut);
+;
 
+#if !__ANDROID__
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
-#if !__ANDROID__
 				MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
 				MenuOptionSettings.controlsPopOut = controlsPopOut;
-#endif
 			}
+#endif
 
-			var optionsControls = new PrinterConfigurationScrollWidget();
-			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(optionsControls, "Options".Localize().ToUpper()), "Options Tab", textSize,
-						ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+			advancedControls.AddTab(
+				new SimpleTextTabWidget(
+					new TabPage(new PrinterConfigurationScrollWidget(), "Options".Localize().ToUpper()), 
+					"Options Tab", 
+					textSize,
+					ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
+			/*
 			// Make sure we are on the right tab when we create this view
 			{
 				string selectedTab = UserSettings.Instance.get(ThirdPanelTabView_AdvancedControls_CurrentTab);
@@ -160,7 +161,10 @@ namespace MatterHackers.MatterControl
 						UserSettings.Instance.set(ThirdPanelTabView_AdvancedControls_CurrentTab, selectedTabName);
 					}
 				};
-			}
+			} */
+
+			// MatterControl historically started with the queue selected, force to 0 to remain consistent
+			advancedControls.SelectedTabIndex = 0;
 
 			return advancedControls;
 		}

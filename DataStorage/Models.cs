@@ -27,18 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using MatterHackers.VectorMath;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
