@@ -474,7 +474,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 					var view3D = systemWindow.ChildrenRecursive<View3DWidget>().FirstOrDefault();
 
-					if (view3D != null) 
+					if (view3D != null && false)
 						//&& view3D.ShouldBeSaved)
 					{
 						StyledMessageBox.ShowMessageBox((bool startPrint) =>
