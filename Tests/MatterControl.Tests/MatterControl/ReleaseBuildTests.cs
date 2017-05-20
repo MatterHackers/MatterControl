@@ -105,18 +105,13 @@ namespace MatterControl.Tests
 		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
 		public async Task MatterControlRuns()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				Assert.IsTrue(testRunner.NameExists("SettingsAndControls"));
-
+				Assert.IsTrue(testRunner.WaitForName("Library Tab", 3));
 				testRunner.ClickByName("Library Tab");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
+			});
 		}
 #endif
 

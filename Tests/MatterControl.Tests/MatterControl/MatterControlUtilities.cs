@@ -41,7 +41,6 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
@@ -354,11 +353,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			File.WriteAllText(mcpPath, JsonConvert.SerializeObject(queueItemData, Formatting.Indented));
 
 			Assert.IsTrue(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
-		}
-
-		public static LibraryProvider CurrentProvider()
-		{
-			return ApplicationController.Instance.CurrentLibraryDataView.CurrentLibraryProvider;
 		}
 
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)

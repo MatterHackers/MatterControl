@@ -27,88 +27,93 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
+using MatterHackers.MatterControl.Library;
 
-namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
+namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class FolderBreadCrumbWidget : FlowLayoutWidget
 	{
-		private static TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory();
-
-		private Action<LibraryProvider> SwitchToLibraryProvider;
-
-		public FolderBreadCrumbWidget(Action<LibraryProvider> SwitchToLibraryProvider, LibraryProvider currentLibraryProvider)
+		private ListView listView;
+		private TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory()
 		{
+			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			Margin = new BorderDouble(10, 0),
+			borderWidth = 0
+		};
+
+		public FolderBreadCrumbWidget(ListView listView)
+		{
+			this.listView = listView;
 			this.Name = "FolderBreadCrumbWidget";
-			this.SwitchToLibraryProvider = SwitchToLibraryProvider;
-			UiThread.RunOnIdle(() => SetBreadCrumbs(null, currentLibraryProvider));
-
-			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.disabledFillColor = navigationButtonFactory.normalFillColor;
-			navigationButtonFactory.Margin = new BorderDouble(10, 0);
-			navigationButtonFactory.borderWidth = 0;
-
+			UiThread.RunOnIdle(() => SetBreadCrumbs(listView.ActiveContainer));
 			HAnchor = HAnchor.ParentLeftRight;
+
+			navigationButtonFactory.disabledFillColor = navigationButtonFactory.normalFillColor;
 		}
 
-		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
+		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)
 		{
-			LibraryProvider displayingProvider = currentLibraryProvider;
+			var container = item;
+			while (container != null)
+			{
+				yield return container;
+				container = container.Parent;
+			}
+		}
 
+		public void SetBreadCrumbs(ILibraryContainer currentContainer)
+		{
 			this.CloseAllChildren();
 
-			List<LibraryProvider> parentProviderList = new List<LibraryProvider>();
-			while (currentLibraryProvider != null)
+			bool haveFilterRunning = !string.IsNullOrEmpty(currentContainer.KeywordFilter);
+
+			var icon = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "up_folder_20.png");
+			//icon = LibraryProviderHelpers.ResizeImage(icon, 20, 20);
+
+			Button upbutton = navigationButtonFactory.Generate("", icon);
+			upbutton.Name = "Library Up Button";
+			upbutton.Margin = new BorderDouble(3, 0, 3, 0);
+			upbutton.Click += (s, e) =>
 			{
-				parentProviderList.Add(currentLibraryProvider);
-				currentLibraryProvider = currentLibraryProvider.ParentLibraryProvider;
-			}
+				if (listView.ActiveContainer.Parent != null)
+				{
+					UiThread.RunOnIdle(() => listView.LoadContainer(listView.ActiveContainer.Parent));
+				}
+			};
+			this.AddChild(upbutton);
 
-			bool haveFilterRunning = !string.IsNullOrEmpty(displayingProvider.KeywordFilter);
+			bool firstItem = true;
 
-			bool first = true;
-			for (int i = parentProviderList.Count - 1; i >= 0; i--)
+			foreach(var container in ItemAndParents(currentContainer).Reverse())
 			{
-				LibraryProvider parentLibraryProvider = parentProviderList[i];
-				if (!first)
+				if (!firstItem)
 				{
-					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
-					separator.VAnchor = VAnchor.ParentCenter;
-					separator.Margin = new BorderDouble(0);
-					this.AddChild(separator);
-				}
-
-				Button gotoProviderButton = navigationButtonFactory.Generate(parentLibraryProvider.Name);
-				gotoProviderButton.Name = "Bread Crumb Button " + parentLibraryProvider.Name;
-				if (first)
-				{
-					gotoProviderButton.Margin = new BorderDouble(0, 0, 3, 0);
-				}
-				else
-				{
-					gotoProviderButton.Margin = new BorderDouble(3, 0);
-				}
-				gotoProviderButton.Click += (sender2, e2) =>
-				{
-					UiThread.RunOnIdle(() =>
+					// Create separator chevron
+					this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
 					{
-						SwitchToLibraryProvider(parentLibraryProvider);
+						VAnchor = VAnchor.ParentCenter,
+						Margin = new BorderDouble(0)
 					});
+				}
+
+				Button gotoProviderButton = navigationButtonFactory.Generate(container.Name);
+				gotoProviderButton.Name = "Bread Crumb Button " + container.Name;
+				gotoProviderButton.Margin = new BorderDouble(firstItem ? 0 : 3, 0, 3, 0);
+				gotoProviderButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(() => listView.LoadContainer(container));
 				};
 				this.AddChild(gotoProviderButton);
-				first = false;
+
+				firstItem = false;
 			}
 
 			if (haveFilterRunning)

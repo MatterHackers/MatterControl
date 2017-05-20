@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MatterHackers.MatterControl.CustomWidgets.ListViewItem">
+    <Position X="9" Y="1.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAIAAAAAABAAABAAAAAAAAAAAAAAABlAgASAAAAAA=</HashCode>
+      <FileName>LibraryProviders\ListView\ListViewItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.CustomWidgets.ListViewItemBase" Collapsed="true">
+    <Position X="4.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAIEAECAAAABQAEAACBABEYIBKgAASAAKAEk=</HashCode>
+      <FileName>LibraryProviders\ListView\ListViewItemBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.CustomWidgets.IconListView">
+    <Position X="5.25" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAIAAgAAAAwAACAAAAABAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\ListView\IconListView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.CustomWidgets.IconViewItem" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="2" />
+    <InheritanceLine Type="MatterHackers.MatterControl.CustomWidgets.ListViewItemBase" FixedFromPoint="true">
+      <Path>
+        <Point X="4.25" Y="0.938" />
+        <Point X="3.5" Y="0.938" />
+        <Point X="3.5" Y="1.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACCAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\ListView\IconListView.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.CustomWidgets.RowListView">
+    <Position X="2.75" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAwAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\ListView\RowListView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.CustomWidgets.RowViewItem" Collapsed="true">
+    <Position X="5.25" Y="1.75" Width="2" />
+    <InheritanceLine Type="MatterHackers.MatterControl.CustomWidgets.ListViewItemBase" FixedFromPoint="true">
+      <Path>
+        <Point X="5.75" Y="0.938" />
+        <Point X="6.5" Y="0.938" />
+        <Point X="6.5" Y="1.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>QAEAAAAAAIEYAAACAAAACQgCAAAAAIAQAQAAQwAAAAE=</HashCode>
+      <FileName>LibraryProviders\ListView\RowListView.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="MatterHackers.MatterControl.CustomWidgets.IListContentView">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAwAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\ListView\IListContentView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -472,7 +472,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					{
 						if (shouldRebuildThumbnails)
 						{
-							string directoryToRemove = PartThumbnailWidget.ThumbnailPath();
+							string directoryToRemove = PartThumbnailWidget.ThumbnailsPath;
 							try
 							{
 								if (Directory.Exists(directoryToRemove))

@@ -153,16 +153,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string getSlicerFullPath()
 		{
-			SliceEngineInfo info = getSliceEngineInfoByType(ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType());
-			if (info != null)
-			{
-				return info.GetEnginePath();
-			}
-			else
-			{
-				//throw new Exception("Slice engine is unavailable");
-				return null;
-			}
+			var engineType = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType();
+			return getSliceEngineInfoByType(engineType)?.GetEnginePath();
 		}
 
 		public static List<bool> extrudersUsed = new List<bool>();
@@ -362,60 +354,65 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (listOfSlicingItems.Count > 0)
 				{
 					PrintItemWrapper itemToSlice = listOfSlicingItems[0];
-					bool doMergeInSlicer = false;
+					bool doMergeInSlicer = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice;
 					string mergeRules = "";
-					doMergeInSlicer = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice;
+					
 					string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
 					string fileToSlice = stlFileLocations[0];
+
 					// check that the STL file is currently on disk
 					if (File.Exists(fileToSlice))
 					{
 						itemToSlice.CurrentlySlicing = true;
 
-						string currentConfigurationFileAndPath = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, "config_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString() + ".ini");
+						string configFilePath = Path.Combine(
+							ApplicationDataStorage.Instance.GCodeOutputPath,
+							string.Format("config_{0}.ini", ActiveSliceSettings.Instance.GetLongHashCode().ToString()));
 
-						string gcodePathAndFileName = itemToSlice.GetGCodePathAndFileName();
-						bool gcodeFileIsComplete = itemToSlice.IsGCodeFileComplete(gcodePathAndFileName);
+						string gcodeFilePath = itemToSlice.GetGCodePathAndFileName();
+						bool gcodeFileIsComplete = itemToSlice.IsGCodeFileComplete(gcodeFilePath);
 
-						if (!File.Exists(gcodePathAndFileName) || !gcodeFileIsComplete)
+						if (!File.Exists(gcodeFilePath) || !gcodeFileIsComplete)
 						{
 							string commandArgs = "";
 
 							switch (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
 							{
 								case SlicingEngineTypes.Slic3r:
-									Slic3rEngineMappings.WriteSliceSettingsFile(currentConfigurationFileAndPath);
+									Slic3rEngineMappings.WriteSliceSettingsFile(configFilePath);
+
 									// if we have centering turend on and are printing a model loaded up from meshes (not gcode)
 									if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.center_part_on_bed))
 									{
 										// figure out the center position of this file
 										Vector2 bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-										commandArgs = $"--print-center {bedCenter.x:0.##},{bedCenter.y:0.##} " + "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
+										commandArgs = $"--print-center {bedCenter.x:0.##},{bedCenter.y:0.##} --load \"{configFilePath}\" --output \"{gcodeFilePath}\" \"{fileToSlice}\"";
 									}
 									else
 									{
-										commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
+										commandArgs = $"--load \"{configFilePath}\" --output \"{gcodeFilePath}\" \"{fileToSlice}\"";
 									}
 									break;
 
 								case SlicingEngineTypes.CuraEngine:
-									commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + fileToSlice + "\"";
+									commandArgs = $"-v -o \"{gcodeFilePath}\" {EngineMappingCura.GetCuraCommandLineSettings()} \"{fileToSlice}\"";
 									break;
 
 								case SlicingEngineTypes.MatterSlice:
 									{
-										EngineMappingsMatterSlice.WriteSliceSettingsFile(currentConfigurationFileAndPath);
+										EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
 										if (mergeRules == "")
 										{
-											commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\"";
+											commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
 										}
 										else
 										{
-											commandArgs = "-b {0} -v -o \"".FormatWith(mergeRules) + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\"";
+											commandArgs = $"-b {mergeRules} -v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
 										}
+
 										foreach (string filename in stlFileLocations)
 										{
-											commandArgs = commandArgs + " \"" + filename + "\"";
+											commandArgs +=  $" \"{filename}\"";
 										}
 									}
 									break;
@@ -440,29 +437,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 							else
 							{
-								slicerProcess = new Process();
-								slicerProcess.StartInfo.Arguments = commandArgs;
-								string slicerFullPath = getSlicerFullPath();
-
-								slicerProcess.StartInfo.CreateNoWindow = true;
-								slicerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-								slicerProcess.StartInfo.RedirectStandardError = true;
-								slicerProcess.StartInfo.RedirectStandardOutput = true;
-
-								slicerProcess.StartInfo.FileName = slicerFullPath;
-								slicerProcess.StartInfo.UseShellExecute = false;
+								slicerProcess = new Process()
+								{
+									StartInfo = new ProcessStartInfo()
+									{
+										Arguments = commandArgs,
+										CreateNoWindow = true,
+										WindowStyle = ProcessWindowStyle.Hidden,
+										RedirectStandardError = true,
+										RedirectStandardOutput = true,
+										FileName = getSlicerFullPath(),
+										UseShellExecute = false
+									}
+								};
 
 								slicerProcess.OutputDataReceived += (sender, args) =>
 								{
 									if (args.Data != null)
 									{
-										string message = args.Data;
-										message = message.Replace("=>", "").Trim();
+										string message = args.Data.Replace("=>", "").Trim();
 										if (message.Contains(".gcode"))
 										{
 											message = "Saving intermediate file";
 										}
 										message += "...";
+
 										UiThread.RunOnIdle(() =>
 										{
 											itemToSlice.OnSlicingOutputMessage(new StringEventArgs(message));
@@ -484,14 +483,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						try
 						{
-							if (File.Exists(gcodePathAndFileName)
-								&& File.Exists(currentConfigurationFileAndPath))
+							if (File.Exists(gcodeFilePath)
+								&& File.Exists(configFilePath))
 							{
 								// make sure we have not already written the settings onto this file
 								bool fileHasSettings = false;
 								int bufferSize = 32000;
-								using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
+								using (Stream fileStream = File.OpenRead(gcodeFilePath))
 								{
+									// Read the tail of the file to determine if the given token exists
 									byte[] buffer = new byte[bufferSize];
 									fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
 									int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
@@ -504,20 +504,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								if (!fileHasSettings)
 								{
-									using (StreamWriter gcodeWriter = File.AppendText(gcodePathAndFileName))
+									using (StreamWriter gcodeWriter = File.AppendText(gcodeFilePath))
 									{
 										string oemName = "MatterControl";
 										if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
 										{
-											oemName = oemName + " - {0}".FormatWith(OemSettings.Instance.WindowTitleExtra);
+											oemName += $" - {OemSettings.Instance.WindowTitleExtra}";
 										}
 
-										gcodeWriter.WriteLine("; {0} Version {1} Build {2} : GCode settings used".FormatWith(oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion));
-										gcodeWriter.WriteLine("; Date {0} Time {1}:{2:00}".FormatWith(DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute));
+										gcodeWriter.WriteLine("; {0} Version {1} Build {2} : GCode settings used", oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion);
+										gcodeWriter.WriteLine("; Date {0} Time {1}:{2:00}", DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute);
 
-										foreach (string line in File.ReadLines(currentConfigurationFileAndPath))
+										foreach (string line in File.ReadLines(configFilePath))
 										{
-											gcodeWriter.WriteLine("; {0}".FormatWith(line));
+											gcodeWriter.WriteLine("; {0}", line);
 										}
 									}
 								}

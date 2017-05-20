@@ -123,7 +123,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
-				bool authorized = true;
+
+				bool authorized = view3DWidget?.ActiveSelectionEditor.Unlocked == true;
 				if (authorized)
 				{
 					GLHelper.Render(GetNormalShadowMesh(), new RGBA_Bytes(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);

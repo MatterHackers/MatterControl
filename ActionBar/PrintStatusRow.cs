@@ -49,17 +49,14 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TextWidget activePrintStatus;
 		private TemperatureWidgetBase bedTemperatureWidget;
 		private TemperatureWidgetBase extruderTemperatureWidget;
-		private QueueDataView queueDataView;
 		private EventHandler unregisterEvents;
 
-		public PrintStatusRow(QueueDataView queueDataView)
+		public PrintStatusRow()
 		{
 			UiThread.RunOnIdle(OnIdle);
 
 			this.Margin = new BorderDouble(6, 3, 6, 6);
 			this.HAnchor = HAnchor.ParentLeftRight;
-
-			this.queueDataView = queueDataView;
 
 			AddChildElements();
 
@@ -162,7 +159,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(topRow);
 			container.AddChild(activePrintName);
 			container.AddChild(activePrintStatus);
-			container.AddChild(new PrintActionRow(queueDataView));
 
 			return container;
 		}

@@ -27,15 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace MatterHackers.MatterControl
 {
@@ -96,11 +95,6 @@ namespace MatterHackers.MatterControl
 			// TODO: Enable once the cache mechanism is scene graph aware
 			return;
 
-			if (LibraryProviderSQLite.PreloadingCalibrationFiles)
-			{
-				return;
-			}
-
 			// delete everything in the GCodeOutputPath
 			//   AppData\Local\MatterControl\data\gcode
 			// delete everything in the temp data that is not in use
@@ -133,14 +127,16 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			// NOTE: Why exclude PrintItemCollectionID == 0 items from these results
+			var allPrintItems = Datastore.Instance.dbSQLite.Query<PrintItem>("SELECT * FROM PrintItem WHERE PrintItemCollectionID != 0;");
+
 			// Add in all the stl and amf files referenced in the library.
-			foreach (PrintItem printItem in LibraryProviderSQLite.GetAllPrintItemsRecursive())
+			foreach (PrintItem printItem in allPrintItems)
 			{
-				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-				string fileLocation = printItem.FileLocation;
-				if (!referencedFilePaths.Contains(fileLocation))
+				var printItemWrapper = new PrintItemWrapper(printItem);
+				if (!referencedFilePaths.Contains(printItem.FileLocation))
 				{
-					referencedFilePaths.Add(fileLocation);
+					referencedFilePaths.Add(printItem.FileLocation);
 					referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItemWrapper));
 				}
 			}
@@ -224,7 +220,6 @@ namespace MatterHackers.MatterControl
 					case ".PNG":
 					case ".TGA":
 						if (referencedFilePaths.Contains(file)
-							|| LibraryProviderSQLite.PreloadingCalibrationFiles
 							|| fileIsNew)
 						{
 							contentCount++;

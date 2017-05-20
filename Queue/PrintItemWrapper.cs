@@ -27,16 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Diagnostics;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -61,7 +60,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private long writeTime = 0;
 
-		public PrintItemWrapper(PrintItem printItem, List<ProviderLocatorNode> sourceLibraryProviderLocator = null)
+		public PrintItemWrapper(PrintItem printItem, ILibraryContainer sourceLibraryProviderLocator = null)
 		{
 			this.PrintItem = printItem;
 
@@ -246,7 +245,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public bool SlicingHadError { get { return slicingHadError; } }
 
-		public List<ProviderLocatorNode> SourceLibraryProviderLocator { get; private set; }
+		public ILibraryContainer SourceLibraryProviderLocator { get; private set; }
 		public bool UseIncrementedNameDuringTypeChange { get; internal set; }
 
 		public void Delete()

@@ -49,11 +49,10 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TextWidget activePrintStatus;
 		private TemperatureWidgetBase bedTemperatureWidget;
 		private TemperatureWidgetBase extruderTemperatureWidget;
-		private QueueDataView queueDataView;
 		private EventHandler unregisterEvents;
 		private Button setupButton;
 
-		public TouchScreenPrintStatusRow(QueueDataView queueDataView)
+		public TouchScreenPrintStatusRow()
 		{
 			UiThread.RunOnIdle(OnIdle);
 
@@ -62,8 +61,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Padding = new BorderDouble(0, 0, 6, 6);
 			this.Margin = new BorderDouble(6, 3, 0, 0);
 			this.HAnchor = HAnchor.ParentLeftRight;
-
-			this.queueDataView = queueDataView;
 
 			AddChildElements();
 
@@ -134,8 +131,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			FlowLayoutWidget printStatusContainer = CreateActivePrinterInfoWidget();
 
-			PrintActionRow printActionRow = new PrintActionRow(queueDataView);
-			printActionRow.VAnchor = VAnchor.ParentTop;
+			var printActionRow = new PrintActionRow()
+			{
+				VAnchor = VAnchor.ParentTop
+			};
 
 			ImageButtonFactory factory = new ImageButtonFactory();
 			factory.InvertImageColor = false;

@@ -53,18 +53,15 @@ namespace MatterHackers.MatterControl
 		private GuiWidget addedUpdateMark = null;
 
 		private PartPreviewContent partPreviewContainer;
-		private QueueDataView queueDataView;
-		private TabPage QueueTabPage;
 
 		private bool simpleMode;
 		private GuiWidget sliceSettingsWidget;
 
 		private int TabTextSize;
 		
-		public TouchscreenTabView(QueueDataView queueDataView)
+		public TouchscreenTabView()
 			: base(Orientation.Vertical)
 		{
-			this.queueDataView = queueDataView;
 			this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
 			this.TabBar.Margin = new BorderDouble(4, 0, 0, 0);
@@ -119,30 +116,21 @@ namespace MatterHackers.MatterControl
 				"Controls".Localize().ToUpper(),
 				() => new ManualPrinterControls());
 
-			// TODO: How to handle reload? Create .Reload on LazyTab? Create accessor for tabs["Controls Tab"].Reload()?
-			//manualControlsPage = new TabPage(, printerControlsLabel);
-
 			this.TabBar.AddChild(new HorizontalLine() { Margin = horizontalSpacerMargin });
-
-			this.AddTab(
-				"Queue Tab",
-				"Queue".Localize().ToUpper(),
-				() => new QueueDataWidget(queueDataView));
-
-			QueueTabPage = this.GetTabPage("Queue Tab");
 
 			this.AddTab(
 				"Library Tab",
 				"Library".Localize().ToUpper(),
 				() => new PrintLibraryWidget());
 
+			/*
 			if (!simpleMode)
 			{
 				this.AddTab(
 				"History Tab",
 				"History".Localize().ToUpper(),
 				() => new PrintHistoryWidget());
-			}
+			} */
 
 			this.TabBar.AddChild(new HorizontalLine() { Margin = horizontalSpacerMargin });
 
@@ -188,11 +176,7 @@ namespace MatterHackers.MatterControl
 				"About".Localize().ToUpper(),
 				() => new AboutWidget());
 
-			NumQueueItemsChanged(this, null);
 			SetUpdateNotification(this, null);
-
-			QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-			QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
 			{
@@ -293,11 +277,6 @@ namespace MatterHackers.MatterControl
 			sliceSettingsTabPage.Reload();
 
 			this.Invalidate();
-		}
-
-		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
-		{
-			QueueTabPage.Text = string.Format("{0} ({1})", "Queue".Localize().ToUpper(), QueueData.Instance.ItemCount);
 		}
 
 		private void AddTab(string name, string tabTitle, Func<GuiWidget> generator)

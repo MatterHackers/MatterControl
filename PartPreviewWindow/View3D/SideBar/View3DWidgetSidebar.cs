@@ -27,33 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class View3DWidgetSidebar : FlowLayoutWidget
 	{
-		private static string iconPath = Path.Combine("Icons", "3D Icons");
-		private static string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-		private static string createdIconPath = Path.Combine(applicationUserDataPath, "data", "temp", "shape thumbnails");
-
 		private View3DWidget view3DWidget;
 
 		public CheckBox expandMaterialOptions { get; private set; }
@@ -231,12 +221,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// call create button methods
 		public void InitializeComponents()
 		{
-			PluginFinder<SideBarPlugin> SideBarPlugins = new PluginFinder<SideBarPlugin>();
-			foreach (SideBarPlugin plugin in SideBarPlugins.Plugins)
-			{
-				buttonPanel.AddChild(plugin.CreateSideBarTool(view3DWidget));
-			}
-
 			HashSet<IObject3DEditor> mappedEditors;
 
 			var objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
@@ -350,70 +334,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			widgetToAddTo.AddChild(container);
 		}
 
-		public GuiWidget CreateAddButton(string buttonLable, string iconFileName, Func<IObject3D> createMeshFunction)
+		public GuiWidget CreateAddButton(string buttonLabel, Func<IObject3D> itemCreator)
 		{
-			string iconPathAndFileName = Path.Combine(iconPath, iconFileName);
-			ImageBuffer buttonImage = new ImageBuffer(64, 64, 32, new BlenderBGRA());
-			if (StaticData.Instance.FileExists(iconPathAndFileName))
-			{
-				buttonImage = StaticData.Instance.LoadImage(iconPathAndFileName);
-				buttonImage.SetRecieveBlender(new BlenderPreMultBGRA());
-				buttonImage = ImageBuffer.CreateScaledImage(buttonImage, 64, 64);
-			}
-			else
-			{
-				iconPathAndFileName = Path.Combine(createdIconPath, iconFileName);
-				if (File.Exists(iconPathAndFileName))
-				{
-					ImageIO.LoadImageData(iconPathAndFileName, buttonImage);
-					buttonImage.SetRecieveBlender(new BlenderPreMultBGRA());
-				}
-				else
-				{
-					Task.Run(() =>
-					{
-						IObject3D item = createMeshFunction();
-
-						// If the item has an empty mesh but children, flatten them into a mesh and swap the new item into place
-						if (item.Mesh == null && item.HasChildren)
-						{
-							item = new Object3D()
-							{
-								ItemType = Object3DTypes.Model,
-								Mesh = MeshFileIo.DoMerge(item.ToMeshGroupList(), new MeshOutputSettings())
-							};
-						}
-
-						if (item.Mesh != null)
-						{
-							item.Mesh.Triangulate();
-
-							ThumbnailTracer tracer = new ThumbnailTracer(item, 64, 64);
-							tracer.DoTrace();
-
-							buttonImage.SetRecieveBlender(new BlenderPreMultBGRA());
-							//buttonImage = ImageBuffer.CreateScaledImage(tracer.destImage, 64, 64);
-							buttonImage.CopyFrom(tracer.destImage);
-							UiThread.RunOnIdle(() =>
-							{
-								if (!Directory.Exists(createdIconPath))
-								{
-									Directory.CreateDirectory(createdIconPath);
-								}
-								ImageIO.SaveImageData(iconPathAndFileName, buttonImage);
-							});
-						}
-					});
-				}
-			}
-
-			var textColor = ActiveTheme.Instance.PrimaryTextColor;
-			GuiWidget addItemButton = CreateButtonState(buttonLable, buttonImage, ActiveTheme.Instance.PrimaryBackgroundColor, textColor);
-
+			GuiWidget addItemButton = CreateButtonState(
+				buttonLabel,
+				ImageBuffer.CreateScaledImage(StaticData.Instance.LoadImage(Path.Combine("Icons", "part_icon_transparent_40x40.png")), 64, 64), 
+				ActiveTheme.Instance.PrimaryBackgroundColor, 
+				ActiveTheme.Instance.PrimaryTextColor);
 			addItemButton.Margin = new BorderDouble(3);
+
 			addItemButton.MouseDown += (sender, e) =>
 			{
-				view3DWidget.DragDropSource = createMeshFunction();
+				view3DWidget.DragDropSource = itemCreator();
 			};
 
 			addItemButton.MouseMove += (sender, mouseArgs) =>

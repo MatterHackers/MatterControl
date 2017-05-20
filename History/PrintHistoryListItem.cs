@@ -38,10 +38,36 @@ using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Globalization;
 using System.IO;
+using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
-	public class PrintHistoryListItem : GuiWidget
+
+	public class HistoryListView : FlowLayoutWidget, IListContentView
+	{
+		public int ThumbWidth { get; } = 50;
+		public int ThumbHeight { get; } = 50;
+
+		public HistoryListView()
+			: base(FlowDirection.TopToBottom)
+		{
+		}
+
+		public void AddItem(ListViewItem item)
+		{
+			var historyRowItem = item.Model as HistoryRowItem;
+			var detailsView = new PrintHistoryListItem(item, this.ThumbWidth, this.ThumbHeight, historyRowItem?.PrintTask, true);
+			this.AddChild(detailsView);
+
+			item.ViewWidget = detailsView;
+		}
+
+		public void ClearItems()
+		{
+		}
+	}
+
+	public class PrintHistoryListItem : ListViewItemBase
 	{
 		public PrintTask printTask;
 		public RGBA_Bytes WidgetTextColor;
@@ -60,26 +86,24 @@ namespace MatterHackers.MatterControl.PrintHistory
 #else
 		private float pointSizeFactor = 1f;
 		private static int rightOverlayWidth  = 200;
-
 #endif
 		private int actionButtonSize = rightOverlayWidth/2;
 		private SlideWidget rightButtonOverlay;
 
-		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-
-		public PrintHistoryListItem(PrintTask printTask, bool showTimestamp)
+		public PrintHistoryListItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, PrintTask printTask, bool showTimestamp)
+			: base(listViewItem, thumbWidth, thumbHeight)
 		{
 			this.printTask = printTask;
 			this.showTimestamp = showTimestamp;
-			SetDisplayAttributes();
-			AddChildElements();
-			AddHandlers();
-		}
 
-		private void AddChildElements()
-		{
-			GuiWidget mainContainer = new GuiWidget();
-			mainContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			this.Height = 50;
+			this.BackgroundColor = this.WidgetBackgroundColor;
+			this.Padding = new BorderDouble(0);
+			this.Margin = new BorderDouble(6, 0, 6, 6);
+
+			var mainContainer = new GuiWidget();
+			mainContainer.HAnchor = HAnchor.ParentLeftRight;
 			mainContainer.VAnchor = VAnchor.ParentBottomTop;
 
 			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
@@ -119,13 +143,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				buttonContainer.Margin = new BorderDouble(0);
 				buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 				{
-					TextWidget statusIndicator = new TextWidget("Status: Completed".Localize(), pointSize: 8 * pointSizeFactor);
-					statusIndicator.Margin = new BorderDouble(right: 3);
-					//buttonContainer.AddChild(statusIndicator);
-
-					string printTimeLabel = "Time".Localize().ToUpper();
-					string printTimeLabelFull = string.Format("{0}: ", printTimeLabel);
-					TextWidget timeLabel = new TextWidget(printTimeLabelFull, pointSize: 8 * pointSizeFactor);
+					var timeLabel = new TextWidget("Time".Localize().ToUpper() + ": ", pointSize: 8 * pointSizeFactor);
 					timeLabel.TextColor = timeTextColor;
 
 					TextWidget timeIndicator;
@@ -302,23 +320,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 		}
 
-		private void SetDisplayAttributes()
-		{
-			linkButtonFactory.fontSize = 10;
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			this.Height = 50;
-			this.BackgroundColor = this.WidgetBackgroundColor;
-			this.Padding = new BorderDouble(0);
-			this.Margin = new BorderDouble(6, 0, 6, 6);
-		}
-
 		private EventHandler unregisterEvents;
-
-		private void AddHandlers()
-		{
-			MouseEnterBounds += new EventHandler(HistoryItem_MouseEnterBounds);
-			MouseLeaveBounds += new EventHandler(HistoryItem_MouseLeaveBounds);
-		}
 
 		private void ViewButton_Click(object sender, EventArgs e)
 		{
@@ -401,22 +403,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.partPreviewWindow = null;
 		}
 
-		private void HistoryItem_MouseLeaveBounds(object sender, EventArgs e)
-		{
-			rightButtonOverlay.SlideOut();
-		}
-
-		private void HistoryItem_MouseEnterBounds(object sender, EventArgs e)
-		{
-			rightButtonOverlay.SlideIn();
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

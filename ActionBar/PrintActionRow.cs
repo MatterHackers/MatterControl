@@ -64,7 +64,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button resetConnectionButton;
 		private Button doneWithCurrentPartButton;
 		private Button pauseButton;
-		private QueueDataView queueDataView;
 		private Button removeButton;
 		private Button reprintButton;
 		private Button resumeButton;
@@ -74,7 +73,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TextImageButtonFactory textImageButtonFactory;
 		private EventHandler unregisterEvents;
 
-		public PrintActionRow(QueueDataView queueDataView)
+		public PrintActionRow()
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 
@@ -91,8 +90,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				normalBorderColor = new RGBA_Bytes(255, 255, 255, 100),
 				hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100)
 			};
-
-			this.queueDataView = queueDataView;
 
 			AddChildElements();
 

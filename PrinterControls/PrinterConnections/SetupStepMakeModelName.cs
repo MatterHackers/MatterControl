@@ -1,18 +1,13 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using System;
-using MatterHackers.MatterControl.SettingsManagement;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
-using System.IO;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.MatterControl.PrintQueue;
-using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -236,8 +231,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			});
 		}
 
+		// TODO: Do we still want to do this - constantly adding items to the queue as printers are added? What about a LibraryContainer for '[PrinterName] Calibration Files' - much cleaner to implement, never an extra files on disk or one-time processing that remain becomes inconsistent over time
 		public void LoadCalibrationPrints()
 		{
+			/*
 			// Load the calibration file names
 			string calibrationFiles = ActiveSliceSettings.Instance.GetValue("calibration_files");
 			if(string.IsNullOrEmpty(calibrationFiles))
@@ -250,9 +247,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				return;
 			}
-
-			var libraryProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
-			libraryProvider.EnsureSamplePartsExist(calibrationPrintFileNames);
 
 			var queueItems = QueueData.Instance.GetItemNames();
 
@@ -274,6 +268,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 
 			libraryProvider.Dispose();
+			*/
 		}
 
 		private bool ValidateControls()

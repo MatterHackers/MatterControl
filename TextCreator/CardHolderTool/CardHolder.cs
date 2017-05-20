@@ -36,6 +36,8 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 		public string Name => "MatterCad";
 
+		public bool Unlocked { get; } = true;
+
 		public IEnumerable<Type> SupportedTypes() => new Type[]
 		{
 			typeof(MatterCadObject3D),

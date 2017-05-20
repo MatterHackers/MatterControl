@@ -125,6 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
 		public const string manual_movement_speeds = nameof(manual_movement_speeds);
+		public const string calibration_files = nameof(calibration_files);
 	}
 
 	public class SettingsHelpers
