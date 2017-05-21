@@ -420,7 +420,8 @@ namespace MatterHackers.MatterControl
 
 				if (overrideHeight != -1)
 				{
-					height = overrideHeight;
+					// Height should be constrained to actual
+					height = Math.Min(overrideHeight, desktopSize.y);
 				}
 				else
 				{
