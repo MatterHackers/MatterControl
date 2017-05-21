@@ -41,30 +41,26 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class PrintQueueContainer : WritableContainer
 	{
-		private EventHandler unregisterEvents;
-
 		public PrintQueueContainer()
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Print Queue".Localize();
 
-			// TODO: Wire up reload sync via QueueData changed event - which I'm not seeing ATM
-
-			this.ReloadContainer();
+			Task.Run(() =>
+			{
+				this.ReloadContainer();
+			});
 		}
 
 		private void ReloadContainer()
 		{
-			Task.Run(() =>
+			this.Items = QueueData.Instance.PrintItems.Select(p => new FileSystemFileItem(p.FileLocation)
 			{
-				this.Items = QueueData.Instance.PrintItems.Select(p => new FileSystemFileItem(p.FileLocation)
-				{
-					Name = p.Name
-				}).ToList<ILibraryItem>();
+				Name = p.Name
+			}).ToList<ILibraryItem>();
 
-				UiThread.RunOnIdle(this.OnReloaded);
-			});
+			UiThread.RunOnIdle(this.OnReloaded);
 		}
 
 		public override async void Add(IEnumerable<ILibraryItem> items)
@@ -103,7 +99,7 @@ namespace MatterHackers.MatterControl.Library
 					}
 				}
 
-				this.OnReloaded();
+				this.ReloadContainer();
 			});
 		}
 

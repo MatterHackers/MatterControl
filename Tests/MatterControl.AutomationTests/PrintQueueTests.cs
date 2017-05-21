@@ -213,39 +213,31 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
+				// Expected = initial + 2;
+				int expectedCount = QueueData.Instance.ItemCount + 2;
+
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.ChangeToQueueContainer();
-				/*
-				 * Tests that Add button can add multiple files to the print queue:
-				 * 1. The Queue count is increased by 2
-				 * 2. 2 QueueRowItems are created and added to the queue
-				 */
-
-				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
 
 				//Click Add Button and Add Part To Queue
-				testRunner.ClickByName("Queue Add Button", 2);
-				string pathToFirstQueueItem = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				testRunner.ClickByName("Library Add Button", 2);
 				testRunner.Delay(1);
-				string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
-				string textForBothQueueItems = string.Format("\"{0}\" \"{1}\"", pathToFirstQueueItem, pathToSecondQueueItem);
 
-				testRunner.Type(textForBothQueueItems);
+				testRunner.Type(string.Format(
+					"\"{0}\" \"{1}\"", 
+					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"), 
+					MatterControlUtilities.GetTestItemPath("Batman.stl")));
+
 				testRunner.Delay(2);
 				testRunner.Type("{Enter}");
-				testRunner.Delay(2);
 
-				//Confirm that both items were added and  that the queue count increases by the appropriate number
-				int queueCountAfterAdd = QueueData.Instance.ItemCount;
+				// Wait up to 3 seconds for expected outcome
+				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
-				Assert.IsTrue(QueueData.Instance.ItemCount == queueCountBeforeAdd + 2);
-
-				bool firstQueueItemWasAdded = testRunner.WaitForName("Queue Item Fennec_Fox", 2);
-				bool secondQueueItemWasAdded = testRunner.WaitForName("Queue Item Batman", 2);
-
-				Assert.IsTrue(firstQueueItemWasAdded == true);
-				Assert.IsTrue(secondQueueItemWasAdded == true);
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue item count should increase by 2 after adding 2 items");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Named widget should exist after add(Fennec_Fox)");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Named widget should exist after add(Batman)");
 
 				return Task.FromResult(0);
 			};
