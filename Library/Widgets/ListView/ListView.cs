@@ -160,43 +160,26 @@ if (hasID
 			int width = itemsContentView.ThumbWidth;
 			int height = itemsContentView.ThumbHeight;
 
-			// TODO: Disabled to consider upfolder on breadcrumb bar
-			if (sourceContainer.Parent != null && false)
-			{
-				var icon = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "up_folder.png");
-				icon = ResizeCanvas(icon, width, height);
-
-				// Up folder item
-				var item = new DynamicContainerLink("..", icon, null);
-				var listViewItem = new ListViewItem(item, this)
-				{
-					Text = "..",
-				};
-
-				listViewItem.DoubleClick += listViewItem_DoubleClick;
-
-				items.Add(listViewItem);
-				itemsContentView.AddItem(listViewItem);
-			}
-
 			// Folder items
 			foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible))
 			{
-					var listViewItem = new ListViewItem(childContainer, this);
-					listViewItem.DoubleClick += listViewItem_DoubleClick;
+				var listViewItem = new ListViewItem(childContainer, this);
+				listViewItem.DoubleClick += listViewItem_DoubleClick;
+				items.Add(listViewItem);
 
-					items.Add(listViewItem);
-					itemsContentView.AddItem(listViewItem);
-				}
+				itemsContentView.AddItem(listViewItem);
+				listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
+			}
 
 			// List items
 			foreach (var item in sourceContainer.Items.Where(i => i.IsVisible))
 			{
 				var listViewItem = new ListViewItem(item, this);
 				listViewItem.DoubleClick += listViewItem_DoubleClick;
-
 				items.Add(listViewItem);
+
 				itemsContentView.AddItem(listViewItem);
+				listViewItem.ViewWidget.Name = "Row Item " + item.Name;
 			}
 		}
 

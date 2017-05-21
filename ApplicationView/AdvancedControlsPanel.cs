@@ -104,8 +104,14 @@ namespace MatterHackers.MatterControl
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
 			var libraryTabPage = new TabPage(new PrintLibraryWidget(), "Library".Localize().ToUpper());
-			advancedControls.AddTab(new SimpleTextTabWidget(libraryTabPage, "Library Tab", 15,
-					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+			advancedControls.AddTab(new SimpleTextTabWidget(
+				libraryTabPage, 
+				"Library Tab", 
+				15,
+				ActiveTheme.Instance.TabLabelSelected, 
+				new RGBA_Bytes(), 
+				unselectedTextColor, 
+				new RGBA_Bytes()));
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
