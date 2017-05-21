@@ -357,10 +357,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
-			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			testRunner.ClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
-			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
+			testRunner.DoubleClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
 		}
 
