@@ -168,6 +168,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
+		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
+		{
+			testRunner.NavigateToFolder("Print Queue Row Item Collection");
+		}
+
 		public class PrintEmulatorProcess: Process
 		{
 			protected override void Dispose(bool disposing)

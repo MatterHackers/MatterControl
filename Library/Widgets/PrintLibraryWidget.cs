@@ -273,8 +273,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						if (openParams.FileNames != null)
 						{
-							System.Diagnostics.Debugger.Break();
-							//this.libraryView.ActiveContainer.AddFiles(openParams.FileNames);
+							var writableContainer = this.libraryView.ActiveContainer as ILibraryWritableContainer;
+							if (writableContainer != null
+								&& openParams.FileNames.Length > 0)
+							{
+								writableContainer.Add(openParams.FileNames.Select(f => new FileSystemFileItem(f)));
+							}
 						}
 					});
 			});

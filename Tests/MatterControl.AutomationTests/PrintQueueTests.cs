@@ -215,6 +215,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
+				testRunner.ChangeToQueueContainer();
 				/*
 				 * Tests that Add button can add multiple files to the print queue:
 				 * 1. The Queue count is increased by 2
