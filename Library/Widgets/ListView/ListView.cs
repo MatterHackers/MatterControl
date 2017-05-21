@@ -285,9 +285,11 @@ if (hasID
 					if (containerLink != null)
 					{
 						var container = await containerLink.GetContainer(null);
-						container.Parent = ActiveContainer;
-
-						LoadContainer(container);
+						if (container != null)
+						{
+							container.Parent = ActiveContainer;
+							LoadContainer(container);
+						}
 					}
 				}
 				else
