@@ -88,7 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(0), () => MirrorOnAxis(0)));
 
-					Debugger.Break();
+					throw new NotImplementedException();
+					
 					/* TODO: Revise above for scenebundle with the following...
 					var selectedItem = view3DWidget.Scene.SelectedItem;
 					selectedItem.Mesh.ReverseFaceEdges();
@@ -106,7 +107,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (view3DWidget.Scene.HasSelection)
 				{
 					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(1), () => MirrorOnAxis(1)));
-					Debugger.Break();
+
+					throw new NotImplementedException();
+
 					/* TODO: Revise above for scenebundle with the following...
 					var selectedItem = view3DWidget.Scene.SelectedItem;
 					selectedItem.Mesh.ReverseFaceEdges();
@@ -124,7 +127,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (view3DWidget.Scene.HasSelection)
 				{
 					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(2), () => MirrorOnAxis(2)));
-					Debugger.Break();
+
+					throw new NotImplementedException();
+
 					/* TODO: Revise above for scenebundle with the following...
 					var selectedItem = view3DWidget.Scene.SelectedItem;
 					selectedItem.Mesh.ReverseFaceEdges();

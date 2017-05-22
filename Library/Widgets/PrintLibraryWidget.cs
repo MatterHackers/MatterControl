@@ -372,7 +372,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowMultiple = false,
 				AllowProtected = false,
 				AllowContainers = false,
-				Action = (selectedLibraryItems, listView) => System.Diagnostics.Debugger.Break() /* editButton_Click(s, null) */
+				Action = (selectedLibraryItems, listView) =>
+				{
+					throw new NotImplementedException();
+					/* editButton_Click(s, null) */
+				}
 			});
 
 			// rename menu item
@@ -795,7 +799,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void shareFromLibraryButton_Click(object sender, EventArgs e)
 		{
 			// TODO: Should be rewritten to Register from cloudlibrary, include logic to add to library as needed
-			System.Diagnostics.Debugger.Break();
+			throw new NotImplementedException();
 
 			if (libraryView.SelectedItems.Count == 1)
 			{

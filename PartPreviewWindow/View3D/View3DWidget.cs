@@ -2220,7 +2220,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								libraryToSaveTo.AddItem(printItemWrapper);
 
-								Debugger.Break(); // Disabled dispose
+								throw new NotImplementedException();
+
 								//libraryToSaveTo.Dispose();
 							}
 						}

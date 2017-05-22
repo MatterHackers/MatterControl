@@ -276,8 +276,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToSettingsAndControls();
-
 					testRunner.ClickByName("Controls Tab", 1);
 
 					testRunner.ClickByName("Start Print Button", 1);
@@ -352,7 +350,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task TuningAdjustmentControlsBoundToStreamValues()
 		{
-
 			double targetExtrusionRate = 1.5;
 			double targetFeedRate = 2;
 
@@ -373,8 +370,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
-
-					testRunner.SwitchToSettingsAndControls();
 
 					testRunner.ClickByName("Controls Tab", 1);
 
