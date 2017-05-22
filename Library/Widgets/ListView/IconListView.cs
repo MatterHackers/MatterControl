@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -43,31 +44,44 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private FlowLayoutWidget rowButtonContainer = null;
 
+		private int cellIndex = 0;
+		private int columnCount = 1;
+		private int itemRightMargin;
+
 		public IconListView()
 			: base(FlowDirection.TopToBottom)
 		{
 		}
 
-		private int cellIndex = 0;
-
-		int columnCount = 1;
-
 		public override void OnBoundsChanged(EventArgs e)
 		{
-			columnCount = (int)Math.Floor(this.LocalBounds.Width / ThumbWidth);
+			int padding = 4;
+			int itemWidth = ThumbWidth + (padding * 2);
+
+			columnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
+
+			int remainingSpace = (int) this.LocalBounds.Width - columnCount * itemWidth;
+
+			itemRightMargin = (columnCount <= 0) ? 0 : remainingSpace / (columnCount + 1);
+
+			this.Padding = new BorderDouble(0, itemRightMargin);
+
 			base.OnBoundsChanged(e);
 		}
 
 		public void AddItem(ListViewItem item)
 		{
 			var iconView = new IconViewItem(item, this.ThumbWidth, this.ThumbHeight);
+			iconView.Margin = new BorderDouble(0, 0, itemRightMargin, 0);
 			item.ViewWidget = iconView;
 
 			if (rowButtonContainer == null)
 			{
-				rowButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				rowButtonContainer.HAnchor = HAnchor.ParentLeftRight;
-
+				rowButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+					Padding = new BorderDouble(itemRightMargin, 0, 0, 0)
+				};
 				rowButtonContainer.AddChild(iconView);
 				this.AddChild(rowButtonContainer);
 				cellIndex = 1;
