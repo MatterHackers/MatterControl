@@ -170,37 +170,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task AddSingleItemToQueue()
+		public async Task AddOneItemToQueue()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
+				// Expected = initial + 1
+				int expectedCount = QueueData.Instance.ItemCount + 1;
+
 				testRunner.CloseSignInAndPrinterSelect();
 
-				/*
-				 * Tests that Queue Add button adds a single part to queue:
-				 * 1. The Queue count is increased by 1
-				 * 2. A QueueRowItem is created and added to the queue
-				 */
+				testRunner.ChangeToQueueContainer();
 
-				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
-
-				//Click Add Button and Add Part To Queue
-				testRunner.ClickByName("Queue Add Button", 2);
-				testRunner.Delay(2);
-
-				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
-
-				testRunner.Type(queueItemPath);
+				// Click Add button and select files
+				testRunner.ClickByName("Library Add Button", 2);
+				testRunner.WaitForName("Automation Dialog TextEdit", 3);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				//Make sure single part is added and queue count increases by one
-				bool fennecFoxPartWasAdded = testRunner.WaitForName("Queue Item Fennec_Fox", 2);
-				Assert.IsTrue(fennecFoxPartWasAdded == true);
+				// Wait up to 3 seconds for expected outcome
+				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
-				int queueCountAfterAdd = QueueData.Instance.ItemCount;
-
-				Assert.IsTrue(queueCountBeforeAdd + 1 == queueCountAfterAdd);
+				// Assert - one part  added and queue count increases by one
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Named widget should exist after add(Fennec_Fox)");
 
 				return Task.FromResult(0);
 			};
@@ -209,7 +202,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task AddMultipleItemsToQueue()
+		public async Task AddTwoItemsToQueue()
 		{
 			AutomationTest testToRun = (testRunner) =>
 			{
@@ -220,10 +213,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ChangeToQueueContainer();
 
-				//Click Add Button and Add Part To Queue
+				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button", 2);
-				testRunner.Delay(1);
-
+				testRunner.WaitForName("Automation Dialog TextEdit", 3);
 				testRunner.Type(string.Format(
 					"\"{0}\" \"{1}\"", 
 					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"), 
@@ -235,7 +227,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Wait up to 3 seconds for expected outcome
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue item count should increase by 2 after adding 2 items");
+				// Assert - two parts added and queue count increases by two
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 2 when adding 2 items");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Named widget should exist after add(Fennec_Fox)");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Named widget should exist after add(Batman)");
 
