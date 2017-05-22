@@ -63,12 +63,14 @@
     <Compile Include="ExportItemWindowTests.cs" />
     <Compile Include="FileMenuTest.cs" />
     <Compile Include="HardwareLevelingUITests.cs" />
+    <Compile Include="LibraryActionTests.cs" />
     <Compile Include="LibraryDownloadsTest.cs" />
     <Compile Include="LocalLibraryTests.cs" />
     <Compile Include="OptionsTabTests.cs" />
     <Compile Include="PartPreviewTests.cs" />
     <Compile Include="PrinterDropDownTests.cs" />
     <Compile Include="PrintQueueTests.cs" />
+    <Compile Include="PrintQueueUncertain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PrintingTests.cs" />
     <Compile Include="SliceSettingsTests.cs" />
