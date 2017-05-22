@@ -752,32 +752,34 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task QueueAddButtonAddsSTL()
+		public async Task AddStlFile()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				// Expected = initial + 1
+				int expectedCount = QueueData.Instance.ItemCount + 1;
+
 				testRunner.CloseSignInAndPrinterSelect();
 
-				int initialQueueCount = QueueData.Instance.ItemCount;
+				testRunner.ChangeToQueueContainer();
 
-				// Click Add button 
-				testRunner.ClickByName("Queue Add Button");
-				testRunner.Delay(1);
+				// Click Add button and select files
+				testRunner.ClickByName("Library Add Button", 2);
+				testRunner.WaitForName("Automation Dialog TextEdit", 3);
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				// Widget should exist
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 5), "Widget for added item should exist in control tree");
+				// Wait up to 3 seconds for expected outcome
+				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
-				// Queue count should increases by one 
-				Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "After adding item, queue count should increase by one");
+				// Assert - one part  added and queue count increases by one
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Named widget should exist after add(Batman)");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
