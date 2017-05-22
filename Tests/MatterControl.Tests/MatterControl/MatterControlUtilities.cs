@@ -473,23 +473,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		}
 
-		public static void SwitchToSettingsAndControls(this AutomationRunner testRunner)
-		{
-			if (testRunner.WaitForName("SettingsAndControls"))
-			{
-				testRunner.ClickByName("SettingsAndControls");
-				testRunner.Delay(.5);
-			}
-		}
-
 		public static void SwitchToAdvancedSettings(AutomationRunner testRunner)
 		{
-			if (testRunner.WaitForName("SettingsAndControls"))
-			{
-				testRunner.ClickByName("SettingsAndControls");
-				testRunner.Delay(.5);
-			}
-
 			testRunner.ClickByName("User Level Dropdown");
 			testRunner.ClickByName("Advanced Menu Item");
 			testRunner.Delay(.5);
