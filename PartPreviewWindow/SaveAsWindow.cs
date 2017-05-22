@@ -95,7 +95,8 @@ namespace MatterHackers.MatterControl
 			};
 
 			// TODO: Needs a separate implementation that doesn't change the standard list view contents as we browse around
-			System.Diagnostics.Debugger.Break();
+			throw new NotImplementedException();
+
 			librarySelectorWidget = new ListView(ApplicationController.Instance.Library);
 
 			// put in the bread crumb widget
