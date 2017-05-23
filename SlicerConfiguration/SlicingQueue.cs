@@ -198,6 +198,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				case ".MCX":
 				case ".AMF":
+				case ".OBJ":
 					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
 					List<MeshGroup> meshGroups = new List<MeshGroup> { Object3D.Load(fileToSlice).Flatten() };
 					if (meshGroups != null)
