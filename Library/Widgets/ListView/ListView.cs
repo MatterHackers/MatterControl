@@ -42,8 +42,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-
-
 	public class ListView : ScrollableWidget
 	{
 		private EventHandler unregisterEvents;

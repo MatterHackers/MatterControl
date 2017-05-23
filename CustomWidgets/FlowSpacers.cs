@@ -50,27 +50,33 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class HorizontalLine : GuiWidget
 	{
-		public HorizontalLine()
+		public HorizontalLine(int alpha = 255)
 			: base(1, 1)
 		{
-			BackgroundColor = ActiveTheme.Instance.SecondaryTextColor;
+			BackgroundColor = GetBorderColor(alpha);
 			HAnchor = HAnchor.ParentLeftRight;
 		}
 
-		public HorizontalLine(RGBA_Bytes backgroundColor)
-			: base(1, 1)
+		internal static RGBA_Bytes GetBorderColor(int alpha)
 		{
-			BackgroundColor = backgroundColor;
-			HAnchor = HAnchor.ParentLeftRight;
+			RGBA_Bytes color = ActiveTheme.Instance.SecondaryTextColor;
+
+			if (alpha != 255)
+			{
+				color = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor);
+				color.alpha = (byte)alpha;
+			}
+
+			return color;
 		}
 	}
 
 	public class VerticalLine : GuiWidget
 	{
-		public VerticalLine()
+		public VerticalLine(int alpha = 255)
 			: base(1, 1)
 		{
-			BackgroundColor = ActiveTheme.Instance.SecondaryTextColor;
+			BackgroundColor = HorizontalLine.GetBorderColor(alpha);
 			VAnchor = VAnchor.ParentBottomTop;
 		}
 	}

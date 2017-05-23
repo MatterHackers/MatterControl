@@ -69,8 +69,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler ResetView;
 
-		bool overflowMenuActive = false;
-
 		public bool PartSelectVisible
 		{
 			get { return partSelectSeparator.Visible; }
@@ -142,7 +140,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				checkedBorderColor = RGBA_Bytes.White
 			};
 
-			
 			string iconPath;
 
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
@@ -184,26 +181,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(partSelectButton);
 			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
 
-			var slightShade = new RGBA_Bytes(0, 0, 0, 40);
-
-			var menuInitiallyActive = false;
-			iconPath = Path.Combine("ViewTransformControls", "overflow.png");
-			var overflowButton = new ImageWidget(StaticData.Instance.LoadIcon(iconPath, 32, 32));
+			var overflowButton = new OverflowDropdown(allowLightnessInvert: false);
 			overflowButton.ToolTipText = "More...".Localize();
 			overflowButton.Margin = 3;
+			overflowButton.PopupContent = ShowOverflowMenu();
 			AddChild(overflowButton);
-			overflowButton.MouseDown += (s, e) =>
-			{
-				menuInitiallyActive = overflowMenuActive;
-			};
-			overflowButton.Click += (s, e) =>
-			{
-				if (!menuInitiallyActive)
-				{
-					ShowOverflowMenu(overflowButton);
-					overflowButton.BackgroundColor = slightShade;
-				}
-			};
 
 			Margin = new BorderDouble(5);
 			HAnchor |= Agg.UI.HAnchor.ParentLeft;
@@ -217,13 +199,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
-		public void ShowOverflowMenu(GuiWidget parent)
+		public GuiWidget ShowOverflowMenu()
 		{
-			overflowMenuActive = true;
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var menuItems = new List<GuiWidget>();
-
-			menuItems.Add(
+			topToBottom.AddChild(
 				AddCheckbox(
 					"Show Print Bed".Localize(),
 					"Show Help Checkbox",
@@ -241,7 +221,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
 			if (buildHeight > 0)
 			{
-				menuItems.Add(
+				topToBottom.AddChild(
 					AddCheckbox(
 						"Show Print Area".Localize(),
 						"Show Help Checkbox",
@@ -263,23 +243,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(5, 5, 5, 0)
 			};
 
-			menuItems.Add(new HorizontalLine());
+			topToBottom.AddChild(new HorizontalLine());
 			CreateRenderTypeRadioButtons(widget);
 
-			menuItems.Add(widget);
+			topToBottom.AddChild(widget);
 
-			var popupWidget = new PopupWidget(menuItems, parent, Vector2.Zero, Direction.Down, 0, false)
-			{
-				BorderWidth = 1,
-				BorderColor = RGBA_Bytes.Gray,
-				BackgroundColor = RGBA_Bytes.White,
-			};
-			popupWidget.Closed += (s, e) =>
-			{
-				parent.BackgroundColor = RGBA_Bytes.Transparent;
-				overflowMenuActive = false;
-			};
-			popupWidget.Focus();
+			return topToBottom;
 		}
 
 		private void CreateRenderTypeRadioButtons(GuiWidget parentContainer)

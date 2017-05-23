@@ -218,7 +218,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				PrinterConnectionAndCommunication.Instance.ReleaseMotors();
 			};
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			GuiWidget spacerReleaseShow = new GuiWidget(10 * GuiWidget.DeviceScale, 0);
 

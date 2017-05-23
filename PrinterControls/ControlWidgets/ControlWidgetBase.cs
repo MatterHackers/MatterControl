@@ -57,11 +57,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		protected static GuiWidget CreateSeparatorLine()
 		{
-			GuiWidget topLine = new GuiWidget(10 * GuiWidget.DeviceScale, 1 * GuiWidget.DeviceScale);
-			topLine.Margin = new BorderDouble(0, 5);
-			topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			topLine.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
-			return topLine;
+			return new HorizontalLine(alpha: 100)
+			{
+				Margin = new BorderDouble(0, 5)
+			};
 		}
 	}
 }

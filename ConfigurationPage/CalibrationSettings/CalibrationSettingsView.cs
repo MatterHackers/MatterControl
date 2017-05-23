@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				mainContainer.AddChild(printLevelingContainer);
 			}
 
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			mainContainer.AddChild(new HorizontalLine(50));
 
 			AddChild(mainContainer);
 

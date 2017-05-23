@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			: base(FlowDirection.TopToBottom)
 		{
 			Name = label;
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				StringEventArgs stringEvent = e as StringEventArgs;
@@ -73,22 +74,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
-			GuiWidget accentBar = new GuiWidget(7, 5)
+			GuiWidget accentBar = new GuiWidget(7, 3)
 			{
 				BackgroundColor = accentColor,
 				HAnchor = HAnchor.ParentLeftRight
 			};
 
-			TextWidget labelText = new TextWidget(label.Localize().ToUpper())
+			// Section Label
+			this.AddChild(new TextWidget(label.Localize().ToUpper())
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = Agg.UI.HAnchor.ParentCenter,
-				Margin = new BorderDouble(0, 3, 0, 6)
-			};
+				HAnchor = Agg.UI.HAnchor.ParentLeft,
+				Margin = new BorderDouble(12, 3, 0, 6)
+			});
 
-			this.AddChild(labelText);
 			pullDownContainer = new GuiWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -104,12 +105,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var dropDownList = CreateDropdown();
 
-			FlowLayoutWidget container = new FlowLayoutWidget();
-			container.HAnchor = HAnchor.ParentLeftRight;
-			container.Padding = new BorderDouble(6, 0);
+			FlowLayoutWidget container = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Padding = new BorderDouble(12, 0)
+			};
 
 			editButton = TextImageButtonFactory.GetThemedEditButton();
-
 			editButton.ToolTipText = "Edit Selected Setting".Localize();
 			editButton.Enabled = dropDownList.SelectedIndex != -1;
 			editButton.VAnchor = VAnchor.ParentCenter;

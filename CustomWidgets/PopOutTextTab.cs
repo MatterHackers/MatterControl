@@ -41,7 +41,7 @@ namespace MatterHackers.Agg.UI
 	public class PopOutTextTabWidget : Tab
 	{
 		private PopOutManager popOutManager;
-		Button popOutButton;
+		private Button popOutButton;
 
 		public PopOutTextTabWidget(TabPage tabPageControledByTab, string internalTabName, Vector2 minSize)
 			: this(tabPageControledByTab, internalTabName, minSize, 12)
@@ -51,13 +51,16 @@ namespace MatterHackers.Agg.UI
 		public PopOutTextTabWidget(TabPage tabPageControledByTab, string internalTabName, Vector2 minSize, double pointSize)
 			: base(internalTabName, new GuiWidget(), new GuiWidget(), new GuiWidget(), tabPageControledByTab)
 		{
+			this.Padding = new BorderDouble(5, 0);
+			this.Margin = new BorderDouble(0, 0, 10, 0);
+
 			RGBA_Bytes selectedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			RGBA_Bytes selectedBackgroundColor = new RGBA_Bytes();
 			RGBA_Bytes normalTextColor = ActiveTheme.Instance.TabLabelUnselected;
 			RGBA_Bytes normalBackgroundColor = new RGBA_Bytes();
 
-			AddText(tabPageControledByTab.Text, selectedWidget, selectedTextColor, selectedBackgroundColor, pointSize);
-			AddText(tabPageControledByTab.Text, normalWidget, normalTextColor, normalBackgroundColor, pointSize);
+			AddText(tabPageControledByTab.Text, selectedWidget, selectedTextColor, selectedBackgroundColor, pointSize, true);
+			AddText(tabPageControledByTab.Text, normalWidget, normalTextColor, normalBackgroundColor, pointSize, false);
 
 			tabPageControledByTab.TextChanged += tabPageControledByTab_TextChanged;
 
@@ -93,9 +96,15 @@ namespace MatterHackers.Agg.UI
 		public TextWidget tabTitle;
 		private FlowLayoutWidget leftToRight;
 
-		private void AddText(string tabText, GuiWidget widgetState, RGBA_Bytes textColor, RGBA_Bytes backgroundColor, double pointSize)
+		private void AddText(string tabText, GuiWidget widgetState, RGBA_Bytes textColor, RGBA_Bytes backgroundColor, double pointSize, bool isActive)
 		{
-			leftToRight = new FlowLayoutWidget();
+			leftToRight = new FlowLayoutWidget()
+			{
+				VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+				Margin = 0,
+				Padding = 0
+			};
+
 			tabTitle = new TextWidget(tabText, pointSize: pointSize, textColor: textColor);
 			tabTitle.AutoExpandBoundsToText = true;
 			leftToRight.AddChild(tabTitle);
@@ -127,8 +136,9 @@ namespace MatterHackers.Agg.UI
 			leftToRight.AddChild(popOutButton);
 
 			widgetState.AddChild(leftToRight);
-			widgetState.SetBoundsToEncloseChildren();
 			widgetState.BackgroundColor = backgroundColor;
+
+			EnforceSizingAdornActive(widgetState, isActive);
 		}
 	}
 }

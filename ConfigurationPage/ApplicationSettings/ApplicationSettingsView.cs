@@ -58,44 +58,44 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			cannotRestartWhileActive = "Unable to restart".Localize();
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(new HorizontalLine(50));
 			}
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetUpdateControl());
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(new HorizontalLine(50));
 			}
 			
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			mainContainer.AddChild(new HorizontalLine(50));
 			mainContainer.AddChild(GetLanguageControl());
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			mainContainer.AddChild(new HorizontalLine(50));
 			GuiWidget sliceEngineControl = GetSliceEngineControl();
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				mainContainer.AddChild(sliceEngineControl);
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(new HorizontalLine(50));
 			}
 
 
 			#if !__ANDROID__
 			{
 				mainContainer.AddChild(GetThumbnailRenderingControl());
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(new HorizontalLine(50));
 
 				mainContainer.AddChild(GetDisplayControl());
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(new HorizontalLine(50));
 			}
 			#endif
 			
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetModeControl());
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(new HorizontalLine(50));
 			}
 
 			mainContainer.AddChild(GetClearHistoryControl());
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			mainContainer.AddChild(new HorizontalLine(50));
 
 			mainContainer.AddChild(GetThemeControl());
 

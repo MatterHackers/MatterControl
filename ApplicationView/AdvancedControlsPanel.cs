@@ -45,10 +45,7 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		private Button backButton;
 		private GuiWidget sliceSettingsWidget;
-
-		public event EventHandler BackClicked;
 
 		private TabControl advancedTab;
 
@@ -94,10 +91,10 @@ namespace MatterHackers.MatterControl
 		{
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			var advancedControls = new TabControl();
-			advancedControls.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
+			var advancedControls = new TabControl(separator: new HorizontalLine(alpha: 50));
+			advancedControls.TabBar.BorderColor = RGBA_Bytes.Transparent; // ActiveTheme.Instance.SecondaryTextColor;
 			advancedControls.TabBar.Margin = 0;
-			advancedControls.TabBar.Padding = new BorderDouble(0, 12);
+			advancedControls.TabBar.Padding = 0;
 
 			int textSize = 14;
 
@@ -106,8 +103,8 @@ namespace MatterHackers.MatterControl
 			var libraryTabPage = new TabPage(new PrintLibraryWidget(), "Library".Localize().ToUpper());
 			advancedControls.AddTab(new SimpleTextTabWidget(
 				libraryTabPage, 
-				"Library Tab", 
-				15,
+				"Library Tab",
+				textSize,
 				ActiveTheme.Instance.TabLabelSelected, 
 				new RGBA_Bytes(), 
 				unselectedTextColor, 
@@ -136,7 +133,6 @@ namespace MatterHackers.MatterControl
 
 			advancedControls.AddTab(sliceSettingPopOut);
 			advancedControls.AddTab(controlsPopOut);
-;
 
 #if !__ANDROID__
 			if (!UserSettings.Instance.IsTouchScreen)
@@ -152,22 +148,6 @@ namespace MatterHackers.MatterControl
 					"Options Tab", 
 					textSize,
 					ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-			/*
-			// Make sure we are on the right tab when we create this view
-			{
-				string selectedTab = UserSettings.Instance.get(ThirdPanelTabView_AdvancedControls_CurrentTab);
-				advancedControls.SelectTab(selectedTab);
-
-				advancedControls.TabBar.TabIndexChanged += (sender, e) =>
-				{
-					string selectedTabName = advancedControls.TabBar.SelectedTabName;
-					if (!string.IsNullOrEmpty(selectedTabName))
-					{
-						UserSettings.Instance.set(ThirdPanelTabView_AdvancedControls_CurrentTab, selectedTabName);
-					}
-				};
-			} */
 
 			// MatterControl historically started with the queue selected, force to 0 to remain consistent
 			advancedControls.SelectedTabIndex = 0;

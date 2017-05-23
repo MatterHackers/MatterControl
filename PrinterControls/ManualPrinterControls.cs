@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl
 
 		public ManualPrinterControls()
 		{
+			this.BackgroundColor = ApplicationController.Instance.TabBodyBackground;
 			AnchorAll();
 			if (UserSettings.Instance.IsTouchScreen)
 			{
@@ -351,7 +352,7 @@ namespace MatterHackers.MatterControl
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
 			this.TabBar.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
-			this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+			this.TabBar.BorderColor = RGBA_Bytes.Transparent;
 			this.TabBar.Margin = new BorderDouble(0);
 			this.TabBar.Padding = new BorderDouble(4, 4);
 
