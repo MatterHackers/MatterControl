@@ -548,6 +548,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 160);
+
 		public string CachePath(ILibraryItem libraryItem)
 		{
 			// TODO: Use content SHA

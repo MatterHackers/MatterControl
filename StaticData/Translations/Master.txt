@@ -6124,3 +6124,78 @@ Translated:Text
 English:Braille
 Translated:Braille
 
+English:Calibration Parts
+Translated:Calibration Parts
+
+English:Print History
+Translated:Print History
+
+English:Text Tools
+Translated:Text Tools
+
+English:Export to Zip
+Translated:Export to Zip
+
+English:Export to Folder or SD Card
+Translated:Export to Folder or SD Card
+
+English:Create Part Sheet
+Translated:Create Part Sheet
+
+English:View List
+Translated:View List
+
+English:View Icons
+Translated:View Icons
+
+English:View Large Icons
+Translated:View Large Icons
+
+English:Primitive Shapes
+Translated:Primitive Shapes
+
+English:TestPart
+Translated:TestPart
+
+English:ChairFoot
+Translated:ChairFoot
+
+English:Rotation Count:
+Translated:Rotation Count:
+
+English:Height
+Translated:Height
+
+English:Radius
+Translated:Radius
+
+English:Update
+Translated:Update
+
+English:Color
+Translated:Color
+
+English:Loading
+Translated:Loading
+
+English:Depth
+Translated:Depth
+
+English: in use
+Translated: in use
+
+English:More...
+Translated:More...
+
+English:Select Image
+Translated:Select Image
+
+English:Unlock to Print
+Translated:Unlock to Print
+
+English:Demo
+Translated:Demo
+
+English:Creating Mesh
+Translated:Creating Mesh
+

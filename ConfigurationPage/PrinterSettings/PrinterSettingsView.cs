@@ -32,9 +32,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			terminalCommunicationsContainer = new DisableableWidget();
 			terminalCommunicationsContainer.AddChild(GetGcodeTerminalControl());
 
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			mainContainer.AddChild(new HorizontalLine(50));
 			mainContainer.AddChild(eePromControlsContainer);
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			mainContainer.AddChild(new HorizontalLine(50));
 
 			mainContainer.AddChild(terminalCommunicationsContainer);
 
@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true")
 			{
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(new HorizontalLine(50));
 				mainContainer.AddChild(cameraContainer);
 			}
 

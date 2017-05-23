@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -143,14 +144,7 @@ namespace MatterHackers.MatterControl
 #endif
 			}
 
-			var menuSeparator = new GuiWidget()
-			{
-				BackgroundColor = new RGBA_Bytes(200, 200, 200),
-				Height = 2,
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(3, 6, 3, 3)
-			};
-			container.AddChild(menuSeparator);
+			container.AddChild(new HorizontalLine(alpha:50));
 
 			widescreenPanel = new WidescreenPanel();
 			container.AddChild(widescreenPanel);

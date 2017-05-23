@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void LoadPrintItem(PrintItemWrapper printItem)
 		{
 			tabControl = new TabControl();
-			tabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+			tabControl.TabBar.BorderColor = RGBA_Bytes.Transparent;
 
 			tabControl.TabBar.Padding = new BorderDouble(top: 6);
 

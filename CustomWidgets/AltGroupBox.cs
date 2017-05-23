@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -92,7 +91,6 @@ namespace MatterHackers.MatterControl
 			this.Margin = new BorderDouble(0);
 			this.groupBoxLabel = groupBoxLabel;
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			if (groupBoxLabel != null)
 			{

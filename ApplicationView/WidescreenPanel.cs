@@ -31,6 +31,7 @@ using System;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
@@ -90,14 +91,12 @@ namespace MatterHackers.MatterControl
 		private void LoadCompactView()
 		{
 			ColumnOne.RemoveAllChildren();
-			ColumnOne.AddChild(new ActionBarPlus());
 
 			advancedControlsPanel = new AdvancedControlsPanel()
 			{
 				Name = "For - CompactSlidePanel"
 			};
 
-			ColumnOne.AddChild(new PrintProgressBar());
 			ColumnOne.AddChild(advancedControlsPanel);
 			ColumnOne.AnchorAll();
 		}
@@ -180,21 +179,21 @@ namespace MatterHackers.MatterControl
 			ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			AddChild(ColumnOne);
+			this.AddChild(ColumnOne);
+
 			leftBorderLine = new GuiWidget()
 			{
-				VAnchor = VAnchor.ParentBottomTop
+				VAnchor = VAnchor.ParentBottomTop,
+				Width = 15,
+				Padding = 5
 			};
-			leftBorderLine.Width = 15;
-			leftBorderLine.BeforeDraw += (widget, graphics2D) =>
+			leftBorderLine.AddChild(new VerticalLine(alpha:50)
 			{
-				RectangleDouble bounds = ((GuiWidget)widget).LocalBounds;
-				bounds.Left += 3;
-				bounds.Right -= 8;
-				graphics2D.graphics2D.FillRectangle(bounds, new RGBA_Bytes(160, 160, 160));
-			};
-			AddChild(leftBorderLine);
-			AddChild(ColumnTwo);
+				HAnchor = HAnchor.ParentLeft
+			});
+			this.AddChild(leftBorderLine);
+
+			this.AddChild(ColumnTwo);
 		}
 
 		public void ReloadAdvancedControlsPanel()

@@ -22,12 +22,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		public CloudSettingsWidget()
 			: base("Cloud".Localize())
 		{
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			mainContainer.AddChild(new HorizontalLine(50));
 
 			notificationSettingsContainer = new DisableableWidget();
 			notificationSettingsContainer.AddChild(GetNotificationControls());
 			mainContainer.AddChild(notificationSettingsContainer);
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			mainContainer.AddChild(new HorizontalLine(50));
 			cloudSyncContainer = new DisableableWidget();
 			cloudSyncContainer.AddChild(GetCloudSyncDashboardControls());
 			mainContainer.AddChild(cloudSyncContainer);

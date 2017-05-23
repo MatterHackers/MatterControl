@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			: base(Orientation.Vertical)
 		{
 			this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+			this.TabBar.BorderColor = RGBA_Bytes.Transparent;
 			this.TabBar.Margin = new BorderDouble(4, 0, 0, 0);
 			this.TabBar.Padding = new BorderDouble(0, 8);
 			this.Margin = new BorderDouble(top: 0);

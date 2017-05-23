@@ -46,7 +46,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			Margin = new BorderDouble(10, 0),
-			borderWidth = 0
+			borderWidth = 0,
+			FixedHeight = 30
 		};
 
 		public FolderBreadCrumbWidget(ListView listView)
@@ -80,7 +81,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			Button upbutton = navigationButtonFactory.Generate("", icon);
 			upbutton.Name = "Library Up Button";
-			upbutton.Margin = new BorderDouble(3, 0, 3, 0);
+			upbutton.Margin = 0;
 			upbutton.Click += (s, e) =>
 			{
 				if (listView.ActiveContainer.Parent != null)
@@ -88,6 +89,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					UiThread.RunOnIdle(() => listView.LoadContainer(listView.ActiveContainer.Parent));
 				}
 			};
+
 			this.AddChild(upbutton);
 
 			bool firstItem = true;
