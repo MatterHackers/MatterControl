@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected ViewControls3D viewControls3D;
 
-		private bool needToRecretaeBed = false;
+		private bool needToRecreateBed = false;
 
 		public PartPreview3DWidget()
 		{
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					|| stringEvent.Data == SettingsKey.bed_shape
 					|| stringEvent.Data == SettingsKey.center_part_on_bed)
 				{
-					needToRecretaeBed = true;
+					needToRecreateBed = true;
 				}
 			}
 		}
@@ -152,9 +152,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (needToRecretaeBed)
+			if (needToRecreateBed)
 			{
-				needToRecretaeBed = false;
+				needToRecreateBed = false;
 				RecreateBed();
 			}
 			base.OnDraw(graphics2D);
@@ -180,10 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

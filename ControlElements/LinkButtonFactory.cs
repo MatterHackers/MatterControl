@@ -51,17 +51,17 @@ namespace MatterHackers.MatterControl
 			VAnchor = VAnchor.FitToChildren;
 		}
 
-		public override void SendToChildren(object objectToRout)
+		public override void SendToChildren(object objectToRoute)
 		{
-			ChangeTextColorEventArgs changeColorEvent = objectToRout as ChangeTextColorEventArgs;
+			var changeColorEvent = objectToRoute as ChangeTextColorEventArgs;
 			if (changeColorEvent != null)
 			{
 				buttonText.TextColor = changeColorEvent.color;
 			}
-			base.SendToChildren(objectToRout);
+			base.SendToChildren(objectToRoute);
 		}
 
-		public override void OnDraw(Agg.Graphics2D graphics2D)
+		public override void OnDraw(Graphics2D graphics2D)
 		{
 			RectangleDouble Bounds = LocalBounds;
 			RoundedRect rectBorder = new RoundedRect(Bounds, this.borderRadius);
