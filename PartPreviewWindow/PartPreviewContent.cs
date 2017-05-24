@@ -98,10 +98,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void LoadPrintItem(PrintItemWrapper printItem)
 		{
-			tabControl = new TabControl();
-			tabControl.TabBar.BorderColor = RGBA_Bytes.Transparent;
-
-			tabControl.TabBar.Padding = new BorderDouble(top: 6);
+			var activeSettings = ActiveSliceSettings.Instance;
+			tabControl = ApplicationController.Instance.Theme.CreateTabControl();
 
 			RGBA_Bytes selectedTabColor;
 			if (!UserSettings.Instance.IsTouchScreen)
@@ -115,18 +113,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
+			double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
 
 			// put in the 3D view
 			partPreviewView = new View3DWidget(printItem,
-				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
-				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape),
+				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
+				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
+				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
 				windowMode,
 				autoRotate3DView,
 				openMode);
 
-			TabPage partPreview3DView = new TabPage(partPreviewView, string.Format("3D {0} ", "View".Localize()).ToUpper());
+			string tabTitle = !activeSettings.PrinterSelected ? "Printer".Localize() : activeSettings.GetValue(SettingsKey.printer_name);
+
+			TabPage partPreview3DView = new TabPage(partPreviewView, tabTitle.ToUpper());
 
 			// put in the gcode view
 			ViewGcodeBasic.WindowMode gcodeWindowMode = ViewGcodeBasic.WindowMode.Embeded;
@@ -136,9 +136,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			viewGcodeBasic = new ViewGcodeBasic(
-				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
-				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape), gcodeWindowMode);
+				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
+				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
+				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape), gcodeWindowMode);
 
 			if (windowMode == View3DWidget.WindowMode.StandAlone)
 			{
@@ -146,32 +146,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewGcodeBasic.Closed += (s, e) => Close();
 			}
 
-			TabPage layerView = new TabPage(viewGcodeBasic, "Layer View".Localize().ToUpper());
+			Tab printerTab;
+			var layerView = new TabPage(viewGcodeBasic, "Layer View".Localize().ToUpper());
 
-			int tabPointSize = 16;
-            // add the correct tabs based on whether we are stand alone or embedded
-            Tab threeDViewTab;
-            if (windowMode == View3DWidget.WindowMode.StandAlone || UserSettings.Instance.IsTouchScreen)
+			// add the correct tabs based on whether we are stand alone or embedded
+			if (windowMode == View3DWidget.WindowMode.StandAlone || UserSettings.Instance.IsTouchScreen)
 			{
-                threeDViewTab = new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
-                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-                tabControl.AddTab(threeDViewTab);
-                layerViewTab = new SimpleTextTabWidget(layerView, "Layer View Tab", tabPointSize,
-                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-                tabControl.AddTab(layerViewTab);
+				printerTab = new SimpleTextTabWidget(
+					partPreview3DView,
+					"3D View Tab",
+					tabControl.TextPointSize,
+					selectedTabColor,
+					new RGBA_Bytes(),
+					ActiveTheme.Instance.TabLabelUnselected,
+					new RGBA_Bytes());
+
+
+				layerViewTab = new SimpleTextTabWidget(
+					layerView,
+					"Layer View Tab",
+					tabControl.TextPointSize,
+					selectedTabColor,
+					new RGBA_Bytes(),
+					ActiveTheme.Instance.TabLabelUnselected,
+					new RGBA_Bytes());
 			}
 			else
 			{
-                threeDViewTab = new PopOutTextTabWidget(partPreview3DView, "3D View Tab", new Vector2(590, 400), tabPointSize);
-                tabControl.AddTab(threeDViewTab);
-				layerViewTab = new PopOutTextTabWidget(layerView, "Layer View Tab", new Vector2(590, 400), tabPointSize);
-				tabControl.AddTab(layerViewTab);
+				printerTab = new PopOutTextTabWidget(
+					partPreview3DView,
+					"3D View Tab",
+					new Vector2(590, 400),
+					tabControl.TextPointSize);
+
+				layerViewTab = new PopOutTextTabWidget(
+					layerView,
+					"Layer View Tab",
+					new Vector2(590, 400),
+					tabControl.TextPointSize);
 			}
 
-            threeDViewTab.ToolTipText = "Preview 3D Design".Localize();
-            layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
+			printerTab.ToolTipText = "Preview 3D Design".Localize();
+			layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
 
-            this.AddChild(tabControl);
+			tabControl.AddTab(printerTab);
+			tabControl.AddTab(layerViewTab);
+
+			this.AddChild(tabControl);
 		}
 
 		public override void OnLoad(EventArgs args)

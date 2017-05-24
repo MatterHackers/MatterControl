@@ -127,6 +127,17 @@ namespace MatterHackers.MatterControl
 					borderWidth = 1
 				};
 			}
+
+			internal TabControl CreateTabControl()
+			{
+				var advancedControls = new TabControl(separator: new HorizontalLine(alpha: 50));
+				advancedControls.TabBar.BorderColor = RGBA_Bytes.Transparent; // ActiveTheme.Instance.SecondaryTextColor;
+				advancedControls.TabBar.Margin = 0;
+				advancedControls.TabBar.Padding = 0;
+				advancedControls.TextPointSize = 14;
+
+				return advancedControls;
+			}
 		}
 
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
