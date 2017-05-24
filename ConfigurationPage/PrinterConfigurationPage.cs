@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl
 			: base(true)
 		{
 			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			this.BackgroundColor = ApplicationController.Instance.TabBodyBackground;
 			AnchorAll();
 			AddChild(new PrinterConfigurationWidget());
 		}
@@ -210,22 +211,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static GuiWidget CreateSeparatorLine()
-		{
-			GuiWidget topLine = new GuiWidget(10, 1);
-			topLine.Margin = new BorderDouble(0, 5);
-			topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			topLine.BackgroundColor = RGBA_Bytes.White;
-			return topLine;
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

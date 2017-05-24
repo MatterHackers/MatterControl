@@ -43,9 +43,7 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrintStatusRow : FlowLayoutWidget
 	{
-		private TextWidget activePrintLabel;
 		private TextWidget activePrintName;
-		private PartThumbnailWidget activePrintPreviewImage;
 		private TextWidget activePrintStatus;
 		private TemperatureWidgetBase bedTemperatureWidget;
 		private TemperatureWidgetBase extruderTemperatureWidget;
@@ -55,7 +53,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			UiThread.RunOnIdle(OnIdle);
 
-			this.Margin = new BorderDouble(6, 3, 6, 6);
+			this.Margin = 0;
+			this.Padding = 0;
 			this.HAnchor = HAnchor.ParentLeftRight;
 
 			AddChildElements();
@@ -75,31 +74,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				UpdatePrintStatus();
 			}, ref unregisterEvents);
-
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-
-			onActivePrintItemChanged(null, null);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (activePrintPreviewImage.ItemWrapper != null)
-			{
-				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
-			}
-
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
 		private void AddChildElements()
 		{
-			activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", PartThumbnailWidget.ImageSizes.Size115x115);
-			activePrintPreviewImage.VAnchor = VAnchor.ParentTop;
-			activePrintPreviewImage.Padding = new BorderDouble(0);
-			activePrintPreviewImage.HoverBackgroundColor = new RGBA_Bytes();
-			activePrintPreviewImage.BorderWidth = 3;
-
 			FlowLayoutWidget temperatureWidgets = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
 				extruderTemperatureWidget = new TemperatureWidgetExtruder();
@@ -123,7 +107,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			iconContainer.Margin = new BorderDouble(top: 3);
 			iconContainer.AddChild(GetAutoLevelIndicator());
 
-			this.AddChild(activePrintPreviewImage);
 			this.AddChild(printStatusContainer);
 			this.AddChild(iconContainer);
 			this.AddChild(temperatureWidgets);
@@ -134,30 +117,21 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private FlowLayoutWidget CreateActivePrinterInfoWidget()
 		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(6, 0, 6, 0);
-			container.HAnchor = HAnchor.ParentLeftRight;
-			container.VAnchor |= VAnchor.ParentTop;
-
-			FlowLayoutWidget topRow = new FlowLayoutWidget();
-			topRow.Name = "PrintStatusRow.ActivePrinterInfo.TopRow";
-			topRow.HAnchor = HAnchor.ParentLeftRight;
-
-			activePrintLabel = getPrintStatusLabel("Next Print".Localize() + ":", pointSize: 11);
-			activePrintLabel.VAnchor = VAnchor.ParentTop;
-
-			topRow.AddChild(activePrintLabel);
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(6, 0, 6, 0),
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottom | VAnchor.FitToChildren,
+			};
 
 			activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);
 			activePrintName.AutoExpandBoundsToText = false;
+			container.AddChild(activePrintName);
 
 			activePrintStatus = getPrintStatusLabel("this is the biggest label we will allow - bigger", pointSize: 11);
 			activePrintStatus.AutoExpandBoundsToText = false;
 			activePrintStatus.Text = "";
 			activePrintStatus.Margin = new BorderDouble(top: 3);
-
-			container.AddChild(topRow);
-			container.AddChild(activePrintName);
 			container.AddChild(activePrintStatus);
 
 			return container;
@@ -168,6 +142,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
 			imageButtonFactory.InvertImageColor = false;
 			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 16, 16).InvertLightness();
+
 			Button autoLevelButton = imageButtonFactory.Generate(levelingImage, levelingImage);
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
 			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
@@ -189,25 +164,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			widget.AutoExpandBoundsToText = true;
 			widget.MinimumSize = new Vector2(widget.Width, widget.Height);
 			return widget;
-		}
-
-		private void onActivePrintItemChanged(object sender, EventArgs e)
-		{
-			// first we have to remove any link to an old part (the part currently in the view)
-			if (activePrintPreviewImage.ItemWrapper != null)
-			{
-				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
-			}
-
-			activePrintPreviewImage.ItemWrapper = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-
-			// then hook up our new part
-			if (activePrintPreviewImage.ItemWrapper != null)
-			{
-				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
-			}
-
-			activePrintPreviewImage.Invalidate();
 		}
 
 		private void OnIdle()
@@ -340,7 +296,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				printerStatus = "Press 'Add' to choose an item to print".Localize();
 			}
 
-			activePrintLabel.Text = printLabel;
 			activePrintStatus.Text = printerStatus;
 		}
 	}

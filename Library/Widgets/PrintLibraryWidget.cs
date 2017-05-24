@@ -66,13 +66,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private DropDownMenu actionMenu;
+		private OverflowDropdown overflowDropdown;
+
+		//private DropDownMenu actionMenu;
 		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
 
 		public PrintLibraryWidget()
 		{
 			this.Padding = new BorderDouble(3);
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.BackgroundColor = ApplicationController.Instance.TabBodyBackground;
 			this.AnchorAll();
 
 			textImageButtonFactory = new TextImageButtonFactory()
@@ -104,7 +106,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay,
 					HAnchor = HAnchor.ParentLeftRight,
-					Padding = new BorderDouble(0)
+					Padding = new BorderDouble(0),
+					Visible = false // TODO: Restore ASAP
 				};
 
 				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
@@ -152,20 +155,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			breadCrumbAndActionBar.AddChild(breadCrumbSpaceHolder);
 
-			actionMenu = new DropDownMenu("Actions".Localize() + "... ")
+			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
 				AlignToRightEdge = true,
-				NormalColor = new RGBA_Bytes(),
-				BorderWidth = 1,
-				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100),
-				MenuAsWideAsItems = false,
-				VAnchor = VAnchor.ParentBottomTop,
-				Margin = new BorderDouble(3),
-				Padding = new BorderDouble(10),
-				Name = "LibraryActionMenu"
 			};
-
-			breadCrumbAndActionBar.AddChild(actionMenu);
+			breadCrumbAndActionBar.AddChild(overflowDropdown);
 
 			allControls.AddChild(breadCrumbAndActionBar);
 
@@ -913,8 +907,36 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnLoad(EventArgs args)
 		{
+
+			var actionMenu = new DropDownMenu("Actions".Localize() + "... ")
+			{
+				AlignToRightEdge = true,
+				NormalColor = new RGBA_Bytes(),
+				BorderWidth = 1,
+				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100),
+				MenuAsWideAsItems = false,
+				VAnchor = VAnchor.ParentBottomTop,
+				Margin = new BorderDouble(3),
+				Padding = new BorderDouble(10),
+				Name = "LibraryActionMenu"
+			};
+
 			// Defer creating menu items until plugins have loaded
 			CreateActionMenuItems(actionMenu);
+
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Name = "_topToBottom",
+			};
+
+			foreach (var menuAction in menuActions)
+			{
+				var menu = menuAction.MenuItem;
+				menu?.ClearRemovedFlag();
+				topToBottom.AddChild(menu);
+			}
+
+			overflowDropdown.PopupContent = topToBottom;
 
 			base.OnLoad(args);
 		}

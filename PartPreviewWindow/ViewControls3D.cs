@@ -36,6 +36,10 @@ using System.IO;
 using MatterHackers.Localizations;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.ImageProcessing;
+using System.Collections.Generic;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -136,7 +140,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				checkedBorderColor = RGBA_Bytes.White
 			};
 
-			
 			string iconPath;
 
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
@@ -162,25 +165,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			iconPath = Path.Combine("ViewTransformControls", "scale.png");
 			scaleButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
-			scaleButton.Margin = new BorderDouble(3);
+			scaleButton.Margin = 3;
 			AddChild(scaleButton);
 			scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
 
 			partSelectSeparator = new GuiWidget(2, 32);
 			partSelectSeparator.BackgroundColor = RGBA_Bytes.White;
-			partSelectSeparator.Margin = new BorderDouble(3);
+			partSelectSeparator.Margin = 3;
 			AddChild(partSelectSeparator);
 
 			iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 			partSelectButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
-            partSelectButton.ToolTipText = "Select Part".Localize();
-            partSelectButton.Margin = new BorderDouble(3);
+			partSelectButton.ToolTipText = "Select Part".Localize();
+			partSelectButton.Margin = new BorderDouble(3);
 			AddChild(partSelectButton);
 			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
+
+			var overflowButton = new OverflowDropdown(allowLightnessInvert: false);
+			overflowButton.ToolTipText = "More...".Localize();
+			overflowButton.Margin = 3;
+			overflowButton.PopupContent = ShowOverflowMenu();
+			AddChild(overflowButton);
 
 			Margin = new BorderDouble(5);
 			HAnchor |= Agg.UI.HAnchor.ParentLeft;
 			VAnchor = Agg.UI.VAnchor.ParentTop;
+
+			Margin = new BorderDouble(0, 0, 0, 72);
 			rotateButton.Checked = true;
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 
@@ -188,6 +199,196 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partSelectButton.CheckedStateChanged += SetMeshViewerDisplayTheme;
 
 			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+		}
+
+		public GuiWidget ShowOverflowMenu()
+		{
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			topToBottom.AddChild(
+				AddCheckbox(
+					"Show Print Bed".Localize(),
+					"Show Help Checkbox",
+					meshViewerWidget.RenderBed,
+					5,
+					(s, e) =>
+					{
+						var checkbox = s as CheckBox;
+						if (checkbox != null)
+						{
+							meshViewerWidget.RenderBed = checkbox.Checked;
+						}
+					}));
+
+			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
+			if (buildHeight > 0)
+			{
+				topToBottom.AddChild(
+					AddCheckbox(
+						"Show Print Area".Localize(),
+						"Show Help Checkbox",
+						meshViewerWidget.RenderBuildVolume,
+						5,
+						(s, e) =>
+						{
+							var checkbox = s as CheckBox;
+							if (checkbox != null)
+							{
+								meshViewerWidget.RenderBuildVolume = checkbox.Checked;
+							}
+						}));
+			}
+
+			var widget = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(5, 5, 5, 0)
+			};
+
+			topToBottom.AddChild(new HorizontalLine());
+			CreateRenderTypeRadioButtons(widget);
+
+			topToBottom.AddChild(widget);
+
+			return topToBottom;
+		}
+
+		private void CreateRenderTypeRadioButtons(GuiWidget parentContainer)
+		{
+			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
+			if (renderTypeString == null)
+			{
+				if (UserSettings.Instance.IsTouchScreen)
+				{
+					renderTypeString = "Shaded";
+				}
+				else
+				{
+					renderTypeString = "Outlines";
+				}
+				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
+			}
+
+			//var itemTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			var itemTextColor = RGBA_Bytes.Black;
+
+			RenderTypes renderType;
+			bool canParse = Enum.TryParse(renderTypeString, out renderType);
+			if (canParse)
+			{
+				meshViewerWidget.RenderType = renderType;
+			}
+
+			{
+				RadioButton renderTypeCheckBox = new RadioButton("Shaded".Localize(), textColor: itemTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
+
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
+				{
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Shaded;
+						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
+					}
+				};
+				parentContainer.AddChild(renderTypeCheckBox);
+			}
+
+			{
+				RadioButton renderTypeCheckBox = new RadioButton("Outlines".Localize(), textColor: itemTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
+				{
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Outlines;
+						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
+					}
+				};
+				parentContainer.AddChild(renderTypeCheckBox);
+			}
+
+			{
+				RadioButton renderTypeCheckBox = new RadioButton("Polygons".Localize(), textColor: itemTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
+				{
+					if (renderTypeCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Polygons;
+						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
+					}
+				};
+				parentContainer.AddChild(renderTypeCheckBox);
+			}
+
+			{
+				RadioButton renderTypeCheckBox = new RadioButton("Overhang".Localize(), textColor: itemTextColor);
+				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Overhang);
+
+				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
+				{
+					if (renderTypeCheckBox.Checked)
+					{
+						// TODO: Determine if Scene is available in scope
+						var scene = MatterControlApplication.Instance.ActiveView3DWidget.Scene;
+
+						meshViewerWidget.RenderType = RenderTypes.Overhang;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+						foreach (var meshAndTransform in scene.VisibleMeshes(Matrix4X4.Identity))
+						{
+							meshAndTransform.MeshData.MarkAsChanged();
+							// change the color to be the right thing
+							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshAndTransform.MeshData, (faceEdge) =>
+							{
+								Vector3 normal = faceEdge.containingFace.normal;
+								normal = Vector3.TransformVector(normal, meshAndTransform.Matrix).GetNormal();
+								VertexColorData colorData = new VertexColorData();
+
+								double startColor = 223.0 / 360.0;
+								double endColor = 5.0 / 360.0;
+								double delta = endColor - startColor;
+
+								RGBA_Bytes color = RGBA_Floats.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
+								if (normal.z < 0)
+								{
+									color = RGBA_Floats.FromHSL(startColor - delta * normal.z, .99, .49).GetAsRGBA_Bytes();
+								}
+
+								colorData.red = color.red;
+								colorData.green = color.green;
+								colorData.blue = color.blue;
+								return colorData;
+							});
+						}
+					}
+					else
+					{
+						// TODO: Implement
+						/*
+						foreach (var meshTransform in Scene.VisibleMeshes(Matrix4X4.Identity))
+						{
+							// turn off the overhang colors
+						} */
+					}
+				};
+
+				parentContainer.AddChild(renderTypeCheckBox);
+			}
+		}
+
+		private static MenuItem AddCheckbox(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
+		{
+			var checkbox = new CheckBox(text)
+			{
+				Checked = itemChecked
+			};
+			checkbox.CheckedStateChanged += eventHandler;
+
+			return new MenuItem(checkbox, itemValue)
+			{
+				Padding = padding,
+			};
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

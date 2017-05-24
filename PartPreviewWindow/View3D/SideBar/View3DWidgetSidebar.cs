@@ -48,10 +48,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public CheckBox expandMaterialOptions { get; private set; }
 		public CheckBox expandRotateOptions { get; private set; }
-		public CheckBox expandViewOptions { get; private set; }
 
 		public FlowLayoutWidget rotateOptionContainer;
-		private FlowLayoutWidget viewOptionContainer;
 		private FlowLayoutWidget materialOptionContainer;
 
 		// TODO: Remove debugging variables and draw functions once drag items are positioning correctly
@@ -154,52 +152,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					view3DWidget.AddMaterialControls(materialOptionContainer);
 				}
 
-				// put in the view options
-				{
-					expandViewOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(),
-					View3DWidget.ArrowRight,
-					View3DWidget.ArrowDown);
-					expandViewOptions.Margin = new BorderDouble(bottom: 2);
-					buttonPanel.AddChild(expandViewOptions);
-					expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
-
-					viewOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					viewOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					viewOptionContainer.Padding = new BorderDouble(left: 4);
-					viewOptionContainer.Visible = false;
-					{
-						CheckBox showBedCheckBox = new CheckBox("Show Print Bed".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-						showBedCheckBox.Checked = true;
-						showBedCheckBox.CheckedStateChanged += (sender, e) =>
-						{
-							view3DWidget.meshViewerWidget.RenderBed = showBedCheckBox.Checked;
-						};
-						viewOptionContainer.AddChild(showBedCheckBox);
-
-						if (buildHeight > 0)
-						{
-							CheckBox showBuildVolumeCheckBox = new CheckBox("Show Print Area".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-							showBuildVolumeCheckBox.Checked = false;
-							showBuildVolumeCheckBox.Margin = new BorderDouble(bottom: 5);
-							showBuildVolumeCheckBox.CheckedStateChanged += (sender, e) =>
-							{
-								view3DWidget.meshViewerWidget.RenderBuildVolume = showBuildVolumeCheckBox.Checked;
-							};
-							viewOptionContainer.AddChild(showBuildVolumeCheckBox);
-						}
-
-						if (UserSettings.Instance.IsTouchScreen)
-						{
-							UserSettings.Instance.set("defaultRenderSetting", RenderTypes.Shaded.ToString());
-						}
-						else
-						{
-							view3DWidget.CreateRenderTypeRadioButtons(viewOptionContainer);
-						}
-					}
-					buttonPanel.AddChild(viewOptionContainer);
-				}
-
 				// Add vertical spacer
 				this.AddChild(new GuiWidget()
 				{
@@ -250,7 +202,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (expandMaterialOptions.Checked == true)
 			{
 				expandRotateOptions.Checked = false;
-				expandViewOptions.Checked = false;
 			}
 			materialOptionContainer.Visible = expandMaterialOptions.Checked;
 		}
@@ -261,23 +212,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (expandRotateOptions.Checked == true)
 				{
-					expandViewOptions.Checked = false;
 					expandMaterialOptions.Checked = false;
 				}
 				rotateOptionContainer.Visible = expandRotateOptions.Checked;
-			}
-		}
-
-		private void expandViewOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (viewOptionContainer.Visible != expandViewOptions.Checked)
-			{
-				if (expandViewOptions.Checked == true)
-				{
-					expandRotateOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				viewOptionContainer.Visible = expandViewOptions.Checked;
 			}
 		}
 

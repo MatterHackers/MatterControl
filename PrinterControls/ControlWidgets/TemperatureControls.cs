@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					DisableableWidget extruderTemperatureControlWidget = new DisableableWidget();
 					extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget(i));
 					mainContainer.AddChild(extruderTemperatureControlWidget);
-					mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+					mainContainer.AddChild(new HorizontalLine(50));
 					ExtruderWidgetContainers.Add(extruderTemperatureControlWidget);
 				}
 			}
@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				DisableableWidget extruderTemperatureControlWidget = new DisableableWidget();
 				extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget());
 				mainContainer.AddChild(extruderTemperatureControlWidget);
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(new HorizontalLine(50));
 				ExtruderWidgetContainers.Add(extruderTemperatureControlWidget);
 			}
 

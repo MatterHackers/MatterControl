@@ -8,7 +8,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		protected readonly int TallButtonHeight = (int)(25 * GuiWidget.DeviceScale + .5);
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		protected RGBA_Bytes separatorLineColor;
 		protected FlowLayoutWidget mainContainer;
 
 		public SettingsViewBase(string title)
@@ -22,7 +21,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetDisplayAttributes()
 		{
-			this.separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
 			this.Margin = new BorderDouble(2, 4, 2, 0);
 
 			// colors
