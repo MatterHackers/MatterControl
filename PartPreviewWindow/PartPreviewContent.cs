@@ -149,29 +149,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TabPage layerView = new TabPage(viewGcodeBasic, "Layer View".Localize().ToUpper());
 
 			int tabPointSize = 16;
-            // add the correct tabs based on whether we are stand alone or embedded
-            Tab threeDViewTab;
-            if (windowMode == View3DWidget.WindowMode.StandAlone || UserSettings.Instance.IsTouchScreen)
+			// add the correct tabs based on whether we are stand alone or embedded
+			Tab threeDViewTab;
+			if (windowMode == View3DWidget.WindowMode.StandAlone || UserSettings.Instance.IsTouchScreen)
 			{
-                threeDViewTab = new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
-                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-                tabControl.AddTab(threeDViewTab);
-                layerViewTab = new SimpleTextTabWidget(layerView, "Layer View Tab", tabPointSize,
-                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-                tabControl.AddTab(layerViewTab);
+				threeDViewTab = new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
+					selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
+				tabControl.AddTab(threeDViewTab);
+				layerViewTab = new SimpleTextTabWidget(layerView, "Layer View Tab", tabPointSize,
+					selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
+				tabControl.AddTab(layerViewTab);
 			}
 			else
 			{
-                threeDViewTab = new PopOutTextTabWidget(partPreview3DView, "3D View Tab", new Vector2(590, 400), tabPointSize);
-                tabControl.AddTab(threeDViewTab);
+				threeDViewTab = new PopOutTextTabWidget(partPreview3DView, "3D View Tab", new Vector2(590, 400), tabPointSize);
+				tabControl.AddTab(threeDViewTab);
 				layerViewTab = new PopOutTextTabWidget(layerView, "Layer View Tab", new Vector2(590, 400), tabPointSize);
 				tabControl.AddTab(layerViewTab);
 			}
 
-            threeDViewTab.ToolTipText = "Preview 3D Design".Localize();
-            layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
+			layerViewTab.Selected += (s1, e1) =>
+			{
+				// match the transform from the 3d view
+				viewGcodeBasic.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(partPreviewView.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
+			};
 
-            this.AddChild(tabControl);
+			threeDViewTab.Selected += (s1, e1) =>
+			{
+				// match the transform from the 3d view
+				partPreviewView.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(viewGcodeBasic.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
+			};
+
+			threeDViewTab.ToolTipText = "Preview 3D Design".Localize();
+			layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
+
+			this.AddChild(tabControl);
 		}
 
 		public override void OnLoad(EventArgs args)
