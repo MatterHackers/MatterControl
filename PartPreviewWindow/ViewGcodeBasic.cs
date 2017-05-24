@@ -309,6 +309,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			viewControls3D = new ViewControls3D(meshViewerWidget);
+			viewControls3D.Margin = new BorderDouble(0, 0, 0, 40);
 			viewControls3D.PartSelectVisible = false;
 			AddChild(viewControls3D);
 

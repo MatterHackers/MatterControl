@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrinterConnectAndSelectControl : FlowLayoutWidget
 	{
-		private TextImageButtonFactory actionBarButtonFactory = new TextImageButtonFactory();
 		private Button connectPrinterButton;
 		private Button editPrinterButton;
 		private string disconnectAndCancelTitle = "Disconnect and stop the current print?".Localize();
@@ -59,18 +58,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 
-			actionBarButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			actionBarButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			actionBarButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			actionBarButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
-			actionBarButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-
-			actionBarButtonFactory.hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			actionBarButtonFactory.invertImageLocation = true;
-			actionBarButtonFactory.borderWidth = 0;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			AddChildElements();
@@ -84,27 +71,16 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void AddChildElements()
 		{
-			actionBarButtonFactory.invertImageLocation = false;
-			actionBarButtonFactory.borderWidth = 1;
-			if (ActiveTheme.Instance.IsDarkTheme)
-			{
-				actionBarButtonFactory.normalBorderColor = new RGBA_Bytes(77, 77, 77);
-			}
-			else
-			{
-				actionBarButtonFactory.normalBorderColor = new RGBA_Bytes(190, 190, 190);
-			}
-			actionBarButtonFactory.hoverBorderColor = new RGBA_Bytes(128, 128, 128);
-
+			var buttonFactory = ApplicationController.Instance.Theme.PrinterConnectButtonFactory;
 			// connect and disconnect buttons
 			{
 				var normalImage = StaticData.Instance.LoadIcon("connect.png", 32, 32);
 
 				// Create the image button with the normal and disabled ImageBuffers
-				connectPrinterButton = actionBarButtonFactory.Generate("Connect".Localize().ToUpper(), normalImage);
+				connectPrinterButton = buttonFactory.Generate("Connect".Localize().ToUpper(), normalImage);
 				connectPrinterButton.Name = "Connect to printer button";
 				connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
-				connectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
+				connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
 
 				connectPrinterButton.VAnchor = VAnchor.ParentTop;
 				connectPrinterButton.Cursor = Cursors.Hand;
@@ -120,15 +96,13 @@ namespace MatterHackers.MatterControl.ActionBar
 					}
 				};
 
-				disconnectPrinterButton = actionBarButtonFactory.Generate("Disconnect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 32, 32));
+				disconnectPrinterButton = buttonFactory.Generate("Disconnect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 32, 32));
 				disconnectPrinterButton.Name = "Disconnect from printer button";
 				disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
 				disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
 				disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
 				disconnectPrinterButton.Cursor = Cursors.Hand;
 				disconnectPrinterButton.Click += (s, e) => UiThread.RunOnIdle(OnIdleDisconnect);
-
-				actionBarButtonFactory.invertImageLocation = true;
 
 				this.AddChild(connectPrinterButton);
 				this.AddChild(disconnectPrinterButton);
@@ -179,7 +153,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// reset connection button
 			{
 				string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
-				Button resetConnectionButton = actionBarButtonFactory.Generate(resetConnectionText, "e_stop4.png");
+				Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
 				resetConnectionButton.Margin = new BorderDouble(6, 0, 3, 3);
 				this.AddChild(resetConnectionButton);
 

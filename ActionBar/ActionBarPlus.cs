@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ActionBar;
-using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl
 {

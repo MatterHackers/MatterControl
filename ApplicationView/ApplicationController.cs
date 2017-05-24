@@ -57,6 +57,80 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
+		public class ThemeConfig
+		{
+			protected readonly int fizedHeightA = (int)(25 * GuiWidget.DeviceScale + .5);
+			protected readonly int fontSizeA = 11;
+
+			protected readonly double fizedHeightB = 52 * GuiWidget.DeviceScale;
+			protected readonly int fontSizeB = 14;
+
+			protected readonly int borderWidth = 1;
+
+			public TextImageButtonFactory ImageButtonFactory { get; private set; }
+			public TextImageButtonFactory ActionRowButtonFactory { get; private set; }
+			public TextImageButtonFactory PrinterConnectButtonFactory { get; private set; }
+
+			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+			private EventHandler unregisterEvents;
+
+			public ThemeConfig()
+			{
+				ActiveTheme.ThemeChanged.RegisterEvent((s, e) => RebuildTheme(), ref unregisterEvents);
+				RebuildTheme();
+			}
+
+			public void RebuildTheme()
+			{
+				this.ImageButtonFactory = new TextImageButtonFactory()
+				{
+					normalFillColor = RGBA_Bytes.Transparent,
+					normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+					normalTextColor = ActiveTheme.Instance.SecondaryTextColor,
+					pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+					disabledFillColor = RGBA_Bytes.Transparent,
+					disabledBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
+					disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
+					FixedHeight = fizedHeightA,
+					fontSize = fontSizeA,
+					borderWidth = borderWidth
+				};
+
+				this.ActionRowButtonFactory = new TextImageButtonFactory()
+				{
+					normalTextColor = RGBA_Bytes.White,
+					disabledTextColor = RGBA_Bytes.LightGray,
+					hoverTextColor = RGBA_Bytes.White,
+					pressedTextColor = RGBA_Bytes.White,
+					AllowThemeToAdjustImage = false,
+					borderWidth = borderWidth,
+					FixedHeight = fizedHeightB,
+					fontSize = fontSizeB,
+					normalBorderColor = new RGBA_Bytes(255, 255, 255, 100),
+					hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100)
+				};
+
+				this.PrinterConnectButtonFactory = new TextImageButtonFactory()
+				{
+					normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					normalBorderColor = (ActiveTheme.Instance.IsDarkTheme) ? new RGBA_Bytes(77, 77, 77) : new RGBA_Bytes(190, 190, 190),
+					hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					disabledTextColor = ActiveTheme.Instance.TabLabelUnselected,
+					disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+					disabledBorderColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+					hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+					hoverBorderColor = new RGBA_Bytes(128, 128, 128),
+					invertImageLocation = false,
+					borderWidth = 1
+				};
+			}
+		}
+
+		public ThemeConfig Theme { get; set; } = new ThemeConfig();
+
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
 

@@ -190,6 +190,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Margin = new BorderDouble(5);
 			HAnchor |= Agg.UI.HAnchor.ParentLeft;
 			VAnchor = Agg.UI.VAnchor.ParentTop;
+
+			Margin = new BorderDouble(0, 0, 0, 72);
 			rotateButton.Checked = true;
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 

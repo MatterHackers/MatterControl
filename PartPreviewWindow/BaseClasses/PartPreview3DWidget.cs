@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// this is to add an image to the bed
 			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
-			if (allowAutoRotate && StaticData.Instance.FileExists(imagePathAndFile))
+			if (StaticData.Instance.FileExists(imagePathAndFile))
 			{
 				if (wattermarkImage == null)
 				{

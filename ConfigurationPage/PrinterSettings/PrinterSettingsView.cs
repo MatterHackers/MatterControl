@@ -16,28 +16,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
 	public class HardwareSettingsWidget : SettingsViewBase
 	{
-		private Button openGcodeTerminalButton;
 		private Button openCameraButton;
-
-		private DisableableWidget eePromControlsContainer;
-		private DisableableWidget terminalCommunicationsContainer;
 
 		private EventHandler unregisterEvents;
 
 		public HardwareSettingsWidget()
 			: base("Hardware".Localize())
 		{
-			eePromControlsContainer = new DisableableWidget();
-			eePromControlsContainer.AddChild(GetEEPromControl());
-			terminalCommunicationsContainer = new DisableableWidget();
-			terminalCommunicationsContainer.AddChild(GetGcodeTerminalControl());
-
-			mainContainer.AddChild(new HorizontalLine(50));
-			mainContainer.AddChild(eePromControlsContainer);
-			mainContainer.AddChild(new HorizontalLine(50));
-
-			mainContainer.AddChild(terminalCommunicationsContainer);
-
 			DisableableWidget cameraContainer = new DisableableWidget();
 			cameraContainer.AddChild(GetCameraControl());
 
@@ -112,76 +97,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return buttonRow;
 		}
 
-		private FlowLayoutWidget GetGcodeTerminalControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(0, 4);
-
-			ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
-			terminalSettingsImage.SetRecieveBlender(new BlenderPreMultBGRA());
-			int iconSize = (int)(24 * GuiWidget.DeviceScale);
-
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				terminalSettingsImage.InvertLightness();
-			}
-
-			ImageWidget terminalIcon = new ImageWidget(terminalSettingsImage);
-			terminalIcon.Margin = new BorderDouble(right: 6, bottom: 6);
-
-			TextWidget gcodeTerminalLabel = new TextWidget("G-Code Terminal".Localize());
-			gcodeTerminalLabel.AutoExpandBoundsToText = true;
-			gcodeTerminalLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;
-
-			openGcodeTerminalButton = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
-			openGcodeTerminalButton.Name = "Show Terminal Button";
-			openGcodeTerminalButton.Click += openGcodeTerminalButton_Click;
-
-			buttonRow.AddChild(terminalIcon);
-			buttonRow.AddChild(gcodeTerminalLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(openGcodeTerminalButton);
-
-			return buttonRow;
-		}
-
-		private static EePromMarlinWindow openEePromMarlinWidget = null;
-		private static EePromRepetierWindow openEePromRepetierWidget = null;
-		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
-		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
-
-		private FlowLayoutWidget GetEEPromControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(0, 4);
-
-			TextWidget notificationSettingsLabel = new TextWidget("EEProm".Localize());
-			notificationSettingsLabel.AutoExpandBoundsToText = true;
-			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
-
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24);
-
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				levelingImage.InvertLightness();
-			}
-			ImageWidget levelingIcon = new ImageWidget(levelingImage);
-			levelingIcon.Margin = new BorderDouble(right: 6);
-
-			Button configureEePromButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
-			configureEePromButton.Click += configureEePromButton_Click;
-
-			//buttonRow.AddChild(eePromIcon);
-			buttonRow.AddChild(notificationSettingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(configureEePromButton);
-
-			return buttonRow;
-		}
 
 		private void AddHandlers()
 		{
@@ -194,66 +109,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			MatterControlApplication.Instance.OpenCameraPreview();
 		}
 
-		private void configureEePromButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(()=>
-			{
-#if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
-                        new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
-#else
-				switch (PrinterConnectionAndCommunication.Instance.FirmwareType)
-				{
-					case PrinterConnectionAndCommunication.FirmwareTypes.Repetier:
-						if (openEePromRepetierWidget != null)
-						{
-							openEePromRepetierWidget.BringToFront();
-						}
-						else
-						{
-							openEePromRepetierWidget = new EePromRepetierWindow();
-							openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) =>
-							{
-								openEePromRepetierWidget = null;
-							};
-						}
-						break;
-
-					case PrinterConnectionAndCommunication.FirmwareTypes.Marlin:
-						if (openEePromMarlinWidget != null)
-						{
-							openEePromMarlinWidget.BringToFront();
-						}
-						else
-						{
-							openEePromMarlinWidget = new EePromMarlinWindow();
-							openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) =>
-							{
-								openEePromMarlinWidget = null;
-							};
-						}
-						break;
-
-					default:
-						PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M115");
-						StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
-						break;
-				}
-#endif
-			});
-		}
-
-		private void openGcodeTerminalButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(TerminalWindow.Show);
-		}
-
 		private void SetEnabledStates()
 		{
 			if (!ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				// no printer selected
-				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
 			else // we at least have a printer selected
@@ -266,19 +125,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
 					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
 					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-						eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
 					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-						eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-						eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
@@ -289,8 +142,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
 							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
 							case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
-								eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-								terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 								break;
 
 							default:
@@ -299,8 +150,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						break;
 
 					default:
