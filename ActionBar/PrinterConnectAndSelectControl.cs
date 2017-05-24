@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,37 +30,49 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.ImageProcessing;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	public class PrinterConnectAndSelectControl : FlowLayoutWidget
+	public class PrinterSelectEditDropdown : FlowLayoutWidget
 	{
-		private Button connectPrinterButton;
-		private Button editPrinterButton;
-		private string disconnectAndCancelTitle = "Disconnect and stop the current print?".Localize();
-		private string disconnectAndCancelMessage = "WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?".Localize();
-		private Button disconnectPrinterButton;
 		private PrinterSelector printerSelector;
-		GuiWidget printerSelectorAndEditOverlay;
-
+		private GuiWidget printerSelectorAndEditOverlay;
+		private Button editPrinterButton;
 		private EventHandler unregisterEvents;
-		static EventHandler staticUnregisterEvents;
 
-		public PrinterConnectAndSelectControl()
+		public PrinterSelectEditDropdown()
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
+			printerSelector = new PrinterSelector()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Cursor = Cursors.Hand,
+				Margin = new BorderDouble(0, 6, 0, 3)
+			};
+			printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup(true);
+			this.AddChild(printerSelector);
 
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			editPrinterButton = TextImageButtonFactory.GetThemedEditButton();
+			editPrinterButton.Name = "Edit Printer Button";
+			editPrinterButton.VAnchor = VAnchor.ParentCenter;
+			editPrinterButton.Click += UiNavigation.OpenEditPrinterWizard_Click;
+			this.AddChild(editPrinterButton);
 
-			AddChildElements();
+			printerSelectorAndEditOverlay = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop,
+				Selectable = false,
+			};
+			this.AddChild(printerSelectorAndEditOverlay);
+
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -69,188 +81,276 @@ namespace MatterHackers.MatterControl.ActionBar
 			base.OnClosed(e);
 		}
 
-		protected void AddChildElements()
+		private void SetVisibleStates(object sender, EventArgs e)
 		{
-			var buttonFactory = ApplicationController.Instance.Theme.PrinterConnectButtonFactory;
-			// connect and disconnect buttons
+			UiThread.RunOnIdle(() =>
 			{
-				var normalImage = StaticData.Instance.LoadIcon("connect.png", 32, 32);
+				bool printerIsPrintingOrPaused = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+					|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
 
+				editPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected && !printerIsPrintingOrPaused;
+				printerSelector.Enabled = !printerIsPrintingOrPaused;
+				if (printerIsPrintingOrPaused)
+				{
+					printerSelectorAndEditOverlay.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
+				}
+				else
+				{
+					printerSelectorAndEditOverlay.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
+				}
+			});
+		}
+	}
+
+	public class ResetButton : GuiWidget
+	{
+		private readonly string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
+		private EventHandler unregisterEvents;
+
+		public ResetButton(TextImageButtonFactory buttonFactory)
+		{
+			this.HAnchor = HAnchor.ParentLeftRight | HAnchor.FitToChildren;
+			this.VAnchor = VAnchor.FitToChildren;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
+			resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
+			resetConnectionButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
+			};
+			this.AddChild(resetConnectionButton);
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				var stringEvent = e as StringEventArgs;
+				if (stringEvent?.Data == SettingsKey.show_reset_connection)
+				{
+					resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
+				}
+			}, ref unregisterEvents);
+		}
+	}
+
+	public class SimpleButton : FlowLayoutWidget
+	{
+		public ImageBuffer Image { get; set; }
+		public BorderDouble ImageMargin { get; set; }
+		public BorderDouble ImagePadding { get; set; }
+		public double FontSize { get; set; } = 12;
+
+		public int BorderWidth { get; set; }
+
+		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Transparent;
+
+		private int borderRadius = 0;
+
+		public SimpleButton(string text, ImageBuffer image = null)
+		{
+			this.HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren;
+			this.VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren;
+
+			this.Text = text;
+			this.Image = image;
+
+			this.AddChild(new GuiWidget() { BackgroundColor = RGBA_Bytes.Green, Height = 10, Width = 20 });
+
+			UiThread.RunOnIdle(() =>
+			{
+				if (this.Image != null)
+				{
+					this.AddChild(
+						new ImageWidget(this.Image)
+						{
+							Margin = ImageMargin,
+							Padding = ImagePadding,
+							VAnchor = VAnchor.ParentBottomTop,
+						});
+				}
+
+				if (!string.IsNullOrEmpty(this.Text))
+				{
+					this.AddChild(new TextWidget(this.Text, pointSize: this.FontSize));
+				}
+
+				this.AddChild(new GuiWidget() { BackgroundColor = RGBA_Bytes.Red, Height = 10, Width = 20 });
+			});
+		}
+
+		public override void OnLayout(LayoutEventArgs layoutEventArgs)
+		{
+			base.OnLayout(layoutEventArgs);
+		}
+
+		/*
+		public override void OnLoad(EventArgs args)
+		{
+			if (this.Image != null)
+			{
+				this.AddChild(new ImageWidget(this.Image)
+				{
+					Margin = ImageMargin
+				});
+			}
+
+			if (!string.IsNullOrEmpty(this.Text))
+			{
+				this.AddChild(new TextWidget(this.Text, pointSize: this.FontSize));
+			}
+
+			base.OnLoad(args);
+		}*/
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.BorderColor.Alpha0To255 > 0)
+			{
+				RectangleDouble borderRectangle = LocalBounds;
+
+				if (BorderWidth > 0)
+				{
+					if (BorderWidth == 1)
+					{
+						graphics2D.Rectangle(borderRectangle, this.BorderColor);
+					}
+					else
+					{
+						graphics2D.Render(
+							new Stroke(
+								new RoundedRect(borderRectangle, this.borderRadius), 
+								BorderWidth), 
+							this.BorderColor);
+					}
+				}
+			}
+
+			base.OnDraw(graphics2D);
+		}
+	}
+
+	public class PrinterConnectButton : GuiWidget
+	{
+		private readonly string disconnectAndCancelTitle = "Disconnect and stop the current print?".Localize();
+		private readonly string disconnectAndCancelMessage = "WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?".Localize();
+
+		private GuiWidget connectButton;
+		private Button disconnectButton;
+
+		private EventHandler unregisterEvents;
+
+		public PrinterConnectButton(TextImageButtonFactory buttonFactory)
+		{
+			this.HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren;
+			this.VAnchor = VAnchor.FitToChildren;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			if (false)
+			{
 				// Create the image button with the normal and disabled ImageBuffers
-				connectPrinterButton = buttonFactory.Generate("Connect".Localize().ToUpper(), normalImage);
-				connectPrinterButton.Name = "Connect to printer button";
-				connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
-				connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
-
-				connectPrinterButton.VAnchor = VAnchor.ParentTop;
-				connectPrinterButton.Cursor = Cursors.Hand;
-				connectPrinterButton.Click += (s, e) =>
+				connectButton = new SimpleButton("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16))
 				{
-					Button buttonClicked = ((Button)s);
-					if (buttonClicked.Enabled)
-					{
-						if (ActiveSliceSettings.Instance.PrinterSelected)
-						{
-							UserRequestedConnectToActivePrinter();
-						}
-					}
+					Name = "Connect to printer button",
+					ToolTipText = "Connect to the currently selected printer".Localize(),
+					ImageMargin = 6,
+					Margin = 6,
+					MinimumSize = new VectorMath.Vector2(100, 0)
 				};
-
-				disconnectPrinterButton = buttonFactory.Generate("Disconnect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 32, 32));
-				disconnectPrinterButton.Name = "Disconnect from printer button";
-				disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
-				disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
-				disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
-				disconnectPrinterButton.Cursor = Cursors.Hand;
-				disconnectPrinterButton.Click += (s, e) => UiThread.RunOnIdle(OnIdleDisconnect);
-
-				this.AddChild(connectPrinterButton);
-				this.AddChild(disconnectPrinterButton);
 			}
-
-			// printer selector and edit button
+			else
 			{
-				GuiWidget container = new GuiWidget()
-				{
-					HAnchor = HAnchor.ParentLeftRight,
-					VAnchor = VAnchor.FitToChildren,
-				};
-
-				FlowLayoutWidget printerSelectorAndEditButton = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.ParentLeftRight,
-				};
-
-				printerSelector = new PrinterSelector()
-				{
-					HAnchor = HAnchor.ParentLeftRight,
-					Cursor = Cursors.Hand,
-					Margin = new BorderDouble(0, 6, 0, 3)
-				};
-				printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup(true);
-				// make sure the control can get smaller but maintains its height
-				printerSelector.MinimumSize = new Vector2(0, connectPrinterButton.MinimumSize.y);
-				printerSelectorAndEditButton.AddChild(printerSelector);
-
-				editPrinterButton = TextImageButtonFactory.GetThemedEditButton();
-				editPrinterButton.Name = "Edit Printer Button";
-				editPrinterButton.VAnchor = VAnchor.ParentCenter;
-				editPrinterButton.Click += UiNavigation.OpenEditPrinterWizard_Click;
-				printerSelectorAndEditButton.AddChild(editPrinterButton);
-
-				container.AddChild(printerSelectorAndEditButton);
-				printerSelectorAndEditOverlay = new GuiWidget()
-				{
-					HAnchor = HAnchor.ParentLeftRight,
-					VAnchor = VAnchor.ParentBottomTop,
-					Selectable = false,
-				};
-				container.AddChild(printerSelectorAndEditOverlay);
-
-				this.AddChild(container);
+				connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16));
 			}
-
-			// reset connection button
+			connectButton.Click += (s, e) =>
 			{
-				string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
-				Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
-				resetConnectionButton.Margin = new BorderDouble(6, 0, 3, 3);
-				this.AddChild(resetConnectionButton);
-
-				resetConnectionButton.Click += (s, e) => 
+				if (connectButton.Enabled)
 				{
-					UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
-				};
-				resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
-
-				ActiveSliceSettings.SettingChanged.RegisterEvent((sender, e) => 
-				{
-					StringEventArgs stringEvent = e as StringEventArgs;
-					if (stringEvent != null)
+					if (ActiveSliceSettings.Instance.PrinterSelected)
 					{
-						if (stringEvent.Data == SettingsKey.show_reset_connection)
-						{
-							resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
-						}
+						UserRequestedConnectToActivePrinter();
 					}
-				}, ref unregisterEvents);
+				}
+			};
+			this.AddChild(connectButton);
+
+			disconnectButton = buttonFactory.Generate("Disconnect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16));
+			disconnectButton.Name = "Disconnect from printer button";
+			disconnectButton.Visible = false;
+			disconnectButton.ToolTipText = "Disconnect from current printer".Localize();
+			disconnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				{
+					StyledMessageBox.ShowMessageBox(
+						(bool disconnectCancel) =>
+						{
+							if (disconnectCancel)
+							{
+								PrinterConnectionAndCommunication.Instance.Stop(false);
+								PrinterConnectionAndCommunication.Instance.Disable();
+							}
+						},
+						disconnectAndCancelMessage,
+						disconnectAndCancelTitle,
+						StyledMessageBox.MessageType.YES_NO,
+						"Disconnect".Localize(),
+						"Stay Connected".Localize());
+				}
+				else
+				{
+					PrinterConnectionAndCommunication.Instance.Disable();
+				}
+			});
+			//this.AddChild(disconnectButton);
+
+			foreach (var child in Children)
+			{
+				child.VAnchor = VAnchor.ParentTop;
+				child.HAnchor = HAnchor.ParentLeft;
+				child.Cursor = Cursors.Hand;
 			}
 
 			// Bind connect button states to active printer state
-			this.SetConnectionButtonVisibleState();
+			this.SetVisibleStates(null, null);
 
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 
 		static public void UserRequestedConnectToActivePrinter()
 		{
-			if (staticUnregisterEvents != null)
-			{
-				staticUnregisterEvents(null, null);
-				staticUnregisterEvents = null;
-			}
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
 		}
 
-		private void onConfirmStopPrint(bool messageBoxResponse)
+		private void SetVisibleStates(object sender, EventArgs e)
 		{
-			if (messageBoxResponse)
+			UiThread.RunOnIdle(() =>
 			{
-				PrinterConnectionAndCommunication.Instance.Stop(false);
-				PrinterConnectionAndCommunication.Instance.Disable();
-				printerSelector.Invalidate();
-			}
-		}
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+				{
+					disconnectButton.Visible = true;
+					connectButton.Visible = false;
+				}
+				else
+				{
+					disconnectButton.Visible = false;
+					connectButton.Visible = true;
+				}
 
-		private void OnIdleDisconnect()
-		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-			{
-				StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO, "Disconnect".Localize(), "Stay Connected".Localize());
-			}
-			else
-			{
-				PrinterConnectionAndCommunication.Instance.Disable();
-				printerSelector.Invalidate();
-			}
-		}
+				var communicationState = PrinterConnectionAndCommunication.Instance.CommunicationState;
 
-		private void onPrinterStatusChanged(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(SetConnectionButtonVisibleState);
-		}
+				// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
+				connectButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected
+					&& communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
 
-		private void SetConnectionButtonVisibleState()
-		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
-			{
-				disconnectPrinterButton.Visible = true;
-				connectPrinterButton.Visible = false;
-			}
-			else
-			{
-				disconnectPrinterButton.Visible = false;
-				connectPrinterButton.Visible = true;
-			}
-
-			var communicationState = PrinterConnectionAndCommunication.Instance.CommunicationState;
-
-			// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
-			connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect && ActiveSliceSettings.Instance.PrinterSelected;
-			bool printerIsPrintigOrPause = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-			editPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected && !printerIsPrintigOrPause;
-			printerSelector.Enabled = !printerIsPrintigOrPause;
-			if(printerIsPrintigOrPause)
-			{
-				printerSelectorAndEditOverlay.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
-			}
-			else
-			{
-				printerSelectorAndEditOverlay.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
-			}
-			disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
+				disconnectButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
+			});
 		}
 	}
 }

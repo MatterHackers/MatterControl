@@ -31,12 +31,12 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-
 	public partial class View3DWidget : PartPreview3DWidget
 	{
 		public class PrinterActionsBar : FlowLayoutWidget
@@ -48,12 +48,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public PrinterActionsBar()
 			{
-				this.Padding = new BorderDouble(0, 0, 10, 0);
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				this.Padding = new BorderDouble(0, 5);
 				this.HAnchor = HAnchor.ParentLeftRight;
 				this.VAnchor = VAnchor.FitToChildren;
 
-				var buttonFactory = ApplicationController.Instance.Theme.PrinterConnectButtonFactory;
+				var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+
+				this.AddChild(new PrinterConnectButton(buttonFactory));
+				//this.AddChild(new ResetButton(buttonFactory));
 
 				//ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
 				var terminalButton = buttonFactory.Generate("Terminal".Localize().ToUpper());
@@ -67,13 +69,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					levelingImage.InvertLightness();
 				}*/
+
 				Button configureEePromButton = buttonFactory.Generate("EEProm".Localize().ToUpper());
 				configureEePromButton.Click += configureEePromButton_Click;
 				this.AddChild(configureEePromButton);
 
-				this.AddChild(new PrinterConnectAndSelectControl());
+				//this.AddChild(new PrintStatusRow());
 
-				this.AddChild(new PrintStatusRow());
+				this.AddChild(new HorizontalSpacer());
+
+				var overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
+				{
+					AlignToRightEdge = true,
+					DynamicPopupContent = GeneratePopupContent
+				};
+				this.AddChild(overflowDropdown);
+			}
+
+			private GuiWidget GeneratePopupContent()
+			{
+				var widgetToPop = new FlowLayoutWidget();
+
+				widgetToPop.AddChild(new PrinterSelectEditDropdown());
+				
+				//widgetToPop.AddChild("more stuff...");
+
+				return widgetToPop;
 			}
 
 			private void configureEePromButton_Click(object sender, EventArgs mouseEvent)

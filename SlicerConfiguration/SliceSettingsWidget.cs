@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingsWidget(List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
 		{
-			this.BackgroundColor = ApplicationController.Instance.TabBodyBackground;
+			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.layerCascade = layerCascade;
 			this.viewFilter = viewFilter;
