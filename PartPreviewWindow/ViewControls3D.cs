@@ -203,9 +203,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget ShowOverflowMenu()
 		{
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			topToBottom.AddChild(
+			popupContainer.AddChild(
 				AddCheckbox(
 					"Show Print Bed".Localize(),
 					"Show Help Checkbox",
@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
 			if (buildHeight > 0)
 			{
-				topToBottom.AddChild(
+				popupContainer.AddChild(
 					AddCheckbox(
 						"Show Print Area".Localize(),
 						"Show Help Checkbox",
@@ -245,12 +245,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(5, 5, 5, 0)
 			};
 
-			topToBottom.AddChild(new HorizontalLine());
+			popupContainer.AddChild(new HorizontalLine());
 			CreateRenderTypeRadioButtons(widget);
 
-			topToBottom.AddChild(widget);
+			popupContainer.AddChild(widget);
 
-			return topToBottom;
+			return popupContainer;
 		}
 
 		private void CreateRenderTypeRadioButtons(GuiWidget parentContainer)

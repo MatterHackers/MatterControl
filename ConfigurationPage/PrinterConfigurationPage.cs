@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 			: base(true)
 		{
 			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			this.BackgroundColor = ApplicationController.Instance.TabBodyBackground;
+			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			AnchorAll();
 			AddChild(new PrinterConfigurationWidget());
 		}

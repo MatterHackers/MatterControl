@@ -35,6 +35,7 @@ using MatterHackers.Localizations;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
+using System;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -65,6 +66,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget PopupContent { get; set; }
 
+		public Func<GuiWidget> DynamicPopupContent { get; set; }
+
 		public bool AlignToRightEdge { get; set; }
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -88,7 +91,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			overflowMenuActive = true;
 
-			this.PopupContent.ClearRemovedFlag();
+			this.PopupContent?.ClearRemovedFlag();
+
+			if (this.DynamicPopupContent != null)
+			{
+				this.PopupContent = this.DynamicPopupContent();
+			}
+
+			if (this.PopupContent == null)
+			{
+				return;
+			}
 
 			var popupWidget = new PopupWidget(this.PopupContent, this, Vector2.Zero, Direction.Down, 0, this.AlignToRightEdge)
 			{

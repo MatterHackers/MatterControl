@@ -70,6 +70,10 @@ namespace MatterHackers.MatterControl
 			public TextImageButtonFactory ImageButtonFactory { get; private set; }
 			public TextImageButtonFactory ActionRowButtonFactory { get; private set; }
 			public TextImageButtonFactory PrinterConnectButtonFactory { get; private set; }
+			public TextImageButtonFactory BreadCrumbButtonFactory { get; internal set; }
+			public TextImageButtonFactory BreadCrumbButtonFactorySmallMargins { get; internal set; }
+
+			public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 160);
 
 			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 			private EventHandler unregisterEvents;
@@ -82,17 +86,18 @@ namespace MatterHackers.MatterControl
 
 			public void RebuildTheme()
 			{
+				var theme = ActiveTheme.Instance;
 				this.ImageButtonFactory = new TextImageButtonFactory()
 				{
 					normalFillColor = RGBA_Bytes.Transparent,
 					normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-					normalTextColor = ActiveTheme.Instance.SecondaryTextColor,
-					pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+					normalTextColor = theme.SecondaryTextColor,
+					pressedTextColor = theme.PrimaryTextColor,
+					hoverTextColor = theme.PrimaryTextColor,
+					hoverBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
 					disabledFillColor = RGBA_Bytes.Transparent,
-					disabledBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
-					disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
+					disabledBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 100),
+					disabledTextColor = new RGBA_Bytes(theme.PrimaryTextColor, 100),
 					FixedHeight = fizedHeightA,
 					fontSize = fontSizeA,
 					borderWidth = borderWidth
@@ -114,18 +119,51 @@ namespace MatterHackers.MatterControl
 
 				this.PrinterConnectButtonFactory = new TextImageButtonFactory()
 				{
-					normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					normalBorderColor = (ActiveTheme.Instance.IsDarkTheme) ? new RGBA_Bytes(77, 77, 77) : new RGBA_Bytes(190, 190, 190),
-					hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					disabledTextColor = ActiveTheme.Instance.TabLabelUnselected,
-					disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-					disabledBorderColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-					hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+					normalTextColor = theme.PrimaryTextColor,
+					normalBorderColor = (theme.IsDarkTheme) ? new RGBA_Bytes(77, 77, 77) : new RGBA_Bytes(190, 190, 190),
+					hoverTextColor = theme.PrimaryTextColor,
+					pressedTextColor = theme.PrimaryTextColor,
+					disabledTextColor = theme.TabLabelUnselected,
+					disabledFillColor = theme.PrimaryBackgroundColor,
+					disabledBorderColor = theme.SecondaryBackgroundColor,
+					hoverFillColor = theme.PrimaryBackgroundColor,
 					hoverBorderColor = new RGBA_Bytes(128, 128, 128),
 					invertImageLocation = false,
 					borderWidth = 1
 				};
+
+				this.BreadCrumbButtonFactory = new TextImageButtonFactory()
+				{
+					normalTextColor = theme.PrimaryTextColor,
+					hoverTextColor = theme.PrimaryTextColor,
+					pressedTextColor = theme.PrimaryTextColor,
+					disabledTextColor = theme.TertiaryBackgroundColor,
+					Margin = new BorderDouble(16, 0),
+					borderWidth = 0,
+					FixedHeight = 32,
+				};
+
+				this.BreadCrumbButtonFactorySmallMargins = new TextImageButtonFactory()
+				{
+					normalTextColor = theme.PrimaryTextColor,
+					hoverTextColor = theme.PrimaryTextColor,
+					pressedTextColor = theme.PrimaryTextColor,
+					disabledTextColor = theme.TertiaryBackgroundColor,
+					Margin = new BorderDouble(8, 0),
+					borderWidth = 0,
+					FixedHeight = 32,
+				};
+			}
+
+			internal TabControl CreateTabControl()
+			{
+				var advancedControls = new TabControl(separator: new HorizontalLine(alpha: 50));
+				advancedControls.TabBar.BorderColor = RGBA_Bytes.Transparent; // theme.SecondaryTextColor;
+				advancedControls.TabBar.Margin = 0;
+				advancedControls.TabBar.Padding = 0;
+				advancedControls.TextPointSize = 14;
+
+				return advancedControls;
 			}
 		}
 
@@ -621,8 +659,6 @@ namespace MatterHackers.MatterControl
 				return globalInstance;
 			}
 		}
-
-		public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 160);
 
 		public string CachePath(ILibraryItem libraryItem)
 		{

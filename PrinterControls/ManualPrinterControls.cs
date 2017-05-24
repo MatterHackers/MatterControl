@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 
 		public ManualPrinterControls()
 		{
-			this.BackgroundColor = ApplicationController.Instance.TabBodyBackground;
+			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			AnchorAll();
 			if (UserSettings.Instance.IsTouchScreen)
 			{

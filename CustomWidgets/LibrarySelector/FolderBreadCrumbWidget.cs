@@ -39,16 +39,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class FolderBreadCrumbWidget : FlowLayoutWidget
 	{
 		private ListView listView;
-		private TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory()
-		{
-			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			Margin = new BorderDouble(10, 0),
-			borderWidth = 0,
-			FixedHeight = 30
-		};
 
 		public FolderBreadCrumbWidget(ListView listView)
 		{
@@ -56,8 +46,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Name = "FolderBreadCrumbWidget";
 			UiThread.RunOnIdle(() => SetBreadCrumbs(listView.ActiveContainer));
 			HAnchor = HAnchor.ParentLeftRight;
-
-			navigationButtonFactory.disabledFillColor = navigationButtonFactory.normalFillColor;
 		}
 
 		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)
@@ -72,6 +60,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void SetBreadCrumbs(ILibraryContainer currentContainer)
 		{
+			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
 			this.CloseAllChildren();
 
 			bool haveFilterRunning = !string.IsNullOrEmpty(currentContainer.KeywordFilter);
@@ -79,7 +68,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var icon = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "up_folder_20.png");
 			//icon = LibraryProviderHelpers.ResizeImage(icon, 20, 20);
 
-			Button upbutton = navigationButtonFactory.Generate("", icon);
+			Button upbutton = buttonFactory.Generate("", icon);
 			upbutton.Name = "Library Up Button";
 			upbutton.Margin = 0;
 			upbutton.Click += (s, e) =>
@@ -106,7 +95,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					});
 				}
 
-				Button gotoProviderButton = navigationButtonFactory.Generate(container.Name);
+				Button gotoProviderButton = buttonFactory.Generate(container.Name);
 				gotoProviderButton.Name = "Bread Crumb Button " + container.Name;
 				gotoProviderButton.Margin = new BorderDouble(firstItem ? 0 : 3, 0, 3, 0);
 				gotoProviderButton.Click += (s, e) =>
@@ -128,11 +117,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Button searchResultsButton = null;
 				if (UserSettings.Instance.IsTouchScreen)
 				{
-					searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
+					searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
 				}
 				else
 				{
-					searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
+					searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
 				}
 				searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
 				searchResultsButton.Margin = new BorderDouble(3, 0);

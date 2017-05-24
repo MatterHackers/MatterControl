@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public PrintLibraryWidget()
 		{
 			this.Padding = new BorderDouble(3);
-			this.BackgroundColor = ApplicationController.Instance.TabBodyBackground;
+			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
 
 			textImageButtonFactory = new TextImageButtonFactory()

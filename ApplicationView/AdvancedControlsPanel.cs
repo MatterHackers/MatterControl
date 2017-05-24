@@ -47,12 +47,14 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget sliceSettingsWidget;
 
-		private TabControl advancedTab;
+		private TabControl tabControl;
 
 		public AdvancedControlsPanel()
 		{
-			advancedTab = CreateAdvancedControlsTab();
-			AddChild(advancedTab);
+			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			tabControl = CreateTabControl();
+			AddChild(tabControl);
 			AnchorAll();
 
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadSliceSettings), ref unregisterEvents);
@@ -65,19 +67,19 @@ namespace MatterHackers.MatterControl
 		public void ReloadSliceSettings()
 		{
 			WidescreenPanel.PreChangePanels.CallEvents(null, null);
-			if (advancedTab.HasBeenClosed)
+			if (tabControl.HasBeenClosed)
 			{
 				return;
 			}
 
 			PopOutManager.SaveIfClosed = false;
 			// remove the advance control and replace it with new ones built for the selected printer
-			int advancedControlsIndex = GetChildIndex(advancedTab);
+			int advancedControlsIndex = GetChildIndex(tabControl);
 			RemoveChild(advancedControlsIndex);
-			advancedTab.Close();
+			tabControl.Close();
 
-			advancedTab = CreateAdvancedControlsTab();
-			AddChild(advancedTab, advancedControlsIndex);
+			tabControl = CreateTabControl();
+			AddChild(tabControl, advancedControlsIndex);
 			PopOutManager.SaveIfClosed = true;
 		}
 
@@ -87,24 +89,17 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		private TabControl CreateAdvancedControlsTab()
+		private TabControl CreateTabControl()
 		{
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			var advancedControls = new TabControl(separator: new HorizontalLine(alpha: 50));
-			advancedControls.TabBar.BorderColor = RGBA_Bytes.Transparent; // ActiveTheme.Instance.SecondaryTextColor;
-			advancedControls.TabBar.Margin = 0;
-			advancedControls.TabBar.Padding = 0;
-
-			int textSize = 14;
+			var newTabControl = ApplicationController.Instance.Theme.CreateTabControl();
 
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
 			var libraryTabPage = new TabPage(new PrintLibraryWidget(), "Library".Localize().ToUpper());
-			advancedControls.AddTab(new SimpleTextTabWidget(
+			newTabControl.AddTab(new SimpleTextTabWidget(
 				libraryTabPage, 
 				"Library Tab",
-				textSize,
+				newTabControl.TextPointSize,
 				ActiveTheme.Instance.TabLabelSelected, 
 				new RGBA_Bytes(), 
 				unselectedTextColor, 
@@ -123,16 +118,16 @@ namespace MatterHackers.MatterControl
 					new TabPage(sliceSettingsWidget, "Settings".Localize().ToUpper()),
 					SliceSettingsTabName,
 					new Vector2(590, 400),
-					textSize);
+					newTabControl.TextPointSize);
 
 			var controlsPopOut = new PopOutTextTabWidget(
 					new TabPage(new ManualPrinterControls(), "Controls".Localize().ToUpper()),
 					ControlsTabName,
 					new Vector2(400, 300),
-					textSize);
+					newTabControl.TextPointSize);
 
-			advancedControls.AddTab(sliceSettingPopOut);
-			advancedControls.AddTab(controlsPopOut);
+			newTabControl.AddTab(sliceSettingPopOut);
+			newTabControl.AddTab(controlsPopOut);
 
 #if !__ANDROID__
 			if (!UserSettings.Instance.IsTouchScreen)
@@ -142,17 +137,17 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 
-			advancedControls.AddTab(
+			newTabControl.AddTab(
 				new SimpleTextTabWidget(
 					new TabPage(new PrinterConfigurationScrollWidget(), "Options".Localize().ToUpper()), 
 					"Options Tab", 
-					textSize,
+					newTabControl.TextPointSize,
 					ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
 			// MatterControl historically started with the queue selected, force to 0 to remain consistent
-			advancedControls.SelectedTabIndex = 0;
+			newTabControl.SelectedTabIndex = 0;
 
-			return advancedControls;
+			return newTabControl;
 		}
 	}
 }

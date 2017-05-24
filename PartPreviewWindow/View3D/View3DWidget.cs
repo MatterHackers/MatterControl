@@ -249,6 +249,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printItemWrapper = printItemWrapper;
 			this.Name = "View3DWidget";
 
+			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
@@ -257,7 +259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			centerPartPreviewAndControls.Name = "centerPartPreviewAndControls";
 			centerPartPreviewAndControls.AnchorAll();
 
-			var textImageButtonFactory = ApplicationController.Instance.Theme.ImageButtonFactory;
+			var textImageButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
 
 			mainContainerTopToBottom.AddChild(new PrinterActionsBar());
 
@@ -1578,6 +1580,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(OpenSaveAsWindow);
 				return true;
 			});
+
+
+			/*
+			DynamicDropDownMenu menu = CreateMenu(direction);
+	
+			for (int index = 1; index < buttonList.Count; index++)
+			{
+				menu.addItem(buttonList[index].Item1, buttonList[index].Item2);
+			}
+
+			SplitButton splitButton = new SplitButton(button, menu);
+			*/
 
 			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
 			splitButtonFactory.FixedHeight = 40 * GuiWidget.DeviceScale;
