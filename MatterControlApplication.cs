@@ -928,8 +928,8 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						//e.graphics2D.DrawString($"{child.widget.GetType().Name} -- -", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
-						//start.y += lineHeight;
+						e.graphics2D.DrawString($"{child.widget.GetType().Name} -- -", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+						start.y += lineHeight;
 					}
 				}
 			}

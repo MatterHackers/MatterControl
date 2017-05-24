@@ -70,26 +70,11 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button skipButton;
 		private Button startButton;
 		private Button finishSetupButton;
-		private TextImageButtonFactory textImageButtonFactory;
 		private EventHandler unregisterEvents;
 
 		public PrintActionRow()
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
-
-			textImageButtonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = RGBA_Bytes.White,
-				disabledTextColor = RGBA_Bytes.LightGray,
-				hoverTextColor = RGBA_Bytes.White,
-				pressedTextColor = RGBA_Bytes.White,
-				AllowThemeToAdjustImage = false,
-				borderWidth = 1,
-				FixedHeight = 52 * GuiWidget.DeviceScale,
-				fontSize = 14,
-				normalBorderColor = new RGBA_Bytes(255, 255, 255, 100),
-				hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100)
-			};
 
 			AddChildElements();
 
@@ -101,7 +86,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void AddChildElements()
 		{
-			addButton = textImageButtonFactory.GenerateTooltipButton("Add".Localize(), StaticData.Instance.LoadIcon("icon_circle_plus.png",32,32).InvertLightness());
+			var buttonFactory = ApplicationController.Instance.Theme.ActionRowButtonFactory;
+
+			addButton = buttonFactory.GenerateTooltipButton("Add".Localize(), StaticData.Instance.LoadIcon("icon_circle_plus.png",32,32).InvertLightness());
 			addButton.ToolTipText = "Add a file to be printed".Localize();
 			addButton.Margin = new BorderDouble(6, 6, 6, 3);
 			addButton.Click += (s, e) =>
@@ -109,21 +96,21 @@ namespace MatterHackers.MatterControl.ActionBar
 				UiThread.RunOnIdle(AddButtonOnIdle);
 			};
 
-			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32).InvertLightness());
+			startButton = buttonFactory.GenerateTooltipButton("Print".Localize(), StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32).InvertLightness());
 			startButton.Name = "Start Print Button";
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
 			startButton.Click += onStartButton_Click;
 
-			finishSetupButton = textImageButtonFactory.GenerateTooltipButton("Finish Setup...".Localize());
+			finishSetupButton = buttonFactory.GenerateTooltipButton("Finish Setup...".Localize());
 			finishSetupButton.Name = "Finish Setup Button";
 			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			finishSetupButton.Margin = new BorderDouble(6, 6, 6, 3);
 			finishSetupButton.Click += onStartButton_Click;
 
-			touchScreenConnectButton = textImageButtonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("connect.png", 32,32).InvertLightness());
+			touchScreenConnectButton = buttonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("connect.png", 32,32).InvertLightness());
 			touchScreenConnectButton.ToolTipText = "Connect to the printer".Localize();
-			touchScreenConnectButton.Margin = new BorderDouble(6, 6, 6, 3);
+			touchScreenConnectButton.Margin = new BorderDouble(0, 6, 6, 3);
 			touchScreenConnectButton.Click += (s, e) =>
 			{
 				if (ActiveSliceSettings.Instance.PrinterSelected)
@@ -144,7 +131,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			};
 
-			addPrinterButton = textImageButtonFactory.GenerateTooltipButton("Add Printer".Localize());
+			addPrinterButton = buttonFactory.GenerateTooltipButton("Add Printer".Localize());
 			addPrinterButton.ToolTipText = "Select and add a new printer.".Localize();
 			addPrinterButton.Margin = new BorderDouble(6, 6, 6, 3);
 			addPrinterButton.Click += (s, e) =>
@@ -152,7 +139,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup(true));
 			};
 
-			selectPrinterButton = textImageButtonFactory.GenerateTooltipButton("Select Printer".Localize());
+			selectPrinterButton = buttonFactory.GenerateTooltipButton("Select Printer".Localize());
 			selectPrinterButton.ToolTipText = "Select an existing printer.".Localize();
 			selectPrinterButton.Margin = new BorderDouble(6, 6, 6, 3);
 			selectPrinterButton.Click += (s, e) =>
@@ -160,7 +147,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
 			};
 
-			resetConnectionButton = textImageButtonFactory.GenerateTooltipButton("Reset".Localize(), StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
+			resetConnectionButton = buttonFactory.GenerateTooltipButton("Reset".Localize(), StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
 			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
 			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);
 			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
@@ -289,9 +276,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected Button makeButton(string buttonText, string buttonToolTip = "")
 		{
-			Button button = textImageButtonFactory.GenerateTooltipButton(buttonText);
+			Button button = ApplicationController.Instance.Theme.ActionRowButtonFactory.GenerateTooltipButton(buttonText);
 			button.ToolTipText = buttonToolTip;
 			button.Margin = new BorderDouble(0, 6, 6, 3);
+
 			return button;
 		}
 

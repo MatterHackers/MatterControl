@@ -236,6 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
+
 		protected FlowLayoutWidget editPlateButtonsContainer;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
@@ -252,9 +253,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
 
-			FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			var centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			centerPartPreviewAndControls.Name = "centerPartPreviewAndControls";
 			centerPartPreviewAndControls.AnchorAll();
+
+			var textImageButtonFactory = ApplicationController.Instance.Theme.ImageButtonFactory;
+
+			mainContainerTopToBottom.AddChild(new PrinterActionsBar());
 
 			GuiWidget viewArea = new GuiWidget();
 			viewArea.AnchorAll();
