@@ -107,6 +107,12 @@ namespace MatterHackers.MatterControl
 			ColumnTwo.CloseAllChildren();
 			PopOutManager.SaveIfClosed = true;
 
+			// HACK: Short term restore auto population of ActivePrintItem based on Queue Index0. Long term, persist Scene as needed before running operations that depend on ActivePrintItem
+			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
+			{
+				PrinterConnectionAndCommunication.Instance.ActivePrintItem = QueueData.Instance.GetPrintItemWrapper(0);
+			}
+
 			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled);
 			partViewContent.AnchorAll();
 

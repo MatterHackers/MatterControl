@@ -38,17 +38,15 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.IO;
+using static MatterHackers.MatterControl.PartPreviewWindow.View3DWidget;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PartPreviewContent : GuiWidget
+	public class PartPreviewContent : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 
-		private View3DWidget partPreviewView;
-		private ViewGcodeBasic viewGcodeBasic;
 		private TabControl tabControl;
-		private Tab layerViewTab;
 		private View3DWidget.AutoRotate autoRotate3DView;
 		private View3DWidget.OpenMode openMode;
 		private View3DWidget.WindowMode windowMode;
@@ -64,42 +62,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.AnchorAll();
-			this.LoadPrintItem(printItem);
 
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
-			{
-				if (windowMode == View3DWidget.WindowMode.Embeded)
-				{
-					this.printItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-					LoadActivePrintItem();
-				}
-			}, ref unregisterEvents);
-
-			// We do this after showing the system window so that when we try and take focus of the parent window (the system window)
-			// it exists and can give the focus to its child the gcode window.
-			if (printItem != null
-				&& Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
-			{
-				SwitchToGcodeView();
-			}
-		}
-
-		public void Reload(PrintItemWrapper printItem)
-		{
-			this.CloseAllChildren();
-			this.LoadPrintItem(printItem);
-		}
-
-		private async void LoadActivePrintItem()
-		{
-			await partPreviewView.ClearBedAndLoadPrintItemWrapper(printItem);
-			viewGcodeBasic.LoadItem(printItem);
-		}
-
-		private void LoadPrintItem(PrintItemWrapper printItem)
-		{
+			// LoadPrintItem {{
 			var activeSettings = ActiveSliceSettings.Instance;
+
 			tabControl = ApplicationController.Instance.Theme.CreateTabControl();
+
+			string tabTitle = !activeSettings.PrinterSelected ? "Printer".Localize() : activeSettings.GetValue(SettingsKey.printer_name);
 
 			RGBA_Bytes selectedTabColor;
 			if (!UserSettings.Instance.IsTouchScreen)
@@ -113,119 +82,124 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 
-			double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
-
-			// put in the 3D view
-			partPreviewView = new View3DWidget(printItem,
-				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
-				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
-				windowMode,
-				autoRotate3DView,
-				openMode);
-
-			string tabTitle = !activeSettings.PrinterSelected ? "Printer".Localize() : activeSettings.GetValue(SettingsKey.printer_name);
-
-			TabPage partPreview3DView = new TabPage(partPreviewView, tabTitle.ToUpper());
-
-			// put in the gcode view
-			ViewGcodeBasic.WindowMode gcodeWindowMode = ViewGcodeBasic.WindowMode.Embeded;
-			if (windowMode == View3DWidget.WindowMode.StandAlone)
-			{
-				gcodeWindowMode = ViewGcodeBasic.WindowMode.StandAlone;
-			}
-
-			viewGcodeBasic = new ViewGcodeBasic(
-				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
-				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape), gcodeWindowMode);
-
-			if (windowMode == View3DWidget.WindowMode.StandAlone)
-			{
-				partPreviewView.Closed += (s, e) => Close();
-				viewGcodeBasic.Closed += (s, e) => Close();
-			}
-
-			Tab printerTab;
-			var layerView = new TabPage(viewGcodeBasic, "Layer View".Localize().ToUpper());
-
-			// add the correct tabs based on whether we are stand alone or embedded
-			if (windowMode == View3DWidget.WindowMode.StandAlone || UserSettings.Instance.IsTouchScreen)
-			{
-				printerTab = new SimpleTextTabWidget(
-					partPreview3DView,
-					"3D View Tab",
-					tabControl.TextPointSize,
-					selectedTabColor,
-					new RGBA_Bytes(),
-					ActiveTheme.Instance.TabLabelUnselected,
-					new RGBA_Bytes());
-
-
-				layerViewTab = new SimpleTextTabWidget(
-					layerView,
-					"Layer View Tab",
-					tabControl.TextPointSize,
-					selectedTabColor,
-					new RGBA_Bytes(),
-					ActiveTheme.Instance.TabLabelUnselected,
-					new RGBA_Bytes());
-			}
-			else
-			{
-				printerTab = new PopOutTextTabWidget(
-					partPreview3DView,
-					"3D View Tab",
-					new Vector2(590, 400),
-					tabControl.TextPointSize);
-
-				layerViewTab = new PopOutTextTabWidget(
-					layerView,
-					"Layer View Tab",
-					new Vector2(590, 400),
-					tabControl.TextPointSize);
-			}
-
-			layerViewTab.Selected += (s1, e1) =>
-			{
-				// match the transform from the 3d view
-				viewGcodeBasic.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(partPreviewView.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
-			};
-
-			printerTab.Selected += (s1, e1) =>
-			{
-				// match the transform from the 3d view
-				partPreviewView.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(viewGcodeBasic.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
-			};
-
+			// Add a tab for the current printer
+			var printerTab = new SimpleTextTabWidget(
+				new TabPage(new PrinterTabPage(ActiveSliceSettings.Instance, printItem), tabTitle.ToUpper()),
+				"3D View Tab",
+				tabControl.TextPointSize,
+				selectedTabColor,
+				new RGBA_Bytes(),
+				ActiveTheme.Instance.TabLabelUnselected,
+				new RGBA_Bytes());
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
-			layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
-
 			tabControl.AddTab(printerTab);
-			tabControl.AddTab(layerViewTab);
 
 			this.AddChild(tabControl);
 		}
 
-		public override void OnLoad(EventArgs args)
+		public void Reload(PrintItemWrapper printItem)
 		{
-			MatterControlApplication.Instance.ActiveView3DWidget = partPreviewView;
-
-			LoadActivePrintItem();
-
-			base.OnLoad(args);
+			this.CloseAllChildren();
+			//this.LoadPrintItem(printItem);
+			System.Diagnostics.Debugger.Break();
 		}
 
-		public void SwitchToGcodeView()
+		public class PrinterTabPage : GuiWidget
 		{
-			tabControl.TabBar.SelectTab(layerViewTab);
-			viewGcodeBasic.Focus();
-		}
+			private View3DWidget modelViewer;
+			private ViewGcodeBasic gcodeViewer;
+			private PrintItemWrapper printItem;
+			private ViewControls3D viewControls3D;
 
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
+			public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
+			{
+				double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
+
+				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				topToBottom.AnchorAll();
+				this.AddChild(topToBottom);
+
+				topToBottom.AddChild(new PrinterActionsBar());
+
+				viewControls3D = new ViewControls3D()
+				{
+					PartSelectVisible = false,
+					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
+					HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren,
+					Visible = true,
+					Margin = new BorderDouble(3, 0, 0, 51)
+				};
+				viewControls3D.ResetView += (sender, e) =>
+				{
+					modelViewer.meshViewerWidget.ResetView();
+				};
+
+				// The 3D model view
+				modelViewer = new View3DWidget(printItem,
+					new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
+					activeSettings.GetValue<Vector2>(SettingsKey.print_center),
+					activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
+					View3DWidget.WindowMode.Embeded,
+					View3DWidget.AutoRotate.Disabled,
+					viewControls3D,
+					View3DWidget.OpenMode.Editing);
+				topToBottom.AddChild(modelViewer);
+
+				// The slice layers view
+				gcodeViewer = new ViewGcodeBasic(
+					new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
+					activeSettings.GetValue<Vector2>(SettingsKey.print_center),
+					activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
+					ViewGcodeBasic.WindowMode.Embeded,
+					viewControls3D);
+				gcodeViewer.AnchorAll();
+				this.gcodeViewer.Visible = false;
+				topToBottom.AddChild(gcodeViewer);
+
+				this.printItem = printItem;
+
+				//this.DebugShowBounds = true;
+
+
+				this.AddChild(viewControls3D);
+
+				this.AnchorAll();
+			}
+
+			public void ToggleView()
+			{
+				bool layersVisible = gcodeViewer.Visible;
+
+				if (layersVisible)
+				{
+					// Copy layers tumble state to partpreview
+				}
+				else
+				{
+					// Copy partpreview tumble state to layers
+				}
+
+				modelViewer.Visible = layersVisible;
+				gcodeViewer.Visible = !modelViewer.Visible;
+			}
+
+			private async void LoadActivePrintItem()
+			{
+				await modelViewer.ClearBedAndLoadPrintItemWrapper(printItem);
+				gcodeViewer.LoadItem();
+			}
+
+			public override void OnLoad(EventArgs args)
+			{
+				MatterControlApplication.Instance.ActiveView3DWidget = modelViewer;
+				LoadActivePrintItem();
+				base.OnLoad(args);
+			}
+
+			public override void OnClosed(ClosedEventArgs e)
+			{
+				base.OnClosed(e);
+			}
 		}
 	}
 }

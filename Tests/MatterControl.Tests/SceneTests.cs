@@ -117,8 +117,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				new Vector2(100, 100),
 				MeshVisualizer.BedShape.Rectangular,
 				View3DWidget.WindowMode.Embeded,
-				 View3DWidget.AutoRotate.Disabled,
-				  View3DWidget.OpenMode.Editing);
+				View3DWidget.AutoRotate.Disabled,
+				new ViewControls3D(),
+				View3DWidget.OpenMode.Editing);
 
 			var scene = view3DWidget.Scene;
 			scene.Children.Add(new Object3D

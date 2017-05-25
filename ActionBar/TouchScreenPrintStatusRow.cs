@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			FlowLayoutWidget printStatusContainer = CreateActivePrinterInfoWidget();
 
-			var printActionRow = new PrintActionRow()
+			var printActionRow = new PrintActionRow(ApplicationController.Instance.Theme.BreadCrumbButtonFactory, this)
 			{
 				VAnchor = VAnchor.ParentTop
 			};

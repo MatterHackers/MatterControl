@@ -239,7 +239,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected FlowLayoutWidget editPlateButtonsContainer;
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
+		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, OpenMode openMode = OpenMode.Viewing)
+			: base(viewControls3D)
 		{
 			this.openMode = openMode;
 			this.windowType = windowType;
@@ -261,12 +262,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var textImageButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
 
-			mainContainerTopToBottom.AddChild(new PrinterActionsBar());
-
 			GuiWidget viewArea = new GuiWidget();
 			viewArea.AnchorAll();
 			{
 				meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
+
+				viewControls3D.RegisterViewer(meshViewerWidget);
 
 				PutOemImageOnBed();
 
@@ -491,12 +492,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonRightPanelHolder.Visible = Sidebar.Visible;
 			};
 
-			viewControls3D = new ViewControls3D(meshViewerWidget);
-			viewControls3D.ResetView += (sender, e) =>
-			{
-				meshViewerWidget.ResetView();
-			};
-
 			buttonRightPanelDisabledCover = new GuiWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -505,7 +500,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
 			buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
 
-			viewControls3D.PartSelectVisible = false;
 			LockEditControls();
 
 			GuiWidget leftRightSpacer = new GuiWidget();
@@ -528,7 +522,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AnchorAll();
 
 			meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-			AddChild(viewControls3D);
 
 
 			/* TODO: Why doesn't this pattern work but using new SelectedObjectPanel object does?
@@ -1593,8 +1586,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SplitButton splitButton = new SplitButton(button, menu);
 			*/
 
+			var textImageButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
+
 			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
-			splitButtonFactory.FixedHeight = 40 * GuiWidget.DeviceScale;
+			splitButtonFactory.FixedHeight = textImageButtonFactory.FixedHeight;
 
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
 			saveButtons.Visible = false;
@@ -2122,11 +2117,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var libraryToSaveTo = returnInfo.destinationLibraryProvider;
 							if (libraryToSaveTo != null)
 							{
-								libraryToSaveTo.AddItem(printItemWrapper);
+								var writableContainer = libraryToSaveTo as ILibraryWritableContainer;
+								if (writableContainer != null)
+								{
+									writableContainer.Add(new[] { new FileSystemFileItem(printItemWrapper.FileLocation) });
 
-								throw new NotImplementedException();
+									// HACK: This is a short term hack to get back into the game
+									// Set active item
+									//PrinterConnectionAndCommunication.Instance.ActivePrintItem = printItemWrapper;
+								}
 
-								//libraryToSaveTo.Dispose();
+								libraryToSaveTo.Dispose();
 							}
 						}
 
