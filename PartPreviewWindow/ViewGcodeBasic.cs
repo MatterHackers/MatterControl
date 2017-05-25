@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,9 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.ComponentModel;
+using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
@@ -38,9 +39,6 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
-using System;
-using System.ComponentModel;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -48,15 +46,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public enum WindowMode { Embeded, StandAlone };
 
-		public SolidSlider selectLayerSlider;
+		//public SolidSlider selectLayerSlider;
 
-		private SetLayerWidget setLayerWidget;
-		private LayerNavigationWidget navigationWidget;
-		public DoubleSolidSlider layerRenderRatioSlider;
+		//private SetLayerWidget setLayerWidget;
+		//private LayerNavigationWidget navigationWidget;
+		//public DoubleSolidSlider layerRenderRatioSlider;
 
 		private TextWidget gcodeProcessingStateInfoText;
 		private ViewGcodeWidget gcodeViewWidget;
-		private PrintItemWrapper printItem { get; set; }
+		private PrintItemWrapper printItem => PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 		private bool startedSliceFromGenerateButton = false;
 		private Button generateGCodeButton;
 		private FlowLayoutWidget buttonBottomPanel;
@@ -90,7 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private BedShape bedShape;
 		private int sliderWidth;
 
-		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode)
+		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D)
+			:base(viewControls3D)
 		{
 			this.viewerVolume = viewerVolume;
 			this.bedShape = bedShape;
@@ -117,21 +116,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private void RecreateBedAndPartPosition(object sender, EventArgs e)
-				{
-					viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height));
-					bedShape = ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape);
-					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+		{
+			viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height));
+			bedShape = ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape);
+			bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
 
-					double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
+			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
 
-					UiThread.RunOnIdle(() =>
-					{
-						meshViewerWidget.CreatePrintBed(
-							viewerVolume,
-							bedCenter,
-							bedShape);
-					});
-				}
+			UiThread.RunOnIdle(() =>
+			{
+				meshViewerWidget.CreatePrintBed(
+					viewerVolume,
+					bedCenter,
+					bedShape);
+			});
+		}
 
 		private void CheckSettingChanged(object sender, EventArgs e)
 		{
@@ -164,17 +163,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void LoadItem(PrintItemWrapper printItem)
+		public void LoadItem()
 		{
-			this.printItem = printItem;
 			Clear3DGCode();
 
 			gcodeDisplayWidget.CloseAllChildren();
 
-            if(printItem == null)
-            {
-                return;
-            }
+			if (printItem == null)
+			{
+				return;
+			}
 
 			//firstProcessingMessage = "Loading G-Code...".Localize();
 			if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
@@ -245,7 +243,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			generateGCodeButton = textImageButtonFactory.Generate("Generate".Localize());
 			generateGCodeButton.Name = "Generate Gcode Button";
-			generateGCodeButton.Click += generateButton_Click;
+			generateGCodeButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					if (ActiveSliceSettings.Instance.PrinterSelected)
+					{
+						if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
+						{
+							generateGCodeButton.Visible = false;
+							SlicingQueue.Instance.QueuePartForSlicing(printItem);
+							startedSliceFromGenerateButton = true;
+						}
+					}
+					else
+					{
+						StyledMessageBox.ShowMessageBox(null, "Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
+					}
+				});
+			};
+
 			buttonBottomPanel.AddChild(generateGCodeButton);
 
 			layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft);
@@ -301,6 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 
 			viewControls2D = new ViewControls2D();
+			viewControls2D.Visible = false;
 			AddChild(viewControls2D);
 
 			viewControls2D.ResetView += (sender, e) =>
@@ -308,18 +326,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetDefaultView2D();
 			};
 
-			viewControls3D = new ViewControls3D(meshViewerWidget);
-			viewControls3D.Margin = new BorderDouble(0, 0, 0, 40);
-			viewControls3D.PartSelectVisible = false;
-			AddChild(viewControls3D);
-
+			viewControls3D.RegisterViewer(meshViewerWidget);
 			viewControls3D.ResetView += (sender, e) =>
 			{
 				meshViewerWidget.ResetView();
 			};
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-			viewControls3D.Visible = false;
 
 			viewControlsToggle = new ViewControlsToggle();
 			viewControlsToggle.HAnchor = Agg.UI.HAnchor.ParentRight;
@@ -330,6 +343,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.ResetView();
 
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
+			
 			viewControls2D.translateButton.Click += (sender, e) =>
 			{
 				gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Move;
@@ -394,22 +409,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeViewWidget.gCodeRenderer.Render3D(renderInfo);
 		}
 
-		private void SetAnimationPosition()
-		{
-			int currentLayer = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
-			if (currentLayer <= 0)
-			{
-				selectLayerSlider.Value = 0;
-				layerRenderRatioSlider.SecondValue = 0;
-				layerRenderRatioSlider.FirstValue = 0;
-			}
-			else
-			{
-				selectLayerSlider.Value = currentLayer - 1;
-				layerRenderRatioSlider.SecondValue = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
-				layerRenderRatioSlider.FirstValue = 0;
-			}
-		}
+		private Action ResetAnimationPosition;
 
 		private FlowLayoutWidget CreateRightButtonPanel()
 		{
@@ -531,8 +531,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			modelInfoContainer.AddChild(GetEstimatedMassInfo());
 			modelInfoContainer.AddChild(GetEstimatedCostInfo());
-
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
 
 			buttonPanel.AddChild(modelInfoContainer);
 
@@ -808,34 +806,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			textImageButtonFactory.FixedWidth = oldWidth;
 		}
 
-		private void SetSyncToPrintVisibility()
-		{
-			if (windowMode == WindowMode.Embeded)
-			{
-				bool printerIsRunningPrint = PrinterConnectionAndCommunication.Instance.PrinterIsPaused || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
-
-				if (syncToPrint.Checked && printerIsRunningPrint)
-				{
-					SetAnimationPosition();
-					//navigationWidget.Visible = false;
-					//setLayerWidget.Visible = false;
-					layerRenderRatioSlider.Visible = false;
-					selectLayerSlider.Visible = false;
-				}
-				else
-				{
-					if (layerRenderRatioSlider != null)
-					{
-						layerRenderRatioSlider.FirstValue = 0;
-						layerRenderRatioSlider.SecondValue = 1;
-					}
-					navigationWidget.Visible = true;
-					setLayerWidget.Visible = true;
-					layerRenderRatioSlider.Visible = true;
-					selectLayerSlider.Visible = true;
-				}
-			}
-		}
+		private Action SetSyncToPrintVisibility;
 
 		private void SetLayerViewType()
 		{
@@ -845,7 +816,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls2D.Visible = false;
 				gcodeViewWidget.Visible = false;
 
-				viewControls3D.Visible = true;
 				meshViewerWidget.Visible = true;
 			}
 			else
@@ -854,7 +824,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls2D.Visible = true;
 				gcodeViewWidget.Visible = true;
 
-				viewControls3D.Visible = false;
 				meshViewerWidget.Visible = false;
 			}
 		}
@@ -873,7 +842,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				generateGCodeButton.Visible = true;
 			}
-			SetSyncToPrintVisibility();
+			//SetSyncToPrintVisibility();
 		}
 
 		private string partToStartLoadingOnFirstDraw = null;
@@ -897,7 +866,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& syncToPrint.Checked
 				&& printerIsRunningPrint)
 			{
-				SetAnimationPosition();
+				ResetAnimationPosition();
 			}
 
 			EnsureKeyDownHooked();
@@ -1019,7 +988,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return false;
 		}
 
-		private void DoneLoadingGCode(object sender, EventArgs e)
+		private void DoneLoadingGCode(object sender, EventArgs ex)
 		{
 			SetProcessingMessage("");
 			if (gcodeViewWidget != null
@@ -1050,29 +1019,100 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonRightPanel.Visible = true;
 				viewControlsToggle.Visible = true;
 
-				CloseIfNotNull(setLayerWidget);
-				setLayerWidget = new SetLayerWidget(gcodeViewWidget);
+				var setLayerWidget = new SetLayerWidget(gcodeViewWidget);
 				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
-				CloseIfNotNull(navigationWidget);
-				navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
+				var navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
 				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
 				layerSelectionButtonsPanel.AddChild(navigationWidget);
 
-				CloseIfNotNull(selectLayerSlider);
-				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
-				selectLayerSlider.ValueChanged += selectLayerSlider_ValueChanged;
-				gcodeViewWidget.ActiveLayerChanged += gcodeViewWidget_ActiveLayerChanged;
+				var selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
+				selectLayerSlider.ValueChanged += (s, e) =>
+				{
+					gcodeViewWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+				};
+				gcodeViewWidget.ActiveLayerChanged += (s, e) =>
+				{
+					if (gcodeViewWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
+					{
+						selectLayerSlider.Value = gcodeViewWidget.ActiveLayerIndex;
+					}
+				};
 				AddChild(selectLayerSlider);
 
-				CloseIfNotNull(layerRenderRatioSlider);
-				layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
+				var layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
 				layerRenderRatioSlider.FirstValue = 0;
-				layerRenderRatioSlider.FirstValueChanged += layerStartRenderRatioSlider_ValueChanged;
+				layerRenderRatioSlider.FirstValueChanged += (s, e) =>
+				{
+					gcodeViewWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					gcodeViewWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					gcodeViewWidget.Invalidate();
+				};
 				layerRenderRatioSlider.SecondValue = 1;
-				layerRenderRatioSlider.SecondValueChanged += layerEndRenderRatioSlider_ValueChanged;
+				layerRenderRatioSlider.SecondValueChanged += (s, e) =>
+				{
+					gcodeViewWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					gcodeViewWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					gcodeViewWidget.Invalidate();
+				};
 				AddChild(layerRenderRatioSlider);
+
+				ResetAnimationPosition = () =>
+				{
+					int currentLayer = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
+					if (currentLayer <= 0)
+					{
+						selectLayerSlider.Value = 0;
+						layerRenderRatioSlider.SecondValue = 0;
+						layerRenderRatioSlider.FirstValue = 0;
+					}
+					else
+					{
+						selectLayerSlider.Value = currentLayer - 1;
+						layerRenderRatioSlider.SecondValue = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
+						layerRenderRatioSlider.FirstValue = 0;
+					}
+				};
+
+				SetSyncToPrintVisibility = () =>
+				{
+					if (windowMode == WindowMode.Embeded)
+					{
+						bool printerIsRunningPrint = PrinterConnectionAndCommunication.Instance.PrinterIsPaused || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
+
+						if (syncToPrint?.Checked == true
+							&& printerIsRunningPrint)
+						{
+							ResetAnimationPosition();
+							//navigationWidget.Visible = false;
+							//setLayerWidget.Visible = false;
+							layerRenderRatioSlider.Visible = false;
+							selectLayerSlider.Visible = false;
+						}
+						else
+						{
+							if (layerRenderRatioSlider != null)
+							{
+								layerRenderRatioSlider.FirstValue = 0;
+								layerRenderRatioSlider.SecondValue = 1;
+							}
+							navigationWidget.Visible = true;
+							setLayerWidget.Visible = true;
+							layerRenderRatioSlider.Visible = true;
+							selectLayerSlider.Visible = true;
+						}
+					}
+				};
+
+				SetSliderSizes = () =>
+				{
+					selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDisplayWidget.Width - 20, 70);
+					selectLayerSlider.TotalWidthInPixels = gcodeDisplayWidget.Height - 80;
+
+					layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 70);
+					layerRenderRatioSlider.TotalWidthInPixels = gcodeDisplayWidget.Width - 100;
+				};
 
 				SetSliderSizes();
 
@@ -1083,6 +1123,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BoundsChanged += PartPreviewGCode_BoundsChanged;
 
 				meshViewerWidget.partProcessingInfo.Visible = false;
+
+				
 			}
 		}
 
@@ -1098,47 +1140,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcodeViewWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-			gcodeViewWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-			gcodeViewWidget.Invalidate();
-		}
-
-		private void layerEndRenderRatioSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcodeViewWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-			gcodeViewWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-			gcodeViewWidget.Invalidate();
-		}
-
-		private void gcodeViewWidget_ActiveLayerChanged(object sender, EventArgs e)
-		{
-			if (gcodeViewWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
-			{
-				selectLayerSlider.Value = gcodeViewWidget.ActiveLayerIndex;
-			}
-		}
-
-		private void selectLayerSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcodeViewWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
-		}
-
 		private void PartPreviewGCode_BoundsChanged(object sender, EventArgs e)
 		{
 			SetSliderSizes();
 		}
 
-		private void SetSliderSizes()
-		{
-			selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDisplayWidget.Width - 20, 70);
-			selectLayerSlider.TotalWidthInPixels = gcodeDisplayWidget.Height - 80;
-
-			layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 70);
-			layerRenderRatioSlider.TotalWidthInPixels = gcodeDisplayWidget.Width - 100;
-		}
-
+		private Action SetSliderSizes;
+		
 		private void AddHandlers()
 		{
 			expandModelOptions.CheckedStateChanged += expandModelOptions_CheckedStateChanged;
@@ -1191,28 +1199,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		private void generateButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(DoGenerateButton_Click, sender);
-		}
-
-		private void DoGenerateButton_Click(object state)
-		{
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
-				{
-					((Button)state).Visible = false;
-					SlicingQueue.Instance.QueuePartForSlicing(printItem);
-					startedSliceFromGenerateButton = true;
-				}
-			}
-			else
-			{
-				StyledMessageBox.ShowMessageBox(null, "Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
-			}
-		}
-
 		private void sliceItem_SlicingOutputMessage(object sender, EventArgs e)
 		{
 			StringEventArgs message = e as StringEventArgs;
@@ -1234,7 +1220,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
 			printItem.SlicingDone -= sliceItem_Done;
 
-			UiThread.RunOnIdle(() => LoadItem(printItem));
+			UiThread.RunOnIdle(() => LoadItem());
 			
 			startedSliceFromGenerateButton = false;
 		}

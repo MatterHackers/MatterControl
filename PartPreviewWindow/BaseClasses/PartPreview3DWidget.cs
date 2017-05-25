@@ -60,8 +60,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool needToRecreateBed = false;
 
-		public PartPreview3DWidget()
+		public PartPreview3DWidget(ViewControls3D viewControls3D)
 		{
+			this.viewControls3D = viewControls3D;
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 		}

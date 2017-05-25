@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.MatterControl.CustomWidgets;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -54,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewControls3D : FlowLayoutWidget
 	{
 		private GuiWidget partSelectSeparator;
-		private MeshViewerWidget meshViewerWidget;
+		private List<MeshViewerWidget> meshViewers = new List<MeshViewerWidget>();
 
 		private Button resetViewButton;
 
@@ -65,9 +66,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private EventHandler unregisterEvents;
 
+		private OverflowDropdown overflowButton;
+
 		private int buttonHeight;
 
 		public event EventHandler ResetView;
+
 
 		public bool PartSelectVisible
 		{
@@ -91,32 +95,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.activeTransformState = value;
 
-				switch(value)
+				foreach (var meshViewerWidget in meshViewers)
 				{
-					case ViewControls3DButtons.Rotate:
-						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-						rotateButton.Checked = true;
-						break;
+					switch (value)
+					{
+						case ViewControls3DButtons.Rotate:
+							meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+							rotateButton.Checked = true;
+							break;
 
-					case ViewControls3DButtons.Translate:
-						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
-						translateButton.Checked = true;
-						break;
+						case ViewControls3DButtons.Translate:
+							meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
+							translateButton.Checked = true;
+							break;
 
-					case ViewControls3DButtons.Scale:
-						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
-						scaleButton.Checked = true;
-						break;
+						case ViewControls3DButtons.Scale:
+							meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
+							scaleButton.Checked = true;
+							break;
 
-					case ViewControls3DButtons.PartSelect:
-						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
-						partSelectButton.Checked = true;
-						break;
+						case ViewControls3DButtons.PartSelect:
+							meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
+							partSelectButton.Checked = true;
+							break;
+					}
 				}
 			}
 		}
 
-		public ViewControls3D(MeshViewerWidget meshViewerWidget)
+		public MeshViewerWidget FirstMeshViewer { get; private set; }
+
+		public ViewControls3D()
 		{
 			if (UserSettings.Instance.IsTouchScreen)
 			{
@@ -127,7 +136,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonHeight = 0;
 			}
 
-			this.meshViewerWidget = meshViewerWidget;
 			var textImageButtonFactory = new TextImageButtonFactory()
 			{
 				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -145,29 +153,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
 			resetViewButton = textImageButtonFactory.Generate("", StaticData.Instance.LoadIcon(iconPath,32,32).InvertLightness());
 			resetViewButton.ToolTipText = "Reset View".Localize();
-			AddChild(resetViewButton);
 			resetViewButton.Click += (s, e) => ResetView?.Invoke(this, null);
+			AddChild(resetViewButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "rotate.png");
 			rotateButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
 			rotateButton.Margin = new BorderDouble(3);
-			AddChild(rotateButton);
 			rotateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Rotate;
+			AddChild(rotateButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "translate.png");
 			translateButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
 			translateButton.Margin = new BorderDouble(3);
-			AddChild(translateButton);
 			translateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Translate;
+			AddChild(translateButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "scale.png");
 			scaleButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
 			scaleButton.Margin = 3;
-			AddChild(scaleButton);
 			scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
+			AddChild(scaleButton);
 
 			partSelectSeparator = new GuiWidget(2, 32);
 			partSelectSeparator.BackgroundColor = RGBA_Bytes.White;
@@ -178,20 +186,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partSelectButton = textImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			partSelectButton.ToolTipText = "Select Part".Localize();
 			partSelectButton.Margin = new BorderDouble(3);
-			AddChild(partSelectButton);
 			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
+			AddChild(partSelectButton);
 
-			var overflowButton = new OverflowDropdown(allowLightnessInvert: false);
+			iconPath = Path.Combine("ViewTransformControls", "layers.png");
+			var layersButton = textImageButtonFactory.Generate("", StaticData.Instance.LoadIcon(iconPath, 32, 32).InvertLightness());
+			layersButton.ToolTipText = "Layers".Localize();
+			layersButton.Margin = 3;
+			layersButton.Click += (s, e) =>
+			{
+				var parentTabPage = this.Parents<PartPreviewContent.PrinterTabPage>().First();
+				parentTabPage.ToggleView();
+			};
+			AddChild(layersButton);
+
+			overflowButton = new OverflowDropdown(allowLightnessInvert: false);
 			overflowButton.ToolTipText = "More...".Localize();
 			overflowButton.Margin = 3;
-			overflowButton.PopupContent = ShowOverflowMenu();
 			AddChild(overflowButton);
 
-			Margin = new BorderDouble(5);
 			HAnchor |= Agg.UI.HAnchor.ParentLeft;
 			VAnchor = Agg.UI.VAnchor.ParentTop;
 
-			Margin = new BorderDouble(0, 0, 0, 72);
 			rotateButton.Checked = true;
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 
@@ -201,7 +217,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
-		public GuiWidget ShowOverflowMenu()
+		public override void OnLoad(EventArgs args)
+		{
+			overflowButton.PopupContent = ShowOverflowMenu();
+			base.OnLoad(args);
+		}
+
+		public void RegisterViewer(MeshViewerWidget meshViewer)
+		{
+			if (this.FirstMeshViewer == null)
+			{
+				this.FirstMeshViewer = meshViewer;
+			}
+			this.meshViewers.Add(meshViewer);
+		}
+
+		private GuiWidget ShowOverflowMenu()
 		{
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
@@ -209,14 +240,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddCheckbox(
 					"Show Print Bed".Localize(),
 					"Show Help Checkbox",
-					meshViewerWidget.RenderBed,
+					this.FirstMeshViewer.RenderBed,
 					5,
 					(s, e) =>
 					{
 						var checkbox = s as CheckBox;
 						if (checkbox != null)
 						{
-							meshViewerWidget.RenderBed = checkbox.Checked;
+							meshViewers.ForEach(m => m.RenderBed = checkbox.Checked);
 						}
 					}));
 
@@ -227,14 +258,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					AddCheckbox(
 						"Show Print Area".Localize(),
 						"Show Help Checkbox",
-						meshViewerWidget.RenderBuildVolume,
+						this.FirstMeshViewer.RenderBed,
 						5,
 						(s, e) =>
 						{
 							var checkbox = s as CheckBox;
 							if (checkbox != null)
 							{
-								meshViewerWidget.RenderBuildVolume = checkbox.Checked;
+								meshViewers.ForEach(m => m.RenderBuildVolume = checkbox.Checked);
 							}
 						}));
 			}
@@ -276,19 +307,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool canParse = Enum.TryParse(renderTypeString, out renderType);
 			if (canParse)
 			{
-				meshViewerWidget.RenderType = renderType;
+				meshViewers.ForEach(m => m.RenderType = renderType);
 			}
 
 			{
 				RadioButton renderTypeCheckBox = new RadioButton("Shaded".Localize(), textColor: itemTextColor);
-				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
+				renderTypeCheckBox.Checked = (this.FirstMeshViewer.RenderType == RenderTypes.Shaded);
 
 				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
 					if (renderTypeCheckBox.Checked)
 					{
-						meshViewerWidget.RenderType = RenderTypes.Shaded;
-						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
+						meshViewers.ForEach(m => m.RenderType = RenderTypes.Shaded);
+						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, this.FirstMeshViewer.RenderType.ToString());
 					}
 				};
 				parentContainer.AddChild(renderTypeCheckBox);
@@ -296,13 +327,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			{
 				RadioButton renderTypeCheckBox = new RadioButton("Outlines".Localize(), textColor: itemTextColor);
-				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
+				renderTypeCheckBox.Checked = (this.FirstMeshViewer.RenderType == RenderTypes.Outlines);
 				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
 					if (renderTypeCheckBox.Checked)
 					{
-						meshViewerWidget.RenderType = RenderTypes.Outlines;
-						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
+						meshViewers.ForEach(m => m.RenderType = RenderTypes.Outlines);
+						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, this.FirstMeshViewer.RenderType.ToString());
 					}
 				};
 				parentContainer.AddChild(renderTypeCheckBox);
@@ -310,13 +341,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			{
 				RadioButton renderTypeCheckBox = new RadioButton("Polygons".Localize(), textColor: itemTextColor);
-				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
+				renderTypeCheckBox.Checked = (this.FirstMeshViewer.RenderType == RenderTypes.Polygons);
 				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
 					if (renderTypeCheckBox.Checked)
 					{
-						meshViewerWidget.RenderType = RenderTypes.Polygons;
-						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
+						meshViewers.ForEach(m => m.RenderType = RenderTypes.Polygons);
+						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, this.FirstMeshViewer.RenderType.ToString());
 					}
 				};
 				parentContainer.AddChild(renderTypeCheckBox);
@@ -324,7 +355,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			{
 				RadioButton renderTypeCheckBox = new RadioButton("Overhang".Localize(), textColor: itemTextColor);
-				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Overhang);
+				renderTypeCheckBox.Checked = (this.FirstMeshViewer.RenderType == RenderTypes.Overhang);
 
 				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
 				{
@@ -333,8 +364,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						// TODO: Determine if Scene is available in scope
 						var scene = MatterControlApplication.Instance.ActiveView3DWidget.Scene;
 
-						meshViewerWidget.RenderType = RenderTypes.Overhang;
-						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+						meshViewers.ForEach(m => m.RenderType = RenderTypes.Overhang);
+
+						UserSettings.Instance.set("defaultRenderSetting", this.FirstMeshViewer.RenderType.ToString());
 						foreach (var meshAndTransform in scene.VisibleMeshes(Matrix4X4.Identity))
 						{
 							meshAndTransform.MeshData.MarkAsChanged();
@@ -404,11 +436,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected void SetMeshViewerDisplayTheme(object sender = null, EventArgs e = null)
 		{
-			meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			//meshViewerWidget.MaterialColor = RGBA_Bytes.White;
-			//meshViewerWidget.SelectedMaterialColor = ActiveTheme.Instance.PrimaryAccentColor;
-			meshViewerWidget.BuildVolumeColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor.Red0To255, ActiveTheme.Instance.PrimaryAccentColor.Green0To255, ActiveTheme.Instance.PrimaryAccentColor.Blue0To255, 50);
+			meshViewers.ForEach(meshViewerWidget =>
+			{
+				meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				meshViewerWidget.BuildVolumeColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor.Red0To255, ActiveTheme.Instance.PrimaryAccentColor.Green0To255, ActiveTheme.Instance.PrimaryAccentColor.Blue0To255, 50);
+			});
 		}
 	}
 }

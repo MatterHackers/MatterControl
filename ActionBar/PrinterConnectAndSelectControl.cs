@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				Cursor = Cursors.Hand,
-				Margin = new BorderDouble(0, 6, 0, 3)
+				Margin = 0
 			};
 			printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup(true);
 			this.AddChild(printerSelector);
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					PrinterConnectionAndCommunication.Instance.Disable();
 				}
 			});
-			//this.AddChild(disconnectButton);
+			this.AddChild(disconnectButton);
 
 			foreach (var child in Children)
 			{

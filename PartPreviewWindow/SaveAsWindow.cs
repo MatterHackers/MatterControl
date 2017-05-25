@@ -38,13 +38,19 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
+	public class SaveAsContext : LibraryConfig
+	{
+	}
+
 	public class SaveAsWindow : SystemWindow
 	{
 		private Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
-		ListView librarySelectorWidget;
-		Button saveAsButton;
+		private ListView librarySelectorWidget;
+		private Button saveAsButton;
+
+		private ILibraryContext libraryNavContext;
 
         public SaveAsWindow(Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
 			: base(480, 500)
@@ -94,25 +100,23 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor
 			};
 
-			// TODO: Needs a separate implementation that doesn't change the standard list view contents as we browse around
-			throw new NotImplementedException();
+			libraryNavContext = new SaveAsContext()
+			{
+				ActiveContainer = ApplicationController.Instance.Library.RootLibaryContainer
+			};
+			libraryNavContext.ContainerChanged += (s, e) =>
+			{
+				/* Still Needed?
+				breadCrumbWidget.SetBreadCrumbs(e.ActiveContainer); */
 
-			librarySelectorWidget = new ListView(ApplicationController.Instance.Library);
+				saveAsButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer;
+			};
+
+			librarySelectorWidget = new ListView(libraryNavContext);
 
 			// put in the bread crumb widget
 			var breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget);
 			middleRowContainer.AddChild(breadCrumbWidget);
-
-			// TODO: Resolve
-			/*
-			librarySelectorWidget.LibraryContainerChanged += (s, e) =>
-			{
-				breadCrumbWidget.SetBreadCrumbs(e.ActiveContainer);
-
-				// Once we have navigated to any provider enable the ability to click the save as button.
-				saveAsButton.Enabled = true;
-
-			}; */
 
 			// put in the area to pick the provider to save to
 			// Adds text box and check box to the above container

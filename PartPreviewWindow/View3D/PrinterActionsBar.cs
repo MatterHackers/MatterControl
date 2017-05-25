@@ -53,9 +53,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.VAnchor = VAnchor.FitToChildren;
 
 				var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
-
+				
 				this.AddChild(new PrinterConnectButton(buttonFactory));
-				//this.AddChild(new ResetButton(buttonFactory));
+
+				this.AddChild(new PrintActionRow(buttonFactory, this));
 
 				//ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
 				var terminalButton = buttonFactory.Generate("Terminal".Localize().ToUpper());
@@ -78,6 +79,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddChild(new HorizontalSpacer());
 
+				this.AddChild(GeneratePopupContent());
+
 				var overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 				{
 					AlignToRightEdge = true,
@@ -89,6 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private GuiWidget GeneratePopupContent()
 			{
 				var widgetToPop = new FlowLayoutWidget();
+				widgetToPop.MaximumSize = new VectorMath.Vector2(280, 35);
 
 				widgetToPop.AddChild(new PrinterSelectEditDropdown());
 				

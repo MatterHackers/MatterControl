@@ -55,28 +55,29 @@ namespace MatterHackers.MatterControl.ActionBar
 	{
 		private List<Button> activePrintButtons = new List<Button>();
 		private Button addButton;
-		private List<Button> allPrintButtons = new List<Button>();
-		private Button cancelButton;
-		private Button cancelConnectButton;
-		private Button touchScreenConnectButton;
 		private Button addPrinterButton;
 		private Button selectPrinterButton;
+		private List<Button> allPrintButtons = new List<Button>();
+
+		private Button touchScreenConnectButton;
+		private Button cancelConnectButton;
 		private Button resetConnectionButton;
-		private Button doneWithCurrentPartButton;
-		private Button pauseButton;
-		private Button removeButton;
-		private Button reprintButton;
 		private Button resumeButton;
-		private Button skipButton;
+
 		private Button startButton;
+		private Button pauseButton;
+		private Button cancelButton;
+
 		private Button finishSetupButton;
+
 		private EventHandler unregisterEvents;
 
-		public PrintActionRow()
+
+		public PrintActionRow(TextImageButtonFactory buttonFactory, GuiWidget parentWidget)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 
-			AddChildElements();
+			AddChildElements(buttonFactory, parentWidget);
 
 			// Add Handlers
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
@@ -84,11 +85,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 		}
 
-		protected void AddChildElements()
+		protected void AddChildElements(TextImageButtonFactory buttonFactory, GuiWidget parentWidget)
 		{
-			var buttonFactory = ApplicationController.Instance.Theme.ActionRowButtonFactory;
-
-			addButton = buttonFactory.GenerateTooltipButton("Add".Localize(), StaticData.Instance.LoadIcon("icon_circle_plus.png",32,32).InvertLightness());
+			addButton = buttonFactory.GenerateTooltipButton("Add".Localize().ToUpper());
 			addButton.ToolTipText = "Add a file to be printed".Localize();
 			addButton.Margin = new BorderDouble(6, 6, 6, 3);
 			addButton.Click += (s, e) =>
@@ -96,7 +95,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				UiThread.RunOnIdle(AddButtonOnIdle);
 			};
 
-			startButton = buttonFactory.GenerateTooltipButton("Print".Localize(), StaticData.Instance.LoadIcon("icon_play_32x32.png",32,32).InvertLightness());
+			startButton = buttonFactory.GenerateTooltipButton("Print".Localize().ToUpper());
 			startButton.Name = "Start Print Button";
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
@@ -108,7 +107,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			finishSetupButton.Margin = new BorderDouble(6, 6, 6, 3);
 			finishSetupButton.Click += onStartButton_Click;
 
-			touchScreenConnectButton = buttonFactory.GenerateTooltipButton("Connect".Localize(), StaticData.Instance.LoadIcon("connect.png", 32,32).InvertLightness());
+			touchScreenConnectButton = buttonFactory.GenerateTooltipButton("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16,16).InvertLightness());
 			touchScreenConnectButton.ToolTipText = "Connect to the printer".Localize();
 			touchScreenConnectButton.Margin = new BorderDouble(0, 6, 6, 3);
 			touchScreenConnectButton.Click += (s, e) =>
@@ -131,7 +130,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			};
 
-			addPrinterButton = buttonFactory.GenerateTooltipButton("Add Printer".Localize());
+			addPrinterButton = buttonFactory.GenerateTooltipButton("Add Printer".Localize().ToUpper());
 			addPrinterButton.ToolTipText = "Select and add a new printer.".Localize();
 			addPrinterButton.Margin = new BorderDouble(6, 6, 6, 3);
 			addPrinterButton.Click += (s, e) =>
@@ -139,7 +138,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup(true));
 			};
 
-			selectPrinterButton = buttonFactory.GenerateTooltipButton("Select Printer".Localize());
+			selectPrinterButton = buttonFactory.GenerateTooltipButton("Select Printer".Localize().ToUpper());
 			selectPrinterButton.ToolTipText = "Select an existing printer.".Localize();
 			selectPrinterButton.Margin = new BorderDouble(6, 6, 6, 3);
 			selectPrinterButton.Click += (s, e) =>
@@ -147,27 +146,23 @@ namespace MatterHackers.MatterControl.ActionBar
 				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
 			};
 
-			resetConnectionButton = buttonFactory.GenerateTooltipButton("Reset".Localize(), StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
+			resetConnectionButton = buttonFactory.GenerateTooltipButton("Reset".Localize().ToUpper(), StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
 			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
 			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);
 			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
 
-			skipButton = makeButton("Skip".Localize(), "Skip the current item and move to the next in queue".Localize());
-			skipButton.Click += onSkipButton_Click;
-
-			removeButton = makeButton("Remove".Localize(), "Remove current item from queue".Localize());
-			removeButton.Click += onRemoveButton_Click;
-
-			pauseButton = makeButton("Pause".Localize(), "Pause the current print".Localize());
+			pauseButton = buttonFactory.GenerateTooltipButton("Pause".Localize().ToUpper());
+			pauseButton.ToolTipText = "Pause the current print".Localize();
 			pauseButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RequestPause);
 				pauseButton.Enabled = false;
 			};
-			this.AddChild(pauseButton);
+			parentWidget.AddChild(pauseButton);
 			allPrintButtons.Add(pauseButton);
 
-			cancelConnectButton = makeButton("Cancel Connect".Localize(), "Stop trying to connect to the printer.".Localize());
+			cancelConnectButton = buttonFactory.GenerateTooltipButton("Cancel Connect".Localize().ToUpper());
+			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
 			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.ConditionalCancelPrint();
@@ -175,7 +170,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			});
 			
 
-			cancelButton = makeButton("Cancel".Localize(), "Stop the current print".Localize());
+			cancelButton = buttonFactory.GenerateTooltipButton("Cancel".Localize().ToUpper());
+			cancelButton.ToolTipText = "Stop the current print".Localize();
 			cancelButton.Name = "Cancel Print Button";
 			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -183,7 +179,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				SetButtonStates();
 			});
 
-			resumeButton = makeButton("Resume".Localize(), "Resume the current print".Localize());
+			resumeButton = buttonFactory.GenerateTooltipButton("Resume".Localize().ToUpper());
+			resumeButton.ToolTipText = "Resume the current print".Localize();
 			resumeButton.Name = "Resume Button";
 			resumeButton.Click += (s, e) =>
 			{
@@ -194,63 +191,36 @@ namespace MatterHackers.MatterControl.ActionBar
 				pauseButton.Enabled = true;
 			};
 
-			this.AddChild(resumeButton);
+			parentWidget.AddChild(resumeButton);
 			allPrintButtons.Add(resumeButton);
-
-			reprintButton = makeButton("Print Again".Localize(), "Print current item again".Localize());
-			reprintButton.Name = "Print Again Button";
-			reprintButton.Click += onReprintButton_Click;
-
-			doneWithCurrentPartButton = makeButton("Done".Localize(), "Move to next print in queue".Localize());
-			doneWithCurrentPartButton.Name = "Done Button";
-			doneWithCurrentPartButton.Click += (s,e) => UiThread.RunOnIdle(() =>
-			{
-				PrinterConnectionAndCommunication.Instance.ResetToReadyState();
-				QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
-				// We don't have to change the selected index because we should be on the next one as we deleted the one
-				// we were on.
-			});
-
 			this.Margin = new BorderDouble(0, 0, 10, 0);
 			this.HAnchor = HAnchor.FitToChildren;
 
-			this.AddChild(touchScreenConnectButton);
+			parentWidget.AddChild(touchScreenConnectButton);
 			allPrintButtons.Add(touchScreenConnectButton);
 
-			this.AddChild(addPrinterButton);
+			parentWidget.AddChild(addPrinterButton);
 			allPrintButtons.Add(addPrinterButton);
 
-			this.AddChild(selectPrinterButton);
+			parentWidget.AddChild(selectPrinterButton);
 			allPrintButtons.Add(selectPrinterButton);
 
-			this.AddChild(addButton);
+			parentWidget.AddChild(addButton);
 			allPrintButtons.Add(addButton);
 
-			this.AddChild(startButton);
+			parentWidget.AddChild(startButton);
 			allPrintButtons.Add(startButton);
 
-			this.AddChild(finishSetupButton);
+			parentWidget.AddChild(finishSetupButton);
 			allPrintButtons.Add(finishSetupButton);
 
-			this.AddChild(doneWithCurrentPartButton);
-			allPrintButtons.Add(doneWithCurrentPartButton);
-
-			this.AddChild(skipButton);
-			allPrintButtons.Add(skipButton);
-
-			this.AddChild(cancelButton);
+			parentWidget.AddChild(cancelButton);
 			allPrintButtons.Add(cancelButton);
 
-			this.AddChild(cancelConnectButton);
+			parentWidget.AddChild(cancelConnectButton);
 			allPrintButtons.Add(cancelConnectButton);
 
-			this.AddChild(reprintButton);
-			allPrintButtons.Add(reprintButton);
-
-			this.AddChild(removeButton);
-			allPrintButtons.Add(removeButton);
-
-			this.AddChild(resetConnectionButton);
+			parentWidget.AddChild(resetConnectionButton);
 			allPrintButtons.Add(resetConnectionButton);
 
 			SetButtonStates();
@@ -272,15 +242,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				button.Enabled = true;
 			}
-		}
-
-		protected Button makeButton(string buttonText, string buttonToolTip = "")
-		{
-			Button button = ApplicationController.Instance.Theme.ActionRowButtonFactory.GenerateTooltipButton(buttonText);
-			button.ToolTipText = buttonToolTip;
-			button.Margin = new BorderDouble(0, 6, 6, 3);
-
-			return button;
 		}
 
 		//Set the states of the buttons based on the status of PrinterCommunication
@@ -310,12 +271,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				ShowActiveButtons();
 				EnableActiveButtons();
 			}
-			else if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
-			{
-				this.activePrintButtons.Add(addButton);
-				ShowActiveButtons();
-				EnableActiveButtons();
-			}
 			else
 			{
 				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
@@ -335,13 +290,6 @@ namespace MatterHackers.MatterControl.ActionBar
 						else
 						{
 							this.activePrintButtons.Add(startButton);
-							//Show 'skip' button if there are more items in queue
-							if (QueueData.Instance.ItemCount > 1)
-							{
-								this.activePrintButtons.Add(skipButton);
-							}
-
-							this.activePrintButtons.Add(removeButton);
 						}
 
 						EnableActiveButtons();
@@ -374,8 +322,6 @@ namespace MatterHackers.MatterControl.ActionBar
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-						this.activePrintButtons.Add(reprintButton);
-						this.activePrintButtons.Add(doneWithCurrentPartButton);
 						EnableActiveButtons();
 						break;
 
@@ -430,24 +376,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		void RunTroubleShooting()
 		{
 			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
-		}
-
-		private void onRemoveButton_Click(object sender, EventArgs mouseEvent)
-		{
-			QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
-		}
-
-		private void onReprintButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(() => PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible());
-		}
-
-		private void onSkipButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (QueueData.Instance.ItemCount > 1)
-			{
-				QueueData.Instance.MoveToNext();
-			}
 		}
 
 		string unsavedChangesCaption = "Unsaved Changes";
