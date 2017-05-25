@@ -186,6 +186,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl.TextPointSize);
 			}
 
+			layerViewTab.Selected += (s1, e1) =>
+			{
+				// match the transform from the 3d view
+				viewGcodeBasic.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(partPreviewView.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
+			};
+
+			printerTab.Selected += (s1, e1) =>
+			{
+				// match the transform from the 3d view
+				partPreviewView.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(viewGcodeBasic.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
+			};
+
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 			layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
 
