@@ -81,7 +81,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddChild(GeneratePopupContent());
 
-
 				Button undoButton = buttonFactory.Generate("Undo".Localize(), centerText: true);
 				undoButton.Name = "3D View Undo";
 				undoButton.Enabled = false;

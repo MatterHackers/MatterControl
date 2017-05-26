@@ -26,22 +26,14 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class MirrorControls : FlowLayoutWidget
 	{
-		private CheckBox expandMirrorOptions;
-		private FlowLayoutWidget mirrorOptionContainer;
 		private View3DWidget view3DWidget;
 
 		public MirrorControls(View3DWidget view3DWidget)
@@ -49,24 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 
-			// put in the mirror options
-			{
-				expandMirrorOptions = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton(
-					"Mirror".Localize().ToUpper(), 
-					View3DWidget.ArrowRight,
-					View3DWidget.ArrowDown);
-				expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
-				this.AddChild(expandMirrorOptions);
-
-				mirrorOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				mirrorOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-				mirrorOptionContainer.Visible = false;
-				this.AddChild(mirrorOptionContainer);
-
-				AddMirrorControls(mirrorOptionContainer);
-			}
-
-			expandMirrorOptions.CheckedStateChanged += expandMirrorOptions_CheckedStateChanged;
+			AddMirrorControls(this);
 		}
 
 		private void AddMirrorControls(FlowLayoutWidget buttonPanel)
@@ -77,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DWidget.textImageButtonFactory.FixedWidth = view3DWidget.EditButtonHeight;
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
+			buttonContainer.HAnchor = HAnchor.FitToChildren;
 
 			Button mirrorXButton = view3DWidget.textImageButtonFactory.Generate("X", centerText: true);
 			buttonContainer.AddChild(mirrorXButton);
@@ -145,21 +120,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MirrorOnAxis(int axisIndex)
 		{
-			/* TODO: Revise for scen_bundle
+			/* TODO: Revise for scene_bundle
 			view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
 			Vector3 mirorAxis = Vector3.One;
 			mirorAxis[axisIndex] = -1;
 			view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(mirorAxis));
 			view3DWidget.PartHasBeenChanged(); */
 			Invalidate();
-		}
-
-		private void expandMirrorOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (mirrorOptionContainer.Visible != expandMirrorOptions.Checked)
-			{
-				mirrorOptionContainer.Visible = expandMirrorOptions.Checked;
-			}
 		}
 	}
 }
