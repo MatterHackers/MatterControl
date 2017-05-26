@@ -75,7 +75,8 @@ namespace MatterHackers.MatterControl
 
 			public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 160);
 
-			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+			public TextImageButtonFactory ViewControlsButtonFactory { get; internal set; }
+
 			private EventHandler unregisterEvents;
 
 			public ThemeConfig()
@@ -153,6 +154,29 @@ namespace MatterHackers.MatterControl
 					borderWidth = 0,
 					FixedHeight = 32,
 				};
+
+				int buttonHeight;
+				if (UserSettings.Instance.IsTouchScreen)
+				{
+					buttonHeight = 40;
+				}
+				else
+				{
+					buttonHeight = 0;
+				}
+
+				this.ViewControlsButtonFactory = new TextImageButtonFactory()
+				{
+					normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+					FixedHeight = buttonHeight,
+					FixedWidth = buttonHeight,
+					AllowThemeToAdjustImage = false,
+					checkedBorderColor = RGBA_Bytes.White
+				};
+
 			}
 
 			internal TabControl CreateTabControl()

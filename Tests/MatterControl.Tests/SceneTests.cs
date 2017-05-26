@@ -118,7 +118,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				MeshVisualizer.BedShape.Rectangular,
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
-				new ViewControls3D(),
+				new ViewControls3D(new MatterControl.TextImageButtonFactory()),
 				View3DWidget.OpenMode.Editing);
 
 			var scene = view3DWidget.Scene;

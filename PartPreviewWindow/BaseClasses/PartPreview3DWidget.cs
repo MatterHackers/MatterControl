@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// Proxy to MeshViewerWidget
 		public InteractiveScene Scene => meshViewerWidget.Scene;
 
-		protected ViewControls3D viewControls3D;
+		protected ViewControls3D viewControls3D { get;  }
 
 		private bool needToRecreateBed = false;
 

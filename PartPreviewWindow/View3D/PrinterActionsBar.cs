@@ -84,8 +84,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 				{
 					AlignToRightEdge = true,
-					DynamicPopupContent = GeneratePopupContent
 				};
+				overflowDropdown.DynamicPopupContent.Add(GeneratePopupContent);
+
+				// Deregister on close
+				this.Closed += (s, e) =>
+				{
+					overflowDropdown.DynamicPopupContent.Add(GeneratePopupContent);
+				};
+
 				this.AddChild(overflowDropdown);
 			}
 

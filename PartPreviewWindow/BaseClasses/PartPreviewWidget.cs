@@ -117,8 +117,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor
 			};
-
-			BackgroundColor = RGBA_Bytes.White;
 		}
 	}
 }
