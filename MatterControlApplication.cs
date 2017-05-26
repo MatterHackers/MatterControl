@@ -915,7 +915,7 @@ namespace MatterHackers.MatterControl
 			if (showNamesUnderMouse)
 			{
 				List<WidgetAndPosition> namedChildren = new List<WidgetAndPosition>();
-				this.FindNamedChildrenRecursive("", namedChildren, new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1 , mousePosition.y + 1), SearchType.Partial);
+				this.FindNamedChildrenRecursive("", namedChildren, new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1 , mousePosition.y + 1), SearchType.Partial, allowInvalidItems: false);
 				Vector2 start = new Vector2(10, 50);
 				int lineHeight = 20;
 				e.graphics2D.FillRectangle(start, start + new Vector2(500, namedChildren.Count * lineHeight), new RGBA_Bytes(RGBA_Bytes.Black, 120));

@@ -60,7 +60,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.autoRotate3DView = autoRotate3DView;
 			this.windowMode = windowMode;
 
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.AnchorAll();
 
 			// LoadPrintItem {{
@@ -121,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				topToBottom.AddChild(new PrinterActionsBar());
 
-				viewControls3D = new ViewControls3D()
+				viewControls3D = new ViewControls3D(ApplicationController.Instance.Theme.ViewControlsButtonFactory)
 				{
 					PartSelectVisible = false,
 					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
@@ -173,10 +172,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (layersVisible)
 				{
 					// Copy layers tumble state to partpreview
+					modelViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(gcodeViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
 				}
 				else
 				{
 					// Copy partpreview tumble state to layers
+					gcodeViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(modelViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
 				}
 
 				modelViewer.Visible = layersVisible;
@@ -186,7 +187,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private async void LoadActivePrintItem()
 			{
 				await modelViewer.ClearBedAndLoadPrintItemWrapper(printItem);
-				gcodeViewer.LoadItem();
 			}
 
 			public override void OnLoad(EventArgs args)
