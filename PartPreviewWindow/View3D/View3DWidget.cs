@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IObject3D item;
 		private View3DWidget view3DWidget;
 
-		public string Name { get { return "General"; } }
+		public string Name => "General";
 
 		public bool Unlocked => true;
 
@@ -2396,7 +2396,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 
 		// ViewControls3D {{
-		private GuiWidget ShowOverflowMenu()
+		internal GuiWidget ShowOverflowMenu()
 		{
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 

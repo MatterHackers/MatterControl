@@ -36,7 +36,6 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -67,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget PopupContent { get; set; }
 
-		public List<Func<GuiWidget>> DynamicPopupContent { get; set; } = new List<Func<GuiWidget>>();
+		public Func<GuiWidget> DynamicPopupContent { get; set; }
 
 		public bool AlignToRightEdge { get; set; }
 
@@ -94,18 +93,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.PopupContent?.ClearRemovedFlag();
 
-			// Invoke registered funcs until content is found
 			if (this.DynamicPopupContent != null)
 			{
-				foreach(var action in this.DynamicPopupContent)
-				{
-					var content = action();
-					if(content != null)
-					{
-						this.PopupContent = content;
-						break;
-					}
-				}
+				this.PopupContent = this.DynamicPopupContent();
 			}
 
 			if (this.PopupContent == null)

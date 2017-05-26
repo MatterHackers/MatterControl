@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private EventHandler unregisterEvents;
 
-		private OverflowDropdown overflowButton;
+		internal OverflowDropdown OverflowButton;
 
 		public event EventHandler ResetView;
 
@@ -176,10 +176,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			AddChild(layersButton);
 
-			overflowButton = new OverflowDropdown(allowLightnessInvert: false);
-			overflowButton.ToolTipText = "More...".Localize();
-			overflowButton.Margin = 3;
-			AddChild(overflowButton);
+			OverflowButton = new OverflowDropdown(allowLightnessInvert: false);
+			OverflowButton.ToolTipText = "More...".Localize();
+			OverflowButton.Margin = 3;
+			AddChild(OverflowButton);
 
 			HAnchor |= Agg.UI.HAnchor.ParentLeft;
 			VAnchor = Agg.UI.VAnchor.ParentTop;

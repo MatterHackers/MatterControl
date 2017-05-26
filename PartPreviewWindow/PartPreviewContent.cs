@@ -132,6 +132,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					modelViewer.meshViewerWidget.ResetView();
 				};
+				viewControls3D.OverflowButton.DynamicPopupContent = () =>
+				{
+					if (modelViewer.Visible)
+					{
+						return modelViewer.ShowOverflowMenu();
+					}
+
+					return null;
+				};
 
 				// The 3D model view
 				modelViewer = new View3DWidget(printItem,
