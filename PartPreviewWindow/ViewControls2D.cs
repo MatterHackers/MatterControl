@@ -27,31 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using System.IO;
-using MatterHackers.Localizations;
 using System;
-using MatterHackers.Agg.PlatformAbstract;
+using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewControlsBase : FlowLayoutWidget
 	{
-		protected int buttonHeight;
-
-		public ViewControlsBase()
-		{
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				buttonHeight = 40;
-			}
-			else
-			{
-				buttonHeight = 20;
-			}
-		}
+		protected int buttonHeight = UserSettings.Instance.IsTouchScreen ? 40 : 20;
+		protected const int overlayAlpha = 50;
 	}
 
 	public class ViewControls2D : ViewControlsBase
@@ -63,27 +52,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler ResetView;
 
-		public ViewControls2D()
+		public ViewControls2D(TextImageButtonFactory buttonFactory)
 		{
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				buttonHeight = 40;
-			}
-			else
-			{
-				buttonHeight = 0;
-			}
-
-			TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
-			iconTextImageButtonFactory.AllowThemeToAdjustImage = false;
-			iconTextImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
-
-			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-			iconTextImageButtonFactory.FixedHeight = buttonHeight * GuiWidget.DeviceScale;
-			iconTextImageButtonFactory.FixedWidth = buttonHeight * GuiWidget.DeviceScale;
-
+			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
 			string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = iconTextImageButtonFactory.Generate("", StaticData.Instance.LoadIcon(resetViewIconPath,32,32).InvertLightness());
+			resetViewButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon(resetViewIconPath, 32, 32).InvertLightness());
 			resetViewButton.ToolTipText = "Reset View".Localize();
 			AddChild(resetViewButton);
 			resetViewButton.Click += (sender, e) =>
@@ -92,20 +65,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
-			translateButton = iconTextImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(translateIconPath,32,32));
-            translateButton.ToolTipText = "Move".Localize();
-            translateButton.Margin = new BorderDouble(3);
+			translateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(translateIconPath, 32, 32));
+			translateButton.ToolTipText = "Move".Localize();
+			translateButton.Margin = new BorderDouble(3);
 			AddChild(translateButton);
 
 			string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
-			scaleButton = iconTextImageButtonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(scaleIconPath,32,32));
-            scaleButton.ToolTipText = "Zoom".Localize();
-            scaleButton.Margin = new BorderDouble(3);
+			scaleButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(scaleIconPath, 32, 32));
+			scaleButton.ToolTipText = "Zoom".Localize();
+			scaleButton.Margin = new BorderDouble(3);
 			AddChild(scaleButton);
 
 			Margin = new BorderDouble(5);
-			HAnchor |= Agg.UI.HAnchor.ParentLeft;
-			VAnchor = Agg.UI.VAnchor.ParentTop;
+			HAnchor |= HAnchor.ParentLeft;
+			VAnchor = VAnchor.ParentTop;
 			translateButton.Checked = true;
 		}
 	}
@@ -117,29 +90,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static bool userChangedTo3DThisRun = false;
 
-		public ViewControlsToggle()
+		public ViewControlsToggle(TextImageButtonFactory buttonFactory)
 		{
-			TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
-			iconTextImageButtonFactory.AllowThemeToAdjustImage = false;
-			iconTextImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
+			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
 
-			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-
-			iconTextImageButtonFactory.FixedHeight = buttonHeight * GuiWidget.DeviceScale;
-			iconTextImageButtonFactory.FixedWidth = buttonHeight * GuiWidget.DeviceScale;
-
-			string select2dIconPath = Path.Combine("ViewTransformControls", "2d.png");
-			twoDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", select2dIconPath);
+			twoDimensionButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "2d.png"));
 			twoDimensionButton.Margin = new BorderDouble(3);
-			AddChild(twoDimensionButton);
+			this.AddChild(twoDimensionButton);
 
-			string select3dIconPath = Path.Combine("ViewTransformControls", "3d.png");
-			threeDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", select3dIconPath);
+			threeDimensionButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "3d.png"));
 			threeDimensionButton.Margin = new BorderDouble(3);
+			threeDimensionButton.Click += (sender, e) =>
+			{
+				userChangedTo3DThisRun = true;
+			};
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
-				AddChild(threeDimensionButton);
+				this.AddChild(threeDimensionButton);
 
 				if (UserSettings.Instance.get("LayerViewDefault") == "3D Layer"
 					&&
@@ -159,13 +127,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				twoDimensionButton.Checked = true;
 			}
 
-			threeDimensionButton.Click += (sender, e) =>
-			{
-				userChangedTo3DThisRun = true;
-			};
-			Margin = new BorderDouble(5, 5, 200, 5);
-			HAnchor |= Agg.UI.HAnchor.ParentRight;
-			VAnchor = Agg.UI.VAnchor.ParentTop;
+			this.Margin = new BorderDouble(5, 5, 200, 5);
+			this.HAnchor |= HAnchor.ParentRight;
+			this.VAnchor = VAnchor.ParentTop;
 		}
 	}
 }
