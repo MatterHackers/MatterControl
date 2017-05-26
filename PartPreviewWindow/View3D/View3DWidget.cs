@@ -182,7 +182,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Action afterSaveCallback = null;
 		private bool editorThatRequestedSave = false;
-		private FlowLayoutWidget enterEditButtonsContainer;
 		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
@@ -205,7 +204,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool wasInSelectMode = false;
 
 		public event EventHandler SelectedTransformChanged;
-		public View3DWidgetSidebar Sidebar;
 
 		public static ImageBuffer ArrowRight
 		{
@@ -252,6 +250,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
+
+			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
+
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
@@ -283,10 +284,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			Sidebar = new View3DWidgetSidebar(this, viewerVolume.y);
-			Sidebar.Name = "buttonRightPanel";
-			Sidebar.Visible = false;
-			Sidebar.InitializeComponents();
+			HashSet<IObject3DEditor> mappedEditors;
+			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
+
+			// TODO: Consider only loading once into a static
+			var objectEditors = new PluginFinder<IObject3DEditor>().Plugins;
+			foreach (IObject3DEditor editor in objectEditors)
+			{
+				foreach (Type type in editor.SupportedTypes())
+				{
+					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
+					{
+						mappedEditors = new HashSet<IObject3DEditor>();
+						objectEditorsByType.Add(type, mappedEditors);
+					}
+
+					mappedEditors.Add(editor);
+				}
+			}
 
 			Scene.SelectionChanged += Scene_SelectionChanged;
 
@@ -302,59 +317,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				editToolBar.AddChild(processingProgressControl);
 				editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
 				processingProgressControl.Visible = false;
-
-				// If the window is embedded (in the center panel) and there is no item loaded then don't show the add button
-				enterEditButtonsContainer = new FlowLayoutWidget();
-				{
-					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
-					addButton.ToolTipText = "Insert an .stl, .amf or .zip file".Localize();
-					addButton.Margin = new BorderDouble(right: 0);
-					enterEditButtonsContainer.AddChild(addButton);
-					addButton.Click += (sender, e) =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							SwitchStateToEditing();
-						});
-					};
-					if (printItemWrapper != null
-						&& printItemWrapper.PrintItem.ReadOnly)
-					{
-						addButton.Enabled = false;
-					}
-
-					ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit.png", 14, 14);
-
-					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), normalImage);
-					enterEdittingButton.Name = "3D View Edit";
-					enterEdittingButton.Margin = new BorderDouble(right: 4);
-					enterEdittingButton.Click += (sender, e) =>
-					{
-						SwitchStateToEditing();
-					};
-
-					if (printItemWrapper != null
-						&& printItemWrapper.PrintItem.ReadOnly)
-					{
-						enterEdittingButton.Enabled = false;
-					}
-
-					Button exportButton = textImageButtonFactory.Generate("Export".Localize() + "...");
-
-					exportButton.Margin = new BorderDouble(right: 10);
-					exportButton.Click += (sender, e) =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							OpenExportWindow();
-						});
-					};
-
-					enterEditButtonsContainer.AddChild(enterEdittingButton);
-					enterEditButtonsContainer.AddChild(exportButton);
-				}
-				editToolBar.AddChild(enterEditButtonsContainer);
-
 				doEdittingButtonsContainer = new FlowLayoutWidget();
 				doEdittingButtonsContainer.Visible = false;
 
@@ -439,35 +401,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					separatorThree.VAnchor = VAnchor.ParentBottomTop;
 					doEdittingButtonsContainer.AddChild(separatorThree);
 
-					Button cancelEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
-					cancelEditModeButton.Name = "3D View Cancel";
-					cancelEditModeButton.Click += (sender, e) =>
+					Button exportButton = textImageButtonFactory.Generate("Export".Localize() + "...");
+
+					exportButton.Margin = new BorderDouble(right: 10);
+					exportButton.Click += (sender, e) =>
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							if (saveButtons.Visible)
-							{
-								StyledMessageBox.ShowMessageBox(
-									ExitEditingAndSaveIfRequested,
-									"Would you like to save your changes before exiting the editor?".Localize(),
-									"Save Changes".Localize(),
-									StyledMessageBox.MessageType.YES_NO);
-							}
-							else
-							{
-								if (partHasBeenEdited)
-								{
-									ExitEditingAndSaveIfRequested(false);
-								}
-								else
-								{
-									SwitchStateToNotEditing();
-								}
-							}
+							OpenExportWindow();
 						});
 					};
-
-					doEdittingButtonsContainer.AddChild(cancelEditModeButton);
 
 					// put in the save button
 					AddSaveAndSaveAs(doEdittingButtonsContainer);
@@ -529,12 +472,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			buttonRightPanelHolder.Name = "buttonRightPanelHolder";
 			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
-			buttonRightPanelHolder.AddChild(Sidebar);
-			Sidebar.VisibleChanged += (sender, e) =>
-			{
-				buttonRightPanelHolder.Visible = Sidebar.Visible;
-			};
-
+			
 			buttonRightPanelDisabledCover = new GuiWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -579,17 +517,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectPanel = new SelectedObjectPanel()
 			{
-				Margin = new BorderDouble(0, 0, Sidebar.Width + 5, 5),
+				Margin = 5,
+				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControls2D.overlayAlpha)
 			};
 
 			AddChild(selectedObjectPanel);
 
 			UiThread.RunOnIdle(AutoSpin);
-
-			if (printItemWrapper == null && windowType == WindowMode.Embeded)
-			{
-				enterEditButtonsContainer.Visible = false;
-			}
 
 			if (windowType == WindowMode.Embeded)
 			{
@@ -635,6 +569,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AfterDraw += RemoveBooleanTestGeometry;
 			}
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+		}
+
+		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
+		{
+			switch (e.TransformMode)
+			{
+				case ViewControls3DButtons.Rotate:
+					meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+					break;
+
+				case ViewControls3DButtons.Translate:
+					meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
+					break;
+
+				case ViewControls3DButtons.Scale:
+					meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
+					break;
+
+				case ViewControls3DButtons.PartSelect:
+					meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
+					break;
+			}
 		}
 
 		public void SelectAll()
@@ -900,6 +856,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			// Not needed but safer than without
+			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
+
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
@@ -1400,12 +1359,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (partsToAdd.Length > 0)
 					{
-						bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
-						if (enterEditModeBeforeAddingParts)
-						{
-							SwitchStateToEditing();
-						}
-
 						loadAndAddPartsToPlate(partsToAdd);
 					}
 				}
@@ -1661,15 +1614,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		// Indicates if MatterControl is in a mode that allows DragDrop
 		private bool AllowDragDrop()
-		{ 
-			if ((!enterEditButtonsContainer.Visible
-				&& !doEdittingButtonsContainer.Visible)
-				|| printItemWrapper != null && printItemWrapper.PrintItem.ReadOnly)
-			{
-				return false;
-			}
-
-			return true;
+		{
+			return printItemWrapper?.PrintItem.ReadOnly != false;
 		}
 
 		private void AutoSpin()
@@ -1719,14 +1665,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public async Task ClearBedAndLoadPrintItemWrapper(PrintItemWrapper newPrintItem, bool switchToEditingMode = false)
 		{
-			if(switchToEditingMode)
-			{
-				SwitchStateToEditing();
-			}
-			else
-			{
-				SwitchStateToNotEditing();
-			}
+			SwitchStateToEditing();
 
 			Scene.ModifyChildren(children => children.Clear());
 
@@ -1799,14 +1738,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				VAnchor = VAnchor.FitToChildren
+				VAnchor = VAnchor.FitToChildren,
 			};
 
 			if (mappedEditors != null)
 			{
 				var dropDownList = new DropDownList("", maxHeight: 300)
 				{
-					Margin = new BorderDouble(0, 3)
+					Margin = 3
 				};
 
 				foreach (IObject3DEditor editor in mappedEditors)
@@ -1900,13 +1839,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (userResponseYesSave)
 			{
-				SaveChanges(null, SwitchStateToNotEditing);
+				SaveChanges(null);
 			}
 			else
 			{
-				// Discard changes in scene, revert back to original state
-				SwitchStateToNotEditing();
-
 				// and reload the part
 				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
 			}
@@ -2015,7 +1951,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void LockEditControls()
 		{
 			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
-			enterEditButtonsContainer.Visible = false;
 			doEdittingButtonsContainer.Visible = false;
 			buttonRightPanelDisabledCover.Visible = true;
 			if (viewControls3D.PartSelectVisible == true)
@@ -2347,38 +2282,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override bool InEditMode
-		{
-			get { return Sidebar != null && Sidebar.Visible; }
-		}
-
-		private void SwitchStateToNotEditing()
-		{
-			IsEditing = false;
-
-			if (!enterEditButtonsContainer.Visible)
-			{
-				enterEditButtonsContainer.Visible = true;
-				processingProgressControl.Visible = false;
-				Sidebar.Visible = false;
-				doEdittingButtonsContainer.Visible = false;
-				viewControls3D.PartSelectVisible = false;
-				if (viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-				}
-
-				Scene.ModifyChildren(ClearSelectionApplyChanges);
-			}
-		}
+		public override bool InEditMode => true;
 
 		internal async void SwitchStateToEditing()
 		{
-			if (enterEditButtonsContainer.Visible == true)
-			{
-				enterEditButtonsContainer.Visible = false;
-			}
-
 			this.IsEditing = true;
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
@@ -2415,7 +2322,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Scene.SelectFirstChild();
 			}
 
-			Sidebar.Visible = true;
 			UnlockEditControls();
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
@@ -2429,15 +2335,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (viewIsInEditModePreLock)
 			{
-				if (!enterEditButtonsContainer.Visible)
-				{
-					viewControls3D.PartSelectVisible = true;
-					doEdittingButtonsContainer.Visible = true;
-				}
-			}
-			else
-			{
-				enterEditButtonsContainer.Visible = true;
+				viewControls3D.PartSelectVisible = true;
+				doEdittingButtonsContainer.Visible = true;
 			}
 
 			if (wasInSelectMode)

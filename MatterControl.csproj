@@ -233,7 +233,6 @@
     <Compile Include="PartPreviewWindow\View3D\View3DUngroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\MirrorControls.cs" />
     <Compile Include="PartPreviewWindow\View3D\IObject3DEditor.cs" />
-    <Compile Include="PartPreviewWindow\View3D\SideBar\View3DWidgetSidebar.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />
     <Compile Include="PartPreviewWindow\SelectedObjectPanel.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />

@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewControlsBase : FlowLayoutWidget
 	{
 		protected int buttonHeight = UserSettings.Instance.IsTouchScreen ? 40 : 20;
-		protected const int overlayAlpha = 50;
+		public const int overlayAlpha = 50;
 	}
 
 	public class ViewControls2D : ViewControlsBase
@@ -109,18 +109,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.AddChild(threeDimensionButton);
 
-				if (UserSettings.Instance.get("LayerViewDefault") == "3D Layer"
-					&&
-					(UserSettings.Instance.Fields.StartCountDurringExit == UserSettings.Instance.Fields.StartCount - 1
-					|| userChangedTo3DThisRun)
-					)
-				{
-					threeDimensionButton.Checked = true;
-				}
-				else
-				{
-					twoDimensionButton.Checked = true;
-				}
+				// Change to always start in 3D view
+				threeDimensionButton.Checked = true;
 			}
 			else
 			{
