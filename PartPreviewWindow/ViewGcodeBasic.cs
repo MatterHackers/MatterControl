@@ -300,7 +300,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.AnchorAll();
 			meshViewerWidget.AllowBedRenderingWhenEmpty = true;
 			gcodeDisplayWidget.AddChild(meshViewerWidget);
-			meshViewerWidget.Visible = false;
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
 
 			viewControls2D = new ViewControls2D(ApplicationController.Instance.Theme.ViewControlsButtonFactory);
@@ -379,6 +378,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
+			if (gcodeViewWidget?.LoadedGCode == null)
+			{
+				return;
+			}
+
 			GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			GCodeRenderInfo renderInfo = new GCodeRenderInfo(0,
@@ -877,6 +881,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			gcodeViewWidget = new ViewGcodeWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter);
 			gcodeViewWidget.DoneLoading += DoneLoadingGCode;
+			gcodeViewWidget.Visible = false;
 			gcodeViewWidget.LoadingProgressChanged += LoadingProgressChanged;
 			partToStartLoadingOnFirstDraw = pathAndFileName;
 
