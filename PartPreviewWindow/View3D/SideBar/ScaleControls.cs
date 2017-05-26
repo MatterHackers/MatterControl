@@ -42,8 +42,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public partial class ScaleControls : FlowLayoutWidget
 	{
 		private Button applyScaleButton;
-		private CheckBox expandScaleOptions;
-		private FlowLayoutWidget scaleOptionContainer;
 		private MHNumberEdit scaleRatioControl;
 		private EditableNumberDisplay[] sizeDisplay = new EditableNumberDisplay[3];
 		private CheckBox uniformScale;
@@ -53,23 +51,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(FlowDirection.TopToBottom)
 		{
 			this.view3DWidget = view3DWidget;
-			{
-				expandScaleOptions = view3DWidget.ExpandMenuOptionFactory.GenerateCheckBoxButton("Scale".Localize().ToUpper(),
-					View3DWidget.ArrowRight,
-					View3DWidget.ArrowDown);
-				expandScaleOptions.Margin = new BorderDouble(bottom: 2);
-				this.AddChild(expandScaleOptions);
 
-				scaleOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				scaleOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-				scaleOptionContainer.Visible = false;
-				this.AddChild(scaleOptionContainer);
-
-				AddScaleControls(scaleOptionContainer);
-			}
-
-			expandScaleOptions.CheckedStateChanged += expandScaleOptions_CheckedStateChanged;
-
+			AddScaleControls(this);
 			view3DWidget.SelectedTransformChanged += OnSelectedTransformChanged;
 		}
 
@@ -253,14 +236,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			return presetScaleMenu;
-		}
-
-		private void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (scaleOptionContainer.Visible != expandScaleOptions.Checked)
-			{
-				scaleOptionContainer.Visible = expandScaleOptions.Checked;
-			}
 		}
 
 		private void ScaleAxis(double scaleIn, int axis)

@@ -37,7 +37,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -46,62 +45,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private View3DWidget view3DWidget;
 
-		public CheckBox expandMaterialOptions { get; private set; }
-		public CheckBox expandRotateOptions { get; private set; }
-
-		public FlowLayoutWidget rotateOptionContainer;
-		private FlowLayoutWidget materialOptionContainer;
-
 		// TODO: Remove debugging variables and draw functions once drag items are positioning correctly
 		private Vector2 mouseMovePosition;
 		private RectangleDouble meshViewerPosition;
 		private FlowLayoutWidget buttonPanel;
 
-		public View3DWidgetSidebar(View3DWidget view3DWidget, double buildHeight, UndoBuffer undoBuffer)
+		public View3DWidgetSidebar(View3DWidget view3DWidget, double buildHeight)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.view3DWidget = view3DWidget;
 			this.Width = 200;
 
 			var ExpandMenuOptionFactory = view3DWidget.ExpandMenuOptionFactory;
-			// put in undo redo
-			{
-				FlowLayoutWidget undoRedoButtons = new FlowLayoutWidget()
-				{
-					VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
-					HAnchor = HAnchor.FitToChildren | HAnchor.ParentCenter,
-				};
-
-				var WhiteButtonFactory = view3DWidget.WhiteButtonFactory;
-
-				double oldWidth = WhiteButtonFactory.FixedWidth;
-				WhiteButtonFactory.FixedWidth = WhiteButtonFactory.FixedWidth / 2;
-				Button undoButton = WhiteButtonFactory.Generate("Undo".Localize(), centerText: true);
-				undoButton.Name = "3D View Undo";
-				undoButton.Enabled = false;
-				undoButton.Click += (sender, e) =>
-				{
-					undoBuffer.Undo();
-				};
-				undoRedoButtons.AddChild(undoButton);
-
-				Button redoButton = WhiteButtonFactory.Generate("Redo".Localize(), centerText: true);
-				redoButton.Name = "3D View Redo";
-				redoButton.Enabled = false;
-				redoButton.Click += (sender, e) =>
-				{
-					undoBuffer.Redo();
-				};
-				undoRedoButtons.AddChild(redoButton);
-				this.AddChild(undoRedoButtons);
-
-				undoBuffer.Changed += (sender, e) =>
-				{
-					undoButton.Enabled = undoBuffer.UndoCount > 0;
-					redoButton.Enabled = undoBuffer.RedoCount > 0;
-				};
-				WhiteButtonFactory.FixedWidth = oldWidth;
-			}
 
 			buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -109,64 +64,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.FitToChildren
 			};
 			this.AddChild(buttonPanel);
-
-			{
-				BorderDouble buttonMargin = new BorderDouble(top: 3);
-
-				expandRotateOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Rotate".Localize().ToUpper(),
-					View3DWidget.ArrowRight,
-					View3DWidget.ArrowDown);
-				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
-				expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
-
-				buttonPanel.AddChild(expandRotateOptions);
-
-				rotateOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				rotateOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-				rotateOptionContainer.Visible = false;
-				buttonPanel.AddChild(rotateOptionContainer);
-
-				buttonPanel.AddChild(new ScaleControls(view3DWidget));
-
-				buttonPanel.AddChild(new MirrorControls(view3DWidget));
-
-				// put in the material options
-				int numberOfExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
-
-				expandMaterialOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton(
-					"Materials".Localize().ToUpper(),
-					View3DWidget.ArrowRight,
-					View3DWidget.ArrowDown);
-				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
-				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
-
-				if (numberOfExtruders > 1)
-				{
-					buttonPanel.AddChild(expandMaterialOptions);
-
-					materialOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					materialOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					materialOptionContainer.Visible = false;
-
-					buttonPanel.AddChild(materialOptionContainer);
-					view3DWidget.AddMaterialControls(materialOptionContainer);
-				}
-
-				// Add vertical spacer
-				this.AddChild(new GuiWidget()
-				{
-					VAnchor = VAnchor.ParentBottomTop
-				});
-
-				AddGridSnapSettings(this);
-			}
-
 			this.Padding = new BorderDouble(6, 6);
 			this.Margin = new BorderDouble(0, 1);
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.VAnchor = VAnchor.ParentBottomTop;
 		}
-
 
 		// InitializeComponent is called after the Sidebar property has been assigned as SidebarPlugins
 		// are passed an instance of the View3DWidget and expect to be able to access the Sidebar to
@@ -195,80 +97,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			view3DWidget.objectEditors = objectEditors;
 			view3DWidget.objectEditorsByType = objectEditorsByType;
-		}
-
-		private void expandMaterialOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (expandMaterialOptions.Checked == true)
-			{
-				expandRotateOptions.Checked = false;
-			}
-			materialOptionContainer.Visible = expandMaterialOptions.Checked;
-		}
-
-		private void expandRotateOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (rotateOptionContainer.Visible != expandRotateOptions.Checked)
-			{
-				if (expandRotateOptions.Checked == true)
-				{
-					expandMaterialOptions.Checked = false;
-				}
-				rotateOptionContainer.Visible = expandRotateOptions.Checked;
-			}
-		}
-
-		private void AddGridSnapSettings(GuiWidget widgetToAddTo)
-		{
-			FlowLayoutWidget container = new FlowLayoutWidget()
-			{
-				Margin = new BorderDouble(5, 0) * GuiWidget.DeviceScale,
-			};
-
-			TextWidget snapGridLabel = new TextWidget("Snap Grid".Localize())
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(3, 0, 0, 0) * GuiWidget.DeviceScale,
-			};
-
-			container.AddChild(snapGridLabel);
-
-			var selectableOptions = new DropDownList("Custom", Direction.Up)
-			{
-				VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
-			};
-
-			Dictionary<double, string> snapSettings = new Dictionary<double, string>()
-			{
-				{ 0, "Off" },
-				{ .1, "0.1" },
-				{ .25, "0.25" },
-				{ .5, "0.5" },
-				{ 1, "1" },
-				{ 2, "2" },
-				{ 5, "5" },
-			};
-
-			foreach (KeyValuePair<double, string> snapSetting in snapSettings)
-			{
-				double valueLocal = snapSetting.Key;
-
-				MenuItem newItem = selectableOptions.AddItem(snapSetting.Value);
-				if (view3DWidget.meshViewerWidget.SnapGridDistance == valueLocal)
-				{
-					selectableOptions.SelectedLabel = snapSetting.Value;
-				}
-
-				newItem.Selected += (sender, e) =>
-				{
-					view3DWidget.meshViewerWidget.SnapGridDistance = snapSetting.Key;
-				};
-			}
-
-			container.AddChild(selectableOptions);
-
-			widgetToAddTo.AddChild(container);
 		}
 
 		public GuiWidget CreateAddButton(string buttonLabel, Func<IObject3D> itemCreator)

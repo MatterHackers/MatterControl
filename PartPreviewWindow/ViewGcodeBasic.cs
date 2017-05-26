@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.Visible = false;
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
 
-			viewControls2D = new ViewControls2D();
+			viewControls2D = new ViewControls2D(ApplicationController.Instance.Theme.ViewControlsButtonFactory);
 			viewControls2D.Visible = false;
 			AddChild(viewControls2D);
 
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 
-			viewControlsToggle = new ViewControlsToggle();
+			viewControlsToggle = new ViewControlsToggle(ApplicationController.Instance.Theme.ViewControlsButtonFactory);
 			viewControlsToggle.HAnchor = Agg.UI.HAnchor.ParentRight;
 			AddChild(viewControlsToggle);
 			viewControlsToggle.Visible = false;
@@ -575,9 +575,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GuiWidget GetEstimatedMassInfo()
 		{
 			FlowLayoutWidget estimatedMassInfo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			string massLabel = "Estimated Mass".Localize();
-			string massLabelFull = string.Format("{0}:", massLabel);
-			estimatedMassInfo.AddChild(new TextWidget(massLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			estimatedMassInfo.AddChild(new TextWidget("Estimated Mass".Localize() + ":", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 			massTextWidget = new TextWidget("", pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,

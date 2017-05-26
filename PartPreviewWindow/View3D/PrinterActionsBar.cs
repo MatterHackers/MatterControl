@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
 			private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
-			public PrinterActionsBar()
+			public PrinterActionsBar(UndoBuffer undoBuffer)
 			{
 				this.Padding = new BorderDouble(0, 5);
 				this.HAnchor = HAnchor.ParentLeftRight;
@@ -81,16 +81,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddChild(GeneratePopupContent());
 
+				Button undoButton = buttonFactory.Generate("Undo".Localize(), centerText: true);
+				undoButton.Name = "3D View Undo";
+				undoButton.Enabled = false;
+				undoButton.Margin = new BorderDouble(8, 0);
+				undoButton.Click += (sender, e) =>
+				{
+					undoBuffer.Undo();
+				};
+				this.AddChild(undoButton);
+
+				Button redoButton = buttonFactory.Generate("Redo".Localize(), centerText: true);
+				redoButton.Name = "3D View Redo";
+				redoButton.Enabled = false;
+				redoButton.Click += (sender, e) =>
+				{
+					undoBuffer.Redo();
+				};
+				this.AddChild(redoButton);
+
+				undoBuffer.Changed += (sender, e) =>
+				{
+					undoButton.Enabled = undoBuffer.UndoCount > 0;
+					redoButton.Enabled = undoBuffer.RedoCount > 0;
+				};
+
 				var overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 				{
 					AlignToRightEdge = true,
 				};
-				overflowDropdown.DynamicPopupContent.Add(GeneratePopupContent);
+				overflowDropdown.DynamicPopupContent = GeneratePopupContent;
 
 				// Deregister on close
 				this.Closed += (s, e) =>
 				{
-					overflowDropdown.DynamicPopupContent.Add(GeneratePopupContent);
+					overflowDropdown.DynamicPopupContent = GeneratePopupContent;
 				};
 
 				this.AddChild(overflowDropdown);

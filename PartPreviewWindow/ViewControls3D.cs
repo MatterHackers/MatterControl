@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,20 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
 using System;
 using System.IO;
-using MatterHackers.Localizations;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.ImageProcessing;
-using System.Collections.Generic;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.MatterControl.CustomWidgets;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -57,8 +51,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ViewControls3DButtons TransformMode { get; set; }
 	}
 
-	public class ViewControls3D : FlowLayoutWidget
+	public class ViewControls3D : ViewControlsBase
 	{
+		public event EventHandler ResetView;
+		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
+
+		internal OverflowDropdown OverflowButton;
+
 		private GuiWidget partSelectSeparator;
 		private Button resetViewButton;
 
@@ -69,12 +68,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private EventHandler unregisterEvents;
 
-		private OverflowDropdown overflowButton;
-
-		public event EventHandler ResetView;
-
-		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
-
+		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
+		
 		public bool PartSelectVisible
 		{
 			get { return partSelectSeparator.Visible; }
@@ -84,8 +79,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				partSelectButton.Visible = value;
 			}
 		}
-
-		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
 
 		public ViewControls3DButtons ActiveButton
 		{
@@ -124,6 +117,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls3D(TextImageButtonFactory buttonFactory)
 		{
+			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
+			this.HAnchor |= HAnchor.ParentLeft;
+			this.VAnchor = VAnchor.ParentTop;
+
 			string iconPath;
 
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
@@ -176,16 +173,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			AddChild(layersButton);
 
-			overflowButton = new OverflowDropdown(allowLightnessInvert: false);
-			overflowButton.ToolTipText = "More...".Localize();
-			overflowButton.Margin = 3;
-			AddChild(overflowButton);
-
-			HAnchor |= Agg.UI.HAnchor.ParentLeft;
-			VAnchor = Agg.UI.VAnchor.ParentTop;
+			OverflowButton = new OverflowDropdown(allowLightnessInvert: false);
+			OverflowButton.ToolTipText = "More...".Localize();
+			OverflowButton.Margin = 3;
+			AddChild(OverflowButton);
 
 			rotateButton.Checked = true;
-			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

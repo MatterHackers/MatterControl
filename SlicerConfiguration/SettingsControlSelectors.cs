@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var dropDownList = new DropDownList(defaultMenuItemText, maxHeight: 300, useLeftIcons: true)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				MenuItemsPadding = new BorderDouble(10, 4, 10, 6),
+				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
 			};
 
 			dropDownList.Name = layerType.ToString();

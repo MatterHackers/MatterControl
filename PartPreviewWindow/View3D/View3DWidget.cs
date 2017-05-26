@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IObject3D item;
 		private View3DWidget view3DWidget;
 
-		public string Name { get { return "General"; } }
+		public string Name => "General";
 
 		public bool Unlocked => true;
 
@@ -283,14 +283,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			Sidebar = new View3DWidgetSidebar(this, viewerVolume.y, UndoBuffer);
+			Sidebar = new View3DWidgetSidebar(this, viewerVolume.y);
 			Sidebar.Name = "buttonRightPanel";
 			Sidebar.Visible = false;
 			Sidebar.InitializeComponents();
 
 			Scene.SelectionChanged += Scene_SelectionChanged;
-
-			CreateOptionsContent();
 
 			// add in the plater tools
 			{
@@ -450,9 +448,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							if (saveButtons.Visible)
 							{
 								StyledMessageBox.ShowMessageBox(
-									ExitEditingAndSaveIfRequested, 
-									"Would you like to save your changes before exiting the editor?".Localize(), 
-									"Save Changes".Localize(), 
+									ExitEditingAndSaveIfRequested,
+									"Would you like to save your changes before exiting the editor?".Localize(),
+									"Save Changes".Localize(),
 									StyledMessageBox.MessageType.YES_NO);
 							}
 							else
@@ -473,6 +471,51 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					// put in the save button
 					AddSaveAndSaveAs(doEdittingButtonsContainer);
+
+					var rotateButton = textImageButtonFactory.Generate("Rotate".Localize());
+					rotateButton.Click += (s, e) =>
+					{
+						var popup = new PopupWidget(this.CreateRotateControls(), rotateButton, Vector2.Zero, Direction.Up, 0, true);
+						popup.Focus();
+					};
+					doEdittingButtonsContainer.AddChild(rotateButton);
+
+					var scaleButton = textImageButtonFactory.Generate("Scale".Localize());
+					scaleButton.Click += (s, e) =>
+					{
+						var popup = new PopupWidget(new ScaleControls(this)
+						{
+							BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+							Padding = 15
+						}, scaleButton, Vector2.Zero, Direction.Up, 0, true);
+						popup.Focus();
+					};
+					doEdittingButtonsContainer.AddChild(scaleButton);
+
+					var mirrorButton = textImageButtonFactory.Generate("Mirror".Localize());
+					mirrorButton.Click += (s, e) =>
+					{
+						var popup = new PopupWidget(new MirrorControls(this)
+						{
+							BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+							Padding = 15
+						}, mirrorButton, Vector2.Zero, Direction.Up, 0, true);
+						popup.Focus();
+					};
+					doEdittingButtonsContainer.AddChild(mirrorButton);
+
+					// put in the material options
+					int numberOfExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+					if (numberOfExtruders > 1)
+					{
+						var materialsButton = textImageButtonFactory.Generate("Materials".Localize());
+						materialsButton.Click += (s, e) =>
+						{
+							var popup = new PopupWidget(this.AddMaterialControls(), materialsButton, Vector2.Zero, Direction.Up, 0, true);
+							popup.Focus();
+						};
+						doEdittingButtonsContainer.AddChild(materialsButton);
+					}
 				}
 
 				editToolBar.AddChild(doEdittingButtonsContainer);
@@ -1412,13 +1455,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 		}
 
-		internal void AddMaterialControls(FlowLayoutWidget buttonPanel)
+		internal GuiWidget AddMaterialControls()
 		{
+			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.FitToChildren,
+				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				Padding = 15
+			};
+
 			extruderButtons.Clear();
 			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count); extruderIndex++)
 			{
 				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
+				colorSelectionContainer.HAnchor = HAnchor.FitToChildren;
 				colorSelectionContainer.Padding = new BorderDouble(5);
 
 				string colorLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
@@ -1446,10 +1497,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				buttonPanel.AddChild(colorSelectionContainer);
 			}
+
+			return buttonPanel;
 		}
 
-		private void AddRotateControls(FlowLayoutWidget buttonPanel)
+		internal GuiWidget CreateRotateControls()
 		{
+			var buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				Padding = 15
+			};
 			List<GuiWidget> rotateControls = new List<GuiWidget>();
 
 			textImageButtonFactory.FixedWidth = EditButtonHeight;
@@ -1486,7 +1544,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
 					Matrix4X4 rotation = Matrix4X4.CreateRotationX(radians);
 					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
-                    Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, rotation);
+					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, rotation);
 					UndoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
 					PartHasBeenChanged();
 					Invalidate();
@@ -1549,6 +1607,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(GenerateHorizontalRule());
 			textImageButtonFactory.FixedWidth = 0;
+
+			return buttonPanel;
 		}
 
 		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
@@ -1699,11 +1759,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			PartHasBeenChanged();
 			partHasBeenEdited = false;
-		}
-
-		private void CreateOptionsContent()
-		{
-			AddRotateControls(Sidebar.rotateOptionContainer);
 		}
 
 		public List<IObject3DEditor> objectEditors = new List<IObject3DEditor>();
@@ -2396,7 +2451,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 
 		// ViewControls3D {{
-		private GuiWidget ShowOverflowMenu()
+		internal GuiWidget ShowOverflowMenu()
 		{
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
@@ -2572,8 +2627,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				parentContainer.AddChild(renderTypeCheckBox);
+
+				AddGridSnapSettings(parentContainer);
 			}
 		}
+
+		private void AddGridSnapSettings(GuiWidget widgetToAddTo)
+		{
+			TextWidget snapGridLabel = new TextWidget("Snap Grid".Localize())
+			{
+				TextColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				Margin = new BorderDouble(0, 0, 0, 10)
+			};
+			widgetToAddTo.AddChild(snapGridLabel);
+
+			var selectableOptions = new DropDownList("Custom", Direction.Down);
+
+			Dictionary<double, string> snapSettings = new Dictionary<double, string>()
+			{
+				{ 0, "Off" },
+				{ .1, "0.1" },
+				{ .25, "0.25" },
+				{ .5, "0.5" },
+				{ 1, "1" },
+				{ 2, "2" },
+				{ 5, "5" },
+			};
+
+			foreach (KeyValuePair<double, string> snapSetting in snapSettings)
+			{
+				double valueLocal = snapSetting.Key;
+
+				MenuItem newItem = selectableOptions.AddItem(snapSetting.Value);
+				if (meshViewerWidget.SnapGridDistance == valueLocal)
+				{
+					selectableOptions.SelectedLabel = snapSetting.Value;
+				}
+
+				newItem.Selected += (sender, e) =>
+				{
+					meshViewerWidget.SnapGridDistance = snapSetting.Key;
+				};
+			}
+
+			widgetToAddTo.AddChild(selectableOptions);
+		}
+
 
 		private static MenuItem AddCheckbox(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
 		{

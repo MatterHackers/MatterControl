@@ -347,18 +347,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void CreateActionMenuItems(DropDownMenu dropDownMenu)
 		{
-			dropDownMenu.SelectionChanged += (sender, e) =>
-			{
-				string menuSelection = ((DropDownMenu)sender).SelectedValue;
-				foreach (var menuItem in menuActions)
-				{
-					if (menuItem.Title == menuSelection)
-					{
-						menuItem.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
-					}
-				}
-			};
-
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{
@@ -592,6 +580,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					};
 				},
 			});
+
 			// Create menu items in the DropList for each element in this.menuActions
 			foreach (var item in menuActions)
 			{
@@ -907,7 +896,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnLoad(EventArgs args)
 		{
-
 			var actionMenu = new DropDownMenu("Actions".Localize() + "... ")
 			{
 				AlignToRightEdge = true,
@@ -933,6 +921,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				var menu = menuAction.MenuItem;
 				menu?.ClearRemovedFlag();
+
+				menu.Click += (s, e) =>
+				{
+					menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
+				};
+
 				topToBottom.AddChild(menu);
 			}
 
