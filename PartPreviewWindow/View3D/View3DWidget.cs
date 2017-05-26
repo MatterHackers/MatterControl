@@ -1510,7 +1510,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
 		{
-			TupleList<string, Func<bool>> buttonList = new TupleList<string, Func<bool>>();
+			var buttonList = new List<NamedAction>();
 			buttonList.Add("Save".Localize(), () =>
 			{
 				if(printItemWrapper == null)
@@ -1521,14 +1521,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SaveChanges(null);
 				}
-
-				return true;
 			});
 
 			buttonList.Add("Save As".Localize(), () =>
 			{
 				UiThread.RunOnIdle(OpenSaveAsWindow);
-				return true;
 			});
 
 

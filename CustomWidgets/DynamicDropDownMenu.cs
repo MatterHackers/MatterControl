@@ -27,20 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.Agg.UI
 {
 	public class DynamicDropDownMenu : DropDownMenu
 	{
-		private TupleList<string, Func<bool>> menuItems;
+		private List<Action> menuItems;
 
 		public DynamicDropDownMenu(GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
 			: base(buttonView, direction, pointSize)
 		{
-			menuItems = new TupleList<string, Func<bool>>();
+			menuItems = new List<Action>();
 			TextColor = RGBA_Bytes.Black;
 			NormalArrowColor = RGBA_Bytes.Black;
 			HoverArrowColor = RGBA_Bytes.Black;
@@ -48,13 +47,13 @@ namespace MatterHackers.Agg.UI
 			BorderWidth = 1;
 			BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-			this.SelectionChanged += new EventHandler(AltChoices_SelectionChanged);
+			this.SelectionChanged += AltChoices_SelectionChanged;
 		}
 
 		public DynamicDropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
 			: base(topMenuText, direction, pointSize)
 		{
-			menuItems = new TupleList<string, Func<bool>>();
+			menuItems = new List<Action>();
 
 			NormalColor = RGBA_Bytes.White;
 			TextColor = RGBA_Bytes.Black;
@@ -64,7 +63,7 @@ namespace MatterHackers.Agg.UI
 			BorderWidth = 1;
 			BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-			this.SelectionChanged += new EventHandler(AltChoices_SelectionChanged);
+			this.SelectionChanged += AltChoices_SelectionChanged;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -72,15 +71,19 @@ namespace MatterHackers.Agg.UI
 			base.OnDraw(graphics2D);
 		}
 
-		public void addItem(string name, Func<bool> clickFunction)
+		public void addItem(string name, Action clickFunction)
 		{
 			this.AddItem(name);
-			menuItems.Add(name, clickFunction);
+			menuItems.Add(clickFunction);
 		}
 
 		private void AltChoices_SelectionChanged(object sender, EventArgs e)
 		{
-			menuItems[((DropDownMenu)sender).SelectedIndex].Item2();
+			var dropDownMenu = sender as DropDownMenu;
+
+			var action = menuItems[dropDownMenu.SelectedIndex];
+
+			action();
 		}
 	}
 }

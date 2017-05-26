@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -35,22 +36,22 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		public SplitButton Generate(TupleList<string, Func<bool>> buttonList, Direction direction = Direction.Down, string imageName = null)
+		public SplitButton Generate(List<NamedAction> buttonList, Direction direction = Direction.Down, string imageName = null)
 		{
 			this.imageName = imageName;
 
 			DynamicDropDownMenu menu = CreateMenu(direction);
 			if(buttonList.Count > 1)
 			{
-				menu.Name = buttonList[1].Item1 + " Menu";
+				menu.Name = buttonList[1].Title + " Menu";
 			}
 
 			menu.Margin = new BorderDouble();
 			Button button = CreateButton(buttonList[0]);
 
-			for (int index = 1; index < buttonList.Count; index++)
+			foreach (var namedAction in buttonList)
 			{
-				menu.addItem(buttonList[index].Item1, buttonList[index].Item2);
+				menu.addItem(namedAction.Title, namedAction.Action);
 			}
 
 			SplitButton splitButton = new SplitButton(button, menu);
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl
 			return splitButton;
 		}
 
-		private Button CreateButton(Tuple<string, Func<bool>> buttonInfo)
+		private Button CreateButton(NamedAction buttonInfo)
 		{
 			TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
@@ -70,9 +71,12 @@ namespace MatterHackers.MatterControl
 			buttonFactory.borderWidth = 1;
 			buttonFactory.normalBorderColor = this.normalBorderColor;
 			buttonFactory.hoverBorderColor = this.hoverBorderColor;
-
-			Button button = buttonFactory.Generate(buttonInfo.Item1, normalImageName: imageName, centerText: true);
-			button.Click += (s, e) => buttonInfo.Item2();
+			
+			Button button = buttonFactory.Generate(buttonInfo.Title, normalImageName: imageName, centerText: true);
+			button.Click += (s, e) =>
+			{
+				buttonInfo.Action();
+			};
 
 			return button;
 		}

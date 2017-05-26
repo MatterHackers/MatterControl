@@ -1,5 +1,6 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, John Lewin
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,15 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.Agg.UI
 {
-	public class TupleList<T1, T2> : List<Tuple<T1, T2>>
+	public class NamedAction
 	{
-		public void Add(T1 item, T2 item2)
-		{
-			Add(new Tuple<T1, T2>(item, item2));
-		}
+		public string Title { get; set; }
+		public Action Action { get; set; }
 	}
 }

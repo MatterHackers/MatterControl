@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 			AddChild(altChoices);
 		}
 
-		public void AddItem(string name, Func<bool> clickFunction)
+		public void AddItem(string name, Action clickFunction)
 		{
 			altChoices.addItem(name, clickFunction);
 		}

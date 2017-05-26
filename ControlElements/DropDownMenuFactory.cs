@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -129,7 +130,7 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		public DynamicDropDownMenu Generate(string label = "", TupleList<string, Func<bool>> optionList = null, Direction direction = Direction.Down)
+		public DynamicDropDownMenu Generate(string label = "", List<NamedAction> optionList = null, Direction direction = Direction.Down)
 		{
 			DynamicDropDownMenu menu = new DynamicDropDownMenu(CreateButtonViewStates(label), direction);
 			menu.VAnchor = VAnchor.ParentCenter;
@@ -143,9 +144,9 @@ namespace MatterHackers.MatterControl
 
 			if (optionList != null)
 			{
-				foreach (Tuple<string, Func<bool>> option in optionList)
+				foreach (var option in optionList)
 				{
-					menu.addItem(option.Item1, option.Item2);
+					menu.addItem(option.Title, option.Action);
 				}
 			}
 
