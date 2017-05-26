@@ -42,22 +42,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public SelectedObjectPanel() : base(FlowDirection.TopToBottom)
 		{
-			var buttonHeight = 40;
-
-			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				FixedHeight = buttonHeight,
-				FixedWidth = buttonHeight,
-				AllowThemeToAdjustImage = false,
-				checkedBorderColor = RGBA_Bytes.White
-			};
-
-			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-
 			HAnchor |= HAnchor.ParentRight;
 			VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren;
 		}
