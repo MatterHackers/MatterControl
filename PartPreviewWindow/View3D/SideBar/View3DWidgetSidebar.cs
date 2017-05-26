@@ -37,7 +37,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -57,51 +56,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RectangleDouble meshViewerPosition;
 		private FlowLayoutWidget buttonPanel;
 
-		public View3DWidgetSidebar(View3DWidget view3DWidget, double buildHeight, UndoBuffer undoBuffer)
+		public View3DWidgetSidebar(View3DWidget view3DWidget, double buildHeight)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.view3DWidget = view3DWidget;
 			this.Width = 200;
 
 			var ExpandMenuOptionFactory = view3DWidget.ExpandMenuOptionFactory;
-			// put in undo redo
-			{
-				FlowLayoutWidget undoRedoButtons = new FlowLayoutWidget()
-				{
-					VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
-					HAnchor = HAnchor.FitToChildren | HAnchor.ParentCenter,
-				};
-
-				var WhiteButtonFactory = view3DWidget.WhiteButtonFactory;
-
-				double oldWidth = WhiteButtonFactory.FixedWidth;
-				WhiteButtonFactory.FixedWidth = WhiteButtonFactory.FixedWidth / 2;
-				Button undoButton = WhiteButtonFactory.Generate("Undo".Localize(), centerText: true);
-				undoButton.Name = "3D View Undo";
-				undoButton.Enabled = false;
-				undoButton.Click += (sender, e) =>
-				{
-					undoBuffer.Undo();
-				};
-				undoRedoButtons.AddChild(undoButton);
-
-				Button redoButton = WhiteButtonFactory.Generate("Redo".Localize(), centerText: true);
-				redoButton.Name = "3D View Redo";
-				redoButton.Enabled = false;
-				redoButton.Click += (sender, e) =>
-				{
-					undoBuffer.Redo();
-				};
-				undoRedoButtons.AddChild(redoButton);
-				this.AddChild(undoRedoButtons);
-
-				undoBuffer.Changed += (sender, e) =>
-				{
-					undoButton.Enabled = undoBuffer.UndoCount > 0;
-					redoButton.Enabled = undoBuffer.RedoCount > 0;
-				};
-				WhiteButtonFactory.FixedWidth = oldWidth;
-			}
 
 			buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

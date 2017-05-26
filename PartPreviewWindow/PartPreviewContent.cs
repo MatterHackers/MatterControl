@@ -114,12 +114,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
 
-				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				topToBottom.AnchorAll();
-				this.AddChild(topToBottom);
-
-				topToBottom.AddChild(new PrinterActionsBar());
-
 				viewControls3D = new ViewControls3D(ApplicationController.Instance.Theme.ViewControlsButtonFactory)
 				{
 					PartSelectVisible = false,
@@ -151,6 +145,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					View3DWidget.AutoRotate.Disabled,
 					viewControls3D,
 					View3DWidget.OpenMode.Editing);
+
+				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				topToBottom.AnchorAll();
+				this.AddChild(topToBottom);
+
+				// Must come after we have an instance of View3DWidget an its undo buffer
+				topToBottom.AddChild(new PrinterActionsBar(modelViewer.UndoBuffer));
 				topToBottom.AddChild(modelViewer);
 
 				// The slice layers view

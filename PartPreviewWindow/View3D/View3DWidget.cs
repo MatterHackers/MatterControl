@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			Sidebar = new View3DWidgetSidebar(this, viewerVolume.y, UndoBuffer);
+			Sidebar = new View3DWidgetSidebar(this, viewerVolume.y);
 			Sidebar.Name = "buttonRightPanel";
 			Sidebar.Visible = false;
 			Sidebar.InitializeComponents();
