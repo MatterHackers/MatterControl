@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -56,6 +57,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using MatterHackers.RayTracer.Traceable;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -629,9 +631,88 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public class BvhAndTransform : IEnumerable<BvhAndTransform>
+		{
+			public Matrix4X4 TransformToWorld { get; private set; }
+			public IBvhItem Bvh { get; private set; }
+
+			public BvhAndTransform(IBvhItem referenceItem, Matrix4X4 initialTransform = default(Matrix4X4))
+			{
+				TransformToWorld = initialTransform;
+				if (TransformToWorld == default(Matrix4X4))
+				{
+					TransformToWorld = Matrix4X4.Identity;
+				}
+
+				Bvh = referenceItem;
+			}
+
+			public IEnumerator<BvhAndTransform> GetEnumerator()
+			{
+				if (Bvh is Transform)
+				{
+					Transform transform = (Transform)Bvh;
+					if (transform.Child != null)
+					{
+						var bat = new BvhAndTransform(transform.Child, TransformToWorld * transform.WorldToAxis);
+
+						yield return bat;
+
+						foreach (var subBat in bat)
+						{
+							yield return subBat;
+						}
+					}
+				}
+				else if (Bvh is UnboundCollection)
+				{
+					UnboundCollection unboundCollection = (UnboundCollection)Bvh;
+					foreach (var item in unboundCollection.Items)
+					{
+						var bat = new BvhAndTransform(item, TransformToWorld);
+						yield return bat;
+
+						foreach (var subBat in bat)
+						{
+							yield return subBat;
+						}
+					}
+				}
+				else if (Bvh is TriangleShape)
+				{
+
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				throw new NotImplementedException();
+			}
+		}
+
 		// TODO: Still valid?
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
+			foreach(var bvhAndTransform in (new BvhAndTransform(Scene.TraceData())))
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					Vector3 bottomStartPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), bvhAndTransform.TransformToWorld);
+					Vector3 bottomEndPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), bvhAndTransform.TransformToWorld);
+					GLHelper.Render3DLine(bottomStartPosition, bottomEndPosition, 1, 1, RGBA_Bytes.Black);
+
+					Vector3 topStartPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), bvhAndTransform.TransformToWorld);
+					Vector3 topEndPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), bvhAndTransform.TransformToWorld);
+					GLHelper.Render3DLine(topStartPosition, topEndPosition, 1, 1, RGBA_Bytes.Black);
+
+					GLHelper.Render3DLine(topStartPosition, bottomStartPosition, 1, 1, RGBA_Bytes.Black);
+				}
+			}
+
 			return;
 			if (Scene?.TraceData() != null)
 			{
