@@ -42,8 +42,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TextImageButtonFactory ExpandMenuOptionFactory;
 		public TextImageButtonFactory WhiteButtonFactory;
 
-		protected ViewControls2D viewControls2D;
-
 		protected GuiWidget buttonRightPanelDisabledCover;
 		protected FlowLayoutWidget buttonRightPanel;
 

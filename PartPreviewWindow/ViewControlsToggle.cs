@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,10 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -41,46 +38,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		protected int buttonHeight = UserSettings.Instance.IsTouchScreen ? 40 : 20;
 		public const int overlayAlpha = 50;
-	}
-
-	public class ViewControls2D : ViewControlsBase
-	{
-		private Button resetViewButton;
-
-		public RadioButton translateButton;
-		public RadioButton scaleButton;
-
-		public event EventHandler ResetView;
-
-		public ViewControls2D(TextImageButtonFactory buttonFactory)
-		{
-			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
-			string resetViewIconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon(resetViewIconPath, 32, 32).InvertLightness());
-			resetViewButton.ToolTipText = "Reset View".Localize();
-			AddChild(resetViewButton);
-			resetViewButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(() => ResetView?.Invoke(this, null));
-			};
-
-			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
-			translateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(translateIconPath, 32, 32));
-			translateButton.ToolTipText = "Move".Localize();
-			translateButton.Margin = new BorderDouble(3);
-			AddChild(translateButton);
-
-			string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
-			scaleButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(scaleIconPath, 32, 32));
-			scaleButton.ToolTipText = "Zoom".Localize();
-			scaleButton.Margin = new BorderDouble(3);
-			AddChild(scaleButton);
-
-			Margin = new BorderDouble(5);
-			HAnchor |= HAnchor.ParentLeft;
-			VAnchor = VAnchor.ParentTop;
-			translateButton.Checked = true;
-		}
 	}
 
 	public enum PartViewMode
