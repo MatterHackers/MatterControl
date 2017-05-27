@@ -871,7 +871,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GuiWidget CreateGCodeViewWidget(string pathAndFileName)
 		{
 			gcodeViewWidget = new ViewGcodeWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter);
-			gcodeViewWidget.DebugShowBounds = true;
 			gcodeViewWidget.DoneLoading += DoneLoadingGCode;
 			gcodeViewWidget.Visible = (activeViewMode == PartViewMode.Layers2D);
 			gcodeViewWidget.LoadingProgressChanged += LoadingProgressChanged;
