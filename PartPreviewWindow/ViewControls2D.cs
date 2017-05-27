@@ -83,43 +83,60 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
+	public enum PartViewMode
+	{
+		Layers2D,
+		Layers3D,
+		Model
+	}
+
+	public class ViewModeChangedEventArgs : EventArgs
+	{
+		public PartViewMode ViewMode { get; set; }
+	}
+
 	public class ViewControlsToggle : ViewControlsBase
 	{
-		public RadioButton twoDimensionButton;
-		public RadioButton threeDimensionButton;
+		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 
-		private static bool userChangedTo3DThisRun = false;
-
-		public ViewControlsToggle(TextImageButtonFactory buttonFactory)
+		public ViewControlsToggle(TextImageButtonFactory buttonFactory, PartViewMode initialViewMode)
 		{
 			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
 
-			twoDimensionButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "2d.png"));
-			twoDimensionButton.Margin = new BorderDouble(3);
-			this.AddChild(twoDimensionButton);
+			var layers2DButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "2d.png"));
+			layers2DButton.Name = "Layers2D Button";
+			layers2DButton.Margin = new BorderDouble(3);
+			layers2DButton.Click += SwitchModes_Click;
+			this.AddChild(layers2DButton);
 
-			threeDimensionButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "3d.png"));
-			threeDimensionButton.Margin = new BorderDouble(3);
-			threeDimensionButton.Click += (sender, e) =>
-			{
-				userChangedTo3DThisRun = true;
-			};
-
+			var layers3DButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "3d.png"));
+			layers3DButton.Click += SwitchModes_Click;
+			layers3DButton.Margin = new BorderDouble(3);
+		
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
-				this.AddChild(threeDimensionButton);
+				this.AddChild(layers3DButton);
 
-				// Change to always start in 3D view
-				threeDimensionButton.Checked = true;
+				// Change to always start in 3D view on desktop
+				layers3DButton.Checked = initialViewMode == PartViewMode.Layers3D;
 			}
 			else
 			{
-				twoDimensionButton.Checked = true;
+				layers2DButton.Checked = true;
 			}
 
 			this.Margin = new BorderDouble(5, 5, 200, 5);
 			this.HAnchor |= HAnchor.ParentRight;
 			this.VAnchor = VAnchor.ParentTop;
+		}
+
+		private void SwitchModes_Click(object sender, MouseEventArgs e)
+		{
+			var widget = sender as GuiWidget;
+			ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs()
+			{
+				ViewMode = widget.Name == "Layers2D Button" ? PartViewMode.Layers2D : PartViewMode.Layers3D
+			});
 		}
 	}
 }

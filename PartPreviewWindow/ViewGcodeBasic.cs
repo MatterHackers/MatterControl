@@ -88,6 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private BedShape bedShape;
 		private int sliderWidth;
 
+		private PartViewMode activeViewMode = PartViewMode.Layers3D;
+
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D)
 			: base(viewControls3D)
 		{
@@ -140,12 +142,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
 
 					UiThread.RunOnIdle(() =>
-			{
-				meshViewerWidget.CreatePrintBed(
-					viewerVolume,
-					bedCenter,
-					bedShape);
-			});
+					{
+						meshViewerWidget.CreatePrintBed(
+							viewerVolume,
+							bedCenter,
+							bedShape);
+					});
 				}
 				else if (stringEvent.Data == "extruder_offset")
 				{
@@ -300,15 +302,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.AnchorAll();
 			meshViewerWidget.AllowBedRenderingWhenEmpty = true;
 			gcodeDisplayWidget.AddChild(meshViewerWidget);
+			meshViewerWidget.Visible = (activeViewMode == PartViewMode.Layers3D);
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
 
 			viewControls2D = new ViewControls2D(ApplicationController.Instance.Theme.ViewControlsButtonFactory);
-			viewControls2D.Visible = false;
 			AddChild(viewControls2D);
 
 			viewControls2D.ResetView += (sender, e) =>
 			{
-				SetDefaultView2D();
+				gcodeViewWidget.CenterPartInView();
 			};
 
 			viewControls3D.ResetView += (sender, e) =>
@@ -318,14 +320,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 
-			viewControlsToggle = new ViewControlsToggle(ApplicationController.Instance.Theme.ViewControlsButtonFactory);
-			viewControlsToggle.HAnchor = Agg.UI.HAnchor.ParentRight;
+			viewControlsToggle = new ViewControlsToggle(ApplicationController.Instance.Theme.ViewControlsButtonFactory, activeViewMode);
+			viewControlsToggle.HAnchor = HAnchor.ParentRight;
 			AddChild(viewControlsToggle);
 			viewControlsToggle.Visible = false;
-
-			//viewControls3D.translateButton.ClickButton(null);
-
-			//meshViewerWidget.ResetView();
 
 			viewControls2D.translateButton.Click += (sender, e) =>
 			{
@@ -338,11 +336,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			expandModelOptions.CheckedStateChanged += expandModelOptions_CheckedStateChanged;
 			expandDisplayOptions.CheckedStateChanged += expandDisplayOptions_CheckedStateChanged;
-		}
-
-		private void SetDefaultView2D()
-		{
-			gcodeViewWidget.CenterPartInView();
 		}
 
 		private RenderType GetRenderType()
@@ -759,18 +752,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerInfoContainer.AddChild(hideExtruderOffsets);
 			}
 
-			// put in a show 3D view checkbox
+			// Respond to user driven view mode change events and store and switch to the new mode
+			viewControlsToggle.ViewModeChanged += (s, e) =>
 			{
-				viewControlsToggle.twoDimensionButton.CheckedStateChanged += (sender, e) =>
-				{
-					SetLayerViewType();
-				};
-				viewControlsToggle.threeDimensionButton.CheckedStateChanged += (sender, e) =>
-				{
-					SetLayerViewType();
-				};
-				SetLayerViewType();
-			}
+				activeViewMode = e.ViewMode;
+				SwitchViewModes();
+			};
+
+			// Switch to the most recent view mode, defaulting to Layers3D
+			SwitchViewModes();
 
 			// Put in the sync to print checkbox
 			if (windowMode == WindowMode.Embeded)
@@ -838,24 +828,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void SetLayerViewType()
+		private void SwitchViewModes()
 		{
-			if (viewControlsToggle.threeDimensionButton.Checked)
+			bool inLayers3DMode = activeViewMode == PartViewMode.Layers3D;
+			if (inLayers3DMode)
 			{
 				UserSettings.Instance.set("LayerViewDefault", "3D Layer");
 				viewControls2D.Visible = false;
-				gcodeViewWidget.Visible = false;
-
-				meshViewerWidget.Visible = true;
 			}
 			else
 			{
 				UserSettings.Instance.set("LayerViewDefault", "2D Layer");
 				viewControls2D.Visible = true;
-				gcodeViewWidget.Visible = true;
 
-				meshViewerWidget.Visible = false;
+				// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
+				UiThread.RunOnIdle(gcodeViewWidget.CenterPartInView);
 			}
+
+			meshViewerWidget.Visible = inLayers3DMode;
+			gcodeViewWidget.Visible = !inLayers3DMode;
 		}
 
 		private void HookUpGCodeMessagesWhenDonePrinting(object sender, EventArgs e)
@@ -880,8 +871,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GuiWidget CreateGCodeViewWidget(string pathAndFileName)
 		{
 			gcodeViewWidget = new ViewGcodeWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter);
+			gcodeViewWidget.DebugShowBounds = true;
 			gcodeViewWidget.DoneLoading += DoneLoadingGCode;
-			gcodeViewWidget.Visible = false;
+			gcodeViewWidget.Visible = (activeViewMode == PartViewMode.Layers2D);
 			gcodeViewWidget.LoadingProgressChanged += LoadingProgressChanged;
 			partToStartLoadingOnFirstDraw = pathAndFileName;
 

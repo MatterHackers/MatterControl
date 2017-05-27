@@ -294,27 +294,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GCodeRenderer.ExtruderWidth = .4;
 			}
 
-			await Task.Run(() => DoPostLoadInitialization());
-
-			postLoadInitialization_RunWorkerCompleted();
-		}
-
-		public void DoPostLoadInitialization()
-		{
-			try
+			await Task.Run(() =>
 			{
-				gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
-			}
-			catch (Exception e)
-			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-			}
-			gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
-		}
+				// DoPostLoadInitialization()
+				try
+				{
+					gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+				}
+				catch (Exception ex)
+				{
+					Debug.Print(ex.Message);
+					GuiWidget.BreakInDebugger();
+				}
+				gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
+			});
 
-		private void postLoadInitialization_RunWorkerCompleted()
-		{
 			DoneLoading?.Invoke(this, null);
 		}
 
