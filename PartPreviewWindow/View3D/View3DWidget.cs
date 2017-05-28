@@ -654,7 +654,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Transform transform = (Transform)Bvh;
 					if (transform.Child != null)
 					{
-						var bat = new BvhAndTransform(transform.Child, TransformToWorld * transform.WorldToAxis);
+						var bat = new BvhAndTransform(transform.Child, TransformToWorld * transform.AxisToWorld);
 
 						yield return bat;
 
