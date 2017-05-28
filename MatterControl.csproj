@@ -205,7 +205,9 @@
     <Compile Include="Library\Providers\Zip\ZipMemoryItem.cs" />
     <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
+    <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterActionsBar.cs" />
+    <Compile Include="PartPreviewWindow\View3D\SideBar\RotateControls.cs" />
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
     <Compile Include="Library\Widgets\ListView\ListView.cs" />
     <Compile Include="Library\Widgets\ListView\ListViewItem.cs" />

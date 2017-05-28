@@ -39,7 +39,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	public class PrinterSelectEditDropdown : FlowLayoutWidget
+	public class PrinterSelectEditDropdown : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		private PrinterSelector printerSelector;
 		private GuiWidget printerSelectorAndEditOverlay;
@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			printerSelector = new PrinterSelector()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.FitToChildren,
 				Cursor = Cursors.Hand,
 				Margin = 0
 			};

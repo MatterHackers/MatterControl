@@ -27,33 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using System.IO;
-using MatterHackers.Localizations;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class OverflowDropdown : ImageWidget
+
+	public class OverflowDropdown : PopupButton
 	{
-		private static readonly RGBA_Bytes slightShade = new RGBA_Bytes(0, 0, 0, 40);
-
-		private bool menuInitiallyActive = false;
-		private bool overflowMenuActive = false;
-
 		public OverflowDropdown(bool allowLightnessInvert)
 			: base(LoadThemedIcon(allowLightnessInvert))
 		{
 			this.ToolTipText = "More...".Localize();
-			this.Margin = 3;
 		}
 
-		public static ImageBuffer LoadThemedIcon(bool allowLightnessInvert)
+		public static ImageWidget LoadThemedIcon(bool allowLightnessInvert)
 		{
 			var imageBuffer = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32);
 			if (!ActiveTheme.Instance.IsDarkTheme && allowLightnessInvert)
@@ -61,8 +56,51 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				imageBuffer.InvertLightness();
 			}
 
-			return imageBuffer;
+			return new ImageWidget(imageBuffer);
 		}
+	}
+
+	public class PopupButton : GuiWidget
+	{
+		private static readonly RGBA_Bytes slightShade = new RGBA_Bytes(0, 0, 0, 40);
+
+		private bool menuVisible = false;
+		private bool menuVisibileAtMouseDown = false;
+
+		private PopupWidget popupWidget;
+
+		//private GuiWidget buttonView;
+
+		private GuiWidget buttonView;
+
+		public PopupButton(GuiWidget buttonView)
+		{
+			this.Margin = 3;
+			this.HAnchor = HAnchor.FitToChildren;
+			this.VAnchor = VAnchor.FitToChildren;
+			this.buttonView = buttonView;
+
+			this.AddChild(buttonView);
+
+			// After the buttonView looses focus, wait a moment for the mouse to arrive at the target and if not found, close the menu
+			buttonView.MouseLeaveBounds += (s, e) =>
+			{
+				if (menuVisible)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						if (this.PopupContent?.UnderMouseState != UnderMouseState.NotUnderMouse)
+						{
+							return;
+						}
+
+						popupWidget?.CloseMenu();
+					}, 0.1);
+				}
+			};
+		}
+
+		public Direction PopDirection { get; set; } = Direction.Down;
 
 		public GuiWidget PopupContent { get; set; }
 
@@ -72,24 +110,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			menuInitiallyActive = overflowMenuActive;
+			// Store the menu state at the time of mousedown
+			menuVisibileAtMouseDown = menuVisible;
 			base.OnMouseDown(mouseEvent);
 		}
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			if (!menuInitiallyActive)
+			// Only show the popup if the menu was hidden as the mouse events started
+			if (buttonView.MouseCaptured && !menuVisibileAtMouseDown)
 			{
 				ShowPopup();
 				this.BackgroundColor = slightShade;
 			}
 
-			base.OnClick(mouseEvent);
+			base.OnMouseUp(mouseEvent);
 		}
 
 		public void ShowPopup()
 		{
-			overflowMenuActive = true;
+			menuVisible = true;
 
 			this.PopupContent?.ClearRemovedFlag();
 
@@ -103,16 +143,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			var popupWidget = new PopupWidget(this.PopupContent, this, Vector2.Zero, Direction.Down, 0, this.AlignToRightEdge)
+			popupWidget = new PopupWidget(this.PopupContent, this, Vector2.Zero, this.PopDirection, 0, this.AlignToRightEdge)
 			{
 				BorderWidth = 1,
 				BorderColor = RGBA_Bytes.Gray,
-				BackgroundColor = RGBA_Bytes.White,
 			};
+
 			popupWidget.Closed += (s, e) =>
 			{
 				this.BackgroundColor = RGBA_Bytes.Transparent;
-				overflowMenuActive = false;
+				menuVisible = false;
+				popupWidget = null;
 			};
 			popupWidget.Focus();
 		}

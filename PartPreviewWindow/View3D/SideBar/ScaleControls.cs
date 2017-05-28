@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,19 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class ScaleControls : FlowLayoutWidget
+	public class PopupActionPanel : FlowLayoutWidget, IIgnoredPopupChild
+	{
+		public PopupActionPanel() : base(FlowDirection.TopToBottom)
+		{
+			this.Padding = 15;
+			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+		}
+	}
+
+	public class ScaleControls : PopupActionPanel
 	{
 		private Button applyScaleButton;
 		private MHNumberEdit scaleRatioControl;
@@ -47,28 +54,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private CheckBox uniformScale;
 		private View3DWidget view3DWidget;
 
-		public ScaleControls(View3DWidget view3DWidget)
-			: base(FlowDirection.TopToBottom)
+		public ScaleControls(View3DWidget view3DWidget, TextImageButtonFactory buttonFactory)
 		{
 			this.view3DWidget = view3DWidget;
 
-			AddScaleControls(this);
-			view3DWidget.SelectedTransformChanged += OnSelectedTransformChanged;
-		}
-
-		private void AddScaleControls(FlowLayoutWidget buttonPanel)
-		{
 			List<GuiWidget> scaleControls = new List<GuiWidget>();
 
 			// Put in the scale ratio edit field
 			{
-				FlowLayoutWidget scaleRatioContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+				var scaleRatioContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 				scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
 				scaleRatioContainer.Padding = new BorderDouble(5);
 
-				string scaleRatioLabelText = "Ratio".Localize();
-				string scaleRatioLabelTextFull = "{0}:".FormatWith(scaleRatioLabelText);
-				TextWidget scaleRatioLabel = new TextWidget(scaleRatioLabelTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
+				var scaleRatioLabel = new TextWidget("Ratio".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor);
 				scaleRatioLabel.Margin = new BorderDouble(0, 0, 3, 0);
 				scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
 				scaleRatioContainer.AddChild(scaleRatioLabel);
@@ -96,14 +94,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				scaleRatioContainer.AddChild(CreateScaleDropDownMenu());
 
-				buttonPanel.AddChild(scaleRatioContainer);
+				this.AddChild(scaleRatioContainer);
 
 				scaleControls.Add(scaleRatioControl);
 			}
 
-			applyScaleButton = view3DWidget.WhiteButtonFactory.Generate("Apply Scale".Localize(), centerText: true);
+			applyScaleButton = buttonFactory.Generate("Apply Scale".Localize(), centerText: true);
 			applyScaleButton.Cursor = Cursors.Hand;
-			buttonPanel.AddChild(applyScaleButton);
+			this.AddChild(applyScaleButton);
 
 			scaleControls.Add(applyScaleButton);
 			applyScaleButton.Click += (s, e) =>
@@ -113,9 +111,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the dimensions
 			{
-				buttonPanel.AddChild(CreateAxisScalingControl("x".ToUpper(), 0));
-				buttonPanel.AddChild(CreateAxisScalingControl("y".ToUpper(), 1));
-				buttonPanel.AddChild(CreateAxisScalingControl("z".ToUpper(), 2));
+				this.AddChild(CreateAxisScalingControl("x".ToUpper(), 0, buttonFactory));
+				this.AddChild(CreateAxisScalingControl("y".ToUpper(), 1, buttonFactory));
+				this.AddChild(CreateAxisScalingControl("z".ToUpper(), 2, buttonFactory));
 
 				uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				uniformScale.Checked = true;
@@ -124,10 +122,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				leftToRight.Padding = new BorderDouble(5, 3);
 
 				leftToRight.AddChild(uniformScale);
-				buttonPanel.AddChild(leftToRight);
+				this.AddChild(leftToRight);
 			}
 
-			buttonPanel.AddChild(view3DWidget.GenerateHorizontalRule());
+			view3DWidget.SelectedTransformChanged += OnSelectedTransformChanged;
 		}
 
 		private void ApplyScaleFromEditField()
@@ -154,16 +152,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget CreateAxisScalingControl(string axis, int axisIndex)
+		private GuiWidget CreateAxisScalingControl(string axis, int axisIndex, TextImageButtonFactory buttonFactory)
 		{
-			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			leftToRight.Padding = new BorderDouble(5, 3);
+			var leftToRight = new FlowLayoutWidget()
+			{
+				Padding = new BorderDouble(5, 3)
+			};
 
-			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			sizeDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			var sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			sizeDescription.VAnchor = VAnchor.ParentCenter;
 			leftToRight.AddChild(sizeDescription);
 
-			sizeDisplay[axisIndex] = new EditableNumberDisplay(view3DWidget.textImageButtonFactory, "100", "1000.00");
+			sizeDisplay[axisIndex] = new EditableNumberDisplay(buttonFactory, "100", "1000.00");
 			sizeDisplay[axisIndex].EditComplete += (sender, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
@@ -187,16 +187,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private DropDownMenu CreateScaleDropDownMenu()
 		{
-			DropDownMenu presetScaleMenu = new DropDownMenu("", Direction.Down);
-			presetScaleMenu.NormalArrowColor = ActiveTheme.Instance.PrimaryTextColor;
-			presetScaleMenu.HoverArrowColor = ActiveTheme.Instance.PrimaryTextColor;
-			presetScaleMenu.MenuAsWideAsItems = false;
-			presetScaleMenu.AlignToRightEdge = true;
-			//presetScaleMenu.OpenOffset = new Vector2(-50, 0);
-			presetScaleMenu.HAnchor = HAnchor.AbsolutePosition;
-			presetScaleMenu.VAnchor = VAnchor.AbsolutePosition;
-			presetScaleMenu.Width = 25;
-			presetScaleMenu.Height = scaleRatioControl.Height + 2;
+			var presetScaleMenu = new DropDownMenu("", Direction.Down)
+			{
+				NormalArrowColor = ActiveTheme.Instance.PrimaryTextColor,
+				HoverArrowColor = ActiveTheme.Instance.PrimaryTextColor,
+				MenuAsWideAsItems = false,
+				AlignToRightEdge = true,
+				//presetScaleMenu.OpenOffset = new Vector2(-50, 0);
+				HAnchor = HAnchor.AbsolutePosition,
+				VAnchor = VAnchor.AbsolutePosition,
+				Width = 25,
+				Height = scaleRatioControl.Height + 2
+			};
 
 			presetScaleMenu.AddItem("mm to in (.0393)");
 			presetScaleMenu.AddItem("in to mm (25.4)");

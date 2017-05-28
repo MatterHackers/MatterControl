@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(topToBottom);
 
 				// Must come after we have an instance of View3DWidget an its undo buffer
-				topToBottom.AddChild(new PrinterActionsBar(modelViewer.UndoBuffer));
+				topToBottom.AddChild(new PrinterActionsBar(modelViewer));
 				topToBottom.AddChild(modelViewer);
 
 				// The slice layers view

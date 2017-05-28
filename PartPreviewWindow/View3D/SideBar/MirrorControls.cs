@@ -32,29 +32,20 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class MirrorControls : FlowLayoutWidget
+	public partial class MirrorControls : PopupActionPanel
 	{
 		private View3DWidget view3DWidget;
 
-		public MirrorControls(View3DWidget view3DWidget)
-			: base(FlowDirection.TopToBottom)
+		public MirrorControls(View3DWidget view3DWidget, TextImageButtonFactory buttonFactory)
 		{
 			this.view3DWidget = view3DWidget;
 
-			AddMirrorControls(this);
-		}
-
-		private void AddMirrorControls(FlowLayoutWidget buttonPanel)
-		{
 			List<GuiWidget> mirrorControls = new List<GuiWidget>();
-
-			double oldFixedWidth = view3DWidget.textImageButtonFactory.FixedWidth;
-			view3DWidget.textImageButtonFactory.FixedWidth = view3DWidget.EditButtonHeight;
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.FitToChildren;
 
-			Button mirrorXButton = view3DWidget.textImageButtonFactory.Generate("X", centerText: true);
+			Button mirrorXButton = buttonFactory.Generate("X", centerText: true);
 			buttonContainer.AddChild(mirrorXButton);
 			mirrorControls.Add(mirrorXButton);
 			mirrorXButton.Click += (s, e) =>
@@ -74,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Button mirrorYButton = view3DWidget.textImageButtonFactory.Generate("Y", centerText: true);
+			Button mirrorYButton = buttonFactory.Generate("Y", centerText: true);
 			buttonContainer.AddChild(mirrorYButton);
 			mirrorControls.Add(mirrorYButton);
 			mirrorYButton.Click += (s, e) =>
@@ -94,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Button mirrorZButton = view3DWidget.textImageButtonFactory.Generate("Z", centerText: true);
+			Button mirrorZButton = buttonFactory.Generate("Z", centerText: true);
 			buttonContainer.AddChild(mirrorZButton);
 			mirrorControls.Add(mirrorZButton);
 			mirrorZButton.Click += (s, e) =>
@@ -113,9 +104,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Invalidate(); */
 				}
 			};
-			buttonPanel.AddChild(buttonContainer);
-			buttonPanel.AddChild(view3DWidget.GenerateHorizontalRule());
-			view3DWidget.textImageButtonFactory.FixedWidth = oldFixedWidth;
+
+			this.AddChild(buttonContainer);
 		}
 
 		private void MirrorOnAxis(int axisIndex)
