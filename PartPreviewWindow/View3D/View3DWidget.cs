@@ -632,30 +632,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 
-		// TODO: Still valid?
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			foreach(var bvhAndTransform in Scene.TraceData().MakeEnumerable().Where(x => x.Depth > 1 && x.Bvh.GetType() != typeof(TriangleShape)))
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					Vector3 bottomStartPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), bvhAndTransform.TransformToWorld);
-					Vector3 bottomEndPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), bvhAndTransform.TransformToWorld);
-					GLHelper.Render3DLine(bottomStartPosition, bottomEndPosition, 1, 1, RGBA_Bytes.Black);
-
-					Vector3 topStartPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), bvhAndTransform.TransformToWorld);
-					Vector3 topEndPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), bvhAndTransform.TransformToWorld);
-					GLHelper.Render3DLine(topStartPosition, topEndPosition, 1, 1, RGBA_Bytes.Black);
-
-					GLHelper.Render3DLine(topStartPosition, bottomStartPosition, 1, 1, RGBA_Bytes.Black);
-				}
-			}
-
-			return;
-			if (Scene?.TraceData() != null)
-			{
-				Scene.TraceData().RenderBvhRecursive(Scene.Matrix, 0, 3);
-			}
+			// This shows the BVH as rects around the scene items
+			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
