@@ -329,11 +329,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (e.TransformMode)
 				{
 					case ViewControls3DButtons.Translate:
-						gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Move;
+						if(gcodeViewWidget != null) gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Move;
 						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
 						break;
 					case ViewControls3DButtons.Scale:
-						gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Scale;
+						if (gcodeViewWidget != null) gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Scale;
 						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
 						break;
 					case ViewControls3DButtons.Rotate:

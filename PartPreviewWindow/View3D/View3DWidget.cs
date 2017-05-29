@@ -570,6 +570,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BeforeDraw += CreateBooleanTestGeometry;
 				AfterDraw += RemoveBooleanTestGeometry;
 			}
+
+			AfterDraw += AfterDebugTest;
+
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
 
@@ -1081,6 +1084,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			hasDrawn = true;
 
 			base.OnDraw(graphics2D);
+		}
+
+		private void AfterDebugTest(object sender, DrawEventArgs e)
+		{
+			foreach (var bvhAndTransform in Scene?.TraceData().MakeEnumerable())
+			{
+				TriangleShape tri = bvhAndTransform.Bvh as TriangleShape;
+				if (tri != null)
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						var vertexPos = tri.GetVertex(i);
+						var screenCenter = Vector3.Transform(vertexPos, bvhAndTransform.TransformToWorld);
+						var screenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(screenCenter);
+
+						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
+					}
+				}
+			}
 		}
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
