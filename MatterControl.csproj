@@ -236,7 +236,7 @@
     <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />
     <Compile Include="PartPreviewWindow\SelectedObjectPanel.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
-    <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
+    <Compile Include="PartPreviewWindow\ViewControlsToggle.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
     <Compile Include="PartPreviewWindow\ViewGcodeWidget.cs" />
     <Compile Include="ConfigurationPage\PrinterConfigurationPage.cs" />

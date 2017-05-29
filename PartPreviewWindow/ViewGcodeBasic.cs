@@ -305,17 +305,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.Visible = (activeViewMode == PartViewMode.Layers3D);
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
 
-			viewControls2D = new ViewControls2D(ApplicationController.Instance.Theme.ViewControlsButtonFactory);
-			AddChild(viewControls2D);
-
-			viewControls2D.ResetView += (sender, e) =>
-			{
-				gcodeViewWidget.CenterPartInView();
-			};
-
 			viewControls3D.ResetView += (sender, e) =>
 			{
-				meshViewerWidget.ResetView();
+				if (gcodeDisplayWidget.Visible)
+				{
+					gcodeViewWidget.CenterPartInView();
+				}
+				else
+				{
+					meshViewerWidget.ResetView();
+				}
 			};
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
@@ -325,13 +324,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(viewControlsToggle);
 			viewControlsToggle.Visible = false;
 
-			viewControls2D.translateButton.Click += (sender, e) =>
+			viewControls3D.TransformStateChanged += (s, e) =>
 			{
-				gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Move;
-			};
-			viewControls2D.scaleButton.Click += (sender, e) =>
-			{
-				gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Scale;
+				switch (e.TransformMode)
+				{
+					case ViewControls3DButtons.Translate:
+						gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Move;
+						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
+						break;
+					case ViewControls3DButtons.Scale:
+						gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Scale;
+						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
+						break;
+					case ViewControls3DButtons.Rotate:
+						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+						break;
+
+				}
 			};
 
 			expandModelOptions.CheckedStateChanged += expandModelOptions_CheckedStateChanged;
@@ -834,12 +843,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (inLayers3DMode)
 			{
 				UserSettings.Instance.set("LayerViewDefault", "3D Layer");
-				viewControls2D.Visible = false;
 			}
 			else
 			{
 				UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-				viewControls2D.Visible = true;
 
 				// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
 				UiThread.RunOnIdle(gcodeViewWidget.CenterPartInView);

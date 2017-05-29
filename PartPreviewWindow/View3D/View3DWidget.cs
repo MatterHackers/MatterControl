@@ -520,7 +520,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectedObjectPanel = new SelectedObjectPanel()
 			{
 				Margin = 5,
-				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControls2D.overlayAlpha)
+				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha)
 			};
 
 			AddChild(selectedObjectPanel);
