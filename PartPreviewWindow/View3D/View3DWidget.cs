@@ -631,73 +631,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public class BvhAndTransform : IEnumerable<BvhAndTransform>
-		{
-			public Matrix4X4 TransformToWorld { get; private set; }
-			public IBvhItem Bvh { get; private set; }
-
-			public BvhAndTransform(IBvhItem referenceItem, Matrix4X4 initialTransform = default(Matrix4X4))
-			{
-				TransformToWorld = initialTransform;
-				if (TransformToWorld == default(Matrix4X4))
-				{
-					TransformToWorld = Matrix4X4.Identity;
-				}
-
-				Bvh = referenceItem;
-			}
-
-			public IEnumerator<BvhAndTransform> GetEnumerator()
-			{
-				if (Bvh is Transform)
-				{
-					Transform transform = (Transform)Bvh;
-					if (transform.Child != null)
-					{
-						var bat = new BvhAndTransform(transform.Child, TransformToWorld * transform.AxisToWorld);
-
-						yield return bat;
-
-						foreach (var subBat in bat)
-						{
-							yield return subBat;
-						}
-					}
-				}
-				else if (Bvh is UnboundCollection)
-				{
-					UnboundCollection unboundCollection = (UnboundCollection)Bvh;
-					foreach (var item in unboundCollection.Items)
-					{
-						var bat = new BvhAndTransform(item, TransformToWorld);
-						yield return bat;
-
-						foreach (var subBat in bat)
-						{
-							yield return subBat;
-						}
-					}
-				}
-				else if (Bvh is TriangleShape)
-				{
-
-				}
-				else
-				{
-					throw new NotImplementedException();
-				}
-			}
-
-			IEnumerator IEnumerable.GetEnumerator()
-			{
-				throw new NotImplementedException();
-			}
-		}
 
 		// TODO: Still valid?
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			foreach(var bvhAndTransform in (new BvhAndTransform(Scene.TraceData())))
+			foreach(var bvhAndTransform in Scene.TraceData().MakeEnumerable().Where(x => x.Depth > 1 && x.Bvh.GetType() != typeof(TriangleShape)))
 			{
 				for (int i = 0; i < 4; i++)
 				{
@@ -1161,6 +1099,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			hasDrawn = true;
+
 			base.OnDraw(graphics2D);
 		}
 
