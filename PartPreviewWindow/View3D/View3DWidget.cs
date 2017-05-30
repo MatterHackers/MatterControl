@@ -571,7 +571,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AfterDraw += RemoveBooleanTestGeometry;
 			}
 
-			AfterDraw += AfterDebugTest;
+			meshViewerWidget.AfterDraw += AfterDebugTest;
 
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
