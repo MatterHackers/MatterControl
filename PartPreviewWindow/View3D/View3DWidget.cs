@@ -1079,18 +1079,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AfterDrawTest(object sender, DrawEventArgs e)
 		{
-			foreach (var bvhAndTransform in new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
+			var xxx = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
 			{
 				var center = x.Bvh.GetCenter();
 				var worldCenter = Vector3.Transform(center, x.TransformToWorld);
-				if(worldCenter.z > 0)
+				if (worldCenter.z > 0)
 				{
 					return true;
 				}
 
 				return false;
-			}))
+			});
+
+			int count = xxx.Count();
+
+			foreach (var bvhAndTransform in xxx)
 			{
+				for (int i = 0; i < 4; i++)
+				{
+					Vector3 bottomStartPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), bvhAndTransform.TransformToWorld);
+					var bottomStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomStartPosition);
+
+					Vector3 bottomEndPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), bvhAndTransform.TransformToWorld);
+					var bottomEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomEndPosition);
+
+					Vector3 topStartPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), bvhAndTransform.TransformToWorld);
+					var topStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topStartPosition);
+
+					Vector3 topEndPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), bvhAndTransform.TransformToWorld);
+					var topEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topEndPosition);
+
+					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
+					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
+					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, RGBA_Bytes.Black);
+				}
+
 				TriangleShape tri = bvhAndTransform.Bvh as TriangleShape;
 				if (tri != null)
 				{
@@ -1109,6 +1132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var worldCenter = Vector3.Transform(center, bvhAndTransform.TransformToWorld);
 					var screenPos2 = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(worldCenter);
 					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
+					e.graphics2D.DrawString($"{bvhAndTransform.Depth},", screenPos2.x + 12 * bvhAndTransform.Depth, screenPos2.y);
 				}
 			}
 		}
