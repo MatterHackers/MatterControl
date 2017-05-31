@@ -46,8 +46,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
 			private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
-			public PrinterActionsBar(UndoBuffer undoBuffer)
+			private OverflowDropdown overflowDropdown;
+
+			public PrinterActionsBar(View3DWidget modelViewer)
 			{
+				UndoBuffer undoBuffer = modelViewer.UndoBuffer;
+
 				this.Padding = new BorderDouble(0, 5);
 				this.HAnchor = HAnchor.ParentLeftRight;
 				this.VAnchor = VAnchor.FitToChildren;
@@ -79,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddChild(new HorizontalSpacer());
 
-				this.AddChild(GeneratePopupContent());
+				//this.AddChild(GeneratePopupContent());
 
 				Button undoButton = buttonFactory.Generate("Undo".Localize(), centerText: true);
 				undoButton.Name = "3D View Undo";
@@ -106,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					redoButton.Enabled = undoBuffer.RedoCount > 0;
 				};
 
-				var overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
+				overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 				{
 					AlignToRightEdge = true,
 				};
@@ -123,12 +127,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			private GuiWidget GeneratePopupContent()
 			{
-				var widgetToPop = new FlowLayoutWidget();
-				widgetToPop.MaximumSize = new VectorMath.Vector2(280, 35);
+				var widgetToPop = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.FitToChildren,
+					VAnchor = VAnchor.FitToChildren,
+					BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+				};
 
-				widgetToPop.AddChild(new PrinterSelectEditDropdown());
-				
-				//widgetToPop.AddChild("more stuff...");
+				widgetToPop.AddChild(new PrinterSelectEditDropdown()
+				{
+					Margin = 10
+				});
 
 				return widgetToPop;
 			}
