@@ -24,7 +24,6 @@ namespace MatterHackers.MatterControl
 		{
 			Name = "File Menu";
 			CurrentMenuOptionFile = this;
-
 		}
 
 		protected override IEnumerable<MenuItemAction> GetMenuActions()

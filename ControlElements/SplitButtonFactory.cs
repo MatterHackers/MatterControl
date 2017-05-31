@@ -1,6 +1,8 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -27,84 +29,62 @@ namespace MatterHackers.MatterControl
 		public double borderWidth = 1;
 		public bool invertImageLocation = false;
 		public bool AllowThemeToAdjustImage = true;
-		private string imageName;
 
 		public double FixedHeight = 30 * GuiWidget.DeviceScale;
 
-		public SplitButtonFactory()
+		public SplitButton Generate(List<NamedAction> actions, Direction direction = Direction.Down, string imageName = null)
 		{
-		}
-
-		public SplitButton Generate(TupleList<string, Func<bool>> buttonList, Direction direction = Direction.Down, string imageName = null)
-		{
-			this.imageName = imageName;
-
-			DynamicDropDownMenu menu = CreateMenu(direction);
-			if(buttonList.Count > 1)
+			var menuFactory = new DropDownMenuFactory()
 			{
-				menu.Name = buttonList[1].Item1 + " Menu";
-			}
+				normalFillColor = this.normalFillColor,
+				hoverFillColor = this.hoverFillColor,
+				pressedFillColor = this.pressedFillColor,
+				normalBorderColor = this.normalBorderColor,
+				hoverBorderColor = this.hoverBorderColor,
+				pressedBorderColor = this.pressedBorderColor,
+				disabledBorderColor = this.disabledBorderColor,
+				normalTextColor = this.normalTextColor,
+				hoverTextColor = this.hoverTextColor,
+				pressedTextColor = this.pressedTextColor,
+				disabledTextColor = this.disabledTextColor,
+				FixedWidth = 20,
+			};
 
-			menu.Margin = new BorderDouble();
-			Button button = CreateButton(buttonList[0]);
-
-			for (int index = 1; index < buttonList.Count; index++)
-			{
-				menu.addItem(buttonList[index].Item1, buttonList[index].Item2);
-			}
-
-			SplitButton splitButton = new SplitButton(button, menu);
-
-			return splitButton;
-		}
-
-		private Button CreateButton(Tuple<string, Func<bool>> buttonInfo)
-		{
-			TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-
-			buttonFactory.FixedHeight = this.FixedHeight;
-			buttonFactory.normalFillColor = this.normalFillColor;
-			buttonFactory.normalTextColor = this.normalTextColor;
-			buttonFactory.hoverTextColor = this.hoverTextColor;
-			buttonFactory.hoverFillColor = this.hoverFillColor;
-			buttonFactory.borderWidth = 1;
-			buttonFactory.normalBorderColor = this.normalBorderColor;
-			buttonFactory.hoverBorderColor = this.hoverBorderColor;
-
-			Button button = buttonFactory.Generate(buttonInfo.Item1, normalImageName: imageName, centerText: true);
-			button.Click += (s, e) => buttonInfo.Item2();
-
-			return button;
-		}
-
-		private DynamicDropDownMenu CreateMenu(Direction direction = Direction.Down)
-		{
-			DropDownMenuFactory menuFactory = new DropDownMenuFactory();
-
-			menuFactory.normalFillColor = this.normalFillColor;
-			menuFactory.hoverFillColor = this.hoverFillColor;
-			menuFactory.pressedFillColor = this.pressedFillColor;
-			menuFactory.pressedFillColor = this.pressedFillColor;
-
-			menuFactory.normalBorderColor = this.normalBorderColor;
-			menuFactory.hoverBorderColor = this.hoverBorderColor;
-			menuFactory.pressedBorderColor = this.pressedBorderColor;
-			menuFactory.disabledBorderColor = this.disabledBorderColor;
-
-			menuFactory.normalTextColor = this.normalTextColor;
-			menuFactory.hoverTextColor = this.hoverTextColor;
-			menuFactory.pressedTextColor = this.pressedTextColor;
-			menuFactory.disabledTextColor = this.disabledTextColor;
-
-			DynamicDropDownMenu menu = menuFactory.Generate(direction: direction);
-
+			DropDownMenu menu = menuFactory.Generate(actions: actions.Skip(1).ToList(), direction: direction);
 			menu.Height = FixedHeight;
 			menu.BorderColor = normalBorderColor;
 			menu.HoverArrowColor = this.hoverTextColor;
 			menu.NormalArrowColor = this.normalTextColor;
 			menu.BackgroundColor = normalFillColor;
+			menu.Margin = new BorderDouble();
 
-			return menu;
+			// TODO: Why?
+			if (actions.Count > 1)
+			{
+				menu.Name = actions[1].Title + " Menu";
+			}
+
+			var primaryAction = actions[0];
+
+			var buttonFactory = new TextImageButtonFactory()
+			{
+				FixedHeight = this.FixedHeight,
+				normalFillColor = this.normalFillColor,
+				normalTextColor = this.normalTextColor,
+				hoverTextColor = this.hoverTextColor,
+				hoverFillColor = this.hoverFillColor,
+				borderWidth = 1,
+				normalBorderColor = this.normalBorderColor,
+				hoverBorderColor = this.hoverBorderColor
+			};
+
+			Button button = buttonFactory.Generate(primaryAction.Title, normalImageName: imageName, centerText: true);
+			button.Click += (s, e) =>
+			{
+				primaryAction.Action();
+			};
+
+			return new SplitButton(button, menu);
 		}
 	}
 }

@@ -136,6 +136,7 @@
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\ApplicationController.cs" />
+    <Compile Include="CustomWidgets\NamedAction.cs" />
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionAction.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
@@ -392,7 +393,6 @@
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicingQueue.cs" />
-    <Compile Include="Utilities\TupleList.cs" />
     <Compile Include="VersionManagement\ContactFormRequest.cs" />
     <Compile Include="VersionManagement\LatestVersionRequest.cs" />
     <Compile Include="VersionManagement\ClientTokenRequest.cs" />
@@ -410,7 +410,6 @@
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
     <Compile Include="CustomWidgets\SplitButton.cs" />
-    <Compile Include="CustomWidgets\DynamicDropDownMenu.cs" />
     <Compile Include="ControlElements\DropDownMenuFactory.cs" />
     <Compile Include="ControlElements\SplitButtonFactory.cs" />
   </ItemGroup>

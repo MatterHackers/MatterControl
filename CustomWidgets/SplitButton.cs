@@ -1,71 +1,97 @@
-﻿using MatterHackers.Agg;
+﻿/*
+Copyright (c) 2017, Matt Moening, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using System;
 
 namespace MatterHackers.MatterControl
 {
 	public class SplitButton : FlowLayoutWidget
 	{
-		private Button defaultButton;
-		private DynamicDropDownMenu altChoices;
+		private DropDownMenu altChoices;
 
-		private Button DefaultButton { get { return defaultButton; } }
+		private Button DefaultButton { get; }
 
 		public SplitButton(string buttonText, Direction direction = Direction.Down)
 			: base(FlowDirection.LeftToRight)
 		{
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
-			defaultButton = CreateDefaultButton(buttonText);
+
+			this.DefaultButton = CreateDefaultButton(buttonText);
+			this.DefaultButton.VAnchor = VAnchor.ParentCenter;
+
 			altChoices = CreateDropDown(direction);
 
-			defaultButton.VAnchor = VAnchor.ParentCenter;
-
-			AddChild(defaultButton);
+			AddChild(this.DefaultButton);
 			AddChild(altChoices);
 		}
 
-		public SplitButton(Button button, DynamicDropDownMenu menu)
+		public SplitButton(Button button, DropDownMenu menu)
 			: base(FlowDirection.LeftToRight)
 		{
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
-			defaultButton = button;
+
+			this.DefaultButton = button;
+			this.DefaultButton.VAnchor = VAnchor.ParentCenter;
+
 			altChoices = menu;
 
-			defaultButton.VAnchor = VAnchor.ParentCenter;
-
-			AddChild(defaultButton);
+			AddChild(this.DefaultButton);
 			AddChild(altChoices);
 		}
 
-		public void AddItem(string name, Func<bool> clickFunction)
+		private DropDownMenu CreateDropDown(Direction direction)
 		{
-			altChoices.addItem(name, clickFunction);
-		}
-
-		private DynamicDropDownMenu CreateDropDown(Direction direction)
-		{
-			DynamicDropDownMenu menu = new DynamicDropDownMenu("", direction);
-			menu.VAnchor = VAnchor.ParentCenter;
-			menu.MenuAsWideAsItems = false;
-			menu.AlignToRightEdge = true;
-			menu.Height = defaultButton.Height;
-
-			return menu;
+			return new DropDownMenu("", direction)
+			{
+				VAnchor = VAnchor.ParentCenter,
+				MenuAsWideAsItems = false,
+				AlignToRightEdge = true,
+				Height = this.DefaultButton.Height
+			};
 		}
 
 		private Button CreateDefaultButton(string buttonText)
 		{
-			TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-			buttonFactory.FixedHeight = 30 * GuiWidget.DeviceScale;
-			buttonFactory.normalFillColor = RGBA_Bytes.White;
-			buttonFactory.normalTextColor = RGBA_Bytes.Black;
-			buttonFactory.hoverTextColor = RGBA_Bytes.Black;
-			buttonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
-			buttonFactory.borderWidth = 1;
-			buttonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			buttonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			var buttonFactory = new TextImageButtonFactory()
+			{
+				FixedHeight = 30 * GuiWidget.DeviceScale,
+				normalFillColor = RGBA_Bytes.White,
+				normalTextColor = RGBA_Bytes.Black,
+				hoverTextColor = RGBA_Bytes.Black,
+				hoverFillColor = new RGBA_Bytes(255, 255, 255, 200),
+				borderWidth = 1,
+				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+				hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200)
+			};
 
 			return buttonFactory.Generate(buttonText, centerText: true);
 		}
