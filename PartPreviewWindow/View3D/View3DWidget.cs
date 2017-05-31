@@ -571,7 +571,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AfterDraw += RemoveBooleanTestGeometry;
 			}
 
-			meshViewerWidget.AfterDraw += AfterDebugTest;
+			//meshViewerWidget.AfterDraw += AfterDrawTest;
 
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
@@ -1086,9 +1086,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		private void AfterDebugTest(object sender, DrawEventArgs e)
+		private void AfterDrawTest(object sender, DrawEventArgs e)
 		{
-			foreach (var bvhAndTransform in Scene?.TraceData().MakeEnumerable())
+			foreach (var bvhAndTransform in new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
+			{
+				var center = x.Bvh.GetCenter();
+				var worldCenter = Vector3.Transform(center, x.TransformToWorld);
+				if(worldCenter.z > 0)
+				{
+					return true;
+				}
+
+				return false;
+			}))
 			{
 				TriangleShape tri = bvhAndTransform.Bvh as TriangleShape;
 				if (tri != null)
@@ -1101,6 +1111,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
 					}
+				}
+				else
+				{
+					var center = bvhAndTransform.Bvh.GetCenter();
+					var worldCenter = Vector3.Transform(center, bvhAndTransform.TransformToWorld);
+					var screenPos2 = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(worldCenter);
+					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
 				}
 			}
 		}
