@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			centerPartPreviewAndControls.Name = "centerPartPreviewAndControls";
 			centerPartPreviewAndControls.AnchorAll();
 
-			var textImageButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
+			var smallMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
 
 			GuiWidget viewArea = new GuiWidget();
 			viewArea.AnchorAll();
@@ -321,7 +321,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				doEdittingButtonsContainer.Visible = false;
 
 				{
-					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
+					Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
 					addButton.Margin = new BorderDouble(right: 10);
 					doEdittingButtonsContainer.AddChild(addButton);
 					addButton.Click += (sender, e) =>
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					separator.VAnchor = VAnchor.ParentBottomTop;
 					doEdittingButtonsContainer.AddChild(separator);
 
-					Button ungroupButton = textImageButtonFactory.Generate("Ungroup".Localize());
+					Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
 					ungroupButton.Name = "3D View Ungroup";
 					doEdittingButtonsContainer.AddChild(ungroupButton);
 					ungroupButton.Click += (sender, e) =>
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						UngroupSelectedMeshGroup();
 					};
 
-					Button groupButton = textImageButtonFactory.Generate("Group".Localize());
+					Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
 					groupButton.Name = "3D View Group";
 					doEdittingButtonsContainer.AddChild(groupButton);
 					groupButton.Click += (sender, e) =>
@@ -359,14 +359,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						GroupSelectedMeshs();
 					};
 
-					Button alignButton = textImageButtonFactory.Generate("Align".Localize());
+					Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
 					doEdittingButtonsContainer.AddChild(alignButton);
 					alignButton.Click += (sender, e) =>
 					{
 						AlignToSelectedMeshGroup();
 					};
 
-					Button arrangeButton = textImageButtonFactory.Generate("Arrange".Localize());
+					Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
 					doEdittingButtonsContainer.AddChild(arrangeButton);
 					arrangeButton.Click += (sender, e) =>
 					{
@@ -379,7 +379,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					separatorTwo.VAnchor = VAnchor.ParentBottomTop;
 					doEdittingButtonsContainer.AddChild(separatorTwo);
 
-					Button copyButton = textImageButtonFactory.Generate("Copy".Localize());
+					Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
 					copyButton.Name = "3D View Copy";
 					doEdittingButtonsContainer.AddChild(copyButton);
 					copyButton.Click += (sender, e) =>
@@ -387,7 +387,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						MakeCopyOfGroup();
 					};
 
-					Button deleteButton = textImageButtonFactory.Generate("Remove".Localize());
+					Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
 					deleteButton.Name = "3D View Remove";
 					doEdittingButtonsContainer.AddChild(deleteButton);
 					deleteButton.Click += (sender, e) =>
@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					separatorThree.VAnchor = VAnchor.ParentBottomTop;
 					doEdittingButtonsContainer.AddChild(separatorThree);
 
-					Button exportButton = textImageButtonFactory.Generate("Export".Localize() + "...");
+					Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
 
 					exportButton.Margin = new BorderDouble(right: 10);
 					exportButton.Click += (sender, e) =>
@@ -415,35 +415,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// put in the save button
 					AddSaveAndSaveAs(doEdittingButtonsContainer);
 
-					var rotateButton = textImageButtonFactory.Generate("Rotate".Localize());
-					rotateButton.Click += (s, e) =>
+					// Normal margin factory
+					var normalMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+
+					var rotateButton = new PopupButton(smallMarginButtonFactory.Generate("Rotate".Localize()))
 					{
-						var popup = new PopupWidget(this.CreateRotateControls(), rotateButton, Vector2.Zero, Direction.Up, 0, true);
-						popup.Focus();
+						PopDirection = Direction.Up,
+						PopupContent = new RotateControls(this, normalMarginButtonFactory, smallMarginButtonFactory)
 					};
 					doEdittingButtonsContainer.AddChild(rotateButton);
 
-					var scaleButton = textImageButtonFactory.Generate("Scale".Localize());
-					scaleButton.Click += (s, e) =>
+					var scaleButton = new PopupButton(smallMarginButtonFactory.Generate("Scale".Localize()))
 					{
-						var popup = new PopupWidget(new ScaleControls(this)
-						{
-							BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-							Padding = 15
-						}, scaleButton, Vector2.Zero, Direction.Up, 0, true);
-						popup.Focus();
+						PopDirection = Direction.Up,
+						PopupContent = new ScaleControls(this, normalMarginButtonFactory)
 					};
 					doEdittingButtonsContainer.AddChild(scaleButton);
 
-					var mirrorButton = textImageButtonFactory.Generate("Mirror".Localize());
-					mirrorButton.Click += (s, e) =>
+					var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate("Mirror".Localize()))
 					{
-						var popup = new PopupWidget(new MirrorControls(this)
-						{
-							BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-							Padding = 15
-						}, mirrorButton, Vector2.Zero, Direction.Up, 0, true);
-						popup.Focus();
+						PopDirection = Direction.Up,
+						PopupContent = new MirrorControls(this, normalMarginButtonFactory)
 					};
 					doEdittingButtonsContainer.AddChild(mirrorButton);
 
@@ -451,11 +443,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					int numberOfExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 					if (numberOfExtruders > 1)
 					{
-						var materialsButton = textImageButtonFactory.Generate("Materials".Localize());
-						materialsButton.Click += (s, e) =>
+						var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
 						{
-							var popup = new PopupWidget(this.AddMaterialControls(), materialsButton, Vector2.Zero, Direction.Up, 0, true);
-							popup.Focus();
+							PopDirection = Direction.Up,
+							PopupContent = this.AddMaterialControls()
 						};
 						doEdittingButtonsContainer.AddChild(materialsButton);
 					}
@@ -489,7 +480,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (windowType == WindowMode.StandAlone)
 			{
-				Button closeButton = textImageButtonFactory.Generate("Close".Localize());
+				Button closeButton = smallMarginButtonFactory.Generate("Close".Localize());
 				buttonBottomPanel.AddChild(closeButton);
 				closeButton.Click += (sender, e) =>
 				{
@@ -1454,116 +1445,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return buttonPanel;
 		}
 
-		internal GuiWidget CreateRotateControls()
-		{
-			var buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-				Padding = 15
-			};
-			List<GuiWidget> rotateControls = new List<GuiWidget>();
-
-			textImageButtonFactory.FixedWidth = EditButtonHeight;
-
-			FlowLayoutWidget degreesContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			degreesContainer.HAnchor = HAnchor.ParentLeftRight;
-			degreesContainer.Padding = new BorderDouble(5);
-
-			string degreesLabelText = "Degrees".Localize();
-			string degreesLabelTextFull = "{0}:".FormatWith(degreesLabelText);
-			TextWidget degreesLabel = new TextWidget(degreesLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			degreesContainer.AddChild(degreesLabel);
-			degreesContainer.AddChild(new HorizontalSpacer());
-
-			MHNumberEdit degreesControl = new MHNumberEdit(45, pixelWidth: 40, allowNegatives: true, allowDecimals: true, increment: 5, minValue: -360, maxValue: 360);
-			degreesControl.VAnchor = Agg.UI.VAnchor.ParentTop;
-			degreesContainer.AddChild(degreesControl);
-			rotateControls.Add(degreesControl);
-
-			buttonPanel.AddChild(degreesContainer);
-
-			FlowLayoutWidget rotateButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			rotateButtonContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			ImageBuffer rotateImage = StaticData.Instance.LoadIcon("icon_rotate_32x32.png", 32, 32);
-			Button rotateXButton = textImageButtonFactory.Generate("", rotateImage);
-			TextWidget centeredX = new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredX.Margin = new BorderDouble(3, 0, 0, 0); centeredX.AnchorCenter(); rotateXButton.AddChild(centeredX);
-			rotateButtonContainer.AddChild(rotateXButton);
-			rotateControls.Add(rotateXButton);
-			rotateXButton.Click += (s, e) =>
-			{
-				if (Scene.HasSelection)
-				{
-					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-					Matrix4X4 rotation = Matrix4X4.CreateRotationX(radians);
-					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
-					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, rotation);
-					UndoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-
-			Button rotateYButton = textImageButtonFactory.Generate("", rotateImage);
-			TextWidget centeredY = new TextWidget("Y", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredY.Margin = new BorderDouble(3, 0, 0, 0); centeredY.AnchorCenter(); rotateYButton.AddChild(centeredY);
-			rotateButtonContainer.AddChild(rotateYButton);
-			rotateControls.Add(rotateYButton);
-			rotateYButton.Click += (s, e) =>
-			{
-				if (Scene.HasSelection)
-				{
-					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-					Matrix4X4 rotation = Matrix4X4.CreateRotationY(radians);
-					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
-					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, rotation);
-					UndoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-
-			Button rotateZButton = textImageButtonFactory.Generate("", rotateImage);
-			TextWidget centeredZ = new TextWidget("Z", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredZ.Margin = new BorderDouble(3, 0, 0, 0); centeredZ.AnchorCenter(); rotateZButton.AddChild(centeredZ);
-			rotateButtonContainer.AddChild(rotateZButton);
-			rotateControls.Add(rotateZButton);
-			rotateZButton.Click += (s, e) =>
-			{
-				if (Scene.HasSelection)
-				{
-					double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-					Matrix4X4 rotation = Matrix4X4.CreateRotationZ(radians);
-					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
-					Scene.SelectedItem.Matrix = PlatingHelper.ApplyAtCenter(Scene.SelectedItem, rotation);
-					UndoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-
-			buttonPanel.AddChild(rotateButtonContainer);
-
-			Button layFlatButton = WhiteButtonFactory.Generate("Align to Bed".Localize(), centerText: true);
-			layFlatButton.Cursor = Cursors.Hand;
-			buttonPanel.AddChild(layFlatButton);
-
-			layFlatButton.Click += (s, e) =>
-			{
-				if (Scene.HasSelection)
-				{
-					Matrix4X4 undoTransform = Scene.SelectedItem.Matrix;
-					MakeLowestFaceFlat(Scene.SelectedItem);
-					UndoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-
-			buttonPanel.AddChild(GenerateHorizontalRule());
-			textImageButtonFactory.FixedWidth = 0;
-
-			return buttonPanel;
-		}
-
 		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
 		{
 			TupleList<string, Func<bool>> buttonList = new TupleList<string, Func<bool>>();
@@ -1964,7 +1845,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
+		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
 		{
 			Matrix4X4 objectToWold = objectToLayFlatGroup.Matrix;
 			IObject3D objectToLayFlat = objectToLayFlatGroup.Children[0];
@@ -2352,7 +2233,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// ViewControls3D {{
 		internal GuiWidget ShowOverflowMenu()
 		{
-			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = 12,
+				BackgroundColor = RGBA_Bytes.White
+			};
 
 			var meshViewer = meshViewerWidget;
 
@@ -2389,23 +2274,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						}));
 			}
+		
+			popupContainer.AddChild(new HorizontalLine());
 
-			var widget = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var renderOptions = CreateRenderTypeRadioButtons();
+			popupContainer.AddChild(renderOptions);
+
+			popupContainer.AddChild(new GridOptionsPanel(meshViewer));
+
+			return popupContainer;
+		}
+
+		private GuiWidget CreateRenderTypeRadioButtons()
+		{
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				Margin = new BorderDouble(5, 5, 5, 0)
 			};
 
-			popupContainer.AddChild(new HorizontalLine());
-			CreateRenderTypeRadioButtons(widget);
-
-			popupContainer.AddChild(widget);
-
-			return popupContainer;
-		}
-
-		private void CreateRenderTypeRadioButtons(GuiWidget parentContainer)
-		{
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
 			if (renderTypeString == null)
 			{
@@ -2442,7 +2329,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
 					}
 				};
-				parentContainer.AddChild(renderTypeCheckBox);
+				container.AddChild(renderTypeCheckBox);
 			}
 
 			{
@@ -2456,7 +2343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
 					}
 				};
-				parentContainer.AddChild(renderTypeCheckBox);
+				container.AddChild(renderTypeCheckBox);
 			}
 
 			{
@@ -2470,7 +2357,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
 					}
 				};
-				parentContainer.AddChild(renderTypeCheckBox);
+				container.AddChild(renderTypeCheckBox);
 			}
 
 			{
@@ -2525,53 +2412,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				parentContainer.AddChild(renderTypeCheckBox);
+				container.AddChild(renderTypeCheckBox);
 
-				AddGridSnapSettings(parentContainer);
+				return container;
 			}
 		}
-
-		private void AddGridSnapSettings(GuiWidget widgetToAddTo)
-		{
-			TextWidget snapGridLabel = new TextWidget("Snap Grid".Localize())
-			{
-				TextColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-				Margin = new BorderDouble(0, 0, 0, 10)
-			};
-			widgetToAddTo.AddChild(snapGridLabel);
-
-			var selectableOptions = new DropDownList("Custom", Direction.Down);
-
-			Dictionary<double, string> snapSettings = new Dictionary<double, string>()
-			{
-				{ 0, "Off" },
-				{ .1, "0.1" },
-				{ .25, "0.25" },
-				{ .5, "0.5" },
-				{ 1, "1" },
-				{ 2, "2" },
-				{ 5, "5" },
-			};
-
-			foreach (KeyValuePair<double, string> snapSetting in snapSettings)
-			{
-				double valueLocal = snapSetting.Key;
-
-				MenuItem newItem = selectableOptions.AddItem(snapSetting.Value);
-				if (meshViewerWidget.SnapGridDistance == valueLocal)
-				{
-					selectableOptions.SelectedLabel = snapSetting.Value;
-				}
-
-				newItem.Selected += (sender, e) =>
-				{
-					meshViewerWidget.SnapGridDistance = snapSetting.Key;
-				};
-			}
-
-			widgetToAddTo.AddChild(selectableOptions);
-		}
-
 
 		private static MenuItem AddCheckbox(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
 		{
@@ -2587,7 +2432,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 		// ViewControls3D }}
-
 	}
 
 	public enum HitQuadrant { LB, LT, RB, RT }
