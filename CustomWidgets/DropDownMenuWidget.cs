@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
@@ -41,14 +42,18 @@ namespace MatterHackers.Agg.UI
 
 		private GuiWidget mainControlWidget;
 
-		public BorderDouble MenuItemsPadding { get; set; }
+		private List<NamedAction> menuActions = null;
+
+		TextWidget textWidget = null;
 
 		public DropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
 			: base(direction)
 		{
-			TextWidget textWidget = new TextWidget(topMenuText, pointSize: pointSize);
-			textWidget.TextColor = this.TextColor;
-			TextColorChanged += (s, e) => textWidget.TextColor = this.TextColor;
+			textWidget = new TextWidget(topMenuText, pointSize: pointSize)
+			{
+				TextColor = this.TextColor
+			};
+
 			textWidget.AutoExpandBoundsToText = true;
 			this.Name = topMenuText + " Menu";
 
@@ -61,11 +66,29 @@ namespace MatterHackers.Agg.UI
 			SetStates(topMenuContent);
 		}
 
+		public List<NamedAction> MenuActions
+		{
+			get => menuActions;
+			set
+			{
+				menuActions = value;
+				if (menuActions != null)
+				{
+					foreach (var action in menuActions)
+					{
+						this.AddItem(action.Title);
+					}
+				}
+			}
+		}
+
 		public bool MenuAsWideAsItems { get; set; } = true;
 
 		public bool DrawDirectionalArrow { get; set; } = true;
 
 		public int BorderWidth { get; set; } = 1;
+
+		public BorderDouble MenuItemsPadding { get; set; }
 
 		public RGBA_Bytes BorderColor { get; set; }
 
@@ -77,14 +100,23 @@ namespace MatterHackers.Agg.UI
 
 		public RGBA_Bytes HoverColor { get; set; }
 
-		RGBA_Bytes textColor = RGBA_Bytes.Black;
+		private RGBA_Bytes textColor = RGBA_Bytes.Black;
 		public RGBA_Bytes TextColor
 		{
 			get { return textColor; }
-			set { if (value != textColor) { textColor = value; TextColorChanged?.Invoke(this, null); } }
+			set
+			{
+				if (value != textColor)
+				{
+					textColor = value;
+					
+					if (textWidget != null)
+					{
+						textWidget.TextColor = textColor;
+					}
+				}
+			}
 		}
-
-		public event EventHandler TextColorChanged;
 
 		private int selectedIndex = -1;
 
@@ -99,10 +131,7 @@ namespace MatterHackers.Agg.UI
 			}
 		}
 
-		public String SelectedValue
-		{
-			get { return GetValue(SelectedIndex); }
-		}
+		public string SelectedValue => GetValue(SelectedIndex);
 
 		public string GetValue(int itemIndex)
 		{
@@ -121,9 +150,6 @@ namespace MatterHackers.Agg.UI
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
 
-			MouseEnter += new EventHandler(DropDownList_MouseEnter);
-			MouseLeave += new EventHandler(DropDownList_MouseLeave);
-
 			//IE Don't show arrow unless color is set explicitly
 			NormalArrowColor = new RGBA_Bytes(255, 255, 255, 0);
 			HoverArrowColor = TextColor;
@@ -135,22 +161,33 @@ namespace MatterHackers.Agg.UI
 			base.DropListItems_Closed(sender, e);
 		}
 
-		private void DropDownList_MouseLeave(object sender, EventArgs e)
+		public override void OnMouseLeave(MouseEventArgs mouseEvent)
 		{
 			if (!this.IsOpen)
 			{
 				BackgroundColor = NormalColor;
 			}
+
+			base.OnMouseLeave(mouseEvent);
 		}
 
-		private void DropDownList_MouseEnter(object sender, EventArgs e)
+		public override void OnMouseEnter(MouseEventArgs mouseEvent)
 		{
 			BackgroundColor = HoverColor;
+			base.OnMouseEnter(mouseEvent);
 		}
 
 		private void OnSelectionChanged(EventArgs e)
 		{
-			SelectionChanged?.Invoke(this, e);
+			if (MenuActions != null
+				&& this.selectedIndex <= MenuActions.Count - 1)
+			{
+				MenuActions[this.selectedIndex].Action?.Invoke();
+			}
+			else
+			{
+				SelectionChanged?.Invoke(this, e);
+			}
 		}
 
 		private void MenuItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -179,9 +216,9 @@ namespace MatterHackers.Agg.UI
 			foreach (MenuItem item in e.NewItems)
 			{
 				item.MinimumSize = new Vector2(minSize.x, item.MinimumSize.y);
-				// remove it if it is there so we don't have two. It is ok to remove a delagate that is not present.
-				item.Selected -= new EventHandler(item_Selected);
-				item.Selected += new EventHandler(item_Selected);
+				// remove it if it is there so we don't have two. It is ok to remove a delegate that is not present.
+				item.Selected -= item_Selected;
+				item.Selected += item_Selected;
 			}
 		}
 
@@ -275,24 +312,27 @@ namespace MatterHackers.Agg.UI
 			{
 				value = name;
 			}
+
 			if (mainControlWidget.Text != "")
 			{
 				mainControlWidget.Margin = MenuItemsPadding;
 			}
 
-			//MenuItem menuItem = new MenuItem(new MenuItemStatesView(normalTextWithMargin, hoverTextWithMargin), value);
-			MenuItem menuItem = new MenuItem(new MenuItemColorStatesView(name)
-			{
-				NormalBackgroundColor = MenuItemsBackgroundColor,
-				OverBackgroundColor = MenuItemsBackgroundHoverColor,
+			var menuItem = new MenuItem(
+				new MenuItemColorStatesView(name)
+				{
+					NormalBackgroundColor = MenuItemsBackgroundColor,
+					OverBackgroundColor = MenuItemsBackgroundHoverColor,
 
-				NormalTextColor = MenuItemsTextColor,
-				OverTextColor = MenuItemsTextHoverColor,
-				DisabledTextColor = RGBA_Bytes.Gray,
+					NormalTextColor = MenuItemsTextColor,
+					OverTextColor = MenuItemsTextHoverColor,
+					DisabledTextColor = RGBA_Bytes.Gray,
 
-				PointSize = pointSize,
-				Padding = MenuItemsPadding,
-			}, value);
+					PointSize = pointSize,
+					Padding = MenuItemsPadding,
+				}, 
+				value);
+
 			menuItem.Text = name;
 			menuItem.Name = name + " Menu Item";
 			MenuItems.Add(menuItem);

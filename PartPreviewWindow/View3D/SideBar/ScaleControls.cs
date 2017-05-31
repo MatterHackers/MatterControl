@@ -204,9 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			presetScaleMenu.AddItem("in to mm (25.4)");
 			presetScaleMenu.AddItem("mm to cm (.1)");
 			presetScaleMenu.AddItem("cm to mm (10)");
-			string resetLable = "none".Localize();
-			string resetLableFull = "{0} (1)".FormatWith(resetLable);
-			presetScaleMenu.AddItem(resetLableFull);
+			presetScaleMenu.AddItem("none".Localize() + " (1)");
 
 			presetScaleMenu.SelectionChanged += (sender, e) =>
 			{

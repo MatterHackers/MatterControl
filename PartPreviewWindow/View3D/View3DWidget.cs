@@ -1510,40 +1510,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
 		{
-			var buttonList = new List<NamedAction>();
-			buttonList.Add("Save".Localize(), () =>
+			var buttonList = new List<NamedAction>()
 			{
-				if(printItemWrapper == null)
 				{
-					UiThread.RunOnIdle(OpenSaveAsWindow);
-				}
-				else
+					"Save".Localize(),
+					() =>
+					{
+						if (printItemWrapper == null)
+						{
+							UiThread.RunOnIdle(OpenSaveAsWindow);
+						}
+						else
+						{
+							SaveChanges(null);
+						}
+					}
+				},
 				{
-					SaveChanges(null);
+					"Save As".Localize(),
+					() => UiThread.RunOnIdle(OpenSaveAsWindow)
 				}
-			});
+			};
 
-			buttonList.Add("Save As".Localize(), () =>
+			var splitButtonFactory = new SplitButtonFactory()
 			{
-				UiThread.RunOnIdle(OpenSaveAsWindow);
-			});
-
-
-			/*
-			DynamicDropDownMenu menu = CreateMenu(direction);
-	
-			for (int index = 1; index < buttonList.Count; index++)
-			{
-				menu.addItem(buttonList[index].Item1, buttonList[index].Item2);
-			}
-
-			SplitButton splitButton = new SplitButton(button, menu);
-			*/
-
-			var textImageButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
-
-			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
-			splitButtonFactory.FixedHeight = textImageButtonFactory.FixedHeight;
+				FixedHeight = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins.FixedHeight
+			};
 
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
 			saveButtons.Visible = false;
@@ -2077,7 +2069,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				UnlockEditControls();
-				saveButtons.Visible = !saveSucceded;
+				saveButtons.Visible = true;
 				afterSaveCallback?.Invoke();
 			}
 		}

@@ -126,37 +126,27 @@ namespace MatterHackers.MatterControl
 		public double FixedWidth = 10;
 		public double FixedHeight = 30;
 
-		public DropDownMenuFactory()
+		public DropDownMenu Generate(string label = "", List<NamedAction> actions = null, Direction direction = Direction.Down)
 		{
-		}
-
-		public DynamicDropDownMenu Generate(string label = "", List<NamedAction> optionList = null, Direction direction = Direction.Down)
-		{
-			DynamicDropDownMenu menu = new DynamicDropDownMenu(CreateButtonViewStates(label), direction);
-			menu.VAnchor = VAnchor.ParentCenter;
-			menu.HAnchor = HAnchor.FitToChildren;
-			menu.MenuAsWideAsItems = false;
-			menu.AlignToRightEdge = true;
-			menu.NormalColor = normalFillColor;
-			menu.HoverColor = hoverFillColor;
-			menu.BorderColor = normalBorderColor;
-			menu.BackgroundColor = menu.NormalColor;
-
-			if (optionList != null)
+			return new DropDownMenu(CreateButtonViewStates(label), direction)
 			{
-				foreach (var option in optionList)
-				{
-					menu.addItem(option.Title, option.Action);
-				}
-			}
-
-			return menu;
+				VAnchor = VAnchor.ParentCenter,
+				HAnchor = HAnchor.FitToChildren,
+				MenuAsWideAsItems = false,
+				AlignToRightEdge = true,
+				//Width = this.FixedWidth,
+				NormalColor = normalFillColor,
+				BackgroundColor = normalFillColor,
+				HoverColor = hoverFillColor,
+				BorderColor = normalBorderColor,
+				MenuActions = actions
+			};
 		}
 
 		private ButtonViewStates CreateButtonViewStates(string label)
 		{
 			//Create the multi-state button view
-			ButtonViewStates buttonViewWidget = new ButtonViewStates(
+			var buttonViewWidget = new ButtonViewStates(
 				new DropDownButtonBase(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, fontSize, FlowDirection.LeftToRight, FixedHeight),
 				new DropDownButtonBase(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, fontSize, FlowDirection.LeftToRight, FixedHeight),
 				new DropDownButtonBase(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, fontSize, FlowDirection.LeftToRight, FixedHeight),
