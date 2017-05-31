@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -56,6 +57,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using MatterHackers.RayTracer.Traceable;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -559,6 +561,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BeforeDraw += CreateBooleanTestGeometry;
 				AfterDraw += RemoveBooleanTestGeometry;
 			}
+
+			//meshViewerWidget.AfterDraw += AfterDrawTest;
+
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
 
@@ -620,14 +625,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		// TODO: Still valid?
+
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			return;
-			if (Scene?.TraceData() != null)
-			{
-				Scene.TraceData().RenderBvhRecursive(Scene.Matrix, 0, 3);
-			}
+			// This shows the BVH as rects around the scene items
+			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
@@ -1071,7 +1073,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			hasDrawn = true;
+
 			base.OnDraw(graphics2D);
+		}
+
+		private void AfterDrawTest(object sender, DrawEventArgs e)
+		{
+			foreach (var bvhAndTransform in new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
+			{
+				var center = x.Bvh.GetCenter();
+				var worldCenter = Vector3.Transform(center, x.TransformToWorld);
+				if(worldCenter.z > 0)
+				{
+					return true;
+				}
+
+				return false;
+			}))
+			{
+				TriangleShape tri = bvhAndTransform.Bvh as TriangleShape;
+				if (tri != null)
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						var vertexPos = tri.GetVertex(i);
+						var screenCenter = Vector3.Transform(vertexPos, bvhAndTransform.TransformToWorld);
+						var screenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(screenCenter);
+
+						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
+					}
+				}
+				else
+				{
+					var center = bvhAndTransform.Bvh.GetCenter();
+					var worldCenter = Vector3.Transform(center, bvhAndTransform.TransformToWorld);
+					var screenPos2 = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(worldCenter);
+					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
+				}
+			}
 		}
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
