@@ -243,8 +243,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(viewControls3D)
 		{
 			this.openMode = openMode;
-			this.windowType = windowType;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
+			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			this.windowType = windowType;
 			autoRotating = allowAutoRotate;
 
 			this.printItemWrapper = printItemWrapper;
@@ -268,8 +275,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GuiWidget viewArea = new GuiWidget();
 			viewArea.AnchorAll();
 			{
-				meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
-
 				//viewControls3D.RegisterViewer(meshViewerWidget);
 
 				PutOemImageOnBed();
