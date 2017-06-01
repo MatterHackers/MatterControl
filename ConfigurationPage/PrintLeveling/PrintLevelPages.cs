@@ -441,13 +441,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
 
-			var adjustedProbPosition = probeStartPosition;
+			var adjustedProbePosition = probeStartPosition;
 			// subtract out the probe offset
 			var probeOffset = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
-			adjustedProbPosition -= new Vector3(probeOffset);
+			adjustedProbePosition -= new Vector3(probeOffset);
 
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(adjustedProbPosition, feedRates.x);
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(adjustedProbePosition, feedRates.x);
 
 			int numberOfSamples = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.z_probe_samples);
 			for (int i = 0; i < numberOfSamples; i++)
