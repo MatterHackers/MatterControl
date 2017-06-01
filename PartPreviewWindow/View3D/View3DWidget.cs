@@ -470,7 +470,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			buttonRightPanelHolder.Name = "buttonRightPanelHolder";
 			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
-			
+
 			buttonRightPanelDisabledCover = new GuiWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -597,7 +597,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void SelectAll()
 		{
 			Scene.ClearSelection();
-			foreach(var child in Scene.Children)
+			foreach (var child in Scene.Children)
 			{
 				Scene.AddToSelection(child);
 			}
@@ -606,7 +606,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		// TODO: Rename to DragDropItem
 
-		private IObject3D dragDropSource; 
+		private IObject3D dragDropSource;
 		public IObject3D DragDropSource
 		{
 			get
@@ -718,8 +718,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UndoBuffer.Add(operation);
 		}
 
-#region DoBooleanTest
-        Object3D booleanGroup;
+		#region DoBooleanTest
+		Object3D booleanGroup;
 		Vector3 offset = new Vector3();
 		Vector3 direction = new Vector3(.11, .12, .13);
 		Vector3 rotCurrent = new Vector3();
@@ -757,7 +757,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					children.Add(booleanGroup);
 				});
 			}
-			catch(Exception e2)
+			catch (Exception e2)
 			{
 				string text = e2.Message;
 				int a = 0;
@@ -801,14 +801,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//offsetB = new Vector3(105.240172225344, 92.9716306394062, 18.4619570261172);
 			//rotCurrent = new Vector3(4.56890223673623, -2.67874102322035, 1.02768848238523);
 			//scaleCurrent = new Vector3(1.07853517569753, 0.964980885267323, 1.09290934544604);
-			Debug.WriteLine("t"+offsetB.ToString() + " r" + rotCurrent.ToString() + " s" + scaleCurrent.ToString() + " " + opp);
+			Debug.WriteLine("t" + offsetB.ToString() + " r" + rotCurrent.ToString() + " s" + scaleCurrent.ToString() + " " + opp);
 			Matrix4X4 transformB = Matrix4X4.CreateScale(scaleCurrent) * Matrix4X4.CreateRotation(rotCurrent) * Matrix4X4.CreateTranslation(offsetB);
-            boxB.Transform(transformB);
+			boxB.Transform(transformB);
 
 			Mesh meshToAdd = meshOpperation(boxA, boxB);
 			meshToAdd.CleanAndMergMesh();
 
-			if(aabbOpperation != null)
+			if (aabbOpperation != null)
 			{
 				AxisAlignedBoundingBox boundsA = boxA.GetAxisAlignedBoundingBox();
 				AxisAlignedBoundingBox boundsB = boxB.GetAxisAlignedBoundingBox();
@@ -816,7 +816,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				AxisAlignedBoundingBox boundsResult = aabbOpperation(boundsA, boundsB);
 
-				if(!boundsAdd.Equals(boundsResult, .0001))
+				if (!boundsAdd.Equals(boundsResult, .0001))
 				{
 					int a = 0;
 				}
@@ -833,13 +833,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private void RemoveBooleanTestGeometry(object sender, DrawEventArgs e)
-        {
+		{
 			if (meshViewerWidget.Scene.Children.Contains(booleanGroup))
 			{
 				meshViewerWidget.Scene.Children.Remove(booleanGroup);
 				UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
 			}
-        }
+		}
 		#endregion DoBooleanTest
 
 		public enum AutoRotate { Enabled, Disabled };
@@ -918,7 +918,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var meshViewerPosition = this.meshViewerWidget.TransformToScreenSpace(meshViewerWidget.LocalBounds);
 
 			// If the mouse is within this control
-			if (meshViewerPosition.Contains(screenSpaceMousePosition) 
+			if (meshViewerPosition.Contains(screenSpaceMousePosition)
 				&& this.DragDropSource != null)
 			{
 				var localPosition = this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition);
@@ -1084,7 +1084,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AfterDraw3DContent(object sender, DrawEventArgs e)
 		{
-			var xxx = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
+			//RendereSceneTraceData(e);
+			//RenderSceneObjectData(e);
+
+			if (DragSelectionInProgress)
+			{
+				e.graphics2D.Rectangle(new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition), RGBA_Bytes.Yellow);
+			}
+		}
+
+		private void RendereSceneTraceData(DrawEventArgs e)
+		{
+			var bvhIterator = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
 			{
 				var center = x.Bvh.GetCenter();
 				var worldCenter = Vector3.Transform(center, x.TransformToWorld);
@@ -1096,22 +1107,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return false;
 			});
 
-			int count = xxx.Count();
+			int count = bvhIterator.Count();
 
-			foreach (var bvhAndTransform in xxx)
+			foreach (var subBvhIterator in bvhIterator)
 			{
 				for (int i = 0; i < 4; i++)
 				{
-					Vector3 bottomStartPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), bvhAndTransform.TransformToWorld);
+					Vector3 bottomStartPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), subBvhIterator.TransformToWorld);
 					var bottomStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomStartPosition);
 
-					Vector3 bottomEndPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), bvhAndTransform.TransformToWorld);
+					Vector3 bottomEndPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), subBvhIterator.TransformToWorld);
 					var bottomEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomEndPosition);
 
-					Vector3 topStartPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), bvhAndTransform.TransformToWorld);
+					Vector3 topStartPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), subBvhIterator.TransformToWorld);
 					var topStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topStartPosition);
 
-					Vector3 topEndPosition = Vector3.Transform(bvhAndTransform.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), bvhAndTransform.TransformToWorld);
+					Vector3 topEndPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), subBvhIterator.TransformToWorld);
 					var topEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topEndPosition);
 
 					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
@@ -1119,13 +1130,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, RGBA_Bytes.Black);
 				}
 
-				TriangleShape tri = bvhAndTransform.Bvh as TriangleShape;
+				TriangleShape tri = subBvhIterator.Bvh as TriangleShape;
 				if (tri != null)
 				{
 					for (int i = 0; i < 3; i++)
 					{
 						var vertexPos = tri.GetVertex(i);
-						var screenCenter = Vector3.Transform(vertexPos, bvhAndTransform.TransformToWorld);
+						var screenCenter = Vector3.Transform(vertexPos, subBvhIterator.TransformToWorld);
 						var screenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(screenCenter);
 
 						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
@@ -1133,17 +1144,72 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					var center = bvhAndTransform.Bvh.GetCenter();
-					var worldCenter = Vector3.Transform(center, bvhAndTransform.TransformToWorld);
+					var center = subBvhIterator.Bvh.GetCenter();
+					var worldCenter = Vector3.Transform(center, subBvhIterator.TransformToWorld);
 					var screenPos2 = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(worldCenter);
 					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
-					e.graphics2D.DrawString($"{bvhAndTransform.Depth},", screenPos2.x + 12 * bvhAndTransform.Depth, screenPos2.y);
+					e.graphics2D.DrawString($"{subBvhIterator.Depth},", screenPos2.x + 12 * subBvhIterator.Depth, screenPos2.y);
 				}
 			}
+		}
 
-			if (DragSelectionInProgress)
+		private void RenderSceneObjectData(DrawEventArgs e)
+		{
+			var object3DIterator = new Object3DIterator(Scene, decentFilter: (x) =>
 			{
-				e.graphics2D.Rectangle(new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition), RGBA_Bytes.Yellow);
+				var center = x.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetCenter();
+				var worldCenter = Vector3.Transform(center, Matrix4X4.Identity);
+				if (worldCenter.z > 0)
+				{
+					return true;
+				}
+
+				return false;
+			});
+
+			int count = object3DIterator.Count();
+
+			foreach (var subObject3DIterator in object3DIterator)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					Vector3 bottomStartPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetBottomCorner(i), Matrix4X4.Identity);
+					var bottomStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomStartPosition);
+
+					Vector3 bottomEndPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetBottomCorner((i + 1) % 4), Matrix4X4.Identity);
+					var bottomEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomEndPosition);
+
+					Vector3 topStartPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetTopCorner(i), Matrix4X4.Identity);
+					var topStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topStartPosition);
+
+					Vector3 topEndPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetTopCorner((i + 1) % 4), Matrix4X4.Identity);
+					var topEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topEndPosition);
+
+					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
+					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
+					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, RGBA_Bytes.Black);
+				}
+
+				Mesh tri = subObject3DIterator.IObject3D.Mesh;
+				if (false)//tri != null)
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						//var vertexPos = tri.GetVertex(i);
+						//var screenCenter = Vector3.Transform(vertexPos, bvhAndTransform.TransformToWorld);
+						//var screenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(screenCenter);
+
+						//e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
+					}
+				}
+				else
+				{
+					var center = subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetCenter();
+					var worldCenter = Vector3.Transform(center, Matrix4X4.Identity);
+					var screenPos2 = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(worldCenter);
+					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
+					e.graphics2D.DrawString($"{subObject3DIterator.Depth},", screenPos2.x + 12 * subObject3DIterator.Depth, screenPos2.y);
+				}
 			}
 		}
 
@@ -1218,7 +1284,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							// start a selection rect
 							DragSelectionStartPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
-							DragSelectionEndPosition = DragSelectionStartPosition - OffsetToMeshViewerWidget();
+							DragSelectionEndPosition = DragSelectionStartPosition- OffsetToMeshViewerWidget();
 							DragSelectionInProgress = true;
 						}
 						else
