@@ -358,6 +358,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			this.allowLessThan0 = allowLessThan0;
 			this.probePositions = probePositions;
+
 			this.lastReportedPosition = PrinterConnectionAndCommunication.Instance.LastReportedPosition;
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
@@ -393,7 +394,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					samples.Add(sampleRead);
 
-					if (samples.Count == NumberOfSamples)
+					int numberOfSamples = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.z_probe_samples);
+					if (samples.Count == numberOfSamples)
 					{
 						samples.Sort();
 						if (samples.Count > 3)
@@ -419,7 +421,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnClosed(e);
 		}
 
-		readonly int NumberOfSamples = 5;
 		List<double> samples = new List<double>();
 
 		public override void PageIsBecomingActive()
@@ -429,11 +430,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			base.PageIsBecomingActive();
 
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_probe)
+				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_z_probe)
+				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_servo))
+			{
+				// make sure the servo is deployed
+				var servoDeploy = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_servo_depolyed_angle);
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow($"M280 S{servoDeploy}");
+			}
+
 			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
 
+			var adjustedProbePosition = probeStartPosition;
+			// subtract out the probe offset
+			var probeOffset = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
+			adjustedProbePosition -= new Vector3(probeOffset);
+
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
-			for (int i = 0; i < NumberOfSamples; i++)
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(adjustedProbePosition, feedRates.x);
+
+			int numberOfSamples = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.z_probe_samples);
+			for (int i = 0; i < numberOfSamples; i++)
 			{
 				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30"); // probe the current position
 			}

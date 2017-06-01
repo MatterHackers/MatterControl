@@ -120,7 +120,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string start_gcode = nameof(start_gcode);
 		public const string temperature = nameof(temperature);
 		public const string use_z_probe = nameof(use_z_probe);
+		public const string z_probe_samples = nameof(z_probe_samples);
 		public const string has_z_probe = nameof(has_z_probe);
+		public const string has_z_servo = nameof(has_z_servo);
+		public const string z_probe_xy_offset = nameof(z_probe_xy_offset);
+		public const string z_servo_depolyed_angle = nameof(z_servo_depolyed_angle);
+		public const string z_servo_retracted_angle = nameof(z_servo_retracted_angle);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
