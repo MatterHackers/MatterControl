@@ -515,59 +515,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
-			if (activeButtonBeforeKeyOverride == null)
+			var childWithFocus = this.ChildrenRecursive<GuiWidget>().Where(x => x.Focused).FirstOrDefault();
+
+			if (!(childWithFocus is InternalTextEditWidget))
 			{
-				activeButtonBeforeKeyOverride = viewControls3D.ActiveButton;
-
-				if (keyEvent.Alt)
+				if (activeButtonBeforeKeyOverride == null)
 				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+					activeButtonBeforeKeyOverride = viewControls3D.ActiveButton;
+
+					if (keyEvent.Alt)
+					{
+						viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+					}
+					else if (keyEvent.Shift)
+					{
+						viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
+					}
+					else if (keyEvent.Control)
+					{
+						viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
+					}
 				}
-				else if (keyEvent.Shift)
+
+				switch (keyEvent.KeyCode)
 				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
+					case Keys.Z:
+						if (keyEvent.Control)
+						{
+							UndoBuffer.Undo();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
+
+					case Keys.Y:
+						if (keyEvent.Control)
+						{
+							UndoBuffer.Redo();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
+
+					case Keys.Delete:
+					case Keys.Back:
+						DeleteSelectedMesh();
+						break;
+
+					case Keys.Escape:
+						if (CurrentSelectInfo.DownOnPart)
+						{
+							CurrentSelectInfo.DownOnPart = false;
+
+							SelectedMeshGroupTransform = transformOnMouseDown;
+
+							Invalidate();
+						}
+						break;
 				}
-				else if (keyEvent.Control)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
-				}
-			}
-
-			switch (keyEvent.KeyCode)
-			{
-				case Keys.Z:
-					if (keyEvent.Control)
-					{
-						UndoBuffer.Undo();
-						keyEvent.Handled = true;
-						keyEvent.SuppressKeyPress = true;
-					}
-					break;
-
-				case Keys.Y:
-					if (keyEvent.Control)
-					{
-						UndoBuffer.Redo();
-						keyEvent.Handled = true;
-						keyEvent.SuppressKeyPress = true;
-					}
-					break;
-
-				case Keys.Delete:
-				case Keys.Back:
-					DeleteSelectedMesh();
-					break;
-
-				case Keys.Escape:
-					if (CurrentSelectInfo.DownOnPart)
-					{
-						CurrentSelectInfo.DownOnPart = false;
-
-						SelectedMeshGroupTransform = transformOnMouseDown;
-
-						Invalidate();
-					}
-					break;
 			}
 
 			base.OnKeyDown(keyEvent);

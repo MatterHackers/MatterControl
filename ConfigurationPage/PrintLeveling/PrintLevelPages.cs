@@ -48,46 +48,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	public class LastPage3PointInstructions : InstructionsPage
-	{
-		protected WizardControl container;
-		private List<ProbePosition> probePositions = new List<ProbePosition>(3)
-		{
-			new ProbePosition(),new ProbePosition(),new ProbePosition()
-		};
-
-		public LastPage3PointInstructions(WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
-			: base(pageDescription, instructionsText)
-		{
-			this.probePositions = probePositions;
-			this.container = container;
-		}
-
-		public override void PageIsBecomingActive()
-		{
-			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.manual_probe_paper_width));
-
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			levelingData.SampledPositions.Clear();
-			levelingData.SampledPositions.Add(probePositions[0].position - paperWidth);
-			levelingData.SampledPositions.Add(probePositions[1].position - paperWidth);
-			levelingData.SampledPositions.Add(probePositions[2].position - paperWidth);
-
-			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData, true);
-			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
-
-			if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
-			{
-				PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
-			}
-
-			container.backButton.Enabled = false;
-
-			base.PageIsBecomingActive();
-		}
-	}
-
 	public class LastPagelInstructions : InstructionsPage
 	{
 		protected WizardControl container;

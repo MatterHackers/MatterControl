@@ -952,6 +952,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
+				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
+				if (Math.Abs(GetValue<double>(SettingsKey.baby_step_z_offset)) > 2)
+				{
+					string location = "Location: 'Controls' -> 'Movement' -> 'Z Offset'".Localize();
+					string error = "Z Offset is too large.".Localize();
+					string details = "The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize();
+					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Calibration Error".Localize());
+					return false;
+				}
+
 				if (GetValue<double>(SettingsKey.first_layer_extrusion_width) > GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
 					string error = "'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
