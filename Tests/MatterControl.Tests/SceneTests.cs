@@ -121,6 +121,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				new ViewControls3D(new MatterControl.TextImageButtonFactory()),
 				View3DWidget.OpenMode.Editing);
 
+			// because we are using it without adding it into a parent we need to initialize it
+			view3DWidget.Initialize();
+
 			var scene = view3DWidget.Scene;
 			scene.Children.Add(new Object3D
 			{
