@@ -6148,3 +6148,21 @@ Translated:The number of times to sample each probe position (results will be av
 English:Number of Samples
 Translated:Number of Samples
 
+English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+Translated:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+
+English:Controls Z Offset is too large.
+Translated:Controls Z Offset is too large.
+
+English:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+Translated:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+
+English:Calibration Error
+Translated:Calibration Error
+
+English:Z Offset is too large.
+Translated:Z Offset is too large.
+
+English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+
