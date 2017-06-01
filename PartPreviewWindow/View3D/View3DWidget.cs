@@ -567,7 +567,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AfterDraw += RemoveBooleanTestGeometry;
 			}
 
-			//meshViewerWidget.AfterDraw += AfterDrawTest;
+			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
 			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
@@ -1082,7 +1082,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		private void AfterDrawTest(object sender, DrawEventArgs e)
+		private void AfterDraw3DContent(object sender, DrawEventArgs e)
 		{
 			var xxx = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
 			{
@@ -1140,6 +1140,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					e.graphics2D.DrawString($"{bvhAndTransform.Depth},", screenPos2.x + 12 * bvhAndTransform.Depth, screenPos2.y);
 				}
 			}
+
+			if (DragSelectionInProgress)
+			{
+				e.graphics2D.Rectangle(new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition), RGBA_Bytes.Yellow);
+			}
 		}
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
@@ -1196,7 +1201,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						IntersectInfo info = new IntersectInfo();
 
 						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
-						if (hitObject != null)
+						if (hitObject == null)
+						{
+							if (Scene.HasSelection)
+							{
+								if (Scene.SelectedItem.ItemType == Object3DTypes.SelectionGroup)
+								{
+									Scene.ModifyChildren(ClearSelectionApplyChanges);
+								}
+								else
+								{
+									Scene.ClearSelection();
+								}
+								SelectedTransformChanged?.Invoke(this, null);
+							}
+
+							// start a selection rect
+							DragSelectionStartPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
+							DragSelectionEndPosition = DragSelectionStartPosition - OffsetToMeshViewerWidget();
+							DragSelectionInProgress = true;
+						}
+						else
 						{
 							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.z, null);
 
@@ -1257,25 +1282,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									CurrentSelectInfo.HitQuadrant = HitQuadrant.RT;
 								}
 							}
-						}
-						else
-						{
-							if(!Scene.HasSelection)
-							{
-								return;
-							}
 
-							if(Scene.SelectedItem.ItemType == Object3DTypes.SelectionGroup)
-							{
-								Scene.ModifyChildren(ClearSelectionApplyChanges);
-							}
-							else
-							{
-								Scene.ClearSelection();
-							}
+							SelectedTransformChanged?.Invoke(this, null);
 						}
-
-						SelectedTransformChanged?.Invoke(this, null);
 					}
 				}
 			}
@@ -1391,7 +1400,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
 			}
 
+			if (DragSelectionInProgress)
+			{
+				DragSelectionEndPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
+				Invalidate();
+			}
+
 			base.OnMouseMove(mouseEvent);
+		}
+
+		Vector2 OffsetToMeshViewerWidget()
+		{
+			List<GuiWidget> parents = new List<GuiWidget>();
+			GuiWidget parent = meshViewerWidget.Parent;
+			while (parent != this)
+			{
+				parents.Add(parent);
+				parent = parent.Parent;
+			}
+			Vector2 offset = new Vector2();
+			for(int i=parents.Count-1; i>=0; i--)
+			{
+				offset += parents[i].OriginRelativeParent;
+			}
+			return offset;
 		}
 
 		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
@@ -1423,14 +1455,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-				&& CurrentSelectInfo.DownOnPart
-				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
+			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
-				if (Scene.SelectedItem.Matrix != transformOnMouseDown)
+				if (CurrentSelectInfo.DownOnPart
+				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
-					AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
-					PartHasBeenChanged();
+					if (Scene.SelectedItem.Matrix != transformOnMouseDown)
+					{
+						AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
+						PartHasBeenChanged();
+					}
+				}
+				else if (DragSelectionInProgress)
+				{
+					DragSelectionInProgress = false;
 				}
 			}
 
@@ -2221,6 +2259,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public override bool InEditMode => true;
+
+		public Vector2 DragSelectionStartPosition { get; private set; }
+		public bool DragSelectionInProgress { get; private set; }
+		public Vector2 DragSelectionEndPosition { get; private set; }
 
 		internal async void SwitchStateToEditing()
 		{
