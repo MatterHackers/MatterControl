@@ -1171,16 +1171,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 4; i++)
 				{
 					Vector3 bottomStartPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetBottomCorner(i), Matrix4X4.Identity);
-					var bottomStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomStartPosition);
+					var bottomStartScreenPos = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
 
 					Vector3 bottomEndPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetBottomCorner((i + 1) % 4), Matrix4X4.Identity);
-					var bottomEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomEndPosition);
+					var bottomEndScreenPos = meshViewerWidget.World.GetScreenPosition(bottomEndPosition);
 
 					Vector3 topStartPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetTopCorner(i), Matrix4X4.Identity);
-					var topStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topStartPosition);
+					var topStartScreenPos = meshViewerWidget.World.GetScreenPosition(topStartPosition);
 
 					Vector3 topEndPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetTopCorner((i + 1) % 4), Matrix4X4.Identity);
-					var topEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topEndPosition);
+					var topEndScreenPos = meshViewerWidget.World.GetScreenPosition(topEndPosition);
 
 					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
 					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
@@ -1203,6 +1203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var center = subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetCenter();
 					var worldCenter = Vector3.Transform(center, Matrix4X4.Identity);
+					var screenPos2 = meshViewerWidget.World.GetScreenPosition(worldCenter);
 					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
 					e.graphics2D.DrawString($"{subObject3DIterator.Depth},", screenPos2.x + 12 * subObject3DIterator.Depth, screenPos2.y);
 				}
