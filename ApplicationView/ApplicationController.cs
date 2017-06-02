@@ -694,6 +694,8 @@ namespace MatterHackers.MatterControl
 
 		public MeshViewState PartPreviewState { get; set; } = new MeshViewState();
 
+		public View3DWidget ActiveView3DWidget { get; internal set; }
+
 		public string CachePath(ILibraryItem libraryItem)
 		{
 			// TODO: Use content SHA

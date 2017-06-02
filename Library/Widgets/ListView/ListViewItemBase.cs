@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			// On mouse down update the view3DWidget reference that will be used in MouseMove and MouseUp
-			view3DWidget = MatterControlApplication.Instance.ActiveView3DWidget;
+			view3DWidget = ApplicationController.Instance.ActiveView3DWidget;
 
 			base.OnMouseDown(mouseEvent);
 		}

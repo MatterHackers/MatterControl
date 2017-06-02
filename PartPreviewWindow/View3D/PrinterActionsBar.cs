@@ -110,22 +110,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					redoButton.Enabled = undoBuffer.RedoCount > 0;
 				};
 
+				var editPrinterButton = PrinterSelectEditDropdown.CreatePrinterEditButton();
+				this.AddChild(editPrinterButton);
+
 				overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 				{
 					AlignToRightEdge = true,
 				};
-				overflowDropdown.DynamicPopupContent = GeneratePopupContent;
+				overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
 
 				// Deregister on close
 				this.Closed += (s, e) =>
 				{
-					overflowDropdown.DynamicPopupContent = GeneratePopupContent;
+					overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
 				};
 
 				this.AddChild(overflowDropdown);
 			}
 
-			private GuiWidget GeneratePopupContent()
+			private GuiWidget GeneratePrinterOverflowMenu()
 			{
 				var widgetToPop = new FlowLayoutWidget()
 				{
