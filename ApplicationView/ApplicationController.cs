@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using MatterHackers.MatterControl.Library;
+	using MatterHackers.MatterControl.PartPreviewWindow;
+	using MatterHackers.VectorMath;
 	using PrintHistory;
 	using SettingsManagement;
 
@@ -683,6 +685,14 @@ namespace MatterHackers.MatterControl
 				return globalInstance;
 			}
 		}
+
+		public class MeshViewState
+		{
+			public Matrix4X4 RotationMatrix { get; internal set; } = Matrix4X4.Identity;
+			public Matrix4X4 TranslationMatrix { get; internal set; } = Matrix4X4.Identity;
+		}
+
+		public MeshViewState PartPreviewState { get; set; } = new MeshViewState();
 
 		public string CachePath(ILibraryItem libraryItem)
 		{

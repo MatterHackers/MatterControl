@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				Vector3 renderPosition = bounds.Center;
-				Vector2 cornerScreenSpace = view3DWidget.meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(renderPosition) - new Vector2(40, 20);
+				Vector2 cornerScreenSpace = view3DWidget.meshViewerWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
 
 				e.graphics2D.PushTransform();
 				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
@@ -259,12 +259,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
-
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
+			mainContainerTopToBottom.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			mainContainerTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
 
 			var centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			centerPartPreviewAndControls.Name = "centerPartPreviewAndControls";
@@ -320,9 +319,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				string progressFindPartsLabelFull = "{0}:".FormatWith(progressFindPartsLabel);
 
 				processingProgressControl = new ProgressControl(progressFindPartsLabelFull, ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor);
-				processingProgressControl.VAnchor = Agg.UI.VAnchor.ParentCenter;
+				processingProgressControl.VAnchor = VAnchor.ParentCenter;
 				editToolBar.AddChild(processingProgressControl);
-				editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+				editToolBar.VAnchor |= VAnchor.ParentCenter;
 				processingProgressControl.Visible = false;
 				doEdittingButtonsContainer = new FlowLayoutWidget();
 				doEdittingButtonsContainer.Visible = false;
@@ -558,8 +557,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				partHasBeenEdited = true;
 			};
-
-			meshViewerWidget.ResetView();
 
 			if (DoBooleanTest)
 			{
@@ -1114,16 +1111,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 4; i++)
 				{
 					Vector3 bottomStartPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), subBvhIterator.TransformToWorld);
-					var bottomStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomStartPosition);
+					var bottomStartScreenPos = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
 
 					Vector3 bottomEndPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), subBvhIterator.TransformToWorld);
-					var bottomEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomEndPosition);
+					var bottomEndScreenPos = meshViewerWidget.World.GetScreenPosition(bottomEndPosition);
 
 					Vector3 topStartPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), subBvhIterator.TransformToWorld);
-					var topStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topStartPosition);
+					var topStartScreenPos = meshViewerWidget.World.GetScreenPosition(topStartPosition);
 
 					Vector3 topEndPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), subBvhIterator.TransformToWorld);
-					var topEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topEndPosition);
+					var topEndScreenPos = meshViewerWidget.World.GetScreenPosition(topEndPosition);
 
 					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
 					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
@@ -1137,7 +1134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var vertexPos = tri.GetVertex(i);
 						var screenCenter = Vector3.Transform(vertexPos, subBvhIterator.TransformToWorld);
-						var screenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(screenCenter);
+						var screenPos = meshViewerWidget.World.GetScreenPosition(screenCenter);
 
 						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
 					}
@@ -1146,7 +1143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var center = subBvhIterator.Bvh.GetCenter();
 					var worldCenter = Vector3.Transform(center, subBvhIterator.TransformToWorld);
-					var screenPos2 = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(worldCenter);
+					var screenPos2 = meshViewerWidget.World.GetScreenPosition(worldCenter);
 					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
 					e.graphics2D.DrawString($"{subBvhIterator.Depth},", screenPos2.x + 12 * subBvhIterator.Depth, screenPos2.y);
 				}
@@ -1174,16 +1171,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 4; i++)
 				{
 					Vector3 bottomStartPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetBottomCorner(i), Matrix4X4.Identity);
-					var bottomStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomStartPosition);
+					var bottomStartScreenPos = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
 
 					Vector3 bottomEndPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetBottomCorner((i + 1) % 4), Matrix4X4.Identity);
-					var bottomEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(bottomEndPosition);
+					var bottomEndScreenPos = meshViewerWidget.World.GetScreenPosition(bottomEndPosition);
 
 					Vector3 topStartPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetTopCorner(i), Matrix4X4.Identity);
-					var topStartScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topStartPosition);
+					var topStartScreenPos = meshViewerWidget.World.GetScreenPosition(topStartPosition);
 
 					Vector3 topEndPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetTopCorner((i + 1) % 4), Matrix4X4.Identity);
-					var topEndScreenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(topEndPosition);
+					var topEndScreenPos = meshViewerWidget.World.GetScreenPosition(topEndPosition);
 
 					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
 					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
@@ -1206,7 +1203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var center = subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetCenter();
 					var worldCenter = Vector3.Transform(center, Matrix4X4.Identity);
-					var screenPos2 = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(worldCenter);
+					var screenPos2 = meshViewerWidget.World.GetScreenPosition(worldCenter);
 					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
 					e.graphics2D.DrawString($"{subObject3DIterator.Depth},", screenPos2.x + 12 * subObject3DIterator.Depth, screenPos2.y);
 				}
@@ -1250,7 +1247,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
 
-			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
+			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
 			{
 				if (mouseEvent.Button == MouseButtons.Left
 					&&
@@ -1369,7 +1366,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Translate to local
 			Vector2 localPosition = this.TransformFromScreenSpace(screenSpacePosition);
 
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(localPosition);
+			Ray ray = meshViewerWidget.World.GetRayForLocalBounds(localPosition);
 
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
@@ -1377,7 +1374,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void DragSelectedObject(Vector2 localMousePostion)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePostion);
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+			Ray ray = meshViewerWidget.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 			if (info != null)
@@ -1673,12 +1670,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					hasDrawn = false;
 					timeSinceLastSpin.Restart();
 
-					Quaternion currentRotation = meshViewerWidget.TrackballTumbleWidget.TrackBallController.CurrentRotation.GetRotation();
+					Quaternion currentRotation = meshViewerWidget.World.RotationMatrix.GetRotation();
 					Quaternion invertedRotation = Quaternion.Invert(currentRotation);
 
 					Quaternion rotateAboutZ = Quaternion.FromEulerAngles(new Vector3(0, 0, .01));
 					rotateAboutZ = invertedRotation * rotateAboutZ * currentRotation;
-					meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(rotateAboutZ);
+					meshViewerWidget.World.Rotate(rotateAboutZ);
 					Invalidate();
 				}
 			}
@@ -1860,7 +1857,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector3 boundsCenter = selectedBounds.Center;
 				Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
-				Vector2 centerTopScreenPosition = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(centerTop);
+				Vector2 centerTopScreenPosition = meshViewerWidget.World.GetScreenPosition(centerTop);
 				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
 				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
 

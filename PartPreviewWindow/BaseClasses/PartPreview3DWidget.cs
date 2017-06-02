@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+			Ray ray = meshViewerWidget.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
 			if (intersectionInfo != null)

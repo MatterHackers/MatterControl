@@ -165,10 +165,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.gcodeViewer.Visible = false;
 				topToBottom.AddChild(gcodeViewer);
 
+				if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
+				{
+					modelViewer.meshViewerWidget.ResetView();
+
+					ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.meshViewerWidget.World.RotationMatrix;
+					ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.meshViewerWidget.World.TranslationMatrix;
+				}
+				else
+				{
+					modelViewer.meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
+					modelViewer.meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
+
+					gcodeViewer.meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
+					gcodeViewer.meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
+				}
+
 				this.printItem = printItem;
-
-				//this.DebugShowBounds = true;
-
 
 				this.AddChild(viewControls3D);
 
@@ -178,7 +191,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public void ToggleView()
 			{
 				bool layersVisible = gcodeViewer.Visible;
-
 				if (layersVisible)
 				{
 					// Copy layers tumble state to partpreview
@@ -208,8 +220,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public override void OnClosed(ClosedEventArgs e)
 			{
+				var visibleWidget = (gcodeViewer.Visible) ? gcodeViewer.meshViewerWidget : modelViewer.meshViewerWidget;
+
+				ApplicationController.Instance.PartPreviewState.RotationMatrix = visibleWidget.World.RotationMatrix;
+				ApplicationController.Instance.PartPreviewState.TranslationMatrix = visibleWidget.World.TranslationMatrix;
+
 				base.OnClosed(e);
 			}
 		}
 	}
+
+
 }

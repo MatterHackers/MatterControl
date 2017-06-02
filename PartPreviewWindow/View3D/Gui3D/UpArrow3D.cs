@@ -167,9 +167,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector3 boundsCenter = selectedBounds.Center;
 			Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
-			Vector2 centerTopScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
+			Vector2 centerTopScreenPosition = MeshViewerToDrawWith.World.GetScreenPosition(centerTop);
 
-			double distBetweenPixelsWorldSpace = MeshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
+			double distBetweenPixelsWorldSpace = MeshViewerToDrawWith.World.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
 
 			Matrix4X4 arrowTransform = Matrix4X4.CreateTranslation(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * distBetweenPixelsWorldSpace));
 			arrowTransform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * arrowTransform;
