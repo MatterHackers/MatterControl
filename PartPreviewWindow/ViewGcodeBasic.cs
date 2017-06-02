@@ -167,13 +167,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CreateAndAddChildren()
 		{
-			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			var textImageButtonFactory = new TextImageButtonFactory()
+			{
+				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor
+			};
 
 			CloseAllChildren();
+
+			if (meshViewerWidget != null)
+			{
+				meshViewerWidget.Closed -= MeshViewerWidget_Closed;
+				meshViewerWidget.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+			}
+
+			meshViewerWidget = null;
 			gcodeViewWidget = null;
 			gcodeProcessingStateInfoText = null;
 
@@ -298,12 +308,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mainContainerTopToBottom.AddChild(buttonBottomPanel);
 			this.AddChild(mainContainerTopToBottom);
 
-			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "".Localize());
+			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "")
+			{
+				Visible = (activeViewMode == PartViewMode.Layers3D),
+				AllowBedRenderingWhenEmpty = true
+			};
 			meshViewerWidget.AnchorAll();
-			meshViewerWidget.AllowBedRenderingWhenEmpty = true;
 			gcodeDisplayWidget.AddChild(meshViewerWidget);
-			meshViewerWidget.Visible = (activeViewMode == PartViewMode.Layers3D);
-			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
+			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+			meshViewerWidget.Closed += MeshViewerWidget_Closed;
+
+			// Apply active world view if initialized
+			if (ApplicationController.Instance.PartPreviewState.RotationMatrix != Matrix4X4.Identity)
+			{
+				meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
+				meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
+			}
 
 			viewControls3D.ResetView += (sender, e) =>
 			{
@@ -319,10 +339,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 
-			viewControlsToggle = new ViewControlsToggle(ApplicationController.Instance.Theme.ViewControlsButtonFactory, activeViewMode);
-			viewControlsToggle.HAnchor = HAnchor.ParentRight;
+			viewControlsToggle = new ViewControlsToggle(ApplicationController.Instance.Theme.ViewControlsButtonFactory, activeViewMode)
+			{
+				Visible = false,
+				HAnchor = HAnchor.ParentRight
+			};
 			AddChild(viewControlsToggle);
-			viewControlsToggle.Visible = false;
 
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{
@@ -351,6 +373,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			expandModelOptions.CheckedStateChanged += expandModelOptions_CheckedStateChanged;
 			expandDisplayOptions.CheckedStateChanged += expandDisplayOptions_CheckedStateChanged;
+		}
+
+		private void MeshViewerWidget_Closed(object sender, ClosedEventArgs e)
+		{
+			if (meshViewerWidget.Visible)
+			{
+				ApplicationController.Instance.PartPreviewState.RotationMatrix = meshViewerWidget.World.RotationMatrix;
+				ApplicationController.Instance.PartPreviewState.TranslationMatrix = meshViewerWidget.World.TranslationMatrix;
+			}
 		}
 
 		private RenderType GetRenderType()
